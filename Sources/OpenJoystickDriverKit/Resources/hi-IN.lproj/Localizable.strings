@@ -171,11 +171,11 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.ambiguousProtocolMatch.nextStep" = "सपोर्ट रिपोर्ट भेजें, ताकि तय किया जा सके कि यह कौन-सा प्रोटोकॉल उपयोग करता है।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch" = "इस कंट्रोलर के USB इंटरफ़ेस उसके प्रोटोकॉल की आवश्यकताएँ पूरी नहीं करते, इसलिए OJD इसे सेवा नहीं देता।";
+"ui.controllers.interfaceContractMismatch" = "इस कंट्रोलर के USB इंटरफ़ेस उसके प्रोटोकॉल की आवश्यकताएँ पूरी नहीं करते, इसलिए OJD इसे नहीं संभालता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि इसका समर्थन सुधारा जा सके।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch" = "इस कंट्रोलर का HID डिस्क्रिप्टर उसके प्रोटोकॉल की आवश्यकताएँ पूरी नहीं करता, इसलिए OJD इसे सेवा नहीं देता।";
+"ui.controllers.descriptorContractMismatch" = "इस कंट्रोलर का HID डिस्क्रिप्टर उसके प्रोटोकॉल की आवश्यकताएँ पूरी नहीं करता, इसलिए OJD इसे नहीं संभालता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.descriptorContractMismatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि इसका समर्थन सुधारा जा सके।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -293,7 +293,7 @@
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "आपका कंट्रोलर रिकॉर्ड स्टिक डेडज़ोन सेट नहीं करता, इसलिए रीसेट करने के लिए कुछ नहीं है।";
 /* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
-"ui.controllers.calibration.title" = "अंशांकन";
+"ui.controllers.calibration.title" = "कैलिब्रेशन";
 /* Label of the left stick row of the calibration view in the controller detail. */
 "ui.controllers.calibration.leftStick" = "बायाँ स्टिक";
 /* Label of the right stick row of the calibration view in the controller detail. */
@@ -359,7 +359,7 @@
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
 "ui.virtualProfile.failure.overrideFileKept" = "वर्चुअल गेमपैड फ़ाइल %@ अपनी पहचान खुद तय करती है या किसी पैकेज से आती है, इसलिए वह बनी रहती है। उस फ़ाइल को संपादित करें या हटाएँ। कुछ भी नहीं बदला।";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
-"ui.virtualProfile.storeError" = "वर्चुअल गेमपैड प्रकार के ओवरराइड पढ़े नहीं जा सकते (%@)। कंट्रोलर स्वचालित रूप से चुनते हैं।";
+"ui.virtualProfile.storeError" = "वर्चुअल गेमपैड प्रकार के ओवरराइड पढ़े नहीं जा सकते (%@)। कंट्रोलर के लिए प्रकार स्वचालित रूप से चुना जाता है।";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
 "ui.keyboard.noKey" = "कोई कुंजी चयनित नहीं";
 /* Value of the key field while the app waits for a key press. Keep the three dots. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ में मोशन सेंसर नहीं है।";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "बाइंड नहीं किया गया, क्योंकि कंट्रोलर में ये नहीं हैं: %@.";
+"ui.profiles.templateSkipped" = "बाइंड नहीं किया गया, क्योंकि कंट्रोलर में ये नहीं हैं: %@।";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "टगल";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -1297,7 +1297,7 @@
 /* Message in the rumble section of the input test when the controller has no rumble. */
 "ui.inputTest.rumbleUnavailable" = "इस कंट्रोलर द्वारा रम्बल समर्थित नहीं है।";
 /* Note under the rumble motor controls in the input test window: the motor levels are sent only when the user clicks the Test Rumble button, not when a control changes. */
-"ui.inputTest.rumbleAppliesOnTest" = "मोटर स्तर तब भेजे जाते हैं जब आप रम्बल परीक्षण पर क्लिक करते हैं।";
+"ui.inputTest.rumbleAppliesOnTest" = "मोटर स्तर तब भेजे जाते हैं जब आप रंबल परीक्षण पर क्लिक करते हैं।";
 /* Status of the input test when input stopped arriving. */
 "ui.inputTest.stale" = "इनपुट बाधित";
 /* Status of the input test while it starts. Keep the three dots. */
@@ -1385,7 +1385,7 @@
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Xbox USB ड्राइवर ठीक करें";
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
-"platform.macos.cli.controller.show.labelServedBy" = "मूल ड्राइवर";
+"platform.macos.cli.controller.show.labelServedBy" = "नेटिव ड्राइवर";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
 "platform.macos.cli.controller.show.servedByMacOS" = "macOS द्वारा संभाला जा रहा है। एक्सटेंशन सक्रिय करने और कंट्रोलर लेने के लिए `ojd controller claim %@` चलाएँ।";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
@@ -3706,7 +3706,7 @@
 /* Sentence under a permission row in the Access area when the permission is allowed. */
 "ui.access.permission.granted.message" = "यह अनुमति दी गई है।";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
-"platform.macos.ui.access.permission.denied.message" = "macOS ने यह अनुमति अस्वीकार कर दी है, या इसकी स्थिति पढ़ी नहीं जा सकी। इसे सिस्टम सेटिंग्ज़ में अनुमति दें।";
+"platform.macos.ui.access.permission.denied.message" = "macOS ने यह अनुमति अस्वीकार कर दी है, या इसकी स्थिति पढ़ी नहीं जा सकी। इसे सिस्टम सेटिंग्स में अनुमति दें।";
 /* Sentence under a permission row in the Access area when the permission has not been requested yet. */
 "ui.access.permission.notAsked.message" = "यह अनुमति अभी तक माँगी नहीं गई है।";
 /* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
@@ -4056,7 +4056,7 @@
 /* Menu item in the menu bar menu that lets the service remap again. */
 "ui.extra.resume" = "फिर शुरू करें";
 /* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
-"ui.extra.pause" = "विराम दें";
+"ui.extra.pause" = "अस्थायी रूप से रोकें";
 /* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
 "ui.extra.noProfile" = "प्रोफ़ाइल के बिना";
 /* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
@@ -4174,9 +4174,9 @@
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "प्रोफ़ाइल मान की कुंजी में कोई खाली भाग नहीं हो सकता।";
 /* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
-"ui.shortcuts.action.rumble.title" = "कंट्रोलर को कंपन कराएँ";
+"ui.shortcuts.action.rumble.title" = "कंट्रोलर को रंबल कराएँ";
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
-"ui.shortcuts.action.rumble.description" = "किसी कंट्रोलर की कंपन मोटरों को थोड़ी देर चलाता है।";
+"ui.shortcuts.action.rumble.description" = "किसी कंट्रोलर की रंबल मोटर को थोड़ी देर चलाता है।";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
 "ui.shortcuts.action.rumble.intensity" = "तीव्रता (0-255)";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
@@ -4208,7 +4208,7 @@
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
 "ui.shortcuts.action.installMod.folder" = "फ़ोल्डर";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
-"ui.shortcuts.action.installMod.replace" = "इंस्टॉल किया पैकेज बदलें";
+"ui.shortcuts.action.installMod.replace" = "इंस्टॉल किया गया पैकेज बदलें";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
 "ui.shortcuts.action.removeMod.title" = "मॉड पैकेज हटाएँ";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
@@ -5152,13 +5152,13 @@
 /* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.auxiliary8" = "अतिरिक्त बटन 8";
 /* Name of the touch sensor of the left stick of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.leftStickTouch" = "बायें स्टिक का स्पर्श";
+"ui.controllers.control.leftStickTouch" = "बाएँ स्टिक का स्पर्श";
 /* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.rightStickTouch" = "दायें स्टिक का स्पर्श";
+"ui.controllers.control.rightStickTouch" = "दाएँ स्टिक का स्पर्श";
 /* Name of the touch sensor of the left trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.leftTrackpadTouch" = "बायें पैड का स्पर्श";
+"ui.controllers.control.leftTrackpadTouch" = "बाएँ पैड का स्पर्श";
 /* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.rightTrackpadTouch" = "दायें पैड का स्पर्श";
+"ui.controllers.control.rightTrackpadTouch" = "दाएँ पैड का स्पर्श";
 /* Name of the horizontal position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.pointerX" = "पॉइंटर की क्षैतिज स्थिति";
 /* Name of the vertical position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
@@ -5218,7 +5218,7 @@
 /* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
 "ui.controllers.readiness.working.action" = "इनपुट टेस्ट खोलें";
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
-"ui.controllers.readiness.needsStep.title" = "आपकी ओर से एक कदम चाहिए";
+"ui.controllers.readiness.needsStep.title" = "आपकी ओर से एक चरण चाहिए";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
 "ui.controllers.readiness.needsStep.access.message" = "इस कंट्रोलर को एक अनुमति चाहिए जो अभी नहीं दी गई है।";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
@@ -5228,7 +5228,7 @@
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "ड्राइवर सेट अप करें";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
-"ui.controllers.readiness.needsStep.other.message" = "यह कंट्रोलर अभी पढ़ा नहीं जा सकता। इसके विवरण में अगला कदम बताया गया है।";
+"ui.controllers.readiness.needsStep.other.message" = "यह कंट्रोलर अभी पढ़ा नहीं जा सकता। इसके विवरण में अगला चरण बताया गया है।";
 /* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
 "ui.controllers.readiness.needsStep.other.action" = "समस्या निवारण खोलें";
 /* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
