@@ -104,7 +104,7 @@
       "default": "Simple"
     },
     "idleDisconnectMinutes": {
-      "description": "Minutes without changed input after which a Bluetooth controller disconnects. Unset turns it off, the default. A cable or receiver connection never disconnects.",
+      "description": "Minutes without changed input before a Bluetooth controller disconnects; unset, the default, turns it off.",
       "type": "integer",
       "minimum": 1,
       "maximum": 480
