@@ -56,6 +56,7 @@ A value is wrong when it reads well but says something else. Every non-English l
 - Translate the sense the app uses: "Disabled" means turned off; "Pitch", "Yaw" and "Roll" are rotation axes; "Motion" is the motion sensor, "Trigger" the shoulder trigger, "Escape" the key name.
 - A label stays a label of the same part of speech: a noun stays a noun, an action button a verb, and a one- or two-word label never becomes a sentence, a reply, or a line such as `- Yes.`.
 - Keys with different English get different values; two keys share a value only when their `en-US` values match.
-- One term per concept in a file: controller, profile, mapping, service, extension, pairing. Keep a diagnose "check" distinct from the controller device.
+- A term has one translation per language. The terms are those of [`wiki/Glossary.md`](wiki/Glossary.md): profile, virtual gamepad, virtual gamepad kind, Handled by macOS, Handled by OpenJoystickDriver, Xbox USB driver, connection, and mode. An English value never holds a word the glossary lists as replaced, except a file key in an error message and a System Settings place written as macOS shows it.
+- One word per concept for the other recurring nouns too: controller, mapping, service, pairing. Keep a diagnose "check" distinct from the controller device.
 - For a standard macOS term (menu items, keys, common buttons), use the term Apple's macOS glossary uses in that language when it has the same sense.
 - Leave English only for product names, CLI tokens and option values, identifiers, and loanwords macOS itself uses in that language.
