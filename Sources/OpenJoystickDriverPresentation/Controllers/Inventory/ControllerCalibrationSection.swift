@@ -5,8 +5,7 @@
   import SwiftUI
 
   /// The calibration rows of the controller detail: for each stick and trigger, the raw value, the
-  /// value after tuning, and for a stick the dead zone, with the row that stores the dead zone as
-  /// the controller model's tuning.
+  /// value after tuning, with the row that edits the stick dead zone of the controller model.
   struct ControllerCalibrationSection: View {
     /// The model of the app's view of the service.
     @ObservedObject
@@ -25,15 +24,8 @@
     var body: some View {
       Group {
         StickDeadzoneRow(viewModel: viewModel, device: device, setting: setting, reload: reload)
-        if model.rows.isEmpty {
-          OJDLabeledValue(
-            OJDLocalized.string("ui.controllers.calibration.title"),
-            OJDLocalized.string("ui.controllers.calibration.waiting")
-          )
-        } else {
-          ForEach(model.rows) { row in
-            OJDLabeledValue(Self.label(row.control), Self.text(row))
-          }
+        ForEach(model.rows) { row in
+          OJDLabeledValue(Self.label(row.control), Self.text(row))
         }
       }.task(id: device.sessionToken.rawValue) {
         await model.run(device: device, deadZone: { setting.value }, gateway: viewModel.gateway)
@@ -45,20 +37,14 @@
       OJDLocalized.string("ui.controllers.calibration.\(control.rawValue)")
     }
 
-    /// Returns the raw value, the tuned value and the dead zone of a row as text.
+    /// Returns the raw value and the tuned value of a row as text.
     static func text(_ row: ControllerCalibrationRow) -> String {
       let tuned =
         row.tuned.map(percent) ?? OJDLocalized.string("ui.controllers.calibration.noOutput")
-      let reading = OJDLocalized.formatted(
+      return OJDLocalized.formatted(
         "ui.controllers.calibration.reading",
         percent(row.raw),
         tuned
-      )
-      guard let deadZone = row.deadZone else { return reading }
-      return OJDLocalized.formatted(
-        "ui.controllers.calibration.readingWithDeadZone",
-        reading,
-        percent(deadZone)
       )
     }
 

@@ -150,8 +150,6 @@
 "ui.controllers.loadError" = "Could not load controllers";
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "No controller connected";
-/* Message of the empty state in the Controllers area. It asks the user to connect a controller. */
-"ui.controllers.emptyMessage" = "Connect a controller.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch" = "OJD found no supported protocol for this controller.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -280,8 +278,6 @@
 "ui.controllers.stickDeadzone.label" = "Stick deadzone";
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "Your controller record does not set the stick deadzone, so there is nothing to reset.";
-/* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
-"ui.controllers.calibration.title" = "Calibration";
 /* Label of the left stick row of the calibration view in the controller detail. */
 "ui.controllers.calibration.leftStick" = "Left stick";
 /* Label of the right stick row of the calibration view in the controller detail. */
@@ -292,12 +288,8 @@
 "ui.controllers.calibration.rightTrigger" = "Right trigger";
 /* Value of a stick or trigger row of the calibration view in the controller detail. %1$@ is the value the controller reports, such as 40%, and %2$@ is the value after tuning, such as 0%. */
 "ui.controllers.calibration.reading" = "Raw %1$@, after tuning %2$@";
-/* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
-"ui.controllers.calibration.readingWithDeadZone" = "%1$@, deadzone %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "no virtual gamepad";
-/* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
-"ui.controllers.calibration.waiting" = "Waiting for input...";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "The request names a vendor or product ID that is out of range. Nothing changed.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -312,8 +304,6 @@
 "ui.virtualProfile.kind.generic" = "Generic HID gamepad";
 /* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
 "ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
-/* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
-"ui.virtualProfile.modelScope" = "Applies to every connected controller of this model.";
 /* Value of the virtual gamepad kind source: the user chose the kind. */
 "ui.virtualProfile.sourceOverride" = "Override";
 /* Value of the virtual gamepad kind source: the app chose the kind because the controller cannot use the kind that the user chose. */

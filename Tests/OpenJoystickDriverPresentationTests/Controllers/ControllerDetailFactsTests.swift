@@ -447,15 +447,11 @@ extension ControllerDetailFactsTests {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let rows = ControllerTuningRows.rows(for: record, activeProfile: nil)
-    #expect(rows.map(\.name) == ControllerTuning.Key.allCases.map(\.rawValue))
-    for (row, entry) in zip(rows, record.tuningValues) {
-      if entry.value == nil {
-        let unset = entry.key == .stickDeadzone ? "status.notSet" : "status.driverDefault"
-        #expect(row.text == OJDLocalized.string(unset))
-      } else {
-        #expect(row.layer == CommandLineName.kebab(entry.layer.rawValue))
-        #expect(row.text == "\(row.value) (\(row.layer ?? ""))")
-      }
+    let set = record.tuningValues.filter { $0.key != .stickDeadzone && $0.value != nil }
+    #expect(rows.map(\.name) == set.map(\.key.rawValue))
+    for (row, entry) in zip(rows, set) {
+      #expect(row.layer == CommandLineName.kebab(entry.layer.rawValue))
+      #expect(row.text == "\(row.value) (\(row.layer))")
     }
   }
 

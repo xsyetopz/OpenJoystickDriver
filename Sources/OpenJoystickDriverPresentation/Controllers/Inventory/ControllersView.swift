@@ -278,9 +278,6 @@
             symbol: "gamecontroller",
             title: OJDLocalized.string(
               "ui.controllers.emptyTitle"
-            ),
-            message: OJDLocalized.string(
-              "ui.controllers.emptyMessage"
             )
           )
         }
