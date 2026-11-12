@@ -307,7 +307,7 @@
 /* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.calibration.readingWithDeadZone" = "%1$@，死区 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
-"ui.controllers.calibration.noOutput" = "无虚拟手柄";
+"ui.controllers.calibration.noOutput" = "无虚拟游戏手柄";
 /* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
 "ui.controllers.calibration.waiting" = "正在等待输入…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
@@ -323,7 +323,7 @@
 /* Option of the virtual gamepad kind popup in the Controllers detail: the plain gamepad that any HID reader accepts. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.virtualProfile.kind.generic" = "通用 HID 游戏手柄";
 /* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
-"ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
+"ui.virtualProfile.kind.withIdentifier" = "%1$@（%2$@）";
 /* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
 "ui.virtualProfile.modelScope" = "适用于此型号的所有已连接控制器。";
 /* Value of the virtual gamepad kind source: the user chose the kind. */
@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "无法存储覆盖。未存储任何内容。";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "虚拟游戏手柄文件 %@ 设置了自己的身份或来自某个包，因此会保留。请编辑或删除该文件。未做任何更改。";
+"ui.virtualProfile.failure.overrideFileKept" = "虚拟游戏手柄文件 %@ 设置了自己的身份或来自某个模组包，因此会保留。请编辑或删除该文件。未做任何更改。";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "无法读取虚拟游戏手柄类型覆盖（%@）。控制器将自动选择。";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
@@ -535,7 +535,7 @@
 /* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
 "ui.profiles.convert.leftOutPart" = "%@：控制器缺少所需的部分";
 /* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
-"ui.profiles.convert.section.binding" = "绑定";
+"ui.profiles.convert.section.binding" = "按键映射";
 /* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
 "ui.profiles.convert.section.chord" = "组合键";
 /* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ 没有运动传感器。";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "未绑定，因为控制器没有：%@。";
+"ui.profiles.templateSkipped" = "未映射，因为控制器没有：%@。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切换";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -1261,7 +1261,7 @@
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
 "ui.inputTest.pointer" = "指针";
 /* Name of the indicator in the input test that lights while a pointing device sees its target. */
-"ui.inputTest.pointerTracking" = "跟踪";
+"ui.inputTest.pointerTracking" = "追踪";
 /* Shown under a touch surface in the input test while nothing touches it. */
 "ui.inputTest.touchIdle" = "无接触";
 /* Name of the left touch surface of the controller in the input test. */
@@ -1273,7 +1273,7 @@
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "已按下";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
-"ui.inputTest.receiving" = "正在等待操作…";
+"ui.inputTest.receiving" = "正在等待某个控件移动…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "已松开";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1385,27 +1385,27 @@
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "修复 Xbox USB 驱动程序";
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
-"platform.macos.cli.controller.show.labelServedBy" = "原生驱动";
+"platform.macos.cli.controller.show.labelServedBy" = "原生驱动程序";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
 "platform.macos.cli.controller.show.servedByMacOS" = "由 macOS 处理。运行 `ojd controller claim %@` 以启用扩展并接管该控制器。";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "由 macOS 处理";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple 的驱动正占用此控制器。接管它即可启用 Xbox USB 驱动程序。";
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple 的驱动程序正占用此控制器。接管它即可启用 Xbox USB 驱动程序。";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "接管";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
-"ui.setup.runningDetail" = "正在安装 Xbox USB 驱动…";
+"ui.setup.runningDetail" = "正在安装 Xbox USB 驱动程序…";
 /* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
 "ui.setup.repairRunning" = "正在修复…";
 /* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
-"ui.setup.unavailableDetail" = "无法读取 Xbox USB 驱动的状态，因此无法发送请求。";
+"ui.setup.unavailableDetail" = "无法读取 Xbox USB 驱动程序的状态，因此无法发送请求。";
 /* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
-"ui.setup.failedDetail" = "Xbox USB 驱动请求失败：%3$@（%1$@，代码 %2$lld）。";
+"ui.setup.failedDetail" = "Xbox USB 驱动程序请求失败：%3$@（%1$@，代码 %2$lld）。";
 /* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
-"ui.setup.cancelledDetail" = "Xbox USB 驱动请求已取消。请重试以安装驱动。";
+"ui.setup.cancelledDetail" = "Xbox USB 驱动程序请求已取消。请重试以安装驱动程序。";
 /* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
-"ui.setup.timedOutDetail" = "系统未及时响应 Xbox USB 驱动请求。请重试。";
+"ui.setup.timedOutDetail" = "系统未及时响应 Xbox USB 驱动程序请求。请重试。";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver 无法连接其服务";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
@@ -1933,7 +1933,7 @@
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "无法读取此已存储的配置文件。请删除它，以继续使用有效的配置文件。";
 /* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
-"ui.profiles.staleProfileMessage" = "%@ 由较早版本保存，无法使用。请迁移它以便再次使用，或将其删除。";
+"ui.profiles.staleProfileMessage" = "%@ 由较早版本存储，无法使用。请迁移它以便再次使用，或将其删除。";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "无法读取活动配置文件列表。请重置以继续。你的配置文件将被保留。";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -2056,7 +2056,7 @@
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "覆盖错误";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
-"platform.macos.cli.status.group.labelPassThrough" = "由 macOS 处理 (%lld)";
+"platform.macos.cli.status.group.labelPassThrough" = "由 macOS 处理（%lld）";
 /* Row label in the output of 'ojd status'. The state and version of the service follow. */
 "cli.status.group.labelService" = "服务";
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
@@ -4058,7 +4058,7 @@
 /* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
 "ui.extra.pause" = "暂停";
 /* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
-"ui.extra.noProfile" = "不使用配置文件";
+"ui.extra.noProfile" = "无配置文件";
 /* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
 "ui.extra.moreProfiles" = "更多配置文件";
 /* Title of a controller row in the menu bar menu. %1$@ is the controller name and %2$@ is a list of its battery level, active profile and paused state. The parentheses may change. */
@@ -4178,7 +4178,7 @@
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.description" = "让控制器的振动马达运转片刻。";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
-"ui.shortcuts.action.rumble.intensity" = "强度 (0-255)";
+"ui.shortcuts.action.rumble.intensity" = "强度（0-255）";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
 "ui.shortcuts.action.rumble.duration" = "持续时间（秒）";
 /* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
@@ -4192,9 +4192,9 @@
 /* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
 "ui.shortcuts.action.light.description" = "设置控制器的灯条颜色、LED 亮度或两者。";
 /* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
-"ui.shortcuts.action.light.color" = "颜色 (RRGGBB)";
+"ui.shortcuts.action.light.color" = "颜色（RRGGBB）";
 /* Label in the Shortcuts app of the LED brightness from 0 to 255. */
-"ui.shortcuts.action.light.brightness" = "LED 亮度 (0-255)";
+"ui.shortcuts.action.light.brightness" = "LED 亮度（0-255）";
 /* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
 "ui.shortcuts.error.lightRequest" = "请提供六位十六进制颜色、亮度，或两者都提供。";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
@@ -4208,7 +4208,7 @@
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
 "ui.shortcuts.action.installMod.folder" = "文件夹";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
-"ui.shortcuts.action.installMod.replace" = "替换已安装的包";
+"ui.shortcuts.action.installMod.replace" = "替换已安装的模组包";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
 "ui.shortcuts.action.removeMod.title" = "移除模组包";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
@@ -4504,7 +4504,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
 "error.E5007.virtualDevice.definition" = "%1$@，persona：虚拟游戏手柄定义必须包含 layout、transport、labels、worksWithDefaultSDLHints，以及带 version 的 identity。修复：补上缺少的键，或添加 match 来改为选择虚拟游戏手柄。";
 /* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
-"error.E5007.virtualDevice.matchUnit" = "%1$@，match.unit：match.unit 必须是单元 ID。修复：将 unit 设为某个手柄的单元 ID，或省略。";
+"error.E5007.virtualDevice.matchUnit" = "%1$@，match.unit：match.unit 必须是单元 ID。修复：将 unit 设为某个控制器的单元 ID，或省略。";
 /* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
 "error.E5007.virtualDevice.identityText" = "%1$@，identity.%2$@：虚拟游戏手柄的 identity 需要非空的 %2$@。修复：给 %2$@ 一个非空字符串。";
 /* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
@@ -4540,7 +4540,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@，match：虚拟游戏手柄文件不能重复用户文件 %2$@ 的 match。修复：让每个型号只有一个虚拟游戏手柄文件，或修改其中一个的 match。";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@，match：虚拟游戏手柄文件不能重复软件包文件 %2$@ 的 match。修复：让每个型号只有一个虚拟游戏手柄文件，或修改其中一个的 match。";
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@，match：虚拟游戏手柄文件不能重复模组包文件 %2$@ 的 match。修复：让每个型号只有一个虚拟游戏手柄文件，或修改其中一个的 match。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@，session.keepAlive.intervalMilliseconds：keep-alive 的间隔必须为 1...60000 毫秒。修复：将 intervalMilliseconds 设为 1...60000。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
@@ -5080,7 +5080,7 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "旧版本的已存储文档没有自动转换方式，因此 ojd migrate 会保持其不变。消息会指出文件和字段。请手动把文件改为受支持的 apiVersion。";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
-"error.E5010.message" = "存储的文稿不是 XML 属性列表，或包含日期或数据值。消息会给出文件以及格式或键路径。请用 plutil -convert xml1 将文件存储为 XML 属性列表。";
+"error.E5010.message" = "存储的文件不是 XML 属性列表，或包含日期或数据值。消息会给出文件以及格式或键路径。请用 plutil -convert xml1 将文件存储为 XML 属性列表。";
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "运行生成器脚本，并写入它返回的文档。";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
@@ -5146,11 +5146,11 @@
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "部分文档无法转换，保持不变。请在“终端”中运行 ojd migrate 查看是哪些。";
 /* Text of a technical value in the Advanced section of the controller detail: %1$@ is the value in words and %2$@ is the raw identifier that the files, the command line and the service use. The identifier stays as written. */
-"ui.controllers.withIdentifier" = "%1$@ (%2$@)";
+"ui.controllers.withIdentifier" = "%1$@（%2$@）";
 /* Name of the seventh extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.auxiliary7" = "附加按钮 7";
+"ui.controllers.control.auxiliary7" = "额外按钮 7";
 /* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.auxiliary8" = "附加按钮 8";
+"ui.controllers.control.auxiliary8" = "额外按钮 8";
 /* Name of the touch sensor of the left stick of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.leftStickTouch" = "左摇杆触摸";
 /* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
@@ -5178,13 +5178,13 @@
 /* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
 "ui.profiles.editBlockedChange" = "正在进行的更改完成之前无法编辑。";
 /* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
-"ui.profiles.editBlockedHold" = "正在进行的更改完成或损坏的描述文件得到处理之前无法编辑。";
+"ui.profiles.editBlockedHold" = "正在进行的更改完成或损坏的配置文件得到处理之前无法编辑。";
 /* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedChange" = "正在进行的更改完成之前，无法对描述文件执行操作。";
+"ui.profiles.actionBlockedChange" = "正在进行的更改完成之前，无法对配置文件执行操作。";
 /* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedRecovery" = "资源库修复完成之前，无法对描述文件执行操作。";
+"ui.profiles.actionBlockedRecovery" = "资源库修复完成之前，无法对配置文件执行操作。";
 /* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedDamaged" = "损坏的描述文件被删除或资源库被重置之前，无法对描述文件执行操作。";
+"ui.profiles.actionBlockedDamaged" = "损坏的配置文件被删除或资源库被重置之前，无法对配置文件执行操作。";
 /* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
 "ui.profiles.joyConPairNeedsBoth" = "连接左右 Joy-Con 以进行配对。";
 /* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
