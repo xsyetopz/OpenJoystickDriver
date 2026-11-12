@@ -293,11 +293,11 @@
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "Votre fiche de manette ne définit pas la zone morte du stick, il n’y a donc rien à réinitialiser.";
 /* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
-"ui.controllers.calibration.title" = "Calibrage";
+"ui.controllers.calibration.title" = "Étalonnage";
 /* Label of the left stick row of the calibration view in the controller detail. */
-"ui.controllers.calibration.leftStick" = "Joystick gauche";
+"ui.controllers.calibration.leftStick" = "Stick gauche";
 /* Label of the right stick row of the calibration view in the controller detail. */
-"ui.controllers.calibration.rightStick" = "Joystick droit";
+"ui.controllers.calibration.rightStick" = "Stick droit";
 /* Label of the left trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
 "ui.controllers.calibration.leftTrigger" = "Gâchette gauche";
 /* Label of the right trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
@@ -349,7 +349,7 @@
 /* Message when the service stores the override of the virtual gamepad kind but the controller cannot use it, so the app picks a kind itself. */
 "ui.virtualProfile.failure.overrideRejected" = "Le remplacement est enregistré, mais cette manette ne peut pas l’utiliser et choisit donc automatiquement.";
 /* Error when a virtual gamepad kind fails to activate and the app restores the last working kind. %@ is the reason. */
-"ui.virtualProfile.failure.activationFailed" = "L’activation a échoué, le type de manette virtuelle précédent a donc été restauré : %@";
+"ui.virtualProfile.failure.activationFailed" = "L’activation a échoué, le type de manette virtuelle précédent a donc été restauré : %@";
 /* Message when the service stores the override while virtual output is off. The override takes effect when the user turns virtual output on. */
 "ui.virtualProfile.failure.outputDisabled" = "Le remplacement est enregistré et s’appliquera dès que la sortie virtuelle sera activée.";
 /* Error when the service stops while the user changes the virtual gamepad kind. The stored override stays unchanged. */
@@ -535,7 +535,7 @@
 /* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
 "ui.profiles.convert.leftOutPart" = "%@ : la manette n’a pas un élément nécessaire";
 /* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
-"ui.profiles.convert.section.binding" = "Assignation";
+"ui.profiles.convert.section.binding" = "Affectation";
 /* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
 "ui.profiles.convert.section.chord" = "Combinaison";
 /* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
@@ -543,11 +543,11 @@
 /* Kind of profile part in the list of parts that a profile conversion left out: a layer of bindings. */
 "ui.profiles.convert.section.layer" = "Couche";
 /* Kind of profile part in the list of parts that a profile conversion left out: an advanced mapping of a stick. */
-"ui.profiles.convert.section.stickMapping" = "Assignation de stick";
+"ui.profiles.convert.section.stickMapping" = "Mappage de stick";
 /* Kind of profile part in the list of parts that a profile conversion left out: a mapping of a trigger with two stages. */
-"ui.profiles.convert.section.triggerMapping" = "Assignation de gâchette";
+"ui.profiles.convert.section.triggerMapping" = "Mappage de gâchette";
 /* Kind of profile part in the list of parts that a profile conversion left out: a mapping of a touch surface. */
-"ui.profiles.convert.section.touchMapping" = "Assignation tactile";
+"ui.profiles.convert.section.touchMapping" = "Mappage tactile";
 /* Kind of profile part in the list of parts that a profile conversion left out: the output of the gyro motion sensor. */
 "ui.profiles.convert.section.gyroOutput" = "Sortie du gyroscope";
 /* Kind of profile part in the list of parts that a profile conversion left out: the speed of the pointer. */
@@ -585,7 +585,7 @@
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Comportement de l’attribution";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
-"ui.profiles.apps" = "Applications";
+"ui.profiles.apps" = "Apps";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
 "ui.profiles.addApp" = "Ajouter une app";
 /* Header of the section of the Add App menu that lists the apps that run now. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ n’a pas de capteur de mouvement.";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "Non assigné, car la manette n’a pas : %@.";
+"ui.profiles.templateSkipped" = "Non assigné, car la manette n’a pas : %@.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Basculer";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -3626,7 +3626,7 @@
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
 "ui.shortcuts.action.removeMod.title" = "Retirer un paquet de mods";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.description" = "Retire un paquet de mods installé d'après son nom.";
+"ui.shortcuts.action.removeMod.description" = "Retire un paquet de mods installé d’après son nom.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "Nom";
 /* Name of the model property of a controller in the Shortcuts app. */
@@ -4296,7 +4296,7 @@
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "Les profils actifs n’utilisent pas cette autorisation.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
-"ui.access.permission.limited.message" = "Autorisées, mais les bannières ou les sons sont désactivés; des alertes pourraient passer inaperçues.";
+"ui.access.permission.limited.message" = "Autorisée, mais les bannières ou les sons sont désactivés; des alertes pourraient passer inaperçues.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Activé, mais n’écoute pas sur le port %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */
@@ -4520,7 +4520,7 @@
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "Tester l’entrée";
 /* Button and menu item that ends the wireless link of the selected controller. */
-"ui.menu.controller.disconnectWirelessLink" = "Couper la connexion Bluetooth";
+"ui.menu.controller.disconnectWirelessLink" = "Déconnecter la connexion Bluetooth";
 /* Item of the Controller menu that shows the selected controller in the main window. */
 "ui.menu.controller.showInWindow" = "Afficher dans la fenêtre";
 /* Disabled item of the Controller menu and of the status item's Controllers submenu when no controller is connected. */
@@ -4648,7 +4648,7 @@
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "Tester l’entrée";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
-"ui.extra.disconnectWireless" = "Couper la connexion Bluetooth";
+"ui.extra.disconnectWireless" = "Déconnecter la connexion Bluetooth";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "Afficher dans la fenêtre";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
@@ -5215,21 +5215,21 @@
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.working.title" = "Fonctionne";
 /* One sentence at the top of the Controllers detail for a controller in the Working state. */
-"ui.controllers.readiness.working.message" = "Cette manette est prête à l'emploi.";
+"ui.controllers.readiness.working.message" = "Cette manette est prête à l’emploi.";
 /* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
-"ui.controllers.readiness.working.action" = "Ouvrir le test de saisie";
+"ui.controllers.readiness.working.action" = "Ouvrir le test d’entrée";
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.needsStep.title" = "Une étape est requise de votre part";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
-"ui.controllers.readiness.needsStep.access.message" = "Cette manette a besoin d'une autorisation qui n'a pas encore été accordée.";
+"ui.controllers.readiness.needsStep.access.message" = "Cette manette a besoin d’une autorisation qui n’a pas encore été accordée.";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
 "ui.controllers.readiness.needsStep.access.action" = "Ouvrir Accès";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "Le pilote Xbox USB doit être configuré pour cette manette.";
+"ui.controllers.readiness.needsStep.driver.message" = "Le pilote USB Xbox doit être configuré pour cette manette.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "Configurer le pilote";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
-"ui.controllers.readiness.needsStep.other.message" = "Cette manette ne peut pas encore être lue. Ses détails indiquent l'étape suivante.";
+"ui.controllers.readiness.needsStep.other.message" = "Cette manette ne peut pas encore être lue. Ses détails indiquent l’étape suivante.";
 /* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
 "ui.controllers.readiness.needsStep.other.action" = "Ouvrir le dépannage";
 /* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
