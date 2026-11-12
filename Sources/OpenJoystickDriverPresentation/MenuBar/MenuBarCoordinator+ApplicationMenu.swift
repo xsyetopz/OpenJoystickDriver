@@ -9,8 +9,18 @@
 
   extension MenuBarCoordinator: NSMenuDelegate, NSMenuItemValidation {
     /// Builds the main menu bar and registers its Services, Window and Help menus with the app.
-    func makeApplicationMenu() -> NSMenu {
-      let rendered = MainMenuRenderer.render(target: self)
+    ///
+    /// The menus hold the items that show at `level`; the values default to the preferences, and
+    /// the observer of a change passes the new ones, which the preferences hold only after it runs.
+    func makeApplicationMenu(
+      level: InterfaceLevel? = nil,
+      developerToolsEnabled: Bool? = nil
+    ) -> NSMenu {
+      let rendered = MainMenuRenderer.render(
+        target: self,
+        level: level ?? preferences.interfaceLevel,
+        developerToolsEnabled: developerToolsEnabled ?? preferences.developerToolsEnabled
+      )
       let application = NSApplication.shared
       application.servicesMenu = rendered.servicesMenu
       application.windowsMenu = rendered.windowMenu

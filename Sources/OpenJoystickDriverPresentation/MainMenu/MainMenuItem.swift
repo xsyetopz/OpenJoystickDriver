@@ -130,6 +130,22 @@ extension MainMenuAction {
   }
 }
 
+extension MainMenuAction {
+  /// The level of the command, from `docs/development/interface-audit.md`.
+  ///
+  /// The menus M01 to M17 are Simple; a command of a hidden control follows that control: the
+  /// toolbar item for `toolbar`, S05 for Explain Error Code, the Library for Install Record or
+  /// Mod, and the activity log for Activity Log and Save Activity Log.
+  var interfaceRowLevel: InterfaceRowLevel {
+    switch self {
+    case .toolbar(let action): return action.interfaceRowLevel
+    case .installRecordOrMod, .saveActivityLog, .showActivityLog, .explainErrorCode:
+      return .advanced
+    default: return .simple
+    }
+  }
+}
+
 /// A condition on the app state that must hold for an item to be enabled.
 enum MainMenuRequirement: Hashable, Sendable {
   /// The main window exists.

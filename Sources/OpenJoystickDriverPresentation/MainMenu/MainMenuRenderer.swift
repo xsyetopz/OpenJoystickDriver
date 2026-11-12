@@ -1,6 +1,7 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
   import AppKit
+  import OpenJoystickDriverKit
 
   /// The menus ``MainMenuRenderer`` built, with the ones AppKit tracks by role.
   struct RenderedMainMenu {
@@ -20,9 +21,13 @@
   /// coordinator, which performs the action by item id.
   @MainActor
   enum MainMenuRenderer {
-    /// Returns the menus built from ``MainMenuModel``; `target` performs the actions that do not go
-    /// through the responder chain.
-    static func render(target: MenuBarCoordinator) -> RenderedMainMenu {
+    /// Returns the menus built from ``MainMenuModel`` with the items that show at `level`;
+    /// `target` performs the actions that do not go through the responder chain.
+    static func render(
+      target: MenuBarCoordinator,
+      level: InterfaceLevel,
+      developerToolsEnabled: Bool
+    ) -> RenderedMainMenu {
       let appName = OJDLocalized.string("term.app.name")
       let menu = NSMenu(title: appName)
       let servicesMenu = NSMenu(title: OJDLocalized.string("ui.menu.app.services"))
@@ -31,7 +36,12 @@
       for section in MainMenuModel.sections {
         let submenu = NSMenu(title: title(section.titleKey, appName: appName))
         submenu.delegate = target
-        for entry in section.entries {
+        let entries = MainMenuModel.visibleEntries(
+          of: section,
+          level: level,
+          developerToolsEnabled: developerToolsEnabled
+        )
+        for entry in entries {
           switch entry {
           case .separator: submenu.addItem(.separator())
           case .item(let item):
