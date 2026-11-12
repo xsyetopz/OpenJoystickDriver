@@ -266,7 +266,7 @@
       notificationSounds = enabled
     }
 
-    /// Asks the service to announce a test notification to the app and shows how it ended in
+    /// Asks the service to announce a test notification to the app and shows how it ended
     /// beside the button: nothing for `shown`, the named text for every other outcome.
     ///
     /// The announcement reaches this app's own wait, which calls `answerTestNotification`.
