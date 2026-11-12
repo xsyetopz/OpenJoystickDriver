@@ -59,21 +59,17 @@
       }
     }
 
-    /// The Assignments section: the header with the add and clear buttons, and the assignments by
+    /// The Assignments section: the header with the add button, and the assignments by
     /// group.
     @ViewBuilder
     func assignmentsSection(rowLayout: ProfileAssignmentRowLayout) -> some View {
       Section(
         header: HStack(alignment: .firstTextBaseline) {
-          Text(OJDLocalized.string("term.assignments"))
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
             label: OJDLocalized.string("action.addAssignment")
           ) { activeSheet = .capture }
-          Button(OJDLocalized.string("ui.profiles.clearInputs")) {
-            confirmation = .clearInputs
-          }.disabled(isEditingDisabled)
         }
       ) {
         if draft.profile.bindings.isEmpty {
