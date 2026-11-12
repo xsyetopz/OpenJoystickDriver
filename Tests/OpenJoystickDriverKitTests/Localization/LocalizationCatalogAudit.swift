@@ -108,7 +108,6 @@ enum LocalizationCatalogAudit {
       "term.key.capsLock", "term.key.meta",
       "term.key.control", "term.key.escape", "term.key.alt", "term.key.return", "term.key.shift",
       "term.key.tab", "ui.mapping.guide", "ui.motion.calibration.offset",
-      "ui.controllers.calibration.readingWithDeadZone",
       "ui.profiles.physical.motor",
       "ui.profiles.stick.horizontal",
       "ui.profiles.target", "ui.profiles.trackball.enabled", "ui.profiles.turbo",

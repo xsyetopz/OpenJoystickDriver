@@ -31,7 +31,7 @@
       _scope = State(initialValue: VirtualHIDProfileScopeChoice.initial(for: device))
     }
 
-    /// The profile picker, the scope picker or the model-scope note, the progress and the problems.
+    /// The profile picker, the scope picker, the progress and the problems.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Picker(
@@ -67,12 +67,6 @@
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           }
-        } else {
-          Text(OJDLocalized.string("ui.virtualProfile.modelScope")).font(.caption)
-            .foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
-              horizontal: false,
-              vertical: true
-            )
         }
         if overrideState.inFlight {
           HStack(spacing: OJDSpacing.small) {

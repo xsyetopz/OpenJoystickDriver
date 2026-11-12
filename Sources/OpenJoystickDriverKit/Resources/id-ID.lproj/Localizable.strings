@@ -158,8 +158,6 @@
 "ui.controllers.loadError" = "Tidak dapat memuat pengontrol";
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "Tidak ada pengontrol yang terhubung";
-/* Message of the empty state in the Controllers area. It asks the user to connect a controller. */
-"ui.controllers.emptyMessage" = "Hubungkan pengontrol.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch" = "OJD tidak menemukan protokol yang didukung untuk pengontrol ini.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -290,8 +288,6 @@
 "ui.controllers.stickDeadzone.label" = "Zona mati stik";
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "Catatan pengontrol Anda tidak menetapkan zona mati stik, jadi tidak ada yang bisa diatur ulang.";
-/* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
-"ui.controllers.calibration.title" = "Kalibrasi";
 /* Label of the left stick row of the calibration view in the controller detail. */
 "ui.controllers.calibration.leftStick" = "Stik kiri";
 /* Label of the right stick row of the calibration view in the controller detail. */
@@ -302,12 +298,8 @@
 "ui.controllers.calibration.rightTrigger" = "Pemicu kanan";
 /* Value of a stick or trigger row of the calibration view in the controller detail. %1$@ is the value the controller reports, such as 40%, and %2$@ is the value after tuning, such as 0%. */
 "ui.controllers.calibration.reading" = "Mentah %1$@, setelah penyetelan %2$@";
-/* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
-"ui.controllers.calibration.readingWithDeadZone" = "%1$@, deadzone %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "tidak ada gamepad virtual";
-/* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
-"ui.controllers.calibration.waiting" = "Menunggu input…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Permintaan menyebut ID vendor atau produk yang di luar rentang. Tidak ada yang berubah.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -322,8 +314,6 @@
 "ui.virtualProfile.kind.generic" = "Gamepad HID generik";
 /* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
 "ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
-/* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
-"ui.virtualProfile.modelScope" = "Berlaku untuk setiap pengontrol terhubung dari model ini.";
 /* Value of the virtual gamepad kind source: the user chose the kind. */
 "ui.virtualProfile.sourceOverride" = "Penimpaan";
 /* Value of the virtual gamepad kind source: the app chose the kind because the controller cannot use the kind that the user chose. */
