@@ -297,7 +297,8 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 
 ## 19. Release check
 
-- [ ] 19.1 Run `just check` once and fix what it reports.
+- [x] 19.1 Run `just check` once and fix what it reports.
+  - Note: the justfile has no `check` recipe; `just verify` runs every check CI runs. It exits 0 at `fd76ccecf`. Its `xcode test` step runs the `OpenJoystickDriverUITests` launch test (`98778e7d6`), which skips while another OpenJoystickDriver copy runs (`fd76ccecf`), because that copy owns the app's RPC service.
   - Note: `just verify` at `2a70c4721` stops in `just swift::xcode build-for-testing`: `Sources/OpenJoystickDriver/platform/macos/PlatformHostInstallation.swift:6` cannot see `MacOSPlatformHost` and `PlatformHosts`, which are `package` access (`b453f2cfe`) and so hidden from the Xcode app target. `just cpp::lint` passes (`0a5cf0742`).
 - [ ] 19.2 Install the build over the alpha.2 data on the maintainer's Mac: the first start migrates every file, `Migrated/` holds the originals, no area shows `E5001`, and the interface is in Advanced.
 - [ ] 19.3 **Hardware (maintainer)**: run the procedure in `docs/testing/8bitdo-ultimate-2c.md` for cable, receiver, and Bluetooth LE on the release build, with rumble in each mode.
