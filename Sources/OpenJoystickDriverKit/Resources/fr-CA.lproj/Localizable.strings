@@ -585,7 +585,7 @@
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Comportement de l’attribution";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
-"ui.profiles.apps" = "Apps";
+"ui.profiles.apps" = "Applications";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
 "ui.profiles.addApp" = "Ajouter une app";
 /* Header of the section of the Add App menu that lists the apps that run now. */
