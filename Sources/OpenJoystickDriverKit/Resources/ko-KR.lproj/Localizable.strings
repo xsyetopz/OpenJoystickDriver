@@ -312,46 +312,54 @@
 "ui.controllers.calibration.waiting" = "입력을 기다리는 중…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "요청한 공급업체 ID 또는 제품 ID가 범위를 벗어났습니다. 변경된 항목이 없습니다.";
-/* Button in the Controllers detail that shows or hides the advanced virtual HID profile choices. HID is the abbreviation of Human Interface Device and stays as written. */
+/* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "고급";
-/* Heading of the virtual HID profile section in the Controllers detail. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.virtualProfile.title" = "가상 HID 프로파일";
-/* Note under the virtual HID profile popup. The choice applies to all connected controllers of the model. */
+/* Heading of the virtual gamepad kind section in the Controllers detail. */
+"ui.virtualProfile.title" = "가상 게임패드 종류";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the kind that Steam and games that use SDL read. Steam and SDL are product names. */
+"ui.virtualProfile.kind.sdlCompatible" = "Steam 및 SDL 게임용";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the kind that games that use Apple's Game Controller framework read. Apple and Game Controller stay as written. */
+"platform.macos.ui.virtualProfile.kind.gameControllerCompatible" = "Apple Game Controller 게임용";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the plain gamepad that any HID reader accepts. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.virtualProfile.kind.generic" = "일반 HID 게임패드";
+/* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
+"ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
+/* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
 "ui.virtualProfile.modelScope" = "이 모델의 연결된 모든 컨트롤러에 적용됩니다.";
-/* Value of the virtual HID profile source: the user chose the profile. */
+/* Value of the virtual gamepad kind source: the user chose the kind. */
 "ui.virtualProfile.sourceOverride" = "재정의";
-/* Value of the virtual HID profile source: the app chose the profile because the controller cannot use the profile that the user chose. */
+/* Value of the virtual gamepad kind source: the app chose the kind because the controller cannot use the kind that the user chose. */
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "자동, 재정의 거부됨";
-/* Value of the virtual HID profile when the controller has none. */
-"ui.virtualProfile.none" = "가상 HID 프로파일 없음";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+/* Value of the virtual gamepad kind when the controller has none. */
+"ui.virtualProfile.none" = "가상 게임패드 종류 없음";
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
 "ui.virtualProfile.inForce" = "사용 중: %1$@. 저장된 재정의: %2$@.";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
 "ui.virtualProfile.unchanged" = "이 선택은 이미 적용되어 있습니다. 변경된 내용이 없습니다.";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
 "ui.virtualProfile.otherScopeHolds.model" = "적용 중인 재정의가 이 모델의 모든 컨트롤러에 저장되어 있으므로 이 컨트롤러만을 위해 지울 항목이 없습니다. 변경된 내용이 없습니다.";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
 "ui.virtualProfile.otherScopeHolds.unit" = "적용 중인 재정의가 이 컨트롤러에만 저장되어 있으므로 모델에서 지울 항목이 없습니다. 변경된 내용이 없습니다.";
-/* Status shown while the app changes the virtual HID profile. Keep the three dots. */
-"ui.virtualProfile.updating" = "가상 HID 프로파일 업데이트 중…";
-/* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */
-"ui.virtualProfile.failure.unknownProfile" = "이 가상 HID 프로파일은 알 수 없습니다. 저장된 항목이 없습니다.";
-/* Error when the controller is gone while the user changes its virtual HID profile. The stored override stays unchanged. */
+/* Status shown while the app changes the virtual gamepad kind. Keep the three dots. */
+"ui.virtualProfile.updating" = "가상 게임패드 종류 업데이트 중…";
+/* Error when the user picks a virtual gamepad kind that the service does not know. The service stored nothing. */
+"ui.virtualProfile.failure.unknownProfile" = "이 가상 게임패드 종류는 알 수 없습니다. 저장된 항목이 없습니다.";
+/* Error when the controller is gone while the user changes its virtual gamepad kind. The stored override stays unchanged. */
 "ui.virtualProfile.failure.controllerNotFound" = "컨트롤러 연결이 끊겼거나 찾을 수 없습니다. 재정의는 변경되지 않았습니다.";
-/* Message when the service stores the override of the virtual HID profile but the controller cannot use it, so the app picks a profile itself. */
+/* Message when the service stores the override of the virtual gamepad kind but the controller cannot use it, so the app picks a kind itself. */
 "ui.virtualProfile.failure.overrideRejected" = "재정의는 저장되었지만 이 컨트롤러에서 사용할 수 없으므로 자동으로 선택합니다.";
-/* Error when a virtual HID profile fails to activate and the app restores the last working profile. %@ is the reason. */
-"ui.virtualProfile.failure.activationFailed" = "활성화에 실패하여 이전 가상 HID 프로파일을 복원했습니다: %@";
+/* Error when a virtual gamepad kind fails to activate and the app restores the last working kind. %@ is the reason. */
+"ui.virtualProfile.failure.activationFailed" = "활성화에 실패하여 이전 가상 게임패드 종류를 복원했습니다: %@";
 /* Message when the service stores the override while virtual output is off. The override takes effect when the user turns virtual output on. */
 "ui.virtualProfile.failure.outputDisabled" = "재정의가 저장되었으며 가상 출력이 활성화되면 적용됩니다.";
-/* Error when the service stops while the user changes the virtual HID profile. The stored override stays unchanged. */
+/* Error when the service stops while the user changes the virtual gamepad kind. The stored override stays unchanged. */
 "ui.virtualProfile.failure.serverStopped" = "서비스가 중지되었습니다. 재정의는 변경되지 않았습니다.";
-/* Error when the service cannot save the override of the virtual HID profile. Nothing is stored. */
+/* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "재정의를 저장할 수 없습니다. 저장된 항목이 없습니다.";
-/* Error when resetting the virtual HID profile finds a virtual device file that the reset does not remove. %@ is the path of the file. */
+/* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
 "ui.virtualProfile.failure.overrideFileKept" = "가상 기기 파일 %@은(는) 자체 ID를 설정하거나 패키지에서 제공되므로 그대로 남습니다. 해당 파일을 편집하거나 삭제하세요. 변경된 내용이 없습니다.";
-/* Error when the stored virtual HID profile overrides cannot be read. %@ is the reason. Controllers pick a profile themselves. */
-"ui.virtualProfile.storeError" = "가상 HID 프로파일 재정의를 읽을 수 없습니다(%@). 컨트롤러가 자동으로 선택합니다.";
+/* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
+"ui.virtualProfile.storeError" = "가상 게임패드 종류 재정의를 읽을 수 없습니다(%@). 컨트롤러가 자동으로 선택합니다.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
 "ui.keyboard.noKey" = "선택된 키 없음";
 /* Value of the key field while the app waits for a key press. Keep the three dots. */
@@ -1350,9 +1358,9 @@
 "term.key.alt" = "Option";
 /* Name of the Shift modifier key in the text that describes a captured key press. */
 "term.key.shift" = "Shift";
-/* Value of the virtual HID profile when the app picks it. HID is the abbreviation of Human Interface Device and stays as written. */
+/* Value of the virtual gamepad kind when the app picks it. */
 "ui.mapping.automatic" = "자동";
-/* Value of the virtual HID profile when the app picks it. %@ is the name of the picked profile. */
+/* Value of the virtual gamepad kind when the app picks it. %@ is the name of the picked kind. */
 "ui.virtualProfile.automaticSelected" = "자동(%@)";
 /* Detail line in the Driver section of the settings window when the driver extension for Xbox USB controllers is installed and works. */
 "ui.setup.activeDetail" = "제한된 Xbox USB 드라이버가 설치되어 준비되었습니다.";
@@ -4774,16 +4782,16 @@
 "ui.controllers.publicationCompleted" = "마지막으로 수락된 전송";
 /* Label of the fact in the Controllers detail that tells what chose the server of the controller: the controller record or the user. */
 "ui.controllers.server.source" = "설정한 곳";
-/* Label of the popup that sets whether a virtual HID profile choice applies to a controller model or to one controller. */
+/* Label of the popup that sets whether a virtual gamepad kind choice applies to a controller model or to one controller. */
 "ui.controllers.virtual.scope" = "적용 대상";
 /* Option of the scope popup: the choice applies to all controllers of the model. */
 "ui.controllers.virtual.scope.model" = "이 모델";
 /* Option of the scope popup: the choice applies to this controller only. */
 "ui.controllers.virtual.scope.unit" = "이 컨트롤러";
-/* Label of the row in the Controllers detail that holds the button that clears all virtual HID profile choices. */
+/* Label of the row in the Controllers detail that holds the button that clears all virtual gamepad kind choices. */
 "ui.controllers.virtual.resetAll" = "모든 재정의 재설정";
-/* Error when the service cannot clear the virtual HID profile choices. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.controllers.virtual.resetAllFailed" = "서비스가 가상 HID 프로파일 선택을 지우지 못했습니다.";
+/* Error when the service cannot clear the virtual gamepad kind choices. */
+"ui.controllers.virtual.resetAllFailed" = "서비스가 가상 게임패드 종류 선택을 지우지 못했습니다.";
 /* Label of the row in the Controllers detail that holds the button that exports the mapping of the virtual gamepad. */
 "ui.controllers.exportMapping" = "매핑 내보내기";
 /* Title of the save panel that exports the mapping of the virtual gamepad. */
