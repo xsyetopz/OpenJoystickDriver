@@ -2898,25 +2898,25 @@
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Não usado: %@";
 /* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
-"cli.protocol.group.abstract" = "Valide, instale ou liste descrições de protocolo.";
+"cli.protocol.group.abstract" = "Valida, instala ou lista descrições de protocolo.";
 /* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
 "cli.protocol.group.discussion" = "Uma descrição de protocolo é um arquivo .plist que define uma família de controles que o OJD não embute. As descrições instaladas ficam em ~/Library/Application Support/OpenJoystickDriver/Protocols, e um pacote de mod também pode trazê-las. Estes comandos não precisam do serviço.";
 /* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
 "cli.protocol.group.file" = "Um arquivo de descrição com o nome da sua família, como VendorAcmePad.plist.";
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
-"cli.protocol.validate.abstract" = "Verifique um arquivo de descrição de protocolo sem instalá-lo.";
+"cli.protocol.validate.abstract" = "Verifica um arquivo de descrição de protocolo sem instalá-lo.";
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "Verifica se o arquivo é uma descrição válida, se o nome da família está em UpperCamelCase e coincide com o nome do arquivo, se não é uma família embutida e se define um nome de exibição e layouts de entrada. Sai com 1 e o código E5xxx quando o arquivo é recusado.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ é uma descrição válida da família %2$@ (%3$@). Instale-a com 'ojd protocol install'.";
+"cli.protocol.validate.valid" = "%1$@ é uma descrição válida da família %2$@ (%3$@). Instale-a com “ojd protocol install”.";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
-"cli.protocol.install.abstract" = "Verifique uma descrição de protocolo e instale-a para o seu usuário.";
+"cli.protocol.install.abstract" = "Verifica uma descrição de protocolo e a instala para o seu usuário.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
 "cli.protocol.install.discussion" = "Copia o arquivo para Protocols/FAMILY.plist. Uma descrição instalada da mesma família é substituída. --dry-run verifica o arquivo e não grava nada.";
 /* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
 "cli.protocol.install.success" = "%@ instalado.";
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
-"cli.protocol.list.abstract" = "Liste as famílias de protocolo embutidas e documentadas e a origem de cada uma.";
+"cli.protocol.list.abstract" = "Lista as famílias de protocolo embutidas e documentadas e a origem de cada uma.";
 /* Long description in the help of 'ojd protocol list'. */
 "cli.protocol.list.discussion" = "Lista cada família com o nome de exibição e a origem: embutida, sua pasta Protocols ou um pacote de mod. Uma descrição recusada não aparece.";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
@@ -3896,11 +3896,11 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
 "error.E5007.protocolDescription.namedPacketPrefix" = "%1$@, namedPackets: o id de cada pacote nomeado começa com %2$@/. Correção: renomeie os pacotes para que cada id comece com %2$@/.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
-"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: uma família sempre raw USB lê seus ajustes por rawUSBTuningKeys. Correção: mova as chaves de tuningKeys para rawUSBTuningKeys.";
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: uma família sempre USB bruto lê seus ajustes por rawUSBTuningKeys. Correção: mova as chaves de tuningKeys para rawUSBTuningKeys.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
 "error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@, rawUSBTuningKeys: rawUSBTuningKeys vale só para uma família com variante raw-USB. Correção: remova rawUSBTuningKeys, ou adicione uma variante raw-USB.";
 /* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
-"error.E5007.record.hexBytes" = "%1$@, %2$@: os bytes de %3$@ devem ser pares hexadecimais maiúsculos separados por um único espaço. Correção: escreva %2$@ como pares como 42 03 00, com dígitos maiúsculos e um espaço entre os pares.";
+"error.E5007.record.hexBytes" = "%1$@, %2$@: os bytes de %3$@ devem ser pares hexadecimais maiúsculos separados por um único espaço. Correção: escreva %2$@ como pares do tipo 42 03 00, com dígitos maiúsculos e um espaço entre os pares.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch deve conter modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input ou tuning. Correção: mantenha só essas seções e informe ao menos uma.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
@@ -3958,7 +3958,7 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: um intervalo de keep-alive deve ser de 1...60000 ms. Correção: defina intervalMilliseconds como 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
-"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: um keep-alive deve nomear nenhuma escrita ou 1...8 delas. Correção: liste 1...8 escritas, ou omita writes.";
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: um keep-alive deve nomear nenhuma gravação ou 1...8 delas. Correção: liste 1...8 gravações, ou omita writes.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: o resendTuning de um keep-alive deve ser lizardResendTicks. Correção: defina resendTuning como lizardResendTicks, ou omita-o.";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
@@ -4081,7 +4081,7 @@
 /* Error E5007, shown when a startup write of a record fails: a startup report is not 2...128 bytes long. %1$@ is the file. */
 "error.E5007.startupWrite.reportLength" = "%1$@, session.startup[].report: um relatório de inicialização deve ter 2...128 bytes. Correção: dê ao relatório um tamanho de 2...128 bytes.";
 /* Error E5007, shown when a startup write of a record fails: a startup write lists the wrong number of bytes. %2$@ is the number of bytes the report takes after its ID. %1$@ is the file. */
-"error.E5007.startupWrite.bytesCount" = "%1$@, session.startup[].bytes: uma gravação de inicialização deve listar %2$@ bytes, todos os que vêm após o ID do relatório. Correção: dê a bytes exatamente %2$@ bytes.";
+"error.E5007.startupWrite.bytesCount" = "%1$@, session.startup[].bytes: uma gravação de inicialização deve listar %2$@ bytes, todos os que vêm após o ID do relatório. Correção: dê a bytes %2$@ bytes.";
 /* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
 "error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: um atraso de inicialização deve ser de 0...1000 ms. Correção: defina delayMilliseconds como 0...1000, ou omita-o.";
 /* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
