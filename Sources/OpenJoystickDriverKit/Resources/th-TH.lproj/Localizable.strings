@@ -5237,3 +5237,13 @@
 "ui.controllers.readiness.notSupported.message" = "OpenJoystickDriver ยังใช้คอนโทรลเลอร์นี้ไม่ได้";
 /* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
 "ui.controllers.readiness.notSupported.action" = "ดูคอนโทรลเลอร์ที่รองรับ";
+/* Title of the row in the General pane of the settings window that sets how long a Bluetooth controller may sit without a change in its input before OpenJoystickDriver disconnects it. Bluetooth is a product name. */
+"ui.settings.general.idleDisconnect" = "ตัดการเชื่อมต่อคอนโทรลเลอร์ Bluetooth ที่ไม่ได้ใช้งาน";
+/* Explanation under the idle disconnect title in the General pane of the settings window. Bluetooth is a product name. A cable or a receiver is the other way a controller connects. */
+"ui.settings.general.idleDisconnectDescription" = "ตัดการเชื่อมต่อคอนโทรลเลอร์ Bluetooth ที่อินพุตไม่เปลี่ยนแปลงตลอดเวลาที่เลือก คอนโทรลเลอร์ที่ต่อด้วยสายหรือตัวรับสัญญาณจะยังคงเชื่อมต่ออยู่";
+/* Title of the choice that turns the idle disconnect off in the General pane of the settings window. */
+"ui.settings.general.idleDisconnectOff" = "ปิด";
+/* Choice of the idle disconnect picker in the General pane of the settings window. %1$ld is a number of minutes, such as 15. */
+"ui.settings.general.idleDisconnectMinutes" = "%1$ld นาที";
+/* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
+"cli.setting.set.badIdleDisconnect" = "“%1$@” ไม่ใช่จำนวนนาที ให้ใช้จำนวนเต็มตั้งแต่ %2$@ ถึง %3$@ หรือ off";

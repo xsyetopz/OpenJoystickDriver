@@ -277,6 +277,13 @@ It is unset until you click **Record Shortcut** and press a key with Control, Op
 Another app that uses the same combination makes the shortcut fail with an error here; record a different one.
 `ojd setting set pauseShortcut` sets it too.
 
+**Disconnect idle Bluetooth controllers** disconnects a Bluetooth controller whose input has not changed for the time you choose: 5, 10, 15, 30, or 60 minutes.
+It is **Off** until you change it.
+It disconnects the way **Disconnect** in the menu does.
+A controller that stays on the same input, such as a stick held still, counts as idle.
+A controller on a cable or a receiver is never disconnected.
+`ojd setting set idleDisconnectMinutes` sets it too, to any whole number of minutes from 1 to 480.
+
 **Interface** chooses how much of the app shows: **Simple** or **Advanced**.
 It is **Simple** until you change it.
 The **View** menu has the same two items, **Simple** and **Advanced**, with a checkmark on the current one.
