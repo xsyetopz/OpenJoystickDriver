@@ -218,8 +218,6 @@
 "ui.controllers.paused.value" = "En pause";
 /* Label of the fact in the Controllers detail that names the app in front that selected the profile in force. Its value is the name of the app. */
 "ui.controllers.profileSelectedBy.label" = "Sélectionné par l’app";
-/* Note in the menu bar row of a controller that names the app in front that selected the profile in force. %@ is the name of the app. */
-"ui.extra.profileSelectedByApp" = "Sélectionné par %@";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Afficher le numéro de série";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */

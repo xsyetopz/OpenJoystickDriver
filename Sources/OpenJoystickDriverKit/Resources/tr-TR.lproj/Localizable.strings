@@ -218,8 +218,6 @@
 "ui.controllers.paused.value" = "Duraklatıldı";
 /* Label of the fact in the Controllers detail that names the app in front that selected the profile in force. Its value is the name of the app. */
 "ui.controllers.profileSelectedBy.label" = "Uygulama tarafından seçildi";
-/* Note in the menu bar row of a controller that names the app in front that selected the profile in force. %@ is the name of the app. */
-"ui.extra.profileSelectedByApp" = "%@ tarafından seçildi";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Seri numarasını göster";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */

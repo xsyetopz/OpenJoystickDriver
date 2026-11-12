@@ -218,8 +218,6 @@
 "ui.controllers.paused.value" = "रुका हुआ";
 /* Label of the fact in the Controllers detail that names the app in front that selected the profile in force. Its value is the name of the app. */
 "ui.controllers.profileSelectedBy.label" = "ऐप द्वारा चुना गया";
-/* Note in the menu bar row of a controller that names the app in front that selected the profile in force. %@ is the name of the app. */
-"ui.extra.profileSelectedByApp" = "%@ द्वारा चुना गया";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "सीरियल नंबर दिखाएँ";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */

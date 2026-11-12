@@ -11,7 +11,6 @@ struct StatusItemMenuTests {
     name: String = "Pad",
     isSuspended: Bool = false,
     isWireless: Bool = false,
-    isPaused: Bool = false,
     battery: String? = nil,
     profiles: [StatusItemState.Profile] = []
   ) -> StatusItemState.Controller {
@@ -19,8 +18,7 @@ struct StatusItemMenuTests {
       id: id,
       name: name,
       isSuspended: isSuspended,
-      isWireless: isWireless,
-      isPaused: isPaused
+      isWireless: isWireless
     )
     controller.battery = battery
     controller.profiles = profiles
@@ -78,49 +76,17 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func controllerRowShowsBatteryProfileAndPausedState() {
+  func controllerRowTitleKeepsTheNameAndBatteryOnly() {
     let racing = Self.profile("Racing", active: true)
     let menu = Self.rows(
       Self.entries([
-        Self.controller(
-          "a",
-          name: "Pad",
-          battery: "80%",
-          profiles: [racing, Self.profile("Menu")]
-        ),
-        Self.controller("b", name: "Stick", isPaused: true),
+        Self.controller("a", name: "Pad", battery: "80%", profiles: [racing]),
+        Self.controller("b", name: "Stick", isSuspended: true),
       ])
     )
     #expect(menu[0].title == .verbatim("Pad"))
-    #expect(menu[0].details == [.verbatim("80%"), .verbatim("Racing")])
-    #expect(menu[1].details == [.key("ui.controllers.paused.value")])
-  }
-
-  @Test
-  func controllerRowNamesTheProfileInForceAndTheAppThatSelectedIt() {
-    var selected = Self.controller(
-      "a",
-      battery: "80%",
-      profiles: [Self.profile("Menu", active: true)]
-    )
-    selected.profileInForce = "Racing"
-    selected.profileSelectedBy = "Racer"
-    var everywhere = Self.controller("b")
-    everywhere.profileInForce = "Everywhere"
-    let menu = Self.rows(Self.entries([selected, everywhere]))
-    #expect(
-      menu[0].details == [
-        .verbatim("80%"), .verbatim("Racing"),
-        .formatted("ui.extra.profileSelectedByApp", .verbatim("Racer")),
-      ]
-    )
-    #expect(menu[1].details == [.verbatim("Everywhere")])
-  }
-
-  @Test
-  func suspendedControllerRowSaysPaused() {
-    let menu = Self.rows(Self.entries([Self.controller("a", isSuspended: true)]))
-    #expect(menu[0].details == [.key("ui.controllers.paused.value")])
+    #expect(menu[0].details == [.verbatim("80%")])
+    #expect(menu[1].details.isEmpty)
   }
 
   @Test
@@ -233,7 +199,7 @@ struct StatusItemMenuTests {
       "ui.menu.app.quit",
       "ui.extra.resume", "ui.extra.pause", "ui.extra.disconnectWireless", "ui.extra.testInput",
       "ui.extra.showInWindow", "ui.extra.noProfile", "ui.extra.moreProfiles",
-      "ui.controllers.paused.value", MainMenuModel.noControllerTitleKey,
+      MainMenuModel.noControllerTitleKey,
     ]
     for entry in menu {
       if case .key(let key) = entry.title { #expect(allowed.contains(key), "\(entry.id)") }
