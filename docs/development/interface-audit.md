@@ -6,14 +6,14 @@ Task 10.1 of `openspec/changes/0-6-0-alpha-3/tasks.md`; decision D23 of `design.
 
 Each control in sections 1 to 7 has a **Level** and a **Level basis**, assigned by the rule of D21 and `specs/interface-level/spec.md`: Simple shows the controller list, each controller's state and next step, the profile choice, Test Input, and the permission steps; Advanced adds the virtual gamepad kind, who serves a controller, tuning, identifiers, records and patches, and the activity log; Developer is a tool that shows only in Advanced with the developer switch on (packet streams, raw reports, contributor diagnostics). A window, menu, or toolbar that holds a Simple row, or is needed to reach one, is Simple. D21 left 64 controls undecided. The maintainer answered three questions: W07 is Simple, alerts show in both levels, and the rest is decided by the software and Apple practice. On confirming the list, the maintainer moved creating and editing a profile and prerelease updates to Simple, and the Access area's programs, tokens, endpoint and port under the developer switch; those rows end "(confirmation popup)". Each of the other rows names its evidence and ends "(decided by evidence)".
 
-The file holds 127 distinct controls (W01-W11, S01-S24, M01-M17, T01-T21, C01-C29, P01-P18, I01-I07). The table "12.12 comparison" repeats S01-S24 with the same level, which makes 151 table rows.
+The file holds 130 distinct controls (W01-W11, S01-S24, M01-M17, T01-T21, C01-C32, P01-P18, I01-I07). The table "12.12 comparison" repeats S01-S24 with the same level, which makes 151 table rows.
 
 | Level | Controls |
 | --- | --- |
 | Simple | 77 |
-| Advanced | 38 |
+| Advanced | 41 |
 | Developer | 12 |
-| Total | 127 |
+| Total | 130 |
 
 Rows that one level holds only in part, with the part in the other level named in the basis: C06 (identifiers and route are Advanced), C24 (endpoint and lists are Developer), M08 and M17 (Activity Log and Explain Error Code are Advanced). Group 13 hides those parts row by row.
 
@@ -174,6 +174,9 @@ Every item is read in A1 and shown in `ojd-alpha2/main-<Area>.png`. All keep the
 | C27 | Clients and tokens lists | `Access/AccessAreaView+Lists.swift` | not measured (no client or token present) | "Grant", "Revoke", "Revoke all" | `inclusion` | none | "Grant", "Program" and "Token" are not defined | fix 14.2 | Developer | maintainer: the programs, tokens, local endpoint and port of the Access area sit under the developer switch (confirmation popup) |
 | C28 | Activity area (Log) | `Activity/ActivityLogView.swift` | outline 790 x 536, rows 773 x 24; `ojd-alpha2/main-Activity.png` | "Stream", "Message", "Output" | `inclusion` | none | the log shows raw identifiers (`VID:0x2DC8 PID:0x301B loc=`) | fix 13.3 | Advanced | D21: the activity log |
 | C29 | Activity diagnostics | `Activity/ActivityDiagnosticsView.swift` | not measured (Diagnostics view not opened) | the fix buttons' titles | `buttons` | none | not read | fix 10.5 (read the diagnostics) | Advanced | fix buttons for the user, not packet streams or raw reports, so not Developer; they sit beside the activity log, which D21 puts in Advanced (decided by evidence) |
+| C30 | Held by Apple driver section | `Controllers/Inventory/ControllerDetailView+Facts.swift` | not measured | "Handled by macOS", "Apple's driver holds this controller. Claim it to activate the Xbox USB driver.", "Claim" | `buttons` | none | not measured | none | Advanced | maintainer: Advanced (popup answer) |
+| C31 | Export Mapping and Launch rows | `Controllers/Actions/ControllerActionViews.swift` | not measured | "Export mapping", "Launch" | `buttons` | none | not measured | none | Advanced | maintainer: Advanced (popup answer) |
+| C32 | Calibration readouts | `Controllers/Inventory/ControllerCalibrationSection.swift`, `Controllers/Inventory/ControllerCalibrationRows.swift` | not measured | each stick or trigger: the reported value, the tuned value and the dead zone | `inclusion` | none | not measured | none | Advanced | maintainer: Advanced (popup answer) |
 
 ## 6. Settings window
 
