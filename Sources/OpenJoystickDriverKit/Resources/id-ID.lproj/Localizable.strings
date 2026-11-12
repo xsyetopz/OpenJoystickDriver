@@ -2014,7 +2014,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Contoh:\n  # Tahan Space selama tombol selatan ditahan\n  ojd binding set Racing button:south key:space\n  # Alihkan J pada setiap penekanan\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # Ulangi J 10 kali per detik selama ditahan\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Contoh:\n  # Instal file rekaman\n  ojd record install 045e-028e.plist\n  # Baca rekaman dari stdin\n  ojd record install - < 045e-028e.plist";
+"cli.record.install.examples" = "Contoh:\n  # Instal file catatan\n  ojd record install 045e-028e.plist\n  # Baca catatan dari stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Contoh:\n  # Izinkan program menggunakan layanan\n  ojd access grant /Applications/Example.app\n  # Buat token untuk halaman yang disajikan dari satu origin\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -2898,27 +2898,27 @@
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Tidak dipakai: %@";
 /* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
-"cli.protocol.group.abstract" = "Validasi, instal, atau daftarkan deskripsi protokol.";
+"cli.protocol.group.abstract" = "Validasi, instal, atau tampilkan daftar deskripsi protokol.";
 /* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
-"cli.protocol.group.discussion" = "Deskripsi protokol adalah berkas .plist yang mendefinisikan keluarga pengontrol yang tidak dibangun dalam OJD. Deskripsi yang terpasang ada di ~/Library/Application Support/OpenJoystickDriver/Protocols, dan paket mod juga dapat membawanya. Perintah ini tidak memerlukan layanan.";
+"cli.protocol.group.discussion" = "Deskripsi protokol adalah file .plist yang mendefinisikan keluarga pengontrol yang tidak dibangun dalam OJD. Deskripsi yang terpasang ada di ~/Library/Application Support/OpenJoystickDriver/Protocols, dan paket mod juga dapat membawanya. Perintah ini tidak memerlukan layanan.";
 /* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
-"cli.protocol.group.file" = "Berkas deskripsi yang dinamai sesuai keluarganya, misalnya VendorAcmePad.plist.";
+"cli.protocol.group.file" = "File deskripsi yang dinamai sesuai keluarganya, misalnya VendorAcmePad.plist.";
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
-"cli.protocol.validate.abstract" = "Periksa berkas deskripsi protokol tanpa memasangnya.";
+"cli.protocol.validate.abstract" = "Periksa file deskripsi protokol tanpa memasangnya.";
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
-"cli.protocol.validate.discussion" = "Memeriksa bahwa berkas adalah deskripsi yang valid, nama keluarga berformat UpperCamelCase dan sama dengan nama berkas, bukan keluarga bawaan, serta menetapkan nama tampilan dan tata letak input. Keluar dengan kode 1 dan kode E5xxx jika berkas ditolak.";
+"cli.protocol.validate.discussion" = "Memeriksa bahwa file adalah deskripsi yang valid, nama keluarga berformat UpperCamelCase dan sama dengan nama file, bukan keluarga bawaan, serta menetapkan nama tampilan dan tata letak input. Keluar dengan kode 1 dan kode E5xxx jika file ditolak.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ adalah deskripsi valid untuk keluarga %2$@ (%3$@). Pasang dengan 'ojd protocol install'.";
+"cli.protocol.validate.valid" = "%1$@ adalah deskripsi valid untuk keluarga %2$@ (%3$@). Pasang dengan “ojd protocol install”.";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "Periksa deskripsi protokol dan pasang untuk pengguna Anda.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
-"cli.protocol.install.discussion" = "Menyalin berkas ke Protocols/FAMILY.plist. Deskripsi terpasang dari keluarga yang sama akan diganti. --dry-run memeriksa berkas dan tidak menulis apa pun.";
+"cli.protocol.install.discussion" = "Menyalin file ke Protocols/FAMILY.plist. Deskripsi terpasang dari keluarga yang sama akan diganti. --dry-run memeriksa file dan tidak menulis apa pun.";
 /* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
 "cli.protocol.install.success" = "%@ terpasang.";
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
-"cli.protocol.list.abstract" = "Daftarkan keluarga protokol bawaan dan terdokumentasi beserta asalnya.";
+"cli.protocol.list.abstract" = "Tampilkan daftar keluarga protokol bawaan dan terdokumentasi beserta asalnya.";
 /* Long description in the help of 'ojd protocol list'. */
-"cli.protocol.list.discussion" = "Mendaftarkan setiap keluarga dengan nama tampilan dan asalnya: bawaan, folder Protocols Anda, atau paket mod. Deskripsi yang ditolak tidak didaftarkan.";
+"cli.protocol.list.discussion" = "Menampilkan daftar setiap keluarga dengan nama tampilan dan asalnya: bawaan, folder Protocols Anda, atau paket mod. Deskripsi yang ditolak tidak ditampilkan.";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
 "cli.protocol.list.builtIn" = "bawaan";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
@@ -3214,7 +3214,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "Catatan pengontrol yang dilewati (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "Tampilkan daftar, tetapkan, dan hapus penetapan profil.";
+"cli.binding.group.abstract" = "Tampilkan daftar, tetapkan, dan hapus penetapan pada profil.";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json bukan daftar tindakan yang valid: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3374,7 +3374,7 @@
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ tidak memiliki sensor gerak.";
 /* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
-"cli.profile.create.skipped" = "Dilewati karena kontroler tidak memiliki: %@.";
+"cli.profile.create.skipped" = "Dilewati karena pengontrol tidak memiliki: %@.";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "Stik yang dikendalikan templat gyro-stick: left atau right. Default-nya right.";
 /* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
@@ -3412,17 +3412,17 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "“%1$@”: %2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "Salin profil untuk model kontroler lain dan pertahankan pengaturan tombol yang dapat dipakai model itu.";
+"cli.profile.convert.abstract" = "Salin profil untuk model pengontrol lain dan pertahankan pengaturan tombol yang dapat dipakai model itu.";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
-"cli.profile.convert.controller" = "Model kontroler tujuan: VVVV:PPPP, atau ID kontroler yang tersambung.";
+"cli.profile.convert.controller" = "Model pengontrol tujuan: VVVV:PPPP, atau ID pengontrol yang tersambung.";
 /* Help text of the --name option of 'ojd profile convert'. */
 "cli.profile.convert.name" = "Nama profil hasil konversi. Bawaannya nama profil diikuti model.";
 /* Message printed after 'ojd profile convert'. %1$@ is the name of the converted profile, shown in quotes, %2$@ is its profile ID, and %3$@ is the target controller as VVVV:PPPP. */
 "cli.profile.convert.done" = "“%1$@” (%2$@) dibuat untuk %3$@. Profil asli tidak berubah.";
 /* Line printed after 'ojd profile convert' for each part of the profile that the target controller cannot take. %1$@ is the kind of part, such as binding, and stays as written. %2$@ is the comma-separated list of sources the controller lacks; they stay as written. */
-"cli.profile.convert.leftOut" = "%1$@ dilewati (kontroler tidak memiliki: %2$@).";
+"cli.profile.convert.leftOut" = "%1$@ dilewati (pengontrol tidak memiliki: %2$@).";
 /* Line printed after 'ojd profile convert' for a part of the profile that the target controller cannot take for a reason that names no source. %@ is the kind of part, such as gyro-output, and stays as written. */
-"cli.profile.convert.leftOutPart" = "%@ dilewati (kontroler tidak memiliki bagian yang dibutuhkan).";
+"cli.profile.convert.leftOutPart" = "%@ dilewati (pengontrol tidak memiliki bagian yang dibutuhkan).";
 /* One-line summary of 'ojd profile duplicate' in the command list and at the top of its help. */
 "cli.profile.duplicate.abstract" = "Salin profil dengan nama baru. Salinan dimulai dalam keadaan tidak aktif.";
 /* Message printed after 'ojd profile duplicate'. %1$@ is the name of the copy, shown in quotes, and %2$@ is its profile ID. */
@@ -4404,13 +4404,13 @@
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Catatan pengontrol atau patch tidak valid. Periksa file dengan skemanya dan perbaiki kolom yang disebut pesan.";
 /* Error E5007, in place of a file path when the message does not know which file failed. */
-"error.E5007.thisFile" = "file rekaman ini";
+"error.E5007.thisFile" = "file catatan ini";
 /* Error E5007, shown when the bundled controller catalog holds no record file. */
-"error.E5007.record.catalogEmpty" = "Folder Controllers dari katalog bawaan: katalog tidak memiliki file rekaman. Aturan: katalog berisi minimal satu rekaman kontroler. Perbaikan: instal ulang OpenJoystickDriver.";
+"error.E5007.record.catalogEmpty" = "Folder Controllers dari katalog bawaan: katalog tidak memiliki file catatan. Aturan: katalog berisi minimal satu catatan pengontrol. Perbaikan: instal ulang OpenJoystickDriver.";
 /* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
 "error.E5007.record.fileName" = "%1$@, vendorID dan productID: nama file harus %2$@, kedua ID dalam heksadesimal. Perbaikan: ganti nama file menjadi %2$@, atau perbaiki ID di dalamnya.";
 /* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
-"error.E5007.record.duplicateIdentity" = "%1$@, vendorID dan productID: %2$@ sudah menjadi identitas rekaman di %3$@. Perbaikan: hapus salah satu dari kedua file, atau ubah ID file ini.";
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID dan productID: %2$@ sudah menjadi identitas catatan di %3$@. Perbaikan: hapus salah satu dari kedua file, atau ubah ID file ini.";
 /* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
 "error.E5007.record.unwritableValue" = "%1$@, document: sebuah nilai tidak dapat ditulis sebagai JSON (%2$@). Perbaikan: ganti nilai yang disebut alasan dengan string, angka, boolean, daftar, atau kamus.";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
@@ -4500,7 +4500,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@, labels: labels harus Xbox atau Generic. Perbaikan: atur labels ke Xbox atau Generic.";
 /* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@, match: berkas dengan match memilih sebuah gamepad virtual, jadi tidak boleh memuat layout, transport, atau worksWithDefaultSDLHints. Perbaikan: hapus layout, transport, dan worksWithDefaultSDLHints, atau hapus match.";
+"error.E5007.virtualDevice.matchExtras" = "%1$@, match: file dengan match memilih sebuah gamepad virtual, jadi tidak boleh memuat layout, transport, atau worksWithDefaultSDLHints. Perbaikan: hapus layout, transport, dan worksWithDefaultSDLHints, atau hapus match.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
 "error.E5007.virtualDevice.definition" = "%1$@, persona: definisi gamepad virtual harus memuat layout, transport, labels, worksWithDefaultSDLHints, dan identity dengan version. Perbaikan: tambahkan kunci yang kurang, atau tambahkan match untuk memilih gamepad virtual.";
 /* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
@@ -4532,7 +4532,7 @@
 /* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
 "error.E5007.namedPacketPlan.shape" = "%1$@, session.namedPackets[].sessionByte: paket bernama harus punya minimal 3 byte dan byte sesinya harus 2. Perbaikan: beri bytes minimal 3 byte dan atur sessionByte ke 2.";
 /* Error E5007, shown when a startup write of a record fails: a startup packet reference sits in a record instead of a protocol description. %1$@ is the file. */
-"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: referensi paket startup hanya untuk deskripsi protokol. Perbaikan: tulis byte di rekaman, bukan packet.";
+"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: referensi paket startup hanya untuk deskripsi protokol. Perbaikan: tulis byte di catatan, bukan packet.";
 /* Error E5007, shown when a startup write of a record fails: a startup phase is not Startup or Activation. %1$@ is the file. */
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: fase startup harus Startup atau Activation. Perbaikan: atur phase ke salah satunya, atau hilangkan.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
@@ -4544,38 +4544,38 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: interval keep-alive harus 1...60000 ms. Perbaikan: atur intervalMilliseconds ke 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
-"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive harus menyebut tanpa penulisan atau 1...8 penulisan. Perbaikan: cantumkan 1...8 penulisan, atau hilangkan writes.";
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive harus tanpa penulisan atau memiliki 1...8 penulisan. Perbaikan: cantumkan 1...8 penulisan, atau hilangkan writes.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning keep-alive harus lizardResendTicks. Perbaikan: atur resendTuning ke lizardResendTicks, atau hilangkan.";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: rekaman bawaan harus memuat rekaman untuk gamepad virtual %2$@. Perbaikan: instal ulang OpenJoystickDriver.";
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: catatan bawaan harus memuat catatan untuk gamepad virtual %2$@. Perbaikan: instal ulang OpenJoystickDriver.";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: rekaman bawaan harus mendefinisikan gamepad virtual %2$@ dan tidak memuat match. Perbaikan: instal ulang OpenJoystickDriver.";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: catatan bawaan harus mendefinisikan gamepad virtual %2$@ dan tidak memuat match. Perbaikan: instal ulang OpenJoystickDriver.";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
-"error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: berkas %3$@ tidak boleh tercantum di %2$@ dalam mod.plist, yang mencantumkan berkas %4$@. Perbaikan: cantumkan berkas di daftar yang sesuai dengan jenisnya.";
+"error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: file %3$@ tidak boleh tercantum di %2$@ dalam mod.plist, yang mencantumkan file %4$@. Perbaikan: cantumkan file di daftar yang sesuai dengan jenisnya.";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
 "error.E5007.record.identityRange" = "%1$@, vendorID: pengontrol membutuhkan vendorID 1...65535 dan productID 0...65535. Perbaikan: atur vendorID dan productID dalam rentang itu.";
 /* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
 "error.E5007.deviceCatalog.usbConfiguration" = "%1$@, usb.configuration: konfigurasi USB harus SetConfiguration1BeforeClaim, bukan %2$@. Perbaikan: atur configuration ke SetConfiguration1BeforeClaim, atau hilangkan.";
 /* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
-"error.E5007.patch.path" = "%1$@, selector: berkas patch harus berada di %2$@. Perbaikan: pindahkan berkas ke sana, atau ubah selector-nya.";
+"error.E5007.patch.path" = "%1$@, selector: file patch harus berada di %2$@. Perbaikan: pindahkan file ke sana, atau ubah selector-nya.";
 /* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
 "error.E5007.tuningDefaults.selector" = "%1$@, selector: selector bawaan penyetelan harus all. Perbaikan: atur selector ke all.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: setiap entri harus memuat id dan hanya id, protocol, match, interface, session, atau idle. Perbaikan: beri setiap entri id dan hapus kunci lainnya.";
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
-"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: patch all hanya boleh mengatur tuning. Perbaikan: pindahkan bagian lain ke patch untuk satu kontroler.";
+"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: patch all hanya boleh mengatur tuning. Perbaikan: pindahkan bagian lain ke patch untuk satu pengontrol.";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
 "error.E5007.patch.removeNotList" = "%1$@, remove: remove harus berupa daftar jalur kunci bertitik yang tidak kosong. Perbaikan: daftarkan jalur kunci yang dihapus, atau hapus remove.";
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
 "error.E5007.patch.removeNotText" = "%1$@, remove: remove harus memuat jalur kunci bertitik sebagai teks. Perbaikan: tulis setiap entri sebagai string.";
 /* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removePathUnknown" = "%1$@, remove: jalur %2$@ tidak ada dalam skema rekaman. Perbaikan: gunakan jalur kunci dari skema rekaman, atau hapus entri.";
+"error.E5007.patch.removePathUnknown" = "%1$@, remove: jalur %2$@ tidak ada dalam skema catatan. Perbaikan: gunakan jalur kunci dari skema catatan, atau hapus entri.";
 /* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeDuplicate" = "%1$@, remove: jalur %2$@ tercantum dua kali. Perbaikan: hapus salah satu dari kedua entri.";
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: patch all hanya boleh menghapus kunci tuning, bukan %2$@. Perbaikan: hapus hanya kunci tuning di sini, atau gunakan patch untuk satu kontroler.";
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: patch all hanya boleh menghapus kunci tuning, bukan %2$@. Perbaikan: hapus hanya kunci tuning di sini, atau gunakan patch untuk satu pengontrol.";
 /* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
 "error.E5007.patch.selectorNotObject" = "%1$@, selector: selector harus all, model, atau vendorID dengan productID. Perbaikan: tulis selector sebagai kamus salah satu bentuk itu.";
 /* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
@@ -4589,21 +4589,21 @@
 /* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNameRecord" = "%1$@, file name: nama file harus %2$@. Perbaikan: ganti nama file menjadi %2$@, atau perbaiki ID di dalamnya.";
 /* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
-"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: paket %2$@ sudah menyediakan kontroler ini. Perbaikan: hapus salah satu dari kedua paket, atau ubah ID rekaman ini.";
+"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: paket %2$@ sudah menyediakan pengontrol ini. Perbaikan: hapus salah satu dari kedua paket, atau ubah ID catatan ini.";
 /* Error E5007, shown when a user or package record file is skipped: a patch file is not named after its selector. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNamePatch" = "%1$@, file name: nama file harus %2$@. Perbaikan: ganti nama file menjadi %2$@, atau perbaiki selector di dalamnya.";
 /* Error E5007, shown when a user or package record file is skipped: the file is not a dictionary. %1$@ is the file. */
 "error.E5007.userFile.notDictionary" = "%1$@, document: file bukan kamus. Perbaikan: jadikan akar daftar properti sebagai kamus.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ adalah kontroler bawaan, jadi file Controller tidak dapat menambahkannya. Perbaikan: tulis file patch untuknya.";
+"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ adalah pengontrol bawaan, jadi file Controller tidak dapat menambahkannya. Perbaikan: tulis file patch untuknya.";
 /* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ adalah identitas bootloader, jadi tidak ada file pengguna atau paket yang dapat menambahkan atau mem-patch-nya. Perbaikan: hapus file; OJD tidak mengirim data ke kontroler dalam status bootloader.";
+"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ adalah identitas bootloader, jadi tidak ada file pengguna atau paket yang dapat menambahkan atau mem-patch-nya. Perbaikan: hapus file; OJD tidak mengirim data ke pengontrol dalam status bootloader.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
-"error.E5007.userFile.unknownController" = "%1$@, selector: selector %2$@ tidak cocok dengan kontroler yang dikenal. Perbaikan: gunakan file Controller untuk menambah kontroler baru, atau perbaiki selector.";
+"error.E5007.userFile.unknownController" = "%1$@, selector: selector %2$@ tidak cocok dengan pengontrol yang dikenal. Perbaikan: gunakan file Controller untuk menambah pengontrol baru, atau perbaiki selector.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
-"error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: rekaman yang dikenai patch bukan kamus. Perbaikan: perbaiki file rekaman yang dikenai patch.";
+"error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: catatan yang dikenai patch bukan kamus. Perbaikan: perbaiki file catatan yang dikenai patch.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
-"error.E5007.userFile.patchNoChange" = "%1$@, patch: patch tidak mengubah apa pun pada rekaman. Perbaikan: hapus patch, atau atur nilai yang berbeda dari rekaman.";
+"error.E5007.userFile.patchNoChange" = "%1$@, patch: patch tidak mengubah apa pun pada catatan. Perbaikan: hapus patch, atau atur nilai yang berbeda dari catatan.";
 /* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
 "error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: input harus mencantumkan minimal satu tata letak. Perbaikan: tambahkan tata letak, atau hapus input.";
 /* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Mengonversi dokumen tersimpan dari versi lama ke versi saat ini.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Mengonversi Settings.plist, AccessGrants.plist, profil, rekaman dan patch pengontrol Anda, serta file gamepad virtual yang memiliki apiVersion lama. Setiap file asli disimpan di folder Migrated pada folder dukungan. Paket mod juga dikonversi. Sebutkan sebuah folder untuk dipindai sebagai ganti folder dukungan. Setiap file mendapat satu putusan: Migrated, Current, Failed, atau Foreign.";
+"cli.migrate.group.discussion" = "Mengonversi Settings.plist, AccessGrants.plist, profil, catatan dan patch pengontrol Anda, serta file gamepad virtual yang memiliki apiVersion lama. Setiap file asli disimpan di folder Migrated pada folder dukungan. Paket mod juga dikonversi. Sebutkan sebuah folder untuk dipindai sebagai ganti folder dukungan. Setiap file mendapat satu putusan: Migrated, Current, Failed, atau Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Menampilkan daftar dokumen yang akan dikonversi tanpa mengubah apa pun.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -5206,9 +5206,9 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "Aplikasi lain sudah memakai pintasan ini. Rekam pintasan yang berbeda.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "'%1$@' bukan pintasan. Gunakan pengubah dan sebuah tombol yang digabung dengan +, seperti control+option+P, atau none.";
+"cli.setting.set.badShortcut" = "“%1$@” bukan pintasan. Gunakan pengubah dan sebuah tombol yang digabung dengan +, seperti control+option+P, atau none.";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
-"cli.setting.set.badInterfaceLevel" = "'%1$@' bukan tingkat antarmuka. Gunakan Simple atau Advanced.";
+"cli.setting.set.badInterfaceLevel" = "“%1$@” bukan tingkat antarmuka. Gunakan Simple atau Advanced.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "Yang Baru di %@";
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
