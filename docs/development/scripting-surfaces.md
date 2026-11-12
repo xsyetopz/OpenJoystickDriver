@@ -130,7 +130,7 @@ Gaps for a mod author: 11, with item 6 narrowed to the speaker.
 
 ## Tried against the installed build
 
-The endpoint surfaces of tasks 6.11 to 6.15 ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token that held `Read` and `Control`. Each script and its output are in `openspec/changes/0-6-0-alpha-3/evidence/scripting/`; `access-before.txt` and `access-after.txt` show the endpoint off, with no grant or token, before and after. The scripts used a scratch profile and a scratch mod package, both removed afterwards. No controller was connected during the run (`ojd controller list` printed `No controllers are connected.`).
+The endpoint surfaces of tasks 6.11 to 6.15 ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token that held `Read` and `Control`. Each script and its output are in `evidence/scripting/`; `access-before.txt` and `access-after.txt` show the endpoint off, with no grant or token, before and after. The scripts used a scratch profile and a scratch mod package, both removed afterwards. No controller was connected during the run (`ojd controller list` printed `No controllers are connected.`).
 
 | Surface | Script, output | Result |
 | --- | --- | --- |

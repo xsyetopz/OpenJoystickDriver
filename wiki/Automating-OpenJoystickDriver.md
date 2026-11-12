@@ -259,7 +259,7 @@ A program with the `Read` scope can list the installed mod packages, as `ojd mod
 
 ### What ran against the installed build
 
-The messages above ran through the socket against build `8456f9de8665`, with a token that held `Read` and `Control`. The scripts and their output are in [`evidence/scripting/`](../openspec/changes/0-6-0-alpha-3/evidence/scripting/):
+The messages above ran through the socket against build `8456f9de8665`, with a token that held `Read` and `Control`. The scripts and their output are in [`evidence/scripting/`](../evidence/scripting/):
 
 - `ProfileRequest` activated, renamed (`Set` of `name`), and deactivated a profile, each answered by a `ProfileResult`. A profile that does not exist got `E2012` and the connection stayed open; a `Set` without `value` got `E1003`; a client with only `Read` got `E1002`.
 - `ModList` answered an empty `mods` list, then the package after `ojd mod install` on the same connection, then an empty list after `ojd mod remove`.
