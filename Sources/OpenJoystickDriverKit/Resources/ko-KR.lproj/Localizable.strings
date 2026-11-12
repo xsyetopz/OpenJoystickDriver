@@ -1025,7 +1025,7 @@
 /* Message about a request to the system extension manager that ends cancelled. The request installs or removes the driver extension. */
 "cli.transportExtension.group.cancelled" = "Xbox USB 드라이버 요청이 취소되었습니다.";
 /* Message about a request to the system extension manager that finished. %@ is the result name from the system and stays as written. */
-"cli.transportExtension.group.completed" = "Xbox USB 드라이버 요청이 결과 %@로 완료되었습니다.";
+"cli.transportExtension.group.completed" = "Xbox USB 드라이버 요청이 결과 %@(으)로 완료되었습니다.";
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "Xbox USB 드라이버 요청 실패: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
@@ -2720,7 +2720,7 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "레코드";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "지원되지 않음";
+"cli.controller.show.labelNotServed" = "처리되지 않음";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "다음 단계";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "파일이 올바른 설명인지, 계열 이름이 UpperCamelCase이고 파일 이름과 같은지, 내장 계열이 아닌지, 표시 이름과 입력 레이아웃을 지정했는지 확인합니다. 파일이 거부되면 E5xxx 코드와 함께 1로 종료합니다.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@은(는) %2$@(%3$@) 계열의 올바른 설명입니다. 'ojd protocol install'로 설치하세요.";
+"cli.protocol.validate.valid" = "%1$@은(는) %2$@(%3$@) 계열의 올바른 설명입니다. ‘ojd protocol install’로 설치하세요.";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "프로토콜 설명을 확인하고 사용자용으로 설치합니다.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -2922,7 +2922,7 @@
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
 "cli.protocol.list.builtIn" = "내장";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
-"cli.protocol.list.user" = "Protocols 폴더";
+"cli.protocol.list.user" = "사용자 Protocols 폴더";
 /* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
 "cli.protocol.list.package" = "패키지 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
@@ -3364,7 +3364,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "자이로 출력을 위해 누르고 있어야 하는 컨트롤 (gyro-stick 템플릿). 지정하지 않으면 자이로 출력은 항상 켜져 있습니다.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "이 앱(앱 ID 기준)이 맨 앞에 있을 때만 프로필을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
+"cli.profile.create.app" = "이 앱(앱 ID 기준)이 맨 앞에 있을 때만 프로파일을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "컨트롤러 모델: VVVV:PPPP 또는 연결된 컨트롤러의 ID입니다.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3464,7 +3464,7 @@
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "‘%1$@’(%2$@)을(를) 가져왔습니다.";
 /* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
-"cli.profile.import.app" = "파일에 있는 범위 대신, 이 앱(앱 ID 기준)이 맨 앞에 있을 때만 가져온 프로필을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
+"cli.profile.import.app" = "파일에 있는 범위 대신, 이 앱(앱 ID 기준)이 맨 앞에 있을 때만 가져온 프로파일을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "stdin에서 프로파일을 읽으려면 - 를 사용합니다. 기존 프로파일과 ID가 같은 프로파일은 기존 프로파일을 대체합니다.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -4556,7 +4556,7 @@
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
 "error.E5007.record.identityRange" = "%1$@, vendorID: 컨트롤러에는 1...65535의 vendorID와 0...65535의 productID가 필요합니다. 해결: vendorID와 productID를 그 범위로 설정하세요.";
 /* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
-"error.E5007.deviceCatalog.usbConfiguration" = "%1$@, usb.configuration: USB 구성은 %2$@가 아니라 SetConfiguration1BeforeClaim이어야 합니다. 해결: configuration을 SetConfiguration1BeforeClaim으로 설정하거나 생략하세요.";
+"error.E5007.deviceCatalog.usbConfiguration" = "%1$@, usb.configuration: USB 구성은 %2$@이(가) 아니라 SetConfiguration1BeforeClaim이어야 합니다. 해결: configuration을 SetConfiguration1BeforeClaim으로 설정하거나 생략하세요.";
 /* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
 "error.E5007.patch.path" = "%1$@, selector: 패치 파일은 %2$@에 있어야 합니다. 해결: 파일을 그곳으로 옮기거나 selector를 바꾸세요.";
 /* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 게임패드 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 모드 패키지도 변환됩니다. 지원 폴더 대신 검사할 폴더를 지정할 수 있습니다. 각 파일은 Migrated, Current, Failed, Foreign 중 하나의 판정을 받습니다.";
+"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로파일, 사용자 컨트롤러 레코드와 패치, 가상 게임패드 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 모드 패키지도 변환됩니다. 지원 폴더 대신 검사할 폴더를 지정할 수 있습니다. 각 파일은 Migrated, Current, Failed, Foreign 중 하나의 판정을 받습니다.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "변환될 문서를 나열하고 아무것도 변경하지 않습니다.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -5206,9 +5206,9 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "다른 앱이 이미 이 단축키를 사용 중입니다. 다른 단축키를 기록하세요.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "'%1$@'은(는) 단축키가 아닙니다. control+option+P처럼 +로 연결한 보조 키와 키를 사용하거나 none을 사용하세요.";
+"cli.setting.set.badShortcut" = "‘%1$@’은(는) 단축키가 아닙니다. control+option+P처럼 +로 연결한 보조 키와 키를 사용하거나 none을 사용하세요.";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
-"cli.setting.set.badInterfaceLevel" = "'%1$@'은(는) 인터페이스 수준이 아닙니다. Simple 또는 Advanced를 사용하세요.";
+"cli.setting.set.badInterfaceLevel" = "‘%1$@’은(는) 인터페이스 수준이 아닙니다. Simple 또는 Advanced를 사용하세요.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@의 새로운 기능";
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
