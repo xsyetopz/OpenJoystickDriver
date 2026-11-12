@@ -1400,6 +1400,20 @@
 "ui.setup.timedOutDetail" = "Il sistema non ha risposto in tempo alla richiesta del driver USB Xbox. Riprova.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver non riesce a raggiungere il proprio servizio";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
+"ui.service.state.checking.message" = "Controllo del servizio…";
+/* Sentence next to the service symbol when the service answers and runs the same version as the app. */
+"ui.service.state.running.message" = "Il servizio è in esecuzione.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
+"ui.service.state.listenerStopped.message" = "Il servizio ha smesso di ascoltare le richieste.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
+"ui.service.state.readFailed.message" = "L’app non è riuscita a leggere lo stato del servizio.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
+"ui.service.state.notInstalled.message" = "Il servizio non è installato.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
+"ui.service.state.needsApproval.message" = "Il servizio ha bisogno della tua approvazione prima di avviarsi.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
+"ui.service.state.versionMismatch.message" = "Il servizio esegue una versione diversa da quella dell’app.";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "Autorizzazione necessaria";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -4621,8 +4635,6 @@
 "ui.extra.grantAccess" = "Concedi accesso";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "Autorizzazione mancante: %@";
-/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
-"ui.extra.problemServiceNotRunning" = "Servizio non in esecuzione: avvialo";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Apri %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */

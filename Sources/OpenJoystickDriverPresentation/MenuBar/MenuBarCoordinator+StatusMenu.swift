@@ -68,6 +68,9 @@
       MainMenuRenderer.identify(item, as: entry.id)
       item.isEnabled = entry.isEnabled
       item.state = entry.isChecked ? .on : .off
+      item.image = entry.symbolName.flatMap {
+        NSImage(systemSymbolName: $0, accessibilityDescription: nil)
+      }
       if let submenu = entry.submenu {
         item.submenu = makeStatusMenu(from: submenu, title: title)
       } else if let action = entry.action {

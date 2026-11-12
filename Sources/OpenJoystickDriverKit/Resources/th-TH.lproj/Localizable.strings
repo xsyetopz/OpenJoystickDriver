@@ -1400,6 +1400,20 @@
 "ui.setup.timedOutDetail" = "ระบบไม่ตอบคำขอไดรเวอร์ Xbox USB ทันเวลา ลองอีกครั้ง";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver ไม่สามารถเชื่อมต่อกับบริการของตนได้";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
+"ui.service.state.checking.message" = "กำลังตรวจสอบบริการ…";
+/* Sentence next to the service symbol when the service answers and runs the same version as the app. */
+"ui.service.state.running.message" = "บริการกำลังทำงาน";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
+"ui.service.state.listenerStopped.message" = "บริการหยุดรับคำขอแล้ว";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
+"ui.service.state.readFailed.message" = "แอปอ่านสถานะของบริการไม่ได้";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
+"ui.service.state.notInstalled.message" = "ยังไม่ได้ติดตั้งบริการ";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
+"ui.service.state.needsApproval.message" = "บริการต้องได้รับการอนุมัติจากคุณก่อนจึงจะเริ่มได้";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
+"ui.service.state.versionMismatch.message" = "บริการทำงานด้วยเวอร์ชันที่ต่างจากแอป";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "ต้องมีสิทธิ์";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -4039,8 +4053,6 @@
 "ui.extra.grantAccess" = "ให้สิทธิ์การเข้าถึง";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "ไม่มีสิทธิ์: %@";
-/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
-"ui.extra.problemServiceNotRunning" = "บริการไม่ทำงาน: เริ่มบริการ";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "เปิด %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */

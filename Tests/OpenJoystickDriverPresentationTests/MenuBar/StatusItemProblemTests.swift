@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -7,6 +8,9 @@ import Testing
 /// The problem rows and the icon of `specs/menu-bar-item/spec.md`.
 @Suite
 struct StatusItemProblemTests {
+  // A service that does not answer asks the platform host for the login item.
+  init() { PlatformHosts.install(FakePlatformHost()) }
+
   private static func pad() -> StatusItemState.Controller {
     StatusItemState.Controller(id: "a", name: "Pad", isSuspended: false, isWireless: false)
   }
@@ -53,10 +57,10 @@ struct StatusItemProblemTests {
 
   @Test
   func unreachableServiceRowOffersToStartIt() throws {
-    let menu = Self.rows(Self.state(problems: [.serviceNotRunning], controllers: []))
+    let menu = Self.rows(Self.state(problems: [.service(.stopped)], controllers: []))
     let first = try #require(menu.first)
     #expect(first.id == "problem.service")
-    #expect(first.title == .key("ui.extra.problemServiceNotRunning"))
+    #expect(first.title == .key("ui.banner.service.title"))
     #expect(first.action == .startService)
     #expect(first.isEnabled)
   }
@@ -66,14 +70,14 @@ struct StatusItemProblemTests {
     let menu = Self.rows(Self.state())
     #expect(!menu.contains { $0.id.hasPrefix("problem.") })
     #expect(!Self.titles(menu).contains(.key("status.needsAttention")))
-    let withProblem = Self.rows(Self.state(problems: [.serviceNotRunning]))
+    let withProblem = Self.rows(Self.state(problems: [.service(.stopped)]))
     #expect(!Self.titles(withProblem).contains(.key("status.needsAttention")))
   }
 
   @Test
   func problemRowsAreTheOnlyAdditionsToTheMenu() {
     let plain = Self.rows(Self.state()).map(\.id)
-    let withProblem = Self.rows(Self.state(problems: [.serviceNotRunning])).map(\.id)
+    let withProblem = Self.rows(Self.state(problems: [.service(.stopped)])).map(\.id)
     #expect(withProblem == ["problem.service"] + plain)
   }
 
@@ -108,7 +112,7 @@ struct StatusItemProblemTests {
     let model = await Self.viewModel(
       gateway: GatewayStub(statusShouldFail: true, statusError: .notConnected)
     )
-    #expect(model.statusItemState.problems.first == .serviceNotRunning)
+    #expect(model.statusItemState.problems.first == .service(.notInstalled))
   }
 
   @Test
@@ -124,7 +128,7 @@ struct StatusItemProblemTests {
   @Test
   func theIconChangesShapeWhileAProblemRowExists() {
     let ready = StatusItemModel.symbolName(for: Self.state())
-    for problem in [StatusItemProblem.serviceNotRunning, .missingPermission(.inputRead)] {
+    for problem in [StatusItemProblem.service(.stopped), .missingPermission(.inputRead)] {
       #expect(StatusItemModel.symbolName(for: Self.state(problems: [problem])) != ready)
     }
   }
@@ -146,7 +150,7 @@ struct StatusItemProblemTests {
     )
     #expect(
       StatusItemModel.accessibilityTitle(
-        for: Self.state(problems: [.missingPermission(.inputInject), .serviceNotRunning])
+        for: Self.state(problems: [.missingPermission(.inputInject), .service(.stopped)])
       )
         == .formatted(
           "a11y.menuBar.problem",

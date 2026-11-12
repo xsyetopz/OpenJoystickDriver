@@ -20,14 +20,18 @@
       return status.devices
     }
 
-    /// The problems that need the user's action: the service not reachable, then each permission
-    /// the Access area shows as missing.
+    /// The problems that need the user's action: the service when its state is a problem, then each
+    /// permission the Access area shows as missing.
     var problems: [StatusItemProblem] {
       var found: [StatusItemProblem] = []
-      switch runtime.statusState {
-      case .unavailable, .error: found.append(.serviceNotRunning)
-      case .loading, .available: break
-      }
+      let readiness = ServiceReadiness.resolve(
+        ServiceReadinessInput(
+          status: runtime.statusState,
+          listenerStopped: runtime.listenerFailure != nil,
+          registration: ServiceReadiness.currentRegistration(for: runtime.statusState)
+        )
+      )
+      if readiness.isProblem { found.append(.service(readiness)) }
       found += AccessReadiness.missingPermissions(
         permissionState: runtime.permissionState,
         statusState: runtime.statusState

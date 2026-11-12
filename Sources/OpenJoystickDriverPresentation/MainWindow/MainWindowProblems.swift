@@ -6,10 +6,9 @@ import OpenJoystickDriverKit
 ///
 /// A healthy app has none, and the banner is then absent.
 enum MainWindowProblem: Equatable, Sendable, Identifiable {
-  /// The application service did not answer; the message says why.
-  case serviceUnavailable(String)
-  /// The service's request listener stopped; the message gives its code and error number.
-  case listenerStopped(String)
+  /// The service is in a state that needs attention; the message is the service's own, and empty
+  /// when it gave none.
+  case service(ServiceReadiness, String)
   /// The Xbox USB driver extension is not active.
   case driver(SystemExtensionSetupState)
   /// macOS has not granted a permission the service needs.
@@ -18,10 +17,10 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// service repeatedly instead.
   case liveUpdatesPolling(ControllerLiveUpdateFailure)
 
-  /// The identity of the banner row; the two service problems share one row.
+  /// The identity of the banner row; every service problem shares one row.
   var id: String {
     switch self {
-    case .serviceUnavailable, .listenerStopped: return "service"
+    case .service: return "service"
     case .driver: return "driver"
     case .accessMissing: return "access"
     case .liveUpdatesPolling: return "liveUpdates"
@@ -31,7 +30,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The localization key of the banner row's title.
   var titleKey: String {
     switch self {
-    case .serviceUnavailable, .listenerStopped: return "ui.banner.service.title"
+    case .service(let readiness, _): return readiness.messageKey
     case .driver: return "ui.setup.driverTitle"
     case .accessMissing: return "ui.banner.access.title"
     case .liveUpdatesPolling: return "ui.banner.liveUpdates.title"
@@ -41,7 +40,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The localization key of the detail, or nil when the detail is the service's own message.
   var detailKey: String? {
     switch self {
-    case .serviceUnavailable, .listenerStopped: return nil
+    case .service: return nil
     case .liveUpdatesPolling(let failure): return failure.detailKey
     case .driver(let state):
       switch state {
@@ -64,8 +63,12 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The button of the banner row, or nil when the row offers no fix.
   var action: MainWindowProblemAction? {
     switch self {
-    case .serviceUnavailable: return .retryService
-    case .listenerStopped: return .restartListener
+    case .service(let readiness, _):
+      switch readiness {
+      case .listenerStopped: return .restartListener
+      case .versionMismatch, .checking, .running: return nil
+      case .stopped, .readFailed, .notInstalled, .needsApproval: return .retryService
+      }
     case .driver(let state):
       switch state {
       case .needsApproval: return .openDriverApproval
@@ -98,7 +101,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The other problems need the user's attention.
   var isFailure: Bool {
     switch self {
-    case .serviceUnavailable, .listenerStopped: return true
+    case .service(let readiness, _): return readiness.isFailure
     case .driver(let state): return state == .missingEmbedded || state == .invalid
     case .accessMissing, .liveUpdatesPolling: return false
     }
@@ -114,15 +117,23 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     driver: SystemExtensionSetupState,
     extensionRouteConnected: Bool,
     liveUpdatesFallbackReason: ControllerLiveUpdateFailure?,
-    listenerFailure: ServiceListenerFailure?
+    listenerFailure: ServiceListenerFailure?,
+    registration: ApplicationServiceRegistrationStatus? = nil
   ) -> [Self] {
     var problems: [Self] = []
-    switch status {
-    case .unavailable(let message), .error(let message):
-      problems.append(
-        listenerFailure == nil ? .serviceUnavailable(message) : .listenerStopped(message)
+    let readiness = ServiceReadiness.resolve(
+      ServiceReadinessInput(
+        status: status,
+        listenerStopped: listenerFailure != nil,
+        registration: registration
       )
-    case .loading, .available: break
+    )
+    if readiness.isProblem {
+      switch status {
+      case .unavailable(let message), .error(let message):
+        problems.append(.service(readiness, message))
+      case .loading, .available: problems.append(.service(readiness, ""))
+      }
     }
     switch driver {
     case .checking, .active: break

@@ -21,7 +21,7 @@ struct StatusItemModelTests {
     }
     let entries = StatusItemModel.entries(
       for: StatusItemState(
-        problems: [.missingPermission(.inputRead), .serviceNotRunning],
+        problems: [.missingPermission(.inputRead), .service(.stopped)],
         controllers: [controller("pad-a"), controller("pad-b")],
         profileListRead: true
       )

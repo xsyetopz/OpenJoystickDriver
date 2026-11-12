@@ -54,7 +54,7 @@ struct ListenerFailureStatusTests {
         listenerFailure: viewModel.listenerFailure
       )
     }
-    #expect(problems.first == .listenerStopped(failure.localizedSummary))
+    #expect(problems.first == .service(.listenerStopped, failure.localizedSummary))
     #expect(problems.first?.action == .restartListener)
   }
 
@@ -157,7 +157,7 @@ struct ListenerFailureStatusTests {
         listenerFailure: viewModel.listenerFailure
       )
     }
-    #expect(problems.first == .listenerStopped(message))
+    #expect(problems.first == .service(.listenerStopped, message))
   }
 
   @Test

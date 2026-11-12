@@ -45,15 +45,15 @@ indirect enum StatusItemTitle: Equatable {
 
 /// Something that needs the user's action; the menu shows one row for each.
 enum StatusItemProblem: Equatable {
-  /// The app cannot reach the service.
-  case serviceNotRunning
+  /// The service is in a state that needs attention.
+  case service(ServiceReadiness)
   /// A permission the service needs is missing.
   case missingPermission(AccessPermissionRow.Kind)
 
   /// The row's title: it names the problem.
   var title: StatusItemTitle {
     switch self {
-    case .serviceNotRunning: return .key("ui.extra.problemServiceNotRunning")
+    case .service(let readiness): return .key(readiness.messageKey)
     case .missingPermission(let kind):
       return .formatted(
         "ui.extra.problemPermission",
@@ -83,6 +83,8 @@ struct StatusItemEntry: Equatable {
   let isSeparator: Bool
   /// What the entry adds to its title: battery level, profile name, state.
   let details: [StatusItemTitle]
+  /// The SF Symbol the item shows before its title, or nil for none.
+  let symbolName: String?
 
   /// Creates an entry that is enabled and unchecked unless given otherwise.
   init(
@@ -92,7 +94,8 @@ struct StatusItemEntry: Equatable {
     isChecked: Bool = false,
     action: StatusItemAction? = nil,
     submenu: [Self]? = nil,
-    details: [StatusItemTitle] = []
+    details: [StatusItemTitle] = [],
+    symbolName: String? = nil
   ) {
     self.id = id
     self.title = title
@@ -102,6 +105,7 @@ struct StatusItemEntry: Equatable {
     self.submenu = submenu
     self.isSeparator = false
     self.details = details
+    self.symbolName = symbolName
   }
 
   /// Creates a separator with the identifier.
@@ -114,6 +118,7 @@ struct StatusItemEntry: Equatable {
     self.submenu = nil
     self.isSeparator = true
     self.details = []
+    self.symbolName = nil
   }
 
   /// Returns a separator with the identifier.
@@ -176,8 +181,13 @@ enum StatusItemModel {
   static func entries(for state: StatusItemState) -> [StatusItemEntry] {
     let problemRows = state.problems.map { problem -> StatusItemEntry in
       switch problem {
-      case .serviceNotRunning:
-        return StatusItemEntry(id: "problem.service", title: problem.title, action: .startService)
+      case .service(let readiness):
+        return StatusItemEntry(
+          id: "problem.service",
+          title: problem.title,
+          action: .startService,
+          symbolName: readiness.symbolName
+        )
       case .missingPermission(let kind):
         return StatusItemEntry(
           id: "problem.\(kind.rawValue)",

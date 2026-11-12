@@ -1400,6 +1400,20 @@
 "ui.setup.timedOutDetail" = "सिस्टम ने Xbox USB ड्राइवर के अनुरोध का समय पर उत्तर नहीं दिया। फिर कोशिश करें।";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver अपनी सेवा तक नहीं पहुँच पा रहा है";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
+"ui.service.state.checking.message" = "सेवा की जाँच हो रही है…";
+/* Sentence next to the service symbol when the service answers and runs the same version as the app. */
+"ui.service.state.running.message" = "सेवा चल रही है।";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
+"ui.service.state.listenerStopped.message" = "सेवा ने अनुरोध सुनना बंद कर दिया।";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
+"ui.service.state.readFailed.message" = "ऐप सेवा की स्थिति नहीं पढ़ सका।";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
+"ui.service.state.notInstalled.message" = "सेवा इंस्टॉल नहीं है।";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
+"ui.service.state.needsApproval.message" = "सेवा शुरू होने से पहले उसे आपकी स्वीकृति चाहिए।";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
+"ui.service.state.versionMismatch.message" = "सेवा ऐप से अलग संस्करण चला रही है।";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "अनुमति आवश्यक है";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -4039,8 +4053,6 @@
 "ui.extra.grantAccess" = "ऐक्सेस दें";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "अनुमति गायब है: %@";
-/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
-"ui.extra.problemServiceNotRunning" = "सेवा नहीं चल रही: इसे शुरू करें";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "%@ खोलें";
 /* Title of the alert shown when an action of the menu bar menu fails. */

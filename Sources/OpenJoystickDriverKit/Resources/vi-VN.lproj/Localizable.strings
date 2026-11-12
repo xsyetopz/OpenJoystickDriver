@@ -1400,6 +1400,20 @@
 "ui.setup.timedOutDetail" = "Hệ thống không trả lời yêu cầu trình điều khiển Xbox USB kịp thời. Hãy thử lại.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver không thể kết nối với dịch vụ của nó";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
+"ui.service.state.checking.message" = "Đang kiểm tra dịch vụ…";
+/* Sentence next to the service symbol when the service answers and runs the same version as the app. */
+"ui.service.state.running.message" = "Dịch vụ đang chạy.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
+"ui.service.state.listenerStopped.message" = "Dịch vụ đã ngừng nghe yêu cầu.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
+"ui.service.state.readFailed.message" = "Ứng dụng không đọc được trạng thái của dịch vụ.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
+"ui.service.state.notInstalled.message" = "Dịch vụ chưa được cài đặt.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
+"ui.service.state.needsApproval.message" = "Dịch vụ cần bạn phê duyệt trước khi có thể bắt đầu.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
+"ui.service.state.versionMismatch.message" = "Dịch vụ chạy phiên bản khác với ứng dụng.";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "Cần cấp quyền";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -4039,8 +4053,6 @@
 "ui.extra.grantAccess" = "Cấp quyền truy cập";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "Thiếu quyền: %@";
-/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
-"ui.extra.problemServiceNotRunning" = "Dịch vụ không chạy: Bắt đầu";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Mở %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
