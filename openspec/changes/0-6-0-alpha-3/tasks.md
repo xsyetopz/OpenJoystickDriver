@@ -100,7 +100,9 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 - [x] 8.3 Take the Elite Series 1 endpoints (`0x81`, `0x01`) from pull request #56 into the `045E:02E3` record. **Hardware (reporter, #55)**: draft the request to confirm on a tester build.
 - [x] 8.4 After 9.2, write the `044F:B671` wheel as an `XboxGIP` record with an input layout (steering bytes 6 to 7, brake bytes 10 to 11 as reported), and check it with `ojd record test` on the reporter's packets. List what the layout vocabulary lacks for a wheel (`axes` holds at most 4 entries) and add only that. **Hardware (reporter, #58)**: draft the request for a full capture of every pedal and button.
 - [ ] 8.5 Write a failing test for the Guide button of `20D6:2028` from the reporter's packets and fix the GIP virtual-key handling. Caller: the GIP driver. (#53)
+  - Note: blocked. Issue #53 holds no Guide packet; it needs a capture of a Guide press from the reporter.
 - [ ] 8.6 Reproduce the Logitech F710 replug failure with a session test that removes and re-adds the device, and fix it. Caller: USB discovery. (#48)
+  - Note: `USBReplugTests` (`410e19d20`) removes and re-adds the device and passes; its race on the session close is fixed in `d39179380` (5 of 5 runs pass). The reported symptom (status off until Steam runs) does not reproduce in the test, so it stays hardware-gated on an F710 capture.
 - [ ] 8.7 Rebase pull request #54 onto the branch, migrate its documents, and verify wireless input decoding and empty-slot hiding for `045E:02A9`. (#9, #54)
 - [x] 8.8 Migrate the Turtle Beach `10F5:711E` record from pull request #57 and run the record checks. (#57)
 - [x] 8.9 Re-create the PowerA Spectra `20D6:4002` record from pull request #50 as a `v1alpha3` record, with the author credited. (#62, #50)
@@ -189,11 +191,14 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 
 - [x] 13.1 Add the setting `interfaceLevel` with the values `Simple` and `Advanced` to `settings.schema.json`, the settings reader, and `ojd setting`, with `Simple` as the built-in default. Make the `AlphaTwoToAlphaThree` step (5.2) write `Advanced` into a settings document it converts. Add the rejection case for another value. Caller: the settings store.
   - Note: `6817ae743`. The rejection cases for `"Pro"` and `1` are in `SettingsStoreTests.aDamagedFileIsAnErrorNotAnEmptyLayer` and `Tests/RepositoryScripts/test_settings_schema.py`; `SchemaRejections/` holds catalog cases only. `ojd setting set interfaceLevel` refuses another value with `E2003`.
-- [ ] 13.2 Add the pop-up button "Interface" to Settings > General and the items "Simple" and "Advanced" with a checkmark to the View menu. Every open window follows a change without a restart. Caller: the Settings window and the main menu.
+- [x] 13.2 Add the pop-up button "Interface" to Settings > General and the items "Simple" and "Advanced" with a checkmark to the View menu. Every open window follows a change without a restart. Caller: the Settings window and the main menu.
+  - Note: `9fee83e59`; `GeneralPaneView` and `MenuBarCoordinator+ApplicationMenu` call `SettingsPreferencesModel.setInterfaceLevel`. `InterfaceLevelPreferencesTests` and `MainMenuInterfaceLevelTests` pass.
 - [ ] 13.3 Make each view show its rows by the level, from the list of 10.6. Add one test per view that the rows of Simple are a subset of the rows of Advanced.
 - [ ] 13.4 In Simple, show one row with the count of hidden controls that hold a value other than their default and a button that switches to Advanced. Caller: the controller detail and the profile editor.
-- [ ] 13.5 Show the developer tools only when the level is Advanced and `developerTools` is on.
-- [ ] 13.6 Add a test that the service reads no `interfaceLevel` and that `ojd` output is the same for both values.
+- [x] 13.5 Show the developer tools only when the level is Advanced and `developerTools` is on.
+  - Note: `05dd524e4`; `AdvancedPaneView` and `SettingsWindowController` read `developerToolsVisible`. `PreferencesTests` and `DeveloperToolsTests` pass.
+- [x] 13.6 Add a test that the service reads no `interfaceLevel` and that `ojd` output is the same for both values.
+  - Note: `b6787c9db`; `InterfaceLevelIsPresentationOnlyTests` passes.
 - [ ] 13.7 Describe the setting in `wiki/Using-the-App.md` and mark in each wiki page the controls that need Advanced.
 
 ## 14. Terminology
@@ -219,8 +224,8 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 - [ ] 16.1 Live view: draw every control a record or a HID descriptor declares, by control kind, with its live value. Add a test that builds the view's model for every bundled record and fails on a control with no drawing. Caller: the controller detail.
 - [ ] 16.2 Calibration view for sticks and triggers: the raw value, the value after tuning, and the dead zone, with the value the user sets stored as tuning for the controller. First read which values the status RPC carries. Caller: the controller detail.
 - [x] 16.3 Add profile templates that bind controls by their standard names beside `empty` and `gyroStick` (`ProfileCreationFields.swift:185`); a template skips a binding whose control the controller lacks, and the sheet lists each one skipped. Caller: the profile creation sheet and `ojd profile create`.
-- [ ] 16.4 Decide from the profile reader and `profile.schema.json:7-15,76` whether a profile can leave out `device`, and record the result in `design.md`. Then add the conversion of a profile to another controller model, in the app and as an `ojd profile` subcommand named in `Tests/CommandLineNames`: it keeps each binding whose source control the target has, lists each one left out, and leaves the original unchanged.
-  - Note: the decision is D20 in `design.md`. `ojd profile convert` is in (`d0a00025d`, `602ab6682`; `ProfileConversionTests` and `ProfileCommandTests` pass). Open: the conversion in the app.
+- [x] 16.4 Decide from the profile reader and `profile.schema.json:7-15,76` whether a profile can leave out `device`, and record the result in `design.md`. Then add the conversion of a profile to another controller model, in the app and as an `ojd profile` subcommand named in `Tests/CommandLineNames`: it keeps each binding whose source control the target has, lists each one left out, and leaves the original unchanged.
+  - Note: the decision is D20 in `design.md`. `ojd profile convert` is in (`d0a00025d`, `602ab6682`; `ProfileConversionTests` and `ProfileCommandTests` pass). The app's Convert toolbar item and Profile menu entry open `ProfileConversionSheet` (`5d1681354`, `2a70c4721`); `ProfileConversionModelTests`, `MainWindowAreaTests` and `GUICoverageTests` pass.
 - [x] 16.5 Sort the profile list by name, by controller, or by last use, and add a note to a binding (schema, reader, editor). `profile.note` is a MIDI note number, so the property takes another name.
 - [x] 16.6 Add one system-wide keyboard shortcut that pauses and resumes every controller, unset on a fresh installation. Caller: Settings and the pause RPC.
 - [ ] 16.7 Add a setting that disconnects a Bluetooth controller after a time with no changed input, off by default. **Hardware (maintainer)**: confirm with the 2C over Bluetooth LE. Caller: the session's input path.
@@ -246,6 +251,7 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 ## 19. Release check
 
 - [ ] 19.1 Run `just check` once and fix what it reports.
+  - Note: `just verify` at `2a70c4721` stops in `just swift::xcode build-for-testing`: `Sources/OpenJoystickDriver/platform/macos/PlatformHostInstallation.swift:6` cannot see `MacOSPlatformHost` and `PlatformHosts`, which are `package` access (`b453f2cfe`) and so hidden from the Xcode app target. `just cpp::lint` passes (`0a5cf0742`).
 - [ ] 19.2 Install the build over the alpha.2 data on the maintainer's Mac: the first start migrates every file, `Migrated/` holds the originals, no area shows `E5001`, and the interface is in Advanced.
 - [ ] 19.3 **Hardware (maintainer)**: run the procedure in `docs/testing/8bitdo-ultimate-2c.md` for cable, receiver, and Bluetooth LE on the release build, with rumble in each mode.
 - [ ] 19.4 Search the diff of the release for a Swift branch on one controller model, and move each one found into a record.
