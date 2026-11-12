@@ -136,6 +136,8 @@ public actor DeviceManager {
   var retiredHIDOutputQueues: [LogicalControllerID: PhysicalHIDOutputSerialQueue] = [:]
   /// The task that watches the access state of the host.
   var permissionWatchTask: Task<Void, Never>?
+  /// The task that disconnects idle Bluetooth controllers while the setting is on.
+  var idleDisconnectTask: Task<Void, Never>?
   /// Counts lifecycle changes; a detection run that started under an earlier count stops.
   var lifecycleGeneration: UInt64 = 0
   /// Whether a stop is in progress, so detection and event handling ignore new work.

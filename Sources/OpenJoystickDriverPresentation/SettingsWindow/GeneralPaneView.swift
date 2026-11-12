@@ -53,6 +53,7 @@
             )
           )
           PauseShortcutRow(preferences: preferences)
+          IdleDisconnectRow(preferences: preferences)
           Picker(
             OJDLocalized.string("ui.settings.general.interface"),
             selection: Binding(

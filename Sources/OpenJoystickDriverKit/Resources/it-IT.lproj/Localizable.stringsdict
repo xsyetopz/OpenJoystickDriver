@@ -248,5 +248,30 @@
 			<string>Interrotto · %lld pacchetti</string>
 		</dict>
 	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d minuti</string>
+			<key>one</key>
+			<string>%d minuto</string>
+			<key>two</key>
+			<string>%d minuti</string>
+			<key>few</key>
+			<string>%d minuti</string>
+			<key>many</key>
+			<string>%d minuti</string>
+			<key>other</key>
+			<string>%d minuti</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

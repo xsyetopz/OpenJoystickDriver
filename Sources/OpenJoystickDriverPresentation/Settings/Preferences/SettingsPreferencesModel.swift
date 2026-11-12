@@ -92,6 +92,10 @@
     /// How much of the interface shows: Simple or Advanced.
     @Published
     private(set) var interfaceLevel: InterfaceLevel = .default
+    /// Minutes without changed input after which a Bluetooth controller disconnects, or nil while
+    /// off.
+    @Published
+    private(set) var idleDisconnectMinutes: Int?
     /// Whether the developer tools show: the level is Advanced and the developer tools are on.
     var developerToolsVisible: Bool { interfaceLevel == .advanced && developerToolsEnabled }
     /// The system-wide shortcut that pauses and resumes every controller, or nil while unset.
@@ -210,6 +214,7 @@
       includePrereleaseUpdates = value(.updatesIncludePrereleases)
       developerToolsEnabled = value(.developerTools)
       interfaceLevel = stored.interfaceLevel ?? .default
+      idleDisconnectMinutes = stored.idleDisconnectMinutes
       pauseShortcut = stored.pauseShortcut
       if recovered { settingsRecovered?() }
     }
@@ -419,6 +424,15 @@
       do {
         try settings.setInterfaceLevel(level)
         interfaceLevel = level
+      } catch { report(error) }
+    }
+
+    /// Stores the idle disconnect minutes, or turns it off with nil; a failure shows in
+    /// ``errorMessage``.
+    func setIdleDisconnectMinutes(_ minutes: Int?) {
+      do {
+        try settings.setIdleDisconnectMinutes(minutes)
+        idleDisconnectMinutes = minutes
       } catch { report(error) }
     }
 

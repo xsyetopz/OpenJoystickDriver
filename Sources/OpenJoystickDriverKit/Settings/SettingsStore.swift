@@ -136,6 +136,15 @@ public struct SettingsStore: Sendable {
     try update { $0.pauseShortcut = shortcut }
   }
 
+  /// Minutes without changed input after which a Bluetooth controller disconnects, or nil while
+  /// the setting is off.
+  public func idleDisconnectMinutes() throws -> Int? { try load().idleDisconnectMinutes }
+
+  /// Stores the idle disconnect time in the user file, or turns it off when `minutes` is nil.
+  public func setIdleDisconnectMinutes(_ minutes: Int?) throws {
+    try update { $0.idleDisconnectMinutes = minutes }
+  }
+
   /// The version whose changelog section the app showed last, or nil while none was shown.
   public func lastShownChangelogVersion() throws -> String? {
     try load().lastShownChangelogVersion

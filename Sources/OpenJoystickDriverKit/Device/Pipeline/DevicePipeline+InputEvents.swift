@@ -51,6 +51,7 @@ extension DevicePipeline {
     }
     let previousInput = currentInputState
     currentInputState = event.state
+    idleInput.observe(event.state, at: now)
 
     if !externalOutputAllowed { return }
     if waitingForExternalNeutral {
@@ -185,4 +186,18 @@ extension DevicePipeline {
   func currentConnectionState() -> ControllerConnectionState? {
     binding.map { connectionState(binding: $0, interface: interface) }
   }
+}
+
+extension DevicePipeline {
+  /// Whether the controller is on Bluetooth and its input state has not changed for `minutes`.
+  func isIdleDisconnectDue(afterMinutes minutes: Int) -> Bool {
+    IdleDisconnectPolicy.isDue(
+      transport: currentConnectionState()?.transport,
+      idleNanoseconds: idleInput.idleNanoseconds(at: uptimeNanoseconds()),
+      afterMinutes: minutes
+    )
+  }
+
+  /// Starts the idle time again, so a failed disconnect is retried after a full period.
+  func restartIdleWindow() { idleInput.restart(at: uptimeNanoseconds()) }
 }

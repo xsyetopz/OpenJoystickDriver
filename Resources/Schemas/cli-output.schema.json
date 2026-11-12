@@ -3871,7 +3871,7 @@
               "$ref": "#/$defs/sharedSettingKey"
             },
             {
-              "enum": ["pauseShortcut", "interfaceLevel"]
+              "enum": ["pauseShortcut", "interfaceLevel", "idleDisconnectMinutes"]
             }
           ]
         },

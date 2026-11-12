@@ -230,5 +230,30 @@
 			<string>रुका · %lld पैकेट</string>
 		</dict>
 	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d मिनट</string>
+			<key>one</key>
+			<string>%d मिनट</string>
+			<key>two</key>
+			<string>%d मिनट</string>
+			<key>few</key>
+			<string>%d मिनट</string>
+			<key>many</key>
+			<string>%d मिनट</string>
+			<key>other</key>
+			<string>%d मिनट</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

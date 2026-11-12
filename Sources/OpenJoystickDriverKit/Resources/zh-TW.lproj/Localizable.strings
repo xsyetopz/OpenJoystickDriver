@@ -5239,3 +5239,11 @@
 "ui.controllers.readiness.notSupported.message" = "OpenJoystickDriver 目前無法使用此控制器。";
 /* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
 "ui.controllers.readiness.notSupported.action" = "檢視支援的控制器";
+/* Title of the row in the General pane of the settings window that sets how long a Bluetooth controller may sit without a change in its input before OpenJoystickDriver disconnects it. Bluetooth is a product name. */
+"ui.settings.general.idleDisconnect" = "中斷閒置的 Bluetooth 控制器連線";
+/* Explanation under the idle disconnect title in the General pane of the settings window. Bluetooth is a product name. A cable or a receiver is the other way a controller connects. */
+"ui.settings.general.idleDisconnectDescription" = "當 Bluetooth 控制器的輸入在所選時間內沒有變化時中斷其連線。使用傳輸線或接收器連接的控制器保持連線。";
+/* Title of the choice that turns the idle disconnect off in the General pane of the settings window. */
+"ui.settings.general.idleDisconnectOff" = "關";
+/* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
+"cli.setting.set.badIdleDisconnect" = "「%1$@」不是分鐘數。請使用 %2$@ 到 %3$@ 之間的整數，或 off。";
