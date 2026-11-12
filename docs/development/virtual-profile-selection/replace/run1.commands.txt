@@ -1,0 +1,6 @@
+1794525153.505 set game-controller-compatible
+1794525154.025 8BitDo Ultimate 2C Wireless now publishes game-controller-compatible (override).
+1794525154.026 set returned
+1794525169.039 reset
+1794525169.558 8BitDo Ultimate 2C Wireless now publishes sdl-compatible (automatic).
+1794525169.559 reset returned

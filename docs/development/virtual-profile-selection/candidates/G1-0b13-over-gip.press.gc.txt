@@ -1,0 +1,19 @@
+# candidate=G1-0b13-over-gip.press persona=SDLCompatible identity=045E:0B13 version=0 productName="Xbox Wireless Controller" tag=gc
+# started: 2026-11-12T22:59:31Z
+# ojd virtual show:
+#   E-IhMcvcVF0peGonau  8BitDo Ultimate 2C Wireless  sdl-compatible (override)
+#   Profiles: sdl-compatible, generic, game-controller-compatible
+Scripts/Diagnostics/backend.sh gamecontroller --seconds 50
+GameController probe
+Listening for 50s
+
+HID GamePad support:
+- 045E:028E "GamePad-1" transport=Virtual gamecontroller=yes
+- 045E:0B13 "Xbox Wireless Controller" transport=Virtual gamecontroller=yes
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+connect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
+inputs: buttons=[Button A,Button B,Button Home,Button Menu,Button Options,Button Share,Button X,Button Y,Direction Pad Down,Direction Pad Left,Direction Pad Right,Direction Pad Up,Left Shoulder,Left Thumbstick Button,Left Thumbstick Down,Left Thumbstick Left,Left Thumbstick Right,Left Thumbstick Up,Left Trigger,Right Shoulder,Right Thumbstick Button,Right Thumbstick Down,Right Thumbstick Left,Right Thumbstick Right,Right Thumbstick Up,Right Trigger] xbox=true share=true paddles=0
+evidence supports_hid=true connect=true extended_profile=true live_input=false disconnect=false reconnect=false haptics=unclaimed
+# probe exit: 0

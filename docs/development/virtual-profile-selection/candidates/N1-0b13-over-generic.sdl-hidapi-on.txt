@@ -1,0 +1,31 @@
+# candidate=N1-0b13-over-generic persona=Generic identity=045E:0B13 version=0 productName="Xbox Wireless Controller" tag=sdl-hidapi-on
+# started: 2026-11-12T22:57:52Z
+# ojd virtual show:
+#   E-IhMcvcVF0peGonau  8BitDo Ultimate 2C Wireless  generic (override)
+#   Profiles: sdl-compatible, generic, game-controller-compatible
+Scripts/Diagnostics/backend.sh sdl3 --seconds 6 --wait-devices 5
+Building SDL3 probe (native)...
+[0m[38;2;0;255;0;1m[100%]:[0m [38;2;0;255;0;1mbuild ok, spent 0.016s[0m
+
+Running SDLGamepadProbe --seconds 6 --wait-devices 5
+Tip: if it prints 'Found 0 joystick(s)', grant Input Monitoring to your terminal app:
+  System Settings -> Privacy & Security -> Input Monitoring
+
+SDL linked version: 3.4.20 (raw=3004020)
+SDL platform: macOS
+SDL_JOYSTICK_MFI=(unset)
+SDL_JOYSTICK_IOKIT=(unset)
+SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=(unset)
+SDL_JOYSTICK_HIDAPI_XBOX=(unset)
+SDL_JOYSTICK_HIDAPI_XBOX_ONE=(unset)
+
+Found 1 joystick(s)
+- id=2 vid=0x045e pid=0x0b13 ver=0x0000 guid=0300c6515e040000130b000000006800
+  joystick_name=Xbox Series X Controller
+  is_gamepad=yes gamepad_name=Xbox Series X Controller
+  mapping=0300c6515e040000130b000000006800,*,a:b0,b:b1,back:b4,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b5,leftshoulder:b9,leftstick:b7,lefttrigger:a4,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b8,righttrigger:a5,rightx:a2,righty:a3,start:b6,x:b2,y:b3,misc1:b11,crc:51c6,
+  gamepad_axes: a0=0 a1=0 a2=0 a3=0 a4=0 a5=0
+  gamepad_buttons: b0=0 b1=0 b2=0 b3=0 b4=0 b5=0 b6=0 b7=0 b8=0 b9=0 b10=0 b11=0 b12=0 b13=0 b14=0 b15=0 b16=0 b17=0 b18=0 b19=0 b20=0 b21=0 b22=0 b23=0 b24=0 b25=0
+
+Listening for 6s (press buttons now) ...
+# probe exit: 0

@@ -1,0 +1,18 @@
+# candidate=B1-0b0c-over-bt persona=GameControllerCompatible identity=045E:0B0C version=0 productName="Xbox Adaptive Controller" tag=gc
+# started: 2026-11-12T22:55:34Z
+# ojd virtual show:
+#   E-IhMcvcVF0peGonau  8BitDo Ultimate 2C Wireless  game-controller-compatible (override)
+#   E-IhMcvcVF0peGonau  Note: game-controller-compatible does not work with SDL's default hints.
+#   Profiles: sdl-compatible, generic, game-controller-compatible
+Scripts/Diagnostics/backend.sh gamecontroller --seconds 6
+GameController probe
+Listening for 6s
+
+HID GamePad support:
+- 045E:028E "GamePad-1" transport=Virtual gamecontroller=yes
+- 045E:0B0C "Xbox Adaptive Controller" transport=Virtual gamecontroller=yes
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+evidence supports_hid=true connect=false extended_profile=false live_input=false disconnect=false reconnect=false haptics=unclaimed
+# probe exit: 0

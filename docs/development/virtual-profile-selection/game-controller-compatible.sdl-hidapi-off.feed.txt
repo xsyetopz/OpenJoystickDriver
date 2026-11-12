@@ -1,0 +1,1 @@
+Publishing a GameControllerCompatible virtual gamepad... Write frames on standard input; end the input or press Control-C to stop.

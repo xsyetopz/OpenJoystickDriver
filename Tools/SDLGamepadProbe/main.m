@@ -180,7 +180,13 @@ static void print_events(int seconds, const SDL_JoystickID *joy_ids, int joy_cou
                 case SDL_EVENT_GAMEPAD_AXIS_MOTION:
                     handle_axis_motion(&event.gaxis);
                     break;
+                case SDL_EVENT_GAMEPAD_ADDED:
+                    printf("GAMEPAD_ADDED which=%u ms=%llu\n", (unsigned)event.gdevice.which,
+                           (unsigned long long)SDL_GetTicks());
+                    break;
                 case SDL_EVENT_GAMEPAD_REMOVED:
+                    printf("GAMEPAD_REMOVED which=%u ms=%llu\n", (unsigned)event.gdevice.which,
+                           (unsigned long long)SDL_GetTicks());
                     clear_axis_state(event.gdevice.which);
                     break;
                 default:

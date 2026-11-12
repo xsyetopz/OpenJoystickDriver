@@ -1,0 +1,62 @@
+# profile=game-controller-compatible tag=gc
+# probe: just diagnose-gamecontroller --seconds 34
+# started: 2026-11-12T23:17:48Z
+Scripts/Diagnostics/backend.sh gamecontroller --seconds 34
+GameController probe
+Listening for 34s
+
+HID GamePad support:
+- 045E:028E "GamePad-1" transport=Virtual gamecontroller=yes
+- 045E:0B13 "Xbox Wireless Controller" transport=Virtual gamecontroller=yes
+
+Initial controllers: 0
+connect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
+inputs: buttons=[Button A,Button B,Button Home,Button Menu,Button Options,Button Share,Button X,Button Y,Direction Pad Down,Direction Pad Left,Direction Pad Right,Direction Pad Up,Left Shoulder,Left Thumbstick Button,Left Thumbstick Down,Left Thumbstick Left,Left Thumbstick Right,Left Thumbstick Up,Left Trigger,Right Shoulder,Right Thumbstick Button,Right Thumbstick Down,Right Thumbstick Left,Right Thumbstick Right,Right Thumbstick Up,Right Trigger] xbox=true share=true paddles=0
+button: Button A value=1.0 pressed=true
+button: Button A value=0.0 pressed=false
+button: Button B value=1.0 pressed=true
+button: Button B value=0.0 pressed=false
+button: Button X value=1.0 pressed=true
+button: Button X value=0.0 pressed=false
+button: Button Y value=1.0 pressed=true
+button: Button Y value=0.0 pressed=false
+button: Left Shoulder value=1.0 pressed=true
+button: Left Shoulder value=0.0 pressed=false
+button: Right Shoulder value=1.0 pressed=true
+button: Right Shoulder value=0.0 pressed=false
+button: Left Trigger value=1.0 pressed=true
+button: Left Trigger value=0.0 pressed=false
+button: Right Trigger value=1.0 pressed=true
+button: Right Trigger value=0.0 pressed=false
+button: Left Thumbstick Button value=1.0 pressed=true
+button: Left Thumbstick Button value=0.0 pressed=false
+button: Right Thumbstick Button value=1.0 pressed=true
+button: Right Thumbstick Button value=0.0 pressed=false
+button: Button Menu value=1.0 pressed=true
+button: Button Menu value=0.0 pressed=false
+button: Button Options value=1.0 pressed=true
+button: Button Options value=0.0 pressed=false
+direction: Direction Pad x=0.0 y=1.0
+direction: Direction Pad x=0.0 y=0.0
+direction: Direction Pad x=0.0 y=-1.0
+direction: Direction Pad x=0.0 y=0.0
+direction: Direction Pad x=-1.0 y=0.0
+direction: Direction Pad x=-0.0 y=0.0
+direction: Direction Pad x=1.0 y=0.0
+direction: Direction Pad x=-0.0 y=0.0
+direction: Left Thumbstick x=0.9999599 y=0.0
+direction: Left Thumbstick x=-0.0 y=0.0
+direction: Left Thumbstick x=-0.0 y=-0.9999599
+direction: Left Thumbstick x=-0.0 y=0.0
+direction: Right Thumbstick x=0.99995846 y=0.0
+direction: Right Thumbstick x=-0.0 y=0.0
+direction: Right Thumbstick x=-0.0 y=-0.99995846
+direction: Right Thumbstick x=-0.0 y=0.0
+button: Left Trigger value=1.0 pressed=true
+button: Left Trigger value=0.0 pressed=false
+button: Right Trigger value=1.0 pressed=true
+button: Right Trigger value=0.0 pressed=false
+disconnect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
+evidence supports_hid=true connect=true extended_profile=true live_input=true disconnect=true reconnect=false haptics=unclaimed
+# probe exit: 0
+# feed exit: 0
