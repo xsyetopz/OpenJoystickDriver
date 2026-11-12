@@ -79,11 +79,11 @@ Raw source: `2c-bluetooth-301b/ordered-controls-120s.txt`. OJD decode source: `2
 
 The trigger rows follow the press order: the OJD capture lists LeftTrigger before RightTrigger, and the raw capture raises byte 7 before byte 6.
 
-Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture holds one charge level.
+Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture records no charge level. At 100%, as `system_profiler SPBluetoothDataType` reads it from the pad's Bluetooth battery service, byte 10 reads `00` in all 653 reports (`2c-bluetooth-301b/battery-100-percent.txt`).
 
 Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); `tasks.md` 2.3 names them L4 and R4. The decode in `ojd-watch-120s.txt` lists neither bit, because the record maps neither.
 
-Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer reports one rumble when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`).
+Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer reports one rumble when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`). With a user patch that gives the mode a rumble template for output report 5, OJD's session sends the write while OJD serves the pad, and it fails with the same `kIOReturnNotFound` (`2c-bluetooth-301b/rumble-writes.txt`). Over Bluetooth LE the record declares no rumble.
 
 ### Unverified
 
@@ -91,7 +91,7 @@ Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of ou
 | --- | --- |
 | `2DC8:301C`, L4 unassigned | A capture of L4 with no assignment. `rear-l4-assigned-60s.txt` holds L4 assigned. |
 | `2DC8:310A`, both rear buttons unassigned | A capture of L4 and R4 with no assignment. `rear-square-star-45s.txt` holds assigned rear buttons. |
-| `2DC8:301B`, battery at a second charge level | A capture of byte 10 at a different charge level. The one captured level reads 0. |
+| `2DC8:301B`, battery at a second charge level | A capture of byte 10 below 100%. At 100% it reads 0. |
 | Rear buttons by cable | A capture with a cable connected, for each rear button. |
 | Pad mode that produces `2DC8:301D` | A capture of that identity, and the mode that enumerates as it. |
 | Pad mode that produces `2DC8:3109` | A capture of that identity, and the mode that enumerates as it. |
