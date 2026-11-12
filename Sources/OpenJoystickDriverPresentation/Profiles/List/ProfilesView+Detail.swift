@@ -104,6 +104,7 @@
           if presentation.offersMigration {
             Button(OJDLocalized.string("ui.migrate.action")) { migrateStoredDocuments() }
               .disabled(library.profileRecoveryInFlight)
+            besideError(.migration)
           }
           Button(
             OJDLocalized.string(
@@ -115,8 +116,22 @@
               issue.kind == .damagedProfile
               ? .deleteDamagedProfile(issue.id) : .resetLibrary(issue.id)
           }.disabled(library.profileRecoveryInFlight)
+          besideError(.recovery)
         }
       }.ojdGroupedForm()
+    }
+
+    /// The failure of a request that the control `origin` started, in red under the control; empty
+    /// while that control has no failure.
+    ///
+    /// - Parameter origin: The control that started the request.
+    /// - Returns: The message, or nothing.
+    @ViewBuilder
+    func besideError(_ origin: ProfileActionOrigin) -> some View {
+      if let message = screen.profileActionError(beside: origin) {
+        Text(message).font(.body).foregroundColor(Color(NSColor.systemRed))
+          .fixedSize(horizontal: false, vertical: true)
+      }
     }
 
     /// The Joy-Con pair row of a profile: Pair Joy-Cons, or Unpair Joy-Cons for each active pair.
@@ -141,8 +156,9 @@
           ForEach(sessions, id: \.sessionID) { session in
             Button(OJDLocalized.string("ui.profiles.unpairJoyCons")) {
               Task { @MainActor in
-                profileActionError = await viewModel.unpairRemappingJoyCons(
-                  sessionID: session.sessionID
+                screen.failProfileAction(
+                  await viewModel.unpairRemappingJoyCons(sessionID: session.sessionID),
+                  beside: .joyCon
                 )
               }
             }.disabled(isProfileActionBlocked)
@@ -154,6 +170,7 @@
         }
         Spacer()
       }.padding(.horizontal, 28).padding(.top, 10)
+      besideError(.joyCon).padding(.horizontal, 28)
     }
 
     /// The snapshot of the available state, or the last snapshot.
