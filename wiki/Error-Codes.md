@@ -102,7 +102,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3024 | Remapping | The remapping service hit an error it does not recognize. Run 'ojd diagnose' and report the problem with its output. Wire value `unexpected`. |
 | E3025 | Remapping | The profile produces no output. Add a binding or a light color to it, or activate it with --allow-empty. Wire value `profile_produces_no_output`. |
 | E3026 | Remapping | The Joy-Con pair profile takes its gyro from the other Joy-Con. Calibrate the motion of the controller that the profile selects for the gyro. Wire value `motion_gyro_not_selected`. |
-| E3027 | Remapping | No remapping profile is active for the controller, so it does not process motion. Activate a profile for it, bring its target app to the front, and try again. Wire value `motion_profile_inactive`. |
+| E3027 | Remapping | No profile is active for the controller, so it does not process motion. Activate a profile for it, bring its target app to the front, and try again. Wire value `motion_profile_inactive`. |
 | E3028 | Remapping | The remapping session of the controller changed while the request ran. Try again. Wire value `motion_session_changed`. |
 | E3029 | Remapping | A profile that comes from an installed package cannot be changed. Duplicate the profile and change the copy. Wire value `package_profile_read_only`. |
 | E3030 | Remapping | The action did not run because Post Event access is not granted. Grant it to OpenJoystickDriver and try again. Wire value `post_event_access_missing`. |
@@ -113,7 +113,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E4001 | Mod packages | The package manifest mod.plist is missing or invalid. Check it against the mod-package schema and run the command again. |
 | E4002 | Mod packages | The package requires a different version of OpenJoystickDriver than the one that runs. Install a package version that supports this version, or update OpenJoystickDriver. |
 | E4003 | Mod packages | A file of the package is invalid, missing, or not listed in mod.plist. Fix the file that the command names and run it again. |
-| E4004 | Mod packages | The package covers a controller, persona, or profile that your own files or another installed package already hold. Remove the clashing file or package, or change the package, and run the command again. |
+| E4004 | Mod packages | The package covers a controller, virtual gamepad, or profile that your own files or another installed package already hold. Remove the clashing file or package, or change the package, and run the command again. |
 | E4005 | Mod packages | A package with this name is already installed. Run the command with --force to replace it. |
 | E4006 | Mod packages | No installed package has this name. Run 'ojd mod list' to see the installed packages. |
 | E4007 | Mod packages | The package folder could not be changed. Check the free disk space and the folder permissions. |
