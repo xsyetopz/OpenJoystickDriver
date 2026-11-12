@@ -2400,7 +2400,7 @@
 /* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.cli.permission.group.paneInputRead" = "Privacy e sicurezza > Monitoraggio input";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
-"cli.permission.group.purposeInputInject" = "Pubblicare l’output del controller virtuale";
+"cli.permission.group.purposeInputInject" = "Pubblicare l’output del gamepad virtuale";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
 "platform.macos.cli.permission.group.purposeUsbTransport" = "Gestire interfacce USB raw soggette a entitlement; non è un permesso di privacy TCC";
 /* Purpose column of the input reading permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -2706,6 +2706,8 @@
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "Persona pubblicata";
 /* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+"cli.controller.show.labelPersona" = "Gamepad virtuale";
+/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@ (da %2$@)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "Protocollo";
@@ -2999,8 +3001,8 @@
 "cli.virtual.reset.allDone" = "Ogni modello di controller ora seleziona automaticamente il proprio gamepad virtuale.";
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "Riporterebbe ogni modello di controller alla selezione automatica del gamepad virtuale.";
-/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual device file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "Il servizio non ha potuto cancellare tutte le scelte del gamepad virtuale. Un file di dispositivo virtuale nella cartella VirtualDevices che definisce una propria identità resta finché non lo modifichi o lo elimini. Controlla con «ojd status».";
+/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
+"cli.virtual.reset.allFailed" = "Il servizio non ha potuto cancellare tutte le scelte del gamepad virtuale. Un file di gamepad virtuale nella cartella VirtualDevices che definisce una propria identità resta finché non lo modifichi o lo elimini. Controlla con «ojd status».";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "Riportare ogni modello di controller alla selezione automatica del gamepad virtuale?";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3028,7 +3030,7 @@
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "record utente applicati: %lld";
 /* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.plist e i file persona sono validi";
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist e i file di gamepad virtuale sono validi";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "ignorati o saltati: %@; correggili e controlla con «ojd status»";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -3199,9 +3201,9 @@
 "cli.record.validate.valid" = "%1$@ è un record %2$@ valido per %3$@ (%4$@). Installalo con «ojd record install».";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
 "cli.status.group.labelIgnoredDefaults" = "File dei valori predefiniti ignorato";
-/* Heading in the output of 'ojd status' above the list of skipped virtual device files. %lld is the number of entries. */
-"cli.status.group.labelSkippedVirtualDevices" = "File di dispositivo virtuale ignorati (%lld)";
-/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual device files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
+/* Heading in the output of 'ojd status' above the list of skipped virtual gamepad files. %lld is the number of entries. */
+"cli.status.group.labelSkippedVirtualDevices" = "File di gamepad virtuale ignorati (%lld)";
+/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual gamepad files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
 "status.virtualDeviceFolderNotRead" = "OpenJoystickDriver non legge questa cartella. Sposta i suoi file in %@, poi rimuovi la cartella.";
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "Record del controller ignorati (%lld)";
@@ -3787,8 +3789,8 @@
 "error.E4002.message" = "Il pacchetto richiede una versione di OpenJoystickDriver diversa da quella in esecuzione. Installa una versione del pacchetto compatibile con questa versione oppure aggiorna OpenJoystickDriver.";
 /* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
 "error.E4003.message" = "Un file del pacchetto non è valido, manca o non è elencato in mod.plist. Correggi il file indicato dal comando ed eseguilo di nuovo.";
-/* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
-"error.E4004.message" = "Il pacchetto copre un controller, una persona o un profilo già presenti nei tuoi file o in un altro pacchetto installato. Rimuovi il file o il pacchetto in conflitto, oppure modifica il pacchetto, ed esegui di nuovo il comando.";
+/* Text of error E4004, printed when a mod package covers a controller, virtual gamepad or profile that the user's files or another package hold. */
+"error.E4004.message" = "Il pacchetto copre un controller, un gamepad virtuale o un profilo già presenti nei tuoi file o in un altro pacchetto installato. Rimuovi il file o il pacchetto in conflitto, oppure modifica il pacchetto, ed esegui di nuovo il comando.";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
 "error.E4005.message" = "Un pacchetto con questo nome è già installato. Esegui il comando con --force per sostituirlo.";
 /* Text of error E4006, printed when no installed mod package has the name. The command in quotes stays as written. */
@@ -3895,25 +3897,25 @@
 "error.E5007.record.hexBytes" = "%1$@, %2$@: i byte di %3$@ devono essere coppie esadecimali maiuscole separate da singoli spazi. Correzione: scrivi %2$@ come coppie tipo 42 03 00, con cifre maiuscole e uno spazio tra le coppie.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch deve contenere modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input o tuning. Correzione: mantieni solo queste sezioni e indicane almeno una.";
-/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona deve essere uno tra %2$@. Correzione: imposta persona su uno di essi.";
-/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
 "error.E5007.virtualDevice.matchRequired" = "%1$@, match: un file nella cartella dell’utente deve contenere match. Correzione: aggiungi match con vendorID e productID del modello.";
-/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout deve essere uno tra %2$@. Correzione: imposta layout su uno di essi.";
-/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@, transport: transport deve essere USB o Bluetooth. Correzione: imposta transport su USB o Bluetooth.";
-/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@, labels: labels deve essere Xbox o Generic. Correzione: imposta labels su Xbox o Generic.";
-/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@, match: un file con match sceglie una persona, quindi non può contenere layout, transport né worksWithDefaultSDLHints. Correzione: rimuovi layout, transport e worksWithDefaultSDLHints, oppure rimuovi match.";
-/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
-"error.E5007.virtualDevice.definition" = "%1$@, persona: una definizione di persona deve contenere layout, transport, labels, worksWithDefaultSDLHints e identity con version. Correzione: aggiungi le chiavi mancanti, oppure aggiungi match per scegliere una persona.";
-/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@, match: un file con match sceglie un gamepad virtuale, quindi non può contenere layout, transport né worksWithDefaultSDLHints. Correzione: rimuovi layout, transport e worksWithDefaultSDLHints, oppure rimuovi match.";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@, persona: una definizione di gamepad virtuale deve contenere layout, transport, labels, worksWithDefaultSDLHints e identity con version. Correzione: aggiungi le chiavi mancanti, oppure aggiungi match per scegliere un gamepad virtuale.";
+/* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit deve essere un ID di unità. Correzione: imposta unit sull’ID di unità di un controller, oppure omettilo.";
-/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: un’identità di persona richiede un valore non vuoto per %2$@. Correzione: dai a %2$@ una stringa non vuota.";
-/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: un’identità di gamepad virtuale richiede un valore non vuoto per %2$@. Correzione: dai a %2$@ una stringa non vuota.";
+/* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: un ID deve essere %3$@...65535. Correzione: imposta %2$@ su %3$@...65535.";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: il counterModulus di un sottocomando deve essere 2...256. Correzione: imposta counterModulus su 2...256.";
@@ -3943,20 +3945,20 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: una fase di avvio deve essere Startup o Activation. Correzione: imposta phase su una delle due, oppure omettila.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: un crc32Seed di avvio deve essere 0...255. Correzione: imposta crc32Seed su 0...255, oppure omettilo.";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: un file persona non deve ripetere il match del file utente %2$@. Correzione: dai a ogni modello un solo file persona, oppure cambia match in uno dei due.";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: un file persona non deve ripetere il match del file del pacchetto %2$@. Correzione: dai a ogni modello un solo file persona, oppure cambia match in uno dei due.";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: un file di gamepad virtuale non deve ripetere il match del file utente %2$@. Correzione: dai a ogni modello un solo file di gamepad virtuale, oppure cambia match in uno dei due.";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: un file di gamepad virtuale non deve ripetere il match del file del pacchetto %2$@. Correzione: dai a ogni modello un solo file di gamepad virtuale, oppure cambia match in uno dei due.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: un intervallo di keep-alive deve essere di 1...60000 ms. Correzione: imposta intervalMilliseconds su 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: un keep-alive deve indicare nessuna scrittura oppure 1...8. Correzione: elenca 1...8 scritture, oppure ometti writes.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: il resendTuning di un keep-alive deve essere lizardResendTicks. Correzione: imposta resendTuning su lizardResendTicks, oppure omettilo.";
-/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: i record inclusi devono contenere un record per la persona %2$@. Correzione: reinstalla OpenJoystickDriver.";
-/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: un record incluso deve definire la persona %2$@ e non contenere match. Correzione: reinstalla OpenJoystickDriver.";
+/* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: i record inclusi devono contenere un record per il gamepad virtuale %2$@. Correzione: reinstalla OpenJoystickDriver.";
+/* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: un record incluso deve definire il gamepad virtuale %2$@ e non contenere match. Correzione: reinstalla OpenJoystickDriver.";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: un file %3$@ non può essere elencato sotto %2$@ in mod.plist, che elenca file %4$@. Correzione: elenca il file sotto l’elenco che corrisponde al suo tipo.";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4161,7 +4163,7 @@
 "ui.library.record.removed" = "Record per %@ rimosso.";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
 "ui.library.record.removeFailed" = "Impossibile rimuovere %1$@: %2$@";
-/* Heading of the mods list in the Library area. A mod is a package of records, profiles and personas. */
+/* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "Mod";
 /* Title of the empty state in the mods list of the Library area. */
 "ui.library.mods.empty.title" = "Nessun mod installato";
@@ -4183,8 +4185,8 @@
 "ui.library.mod.replace.message" = "%1$@ è già installato. La sostituzione rimuove i file installati e installa la versione %2$@.";
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "Rimuovere il mod %@?";
-/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. Personas are the identities that a virtual gamepad can show. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver elimina il mod insieme ai record, ai profili e alle persone che ha aggiunto.";
+/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
+"ui.library.mod.remove.message" = "OpenJoystickDriver elimina il mod insieme ai record, ai profili e ai gamepad virtuali che ha aggiunto.";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "Mod %@ rimosso.";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -4875,8 +4877,8 @@
 "ui.controllers.publication.reason.systemGamepad" = "Il sistema lo gestisce come gamepad";
 /* Reason the controller has no virtual gamepad: macOS handles its input directly. */
 "ui.controllers.publication.reason.nativeHIDPassThrough" = "Il sistema gestisce direttamente il suo input";
-/* Reason the controller has no virtual gamepad: another virtual device stands for it. */
-"ui.controllers.publication.reason.upstreamVirtualDevice" = "Un altro dispositivo virtuale lo rappresenta già";
+/* Reason the controller has no virtual gamepad: another virtual gamepad stands for it. */
+"ui.controllers.publication.reason.upstreamVirtualDevice" = "Un altro gamepad virtuale lo rappresenta già";
 /* Reason the controller has no virtual gamepad: the user suspended the session. */
 "ui.controllers.publication.reason.sessionSuspended" = "Sessione sospesa";
 /* Reason the controller has no virtual gamepad: no virtual profile fits the controller. */
@@ -4915,8 +4917,8 @@
 "ui.controllers.physicalOwnership.systemHIDVisible" = "HID di sistema";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */
 "ui.controllers.physicalOwnership.systemGamepad" = "Gamepad di sistema";
-/* Value of the owner of the physical controller: another virtual device holds it before the app sees it. */
-"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "Dispositivo virtuale a monte";
+/* Value of the owner of the physical controller: another virtual gamepad holds it before the app sees it. */
+"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "Gamepad virtuale a monte";
 /* Value of the owner of the physical controller when the app does not know it. */
 "ui.controllers.physicalOwnership.unknown" = "Sconosciuto";
 /* Result of opening the HID input of a controller when the app does not know the result. */
@@ -4980,8 +4982,8 @@
 "status.controllerOwner.nameOnly" = "In uso da %@. Il controller viene letto direttamente. OpenJoystickDriver lo gestisce non appena viene rilasciato.";
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "In uso da un’altra app. Il controller viene letto direttamente. OpenJoystickDriver lo gestisce non appena viene rilasciato.";
-/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual controller of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "Il sistema elenca questo controller anche come secondo controller senza input. In un gioco, scegli il controller virtuale pubblicato da OpenJoystickDriver.";
+/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
+"status.controllerAlsoListedBySystem" = "Il sistema elenca questo controller anche come secondo controller senza input. In un gioco, scegli il gamepad virtuale pubblicato da OpenJoystickDriver.";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "Accesso esclusivo";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5115,7 +5117,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Converte i documenti salvati di una versione precedente nella versione attuale.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Converte Settings.plist, AccessGrants.plist, i profili, i tuoi record e patch dei controller e i file dei dispositivi virtuali con un apiVersion precedente. Ogni originale resta nella cartella Migrated della cartella di supporto. Anche i pacchetti di mod vengono convertiti. Indica una cartella per analizzarla al posto della cartella di supporto. Ogni file riceve un verdetto: Migrated, Current, Failed o Foreign.";
+"cli.migrate.group.discussion" = "Converte Settings.plist, AccessGrants.plist, i profili, i tuoi record e patch dei controller e i file dei gamepad virtuali con un apiVersion precedente. Ogni originale resta nella cartella Migrated della cartella di supporto. Anche i pacchetti di mod vengono convertiti. Indica una cartella per analizzarla al posto della cartella di supporto. Ogni file riceve un verdetto: Migrated, Current, Failed o Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Elenca i documenti che verrebbero convertiti senza modificare nulla.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */

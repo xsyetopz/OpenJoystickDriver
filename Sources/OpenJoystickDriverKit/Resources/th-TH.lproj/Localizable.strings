@@ -2400,7 +2400,7 @@
 /* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.cli.permission.group.paneInputRead" = "ความเป็นส่วนตัวและความปลอดภัย > การตรวจสอบสัญญาณเข้า";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
-"cli.permission.group.purposeInputInject" = "เผยแพร่เอาต์พุตของคอนโทรลเลอร์เสมือน";
+"cli.permission.group.purposeInputInject" = "เผยแพร่เอาต์พุตของเกมแพดเสมือน";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
 "platform.macos.cli.permission.group.purposeUsbTransport" = "เป็นเจ้าของอินเทอร์เฟซ USB ดิบที่จำกัดด้วยสิทธิ์ ไม่ใช่สิทธิ์ความเป็นส่วนตัวของ TCC";
 /* Purpose column of the input reading permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -2706,6 +2706,8 @@
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "เพอร์โซนา";
 /* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+"cli.controller.show.labelPersona" = "เกมแพดเสมือน";
+/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@ (จาก %2$@)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "โปรโตคอล";
@@ -2999,8 +3001,8 @@
 "cli.virtual.reset.allDone" = "ทุกรุ่นของคอนโทรลเลอร์เลือกเกมแพดเสมือนอัตโนมัติแล้ว";
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "จะคืนทุกรุ่นของคอนโทรลเลอร์ให้เป็นการเลือกเกมแพดเสมือนอัตโนมัติ";
-/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual device file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "บริการล้างตัวเลือกเกมแพดเสมือนไม่ได้ทั้งหมด ไฟล์อุปกรณ์เสมือนในโฟลเดอร์ VirtualDevices ที่กำหนดข้อมูลระบุตัวตนของตัวเองจะยังคงอยู่จนกว่าคุณจะแก้ไขหรือลบไฟล์นั้น ตรวจสอบด้วย “ojd status”";
+/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
+"cli.virtual.reset.allFailed" = "บริการล้างตัวเลือกเกมแพดเสมือนไม่ได้ทั้งหมด ไฟล์เกมแพดเสมือนในโฟลเดอร์ VirtualDevices ที่กำหนดข้อมูลระบุตัวตนของตัวเองจะยังคงอยู่จนกว่าคุณจะแก้ไขหรือลบไฟล์นั้น ตรวจสอบด้วย “ojd status”";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "คืนทุกรุ่นของคอนโทรลเลอร์ให้เป็นการเลือกเกมแพดเสมือนอัตโนมัติหรือไม่";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3028,7 +3030,7 @@
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "ใช้ระเบียนของผู้ใช้แล้ว: %lld";
 /* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.plist และไฟล์เพอร์โซนาถูกต้อง";
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist และไฟล์เกมแพดเสมือนถูกต้อง";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "ละเว้นหรือข้าม: %@; แก้ไขแล้วตรวจสอบด้วย “ojd status”";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -3199,9 +3201,9 @@
 "cli.record.validate.valid" = "%1$@ เป็นระเบียน %2$@ ที่ถูกต้องสำหรับ %3$@ (%4$@) ติดตั้งด้วย “ojd record install”";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
 "cli.status.group.labelIgnoredDefaults" = "ไฟล์ค่าเริ่มต้นที่ถูกละเว้น";
-/* Heading in the output of 'ojd status' above the list of skipped virtual device files. %lld is the number of entries. */
-"cli.status.group.labelSkippedVirtualDevices" = "ไฟล์อุปกรณ์เสมือนที่ข้าม (%lld)";
-/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual device files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
+/* Heading in the output of 'ojd status' above the list of skipped virtual gamepad files. %lld is the number of entries. */
+"cli.status.group.labelSkippedVirtualDevices" = "ไฟล์เกมแพดเสมือนที่ข้าม (%lld)";
+/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual gamepad files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
 "status.virtualDeviceFolderNotRead" = "OpenJoystickDriver ไม่อ่านโฟลเดอร์นี้ ย้ายไฟล์ในโฟลเดอร์ไปที่ %@ แล้วเอาโฟลเดอร์ออก";
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "ระเบียนคอนโทรลเลอร์ที่ข้าม (%lld)";
@@ -3579,7 +3581,7 @@
 "ui.library.record.removed" = "เอาระเบียนสำหรับ %@ ออกแล้ว";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
 "ui.library.record.removeFailed" = "ไม่สามารถเอา %1$@ ออกได้: %2$@";
-/* Heading of the mods list in the Library area. A mod is a package of records, profiles and personas. */
+/* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "ม็อด";
 /* Title of the empty state in the mods list of the Library area. */
 "ui.library.mods.empty.title" = "ไม่มีม็อดที่ติดตั้ง";
@@ -3601,8 +3603,8 @@
 "ui.library.mod.replace.message" = "ติดตั้ง %1$@ อยู่แล้ว การแทนที่จะลบไฟล์ที่ติดตั้งและติดตั้งเวอร์ชัน %2$@";
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "เอาม็อด %@ ออกหรือไม่";
-/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. Personas are the identities that a virtual gamepad can show. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver จะลบม็อดและระเบียน โปรไฟล์ และเพอร์โซนาที่ม็อดนั้นเพิ่มไว้";
+/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
+"ui.library.mod.remove.message" = "OpenJoystickDriver จะลบม็อดและระเบียน โปรไฟล์ และเกมแพดเสมือนที่ม็อดนั้นเพิ่มไว้";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "เอาม็อด %@ ออกแล้ว";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -4373,8 +4375,8 @@
 "error.E4002.message" = "แพ็กเกจต้องใช้ OpenJoystickDriver คนละเวอร์ชันกับที่กำลังทำงานอยู่ ติดตั้งแพ็กเกจเวอร์ชันที่รองรับเวอร์ชันนี้ หรืออัปเดต OpenJoystickDriver";
 /* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
 "error.E4003.message" = "ไฟล์ของแพ็กเกจไม่ถูกต้อง ขาดหาย หรือไม่ได้ระบุไว้ใน mod.plist แก้ไขไฟล์ที่คำสั่งระบุ แล้วเรียกใช้อีกครั้ง";
-/* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
-"error.E4004.message" = "แพ็กเกจครอบคลุมคอนโทรลเลอร์ เพอร์โซนา หรือโปรไฟล์ที่มีอยู่แล้วในไฟล์ของคุณเองหรือในแพ็กเกจอื่นที่ติดตั้งไว้ ลบไฟล์หรือแพ็กเกจที่ขัดแย้งกัน หรือแก้ไขแพ็กเกจ แล้วเรียกใช้คำสั่งอีกครั้ง";
+/* Text of error E4004, printed when a mod package covers a controller, virtual gamepad or profile that the user's files or another package hold. */
+"error.E4004.message" = "แพ็กเกจครอบคลุมคอนโทรลเลอร์ เกมแพดเสมือน หรือโปรไฟล์ที่มีอยู่แล้วในไฟล์ของคุณเองหรือในแพ็กเกจอื่นที่ติดตั้งไว้ ลบไฟล์หรือแพ็กเกจที่ขัดแย้งกัน หรือแก้ไขแพ็กเกจ แล้วเรียกใช้คำสั่งอีกครั้ง";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
 "error.E4005.message" = "มีแพ็กเกจชื่อนี้ติดตั้งอยู่แล้ว เรียกใช้คำสั่งด้วย --force เพื่อแทนที่";
 /* Text of error E4006, printed when no installed mod package has the name. The command in quotes stays as written. */
@@ -4481,25 +4483,25 @@
 "error.E5007.record.hexBytes" = "%1$@, %2$@: ไบต์ของ %3$@ ต้องเป็นคู่เลขฐานสิบหกตัวพิมพ์ใหญ่ คั่นด้วยช่องว่างเดียว วิธีแก้: เขียน %2$@ เป็นคู่ เช่น 42 03 00 ด้วยตัวพิมพ์ใหญ่และเว้นหนึ่งช่องว่างระหว่างคู่";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch ต้องมี modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input หรือ tuning วิธีแก้: เก็บไว้เฉพาะส่วนเหล่านั้นและใส่อย่างน้อยหนึ่งส่วน";
-/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona ต้องเป็นหนึ่งใน %2$@ วิธีแก้: ตั้ง persona เป็นหนึ่งในนั้น";
-/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
 "error.E5007.virtualDevice.matchRequired" = "%1$@, match: ไฟล์ในโฟลเดอร์ผู้ใช้ต้องมี match วิธีแก้: เพิ่ม match พร้อม vendorID และ productID ของรุ่น";
-/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout ต้องเป็นหนึ่งใน %2$@ วิธีแก้: ตั้ง layout เป็นหนึ่งในนั้น";
-/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@, transport: transport ต้องเป็น USB หรือ Bluetooth วิธีแก้: ตั้ง transport เป็น USB หรือ Bluetooth";
-/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@, labels: labels ต้องเป็น Xbox หรือ Generic วิธีแก้: ตั้ง labels เป็น Xbox หรือ Generic";
-/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@, match: ไฟล์ที่มี match เลือกเพอร์โซนา จึงมี layout, transport หรือ worksWithDefaultSDLHints ไม่ได้ วิธีแก้: ลบ layout, transport และ worksWithDefaultSDLHints หรือลบ match";
-/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
-"error.E5007.virtualDevice.definition" = "%1$@, persona: คำนิยามเพอร์โซนาต้องมี layout, transport, labels, worksWithDefaultSDLHints และ identity ที่มี version วิธีแก้: เพิ่มคีย์ที่ขาด หรือเพิ่ม match เพื่อเลือกเพอร์โซนาแทน";
-/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@, match: ไฟล์ที่มี match เลือกเกมแพดเสมือน จึงมี layout, transport หรือ worksWithDefaultSDLHints ไม่ได้ วิธีแก้: ลบ layout, transport และ worksWithDefaultSDLHints หรือลบ match";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@, persona: คำนิยามเกมแพดเสมือนต้องมี layout, transport, labels, worksWithDefaultSDLHints และ identity ที่มี version วิธีแก้: เพิ่มคีย์ที่ขาด หรือเพิ่ม match เพื่อเลือกเกมแพดเสมือนแทน";
+/* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit ต้องเป็นรหัสหน่วย วิธีแก้: ตั้ง unit เป็นรหัสหน่วยของคอนโทรลเลอร์ หรือเว้นไว้";
-/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: ตัวตนของเพอร์โซนาต้องมี %2$@ ที่ไม่ว่าง วิธีแก้: ใส่สตริงที่ไม่ว่างให้ %2$@";
-/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: ตัวตนของเกมแพดเสมือนต้องมี %2$@ ที่ไม่ว่าง วิธีแก้: ใส่สตริงที่ไม่ว่างให้ %2$@";
+/* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: รหัสต้องเป็น %3$@...65535 วิธีแก้: ตั้ง %2$@ เป็น %3$@...65535";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: counterModulus ของซับคำสั่งต้องเป็น 2...256 วิธีแก้: ตั้ง counterModulus เป็น 2...256";
@@ -4529,20 +4531,20 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: เฟสเริ่มต้นต้องเป็น Startup หรือ Activation วิธีแก้: ตั้ง phase เป็นอย่างใดอย่างหนึ่ง หรือไม่ต้องระบุ";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: crc32Seed ของการเริ่มต้นต้องอยู่ในช่วง 0...255 วิธีแก้: ตั้ง crc32Seed เป็น 0...255 หรือไม่ต้องระบุ";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: ไฟล์เพอร์โซนาต้องไม่ใช้ match ซ้ำกับไฟล์ผู้ใช้ %2$@ วิธีแก้: ให้แต่ละรุ่นมีไฟล์เพอร์โซนาเดียว หรือเปลี่ยน match ในไฟล์ใดไฟล์หนึ่ง";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: ไฟล์เพอร์โซนาต้องไม่ใช้ match ซ้ำกับไฟล์แพ็กเกจ %2$@ วิธีแก้: ให้แต่ละรุ่นมีไฟล์เพอร์โซนาเดียว หรือเปลี่ยน match ในไฟล์ใดไฟล์หนึ่ง";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: ไฟล์เกมแพดเสมือนต้องไม่ใช้ match ซ้ำกับไฟล์ผู้ใช้ %2$@ วิธีแก้: ให้แต่ละรุ่นมีไฟล์เกมแพดเสมือนเดียว หรือเปลี่ยน match ในไฟล์ใดไฟล์หนึ่ง";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: ไฟล์เกมแพดเสมือนต้องไม่ใช้ match ซ้ำกับไฟล์แพ็กเกจ %2$@ วิธีแก้: ให้แต่ละรุ่นมีไฟล์เกมแพดเสมือนเดียว หรือเปลี่ยน match ในไฟล์ใดไฟล์หนึ่ง";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: ช่วง keep-alive ต้องเป็น 1...60000 ms วิธีแก้: ตั้ง intervalMilliseconds เป็น 1...60000";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive ต้องไม่ระบุการเขียนเลย หรือระบุ 1...8 รายการ วิธีแก้: ระบุการเขียน 1...8 รายการ หรือไม่ต้องระบุ writes";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning ของ keep-alive ต้องเป็น lizardResendTicks วิธีแก้: ตั้ง resendTuning เป็น lizardResendTicks หรือไม่ต้องระบุ";
-/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: เรกคอร์ดที่มาพร้อมแอปต้องมีเรกคอร์ดสำหรับเพอร์โซนา %2$@ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
-/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: เรกคอร์ดที่มาพร้อมแอปต้องกำหนดเพอร์โซนา %2$@ และต้องไม่มี match วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+/* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: เรกคอร์ดที่มาพร้อมแอปต้องมีเรกคอร์ดสำหรับเกมแพดเสมือน %2$@ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+/* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: เรกคอร์ดที่มาพร้อมแอปต้องกำหนดเกมแพดเสมือน %2$@ และต้องไม่มี match วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: ไฟล์ %3$@ ระบุไว้ใต้ %2$@ ใน mod.plist ไม่ได้ เพราะรายการนั้นรวมไฟล์ %4$@ วิธีแก้: ระบุไฟล์ไว้ในรายการที่ตรงกับชนิดของไฟล์";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4874,8 +4876,8 @@
 "ui.controllers.publication.reason.systemGamepad" = "ระบบจัดการเป็นเกมแพด";
 /* Reason the controller has no virtual gamepad: macOS handles its input directly. */
 "ui.controllers.publication.reason.nativeHIDPassThrough" = "ระบบจัดการอินพุตโดยตรง";
-/* Reason the controller has no virtual gamepad: another virtual device stands for it. */
-"ui.controllers.publication.reason.upstreamVirtualDevice" = "มีอุปกรณ์เสมือนอื่นแทนอยู่แล้ว";
+/* Reason the controller has no virtual gamepad: another virtual gamepad stands for it. */
+"ui.controllers.publication.reason.upstreamVirtualDevice" = "มีเกมแพดเสมือนอื่นแทนอยู่แล้ว";
 /* Reason the controller has no virtual gamepad: the user suspended the session. */
 "ui.controllers.publication.reason.sessionSuspended" = "เซสชันถูกระงับ";
 /* Reason the controller has no virtual gamepad: no virtual profile fits the controller. */
@@ -4914,8 +4916,8 @@
 "ui.controllers.physicalOwnership.systemHIDVisible" = "HID ของระบบ";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */
 "ui.controllers.physicalOwnership.systemGamepad" = "เกมแพดของระบบ";
-/* Value of the owner of the physical controller: another virtual device holds it before the app sees it. */
-"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "อุปกรณ์เสมือนต้นทาง";
+/* Value of the owner of the physical controller: another virtual gamepad holds it before the app sees it. */
+"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "เกมแพดเสมือนต้นทาง";
 /* Value of the owner of the physical controller when the app does not know it. */
 "ui.controllers.physicalOwnership.unknown" = "ไม่ทราบ";
 /* Result of opening the HID input of a controller when the app does not know the result. */
@@ -4979,8 +4981,8 @@
 "status.controllerOwner.nameOnly" = "%@ ใช้งานอยู่ คอนโทรลเลอร์นี้ถูกอ่านโดยตรง OpenJoystickDriver จะดูแลต่อเมื่อถูกปล่อย";
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "แอปอื่นใช้งานอยู่ คอนโทรลเลอร์นี้ถูกอ่านโดยตรง OpenJoystickDriver จะดูแลต่อเมื่อถูกปล่อย";
-/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual controller of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "ระบบแสดงคอนโทรลเลอร์นี้เป็นคอนโทรลเลอร์ตัวที่สองที่ไม่ส่งอินพุตด้วย ในเกม ให้เลือกคอนโทรลเลอร์เสมือนที่ OpenJoystickDriver เผยแพร่";
+/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
+"status.controllerAlsoListedBySystem" = "ระบบแสดงคอนโทรลเลอร์นี้เป็นคอนโทรลเลอร์ตัวที่สองที่ไม่ส่งอินพุตด้วย ในเกม ให้เลือกเกมแพดเสมือนที่ OpenJoystickDriver เผยแพร่";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "การเข้าถึงแบบเฉพาะ";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5114,7 +5116,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "แปลงเอกสารที่บันทึกไว้จากเวอร์ชันเก่าเป็นเวอร์ชันปัจจุบัน";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "แปลง Settings.plist, AccessGrants.plist, โปรไฟล์, ระเบียนและแพตช์คอนโทรลเลอร์ของคุณ และไฟล์อุปกรณ์เสมือนที่มี apiVersion เก่า ไฟล์ต้นฉบับแต่ละไฟล์จะเก็บไว้ในโฟลเดอร์ Migrated ของโฟลเดอร์สนับสนุน แพ็กเกจม็อดจะถูกแปลงด้วย ระบุโฟลเดอร์เพื่อสแกนแทนโฟลเดอร์สนับสนุน แต่ละไฟล์จะได้รับผลตัดสินหนึ่งอย่าง: Migrated, Current, Failed หรือ Foreign";
+"cli.migrate.group.discussion" = "แปลง Settings.plist, AccessGrants.plist, โปรไฟล์, ระเบียนและแพตช์คอนโทรลเลอร์ของคุณ และไฟล์เกมแพดเสมือนที่มี apiVersion เก่า ไฟล์ต้นฉบับแต่ละไฟล์จะเก็บไว้ในโฟลเดอร์ Migrated ของโฟลเดอร์สนับสนุน แพ็กเกจม็อดจะถูกแปลงด้วย ระบุโฟลเดอร์เพื่อสแกนแทนโฟลเดอร์สนับสนุน แต่ละไฟล์จะได้รับผลตัดสินหนึ่งอย่าง: Migrated, Current, Failed หรือ Foreign";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "แสดงรายการเอกสารที่จะถูกแปลงโดยไม่เปลี่ยนแปลงสิ่งใด";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */

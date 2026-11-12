@@ -2400,7 +2400,7 @@
 /* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.cli.permission.group.paneInputRead" = "隐私与安全性 > 输入监控";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
-"cli.permission.group.purposeInputInject" = "发布虚拟控制器输出";
+"cli.permission.group.purposeInputInject" = "发布虚拟游戏手柄输出";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
 "platform.macos.cli.permission.group.purposeUsbTransport" = "独占需要授权才能访问的原始 USB 接口；不是 TCC 隐私权限";
 /* Purpose column of the input reading permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -2706,6 +2706,8 @@
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "呈现身份";
 /* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+"cli.controller.show.labelPersona" = "虚拟游戏手柄";
+/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@（来自 %2$@）";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "协议";
@@ -2999,8 +3001,8 @@
 "cli.virtual.reset.allDone" = "现在每个控制器型号都会自动选择其虚拟游戏手柄。";
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "将让所有控制器型号恢复自动选择虚拟游戏手柄。";
-/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual device file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "服务无法清除所有虚拟游戏手柄的选择。VirtualDevices 文件夹中设置了自己身份的虚拟设备文件会保留，直到你编辑或删除它。请用“ojd status”检查。";
+/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
+"cli.virtual.reset.allFailed" = "服务无法清除所有虚拟游戏手柄的选择。VirtualDevices 文件夹中设置了自己身份的虚拟游戏手柄文件会保留，直到你编辑或删除它。请用“ojd status”检查。";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "要让所有控制器型号恢复自动选择虚拟游戏手柄吗？";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3028,7 +3030,7 @@
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "已应用的用户记录：%lld";
 /* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 和人设文件有效";
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 和虚拟游戏手柄文件有效";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "已忽略或跳过 %@；请修复后用“ojd status”检查";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -3199,9 +3201,9 @@
 "cli.record.validate.valid" = "%1$@ 是有效的 %2$@ 记录，适用于 %3$@ (%4$@)。请用“ojd record install”安装。";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
 "cli.status.group.labelIgnoredDefaults" = "已忽略的默认值文件";
-/* Heading in the output of 'ojd status' above the list of skipped virtual device files. %lld is the number of entries. */
-"cli.status.group.labelSkippedVirtualDevices" = "已跳过的虚拟设备文件 (%lld)";
-/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual device files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
+/* Heading in the output of 'ojd status' above the list of skipped virtual gamepad files. %lld is the number of entries. */
+"cli.status.group.labelSkippedVirtualDevices" = "已跳过的虚拟游戏手柄文件 (%lld)";
+/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual gamepad files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
 "status.virtualDeviceFolderNotRead" = "OpenJoystickDriver 不读取此文件夹。请将其中的文件移到 %@，然后移除该文件夹。";
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "已跳过的控制器记录 (%lld)";
@@ -3579,7 +3581,7 @@
 "ui.library.record.removed" = "已移除 %@ 的记录。";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
 "ui.library.record.removeFailed" = "无法移除 %1$@：%2$@";
-/* Heading of the mods list in the Library area. A mod is a package of records, profiles and personas. */
+/* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "模组";
 /* Title of the empty state in the mods list of the Library area. */
 "ui.library.mods.empty.title" = "没有已安装的模组";
@@ -3601,8 +3603,8 @@
 "ui.library.mod.replace.message" = "%1$@ 已安装。替换会移除已安装的文件，并安装版本 %2$@。";
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "要移除模组 %@ 吗？";
-/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. Personas are the identities that a virtual gamepad can show. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver 会删除该模组及其添加的记录、配置文件和人设。";
+/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
+"ui.library.mod.remove.message" = "OpenJoystickDriver 会删除该模组及其添加的记录、配置文件和虚拟游戏手柄。";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "已移除模组 %@。";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -4373,8 +4375,8 @@
 "error.E4002.message" = "此包需要与当前运行版本不同的 OpenJoystickDriver 版本。请安装支持当前版本的包版本，或更新 OpenJoystickDriver。";
 /* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
 "error.E4003.message" = "包中的某个文件无效、缺失或未在 mod.plist 中列出。请修复命令指出的文件，然后重新运行。";
-/* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
-"error.E4004.message" = "此包涵盖的控制器、人设或配置文件已存在于你自己的文件或另一个已安装的包中。请删除冲突的文件或包，或修改此包，然后重新运行该命令。";
+/* Text of error E4004, printed when a mod package covers a controller, virtual gamepad or profile that the user's files or another package hold. */
+"error.E4004.message" = "此包涵盖的控制器、虚拟游戏手柄或配置文件已存在于你自己的文件或另一个已安装的包中。请删除冲突的文件或包，或修改此包，然后重新运行该命令。";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
 "error.E4005.message" = "已安装同名的包。请使用 --force 运行该命令以替换它。";
 /* Text of error E4006, printed when no installed mod package has the name. The command in quotes stays as written. */
@@ -4481,25 +4483,25 @@
 "error.E5007.record.hexBytes" = "%1$@，%2$@：%3$@ 的字节必须是以单个空格分隔的大写十六进制字节对。修复：将 %2$@ 写成 42 03 00 这样的字节对，使用大写数字，字节对之间留一个空格。";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、placeholderSerial、usb、bluetoothLE、capabilities、server、route、heldByAppleDriver、input 或 tuning。修复：只保留这些部分，并至少给出一个。";
-/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@，persona：persona 必须是 %2$@ 之一。修复：将 persona 设为其中之一。";
-/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
 "error.E5007.virtualDevice.matchRequired" = "%1$@，match：用户文件夹中的文件必须包含 match。修复：添加含有该型号 vendorID 和 productID 的 match。";
-/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@，layout：layout 必须是 %2$@ 之一。修复：将 layout 设为其中之一。";
-/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@，transport：transport 必须是 USB 或 Bluetooth。修复：将 transport 设为 USB 或 Bluetooth。";
-/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@，labels：labels 必须是 Xbox 或 Generic。修复：将 labels 设为 Xbox 或 Generic。";
-/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@，match：含有 match 的文件用于选择角色，因此不能包含 layout、transport 或 worksWithDefaultSDLHints。修复：移除 layout、transport 和 worksWithDefaultSDLHints，或移除 match。";
-/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
-"error.E5007.virtualDevice.definition" = "%1$@，persona：角色定义必须包含 layout、transport、labels、worksWithDefaultSDLHints，以及带 version 的 identity。修复：补上缺少的键，或添加 match 来改为选择角色。";
-/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@，match：含有 match 的文件用于选择虚拟游戏手柄，因此不能包含 layout、transport 或 worksWithDefaultSDLHints。修复：移除 layout、transport 和 worksWithDefaultSDLHints，或移除 match。";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@，persona：虚拟游戏手柄定义必须包含 layout、transport、labels、worksWithDefaultSDLHints，以及带 version 的 identity。修复：补上缺少的键，或添加 match 来改为选择虚拟游戏手柄。";
+/* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@，match.unit：match.unit 必须是单元 ID。修复：将 unit 设为某个手柄的单元 ID，或省略。";
-/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@，identity.%2$@：角色的 identity 需要非空的 %2$@。修复：给 %2$@ 一个非空字符串。";
-/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@，identity.%2$@：虚拟游戏手柄的 identity 需要非空的 %2$@。修复：给 %2$@ 一个非空字符串。";
+/* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@，%2$@：ID 必须为 %3$@...65535。修复：将 %2$@ 设为 %3$@...65535。";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@，session.subcommands.counterModulus：子命令的 counterModulus 必须为 2...256。修复：将 counterModulus 设为 2...256。";
@@ -4529,20 +4531,20 @@
 "error.E5007.startupWrite.phase" = "%1$@，session.startup[].phase：启动阶段必须是 Startup 或 Activation。修复：将 phase 设为其中之一，或省略。";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@，session.startup[].crc32Seed：启动的 crc32Seed 必须在 0...255 之间。修复：将 crc32Seed 设为 0...255，或省略。";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@，match：角色文件不能重复用户文件 %2$@ 的 match。修复：让每个型号只有一个角色文件，或修改其中一个的 match。";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@，match：角色文件不能重复软件包文件 %2$@ 的 match。修复：让每个型号只有一个角色文件，或修改其中一个的 match。";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@，match：虚拟游戏手柄文件不能重复用户文件 %2$@ 的 match。修复：让每个型号只有一个虚拟游戏手柄文件，或修改其中一个的 match。";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@，match：虚拟游戏手柄文件不能重复软件包文件 %2$@ 的 match。修复：让每个型号只有一个虚拟游戏手柄文件，或修改其中一个的 match。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@，session.keepAlive.intervalMilliseconds：keep-alive 的间隔必须为 1...60000 ms。修复：将 intervalMilliseconds 设为 1...60000。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
 "error.E5007.keepAlive.writesCount" = "%1$@，session.keepAlive.writes：keep-alive 必须不列出写入，或列出 1...8 个。修复：列出 1...8 个写入，或省略 writes。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@，session.keepAlive.writes[].resendTuning：keep-alive 的 resendTuning 必须是 lizardResendTicks。修复：将 resendTuning 设为 lizardResendTicks，或省略。";
-/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@，persona：内置记录必须包含角色 %2$@ 的记录。修复：重新安装 OpenJoystickDriver。";
-/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@，persona：内置记录必须定义角色 %2$@，且不能包含 match。修复：重新安装 OpenJoystickDriver。";
+/* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@，persona：内置记录必须包含虚拟游戏手柄 %2$@ 的记录。修复：重新安装 OpenJoystickDriver。";
+/* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@，persona：内置记录必须定义虚拟游戏手柄 %2$@，且不能包含 match。修复：重新安装 OpenJoystickDriver。";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@，%2$@：%3$@ 文件不能列在 mod.plist 的 %2$@ 下，该列表只列出 %4$@ 文件。修复：将文件列在与其类型相符的列表下。";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4874,8 +4876,8 @@
 "ui.controllers.publication.reason.systemGamepad" = "系统将其作为游戏手柄处理";
 /* Reason the controller has no virtual gamepad: macOS handles its input directly. */
 "ui.controllers.publication.reason.nativeHIDPassThrough" = "系统直接处理其输入";
-/* Reason the controller has no virtual gamepad: another virtual device stands for it. */
-"ui.controllers.publication.reason.upstreamVirtualDevice" = "已有其他虚拟设备代表它";
+/* Reason the controller has no virtual gamepad: another virtual gamepad stands for it. */
+"ui.controllers.publication.reason.upstreamVirtualDevice" = "已有其他虚拟游戏手柄代表它";
 /* Reason the controller has no virtual gamepad: the user suspended the session. */
 "ui.controllers.publication.reason.sessionSuspended" = "会话已暂停";
 /* Reason the controller has no virtual gamepad: no virtual profile fits the controller. */
@@ -4914,8 +4916,8 @@
 "ui.controllers.physicalOwnership.systemHIDVisible" = "系统 HID";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */
 "ui.controllers.physicalOwnership.systemGamepad" = "系统游戏手柄";
-/* Value of the owner of the physical controller: another virtual device holds it before the app sees it. */
-"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "上游虚拟设备";
+/* Value of the owner of the physical controller: another virtual gamepad holds it before the app sees it. */
+"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "上游虚拟游戏手柄";
 /* Value of the owner of the physical controller when the app does not know it. */
 "ui.controllers.physicalOwnership.unknown" = "未知";
 /* Result of opening the HID input of a controller when the app does not know the result. */
@@ -4979,8 +4981,8 @@
 "status.controllerOwner.nameOnly" = "由 %@ 占用。该控制器正被直接读取。释放后 OpenJoystickDriver 会接管它。";
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "由其他 App 占用。该控制器正被直接读取。释放后 OpenJoystickDriver 会接管它。";
-/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual controller of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "系统还会把该控制器列为第二个没有输入的控制器。在游戏中，请选择 OpenJoystickDriver 发布的虚拟控制器。";
+/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
+"status.controllerAlsoListedBySystem" = "系统还会把该控制器列为第二个没有输入的控制器。在游戏中，请选择 OpenJoystickDriver 发布的虚拟游戏手柄。";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "独占访问";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5114,7 +5116,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "把旧版本的已存储文档转换为当前版本。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "转换带有旧 apiVersion 的 Settings.plist、AccessGrants.plist、配置文件、你的手柄记录和补丁以及虚拟设备文件。每个原件都保存在支持文件夹的 Migrated 文件夹中。模组包也会被转换。可指定一个文件夹来代替支持文件夹进行扫描。每个文件得到一个结论：Migrated、Current、Failed 或 Foreign。";
+"cli.migrate.group.discussion" = "转换带有旧 apiVersion 的 Settings.plist、AccessGrants.plist、配置文件、你的手柄记录和补丁以及虚拟游戏手柄文件。每个原件都保存在支持文件夹的 Migrated 文件夹中。模组包也会被转换。可指定一个文件夹来代替支持文件夹进行扫描。每个文件得到一个结论：Migrated、Current、Failed 或 Foreign。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "列出将被转换的文档，不做任何更改。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */

@@ -2400,7 +2400,7 @@
 /* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.cli.permission.group.paneInputRead" = "개인정보 보호 및 보안 > 입력 모니터링";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
-"cli.permission.group.purposeInputInject" = "가상 컨트롤러 출력 게시";
+"cli.permission.group.purposeInputInject" = "가상 게임패드 출력 게시";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
 "platform.macos.cli.permission.group.purposeUsbTransport" = "권한으로 제한된 원시 USB 인터페이스 소유. TCC 개인정보 보호 권한이 아님";
 /* Purpose column of the input reading permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -2706,6 +2706,8 @@
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "페르소나";
 /* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+"cli.controller.show.labelPersona" = "가상 게임패드";
+/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@(%2$@에서)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "프로토콜";
@@ -2999,8 +3001,8 @@
 "cli.virtual.reset.allDone" = "이제 모든 컨트롤러 모델이 가상 게임패드를 자동으로 선택합니다.";
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "모든 컨트롤러 모델을 가상 게임패드 자동 선택으로 되돌립니다.";
-/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual device file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "서비스가 가상 게임패드 선택을 모두 지우지 못했습니다. VirtualDevices 폴더에서 자체 ID를 설정하는 가상 기기 파일은 편집하거나 삭제할 때까지 남습니다. ‘ojd status’로 확인하세요.";
+/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
+"cli.virtual.reset.allFailed" = "서비스가 가상 게임패드 선택을 모두 지우지 못했습니다. VirtualDevices 폴더에서 자체 ID를 설정하는 가상 게임패드 파일은 편집하거나 삭제할 때까지 남습니다. ‘ojd status’로 확인하세요.";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "모든 컨트롤러 모델을 가상 게임패드 자동 선택으로 되돌리시겠습니까?";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3028,7 +3030,7 @@
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "적용된 사용자 레코드: %lld";
 /* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 및 페르소나 파일이 유효합니다";
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 및 가상 게임패드 파일이 유효합니다";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "무시 또는 건너뜀: %@; 수정한 뒤 ‘ojd status’로 확인하세요";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -3199,9 +3201,9 @@
 "cli.record.validate.valid" = "%1$@은(는) 유효한 %2$@ 레코드입니다(대상: %3$@, %4$@). ‘ojd record install’로 설치하세요.";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
 "cli.status.group.labelIgnoredDefaults" = "무시된 기본값 파일";
-/* Heading in the output of 'ojd status' above the list of skipped virtual device files. %lld is the number of entries. */
-"cli.status.group.labelSkippedVirtualDevices" = "건너뛴 가상 기기 파일 (%lld)";
-/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual device files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
+/* Heading in the output of 'ojd status' above the list of skipped virtual gamepad files. %lld is the number of entries. */
+"cli.status.group.labelSkippedVirtualDevices" = "건너뛴 가상 게임패드 파일 (%lld)";
+/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual gamepad files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
 "status.virtualDeviceFolderNotRead" = "OpenJoystickDriver는 이 폴더를 읽지 않습니다. 폴더의 파일을 %@(으)로 옮긴 뒤 폴더를 제거하세요.";
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "건너뛴 컨트롤러 레코드 (%lld)";
@@ -3579,7 +3581,7 @@
 "ui.library.record.removed" = "%@의 레코드를 제거했습니다.";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
 "ui.library.record.removeFailed" = "%1$@을(를) 제거할 수 없음: %2$@";
-/* Heading of the mods list in the Library area. A mod is a package of records, profiles and personas. */
+/* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "모드";
 /* Title of the empty state in the mods list of the Library area. */
 "ui.library.mods.empty.title" = "설치된 모드 없음";
@@ -3601,8 +3603,8 @@
 "ui.library.mod.replace.message" = "%1$@은(는) 이미 설치되어 있습니다. 교체하면 설치된 파일을 제거하고 버전 %2$@을(를) 설치합니다.";
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "모드 %@을(를) 제거하시겠습니까?";
-/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. Personas are the identities that a virtual gamepad can show. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver가 모드와, 모드가 추가한 레코드, 프로파일, 페르소나를 삭제합니다.";
+/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
+"ui.library.mod.remove.message" = "OpenJoystickDriver가 모드와, 모드가 추가한 레코드, 프로파일, 가상 게임패드를 삭제합니다.";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "모드 %@을(를) 제거했습니다.";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -4373,8 +4375,8 @@
 "error.E4002.message" = "이 패키지는 실행 중인 버전과 다른 OpenJoystickDriver 버전이 필요합니다. 이 버전을 지원하는 패키지 버전을 설치하거나 OpenJoystickDriver를 업데이트하세요.";
 /* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
 "error.E4003.message" = "패키지의 파일이 올바르지 않거나 없거나 mod.plist에 나열되어 있지 않습니다. 명령이 알려 주는 파일을 고친 뒤 다시 실행하세요.";
-/* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
-"error.E4004.message" = "이 패키지는 사용자 파일이나 설치된 다른 패키지에 이미 있는 컨트롤러, 페르소나 또는 프로파일을 다룹니다. 충돌하는 파일이나 패키지를 제거하거나 패키지를 수정한 뒤 명령을 다시 실행하세요.";
+/* Text of error E4004, printed when a mod package covers a controller, virtual gamepad or profile that the user's files or another package hold. */
+"error.E4004.message" = "이 패키지는 사용자 파일이나 설치된 다른 패키지에 이미 있는 컨트롤러, 가상 게임패드 또는 프로파일을 다룹니다. 충돌하는 파일이나 패키지를 제거하거나 패키지를 수정한 뒤 명령을 다시 실행하세요.";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
 "error.E4005.message" = "이 이름의 패키지가 이미 설치되어 있습니다. 바꾸려면 --force 옵션으로 명령을 실행하세요.";
 /* Text of error E4006, printed when no installed mod package has the name. The command in quotes stays as written. */
@@ -4481,25 +4483,25 @@
 "error.E5007.record.hexBytes" = "%1$@, %2$@: %3$@의 바이트는 공백 하나로 구분한 대문자 16진수 쌍이어야 합니다. 해결: %2$@을(를) 42 03 00처럼 대문자로, 쌍 사이에 공백 하나를 두고 작성하세요.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch에는 modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input 또는 tuning이 있어야 합니다. 해결: 이 섹션만 남기고 하나 이상 지정하세요.";
-/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona는 %2$@ 중 하나여야 합니다. 해결: persona를 그중 하나로 설정하세요.";
-/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
 "error.E5007.virtualDevice.matchRequired" = "%1$@, match: 사용자 폴더의 파일에는 match가 있어야 합니다. 해결: 모델의 vendorID와 productID가 있는 match를 추가하세요.";
-/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout은 %2$@ 중 하나여야 합니다. 해결: layout을 그중 하나로 설정하세요.";
-/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@, transport: transport는 USB 또는 Bluetooth여야 합니다. 해결: transport를 USB 또는 Bluetooth로 설정하세요.";
-/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@, labels: labels는 Xbox 또는 Generic이어야 합니다. 해결: labels를 Xbox 또는 Generic으로 설정하세요.";
-/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@, match: match가 있는 파일은 페르소나를 선택하므로 layout, transport, worksWithDefaultSDLHints를 가질 수 없습니다. 해결: layout, transport, worksWithDefaultSDLHints를 제거하거나 match를 제거하세요.";
-/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
-"error.E5007.virtualDevice.definition" = "%1$@, persona: 페르소나 정의에는 layout, transport, labels, worksWithDefaultSDLHints, version이 있는 identity가 있어야 합니다. 해결: 빠진 키를 추가하거나 match를 추가해 페르소나를 선택하세요.";
-/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@, match: match가 있는 파일은 가상 게임패드를 선택하므로 layout, transport, worksWithDefaultSDLHints를 가질 수 없습니다. 해결: layout, transport, worksWithDefaultSDLHints를 제거하거나 match를 제거하세요.";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@, persona: 가상 게임패드 정의에는 layout, transport, labels, worksWithDefaultSDLHints, version이 있는 identity가 있어야 합니다. 해결: 빠진 키를 추가하거나 match를 추가해 가상 게임패드를 선택하세요.";
+/* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit은 유닛 ID여야 합니다. 해결: unit을 컨트롤러의 유닛 ID로 설정하거나 생략하세요.";
-/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: 페르소나 identity에는 비어 있지 않은 %2$@가 필요합니다. 해결: %2$@에 비어 있지 않은 문자열을 지정하세요.";
-/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: 가상 게임패드 identity에는 비어 있지 않은 %2$@가 필요합니다. 해결: %2$@에 비어 있지 않은 문자열을 지정하세요.";
+/* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: ID는 %3$@...65535여야 합니다. 해결: %2$@를 %3$@...65535로 설정하세요.";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: 서브커맨드의 counterModulus는 2...256이어야 합니다. 해결: counterModulus를 2...256으로 설정하세요.";
@@ -4529,20 +4531,20 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: 시작 단계는 Startup 또는 Activation이어야 합니다. 해결: phase를 둘 중 하나로 설정하거나 생략하세요.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: 시작 crc32Seed는 0...255여야 합니다. 해결: crc32Seed를 0...255로 설정하거나 생략하세요.";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: 페르소나 파일은 사용자 파일 %2$@의 match를 반복할 수 없습니다. 해결: 모델마다 페르소나 파일을 하나만 두거나 둘 중 하나의 match를 바꾸세요.";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: 페르소나 파일은 패키지 파일 %2$@의 match를 반복할 수 없습니다. 해결: 모델마다 페르소나 파일을 하나만 두거나 둘 중 하나의 match를 바꾸세요.";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: 가상 게임패드 파일은 사용자 파일 %2$@의 match를 반복할 수 없습니다. 해결: 모델마다 가상 게임패드 파일을 하나만 두거나 둘 중 하나의 match를 바꾸세요.";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: 가상 게임패드 파일은 패키지 파일 %2$@의 match를 반복할 수 없습니다. 해결: 모델마다 가상 게임패드 파일을 하나만 두거나 둘 중 하나의 match를 바꾸세요.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: keep-alive 간격은 1...60000 ms여야 합니다. 해결: intervalMilliseconds를 1...60000으로 설정하세요.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive는 쓰기를 지정하지 않거나 1...8개를 지정해야 합니다. 해결: 쓰기를 1...8개 나열하거나 writes를 생략하세요.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: keep-alive의 resendTuning은 lizardResendTicks여야 합니다. 해결: resendTuning을 lizardResendTicks로 설정하거나 생략하세요.";
-/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: 번들 레코드에는 페르소나 %2$@의 레코드가 있어야 합니다. 해결: OpenJoystickDriver를 다시 설치하세요.";
-/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: 번들 레코드는 페르소나 %2$@를 정의해야 하며 match가 없어야 합니다. 해결: OpenJoystickDriver를 다시 설치하세요.";
+/* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: 번들 레코드에는 가상 게임패드 %2$@의 레코드가 있어야 합니다. 해결: OpenJoystickDriver를 다시 설치하세요.";
+/* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: 번들 레코드는 가상 게임패드 %2$@를 정의해야 하며 match가 없어야 합니다. 해결: OpenJoystickDriver를 다시 설치하세요.";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: %3$@ 파일은 %4$@ 파일을 나열하는 mod.plist의 %2$@에 나열할 수 없습니다. 해결: 파일 종류에 맞는 목록에 나열하세요.";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4874,8 +4876,8 @@
 "ui.controllers.publication.reason.systemGamepad" = "시스템이 게임패드로 처리함";
 /* Reason the controller has no virtual gamepad: macOS handles its input directly. */
 "ui.controllers.publication.reason.nativeHIDPassThrough" = "시스템이 입력을 직접 처리함";
-/* Reason the controller has no virtual gamepad: another virtual device stands for it. */
-"ui.controllers.publication.reason.upstreamVirtualDevice" = "다른 가상 기기가 이미 대신하고 있음";
+/* Reason the controller has no virtual gamepad: another virtual gamepad stands for it. */
+"ui.controllers.publication.reason.upstreamVirtualDevice" = "다른 가상 게임패드가 이미 대신하고 있음";
 /* Reason the controller has no virtual gamepad: the user suspended the session. */
 "ui.controllers.publication.reason.sessionSuspended" = "세션 일시 중단됨";
 /* Reason the controller has no virtual gamepad: no virtual profile fits the controller. */
@@ -4914,8 +4916,8 @@
 "ui.controllers.physicalOwnership.systemHIDVisible" = "시스템 HID";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */
 "ui.controllers.physicalOwnership.systemGamepad" = "시스템 게임패드";
-/* Value of the owner of the physical controller: another virtual device holds it before the app sees it. */
-"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "업스트림 가상 기기";
+/* Value of the owner of the physical controller: another virtual gamepad holds it before the app sees it. */
+"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "업스트림 가상 게임패드";
 /* Value of the owner of the physical controller when the app does not know it. */
 "ui.controllers.physicalOwnership.unknown" = "알 수 없음";
 /* Result of opening the HID input of a controller when the app does not know the result. */
@@ -4979,8 +4981,8 @@
 "status.controllerOwner.nameOnly" = "%@이(가) 사용 중입니다. 이 컨트롤러는 직접 읽히고 있습니다. 해제되면 OpenJoystickDriver가 처리합니다.";
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "다른 앱이 사용 중입니다. 이 컨트롤러는 직접 읽히고 있습니다. 해제되면 OpenJoystickDriver가 처리합니다.";
-/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual controller of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "시스템이 이 컨트롤러를 입력이 없는 두 번째 컨트롤러로도 표시합니다. 게임에서는 OpenJoystickDriver가 게시하는 가상 컨트롤러를 선택하십시오.";
+/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
+"status.controllerAlsoListedBySystem" = "시스템이 이 컨트롤러를 입력이 없는 두 번째 컨트롤러로도 표시합니다. 게임에서는 OpenJoystickDriver가 게시하는 가상 게임패드를 선택하십시오.";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "단독 접근";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5114,7 +5116,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 장치 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 모드 패키지도 변환됩니다. 지원 폴더 대신 검사할 폴더를 지정할 수 있습니다. 각 파일은 Migrated, Current, Failed, Foreign 중 하나의 판정을 받습니다.";
+"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 게임패드 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 모드 패키지도 변환됩니다. 지원 폴더 대신 검사할 폴더를 지정할 수 있습니다. 각 파일은 Migrated, Current, Failed, Foreign 중 하나의 판정을 받습니다.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "변환될 문서를 나열하고 아무것도 변경하지 않습니다.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
