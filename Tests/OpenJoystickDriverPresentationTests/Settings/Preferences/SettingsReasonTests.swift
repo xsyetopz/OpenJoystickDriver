@@ -97,6 +97,7 @@
         )
       )
       #expect(!ready.needsAttention)
+      #expect(ready.status == nil)
     }
 
     @Test

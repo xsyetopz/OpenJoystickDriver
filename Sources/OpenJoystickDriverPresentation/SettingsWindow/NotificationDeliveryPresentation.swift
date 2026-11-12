@@ -17,13 +17,14 @@
       }
     }
 
-    /// The text that says whether notifications reach the user.
-    var status: String {
+    /// The text that says why notifications do not reach the user, or nil while they do.
+    var status: String? {
       switch settings.authorization {
       case .denied:
         return OJDLocalized.string("platform.macos.ui.settings.notifications.notificationsDenied")
-      case .checking, .notDetermined:
+      case .notDetermined:
         return OJDLocalized.string("ui.settings.notifications.notificationPermissionRequired")
+      case .checking: return nil
       case .allowed: break
       }
       switch (settings.alertStyle, settings.soundsEnabled) {
@@ -39,10 +40,7 @@
         return OJDLocalized.string(
           "platform.macos.ui.settings.notifications.notificationSoundOffDetail"
         )
-      case (.banner, true), (.alert, true):
-        return OJDLocalized.string("ui.settings.notifications.notificationDeliveryReady")
-      case (.unknown, _), (_, nil):
-        return OJDLocalized.string("ui.settings.notifications.notificationDeliveryAllowed")
+      case (.banner, true), (.alert, true), (.unknown, _), (_, nil): return nil
       }
     }
   }

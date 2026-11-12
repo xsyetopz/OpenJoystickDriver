@@ -17,7 +17,6 @@
         Section {
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.general.startAtLogin"),
-            description: OJDLocalized.string("ui.settings.general.startAtLoginDescription"),
             isOn: Binding(
               get: { preferences.startAtLogin },
               set: { preferences.setStartAtLogin($0) }
@@ -28,7 +27,6 @@
           SettingsBesideError(preferences: preferences, origin: .loginItem)
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.general.showInMenuBar"),
-            description: OJDLocalized.string("ui.settings.general.showInMenuBarDescription"),
             isOn: Binding(
               get: { preferences.showInMenuBar },
               set: { preferences.setShowInMenuBar($0) }
@@ -101,9 +99,6 @@
         }.ojdInterfaceRow(SettingsRow.version)
         SettingsSwitchRow(
           title: OJDLocalized.string("ui.settings.general.checkUpdatesAutomatically"),
-          description: OJDLocalized.string(
-            "ui.settings.general.checkUpdatesAutomaticallyDescription"
-          ),
           isOn: Binding(
             get: { preferences.checkUpdatesAutomatically },
             set: { preferences.setCheckUpdatesAutomatically($0) }

@@ -40,11 +40,11 @@
       }
     }
 
-    /// The localization key of the sentence that describes the driver extension state.
+    /// The localization key of the text that describes the driver extension state.
     private var detailKey: String {
       switch runtime.systemExtensionSetupState {
-      case .checking: return "ui.setup.checkingDetail"
-      case .active: return "ui.setup.activeDetail"
+      case .checking: return "status.checking"
+      case .active: return "ui.library.installed"
       case .missingEmbedded: return "ui.setup.missingDetail"
       case .invalid: return "ui.setup.invalidDetail"
       case .unavailable: return "ui.setup.unavailableDetail"
