@@ -18,6 +18,7 @@ enum LocalizationCatalogAudit {
     "cli.controller.show.labelMotionPlus", "term.wiiExtension.nunchuk",
     "term.wiiExtension.classicController", "term.wiiExtension.classicControllerPro",
     "term.wiiExtension.motionPlus",
+    "platform.macos.ui.controllers.server.system", "ui.controllers.server.ojd",
   ]
 
   static let nonLinguisticSourceIdenticalKeys: Set<String> = sameInEveryLocaleKeys.union([
