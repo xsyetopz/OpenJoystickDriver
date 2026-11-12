@@ -228,10 +228,11 @@ struct InterfaceRowAuditTests {
   func settingsRowsMatchTheAuditLevels() throws {
     let rows = SettingsRow.allCases
     try expectMatchesAudit(rows)
-    let ids = (1...16).map { $0 < 10 ? "P0\($0)" : "P\($0)" }
+    let ids = (1...18).map { $0 < 10 ? "P0\($0)" : "P\($0)" }
     #expect(Set(rows.flatMap(\.auditIDs)) == Set(ids))
     #expect(
-      rows.filter { $0.rowLevel == .advanced }.flatMap(\.auditIDs).sorted() == ["P12", "P14"]
+      rows.filter { $0.rowLevel == .advanced }.flatMap(\.auditIDs).sorted()
+        == ["P12", "P14", "P17", "P18"]
     )
     #expect(rows.filter { $0.rowLevel == .developer }.flatMap(\.auditIDs) == ["P15"])
   }

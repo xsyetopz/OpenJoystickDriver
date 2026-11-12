@@ -276,12 +276,12 @@ For more information, see [Command reference](Command-Reference.md).
 **Show in menu bar** and **Show in Dock** choose where the icon shows.
 When **Show in Dock** is off, the Dock icon shows only while a window is open.
 
-**Pause shortcut** is a keyboard shortcut that pauses every controller, or resumes them when all are paused, from any app.
+**Pause shortcut** is a keyboard shortcut that pauses every controller, or resumes them when all are paused, from any app (needs the **Advanced** interface).
 It is unset until you click **Record Shortcut** and press a key with Control, Option, or Command; Escape cancels, and **Clear** removes it.
 Another app that uses the same combination makes the shortcut fail with an error here; record a different one.
 `ojd setting set pauseShortcut` sets it too.
 
-**Disconnect idle Bluetooth controllers** disconnects a Bluetooth controller whose input has not changed for the time you choose: 5, 10, 15, 30, or 60 minutes.
+**Disconnect idle Bluetooth controllers** disconnects a Bluetooth controller whose input has not changed for the time you choose: 5, 10, 15, 30, or 60 minutes (needs the **Advanced** interface).
 It is **Off** until you change it.
 It disconnects the way **Disconnect** in the menu does.
 A controller that stays on the same input, such as a stick held still, counts as idle.

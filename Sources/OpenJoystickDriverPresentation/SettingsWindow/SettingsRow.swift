@@ -1,4 +1,4 @@
-/// The rows of the Settings window, with the audit IDs P01 to P16.
+/// The rows of the Settings window, with the audit IDs P01 to P18.
 enum SettingsRow: InterfaceRow {
   /// P01: the Interface pop-up, which shows at both levels so a user can switch back.
   case interfacePicker
@@ -32,6 +32,10 @@ enum SettingsRow: InterfaceRow {
   case developerTools
   /// P16: the settings error section.
   case errorSection
+  /// P17: the pause shortcut row.
+  case pauseShortcut
+  /// P18: the idle-disconnect row.
+  case idleDisconnect
 
   var auditIDs: [String] {
     switch self {
@@ -51,12 +55,14 @@ enum SettingsRow: InterfaceRow {
     case .developerToolsSwitch: return ["P14"]
     case .developerTools: return ["P15"]
     case .errorSection: return ["P16"]
+    case .pauseShortcut: return ["P17"]
+    case .idleDisconnect: return ["P18"]
     }
   }
 
   var rowLevel: InterfaceRowLevel {
     switch self {
-    case .commandLineTool, .developerToolsSwitch: return .advanced
+    case .commandLineTool, .developerToolsSwitch, .pauseShortcut, .idleDisconnect: return .advanced
     case .developerTools: return .developer
     case .interfacePicker, .startAtLogin, .showInMenuBar, .showInDock, .version,
       .checkUpdatesAutomatically, .prereleaseUpdates, .controllerNotifications,

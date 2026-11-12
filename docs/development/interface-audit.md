@@ -6,14 +6,14 @@ Task 10.1 of `openspec/changes/0-6-0-alpha-3/tasks.md`; decision D23 of `design.
 
 Each control in sections 1 to 7 has a **Level** and a **Level basis**, assigned by the rule of D21 and `specs/interface-level/spec.md`: Simple shows the controller list, each controller's state and next step, the profile choice, Test Input, and the permission steps; Advanced adds the virtual gamepad kind, who serves a controller, tuning, identifiers, records and patches, and the activity log; Developer is a tool that shows only in Advanced with the developer switch on (packet streams, raw reports, contributor diagnostics). A window, menu, or toolbar that holds a Simple row, or is needed to reach one, is Simple. D21 left 64 controls undecided. The maintainer answered three questions: W07 is Simple, alerts show in both levels, and the rest is decided by the software and Apple practice. On confirming the list, the maintainer moved creating and editing a profile and prerelease updates to Simple, and the Access area's programs, tokens, endpoint and port under the developer switch; those rows end "(confirmation popup)". Each of the other rows names its evidence and ends "(decided by evidence)".
 
-The file holds 125 distinct controls (W01-W11, S01-S24, M01-M17, T01-T21, C01-C29, P01-P16, I01-I07). The table "12.12 comparison" repeats S01-S24 with the same level, which makes 149 table rows.
+The file holds 127 distinct controls (W01-W11, S01-S24, M01-M17, T01-T21, C01-C29, P01-P18, I01-I07). The table "12.12 comparison" repeats S01-S24 with the same level, which makes 151 table rows.
 
 | Level | Controls |
 | --- | --- |
 | Simple | 77 |
-| Advanced | 36 |
+| Advanced | 38 |
 | Developer | 12 |
-| Total | 125 |
+| Total | 127 |
 
 Rows that one level holds only in part, with the part in the other level named in the basis: C06 (identifiers and route are Advanced), C24 (endpoint and lists are Developer), M08 and M17 (Activity Log and Explain Error Code are Advanced). Group 13 hides those parts row by row.
 
@@ -195,6 +195,8 @@ Every item is read in A1 and shown in `ojd-alpha2/main-<Area>.png`. All keep the
 | P14 | Enable Developer Tools | `SettingsWindow/AdvancedPaneView.swift` | switch 36 x 16 | "Developer Tools", "Show controller input and USB packet tools." | `disclosure-controls`: "Use a disclosure control to hide details until they're relevant." | MonitorControl: "Show advanced settings" | the Developer pane is not opened (it shows only with the switch on) | fix 13.5 | Advanced | the spec shows developer tools only in Advanced, so their switch shows only there (decided by evidence) |
 | P15 | Developer controller pop-up | `Settings/Developer/DeveloperControllerSummaryView.swift` | not measured (Developer pane not opened) | "No controllers connected" | `pop-up-buttons` | none | stays enabled with no option | fix 12.6 | Developer | audit: the developer switch (Settings/Developer) |
 | P16 | Settings error section | `SettingsWindow/SettingsPaneComponents.swift` | not measured (shown on an error) | "Open System Settings", "Dismiss", "Reset settings" | `buttons` | none | one of the seven places a failure shows | fix 12.7 | Simple | maintainer: alerts and failure messages show in both levels (popup answer) |
+| P17 | Pause shortcut row | `SettingsWindow/PauseShortcutRow.swift` | not measured | "Pause shortcut", "Record Shortcut", "Clear" | `buttons` | none | none | none | Advanced | maintainer: Advanced (popup answer) |
+| P18 | Idle-disconnect row | `SettingsWindow/IdleDisconnectRow.swift` | not measured | "Disconnect idle Bluetooth controllers" | `pop-up-buttons` | none | none | none | Advanced | maintainer: Advanced (popup answer) |
 
 ## 7. Input Test
 

@@ -52,8 +52,8 @@
               "platform.macos.ui.settings.general.entryPointRequired"
             )
           ).ojdInterfaceRow(SettingsRow.showInDock)
-          PauseShortcutRow(preferences: preferences)
-          IdleDisconnectRow(preferences: preferences)
+          PauseShortcutRow(preferences: preferences).ojdInterfaceRow(SettingsRow.pauseShortcut)
+          IdleDisconnectRow(preferences: preferences).ojdInterfaceRow(SettingsRow.idleDisconnect)
           Picker(
             OJDLocalized.string("ui.settings.general.interface"),
             selection: Binding(
