@@ -3632,7 +3632,7 @@
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "文件路径";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */
-"ui.library.field.transport" = "传输方式";
+"ui.library.field.transport" = "连接";
 /* Label of the field in the mod detail that holds the version. */
 "ui.library.field.version" = "版本";
 /* Label of the field in the mod detail that holds the author. */
@@ -3930,7 +3930,7 @@
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "测试输入";
 /* Button and menu item that ends the wireless link of the selected controller. */
-"ui.menu.controller.disconnectWirelessLink" = "断开无线连接";
+"ui.menu.controller.disconnectWirelessLink" = "断开蓝牙连接";
 /* Item of the Controller menu that shows the selected controller in the main window. */
 "ui.menu.controller.showInWindow" = "在窗口中显示";
 /* Disabled item of the Controller menu and of the status item's Controllers submenu when no controller is connected. */
@@ -4058,7 +4058,7 @@
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "测试输入";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
-"ui.extra.disconnectWireless" = "断开无线连接";
+"ui.extra.disconnectWireless" = "断开蓝牙连接";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "在窗口中显示";
 /* Button of the problem banner that opens the Access area so the user can grant access. */

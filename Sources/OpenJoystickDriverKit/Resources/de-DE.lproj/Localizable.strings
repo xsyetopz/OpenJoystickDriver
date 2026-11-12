@@ -4214,7 +4214,7 @@
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "Dateipfad";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */
-"ui.library.field.transport" = "Übertragung";
+"ui.library.field.transport" = "Verbindung";
 /* Label of the field in the mod detail that holds the version. */
 "ui.library.field.version" = "Version";
 /* Label of the field in the mod detail that holds the author. */
@@ -4512,7 +4512,7 @@
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "Eingabe testen";
 /* Button and menu item that ends the wireless link of the selected controller. */
-"ui.menu.controller.disconnectWirelessLink" = "Funkverbindung trennen";
+"ui.menu.controller.disconnectWirelessLink" = "Bluetooth-Verbindung trennen";
 /* Item of the Controller menu that shows the selected controller in the main window. */
 "ui.menu.controller.showInWindow" = "Im Fenster anzeigen";
 /* Disabled item of the Controller menu and of the status item's Controllers submenu when no controller is connected. */
@@ -4640,7 +4640,7 @@
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "Eingabe testen";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
-"ui.extra.disconnectWireless" = "Funkverbindung trennen";
+"ui.extra.disconnectWireless" = "Bluetooth-Verbindung trennen";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "Im Fenster anzeigen";
 /* Button of the problem banner that opens the Access area so the user can grant access. */

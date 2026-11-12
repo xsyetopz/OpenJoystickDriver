@@ -43,7 +43,7 @@ enum LocalizationCatalogAudit {
     "ui.settings.general.title", "ui.controllers.server.ojd", "term.macro", "ui.profiles.macros",
   ]
   private static let frenchTerms: Set<String> = [
-    "ui.library.field.source", "ui.library.field.transport", "ui.library.field.version",
+    "ui.library.field.source", "ui.library.field.version",
     "ui.capture.gain",
     "cli.controller.show.labelSession", "cli.controller.show.labelExtension",
     "cli.status.group.labelTransportExtension", "cli.status.group.labelService", "term.destination",
@@ -138,7 +138,7 @@ enum LocalizationCatalogAudit {
     "nl-NL": [
       "term.macro", "ui.profiles.sort.controller",
       "term.parser", "term.protocolVariant.dongle",
-      "ui.library.field.transport", "ui.access.details", "ui.library.details", "ui.activity.filter",
+      "ui.access.details", "ui.library.details", "ui.activity.filter",
       "ui.activity.column.details",
       "ui.access.token.issued.title", "ui.access.token.named", "ui.access.tokens",
       "ui.library.mods",
