@@ -265,7 +265,7 @@
 /* Note on a controller row in the Controllers area when macOS serves the controller natively and the driver does not publish a virtual gamepad for it. */
 "platform.macos.ui.controllers.systemGamepadNotPublished" = "Встроенный геймпад macOS, не публикуется";
 /* Label of the popup in the Controllers detail that picks which program handles the controller for games. */
-"ui.controllers.server.label" = "Управляет";
+"ui.controllers.server.label" = "Управляется";
 /* Entry of the server picker in the Controllers detail: macOS handles the controller itself. */
 "platform.macos.ui.controllers.server.system" = "macOS";
 /* Option of the server popup: OpenJoystickDriver handles the controller and shows a virtual gamepad. OpenJoystickDriver is the product name. */
@@ -1385,7 +1385,7 @@
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Восстановить USB-драйвер Xbox";
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
-"platform.macos.cli.controller.show.labelServedBy" = "Штатный драйвер";
+"platform.macos.cli.controller.show.labelServedBy" = "Нативный драйвер";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
 "platform.macos.cli.controller.show.servedByMacOS" = "Управляется macOS. Выполните `ojd controller claim %@`, чтобы включить расширение и взять контроллер.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
@@ -1933,7 +1933,7 @@
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Не удалось прочитать этот сохранённый профиль. Удалите его, чтобы продолжить использование допустимых профилей.";
 /* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
-"ui.profiles.staleProfileMessage" = "Файл %@ сохранён более ранней версией и не может использоваться. Перенесите его, чтобы снова им пользоваться, или удалите.";
+"ui.profiles.staleProfileMessage" = "Файл %@ сохранён более ранней версией и не может использоваться. Мигрируйте его, чтобы снова им пользоваться, или удалите.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "Не удалось прочитать список активных профилей. Сбросьте его, чтобы продолжить. Ваши профили сохранятся.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -3706,7 +3706,7 @@
 /* Sentence under a permission row in the Access area when the permission is allowed. */
 "ui.access.permission.granted.message" = "Это разрешение предоставлено.";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
-"platform.macos.ui.access.permission.denied.message" = "macOS отклонила это разрешение, или его состояние не удалось прочитать. Разрешите его в Системных настройках.";
+"platform.macos.ui.access.permission.denied.message" = "Это разрешение отклонено в macOS, или его состояние не удалось прочитать. Разрешите его в Системных настройках.";
 /* Sentence under a permission row in the Access area when the permission has not been requested yet. */
 "ui.access.permission.notAsked.message" = "Это разрешение ещё не запрашивалось.";
 /* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
@@ -5156,9 +5156,9 @@
 /* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.rightStickTouch" = "Касание правого стика";
 /* Name of the touch sensor of the left trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.leftTrackpadTouch" = "Касание левой панели";
+"ui.controllers.control.leftTrackpadTouch" = "Касание левой сенсорной панели";
 /* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.rightTrackpadTouch" = "Касание правой панели";
+"ui.controllers.control.rightTrackpadTouch" = "Касание правой сенсорной панели";
 /* Name of the horizontal position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.pointerX" = "Горизонтальное положение указателя";
 /* Name of the vertical position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
@@ -5220,11 +5220,11 @@
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.needsStep.title" = "Требуется ваше действие";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
-"ui.controllers.readiness.needsStep.access.message" = "Этому контроллеру нужно разрешение, которое ещё не выдано.";
+"ui.controllers.readiness.needsStep.access.message" = "Этому контроллеру нужно разрешение, которое ещё не предоставлено.";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
-"ui.controllers.readiness.needsStep.access.action" = "Открыть доступ";
+"ui.controllers.readiness.needsStep.access.action" = "Открыть «Доступ»";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "Для этого контроллера нужно настроить драйвер Xbox USB.";
+"ui.controllers.readiness.needsStep.driver.message" = "Для этого контроллера нужно настроить USB-драйвер Xbox.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "Настроить драйвер";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
