@@ -331,6 +331,31 @@ The virtual gamepad is a standard gamepad. Each profile has a fixed set of butto
 - The right pad of the classic Steam Controller is its right stick, and the controller has no separate right stick click, so its pad click is the right stick click. The Steam Deck and the Steam Triton have a right stick click of their own, so their right pad click is a different control and is not carried.
 - The D-pad buttons of `sdl-compatible` stay clear. The D-pad is the hat.
 
+## Use AppleScript or JavaScript for Automation
+
+The app has no AppleScript dictionary. A script runs `ojd` through `do shell script`, whose `PATH` lacks `/usr/local/bin`, so it names the link in full. Turn the link on in Settings first. These examples read another path from the `OJD` environment variable.
+
+```applescript
+set ojd to system attribute "OJD"
+if ojd is "" then set ojd to "/usr/local/bin/ojd"
+set state to do shell script quoted form of ojd & " --no-input --json status | /usr/bin/plutil -extract service.state raw -o - -"
+set controllers to do shell script quoted form of ojd & " --no-input --json controller list | /usr/bin/plutil -extract items raw -o - -"
+return "Service: " & state & ". Connected controllers: " & controllers & "."
+```
+
+`osascript service-state.applescript` prints `Service: Running. Connected controllers: 0.` with no controller connected.
+
+```javascript
+const app = Application.currentApplication();
+app.includeStandardAdditions = true;
+const ojd = app.systemAttribute("OJD") || "/usr/local/bin/ojd";
+const status = JSON.parse(app.doShellScript(`'${ojd}' --no-input --json status`));
+const lines = status.unboundDevices.map((device) => `${device.name} (${device.connection})`);
+`Service ${status.service.state}; ${status.controllers.length} controllers; unbound: ${lines.join(", ") || "none"}`;
+```
+
+`osascript -l JavaScript unbound-devices.js` prints `Service Running; 0 controllers; unbound: 8BitDo Ultimate 2C Wireless Controller (USB)` while another program holds that controller. Both scripts and their output are in [`evidence/scripting/`](../evidence/scripting/).
+
 ## Use Shortcuts
 
 On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
