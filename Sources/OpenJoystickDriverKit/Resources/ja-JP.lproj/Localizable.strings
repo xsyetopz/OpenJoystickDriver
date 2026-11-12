@@ -1358,8 +1358,6 @@
 "platform.macos.cli.controller.show.servedByMacOS" = "macOS が処理しています。拡張機能を有効にしてコントローラを引き継ぐには `ojd controller claim %@` を実行してください。";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "macOS が処理";
-/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "Appleのドライバがこのコントローラを保持しています。引き継ぐと、Xbox USB ドライバが有効になります。";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "引き継ぐ";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
@@ -4860,8 +4858,6 @@
 "ui.controllers.publication.withReason" = "%1$@ (%2$@)";
 /* Reason shown with a failed publication. %@ is the reason the last send failed. */
 "ui.controllers.publication.failedSend" = "直前の送信に失敗しました: %@";
-/* Serving route with why it publishes nothing, for example "Output off (No virtual profile fits it)". %1$@ is the route and %2$@ the reason. */
-"ui.controllers.serving.withReason" = "%1$@（%2$@）";
 /* Reason of failing input health: the controller sends no reports. */
 "ui.controllers.inputHealth.reason.missingReports" = "レポートが届いていません";
 /* Reason of failing input health: the reports arrive but their content does not change. */
