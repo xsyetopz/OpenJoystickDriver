@@ -41,7 +41,7 @@ public enum MainWindowArea: String, CaseIterable, Identifiable, Hashable, Sendab
   }
 
   /// The address of this area's page on the project's GitHub wiki.
-  public var wikiURL: URL {
+  var wikiURL: URL {
     URL(string: "https://github.com/xsyetopz/OpenJoystickDriver/wiki/\(wikiPage)")
       ?? URL(fileURLWithPath: "/")
   }
