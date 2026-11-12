@@ -21,7 +21,7 @@
 /* Toolbar item of the input test window and button of the developer controller summary that reads the controller state again. */
 "action.refresh" = "Refresh";
 /* Button of an error state view and of the controller detail facts that repeats the failed load. */
-"action.tryAgain" = "Try again";
+"action.tryAgain" = "Try Again";
 /* Button of the access sheets that closes the sheet without changing anything. It is also bound to the Escape key. */
 "action.cancel" = "Cancel";
 /* Button of the motion and stick sheets of the profile editor that stores the edited values in the profile. */
@@ -145,11 +145,11 @@
 /* Button in the Updates section of the settings window that opens the page of the available update. */
 "ui.settings.general.viewUpdate" = "View Update";
 /* Title of the message in the Controllers area when the service cannot list controllers. */
-"ui.controllers.unavailable" = "Controllers unavailable";
+"ui.controllers.unavailable" = "Controllers Unavailable";
 /* Title of the message in the Controllers area when the list of controllers fails to load. */
-"ui.controllers.loadError" = "Could not load controllers";
+"ui.controllers.loadError" = "Could Not Load Controllers";
 /* Title of the empty state in the Controllers area when no controller is connected. */
-"ui.controllers.emptyTitle" = "No controller connected";
+"ui.controllers.emptyTitle" = "No Controller Connected";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch" = "OJD found no supported protocol for this controller.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -341,9 +341,9 @@
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
 "ui.keyboard.noKey" = "No key selected";
 /* Value of the key field while the app waits for a key press. Keep the three dots. */
-"ui.keyboard.pressKey" = "Press a key...";
+"ui.keyboard.pressKey" = "Press a Key...";
 /* Title of the button that starts the capture of a key in the capture assignment sheet. */
-"ui.keyboard.captureKey" = "Capture key";
+"ui.keyboard.captureKey" = "Capture Key";
 /* VoiceOver announcement when the key capture starts. Escape is the name of the Escape key. */
 "ui.keyboard.captureStarted" = "Keyboard capture started. Press a key; press Escape to cancel.";
 /* Instruction under the key field in the capture assignment sheet. Modifiers are keys such as Shift, Control, Option and Command. */
@@ -415,7 +415,7 @@
 /* Error under the name field of the profile creation sheet when the name is empty. */
 "ui.capture.profileNameValidation" = "Enter a profile name.";
 /* Toolbar button in the Profiles area that creates a profile. */
-"ui.profiles.new" = "New profile";
+"ui.profiles.new" = "New Profile";
 /* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
 "ui.profiles.remark" = "Note (optional)";
 /* Label of the popup above the profile list that chooses the order of the list. */
@@ -607,7 +607,7 @@
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "Not supported by this controller or protocol.";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
-"ui.profiles.export" = "Export profile";
+"ui.profiles.export" = "Export Profile";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
 "ui.profiles.hold" = "Hold";
 /* Label of the field in the behavior sheet that sets how long a control must be held. The value is in milliseconds. */
@@ -615,9 +615,9 @@
 /* Hint under the vendor ID and product ID fields. 0x marks a hexadecimal number and stays as written. */
 "ui.profiles.identifierHint" = "Use decimal or 0x-prefixed hexadecimal identifiers.";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
-"ui.profiles.import" = "Import profile";
+"ui.profiles.import" = "Import Profile";
 /* Toolbar button in the Profiles area that checks a profile file without importing it. */
-"ui.profiles.validateFile" = "Validate profile file";
+"ui.profiles.validateFile" = "Validate Profile File";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "Valid profile";
 /* Title of the alert when the checked profile file is not valid. */
@@ -1413,7 +1413,7 @@
 /* Button of the explain sheet that looks up the error code. */
 "ui.console.explain.action" = "Explain";
 /* Title of the message in the Activity log when the log cannot be read. */
-"ui.console.loadError" = "Could not read logs";
+"ui.console.loadError" = "Could Not Read Logs";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "Output";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
@@ -1571,11 +1571,11 @@
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
 "ui.motion.calibration.offset" = "Bias (°/s): X %1$.3f · Y %2$.3f · Z %3$.3f";
 /* Button in the motion calibration controls that starts collecting gyro bias samples. Disabled while collecting or while the controller reports no motion baseline. */
-"ui.motion.calibration.start" = "Start calibration";
+"ui.motion.calibration.start" = "Start Calibration";
 /* Button in the motion calibration controls that pauses collecting gyro bias samples. Disabled while nothing is collected. */
 "ui.motion.calibration.pause" = "Pause";
 /* Header of the motion calibration section in the input test window, which holds the gyro calibration controls for the selected controller. */
-"ui.motion.calibration.title" = "Motion calibration";
+"ui.motion.calibration.title" = "Motion Calibration";
 
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "Reconnect the controller, then refresh calibration status.";
@@ -4096,9 +4096,9 @@
 /* Error in the Library area. %1$@ is the name of a file or folder and %2$@ is the reason it cannot be read. */
 "ui.library.unreadable" = "%1$@ cannot be read: %2$@";
 /* Name of the check in the diagnostics table that validates the controller records. */
-"ui.library.records" = "Controller records";
+"ui.library.records" = "Controller Records";
 /* Title of the empty state in the records list of the Library area. */
-"ui.library.records.empty.title" = "No installed records";
+"ui.library.records.empty.title" = "No Installed Records";
 /* Name of the source of a record: a file that the user installed. It is shown next to the record. */
 "ui.library.layer.user" = "Your file";
 /* Name of the source of a record: a mod package added it. */
@@ -4134,7 +4134,7 @@
 /* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "Mods";
 /* Title of the empty state in the mods list of the Library area. */
-"ui.library.mods.empty.title" = "No installed mods";
+"ui.library.mods.empty.title" = "No Installed Mods";
 /* Notice after a mod check passed. %1$@ is the folder name and %2$@ is the mod name. */
 "ui.library.mod.valid" = "%1$@ is a valid mod: %2$@.";
 /* Error when a mod is refused. %1$@ is the folder name or mod name and %2$@ is the reason. */
@@ -4168,7 +4168,7 @@
 /* Placeholder of the search field in the toolbar of the Library area. */
 "ui.library.search" = "Search";
 /* Title of the empty state in the Library area when the search matches nothing. */
-"ui.library.search.noMatches" = "No matches";
+"ui.library.search.noMatches" = "No Matches";
 /* Toolbar button in the Library area that runs a record against a packet capture. Keep the three dots. */
 "ui.library.testRecord" = "Test Record...";
 /* Value of the status of a library item that is installed. */
@@ -4190,7 +4190,7 @@
 /* Heading of the section in the mod detail that lists the files. */
 "ui.library.section.files" = "Files";
 /* Heading of the section in the record detail that shows the result of a test. */
-"ui.library.section.testResult" = "Test result";
+"ui.library.section.testResult" = "Test Result";
 /* Name of the source of a record: the record ships with the app. */
 "ui.library.layer.driver" = "Default";
 /* Name of the source of a record: a global file of the user. */
@@ -4280,7 +4280,7 @@
 /* Line of the alert that turns on the WebSocket when the port is automatic. */
 "ui.access.web.enable.automatic" = "The system picks a free port.";
 /* Heading of the list of programs that have access in the Access area. */
-"ui.access.grants" = "Programs with access";
+"ui.access.grants" = "Programs with Access";
 /* Toolbar button in the Access area that starts the grant of access to a program. Keep the three dots. */
 "ui.access.grantProgram" = "Grant a Program...";
 /* Button on a refused program that grants it access. */
@@ -4318,7 +4318,7 @@
 /* Toolbar button in the Access area that starts the creation of a token. Keep the three dots. */
 "ui.access.grantToken" = "Create a Token...";
 /* Heading of the token creation sheet. */
-"ui.access.token.form.title" = "Create a token";
+"ui.access.token.form.title" = "Create a Token";
 /* Placeholder of the name field of the token creation sheet. */
 "ui.access.token.name" = "Name";
 /* Help text under the origins field of the token creation sheet. https://example.com is an example and stays as written. */
@@ -4346,11 +4346,11 @@
 /* Title of a token in the list of tokens when its name is not known. */
 "ui.access.token.unknown" = "Unknown token";
 /* Heading of the list of programs and tokens that the endpoint refused in the last 24 hours. */
-"ui.access.refused" = "Refused recently";
+"ui.access.refused" = "Refused Recently";
 /* Footer of the list of refused programs and tokens. */
 "ui.access.refused.message" = "Programs and tokens that the endpoint turned away in the last 24 hours.";
 /* Heading of the list of connections that are open at the moment in the Access area. */
-"ui.access.connections" = "Connected now";
+"ui.access.connections" = "Connected Now";
 /* Name of the read scope. It lets a program read controller state. */
 "ui.access.scope.read" = "Read";
 /* Name of the control scope. It lets a program change controller state and send output. */
@@ -4530,7 +4530,7 @@
 /* Item of the Help menu that starts a short tour of the main window, one step per area. */
 "ui.menu.help.mainWindowTour" = "Main Window Tour";
 /* Title of the alert shown after the support report is copied. */
-"ui.menu.copySupportReport.done" = "Support report copied";
+"ui.menu.copySupportReport.done" = "Support Report Copied";
 /* Message of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.doneDetail" = "The support report is on the clipboard.";
 /* Title of the alert shown when the support report cannot be copied. */
@@ -4742,9 +4742,9 @@
 /* Label of the popup that sets whether a virtual gamepad kind choice applies to a controller model or to one controller. */
 "ui.controllers.virtual.scope" = "Apply to";
 /* Option of the scope popup: the choice applies to all controllers of the model. */
-"ui.controllers.virtual.scope.model" = "This model";
+"ui.controllers.virtual.scope.model" = "This Model";
 /* Option of the scope popup: the choice applies to this controller only. */
-"ui.controllers.virtual.scope.unit" = "This controller";
+"ui.controllers.virtual.scope.unit" = "This Controller";
 /* Label of the row in the Controllers detail that holds the button that clears all virtual gamepad kind choices. */
 "ui.controllers.virtual.resetAll" = "Reset all overrides";
 /* Error when the service cannot clear the virtual gamepad kind choices. */
@@ -4915,7 +4915,7 @@
 /* Row label in the ojd status table that gives why the stopped service's request listener stopped. */
 "cli.status.group.listenerFailureLabel" = "Request listener";
 /* Label of the button in the problem banner that starts the service's stopped request listener again. */
-"status.listenerFailure.restart" = "Restart listener";
+"status.listenerFailure.restart" = "Restart Listener";
 /* Status line when restarting the request listener failed. %@ is the error number of the failed call. */
 "status.listenerFailure.restartFailed" = "The request listener did not restart (error number %@). Quit and reopen OpenJoystickDriver.";
 /* Status line of a service that is not running when its last request listener stopped with an error. %@ is the error code with its explanation, the error number and the time. */
@@ -5157,7 +5157,7 @@
 /* Button in the General pane of the settings window that starts recording the pause shortcut. */
 "ui.settings.general.pauseShortcutRecord" = "Record Shortcut";
 /* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
-"ui.settings.general.pauseShortcutRecording" = "Press the shortcut...";
+"ui.settings.general.pauseShortcutRecording" = "Press the Shortcut...";
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "Another app already uses this shortcut. Record a different one.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
@@ -5201,7 +5201,7 @@
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
 "cli.setting.set.badIdleDisconnect" = "'%1$@' is not a number of minutes. Use a whole number from %2$@ to %3$@, or off.";
 /* Heading of the setup steps that the main window shows when the app starts with a step still open. */
-"ui.setupSteps.title" = "Finish setting up";
+"ui.setupSteps.title" = "Finish Setting Up";
 /* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
 "platform.macos.ui.setupSteps.inputRead" = "Allow Input Monitoring so OpenJoystickDriver can read your controllers.";
 /* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
@@ -5213,4 +5213,4 @@
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
 "ui.interface.showAdvanced" = "Show All Controls";
 /* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
-"ui.interface.areaNeedsAdvanced" = "Hidden in the Simple interface";
+"ui.interface.areaNeedsAdvanced" = "Hidden in the Simple Interface";
