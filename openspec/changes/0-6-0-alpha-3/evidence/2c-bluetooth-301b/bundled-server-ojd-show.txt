@@ -1,0 +1,22 @@
+2026-11-12 23:45, build f8a498dfb, empty Controllers/ folder
+$ ojd controller show 2DC8:301B
+Name                  8BitDo Ultimate 2C Wireless
+ID                    E-cgEzuwiAjasRMuTI
+Unit ID               U-BEAkr199Ua8jvgZG
+Vendor:Product        2DC8:301B
+Connection            Bluetooth Low Energy
+Protocol              hid-descriptor
+Session               active
+Battery               none
+Input                 awaiting-input
+Ownership             route hid, physical exclusive-hid, HID input exclusive
+Handled by            OJD (from bundled)
+Serving route         virtual-hid
+Virtual gamepad       sdl-compatible
+Record                bundled
+Input mapping         record
+Controls              south, east, west, north, left-shoulder, right-shoulder, left-trigger, right-trigger, back, start, left-stick-click, right-stick-click, dpad-up, dpad-down, dpad-left, dpad-right, guide, left-stick-x, left-stick-y, right-stick-x, right-stick-y
+Rumble                none
+Lighting              none
+Virtual gamepad kind  sdl-compatible (automatic)
+Publication           published
