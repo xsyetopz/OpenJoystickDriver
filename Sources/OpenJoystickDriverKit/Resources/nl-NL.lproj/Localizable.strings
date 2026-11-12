@@ -2014,7 +2014,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Voorbeelden:\n  # Houd de spatiebalk ingedrukt zolang de zuidknop wordt ingedrukt\n  ojd binding set Racing button:south key:space\n  # Schakel J om bij elke druk\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # Herhaal J 10 keer per seconde zolang de knop wordt ingedrukt\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Voorbeelden:\n  # Installeer een opnamebestand\n  ojd record install 045e-028e.plist\n  # Lees de opname van stdin\n  ojd record install - < 045e-028e.plist";
+"cli.record.install.examples" = "Voorbeelden:\n  # Installeer een recordbestand\n  ojd record install 045e-028e.plist\n  # Lees het record van stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Voorbeelden:\n  # Laat een programma de service gebruiken\n  ojd access grant /Applications/Example.app\n  # Maak een token voor pagina’s die vanaf één oorsprong worden aangeboden\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -2638,7 +2638,7 @@
 /* Message when a controller cannot be released to macOS because macOS does not handle it natively. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "platform.macos.cli.controller.group.serverNotNative" = "macOS beheert %@ niet native, dus OpenJoystickDriver beheert hem altijd.";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
-"cli.controller.group.serverRawUsb" = "%@ gebruikt ruwe USB, dus OpenJoystickDriver beheert hem altijd.";
+"cli.controller.group.serverRawUsb" = "%@ gebruikt raw USB, dus OpenJoystickDriver beheert hem altijd.";
 /* Message printed after the server of a controller is changed. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
 "cli.controller.group.serverSuccess" = "%1$@ op %2$@ gezet in %3$@. De draaiende service past het nu toe.";
 /* One-line summary of 'ojd controller player' in the command list and at the top of its help. */
@@ -2720,7 +2720,7 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Record";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "Niet bediend";
+"cli.controller.show.labelNotServed" = "Niet beheerd";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "Volgende stap";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "Controleert of het bestand een geldige beschrijving is, of de familienaam UpperCamelCase is en overeenkomt met de bestandsnaam, of het geen ingebouwde familie is en of het een weergavenaam en invoerindelingen instelt. Eindigt met 1 en de E5xxx-code als het bestand wordt geweigerd.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ is een geldige beschrijving van de familie %2$@ (%3$@). Installeer het met 'ojd protocol install'.";
+"cli.protocol.validate.valid" = "%1$@ is een geldige beschrijving van de familie %2$@ (%3$@). Installeer het met ‘ojd protocol install’.";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "Een protocolbeschrijving controleren en voor je gebruiker installeren.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -3412,7 +3412,7 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "‘%1$@’: %2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "Kopieert een profiel voor een ander controllermodel en behoudt de toewijzingen die dat model kan gebruiken.";
+"cli.profile.convert.abstract" = "Kopieert een profiel voor een ander controllermodel en behoudt de koppelingen die dat model kan gebruiken.";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.convert.controller" = "Het doelmodel van de controller: VVVV:PPPP of de ID van een aangesloten controller.";
 /* Help text of the --name option of 'ojd profile convert'. */
@@ -3674,7 +3674,7 @@
 /* Line of the output of 'ojd explain' with the wire value of the code, which other programs read. %@ is that value and stays as written. */
 "cli.explain.group.wire" = "Wire-waarde: %@";
 /* Error when the installed app is older than the repository sources that built this ojd. The build command, the environment variable OJD_RUN_REPOSITORY_CLI=1 and OpenJoystickDriver.app stay as written. */
-"cli.shared.error.staleInstallation" = "De geïnstalleerde OpenJoystickDriver.app is ouder dan deze repositorybronnen. Voer „just install-fast-dev” uit of stel OJD_RUN_REPOSITORY_CLI=1 in om deze build uit te voeren.";
+"cli.shared.error.staleInstallation" = "De geïnstalleerde OpenJoystickDriver.app is ouder dan deze repositorybronnen. Voer ‘just install-fast-dev’ uit of stel OJD_RUN_REPOSITORY_CLI=1 in om deze build uit te voeren.";
 /* Error when ojd cannot hand the command line to the installed ojd. ojd stays as written. */
 "cli.shared.error.forwarderAllocation" = "Kon geen argumenten reserveren voor de geïnstalleerde ojd. Voer de opdracht opnieuw uit.";
 /* Error when ojd cannot start the installed ojd. %@ is the reason from the system. OpenJoystickDriver.app stays as written. */
@@ -3718,7 +3718,7 @@
 /* Text of error E2019, printed when the check for updates did not finish. */
 "error.E2019.message" = "De controle op updates is niet voltooid. Controleer je netwerkverbinding en probeer het opnieuw.";
 /* Text of error E2020, printed when the installed app is older than the ojd that runs. OpenJoystickDriver is the product name. The build command and OJD_RUN_REPOSITORY_CLI=1 stay as written. */
-"error.E2020.message" = "De geïnstalleerde OpenJoystickDriver-app is ouder dan deze ojd. Voer „just install-fast-dev” uit of stel OJD_RUN_REPOSITORY_CLI=1 in om deze build uit te voeren.";
+"error.E2020.message" = "De geïnstalleerde OpenJoystickDriver-app is ouder dan deze ojd. Voer ‘just install-fast-dev’ uit of stel OJD_RUN_REPOSITORY_CLI=1 in om deze build uit te voeren.";
 /* Text of error E2021, printed when an ojd built from the repository cannot hand a command to the installed app. OpenJoystickDriver.app stays as written. */
 "error.E2021.message" = "Een ojd-build uit de repository kon de opdracht niet doorgeven aan de geïnstalleerde app. Installeer OpenJoystickDriver.app opnieuw en voer de opdracht opnieuw uit.";
 /* Text of error E3001, returned when a remapping request names a controller that is not connected or not ready. */
@@ -3844,9 +3844,9 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is not the kind of packet its protocol uses. %1$@ is the file. */
 "error.E5007.rumble.templateKind" = "%1$@, session.rumble: een trilsjabloon is een usb-pakket voor een raw-USB-protocol en een HID-rapport voor een HID-protocol. Oplossing: schrijf het sjabloon als het soort pakket dat het protocol gebruikt.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is in a family whose driver does not encode it. %1$@ is the file. */
-"error.E5007.rumble.templateDriver" = "%1$@, session.rumble: trilsjablonen vereisen een driver die ze codeert. Oplossing: verwijder het trilsjabloon, of gebruik een familie waarvan de driver het codeert.";
+"error.E5007.rumble.templateDriver" = "%1$@, session.rumble: trilsjablonen vereisen een stuurprogramma dat ze codeert. Oplossing: verwijder het trilsjabloon, of gebruik een familie waarvan het stuurprogramma het codeert.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is beside a session keepAlive. %1$@ is the file. */
-"error.E5007.rumble.resendWithKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: een resendIntervalMilliseconds voor trillen kan niet samen met een sessie-keepAlive. Oplossing: verwijder resendIntervalMilliseconds, of de sessie-keepAlive.";
+"error.E5007.rumble.resendWithKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: een resendIntervalMilliseconds voor trillen kan niet worden gecombineerd met een sessie-keepAlive. Oplossing: verwijder resendIntervalMilliseconds, of de sessie-keepAlive.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is in a family that declares its own keepAlive. %1$@ is the file. */
 "error.E5007.rumble.resendWithFamilyKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: een resendIntervalMilliseconds voor trillen vereist een familie waarvan de beschrijving geen keepAlive declareert. Oplossing: verwijder resendIntervalMilliseconds, want de keep-alive van de familie bepaalt de timing.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a record has no mode. %1$@ is the file. */
@@ -3864,11 +3864,11 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
 "error.E5007.modes.usageMapNotLayouts" = "%1$@, input: een HIDDescriptor-modus leest een gebruikstabel, geen invoerindelingen. Oplossing: vervang de invoerindelingen door een gebruikstabel.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
-"error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: een HID-gebruikstabel geldt alleen als de driver van elke modus er een leest. Oplossing: verwijder de gebruikstabel, of gebruik alleen drivers die er een lezen.";
+"error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: een HID-gebruikstabel geldt alleen als het stuurprogramma van elke modus er een leest. Oplossing: verwijder de gebruikstabel, of gebruik alleen stuurprogramma’s die er een lezen.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */
-"error.E5007.modes.capabilities" = "%1$@, capabilities: capabilities moeten delta’s zijn die de driver van een modus declareert. Oplossing: houd alleen capabilities die de driver van een modus declareert.";
+"error.E5007.modes.capabilities" = "%1$@, capabilities: capabilities moeten delta’s zijn die het stuurprogramma van een modus declareert. Oplossing: houd alleen capabilities die het stuurprogramma van een modus declareert.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a tuning key is not read by the driver. %2$@ is the key and %3$@ is the driver. %1$@ is the file. */
-"error.E5007.tuning.keyNotRead" = "%1$@, tuning.%2$@: %2$@ wordt niet gelezen door de driver %3$@. Oplossing: verwijder %2$@ uit tuning, of gebruik een driver die het leest.";
+"error.E5007.tuning.keyNotRead" = "%1$@, tuning.%2$@: %2$@ wordt niet gelezen door het stuurprogramma %3$@. Oplossing: verwijder %2$@ uit tuning, of gebruik een stuurprogramma dat het leest.";
 /* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold input layouts for a family that reads none. %1$@ is the file. */
 "error.E5007.protocolDescription.inputLayout" = "%1$@, defaults.input: een invoerindeling geldt alleen voor een familie die er een leest. Oplossing: verwijder de invoerindeling uit de standaardwaarden.";
 /* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold a usage map for a family that reads none. %1$@ is the file. */
@@ -3886,7 +3886,7 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
 "error.E5007.protocolDescription.keepAliveUSB" = "%1$@, defaults.session.keepAlive.writes: een raw-USB-keep-alive-schrijfactie geldt alleen voor een familie met een raw-USB-variant. Oplossing: verwijder de raw-USB-schrijfactie, of gebruik een HID-schrijfactie.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
-"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@, defaults.session.keepAlive.writes[].resendTuning: de resendTuning van een keep-alive-schrijfactie noemt %2$@, dat de familie moet lezen en een standaardwaarde moet geven. Oplossing: noem een tuningsleutel die de familie leest en een standaardwaarde geeft, of verwijder resendTuning.";
+"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@, defaults.session.keepAlive.writes[].resendTuning: de resendTuning van een keep-alive-schrijfactie noemt %2$@, dat de familie moet lezen en een standaardwaarde moet geven. Oplossing: noem een afstelsleutel die de familie leest en een standaardwaarde geeft, of verwijder resendTuning.";
 /* Error E5007, shown when a record or protocol description breaks a rule: activation or deactivation names a transport that writeTransports does not list. %1$@ is the file. */
 "error.E5007.protocolDescription.activationTransport" = "%1$@, activation: activation en deactivation noemen alleen een transport dat writeTransports vermeldt. Oplossing: noem een transport uit writeTransports, of voeg het daar toe.";
 /* Error E5007, shown when a record or protocol description breaks a rule: the defaults leave out session fields that the family reads. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
@@ -3896,7 +3896,7 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
 "error.E5007.protocolDescription.namedPacketPrefix" = "%1$@, namedPackets: de id van elk benoemd pakket begint met %2$@/. Oplossing: hernoem de pakketten zodat elke id met %2$@/ begint.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
-"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: een familie die altijd raw USB is leest haar tuning via rawUSBTuningKeys. Oplossing: verplaats de sleutels van tuningKeys naar rawUSBTuningKeys.";
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: een familie die altijd raw USB is leest haar afstelling via rawUSBTuningKeys. Oplossing: verplaats de sleutels van tuningKeys naar rawUSBTuningKeys.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
 "error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@, rawUSBTuningKeys: rawUSBTuningKeys gelden alleen voor een familie met een raw-USB-variant. Oplossing: verwijder rawUSBTuningKeys, of voeg een raw-USB-variant toe.";
 /* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
@@ -3962,9 +3962,9 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: de resendTuning van een keep-alive moet lizardResendTicks zijn. Oplossing: stel resendTuning in op lizardResendTicks, of laat het weg.";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: de gebundelde records moeten een record voor de virtuele gamepad %2$@ bevatten. Oplossing: installeer OpenJoystickDriver opnieuw.";
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: de meegeleverde records moeten een record voor de virtuele gamepad %2$@ bevatten. Oplossing: installeer OpenJoystickDriver opnieuw.";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: een gebundeld record moet de virtuele gamepad %2$@ definiëren en geen match bevatten. Oplossing: installeer OpenJoystickDriver opnieuw.";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: een meegeleverd record moet de virtuele gamepad %2$@ definiëren en geen match bevatten. Oplossing: installeer OpenJoystickDriver opnieuw.";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: een %3$@-bestand mag in mod.plist niet onder %2$@ staan, dat %4$@-bestanden noemt. Oplossing: zet het bestand onder de lijst die bij zijn soort past.";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -3974,7 +3974,7 @@
 /* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
 "error.E5007.patch.path" = "%1$@, selector: een patchbestand moet op %2$@ staan. Oplossing: verplaats het bestand daarheen, of wijzig zijn selector.";
 /* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
-"error.E5007.tuningDefaults.selector" = "%1$@, selector: de selector van de standaardafstemming moet all zijn. Oplossing: stel selector in op all.";
+"error.E5007.tuningDefaults.selector" = "%1$@, selector: de selector van de standaardafstelling moet all zijn. Oplossing: stel selector in op all.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: elk item moet een id bevatten en alleen id, protocol, match, interface, session of idle. Oplossing: geef elk item een id en verwijder elke andere sleutel.";
@@ -3989,7 +3989,7 @@
 /* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeDuplicate" = "%1$@, remove: het pad %2$@ staat twee keer in de lijst. Oplossing: verwijder een van de twee items.";
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: een all-patch mag alleen tuning-sleutels verwijderen, niet %2$@. Oplossing: verwijder hier alleen tuning-sleutels of gebruik een patch voor één controller.";
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: een all-patch mag alleen afstelsleutels verwijderen, niet %2$@. Oplossing: verwijder hier alleen tuning-sleutels of gebruik een patch voor één controller.";
 /* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
 "error.E5007.patch.selectorNotObject" = "%1$@, selector: selector moet all, model of vendorID met productID zijn. Oplossing: schrijf selector als dictionary in een van die vormen.";
 /* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
@@ -5085,7 +5085,7 @@
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "Voert een generatorscript uit en schrijft de documenten die het teruggeeft.";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
-"cli.generate.group.discussion" = "Voert het script uit in een hulpproces zonder toegang tot bestanden of netwerk, controleert de documenten die de functie generate teruggeeft en schrijft elk als propertylistbestand naar --output. Zonder --output toont het de documenten. --timeout stelt de tijdslimiet in seconden in (standaard 5).";
+"cli.generate.group.discussion" = "Voert het script uit in een hulpproces zonder toegang tot bestanden of netwerk, controleert de documenten die de functie generate teruggeeft en schrijft elk als eigenschappenlijstbestand naar --output. Zonder --output toont het de documenten. --timeout stelt de tijdslimiet in seconden in (standaard 5).";
 /* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
 "cli.generate.group.script" = "Het generatorscript, een .js-bestand.";
 /* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
