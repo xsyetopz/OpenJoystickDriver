@@ -189,7 +189,8 @@
         .installRecordOrMod, .saveSupportReport, .saveActivityLog, .showArea,
         .controllerTarget, .suspendOrResumeController, .testInput, .disconnectWirelessLink,
         .showControllerInWindow, .activateProfile, .deactivateProfile, .showActivityLog,
-        .explainErrorCode, .copySupportReport, .openAreaHelp, .reportProblem,
+        .explainErrorCode, .copySupportReport, .openAreaHelp, .showMainWindowTour,
+        .reportProblem,
         .openProjectWebsite, .find,
         .toolbar, .setInterfaceLevel:
         return nil

@@ -163,6 +163,7 @@
       case .copySupportReport: copySupportReportWithFeedback()
       case .openAreaHelp:
         NSWorkspace.shared.open((mainWindow?.selectedArea ?? .controllers).wikiURL)
+      case .showMainWindowTour: showMainWindowTour()
       case .reportProblem: open(urlString: StatusItemModel.problemReport)
       case .openProjectWebsite: openProjectPage(nil)
       case .services, .hide, .hideOthers, .showAll, .undo, .redo, .cut, .copy, .paste, .delete,
@@ -267,6 +268,36 @@
       alert.informativeText = message
       alert.addButton(withTitle: OJDLocalized.string("action.ok"))
       alert.runActivatingApp()
+    }
+
+    /// Shows the tour of the main window, one alert per area, until the person is done.
+    private func showMainWindowTour() {
+      var tour = MainWindowTour()
+      while true {
+        let choices = tour.choices
+        let step = tour.current
+        mainWindow?.showMainWindow(area: step.area)
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.icon = NSImage(systemSymbolName: step.area.symbolName, accessibilityDescription: nil)
+        alert.messageText = OJDLocalized.string(step.titleKey)
+        alert.informativeText = OJDLocalized.string(step.summaryKey)
+        for choice in choices {
+          switch choice {
+          case .next: alert.addButton(withTitle: OJDLocalized.string("ui.tour.next"))
+          case .back: alert.addButton(withTitle: OJDLocalized.string("ui.tour.back"))
+          case .done: alert.addButton(withTitle: OJDLocalized.string("action.done"))
+          }
+        }
+        let first = NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
+        let pressed = alert.runActivatingApp().rawValue - first
+        guard choices.indices.contains(pressed) else { return }
+        switch choices[pressed] {
+        case .next: tour.next()
+        case .back: tour.back()
+        case .done: return
+        }
+      }
     }
 
     /// Asks to confirm, then disconnects the wireless link of `device`.

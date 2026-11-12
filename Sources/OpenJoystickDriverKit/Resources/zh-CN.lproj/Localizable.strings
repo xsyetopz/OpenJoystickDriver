@@ -3949,6 +3949,8 @@
 "ui.menu.help.projectWebsite" = "项目网站";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "此区域的帮助";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "主窗口导览";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "已拷贝支持报告";
 /* Message of the alert shown after the support report is copied. */
@@ -3967,6 +3969,20 @@
 "ui.sidebar.access.title" = "访问";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "活动";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "查看已连接的控制器并测试其输入。";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "创建和编辑用于重新映射控制器按键和摇杆的配置文件。";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "浏览随 App 提供或已安装的控制器记录和模组。";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "检查 App 需要的权限以及哪些客户端可以访问它。";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "出现问题时，阅读日志并运行诊断。";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "下一个";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "返回";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "在菜单栏中显示 OpenJoystickDriver 项目。";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */

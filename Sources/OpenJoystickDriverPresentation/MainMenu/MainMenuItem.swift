@@ -111,6 +111,8 @@ enum MainMenuAction: Hashable, Sendable {
   case copySupportReport
   /// Open the wiki page of the main-window area in view.
   case openAreaHelp
+  /// Show the tour of the main window.
+  case showMainWindowTour
   /// Open the page to report a problem.
   case reportProblem
   /// Open the project page in the default browser.

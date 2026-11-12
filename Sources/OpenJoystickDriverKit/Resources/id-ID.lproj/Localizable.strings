@@ -3949,6 +3949,8 @@
 "ui.menu.help.projectWebsite" = "Situs Web Proyek";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "Bantuan untuk Area Ini";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "Tur Jendela Utama";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Laporan dukungan disalin";
 /* Message of the alert shown after the support report is copied. */
@@ -3967,6 +3969,20 @@
 "ui.sidebar.access.title" = "Akses";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "Aktivitas";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "Lihat pengontrol yang terhubung dan uji masukannya.";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "Buat dan edit profil yang memetakan ulang tombol dan stik pengontrol.";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "Telusuri catatan pengontrol dan mod yang disertakan dengan app atau sudah terpasang.";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "Periksa izin yang dibutuhkan app dan klien mana yang dapat menjangkaunya.";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "Baca log dan jalankan diagnostik saat ada yang tidak berfungsi.";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "Berikutnya";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "Kembali";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "Tampilkan item OpenJoystickDriver di bar menu.";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */

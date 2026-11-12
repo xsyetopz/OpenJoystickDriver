@@ -3949,6 +3949,8 @@
 "ui.menu.help.projectWebsite" = "Веб-сайт проекта";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "Справка по этой области";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "Обзор главного окна";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Отчёт для поддержки скопирован";
 /* Message of the alert shown after the support report is copied. */
@@ -3967,6 +3969,20 @@
 "ui.sidebar.access.title" = "Доступ";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "Активность";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "Просматривайте подключённые контроллеры и проверяйте их ввод.";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "Создавайте и редактируйте профили, которые переназначают кнопки и стики контроллера.";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "Просматривайте записи контроллеров и моды, которые входят в приложение или установлены.";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "Проверяйте, какие разрешения нужны приложению и какие клиенты могут к нему обращаться.";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "Читайте журнал и запускайте диагностику, если что-то не работает.";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "Далее";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "Назад";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "Показывать пункт OpenJoystickDriver в строке меню.";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */
