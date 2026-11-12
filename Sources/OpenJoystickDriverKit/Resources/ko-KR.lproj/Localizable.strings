@@ -3681,6 +3681,18 @@
 "ui.access.web.on" = "%1$@에서 켬, 페이지 위치 %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "끔";
+/* Sentence under a permission row in the Access area when the permission is allowed. */
+"ui.access.permission.granted.message" = "이 권한은 허용되어 있습니다.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+"platform.macos.ui.access.permission.denied.message" = "macOS가 이 권한을 거부했거나 상태를 읽을 수 없습니다. 시스템 설정에서 허용하세요.";
+/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
+"ui.access.permission.notAsked.message" = "이 권한은 아직 요청하지 않았습니다.";
+/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
+"ui.access.permission.checking.message" = "이 권한을 확인하는 중…";
+/* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
+"ui.access.permission.notNeeded.message" = "활성 프로파일은 이 권한을 사용하지 않습니다.";
+/* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
+"ui.access.permission.limited.message" = "허용되었지만 배너 또는 사운드가 꺼져 있어 알림을 놓칠 수 있습니다.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "켜져 있지만 포트 %@에서 수신하지 않음";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

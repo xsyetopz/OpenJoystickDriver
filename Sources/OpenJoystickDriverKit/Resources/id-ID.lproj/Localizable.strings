@@ -3681,6 +3681,18 @@
 "ui.access.web.on" = "Nyala di %1$@, laman di %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "Mati";
+/* Sentence under a permission row in the Access area when the permission is allowed. */
+"ui.access.permission.granted.message" = "Izin ini diberikan.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+"platform.macos.ui.access.permission.denied.message" = "macOS menolak izin ini, atau statusnya tidak dapat dibaca. Izinkan di Pengaturan Sistem.";
+/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
+"ui.access.permission.notAsked.message" = "Izin ini belum diminta.";
+/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
+"ui.access.permission.checking.message" = "Memeriksa izin ini…";
+/* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
+"ui.access.permission.notNeeded.message" = "Profil aktif tidak menggunakan izin ini.";
+/* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
+"ui.access.permission.limited.message" = "Diizinkan, tetapi banner atau suara dimatikan, sehingga pemberitahuan bisa terlewat.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Nyala, tetapi tidak mendengarkan di port %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

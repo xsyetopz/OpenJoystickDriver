@@ -3681,6 +3681,18 @@
 "ui.access.web.on" = "Açık: %1$@, sayfalar: %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "Kapalı";
+/* Sentence under a permission row in the Access area when the permission is allowed. */
+"ui.access.permission.granted.message" = "Bu izin verilmiş.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+"platform.macos.ui.access.permission.denied.message" = "macOS bu izni reddetti ya da durumu okunamadı. Sistem Ayarları’nda izin verin.";
+/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
+"ui.access.permission.notAsked.message" = "Bu izin henüz istenmedi.";
+/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
+"ui.access.permission.checking.message" = "Bu izin denetleniyor…";
+/* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
+"ui.access.permission.notNeeded.message" = "Etkin profiller bu izni kullanmıyor.";
+/* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
+"ui.access.permission.limited.message" = "İzin verilmiş, ancak bannerlar veya sesler kapalı; bu yüzden bildirimler gözden kaçabilir.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Açık, ancak %@ bağlantı noktası dinlenmiyor";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */
