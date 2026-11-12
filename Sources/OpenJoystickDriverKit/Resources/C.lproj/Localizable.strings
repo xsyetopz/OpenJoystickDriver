@@ -35,13 +35,13 @@
 /* Button in the mapping capture banner that discards local edits and loads the stored profile again. It sits beside Keep editing. */
 "action.reload" = "Reload";
 /* Button in the mapping capture banner that keeps the local edits when the stored profile changed. It sits beside Reload. */
-"action.keepEditing" = "Keep editing";
+"action.keepEditing" = "Keep Editing";
 /* Button that removes the captured keys in the keyboard capture view and the captured packets in the developer packet capture view. */
 "action.clear" = "Clear";
 /* Button that asks macOS for the input permission shown on the row. Ends in an ellipsis because a system prompt follows. */
 "action.request" = "Request...";
 /* Button of the capture assignment sheet and of the profile editor sections that adds an assignment to the profile. */
-"action.addAssignment" = "Add assignment";
+"action.addAssignment" = "Add Assignment";
 /* Label and tooltip of the button that removes one assignment from the profile. */
 "action.removeAssignment" = "Remove assignment";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
@@ -53,7 +53,7 @@
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "Deactivate";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
-"action.setActive" = "Set active";
+"action.setActive" = "Set Active";
 /* Value of a permission row in the Access area while macOS is asked for its state. Keep the three dots. */
 "status.checking" = "Checking...";
 /* Runtime state label: the service is up and can serve controllers. */
@@ -369,11 +369,11 @@
 /* Option of the response curve popup: output grows in proportion to the travel. */
 "ui.capture.linear" = "Linear";
 /* Option of the response curve popup: output grows slowly at first and faster later. */
-"ui.capture.easeIn" = "Ease in";
+"ui.capture.easeIn" = "Ease In";
 /* Option of the response curve popup: output grows fast at first and slower later. */
-"ui.capture.easeOut" = "Ease out";
+"ui.capture.easeOut" = "Ease Out";
 /* Option of the response curve popup: output grows slowly at both ends and faster in the middle. */
-"ui.capture.smoothStep" = "Smooth step";
+"ui.capture.smoothStep" = "Smooth Step";
 /* Heading of the capture assignment sheet while the app waits for the user to press a control of the controller. */
 "ui.capture.pressControl" = "Press a controller control";
 /* Instruction in the capture assignment sheet. The user picks a control from the popup or lets the app wait for the next input. */
@@ -381,7 +381,7 @@
 /* Label of the popup in the capture assignment sheet that lists the controls of the controller. */
 "ui.capture.controllerControl" = "Controller control";
 /* Title of the button in the capture assignment sheet that waits for the next controller input. */
-"ui.capture.listen" = "Listen for control";
+"ui.capture.listen" = "Listen for Control";
 /* Message in the capture assignment sheet when no controller is connected. Manual selection means the popup of controls. */
 "ui.capture.connectForLive" = "Connect a controller to enable live capture. Manual selection is still available.";
 /* VoiceOver label of the capture assignment sheet. */
@@ -425,7 +425,7 @@
 /* Option of the sort popup above the profile list: sort the profiles by controller. */
 "ui.profiles.sort.controller" = "Controller";
 /* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
-"ui.profiles.sort.lastUsed" = "Last used";
+"ui.profiles.sort.lastUsed" = "Last Used";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "Delete profile?";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */
@@ -437,11 +437,11 @@
 /* Message in the Profiles area when the profiles cannot be loaded. */
 "ui.profiles.loadError" = "Profiles could not be loaded.";
 /* Title of the message in the Profiles area when the profiles are unavailable. */
-"ui.profiles.unavailable" = "Profiles unavailable";
+"ui.profiles.unavailable" = "Profiles Unavailable";
 /* Title of the message in the Profiles area when the app cannot read the current state of the profiles. */
 "ui.profiles.refreshError" = "Could not refresh profile state";
 /* Title of the empty state in the Profiles area when no profile exists. */
-"ui.profiles.none" = "No profiles";
+"ui.profiles.none" = "No Profiles";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "Refreshing profile state...";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */
@@ -465,17 +465,17 @@
 /* Caption of a profile in the Profiles list. %@ is the assignment count text, for example 3 assignments. The profile is active. */
 "ui.profiles.activeAssignmentCount" = "%@, active";
 /* Button of the combination sheet that adds a chord. A chord is a set of controls pressed together. */
-"ui.profiles.addChord" = "Add chord";
+"ui.profiles.addChord" = "Add Chord";
 /* Button of the combination sheet that adds a control to the chord or sequence. */
-"ui.profiles.addControl" = "Add control";
+"ui.profiles.addControl" = "Add Control";
 /* Title of the sheet that adds a layer. A layer is a second set of assignments that a held control turns on. */
-"ui.profiles.addLayer" = "Add layer";
+"ui.profiles.addLayer" = "Add Layer";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "Add assignment to %@";
 /* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
-"ui.profiles.addMultiTap" = "Add tap count";
+"ui.profiles.addMultiTap" = "Add Tap Count";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
-"ui.profiles.addSequence" = "Add sequence";
+"ui.profiles.addSequence" = "Add Sequence";
 /* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
 "ui.profiles.multiTap" = "Multi tap";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
@@ -487,11 +487,11 @@
 /* Heading of the group of shoulder buttons in the assignment list of the profile editor. */
 "ui.profiles.sectionShoulders" = "Shoulders";
 /* Heading of the group of stick click buttons in the assignment list of the profile editor. */
-"ui.profiles.sectionStickClicks" = "Stick clicks";
+"ui.profiles.sectionStickClicks" = "Stick Clicks";
 /* Heading of the group of system buttons, such as Start and Back, in the assignment list of the profile editor. */
-"ui.profiles.sectionSystemControls" = "System controls";
+"ui.profiles.sectionSystemControls" = "System Controls";
 /* Heading of the group of face buttons in the assignment list of the profile editor. */
-"ui.profiles.sectionFaceButtons" = "Face buttons";
+"ui.profiles.sectionFaceButtons" = "Face Buttons";
 /* Heading of the group of directional pad buttons in the assignment list of the profile editor. */
 "ui.profiles.sectionDpad" = "D-pad";
 /* Heading of the group of triggers in the assignment list of the profile editor. */
@@ -559,7 +559,7 @@
 /* Button of an assignment row that opens the behavior sheet. Keep the three dots. */
 "ui.profiles.behavior" = "Behavior...";
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
-"ui.profiles.bindingBehavior" = "Assignment behavior";
+"ui.profiles.bindingBehavior" = "Assignment Behavior";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
 "ui.profiles.apps" = "Apps";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
@@ -601,9 +601,9 @@
 /* Caption of a profile in the Profiles list. %1$@ is the controller model and %2$@ is the app scope. The dot between them separates the two and may change. */
 "ui.profiles.scopedCaption" = "%1$@ · %2$@";
 /* Menu item that turns off all active profiles of one controller. */
-"ui.profiles.deactivateController" = "Deactivate all";
+"ui.profiles.deactivateController" = "Deactivate All";
 /* Title of the sheet that edits the details of a profile. */
-"ui.profiles.details" = "Profile details";
+"ui.profiles.details" = "Profile Details";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "Not supported by this controller or protocol.";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
@@ -619,9 +619,9 @@
 /* Toolbar button in the Profiles area that checks a profile file without importing it. */
 "ui.profiles.validateFile" = "Validate Profile File";
 /* Title of the alert when the checked profile file is valid. */
-"ui.profiles.validTitle" = "Valid profile";
+"ui.profiles.validTitle" = "Valid Profile";
 /* Title of the alert when the checked profile file is not valid. */
-"ui.profiles.invalidTitle" = "Invalid profile";
+"ui.profiles.invalidTitle" = "Invalid Profile";
 /* Message of the alert when the checked profile file is valid. %1$@ is the profile name, %2$@ is the controller model and %3$@ is the app scope. */
 "ui.profiles.validMessage" = "%1$@ (%2$@). Applies to: %3$@.";
 /* Error in the profile details sheet when the vendor ID or product ID is not a 16-bit number. */
@@ -651,19 +651,19 @@
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "Target";
 /* Option of the target popup: the profile applies to one app. */
-"ui.profiles.targetApplication" = "One application";
+"ui.profiles.targetApplication" = "One Application";
 /* Option of the target popup: the profile applies to all apps. */
-"ui.profiles.targetGlobal" = "All applications";
+"ui.profiles.targetGlobal" = "All Applications";
 /* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
 "ui.profiles.template" = "Template";
 /* Option of the template popup in the profile creation sheet: the profile starts empty. */
 "ui.profiles.templateEmpty" = "Empty";
 /* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
-"ui.profiles.templateGyroStick" = "Gyro to stick";
+"ui.profiles.templateGyroStick" = "Gyro to Stick";
 /* Option of the template popup in the profile creation sheet: the profile binds the D-pad, South and East to keyboard navigation keys. */
-"ui.profiles.templateKeyboardNavigation" = "Keyboard navigation";
+"ui.profiles.templateKeyboardNavigation" = "Keyboard Navigation";
 /* Option of the template popup in the profile creation sheet: the profile binds South, East and North to the mouse buttons. */
-"ui.profiles.templateMouseClicks" = "Mouse clicks";
+"ui.profiles.templateMouseClicks" = "Mouse Clicks";
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ has no motion sensor.";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
@@ -795,15 +795,15 @@
 /* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
 "ui.mapping.touchArea" = "%1$@ area at %2$.2f, %3$.2f, %4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
-"ui.mapping.touchSurfacePrimary" = "Primary surface";
+"ui.mapping.touchSurfacePrimary" = "Primary Surface";
 /* Option of the touch surface popup: the left touch surface of the controller. */
-"ui.mapping.touchSurfaceLeft" = "Left surface";
+"ui.mapping.touchSurfaceLeft" = "Left Surface";
 /* Option of the touch surface popup: the right touch surface of the controller. */
-"ui.mapping.touchSurfaceRight" = "Right surface";
+"ui.mapping.touchSurfaceRight" = "Right Surface";
 /* Heading of the group of touch controls in the assignment list of the profile editor. */
 "ui.profiles.sectionTouch" = "Touch";
 /* Title of the sheet that sets the touch mappings of a profile. */
-"ui.profiles.touch.title" = "Touch mappings";
+"ui.profiles.touch.title" = "Touch Mappings";
 /* Label of the touch surface popup in the touch sheet. */
 "ui.profiles.touch.surface" = "Surface";
 /* Title of the switch in the touch sheet that turns on continuous touch output. */
@@ -813,9 +813,9 @@
 /* Option of the touch mode popup and of the gyro mode popup: it moves the pointer. */
 "ui.profiles.touch.pointer" = "Pointer";
 /* Option of the touch and gyro mode popups: it moves the left stick of the virtual gamepad. */
-"ui.profiles.touch.leftStick" = "Left stick";
+"ui.profiles.touch.leftStick" = "Left Stick";
 /* Option of the touch and gyro mode popups: it moves the right stick of the virtual gamepad. */
-"ui.profiles.touch.rightStick" = "Right stick";
+"ui.profiles.touch.rightStick" = "Right Stick";
 /* Label of the field in the touch sheet that sets how many pointer points one full swipe over the surface moves. */
 "ui.profiles.touch.pointerSensitivity" = "Pointer points per surface";
 /* Label of the field in the touch sheet that sets the share of the surface that moves the stick all the way. */
@@ -827,11 +827,11 @@
 /* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
 "ui.profiles.region.kind" = "Region type";
 /* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
-"ui.profiles.region.stick" = "Stick ring";
+"ui.profiles.region.stick" = "Stick Ring";
 /* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
-"ui.profiles.region.trigger" = "Trigger band";
+"ui.profiles.region.trigger" = "Trigger Band";
 /* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
-"ui.profiles.region.touch" = "Touch area";
+"ui.profiles.region.touch" = "Touch Area";
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "Input";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
@@ -867,7 +867,7 @@
 /* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
 "ui.profiles.region.liveTouch" = "Touch at %1$.2f, %2$.2f";
 /* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
-"ui.profiles.pointerSpeed.title" = "Pointer speed";
+"ui.profiles.pointerSpeed.title" = "Pointer Speed";
 /* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
 "ui.profiles.pointerSpeed.enabled" = "Scale pointer speed";
 /* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
@@ -875,7 +875,7 @@
 /* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
 "ui.profiles.pointerSpeed.driverTrigger" = "Trigger";
 /* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
-"ui.profiles.pointerSpeed.driverStickDepth" = "Stick depth";
+"ui.profiles.pointerSpeed.driverStickDepth" = "Stick Depth";
 /* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
 "ui.profiles.pointerSpeed.side" = "Side";
 /* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
@@ -1447,13 +1447,13 @@
 /* Option of the virtual output popup: the profile publishes no virtual gamepad. */
 "ui.profiles.virtualDisabled" = "Disabled";
 /* Option of the virtual output popup: the virtual gamepad carries only the controls that the profile maps. */
-"ui.profiles.virtualMapped" = "Mapped controls only";
+"ui.profiles.virtualMapped" = "Mapped Controls Only";
 /* Option of the virtual output popup: the virtual gamepad also carries the controls that the profile does not map. */
-"ui.profiles.virtualPassthrough" = "Include unmapped controls";
+"ui.profiles.virtualPassthrough" = "Include Unmapped Controls";
 /* Title of the switch in the profile editor that makes the profile need exclusive access to the physical controller. */
 "ui.profiles.exclusiveInput" = "Require exclusive physical input";
 /* VoiceOver label of the group of profile action buttons in the profile editor. */
-"ui.profiles.actions" = "Profile actions";
+"ui.profiles.actions" = "Profile Actions";
 /* VoiceOver label of the picker that switches the section of the profile editor. */
 "ui.profiles.editorSection" = "Profile editor section";
 /* Title of the section of the profile editor that holds chords, sequences and layers. */
@@ -1478,16 +1478,16 @@
 "ui.profiles.releaseOnly" = "Release only";
 
 /* Heading of the list of additional actions that an assignment runs. */
-"ui.profiles.additionalActions" = "Additional actions";
+"ui.profiles.additionalActions" = "Additional Actions";
 
 /* Button that adds an additional action to an assignment. */
-"ui.profiles.addAction" = "Add action";
+"ui.profiles.addAction" = "Add Action";
 
 /* Button that moves an additional action one place up in the list. */
-"ui.profiles.moveUp" = "Move up";
+"ui.profiles.moveUp" = "Move Up";
 
 /* Button that moves an additional action one place down in the list. */
-"ui.profiles.moveDown" = "Move down";
+"ui.profiles.moveDown" = "Move Down";
 
 /* Name of the function button on the left side of a controller. */
 "ui.mapping.leftFunctionButton" = "Left function button";
@@ -1532,7 +1532,7 @@
 "ui.mapping.rightGripTouch" = "Right grip touch";
 
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
-"ui.profiles.motion.title" = "Motion tuning";
+"ui.profiles.motion.title" = "Motion Tuning";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
 "ui.profiles.motion.space" = "Coordinate space";
 /* Option of the coordinate space popup: motion is measured relative to the controller. */
@@ -1591,11 +1591,11 @@
 /* Option of the gyro output popup: the gyro does nothing. */
 "ui.profiles.gyro.disabled" = "Disabled";
 /* Option of the gyro output popup: the gyro moves the mouse pointer. */
-"ui.profiles.gyro.mouse" = "Mouse pointer";
+"ui.profiles.gyro.mouse" = "Mouse Pointer";
 /* Option of the gyro output popup: the gyro moves the left stick of the virtual gamepad. */
-"ui.profiles.gyro.leftStick" = "Left stick";
+"ui.profiles.gyro.leftStick" = "Left Stick";
 /* Option of the gyro output popup: the gyro moves the right stick of the virtual gamepad. */
-"ui.profiles.gyro.rightStick" = "Right stick";
+"ui.profiles.gyro.rightStick" = "Right Stick";
 /* Label of the field in the gyro sheet that sets how many pointer points one degree of turn moves. */
 "ui.profiles.gyro.pointerScale" = "Pointer points per degree";
 /* Label of the field in the gyro sheet that sets the turn rate that moves the stick all the way. The value is in degrees per second. */
@@ -1603,13 +1603,13 @@
 /* Label of the popup in the gyro sheet that picks when the gyro is active. */
 "ui.profiles.gyro.activation" = "Gyro activation";
 /* Option of the gyro activation popup: the gyro is always active. */
-"ui.profiles.gyro.always" = "Always active";
+"ui.profiles.gyro.always" = "Always Active";
 /* Option of the gyro activation popup: the gyro is active while the activation control is held. */
-"ui.profiles.gyro.whileHeld" = "While held";
+"ui.profiles.gyro.whileHeld" = "While Held";
 /* Option of the gyro activation popup: the gyro is active while the activation control is not held. */
-"ui.profiles.gyro.whileReleased" = "While released";
+"ui.profiles.gyro.whileReleased" = "While Released";
 /* Option of the gyro activation popup: pressing the activation control turns the gyro on or off. */
-"ui.profiles.gyro.toggle" = "Toggle on press";
+"ui.profiles.gyro.toggle" = "Toggle on Press";
 /* Label of the popup in the gyro sheet that picks the control that activates the gyro. */
 "ui.profiles.gyro.source" = "Activation control";
 
@@ -1629,7 +1629,7 @@
 /* Option of the trackball axes popup: turn left and right only. */
 "ui.profiles.trackball.yaw" = "Yaw";
 /* Option of the trackball axes popup: both pitch and yaw. */
-"ui.profiles.trackball.both" = "Pitch and yaw";
+"ui.profiles.trackball.both" = "Pitch and Yaw";
 /* Label of the field in the trackball sheet that sets how many times per second the speed halves. */
 "ui.profiles.trackball.decay" = "Velocity halvings per second";
 /* Hint under the decay field of the trackball sheet. Zero keeps the speed and one halves it each second. */
@@ -1638,7 +1638,7 @@
 "ui.profiles.trackball.consume" = "Suppress original virtual trackball control";
 
 /* Button in the motion sheet of an assignment that drops the tuning of the assignment and uses the tuning of the profile. */
-"ui.profiles.motion.inherit" = "Use profile tuning";
+"ui.profiles.motion.inherit" = "Use Profile Tuning";
 
 /* Option of the stick mode popup: the stick turns the aim at a set rate. */
 "ui.profiles.stick.aim" = "Aim";
@@ -1649,11 +1649,11 @@
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
 "ui.profiles.stick.exponent" = "Response exponent";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
-"ui.profiles.stick.flick" = "Flick and rotate";
+"ui.profiles.stick.flick" = "Flick and Rotate";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
 "ui.profiles.stick.flickDuration" = "Flick duration (ms)";
 /* Option of the stick mode popup: the stick only flicks. */
-"ui.profiles.stick.flickOnly" = "Flick only";
+"ui.profiles.stick.flickOnly" = "Flick Only";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
 "ui.profiles.stick.hysteresis" = "Flick release hysteresis";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
@@ -1669,13 +1669,13 @@
 /* Label of the field in the stick sheet that sets how many pointer points one degree moves. */
 "ui.profiles.stick.pointerScale" = "Pointer points per degree";
 /* Option of the stick mode popup: the stick only rotates the view. */
-"ui.profiles.stick.rotateOnly" = "Rotate only";
+"ui.profiles.stick.rotateOnly" = "Rotate Only";
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "Stick";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
 "ui.profiles.stick.threshold" = "Flick engagement threshold";
 /* Title of the sheet that sets the stick modes of a profile. */
-"ui.profiles.stick.title" = "Stick modes";
+"ui.profiles.stick.title" = "Stick Modes";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
 "ui.mapping.triggerStage" = "%1$@ trigger %2$@ pull";
 /* Name of a motion lean direction as a control. %@ is the direction. */
@@ -1683,13 +1683,13 @@
 /* Heading of the group of motion controls in the assignment list of the profile editor. */
 "ui.profiles.sectionMotion" = "Motion";
 /* Option of the stick mode popup: the stick places the pointer inside an area of the screen. */
-"ui.profiles.stick.pointerArea" = "Pointer area";
+"ui.profiles.stick.pointerArea" = "Pointer Area";
 /* Option of the stick mode popup: the stick places the pointer on a ring around the center. */
-"ui.profiles.stick.pointerRing" = "Pointer ring";
+"ui.profiles.stick.pointerRing" = "Pointer Ring";
 /* Option of the stick mode popup: turning the stick scrolls like a wheel. */
-"ui.profiles.stick.scrollWheel" = "Scroll wheel";
+"ui.profiles.stick.scrollWheel" = "Scroll Wheel";
 /* Option of the stick mode popup: the stick works as the steering wheel of a vehicle. */
-"ui.profiles.stick.steering" = "Steering wheel";
+"ui.profiles.stick.steering" = "Steering Wheel";
 /* Label of the field in the stick sheet that sets the radius of the pointer area or ring. The value is in points. */
 "ui.profiles.stick.pointerRadius" = "Pointer radius (points)";
 /* Label of the field in the stick sheet that sets how many degrees of rotation scroll one line. */
@@ -1707,9 +1707,9 @@
 /* Label of the popup in the stick sheet that picks the axis of the virtual gamepad that the steering moves. */
 "ui.profiles.stick.steeringOutput" = "Virtual steering axis";
 /* Option of the steering axis popup: the horizontal axis of the left stick. */
-"ui.profiles.stick.leftStickX" = "Left stick horizontal";
+"ui.profiles.stick.leftStickX" = "Left Stick Horizontal";
 /* Option of the steering axis popup: the horizontal axis of the right stick. */
-"ui.profiles.stick.rightStickX" = "Right stick horizontal";
+"ui.profiles.stick.rightStickX" = "Right Stick Horizontal";
 /* Label of the popup in the stick sheet that picks which rotation direction steers to the right. */
 "ui.profiles.stick.rotationDirection" = "Positive rotation";
 /* Option of the rotation popup: turning the stick clockwise. */
@@ -1719,13 +1719,13 @@
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
 "ui.profiles.stick.passthrough" = "Keep physical stick passthrough";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
-"ui.profiles.trigger.title" = "Trigger stages";
+"ui.profiles.trigger.title" = "Trigger Stages";
 /* Label of the popup in the trigger sheet that picks the trigger. */
 "ui.profiles.trigger.source" = "Trigger";
 /* Option of the trigger popup: the left trigger. */
-"ui.profiles.trigger.left" = "Left trigger";
+"ui.profiles.trigger.left" = "Left Trigger";
 /* Option of the trigger popup: the right trigger. */
-"ui.profiles.trigger.right" = "Right trigger";
+"ui.profiles.trigger.right" = "Right Trigger";
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "Enable dual-stage trigger";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
@@ -1741,17 +1741,17 @@
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
 "ui.profiles.trigger.passthrough" = "Keep analog trigger passthrough";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
-"ui.profiles.trigger.simultaneous" = "Soft and full together";
+"ui.profiles.trigger.simultaneous" = "Soft and Full Together";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */
-"ui.profiles.trigger.exclusive" = "Full replaces soft";
+"ui.profiles.trigger.exclusive" = "Full Replaces Soft";
 /* Option of the stage interaction popup: a quick pull goes straight to the full stage. */
-"ui.profiles.trigger.preferFull" = "Prefer quick full";
+"ui.profiles.trigger.preferFull" = "Prefer Quick Full";
 /* Option of the stage interaction popup: a quick pull goes straight to the full stage, and a slow pull combines both stages late. */
-"ui.profiles.trigger.preferFullCombined" = "Prefer quick full; combine late";
+"ui.profiles.trigger.preferFullCombined" = "Prefer Quick Full; Combine Late";
 /* Option of the stage interaction popup: the soft stage fires at once, and a quick pull goes straight to the full stage. */
-"ui.profiles.trigger.responsivePreferFull" = "Responsive soft; prefer quick full";
+"ui.profiles.trigger.responsivePreferFull" = "Responsive Soft; Prefer Quick Full";
 /* Option of the stage interaction popup: the soft stage fires at once, and both stages combine late. */
-"ui.profiles.trigger.responsivePreferFullCombined" = "Responsive soft; combine late";
+"ui.profiles.trigger.responsivePreferFullCombined" = "Responsive Soft; Combine Late";
 /* Title of the switch in the motion sheet that turns on lean sources. A lean source is a control that is active while the controller is tilted to one side. */
 "ui.profiles.motion.leanEnabled" = "Enable lean sources";
 /* Label of the slider in the motion sheet that sets the tilt at which a lean starts. The value is in degrees. */
@@ -1763,9 +1763,9 @@
 /* Label of the popup in the motion sheet that picks the axis of the virtual gamepad that the steering moves. */
 "ui.profiles.motion.steeringOutput" = "Virtual steering axis";
 /* Option of the steering axis popup: the horizontal axis of the left stick. */
-"ui.profiles.motion.steeringLeft" = "Left stick horizontal";
+"ui.profiles.motion.steeringLeft" = "Left Stick Horizontal";
 /* Option of the steering axis popup: the horizontal axis of the right stick. */
-"ui.profiles.motion.steeringRight" = "Right stick horizontal";
+"ui.profiles.motion.steeringRight" = "Right Stick Horizontal";
 /* Label of the slider in the motion sheet that sets the tilt around the center that is ignored. The value is in degrees. */
 "ui.profiles.motion.steeringDeadzoneDegrees" = "Steering deadzone (degrees)";
 /* Label of the slider in the motion sheet that sets the tilt that counts as full steering. The value is in degrees. */
@@ -1786,7 +1786,7 @@
 /* Option of the gyro source popup: the right Joy-Con. Joy-Con is a Nintendo product name. */
 "ui.profiles.joyConRight" = "Right Joy-Con";
 /* Button in the Profiles area that opens the sheet that pairs two connected Joy-Cons. Keep the three dots. Joy-Con is a Nintendo product name. */
-"ui.profiles.pairJoyCons" = "Pair connected Joy-Cons...";
+"ui.profiles.pairJoyCons" = "Pair Connected Joy-Cons...";
 /* Status in the Profiles area when two Joy-Cons are paired. */
 "ui.profiles.joyConPairActive" = "Pair active";
 /* Button in the Profiles area that ends the pairing of two Joy-Cons. */
@@ -1881,9 +1881,9 @@
 /* Title of the switch in the lighting editor that uses the color that the controller shows by default. */
 "ui.profiles.useControllerDefaultColor" = "Use controller default";
 /* Title of the message in the Profiles area when a saved profile cannot be read. */
-"ui.profiles.damagedProfile" = "Damaged profile";
+"ui.profiles.damagedProfile" = "Damaged Profile";
 /* Title of the message in the Profiles area when the list of active profiles cannot be read. */
-"ui.profiles.damagedLibrary" = "Damaged active profile list";
+"ui.profiles.damagedLibrary" = "Damaged Active Profile List";
 /* Button in the Profiles area that deletes a damaged profile. Keep the three dots. */
 "ui.profiles.deleteDamagedButton" = "Delete Damaged Profile...";
 /* Button in the Profiles area that backs up and resets the list of active profiles. The ampersand stays. Keep the three dots. */
@@ -4967,7 +4967,7 @@
 /* Heading of the list of steps in the macro editor sheet. */
 "ui.macros.steps" = "Steps";
 /* Title of the menu in the macro editor sheet that adds a step to the macro. */
-"ui.macros.addStep" = "Add step";
+"ui.macros.addStep" = "Add Step";
 /* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
 "ui.macros.stepTap" = "Tap";
 /* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
@@ -4981,7 +4981,7 @@
 /* Label of the slider in a chord step of the macro editor for how long the chord is held. */
 "ui.macros.holdTime" = "Hold time";
 /* Button in a chord step of the macro editor that adds one more key or button to the chord. */
-"ui.macros.addChordKey" = "Add key to chord";
+"ui.macros.addChordKey" = "Add Key to Chord";
 /* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
 "ui.macros.moveUp" = "Move step up";
 /* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
@@ -4991,9 +4991,9 @@
 /* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
 "ui.macros.repeat" = "Repeat";
 /* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
-"ui.macros.repeatCounted" = "Fixed number of times";
+"ui.macros.repeatCounted" = "Fixed Number of Times";
 /* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
-"ui.macros.repeatWhileHeld" = "While held";
+"ui.macros.repeatWhileHeld" = "While Held";
 /* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
 "ui.macros.repeatTimes" = "Times";
 /* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
