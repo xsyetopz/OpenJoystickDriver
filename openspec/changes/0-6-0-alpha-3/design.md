@@ -417,6 +417,8 @@ Measured by task 9.11 (`evidence/system-serving/`), from a command-line process 
 - Settle time: 1 s, about 50 times the measured 18 ms. No physical pad that macOS lists was measured, so 9.12 records the settle time as a constant beside this measurement.
 - Not measured: the service process itself. The probe ran as a separate process; 9.12's test of the detection runs in the service.
 
+Measured by task 9.12 in the service, with the 2C over Bluetooth LE and its bundled `server` removed by a user patch (`evidence/system-serving/2c-detection-in-service.txt`): `ojd controller show` named `OJD (from default)` with the pad seized (`exclusive-hid`) and served over `virtual-hid`. The settle check runs in the service process and reads GameController's list there: 1 s after arrival it logged that GameController lists no "8BitDo Ultimate 2C Wireless", only OJD's own "Xbox Wireless Controller". Release and claim then need the fact that macOS can serve the pad (`supportsHIDDevice`), not that it serves it now, because detection gives such a pad to OJD: the description carries `gameControllerSupported`, and the server choice of `ojd controller show`, `claim`, `release`, and the app's picker reads it. A claim that restates the server the bundled record states drops `server` from the user patch, since a patch that changes nothing is refused.
+
 Alternative considered: fix only the `301B` record. Rejected as the whole answer: every other pad with this macOS behavior would need a patch from its user.
 
 Alternative considered: OJD serves every HID pad it has a record for. Rejected: for a pad macOS serves, macOS keeps a second controller that gives no input beside OJD's (`PhysicalInterfaceSignature.swift:295-297`).

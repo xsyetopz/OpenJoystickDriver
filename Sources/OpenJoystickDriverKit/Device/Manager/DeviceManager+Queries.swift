@@ -112,6 +112,7 @@ extension DeviceManager {
       interfaceNumber: observedInterface,
       discoverySource: info.discoverySource.kind,
       physicalOwnership: ownership,
+      gameControllerSupported: info.physicalDevice?.gameControllerSupported ?? false,
       hidInputOwnership: usbHeld ? .ownedByAnotherClient : info.hidInputOwnership,
       inputOwner: usbHeld ? await pipeline.usbExclusiveOwner : nil,
       duplicateExposureRisk: info.duplicateExposureRisk,
@@ -131,7 +132,8 @@ extension DeviceManager {
       preferredBackends: record?.preferredBackends.map(\.rawValue) ?? [],
       physicalOutputCapabilities: await pipeline.physicalOutputCapabilities(),
       physicalOutputOwner: pipeline.macOSOwnedOutput == nil ? .ojd : .system,
-      recordServer: record?.server ?? .system,
+      recordServer: record.flatMap { $0.statesServer ? $0.server : nil }
+        ?? info.physicalDevice?.detectedServer ?? .system,
       recordAccessRoute: record?.accessRoute ?? .system,
       tuning: record?.tuning ?? .none,
       capabilities: protocolDriverRegistry.capabilities(

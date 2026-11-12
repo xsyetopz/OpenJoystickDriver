@@ -32,6 +32,7 @@ struct ServingPolicyCallersTests {
       "native HID": .nativeHIDPassThrough,
       "native claimed by OJD": nil,
       "seized HID": nil,
+      "native pad GameController leaves unlisted": nil,
       "seized HID with override": nil,
       "raw USB claimed by OJD": nil,
       "extension owned": nil,

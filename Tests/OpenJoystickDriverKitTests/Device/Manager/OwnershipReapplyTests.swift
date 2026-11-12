@@ -64,10 +64,10 @@ struct OwnershipReapplyTests {
   func anOJDOwnedNativeModelDispatchesEachChangedReportWithoutARoute() async throws {
     let records = try Self.recordsOwningTheChangedModel()
     let catalog = DeviceCatalog(records: records)
-    #expect(catalog.takesOwnership(of: Self.changedModel))
+    #expect(catalog.statedServer(of: Self.changedModel) == .ojd)
     // `HIDDeviceStream.nativePassThrough` for a model that GameController supports.
     let nativePassThrough =
-      !catalog.takesOwnership(of: Self.changedModel)
+      catalog.statedServer(of: Self.changedModel) != .ojd
     let owned = try await Self.dispatchedReports(nativePassThrough: nativePassThrough)
     #expect(owned.observedGate == false)
     #expect(owned.dispatched == 2)

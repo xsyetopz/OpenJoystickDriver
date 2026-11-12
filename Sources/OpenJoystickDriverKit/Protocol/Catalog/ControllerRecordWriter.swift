@@ -174,7 +174,15 @@ public enum ControllerRecordWriter {
     let file = existingController == nil ? patchFile : controllerFile ?? patchFile
     let document: [String: Any]?
     if let existing {
-      document = try updated(existing, file: file, packages: packages, edit: edit)
+      let upstream: ControllerRecord? =
+        if case .model(let model) = target { packages[model] } else { nil }
+      document = try updated(
+        existing,
+        file: file,
+        packages: packages,
+        upstreamServer: upstream?.statedServer,
+        edit: edit
+      )
     } else {
       if case .model(let model) = target, packages[model] == nil { throw .record(.noRecord(model)) }
       var body: [String: Any] = [:]
@@ -214,10 +222,15 @@ public enum ControllerRecordWriter {
 
   /// The existing user file with `edit` applied in the Controller file or in the `patch` of the
   /// ControllerPatch file; nil when a removal leaves a patch with no key and no `remove`.
+  ///
+  /// A patch `server` equal to `upstreamServer`, the server the bundled or package record states,
+  /// is dropped from the patch together with a `remove` of `server`, because a patch that restates
+  /// the upstream value changes nothing and is refused.
   private static func updated<EditFailure: Error>(
     _ data: Data,
     file: URL,
     packages: [ControllerModelID: ControllerRecord],
+    upstreamServer: ControllerServer?,
     edit: (inout [String: Any]) throws(EditFailure) -> Void
   ) throws(Refusal<EditFailure>) -> [String: Any]? {
     let operation: ControllerRecordOperation
@@ -240,6 +253,11 @@ public enum ControllerRecordWriter {
     }
     var fields = document["patch"] as? [String: Any] ?? [:]
     do { try edit(&fields) } catch { throw .edit(error) }
+    if let upstreamServer, fields["server"] as? String == upstreamServer.rawValue {
+      fields["server"] = nil
+      let remove = (document["remove"] as? [String] ?? []).filter { $0 != "server" }
+      document["remove"] = remove.isEmpty ? nil : remove
+    }
     if fields.isEmpty {
       guard document["remove"] != nil else { return nil }
       document["patch"] = nil

@@ -170,8 +170,9 @@ public enum GIPKeepAlivePolicy: String, Codable, Sendable {
 
 /// Who serves a HID controller that macOS also supports as a native gamepad.
 public enum ControllerServer: String, Codable, Sendable {
-  /// macOS serves it; OJD publishes no virtual controller and sends only the output macOS
-  /// leaves undone. A controller macOS does not support is OJD's either way.
+  /// macOS serves it, even when GameController lists no controller for it; OJD publishes no
+  /// virtual controller and sends only the output macOS leaves undone. A controller macOS does not
+  /// support is OJD's either way.
   case system = "System"
   /// OJD seizes it and publishes its own virtual controller.
   case ojd = "OJD"

@@ -22,10 +22,29 @@ struct OwnershipReevaluationTests {
       tracked: tracked,
       models: [Self.changedModel]
     ) { deviceID, connection in
-      deviceID == 10 ? false : connection.physicalDevice.nativePassThrough
+      HIDDeviceStream.Admission(
+        nativePassThrough: deviceID == 10 ? false : connection.physicalDevice.nativePassThrough,
+        systemListsGameController: false
+      )
     }
 
     #expect(cycled == [10, 11])
+  }
+
+  /// A served device is admitted again when GameController starts or stops listing it, so the
+  /// second-controller warning follows the list; a device macOS serves has no such warning.
+  @Test(arguments: [(false, true), (true, false)])
+  func reevaluationCyclesOnlyAServedDeviceWhoseListingChanged(native: Bool, cycles: Bool) {
+    let device = Self.gameSir(productID: 0x100B, locationID: 1, native: native)
+
+    let cycled = HIDDeviceStream.ownershipReevaluation(
+      tracked: [10: device],
+      models: [Self.changedModel]
+    ) { _, _ in
+      HIDDeviceStream.Admission(nativePassThrough: native, systemListsGameController: true)
+    }
+
+    #expect(cycled == (cycles ? [10] : []))
   }
 
   private static func gameSir(

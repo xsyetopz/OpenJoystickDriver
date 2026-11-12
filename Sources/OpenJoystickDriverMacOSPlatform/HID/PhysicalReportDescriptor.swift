@@ -28,7 +28,8 @@ package enum PhysicalReportDescriptor {
       productID: product,
       transportProperty: IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String,
       nativePassThrough: false,
-      systemListsGameController: false
+      systemListsGameController: false,
+      gameControllerSupported: false
     )
   }
 

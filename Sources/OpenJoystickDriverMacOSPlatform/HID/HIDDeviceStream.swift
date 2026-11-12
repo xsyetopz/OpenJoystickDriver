@@ -42,6 +42,10 @@ package final class HIDDeviceStream: @unchecked Sendable {
   var connectionsByDeviceID: [UInt64: HIDDeviceConnection] = [:]
   /// Admitted devices this stream opened for shared input, with their input report buffers.
   var sharedOpenByDeviceID: [UInt64: SharedOpenDevice] = unsafe [:]
+  /// Whether GameController lists each tracked device, by device ID.
+  ///
+  /// Holds only devices that `GCController.supportsHIDDevice` accepts. Main-confined.
+  var gameControllerListings: [UInt64: GameControllerListing] = [:]
   /// The adapter that turns device events into backend events.
   let eventAdapter = SynchronizedPhysicalHIDBackendEventAdapter()
   /// Models whose family declares HID protocol roles; each of their devices disconnects on its own

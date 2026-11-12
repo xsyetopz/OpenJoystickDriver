@@ -72,14 +72,15 @@ A record for a model that uses raw USB works only when macOS lets OpenJoystickDr
 
 ## Choose Who Drives the Controller
 
-macOS handles some controllers through the Game Controller framework. A controller is [Handled by macOS](Glossary.md#terms) by default, and OpenJoystickDriver only reads its input. The record's `server` field changes this:
+macOS handles some controllers through the Game Controller framework. A controller is [Handled by macOS](Glossary.md#terms) when the Game Controller framework lists it within one second after it connects, and OpenJoystickDriver then only reads its input. When macOS accepts the controller but lists none for it, OpenJoystickDriver handles it. The record's `server` field decides instead:
 
-- `System`: macOS drives the controller when it can. This is the default.
+- No `server`: OpenJoystickDriver checks the list as above. This is the default.
+- `System`: macOS drives the controller when it can, whether or not it lists one.
 - `OJD`: OpenJoystickDriver opens the controller exclusively even when macOS supports it, and drives it like a controller macOS does not know.
 
 A raw-USB family, such as `XboxGIP`, has no `server` field, because macOS cannot handle those controllers. A new `server` value applies to a connected controller as soon as the running service reloads the records. You do not need to unplug the controller.
 
-To change `server` without editing the file, run `ojd controller claim CONTROLLER` or `ojd controller release CONTROLLER`. `claim` sets `OJD`, and `release` sets `System`. The command writes the value to your record for the model, and creates a `ControllerPatch` file when you have none and the bundled catalog or an installed package has a record of the model. It refuses a raw-USB family, a controller that macOS cannot handle, and a model that has no record at all, with the code E2023. For a model with no record, run `ojd record draft` to start one. `ojd controller show` names the choice and the layer it comes from, and the route and [virtual gamepad kind](Glossary.md#terms). In the app, the controller detail has the same choice as the **Handled by** picker, shown for a controller that macOS can handle or that a record gives to OpenJoystickDriver, and never for a raw-USB family.
+To change `server` without editing the file, run `ojd controller claim CONTROLLER` or `ojd controller release CONTROLLER`. `claim` sets `OJD`, and `release` sets `System`. The command writes the value to your record for the model, and creates a `ControllerPatch` file when you have none and the bundled catalog or an installed package has a record of the model. When the value equals the `server` of the bundled or package record, the command removes `server` from your `ControllerPatch` instead, and deletes the file when nothing else is left in it. It refuses a raw-USB family, a controller that macOS cannot handle, and a model that has no record at all, with the code E2023. For a model with no record, run `ojd record draft` to start one. `ojd controller show` names the choice and the layer it comes from, `default` when no layer sets `server` and the list check chose, and the route and [virtual gamepad kind](Glossary.md#terms). In the app, the controller detail has the same choice as the **Handled by** picker, shown for a controller that macOS can handle or that a record gives to OpenJoystickDriver, and never for a raw-USB family.
 
 ## Describe a Controller's Input Reports
 

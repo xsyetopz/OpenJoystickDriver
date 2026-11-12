@@ -323,7 +323,7 @@ struct ControllerShowReport: Encodable, Equatable {
         hidInput: device.hidInputOwnership.rawValue,
         owner: device.inputOwner,
         duplicateExposureRisk: device.duplicateExposureRisk.rawValue,
-        server: offersServerChoice ? record?.server ?? .system : .ojd,
+        server: offersServerChoice ? record?.statedServer ?? device.recordServer : .ojd,
         serverSource: offersServerChoice
           ? record?.serverSource ?? ControllerRecord.defaultServerSource
           : ControllerRecord.routeServerSource

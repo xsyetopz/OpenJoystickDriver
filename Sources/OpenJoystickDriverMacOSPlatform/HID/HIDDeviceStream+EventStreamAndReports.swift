@@ -1,4 +1,5 @@
 package import Foundation
+import GameController
 import IOKit
 import IOKit.hid
 package import OpenJoystickDriverKit
@@ -64,6 +65,8 @@ extension HIDDeviceStream {
   /// ignores negative property keys) and a second object for any service that satisfies more
   /// than one matching dictionary. `handleDeviceAdded` opens only admitted devices.
   private func registerCallbacks() {
+    // The service is never frontmost; D16 measured the list with this set.
+    GCController.shouldMonitorBackgroundEvents = true
     let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     self.manager = manager
     IOHIDManagerSetDeviceMatchingMultiple(manager, currentDeviceMatching())
@@ -114,6 +117,7 @@ extension HIDDeviceStream {
       }
       seizedByLocation.removeAll()
       releasedByLocation.removeAll()
+      gameControllerListings.removeAll()
       connectionsByDeviceID.removeAll()
       defer { unsafe sharedOpenByDeviceID.removeAll() }
       return unsafe Array(sharedOpenByDeviceID.values)

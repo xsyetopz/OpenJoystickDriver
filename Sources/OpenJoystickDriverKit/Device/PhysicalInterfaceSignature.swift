@@ -287,15 +287,26 @@ public struct PhysicalDevice: Equatable, Sendable {
   public let stableParentDeviceIdentifier: String?
   /// The signature of each interface of the device.
   public let interfaces: [PhysicalInterfaceSignature]?
-  /// Whether the running macOS already exposes this device as a native gamepad
-  /// (`GCController.supportsHIDDevice`).
+  /// Whether the running macOS serves this device as a native gamepad: `GCController` supports
+  /// it and lists a controller for it within the settle time, or its record states `server`
+  /// `System`.
   ///
   /// OJD leaves such a device to macOS before classification.
   public let nativePassThrough: Bool
-  /// Whether GameController lists this device as a gamepad (`GCController.supportsHIDDevice`).
+  /// Whether `GCController.controllers()` lists a controller whose `vendorName` is this device's
+  /// product name, once the settle time after the device arrived has passed.
   ///
   /// When OJD serves the device anyway, macOS publishes a second pad for it that gives no input.
   public let systemListsGameController: Bool
+  /// Whether `GCController.supportsHIDDevice` accepts this device, so macOS can serve it when OJD
+  /// leaves it alone.
+  public let gameControllerSupported: Bool
+
+  /// Who serves the device when no record states `server`: OJD for a device macOS can serve but
+  /// does not, because GameController lists no controller for it; the system otherwise.
+  public var detectedServer: ControllerServer {
+    gameControllerSupported && !nativePassThrough ? .ojd : .system
+  }
 
   /// Creates a physical device; every fact left nil is unknown.
   public init(
@@ -316,7 +327,8 @@ public struct PhysicalDevice: Equatable, Sendable {
     stableParentDeviceIdentifier: String? = nil,
     interfaces: [PhysicalInterfaceSignature]? = nil,
     nativePassThrough: Bool = false,
-    systemListsGameController: Bool = false
+    systemListsGameController: Bool = false,
+    gameControllerSupported: Bool = false
   ) {
     self.serviceAddress = serviceAddress
     self.platformUniqueIdentifier = platformUniqueIdentifier
@@ -336,5 +348,6 @@ public struct PhysicalDevice: Equatable, Sendable {
     self.interfaces = interfaces
     self.nativePassThrough = nativePassThrough
     self.systemListsGameController = systemListsGameController
+    self.gameControllerSupported = gameControllerSupported
   }
 }

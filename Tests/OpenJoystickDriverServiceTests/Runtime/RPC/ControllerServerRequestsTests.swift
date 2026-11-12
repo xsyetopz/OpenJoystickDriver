@@ -29,7 +29,7 @@ struct ControllerServerRequestsTests {
       vendorID: model.vendorID,
       productID: model.productID,
       server: server,
-      systemGamepadConnected: native,
+      servableBySystem: native,
       directory: directory
     )
   }
@@ -55,6 +55,40 @@ struct ControllerServerRequestsTests {
       #expect(back.previous == .ojd)
       #expect(!back.created)
       #expect(Self.loadedOwnership(in: directory) == .system)
+    }
+  }
+
+  @Test
+  func aModelTheBundledRecordGivesToOJDIsReleasedAndClaimedBack() throws {
+    try Self.withDirectory { directory in
+      let ultimate2C = (vendorID: 0x2DC8, productID: 0x301B)
+      let released = Self.set(ultimate2C, to: .system, native: true, in: directory)
+      #expect(released.failure == nil, "\(released.detail ?? "")")
+      #expect(released.previous == .ojd)
+      let claimed = Self.set(ultimate2C, to: .ojd, native: true, in: directory)
+      #expect(claimed.failure == nil, "\(claimed.detail ?? "")")
+      #expect(claimed.previous == .system)
+      #expect(
+        ControllerRecordSet.load(userDirectory: directory)
+          .records[ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)]?.server == .ojd
+      )
+    }
+  }
+
+  @Test
+  func claimingTheUpstreamServerBackDropsAPatchThatRemovesIt() throws {
+    try Self.withDirectory { directory in
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      let file = directory.appendingPathComponent("2dc8-301b.patch.plist")
+      let patch: [String: Any] = [
+        "apiVersion": "openjoystickdriver/v1alpha3", "kind": "ControllerPatch",
+        "selector": ["vendorID": 0x2DC8, "productID": 0x301B], "remove": ["server"],
+      ]
+      try PropertyListSerialization.data(fromPropertyList: patch, format: .xml, options: 0)
+        .write(to: file)
+      let claimed = Self.set((0x2DC8, 0x301B), to: .ojd, native: true, in: directory)
+      #expect(claimed.failure == nil, "\(claimed.detail ?? "")")
+      #expect(!FileManager.default.fileExists(atPath: file.path))
     }
   }
 

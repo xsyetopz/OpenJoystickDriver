@@ -41,12 +41,12 @@ package struct DeviceCatalog: Sendable {
     profiles[model]?.applying(modeID: modeID)
   }
 
-  /// Whether the record sets `server: ojd`, so OJD seizes the controller even when macOS serves it
-  /// natively.
+  /// The `server` the record states, which overrides the stream's own test of whether macOS
+  /// serves the controller; nil when no record states one.
   ///
   /// The stream reads it when a device is added.
-  package func takesOwnership(of model: ControllerModelID) -> Bool {
-    record(for: model)?.server == .ojd
+  package func statedServer(of model: ControllerModelID) -> ControllerServer? {
+    record(for: model).flatMap { $0.statesServer ? $0.server : nil }
   }
 
   /// Whether a HID device of this model is one OJD serves over HID: its record reaches the

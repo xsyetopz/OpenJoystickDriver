@@ -74,6 +74,9 @@ public struct ControllerRecord: Sendable {
   /// Who serves the controller: `system` unless a layer sets `ojd`.
   public var server: ControllerServer { profile.server }
 
+  /// The server a layer states; nil when none does and detection decides.
+  public var statedServer: ControllerServer? { profile.statesServer ? profile.server : nil }
+
   /// The route the record asks for; nil leaves it to the family.
   public var route: ControllerRecordRoute? { profile.route }
 

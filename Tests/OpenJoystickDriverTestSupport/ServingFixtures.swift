@@ -7,6 +7,7 @@ package struct ServingFixture: Sendable {
   package let server: ControllerServer
   package let source: DeviceDiscoverySource
   package let accessRoute: ControllerAccessRoute
+  package let gameControllerSupported: Bool
   package let outputEnabled: Bool
   package let override: VirtualHIDProfileID?
   /// The route the policy must decide.
@@ -19,6 +20,7 @@ package struct ServingFixture: Sendable {
       observation: observation,
       server: server,
       accessRoute: accessRoute,
+      gameControllerSupported: gameControllerSupported,
       outputEnabled: outputEnabled,
       controls: Control.xboxLayout,
       override: override
@@ -35,6 +37,7 @@ package struct ServingFixture: Sendable {
       connection: "USB",
       discoverySource: source,
       physicalOwnership: observation,
+      gameControllerSupported: gameControllerSupported,
       serialNumber: nil,
       bindingResult: .hidDescriptorFixture,
       recordServer: server,
@@ -50,6 +53,7 @@ package struct ServingFixture: Sendable {
     _ server: ControllerServer,
     source: DeviceDiscoverySource = .hid,
     accessRoute: ControllerAccessRoute = .system,
+    gameControllerSupported: Bool = false,
     outputEnabled: Bool = true,
     override: VirtualHIDProfileID? = nil,
     route: ServingRoute,
@@ -60,6 +64,7 @@ package struct ServingFixture: Sendable {
     self.server = server
     self.source = source
     self.accessRoute = accessRoute
+    self.gameControllerSupported = gameControllerSupported
     self.outputEnabled = outputEnabled
     self.override = override
     self.route = route
@@ -95,6 +100,14 @@ package struct ServingFixture: Sendable {
       .system,
       route: .virtualHID(.sdlCompatible),
       offersServerChoice: false
+    ),
+    Self(
+      "native pad GameController leaves unlisted",
+      .exclusiveHID,
+      .system,
+      gameControllerSupported: true,
+      route: .virtualHID(.sdlCompatible),
+      offersServerChoice: true
     ),
     Self(
       "seized HID with override",
