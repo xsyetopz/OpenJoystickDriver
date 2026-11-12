@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- The `SystemAction` destination has `Launchpad` and `Screenshot`, which open Launchpad (or Apps where macOS has no Launchpad) and the Screenshot app; `ojd binding set` takes `system:launchpad` and `system:screenshot`. Lock Screen and Show Desktop are not offered because macOS has no public API for them.
 - Layouts apply to every protocol family: a record of any family but `HIDDescriptor` may hold `input.layouts`. The family driver decodes every report and the layout that selects a report overrides the controls it names, so a device with its own report shape is a record. The Xbox wheel `044F:B671` reads its steering and brake through such a layout.
 - A patch reaches every record property (`capabilities`, `idle`, `modes`, `usb`, `bluetoothLE`, `server`, `route`, `input` and `tuning`), and the selector still names the identity. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the remove path `modes.<id>` drops one.
 - A patch has a `remove` list of dotted key paths, such as `input.hidUsageMap`, that OJD applies before `patch`. A path outside the record schema is refused with `E5007`.

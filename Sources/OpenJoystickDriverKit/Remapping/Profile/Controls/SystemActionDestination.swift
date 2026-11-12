@@ -1,5 +1,16 @@
 import Foundation
 
+extension RemappingSystemActionKind {
+  /// The performer call that the action makes.
+  fileprivate var request: RemappingSystemActionRequest {
+    switch self {
+    case .missionControl: .missionControl
+    case .launchpad: .launchpad
+    case .screenshot: .screenshot
+    }
+  }
+}
+
 extension RemappingDestination {
   /// The performer call that a press or release of the destination makes, or `nil` for none.
   ///
@@ -7,7 +18,7 @@ extension RemappingDestination {
   func systemActionRequest(isDown: Bool) -> RemappingSystemActionRequest? {
     switch self {
     case .systemKey(let key): return .key(key, pressed: isDown)
-    case .systemAction(.missionControl): return isDown ? .missionControl : nil
+    case .systemAction(let action): return isDown ? action.request : nil
     case .openApplication(let identifier): return isDown ? .openApplication(identifier) : nil
     case .openURL(let url): return isDown ? .openURL(url) : nil
     case .runShortcut(let name): return isDown ? .runShortcut(name) : nil

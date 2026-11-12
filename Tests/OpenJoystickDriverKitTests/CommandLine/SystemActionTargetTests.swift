@@ -10,6 +10,8 @@ struct SystemActionTargetTests {
     let cases: [(String, RemappingDestination)] = [
       ("system-key:volume-up", .systemKey(.volumeUp)),
       ("system:mission-control", .systemAction(.missionControl)),
+      ("system:launchpad", .systemAction(.launchpad)),
+      ("system:screenshot", .systemAction(.screenshot)),
       ("open-app:com.apple.TextEdit", .openApplication(bundleIdentifier: "com.apple.TextEdit")),
       ("open-url:https://example.com:8080/a", .openURL("https://example.com:8080/a")),
       ("shortcut:Dim: Lights", .runShortcut("Dim: Lights")),

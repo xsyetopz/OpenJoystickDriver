@@ -690,7 +690,7 @@
           "additionalProperties": false,
           "properties": {
             "action": {
-              "enum": ["MissionControl"]
+              "enum": ["MissionControl", "Launchpad", "Screenshot"]
             },
             "type": {
               "const": "SystemAction"
