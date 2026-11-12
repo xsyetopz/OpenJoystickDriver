@@ -49,7 +49,7 @@
 /* Toolbar button that creates a copy of the selected profile. */
 "action.duplicate" = "डुप्लिकेट करें";
 /* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
-"action.convert" = "बदलें";
+"action.convert" = "रूपांतरित करें";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "निष्क्रिय करें";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
@@ -2720,7 +2720,7 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "रिकॉर्ड";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "सेवा में नहीं";
+"cli.controller.show.labelNotServed" = "संभाला नहीं गया";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "अगला चरण";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "जाँचता है कि फ़ाइल मान्य विवरण है, परिवार का नाम UpperCamelCase में है और फ़ाइल के नाम से मेल खाता है, वह अंतर्निहित परिवार नहीं है, और उसमें प्रदर्शन नाम व इनपुट लेआउट तय हैं। फ़ाइल अस्वीकार होने पर E5xxx कोड के साथ 1 पर समाप्त होता है।";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ परिवार %2$@ (%3$@) का मान्य विवरण है। इसे 'ojd protocol install' से इंस्टॉल करें।";
+"cli.protocol.validate.valid" = "%1$@ परिवार %2$@ (%3$@) का मान्य विवरण है। इसे “ojd protocol install” से इंस्टॉल करें।";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "प्रोटोकॉल विवरण जाँचें और उसे अपने उपयोगकर्ता के लिए इंस्टॉल करें।";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -3374,11 +3374,11 @@
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ में मोशन सेंसर नहीं है।";
 /* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
-"cli.profile.create.skipped" = "छोड़ दिया गया, क्योंकि कंट्रोलर में ये नहीं हैं: %@.";
+"cli.profile.create.skipped" = "छोड़ दिया गया, क्योंकि कंट्रोलर में ये नहीं हैं: %@।";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "gyro-stick टेम्पलेट जिस स्टिक को चलाता है: left या right। डिफ़ॉल्ट right है।";
 /* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
-"cli.profile.create.template" = "टेम्पलेट से शुरू करें: gyro-stick, keyboard-navigation या mouse-clicks.";
+"cli.profile.create.template" = "टेम्पलेट से शुरू करें: gyro-stick, keyboard-navigation या mouse-clicks।";
 /* Error of 'ojd profile create' when --stick or --activation is given without --template gyro-stick. The option names and the template name stay as written. */
 "cli.profile.create.templateRequired" = "--stick और --activation के लिए --template gyro-stick ज़रूरी है।";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
@@ -4550,7 +4550,7 @@
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
 "error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: बंडल किए गए रिकॉर्ड में वर्चुअल गेमपैड %2$@ का रिकॉर्ड होना चाहिए। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: बंडल किया गया रिकॉर्ड वर्चुअल गेमपैड %2$@ को परिभाषित करे और उसमें match न हो। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: बंडल किए गए रिकॉर्ड को वर्चुअल गेमपैड %2$@ परिभाषित करना चाहिए और उसमें match नहीं होना चाहिए। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: %3$@ फ़ाइल को mod.plist में %2$@ के अंतर्गत सूचीबद्ध नहीं किया जा सकता, जो %4$@ फ़ाइलें सूचीबद्ध करता है। समाधान: फ़ाइल को उसके प्रकार से मेल खाती सूची में रखें।";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4673,7 +4673,7 @@
 /* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
 "error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: स्टार्टअप ट्रांसपोर्ट USB, BluetoothClassic या BluetoothLE होना चाहिए। समाधान: transport को इनमें से एक रखें, या उसे छोड़ दें।";
 /* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
-"error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: crc32Seed वाली स्टार्टअप रिपोर्ट में 4 बाइट की पूँछ के लिए जगह होनी चाहिए। समाधान: रिपोर्ट को 4 बाइट से लंबा करें, या crc32Seed हटा दें।";
+"error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: crc32Seed वाली स्टार्टअप रिपोर्ट में 4 बाइट के ट्रेलर के लिए जगह होनी चाहिए। समाधान: रिपोर्ट को 4 बाइट से लंबा करें, या crc32Seed हटा दें।";
 /* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
 "error.E5007.startupWrite.usbLength" = "%1$@, session.startup[].bytes: USB स्टार्टअप पैकेट 1...64 बाइट लंबा होना चाहिए। समाधान: bytes की लंबाई 1...64 रखें।";
 /* Error E5007, shown when a startup write of a record fails: a USB startup endpoint is outside 1...127. %1$@ is the file. */
@@ -5206,9 +5206,9 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "यह शॉर्टकट पहले से किसी दूसरे ऐप में इस्तेमाल हो रहा है। कोई दूसरा शॉर्टकट रिकॉर्ड करें।";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "'%1$@' शॉर्टकट नहीं है। + से जुड़े मॉडिफ़ायर और एक कुंजी इस्तेमाल करें, जैसे control+option+P, या none।";
+"cli.setting.set.badShortcut" = "“%1$@” शॉर्टकट नहीं है। + से जुड़े मॉडिफ़ायर और एक कुंजी इस्तेमाल करें, जैसे control+option+P, या none।";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
-"cli.setting.set.badInterfaceLevel" = "'%1$@' इंटरफ़ेस स्तर नहीं है। Simple या Advanced इस्तेमाल करें।";
+"cli.setting.set.badInterfaceLevel" = "“%1$@” इंटरफ़ेस स्तर नहीं है। Simple या Advanced इस्तेमाल करें।";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@ में नया क्या है";
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
