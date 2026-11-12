@@ -201,7 +201,7 @@
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "Questo controller è in modalità bootloader. OJD non gli invia dati.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.bootloaderIdentity.nextStep" = "Esci dalla modalità bootloader del controller, poi ricollegalo.";
+"ui.controllers.bootloaderIdentity.nextStep" = "Porta il controller fuori dalla modalità bootloader, poi ricollegalo.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "Questo controller condivide il proprio ID con altri modelli e non corrisponde a nessuno di quelli supportati. OJD non gli invia dati.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -209,7 +209,7 @@
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
 "ui.controllers.noControllerLinked" = "Nessun controller è associato a questo ricevitore. OJD non gli invia dati.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
-"ui.controllers.noControllerLinked.nextStep" = "Collega un controller al dispositivo oppure accendi il controller.";
+"ui.controllers.noControllerLinked.nextStep" = "Collega un controller al ricevitore oppure accendi il controller.";
 /* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
 "ui.controllers.wirelessReceiver" = "Ricevitore wireless";
 /* Label of the battery fact in the Controllers detail. */
@@ -2744,7 +2744,7 @@
 /* Row label in the output of 'ojd controller show', present when the system owns the output. The explanation that the system sends rumble and light commands follows. */
 "cli.controller.show.labelOutputOwner" = "Gestore dell’output";
 /* Value of the Output owner row of 'ojd controller show'. Rumble and Lighting are the labels of two other rows and are written as in this catalog. */
-"platform.macos.cli.controller.show.outputOwnerMacos" = "Gestito da macOS. Vibrazione e Illuminazione elencano solo ciò che macOS lascia non eseguito.";
+"platform.macos.cli.controller.show.outputOwnerMacos" = "Gestito da macOS. Vibrazione e Illuminazione elencano solo ciò che macOS non gestisce.";
 /* Row label in the output of 'ojd controller show', present when tuning values apply. The comma-separated tuning values follow. */
 "cli.controller.show.labelTuning" = "Regolazioni";
 /* Value shown in a row of 'ojd controller show' that has nothing to report. */
@@ -4296,7 +4296,7 @@
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "I profili attivi non usano questo permesso.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
-"ui.access.permission.limited.message" = "Consentite, ma banner o suoni sono disattivati, quindi gli avvisi potrebbero sfuggire.";
+"ui.access.permission.limited.message" = "Concesso, ma banner o suoni sono disattivati, quindi gli avvisi potrebbero sfuggire.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Attivo, ma non in ascolto sulla porta %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */
@@ -4564,7 +4564,7 @@
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "Sito web del progetto";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
-"ui.menu.help.helpForThisArea" = "Aiuto per quest'area";
+"ui.menu.help.helpForThisArea" = "Aiuto per quest’area";
 /* Item of the Help menu that starts a short tour of the main window, one step per area. */
 "ui.menu.help.mainWindowTour" = "Tour della finestra principale";
 /* Title of the alert shown after the support report is copied. */
@@ -4654,7 +4654,7 @@
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Concedi accesso";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
-"ui.extra.problemPermission" = "Autorizzazione mancante: %@";
+"ui.extra.problemPermission" = "Permesso mancante: %@";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Apri %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -4822,7 +4822,7 @@
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecordFromSDL.noPad" = "%@ non è connesso come dispositivo HID che OpenJoystickDriver può leggere.";
 /* Label above the sentence in the Controllers detail of a connected device that OpenJoystickDriver does not serve. The sentence says what to do about it. */
-"ui.controllers.unserved.nextStepLabel" = "Passo successivo";
+"ui.controllers.unserved.nextStepLabel" = "Passaggio successivo";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "Acquisisci pacchetti…";
 /* Title of the sheet that captures packets of the controller. */
@@ -5215,17 +5215,17 @@
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.working.title" = "Funzionante";
 /* One sentence at the top of the Controllers detail for a controller in the Working state. */
-"ui.controllers.readiness.working.message" = "Questo controller è pronto all'uso.";
+"ui.controllers.readiness.working.message" = "Questo controller è pronto all’uso.";
 /* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
 "ui.controllers.readiness.working.action" = "Apri test di input";
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.needsStep.title" = "Serve un tuo intervento";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
-"ui.controllers.readiness.needsStep.access.message" = "Questo controller richiede un'autorizzazione non ancora concessa.";
+"ui.controllers.readiness.needsStep.access.message" = "Questo controller richiede un permesso non ancora concesso.";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
 "ui.controllers.readiness.needsStep.access.action" = "Apri Accesso";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "Per questo controller bisogna configurare il driver Xbox USB.";
+"ui.controllers.readiness.needsStep.driver.message" = "Per questo controller bisogna configurare il driver USB Xbox.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "Configura driver";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
