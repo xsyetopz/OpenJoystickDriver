@@ -84,6 +84,39 @@ enum SettingCatalog {
     }
   }
 
+  /// The name of the idle disconnect time, the setting that holds minutes or `off`.
+  static let idleDisconnectName = "idleDisconnectMinutes"
+
+  /// The text that turns the idle disconnect off.
+  static let idleDisconnectOff = "off"
+
+  /// Parses `text` as minutes in ``SettingsDocument/idleDisconnectRange``, or `off`.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither.
+  static func idleDisconnectMinutes(_ text: String) throws -> Int? {
+    guard text != idleDisconnectOff else { return nil }
+    guard let minutes = Int(text), SettingsDocument.idleDisconnectRange.contains(minutes) else {
+      throw ValidationError(
+        CLILocalized.format(
+          "cli.setting.set.badIdleDisconnect",
+          text,
+          String(SettingsDocument.idleDisconnectRange.lowerBound),
+          String(SettingsDocument.idleDisconnectRange.upperBound)
+        )
+      )
+    }
+    return minutes
+  }
+
+  /// Prints `minutes` as `key` and `value` JSON, or as the text alone.
+  static func printIdleDisconnect(_ minutes: Int?) throws {
+    let text = minutes.map(String.init) ?? idleDisconnectOff
+    switch CLIContext.current.format {
+    case .json: try CLIOutput.json(PauseShortcutResult(key: idleDisconnectName, value: text))
+    case .plain, .human: CLIOutput.stdout(text)
+    }
+  }
+
   /// The text that clears the pause shortcut.
   static let noShortcut = "none"
 
@@ -94,15 +127,19 @@ enum SettingCatalog {
 
   /// The names of every setting, as shown in help and error text.
   static var keyNames: String {
-    (ApplicationSettingKey.allCases.map(\.rawValue) + [interfaceLevelName, pauseShortcutName])
-      .joined(separator: ", ")
+    (ApplicationSettingKey.allCases.map(\.rawValue) + [
+      interfaceLevelName, pauseShortcutName, idleDisconnectName,
+    ])
+    .joined(separator: ", ")
   }
 
   /// Checks that `name` names a setting.
   ///
   /// - Throws: ``ValidationError`` when no setting has that name.
   static func validate(name: String) throws {
-    if name != pauseShortcutName, name != interfaceLevelName { _ = try key(name) }
+    if ![pauseShortcutName, interfaceLevelName, idleDisconnectName].contains(name) {
+      _ = try key(name)
+    }
   }
 
   /// Parses `text` as the pause shortcut, or `none` for no shortcut.
@@ -272,6 +309,10 @@ struct SettingGetCommand: AsyncParsableCommand {
         try SettingCatalog.printInterfaceLevel(SettingCatalog.store.interfaceLevel())
         return
       }
+      if key == SettingCatalog.idleDisconnectName {
+        try SettingCatalog.printIdleDisconnect(SettingCatalog.store.idleDisconnectMinutes())
+        return
+      }
       let setting = try SettingCatalog.key(key)
       let value = try await SettingCatalog.read().value(of: setting) ?? setting.defaultValue
       try SettingResult.print(setting, value: value)
@@ -318,6 +359,8 @@ struct SettingSetCommand: AsyncParsableCommand {
       _ = try SettingCatalog.pauseShortcut(value)
     } else if key == SettingCatalog.interfaceLevelName {
       _ = try SettingCatalog.interfaceLevel(value)
+    } else if key == SettingCatalog.idleDisconnectName {
+      _ = try SettingCatalog.idleDisconnectMinutes(value)
     } else {
       _ = try SettingCatalog.value(value, for: SettingCatalog.key(key))
     }
@@ -336,6 +379,12 @@ struct SettingSetCommand: AsyncParsableCommand {
         let level = try SettingCatalog.interfaceLevel(value)
         try SettingCatalog.store.setInterfaceLevel(level)
         try SettingCatalog.printInterfaceLevel(level)
+        return
+      }
+      if key == SettingCatalog.idleDisconnectName {
+        let minutes = try SettingCatalog.idleDisconnectMinutes(value)
+        try SettingCatalog.store.setIdleDisconnectMinutes(minutes)
+        try SettingCatalog.printIdleDisconnect(minutes)
         return
       }
       let setting = try SettingCatalog.key(key)
