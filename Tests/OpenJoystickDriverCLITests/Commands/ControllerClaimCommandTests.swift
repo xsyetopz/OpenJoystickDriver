@@ -328,7 +328,7 @@ struct ControllerClaimCommandTests {
 
     #expect(plain.standardOutput.contains("served-by\tmacos\n"))
     #expect(plain.standardOutput.contains("serving-route\tnative-pass-through"))
-    #expect(human.standardOutput.contains("Served by"))
-    #expect(human.standardOutput.contains("macOS. Run `ojd controller claim "))
+    #expect(human.standardOutput.contains("Handled by"))
+    #expect(human.standardOutput.contains("Handled by macOS. Run `ojd controller claim "))
   }
 }

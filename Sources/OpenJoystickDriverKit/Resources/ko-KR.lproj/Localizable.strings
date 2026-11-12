@@ -264,13 +264,13 @@
 "ui.controllers.accessibilityDetails" = "%1$@. %2$@. 프로토콜: %3$@. 파서: %4$@. 일련 번호: %5$@. USB VID/PID: %6$@. 입력 엔드포인트: %7$@. 출력 엔드포인트: %8$@.";
 /* Note on a controller row in the Controllers area when macOS serves the controller natively and the driver does not publish a virtual gamepad for it. */
 "platform.macos.ui.controllers.systemGamepadNotPublished" = "macOS 기본 게임패드, 게시 안 됨";
-/* Label of the popup in the Controllers detail that picks which program serves the controller to games. */
+/* Label of the popup in the Controllers detail that picks which program handles the controller for games. */
 "ui.controllers.server.label" = "처리 주체";
-/* Entry of the server picker in the Controllers detail: macOS serves the controller itself. */
-"platform.macos.ui.controllers.server.system" = "macOS(기본)";
-/* Option of the server popup: OpenJoystickDriver serves the controller as a virtual gamepad. OpenJoystickDriver is the product name. */
-"ui.controllers.server.ojd" = "OpenJoystickDriver(가상)";
-/* Progress text under the Served by picker in the Controllers detail while the service applies the user's choice of who serves the controller. */
+/* Entry of the server picker in the Controllers detail: macOS handles the controller itself. */
+"platform.macos.ui.controllers.server.system" = "macOS";
+/* Option of the server popup: OpenJoystickDriver handles the controller and shows a virtual gamepad. OpenJoystickDriver is the product name. */
+"ui.controllers.server.ojd" = "OpenJoystickDriver";
+/* Progress text under the Handled by picker in the Controllers detail while the service applies the user's choice of who handles the controller. */
 "ui.controllers.server.updating" = "이 컨트롤러를 처리하는 주체를 변경하는 중…";
 /* Label of the serving route fact in the Controllers detail. The route is the way the input reaches games. */
 "ui.controllers.serving.label" = "처리 경로";
@@ -2047,8 +2047,8 @@
 "platform.macos.cli.status.group.labelInputRead" = "입력 모니터링";
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "재정의 오류";
-/* Heading in the output of 'ojd status' above the list of controllers that macOS serves natively. %lld is the number of controllers. */
-"platform.macos.cli.status.group.labelPassThrough" = "macOS에 맡김 (%lld)";
+/* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
+"platform.macos.cli.status.group.labelPassThrough" = "macOS가 처리 (%lld)";
 /* Row label in the output of 'ojd status'. The state and version of the service follow. */
 "cli.status.group.labelService" = "서비스";
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
@@ -2613,7 +2613,7 @@
 "cli.controller.group.outputSent" = "%1$@ 명령을 %2$@에 보냈습니다.";
 /* Error of the controller output commands when the controller lacks the feature. %1$@ is the controller name, %2$@ is the missing feature as a noun phrase and %3$@ is the session token for 'ojd controller show'. */
 "cli.controller.group.outputUnsupported" = "%1$@에는 %2$@이(가) 없습니다. 지원 기능을 보려면 ‘ojd controller show %3$@’를 실행하세요.";
-/* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
+/* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To handle a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "컨트롤러 모델을 OpenJoystickDriver가 처리하게 합니다.";
 /* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
 "platform.macos.cli.controller.claim.discussion" = "해당 모델의 레코드(레코드 디렉터리의 vvvv-pppp.plist)에서 server를 ojd(으)로 설정하고 레코드의 다른 필드는 그대로 둡니다. 모델의 모든 컨트롤러에 적용됩니다. 실행 중인 서비스는 다시 연결하지 않아도 적용합니다. 컨트롤러를 찾으려면 서비스가 필요합니다. --dry-run은 아무것도 쓰지 않습니다. 원시 USB를 사용해 OpenJoystickDriver가 항상 처리하는 컨트롤러이거나 macOS가 기본적으로 처리하지 않는 컨트롤러는 E2023과 함께 종료 코드 1로 끝납니다.";
@@ -2627,7 +2627,7 @@
 "cli.controller.group.serverInvalid" = "%1$@을(를) 변경할 수 없습니다: %2$@";
 /* Error when a controller has no record to change. %1$@ is the controller identity and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.controller.group.serverNoRecord" = "%1$@에는 변경할 컨트롤러 레코드가 없습니다. ‘ojd record draft %2$@’(으)로 하나를 만드세요.";
-/* Message when a controller cannot be released to macOS because macOS does not serve it natively. %@ is the controller identity. OpenJoystickDriver is the product name. */
+/* Message when a controller cannot be released to macOS because macOS does not handle it natively. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "platform.macos.cli.controller.group.serverNotNative" = "macOS가 %@을(를) 기본적으로 처리하지 않으므로 항상 OpenJoystickDriver가 처리합니다.";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "cli.controller.group.serverRawUsb" = "%@은(는) 원시 USB를 사용하므로 항상 OpenJoystickDriver가 처리합니다.";
@@ -2699,13 +2699,13 @@
 "cli.controller.show.labelOwnership" = "소유권";
 /* Value of the Ownership row of 'ojd controller show'. %1$@ is the route that found the controller, %2$@ is the physical connection and %3$@ is the HID input source, all in kebab case, which stays as written. */
 "cli.controller.show.ownership" = "경로 %1$@, 물리 %2$@, HID 입력 %3$@";
-/* Row label in the output of 'ojd controller show'. The component that serves the controller follows, with where that choice comes from. */
+/* Row label in the output of 'ojd controller show'. The component that handles the controller follows, with where that choice comes from. */
 "cli.controller.show.labelServer" = "처리 주체";
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "처리 경로";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "페르소나";
-/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+/* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@(%2$@에서)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "프로토콜";
@@ -2736,7 +2736,7 @@
 /* Row label in the output of 'ojd controller show', present when the system owns the output. The explanation that the system sends rumble and light commands follows. */
 "cli.controller.show.labelOutputOwner" = "출력 담당";
 /* Value of the Output owner row of 'ojd controller show'. Rumble and Lighting are the labels of two other rows and are written as in this catalog. */
-"platform.macos.cli.controller.show.outputOwnerMacos" = "macOS(기본 제공). 진동과 조명에는 macOS가 처리하지 않는 항목만 표시됩니다.";
+"platform.macos.cli.controller.show.outputOwnerMacos" = "macOS가 처리 중입니다. 진동과 조명에는 macOS가 처리하지 않는 항목만 표시됩니다.";
 /* Row label in the output of 'ojd controller show', present when tuning values apply. The comma-separated tuning values follow. */
 "cli.controller.show.labelTuning" = "튜닝";
 /* Value shown in a row of 'ojd controller show' that has nothing to report. */
