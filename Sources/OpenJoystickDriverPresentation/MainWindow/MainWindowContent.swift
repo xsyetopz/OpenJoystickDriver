@@ -145,7 +145,8 @@
             driver: runtime.systemExtensionSetupState,
             extensionRouteConnected: runtime.statusState.hasExtensionRouteController,
             liveUpdatesFallbackReason: runtime.liveUpdatesFallbackReason,
-            listenerFailure: runtime.listenerFailure
+            listenerFailure: runtime.listenerFailure,
+            registration: ServiceReadiness.currentRegistration(for: runtime.statusState)
           ),
           perform: perform
         )

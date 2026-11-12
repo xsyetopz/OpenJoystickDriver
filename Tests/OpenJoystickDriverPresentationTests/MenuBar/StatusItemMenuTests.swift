@@ -225,11 +225,11 @@ struct StatusItemMenuTests {
     let menu = all(
       Self.entries(
         [Self.controller("a", isWireless: true)],
-        problems: [.missingPermission(.inputRead), .serviceNotRunning]
+        problems: [.missingPermission(.inputRead), .service(.stopped)]
       )
     )
     let allowed: Set<String> = [
-      "ui.extra.problemServiceNotRunning", "ui.extra.openWindow", "ui.menu.app.settings",
+      "ui.banner.service.title", "ui.extra.openWindow", "ui.menu.app.settings",
       "ui.menu.app.quit",
       "ui.extra.resume", "ui.extra.pause", "ui.extra.disconnectWireless", "ui.extra.testInput",
       "ui.extra.showInWindow", "ui.extra.noProfile", "ui.extra.moreProfiles",

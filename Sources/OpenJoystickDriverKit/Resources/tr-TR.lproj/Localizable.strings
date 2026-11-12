@@ -1400,6 +1400,20 @@
 "ui.setup.timedOutDetail" = "Sistem, Xbox USB sürücüsü isteğini zamanında yanıtlamadı. Yeniden deneyin.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver servisine ulaşamıyor";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
+"ui.service.state.checking.message" = "Hizmet denetleniyor…";
+/* Sentence next to the service symbol when the service answers and runs the same version as the app. */
+"ui.service.state.running.message" = "Hizmet çalışıyor.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
+"ui.service.state.listenerStopped.message" = "Hizmet istekleri dinlemeyi bıraktı.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
+"ui.service.state.readFailed.message" = "Uygulama hizmetin durumunu okuyamadı.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
+"ui.service.state.notInstalled.message" = "Hizmet yüklü değil.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
+"ui.service.state.needsApproval.message" = "Hizmetin başlayabilmesi için onayınız gerekiyor.";
+/* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
+"ui.service.state.versionMismatch.message" = "Hizmet, uygulamadan farklı bir sürümü çalıştırıyor.";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "İzin gerekli";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -4051,8 +4065,6 @@
 "ui.extra.grantAccess" = "Erişim Ver";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "İzin eksik: %@";
-/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
-"ui.extra.problemServiceNotRunning" = "Hizmet çalışmıyor: Başlat";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "%@ Uygulamasını Aç";
 /* Title of the alert shown when an action of the menu bar menu fails. */

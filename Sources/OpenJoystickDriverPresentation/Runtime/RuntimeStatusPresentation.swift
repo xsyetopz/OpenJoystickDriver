@@ -116,6 +116,10 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
   ///
   /// Set by `init(payload:)`; a presentation built from parts lists none.
   var unservedDevices: [RuntimeUnservedDevice] = []
+  /// The build the service reports; nil for a presentation built from parts.
+  ///
+  /// Set by `init(payload:)`.
+  var serviceBuild: BuildIdentity?
 
   /// Creates the presentation from the service status. `postEventAccess` and
   /// `requiresPostEventAccess` come from reads of their own; nil means not read.
@@ -137,6 +141,7 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
     }
 
     self.permissions = summary
+    self.serviceBuild = payload.buildIdentity
     self.devices = payload.connectedDevices
     self.unservedDevices = payload.unboundDevices.map(RuntimeUnservedDevice.init)
     self.virtualHIDProfileOverrideError = payload.virtualHIDProfileOverrideError

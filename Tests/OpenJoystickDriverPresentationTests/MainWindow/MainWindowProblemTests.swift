@@ -100,7 +100,7 @@ struct MainWindowProblemTests {
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.serviceUnavailable("down"), .driver(.needsApproval)]
+        == [.service(.stopped, "down"), .driver(.needsApproval)]
     )
     #expect(
       MainWindowProblem.current(
@@ -117,7 +117,7 @@ struct MainWindowProblemTests {
 
   @Test
   func eachProblemNamesItsAction() {
-    #expect(MainWindowProblem.serviceUnavailable("down").action == .retryService)
+    #expect(MainWindowProblem.service(.stopped, "down").action == .retryService)
     #expect(MainWindowProblem.driver(.needsApproval).action == .openDriverApproval)
     #expect(MainWindowProblem.driver(.needsActivation).action == .repairDriver)
     #expect(MainWindowProblem.driver(.invalid).action == nil)
@@ -172,7 +172,7 @@ struct MainWindowProblemTests {
 
   @Test
   func onlyProblemsThatNeedTheServiceOrAReinstallAreFailures() {
-    #expect(MainWindowProblem.serviceUnavailable("down").isFailure)
+    #expect(MainWindowProblem.service(.stopped, "down").isFailure)
     #expect(MainWindowProblem.driver(.missingEmbedded).isFailure)
     #expect(!MainWindowProblem.driver(.needsApproval).isFailure)
     #expect(!MainWindowProblem.accessMissing.isFailure)
