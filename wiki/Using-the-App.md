@@ -127,11 +127,11 @@ For more information, see [Controller not detected](Troubleshooting.md).
 The details include these fields when the controller reports them:
 
 - **Active profile**.
-- **Publication**: whether OJD publishes a [virtual gamepad](Glossary.md#terms) for the controller.
+- **Publication** (needs the **Advanced** interface): whether OJD publishes a [virtual gamepad](Glossary.md#terms) for the controller.
   A controller that is [handled by macOS](Glossary.md#terms) shows **Native macOS gamepad, not published**.
-- **Serving route**: how the input reaches games, for example **OpenJoystickDriver, virtual gamepad** or **macOS, passed through**.
-- **Protocol**.
-- **Serial number**, blurred until you click its eye button.
+- **Serving route** (needs the **Advanced** interface): how the input reaches games, for example **OpenJoystickDriver, virtual gamepad** or **macOS, passed through**.
+- **Protocol** (needs the **Advanced** interface).
+- **Serial number** (needs the **Advanced** interface), blurred until you click its eye button.
 - **Battery**, **Charging state**, and **Cable state**.
 
 A **Suspended** row with a **Resume** button appears while the controller is suspended.
@@ -140,7 +140,7 @@ For more information, see [Testing a controller](Testing-a-Controller.md).
 
 ### Who Handles the Controller
 
-The **Handled by** picker appears for a controller that macOS can handle, or whose record gives it to OpenJoystickDriver.
+The **Handled by** picker (needs the **Advanced** interface) appears for a controller that macOS can handle, or whose record gives it to OpenJoystickDriver.
 It never appears for a controller that uses raw USB or the Xbox USB driver.
 The choices are **macOS** and **OpenJoystickDriver**.
 **Set by** names the record layer that holds the choice.
@@ -150,7 +150,7 @@ For more information, see [Choose who drives the controller](Controller-Records.
 
 ### Virtual Gamepad Kind
 
-The **Virtual gamepad kind** menu appears for controllers that macOS does not handle:
+The **Virtual gamepad kind** menu (needs the **Advanced** interface) appears for controllers that macOS does not handle:
 
 - **Automatic (`<product name>`)** lets OJD choose the [virtual gamepad kind](Glossary.md#terms) and shows the product name games see for it.
 - **For Steam and SDL games** forces the Xbox kind for SDL games and Steam.
@@ -159,7 +159,7 @@ The **Virtual gamepad kind** menu appears for controllers that macOS does not ha
 
 In **Advanced**, each choice also shows its identifier, as in **For Steam and SDL games (SDLCompatible)**. The command line takes that identifier.
 
-**Apply to** chooses whether the override applies to every connected controller of the same model or to this controller only.
+**Apply to** (needs the **Advanced** interface) chooses whether the override applies to every connected controller of the same model or to this controller only.
 **Reset all overrides** clears every override.
 
 The change takes effect at once.
@@ -173,7 +173,9 @@ The detail also has **Export mapping**, which saves the SDL mapping or the W3C G
 
 ### Advanced Section
 
-The **Advanced** section holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
+The **Advanced** section (needs the **Advanced** interface) holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
+**Draft Record...**, **Draft Record from SDL...**, and **Capture Packets...** also need **Enable Developer Tools**.
+The **Stick deadzone** stepper and the **Tuning** group also need the **Advanced** interface.
 **USB VID/PID** is the vendor and product ID.
 For more information, see [Finding your controller ID](Connecting-Controllers.md).
 

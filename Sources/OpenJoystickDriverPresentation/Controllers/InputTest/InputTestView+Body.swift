@@ -94,10 +94,10 @@
     /// The form: the controller header and the sections the controller supports.
     var body: some View {
       Form {
-        Section { controllerHeader }
+        Section { controllerHeader }.ojdInterfaceRow(InputTestRow.status)
         ForEach(model.visibleSections, id: \.self) { section in
           switch section {
-          case .liveInput: Section { liveInput }
+          case .liveInput: Section { liveInput }.ojdInterfaceRow(InputTestRow.controlDiagram)
           case .motion:
             Section(header: Text(OJDLocalized.string("ui.motion.calibration.title"))) {
               MotionCalibrationControls(model: model.motionCalibration)
@@ -108,7 +108,7 @@
                 rumbleContent
                 if outputErrorBelongs(to: [.rumble]) { outputErrorView }
               }
-            }
+            }.ojdInterfaceRow(InputTestRow.rumble)
           case .lighting:
             Section(header: Text(OJDLocalized.string("ui.inputTest.lighting"))) {
               InputTestOutputControlsView(settings: model.outputSettings) {
@@ -117,7 +117,7 @@
                   outputErrorView
                 }
               }
-            }
+            }.ojdInterfaceRow(InputTestRow.lighting)
           }
         }
       }.ojdGroupedForm().onReceive(runtimeViewModel.$statusState) { state in

@@ -155,6 +155,7 @@
         )
         area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
           .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+          .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
       }.frame(
         maxWidth: .infinity,
         minHeight: 0,
