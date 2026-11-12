@@ -265,7 +265,7 @@ The messages above ran through the socket against build `8456f9de8665`, with a t
 - `ModList` answered an empty `mods` list, then the package after `ojd mod install` on the same connection, then an empty list after `ojd mod remove`.
 - The `Profiles` and `Mods` subscriptions sent the whole list at once and again after each change that `ojd` made. `output` on `Profiles` and the stream `Logs` got `E1003`.
 - A `FeedRequest` for `Generic`, `SDLCompatible` and `GameControllerCompatible` each got a `FeedSession`, and `Drain` got `Drained`. `DualShock` got `E1003` with the accepted personas.
-- `OutputRequest` was tried with no controller connected, so each of `Rumble`, `Player` and `Light` got `E2012`, as `ojd controller rumble` does. Rumble, a player number, and a light that a controller carries out are not shown yet.
+- `OutputRequest` was tried with an 8BitDo Ultimate 2C on Bluetooth LE, which OpenJoystickDriver serves by its HID descriptor with no rumble, player lights or light color. Each of `Rumble`, `Player` and `Light` got `E2013` with the same text `ojd controller rumble`, `player` and `light` print, and an unknown controller got `E2012`. Rumble, a player number, and a light that a controller carries out are not shown yet.
 
 ## Change Profiles
 
