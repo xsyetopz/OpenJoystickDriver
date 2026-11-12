@@ -4211,10 +4211,6 @@
 "ui.library.builtIn" = "Intégrés";
 /* Label of the field in the record detail that holds the controller model. */
 "ui.library.field.identity" = "Modèle de manette";
-/* Label of the field in the record detail that holds the protocol family. */
-"ui.library.field.family" = "Famille";
-/* Label of the field in the record detail that holds where the record comes from. */
-"ui.library.field.source" = "Source";
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "Chemin du fichier";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */

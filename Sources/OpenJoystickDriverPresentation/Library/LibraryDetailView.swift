@@ -97,14 +97,6 @@
     private func recordSections(_ detail: LibraryRecordDetail) -> some View {
       Section {
         OJDLabeledValue(OJDLocalized.string("ui.library.field.identity"), detail.item.identity)
-        OJDLabeledValue(
-          OJDLocalized.string("ui.library.field.family"),
-          detail.item.family.displayName
-        )
-        OJDLabeledValue(
-          OJDLocalized.string("ui.library.field.source"),
-          detail.item.layer.libraryTitle
-        )
         OJDLabeledValue(OJDLocalized.string("ui.library.field.file"), detail.item.fileDisplayPath)
         OJDLabeledValue(OJDLocalized.string("ui.library.field.transport"), detail.transport)
         if let claimed = detail.claimedByUSBExtension {
@@ -118,14 +110,18 @@
         }
       }
       if let run = model.testRun, run.model == detail.item.model { testSection(run) }
-      Section(header: Text(OJDLocalized.string("ui.library.section.fields"))) {
-        ForEach(detail.fields) { field in
-          OJDLabeledValue(field.name, field.layer.libraryTitle)
+      if !detail.fields.isEmpty {
+        Section(header: Text(OJDLocalized.string("ui.library.section.fields"))) {
+          ForEach(detail.fields) { field in
+            if field.layer == detail.item.layer {
+              Text(field.name)
+            } else {
+              OJDLabeledValue(field.name, field.layer.libraryTitle)
+            }
+          }
         }
       }
-      Section(header: Text(OJDLocalized.string("cli.controller.show.labelRecord"))) {
-        recordDocument(detail)
-      }
+      Section { recordDocument(detail) }
     }
 
     /// The Record section: the record JSON, or a line that says the text cannot be shown.
@@ -180,17 +176,21 @@
     @ViewBuilder
     private func modSections(_ mod: LibraryModItem) -> some View {
       Section {
-        OJDLabeledValue(OJDLocalized.string("cli.controller.show.labelName"), mod.name)
-        OJDLabeledValue(OJDLocalized.string("ui.library.field.version"), mod.version)
-        OJDLabeledValue(OJDLocalized.string("ui.library.field.author"), mod.author)
+        if let version = mod.version {
+          OJDLabeledValue(OJDLocalized.string("ui.library.field.version"), version)
+        }
+        if let author = mod.author {
+          OJDLabeledValue(OJDLocalized.string("ui.library.field.author"), author)
+        }
         if let problem = mod.problem {
           Text(OJDLocalized.formatted("ui.library.mod.unused", problem))
             .foregroundColor(Color(SemanticTone.caution.color))
         }
       }
-      Section(header: Text(OJDLocalized.string("ui.library.section.files"))) {
-        if mod.files.isEmpty { OJDValueText(nil) }
-        ForEach(mod.files, id: \.self) { file in Text(file).textSelection(.enabled) }
+      if !mod.files.isEmpty {
+        Section(header: Text(OJDLocalized.string("ui.library.section.files"))) {
+          ForEach(mod.files, id: \.self) { file in Text(file).textSelection(.enabled) }
+        }
       }
     }
   }

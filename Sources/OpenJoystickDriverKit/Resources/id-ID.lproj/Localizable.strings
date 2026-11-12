@@ -3629,10 +3629,6 @@
 "ui.library.builtIn" = "Bawaan";
 /* Label of the field in the record detail that holds the controller model. */
 "ui.library.field.identity" = "Model pengontrol";
-/* Label of the field in the record detail that holds the protocol family. */
-"ui.library.field.family" = "Keluarga";
-/* Label of the field in the record detail that holds where the record comes from. */
-"ui.library.field.source" = "Sumber";
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "Jalur file";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */

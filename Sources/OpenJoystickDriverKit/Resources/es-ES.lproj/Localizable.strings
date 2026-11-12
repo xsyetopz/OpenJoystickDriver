@@ -4211,10 +4211,6 @@
 "ui.library.builtIn" = "Integrados";
 /* Label of the field in the record detail that holds the controller model. */
 "ui.library.field.identity" = "Modelo de mando";
-/* Label of the field in the record detail that holds the protocol family. */
-"ui.library.field.family" = "Familia";
-/* Label of the field in the record detail that holds where the record comes from. */
-"ui.library.field.source" = "Origen";
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "Ruta del archivo";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */

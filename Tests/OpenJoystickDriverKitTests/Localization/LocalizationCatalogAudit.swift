@@ -44,7 +44,7 @@ enum LocalizationCatalogAudit {
     "ui.settings.general.title", "ui.controllers.server.ojd", "term.macro", "ui.profiles.macros",
   ]
   private static let frenchTerms: Set<String> = [
-    "ui.library.field.source", "ui.library.field.version",
+    "ui.library.field.version",
     "ui.capture.gain",
     "cli.controller.show.labelSession", "cli.controller.show.labelExtension",
     "cli.status.group.labelTransportExtension", "cli.status.group.labelService", "term.destination",

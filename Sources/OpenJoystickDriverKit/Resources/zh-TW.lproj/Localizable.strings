@@ -3629,10 +3629,6 @@
 "ui.library.builtIn" = "內建";
 /* Label of the field in the record detail that holds the controller model. */
 "ui.library.field.identity" = "控制器型號";
-/* Label of the field in the record detail that holds the protocol family. */
-"ui.library.field.family" = "系列";
-/* Label of the field in the record detail that holds where the record comes from. */
-"ui.library.field.source" = "來源";
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "檔案路徑";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */

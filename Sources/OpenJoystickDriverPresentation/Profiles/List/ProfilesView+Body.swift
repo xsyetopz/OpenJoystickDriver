@@ -323,11 +323,13 @@
           }.padding(.horizontal, 14)
         case .available:
           if !profiles.isEmpty || !(currentSnapshot?.profileIssues.isEmpty ?? true) {
-            Picker(OJDLocalized.string("ui.profiles.sort"), selection: $screen.listSort) {
-              ForEach(ProfileListSort.allCases) { sort in
-                Text(OJDLocalized.string(sort.titleKey)).tag(sort)
-              }
-            }.padding(.horizontal, 14)
+            if profiles.count > 1 {
+              Picker(OJDLocalized.string("ui.profiles.sort"), selection: $screen.listSort) {
+                ForEach(ProfileListSort.allCases) { sort in
+                  Text(OJDLocalized.string(sort.titleKey)).tag(sort)
+                }
+              }.padding(.horizontal, 14)
+            }
             profileListRows
           }
         }

@@ -87,18 +87,13 @@
       Binding(get: { model.selection }, set: { model.select($0) })
     }
 
-    /// The header of the records section; the Built-in scope shows the number of records beside
-    /// the title.
+    /// The header of the records section; the Built-in scope shows only the number of records.
     @ViewBuilder
     private var recordsHeader: some View {
       switch model.scope {
       case .installed: Text(OJDLocalized.string("ui.library.records"))
       case .builtIn:
-        HStack {
-          Text(OJDLocalized.string("ui.library.builtIn"))
-          Spacer()
-          Text(model.records.builtIn.count.formatted())
-        }.ojdAccessibilityValue(model.records.builtIn.count.formatted())
+        Text(model.records.builtIn.count.formatted())
       }
     }
 

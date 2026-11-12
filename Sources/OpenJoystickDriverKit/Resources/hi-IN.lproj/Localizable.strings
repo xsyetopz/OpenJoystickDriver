@@ -3629,10 +3629,6 @@
 "ui.library.builtIn" = "अंतर्निहित";
 /* Label of the field in the record detail that holds the controller model. */
 "ui.library.field.identity" = "कंट्रोलर मॉडल";
-/* Label of the field in the record detail that holds the protocol family. */
-"ui.library.field.family" = "परिवार";
-/* Label of the field in the record detail that holds where the record comes from. */
-"ui.library.field.source" = "स्रोत";
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "फ़ाइल पथ";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */

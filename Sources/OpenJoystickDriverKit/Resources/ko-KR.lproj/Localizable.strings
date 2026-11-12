@@ -3629,10 +3629,6 @@
 "ui.library.builtIn" = "내장";
 /* Label of the field in the record detail that holds the controller model. */
 "ui.library.field.identity" = "컨트롤러 모델";
-/* Label of the field in the record detail that holds the protocol family. */
-"ui.library.field.family" = "제품군";
-/* Label of the field in the record detail that holds where the record comes from. */
-"ui.library.field.source" = "출처";
 /* Label of the field in the record detail that holds the path of the record file. */
 "ui.library.field.file" = "파일 경로";
 /* Label of the field in the record detail that holds how the controller connects, for example USB or Bluetooth. */
