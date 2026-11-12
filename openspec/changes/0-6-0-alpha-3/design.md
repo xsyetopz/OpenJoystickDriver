@@ -431,7 +431,7 @@ When a controller has a record, no mode of the record fits the interfaces the de
 
 Reason: a record that describes one connection of a controller should not block a connection it does not describe. The GameSir G7 Pro dongle is the measured case; its bundled record gains the mode as data (task 8.16), so the fallback covers the next such device before anyone reports it.
 
-This reverses the rule `wiki/Supported-Controllers.md:134` states, so the maintainer confirms it (Open Questions). Task 9.18 reads why that rule exists before it changes the classifier.
+This reverses the rule `wiki/Supported-Controllers.md:134` states; the maintainer accepted it on 2026-11-12 (Open Questions). Task 9.18 reads why that rule exists before it changes the classifier.
 
 Alternative considered: no fallback, only the record fix. Rejected as the whole answer: each further device waits for a release or for its user to write a patch, and the reason it gives today has no text.
 
@@ -625,7 +625,7 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - Can OJD serve `045E:02EA`, `0B00`, and `0B12` through Apple's HID device, which would allow removing the extension? (task 4.9)
 - Which terms does the maintainer choose from the table in D22? In particular "Handled by" against the "Served by" the command line prints, and the three names of the virtual gamepad kinds. (task 14.1)
 - Which of the feature groups 13 (Simple and Advanced), 15 (per-app profiles), and 16 (mapper features) stay in 0.6.0-alpha.3?
-- Does the maintainer accept the HID fallback of D18, which reverses `wiki/Supported-Controllers.md:134`? (task 9.18)
+- "Does the maintainer accept the HID fallback of D18?" (task 9.18) resolved: yes, on 2026-11-12, as D18 describes.
 - Does the menu keep one "Help" item for a user with no open window? (D19)
 - The deployment target is macOS 12 (`Package.swift:33`). `NavigationSplitView` and `MenuBarExtra` need macOS 13. Does the target stay?
 - Should the toolbar be customizable, as Notes offers through "Customize Toolbar…"? No spec asks for it.
