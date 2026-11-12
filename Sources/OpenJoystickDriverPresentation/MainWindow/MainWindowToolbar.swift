@@ -91,6 +91,7 @@
       item.isBordered = true
       if let search = item as? NSSearchToolbarItem {
         search.fixSearchFieldWidth()
+        search.searchField.placeholderString = item.label
       }
       return item
     }

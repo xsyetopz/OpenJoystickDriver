@@ -162,6 +162,15 @@ struct MainWindowAreaTests {
   }
 
   @Test
+  @MainActor
+  func theLibrarySearchFieldShowsItsLabelForVoiceOver() throws {
+    let item = try #require(
+      MainWindowToolbarLayout.makeItem(for: .searchLibrary) as? NSSearchToolbarItem
+    )
+    #expect(item.searchField.placeholderString == item.label)
+  }
+
+  @Test
   func onlyControllersHasASummaryLineWhileTheServiceIsUnavailable() {
     for area in MainWindowArea.allCases {
       #expect(MainWindowSummary.text(for: area, status: .loading).isEmpty)
