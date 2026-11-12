@@ -2757,6 +2757,8 @@
 "cli.controller.show.recordUser" = "سجلك، %@";
 /* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
 "cli.controller.show.inputMappingRecord" = "سجل";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the controller's record fit no interface of the device and the HIDDescriptor rule serves it. HIDDescriptor is a rule name and stays as written. %@ is the row text of the mapping source. */
+"cli.controller.show.inputMappingRecordDidNotFit" = "%@ (لا يناسب السجل هذا الجهاز؛ تتم الخدمة بالقاعدة HIDDescriptor)";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingSDL" = "معيّن من SDL_GameControllerDB (تطابق %1$@، GUID %2$@)";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */

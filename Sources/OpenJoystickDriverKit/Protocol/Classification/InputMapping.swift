@@ -26,6 +26,9 @@ public struct InputMapping: Codable, Equatable, Sendable {
   public let unmapped: [String]
   /// Why a matching line was rejected, so the pad keeps the standard map; nil otherwise.
   public let rejection: String?
+  /// The ID of the controller record that fit no interface of the device, so the `HIDDescriptor`
+  /// rule serves it instead; nil when the record applies or none exists.
+  public internal(set) var unfitRecordID: String?
 
   /// The mapping of a pad with a controller record.
   static let record = Self(
@@ -129,6 +132,21 @@ extension InputMapping {
   /// - Parameter localize: Returns the localized format for a key of the en-US catalog.
   /// - Returns: The row text in the language `localize` uses.
   public func rowText(localize: (String) -> String) -> String {
+    noting(unfitRecord: baseRowText(localize: localize), localize: localize)
+  }
+
+  /// `text` followed by the sentence that the record did not fit, when it did not.
+  ///
+  /// - Parameters:
+  ///   - text: The row text of the mapping's source.
+  ///   - localize: Returns the localized format for a key of the en-US catalog.
+  /// - Returns: `text`, with the note when ``unfitRecordID`` is set.
+  public func noting(unfitRecord text: String, localize: (String) -> String) -> String {
+    guard unfitRecordID != nil else { return text }
+    return unsafe String(format: localize("cli.controller.show.inputMappingRecordDidNotFit"), text)
+  }
+
+  private func baseRowText(localize: (String) -> String) -> String {
     switch source {
     case .record: return localize("cli.controller.show.inputMappingRecord")
     case .sdlGameControllerDB:

@@ -34,10 +34,13 @@ extension ControllerDetailFacts {
       let key =
         mapping.source == .none
         ? "cli.controller.show.inputMappingUnbound" : "cli.controller.show.inputMappingSDL"
-      words = unsafe String(
-        format: OJDLocalized.string(key),
-        mapping.match.map(matchTierText) ?? "",
-        mapping.guid ?? ""
+      words = mapping.noting(
+        unfitRecord: unsafe String(
+          format: OJDLocalized.string(key),
+          mapping.match.map(matchTierText) ?? "",
+          mapping.guid ?? ""
+        ),
+        localize: OJDLocalized.string
       )
     case .record, .standardHIDUsageMap: words = mapping.rowText(localize: OJDLocalized.string)
     }

@@ -86,7 +86,7 @@ package struct DeviceCatalog: Sendable {
     let keepAlivePolicy: GIPKeepAlivePolicy =
       protocolInfo.keepAliveEnabled.map { $0 ? .enabled : .disabled } ?? .enabled
 
-    return DeviceRuntimeProfile(
+    var profile = DeviceRuntimeProfile(
       recordID: unsafe String(format: "%04x-%04x", record.vendorID, record.productID),
       transportProfile: DeviceTransportProfile(
         inputEndpoint: UInt8(inputEndpoint),
@@ -118,6 +118,8 @@ package struct DeviceCatalog: Sendable {
       hasDefaultMode: record.defaultMode != nil,
       idleReason: record.baseMode.idle
     )
+    profile.statesServer = record.server != nil
+    return profile
   }
 
   /// The runtime profile of a row that names only this family and stored variant: default endpoints

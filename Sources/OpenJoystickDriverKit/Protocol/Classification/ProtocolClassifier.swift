@@ -382,11 +382,16 @@ public struct ProtocolBinding: Equatable, Sendable {
   public let record: DeviceRuntimeProfile?
   /// What the database gave a HID pad without a record; nil for a record or another family.
   var sdl: SDLBindingResolution?
+  /// The record that fit no interface of the device when the `HIDDescriptor` rule serves it
+  /// instead; nil otherwise.
+  var unfitRecordID: String?
 
   /// Where the HID usage map of a `HIDDescriptor` binding comes from; nil for another family.
   public var inputMapping: InputMapping? {
     guard protocolID == .hidDescriptor else { return nil }
-    return sdl?.inputMapping ?? (record == nil ? .standardHIDUsageMap : .record)
+    var mapping = sdl?.inputMapping ?? (record == nil ? .standardHIDUsageMap : .record)
+    mapping.unfitRecordID = unfitRecordID
+    return mapping
   }
 
   /// The binding as a family and variant.
@@ -411,9 +416,11 @@ public enum ProtocolClassification: Equatable, Sendable {
 /// signature (the device-descriptor GIP triple only when an unconfigured device
 /// exposes no interface facts), then the `HIDDescriptor` contract.
 /// `HIDDescriptor` always requires the descriptor contract, including for catalog records.
-/// A validation failure never falls through to a lower level. One exception: a record of one
+/// A validation failure never falls through to a lower level. Two exceptions: a record of one
 /// Xbox USB family whose device exposes only the other family's interface signature binds by
-/// that signature.
+/// that signature, and a record that fits none of the HID interfaces of the device, when one of
+/// them passes the descriptor contract and the record does not state `server` `System`, yields
+/// to the `HIDDescriptor` rule.
 enum ProtocolClassifier {
   /// Selects the protocol family, variant and interface that drive `device` over `backend`, or
   /// says why none does.
@@ -445,8 +452,19 @@ enum ProtocolClassifier {
       case nil: break
       }
       if !record.hasDefaultMode, modeID == nil { return .unsupported(.noModeMatched) }
-      return otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
+      let result =
+        otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
         ?? bind(record, interfaces: interfaces, backend: backend)
+      guard recordFitsNoInterface(record, interfaces: interfaces, backend: backend) else {
+        return result
+      }
+      return descriptorFallback(
+        for: record,
+        device: device,
+        interfaces: interfaces,
+        backend: backend,
+        database: database
+      ) ?? mismatch(of: record, kept: result)
     }
     if let result = classifySignature(interfaces, backend: backend)
       ?? classifyDeviceSignature(device, backend: backend)
@@ -587,7 +605,7 @@ enum ProtocolClassifier {
   }
 
   /// The first interface whose observed HID facts satisfy the descriptor contract.
-  private static func descriptorInterface(
+  static func descriptorInterface(
     _ interfaces: [PhysicalInterfaceSignature]
   ) -> PhysicalInterfaceSignature? {
     interfaces.first { HIDDescriptorContract.violation(in: $0.hidLayout) == nil }
