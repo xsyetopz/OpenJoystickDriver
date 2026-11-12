@@ -60,6 +60,8 @@ Use this method for a Bluetooth controller. Bluetooth controllers do not appear 
 3. Turn on **Enable Developer Tools**.
 4. Select your controller in the developer tools below it.
 
+The developer tools need the **Advanced** interface: set **Interface** to **Advanced** in **Settings** > **General**, or choose **View** > **Advanced**.
+At **Simple**, they stay hidden.
 The developer tools show the controller details, including its USB ID, connection type, and endpoints.
 
 ## Xbox USB Driver Extension

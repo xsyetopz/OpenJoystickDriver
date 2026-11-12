@@ -275,6 +275,16 @@ It is unset until you click **Record Shortcut** and press a key with Control, Op
 Another app that uses the same combination makes the shortcut fail with an error here; record a different one.
 `ojd setting set pauseShortcut` sets it too.
 
+**Interface** chooses how much of the app shows: **Simple** or **Advanced**.
+It is **Simple** until you change it.
+The **View** menu has the same two items, **Simple** and **Advanced**, with a checkmark on the current one.
+`ojd setting set interfaceLevel Simple` or `ojd setting set interfaceLevel Advanced` sets it from a terminal.
+For more information, see [Command reference](Command-Reference.md).
+
+At **Advanced**, the developer tools show in **Settings** > **Advanced** while **Enable Developer Tools** is on.
+At **Simple**, they stay hidden even with **Enable Developer Tools** on.
+Wiki pages mark a control that needs **Advanced** with "(needs the **Advanced** interface)".
+
 Under **Updates**, **Check for updates automatically** looks for a newer version when the app starts.
 Click **Check Now** to look at once.
 OJD contacts GitHub only for these checks.
@@ -311,7 +321,8 @@ Click **Open Notification Settings** to fix this.
   Only some Xbox One and Xbox Series controllers on USB need it.
   **Uninstall** appears while the driver is active; it asks you to approve and then deactivates the driver.
   For more information, see [Xbox USB driver extension](Connecting-Controllers.md#xbox-usb-driver-extension).
-- **Enable Developer Tools** shows controller input and USB packet tools in this pane.
+- **Enable Developer Tools** shows controller input and USB packet tools in this pane, together with a soak test section.
+  The tools show only while **Interface** is **Advanced** (needs the **Advanced** interface); the switch itself is always there.
   For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
 If the settings file cannot be read, the app shows **Settings can't be read** with **Reset Settings**. `ojd setting reset` does the same from a terminal.
