@@ -1,0 +1,40 @@
+== Control scope
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Activate", "profile": "ojd-trial-617"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileResult","profile":{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":true,"model":"2DC8:301B","name":"ojd-trial-617"}}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Set", "profile": "ojd-trial-617", "key": "name", "value": "ojd-trial-617-renamed"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileResult","profile":{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":true,"model":"2DC8:301B","name":"ojd-trial-617-renamed"}}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Deactivate", "profile": "ojd-trial-617-renamed"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileResult","profile":{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":false,"model":"2DC8:301B","name":"ojd-trial-617-renamed"}}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Set", "profile": "ojd-trial-617-renamed", "key": "name", "value": "ojd-trial-617"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileResult","profile":{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":false,"model":"2DC8:301B","name":"ojd-trial-617"}}
+== a refusal that keeps the connection open
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Activate", "profile": "No Such Profile"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2012","kind":"Status","message":"No profile has the ID or name 'No Such Profile'. 'ojd profile list' shows every profile.","status":"Failure"}
+== a refusal that closes the connection (Set without a value)
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Set", "profile": "ojd-trial-617", "key": "name"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1003","kind":"Status","message":"The message is not a valid request of its kind.","status":"Failure"}
+== Read scope only
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ProfileRequest", "action": "Activate", "profile": "ojd-trial-617"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1002","kind":"Status","message":"ProfileRequest needs the control scope.","status":"Failure"}
+== the profile after the run, through ojd
+$ ojd --json profile list  -> exit 0
+  {
+    "apiVersion": "openjoystickdriver/v1alpha3",
+    "items": [
+      {
+        "active": false,
+        "bindings": 0,
+        "controller": "2DC8:301B",
+        "id": "F9C99628-CB59-442D-A779-385E91D73386",
+        "name": "ojd-trial-617",
+        "scope": "global"
+      }
+    ],
+    "kind": "ProfileList",
+    "metadata": {}
+  }
+exit 0

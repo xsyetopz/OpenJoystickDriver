@@ -1,0 +1,35 @@
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+== before
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ModList"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[]}
+$ ojd mod install /tmp/ojd-6-17/pkg/scratch-trial  -> exit 0
+  Installed ~/Library/Application Support/OpenJoystickDriver/Packages/scratch-trial. The running service applies it now.
+== after install, on the same connection
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ModList"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[{"author":"6.17 trial","files":["Controllers/ffee-0001.plist"],"name":"scratch-trial","version":"0.0.1"}]}
+$ ojd --json mod list  -> exit 0
+  {
+    "apiVersion": "openjoystickdriver/v1alpha3",
+    "items": [
+      {
+        "author": "6.17 trial",
+        "files": ["Controllers/ffee-0001.plist"],
+        "name": "scratch-trial",
+        "version": "0.0.1"
+      }
+    ],
+    "kind": "ModPackageList",
+    "metadata": {}
+  }
+$ ojd mod remove scratch-trial --force  -> exit 0
+  Deleted ~/Library/Application Support/OpenJoystickDriver/Packages/scratch-trial.
+== after remove
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ModList"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[]}
+== a Control-only connection has no Read scope
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ModList"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1002","kind":"Status","message":"ModList needs the read scope.","status":"Failure"}
+exit 0

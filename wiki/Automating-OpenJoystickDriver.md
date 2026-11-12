@@ -257,6 +257,16 @@ A program with the `Read` scope can list the installed mod packages, as `ojd mod
 2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ModList"}`.
 3. The endpoint answers `Mods` with one entry for each package: `name`, `files`, and `version` and `author` when the package states them. An entry with a `problem` holds a package that the service does not use. The connection stays open, so a `ModList` may follow a `ModList` or a `ProfileRequest`.
 
+### What ran against the installed build
+
+The messages above ran through the socket against build `8456f9de8665`, with a token that held `Read` and `Control`. The scripts and their output are in [`evidence/scripting/`](../openspec/changes/0-6-0-alpha-3/evidence/scripting/):
+
+- `ProfileRequest` activated, renamed (`Set` of `name`), and deactivated a profile, each answered by a `ProfileResult`. A profile that does not exist got `E2012` and the connection stayed open; a `Set` without `value` got `E1003`; a client with only `Read` got `E1002`.
+- `ModList` answered an empty `mods` list, then the package after `ojd mod install` on the same connection, then an empty list after `ojd mod remove`.
+- The `Profiles` and `Mods` subscriptions sent the whole list at once and again after each change that `ojd` made. `output` on `Profiles` and the stream `Logs` got `E1003`.
+- A `FeedRequest` for `Generic`, `SDLCompatible` and `GameControllerCompatible` each got a `FeedSession`, and `Drain` got `Drained`. `DualShock` got `E1003` with the accepted personas.
+- `OutputRequest` was tried with no controller connected, so each of `Rumble`, `Player` and `Light` got `E2012`, as `ojd controller rumble` does. Rumble, a player number, and a light that a controller carries out are not shown yet.
+
 ## Change Profiles
 
 A profile is an XML property list file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. To read one in a script, convert it with `plutil -convert json -o - FILE.plist`.
@@ -389,7 +399,7 @@ To run a shortcut from another program, use the `shortcuts` command or a `shortc
 - Raycast: the Shortcuts extension runs a shortcut by name, or a Script Command can run `shortcuts run "Low Battery Check"`.
 - Stream Deck: an Open action with the link `shortcuts://run-shortcut?name=Low%20Battery%20Check` runs the shortcut.
 
-None of these actions is verified live in the Shortcuts app yet.
+None of these actions is verified live in the Shortcuts app yet. `shortcuts list` prints no shortcut, and no command runs an action by name: `shortcuts run` needs a shortcut that you build in the Shortcuts app first.
 
 ## Further Reading
 

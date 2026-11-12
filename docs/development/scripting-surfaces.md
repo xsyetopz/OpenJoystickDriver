@@ -105,7 +105,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 | Scope `Read` | `Sources/OpenJoystickDriverKit/ApplicationService/Payloads/AccessPayloads.swift:7` | receive controller events |
 | Scope `Control` | `AccessPayloads.swift:9`; checked at `EndpointServer+Handshake.swift:62` | drive a virtual gamepad |
 | Stream | `EndpointServer+Handshake.swift:82`; `EndpointServer+Lists.swift:5`, `:19` | `Controllers`, `Profiles`, and `Mods`; the last two send the list on change |
-| Personas | `wiki/Automating-OpenJoystickDriver.md:214` | `Generic` and `SDLCompatible` |
+| Personas | `docs/sdk/endpoint.md`, `FeedRequest` | `Generic`, `SDLCompatible`, and `GameControllerCompatible` for a client with `Control`; any other id is refused with `E1003` |
 | Token with origins | `AccessTokenGrant.swift:202` (`Sources/OpenJoystickDriverService/Runtime/Endpoint/`) | cannot hold `Control` |
 | Connections | `wiki/Automating-OpenJoystickDriver.md:193` | 8 on the socket, 8 on the WebSocket |
 | Handshake time | `wiki/Automating-OpenJoystickDriver.md:74` | `Hello` within 5 seconds |
@@ -123,7 +123,20 @@ Each item rests on the tables above. A surface that is not listed for an item do
 7. Receive an event inside the service. The endpoint streams `Controllers` to an outside program, and no surface takes a handler that the service runs.
 8. Subscribe to anything but `Controllers`, `Profiles`, and `Mods` (`EndpointServer+Handshake.swift:82`). No stream carries logs, bindings, or macros.
 9. Use the endpoint without a grant by the user. The program needs `ojd access grant` first, and a token with origins cannot hold `Control` (`AccessTokenGrant.swift:202`).
-10. Choose a virtual gamepad persona beyond `Generic` and `SDLCompatible` through the endpoint (`wiki/Automating-OpenJoystickDriver.md:214`).
+10. Choose a virtual gamepad persona that the service does not publish. A client with `Control` may choose each persona the service publishes (see "Tried against the installed build").
 11. Call an intent from a program without Shortcuts. The wiki points to `shortcuts run` and `shortcuts://` links (`wiki/Automating-OpenJoystickDriver.md:320-321`).
 
 Gaps for a mod author: 11, with item 6 narrowed to the speaker.
+
+## Tried against the installed build
+
+The endpoint surfaces of tasks 6.11 to 6.15 ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token that held `Read` and `Control`. Each script and its output are in `openspec/changes/0-6-0-alpha-3/evidence/scripting/`; `access-before.txt` and `access-after.txt` show the endpoint off, with no grant or token, before and after. The scripts used a scratch profile and a scratch mod package, both removed afterwards. No controller was connected during the run (`ojd controller list` printed `No controllers are connected.`).
+
+| Surface | Script, output | Result |
+| --- | --- | --- |
+| `ProfileRequest` (6.11) | `profile_request.py`, `profile_request.txt` | `Activate`, `Set` (`name`), and `Deactivate` each answered a `ProfileResult`. An unknown profile got `E2012` and the connection stayed open. A `Set` without `value` got `E1003`. A `Read`-only client got `E1002`. |
+| `ModList` (6.12) | `mod_list.py`, `mod_list.txt` | `Mods` was empty, listed `scratch-trial` after `ojd mod install` on the same connection, and was empty after `ojd mod remove`. A `Control`-only client got `E1002`. |
+| `OutputRequest` (6.13) | `output_request.py`, `output_request.txt` | Not shown to work. With no controller connected, `Rumble`, `Player` and `Light` each got `E2012`, the code `ojd controller rumble`, `player` and `light` print. An out-of-range `duration` got `E1003`. The delivered path is open until a controller is connected. |
+| `Profiles` and `Mods` subscriptions (6.14) | `subscriptions.py`, `subscriptions.txt` | Each sent the list at once and again after each change made through `ojd`. `output` on `Profiles` and an unknown stream got `E1003`. |
+| Personas (6.15) | `feed_persona.py`, `feed_persona.txt` | `Generic`, `SDLCompatible` and `GameControllerCompatible` each answered a `FeedSession`, and a frame and a `Drain` answered `Drained`. `DualShock` got `E1003` with the accepted personas, and a `Read`-only client got `E1002`. |
+| App Intents (6.11 to 6.13) | `app-intents.txt` | Not run. `shortcuts list` prints no shortcut, and no command runs an intent by name. |

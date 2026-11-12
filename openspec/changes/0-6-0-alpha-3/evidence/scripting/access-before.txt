@@ -1,0 +1,44 @@
+$ ojd --json access status   # before
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "connections": [],
+  "enabled": false,
+  "grants": [],
+  "kind": "EndpointAccess",
+  "refused": [],
+  "refusedTokens": [],
+  "socketPath": "/var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/com.openjoystickdriver.endpoint.sock",
+  "tokens": [],
+  "web": {
+    "enabled": false,
+    "listening": false,
+    "pagesPath": "/Users/krystian/Library/Application Support/OpenJoystickDriver/Overlays"
+  }
+}
+exit 0
+$ ojd --json controller list   # before
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "items": [],
+  "kind": "ControllerList",
+  "metadata": {}
+}
+exit 0
+$ ojd --json profile list   # before
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "items": [],
+  "kind": "ProfileList",
+  "metadata": {}
+}
+exit 0
+$ ojd --json mod list   # before
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "items": [],
+  "kind": "ModPackageList",
+  "metadata": {}
+}
+exit 0
+$ shortcuts list
+exit 0

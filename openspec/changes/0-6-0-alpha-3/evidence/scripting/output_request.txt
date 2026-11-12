@@ -1,0 +1,29 @@
+$ ojd --json controller list  -> exit 0
+  {
+    "apiVersion": "openjoystickdriver/v1alpha3",
+    "items": [],
+    "kind": "ControllerList",
+    "metadata": {}
+  }
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+== Rumble, Player, Light
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "2DC8:301B", "action": "Rumble", "left": 120, "duration": 0.5}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2012","kind":"Status","message":"No controller matches '2DC8:301B', because none is connected. Connect one and run 'ojd controller list'.","status":"Failure"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "2DC8:301B", "action": "Player", "player": 1}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2012","kind":"Status","message":"No controller matches '2DC8:301B', because none is connected. Connect one and run 'ojd controller list'.","status":"Failure"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "2DC8:301B", "action": "Light", "color": "FF8000", "brightness": 100}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2012","kind":"Status","message":"No controller matches '2DC8:301B', because none is connected. Connect one and run 'ojd controller list'.","status":"Failure"}
+== the same through ojd
+$ ojd controller rumble 2DC8:301B --left 120 --duration 0.5  -> exit 1
+  error[E2012]: No controller matches '2DC8:301B', because none is connected. Connect one and run 'ojd controller list'.
+$ ojd controller player 2DC8:301B 1  -> exit 1
+  error[E2012]: No controller matches '2DC8:301B', because none is connected. Connect one and run 'ojd controller list'.
+$ ojd controller light 2DC8:301B --color FF8000 --brightness 100  -> exit 1
+  error[E2012]: No controller matches '2DC8:301B', because none is connected. Connect one and run 'ojd controller list'.
+== refusals
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "FFFF:FFFF", "action": "Rumble", "left": 10}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2012","kind":"Status","message":"No controller matches 'FFFF:FFFF', because none is connected. Connect one and run 'ojd controller list'.","status":"Failure"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "2DC8:301B", "action": "Rumble", "duration": 9}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1003","kind":"Status","message":"The message is not a valid request of its kind.","status":"Failure"}
+exit 0
