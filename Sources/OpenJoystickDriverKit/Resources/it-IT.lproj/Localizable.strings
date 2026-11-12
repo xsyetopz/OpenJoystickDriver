@@ -2014,7 +2014,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Esempi:\n  # Tieni premuto Spazio mentre il pulsante sud è premuto\n  ojd binding set Racing button:south key:space\n  # Attiva/disattiva J a ogni pressione\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # Ripeti J 10 volte al secondo finché è premuto\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Esempi:\n  # Installa un file di registrazione\n  ojd record install 045e-028e.plist\n  # Leggi la registrazione dallo stdin\n  ojd record install - < 045e-028e.plist";
+"cli.record.install.examples" = "Esempi:\n  # Installa un file di record\n  ojd record install 045e-028e.plist\n  # Leggi il record dallo stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Esempi:\n  # Consenti a un programma di usare il servizio\n  ojd access grant /Applications/Example.app\n  # Crea un token per le pagine servite da una sola origine\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "Controlla che il file sia una descrizione valida, che il nome della famiglia sia in UpperCamelCase e coincida con il nome del file, che non sia una famiglia integrata e che imposti un nome visualizzato e i layout di input. Termina con 1 e il codice E5xxx se il file è rifiutato.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ è una descrizione valida della famiglia %2$@ (%3$@). Installala con 'ojd protocol install'.";
+"cli.protocol.validate.valid" = "%1$@ è una descrizione valida della famiglia %2$@ (%3$@). Installala con «ojd protocol install».";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "Controlla una descrizione di protocollo e la installa per il tuo utente.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -2918,7 +2918,7 @@
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
 "cli.protocol.list.abstract" = "Elenca le famiglie di protocollo integrate e documentate e la loro origine.";
 /* Long description in the help of 'ojd protocol list'. */
-"cli.protocol.list.discussion" = "Elenca ogni famiglia con il nome visualizzato e l'origine: integrata, la tua cartella Protocols o un pacchetto mod. Una descrizione rifiutata non compare.";
+"cli.protocol.list.discussion" = "Elenca ogni famiglia con il nome visualizzato e l’origine: integrata, la tua cartella Protocols o un pacchetto mod. Una descrizione rifiutata non compare.";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
 "cli.protocol.list.builtIn" = "integrata";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
@@ -4011,7 +4011,7 @@
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
 "error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ è un controller incluso, quindi un file Controller non può aggiungerlo. Correzione: scrivi invece un file di patch.";
 /* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ è un'identità bootloader, quindi nessun file utente o di pacchetto può aggiungerla o modificarla con una patch. Correzione: rimuovi il file; OJD non invia dati a un controller in stato bootloader.";
+"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ è un’identità bootloader, quindi nessun file utente o di pacchetto può aggiungerla o modificarla con una patch. Correzione: rimuovi il file; OJD non invia dati a un controller in stato bootloader.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: il selettore %2$@ non corrisponde a nessun controller noto. Correzione: usa un file Controller per aggiungere un nuovo controller o correggi il selettore.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
@@ -4023,7 +4023,7 @@
 /* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
 "error.E5007.inputLayout.layoutsSameReport" = "%1$@, input.layouts: due layout selezionano lo stesso report: %2$@ e %3$@. Correzione: assegna loro ID o lunghezze di report diversi o elimina un layout.";
 /* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
-"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: un ID di report va da 1...255. Correzione: imposta un numero intero da 1 a 255 o omettilo.";
+"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: un ID di report è 1...255. Correzione: imposta un numero intero da 1 a 255 o omettilo.";
 /* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
 "error.E5007.inputLayout.reportLength" = "%1$@, input.layouts[].report.length: un report è lungo 1...%2$@ byte, compreso il byte dell’ID. Correzione: imposta una lunghezza in questo intervallo.";
 /* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
@@ -5207,9 +5207,9 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "Un’altra app usa già questa scorciatoia. Registrane una diversa.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "“%1$@” non è una scorciatoia. Usa modificatori e un tasto uniti da +, come control+option+P, oppure none.";
+"cli.setting.set.badShortcut" = "«%1$@» non è una scorciatoia. Usa modificatori e un tasto uniti da +, come control+option+P, oppure none.";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
-"cli.setting.set.badInterfaceLevel" = "“%1$@” non è un livello di interfaccia. Usa Simple oppure Advanced.";
+"cli.setting.set.badInterfaceLevel" = "«%1$@» non è un livello di interfaccia. Usa Simple oppure Advanced.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "Novità di %@";
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
