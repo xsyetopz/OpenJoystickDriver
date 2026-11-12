@@ -11,7 +11,7 @@
     /// The title of the switch.
     let title: String
     /// The line below the switch.
-    let description: String
+    var description: String?
     /// Whether the switch is on.
     let isOn: Binding<Bool>
     /// Whether the switch can be changed.
@@ -26,7 +26,7 @@
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? "")
-        footnote(description)
+        if let description { footnote(description) }
         if let lockReason { footnote(lockReason) }
       }
     }

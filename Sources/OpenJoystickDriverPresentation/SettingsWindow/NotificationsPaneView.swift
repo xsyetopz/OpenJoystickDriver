@@ -49,9 +49,9 @@
               get: { preferences.notificationSounds },
               set: { preferences.setNotificationSounds($0) }
             )
-          )
-        }.ojdInterfaceRow(SettingsRow.notificationSound)
-        Section { deliveryRow }.ojdInterfaceRow(SettingsRow.notificationPermission)
+          ).ojdInterfaceRow(SettingsRow.notificationSound)
+          deliveryRow.ojdInterfaceRow(SettingsRow.notificationPermission)
+        }
       }.ojdGroupedForm().ojdSettingsInterfaceLevel(preferences)
     }
 
@@ -75,10 +75,12 @@
         )
       )
       return HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
-        Text(delivery.status).foregroundColor(
-          delivery.needsAttention
-            ? Color(NSColor.systemOrange) : Color(NSColor.secondaryLabelColor)
-        ).fixedSize(horizontal: false, vertical: true)
+        if let status = delivery.status {
+          Text(status).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
+        }
         Spacer(minLength: 12)
         if delivery.needsAttention {
           Button(OJDLocalized.string("ui.settings.general.openNotificationSettings")) {

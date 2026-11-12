@@ -26,7 +26,7 @@
           .ojdInterfaceRow(SettingsRow.commandLineTool)
         DriverExtensionSection(runtime: runtime)
           .ojdInterfaceRow(SettingsRow.driverExtension)
-        Section(OJDLocalized.string("ui.settings.advanced.developerTools")) {
+        Section {
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.advanced.enableDeveloperTools"),
             description: OJDLocalized.string("ui.settings.advanced.developerToolsDescription"),

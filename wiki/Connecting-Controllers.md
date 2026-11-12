@@ -88,7 +88,7 @@ Do these steps only if you use one of the controllers above.
 2. Click **Open System Settings**. OJD opens the **Login Items & Extensions** settings.
 3. Approve OpenJoystickDriver in **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**.
 
-When the driver is active, the banner disappears, and **Xbox USB Driver** in **Settings** > **Advanced** says that the driver is installed and ready. If the driver needs repair, the banner shows **Repair Xbox USB Driver**. Click it.
+When the driver is active, the banner disappears, and **Xbox USB Driver** in **Settings** > **Advanced** says **Installed**. If the driver needs repair, the banner shows **Repair Xbox USB Driver**. Click it.
 
 ![Settings, Advanced pane: the Xbox USB Driver section says that the driver is installed and ready](../docs/screenshots/settings-advanced.png)
 

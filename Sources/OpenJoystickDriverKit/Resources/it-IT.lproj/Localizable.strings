@@ -86,8 +86,6 @@
 "ui.settings.notifications.controllerDisconnectedShort" = "Disconnesso";
 /* VoiceOver label of the switch for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerNotifications" = "Controller collegato o richiede attenzione";
-/* Heading of the developer tools section in the Advanced pane of the settings window. */
-"ui.settings.advanced.developerTools" = "Strumenti per sviluppatori";
 /* Description of the switch that turns on the developer tools in the Advanced pane of the settings window. */
 "ui.settings.advanced.developerToolsDescription" = "Mostra gli strumenti di input del controller e dei pacchetti USB.";
 /* Title of the alert shown when the user leaves the profile editor with unsaved changes. */
@@ -104,10 +102,6 @@
 "ui.settings.notifications.notificationBannersOff" = "Banner disattivati";
 /* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. */
 "platform.macos.ui.settings.notifications.notificationBannersOffDetail" = "I banner di notifica sono disattivati in Impostazioni di Sistema.";
-/* Status text in the Notifications pane of the settings window when macOS allows notifications. */
-"ui.settings.notifications.notificationDeliveryAllowed" = "La consegna delle notifiche è consentita.";
-/* Status text in the Notifications pane of the settings window when macOS allows banners, Notification Center and sounds. Notification Center is the macOS name. */
-"ui.settings.notifications.notificationDeliveryReady" = "Banner, Centro Notifiche e suoni sono attivati.";
 /* Status text in the Notifications pane of the settings window when the user has not allowed notifications in macOS. */
 "ui.settings.notifications.notificationPermissionRequired" = "È richiesta l’autorizzazione prima di recapitare le notifiche.";
 /* Value of the notification row in the Access area when macOS has turned off sounds for the app. */
@@ -138,8 +132,6 @@
 "ui.settings.general.startAtLogin" = "Apri al login";
 /* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings, General and Login Items are names in macOS and are written as macOS shows them. */
 "platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Consenti OpenJoystickDriver in Impostazioni di Sistema > Generali > Elementi login.";
-/* Description under the Start at login switch in the General pane of the settings window. OpenJoystickDriver is the product name. */
-"ui.settings.general.startAtLoginDescription" = "Apri OpenJoystickDriver nella barra dei menu al login.";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "Invia notifica di prova";
 /* Result of the update check: the installed version is the latest. */
@@ -1356,12 +1348,8 @@
 "ui.mapping.automatic" = "Automatico";
 /* Value of the virtual gamepad kind when the app picks it. %@ is the name of the picked kind. */
 "ui.virtualProfile.automaticSelected" = "Automatico (%@)";
-/* Detail line in the Driver section of the settings window when the driver extension for Xbox USB controllers is installed and works. */
-"ui.setup.activeDetail" = "Il driver USB Xbox con restrizioni è installato e pronto.";
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "Approva il driver in Impostazioni di Sistema per usare i controller USB Microsoft supportati.";
-/* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "Verifica del driver USB Xbox installato…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Driver USB Xbox";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -4617,8 +4605,6 @@
 "a11y.settingsPane.advanced" = "Impostazioni avanzate";
 /* Title of the switch in the General pane of the settings window that shows the app item in the menu bar. */
 "ui.settings.general.showInMenuBar" = "Mostra nella barra dei menu";
-/* Description under the Show in menu bar switch in the General pane of the settings window. OpenJoystickDriver is the product name. */
-"ui.settings.general.showInMenuBarDescription" = "Mostra l’elemento di OpenJoystickDriver nella barra dei menu.";
 /* Label of the pop-up button in the General pane of the settings window that sets how much of the interface shows. */
 "ui.settings.general.interface" = "Interfaccia";
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
@@ -4627,8 +4613,6 @@
 "ui.settings.general.interfaceAdvanced" = "Avanzate";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "Cerca aggiornamenti automaticamente";
-/* Description under the automatic update check switch in the Updates section of the settings window. */
-"ui.settings.general.checkUpdatesAutomaticallyDescription" = "Cerca una versione più recente all’avvio dell’app.";
 /* Title of the alert that removes the command-line tool. */
 "ui.settings.commandLine.uninstallTitle" = "Disinstallare lo strumento da riga di comando?";
 /* Message of the confirmation alert that removes the command line tool. %1$@ is the path of the link. The app stays installed. Terminal is the macOS app and ojd is the command name. */
