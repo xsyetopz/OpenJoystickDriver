@@ -460,6 +460,16 @@ def strings_entries(text: str) -> list[StringsEntry]:
     ]
 
 
+def duplicate_keys(entries: list[StringsEntry]) -> list[str]:
+    seen: set[str] = set()
+    found: list[str] = []
+    for entry in entries:
+        if entry.key in seen and entry.key not in found:
+            found.append(entry.key)
+        seen.add(entry.key)
+    return found
+
+
 def locale_directories(root: Path = ROOT) -> list[Path]:
     return sorted((root / RESOURCES_DIRECTORY).glob("*.lproj"))
 
@@ -644,6 +654,7 @@ def rule_problems(
         "stackedComment": [],
         "commentSpecifier": [],
         "commentCopy": [],
+        "duplicateKey": [],
     }
 
     def add(rule: str, key: str, message: str | None, prefix: str = "") -> None:
@@ -687,10 +698,17 @@ def rule_problems(
             )
     for locale in locale_directories(root):
         found["stackedComment"].extend(stacked_comment_problems(locale))
-        if locale.name == "en-US.lproj":
-            continue
         text = (locale / "Localizable.strings").read_text(encoding="utf-8")
         locale_entries = strings_entries(text)
+        for key in duplicate_keys(locale_entries):
+            add(
+                "duplicateKey",
+                key,
+                f"{key!r} is defined more than once",
+                f"{locale.name}: ",
+            )
+        if locale.name == "en-US.lproj":
+            continue
         for entry in locale_entries:
             add(
                 "specifier",

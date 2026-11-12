@@ -471,6 +471,37 @@ class StackedCommentTests(unittest.TestCase):
         )
 
 
+class DuplicateKeyTests(unittest.TestCase):
+    def test_a_key_defined_twice_fails_once(self) -> None:
+        entries = guard.strings_entries(
+            '/* A. */\n"a.b" = "A";\n/* B. */\n"a.b" = "B";\n"a.b" = "C";\n"c.d" = "D";\n'
+        )
+        self.assertEqual(guard.duplicate_keys(entries), ["a.b"])
+
+    def test_rule_problems_names_the_bundle(self) -> None:
+        scratch = tempfile.TemporaryDirectory()
+        self.addCleanup(scratch.cleanup)
+        root = Path(scratch.name)
+        for name in ("en-US", "C"):
+            directory = root / guard.RESOURCES_DIRECTORY / f"{name}.lproj"
+            directory.mkdir(parents=True)
+            (directory / "Localizable.strings").write_text(
+                '/* L. */\n"ui.fine.title" = "Fine";\n/* L. */\n"ui.fine.title" = "Fine";\n'
+            )
+            (directory / "Localizable.stringsdict").write_bytes(plistlib.dumps({}))
+        found = guard.rule_problems(root, not_a_count={})
+        self.assertEqual(
+            [p.message for p in found["duplicateKey"]],
+            [
+                "C.lproj: 'ui.fine.title' is defined more than once",
+                "en-US.lproj: 'ui.fine.title' is defined more than once",
+            ],
+        )
+
+    def test_the_repository_defines_each_key_once(self) -> None:
+        self.assertEqual([p.message for p in guard.rule_problems()["duplicateKey"]], [])
+
+
 class CommentSpecifierTests(unittest.TestCase):
     def test_a_comment_must_name_each_numbered_specifier(self) -> None:
         entry = guard.StringsEntry("ui.a.b", "%1$@ of %2$@", "%1$@ is the name.")

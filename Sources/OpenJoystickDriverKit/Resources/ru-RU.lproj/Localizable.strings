@@ -2712,10 +2712,8 @@
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "Маршрут обслуживания";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
-"cli.controller.show.labelPersona" = "Персона";
-/* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.labelPersona" = "Виртуальный геймпад";
-/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+/* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@ (из %2$@)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "Протокол";
