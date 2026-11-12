@@ -54,7 +54,7 @@
               OJDLocalized.string("platform.macos.ui.controllers.servedByMacOSDetail")
             )
             ControllerClaimButton(viewModel: viewModel)
-          }
+          }.ojdInterfaceRow(ControllerDetailRow.appleDriverHold)
         }
         if ControllerServerPicker.isShown(for: device) {
           Section {
@@ -84,7 +84,7 @@
               connectedDevices: connectedDevices,
               viewModel: viewModel,
               actions: actions
-            )
+            ).ojdInterfaceRow(ControllerDetailRow.mappingActions)
           }
         }
         if let record {

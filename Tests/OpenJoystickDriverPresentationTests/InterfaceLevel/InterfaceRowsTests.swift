@@ -80,7 +80,7 @@ struct InterfaceRowAuditTests {
     #expect(
       Set(rows.flatMap(\.auditIDs))
         == Set(
-          ["C05", "C06", "C07", "C08", "C09", "C10", "C11", "C12", "C13", "C14", "C15", "C16"]
+          (5...16).map { $0 < 10 ? "C0\($0)" : "C\($0)" } + ["C30", "C31", "C32"]
         )
     )
   }

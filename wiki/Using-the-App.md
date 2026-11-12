@@ -152,6 +152,8 @@ The change takes effect at once and stays after a restart.
 The command line does the same with `ojd controller claim` and `ojd controller release`.
 For more information, see [Choose who drives the controller](Controller-Records.md#choose-who-drives-the-controller).
 
+A controller that Apple's driver holds also has a section with **Handled by macOS** and a **Claim** button (needs the **Advanced** interface).
+
 ### Virtual Gamepad Kind
 
 The **Virtual gamepad kind** menu (needs the **Advanced** interface) appears for controllers that macOS does not handle:
@@ -173,13 +175,13 @@ For more information, see [How games see your controller](Playing-Games.md).
 
 ### Virtual Gamepad Actions
 
-The detail also has **Export mapping**, which saves the SDL mapping or the W3C Gamepad description of the virtual gamepad, and **Launch game with virtual gamepad**, which starts a program with the mapping set.
+The detail also has (needs the **Advanced** interface) **Export mapping**, which saves the SDL mapping or the W3C Gamepad description of the virtual gamepad, and **Launch game with virtual gamepad**, which starts a program with the mapping set.
 
 ### Advanced Section
 
 The **Advanced** section (needs the **Advanced** interface) holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
 **Draft Record...**, **Draft Record from SDL...**, and **Capture Packets...** also need **Enable Developer Tools**.
-The **Stick deadzone** stepper and the **Tuning** group also need the **Advanced** interface.
+The **Stick deadzone** stepper, the calibration readouts of each stick and trigger, and the **Tuning** group also need the **Advanced** interface.
 **USB VID/PID** is the vendor and product ID.
 For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
