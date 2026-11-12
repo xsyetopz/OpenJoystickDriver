@@ -15,6 +15,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - The menu bar menu lists each controller as one row with its battery, profile and paused state. Its submenu holds a checkmarked profile list that ends in **No Profile** (**More Profiles** after ten), **Pause** or **Resume**, **Test Input**, **Show in Window** and, for a wireless controller, **Disconnect**. A row at the top of the menu names each problem, such as a missing permission, and opens its fix, and the menu bar icon and its label change with the state.
 - The menu bar item can be removed by dragging it out with Command held. OJD then stores **Show in menu bar** as off, turns **Show in Dock** on and opens the app window.
 - The setting `interfaceLevel` (`Simple` or `Advanced`, `Simple` by default) and the **Interface** pop-up in **Settings** > **General**, with **Simple** and **Advanced** in the **View** menu. The developer tools show only at the `Advanced` level with `developerTools` on. The service reads no `interfaceLevel`, and `ojd` prints the same for both values. `ojd migrate` writes `Advanced` into a `Settings.plist` it converts from an earlier version.
+- `USBTransportError` conforms to `LocalizedError`, so a tool that prints `localizedDescription` shows the failure and a platform code instead of "USBTransportError error 5" ([#22](https://github.com/xsyetopz/OpenJoystickDriver/issues/22)).
 
 ### Changed
 
