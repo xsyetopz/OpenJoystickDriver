@@ -211,11 +211,45 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 
 - [x] 14.1 List every term the English strings, the prose of `ojd --help`, and the wiki use for each concept in the table of D22, with counts, and give the maintainer the table to settle. Write `wiki/Glossary.md` from the settled table: each term, its definition in one sentence, the words it replaces, and the command-line value it stands for.
   - Note: the counted table is `docs/development/terminology-survey.md` (`eae5c5bae`); the maintainer adopted the terms D22 proposes, and `wiki/Glossary.md` holds them, with two rules for 14.2 and 14.3: an error message keeps a file key such as `persona` as written, and a System Settings place keeps the name macOS shows ("Driver Extensions"). Linked from `wiki/Home.md` and `wiki/_Sidebar.md`.
-- [ ] 14.2 Change the English strings to the glossary's terms, and each language by the rules in `LOCALIZATION.md`, one term per commit. Change no command, flag, schema value, or error code.
+- [x] 14.2 Change the English strings to the glossary's terms, and each language by the rules in `LOCALIZATION.md`, one term per commit. Change no command, flag, schema value, or error code.
+  - Commits, one per term, each in `en-US`, `C` and the 20 translations:
+    - `fb088f31d` Handled by macOS / Handled by OpenJoystickDriver
+    - `0cacb124b` virtual gamepad
+    - `5523de7da` Xbox USB driver
+    - `24e2cda0a` profile
+    - `e56511c81` connection
+    - `ac059674c` virtual gamepad kind
+  - "mode" needed no change: none of the 134 `en-US` values with "protocol" names the setting a switch selects.
+  - `b76b45e08` lists the bare names `macOS` and `OpenJoystickDriver` as the same in every locale.
+  - Kept as the glossary's exceptions:
+    - the `persona` file key in E5007 messages;
+    - "Driver Extensions" as System Settings shows it;
+    - `ojd transport-extension` and `%@.dext`.
+  - Checks:
+    - `check_localization_keys.py` exits 0.
+    - `swift test --filter 'LocalizationTests|ControllerClaimCommandTests|VirtualHIDProfileOverride|VirtualGamepadKindTitle|ActivityLogFollowing|ControllerDetailFacts'` passes 112 tests.
+  - No language-aware reviewer has read the translations back.
 - [ ] 14.3 Add the repository check that fails when an English string holds a word the glossary lists as replaced, and the check that one language translates one term one way.
-- [ ] 14.4 Name each virtual gamepad kind by what reads it in the window, and show the raw identifier beside it only in Advanced (`VirtualHIDProfileOverrideView.swift:34`). Caller: the controller detail.
-- [ ] 14.5 Change the wiki to the glossary's terms and link each term at its first use on a page: `wiki/Playing-Games.md:24,38,85,89`, `wiki/Command-Reference.md:48,232-237`, `wiki/Using-the-App.md`, and the pages a search for each replaced word finds.
-- [ ] 14.6 Add the terms to `LOCALIZATION.md` with the rule that a term has one translation per language.
+- [x] 14.4 Name each virtual gamepad kind by what reads it in the window, and show the raw identifier beside it only in Advanced (`VirtualHIDProfileOverrideView.swift:34`). Caller: the controller detail.
+  - Commit: `554571ffd`.
+  - `VirtualHIDProfileKinds.optionTitle(for:level:)` gives the phrase, plus `(identifier)` in Advanced.
+  - `MainWindowRoot` passes the interface level through the `ojdInterfaceLevel` environment value.
+  - Caller: `ControllerDetailView+Facts.swift:70`, which `ControllersView.swift:244` reaches.
+  - Test: `VirtualGamepadKindTitleTests`, 3 tests, pass.
+- [x] 14.5 Change the wiki to the glossary's terms and link each term at its first use on a page: `wiki/Playing-Games.md:24,38,85,89`, `wiki/Command-Reference.md:48,232-237`, `wiki/Using-the-App.md`, and the pages a search for each replaced word finds.
+  - Commits:
+    - `9a89a822c`, 30 wiki pages.
+    - `f6df431f3`, the window labels the 14.2 strings renamed: Handled by, Virtual gamepad kind, Disconnect Bluetooth Connection, Profiles.
+  - Checks:
+    - `rg -i 'remapping profile|served by|wireless link|virtual hid profile|left to macos|\(native\)|\(virtual\)' wiki` finds nothing outside `Glossary.md` and `Error-Codes.md`.
+    - The wiki tests pass: `python -m unittest discover -s Tests/RepositoryScripts -p '*wiki*'` ran 18 tests, OK.
+  - Kept, as the glossary allows:
+    - "Driver Extensions" as System Settings shows it;
+    - Apple's article title "system extension";
+    - `build dext`;
+    - `--persona`.
+- [x] 14.6 Add the terms to `LOCALIZATION.md` with the rule that a term has one translation per language.
+  - Commit: `063b5e10a`. The rule is under `LOCALIZATION.md` Meaning (line 59).
 
 ## 15. Per-app profiles
 
