@@ -198,6 +198,10 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
 
   func controllerState(for _: ControllerReference) -> ControllerState? { nil }
 
+  func virtualOutputState(
+    for _: ControllerReference
+  ) -> ApplicationServiceVirtualOutputState? { nil }
+
   func packetLog(for _: ControllerReference) -> [PacketLogEntry] { [] }
 
   func remappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {

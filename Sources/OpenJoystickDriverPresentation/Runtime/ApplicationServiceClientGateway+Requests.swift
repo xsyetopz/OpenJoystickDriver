@@ -61,6 +61,18 @@ extension ApplicationServiceClientGateway {
     return try await client.controllerState(for: selector)
   }
 
+  /// Reads the values the virtual gamepad of a controller last reported.
+  ///
+  /// - Parameter selector: The controller.
+  /// - Returns: The values, or nil when no virtual gamepad publishes the controller.
+  /// - Throws: The error of the request.
+  func virtualOutputState(
+    for selector: ControllerReference
+  ) async throws -> ApplicationServiceVirtualOutputState? {
+    await ensureConnection()
+    return try await client.virtualOutputState(for: selector)
+  }
+
   /// Reads the packet log of a controller.
   ///
   /// - Parameter selector: The controller.

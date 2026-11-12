@@ -292,6 +292,24 @@
 "ui.controllers.stickDeadzone.label" = "Zona Morta do Analógico";
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "Seu registro de controle não define a zona morta do analógico, então não há nada a redefinir.";
+/* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
+"ui.controllers.calibration.title" = "Calibração";
+/* Label of the left stick row of the calibration view in the controller detail. */
+"ui.controllers.calibration.leftStick" = "Analógico esquerdo";
+/* Label of the right stick row of the calibration view in the controller detail. */
+"ui.controllers.calibration.rightStick" = "Analógico direito";
+/* Label of the left trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
+"ui.controllers.calibration.leftTrigger" = "Gatilho esquerdo";
+/* Label of the right trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
+"ui.controllers.calibration.rightTrigger" = "Gatilho direito";
+/* Value of a stick or trigger row of the calibration view in the controller detail. %1$@ is the value the controller reports, such as 40%, and %2$@ is the value after tuning, such as 0%. */
+"ui.controllers.calibration.reading" = "Bruto %1$@, após o ajuste %2$@";
+/* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
+"ui.controllers.calibration.readingWithDeadZone" = "%1$@, zona morta %2$@";
+/* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
+"ui.controllers.calibration.noOutput" = "nenhum gamepad virtual";
+/* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
+"ui.controllers.calibration.waiting" = "Aguardando entrada…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "A solicitação indica um ID de fabricante ou de produto fora do intervalo. Nada foi alterado.";
 /* Button in the Controllers detail that shows or hides the advanced virtual HID profile choices. HID is the abbreviation of Human Interface Device and stays as written. */
