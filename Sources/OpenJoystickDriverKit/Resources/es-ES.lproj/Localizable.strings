@@ -187,7 +187,7 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "Conecta el mando de otra forma, por ejemplo con un cable, o envía un informe de soporte.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "OJD no tiene ningún perfil de gamepad virtual para este mando.";
+"ui.controllers.virtualProfileUnavailable" = "OJD no tiene ningún perfil de mando virtual para este mando.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "Envía un informe de soporte para poder añadirle un perfil.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -303,7 +303,7 @@
 /* Label of the right trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
 "ui.controllers.calibration.rightTrigger" = "Gatillo derecho";
 /* Value of a stick or trigger row of the calibration view in the controller detail. %1$@ is the value the controller reports, such as 40%, and %2$@ is the value after tuning, such as 0%. */
-"ui.controllers.calibration.reading" = "Bruto %1$@, tras el ajuste %2$@";
+"ui.controllers.calibration.reading" = "Sin procesar %1$@, tras el ajuste %2$@";
 /* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.calibration.readingWithDeadZone" = "%1$@, zona muerta %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
@@ -585,7 +585,7 @@
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Comportamiento de la asignación";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
-"ui.profiles.apps" = "Aplicaciones";
+"ui.profiles.apps" = "Apps";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
 "ui.profiles.addApp" = "Añadir app";
 /* Header of the section of the Add App menu that lists the apps that run now. */
@@ -1387,7 +1387,7 @@
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
 "platform.macos.cli.controller.show.labelServedBy" = "Controlador nativo";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
-"platform.macos.cli.controller.show.servedByMacOS" = "Lo gestiona macOS. Ejecuta `ojd controller claim %@` para activar la extensión y tomar el mando.";
+"platform.macos.cli.controller.show.servedByMacOS" = "Gestionado por macOS. Ejecuta `ojd controller claim %@` para activar la extensión y tomar el mando.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "Gestionado por macOS";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
@@ -5153,9 +5153,9 @@
 /* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.auxiliary8" = "Botón adicional 8";
 /* Name of the touch sensor of the left stick of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.leftStickTouch" = "Contacto del stick izquierdo";
+"ui.controllers.control.leftStickTouch" = "Contacto de la palanca izquierda";
 /* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.rightStickTouch" = "Contacto del stick derecho";
+"ui.controllers.control.rightStickTouch" = "Contacto de la palanca derecha";
 /* Name of the touch sensor of the left trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.leftTrackpadTouch" = "Contacto del panel izquierdo";
 /* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
@@ -5225,7 +5225,7 @@
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
 "ui.controllers.readiness.needsStep.access.action" = "Abrir Acceso";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "Este mando necesita que se configure el controlador Xbox USB.";
+"ui.controllers.readiness.needsStep.driver.message" = "Este mando necesita que se configure el controlador USB de Xbox.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "Configurar controlador";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
