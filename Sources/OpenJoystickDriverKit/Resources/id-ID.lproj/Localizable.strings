@@ -5211,5 +5211,5 @@
 "ui.setupSteps.bluetooth" = "Izinkan Bluetooth agar OpenJoystickDriver dapat menghubungkan kontroler Switch 2.";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
 "ui.interface.showAdvanced" = "Tampilkan Semua Kontrol";
-/* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
-"ui.interface.areaNeedsAdvanced" = "Area ini memerlukan antarmuka Lanjutan.";
+/* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
+"ui.interface.areaNeedsAdvanced" = "Disembunyikan di antarmuka Sederhana";

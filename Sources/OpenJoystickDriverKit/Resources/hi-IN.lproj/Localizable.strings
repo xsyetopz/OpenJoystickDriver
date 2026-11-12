@@ -5211,5 +5211,5 @@
 "ui.setupSteps.bluetooth" = "ब्लूटूथ की अनुमति दें ताकि OpenJoystickDriver Switch 2 कंट्रोलर जोड़ सके।";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
 "ui.interface.showAdvanced" = "सभी नियंत्रण दिखाएँ";
-/* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
-"ui.interface.areaNeedsAdvanced" = "इस क्षेत्र के लिए उन्नत इंटरफ़ेस ज़रूरी है।";
+/* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
+"ui.interface.areaNeedsAdvanced" = "सरल इंटरफ़ेस में छिपा हुआ";

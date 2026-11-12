@@ -5211,5 +5211,5 @@
 "ui.setupSteps.bluetooth" = "OpenJoystickDriver가 Switch 2 컨트롤러를 연결할 수 있도록 Bluetooth를 허용하세요.";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
 "ui.interface.showAdvanced" = "모든 컨트롤 보기";
-/* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
-"ui.interface.areaNeedsAdvanced" = "이 영역은 고급 인터페이스가 필요합니다.";
+/* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
+"ui.interface.areaNeedsAdvanced" = "간단 인터페이스에서 숨겨짐";

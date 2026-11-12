@@ -5211,5 +5211,5 @@
 "ui.setupSteps.bluetooth" = "允许蓝牙，以便 OpenJoystickDriver 连接 Switch 2 控制器。";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
 "ui.interface.showAdvanced" = "显示所有控件";
-/* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
-"ui.interface.areaNeedsAdvanced" = "此区域需要高级界面。";
+/* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
+"ui.interface.areaNeedsAdvanced" = "在简单界面中隐藏";

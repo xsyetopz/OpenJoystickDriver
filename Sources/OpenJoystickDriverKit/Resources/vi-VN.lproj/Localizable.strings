@@ -5211,5 +5211,5 @@
 "ui.setupSteps.bluetooth" = "Cho phép Bluetooth để OpenJoystickDriver kết nối được tay cầm Switch 2.";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
 "ui.interface.showAdvanced" = "Hiện tất cả điều khiển";
-/* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
-"ui.interface.areaNeedsAdvanced" = "Khu vực này cần giao diện Nâng cao.";
+/* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
+"ui.interface.areaNeedsAdvanced" = "Bị ẩn trong giao diện Đơn giản";
