@@ -273,7 +273,7 @@
 			<string>%d minutos</string>
 		</dict>
 	</dict>
-	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Spanish (Spain) plural forms are a first draft that a native speaker reviews. -->
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Spanish (Spain) plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.interface.hiddenChanges</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -285,17 +285,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>%d ajustes avanzados modificados</string>
+			<string>%d ajustes ocultos modificados</string>
 			<key>one</key>
-			<string>%d ajuste avanzado modificado</string>
+			<string>%d ajuste oculto modificado</string>
 			<key>two</key>
-			<string>%d ajustes avanzados modificados</string>
+			<string>%d ajustes ocultos modificados</string>
 			<key>few</key>
-			<string>%d ajustes avanzados modificados</string>
+			<string>%d ajustes ocultos modificados</string>
 			<key>many</key>
-			<string>%d ajustes avanzados modificados</string>
+			<string>%d ajustes ocultos modificados</string>
 			<key>other</key>
-			<string>%d ajustes avanzados modificados</string>
+			<string>%d ajustes ocultos modificados</string>
 		</dict>
 	</dict>
 </dict>

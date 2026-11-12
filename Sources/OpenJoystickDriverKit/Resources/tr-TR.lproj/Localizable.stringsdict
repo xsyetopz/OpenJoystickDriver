@@ -255,7 +255,7 @@
 			<string>%d dakika</string>
 		</dict>
 	</dict>
-	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Turkish plural forms are a first draft that a native speaker reviews. -->
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Turkish plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.interface.hiddenChanges</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -267,17 +267,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>%d gelişmiş ayar değiştirildi</string>
+			<string>%d gizli ayar değiştirildi</string>
 			<key>one</key>
-			<string>%d gelişmiş ayar değiştirildi</string>
+			<string>%d gizli ayar değiştirildi</string>
 			<key>two</key>
-			<string>%d gelişmiş ayar değiştirildi</string>
+			<string>%d gizli ayar değiştirildi</string>
 			<key>few</key>
-			<string>%d gelişmiş ayar değiştirildi</string>
+			<string>%d gizli ayar değiştirildi</string>
 			<key>many</key>
-			<string>%d gelişmiş ayar değiştirildi</string>
+			<string>%d gizli ayar değiştirildi</string>
 			<key>other</key>
-			<string>%d gelişmiş ayar değiştirildi</string>
+			<string>%d gizli ayar değiştirildi</string>
 		</dict>
 	</dict>
 </dict>

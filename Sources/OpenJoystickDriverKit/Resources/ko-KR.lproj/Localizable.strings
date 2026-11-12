@@ -3888,7 +3888,7 @@
 /* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
 "ui.menu.view.interfaceSimple" = "간단";
 /* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
-"ui.menu.view.interfaceAdvanced" = "고급";
+"ui.menu.view.interfaceAdvanced" = "모든 컨트롤";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "도구 막대 보기";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -4004,7 +4004,7 @@
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
 "ui.settings.general.interfaceSimple" = "간단";
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
-"ui.settings.general.interfaceAdvanced" = "고급";
+"ui.settings.general.interfaceAdvanced" = "모든 컨트롤";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "자동으로 업데이트 확인";
 /* Title of the alert that removes the command-line tool. */
@@ -5213,7 +5213,7 @@
 "platform.macos.ui.setupSteps.postEvent" = "OpenJoystickDriver가 키보드 및 포인터 이벤트를 보낼 수 있도록 ‘손쉬운 사용’을 허용하세요.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "OpenJoystickDriver가 Switch 2 컨트롤러를 연결할 수 있도록 Bluetooth를 허용하세요.";
-/* Button of the Simple interface row that reports a changed or unavailable advanced setting; it switches the interface to Advanced. */
-"ui.interface.showAdvanced" = "고급 설정 보기";
+/* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
+"ui.interface.showAdvanced" = "모든 컨트롤 보기";
 /* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
 "ui.interface.areaNeedsAdvanced" = "이 영역은 고급 인터페이스가 필요합니다.";
