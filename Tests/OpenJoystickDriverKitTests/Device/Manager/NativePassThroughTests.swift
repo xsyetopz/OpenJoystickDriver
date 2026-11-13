@@ -106,7 +106,7 @@ struct NativePassThroughTests {
   }
 
   @Test
-  func nativeConnectionReplacesAHIDDeviceBoundAtItsLocation() async throws {
+  func nativeConnectionReplacesHIDDeviceBoundAtItsLocation() async throws {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),

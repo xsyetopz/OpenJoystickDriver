@@ -12,7 +12,7 @@ struct PacketLogStreamTests {
   }
 
   @Test
-  func deliversEachReportAfterTheFirstSnapshotOnce() async throws {
+  func deliversEachReportAfterFirstSnapshotOnce() async throws {
     let snapshots = [
       [try entry(1, "01")], [try entry(1, "01"), try entry(2, "02")],
       [try entry(1, "01"), try entry(2, "02")], [try entry(2, "02"), try entry(3, "03")],

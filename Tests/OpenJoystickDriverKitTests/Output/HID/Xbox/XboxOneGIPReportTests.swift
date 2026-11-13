@@ -17,7 +17,7 @@ struct XboxOneGIPHIDReportFormatTests {
   }
 
   @Test
-  func neutralReportIsAGIPInputPacket() {
+  func neutralReportIsGIPInputPacket() {
     let neutral = format.buildInputReport(from: VirtualGamepadState())
 
     #expect(neutral == ProtocolPacketFixtures.XboxOneGIP.neutralInputReport)

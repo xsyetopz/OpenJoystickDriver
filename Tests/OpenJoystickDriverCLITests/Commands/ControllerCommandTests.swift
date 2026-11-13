@@ -723,7 +723,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func capturePrintsEachNewPacketAsAJSONLine() async throws {
+  func capturePrintsEachNewPacketAsJSONLine() async throws {
     let reads = Counter()
     let packet = #"{"direction":"Rx","hex":"01 02","length":2,"timestamp":1.5}"#
     let service = try FakeService(devices: [
