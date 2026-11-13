@@ -108,7 +108,7 @@
       }
     }
 
-    /// Selects the profile that a create or import just added; selecting the selected profile does
+    /// Selects the profile that a create or import added; selecting the selected profile does
     /// nothing.
     ///
     /// - Parameter profileID: The profile to select.
@@ -126,9 +126,6 @@
     }
 
     /// Returns whether the profile is active in the snapshot that the screen shows.
-    ///
-    /// - Parameter profile: The profile to check.
-    /// - Returns: Whether the profile is active in the snapshot that the screen shows.
     func isActive(_ profile: RemappingProfile) -> Bool {
       let snapshot: ApplicationServiceRemappingSnapshotPayload?
       switch viewModel.remappingState {
@@ -352,9 +349,6 @@
     }
 
     /// Returns whether the operation is a profile action: not an update from the editor.
-    ///
-    /// - Parameter operation: The operation of a request.
-    /// - Returns: Whether the operation is a profile action: not an update from the editor.
     func isProfileAction(_ operation: RuntimeMutationOperation) -> Bool {
       switch operation {
       case .create, .delete, .activate, .deactivate, .importProfile: return true

@@ -1,7 +1,7 @@
 /// The rows of the Profiles area.
 ///
-/// The audit puts creating and editing a profile in Simple, and the tuning in Advanced. The app
-/// chooser is a Simple row: the "One application" target needs it at every level.
+/// Creating and editing a profile belong to Simple, and the tuning to Advanced. The app chooser is
+/// a Simple row because the "One application" target needs it at every level.
 enum ProfilesRow: InterfaceRow {
   /// The profile list and the editor.
   case list

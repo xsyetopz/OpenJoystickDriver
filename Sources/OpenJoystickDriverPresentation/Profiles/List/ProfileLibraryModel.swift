@@ -61,8 +61,8 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
-  /// Updates a profile through the service, which refuses the update when the stored profile no
-  /// longer equals `expectedCurrent`.
+  /// Updates a profile through the service, which refuses the update when the stored profile
+  /// differs from `expectedCurrent`.
   ///
   /// - Parameters:
   ///   - profile: The edited profile.
