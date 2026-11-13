@@ -51,7 +51,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func userDescriptionReplacesBundledFamilyOfTheSameNameWithNoRefusal() throws {
+  func userDescriptionReplacesBundledFamilyOfSameNameWithNoRefusal() throws {
     try ModPackageFixture.with { fixture in
       defer { DocumentedProtocolFamilies.register([], owner: fixture.root) }
       #expect(Self.family("VendorFlydigi")?.isBundled == true)
@@ -73,7 +73,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func flydigiIsNotABuiltInFamily() {
+  func flydigiIsNotBuiltInFamily() {
     #expect(!PhysicalProtocolID.allCases.map(\.rawValue).contains("VendorFlydigi"))
   }
 

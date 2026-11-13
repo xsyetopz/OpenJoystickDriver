@@ -54,7 +54,7 @@ struct ProtocolParserCoverageTests {
   /// A suite's family is the family the registry binds its model to and builds the driver for,
   /// so a suite listed under the wrong family fails.
   @Test(arguments: parserSuites.map { SuiteBox(suite: $0) })
-  func eachSuiteCoversTheDriverTheRegistryBuildsForItsFamily(box: SuiteBox) throws {
+  func eachSuiteCoversDriverRegistryBuildsForItsFamily(box: SuiteBox) throws {
     let suite = unsafe box.suite
     let record = try #require(ProtocolDriverRegistry().record(for: suite.model))
     #expect(record.physicalProtocolID == suite.family, "\(suite)")

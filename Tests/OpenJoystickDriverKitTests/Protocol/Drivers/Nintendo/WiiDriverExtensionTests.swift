@@ -18,7 +18,7 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func theNunchukStickIsCenteredOnTheFirstSampleAndReachesItsEnds() throws {
+  func nunchukStickIsCenteredOnFirstSampleAndReachesItsEnds() throws {
     #expect(try event("Nunchuk", "data-nunchuk-rest")?.state.leftStick == .center)
     let right = Data([0xFF, 0x00, 0x80, 0x80, 0x80, 0x03])
     let state = try #require(try driver.parseReport(report(right))?.state)
@@ -30,7 +30,7 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func theNunchukButtonsAreDownWhenTheirBitIsClear() throws {
+  func nunchukButtonsAreDownWhenTheirBitIsClear() throws {
     #expect(try event("Nunchuk", "data-nunchuk-rest")?.state.pressed.isEmpty == true)
     #expect(
       try event("Nunchuk", "data-nunchuk-low")?.state.pressed == [.leftTrigger, .leftShoulder]
@@ -38,7 +38,7 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func aClassicReportWithAPressedGivesEastAndNothingElse() throws {
+  func classicReportWithPressedGivesEastAndNothingElse() throws {
     var bytes = Array(try WiiFixtureFolder.extensions.bytes("data-classic-rest"))
     bytes[5] &= ~0x10
     driver.extensionKind = .known("ClassicController")
@@ -46,7 +46,7 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func theClassicSticksAndTriggersScaleFromTheirCenters() throws {
+  func classicSticksAndTriggersScaleFromTheirCenters() throws {
     #expect(try event("ClassicController", "data-classic-rest")?.state.leftStick == .center)
     let high = try #require(try event("ClassicController", "data-classic-high")?.state)
     #expect(high.leftStick.x.rawValue >= 31_000)
@@ -59,13 +59,13 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func anUnknownExtensionLeavesTheExtensionBytesUndecoded() throws {
+  func unknownExtensionLeavesExtensionBytesUndecoded() throws {
     driver.extensionKind = .unknown([1, 2, 3, 4, 5, 6])
     #expect(try driver.parseReport(report(Data([0x23, 0x1B, 0, 0, 0, 0])))?.state == .neutral)
   }
 
   @Test
-  func theDriverDeclaresTheCoreAndEveryExtensionControlAndMotion() throws {
+  func driverDeclaresCoreAndEveryExtensionControlAndMotion() throws {
     let wii = try #require(Self.wii)
     var expected = Set(wii.coreButtons.map(\.control))
     for layout in wii.extensions.compactMap(\.layout) {
@@ -91,7 +91,7 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func theAccelerometerReadingBecomesAMotionSampleInMetresPerSecondSquared() throws {
+  func accelerometerReadingBecomesMotionSampleInMetresPerSecondSquared() throws {
     calibrate()
     let event = try #require(try driver.parseReport(Data([0x31, 0, 0, 0xC0, 0x80, 0x80]), at: 7))
     let sample = try #require(event.motion.first)
@@ -103,7 +103,7 @@ struct WiiDriverExtensionTests {
   }
 
   @Test
-  func noMotionSampleBeforeTheCalibrationIsRead() throws {
+  func noMotionSampleBeforeCalibrationIsRead() throws {
     #expect(try driver.parseReport(Data([0x31, 0, 0, 0xC0, 0x80, 0x80]))?.motion.isEmpty == true)
   }
 }

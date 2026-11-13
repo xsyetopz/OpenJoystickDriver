@@ -25,7 +25,7 @@ struct ControllerRecordDraftTests {
   ]
 
   @Test
-  func mapsTheControlsTheDescriptorStates() throws {
+  func mapsControlsDescriptorStates() throws {
     let draft = try #require(
       ControllerRecordDraft(
         model: Self.unbundled,
@@ -65,7 +65,7 @@ struct ControllerRecordDraftTests {
 
   /// Only reports with the chosen ID and at least the chosen length count.
   @Test
-  func reportsTheBytesThatChanged() throws {
+  func reportsBytesThatChanged() throws {
     let draft = try #require(
       ControllerRecordDraft(
         model: Self.unbundled,
@@ -84,7 +84,7 @@ struct ControllerRecordDraftTests {
   }
 
   @Test
-  func patchesABundledModel() throws {
+  func patchesBundledModel() throws {
     let bundled = try #require(
       ControllerRecordSet.bundled.records.values.sorted { $0.model < $1.model }.first {
         $0.family == "HIDDescriptor"
@@ -106,7 +106,7 @@ struct ControllerRecordDraftTests {
 
   /// Without a usable descriptor, a new model gets `HIDDescriptor` and the common report length.
   @Test(arguments: [nil, [0x05, 0x01, 0x09, 0x05, 0xA1, 0x01, 0xC0]] as [[UInt8]?])
-  func fallsBackToTheDescriptorFamily(descriptor: [UInt8]?) throws {
+  func fallsBackToDescriptorFamily(descriptor: [UInt8]?) throws {
     let reports: [[UInt8]] = [[0, 1, 2], [0, 1, 3], [0, 1, 2], [7]]
     let draft = try #require(
       ControllerRecordDraft(
@@ -132,7 +132,7 @@ struct ControllerRecordDraftTests {
 
   /// The draft is a canonical property list: reading it and writing it again gives its bytes.
   @Test
-  func theDraftIsInTheRecordFileFormat() throws {
+  func draftIsInRecordFileFormat() throws {
     let draft = try #require(
       ControllerRecordDraft(
         model: Self.unbundled,

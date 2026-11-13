@@ -54,7 +54,7 @@ struct DualSenseDriverThirdPartyTests {
 
   /// The record's `maker: ThirdParty` parameter selects the mode; the vendor ID plays no part.
   @Test
-  func modelParametersWithoutTheThirdPartyMakerRunInSonyMode() {
+  func modelParametersWithoutThirdPartyMakerRunInSonyMode() {
     let driver = DualSenseDriver(parameters: ProtocolParameters(unprobedTouchpad: true))
     #expect(driver.thirdParty == nil)
     #expect(DualSenseDriver(parameters: ProtocolParameters(maker: .thirdParty)).thirdParty != nil)
@@ -117,7 +117,7 @@ struct DualSenseDriverThirdPartyTests {
   }
 
   @Test
-  func razerWolverineUsesAlternateLayoutWithoutAProbe() throws {
+  func razerWolverineUsesAlternateLayoutWithoutProbe() throws {
     let driver = DualSenseDriver(
       parameters: ProtocolParameters(
         maker: .thirdParty,

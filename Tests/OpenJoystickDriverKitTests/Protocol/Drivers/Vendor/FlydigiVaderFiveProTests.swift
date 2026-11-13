@@ -20,7 +20,7 @@ struct FlydigiVaderFiveProTests {
   }
 
   @Test
-  func theRecordSendsTheThreeInitWritesThenTheTestModeWrite() throws {
+  func recordSendsThreeInitWritesThenTestModeWrite() throws {
     let record = try #require(ProtocolDriverRegistry().record(for: Self.model))
     #expect(
       record.startupWrites.map(\.bytes) == [
@@ -72,7 +72,7 @@ struct FlydigiVaderFiveProTests {
   }
 
   @Test
-  func aShortReportIsIgnored() throws {
+  func shortReportIsIgnored() throws {
     let driver = try Self.driver()
     #expect(try driver.parseReport(Data(Self.report([:]).dropLast())) == nil)
   }

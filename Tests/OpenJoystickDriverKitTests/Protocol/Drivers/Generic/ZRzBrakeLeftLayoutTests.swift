@@ -50,7 +50,7 @@ struct ZRzBrakeLeftLayoutTests {
   }
 
   @Test(arguments: models)
-  func zAndRzAreTheRightStick(model: ControllerModelID) throws {
+  func zAndRzAreRightStick(model: ControllerModelID) throws {
     let parser = try makeParser(model)
     #expect(parse(parser, value(usage: 0x32, integer: 255)).contains(.rightStick(x: 1, y: 0)))
     let down = parse(parser, value(usage: 0x35, integer: 255))

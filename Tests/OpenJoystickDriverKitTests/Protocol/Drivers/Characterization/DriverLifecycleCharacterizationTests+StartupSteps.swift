@@ -173,7 +173,7 @@ extension DriverLifecycleCharacterizationTests {
   /// The record limits the Bluetooth enable report to Bluetooth, so USB startup writes nothing,
   /// and the assigned player slot follows the first input report.
   @Test
-  func sixaxisUSBStartupWritesOnlyThePlayerSlot() async {
+  func sixaxisUSBStartupWritesOnlyPlayerSlot() async {
     let recording = await startHIDController(Self.sixaxisUSB, transport: "USB", locationID: 206)
     let startup = await recordedSteps(recording)
     await deliver([Self.sixaxisNeutralInput], to: recording, locationID: 206)

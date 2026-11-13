@@ -102,7 +102,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aRecordWithTwoModesPicksEachByItsProbe() async throws {
+  func recordWithTwoModesPicksEachByItsProbe() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let answered = Data([0x00, 0x0A, 0xFF, 0x00])
 
@@ -144,7 +144,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aModeRequiresEveryProbeAndReadsEachReportOnce() async throws {
+  func modeRequiresEveryProbeAndReadsEachReportOnce() async throws {
     let profile = try Self.profile(modes: [
       [
         "id": "both",
@@ -163,7 +163,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aProbeWithoutAReplyFallsBackToTheDefaultModeAndLogsIt() async throws {
+  func probeWithoutReplyFallsBackToDefaultModeAndLogsIt() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let replies: [(String, PhysicalHIDReportResult<Data>)] = [
       ("timeout", timeout),
@@ -192,7 +192,7 @@ struct ControllerModeTests {
 
   /// Two pads of one model differ only by location, so each mode line names it.
   @Test
-  func modeLinesNameTheDeviceLocation() async throws {
+  func modeLinesNameDeviceLocation() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let log = Locked<[String]>([])
     let reader = ScriptedProbeReader([160: .success(Data([1]))])
@@ -212,7 +212,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aStallSatisfiesAStallsProbeAndAnAnswerSatisfiesItNot() async throws {
+  func stallSatisfiesStallsProbeAndAnswerSatisfiesItNot() async throws {
     let profile = try Self.profile(modes: [
       Self.mode(
         "quiet",
@@ -230,7 +230,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aStallWhereAnAnswerIsExpectedFallsBackToTheDefaultMode() async throws {
+  func stallWhereAnswerIsExpectedFallsBackToDefaultMode() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let log = Locked<[String]>([])
     let selection = await Self.select(
@@ -245,7 +245,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func onlyTheDevicesOwnRefusalIsAStall() async throws {
+  func onlyDevicesOwnRefusalIsStall() async throws {
     let profile = try Self.profile(modes: [
       Self.mode(
         "quiet",
@@ -257,10 +257,10 @@ struct ControllerModeTests {
     #expect(
       await Self.select(profile, reader: ScriptedProbeReader([5: unsupported])) == .matched("quiet")
     )
-    let notTheDevices: [PhysicalHIDFailure] = [
+    let notDevices: [PhysicalHIDFailure] = [
       .timedOut, .busy, .notResponding, .hostStatus(1), .hostStatus(2),
     ]
-    for code in notTheDevices {
+    for code in notDevices {
       let log = Locked<[String]>([])
       let selection = await Self.select(
         profile,
@@ -273,7 +273,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aDeviceOffTheIOHIDRouteIsNotProbed() async throws {
+  func deviceOffIOHIDRouteIsNotProbed() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let reader = ScriptedProbeReader([160: .success(Data([1]))])
     let log = Locked<[String]>([])
@@ -290,7 +290,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aReadIsGivenTheDeadlineItWasAskedFor() async {
+  func readIsGivenDeadlineItWasAskedFor() async {
     let deadlines = Locked<[TimeInterval]>([])
     let reads = BoundedHIDRead { timeout, action in
       deadlines.withLock { $0.append(timeout) }
@@ -307,7 +307,7 @@ struct ControllerModeTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aReadThatNeverReturnsGivesUpAtTheDeadline() async {
+  func readThatNeverReturnsGivesUpAtDeadline() async {
     let release = DispatchSemaphore(value: 0)
     let reads = BoundedHIDRead()
     let device = UUID()
@@ -336,7 +336,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aDeviceWithAReadOutstandingIsNotReadAgain() async {
+  func deviceWithReadOutstandingIsNotReadAgain() async {
     let release = DispatchSemaphore(value: 0)
     let reads = BoundedHIDRead()
     let device = UUID()
@@ -379,7 +379,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aRecordWithoutModesReadsNothing() async throws {
+  func recordWithoutModesReadsNothing() async throws {
     let profile = try Self.profile(modes: nil)
     let reader = ScriptedProbeReader([:])
     #expect(await Self.select(profile, reader: reader) == .noModes)
@@ -388,7 +388,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func theDualShock3EFProbeIsDecodedFromTheBundledRecord() async throws {
+  func dualShock3EFProbeIsDecodedFromBundledRecord() async throws {
     let ds3 = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
     let profile = try #require(ControllerRecordSet.bundled.records[ds3]?.profile)
     #expect(profile.modes.map(\.id) == ["bluetooth", "feature-ef-answers"])
@@ -422,7 +422,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aUserPatchMayReplaceTheModes() throws {
+  func userPatchMayReplaceModes() throws {
     let patch = try PropertyListFixture.data(
       tree: ControllerPatch.document(
         selector: .identity(ControllerModelID(vendorID: 0x2C22, productID: 0x2000)),

@@ -60,7 +60,7 @@ struct XboxXIDFieldSweepTests {
   }
 
   @Test
-  func theDescribedLayoutDecodesEveryFieldValueAsTheGoldenRecords() throws {
+  func describedLayoutDecodesEveryFieldValueAsGoldenRecords() throws {
     let driver = ReportLayoutDriver(
       describedBy: .xboxXID,
       variant: .gamepad,

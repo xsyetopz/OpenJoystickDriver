@@ -90,7 +90,7 @@ struct SixaxisDriverTests {
 
   /// A USB Sixaxis streams input reports while idle, so a second without one is a stale pad.
   @Test
-  func testDS3OverUSBGoesStaleAfterASecondWithoutInput() {
+  func testDS3OverUSBGoesStaleAfterSecondWithoutInput() {
     #expect(SixaxisDriver().sessionPlan.inputReportLivenessTimeoutNanoseconds == 1_000_000_000)
     let bluetooth = SixaxisDriver(isBluetooth: true)
     #expect(bluetooth.sessionPlan.inputReportLivenessTimeoutNanoseconds == nil)
@@ -99,7 +99,7 @@ struct SixaxisDriverTests {
   /// A USB Sixaxis sends no input until its PS button is pressed; over Bluetooth the press is
   /// what connects it.
   @Test
-  func testDS3OverUSBStartsInputOnAGuidePress() {
+  func testDS3OverUSBStartsInputOnGuidePress() {
     #expect(SixaxisDriver().sessionPlan.inputStartAction == .pressGuide)
     #expect(SixaxisDriver(isBluetooth: true).sessionPlan.inputStartAction == nil)
   }
@@ -132,7 +132,7 @@ struct SixaxisDriverTests {
 
 extension SixaxisDriverTests {
   @Test
-  func startBindingFiresForADS3UnderItsBoundLabels() throws {
+  func startBindingFiresForDS3UnderItsBoundLabels() throws {
     let report = ProtocolPacketFixtures.DS3.inputReport(
       buttons: (0x08, 0x00, false),
       sticks: ((128, 128), (128, 128)),

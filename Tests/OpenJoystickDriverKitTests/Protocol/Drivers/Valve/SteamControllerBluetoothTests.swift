@@ -28,7 +28,7 @@ private enum BLEReport {
 struct SteamControllerBluetoothTests {
 
   @Test
-  func chunkedPacketsFillTheWiredStateAndKeepUnsentChunks() throws {
+  func chunkedPacketsFillWiredStateAndKeepUnsentChunks() throws {
     let driver = SteamControllerDriver(isBluetooth: true)
     // Buttons chunk 1 (faceSouth), triggers, left stick.
     let first = BLEReport.chunked(mask: 0x00B0, [0x80, 0, 0], [255, 0], [0xFF, 0x7F, 0, 0])

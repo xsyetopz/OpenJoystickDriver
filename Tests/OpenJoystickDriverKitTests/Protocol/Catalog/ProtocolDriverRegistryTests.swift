@@ -56,8 +56,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test(arguments: [(0x054C, 0x09CC), (0x054C, 0x0CE6), (0x057E, 0x2009)])
-  func sonyAndNintendoRowsTakeTheirVariantFromTheHostTransport(vendorID: Int, productID: Int) throws
-  {
+  func sonyAndNintendoRowsTakeTheirVariantFromHostTransport(vendorID: Int, productID: Int) throws {
     let model = ControllerModelID(vendorID: UInt16(vendorID), productID: UInt16(productID))
     let usb = try bound(hidDevice(model, gamepadHIDInterface(host: .usb)))
     let bluetooth = try bound(hidDevice(model, gamepadHIDInterface(host: .bluetoothClassic)))
@@ -66,7 +65,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func catalogGenericHIDRowsBindOnlyWithAContractDescriptor() throws {
+  func catalogGenericHIDRowsBindOnlyWithContractDescriptor() throws {
     let rows = [(0x3537, 0x100A), (0x11C1, 0x5600), (0x2E95, 0x434D)].map {
       ControllerModelID(vendorID: UInt16($0.0), productID: UInt16($0.1))
     }
@@ -101,7 +100,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func sonyRowOverBluetoothLEIsAnUnsupportedTransportVariant() {
+  func sonyRowOverBluetoothLEIsUnsupportedTransportVariant() {
     let model = ControllerModelID(vendorID: 0x054C, productID: 0x09CC)
     #expect(
       registry.classify(
@@ -121,7 +120,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func uncataloguedHIDBindsOnlyWhenTheDescriptorPassesTheContract() throws {
+  func uncataloguedHIDBindsOnlyWhenDescriptorPassesContract() throws {
     let model = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
     #expect(
       registry.classify(hidDevice(model, hostHIDInterface(.usb)), backend: .hid)
@@ -204,7 +203,7 @@ struct ProtocolDriverRegistryTests {
       (0x2DC8, 0x301D, true), (0x0079, 0x0006, true), (0x3537, 0x100A, false),
     ] as [(UInt16, UInt16, Bool)]
   )
-  func recordUsageMapsSelectTheHIDUsageMap(
+  func recordUsageMapsSelectHIDUsageMap(
     vendorID: UInt16,
     productID: UInt16,
     declaresMap: Bool
@@ -229,7 +228,7 @@ struct ProtocolDriverRegistryTests {
       (0x3285, 0x0D18, [], true, true), (0x3285, 0x0D19, [], true, false),
     ] as [(UInt16, UInt16, DualSenseFeatures, Bool, Bool)]
   )
-  func recordParametersDescribeTheThirdPartyDualSense(
+  func recordParametersDescribeThirdPartyDualSense(
     vendorID: UInt16,
     productID: UInt16,
     unprobedFeatures: DualSenseFeatures,
@@ -259,7 +258,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func everyFamilyAndVariantBuildsThroughTheValidatingFactory() throws {
+  func everyFamilyAndVariantBuildsThroughValidatingFactory() throws {
     var built: Set<String> = []
     for model in registry.rawUSBModels {
       let record = try #require(registry.record(for: model))
@@ -305,7 +304,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func catalogRawUSBRowWithoutAClaimHasNoDriver() throws {
+  func catalogRawUSBRowWithoutClaimHasNoDriver() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02EA)
     let binding = try bound(identityOnly(model), backend: .rawUSB)
     #expect(binding.rule == .catalogRecord)
@@ -322,7 +321,7 @@ struct ProtocolDriverRegistryTests {
   ///
   /// Only the record vouches for the interface there.
   @Test
-  func driverKitClaimWithoutObservedFactsBuildsACatalogRow() throws {
+  func driverKitClaimWithoutObservedFactsBuildsCatalogRow() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02EA)
     let record = try #require(registry.record(for: model))
     let binding = try bound(identityOnly(model), backend: .usbExtension)
@@ -425,7 +424,7 @@ struct ProtocolDriverRegistryTests {
     case .hidDescriptor: driver is HIDDescriptorDriver
     case .hidReportLayout: driver is ReportLayoutDriver
     case .xboxXID, .nintendoSwitchInputOnly:
-      decodesTheDescribedLayout(driver, of: id)
+      decodesDescribedLayout(driver, of: id)
     case .xboxXUSB: driver is XUSBDriver
     case .xboxGIP: driver is GIPDriver
     case .sonySixaxis: driver is SixaxisDriver
@@ -440,11 +439,11 @@ struct ProtocolDriverRegistryTests {
     case .vendorGameSir: driver is GameSirDriver
     case .vendorNVIDIAShield: driver is NVIDIAShieldDriver
     case .nintendoWii: driver is WiiDriver
-    default: decodesTheDescribedLayout(driver, of: id)
+    default: decodesDescribedLayout(driver, of: id)
     }
   }
 
-  private static func decodesTheDescribedLayout(
+  private static func decodesDescribedLayout(
     _ driver: any PhysicalProtocolDriver,
     of family: PhysicalProtocolID
   ) -> Bool {

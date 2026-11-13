@@ -148,7 +148,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aTableHatNamesDirectionsForMaskedValues() throws {
+  func tableHatNamesDirectionsForMaskedValues() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 1}},
@@ -164,7 +164,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aSymmetricAxisDividesBothSidesByTheMaximum() throws {
+  func symmetricAxisDividesBothSidesByMaximum() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
@@ -180,7 +180,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aSymmetricAxisWithoutRangeUsesTheFullRange() throws {
+  func symmetricAxisWithoutRangeUsesFullRange() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},

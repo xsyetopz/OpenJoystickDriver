@@ -9,7 +9,7 @@ struct ProtocolClassifierTests {
   // MARK: - Vocabulary
 
   @Test
-  func bindingReasonsAreTheTypedReasonIDs() {
+  func bindingReasonsAreTypedReasonIDs() {
     #expect(
       ProtocolBindingReason.allCases.map(\.rawValue) == [
         "NoProtocolMatch", "AmbiguousProtocolMatch", "InterfaceContractMismatch",
@@ -21,7 +21,7 @@ struct ProtocolClassifierTests {
   }
 
   @Test
-  func everyCatalogRecordDecodesToAnImplementedFamilyVariant() throws {
+  func everyCatalogRecordDecodesToImplementedFamilyVariant() throws {
     for model in Self.catalog.rawUSBModels + Self.catalog.hidModels {
       let record = try #require(Self.catalog.record(for: model))
       if let variant = record.physicalProtocolVariant {
@@ -38,7 +38,7 @@ struct ProtocolClassifierTests {
   // MARK: - Catalog records
 
   @Test
-  func catalogRecordBindsOnARawUSBBackend() throws {
+  func catalogRecordBindsOnRawUSBBackend() throws {
     for backend in [DeviceAccessBackend.rawUSB, .usbExtension] {
       let result = classify(device(0x045E, 0x028E, interfaces: []), backend: backend)
       let binding = try bound(result)
@@ -74,7 +74,7 @@ struct ProtocolClassifierTests {
   }
 
   @Test
-  func rawUSBGIPRecordDerivesTheUSBVariant() throws {
+  func rawUSBGIPRecordDerivesUSBVariant() throws {
     let binding = try bound(
       classify(device(0x045E, 0x02EA, interfaces: []), backend: .usbExtension)
     )
@@ -84,7 +84,7 @@ struct ProtocolClassifierTests {
   }
 
   @Test
-  func hidRecordDerivesTheTransportVariantFromTheHostTransport() throws {
+  func hidRecordDerivesTransportVariantFromHostTransport() throws {
     let usb = try bound(
       classify(device(0x054C, 0x09CC, interfaces: [hidInterface(host: .usb)]), backend: .hid)
     )
@@ -195,7 +195,7 @@ struct ProtocolClassifierTests {
   }
 
   @Test(arguments: [(0x3537, 0x100A), (0x11C1, 0x5600), (0x2E95, 0x434D)] as [(UInt16, UInt16)])
-  func catalogHIDDescriptorRecordsStillRequireTheDescriptorContract(identity: (UInt16, UInt16)) {
+  func catalogHIDDescriptorRecordsStillRequireDescriptorContract(identity: (UInt16, UInt16)) {
     for interfaces in [
       [hidInterface(host: .usb, descriptor: nil)],
       [hidInterface(host: .usb, descriptor: vendorOnly)], [],
@@ -283,7 +283,7 @@ struct ProtocolClassifierTests {
 
   /// One VID:PID can ship XUSB or GIP firmware; the Xbox interface it exposes decides.
   @Test
-  func xboxRecordYieldsToTheOtherXboxFamilysObservedSignature() throws {
+  func xboxRecordYieldsToOtherXboxFamilysObservedSignature() throws {
     let asGIP = try bound(
       classify(device(0x045E, 0x028E, interfaces: [gipInterface()]), backend: .rawUSB)
     )

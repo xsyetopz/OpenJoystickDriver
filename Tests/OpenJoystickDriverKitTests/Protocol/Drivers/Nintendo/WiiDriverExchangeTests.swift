@@ -45,7 +45,7 @@ struct WiiDriverExchangeTests {
   ]
 
   @Test
-  func everyChoiceOfTheDescriptionSendsItsModeWithTheContinuousBitRule() throws {
+  func everyChoiceOfDescriptionSendsItsModeWithContinuousBitRule() throws {
     let wii = try #require(Self.wii)
     for choice in wii.modeChoices {
       driver.requestedFeatures = choice.features
@@ -61,7 +61,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func aStatusReportYieldsExactlyOneModeWrite() throws {
+  func statusReportYieldsExactlyOneModeWrite() throws {
     let writes = try feed("20-status-no-extension")
     #expect(reportIDs(writes).filter { $0 == 0x12 }.count == 1)
     #expect(writes.first == output(Data([0x12, 0x04, 0x31])))
@@ -69,14 +69,14 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func theCalibrationReadRequestsTheEEPROMBlockOnce() throws {
+  func calibrationReadRequestsEEPROMBlockOnce() throws {
     let writes = try feed("20-status-no-extension")
     #expect(writes.last == output(Data([0x17, 0x00, 0x00, 0x00, 0x16, 0x00, 0x0A])))
     #expect(reportIDs(try feed("20-status-no-extension")) == [0x12])
   }
 
   @Test
-  func aSuccessfulReadSetsTheCalibration() throws {
+  func successfulReadSetsCalibration() throws {
     _ = try feed("20-status-no-extension")
     #expect(try feed(reply(address: 0x0016, data: Self.calibrationBlock)).isEmpty)
     #expect(
@@ -89,7 +89,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func anAllZeroBlockLeavesTheCalibrationUnset() throws {
+  func allZeroBlockLeavesCalibrationUnset() throws {
     _ = try feed("20-status-no-extension")
     _ = try feed("21-read-success")
     #expect(driver.accelerometerCalibration == nil)
@@ -97,7 +97,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func anErrorNibbleEndsTheReadWithTheError() throws {
+  func errorNibbleEndsReadWithError() throws {
     _ = try feed("20-status-no-extension")
     _ = try feed("21-read-error")
     #expect(driver.failure == .init(purpose: .accelerometerCalibration, step: 0, reason: .error(7)))
@@ -105,7 +105,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func aReplyForAnotherAddressIsRefusedAndNamed() throws {
+  func replyForAnotherAddressIsRefusedAndNamed() throws {
     _ = try feed("20-status-no-extension")
     _ = try feed(reply(address: 0x0020, data: Self.calibrationBlock))
     #expect(driver.refusedReply == .addressMismatch(expected: 0x0016, received: 0x0020))
@@ -116,7 +116,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func aLongReadIsReassembledFromRepliesAtRisingAddresses() throws {
+  func longReadIsReassembledFromRepliesAtRisingAddresses() throws {
     let wii = try #require(Self.wii)
     #expect(wii.scripts.accelerometerCalibration == [.read(address: 0x16, length: 10)])
     _ = try feed("20-status-no-extension")
@@ -135,7 +135,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func theHandshakeSendsTheScriptStepByStep() throws {
+  func handshakeSendsScriptStepByStep() throws {
     let expected = try WiiFixtureFolder.sequences.byteStrings("handshake-rumble-off").map(output)
     #expect(try startHandshake() == [expected[0]])
     #expect(try feed(acknowledgement(error: 0)) == [expected[1]])
@@ -155,7 +155,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func anUnknownIdKeepsItsBytesAndKeepsTheCoreMode() throws {
+  func unknownIdKeepsItsBytesAndKeepsCoreMode() throws {
     _ = try startHandshake()
     _ = try feed(acknowledgement(error: 0))
     _ = try feed(acknowledgement(error: 0))
@@ -165,7 +165,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func anAcknowledgementErrorEndsTheHandshakeWithoutAFurtherWrite() throws {
+  func acknowledgementErrorEndsHandshakeWithoutFurtherWrite() throws {
     _ = try startHandshake()
     #expect(try feed(acknowledgement(error: 3)).isEmpty)
     #expect(driver.failure == .init(purpose: .extensionHandshake, step: 0, reason: .error(3)))
@@ -173,7 +173,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func aMissingReplyEndsTheHandshakeAtTheTimeoutWithoutAFurtherWrite() throws {
+  func missingReplyEndsHandshakeAtTimeoutWithoutFurtherWrite() throws {
     _ = try feed("20-status-extension", at: 0)
     _ = try feed(reply(address: 0x0016, data: Self.calibrationBlock), at: 1_000)
     let before = Self.timeout + 1_000
@@ -185,7 +185,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func removalReturnsTheExtensionControlsToNeutralAndRestoresTheMode() throws {
+  func removalReturnsExtensionControlsToNeutralAndRestoresMode() throws {
     _ = try startHandshake()
     _ = try feed(acknowledgement(error: 0))
     _ = try feed(acknowledgement(error: 0))
@@ -204,7 +204,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func removalDuringTheHandshakeDropsItAndNoReplyIsAwaited() throws {
+  func removalDuringHandshakeDropsItAndNoReplyIsAwaited() throws {
     _ = try startHandshake()
     #expect(try feed("20-status-no-extension").count == 1)
     #expect(try feed(acknowledgement(error: 0)).isEmpty)
@@ -212,7 +212,7 @@ struct WiiDriverExchangeTests {
   }
 
   @Test
-  func pluggingInAgainStartsANewHandshake() throws {
+  func pluggingInAgainStartsNewHandshake() throws {
     _ = try startHandshake()
     _ = try feed("20-status-no-extension")
     let writes = try feed("20-status-extension")

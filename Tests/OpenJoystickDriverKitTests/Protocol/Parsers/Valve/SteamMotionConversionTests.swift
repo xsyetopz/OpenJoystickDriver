@@ -5,7 +5,7 @@ import Testing
 
 struct SteamMotionConversionTests {
   @Test
-  func nominalScaleMapsGyroAndAccelIntoTheCanonicalFrame() throws {
+  func nominalScaleMapsGyroAndAccelIntoCanonicalFrame() throws {
     var report = [UInt8](repeating: 0, count: 64)
     report[0] = 1
     report[2] = 1

@@ -21,7 +21,7 @@ struct ControllerRecordOutputTests {
     """#
 
   @Test
-  func decodesOwnershipAndARumbleTemplate() throws {
+  func decodesOwnershipAndRumbleTemplate() throws {
     let document = try decode(
       "\(Self.thirdPartyModes(session: "{\(Self.gp100Rumble)}")), \"server\": \"OJD\""
     )
@@ -145,7 +145,7 @@ struct ControllerRecordOutputTests {
 
   /// A HID mode has no raw-USB session to keep alive.
   @Test
-  func rejectsAKeepAliveInAHIDMode() {
+  func rejectsKeepAliveInHIDMode() {
     let keepAlive = #"{"intervalMilliseconds": 500, "writes": [{"bytes": "01"}]}"#
     #expect(throws: DecodingError.self) {
       try decode(Self.thirdPartyModes(session: "{\"keepAlive\": \(keepAlive)}"))
@@ -154,7 +154,7 @@ struct ControllerRecordOutputTests {
 
   /// A report ID of 0 has no ID byte, so byte 0 carries a motor; a feature report stays a feature.
   @Test
-  func writesReportsWithoutAnIDAndFeatureReports() throws {
+  func writesReportsWithoutIDAndFeatureReports() throws {
     let unnumbered = try RumbleOutputTemplate(
       target: .hid(ControllerTemplateReport(kind: .output, reportID: 0, length: 4)),
       motors: [.lowFrequency: .init(byte: 0), .rightTrigger: .init(byte: 3)]
@@ -184,7 +184,7 @@ struct ControllerRecordOutputTests {
 
   /// Fixed bytes stay, each motor writes its encoding at its byte, and the counter fills its byte.
   @Test
-  func decodesFixedBytesEncodingsAndACounter() throws {
+  func decodesFixedBytesEncodingsAndCounter() throws {
     let rumble = #"""
       "rumble": {"report": {"kind": "Output", "id": 2, "length": 12},
         "bytes": "02 00 AA 00 00 00 00 00 00 00 00 BB", "counter": {"byte": 1},
@@ -233,7 +233,7 @@ struct ControllerRecordOutputTests {
 
   /// A raw-USB mode names a usb packet, never a HID report.
   @Test
-  func rejectsAHIDTemplateInARawUSBMode() {
+  func rejectsHIDTemplateInRawUSBMode() {
     let protocolInfo = #"{"family": "XboxXUSB", "variant": "Wired"}"#
     let rumble =
       #"{"report": {"kind": "Output", "id": 2, "length": 8}, "lowFrequency": {"byte": 3}}"#
@@ -262,7 +262,7 @@ struct ControllerRecordOutputTests {
 
   /// A record may carry a rumble template for each family whose driver encodes one.
   @Test
-  func acceptsARumbleTemplateForEachDriverThatEncodesOne() throws {
+  func acceptsRumbleTemplateForEachDriverThatEncodesOne() throws {
     let accepted: [(String, String)] = [
       (#"{"family": "XboxXID", "variant": "Gamepad"}"#, Self.usbRumble),
       (#"{"family": "XboxXUSB", "variant": "Wired"}"#, Self.usbRumble),
@@ -280,7 +280,7 @@ struct ControllerRecordOutputTests {
 
   /// A record template the driver would ignore is refused, not dropped.
   @Test
-  func rejectsARumbleTemplateTheDriverIgnores() {
+  func rejectsRumbleTemplateDriverIgnores() {
     let refused: [(String, String)] = [
       (#"{"family": "VendorNVIDIAShield"}"#, Self.shieldRumble),
       (#"{"family": "VendorGameSir", "variant": "USB"}"#, Self.usbRumble),
@@ -294,7 +294,7 @@ struct ControllerRecordOutputTests {
 
   /// Sixaxis keeps its family writes; a record template adds exactly its own report.
   @Test
-  func macOSOwnedOutputAddsOnlyTheRecordReport() throws {
+  func macOSOwnedOutputAddsOnlyRecordReport() throws {
     let sixaxis = MacOSOwnedOutput.allowance(for: .sonySixaxis, record: nil)
     let sixaxisReport = PhysicalHIDOutputReport(
       reportID: 1,

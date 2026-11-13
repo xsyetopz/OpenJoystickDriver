@@ -210,7 +210,7 @@ extension DualSenseDriverTests {
   }
 
   @Test
-  func badBluetoothCRCCannotConsumeAnEdgeButtonPress() throws {
+  func badBluetoothCRCCannotConsumeEdgeButtonPress() throws {
     let parser = DualSenseDriver(hasEdgeButtons: true)
     let valid = ProtocolPacketFixtures.DualSense.bluetoothInputReport(buttons: (0x08, 0, 0x40))
     var bad = valid

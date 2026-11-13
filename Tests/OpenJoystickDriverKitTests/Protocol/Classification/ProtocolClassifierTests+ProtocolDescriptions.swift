@@ -41,7 +41,7 @@ extension ProtocolClassifierTests {
       ),
     ]
   )
-  func protocolDescriptionRejectsABadSignature(
+  func protocolDescriptionRejectsBadSignature(
     signature: String,
     problem: String,
     code: ErrorCode
@@ -58,7 +58,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func protocolDescriptionRejectsABadHeader() {
+  func protocolDescriptionRejectsBadHeader() {
     let cases: [(Data, String, ErrorCode)] = [
       (
         protocolDescription(signature: #""variant": "USB""#, extra: #""vendorID": 1118,"#),

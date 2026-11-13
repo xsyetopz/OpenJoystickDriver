@@ -47,7 +47,7 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func unconfiguredDeviceWithTheGIPDeviceTripleBindsGIPOnItsDataInterface() throws {
+  func unconfiguredDeviceWithGIPDeviceTripleBindsGIPOnItsDataInterface() throws {
     let device = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -70,7 +70,7 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func deviceTripleDoesNotBindAConfiguredDeviceOrOverHID() {
+  func deviceTripleDoesNotBindConfiguredDeviceOrOverHID() {
     let configured = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -90,7 +90,7 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func catalogRowBeatsAnInterfaceSignature() throws {
+  func catalogRowBeatsInterfaceSignature() throws {
     // 045E:028E is a catalogued XUSB row; while its own XUSB interface is present, an extra GIP
     // triple does not change the binding. A GIP-only device is the firmware-mode case covered in
     // `ProtocolClassifierTests.xboxRecordYieldsToTheOtherXboxFamilysObservedSignature`.
@@ -108,7 +108,7 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func twoFamiliesAtTheInterfaceLevelConflict() {
+  func twoFamiliesAtInterfaceLevelConflict() {
     let device = observed(interfaces: [
       registryInterface(0, 0xFF, 0x5D, 0x01), registryInterface(1, 0xFF, 0x47, 0xD0),
     ])
@@ -119,7 +119,7 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func variantsOfOneFamilyResolveToTheLowestInterface() throws {
+  func variantsOfOneFamilyResolveToLowestInterface() throws {
     let device = observed(interfaces: [
       registryInterface(1, 0xFF, 0x5D, 0x81), registryInterface(0, 0xFF, 0x5D, 0x01),
     ])
@@ -129,14 +129,14 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func uncataloguedDeviceWithoutASignatureHasNoProtocolMatch() {
+  func uncataloguedDeviceWithoutSignatureHasNoProtocolMatch() {
     let device = observed(interfaces: [registryInterface(0, 0xFF, 0x00, 0x00)])
     #expect(!ProtocolDriverRegistry.carriesProtocolSignature(device))
     #expect(registry.classify(device, backend: .rawUSB) == .unsupported(.noProtocolMatch))
   }
 
   @Test
-  func gipSignatureRunsWithTheProfileOfAFamilyOnlyGIPRow() throws {
+  func gipSignatureRunsWithProfileOfFamilyOnlyGIPRow() throws {
     let binding = try bound(observed(interfaces: [registryInterface(0, 0xFF, 0x47, 0xD0)]))
     // 3537:1010 (GameSir G7 SE) names the GIP family, set-configuration-before-claim and a Share
     // offset; a pad known only by its signature has no Share offset.
@@ -201,7 +201,7 @@ struct InterfaceSignatureBindingTests {
   }
 
   @Test
-  func catalogEndpointPinsStayAuthoritativeOverTheObservedDescriptor() throws {
+  func catalogEndpointPinsStayAuthoritativeOverObservedDescriptor() throws {
     // 1532:0A29 pins 129/1; a descriptor naming 0x82/0x02 does not override it.
     let record = try #require(
       registry.record(for: ControllerModelID(vendorID: 0x1532, productID: 0x0A29))

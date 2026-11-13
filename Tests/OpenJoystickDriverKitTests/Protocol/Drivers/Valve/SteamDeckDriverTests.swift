@@ -39,7 +39,7 @@ struct SteamDeckDriverTests {
   static let model = ControllerModelID(vendorID: 0x28DE, productID: 0x1205)
 
   @Test
-  func steamDeckRowBindsValveSteamDeckAndBuildsTheDeckDriver() throws {
+  func steamDeckRowBindsValveSteamDeckAndBuildsDeckDriver() throws {
     let models = [0x1205].map { ControllerModelID(vendorID: 0x28DE, productID: $0) }
     for model in models {
       let record = try #require(ProtocolDriverRegistry().record(for: model), "\(model)")
@@ -75,7 +75,7 @@ struct SteamDeckDriverTests {
   }
 
   @Test
-  func decodesTheDPadBitsIntoTheHat() throws {
+  func decodesDPadBitsIntoHat() throws {
     let cases: [(UInt32, HatDirection)] = [
       (0x0100, .north), (0x0300, .northEast), (0x0200, .east), (0x0A00, .southEast),
       (0x0800, .south), (0x0C00, .southWest), (0x0400, .west), (0x0500, .northWest),
@@ -98,7 +98,7 @@ struct SteamDeckDriverTests {
   }
 
   @Test
-  func rejectsReportsOutsideTheDeckStateHeader() throws {
+  func rejectsReportsOutsideDeckStateHeader() throws {
     var wrongType = Array(DeckReport.state(low: 0x80))
     wrongType[2] = 0x01
     #expect(try SteamDeckDriver().parseReport(Data(wrongType)) == nil)
@@ -107,7 +107,7 @@ struct SteamDeckDriverTests {
 
   /// Accel sits at 24 and gyro at 30, and SDL maps both as (x, z, -y), so no axis is reflected.
   @Test
-  func motionReadsTheDeckOffsetsWithoutReflectingGyroY() throws {
+  func motionReadsDeckOffsetsWithoutReflectingGyroY() throws {
     let driver = SteamDeckDriver()
     let words: [Int: Int16] = [26: 16384, 30: 16384, 32: 16384]
     let sample = try #require(try driver.parseReport(DeckReport.state(words: words))?.motion.first)

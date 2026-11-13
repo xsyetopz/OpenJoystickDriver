@@ -42,7 +42,7 @@ struct RawUSBModeTests {
   private static var usbWrite: [String: Any] { ["bytes": "01 02"] }
 
   @Test
-  func aRawUSBRecordSelectsAnAlternativeModeFromItsInterfaceSignature() async throws {
+  func rawUSBRecordSelectsAlternativeModeFromItsInterfaceSignature() async throws {
     let signature: [String: Any] = [
       "interfaceClass": 255, "interfaceSubclass": 71, "interfaceProtocol": 208,
       "endpoints": [["direction": "In", "transferType": "Interrupt"]],
@@ -102,7 +102,7 @@ struct RawUSBModeTests {
 
   /// A raw-USB route has no feature-report read, so a mode that needs a probe never holds.
   @Test
-  func aRawUSBRouteNeverRunsAProbeMode() async throws {
+  func rawUSBRouteNeverRunsProbeMode() async throws {
     let probe: [String: Any] = ["report": 1, "length": 8, "expect": "Answers"]
     let document = Self.record(modes: [
       Self.gip("default"), Self.gip("probed", match: ["probes": [probe]]),

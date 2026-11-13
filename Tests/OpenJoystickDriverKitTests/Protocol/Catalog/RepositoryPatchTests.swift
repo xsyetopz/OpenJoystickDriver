@@ -90,7 +90,7 @@ struct RepositoryPatchTests {
     """
 
   @Test
-  func patchesAddMembersInPatchOrderAfterTheRecordsMembers() throws {
+  func patchesAddMembersInPatchOrderAfterRecordsMembers() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
@@ -140,7 +140,7 @@ struct RepositoryPatchTests {
   }
 
   @Test
-  func aPatchFileInADeeperDirectoryIsRefused() throws {
+  func patchFileInDeeperDirectoryIsRefused() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
@@ -161,7 +161,7 @@ struct RepositoryPatchTests {
   }
 
   @Test
-  func aPatchThatWritesTheSameNumberAnotherWayChangesNothing() throws {
+  func patchThatWritesSameNumberAnotherWayChangesNothing() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,

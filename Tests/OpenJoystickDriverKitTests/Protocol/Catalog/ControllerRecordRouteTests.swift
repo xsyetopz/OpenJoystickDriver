@@ -6,7 +6,7 @@ import Testing
 /// The record's `route` field, which marks the controllers the USB extension serves.
 struct ControllerRecordRouteTests {
   @Test
-  func decodesExtensionOwnedOnARawUSBFamily() throws {
+  func decodesExtensionOwnedOnRawUSBFamily() throws {
     let document = try decode(
       #""modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}], "#
         + #""route": "ExtensionOwned""#
@@ -39,7 +39,7 @@ struct ControllerRecordRouteTests {
   }
 
   @Test
-  func bundledRecordsRouteExactlyTheGrantedXboxControllersThroughTheExtension() {
+  func bundledRecordsRouteExactlyGrantedXboxControllersThroughExtension() {
     let routed = ControllerRecordSet.bundled.records.values.filter { $0.route == .extensionOwned }
       .map(\.model).sorted()
     #expect(

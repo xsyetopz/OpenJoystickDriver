@@ -124,13 +124,13 @@ private let rejectedFields: [(String, String)] = [
 @Suite
 struct BitAddressedFieldTests {
   @Test(arguments: rawCases)
-  func readsTheRawValue(_ rawCase: BitFieldRawCase) throws {
+  func readsRawValue(_ rawCase: BitFieldRawCase) throws {
     let layout = try inputLayout(axisLayout(rawCase.field, length: rawCase.bytes.count))
     #expect(layout.axes[0].field.raw(in: rawCase.bytes) == rawCase.raw)
   }
 
   @Test
-  func aSixteenBitTriggerReadsAtAnUnalignedOffset() throws {
+  func sixteenBitTriggerReadsAtUnalignedOffset() throws {
     let layout = try inputLayout(
       #"{"report": {"length": {"atLeast": 4}}, "#
         + #""leftTrigger": {"bitOffset": 12, "bitSize": 16}}"#
@@ -141,7 +141,7 @@ struct BitAddressedFieldTests {
   }
 
   @Test
-  func aTwelveBitAxisScalesAroundItsMiddle() throws {
+  func twelveBitAxisScalesAroundItsMiddle() throws {
     let layout = try inputLayout(axisLayout(#""bitOffset": 4, "bitSize": 12"#, length: 3))
     let axis = layout.axes[0]
     #expect(axis.value(in: [0x00, 0x00, 0x00]) == -1)
@@ -157,7 +157,7 @@ struct BitAddressedFieldTests {
   }
 
   @Test
-  func aFieldMayNotCoverTheReportIDByte() {
+  func fieldMayNotCoverReportIDByte() {
     let inID = #"{"report": {"id": 1, "length": {"atLeast": 3}}, "#
     #expect(throws: DecodingError.self) {
       try inputLayout(inID + #""axes": [{"control": "LeftStickX", "bitOffset": 7, "bitSize": 8}]}"#)

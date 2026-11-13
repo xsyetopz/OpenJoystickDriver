@@ -47,7 +47,7 @@ extension DriverLifecycleCharacterizationTests {
     )
   }
 
-  /// The Bluetooth enable report is a startup write in the Sixaxis records now;
+  /// The Bluetooth enable report is a startup write in the Sixaxis records;
   /// `sixaxisBluetoothStartupStepOrder` still sees it sent.
   @Test
   func sixaxisBluetoothTranscript() throws {

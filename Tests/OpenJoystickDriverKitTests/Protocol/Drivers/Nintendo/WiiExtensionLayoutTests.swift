@@ -62,7 +62,7 @@ struct WiiExtensionLayoutTests {
   }
 
   @Test
-  func classicAIsEastAndTheProSharesTheLayout() throws {
+  func classicAIsEastAndProSharesLayout() throws {
     let layout = try Self.layout("ClassicController")
     let east = try #require(layout.buttons.first { $0.control == .east })
     #expect(east.field == .init(byte: 5, mask: 0x10))

@@ -56,7 +56,7 @@ struct EightBitDoUltimate2CTests {
   /// L4 sets button usage 3 and R4 usage 6 over Bluetooth LE (`ordered-controls-120s.txt`) and
   /// on the receiver (`2c-receiver-301c/rear-unassigned-60s.txt`).
   @Test(arguments: [UInt16(0x301B), 0x301C])
-  func rearButtonsAreTheFirstPaddles(productID: UInt16) throws {
+  func rearButtonsAreFirstPaddles(productID: UInt16) throws {
     let parser = HIDDescriptorDriver(
       model: ControllerModelID(vendorID: 0x2DC8, productID: productID),
       usageMap: try catalogUsageMap(0x2DC8, productID)
@@ -88,7 +88,7 @@ struct EightBitDoUltimate2CTests {
   }
 
   @Test(arguments: [UInt16(0x301C), 0x301D])
-  func dinputIdentitiesReplayTheBluetoothUsages(productID: UInt16) throws {
+  func dinputIdentitiesReplayBluetoothUsages(productID: UInt16) throws {
     let parser = HIDDescriptorDriver(
       model: ControllerModelID(vendorID: 0x2DC8, productID: productID),
       usageMap: try catalogUsageMap(0x2DC8, productID)

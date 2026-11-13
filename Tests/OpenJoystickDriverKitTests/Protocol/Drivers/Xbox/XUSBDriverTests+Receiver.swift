@@ -210,7 +210,7 @@ extension XUSBDriverTests {
   /// The manager assigns a receiver slot's ring LED from the pool wired pads share, so the
   /// driver lights nothing itself: two single-slot receivers must not both show player 1.
   @Test
-  func testWirelessReceiverSlotLeavesThePlayerSlotToTheManager() throws {
+  func testWirelessReceiverSlotLeavesPlayerSlotToManager() throws {
     for slot in 0..<4 {
       let parser = try #require(XUSBDriver(slotOrdinal: slot))
       #expect(parser.sessionPlan.assignsStartupPlayerIndicator)

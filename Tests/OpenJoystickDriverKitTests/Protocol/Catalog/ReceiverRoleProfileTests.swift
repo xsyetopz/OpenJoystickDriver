@@ -56,7 +56,7 @@ struct ReceiverRoleProfileTests {
   }
 
   @Test
-  func interfaceWithThreeEndpointsOrAnotherTripleIsNotARole() throws {
+  func interfaceWithThreeEndpointsOrAnotherTripleIsNotRole() throws {
     let binding = try bound(0x045E, 0x0719)
     // Synthetic: interface 2 carries an extra endpoint and interface 1 the non-slot triple.
     let threeEndpoints = PhysicalInterfaceSignature(
@@ -80,7 +80,7 @@ struct ReceiverRoleProfileTests {
   }
 
   @Test
-  func matchingInterfaceBeyondTheFourthSlotIsDropped() throws {
+  func matchingInterfaceBeyondFourthSlotIsDropped() throws {
     let binding = try bound(0x045E, 0x0719)
     // Synthetic: five slot interfaces.
     let roles = registry.roleProfiles(
@@ -92,7 +92,7 @@ struct ReceiverRoleProfileTests {
   }
 
   @Test
-  func onlyTheFirstSlotSetsTheConfiguration() throws {
+  func onlyFirstSlotSetsConfiguration() throws {
     let binding = try bound(0x045E, 0x0719)
     // Synthetic: four slot interfaces on an unconfigured receiver.
     let resolution = claim(
@@ -128,7 +128,7 @@ struct ReceiverRoleProfileTests {
   }
 
   @Test
-  func receiverWithoutAQualifyingInterfaceKeepsItsClaim() throws {
+  func receiverWithoutQualifyingInterfaceKeepsItsClaim() throws {
     let binding = try bound(0x045E, 0x0719)
     let unobserved = USBTransportResolution(profile: try profile(of: binding))
 

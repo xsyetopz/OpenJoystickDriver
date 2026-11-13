@@ -19,7 +19,7 @@ struct ControllerOutputCommandTests {
   }
 
   @Test
-  func unitIntervalIntensitiesSpanTheFullRangeAndClamp() {
+  func unitIntervalIntensitiesSpanFullRangeAndClamp() {
     #expect(UnipolarValue(unitInterval: 0) == .min)
     #expect(UnipolarValue(unitInterval: 1) == .max)
     #expect(UnipolarValue(unitInterval: 0.5).rawValue == 32_768)
@@ -29,7 +29,7 @@ struct ControllerOutputCommandTests {
   }
 
   @Test
-  func partialRumbleZeroesAndReportsTheChannelsTheControllerLacks() throws {
+  func partialRumbleZeroesAndReportsChannelsControllerLacks() throws {
     let mains = PhysicalControllerOutputCapabilities.dualMainRumble
     let requested = RumbleIntensities(
       lowFrequency: UnipolarValue(byte: 0x40),
@@ -77,7 +77,7 @@ struct ControllerOutputCommandTests {
   }
 
   @Test
-  func driversWithoutAnOutputThrowUnsupportedCapability() {
+  func driversWithoutOutputThrowUnsupportedCapability() {
     #expect(throws: ControllerOutputError.unsupportedCapability(.rgb)) {
       try xidDriver().encode(.setRGB(ControllerColor(red: 1, green: 2, blue: 3)))
     }

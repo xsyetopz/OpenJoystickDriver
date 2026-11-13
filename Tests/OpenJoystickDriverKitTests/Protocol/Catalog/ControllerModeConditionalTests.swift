@@ -92,7 +92,7 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func aSessionFollowsTheProtocolOfItsOwnMode() {
+  func sessionFollowsProtocolOfItsOwnMode() {
     Self.expectRejected(
       Self.record(
         default: Self.gip,
@@ -134,7 +134,7 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func usbEndpointsDifferFromTheDefaultOfSomeMode() {
+  func usbEndpointsDifferFromDefaultOfSomeMode() {
     Self.expectRejected(
       Self.record(
         default: ["family": "XboxXUSB", "variant": "Receiver"],
@@ -157,7 +157,7 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func aHIDUsageMapNeedsEveryModeHIDDescriptor() {
+  func hidUsageMapNeedsEveryModeHIDDescriptor() {
     let usage: [String: Any] = ["kind": "Button", "page": 9, "usage": 1, "control": "South"]
     Self.expectRejected(
       Self.record(

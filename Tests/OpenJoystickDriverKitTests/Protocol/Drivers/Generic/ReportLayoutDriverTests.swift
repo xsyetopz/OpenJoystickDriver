@@ -48,7 +48,7 @@ struct ReportLayoutDriverTests {
   // MARK: - Catalog rows
 
   @Test(arguments: [gp100Model, chillStreamModel])
-  func probeFreePadsBindTheReportLayoutFamily(model: ControllerModelID) throws {
+  func probeFreePadsBindReportLayoutFamily(model: ControllerModelID) throws {
     let record = try #require(DeviceCatalog().record(for: model))
     #expect(record.physicalProtocolID == .hidReportLayout)
     #expect(record.inputLayouts != nil)
@@ -113,7 +113,7 @@ struct ReportLayoutDriverTests {
   }
 
   @Test
-  func gp100IgnoresByteZeroAndTheHatNibble() throws {
+  func gp100IgnoresByteZeroAndHatNibble() throws {
     let driver = try catalogDriver(gp100Model)
     // PR #42 reads byte 0 as a report ID and byte 2 as unused; neither is verified as input.
     #expect(try driver.parseReport(gp100Report([0: 0xFF, 2: 0x01]))?.state == .neutral)
@@ -131,7 +131,7 @@ struct ReportLayoutDriverTests {
   ///
   /// The GP100 record's rumble template encodes it.
   @Test
-  func gp100RumbleUsesTheHardwareVerifiedReport() throws {
+  func gp100RumbleUsesHardwareVerifiedReport() throws {
     let command = ControllerOutputCommand.setRumble(
       RumbleIntensities(
         lowFrequency: UnipolarValue(byte: 0x40),
@@ -183,7 +183,7 @@ struct ReportLayoutDriverTests {
   }
 
   @Test
-  func chillStreamHatOfZeroIsIgnoredUntilTheHatMoves() throws {
+  func chillStreamHatOfZeroIsIgnoredUntilHatMoves() throws {
     let driver = try catalogDriver(chillStreamModel)
     // SDL only decodes the hat when it changes from zero, so a constant 0 never reads as north.
     #expect(try driver.parseReport(chillStreamReport([1: 0x00]))?.state == .neutral)

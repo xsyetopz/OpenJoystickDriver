@@ -78,7 +78,7 @@ struct ControllerPatchMergeTests {
   }
 
   @Test
-  func theCasesCoverTheRequiredBehaviour() throws {
+  func casesCoverRequiredBehaviour() throws {
     let cases = try #require(try Self.fixture()["cases"] as? [[String: Any]])
     let names = Set(cases.compactMap { $0["name"] as? String })
     #expect(names.contains("remove deletes a parameter"))
@@ -103,7 +103,7 @@ struct ControllerPatchMergeTests {
   }
 
   @Test
-  func mergingAPatchOrdersTheRecordFirstThenThePatchsNewMembers() throws {
+  func mergingPatchOrdersRecordFirstThenPatchsNewMembers() throws {
     let record = try Self.json(#"{"b": {"y": 1, "x": 2}, "a": [1, 2], "c": 3}"#)
     let patch = try Self.json(
       #"{"d": {"q": 1, "p": 0}, "b": {"z": 1, "x": 5}, "a": [{"k": 1, "j": 2}]}"#
@@ -132,7 +132,7 @@ struct ControllerPatchMergeTests {
   }
 
   @Test
-  func aMergedNumberKeepsItsText() throws {
+  func mergedNumberKeepsItsText() throws {
     let record = try Self.json(#"{"tuning": {"stickDeadzone": 0.10, "keep": 100.50}}"#)
     let digits = "1234567890123456789012345"
     let patch = try Self.json(
@@ -151,7 +151,7 @@ struct ControllerPatchMergeTests {
   }
 
   @Test
-  func numbersThatReadAsTheSameValueAreNotAChange() throws {
+  func numbersThatReadAsSameValueAreNotChange() throws {
     let record = try Self.json(#"{"a": 1, "b": 0.08, "c": [1000]}"#)
     let same = try Self.json(#"{"c": [1e3], "b": 8E-2, "a": 1.0}"#)
     #expect(record.hasSameValue(as: same))

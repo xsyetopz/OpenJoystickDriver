@@ -357,7 +357,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testRepeatedReportRepeatsTheSnapshot() throws {
+  func testRepeatedReportRepeatsSnapshot() throws {
     let parser = GIPDriver()
     var payload1 = Data(repeating: 0, count: 14)
     payload1[0] = 16  // A

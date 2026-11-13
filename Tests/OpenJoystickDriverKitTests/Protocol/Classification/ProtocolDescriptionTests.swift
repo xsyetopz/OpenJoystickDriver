@@ -51,7 +51,7 @@ struct ProtocolDescriptionTests {
   // MARK: - Bundled descriptions
 
   @Test
-  func everyFamilyThatDeclaresParametersHasADescription() {
+  func everyFamilyThatDeclaresParametersHasDescription() {
     for family in PhysicalProtocolID.allCases {
       let description = ProtocolDescription.bundled[family]
       if !ProtocolParameters.declared(by: family).isEmpty {
@@ -63,7 +63,7 @@ struct ProtocolDescriptionTests {
 
   /// The family facts the drivers read come from the descriptions.
   @Test
-  func bundledDescriptionsHoldTheFamilyFacts() throws {
+  func bundledDescriptionsHoldFamilyFacts() throws {
     let bundled = ProtocolDescription.bundled
     #expect(bundled[.xboxXUSB]?.endpoints == .init(input: 129, output: 1))
     #expect(bundled[.xboxXID]?.endpoints == .init(input: 129, output: 2))
@@ -110,7 +110,7 @@ struct ProtocolDescriptionTests {
 
   /// A raw-USB variant reads no HID timing.
   @Test
-  func tuningScopeFollowsTheDescription() {
+  func tuningScopeFollowsDescription() {
     let gameSir = ControllerTuning.scope(protocolID: .vendorGameSir, variant: .usb)
     #expect(
       gameSir == [.stickDeadzone, .frameQueueCapacity, .usbCommandTimeoutMs]
@@ -150,7 +150,7 @@ struct ProtocolDescriptionTests {
   /// The parameters a description declares are those `ProtocolParameters` decodes: the names
   /// match, and an enum's values are cases of the Swift enum that holds it.
   @Test
-  func declaredParametersMatchTheSwiftParameterTypes() {
+  func declaredParametersMatchSwiftParameterTypes() {
     let enums: [String: [String]] = [
       "layout": ProtocolParameters.Layout.allCases.map(\.rawValue),
       "usbProtocol": ProtocolParameters.USBProtocol.allCases.map(\.rawValue),
@@ -212,7 +212,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func anXboxXIDDescriptionMayDeclareAnInputLayout() throws {
+  func xboxXIDDescriptionMayDeclareInputLayout() throws {
     let description = try decode(
       family: .xboxXID,
       #""rawUSB": true, "recordSections": ["input"], "#
@@ -248,7 +248,7 @@ struct ProtocolDescriptionTests {
 
   /// `ProtocolParameters.violation` takes the ranges and enum values from the description.
   @Test
-  func parameterViolationsReadTheDescription() {
+  func parameterViolationsReadDescription() {
     var parameters = ProtocolParameters()
     parameters.shareButton = .init(fromEnd: 300)
     #expect(
@@ -287,13 +287,13 @@ struct ProtocolDescriptionTests {
       (.xboxGIP, #""rawUSB": true, "rawUSBTuningKeys": ["stickDeadzone"]"#),
     ]
   )
-  func rejectsAMalformedBody(family: PhysicalProtocolID, body: String) {
+  func rejectsMalformedBody(family: PhysicalProtocolID, body: String) {
     #expect(rejection(family: family, body)?.code == .invalidProtocolDescription, "\(body)")
   }
 
   /// A description sets exactly the family-specific session fields its driver reads.
   @Test
-  func aFamilySpecificSessionFieldOfAnotherFamilyIsRefused() {
+  func familySpecificSessionFieldOfAnotherFamilyIsRefused() {
     let foreign: [(PhysicalProtocolID, String)] = [
       (.xboxXUSB, "handshakeAttempts"), (.xboxXUSB, "announceResendLimit"),
       (.xboxXID, "handshakeAttempts"),
@@ -312,7 +312,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func aSessionFieldTheDriverReadsMustBeSet() {
+  func sessionFieldDriverReadsMustBeSet() {
     let missing: [(PhysicalProtocolID, String)] = [
       (.xboxGIP, #""rawUSB": true"#),
       (.xboxGIP, #""rawUSB": true, "defaults": {"session": {"handshakeAttempts": 3}}"#),
@@ -345,7 +345,7 @@ struct ProtocolDescriptionTests {
 
   /// The general session keys are the schema's list, which Python reads.
   @Test
-  func theGeneralSessionKeysAreTheSchemasList() throws {
+  func generalSessionKeysAreSchemasList() throws {
     let schema = try JSONSchemaFiles.document(named: "protocol-description.schema.json")
     let defs = try #require(schema["$defs"] as? [String: Any])
     let general = try #require(defs["generalSessionKeys"] as? [String: Any])
@@ -387,7 +387,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsDefaultsTheFamilyDriverDoesNotRead() {
+  func rejectsDefaultsFamilyDriverDoesNotRead() {
     let cases: [(PhysicalProtocolID, String)] = [
       (.hidDescriptor, #""defaults": {"input": \#(Self.minimalInput)}"#),
       (.xboxXUSB, #""defaults": {"input": \#(Self.minimalInput)}"#),
@@ -409,7 +409,7 @@ struct ProtocolDescriptionTests {
   /// XboxXID lists no `sessionKeys`, so its `defaults.session` refuses startup packets and a
   /// keep-alive.
   @Test
-  func anXIDSessionHoldsOnlyARumbleTemplate() {
+  func xidSessionHoldsOnlyRumbleTemplate() {
     let session = [
       #""startup": [{"bytes": "01 02"}]"#,
       #""keepAlive": {"intervalMilliseconds": 500, "writes": [{"bytes": "01 02"}]}"#,
@@ -429,7 +429,7 @@ struct ProtocolDescriptionTests {
 
   /// A description lists the general session keys its driver reads, no other.
   @Test
-  func sessionKeysAreTheOnesTheDriverReads() {
+  func sessionKeysAreOnesDriverReads() {
     let cases: [(PhysicalProtocolID, String)] = [
       (.xboxXID, #""rawUSB": true, "sessionKeys": ["keepAlive"]"#),
       (.xboxXID, #""rawUSB": true, "sessionKeys": ["startup", "startup"]"#),
@@ -490,7 +490,7 @@ struct ProtocolDescriptionTests {
       #""when": {"parameter": "layout", "is": []}"#, #""when": {"parameter": "layout"}"#,
     ]
   )
-  func rejectsAMalformedHIDStartupWrite(field: String) {
+  func rejectsMalformedHIDStartupWrite(field: String) {
     let problem = rejection(family: .sonyDualShock4, startup(hidWrite(field)))
     #expect(problem?.code == .invalidProtocolDescription, "\(field)")
   }
@@ -502,7 +502,7 @@ struct ProtocolDescriptionTests {
       #""delayMilliseconds": -1"#, #""sessionByte": 64"#, #""toleratesRejection": 1"#,
     ]
   )
-  func rejectsAMalformedUSBStartupWrite(field: String) {
+  func rejectsMalformedUSBStartupWrite(field: String) {
     let body = #""rawUSB": true, "# + startup(#"{"bytes": "01", "# + field + "}")
     #expect(rejection(family: .xboxGIP, body)?.code == .invalidProtocolDescription, "\(field)")
   }
@@ -514,7 +514,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsAStartupWriteNamingWhatTheFamilyLacks() {
+  func rejectsStartupWriteNamingWhatFamilyLacks() {
     let variant = rejection(family: .sonyDualShock4, startup(hidWrite(#""variants": ["Wired"]"#)))
     #expect(variant?.code == .unknownProtocolVariant)
     let layout = #""when": {"parameter": "layout", "is": ["Pro"]}"#
@@ -530,7 +530,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsAVariantTheFamilyDoesNotHave() {
+  func rejectsVariantFamilyDoesNotHave() {
     #expect(
       rejection(family: .vendorGameSir, #""rawUSB": ["Wired"]"#)?.code == .unknownProtocolVariant
     )
@@ -544,7 +544,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsAnEmptySession() {
+  func rejectsEmptySession() {
     #expect(
       rejection(exactly: .xboxGIP, #""defaults": {"session": {}}"#)?.code
         == .invalidProtocolDescription
@@ -556,7 +556,7 @@ struct ProtocolDescriptionTests {
     + #"{"bytes": "00 00 08 C0 00 00 00 00 00 00 00 00", "variants": ["Receiver"]}}"#
 
   @Test
-  func readsTheReceiverPowerOffPacketForItsVariantOnly() throws {
+  func readsReceiverPowerOffPacketForItsVariantOnly() throws {
     let description = try decode(family: .xboxXUSB, Self.powerOff)
 
     #expect(description.receiverPowerOffWrite(variant: .receiver)?.bytes.count == 12)
@@ -565,7 +565,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsAReceiverPowerOffPacketOfAnotherFamily() {
+  func rejectsReceiverPowerOffPacketOfAnotherFamily() {
     #expect(
       rejection(family: .xboxGIP, #""defaults": {"receiverPowerOff": {"bytes": "00"}}"#)?.code
         == .invalidProtocolDescription
@@ -583,14 +583,14 @@ struct ProtocolDescriptionTests {
       #"{}"#,
     ]
   )
-  func rejectsAnInvalidReceiverPowerOffPacket(packet: String) {
+  func rejectsInvalidReceiverPowerOffPacket(packet: String) {
     let body = #""rawUSB": true, "defaults": {"receiverPowerOff": \#(packet)}"#
 
     #expect(rejection(family: .xboxXUSB, body) != nil)
   }
 
   @Test
-  func rejectsARumbleResendIntervalInAFamilyWithAKeepAlive() {
+  func rejectsRumbleResendIntervalInFamilyWithKeepAlive() {
     let keepAlive = #""keepAlive": {"intervalMilliseconds": 100}"#
     let variant = rejection(
       family: .vendorGameSir,
@@ -617,7 +617,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsRumbleDefaultsAndStickDeadzoneForTheRightReason() {
+  func rejectsRumbleDefaultsAndStickDeadzoneForRightReason() {
     let rumble = rejection(
       family: .xboxGIP,
       #""defaults": {"session": {"rumble": \#(Self.rumbleTemplate)}}"#
@@ -629,7 +629,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsAVariantTuningKeyOutsideTheVariantScope() {
+  func rejectsVariantTuningKeyOutsideVariantScope() {
     #expect(
       rejection(
         family: .sonyDualSense,
@@ -640,7 +640,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func variantTuningLayersOverTheFlatTuningWithinTheVariantScope() throws {
+  func variantTuningLayersOverFlatTuningWithinVariantScope() throws {
     let description = try decode(
       family: .sonyDualSense,
       #""tuningKeys": ["hidStartupIntervalMs", "minimumHIDOutputIntervalMs"], "#
@@ -675,7 +675,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func aVariantRumbleTemplateOverridesTheFlatOneForThatVariantOnly() throws {
+  func variantRumbleTemplateOverridesFlatOneForThatVariantOnly() throws {
     let description = try decode(
       family: .sonyDualSense,
       #""recordSections": ["rumble"], "#
@@ -689,7 +689,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func aVariantRumbleTemplateStandsWithoutAFlatOneAndBesideVariantTuning() throws {
+  func variantRumbleTemplateStandsWithoutFlatOneAndBesideVariantTuning() throws {
     let description = try decode(
       family: .sonyDualSense,
       #""recordSections": ["rumble"], "tuningKeys": ["hidStartupIntervalMs"], "#
@@ -702,7 +702,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func aRawUSBVariantTakesAUSBPacketTemplate() throws {
+  func rawUSBVariantTakesUSBPacketTemplate() throws {
     let description = try decode(
       family: .sonyDualSense,
       #""rawUSB": ["USB"], "recordSections": ["rumble"], "#
@@ -715,7 +715,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsAVariantRumbleTemplateTheFamilyCannotUse() {
+  func rejectsVariantRumbleTemplateFamilyCannotUse() {
     let cases: [(body: String, code: ErrorCode)] = [
       // A family whose driver reads no rumble section.
       (Self.variantRumble("USB", Self.otherRumbleTemplate), .invalidProtocolDescription),
@@ -770,7 +770,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func theFlatRumbleTemplateIsCheckedAgainstEveryVariantWithoutItsOwn() throws {
+  func flatRumbleTemplateIsCheckedAgainstEveryVariantWithoutItsOwn() throws {
     let rejected = [
       // A HID template with every variant raw USB.
       #""rawUSB": true, "# + Self.flatRumble(Self.otherRumbleTemplate),
@@ -798,7 +798,7 @@ struct ProtocolDescriptionTests {
   ///
   /// A record has no interval of its own.
   @Test
-  func aFamilysKeepAliveIntervalComesFromItsDescription() throws {
+  func familysKeepAliveIntervalComesFromItsDescription() throws {
     let edited = try decode(
       family: .valveSteamDeck,
       #""defaults": {"session": {"keepAlive": {"intervalMilliseconds": 777}, "#
@@ -905,7 +905,7 @@ struct ProtocolDescriptionTests {
       #""delayMilliseconds": 5"#, #""crc32Seed": 1"#,
     ]
   )
-  func rejectsValveActivationMembersOfAStartupWrite(field: String) {
+  func rejectsValveActivationMembersOfStartupWrite(field: String) {
     let write = "[" + Self.valveFeature + #", "bytes": "81 00", "# + field + "}]"
     let body =
       #""defaults": {"session": {"activation": "# + write + #", "deactivation": "#
@@ -914,7 +914,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func rejectsASignatureForAFamilyWithNoVariants() {
+  func rejectsSignatureForFamilyWithNoVariants() {
     let signature =
       #""interfaceSignatures": [{"variant": "USB", "interfaceClass": 3, "#
       + #""interfaceSubclass": 0, "interfaceProtocol": 0}]"#
@@ -953,7 +953,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func theFamilyReadsItsVariantsFromItsDescription() throws {
+  func familyReadsItsVariantsFromItsDescription() throws {
     for protocolID in PhysicalProtocolID.allCases {
       let description = try #require(ProtocolDescription.bundled[protocolID])
       #expect(protocolID.variants == description.variants, "\(protocolID.rawValue)")
@@ -967,7 +967,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func theWiiDescriptionLoadsItsWireFacts() throws {
+  func wiiDescriptionLoadsItsWireFacts() throws {
     let description = try #require(ProtocolDescription.bundled[.nintendoWii])
     let wii = try #require(description.wiiRemote)
     #expect(PhysicalProtocolID.nintendoWii.rawValue == "NintendoWii")
@@ -1025,7 +1025,7 @@ struct ProtocolDescriptionTests {
   }
 
   @Test
-  func everyRejectionCarriesACatalogCode() {
+  func everyRejectionCarriesCatalogCode() {
     let problem = rejection(family: .xboxGIP, #""interfaceSignatures": []"#)
     #expect(problem?.description.hasPrefix("E5002: xbox-gip.plist: ") == true)
     #expect(ErrorCode.invalidProtocolDescription.domain == .document)

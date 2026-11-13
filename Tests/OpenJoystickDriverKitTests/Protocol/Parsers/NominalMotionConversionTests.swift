@@ -5,7 +5,7 @@ import Testing
 
 struct NominalMotionConversionTests {
   @Test(arguments: [NintendoControllerLayout.pro, .leftJoyCon, .rightJoyCon])
-  func nintendoConvertsEverySampleIntoTheStableHardwareFrame(
+  func nintendoConvertsEverySampleIntoStableHardwareFrame(
     _ layout: NintendoControllerLayout
   ) throws {
     var bytes = [UInt8](repeating: 0, count: 49)
@@ -33,7 +33,7 @@ struct NominalMotionConversionTests {
   }
 
   @Test
-  func dualShockFourUsesSonyNominalUnitsInTheCanonicalFrame() throws {
+  func dualShockFourUsesSonyNominalUnitsInCanonicalFrame() throws {
     var bytes = [UInt8](repeating: 0, count: 64)
     bytes[0] = 1
     for (index, value) in [Int16(16), -16, 0, 8192, 0, -8192].enumerated() {
