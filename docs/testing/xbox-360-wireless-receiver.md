@@ -60,7 +60,7 @@ Attach the complete command output to issue #9 with macOS version, Mac model, re
 
 ## Capture Receiver Slots
 
-OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Slot n (from 0) sends the presence inquiry at startup, connects when the slot reports a controller present or sends a valid state report, then lights player n+1. The observed `045e:02a9` and `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4 and 6 with input endpoints `81`, `83`, `85` and `87` on `045e:02a9`, where only interface 0 delivered input.
+OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Each slot sends the presence inquiry at startup and connects when it reports a controller present or sends a valid state report. The manager assigns a player indicator from its pool. The observed `045e:02a9` and `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4 and 6 with input endpoints `81`, `83`, `85` and `87` on `045e:02a9`, where only interface 0 delivered input.
 
 1. Record the configuration descriptor and interface numbers with the receiver plugged in:
 
@@ -77,7 +77,7 @@ OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and
    ```
 
    Expect one entry with `protocol` `XboxXUSB:Receiver` per paired controller, none for an empty slot. `ojd controller show <ID> --json` gives each entry's `interfaceNumber` (`N`) for a FF/5D/81 interface. Paste the output.
-3. Pair one controller at a time. For each, record which interface's entry receives input and which ring-light quadrant lights. Slot order is interface order: the lowest interface is player 1.
+3. Pair one controller at a time. For each, record which interface's entry receives input and which ring-light quadrant lights.
 4. With controllers paired on slot 0 and a later slot, restart OJD without unplugging the receiver. The device is already configured, so no slot, including slot 0, should send SET_CONFIGURATION. Confirm every paired slot resumes input. If slot 0 alone reconnects during a run (for example after a transfer error), confirm the later slots keep their input.
 5. Power off one controller. Confirm only its slot reports disconnected.
 

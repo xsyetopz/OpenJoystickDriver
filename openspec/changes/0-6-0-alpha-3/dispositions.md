@@ -1,6 +1,6 @@
 # Dispositions of open issues and pull requests (task 8.15)
 
-State as listed by `gh issue list --state open` (21 issues) and `gh pr list --state open` (7 pull requests) on 2026-11-11. Task numbers come from `tasks.md`. Every row starts with `| #`; the done-check is `grep -c '^| #' dispositions.md`, which must print 28.
+State as listed by `gh issue list --state open` (21 issues) and `gh pr list --state open` (7 pull requests) on 2026-11-11; #64 was added after. Task numbers come from `tasks.md`. Every row starts with `| #`; the done-check is `grep -c '^| #' dispositions.md`, which must print 29.
 
 "Waiting on reporter" means the maintainer asked the reporter to try 0.6.0-alpha.2 and report back (comment of 2026-11-07), and no answer has come.
 
@@ -36,11 +36,12 @@ State as listed by `gh issue list --state open` (21 issues) and `gh pr list --st
 | --- | --- | --- | --- | --- |
 | #36 | scraton, Flydigi Vader 4 Pro | 5.6, 8.11 | Conflicting with `main`; checks failing. | Do 8.11; decide on 5.6 (what to take from the branch). |
 | #39 | multision, Wolverine V3 TE | 5.6, 8.10 | Conflicting with `main`. | Do 8.10; decide on 5.6. |
-| #47 | mattallty | 8.12 | Conflicting with `main`; no checks. | Do 8.12. |
+| #47 | mattallty, GameSir K1 through Generic HID | 8.12 | Conflicting with `main`; no checks. `3537:1082` is shared with the G7 SE (`docs/testing/gamesir-family.md:16`), so no record is added. The body describes the K1 layout in prose (input report 5, 10 bytes) and holds no descriptor bytes or raw reports, so no descriptor-decoding test is added. | Do 8.12; ask for the K1's `ojd controller capture` output and descriptor if a decoding test is wanted. |
 | #50 | Anonim0Venezian0, PowerA Spectra | 5.6, 8.9 | Conflicting with `main`. | Do 8.9; decide on 5.6. |
 | #54 | bdidier | 8.7 | Conflicting with `main`. | Do 8.7. |
 | #56 | konnsim, Elite Series 1 | 8.3 (with 8.1) | Mergeable; checks mixed (failure and success). Covered by 8.1 and 8.3. | Do 8.1 and 8.3 and merge or replace. |
 | #57 | phil-bbs | 8.8 | Conflicting with `main`; check neutral. | Do 8.8. |
+| #64 | bdidier, XUSB receiver boundaries and reconnection | 8.7 | Targets a non-default branch; review skipped. Ported onto the branch: the 02A9 state-bytes decode test, the XboxXUSB presence-resend tuning rejection (in-range value, Receiver variant), and the receiver doc text. The truncated-report and reconnect cases already exist on the branch. Not ported: the PR's 02A9 evidence section (the branch already holds the PR #54 section). | Do 8.7. |
 
 ## Closed issue noted, not a row
 
