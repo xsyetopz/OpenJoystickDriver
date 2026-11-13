@@ -210,6 +210,23 @@ if monitor {
 
   let openResult = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
   guard openResult == kIOReturnSuccess else {
+    if openResult == kIOReturnExclusiveAccess,
+      let code = monitorThroughService(
+        vendorID: UInt16(clamping: vid),
+        productID: UInt16(clamping: pid),
+        seconds: seconds
+      )
+    {
+      IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
+      exit(code)
+    }
+    if openResult == kIOReturnExclusiveAccess {
+      unsafe fputs(
+        "HINT: the OJD service holds this device, and it refuses a tool it did not sign."
+          + " Run `ojd controller capture VVVV:PPPP` from the installed app.\n",
+        unsafe stderr
+      )
+    }
     unsafe fputs(
       "ERROR: IOHIDManagerOpen failed: "
         + "0x\(String(UInt32(bitPattern: openResult), radix: 16))\n",

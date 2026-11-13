@@ -367,7 +367,6 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
             try await client.packetLog(for: .session(device.sessionToken))
           }
         }
-        var cursor = PacketLogSnapshotCursor(snapshot: try await read())
         CLIOutput.stderr(
           CLILocalized.text(
             "cli.controller.capture.warning"
@@ -383,12 +382,9 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
           )
         }
         var received = false
-        _ = try await pollController(duration: duration) {
-          for entry in cursor.consume(snapshot: try await read()) {
-            received = true
-            try Self.print(entry)
-          }
-          return false
+        try await PacketLogStream.follow(duration: duration, read: read) { entry in
+          received = true
+          try Self.print(entry)
         }
         if !received, CLIContext.current.format == .human {
           CLIOutput.stderr(
