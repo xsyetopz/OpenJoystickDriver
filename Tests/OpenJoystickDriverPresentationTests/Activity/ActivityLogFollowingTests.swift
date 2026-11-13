@@ -110,24 +110,8 @@ extension ActivityLogFollowingTests {
   @Test
   @MainActor
   func theWindowFollowsTheLogOnlyWhileActivityIsSelected() throws {
-    let suiteName = "ActivityLogFollowingTests.\(UUID().uuidString)"
-    let defaults = try #require(UserDefaults(suiteName: suiteName))
-    defer { defaults.removePersistentDomain(forName: suiteName) }
-    let runtime = RuntimeViewModel(gateway: GatewayStub())
-    let controller = MainWindowController(
-      runtime: runtime,
-      supportReport: SupportReportModel(gateway: GatewayStub()),
-      preferences: SettingsPreferencesModel(
-        testNotifications: TestNotificationRequestStub(),
-        settings: SettingsStore(directory: RootedDataDirectory.temporary()),
-        launchAtLogin: LaunchAtLoginStub(isEnabled: false),
-        notificationAuthorization: NotificationAuthorizationStub(state: .denied)
-      ),
-      restartApplication: {},
-      openInputTest: { _ in },
-      visibilityChanged: { _ in },
-      persistence: UserDefaultsMainWindowAreaPersistence(defaults: defaults)
-    )
+    let (controller, cleanup) = try MainWindowController.offScreen()
+    defer { cleanup() }
     let window = try #require(controller.window)
     window.orderFront(nil)
     defer { window.orderOut(nil) }

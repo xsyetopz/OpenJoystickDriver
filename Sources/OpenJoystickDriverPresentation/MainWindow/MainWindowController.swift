@@ -5,49 +5,6 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The size limits of the main window and its three columns.
-  enum MainWindowSizingPolicy {
-    /// The minimum and maximum width of the sidebar.
-    static let sidebarWidth = (minimum: CGFloat(170), maximum: CGFloat(260))
-    /// The minimum and maximum width of the content list column.
-    static let listWidth = (minimum: CGFloat(200), maximum: CGFloat(320))
-    /// The minimum width of the detail column.
-    static let minimumDetailWidth: CGFloat = 420
-    /// The content size of a new main window.
-    static let defaultContentSize = NSSize(width: 1_040, height: 700)
-    /// The smallest content height that the window allows.
-    static let minimumContentHeight: CGFloat = 560
-
-    /// Returns the smallest content width that fits the columns that show: the sum of their
-    /// minimum widths.
-    static func minimumContentWidth(showsSidebar: Bool, showsList: Bool) -> CGFloat {
-      (showsSidebar ? sidebarWidth.minimum : 0) + (showsList ? listWidth.minimum : 0)
-        + minimumDetailWidth
-    }
-
-    /// Returns the smallest content size that fits the columns that show.
-    static func minimumContentSize(showsSidebar: Bool, showsList: Bool) -> NSSize {
-      NSSize(
-        width: minimumContentWidth(showsSidebar: showsSidebar, showsList: showsList),
-        height: minimumContentHeight
-      )
-    }
-
-    /// Returns the smallest frame size of `window` whose content area is
-    /// ``minimumContentSize(showsSidebar:showsList:)``.
-    @MainActor
-    static func minimumFrameSize(
-      for window: NSWindow,
-      showsSidebar: Bool,
-      showsList: Bool
-    )
-      -> NSSize
-    {
-      let content = minimumContentSize(showsSidebar: showsSidebar, showsList: showsList)
-      return window.frameRect(forContentRect: NSRect(origin: .zero, size: content)).size
-    }
-  }
-
   /// The main window: a sidebar, a content list column and a detail column, with a toolbar.
   ///
   /// Closing the window hides it, which keeps the selected area, the screens' state and the window
@@ -70,6 +27,8 @@
     private let sidebarItem: NSSplitViewItem
     /// Re-applies the window minimum when the sidebar collapses or returns.
     private var sidebarObservation: AnyCancellable?
+    /// Fits the list column to the title after each column resize.
+    private var splitResizeObservation: AnyCancellable?
     /// Keeps the window title and the toolbar in step with the selected area.
     private var areaObservation: AnyCancellable?
     /// Re-validates the toolbar items when any state that enables them changes.
@@ -208,6 +167,10 @@
         guard let self, let window else { return }
         applyMinimumSize(to: window)
       }
+      splitResizeObservation = NotificationCenter.default.publisher(
+        for: NSSplitView.didResizeSubviewsNotification,
+        object: splitViewController.splitView
+      ).receive(on: RunLoop.main).sink { [weak self] _ in self?.fitListToTitle() }
       areaObservation = navigationModel.$selectedArea.sink { [weak self] area in
         self?.reflect(area: area)
       }
@@ -235,8 +198,9 @@
           guard let self else { return }
           showToolbarActions(of: navigationModel.selectedArea)
         }
-      summaryObservation = runtime.$statusState.sink { [weak window] status in
+      summaryObservation = runtime.$statusState.sink { [weak self, weak window] status in
         window?.subtitle = MainWindowSummary.text(for: navigationModel.selectedArea, status: status)
+        self?.fitListToTitle()
       }
     }
 
@@ -391,7 +355,8 @@
       MainWindowSizingPolicy.minimumFrameSize(
         for: window,
         showsSidebar: !sidebarItem.isCollapsed,
-        showsList: !listItem.isCollapsed
+        showsList: !listItem.isCollapsed,
+        listMinimum: listItem.minimumThickness
       )
     }
 
@@ -400,7 +365,8 @@
     private func applyMinimumSize(to window: NSWindow) {
       window.contentMinSize = MainWindowSizingPolicy.minimumContentSize(
         showsSidebar: !sidebarItem.isCollapsed,
-        showsList: !listItem.isCollapsed
+        showsList: !listItem.isCollapsed,
+        listMinimum: listItem.minimumThickness
       )
       window.minSize = minimumFrameSize(for: window)
       let fittedFrame = WindowFramePolicy.fittingFrame(window.frame, minimumSize: window.minSize)
@@ -463,6 +429,13 @@
       updateLogFollowing(area: area)
       window?.title = area.title
       window?.subtitle = MainWindowSummary.text(for: area, status: screens.runtime.statusState)
+      fitListToTitle()
+    }
+
+    /// Widens the list column's minimum so the title and subtitle end inside it.
+    private func fitListToTitle() {
+      guard let window, MainWindowTitleFit.fit(listItem, in: window) else { return }
+      applyMinimumSize(to: window)
     }
   }
 
