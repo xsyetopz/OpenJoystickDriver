@@ -271,7 +271,7 @@
             supported: true
           ) { openSheet(.pointerSpeed) }
           if hasUnsupportedSetting {
-            Text(OJDLocalized.string("ui.profiles.notSupportedByController")).font(.caption)
+            Text(OJDLocalized.string("ui.profiles.notSupportedByController")).font(.body)
               .foregroundColor(Color(NSColor.systemOrange))
           }
         }.ojdInterfaceRow(ProfilesRow.analogModes)
