@@ -8,7 +8,25 @@ extension DeviceManager {
   /// location to macOS. A connection that no driver binds, or that a raw-USB pipeline of the same
   /// controller serves, is recorded as unbound. Every await checks that this initialization is
   /// still current, because a later connection can replace it.
+  ///
+  /// A controller whose user suspended it is left with its HID handles closed until
+  /// ``resumeController(_:)``, however the HID backend opened the connection.
   func handleHIDDeviceConnected(connection: HIDDeviceConnection, ownership: HIDInputOwnership) async
+  {
+    await admitHIDConnection(connection: connection, ownership: ownership)
+    let suspended = deviceInfos.contains {
+      $0.value.hidConnectionID == connection.connectionID
+        && suspendedControllerIdentities.contains($0.key)
+    }
+    if suspended { _ = await hidManager.closeDeviceHandles(address: connection.routingAddress) }
+  }
+
+  /// Binds and starts `connection`, leaving the handles of a suspended controller as they are.
+  private func admitHIDConnection(
+    connection: HIDDeviceConnection,
+    ownership: HIDInputOwnership
+  )
+    async
   {
     let physicalDevice = connection.physicalDevice
     let routingAddress = connection.routingAddress

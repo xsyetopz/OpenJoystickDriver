@@ -239,10 +239,13 @@ extension HIDDeviceStream {
   /// Seizes again the devices ``releaseInputClaim(locationID:)`` released.
   ///
   /// When one seize is refused, the devices seized so far return to a shared open and the refusal
-  /// is the result.
+  /// is the result. A location whose handles ``closeDeviceHandles(locationID:)`` closed stays
+  /// closed until ``reopenDeviceHandles(locationID:)``.
   package func reacquireInputClaim(locationID: UInt32) -> PhysicalHIDClaimResult {
     seizeLock.withLock {
-      guard let devices = releasedByLocation[locationID], !devices.isEmpty else {
+      guard closedByLocation[locationID] == nil,
+        let devices = releasedByLocation[locationID], !devices.isEmpty
+      else {
         return .unavailable
       }
       var acquired: [IOHIDDevice] = []

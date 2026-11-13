@@ -15,6 +15,22 @@ actor ClaimRecordingHIDAccessBackend: HIDAccessBackend {
   /// Marks the device handle at `locationID` open, as the platform backend leaves it on admission.
   func openHandle(at locationID: UInt32) { openHandles.insert(locationID) }
 
+  /// The connection an ownership re-evaluation admits again; nil admits none.
+  private var reevaluationAdmits: HIDDeviceConnection?
+  private var snapshots: [HIDDeviceConnectionSnapshot] = []
+
+  /// Makes the next ownership re-evaluation open the device handle at the location of `connection`
+  /// and list it as the only connection, as the platform backend does.
+  func admitOnReevaluation(_ connection: HIDDeviceConnection) { reevaluationAdmits = connection }
+
+  func reevaluateOwnership(of _: Set<ControllerModelID>) -> Set<UUID> {
+    guard let connection = reevaluationAdmits else { return [] }
+    reevaluationAdmits = nil
+    snapshots = [HIDDeviceConnectionSnapshot(connection: connection, ownership: .exclusive)]
+    if let locationID = connection.routingAddress.locationID { openHandles.insert(locationID) }
+    return [connection.connectionID]
+  }
+
   func closeDeviceHandles(address: ControllerConnectionAddress) -> PhysicalHIDClaimResult {
     guard let locationID = address.locationID, openHandles.remove(locationID) != nil else {
       return .unavailable
@@ -35,7 +51,7 @@ actor ClaimRecordingHIDAccessBackend: HIDAccessBackend {
 
   func deviceEvents() -> AsyncStream<HIDDeviceEvent> { AsyncStream { _ in } }
 
-  func currentConnectionSnapshots() -> [HIDDeviceConnectionSnapshot]? { [] }
+  func currentConnectionSnapshots() -> [HIDDeviceConnectionSnapshot]? { snapshots }
 
   func setOutputReport(
     address _: ControllerConnectionAddress,
