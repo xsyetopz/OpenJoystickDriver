@@ -68,12 +68,12 @@ extension OrderedJSON {
       if let whole = Int64(text) { return whole }
       if let wide = UInt64(text) { return wide }
       guard let real = Double(text), real.isFinite else {
-        throw Self.Problem(reason: .notAJSONValue("\(text) is not a number"), offset: nil)
+        throw Self.Problem(reason: .notJSONValue("\(text) is not a number"), offset: nil)
       }
       return real
     case .null:
       throw Self.Problem(
-        reason: .notAJSONValue("a property list cannot hold null; remove the key"),
+        reason: .notJSONValue("a property list cannot hold null; remove the key"),
         offset: nil
       )
     }
