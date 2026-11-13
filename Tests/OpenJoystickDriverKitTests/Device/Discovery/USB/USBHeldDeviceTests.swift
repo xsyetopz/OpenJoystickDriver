@@ -17,6 +17,7 @@ struct USBHeldDeviceTests {
 
   private func makeProvider(
     owner: String?,
+    interfaceOwner: String? = nil,
     readError: USBTransportError? = .accessDenied,
     device: USBTransportDevice? = nil
   ) -> HeldDeviceProvider {
@@ -40,7 +41,8 @@ struct USBHeldDeviceTests {
         ]
       ),
       owner: owner,
-      readError: readError
+      readError: readError,
+      interfaceOwner: interfaceOwner
     )
   }
 
@@ -207,6 +209,37 @@ struct USBHeldDeviceTests {
     await manager.stop()
   }
 
+  /// Steam holds only interface 0: the device names no owner, so the interface owner decides.
+  @Test
+  func anInterfaceOwnerHoldsTheServiceUntilItReleasesWithoutReenumeration() async {
+    let provider = makeProvider(owner: nil, interfaceOwner: "pid 11070, steam_osx")
+    let manager = makeManager(provider)
+    var enumeration = USBEnumerationTracker()
+    let generation = await manager.lifecycleGeneration
+
+    #expect(await poll(1, manager, provider, &enumeration) == [.ignored])
+    #expect(await manager.heldUSBServices == [device.serviceAddress: "pid 11070, steam_osx"])
+    #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.deviceInUse])
+
+    await manager.releaseHeldUSBServices(
+      in: &enumeration,
+      provider: provider,
+      generation: generation
+    )
+    #expect(enumeration.acknowledgedDevices[device.serviceAddress] != nil)
+
+    await provider.release()
+    await manager.releaseHeldUSBServices(
+      in: &enumeration,
+      provider: provider,
+      generation: generation
+    )
+    #expect(enumeration.acknowledgedDevices.isEmpty)
+    #expect(await manager.heldUSBServices.isEmpty)
+    #expect(await manager.unboundDeviceDescriptions().isEmpty)
+    await manager.stop()
+  }
+
   @Test
   func anUnreadableOwnerEndsTheWatchWithTheUnreadableReason() async {
     let provider = makeProvider(owner: "pid 11070, steam_osx")
@@ -323,6 +356,8 @@ actor HeldDeviceProvider: USBTransportProvider {
   let passive: PhysicalDevice
   private var owner: Result<String?, USBTransportError>
   private var readError: USBTransportError?
+  private var interfaceOwner: String?
+  private(set) var interfaceOwnerReads = 0
   private var ownerReadBlocked = false
   private var ownerReadWaiter: CheckedContinuation<Void, Never>?
   private(set) var descriptorReads: [UInt8] = []
@@ -357,12 +392,14 @@ actor HeldDeviceProvider: USBTransportProvider {
     device: USBTransportDevice,
     passive: PhysicalDevice,
     owner: String?,
-    readError: USBTransportError?
+    readError: USBTransportError?,
+    interfaceOwner: String? = nil
   ) {
     self.device = device
     self.passive = passive
     self.owner = .success(owner)
     self.readError = readError
+    self.interfaceOwner = interfaceOwner
   }
 
   func setOwner(_ owner: Result<String?, USBTransportError>) { self.owner = owner }
@@ -372,6 +409,7 @@ actor HeldDeviceProvider: USBTransportProvider {
   /// The owner quits: the host reports no owner and allows the read.
   func release() {
     owner = .success(nil)
+    interfaceOwner = nil
     readError = nil
   }
 
@@ -405,6 +443,14 @@ actor HeldDeviceProvider: USBTransportProvider {
     ownerReads += 1
     if ownerReadBlocked { await withCheckedContinuation { ownerReadWaiter = $0 } }
     return try owner.get()
+  }
+
+  func interfaceExclusiveOwner(
+    of _: USBTransportDevice,
+    interfaceNumber _: UInt8
+  ) -> String? {
+    interfaceOwnerReads += 1
+    return interfaceOwner
   }
 
   func open(
