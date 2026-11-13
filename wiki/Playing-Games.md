@@ -39,14 +39,14 @@ OJD does not publish a virtual gamepad for a controller that is [handled by macO
 
 ### Change the Virtual Gamepad Kind for a Model
 
-OJD is designed to choose the virtual gamepad kind for you. You do not need a different setting for each game. Change the kind only to test a problem, and report the result so that the automatic choice can improve. For more information, see [Reporting a bug](Reporting-a-Bug.md).
+OJD chooses the virtual gamepad kind, and no game needs its own setting. Change the kind only to test a problem, and report the result so that the automatic choice can improve. For more information, see [Reporting a bug](Reporting-a-Bug.md).
 
 1. Open the **Controllers** area.
 2. Select your controller.
 3. Expand **Advanced**.
-4. In **Virtual gamepad kind**, select a kind.
+4. In **Virtual gamepad kind**, choose a kind.
 
-Select **Automatic** to remove the override. The override applies to every connected controller of the same model. For more information, see [Controllers area](Using-the-App.md#controllers-area).
+Choose **Automatic** to remove the override. The override applies to every connected controller of the same model. For more information, see [Controllers area](Using-the-App.md#controllers-area).
 
 ## Game and App Compatibility
 
@@ -78,7 +78,7 @@ Games read controllers through different programming interfaces. The interface d
 | OpenEmu | Works. The Xbox profile maps buttons wrongly. |
 | Steam | Listed as "OpenJoystickDriver Generic HID Gamepad" and needs **Begin Setup**. Skip the Guide step, because the guide button opens Big Picture mode. One tester saw it erratic and slow to respond. |
 
-OJD is designed to make one automatic choice work across these interfaces. The failures above are known issues, not settings that you must change. For more information, see [How games see your controller](#how-games-see-your-controller).
+The failures above are known issues. No setting fixes them. For more information, see [How games see your controller](#how-games-see-your-controller).
 
 ### Start an App with the SDL Mapping
 

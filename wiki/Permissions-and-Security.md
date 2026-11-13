@@ -89,7 +89,7 @@ OJD does not use camera, microphone, or Full Disk Access permissions. It reads B
 ### Grant Input Monitoring and Accessibility
 
 1. Click **Grant Access** in the **Permission needed** banner. A **Permission Missing** row in the menu-bar menu opens the **Access** area at that permission.
-2. Allow **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
+2. Turn on **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
 3. Repeat for **System Settings** > **Privacy & Security** > **Accessibility**.
 4. Click **Restart OpenJoystickDriver** in the **Access** area if it appears.
 
@@ -110,7 +110,7 @@ You can also click **+** under the list and choose `/Applications/OpenJoystickDr
 ### Grant Notifications
 
 1. Open **Settings** and turn on a notification toggle, or click **Send Test Notification**.
-2. Allow the macOS prompt.
+2. Click **Allow** in the macOS prompt.
 
 If you denied notifications before, click **Open Notification Settings**. The **Notifications** row in the **Access** area shows **Banners off** or **Sound off** when macOS turns those parts off.
 
