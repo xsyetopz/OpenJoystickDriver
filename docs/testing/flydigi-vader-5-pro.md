@@ -14,7 +14,7 @@ The record has no second mode. A refused startup write shows as a startup failur
 
 The frames and offsets come from the openflydigi `PROTOCOL.md` at commit `11653507bbe4dc77f3c479c2a7aaebf25bbda995` (CC0; see [Third-Party Notices](../../THIRD_PARTY_NOTICES.md) and [Compatibility Source Notes](../development/compatibility-sources.md)). The notes name the offsets only.
 
-## Startup Writes
+## Startup writes
 
 The record sends four output reports with ID 3 and 32 bytes when the dongle connects, in this order, each zero-padded after the frame:
 
@@ -27,7 +27,7 @@ The record sends four output reports with ID 3 and 32 bytes when the dongle conn
 
 A frame is `5A A5 cmd len payload sum`: `len` is the payload length plus 2 and `sum` is the low byte of cmd, len and payload. The UID read (command 4) is not sent. Whether the extended report starts without it is a card F3 question.
 
-## Report Layout
+## Report layout
 
 The record reads the 32-byte extended report that starts `5A A5 EF`, taken as an unnumbered report with no report ID byte.
 

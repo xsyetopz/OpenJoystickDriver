@@ -4,7 +4,7 @@ Test USB device `12933:1588` (`3285:0634` in hexadecimal) for [OpenJoystickDrive
 
 The bundled record selects `XboxGIP` on interface 0 with interrupt IN `0x87` and OUT `0x07`. It disables the periodic host-side `0x03` packet reported to destabilize native sessions. The record remains unverified. The issue's WebUSB result is independent evidence, not an OJD USBDriverKit acceptance result.
 
-## Validate the Bundled Record
+## Validate the bundled record
 
 Run from the repository root:
 
@@ -20,7 +20,7 @@ Expected result:
 RECORD_VALIDATION result=valid
 ```
 
-## Run the Raw USB Probe
+## Run the raw USB probe
 
 This VID/PID is not in the current production Apple USB entitlement, so the facade tries direct IOUSBHost. Quit games, Steam, and other controller utilities, connect the controller directly by USB, then run:
 
@@ -38,7 +38,7 @@ If the interface is unavailable, record the selected route and live registry own
 
 The parser test fixtures cover split, stacked, extended-length, and requested ACK frames. A physical run must still establish that the native USB session is stable and that the controls reach the installed virtual-gamepad output path.
 
-## Check Physical Output With an Installed App
+## Check physical output with an installed app
 
 Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../wiki/Command-Line.md)):
 

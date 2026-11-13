@@ -2,7 +2,7 @@
 
 The Ultimate 2C Wireless enumerates as a different identity in each mode. Test and report each mode separately.
 
-Capture paths in this page are relative to `openspec/changes/0-6-0-alpha-3/evidence/`.
+Capture paths on this page are relative to the `evidence/` folder of the `0-6-0-alpha-3` change.
 
 | Mode | VID:PID | Route | Status |
 | --- | --- | --- | --- |
@@ -85,9 +85,9 @@ Raw source: `2c-bluetooth-301b/ordered-controls-120s.txt`. OJD decode source: `2
 
 The trigger rows follow the press order: the OJD capture lists LeftTrigger before RightTrigger, and the raw capture raises byte 7 before byte 6.
 
-Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture records no charge level. At 100%, as `system_profiler SPBluetoothDataType` reads it from the pad's Bluetooth battery service, byte 10 reads `00` in all 653 reports (`2c-bluetooth-301b/battery-100-percent.txt`). At 90%, as the macOS Bluetooth menu shows it, byte 10 reads `00` in all 545 reports (`2c-bluetooth-301b/battery-90-percent.txt`). The byte is constant, and the report carries no charge level.
+Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture records no charge level. At 100%, as `system_profiler SPBluetoothDataType` reads it from the pad's Bluetooth battery service, byte 10 reads `00` in all 653 reports (`2c-bluetooth-301b/battery-100-percent.txt`). At 90%, as the macOS Bluetooth menu shows it, byte 10 reads `00` in all 545 reports (`2c-bluetooth-301b/battery-90-percent.txt`). The byte is constant and carries no charge level.
 
-Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); `tasks.md` 2.3 names them L4 and R4. The decode in `ojd-watch-120s.txt`, from `0.6.0-alpha.2`, lists neither bit; the record maps them as `LeftPaddle1` and `RightPaddle1`.
+Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); the maintainer identifies them as L4 and R4. The decode in `ojd-watch-120s.txt`, from `0.6.0-alpha.2`, lists neither bit; the record maps them as `LeftPaddle1` and `RightPaddle1`.
 
 Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer reports one rumble when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`). With a user patch that gives the mode a rumble template for output report 5, OJD's session sends the write while OJD serves the pad, and it fails with the same `kIOReturnNotFound` (`2c-bluetooth-301b/rumble-writes.txt`). Over Bluetooth LE the record declares no rumble.
 
@@ -98,7 +98,7 @@ Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of ou
 | Device that produces `2DC8:301D` | A capture of that identity. Receiver, cable, and Bluetooth LE in XInput and DInput produce `310A`, `301C`, and `301B` only (`2c-cable/mode-attempts.txt`). |
 | Device that produces `2DC8:3109` | A capture of that identity, from an 8BitDo adapter other than the pad's receiver. |
 
-## Why Bluetooth Needs a Record
+## Why Bluetooth needs a record
 
 Over Bluetooth the controller advertises a standard GamePad descriptor. The generic mapping read it wrong: the right stick drove LT/RT, the triggers rested at half travel, and several buttons were shifted. Three properties of the descriptor cause this:
 
@@ -124,7 +124,7 @@ The record binds `HIDDescriptor` with the same layout as the GameSir G7 SE:
 
 Usages 3 and 6 are the rear buttons: the `301B` and `301C` records map usage 3 to `LeftPaddle1` (L4) and usage 6 to `RightPaddle1` (R4), the bits the captures show while the pad gives them no assignment. With an assignment, the pad sends the assigned button's bit instead. Usages 9 and 10 repeat the triggers as digital bits and are not mapped, and `Rx` and `Ry` (usages 51 and 52) map to nothing. The `301C` and `301D` records use this table and the same stick; `301D` maps no rear button, because no capture of it exists. The receiver's descriptor as `301C` puts button usage n on bit n - 1 of bytes 1 and 2, `X`, `Y`, `Z`, `Rz` on bytes 4 to 7, Accelerator on byte 8 and Brake on byte 9, so each control of the `301C` capture lands on the usage of this table. As `310A`, by receiver or cable, the rear buttons send no bit of their own, so OJD sees them only through an assignment the pad makes.
 
-## Bootloader Identities
+## Bootloader identities
 
 `2DC8:3208` and `2DC8:5750` are 8BitDo bootloader identities. A write to a pad in bootloader state risks a bad firmware image, so OJD sends these identities no transfer of any kind: no descriptor read beyond what macOS publishes, no startup step, no probe, no keep-alive, no rumble or light output and no configuration packet. Each identity has a bundled record whose default mode is `idle: Bootloader`, so the refusal holds when an interface signature or a gamepad descriptor would bind a protocol for any other device. The classifier returns the unbound reason `BootloaderIdentity` from that record before it looks at an interface; a user or package file that adds or patches either identity is refused, the log has one `left unbound` line that names the VID:PID and the reason, and the controller detail reads "This controller is in bootloader mode. OJD sends it no data." `ojd diagnose record` refuses a record file for either identity before it opens the device. `BootloaderGuardTests` covers the raw-USB and HID paths and the mode probe, `BootloaderRecordTests` covers the records and the refused files, and `ControllerRecordProbePlanTests` covers the record probe.
 

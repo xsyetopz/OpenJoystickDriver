@@ -2,7 +2,7 @@
 
 The Steam Deck's built-in controller is `0x28de:0x1205`, an internal USB device. Its record's `ValveSteamDeck` family selects `SteamDeckDriver`. The driver follows SDL `SDL_hidapi_steamdeck.c` and Linux `hid-steam.c` (`STEAM_QUIRK_DECK`). It is not hardware-verified. This path applies only when macOS runs on Deck hardware.
 
-## What the Driver Does
+## What the driver does
 
 - Reads the 64-byte state report with message type `0x09`: buttons, D-pad, rear buttons, stick touch, analog triggers, both sticks, both trackpads with pressure, and motion.
 - At start, clears the lizard-mode mappings, turns off trackpad mouse and haptic click, and turns off the watchdog that restores lizard mode.

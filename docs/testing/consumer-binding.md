@@ -10,7 +10,7 @@ Status marks used in the tables below:
 - 🔬 research only
 - ❌ unavailable
 
-## Recorded Fallback and Consumer Limits
+## Recorded fallback and consumer limits
 
 - GameSir G7 Pro `3537:100A` and `3537:1022` are input-only. OJD does not switch modes or force re-enumeration; hold the controller's physical Menu+Share combination before connecting to expose a configuration-ready identity and its additional features.
 - GameSir's shared Microsoft Bluetooth identities `045E:02FD` and `045E:02FF` remain on Microsoft or Generic HID handling. OJD does not assign them a GameSir model without an exact hardware capture.
@@ -25,15 +25,13 @@ Status marks used in the tables below:
 
 ASTRO C40 PS4 mode `9886:0025` is research-only: it is a possible third-party DS4-family candidate, not an implemented spoof. Official DS4/DS5 identities remain preferred when their exact protocol tuples are proven.
 
-## Browser Gamepad API Testing
+## Browser Gamepad API testing
 
-**ControllerTest.io is the canonical manual browser test site**:
-
-**<https://controllertest.io/>**
+ControllerTest.io (<https://controllertest.io/>) is the canonical manual browser test site.
 
 Run each matrix row from a clean browser document and record the exact browser version, Gamepad `id`, mapping, slot/count, every button and axis, timestamps, disconnect/reconnect behavior, and exposed actuator fields. One browser's result does not establish another's support; neither enumeration nor rumble alone proves support. Generic HID is expected to use `mapping: n/a`, with sticks on axes 0–3, analog LT/RT pressure on axes 4–5, and digital controls on B0–B5 and B8–B17. Digital-only trigger sources use full-scale values on axes 4–5. It intentionally does not expose B6/B7 or a D-pad axis. See the [browser test protocol and reported observations](browser-gamepad-api.md).
 
-## Not Implemented and Recorded Spoof Results
+## Not implemented and recorded spoof results
 
 Bluetooth support does not extend to arbitrary controllers. The ASTRO C40 PS4 mode `9886:0025` is experimental research only: the repository lacks a complete descriptor, feature/calibration, input, and output contract, so it is not a supported spoof route.
 
@@ -52,7 +50,7 @@ OJD publishes no per-family spoofed identity (a distinct Xbox 360, Switch Pro, o
 
 Automatic does not use this table; see the declared-controls rule at the top. The Xbox One Bluetooth row records the BT1 and BT2 experiments, not the `SDLCompatible` profile.
 
-## Apple GameController Support
+## Apple GameController support
 
 Use live detection by `GCController.supportsHIDDevice` and a hardware test to determine whether the active virtual controller works with GameController.framework. Select `GameControllerCompatible` with `ojd virtual set game-controller-compatible CONTROLLER` for this test; the OJD probe checks whichever profile is currently published, and confirms whether macOS created `GCXboxGamepad`, `buttonShare`, and any paddle inputs. With a Razer Wolverine Tournament Edition (`1532:0A15`), GameController binds `SDLCompatible`'s reports on `045E:02FD` as `Xbox Wireless Controller (Xbox One)` and receives no input from them: the probe reports `live_input=false`. `SDLCompatible` publishes `045E:0B0C`, which GameController does not bind. Browser Gamepad API results are separate: a browser may omit Share even when native GameController.framework exposes it. The private current-system mapping catalog is optional. A missing pair does not prove incompatibility. See [Xbox fallback identity evidence](../development/xbox-identities.md).
 
@@ -60,13 +58,13 @@ To test GameController input by hand, run `swift run OpenJoystickDriverGameContr
 
 To test the Gamepad API of Firefox, Chrome and Safari, run `just diagnose-browsers [--as PERSONA] [--browsers firefox,chrome,safari]`. It serves a logging page, opens it in each browser in turn, and feeds every control into one virtual gamepad with `ojd virtual feed`. For each control it prints the standard-mapping slot that the browser reported, as `ok`, `missing` or `differs`, and the browser's rumble result. The run writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. Keep each browser's window in front while it runs; other controllers may stay connected.
 
-## Input Integrity
+## Input integrity
 
 Before a parsed packet reaches an output backend, OJD reduces its events to the packet's final net controller state. It drops duplicate transitions and contradictory press/release pulses that end unchanged. It also emits one canonical D-pad direction, rejects non-finite analog values by retaining the prior component, and clamps sticks to `-1...1` and triggers to `0...1`. This integrity gate does not add a timing delay or a new global deadzone. Protocol-specific deadzones remain in their parsers.
 
 The normalized batch is delivered to one persistent virtual-HID device per physical controller. Focusing or opening a consumer does not replace that device, so SDL hot-plug state remains stable. Automatic selection is not persisted; only a per-model override is.
 
-## Manual Checks
+## Manual checks
 
 Before marking a mapping verified, check the exact app and mode:
 

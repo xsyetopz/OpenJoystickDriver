@@ -2,7 +2,7 @@
 
 Use this test for [OpenJoystickDriver issue #11][1] and device `046d:c21d` (`1133:49693` decimal).
 
-The current record uses Linux's Xbox 360 packet layout with the hardware-observed interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield to named controls. Check the reported labels in Controller Settings Live or with (`ojd` is the [command-line tool](../../wiki/Command-Line.md)):
+The current record uses Linux's Xbox 360 packet layout with the hardware-observed interrupt endpoints `0x81`/`0x02`. OJD's parser maps the XInput button bitfield to named controls. Check the reported labels in Controller Settings Live, or with `ojd` (the [command-line tool](../../wiki/Command-Line.md)):
 
 ```bash
 ojd controller watch 046D:C21D
@@ -14,7 +14,7 @@ Record validation is signing-free. Raw-input verification requires a development
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/11
 
-## Validate and Capture
+## Validate and capture
 
 Set the F310 switch to X. Quit Steam and any controller utilities, then run:
 
@@ -38,7 +38,7 @@ Press and release one control at a time in this order:
 
 Verify that each `USB_RX` packet produces only the matching `EVENT` output. If the interface is unavailable, capture `just diagnose-dext`; there is no detach fallback.
 
-## Verify the App and Consumers
+## Verify the app and consumers
 
 Enable Live in Controller Settings. Confirm that LB, RB, and every active control match physical input. Use `controller watch` if the Settings window is unavailable.
 

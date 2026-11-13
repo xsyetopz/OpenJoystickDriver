@@ -2,7 +2,7 @@
 
 This page records one hardware test of the Xbox Nano Controller over Bluetooth.
 
-## Test Setup
+## Test setup
 
 - Controller: Xbox Nano Controller, `045E:0B4F`, firmware `6.9.444.0`.
 - Connection: Bluetooth Low Energy.
@@ -31,7 +31,7 @@ A guided test read each control through Apple's GameController framework.
 
 The tester played Assassin's Creed Shadows with this setup. Everything worked except the Xbox button and Share.
 
-## Xbox Button
+## Xbox button
 
 `ojd controller watch` shows `Guide`, and `ojd controller capture` shows byte 15 of report 1 change to `0x10`. The GameController test did not see the press. This matches the limit that [Playing games](../../wiki/Playing-Games.md) describes.
 

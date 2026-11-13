@@ -16,7 +16,7 @@ cd OpenJoystickDriver
 
 `--validate-only` needs no paid Apple account, provisioning profile, application signing, or system-extension approval. A physical probe through the restricted DEXT route requires the development signing assets described in [Signing assets](../development/signing.md), an installed and approved `com.openjoystickdriver.XboxUSBDevice` extension signed with the `transport.usb` entitlement, and a host authorized to open its user client. Direct IOUSBHost probes do not use that user client. OJD does not use libusb.
 
-## 1. Save the Candidate Record
+## 1. Save the candidate record
 
 Save the proposed controller record outside the bundled record directory until you verify its VID, PID, interface, endpoints, and startup behavior. For example:
 
@@ -33,7 +33,7 @@ Use decimal numbers in the property list. Before probing, review `protocol.initi
 
 `protocol.keepAlive` is an optional boolean for GIP records. Omit it to keep the default-enabled behavior. Set it to `false` only when device evidence requires periodic host output to be disabled.
 
-## 2. Validate Without Opening Hardware
+## 2. Validate without opening hardware
 
 ```bash
 just diagnose-record /tmp/controller-candidate.plist --validate-only
@@ -47,7 +47,7 @@ RECORD_VALIDATION result=valid
 
 Validation rejects unsupported protocol drivers, HID transports, invalid endpoint directions, invalid variants, and unknown startup packet names before opening a device.
 
-## 3. Probe the Physical Controller
+## 3. Probe the physical controller
 
 Quit games, Steam, and other controller tools first. Install and approve a signed development build, connect the controller directly by USB, then run:
 
@@ -68,18 +68,18 @@ During the capture, press one control at a time and return it to neutral. The pr
 
 If the interface is unavailable, preserve the selected route and live registry owner. Use `just diagnose-dext` when the selected model requires the restricted extension. There is no detach or cross-transport fallback.
 
-## 4. Report Results
+## 4. Report results
 
 Identify the distribution path that produced the behavior. An installed app and a source-built record probe are different test subjects:
 
-- **Installed app / shared DMG:** report the exact DMG filename and attach `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG. For an installed copy, also run:
+- Installed app / shared DMG: report the exact DMG filename and attach `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG. For an installed copy, also run:
 
   ```bash
   ojd diagnose --output support-report.json
   ```
 
   This exercises the packaged Developer ID-signed app and its embedded DEXT; it does not use the Swift sources in a checkout. The notarized, stapled community tester package can replace the DriverKit extension with SIP enabled. The report's `controllers[].binding` and `unboundDevices[]` show how each connection was classified: outcome, reason, rule, matched predicates, catalog record ID, access backend, interface summaries, and rejected candidates. It records only whether a serial number is present, never its value, and no packet payloads.
-- **Source-built record probe:** report the checkout commit and working-tree state, the record path, and the complete `just diagnose-record ...` command and output. This route builds/runs the probe from the current source checkout and is not evidence about the installed app or a shared DMG.
+- Source-built record probe: report the checkout commit and working-tree state, the record path, and the complete `just diagnose-record ...` command and output. This route builds/runs the probe from the current source checkout and is not evidence about the installed app or a shared DMG.
 
 Do not mix these reports: a source probe can validate a record while an older installed app or DEXT is still the behavior being observed, and an installed DMG cannot prove that an uncommitted source change was included.
 

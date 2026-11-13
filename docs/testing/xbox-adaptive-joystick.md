@@ -4,7 +4,7 @@ OJD needs the USB identity and packets from an Xbox Adaptive Joystick connected 
 
 Microsoft documents direct PC use, USB-C, and 7 physical buttons, but not the standalone VID/PID, interface, endpoint, or report bytes. A public Reddit comment mentions `USB\VID_045E&PID_0B1A\...`, but OJD needs tester output before committing a record.
 
-## What To Send Back
+## What to send back
 
 Paste full command failures to distinguish HID parsing, raw USB, and DriverKit next steps.
 
@@ -17,7 +17,7 @@ Include:
 - full output from commands that found no device or no packets
 - any byte notes you already know
 
-## 1. macOS Native Checks
+## 1. macOS native checks
 
 Plug the joystick directly into the Mac, then run:
 
@@ -38,7 +38,7 @@ Record these fields if visible:
 - endpoint addresses and max packet sizes
 - whether macOS exposes it as HID, raw USB, or both
 
-## 2. OJD Device Listing
+## 2. OJD device listing
 
 From the repository root:
 
@@ -48,7 +48,7 @@ swift run OpenJoystickDriverHIDTool --list
 
 Paste any `VID:0x45e` or Microsoft-looking lines. If the joystick appears under a different VID/PID, use that exact pair in the commands below.
 
-## 3. HID Monitor
+## 3. HID monitor
 
 If `--list` shows the joystick as an IOHID device, run the HID monitor with the observed VID/PID:
 
@@ -58,7 +58,7 @@ swift run OpenJoystickDriverHIDTool --monitor --vid 0x045e --pid 0x0000 --second
 
 Replace `0x0000` with the observed PID. Paste every `REPORT ... bytes=...`, `VALUE ...`, and `POLL ...` line. If the monitor prints `Monitoring 0 device(s)` or no reports, keep the full output and continue to raw USB.
 
-## 4. Raw USB Monitor
+## 4. Raw USB monitor
 
 Run the controller-neutral USB facade first. It uses direct IOUSBHost when the interface is accessible. If live registry evidence instead proves an exclusive owner, a USBDriverKit experiment requires a development configuration whose exact personality matches the observed VID/PID, a signed host, and an installed and approved development DEXT. Do not broaden the production personality. Run an endpoint sweep:
 
@@ -77,7 +77,7 @@ swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --en
 
 Replace the VID, PID, and endpoint with the values from the sweep.
 
-## 5. Packets To Capture
+## 5. Packets to capture
 
 Return to neutral between captures. One changed control per packet is enough.
 
@@ -103,13 +103,13 @@ For each capture, paste:
 - interface and endpoint, for raw USB
 - any known byte or bit meaning
 
-## 6. OJD App Check
+## 6. OJD app check
 
 If OJD sees the joystick in the app or application service path, open Controller Settings, enable Live, and use `input packets` for packet capture. For each action above, paste the recent RX entries and say whether the on-screen state changed.
 
 If OJD cannot see it but macOS native tools can, say that. That points toward a DriverKit/raw USB path instead of a record-only fix.
 
-## Minimum Parser Evidence
+## Minimum parser evidence
 
 Start a parser only after collecting:
 
@@ -121,7 +121,7 @@ Start a parser only after collecting:
 - report ID behavior, if any
 - interface and endpoint for raw USB captures
 
-## Paste-Back Report Form
+## Paste-back report form
 
 ```text
 macOS version:
