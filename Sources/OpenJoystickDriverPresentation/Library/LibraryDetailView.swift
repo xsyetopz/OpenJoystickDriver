@@ -132,7 +132,7 @@
         LibraryRecordTextView(text: text)
       case .unreadable:
         Text(OJDLocalized.formatted("ui.library.recordUnreadable", detail.item.identity))
-          .foregroundColor(Color(SemanticTone.failure.color))
+          .foregroundColor(Color(SemanticTone.attention.color))
       }
     }
 

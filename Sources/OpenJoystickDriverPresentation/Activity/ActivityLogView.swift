@@ -17,15 +17,16 @@
       content
     }
 
-    /// The line's text, in red with a warning symbol when it came from the error stream.
+    /// The line's text; a warning is orange with a triangle and an error red with an octagon.
     @ViewBuilder
     private func messageText(_ row: ActivityLogEntry) -> some View {
       let text = Text(row.text).font(.system(.body, design: .monospaced)).textSelection(.enabled)
-      if row.stream == .standardError {
+      let severity = row.severity
+      if let tone = severity.tone, let symbolName = severity.symbolName {
         HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
-          Image(systemName: "exclamationmark.triangle.fill").accessibilityHidden(true)
+          Image(systemName: symbolName).accessibilityHidden(true)
           text
-        }.foregroundStyle(.red).accessibilityElement(children: .combine)
+        }.foregroundStyle(Color(tone.color)).accessibilityElement(children: .combine)
           .ojdAccessibilityLabel(OJDLocalized.string("ui.console.errors") + ": " + row.text)
       } else {
         text
