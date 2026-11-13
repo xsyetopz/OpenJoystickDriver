@@ -42,7 +42,7 @@ Each connection mode has its own VID:PID. A controller in USB mode and the same 
 1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](Connecting-Controllers.md).
 2. Look for it in [Supported controllers](Supported-Controllers.md).
 
-The built-in catalog has 710 records. A record without a physical test is unverified. An unverified controller may work, may partly work, or may not work.
+The built-in catalog has 712 records. A record without a physical test is unverified. An unverified controller may work, may partly work, or may not work.
 
 ### Special Cases
 
