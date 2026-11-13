@@ -335,6 +335,15 @@ public protocol USBTransportProvider: Sendable {
   /// - Throws: ``USBTransportError/notSupported`` when the provider cannot observe owners.
   func exclusiveOwner(of device: USBTransportDevice) async throws -> String?
 
+  /// The process or driver that holds interface `interfaceNumber` of `device` exclusively, as the
+  /// host reports it, or nil when the interface names no owner.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` when the provider cannot observe owners.
+  func interfaceExclusiveOwner(
+    of device: USBTransportDevice,
+    interfaceNumber: UInt8
+  ) async throws -> String?
+
   /// Returns once the client that holds interface `interfaceNumber` of `device` exclusively lets go
   /// of it, or the device goes away.
   ///
@@ -393,6 +402,14 @@ extension USBTransportProvider {
   public func exclusiveOwner(of _: USBTransportDevice) throws -> String? {
     throw USBTransportError.notSupported
   }
+
+  /// Names no interface owner.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` always.
+  public func interfaceExclusiveOwner(
+    of _: USBTransportDevice,
+    interfaceNumber _: UInt8
+  ) throws -> String? { throw USBTransportError.notSupported }
 
   /// Waits for no release.
   ///

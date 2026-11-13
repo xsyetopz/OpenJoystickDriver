@@ -249,6 +249,18 @@ final class BluetoothLECompositeUSBTransportProvider: USBTransportProvider {
     return try await base.exclusiveOwner(of: device)
   }
 
+  /// The exclusive owner of interface `interfaceNumber` of `device` according to the base provider.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` without a base provider, or the error of the base
+  ///   provider.
+  func interfaceExclusiveOwner(
+    of device: USBTransportDevice,
+    interfaceNumber: UInt8
+  ) async throws -> String? {
+    guard let base else { throw USBTransportError.notSupported }
+    return try await base.interfaceExclusiveOwner(of: device, interfaceNumber: interfaceNumber)
+  }
+
   /// Waits until the base provider reports the interface released.
   ///
   /// - Throws: ``USBTransportError/notSupported`` without a base provider, or the error of the base
