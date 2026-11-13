@@ -28,7 +28,7 @@ struct BindingRemarkTests {
   }
 
   @Test
-  func aRemarkSurvivesAnEncodeAndDecode() throws {
+  func remarkSurvivesEncodeAndDecode() throws {
     let binding = RemappingBinding(
       source: .button(.south),
       destination: .mouseButton(.left),
@@ -42,14 +42,14 @@ struct BindingRemarkTests {
   }
 
   @Test
-  func aBindingWithoutARemarkEncodesNoRemarkKey() throws {
+  func bindingWithoutRemarkEncodesNoRemarkKey() throws {
     let binding = RemappingBinding(source: .button(.south), destination: .mouseButton(.left))
     let json = try #require(String(bytes: JSONEncoder().encode(binding), encoding: .utf8))
     #expect(!json.contains("remark"))
   }
 
   @Test(arguments: ["Jump", "A", String(repeating: "a", count: 200)])
-  func aRemarkOfAllowedFormIsAccepted(remark: String) throws {
+  func remarkOfAllowedFormAccepted(remark: String) throws {
     try Self.profile(remark: remark).validate()
     try Self.profile(remark: remark, inLayer: true).validate()
   }
@@ -57,7 +57,7 @@ struct BindingRemarkTests {
   @Test(arguments: [
     "", " Jump", "Jump ", "Ju\nmp", "Ju\u{7f}mp", String(repeating: "a", count: 201),
   ])
-  func aRemarkOfBadFormIsRefused(remark: String) {
+  func remarkOfBadFormRefused(remark: String) {
     #expect(throws: RemappingValidationError.bindingRemarkInvalid(index: 0)) {
       try Self.profile(remark: remark).validate()
     }

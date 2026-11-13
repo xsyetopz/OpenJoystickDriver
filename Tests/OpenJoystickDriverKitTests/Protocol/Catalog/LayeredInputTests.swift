@@ -52,7 +52,7 @@ struct LayeredInputTests {
   }
 
   @Test
-  func aGIPRecordWithALayoutReadsTheLayoutAndKeepsTheFamilyDriver() throws {
+  func gipRecordWithLayoutReadsLayoutAndKeepsFamilyDriver() throws {
     // Report 0x20 of 18 bytes; the layout names East at bit 0 of byte 5.
     let input = layout(
       report: ["id": 0x20, "length": ["atLeast": 18] as [String: Int]],
@@ -68,7 +68,7 @@ struct LayeredInputTests {
   }
 
   @Test
-  func anXUSBLayoutNamingOneButtonLeavesTheRestToTheFamily() throws {
+  func xusbLayoutNamingOneButtonLeavesRestToFamily() throws {
     let input = layout(
       report: ["length": ["exactly": 20] as [String: Int]],
       button: "North",
@@ -84,7 +84,7 @@ struct LayeredInputTests {
   }
 
   @Test
-  func aReportNoLayoutSelectsIsDecodedByTheFamilyAlone() throws {
+  func reportNoLayoutSelectsDecodedByFamilyAlone() throws {
     let input = layout(
       report: ["length": ["exactly": 20] as [String: Int]],
       button: "North",
@@ -100,7 +100,7 @@ struct LayeredInputTests {
   }
 
   @Test
-  func aHIDDescriptorRecordRefusesLayouts() {
+  func hidDescriptorRecordRefusesLayouts() {
     let input = layout(
       report: ["length": ["atLeast": 1] as [String: Int]],
       button: "South",

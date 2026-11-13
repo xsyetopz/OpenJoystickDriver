@@ -30,7 +30,7 @@ struct NamedPacketPlanMessageTests {
   }
 
   @Test
-  func anEmptyListNamesTheCount() {
+  func emptyListNamesCount() {
     #expect(
       Self.message("[]")
         == "045e-02ea.plist, session.namedPackets: Named packets must name 1...16 packets. "
@@ -39,7 +39,7 @@ struct NamedPacketPlanMessageTests {
   }
 
   @Test
-  func aRepeatedIDNamesTheID() {
+  func repeatedIDNamesID() {
     let list = "[\(Self.packet()), \(Self.packet())]"
     #expect(
       Self.message(list)
@@ -49,7 +49,7 @@ struct NamedPacketPlanMessageTests {
   }
 
   @Test
-  func anIDWithoutAFamilyNamesTheForm() {
+  func idWithoutFamilyNamesForm() {
     #expect(
       Self.message("[\(Self.packet(id: "start-input"))]")
         == "045e-02ea.plist, session.namedPackets[].id: A named packet id must be a family, a "
@@ -58,7 +58,7 @@ struct NamedPacketPlanMessageTests {
   }
 
   @Test
-  func aShortPacketNamesTheBytesAndSessionByte() {
+  func shortPacketNamesBytesAndSessionByte() {
     #expect(
       Self.message("[\(Self.packet(bytes: "05 20"))]")
         == "045e-02ea.plist, session.namedPackets[].sessionByte: A named packet must have at "

@@ -249,7 +249,7 @@ struct ModeAndSessionRuleMessageTests {
   }
 
   @Test
-  func hexBytesNamesTheFieldAndWhatTheBytesBelongTo() throws {
+  func hexBytesNamesFieldAndWhatBytesBelongTo() throws {
     struct Carrier: Decodable {
       let bytes: [UInt8]
       init(from decoder: any Decoder) throws {

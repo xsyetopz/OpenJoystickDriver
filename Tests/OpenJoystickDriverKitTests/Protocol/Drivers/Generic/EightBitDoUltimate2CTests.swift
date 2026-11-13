@@ -70,7 +70,7 @@ struct EightBitDoUltimate2CTests {
   }
 
   @Test
-  func receiverServesTheLinkedPadThroughItsDescriptor() throws {
+  func receiverServesLinkedPadThroughItsDescriptor() throws {
     let record = try #require(ProtocolDriverRegistry().record(for: Self.receiver))
     #expect(!record.isIdle)
     #expect(record.hidUsageMap == nil)
@@ -109,7 +109,7 @@ struct EightBitDoUltimate2CTests {
   }
 
   @Test
-  func theCapturedReportsMoveTheRightStickWithZAndRzAndLeaveTriggersAtRest() throws {
+  func capturedReportsMoveRightStickWithZAndRzAndLeaveTriggersAtRest() throws {
     let parser = HIDDescriptorDriver(
       model: Self.bluetooth,
       usageMap: try catalogUsageMap(0x2DC8, 0x301B)

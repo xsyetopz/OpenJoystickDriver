@@ -40,7 +40,7 @@ struct FlydigiVaderFourProDongleTests {
   }
 
   @Test
-  func theCapturedNeutralReportRestsCentred() throws {
+  func capturedNeutralReportRestsCentred() throws {
     let state = try #require(try Self.driver().parseReport(Capture.dongle([:]))).state
     #expect(abs(state.leftStick.x.rawValue) < 300 && abs(state.rightStick.y.rawValue) < 300)
     #expect(state.leftTrigger.rawValue == 0 && state.rightTrigger.rawValue == 0)
@@ -69,7 +69,7 @@ struct FlydigiVaderFourProDongleTests {
   /// The reporter drove the motors on a dongle: `05 0F <left> <right>` on report 5, resent at about
   /// 10 Hz, and stopped by the same frame with zero magnitudes.
   @Test
-  func rumbleSendsTheVerifiedVendorFrameAndStopsWithTheSameCommand() throws {
+  func rumbleSendsVerifiedVendorFrameAndStopsWithSameCommand() throws {
     let driver = try Self.driver()
     let on = RumbleIntensities(
       lowFrequency: UnipolarValue(byte: 0x40),
@@ -85,7 +85,7 @@ struct FlydigiVaderFourProDongleTests {
   }
 
   @Test
-  func rumbleIsResentEveryHundredMilliseconds() throws {
+  func rumbleResentEveryHundredMilliseconds() throws {
     let plan = try Self.driver().sessionPlan
     #expect(plan.keepAliveChannels == [.hid])
     #expect(plan.keepAliveIntervalNanoseconds == 100_000_000)
@@ -117,7 +117,7 @@ struct FlydigiVaderFourProBluetoothXInputTests {
   }
 
   @Test
-  func triggersAreTenBitUnsigned() throws {
+  func triggersTenBitUnsigned() throws {
     let driver = try Self.driver()
     let full = try #require(
       try driver.parseReport(Capture.bluetooth([9: 0xFF, 10: 0x03, 11: 0xFF, 12: 0x03]))
@@ -149,7 +149,7 @@ struct FlydigiVaderFourProBluetoothXInputTests {
 
   /// Home arrives on report ID 2, byte 1 bit 0; the main report does not release it.
   @Test
-  func homeArrivesOnReportTwoAndTheMainReportLeavesItAlone() throws {
+  func homeArrivesOnReportTwoAndMainReportLeavesItAlone() throws {
     let driver = try Self.driver()
     _ = try driver.parseReport(Capture.bluetooth([:]))
     #expect(try driver.parseReport(Data([0x02, 0x01])).contains(.press(.guide)))

@@ -38,7 +38,7 @@ struct MotionBiasTests {
   }
 
   @Test
-  func manualCollectionIsTimeWeightedAndPauseRetainsOffset() {
+  func manualCollectionTimeWeightedAndPauseRetainsOffset() {
     var bias = RemappingMotionBias()
     bias.startManualCollection()
     _ = bias.update(reading(1), deltaTime: 0.01, automatic: false)

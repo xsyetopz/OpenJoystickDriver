@@ -65,7 +65,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func aRecordThatFitsNoInterfaceFallsBackToTheHIDDescriptor() throws {
+  func recordFitsNoInterfaceFallsBackToHIDDescriptor() throws {
     let device = PhysicalDevice(
       vendorID: Self.dongle.vendorID,
       productID: Self.dongle.productID,
@@ -80,7 +80,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func theFallbackNamesTheRecordThatDidNotFitInItsRowText() throws {
+  func fallbackNamesRecordDidNotFitInItsRowText() throws {
     let device = PhysicalDevice(
       vendorID: Self.dongle.vendorID,
       productID: Self.dongle.productID,
@@ -94,7 +94,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func aRecordThatFitsNoInterfaceWithNoHIDInterfaceStaysUnsupported() {
+  func recordFitsNoInterfaceWithNoHIDInterfaceStaysUnsupported() {
     let vendorClass = usbInterface(0, 0xFF, 0x47, 0xD0)
     for interfaces in [[vendorClass], [vendorInterface(0)]] {
       let device = PhysicalDevice(
@@ -117,7 +117,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func anIdleRawUSBModeStaysIdleInsteadOfFallingBack() throws {
+  func idleRawUSBModeStaysIdleInsteadOfFallingBack() throws {
     let device = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0xAC02,
@@ -136,7 +136,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func aRecordThatNamesSystemStaysWithMacOS() throws {
+  func recordNamesSystemStaysWithMacOS() throws {
     let device = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0xAC02,

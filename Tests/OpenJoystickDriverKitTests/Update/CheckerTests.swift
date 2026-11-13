@@ -38,7 +38,7 @@ struct UpdateCheckerTests {
   }
 
   @Test("a tester build is offered to the prerelease channel and ordered after its release")
-  func testerBuildIsOfferedAfterTheReleaseBeforeIt() async throws {
+  func testerBuildOfferedAfterReleaseBeforeIt() async throws {
     let checker = try Self.checker(path: "/tester-tags")
 
     let offered = await checker.check(currentVersion: "0.6.0-alpha.2", includePrereleases: true)
@@ -65,7 +65,7 @@ struct UpdateCheckerTests {
   }
 
   @Test("a tester build is offered the release it leads to, a stable one included")
-  func testerBuildIsOfferedTheReleaseItLeadsTo() async throws {
+  func testerBuildOfferedReleaseItLeadsTo() async throws {
     let checker = try Self.checker(path: "/tester-then-release")
 
     let prerelease = await checker.check(
@@ -183,7 +183,7 @@ struct UpdateCheckerTests {
   }
 
   @Test("only prereleases published is a state of the stable channel, not a failure")
-  func onlyPrereleasesPublishedIsNotAFailure() async throws {
+  func onlyPrereleasesPublishedNotFailure() async throws {
     let checker = try Self.checker(path: "/prerelease-only-tags")
 
     let stable = await checker.check(currentVersion: "0.5.0-alpha.1")

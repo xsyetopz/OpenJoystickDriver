@@ -31,7 +31,7 @@ struct Wheel044FB671RecordTests {
   }
 
   @Test
-  func steeringReadsAsTheLeftStickInsteadOfTheLeftTrigger() throws {
+  func steeringReadsAsLeftStickInsteadOfLeftTrigger() throws {
     let report = "20 00 61 11 00 00 B8 03 00 00 00 00 00 00 00 00 00 F0 00 00 C0"
     #expect(
       try difference([report], expectation(leftStickX: -31815, leftTrigger: 0, rightTrigger: 0))
@@ -40,7 +40,7 @@ struct Wheel044FB671RecordTests {
   }
 
   @Test
-  func theBrakeReadsAsTheLeftTrigger() throws {
+  func brakeReadsAsLeftTrigger() throws {
     let report = "20 00 61 11 00 00 00 80 00 00 FF 03 00 00 00 00 00 F0 00 00 C0"
     #expect(
       try difference([report], expectation(leftStickX: 0, leftTrigger: 65535, rightTrigger: 0)) == 0

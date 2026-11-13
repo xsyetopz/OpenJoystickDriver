@@ -130,7 +130,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aRemoveOfATuningKeyDeletesItFromTheBundledRecord() throws {
+  func removeOfTuningKeyDeletesItFromBundledRecord() throws {
     let root = Root()
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
     try root.writePatch(
@@ -147,7 +147,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aRemoveOfTheTuningSectionClearsEveryKeyLayer() throws {
+  func removeOfTuningSectionClearsEveryKeyLayer() throws {
     let root = Root()
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
     try root.writePatch(
@@ -165,7 +165,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func anAllPatchOfAnotherSectionMakesTheDefaultsFileInvalid() throws {
+  func allPatchOfAnotherSectionMakesDefaultsFileInvalid() throws {
     let root = Root()
     try root.writeDefaultsPatch(#"{"usb":{"interface":1}}"#)
 

@@ -49,14 +49,14 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func anXMLPropertyListIsRead() throws {
+  func xmlPropertyListRead() throws {
     let data = plist("<dict><key>kind</key><string>Sample</string></dict>")
     let tree = try #require(try DocumentCoder.read(data, file: "Record.plist") as? [String: Any])
     #expect(tree["kind"] as? String == "Sample")
   }
 
   @Test
-  func aBinaryPropertyListIsRefusedWithTheFileAndTheForm() throws {
+  func binaryPropertyListRefusedWithFileAndForm() throws {
     let data = try PropertyListSerialization.data(
       fromPropertyList: ["kind": "Sample"],
       format: .binary,
@@ -71,7 +71,7 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func jsonTextInAPlistFileIsRefusedWithTheFileAndTheForm() throws {
+  func jsonTextInPlistFileRefusedWithFileAndForm() throws {
     let error = try #require(refusal(Data(#"{"kind": "Sample"}"#.utf8), file: "Play.plist"))
     #expect(error.file == "Play.plist")
     #expect(error.reason == .json)
@@ -79,13 +79,13 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func anOldStylePropertyListIsRefused() throws {
+  func oldStylePropertyListRefused() throws {
     let error = try #require(refusal(Data(#"{ kind = Sample; }"#.utf8)))
     #expect(error.reason == .notXML)
   }
 
   @Test(arguments: [Data([0xFF, 0xFE]), Data("garbage".utf8), Data("<dict/>".utf8)])
-  func bytesAfterThePropertyListAreRefused(tail: Data) throws {
+  func bytesAfterPropertyListRefused(tail: Data) throws {
     let data = plist("<dict><key>kind</key><string>Sample</string></dict>") + tail
     let error = try #require(refusal(data, file: "Play.plist"))
     #expect(error.reason == .trailingBytes)
@@ -97,13 +97,13 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func whitespaceAfterThePropertyListIsRead() {
+  func whitespaceAfterPropertyListRead() {
     let data = plist("<dict><key>kind</key><string>Sample</string></dict>") + Data(" \n\t\n".utf8)
     #expect(refusal(data) == nil)
   }
 
   @Test
-  func aDateIsRefusedWithItsKeyPath() throws {
+  func dateRefusedWithItsKeyPath() throws {
     let data = plist(
       """
       <dict><key>modes</key><array><dict><key>seen</key>\
@@ -116,14 +116,14 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func aDataValueIsRefusedWithItsKeyPath() throws {
+  func dataValueRefusedWithItsKeyPath() throws {
     let data = plist("<dict><key>blob</key><data>AAEC</data></dict>")
     let error = try #require(refusal(data))
     #expect(error.reason == .unsupportedValue(keyPath: "blob", kind: "data"))
   }
 
   @Test
-  func aTypedReadRefusesTheSameForms() throws {
+  func typedReadRefusesSameForms() throws {
     let encoder = PropertyListEncoder()
     encoder.outputFormat = .binary
     let bytes = try encoder.encode(Self.sample)
@@ -136,7 +136,7 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func theBytesOfACanonicalFileDoNotChangeOnARewrite() throws {
+  func bytesOfCanonicalFileDoNotChangeOnRewrite() throws {
     let canonical = try DocumentCoder.encode(Self.sample)
     let typed = try DocumentCoder.decode(Sample.self, from: canonical, file: "Sample.plist")
     #expect(typed == Self.sample)
@@ -146,7 +146,7 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func theCanonicalFormIsXMLWithSortedKeys() throws {
+  func canonicalFormXMLWithSortedKeys() throws {
     let text = try #require(String(bytes: DocumentCoder.encode(Self.sample), encoding: .utf8))
     #expect(text.hasPrefix("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
     let keys = text.split(separator: "\n").compactMap { line -> String? in
@@ -160,7 +160,7 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func integersKeepTheirTypeAcrossTheSixtyFourBitRange() throws {
+  func integersKeepTheirTypeAcrossSixtyFourBitRange() throws {
     let data = try DocumentCoder.encode(Self.sample)
     let text = try #require(String(bytes: data, encoding: .utf8))
     for value in ["-9223372036854775808", "9223372036854775807", "18446744073709551615"] {

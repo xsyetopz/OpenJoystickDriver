@@ -23,7 +23,7 @@ struct HIDUsageMapMessageTests {
   }
 
   @Test
-  func anEmptyMapNamesFileKeyPathRuleAndFix() {
+  func emptyMapNamesFileKeyPathRuleAndFix() {
     #expect(
       Self.message([])
         == "046d-c21d.plist, input.hidUsageMap.usages: A usage map must list at least one usage. "
@@ -32,7 +32,7 @@ struct HIDUsageMapMessageTests {
   }
 
   @Test
-  func aRepeatedUsageNamesTheUsage() {
+  func repeatedUsageNamesUsage() {
     let entry = HIDUsageMap.Entry(usage: Self.usage, binding: .button(.south))
     #expect(
       Self.message([entry, entry])
@@ -43,7 +43,7 @@ struct HIDUsageMapMessageTests {
   }
 
   @Test
-  func aThresholdOutsideTheOpenIntervalNamesTheUsage() {
+  func thresholdOutsideOpenIntervalNamesUsage() {
     let binding = HIDUsageMap.Binding.axisButton(
       .init(half: .positive, control: .east, threshold: 1.5)
     )
@@ -55,7 +55,7 @@ struct HIDUsageMapMessageTests {
   }
 
   @Test
-  func aDecodedUsageMapProblemReadsInTheChosenLanguage() {
+  func decodedUsageMapProblemReadsInChosenLanguage() {
     let json = """
       {"usages": [
         {"kind": "Button", "page": 1, "usage": 48, "control": "South"},

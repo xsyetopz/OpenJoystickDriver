@@ -19,7 +19,7 @@ struct RecordFileRuleMessageTests {
   }
 
   @Test
-  func theBundledPersonaRulesNameThePersona() {
+  func bundledPersonaRulesNamePersona() {
     #expect(
       Self.message("virtualDevice.bundledMissing", ["Generic"])
         == "046d-c21d.plist, persona: The bundled records must hold a record for the persona "
@@ -33,7 +33,7 @@ struct RecordFileRuleMessageTests {
   }
 
   @Test
-  func aPackageFileOfTheWrongKindNamesTheListAndBothKinds() {
+  func packageFileOfWrongKindNamesListAndBothKinds() {
     #expect(
       Self.message("modPackage.kindMismatch", ["controllers", "patch", "record"])
         == "046d-c21d.plist, controllers: A patch file cannot be listed under controllers in "
@@ -43,7 +43,7 @@ struct RecordFileRuleMessageTests {
   }
 
   @Test
-  func theIdentityRangeNamesBothIDs() {
+  func identityRangeNamesBothIDs() {
     #expect(
       Self.message("record.identityRange")
         == "046d-c21d.plist, vendorID: A controller needs a vendorID of 1...65535 and a "
@@ -52,7 +52,7 @@ struct RecordFileRuleMessageTests {
   }
 
   @Test
-  func anUnsupportedUSBConfigurationNamesIt() {
+  func unsupportedUSBConfigurationNamesIt() {
     #expect(
       Self.message("deviceCatalog.usbConfiguration", ["Other"])
         == "046d-c21d.plist, usb.configuration: A USB configuration must be "
@@ -62,7 +62,7 @@ struct RecordFileRuleMessageTests {
   }
 
   @Test
-  func aMisplacedPatchNamesTheExpectedPath() {
+  func misplacedPatchNamesExpectedPath() {
     #expect(
       Self.message("patch.path", ["all/tuning.plist"])
         == "046d-c21d.plist, selector: A patch file must sit at all/tuning.plist. Fix: Move the "
@@ -71,7 +71,7 @@ struct RecordFileRuleMessageTests {
   }
 
   @Test
-  func aTuningDefaultsSelectorOtherThanAllNamesTheKey() {
+  func tuningDefaultsSelectorOtherThanAllNamesKey() {
     #expect(
       Self.message("tuningDefaults.selector")
         == "046d-c21d.plist, selector: The selector of the tuning defaults must be all. Fix: Set "

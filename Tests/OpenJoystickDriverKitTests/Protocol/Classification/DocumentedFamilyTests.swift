@@ -24,7 +24,7 @@ struct DocumentedFamilyTests {
   }
 
   @Test
-  func aDescriptionDocumentBindsAControllerAndDecodesItsReports() throws {
+  func descriptionDocumentBindsControllerAndDecodesItsReports() throws {
     let name = "VendorAcmeBinding"
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-documented-\(UUID().uuidString)", isDirectory: true)

@@ -53,7 +53,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func anIdleDefaultModeClassifiesAsItsReasonWithoutABinding() throws {
+  func idleDefaultModeClassifiesAsItsReasonWithoutBinding() throws {
     let catalog = try Self.catalog(["modes": [Self.defaultMode(idle: "NoControllerLinked")]])
     #expect(catalog.record(for: Self.model)?.idleReason == .noControllerLinked)
     #expect(
@@ -63,7 +63,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func theBootloaderReasonClassifiesAsBootloader() throws {
+  func bootloaderReasonClassifiesAsBootloader() throws {
     let catalog = try Self.catalog(["modes": [Self.defaultMode(idle: "Bootloader")]])
     #expect(
       ProtocolClassifier.classify(Self.hidDevice(Self.model), backend: .hid, catalog: catalog)
@@ -72,7 +72,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func aSelectedIdleModeIdlesAndTheDefaultModeServes() throws {
+  func selectedIdleModeIdlesAndDefaultModeServes() throws {
     let catalog = try Self.catalog(["modes": [Self.defaultMode(), Self.idleMode]])
     let device = Self.hidDevice(Self.model)
     #expect(catalog.record(for: Self.model)?.idleReason == nil)
@@ -104,7 +104,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func idleIsAReasonOfTheRecordsModeNotARecordKey() {
+  func idleReasonOfRecordsModeNotRecordKey() {
     #expect(Self.problem(["idle": "NoControllerLinked"]) != nil)
     #expect(Self.problem(["modes": [Self.defaultMode(idle: "Sleeping")]]) != nil)
     var mode = Self.defaultMode()
@@ -113,7 +113,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func anIdleModeRefusesASessionAndAnInterface() {
+  func idleModeRefusesSessionAndInterface() {
     for extra: (String, Any) in [
       ("session", ["settleMilliseconds": 100]), ("interface", ["first": 0, "last": 0]),
     ] {
@@ -124,7 +124,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func aRecordOfOnlyIdleModesRefusesASectionThatServesControls() {
+  func recordOfOnlyIdleModesRefusesSectionServesControls() {
     let sections: [String: Any] = [
       "input": ["hidUsageMap": ["usages": [["kind": "Hat", "page": 1, "usage": 57]]]],
       "tuning": ["stickDeadzone": 0.1],
@@ -140,7 +140,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func aRecordWithAnIdleModeAndAServingModeKeepsItsSections() {
+  func recordWithIdleModeAndServingModeKeepsItsSections() {
     #expect(
       Self.problem(["modes": [Self.defaultMode(), Self.idleMode], "server": "OJD"]) == nil
     )
@@ -165,7 +165,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func theBundledReceiverIdlesWhileItsProductStringIsIDLE() async throws {
+  func bundledReceiverIdlesWhileItsProductStringIDLE() async throws {
     let catalog = DeviceCatalog()
     let modeID = try #require(await Self.selection(product: "IDLE").modeID)
     #expect(catalog.record(for: Self.receiver, modeID: modeID)?.idleReason == .noControllerLinked)
@@ -180,7 +180,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func theBundledReceiverServesWhileAPadIsLinked() async {
+  func bundledReceiverServesWhilePadLinked() async {
     let catalog = DeviceCatalog()
     let product = "8BitDo Ultimate 2C Wireless Controller"
     let selection = await Self.selection(product: product)

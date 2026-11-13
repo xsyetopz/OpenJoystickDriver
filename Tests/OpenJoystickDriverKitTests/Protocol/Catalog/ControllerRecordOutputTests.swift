@@ -40,7 +40,7 @@ struct ControllerRecordOutputTests {
   }
 
   @Test
-  func aHIDDescriptorModeDecodesAHIDRumbleTemplate() throws {
+  func hidDescriptorModeDecodesAHIDRumbleTemplate() throws {
     let document = try decode(
       "\"modes\": [{\"id\": \"default\", \"protocol\": {\"family\": \"HIDDescriptor\"}, "
         + "\"session\": {\(Self.gp100Rumble)}}]"

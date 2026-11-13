@@ -32,30 +32,30 @@ struct ChangelogTests {
     """
 
   @Test
-  func aSectionIsTheTextUnderItsHeaderUpToTheNextHeader() {
+  func sectionTextUnderItsHeaderUpToNextHeader() {
     #expect(
       Changelog.section(of: "0.6.0-alpha.2", in: Self.text) == "### Added\n\n- Alpha two item."
     )
   }
 
   @Test
-  func theLastSectionEndsBeforeTheLinkReferences() {
+  func lastSectionEndsBeforeLinkReferences() {
     #expect(Changelog.section(of: "0.6.0", in: Self.text) == "### Fixed\n\n- Release item.")
   }
 
   @Test
-  func aVersionMatchesOnlyItsOwnHeader() {
+  func versionMatchesOnlyItsOwnHeader() {
     #expect(Changelog.section(of: "0.6", in: Self.text) == nil)
     #expect(Changelog.section(of: "0.7.0", in: Self.text) == nil)
   }
 
   @Test
-  func aSectionWithNoTextHasNoChanges() {
+  func sectionWithNoTextHasNoChanges() {
     #expect(Changelog.section(of: "Unreleased", in: Self.text) == nil)
   }
 
   @Test
-  func theBundledChangelogHoldsTheReleasedVersions() throws {
+  func bundledChangelogHoldsReleasedVersions() throws {
     let text = try #require(Changelog.bundled())
 
     #expect(text.hasPrefix("# Changelog"))
@@ -63,12 +63,12 @@ struct ChangelogTests {
   }
 
   @Test
-  func aFreshInstallationHasShownNothing() throws {
+  func freshInstallationHasShownNothing() throws {
     #expect(try store.lastShownChangelogVersion() == nil)
   }
 
   @Test
-  func theLastShownVersionIsStored() throws {
+  func lastShownVersionStored() throws {
     try store.setLastShownChangelogVersion("0.6.0-alpha.3")
     try store.set(.developerTools, to: true)
 
@@ -78,7 +78,7 @@ struct ChangelogTests {
   }
 
   @Test
-  func anInstalledVersionShowsItsSectionUntilItIsRecorded() {
+  func installedVersionShowsItsSectionUntilItRecorded() {
     let first = Changelog.toShow(installed: "0.6.0", lastShown: nil, in: Self.text)
     let afterUpdate = Changelog.toShow(
       installed: "0.6.0",
@@ -93,7 +93,7 @@ struct ChangelogTests {
   }
 
   @Test
-  func aVersionWithoutASectionShowsNothing() {
+  func versionWithoutSectionShowsNothing() {
     #expect(Changelog.toShow(installed: "0.7.0-dev", lastShown: "0.6.0", in: Self.text) == nil)
   }
 
@@ -102,7 +102,7 @@ struct ChangelogTests {
     #""lastShownChangelogVersion": 3"#,
     #""lastShownChangelogVersion": true"#,
   ])
-  func aFileWithAnInvalidLastShownVersionIsDamaged(body: String) throws {
+  func fileWithInvalidLastShownVersionDamaged(body: String) throws {
     let url = store.userFileURL
     try FileManager.default.createDirectory(
       at: url.deletingLastPathComponent(),

@@ -121,7 +121,7 @@ struct RawUSBModeTests {
   }
 
   @Test
-  func aRawUSBModeKeepsAnInterfaceAndAHIDSessionOut() {
+  func rawUSBModeKeepsInterfaceAndAHIDSessionOut() {
     let hidWrite: [String: Any] = [
       "report": ["kind": "Feature", "id": 1, "length": 2], "bytes": "02",
     ]
@@ -178,7 +178,7 @@ struct RawUSBModeTests {
   /// A record with one mode gets the same per-mode layout, template and capability checks as a
   /// record with several.
   @Test
-  func aSingleModeRecordObeysTheSamePerModeChecks() {
+  func singleModeRecordObeysSamePerModeChecks() {
     let layout: [String: Any] = [
       "layouts": [
         [

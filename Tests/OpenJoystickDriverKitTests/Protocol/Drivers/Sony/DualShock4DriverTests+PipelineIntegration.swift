@@ -15,7 +15,7 @@ extension DualShock4DriverTests {
     #expect(events.contains(expectedRightStick))
   }
   @Test
-  func testControllerStateExposesTheDS4Hat() async {
+  func testControllerStateExposesDS4Hat() async {
     let dispatcher = CapturingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 1356, productID: 2508),

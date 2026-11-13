@@ -85,7 +85,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWiredPadStillRequiresTheWiredLengthByte() throws {
+  func testWiredPadStillRequiresWiredLengthByte() throws {
     let wired = XUSBDriver()
     var report = Array(Receiver.capture02A9.dropFirst(4).prefix(20))
     #expect(report[1] == 0x13)
@@ -133,7 +133,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverNeedsOnlyTheStateBytesButWiredValidationStaysStrict() throws {
+  func testWirelessReceiverNeedsOnlyStateBytesButWiredValidationStaysStrict() throws {
     var report = Array(Receiver.padData(buttons: 1 << 12).prefix(18))
     report[5] = 0x13
     let parser = XUSBDriver(isWirelessReceiver: true)

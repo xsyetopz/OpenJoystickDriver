@@ -184,7 +184,7 @@ struct ControllerRecordWriterTests {
 
   /// The written file is the canonical property list of the patch with only `server` changed.
   @Test
-  func existingFileIsWrittenAsACanonicalPropertyList() throws {
+  func existingFileWrittenAsCanonicalPropertyList() throws {
     try Self.withDirectory { directory, _ in
       let file = directory.appendingPathComponent("2c22-2000.patch.plist")
       func data(_ server: String) throws -> Data {

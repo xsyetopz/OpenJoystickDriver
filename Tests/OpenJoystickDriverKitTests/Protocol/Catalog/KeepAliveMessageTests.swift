@@ -20,7 +20,7 @@ struct KeepAliveMessageTests {
   }
 
   @Test
-  func anIntervalOutsideItsRangeNamesTheKey() {
+  func intervalOutsideItsRangeNamesKey() {
     #expect(
       Self.message(#"{"intervalMilliseconds": 0}"#)
         == "28de-1205.plist, session.keepAlive.intervalMilliseconds: A keep-alive interval must "
@@ -29,7 +29,7 @@ struct KeepAliveMessageTests {
   }
 
   @Test
-  func anEmptyWritesListNamesTheKey() {
+  func emptyWritesListNamesKey() {
     #expect(
       Self.message(#"{"intervalMilliseconds": 100, "writes": []}"#)
         == "28de-1205.plist, session.keepAlive.writes: A keep-alive must name no writes or 1...8 "
@@ -38,7 +38,7 @@ struct KeepAliveMessageTests {
   }
 
   @Test
-  func moreThanEightWritesNameTheKey() {
+  func moreThanEightWritesNameKey() {
     let writes = Array(repeating: #"{"bytes": "01"}"#, count: 9).joined(separator: ",")
     #expect(
       Self.message(#"{"intervalMilliseconds": 100, "writes": [\#(writes)]}"#)
@@ -48,7 +48,7 @@ struct KeepAliveMessageTests {
   }
 
   @Test
-  func aWrongResendTuningNamesTheKey() {
+  func wrongResendTuningNamesKey() {
     #expect(
       Self.message(
         #"{"intervalMilliseconds": 100, "writes": [{"bytes": "01", "resendTuning": "x"}]}"#

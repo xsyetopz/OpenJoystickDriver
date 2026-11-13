@@ -90,7 +90,7 @@ struct RepositoryValidationTests {
   }
 
   @Test
-  func textThatIsNotAPropertyListIsAnInvalidRecord() throws {
+  func textNotPropertyListInvalidRecord() throws {
     try Self.scratch { directory in
       try Self.write("{", to: directory.appendingPathComponent("04d2-162e.plist"))
       let problems = RepositoryValidation.controllers(in: directory)
@@ -101,7 +101,7 @@ struct RepositoryValidationTests {
   // MARK: one identity has one record
 
   @Test
-  func aSecondRecordOfOneIdentityIsReportedWithBothFiles() throws {
+  func secondRecordOfOneIdentityReportedWithBothFiles() throws {
     try Self.scratch { directory in
       let text =
         #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Controller","#

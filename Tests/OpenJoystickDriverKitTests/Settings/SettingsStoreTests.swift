@@ -54,14 +54,14 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func theInterfaceLevelIsSimpleByDefault() throws {
+  func interfaceLevelSimpleByDefault() throws {
     #expect(try store.interfaceLevel() == .simple)
     try write(header(#", "showInDock": true"#), to: .applicationData)
     #expect(try store.interfaceLevel() == .simple)
   }
 
   @Test(arguments: InterfaceLevel.allCases)
-  func theInterfaceLevelRoundTripsThroughTheUserFile(level: InterfaceLevel) throws {
+  func interfaceLevelRoundTripsThroughUserFile(level: InterfaceLevel) throws {
     try store.setInterfaceLevel(level)
 
     #expect(try store.interfaceLevel() == level)
@@ -69,7 +69,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func theInterfaceLevelIsReadFromTheFileByItsName() throws {
+  func interfaceLevelReadFromFileByItsName() throws {
     try write(header(#", "interfaceLevel": "Advanced""#), to: .applicationData)
 
     #expect(try store.interfaceLevel() == .advanced)

@@ -70,7 +70,7 @@ struct ControllerRecordSetTests {
   /// The Ultimate 2C over Bluetooth LE: GameController lists no controller while macOS serves it
   /// (`gamecontroller-probes.txt`), so the bundled record gives it to OJD.
   @Test
-  func theUltimate2CBluetoothPadIsServedByTheVirtualGamepadWithNoUserDocument() throws {
+  func ultimate2CBluetoothPadServedByVirtualGamepadWithNoUserDocument() throws {
     let model = ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let route = ServingPolicy.route(
@@ -101,7 +101,7 @@ struct ControllerRecordSetTests {
   /// A patch merges `modes` by `id`, so a restated default mode keeps the bundled parameters it
   /// does not name.
   @Test
-  func modesPatchMergesIntoTheDefaultMode() throws {
+  func modesPatchMergesIntoDefaultMode() throws {
     let shareOffsetGIP = ControllerModelID(vendorID: 0x045E, productID: 0x0B12)
     let bundledShare = try #require(ControllerRecordSet.bundled.records[shareOffsetGIP])
     #expect(bundledShare.profile.parameters == ProtocolParameters(shareButton: .init(fromEnd: 26)))
@@ -454,7 +454,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func loadIgnoresFilesThatAreNotPropertyLists() throws {
+  func loadIgnoresFilesNotPropertyLists() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-records-\(UUID().uuidString)",
       isDirectory: true
@@ -493,7 +493,7 @@ struct ControllerRecordSetTests {
   /// A mode the patch names merges into the bundled mode of the same `id` in the bundled member
   /// order.
   @Test
-  func aPatchMergeWritesTheMergedRecordAsAPropertyList() throws {
+  func patchMergeWritesMergedRecordAsPropertyList() throws {
     let record = try Self.record(
       PropertyListFixture.bytes(
         json: """
@@ -560,7 +560,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func fileNameMessageNamesTheExpectedName() {
+  func fileNameMessageNamesExpectedName() {
     let error = ControllerRecordProblem(
       code: .invalidControllerRecord,
       key: "error.E5007.record.fileName",

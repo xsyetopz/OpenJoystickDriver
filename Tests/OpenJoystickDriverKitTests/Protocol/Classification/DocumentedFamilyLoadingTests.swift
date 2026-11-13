@@ -31,7 +31,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aDescriptionInTheUserProtocolsFolderIsLoadedWithItsDisplayName() throws {
+  func descriptionInUserProtocolsFolderLoadedWithItsDisplayName() throws {
     try ModPackageFixture.with { fixture in
       let file = try Self.description("VendorUserLoaded")
       try fixture.write([file], kind: "Protocols", in: fixture.root)
@@ -45,7 +45,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aUserFileThatIsRefusedIsListedAndNotLoaded() throws {
+  func userFileRefusedListedAndNotLoaded() throws {
     try ModPackageFixture.with { fixture in
       let builtIn = try Self.description("XboxGIP")
       let noLayouts = try Self.description("VendorUserNoLayouts") {
@@ -66,7 +66,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageDescriptionIsLoadedWithThePackageAsItsSource() throws {
+  func packageDescriptionLoadedWithPackageAsItsSource() throws {
     try ModPackageFixture.with { fixture in
       let package = try install([Self.description("VendorPackLoaded")], in: fixture)
       _ = ControllerRecordSet.load(userDirectory: fixture.controllers)
@@ -80,7 +80,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageRefusesADescriptionThatIsNotDocumented() throws {
+  func packageRefusesDescriptionNotDocumented() throws {
     try ModPackageFixture.with { fixture in
       let wrongStem = try Self.description("VendorPackWrongStem")
       let refused: [[(name: String, data: Data)]] = [
@@ -95,7 +95,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageRecordMayUseTheFamilyOfItsOwnPackage() throws {
+  func packageRecordMayUseFamilyOfItsOwnPackage() throws {
     try ModPackageFixture.with { fixture in
       let record = try ModPackageFixture.record(0x1234, 0xAC02)
       var data = try #require(try PropertyListFixture.tree(record.data) as? [String: Any])
@@ -112,7 +112,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageDescriptionThatTheUserAlsoHoldsClashes() throws {
+  func packageDescriptionUserAlsoHoldsClashes() throws {
     try ModPackageFixture.with { fixture in
       let file = try Self.description("VendorClash")
       try fixture.write([file], kind: "Protocols", in: fixture.root)

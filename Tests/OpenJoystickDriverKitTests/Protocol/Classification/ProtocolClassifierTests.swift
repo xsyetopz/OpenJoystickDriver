@@ -214,7 +214,7 @@ struct ProtocolClassifierTests {
   /// #63: the GameSir G7 Pro dongle exposes a HID gamepad interface and a HID interface with a
   /// vendor usage; the bundled record's `HIDDescriptor` mode binds the gamepad one.
   @Test
-  func theGameSirDongleBindsItsHIDDescriptorMode() async throws {
+  func gameSirDongleBindsItsHIDDescriptorMode() async throws {
     func hid(
       _ number: UInt8,
       _ usage: HIDUsageSignature,
@@ -255,7 +255,7 @@ struct ProtocolClassifierTests {
   }
 
   @Test
-  func transportMismatchWithTheRecordIsUnsupportedAndNeverGenericHID() throws {
+  func transportMismatchWithRecordUnsupportedAndNeverGenericHID() throws {
     // A raw-USB record observed through IOHID with no usable HID interface.
     #expect(
       classify(

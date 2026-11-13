@@ -47,7 +47,7 @@ struct RemappingProfileStrictDecodingTests {
   }
 
   @Test
-  func anApplicationScopeWithAppIDIsRefusedByName() {
+  func applicationScopeWithAppIDRefusedByName() {
     do {
       _ = try JSONDecoder().decode(
         RemappingApplicationScope.self,

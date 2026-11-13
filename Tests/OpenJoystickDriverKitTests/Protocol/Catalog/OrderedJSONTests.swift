@@ -225,7 +225,7 @@ struct OrderedJSONTests {
   /// `biome format` output for `{"k": [s, s]}` with `s` 16 and 17 ideographs: 79 columns stay on
   /// one line, 83 break, while the line is 47 and 49 characters long.
   @Test
-  func anArrayOfWideTextBreaksByColumns() {
+  func arrayOfWideTextBreaksByColumns() {
     func formatted(_ count: Int) -> String {
       let word = OrderedJSON.string(String(repeating: "日", count: count))
       return OrderedJSON.object([.init(key: "k", value: .array([word, word]))]).formatted()

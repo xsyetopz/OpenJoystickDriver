@@ -46,7 +46,7 @@ struct ProfileConversionTests {
   }
 
   @Test
-  func keepsEachBindingWhoseSourceControlTheTargetHasAndListsTheRest() throws {
+  func keepsEachBindingWhoseSourceControlTargetHasAndListsRest() throws {
     let kept = Self.binding(.button(.south))
     let dpad = Self.binding(.dpad(.up))
     let lost = Self.binding(.button(.leftPaddle1))
@@ -65,7 +65,7 @@ struct ProfileConversionTests {
   }
 
   @Test
-  func theResultIsANewProfileForTheTargetModel() {
+  func resultNewProfileForTargetModel() {
     let profile = RemappingProfile(
       name: "Pad",
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x028E, unit: "U-0123456789abcdef"),
@@ -84,7 +84,7 @@ struct ProfileConversionTests {
   }
 
   @Test
-  func theOriginalStaysUnchanged() {
+  func originalStaysUnchanged() {
     let profile = RemappingProfile(
       name: "Pad",
       device: Self.source,
@@ -99,7 +99,7 @@ struct ProfileConversionTests {
   }
 
   @Test
-  func aChordKeepsOnlyWhenTheTargetHasEverySource() {
+  func chordKeepsOnlyWhenTargetHasEverySource() {
     let whole = RemappingChord(
       sources: [.button(.south), .button(.east)],
       destination: .keyboard(key: .space, modifiers: [])
@@ -135,7 +135,7 @@ struct ProfileConversionTests {
   }
 
   @Test
-  func aLayerGoesWhenItsActivatorOrAnyContentIsMissing() {
+  func layerGoesWhenItsActivatorOrAnyContentMissing() {
     let kept = RemappingLayer(
       name: "Shift",
       activationMode: .hold,
@@ -203,7 +203,7 @@ struct ProfileConversionTests {
   }
 
   @Test
-  func settingsThatNeedAnAbsentPartAreLeftOutAndTheRestStays() {
+  func settingsNeedAbsentPartLeftOutAndRestStays() {
     let stick = RemappingStickMapping(source: .right, mode: .aim)
     let profile = RemappingProfile(
       name: "Pad",

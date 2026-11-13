@@ -34,7 +34,7 @@ struct ZDUltimateLegendRecordTests {
   }
 
   @Test
-  func theWiredPadReadsTheCapturedReportAsNoButtonAndNoTrigger() throws {
+  func wiredPadReadsCapturedReportAsNoButtonAndNoTrigger() throws {
     let state = try wiredRecord().replay(reports: [Self.capturedReport]).state
     #expect(state.pressed.isEmpty)
     #expect(state.hat == .neutral)
@@ -43,7 +43,7 @@ struct ZDUltimateLegendRecordTests {
   }
 
   @Test
-  func theWiredPadMapsEveryReportedControlLikeTheWiredXbox360() throws {
+  func wiredPadMapsEveryReportedControlLikeWiredXbox360() throws {
     let record = try wiredRecord()
     for entry in Self.controlBytes {
       var report = [UInt8](repeating: 0, count: 20)
@@ -57,7 +57,7 @@ struct ZDUltimateLegendRecordTests {
   }
 
   @Test
-  func theWiredPadSendsRumbleAndTheIndicatorToOutEndpoint0x02() throws {
+  func wiredPadSendsRumbleAndIndicatorToOutEndpoint0x02() throws {
     let transport = try wiredRecord().profile.transportProfile
     #expect(transport.inputEndpoint == 0x81)
     #expect(transport.outputEndpoint == 0x02)
@@ -69,7 +69,7 @@ struct ZDUltimateLegendRecordTests {
   /// `SameIdentityDongleTests` bind both shapes, so a fixed `Receiver` or `Wired` record would
   /// break one of them.
   @Test
-  func theDongleHasNoBundledRecordUntilItsXInputInterfaceIsCaptured() {
+  func dongleHasNoBundledRecordUntilItsXInputInterfaceCaptured() {
     #expect(ControllerRecordSet.bundled.records[Self.dongle] == nil)
   }
 
@@ -77,7 +77,7 @@ struct ZDUltimateLegendRecordTests {
   /// one 64-byte output and no Generic Desktop usage, so a `HIDDescriptor` mode cannot read a pad
   /// from it.
   @Test
-  func theDonglesHIDDescriptorIsVendorDefinedWithNoGamepadUsage() throws {
+  func donglesHIDDescriptorVendorDefinedWithNoGamepadUsage() throws {
     let descriptor = try #require(
       Data(base64Encoded: "Bnr/CQGhAQkCoQAJAxUAJf91CJVAgQIJBZECwMA=")
     )

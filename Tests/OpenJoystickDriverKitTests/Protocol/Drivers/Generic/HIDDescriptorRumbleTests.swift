@@ -16,7 +16,7 @@ struct HIDDescriptorRumbleTests {
   }
 
   @Test
-  func aDriverWithoutATemplateHasNoOutput() {
+  func driverWithoutTemplateHasNoOutput() {
     let driver = HIDDescriptorDriver(model: Self.model)
     #expect(driver.outputCapabilities == .none)
     #expect(throws: ControllerOutputError.self) {
@@ -25,7 +25,7 @@ struct HIDDescriptorRumbleTests {
   }
 
   @Test
-  func aTemplateGivesTheDriverRumbleAndEncodesItIntoAHIDReport() throws {
+  func templateGivesDriverRumbleAndEncodesItIntoAHIDReport() throws {
     let driver = HIDDescriptorDriver(
       model: Self.model,
       usageMap: nil,
@@ -41,7 +41,7 @@ struct HIDDescriptorRumbleTests {
   }
 
   @Test
-  func aResendIntervalRepeatsTheLastReportWhileAMotorRuns() throws {
+  func resendIntervalRepeatsLastReportWhileMotorRuns() throws {
     let driver = HIDDescriptorDriver(
       model: Self.model,
       usageMap: nil,

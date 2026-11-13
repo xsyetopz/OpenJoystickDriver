@@ -25,7 +25,7 @@ struct ControllerRecordStartupDecodeMessageTests {
   }
 
   @Test
-  func aPacketReferenceInARecordNamesTheKey() {
+  func packetReferenceInRecordNamesKey() {
     #expect(
       Self.message(#"{"packet": "xbox/start-input"}"#)
         == "046d-c21d.plist, session.startup[].packet: A startup packet reference is only for "
@@ -34,7 +34,7 @@ struct ControllerRecordStartupDecodeMessageTests {
   }
 
   @Test
-  func anUnknownTransportNamesTheKey() {
+  func unknownTransportNamesKey() {
     #expect(
       Self.message("{\(Self.report), \"transport\": \"Radio\"}")
         == "046d-c21d.plist, session.startup[].transport: A startup transport must be USB, "
@@ -43,7 +43,7 @@ struct ControllerRecordStartupDecodeMessageTests {
   }
 
   @Test
-  func anUnknownPhaseNamesTheKey() {
+  func unknownPhaseNamesKey() {
     #expect(
       Self.message("{\(Self.report), \"phase\": \"Boot\"}")
         == "046d-c21d.plist, session.startup[].phase: A startup phase must be Startup or "
@@ -52,7 +52,7 @@ struct ControllerRecordStartupDecodeMessageTests {
   }
 
   @Test
-  func aSeedOutsideItsRangeNamesTheKey() {
+  func seedOutsideItsRangeNamesKey() {
     #expect(
       Self.message("{\(Self.report), \"crc32Seed\": 256}")
         == "046d-c21d.plist, session.startup[].crc32Seed: A startup crc32Seed must be 0...255. "
@@ -61,7 +61,7 @@ struct ControllerRecordStartupDecodeMessageTests {
   }
 
   @Test
-  func aUSBEndpointOutsideItsRangeNamesTheKey() {
+  func usbEndpointOutsideItsRangeNamesKey() {
     #expect(
       Self.message(#"{"bytes": "01", "endpoint": 128}"#)
         == "046d-c21d.plist, session.startup[].endpoint: A USB startup endpoint must be "

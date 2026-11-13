@@ -103,7 +103,7 @@ struct SonySensorSamplesTests {
   }
 
   @Test
-  func touchpadEdgesMapToTheFullRangeWithTopAtZero() {
+  func touchpadEdgesMapToFullRangeWithTopAtZero() {
     // DS4 1920x942 and DualSense 1920x1080: the first raw position is 0, the last is 65535, the
     // raw 12-bit overflow clamps, and raw Y grows downward, so the top edge is Y 0.
     #expect(

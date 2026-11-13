@@ -27,7 +27,7 @@ struct BindingTemplateTests {
   }
 
   @Test
-  func everyTemplateBindsItsControlsByStandardNameOnAFullController() throws {
+  func everyTemplateBindsItsControlsByStandardNameOnFullController() throws {
     for template in RemappingBindingTemplate.allCases {
       let made = Self.made(template, controls: Set(Control.allCases))
       #expect(made.skipped.isEmpty)
@@ -37,14 +37,14 @@ struct BindingTemplateTests {
   }
 
   @Test
-  func theKeyboardNavigationTemplateBindsTheDpadToArrowKeys() {
+  func keyboardNavigationTemplateBindsDpadToArrowKeys() {
     let made = Self.made(.keyboardNavigation, controls: Set(Control.allCases))
     let up = made.profile.bindings.first { $0.source == .dpad(.up) }
     #expect(up?.destination == .keyboard(key: .arrowUp, modifiers: []))
   }
 
   @Test
-  func aTemplateSkipsAControlTheControllerLacksAndListsIt() {
+  func templateSkipsControlControllerLacksAndListsIt() {
     let controls = Set(Control.allCases).subtracting([.dpadLeft, .east])
     let made = Self.made(.keyboardNavigation, controls: controls)
     #expect(Set(made.skipped) == [.dpadLeft, .east])
@@ -55,7 +55,7 @@ struct BindingTemplateTests {
   }
 
   @Test
-  func aTemplateForAControllerWithNoneOfItsControlsSkipsAllOfThem() {
+  func templateForControllerWithNoneOfItsControlsSkipsAllOfThem() {
     let made = Self.made(.mouseClicks, controls: [])
     #expect(made.profile.bindings.isEmpty)
     #expect(made.skipped == RemappingBindingTemplate.mouseClicks.controls)
