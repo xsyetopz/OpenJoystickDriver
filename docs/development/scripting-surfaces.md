@@ -62,7 +62,7 @@ The `mod` group handles a package folder with a `mod.plist` manifest and `Contro
 
 The wiki names the output and prompt options as `--json` and `--no-input`, and scripts read JSON with them (`wiki/Automating-OpenJoystickDriver.md:25-35`).
 
-No command named `generate` exists under `CLI/`: `grep -rn '"generate"' Sources/OpenJoystickDriverCLI` finds nothing. The design text plans `ojd generate` (`openspec/changes/0-6-0-alpha-3/design.md`, decision D2).
+No command named `generate` exists under `CLI/`: `grep -rn '"generate"' Sources/OpenJoystickDriverCLI` finds nothing.
 
 ## The local endpoint
 
@@ -130,13 +130,13 @@ Gaps for a mod author: 11, with item 6 narrowed to the speaker.
 
 ## Tried against the installed build
 
-The endpoint surfaces of tasks 6.11 to 6.15 ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token that held `Read` and `Control`. Each script and its output are in `evidence/scripting/`; `access-before.txt` and `access-after.txt` show the endpoint off, with no grant or token, before and after. The scripts used a scratch profile and a scratch mod package, both removed afterwards. No controller was connected during the run (`ojd controller list` printed `No controllers are connected.`).
+The endpoint surfaces below ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token that held `Read` and `Control`. Before and after the run, the endpoint was off, with no grant or token. The scripts used a scratch profile and a scratch mod package, both removed afterwards. No controller was connected during the run (`ojd controller list` printed `No controllers are connected.`).
 
-| Surface | Script, output | Result |
-| --- | --- | --- |
-| `ProfileRequest` (6.11) | `profile_request.py`, `profile_request.txt` | `Activate`, `Set` (`name`), and `Deactivate` each answered a `ProfileResult`. An unknown profile got `E2012` and the connection stayed open. A `Set` without `value` got `E1003`. A `Read`-only client got `E1002`. |
-| `ModList` (6.12) | `mod_list.py`, `mod_list.txt` | `Mods` was empty, listed `scratch-trial` after `ojd mod install` on the same connection, and was empty after `ojd mod remove`. A `Control`-only client got `E1002`. |
-| `OutputRequest` (6.13) | `output_request.py`, `output_request.txt` | The refusal works; delivery is not shown. With the 8BitDo Ultimate 2C served over Bluetooth LE by `HIDDescriptor`, `Rumble`, `Player` and `Light` each got `E2013` ("has no rumble motor", "no player indicator lights", "no programmable light color"), the code and text `ojd controller rumble`, `player` and `light` print. An unknown controller got `E2012`, and an out-of-range `duration` got `E1003`. Delivery needs a controller served with that output, such as the 2C on its cable or receiver. |
-| `Profiles` and `Mods` subscriptions (6.14) | `subscriptions.py`, `subscriptions.txt` | Each sent the list at once and again after each change made through `ojd`. `output` on `Profiles` and an unknown stream got `E1003`. |
-| Personas (6.15) | `feed_persona.py`, `feed_persona.txt` | `Generic`, `SDLCompatible` and `GameControllerCompatible` each answered a `FeedSession`, and a frame and a `Drain` answered `Drained`. `DualShock` got `E1003` with the accepted personas, and a `Read`-only client got `E1002`. |
-| App Intents (6.11 to 6.13) | `app-intents.txt` | Not run. `shortcuts list` prints no shortcut, and no command runs an intent by name. |
+| Surface | Result |
+| --- | --- |
+| `ProfileRequest` | `Activate`, `Set` (`name`), and `Deactivate` each answered a `ProfileResult`. An unknown profile got `E2012` and the connection stayed open. A `Set` without `value` got `E1003`. A `Read`-only client got `E1002`. |
+| `ModList` | `Mods` was empty, listed `scratch-trial` after `ojd mod install` on the same connection, and was empty after `ojd mod remove`. A `Control`-only client got `E1002`. |
+| `OutputRequest` | The refusal works; delivery is not shown. With the 8BitDo Ultimate 2C served over Bluetooth LE by `HIDDescriptor`, `Rumble`, `Player` and `Light` each got `E2013` ("has no rumble motor", "no player indicator lights", "no programmable light color"), the code and text `ojd controller rumble`, `player` and `light` print. An unknown controller got `E2012`, and an out-of-range `duration` got `E1003`. Delivery needs a controller served with that output, such as the 2C on its cable or receiver. |
+| `Profiles` and `Mods` subscriptions | Each sent the list at once and again after each change made through `ojd`. `output` on `Profiles` and an unknown stream got `E1003`. |
+| Personas | `Generic`, `SDLCompatible` and `GameControllerCompatible` each answered a `FeedSession`, and a frame and a `Drain` answered `Drained`. `DualShock` got `E1003` with the accepted personas, and a `Read`-only client got `E1002`. |
+| App Intents | Not run. `shortcuts list` prints no shortcut, and no command runs an intent by name. |

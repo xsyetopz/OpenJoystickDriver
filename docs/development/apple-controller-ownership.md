@@ -57,7 +57,7 @@ Local macOS 27.2 (Darwin 27.2.0) observations, not a public compatibility contra
 
 Those plists explain why macOS can report an exclusive owner for some controllers. Apple can change this implementation snapshot; absence does not prove a controller is unsupported. The signed entitlement scope, the catalog, and hardware evidence decide what OJD serves.
 
-Hardware-gated: no capture shows OJD serving `02EA`, `0B00`, or `0B12` through the extension. Task 4.9 of `openspec/changes/0-6-0-alpha-3` runs that check.
+Hardware-gated: no capture shows OJD serving `02EA`, `0B00`, or `0B12` through the extension. That check is still to run.
 
 ## Security Boundary
 

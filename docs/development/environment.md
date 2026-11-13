@@ -27,8 +27,8 @@ The signing configurator updates recognized signing keys in the selected root fi
 
 GitHub injects workflow secrets directly; CI neither creates nor requires a local `.env` file. GitHub does not allow reading those values back. The local analogues are:
 
-- certificate and profile secrets → Keychain identities plus the Developer ID profiles consumed by `signing configure` (or `signing ci-release-setup` on the runner);
-- `NOTARIZE_APPLE_ID` / `NOTARIZE_PASSWORD` → the same keys in `.env.release`, or `NOTARIZE_KEYCHAIN_PROFILE` after storing credentials in Keychain.
+- certificate and profile secrets: Keychain identities plus the Developer ID profiles consumed by `signing configure` (or `signing ci-release-setup` on the runner);
+- `NOTARIZE_APPLE_ID` / `NOTARIZE_PASSWORD`: the same keys in `.env.release`, or `NOTARIZE_KEYCHAIN_PROFILE` after storing credentials in Keychain.
 
 Do not copy the CI-only `*_BASE64` / `CERTIFICATE_SECRET` / `KEYCHAIN_SECRET` keys into `.env.dev` or `.env.release`.
 

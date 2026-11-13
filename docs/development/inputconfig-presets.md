@@ -1,11 +1,11 @@
 # InputConfig preset library: import measurement
 
-This page measures whether an importer for InputConfig's library presets is worth writing (task 16.10 of `0-6-0-alpha-3`). It writes no importer. Each claim is marked observed (read in a file or printed by the script) or inferred.
+This page measures whether an importer for InputConfig's library presets is worth writing. It writes no importer. Each claim is marked observed (read in a file or printed by the script) or inferred.
 
 ## Source and scope
 
 - Observed: the repository is `https://github.com/ryleighnewman/InputConfig`, read at commit `958bdd97ceecb182004b3d7d8521761b5a7e7756` ("1.8 (34)"), in a clone kept outside this repository. Nothing from the clone was run or built.
-- Observed: the library is a JSON array in the Swift raw string `ExamplePresets.swift` (`static let libraryJSON`, decoded into `SmartPresetProfile` at line 2996). It holds 456 profiles with 456 distinct ids: 294 `game`, 125 `app`, 37 `workflow`. The README calls it "more than 450". The app also ships built-in presets written as Swift code (`ExamplePresets.swift`, `static var ...: Preset`). `design.md` counts them as 46. They are outside this measurement; they are Swift values, not data.
+- Observed: the library is a JSON array in the Swift raw string `ExamplePresets.swift` (`static let libraryJSON`, decoded into `SmartPresetProfile` at line 2996). It holds 456 profiles with 456 distinct ids: 294 `game`, 125 `app`, 37 `workflow`. The README calls it "more than 450". The app also ships built-in presets written as Swift code (`ExamplePresets.swift`, `static var ...: Preset`). They number 46. They are outside this measurement; they are Swift values, not data.
 - Observed: the license file is `LICENSE` at the repository root, MIT, "Copyright (c) 2026 Ryleigh Newman". The repository has no `NOTICE` file and no separate license for the preset data.
 
 ## The library preset format
@@ -57,7 +57,7 @@ The OJD shape is `Resources/Schemas/profile.schema.json` (`v1alpha3`). One libra
 Notes on the table:
 
 - Observed: `Destination.swift` and the schema define a `Keyboard` destination with a required `key` from a list that has no modifier key. A row that holds Shift, Control, Option, or Command alone, such as sprint on Left Shift, has no OJD destination.
-- Observed: in the Minecraft row set, `axi 1 -` is "Walk forward" (`key 26`), so the library takes negative as up. `wiki/Controller-Records.md` lists W3C as "negative is left or up" and Apple GameController as "positive up". Not checked: which of the two the OJD engine reads for `LeftStickY`, which `design.md` leaves untraced (#33). An importer needs that answer before it writes any `axi 1` or `axi 3` row. It decides nothing in the counts.
+- Observed: in the Minecraft row set, `axi 1 -` is "Walk forward" (`key 26`), so the library takes negative as up. `wiki/Controller-Records.md` lists W3C as "negative is left or up" and Apple GameController as "positive up". Not checked: which of the two the OJD engine reads for `LeftStickY`, which no page traces. An importer needs that answer before it writes any `axi 1` or `axi 3` row. It decides nothing in the counts.
 - Inferred: a speed of 6 to 28 in `mou` and `whe` has no stated unit in OJD. The importer would pick a gain per speed by measuring. The counts treat speed as mapped; if a lossless speed is required, the 360 presets with `mou` and 130 with `whe` need a measurement first.
 - Inferred: `hold` and `double` map by type and range. The timing semantics (the tap output, and when it fires) were not compared; two presets use them.
 
@@ -150,10 +150,10 @@ What follows is a reading of that text, not legal advice.
 - Observed: MIT permits sublicensing. OJD's own MPL-2.0 terms apply to OJD's files, but the MIT notice and the warranty disclaimer stay with the portions taken from InputConfig. Inferred: the converted profiles stay under the MIT terms; the MPL-2.0 license cannot remove them.
 - An importer that reads preset files the user exports from InputConfig, and ships none of its data, copies nothing and needs no notice. Observed: the library is compiled into the InputConfig app as a Swift string; no export file of it exists in the repository. Inferred: only a bundled conversion is practical, so the notice applies.
 - The MIT license covers the code and data of the repository. It does not give rights to the names of the games and apps in the presets or to their trademarks. Not checked beyond the license text.
-- `design.md` D24 says this change "copies no code and no preset file, so it adds no notice". A bundled importer reverses that; D24 and `THIRD_PARTY_NOTICES.md` would change in the same commit.
+- OJD today copies no code and no preset file from InputConfig, so it adds no notice. A bundled importer reverses that, and `THIRD_PARTY_NOTICES.md` would change in the same commit.
 
 ## Verdict
 
 - Inferred: a mechanical import that loses nothing covers 117 of 456 presets (26%). The preset-level settings cost most of the rest.
-- Inferred: two OJD changes would raise the count most: a keyboard destination for a modifier key alone (blocks 217 presets), and a profile-level app launch or a way to drop it (blocks 136 with `appPath`). Each needs its own task and a design decision; neither is made here.
+- Inferred: two OJD changes would raise the count most: a keyboard destination for a modifier key alone (blocks 217 presets), and a profile-level app launch or a way to drop it (blocks 136 with `appPath`). Neither change is made here.
 - Not measured: the 46 built-in presets, the calibration of `mou` and `whe` speeds, the Y direction convention, and the `hold` and `double` timing.
