@@ -74,6 +74,44 @@ struct ReportLayoutDriverTests {
     }
   }
 
+  /// The same issue #38 mapping file: byte 1 bits 0 to 3, the four pressure D-pad bytes, the
+  /// trigger bytes and the stick X bytes.
+  @Test
+  func gp100MapsMenuBitsDpadTriggersAndStickX() throws {
+    let bits: [UInt8: Control] = [
+      0x01: .back, 0x02: .start, 0x04: .leftStickClick, 0x08: .rightStickClick,
+    ]
+    for (mask, control) in bits {
+      let driver = try catalogDriver(gp100Model)
+      #expect(
+        try driver.parseReport(gp100Report([1: mask]))?.state == snapshot(.press(control))
+      )
+    }
+    let hats: [Int: HatDirection] = [7: .east, 8: .west, 9: .north, 10: .south]
+    for (offset, direction) in hats {
+      let driver = try catalogDriver(gp100Model)
+      #expect(
+        try driver.parseReport(gp100Report([offset: 0xFF]))?.state == snapshot(.hat(direction))
+      )
+    }
+    #expect(
+      try catalogDriver(gp100Model).parseReport(gp100Report([17: 0xFF]))?.state
+        == snapshot(.leftTrigger(1))
+    )
+    #expect(
+      try catalogDriver(gp100Model).parseReport(gp100Report([18: 0xFF]))?.state
+        == snapshot(.rightTrigger(1))
+    )
+    #expect(
+      try catalogDriver(gp100Model).parseReport(gp100Report([3: 0xFF]))?.state
+        == snapshot(.leftStick(x: 1, y: 0))
+    )
+    #expect(
+      try catalogDriver(gp100Model).parseReport(gp100Report([5: 0xFF]))?.state
+        == snapshot(.rightStick(x: 1, y: 0))
+    )
+  }
+
   @Test
   func gp100IgnoresByteZeroAndTheHatNibble() throws {
     let driver = try catalogDriver(gp100Model)
