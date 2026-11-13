@@ -433,9 +433,19 @@
     }
 
     /// Widens the list column's minimum so the title and subtitle end inside it.
+    ///
+    /// The fit lays out the window, so it waits for the next turn of the run loop: a `@Published`
+    /// sink runs before the value changes, and a layout there draws the hosted views with the old
+    /// value.
     private func fitListToTitle() {
-      guard let window, MainWindowTitleFit.fit(listItem, in: window) else { return }
-      applyMinimumSize(to: window)
+      RunLoop.main.perform { [weak self] in
+        MainActor.assumeIsolated {
+          guard let self, let window = self.window,
+            MainWindowTitleFit.fit(self.listItem, in: window)
+          else { return }
+          self.applyMinimumSize(to: window)
+        }
+      }
     }
   }
 
