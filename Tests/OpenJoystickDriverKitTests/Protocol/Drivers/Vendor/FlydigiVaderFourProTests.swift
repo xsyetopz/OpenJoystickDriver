@@ -100,7 +100,7 @@ struct FlydigiVaderFourProBluetoothXInputTests {
     try #require(try catalogParser(model, host: .bluetoothClassic) as? ReportLayoutDriver)
   }
 
-  /// Unsigned 16-bit axes centred at 0x7FFF: the neutral report is centred, 0xFFFF is full right
+  /// Unsigned 16-bit axes centered at 0x7FFF: the neutral report is centered, 0xFFFF is full right
   /// and 0x0000 full left, where a signed read wraps everything above 0x8000 negative.
   @Test
   func unsignedAxesCentreAtSevenFFFAndReachBothEnds() throws {

@@ -5,8 +5,8 @@ import Testing
 
 /// The SteelSeries Nimbus `1038:1420` record, from its descriptor layout and SDL's mapping.
 ///
-/// No capture of the pad backs these tests; the descriptor below is written from the layout the
-/// task brief gives: four D-pad pressure bytes, eight button pressure bytes, one Consumer AC Home
+/// No capture of the pad backs these tests; the descriptor below is written from an assumed
+/// layout: four D-pad pressure bytes, eight button pressure bytes, one Consumer AC Home
 /// bit and four signed stick bytes. The record's Menu, threshold and axis signs wait for a
 /// capture from the pad.
 struct SteelSeriesNimbusTests {

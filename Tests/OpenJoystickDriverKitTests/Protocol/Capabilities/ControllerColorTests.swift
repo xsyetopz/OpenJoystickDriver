@@ -3,7 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The persisted profile JSON shape of `ControllerColor`, alone and in a physical colour output.
+/// The persisted profile JSON shape of `ControllerColor`, alone and in a physical color output.
 struct ControllerColorTests {
   func json(_ value: some Encodable) throws -> String {
     let encoder = JSONEncoder()

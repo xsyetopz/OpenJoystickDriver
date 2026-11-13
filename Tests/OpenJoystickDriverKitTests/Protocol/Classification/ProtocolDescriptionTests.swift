@@ -793,7 +793,7 @@ struct ProtocolDescriptionTests {
     #expect(mixed.rumbleTemplate(variant: .bluetoothClassic)?.report?.reportID == 2)
   }
 
-  /// The spec scenario: a family's interval is edited in its description, and every record of the
+  /// A family's interval is edited in its description, and every record of the
   /// family follows it.
   ///
   /// A record has no interval of its own.

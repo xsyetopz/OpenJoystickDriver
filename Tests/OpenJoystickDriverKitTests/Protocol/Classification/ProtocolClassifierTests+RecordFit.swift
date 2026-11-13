@@ -4,7 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// D18: a record whose modes fit no interface of the device falls back to the `HIDDescriptor`
+/// A record whose modes fit no interface of the device falls back to the `HIDDescriptor`
 /// rule when a HID interface meets that contract.
 extension ProtocolClassifierTests {
   private static let dongle = ControllerModelID(vendorID: 0x3537, productID: 0x1022)

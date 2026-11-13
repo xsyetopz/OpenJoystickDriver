@@ -59,7 +59,7 @@ struct VirtualHIDProfileSelectorTests {
     #expect(Set(Control.allCases).subtracting(Selector.primaryControls) == nonPrimary)
   }
 
-  /// Both profiles carry every primary control today, so automatic selection always takes
+  /// Both profiles carry every primary control, so automatic selection always takes
   /// `SDLCompatible`, an override is always satisfiable, and `virtual-profile-unavailable` cannot
   /// occur with the real profiles.
   ///

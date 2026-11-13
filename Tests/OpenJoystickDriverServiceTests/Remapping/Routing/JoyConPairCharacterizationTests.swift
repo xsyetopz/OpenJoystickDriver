@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 @testable import OpenJoystickDriverService
 
-/// Pins how a Joy-Con pair routes both halves into one engine device today.
+/// Pins how a Joy-Con pair routes both halves into one engine device.
 ///
 /// Each step sets one half's full button mask and stick in a full-mode `0x30` report, parses it
 /// with that half's catalog driver, and dispatches the parsed events from that half. The step line

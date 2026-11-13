@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Reports built from the layout of the pinned protocol notes for the Apex 4 in DInput mode, not
-/// captured from a pad: report ID 4 in byte 0, 32 bytes, sticks centred at `0x7F`.
+/// captured from a pad: report ID 4 in byte 0, 32 bytes, sticks centered at `0x7F`.
 private enum SourceReport {
   static let model = ControllerModelID(vendorID: 0x04B4, productID: 0x2412)
 
@@ -52,7 +52,7 @@ struct FlydigiApexFourTests {
     #expect(try driver.parseReport(SourceReport.with([9: mask])).contains(.hat(direction)))
   }
 
-  /// Sticks centre at `0x7F`, and a low raw Y is up, as in the notes.
+  /// Sticks center at `0x7F`, and a low raw Y is up, as in the notes.
   @Test
   func sticksAndTriggersReadTheirBytes() throws {
     let driver = try Self.driver()

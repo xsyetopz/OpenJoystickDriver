@@ -25,7 +25,7 @@ extension PhysicalOutputExecutorTests {
     await manager.stop()
   }
 
-  /// A profile colour, and its removal, are accepted through the sink for a connected controller.
+  /// A profile color, and its removal, are accepted through the sink for a connected controller.
   @Test
   func profileColorThroughSinkIsAcceptedForConnectedController() async throws {
     let started = try await startSixaxis(locationID: 541)
@@ -57,7 +57,7 @@ extension PhysicalOutputExecutorTests {
     await manager.stop()
   }
 
-  /// A profile colour whose lightbar write fails is refused through the sink.
+  /// A profile color whose lightbar write fails is refused through the sink.
   @Test
   func profileColorThroughSinkIsRefusedWhenWriteFails() async throws {
     let started = try await startSixaxis(locationID: 543, productID: 0x05C4)

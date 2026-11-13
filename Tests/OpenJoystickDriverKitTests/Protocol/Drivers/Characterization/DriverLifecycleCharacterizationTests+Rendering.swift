@@ -37,7 +37,7 @@ extension DriverLifecycleCharacterizationTests {
     return lines
   }
 
-  /// Labelled by destination: USB packets, HID output reports, or feature-report haptics.
+  /// Labeled by destination: USB packets, HID output reports, or feature-report haptics.
   func rumbleOutputs(_ driver: any PhysicalProtocolDriver, prefix: String) -> [String] {
     guard
       let plan = driver.encoded(
@@ -45,7 +45,7 @@ extension DriverLifecycleCharacterizationTests {
       )
     else { return [] }
     let caps = driver.outputCapabilities
-    // Declaration order, as the drivers listed their motors.
+    // Declaration order, matching how the drivers list their motors.
     let motors = names(PhysicalRumbleMotor.allCases.filter(caps.rumbleMotors.contains))
     switch plan.writes.first {
     case .usb: return ["\(prefix).usbRumble motors=\(motors)"] + plan.writes.flatMap(render)

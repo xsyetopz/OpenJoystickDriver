@@ -5,10 +5,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Pins what each registry-built protocol driver hands the pipeline today, so replacing the
+/// Pins what each registry-built protocol driver hands the pipeline, so replacing the
 /// parser lifecycle and output protocols cannot change bytes or flags silently.
 ///
-/// Rendering rules for later slices, which may change the concern helpers but not the pins:
+/// Rendering rules; the concern helpers may change, the pins may not:
 /// - Every concern builds a fresh driver, so sequence counters start at construction and a pin
 ///   does not depend on the order in which concerns run.
 /// - A driver is built for one bound variant, so each IOHID transport label renders the driver
