@@ -199,12 +199,15 @@ Select an item to see its fields and files.
 The **Record** section shows the record as its XML property list, colored by part, with the hexadecimal form of the vendor and product IDs beside their lines.
 **Copy All** copies the property list without those readings.
 
+Each record row has the VID:PID as its title and a gray line with the protocol family and where the record comes from.
+The gray line ends with **Apple-signed** for a controller that the Apple-signed USB extension claims.
+
 - **Install** adds a controller record file or a mod folder.
   **Validate...** checks it first.
   **Replace** overwrites an installed item with the same name.
   **Remove** deletes it after you confirm.
 - **Test Record...** replays a packet capture through a record and compares the result with the state you expect.
-- **Search** filters the list.
+- **Search** filters the list by VID:PID, protocol family, and **Apple-signed**.
 
 For more information, see [Writing controller mods](Writing-Controller-Mods.md) and [Controller records](Controller-Records.md).
 

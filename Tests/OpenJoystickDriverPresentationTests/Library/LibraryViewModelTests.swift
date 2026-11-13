@@ -290,6 +290,8 @@ struct LibraryViewModelTests {
 }
 
 struct DirectoryLibraryStoreTests {
+  init() { PlatformHosts.install(FakePlatformHost()) }
+
   private func directory() throws -> URL {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,

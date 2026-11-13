@@ -1356,6 +1356,8 @@
 "platform.macos.cli.controller.show.servedByMacOS" = "macOS が処理しています。拡張機能を有効にしてコントローラを引き継ぐには `ojd controller claim %@` を実行してください。";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "macOS が処理";
+/* Gray segment in a records list row for a controller that the Apple-signed USB extension claims. Apple is the company that signs the extension. */
+"platform.macos.ui.library.record.appleSigned" = "Apple 署名済み";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "引き継ぐ";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */

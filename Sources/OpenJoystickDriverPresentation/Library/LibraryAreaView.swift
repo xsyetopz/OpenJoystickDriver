@@ -102,13 +102,9 @@
       Text(OJDLocalized.string(key)).foregroundColor(.secondary)
     }
 
-    /// The row of a record: its identity, then its family and layer, and the file that patches it.
+    /// The row of a record: its identity, then its caption, and the file that patches it.
     private func recordRow(_ item: LibraryRecordItem) -> some View {
-      let summary = OJDLocalized.formatted(
-        "ui.library.record.detail",
-        item.family.displayName,
-        item.layer.libraryTitle
-      )
+      let summary = item.caption
       return VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Text(item.identity)
         Text(summary).font(.caption).foregroundColor(.secondary)

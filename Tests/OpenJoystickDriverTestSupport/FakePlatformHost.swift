@@ -8,7 +8,12 @@ package import Foundation
 /// A `PlatformHost` that reports an absent extension and no USB controllers, so tests never touch
 /// real USB or `systemextensionsctl`.
 package struct FakePlatformHost: PlatformHost {
-  package init() {}
+  /// The controllers the fake extension's entitlement covers.
+  private let covered: Set<ControllerModelID>
+
+  package init(entitlementCovers covered: Set<ControllerModelID> = []) {
+    self.covered = covered
+  }
 
   package var extensionID: String { "com.openjoystickdriver.fake-extension" }
 
@@ -32,7 +37,9 @@ package struct FakePlatformHost: PlatformHost {
 
   package func countVendorSpecificUSBControllers() async -> Int { 0 }
 
-  package func extensionEntitlementCovers(vendorID _: UInt16, productID _: UInt16) -> Bool { false }
+  package func extensionEntitlementCovers(vendorID: UInt16, productID: UInt16) -> Bool {
+    covered.contains(ControllerModelID(vendorID: vendorID, productID: productID))
+  }
 
   package var accessControl: any AccessControlSystem { FixedAccessControlSystem() }
 
