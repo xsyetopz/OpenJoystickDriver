@@ -50,6 +50,8 @@ public struct ControllerRecord: Sendable {
   ///
   /// A user file over it wins, and ``layer`` names the user.
   public let packageFile: URL?
+  /// The model's USB product string, as the device reports it; nil when the record names none.
+  public let name: String?
   /// The serial number that this model's firmware reports when it has none of its own; nil when
   /// the record names none.
   public let placeholderSerial: String?
@@ -386,6 +388,7 @@ public struct ControllerRecordSet: Sendable {
         ),
       userFile: userFile,
       packageFile: packageFile,
+      name: decoded.document.name,
       placeholderSerial: decoded.document.placeholderSerial,
       protocolID: decoded.document.protocolInfo.protocolID,
       tuningScope: Set(

@@ -170,6 +170,37 @@ struct ControllerRecordSetTests {
   }
 
   @Test
+  func recordNameHoldsUSBProductStringWhenGiven() throws {
+    var named: [String: Any] = [
+      "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
+      "vendorID": Int(Self.unbundled.vendorID), "productID": Int(Self.unbundled.productID),
+      "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
+      "name": "XBOX 360 For Windows",
+    ]
+    let record = try Self.record(Self.json(named))
+    #expect(record.name == "XBOX 360 For Windows")
+    #expect(record.fieldLayers["name"] == .user)
+    #expect(try Self.record(Self.add(Self.unbundled, family: "XboxGIP")).name == nil)
+    named["name"] = ""
+    #expect(Self.problemCode(try Self.json(named)) == .invalidControllerRecord)
+  }
+
+  @Test
+  func patchSetsRecordName() throws {
+    let record = try Self.record(Self.patch(Self.bundledGIP, set: ["name": "Pad"]))
+    #expect(record.name == "Pad")
+    #expect(record.fieldLayers["name"] == .user)
+    #expect(ControllerRecordSet.bundled.records[Self.bundledGIP]?.name == nil)
+  }
+
+  /// Issue 22 posts `USB_STRING product=XBOX 360 For Windows` for 413D:2104.
+  @Test
+  func bundledRecordCarriesPostedProductString() {
+    let model = ControllerModelID(vendorID: 0x413D, productID: 0x2104)
+    #expect(ControllerRecordSet.bundled.records[model]?.name == "XBOX 360 For Windows")
+  }
+
+  @Test
   func recordsThatDoNotFitTheCatalogAreRejected() throws {
     #expect(
       Self.problem(try Self.add(Self.bundledGIP, family: "XboxGIP"))
@@ -212,9 +243,9 @@ struct ControllerRecordSetTests {
         == "record.usb: USB overrides require a raw-USB protocol family"
     )
     #expect(
-      Self.problem(try Self.patch(Self.bundledGIP, set: ["name": "Other"]))
-        == "patch must hold modes, placeholderSerial, usb, bluetoothLE, capabilities, server, "
-        + "route, heldByAppleDriver, input, or tuning; the selector names the identity"
+      Self.problem(try Self.patch(Self.bundledGIP, set: ["label": "Other"]))
+        == "patch must hold modes, name, placeholderSerial, usb, bluetoothLE, capabilities, "
+        + "server, route, heldByAppleDriver, input, or tuning; the selector names the identity"
     )
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["tuning": ["hidStartupIntervalMs": 5]]))

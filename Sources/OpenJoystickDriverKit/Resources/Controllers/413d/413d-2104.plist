@@ -20,6 +20,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>name</key>
+	<string>XBOX 360 For Windows</string>
 	<key>productID</key>
 	<integer>8452</integer>
 	<key>usb</key>

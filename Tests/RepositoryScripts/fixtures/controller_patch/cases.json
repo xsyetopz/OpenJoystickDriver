@@ -2106,7 +2106,7 @@
         },
         "patch": {}
       },
-      "message": "patch must hold modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning; the selector names the identity",
+      "message": "patch must hold modes, name, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning; the selector names the identity",
       "code": "E5007"
     },
     {
@@ -2119,10 +2119,10 @@
           "productID": 746
         },
         "patch": {
-          "name": "x"
+          "label": "x"
         }
       },
-      "message": "patch must hold modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning; the selector names the identity",
+      "message": "patch must hold modes, name, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning; the selector names the identity",
       "code": "E5007"
     },
     {
@@ -2380,7 +2380,7 @@
           1
         ]
       },
-      "message": "patch must hold modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning; the selector names the identity",
+      "message": "patch must hold modes, name, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning; the selector names the identity",
       "code": "E5007"
     }
   ]

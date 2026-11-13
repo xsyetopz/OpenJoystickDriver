@@ -8,6 +8,8 @@
 	<string>ControllerPatch</string>
 	<key>patch</key>
 	<dict>
+		<key>name</key>
+		<string>XBOX 360 For Windows</string>
 		<key>usb</key>
 		<dict>
 			<key>endpoints</key>

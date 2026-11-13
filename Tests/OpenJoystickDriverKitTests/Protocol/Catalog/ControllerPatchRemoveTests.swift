@@ -180,9 +180,9 @@ struct ControllerPatchRemoveTests {
     }
     #expect(
       try message(["vendorID": 1])
-        == "a.patch.plist, patch: Patch must hold modes, placeholderSerial, usb, bluetoothLE, "
-        + "capabilities, server, route, heldByAppleDriver, input, or tuning. Fix: Keep only those "
-        + "sections and give at least one of them."
+        == "a.patch.plist, patch: Patch must hold modes, name, placeholderSerial, usb, "
+        + "bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning. "
+        + "Fix: Keep only those sections and give at least one of them."
     )
     #expect(
       try message(["modes": [["protocol": ["family": "XInput"]]]])

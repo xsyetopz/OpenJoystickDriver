@@ -23,6 +23,8 @@ struct ControllerRecordDocument: Decodable {
   /// The record's modes: `default` and the alternatives of an HID controller, which are tried in
   /// order.
   let modes: [ModeDocument]
+  /// The model's USB product string, verbatim; nil when the record names none.
+  let name: String?
   /// The serial number that this model's firmware reports when it has none of its own; nil when
   /// the record names none.
   let placeholderSerial: String?
@@ -64,7 +66,7 @@ struct ControllerRecordDocument: Decodable {
       )
     }
     try container.rejectUnknown(allowed: [
-      "apiVersion", "kind", "vendorID", "productID", "modes", "placeholderSerial", "usb",
+      "apiVersion", "kind", "vendorID", "productID", "modes", "name", "placeholderSerial", "usb",
       "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input", "tuning",
     ])
     vendorID = try container.decode(Int.self, for: "vendorID")
@@ -94,12 +96,14 @@ struct ControllerRecordDocument: Decodable {
         )
       }
     }
+    name = try container.decodeOptional(String.self, for: "name")
     placeholderSerial = try container.decodeOptional(String.self, for: "placeholderSerial")
-    guard placeholderSerial?.isEmpty != true else {
+    for (key, value) in [("name", name), ("placeholderSerial", placeholderSerial)]
+    where value?.isEmpty == true {
       throw DecodingError.dataCorrupted(
         .init(
-          codingPath: decoder.codingPath + [DocumentKey("placeholderSerial")],
-          debugDescription: "placeholderSerial must not be empty"
+          codingPath: decoder.codingPath + [DocumentKey(key)],
+          debugDescription: "\(key) must not be empty"
         )
       )
     }
@@ -230,8 +234,8 @@ struct ControllerRecordDocument: Decodable {
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["byte", "encoding"])
-      let name = try container.decodeOptional(String.self, for: "encoding")
-      guard let encoding = name.map(RumbleMotorEncoding.init(rawValue:)) ?? .uInt8 else {
+      let encodingName = try container.decodeOptional(String.self, for: "encoding")
+      guard let encoding = encodingName.map(RumbleMotorEncoding.init(rawValue:)) ?? .uInt8 else {
         throw DecodingError.dataCorrupted(
           .init(
             codingPath: decoder.codingPath,
@@ -333,10 +337,13 @@ struct ControllerRecordDocument: Decodable {
       parameters = try container.decodeOptional(ProtocolParameters.self, for: "parameters") ?? .none
       initialization = try container.decodeNamedPacketList(of: family, for: "initialization")
       keepAliveEnabled = try container.decodeOptional(Bool.self, for: "keepAlive")
-      if let name = try container.decodeOptional(String.self, for: "assembly") {
-        guard let policy = ControllerAssemblyPolicy(name: name) else {
+      if let assemblyName = try container.decodeOptional(String.self, for: "assembly") {
+        guard let policy = ControllerAssemblyPolicy(name: assemblyName) else {
           throw DecodingError.dataCorrupted(
-            .init(codingPath: decoder.codingPath, debugDescription: "unknown assembly \(name)")
+            .init(
+              codingPath: decoder.codingPath,
+              debugDescription: "unknown assembly \(assemblyName)"
+            )
           )
         }
         assembly = policy

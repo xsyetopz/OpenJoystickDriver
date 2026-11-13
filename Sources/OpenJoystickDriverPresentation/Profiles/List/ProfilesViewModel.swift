@@ -218,6 +218,10 @@
     /// profiles.
     @Published
     private(set) var catalogModels: [ControllerModelID: PhysicalProtocolID] = [:]
+    /// The USB product string of each catalog model whose record names one, read with
+    /// ``catalogModels``.
+    @Published
+    private(set) var catalogNames: [ControllerModelID: String] = [:]
     /// Whether the catalog read of the profile creation sheet is still running.
     @Published
     private(set) var isLoadingCatalog = false
@@ -240,14 +244,19 @@
     /// Reads the catalog models that the creation and Convert sheets offer.
     private func loadCatalog() {
       catalogModels = [:]
+      catalogNames = [:]
       unreadableRecordFiles = 0
       isLoadingCatalog = true
       Task { @MainActor in
-        let (families, unreadable) = await Task.detached {
+        let (families, names, unreadable) = await Task.detached {
           let set = ControllerRecordSet.load(userDirectory: ControllerRecordSet.userDirectory)
-          return (set.records.mapValues(\.protocolID), set.problems.count)
+          return (
+            set.records.mapValues(\.protocolID), set.records.compactMapValues(\.name),
+            set.problems.count
+          )
         }.value
         catalogModels = families
+        catalogNames = names
         unreadableRecordFiles = unreadable
         isLoadingCatalog = false
       }

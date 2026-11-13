@@ -18,7 +18,8 @@ struct ProfileControllerChoice: Equatable, Identifiable {
 
   /// The identifier of the choice in the picker.
   let id: String
-  /// The controller's own name; nil for a model that is not connected.
+  /// The controller's own name: the connected controller's, else the USB product string its
+  /// record names; nil when neither has one.
   let name: String?
   /// The vendor ID.
   let vendorID: UInt16
@@ -37,8 +38,6 @@ struct ProfileControllerChoice: Equatable, Identifiable {
 
   /// The name in the picker: the controller's name, else the identifiers of the model, with the
   /// family unless the picker section names it.
-  ///
-  /// The catalog has no product names.
   var label: String {
     if let reported = OJDValue.reported(name).textOrNil { return reported }
     let identifiers = OJDValue.usbIdentifier(vendorID: vendorID, productID: productID).displayText
@@ -49,12 +48,15 @@ struct ProfileControllerChoice: Equatable, Identifiable {
   /// The connected controllers, then the models that none of them has: first those of `profiles`,
   /// then those of `catalog`, which maps each catalog model to its protocol family.
   ///
+  /// A model that is not connected takes its name from `names`, the record names by model.
+  ///
   /// Models are ordered by vendor and product; catalog models by family display name first, then by
   /// family, so each family's models stay together when two family names read alike.
   static func choices(
     devices: [ApplicationServiceDeviceDescription],
     profiles: [RemappingProfile],
-    catalog: [ControllerModelID: PhysicalProtocolID]
+    catalog: [ControllerModelID: PhysicalProtocolID],
+    names: [ControllerModelID: String] = [:]
   ) -> [Self] {
     let connected = devices.map {
       Self(
@@ -72,7 +74,7 @@ struct ProfileControllerChoice: Equatable, Identifiable {
         guard seen.insert(model).inserted else { return nil }
         return Self(
           id: unsafe String(format: "model-%04X-%04X", model.vendorID, model.productID),
-          name: nil,
+          name: names[model],
           vendorID: model.vendorID,
           productID: model.productID,
           family: catalog[model],

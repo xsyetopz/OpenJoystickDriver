@@ -188,6 +188,32 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
+  func catalogModelWithRecordNameShowsNameElseIdentifiers() {
+    let named = ControllerModelID(vendorID: 0x413D, productID: 0x2104)
+    let profiled = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
+    let choices = ProfileControllerChoice.choices(
+      devices: [Self.padA],
+      profiles: [Self.profile(named: "Old", vendorID: 0x11C1, productID: 0x5600)],
+      catalog: [
+        named: .xboxXUSB, profiled: .hidDescriptor,
+        ControllerModelID(vendorID: 0x045E, productID: 0x028E): .xboxXUSB,
+        ControllerModelID(vendorID: 0x0001, productID: 0x0002): .xboxXUSB,
+      ],
+      names: [
+        named: "XBOX 360 For Windows", profiled: "Controller",
+        ControllerModelID(vendorID: 0x0001, productID: 0x0002): "Record Pad",
+      ]
+    )
+    #expect(choices.map(\.label) == ["Pad A", "Controller", "045E:028E", "XBOX 360 For Windows"])
+    var fields = ProfileCreationFields()
+    fields.picked = choices[3]
+    #expect(
+      fields.name(in: ProfileCreationContext(choices: choices, profiles: []))
+        == "XBOX 360 For Windows"
+    )
+  }
+
+  @Test
   func twoFamiliesThatShareATitleStayInSectionsOfTheirOwn() {
     let choices = ProfileControllerChoice.choices(
       devices: [],

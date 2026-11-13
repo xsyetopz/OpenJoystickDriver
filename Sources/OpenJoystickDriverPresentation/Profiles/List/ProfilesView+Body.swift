@@ -104,7 +104,8 @@
               choices: ProfileControllerChoice.choices(
                 devices: connectedDevices,
                 profiles: profiles,
-                catalog: screen.catalogModels
+                catalog: screen.catalogModels,
+                names: screen.catalogNames
               ),
               profiles: profiles,
               isLoadingCatalog: screen.isLoadingCatalog,
@@ -123,7 +124,8 @@
             choices: ProfileControllerChoice.choices(
               devices: connectedDevices,
               profiles: profiles,
-              catalog: screen.catalogModels
+              catalog: screen.catalogModels,
+              names: screen.catalogNames
             ),
             profiles: profiles,
             isLoadingCatalog: screen.isLoadingCatalog

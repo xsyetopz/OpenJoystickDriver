@@ -255,6 +255,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>name</key>
+	<string>Controller</string>
 	<key>productID</key>
 	<integer>22016</integer>
 	<key>tuning</key>
