@@ -142,7 +142,7 @@ public final class LoggingOutputDispatcher: OutputDispatcher, Sendable {
     set { storedSuppression.withLock { $0 = newValue } }
   }
 
-  /// Creates a new LoggingOutputDispatcher.
+  /// Creates a dispatcher that logs each state.
   public init() {}
 
   /// Prints each state to standard output.

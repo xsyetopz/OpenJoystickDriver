@@ -195,7 +195,7 @@ public struct HIDLayoutSummary: Equatable, Sendable {
 ///
 /// `hostTransport` describes the observed host-facing link. `physicalTransport` is the
 /// controller-side link and stays nil unless evidence identifies it. `usbRoute` preserves the
-/// access path OJD actually uses; ``DeviceAccessBackend/init(route:)`` names its access backend.
+/// access path OJD uses; ``DeviceAccessBackend/init(route:)`` names its access backend.
 public struct PhysicalInterfaceSignature: Equatable, Sendable {
   /// The interface number (`bInterfaceNumber`).
   public let interfaceNumber: UInt8?

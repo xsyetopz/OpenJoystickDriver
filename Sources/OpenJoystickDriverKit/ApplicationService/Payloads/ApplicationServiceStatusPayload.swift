@@ -149,7 +149,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   /// The Bluetooth access of the service; nil when the service does not report it.
   public let bluetoothAccess: BluetoothAccessState?
 
-  /// Creates a new ApplicationServiceStatusPayload.
+  /// Creates a status payload.
   public init(
     buildIdentity: BuildIdentity = .current(),
     inputRead: PermissionManager.AccessState,

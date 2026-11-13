@@ -251,7 +251,7 @@ extension DeviceManager {
       for pipeline in raw.values where allFailed {
         allFailed = await pipeline.usbSessionStartFailed
       }
-      // The awaits above suspend the actor; act only on the pipelines that were just observed.
+      // The awaits above suspend the actor; act only on the pipelines observed before them.
       guard allFailed, yieldedHIDConnections[connectionID] != nil,
         raw.allSatisfy({ pipelines[$0.key] === $0.value })
       else {

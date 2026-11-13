@@ -96,7 +96,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// It is nil when no profile is active for it. The service sets it when it reports status.
   public var profileInForce: ApplicationServiceProfileInForce?
 
-  /// Creates a new ApplicationServiceDeviceDescription.
+  /// Creates a device description.
   public init(
     name: String,
     vendorID: UInt16,
