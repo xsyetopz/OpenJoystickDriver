@@ -95,7 +95,7 @@ The main menu reads were `get name of menu items` of each menu (A3). The main me
 
 | ID | Element | Source | Measured | Term shown | Guideline | Reference | Differences | Decision | Level | Level basis |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| M01 | Menu bar item menu | `MenuBar/StatusItemModel.swift` | 373 wide, rows 24, separators 11 (A6); `ojd-alpha2/menu-bar-item-menu.png` | "Ready · 1 controller connected · No active profile" | `the-menu-bar`: "Display a menu — not a popover"; `menus` | LinearMouse, MonitorControl, Karabiner-Elements: device or profile at the top level | the menu has no stated purpose in the app; its first row joins three values and cannot be activated | fix 11.1, 11.2 | Simple | container or chrome: holds a Simple row or is needed to reach one |
+| M01 | Menu bar item menu | `MenuBar/StatusItemModel.swift` | 373 wide, rows 24, separators 11 (A6); `ojd-alpha2/menu-bar-item-menu.png` | "Ready · 1 controller connected · No active profile" | `the-menu-bar`: "Display a menu — not a popover"; `menus` | LinearMouse, MonitorControl, Karabiner-Elements: device or profile at the top level; the macOS extras X1 to X4 | the menu has no stated purpose in the app; its first row joins three values and cannot be activated | fix 11.1, 11.2 | Simple | container or chrome: holds a Simple row or is needed to reach one |
 | M02 | Status line | `MenuBar/StatusItemModel.swift` | 373 x 24, unavailable (A6) | `"%1$@ · %2$@ · %3$@"` | `menus`: "Show people when a menu item is unavailable." | MonitorControl: the display's name as a header | no string says the service is stopped: "Needs attention" with 0 controllers | fix 11.2, 11.3 | Simple | D21: controller list, state, and next step |
 | M03 | Controllers submenu | `MenuBar/StatusItemModel.swift` | 373 x 24 (A6) | "Controllers" | `menus`: "Use submenus sparingly." | LinearMouse: battery rows at the top level | one submenu level above the controllers; the row shows a name only | fix 11.2 | Simple | D21: controller list, state, and next step |
 | M04 | Controller submenu | `MenuBar/StatusItemModel.swift` | items read, sizes 0 x 0 (not shown) (A6) | "Suspend", "Test Input", "Active Profile", "Disconnect Wireless Link", "Show in Window" | `menus`: "Limit the depth and length of submenus." | Karabiner-Elements: checkmarked profiles | "Active Profile" opens a third level; "Disconnect Wireless Link" is unavailable and no reason shows | fix 11.1, 11.2 | Simple | D21: controller list, state, and next step |
@@ -112,6 +112,25 @@ The main menu reads were `get name of menu items` of each menu (A3). The main me
 | M15 | Profile menu | `MainMenu/MainMenuModel.swift` | not measured (names only, A3) | "Activate Profile", "Deactivate Profile" | `menus` | Karabiner-Elements: checkmarked profiles | two commands where the status item will hold a checkmarked list | keep: the window's Profile menu acts on the selected profile; 11.2 changes the status item only | Simple | Activate and Deactivate are the profile choice D21 puts in Simple (decided by evidence) |
 | M16 | Window menu | `MainWindow/MainWindowController.swift` | not measured (names only, A3) | system items and "Controllers (1 controller connected)" | `menus` | Notes | none | keep: the standard Window menu | Simple | container or chrome: holds a Simple row or is needed to reach one |
 | M17 | Help menu | `MainMenu/MainMenuModel.swift` | not measured (names only, A3) | "Activity Log", "Explain Error Code...", "Copy Support Report", "Report Problem...", "Project Website" | `inclusion`: "Build in ways to learn how to use your app or game." | none | no in-app help, no tour, no page for the area in view | fix 11.5, 12.16 | Simple | HIG `inclusion`: "Build in ways to learn how to use your app or game."; its Activity Log and Explain Error Code items are Advanced as S05 (decided by evidence) |
+
+### Reference: the macOS menu bar extras (task 10.3)
+
+Captured on 2026-11-13 on macOS 27.2 at 2x into `openspec/changes/0-6-0-alpha-3/evidence/interface-reference/screenshots/`. Accessibility returns no value (`-25212`) for the `AXExtrasMenuBar` of Control Center, so sizes are read from the pixels and halved, about ±2 pt. Bluetooth and Sound are not in this Mac's menu bar; their views were opened from Control Center. OJD's menu was captured from build `60e2eda5d` with the 2C connected over Bluetooth LE (`ojd-menu-bar-2c.png`). Gray boxes cover network names, a personal device name, the playing track, and the Apple Account row (`system-settings-general.png`). Notes was not captured, because its list shows private notes.
+
+| ID | Extra | Screenshot | Measured | Rows |
+| --- | --- | --- | --- | --- |
+| X1 | Wi-Fi | `menu-extra-wifi.png` | panel about 308 wide; network rows 32 | title with a switch; a warning row; headed sections ("Personal Hotspot", "Known Network"); "Other Networks" with a disclosure arrow; last row "Wi-Fi Settings..." |
+| X2 | Bluetooth (Control Center) | `menu-extra-bluetooth.png` | panel about 308 wide; device rows 32 | title with a switch; one row per device with its icon, name, and battery percent with a battery glyph; last row "Bluetooth Settings..." |
+| X3 | Sound (Control Center) | `menu-extra-sound.png` | panel about 308 wide; output rows 32 | title; volume slider; section "Output" with one row per device; last row "Sound Settings..." |
+| X4 | Control Center | `menu-extra-control-center.png` | panel about 296 wide | modules, each opening a view like X2 and X3 |
+| — | OJD menu bar item | `ojd-menu-bar-2c.png` | panel about 250 wide; rows 24, as M01 | controller row "8BitDo Ultimate 2C Wireless" with a submenu; "Open OpenJoystickDriver"; "Settings..." with ⌘,; "Quit OpenJoystickDriver" with ⌘Q |
+
+Differences and decisions:
+
+- The extras are Control Center panels with 32 pt rows and a switch in the title. OJD's item is an `NSMenu` with 24 pt rows. Keep: `the-menu-bar` asks for a menu, not a popover, and the panels are Apple's own Control Center surface.
+- Each extra ends with a row that opens its settings page. OJD's "Settings..." matches: keep.
+- X2 shows each device's battery percent in its row. OJD's 2C row shows no battery over Bluetooth LE, while X2 shows 83% for the same pad. The 2C's Bluetooth LE battery byte reads 0 (task 2.2), so OJD has no value to show. Fix: 2.2 and 2.8.
+- X2 and X3 list devices at the top level with no submenu. OJD lists each controller at the top level with a one-level submenu for its profile and actions (11.2). Keep: `menus` allows one submenu level, and the actions do not fit one row.
 
 ## 4. Main window toolbar
 
