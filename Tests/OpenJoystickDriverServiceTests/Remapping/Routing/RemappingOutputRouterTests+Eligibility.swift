@@ -48,7 +48,7 @@ extension RemappingOutputRouterTests {
   }
 
   @Test
-  func statusReportsTheSameProviderSampleUsedForEligibility() async throws {
+  func statusReportsSameProviderSampleUsedForEligibility() async throws {
     let harness = try await RemappingRouterHarness.make(profile: remappingRouterProfile())
     defer { harness.removeFiles() }
     let device = remappingRouterDevice(1)
@@ -262,7 +262,7 @@ extension RemappingOutputRouterTests {
 
 extension RemappingOutputRouterTests {
   @Test
-  func releaseOnVirtualGamepadRouteDoesNotSwallowTheNextRemappedPress() async throws {
+  func releaseOnVirtualGamepadRouteDoesNotSwallowNextRemappedPress() async throws {
     let profile = remappingRouterProfile()
     let harness = try await RemappingRouterHarness.make(profile: profile)
     defer { harness.removeFiles() }

@@ -8,7 +8,7 @@ import Testing
 /// The clash rules of package profiles, and the files that library writes leave alone.
 extension ProfileLibraryTests {
   @Test
-  func userProfileShadowsAPackageProfileByNameOnly() async throws {
+  func userProfileShadowsPackageProfileByNameOnly() async throws {
     try await withLibrary { library, directory in
       let shipped = makeProfile(name: "Arcade")
       try writePackage("arcade-pack", profiles: [shipped], in: directory)
@@ -22,7 +22,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func amongPackagesTheFirstByPackageNameWinsOnName() async throws {
+  func amongPackagesFirstByPackageNameWinsOnName() async throws {
     try await withLibrary { library, directory in
       let later = makeProfile(name: "shared")
       let first = makeProfile(name: "Shared")
@@ -35,7 +35,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func deletingAShadowingUserProfileLeavesThePackageFile() async throws {
+  func deletingShadowingUserProfileLeavesPackageFile() async throws {
     try await withLibrary { library, directory in
       let shipped = makeProfile(name: "Arcade")
       try writePackage("arcade-pack", profiles: [shipped], in: directory)
@@ -75,7 +75,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func anUnreadablePackageProfileDoesNotStopTheOthers() async throws {
+  func unreadablePackageProfileDoesNotStopOthers() async throws {
     try await withLibrary { library, directory in
       let first = makeProfile(name: "First")
       let last = makeProfile(name: "Last")
@@ -99,12 +99,12 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func defaultPackagesDirectoryIsThePackageStore() {
+  func defaultPackagesDirectoryIsPackageStore() {
     #expect(RemappingProfileLibrary().packagesDirectory == ModPackageStore.rootDirectory)
   }
 
   @Test
-  func anOutOfRangePackageServesNoProfile() async throws {
+  func outOfRangePackageServesNoProfile() async throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       UUID().uuidString,
       isDirectory: true

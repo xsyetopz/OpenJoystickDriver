@@ -24,7 +24,7 @@ struct ControllerRecordWatcherPackageTests {
   )
 
   @Test
-  func appliesAgainWhenAPackageIsInstalledAndRemoved() async throws {
+  func appliesAgainWhenPackageIsInstalledAndRemoved() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)",
       isDirectory: true

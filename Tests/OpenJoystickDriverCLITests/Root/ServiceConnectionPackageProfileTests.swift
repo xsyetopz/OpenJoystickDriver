@@ -6,7 +6,7 @@ import Testing
 
 struct ServiceConnectionPackageProfileTests {
   @Test
-  func aReadOnlyPackageProfileShowsTheLocalizedExplanationWithItsCode() {
+  func readOnlyPackageProfileShowsLocalizedExplanationWithItsCode() {
     let error = ApplicationServiceRemappingRPCError(
       code: .packageProfileReadOnly,
       message: "A package profile cannot be changed."

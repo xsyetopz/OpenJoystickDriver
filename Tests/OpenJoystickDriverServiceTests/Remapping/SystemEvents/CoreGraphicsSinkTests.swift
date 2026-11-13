@@ -113,7 +113,7 @@ struct CoreGraphicsSinkTests {
   }
 
   @Test
-  func pointerPositionSpansTheMainDisplayAndKeepsTheOtherCoordinate() throws {
+  func pointerPositionSpansMainDisplayAndKeepsOtherCoordinate() throws {
     let poster = RecordingPoster(pointerLocation: CGPoint(x: 100, y: 200))
     let sink = makeSink(poster: poster)
 
@@ -135,7 +135,7 @@ struct CoreGraphicsSinkTests {
   }
 
   @Test
-  func pointerPositionRejectsANonFiniteValue() {
+  func pointerPositionRejectsNonFiniteValue() {
     let poster = RecordingPoster()
     let sink = makeSink(poster: poster)
     #expect(throws: CoreGraphicsSystemInputSinkError.eventPreparationFailed) {

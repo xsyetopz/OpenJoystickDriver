@@ -90,7 +90,7 @@ struct MaskImageTests {
   }
 
   @Test(arguments: [2, 3])
-  func onlyThePixelsOfTheMenuWindowsStay(scale: Int) throws {
+  func onlyPixelsOfMenuWindowsStay(scale: Int) throws {
     try OJDRepositoryToolTests.scratch { directory in
       let image = directory.appendingPathComponent("menu.png")
       let width = 30 * scale
@@ -122,7 +122,7 @@ struct MaskImageTests {
   }
 
   @Test
-  func aMenuWindowOutsideTheFrameIsRefusedAndTheImageStays() throws {
+  func menuWindowOutsideFrameIsRefusedAndImageStays() throws {
     try OJDRepositoryToolTests.scratch { directory in
       let image = directory.appendingPathComponent("menu.png")
       try Self.writeImage(width: 60, height: 40, to: image)
@@ -137,7 +137,7 @@ struct MaskImageTests {
   }
 
   @Test
-  func aCallThatTheToolRefusesExitsWith64() throws {
+  func callThatToolRefusesExitsWith64() throws {
     try OJDRepositoryToolTests.scratch { directory in
       let image = directory.appendingPathComponent("menu.png")
       try Self.writeImage(width: 60, height: 40, to: image)

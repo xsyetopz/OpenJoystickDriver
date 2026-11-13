@@ -35,7 +35,7 @@ struct GameControllerPersonalityMatchTests {
     (VirtualHIDProfileID.sdlCompatible, false),
     (VirtualHIDProfileID.gameControllerCompatible, true),
   ])
-  func gameControllerBindsOnlyThePersonaWhoseReportsItReads(
+  func gameControllerBindsOnlyPersonaWhoseReportsItReads(
     _ profileID: VirtualHIDProfileID,
     _ bound: Bool
   ) throws {

@@ -4,12 +4,12 @@ import Testing
 
 @testable import OpenJoystickDriverCLI
 
-/// Every command has a GUI place in the D10 matrix (`GUICoverageMatrix`), and every CLI leaf and
-/// behavior-changing option names the GUI symbol that performs it or is CLI-only (D10), per
+/// Every command has a GUI place in `GUICoverageMatrix`, and every CLI leaf and
+/// behavior-changing option names the GUI symbol that performs it or is CLI-only, per
 /// `GUICoverageEntries`.
 struct GUICoverageTests {
   @Test
-  func everyCommandOfTheRealTreeHasAGUIPlace() {
+  func everyCommandOfRealTreeHasGUIPlace() {
     let paths = CLICommandTree.paths()
     #expect(!paths.isEmpty)
     let unmapped = GUICoverageMatrix.unmapped(in: paths).map { $0.joined(separator: " ") }
@@ -17,7 +17,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func everyMatrixEntryNamesARealCommand() {
+  func everyMatrixEntryNamesRealCommand() {
     let stale = GUICoverageMatrix.stale(in: CLICommandTree.paths()).map {
       $0.prefix.joined(separator: " ")
     }
@@ -25,7 +25,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func everyFieldPlaceNamesARealCommandAndSchemaField() throws {
+  func everyFieldPlaceNamesRealCommandAndSchemaField() throws {
     let paths = CLICommandTree.paths()
     for entry in GUICoverageMatrix.fields {
       #expect(paths.contains(entry.command), "no command \(entry.command)")
@@ -42,7 +42,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func everyLeafAndOptionOfTheRealTreeIsCoveredOrCLIOnly() throws {
+  func everyLeafAndOptionOfRealTreeIsCoveredOrCLIOnly() throws {
     let surface = try CLISurface.items()
     #expect(surface.count > 100)
     var uncovered: [String] = []
@@ -60,7 +60,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func everyEntryAndCLIOnlyItemNamesARealLeafOrOption() throws {
+  func everyEntryAndCLIOnlyItemNamesRealLeafOrOption() throws {
     let surface = Set(try CLISurface.items())
     let staleEntries = GUICoverageEntries.entries.filter {
       !surface.contains(CLISurfaceItem(command: $0.command, option: $0.option))
@@ -73,7 +73,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func noItemIsBothInTheMatrixAndCLIOnly() throws {
+  func noItemIsBothInMatrixAndCLIOnly() throws {
     let both = try CLISurface.items().filter { item in
       isCLIOnly(item)
         && GUICoverageEntries.entries.contains {
@@ -86,7 +86,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func everyNamedGUISymbolIsDeclaredAndReferencedInTheGUI() {
+  func everyNamedGUISymbolIsDeclaredAndReferencedInGUI() {
     #expect(GUISources.text.contains("MainWindowProblemBanner"))
     var missing: [String] = []
     for entry in GUICoverageEntries.entries {
@@ -97,7 +97,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func aSymbolTheGUIDoesNotDeclareIsReported() {
+  func symbolGUIDoesNotDeclareIsReported() {
     #expect(!GUISources.isDeclaredAndReferenced("noSuchGUISymbolAnywhere"))
     #expect(
       GUISources.strippingCommentsAndStrings("// a\nlet b = \"c \\(d) e\" /* f */")
@@ -107,7 +107,7 @@ struct GUICoverageTests {
   }
 
   @Test
-  func aFakeCommandWithNoGUIPlaceIsReported() {
+  func fakeCommandWithNoGUIPlaceIsReported() {
     let paths = CLICommandTree.paths(of: FakeRoot.self)
     #expect(paths == [["status"], ["frobnicate"], ["frobnicate", "run"]])
     #expect(GUICoverageMatrix.unmapped(in: paths) == [["frobnicate", "run"]])

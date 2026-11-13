@@ -164,7 +164,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func grantingATokenNeedsForceAndPrintsTheTokenOnce() async throws {
+  func grantingTokenNeedsForceAndPrintsTokenOnce() async throws {
     let service = try service()
 
     let refused = await service.run(["access", "grant", "--token", "overlay", "--no-input"])
@@ -192,7 +192,7 @@ struct AccessCommandTests {
     ["access", "grant", Self.grant.id, "--token", "overlay", "--force"],
     ["access", "grant", Self.grant.id, "--origin", "http://localhost:8080", "--force"],
   ])
-  func grantNeedsEitherAClientOrAToken(arguments: [String]) async throws {
+  func grantNeedsEitherClientOrToken(arguments: [String]) async throws {
     let service = try service()
 
     let result = await service.run(arguments)
@@ -203,7 +203,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func aTokenWithOriginsCannotAskForControl() async throws {
+  func tokenWithOriginsCannotAskForControl() async throws {
     let service = try service()
 
     let result = await service.run([
@@ -217,7 +217,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func revokingATokenSendsItsIDWithoutLookingItUp() async throws {
+  func revokingTokenSendsItsIDWithoutLookingItUp() async throws {
     let service = try service()
 
     let result = await service.run(["access", "revoke", "token:overlay", "--json"])
@@ -232,7 +232,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func webEnableNeedsForceAndAPortInRange() async throws {
+  func webEnableNeedsForceAndPortInRange() async throws {
     let service = try service()
 
     let refused = await service.run(["access", "web", "enable", "--no-input"])
@@ -255,7 +255,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func webEnableAutomaticAsksForAFreePortAndRefusesAPortBesideIt() async throws {
+  func webEnableAutomaticAsksForFreePortAndRefusesPortBesideIt() async throws {
     let service = try service()
 
     let both = await service.run([
@@ -273,7 +273,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func enableNeedsForceWithoutAPrompt() async throws {
+  func enableNeedsForceWithoutPrompt() async throws {
     let service = try service()
 
     let refused = await service.run(["access", "enable", "--no-input"])
@@ -290,7 +290,7 @@ struct AccessCommandTests {
   }
 
   @Test(arguments: ["Read", "Control", "READ"])
-  func aScopeOnlyParsesInItsKebabCaseSpelling(spelling: String) async throws {
+  func scopeOnlyParsesInItsKebabCaseSpelling(spelling: String) async throws {
     let service = try service()
 
     let run = await service.run([
@@ -302,7 +302,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func grantNeedsForceAndSendsTheSignatureOfTheClientID() async throws {
+  func grantNeedsForceAndSendsSignatureOfClientID() async throws {
     let service = try service()
 
     let refused = await service.run(["access", "grant", Self.grant.id, "--no-input"])
@@ -324,7 +324,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func grantRefusesAnAdHocClientBeforeAnyRequest() async throws {
+  func grantRefusesAdHocClientBeforeAnyRequest() async throws {
     let service = try service()
     let program = try Self.adHocProgram()
     defer { try? FileManager.default.removeItem(at: program.deletingLastPathComponent()) }
@@ -356,7 +356,7 @@ struct AccessCommandTests {
   }
 
   @Test
-  func revokeRemovesTheWholeGrantOrSomeScopes() async throws {
+  func revokeRemovesWholeGrantOrSomeScopes() async throws {
     let service = try service()
 
     let whole = await service.run(["access", "revoke", Self.grant.id, "--json"])

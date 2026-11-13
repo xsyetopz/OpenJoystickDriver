@@ -122,7 +122,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() throws {
+  func modelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory in
       let result = Self.set((0x1234, 0xABCD), to: .ojd, native: true, in: directory)
       #expect(result.failure == .noRecord)
@@ -131,7 +131,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test(arguments: [(-1, 0x2000), (0x2C22, 0x10000), (0x10000, 0x2000)])
-  func aVendorOrProductIDOutOfRangeIsAnInvalidRequest(_ model: (Int, Int)) throws {
+  func vendorOrProductIDOutOfRangeIsInvalidRequest(_ model: (Int, Int)) throws {
     try Self.withDirectory { directory in
       let result = Self.set(model, to: .ojd, native: true, in: directory)
       #expect(result.failure == .invalidRequest)

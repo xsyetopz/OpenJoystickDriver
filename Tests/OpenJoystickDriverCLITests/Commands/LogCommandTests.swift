@@ -53,7 +53,7 @@ struct LogCommandTests {
   }
 
   @Test
-  func pathPrintsTheFolderWithoutTheService() async throws {
+  func pathPrintsFolderWithoutService() async throws {
     let env = environment(terminal: false, paged: Locked([]))
 
     let human = await run(["log", "path"], env)
@@ -66,7 +66,7 @@ struct LogCommandTests {
   }
 
   @Test
-  func showWritesToStandardOutputWhenNotATerminal() async throws {
+  func showWritesToStandardOutputWhenNotTerminal() async throws {
     let paged = Locked<[String]>([])
     let requested = Locked<[Int]>([])
     let env = environment(terminal: false, paged: paged, requestedLines: requested)
@@ -90,7 +90,7 @@ struct LogCommandTests {
   }
 
   @Test
-  func showPagesOnlyOnATerminalInHumanFormat() async {
+  func showPagesOnlyOnTerminalInHumanFormat() async {
     let paged = Locked<[String]>([])
     let env = environment(terminal: true, paged: paged)
 
@@ -133,7 +133,7 @@ struct LogCommandTests {
   }
 
   @Test
-  func exportWritesTheLogsAndRefusesToReplaceAFile() async throws {
+  func exportWritesLogsAndRefusesToReplaceFile() async throws {
     let requested = Locked<[Int]>([])
     let env = environment(terminal: false, paged: Locked([]), requestedLines: requested)
     let file = FileManager.default.temporaryDirectory
@@ -157,7 +157,7 @@ struct LogCommandTests {
   }
 
   @Test
-  func pagerCommandFollowsThePagerVariable() {
+  func pagerCommandFollowsPagerVariable() {
     #expect(LogShowCommand.pagerCommand(environment: [:]) == "less -FRX")
     #expect(LogShowCommand.pagerCommand(environment: ["PAGER": "more"]) == "more")
     #expect(LogShowCommand.pagerCommand(environment: ["PAGER": " "]) == nil)

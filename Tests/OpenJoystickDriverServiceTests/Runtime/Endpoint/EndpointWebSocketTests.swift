@@ -12,7 +12,7 @@ struct EndpointWebSocketTests {
   private static let origin = "http://localhost:8080"
 
   @Test
-  func aTokenClientStreamsControllerEventsOverTheWebSocket() async throws {
+  func tokenClientStreamsControllerEventsOverWebSocket() async throws {
     try await withWeb { server, fixture, port, token in
       fixture.source.set(devices: ["pad-1"], state: ControllerState(pressed: [.south]))
       let client = try await EndpointWebTestClient(port: port)
@@ -74,7 +74,7 @@ struct EndpointWebSocketTests {
       ("Sec-WebSocket-Version", "8", 426),
     ] as [(String, String?, Int)]
   )
-  func aBadUpgradeIsRefused(header: String, value: String?, status: Int) async throws {
+  func badUpgradeIsRefused(header: String, value: String?, status: Int) async throws {
     try await withWeb { _, _, port, _ in
       let client = try await EndpointWebTestClient(port: port)
       var headers = EndpointWebTestClient.upgradeHeaders(port: port, origin: Self.origin)
@@ -89,7 +89,7 @@ struct EndpointWebSocketTests {
 
   /// `localhost` can resolve to `::1`, where another user can listen on the same port.
   @Test
-  func theLocalhostHostNameIsRefused() async throws {
+  func localhostHostNameIsRefused() async throws {
     try await withWeb { _, _, port, _ in
       let client = try await EndpointWebTestClient(port: port)
       var headers = EndpointWebTestClient.upgradeHeaders(port: port, origin: Self.origin)
@@ -102,7 +102,7 @@ struct EndpointWebSocketTests {
   /// A client that sends its hello one byte at a time is closed when the handshake time ends,
   /// so slow clients cannot hold the connection slots.
   @Test(.timeLimit(.minutes(1)))
-  func aHelloMustArriveWithinTheHandshakeTime() async throws {
+  func helloMustArriveWithinHandshakeTime() async throws {
     try await withWeb { _, _, port, _ in
       let client = try await upgraded(port: port)
       // A masked text frame header that announces 100 bytes; its payload never completes.
@@ -123,7 +123,7 @@ struct EndpointWebSocketTests {
   @Test(arguments: [
     "none", "wrong token", "unknown name", "other nonce", "other origin", "other port",
   ])
-  func aHelloWithoutTheRightProofIsRefused(kind: String) async throws {
+  func helloWithoutRightProofIsRefused(kind: String) async throws {
     try await withWeb { server, _, port, token in
       let client = try await upgraded(port: port)
       let otherNonce = try await upgraded(port: port).nonce
@@ -157,7 +157,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aTokenIsRefusedFromAnOriginItWasNotGrantedFor() async throws {
+  func tokenIsRefusedFromOriginItWasNotGrantedFor() async throws {
     try await withWeb { server, _, port, _ in
       let other = try server.grantToken(
         name: "other",
@@ -181,7 +181,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aTokenWithoutOriginsIsRefusedFromAPage() async throws {
+  func tokenWithoutOriginsIsRefusedFromPage() async throws {
     try await withWeb { server, _, port, _ in
       let script = try server.grantToken(name: "script", origins: [], scopes: [.read])
       let client = try await upgraded(port: port)
@@ -202,7 +202,7 @@ struct EndpointWebSocketTests {
   /// A native client, such as a sandboxed app that cannot reach the socket, sends no `Origin`;
   /// it signs an empty origin line and the port.
   @Test
-  func aTokenWithoutOriginsWorksWithoutAnOrigin() async throws {
+  func tokenWithoutOriginsWorksWithoutOrigin() async throws {
     try await withWeb { server, _, port, _ in
       let script = try server.grantToken(name: "script", origins: [], scopes: [.read])
       let client = try await upgraded(port: port, origin: nil)
@@ -221,7 +221,7 @@ struct EndpointWebSocketTests {
 
   /// A page never drives a pad, so a token for a page's origin cannot hold control.
   @Test
-  func aControlTokenCannotBeGrantedForAPage() async throws {
+  func controlTokenCannotBeGrantedForPage() async throws {
     try await withWeb { server, _, _, _ in
       #expect(throws: AccessGrantStoreError.originsWithControl) {
         try server.grantToken(name: "pad", origins: [Self.origin], scopes: [.control])
@@ -234,7 +234,7 @@ struct EndpointWebSocketTests {
   /// A native client that cannot reach the socket, such as a Wine program, drives a pad over the
   /// WebSocket with a token that has no origins.
   @Test
-  func aControlTokenWithoutOriginsWorksWithoutAnOrigin() async throws {
+  func controlTokenWithoutOriginsWorksWithoutOrigin() async throws {
     try await withWeb { server, _, port, _ in
       let pad = try server.grantToken(name: "pad", origins: [], scopes: [.control])
       let client = try await upgraded(port: port, origin: nil)
@@ -256,7 +256,7 @@ struct EndpointWebSocketTests {
 
   /// Any site can script a page, so a page never drives a pad.
   @Test
-  func aControlTokenWithoutOriginsIsRefusedFromAPage() async throws {
+  func controlTokenWithoutOriginsIsRefusedFromPage() async throws {
     try await withWeb { server, _, port, _ in
       let pad = try server.grantToken(name: "pad", origins: [], scopes: [.control])
       let client = try await upgraded(port: port)
@@ -278,7 +278,7 @@ struct EndpointWebSocketTests {
 
   /// Browsers always send `Origin`, so a token bound to origins is refused without one.
   @Test
-  func aTokenWithOriginsIsRefusedWithoutAnOrigin() async throws {
+  func tokenWithOriginsIsRefusedWithoutOrigin() async throws {
     try await withWeb { server, _, port, token in
       _ = try server.grantToken(name: "script", origins: [], scopes: [.read])
       let client = try await upgraded(port: port, origin: nil)
@@ -294,7 +294,7 @@ struct EndpointWebSocketTests {
   /// An `Origin` that is not a web origin comes from a page, not a native client, so it never
   /// counts as no origin.
   @Test(arguments: ["null", "", "chrome-extension://abc"])
-  func anInvalidOriginIsRefusedWithATokenWithoutOrigins(origin: String) async throws {
+  func invalidOriginIsRefusedWithTokenWithoutOrigins(origin: String) async throws {
     try await withWeb { server, _, port, _ in
       _ = try server.grantToken(name: "script", origins: [], scopes: [.read])
       let client = try await EndpointWebTestClient(port: port)
@@ -306,7 +306,7 @@ struct EndpointWebSocketTests {
 
   /// Without `Origin`, the proof still covers the nonce and the port.
   @Test(arguments: ["wrong token", "other port", "socket proof"])
-  func aHelloWithoutAnOriginAndTheRightProofIsRefused(kind: String) async throws {
+  func helloWithoutOriginAndRightProofIsRefused(kind: String) async throws {
     try await withWeb { server, _, port, _ in
       let script = try server.grantToken(name: "script", origins: [], scopes: [.read])
       let client = try await upgraded(port: port, origin: nil)
@@ -331,7 +331,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aFragmentedMessageIsJoined() async throws {
+  func fragmentedMessageIsJoined() async throws {
     try await withWeb { _, _, port, token in
       let client = try await upgraded(port: port)
       let hello = Data(
@@ -355,7 +355,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test(arguments: ["binary", "unmasked", "oversized", "reserved"])
-  func aFrameTheEndpointDoesNotAcceptEndsTheConnection(kind: String) async throws {
+  func frameEndpointDoesNotAcceptEndsConnection(kind: String) async throws {
     try await withWeb { _, _, port, _ in
       let client = try await upgraded(port: port)
       switch kind {
@@ -382,7 +382,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aCloseFrameIsEchoed() async throws {
+  func closeFrameIsEchoed() async throws {
     try await withWeb { _, _, port, _ in
       let client = try await upgraded(port: port)
       await client.sendFrame(opcode: 0x8, payload: Data([0x03, 0xE8]))
@@ -394,7 +394,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func disablingTheWebSocketClosesItsClientsAndFreesThePortButKeepsTheSocket() async throws {
+  func disablingWebSocketClosesItsClientsAndFreesPortButKeepsSocket() async throws {
     try await withWeb { server, _, port, token in
       try server.setEnabled(true)
       try server.grant(EndpointFixture.tool, path: "/Tool", scopes: [.read])
@@ -416,7 +416,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func theWebSocketIsNotReachableFromAnotherInterface() async throws {
+  func webSocketIsNotReachableFromAnotherInterface() async throws {
     try await withWeb { _, _, port, _ in
       guard let address = Self.nonLoopbackAddress() else { return }
       await #expect(throws: POSIXError.self) {
@@ -426,7 +426,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func revokingATokenClosesItsWebConnections() async throws {
+  func revokingTokenClosesItsWebConnections() async throws {
     try await withWeb { server, _, port, token in
       let client = try await EndpointWebTestClient.welcomed(
         port: port,
@@ -441,7 +441,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aPortInUseIsAnErrorAndLeavesTheWebSocketOff() async throws {
+  func portInUseIsErrorAndLeavesWebSocketOff() async throws {
     try await withWeb { server, _, port, _ in
       try await withEndpointServer { other, _ async throws in
         #expect(throws: AccessGrantStoreError.portUnavailable(port)) {
@@ -456,7 +456,7 @@ struct EndpointWebSocketTests {
   /// The first enable without a port lets the system pick a free one, so no fixed port is there
   /// for another program to take first; later enables keep it.
   @Test
-  func theFirstEnableWithoutAPortPicksOneAndKeepsIt() async throws {
+  func firstEnableWithoutPortPicksOneAndKeepsIt() async throws {
     try await withEndpointServer { server, fixture in
       #expect(try server.status().web.port == nil)
       #expect(try server.status().web.url == nil)
@@ -479,7 +479,7 @@ struct EndpointWebSocketTests {
 
   /// Port 0 replaces the saved port with a free one the system picks.
   @Test
-  func port0PicksAFreePortEvenWhenOneIsSaved() async throws {
+  func port0PicksFreePortEvenWhenOneIsSaved() async throws {
     try await withEndpointServer { server, fixture in
       try server.setWebEnabled(true, port: nil)
       let saved = try #require(server.status().web.port)
@@ -498,7 +498,7 @@ struct EndpointWebSocketTests {
 
   /// An explicit port 0 replaces the listener of a WebSocket that is already on.
   @Test
-  func port0MovesARunningWebSocketToANewFreePort() async throws {
+  func port0MovesRunningWebSocketToNewFreePort() async throws {
     try await withEndpointServer { server, fixture in
       try server.setWebEnabled(true, port: nil)
       let first = try #require(server.status().web.port)
@@ -515,7 +515,7 @@ struct EndpointWebSocketTests {
   /// A listener swapped for one with the same descriptor number must not be served by the old
   /// accept loop, which would check requests against the old port.
   @Test
-  func aNewPortIsServedOnlyByTheNewListener() async throws {
+  func newPortIsServedOnlyByNewListener() async throws {
     try await withWeb { server, fixture, _, _ in
       try write("<p>pad</p>", to: "index.html", in: fixture)
       for _ in 0..<20 {
@@ -531,7 +531,7 @@ struct EndpointWebSocketTests {
   /// A loop held between its generation check and its wait must not take over the listener that
   /// replaced its own: its descriptor stays open until it ends, so the number is not reused.
   @Test
-  func aWebLoopHeldBeforeItsWaitDoesNotTakeTheNextListenersFirstClient() async throws {
+  func webLoopHeldBeforeItsWaitDoesNotTakeNextListenersFirstClient() async throws {
     let gate = AcceptLoopGate(holding: .web)
     try await withEndpointServer(beforeAcceptWait: gate.hook) { server, fixture in
       try write("<p>pad</p>", to: "index.html", in: fixture)
@@ -550,24 +550,24 @@ struct EndpointWebSocketTests {
   }
 
   @Test(arguments: [EMFILE, ENFILE, ENOBUFS, ENOMEM])
-  func anAcceptFailureFromResourceExhaustionIsRetried(code: Int32) {
+  func acceptFailureFromResourceExhaustionIsRetried(code: Int32) {
     #expect(AcceptFailure(errno: code) == .waitForResources)
   }
 
   @Test(arguments: [EINTR, ECONNABORTED, EAGAIN])
-  func anInterruptedAcceptIsRetriedAtOnce(code: Int32) {
+  func interruptedAcceptIsRetriedAtOnce(code: Int32) {
     #expect(AcceptFailure(errno: code) == .retry)
   }
 
   @Test(arguments: [EBADF, EINVAL, ENOTSOCK])
-  func anAcceptFailureOnAClosedListenerEndsTheLoop(code: Int32) {
+  func acceptFailureOnClosedListenerEndsLoop(code: Int32) {
     #expect(AcceptFailure(errno: code) == .fatal)
   }
 
   // MARK: - Connection cap
 
   @Test
-  func webConnectionsDoNotUseTheSocketsConnectionSlots() async throws {
+  func webConnectionsDoNotUseSocketsConnectionSlots() async throws {
     try await withWeb { server, _, port, _ in
       try server.setEnabled(true)
       try server.grant(EndpointFixture.tool, path: "/Tool", scopes: [.read])
@@ -606,7 +606,7 @@ struct EndpointWebSocketTests {
   // MARK: - Pages
 
   @Test
-  func pagesAreServedFromTheOverlaysFolder() async throws {
+  func pagesAreServedFromOverlaysFolder() async throws {
     try await withWeb { _, fixture, port, _ in
       try write("<p>pad</p>", to: "index.html", in: fixture)
       try write("body{}", to: "style/main.css", in: fixture)
@@ -647,7 +647,7 @@ struct EndpointWebSocketTests {
       ("/", "GET", "none", 200),
     ] as [(String, String, String?, Int)]
   )
-  func aPageRequestOutsideTheRulesIsRefused(
+  func pageRequestOutsideRulesIsRefused(
     path: String,
     method: String,
     site: String?,
@@ -674,7 +674,7 @@ struct EndpointWebSocketTests {
   }
 
   @Test
-  func aPageRequestForAnotherHostIsRefused() async throws {
+  func pageRequestForAnotherHostIsRefused() async throws {
     try await withWeb { _, fixture, port, _ in
       try write("<p>pad</p>", to: "index.html", in: fixture)
       let client = try await EndpointWebTestClient(port: port)

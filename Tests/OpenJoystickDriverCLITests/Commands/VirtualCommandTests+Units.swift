@@ -46,7 +46,7 @@ extension VirtualCommandTests {
   }
 
   @Test
-  func resetWithUnitSendsTheUnitFlag() async throws {
+  func resetWithUnitSendsUnitFlag() async throws {
     let service = try Self.unitService()
 
     let result = await service.run(["virtual", "reset", token("pad-1"), "--unit"])
@@ -65,7 +65,7 @@ extension VirtualCommandTests {
     ["virtual", "set", "generic", token("pad-2"), "--unit"],
     ["virtual", "reset", token("pad-2"), "--unit"],
   ])
-  func unitForAControllerWithoutAUnitIDFailsBeforeAsking(arguments: [String]) async throws {
+  func unitForControllerWithoutUnitIDFailsBeforeAsking(arguments: [String]) async throws {
     let service = try Self.unitService()
 
     let result = await service.run(arguments)
@@ -77,7 +77,7 @@ extension VirtualCommandTests {
   }
 
   @Test
-  func unitWithAllIsAUsageError() async throws {
+  func unitWithAllIsUsageError() async throws {
     let service = try Self.unitService()
 
     let result = await service.run(["virtual", "reset", "--all", "--unit"])
@@ -86,7 +86,7 @@ extension VirtualCommandTests {
   }
 
   @Test
-  func controllerListReportsTheUnitID() async throws {
+  func controllerListReportsUnitID() async throws {
     let service = try Self.unitService()
 
     let result = await service.run(["controller", "list", "--json"])

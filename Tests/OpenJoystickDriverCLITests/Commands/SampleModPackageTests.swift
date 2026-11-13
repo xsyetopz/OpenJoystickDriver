@@ -41,7 +41,7 @@ struct SampleModPackageTests {
   }
 
   @Test
-  func modValidateAcceptsTheSample() async throws {
+  func modValidateAcceptsSample() async throws {
     let support = Support()
 
     let result = await run(["mod", "validate", Self.sample, "--json"], in: support)
@@ -59,7 +59,7 @@ struct SampleModPackageTests {
   }
 
   @Test
-  func recordTestReplaysTheSampleRecord() async throws {
+  func recordTestReplaysSampleRecord() async throws {
     let support = Support()
     let install = await run(["mod", "install", Self.sample, "--json"], in: support)
     #expect(install.code == 0, "\(install.standardError)")

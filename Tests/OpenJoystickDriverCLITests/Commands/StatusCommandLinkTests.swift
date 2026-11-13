@@ -55,7 +55,7 @@ struct StatusCommandLinkTests {
   }
 
   @Test
-  func anInstalledLinkIsReportedWithItsTarget() async throws {
+  func installedLinkIsReportedWithItsTarget() async throws {
     let folder = try Folder()
     defer { folder.remove() }
     try FileManager.default.createSymbolicLink(atPath: folder.link, withDestinationPath: folder.app)
@@ -74,7 +74,7 @@ struct StatusCommandLinkTests {
   }
 
   @Test
-  func aMissingLinkIsReportedWithoutATarget() async throws {
+  func missingLinkIsReportedWithoutTarget() async throws {
     let folder = try Folder()
     defer { folder.remove() }
 
@@ -90,7 +90,7 @@ struct StatusCommandLinkTests {
   }
 
   @Test
-  func aLinkWhoseTargetIsGoneIsBroken() async throws {
+  func linkWhoseTargetIsGoneIsBroken() async throws {
     let folder = try Folder()
     defer { folder.remove() }
     try FileManager.default.createSymbolicLink(atPath: folder.link, withDestinationPath: folder.app)
@@ -107,7 +107,7 @@ struct StatusCommandLinkTests {
   }
 
   @Test
-  func aLinkToAnotherExistingFileIsLinkedElsewhere() async throws {
+  func linkToAnotherExistingFileIsLinkedElsewhere() async throws {
     let folder = try Folder()
     defer { folder.remove() }
     let other = folder.url.appendingPathComponent("Other").path
@@ -123,7 +123,7 @@ struct StatusCommandLinkTests {
   }
 
   @Test
-  func aRelativeLinkToTheExecutableIsInstalled() async throws {
+  func relativeLinkToExecutableIsInstalled() async throws {
     let folder = try Folder()
     defer { folder.remove() }
     try FileManager.default.createSymbolicLink(
@@ -140,7 +140,7 @@ struct StatusCommandLinkTests {
   }
 
   @Test
-  func aFileThatIsNotALinkBlocksTheLink() async throws {
+  func fileThatIsNotLinkBlocksLink() async throws {
     let folder = try Folder()
     defer { folder.remove() }
     try Data().write(to: URL(fileURLWithPath: folder.link))

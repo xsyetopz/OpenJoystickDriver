@@ -9,7 +9,7 @@ struct OwnershipReevaluationTests {
 
   /// Only the locations where a listed model's native flag changed are cycled, siblings included.
   @Test
-  func reevaluationCyclesEveryDeviceAtALocationWhoseNativeFlagChanged() {
+  func reevaluationCyclesEveryDeviceAtLocationWhoseNativeFlagChanged() {
     let changed = Self.gameSir(productID: 0x100B, locationID: 1, native: true)
     let sibling = Self.gameSir(productID: 0x100B, locationID: 1, native: true, interface: 1)
     let unchanged = Self.gameSir(productID: 0x100B, locationID: 2, native: false)

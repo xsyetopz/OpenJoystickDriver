@@ -28,7 +28,7 @@ struct IOUSBHostTransferTests {
   }
 
   @Test
-  func bulkPipesHonorTheTimeoutAndInterruptPipesUseZero() {
+  func bulkPipesHonorTimeoutAndInterruptPipesUseZero() {
     #expect(
       IOUSBHostTransportProvider.pipeCompletionTimeout(
         endpointAttributes: 0x02,
@@ -81,7 +81,7 @@ struct USBDriverKitTransferTests {
   }
 
   @Test
-  func setConfigurationKeepsTheSetupPacketUsedBeforeTheTypedRequest() throws {
+  func setConfigurationKeepsSetupPacketUsedBeforeTypedRequest() throws {
     let request = try USBControlTransferRequest(
       kind: .standard,
       recipient: .device,
@@ -118,7 +118,7 @@ struct USBDriverKitTransferTests {
   }
 
   @Test
-  func validEndpointAndControlTransfersReachTheRuntime() async throws {
+  func validEndpointAndControlTransfersReachRuntime() async throws {
     let session = detachedSession()
     let control = try USBControlTransferRequest(
       kind: .vendor,
@@ -139,7 +139,7 @@ struct USBDriverKitTransferTests {
   }
 
   @Test
-  func controlDataStageBeyondTheRuntimeLimitIsRejected() async throws {
+  func controlDataStageBeyondRuntimeLimitIsRejected() async throws {
     let session = detachedSession()
     let oversized = try USBControlTransferRequest(
       kind: .vendor,
@@ -154,7 +154,7 @@ struct USBDriverKitTransferTests {
   }
 
   @Test
-  func closedSessionRejectsTransfersAndClosesTheRuntimeOnce() async throws {
+  func closedSessionRejectsTransfersAndClosesRuntimeOnce() async throws {
     let closes = CloseCounter()
     let session = USBDriverKitTransportSession(context: DriverContext(capabilities: .usb)) {
       await closes.increment()

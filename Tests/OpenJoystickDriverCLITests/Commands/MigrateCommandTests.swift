@@ -31,7 +31,7 @@ struct MigrateCommandTests {
     #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "showInDock": true}"#
 
   @Test
-  func aDryRunListsTheDocumentAndChangesNothing() async throws {
+  func dryRunListsDocumentAndChangesNothing() async throws {
     try write(Self.settings, "Settings.json")
 
     let human = await run(["--dry-run"])
@@ -51,7 +51,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func theCommandConvertsTheDocumentSoThatItLoads() async throws {
+  func commandConvertsDocumentSoThatItLoads() async throws {
     try write(Self.settings, "Settings.json")
 
     let result = await run([])
@@ -62,7 +62,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func anUnconvertibleDocumentFailsWithE5009() async throws {
+  func unconvertibleDocumentFailsWithE5009() async throws {
     try write(
       #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "ControllerPatch", "#
         + #""selector": {"vendorID": 1, "productID": 2}, "patch": {"input": {"buttons": []}}}"#,

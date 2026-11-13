@@ -18,7 +18,7 @@ struct GUICoverageEntry: Equatable {
   }
 }
 
-/// A leaf or option that a window cannot naturally perform (D10).
+/// A leaf or option that a window cannot naturally perform.
 struct CLIOnlyItem: Equatable {
   /// The command path.
   ///
@@ -30,14 +30,15 @@ struct CLIOnlyItem: Equatable {
 
 /// The per-leaf and per-option coverage of the real command tree.
 ///
-/// D10 says what a window cannot naturally do; everything else names the GUI symbol that does it.
+/// Each item a window cannot naturally do is in `cliOnly`; every other one names the GUI symbol
+/// that does it.
 enum GUICoverageEntries {
   static let entries: [GUICoverageEntry] =
     status + controller + profile + binding + virtual + record + mod + access + system
 
   /// Leaves and options only a terminal or script performs.
   ///
-  /// The D10 text names each of them, and `GUICoverageTests` checks that.
+  /// `GUICoverageTests` checks that each of them names a real leaf or option.
   static let cliOnly: [CLIOnlyItem] =
     [
       CLIOnlyItem(

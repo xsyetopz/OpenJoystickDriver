@@ -171,7 +171,7 @@ struct ProfileLibraryTests {
   }
 
   @Test
-  func loadingDuplicateActiveEntriesKeepsTheLastPerModelAndScope() async throws {
+  func loadingDuplicateActiveEntriesKeepsLastPerModelAndScope() async throws {
     try await withLibrary { library, directory in
       let first = makeProfile(name: "First")
       let second = makeProfile(name: "Second")
@@ -317,7 +317,7 @@ struct ProfileLibraryTests {
   }
 
   @Test
-  func recoveryIdentifierIsRejectedWhenTheFileChangesOnDisk() async throws {
+  func recoveryIdentifierIsRejectedWhenFileChangesOnDisk() async throws {
     try await withLibrary { library, _ in
       try Data("not json".utf8).write(to: library.selectionsURL)
       let issue = try #require(try await library.snapshot().issues.first)

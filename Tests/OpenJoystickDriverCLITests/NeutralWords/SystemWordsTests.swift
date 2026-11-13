@@ -8,7 +8,7 @@ import Testing
 /// The OS-neutral words of the command line and the support report.
 struct SystemWordsTests {
   @Test
-  func diagnoseHelpListsTheOutputFlag() async {
+  func diagnoseHelpListsOutputFlag() async {
     let result = await CLIRun.run(["diagnose", "--help"])
 
     #expect(result.code == 0)
@@ -62,7 +62,7 @@ struct SystemWordsTests {
   }
 
   @Test
-  func theReportPassesTheSchema() throws {
+  func reportPassesSchema() throws {
     let document = try reportDocument()
 
     #expect(try issues(in: document).isEmpty)
@@ -72,7 +72,7 @@ struct SystemWordsTests {
   }
 
   @Test
-  func theDiagnoseDocumentWithOutputPassesTheSchema() throws {
+  func diagnoseDocumentWithOutputPassesSchema() throws {
     let document: [String: Any] = [
       "apiVersion": "openjoystickdriver/v1alpha3", "kind": "Diagnosis", "checks": [],
       "timings": [], "output": "/tmp/support.json",
@@ -82,7 +82,7 @@ struct SystemWordsTests {
   }
 
   @Test
-  func anUnknownFlagIsRefusedAsAUsageError() async {
+  func unknownFlagIsRefusedAsUsageError() async {
     let unknown = "--x\(UUID().uuidString.prefix(8).lowercased())"
     let result = await CLIRun.run(["diagnose", unknown, "/tmp/support.json"])
 
@@ -92,7 +92,7 @@ struct SystemWordsTests {
   }
 
   @Test
-  func anUnknownFieldInTheDiagnoseDocumentFailsTheSchema() throws {
+  func unknownFieldInDiagnoseDocumentFailsSchema() throws {
     let unknown = "x\(UUID().uuidString.prefix(8).lowercased())"
     let document: [String: Any] = [
       "apiVersion": "openjoystickdriver/v1alpha3", "kind": "Diagnosis", "checks": [],

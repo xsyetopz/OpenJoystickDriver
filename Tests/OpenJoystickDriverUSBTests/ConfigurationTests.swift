@@ -37,7 +37,7 @@ struct USBDriverKitExtensionConfigurationTests {
   }
 
   @Test
-  func matchListComesFromExtensionOwnedRecordsWithinTheGrant() {
+  func matchListComesFromExtensionOwnedRecordsWithinGrant() {
     let outside = ControllerModelID(vendorID: 0x045E, productID: 0x02FF)
     let otherVendor = ControllerModelID(vendorID: 0x0E6F, productID: 0x02D1)
     let models =
@@ -58,7 +58,7 @@ struct USBDriverKitExtensionConfigurationTests {
   }
 
   @Test
-  func bundledRecordsStayWithinTheGrant() {
+  func bundledRecordsStayWithinGrant() {
     let models = USBDriverKitExtensionConfiguration.extensionOwnedModels(
       in: ControllerRecordSet.bundled
     )

@@ -100,7 +100,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func everyCheckPassingExitsZeroAndSkipsOnlyTheSoakAndTheAbsentSwitchPad() async throws {
+  func everyCheckPassingExitsZeroAndSkipsOnlySoakAndAbsentSwitchPad() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -119,7 +119,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func jsonListsEveryStageTimestampOfTheNewestFrames() async throws {
+  func jsonListsEveryStageTimestampOfNewestFrames() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -155,7 +155,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aStoppedServiceReportsNoTimings() async throws {
+  func stoppedServiceReportsNoTimings() async throws {
     let result = await run(["--json"], socketPath: temporarySocketPath())
 
     let timings = try #require(try result.json()["timings"] as? [Any])
@@ -163,7 +163,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func oneFailingCheckExitsOneAndStillPrintsTheTableAndJSON() async throws {
+  func oneFailingCheckExitsOneAndStillPrintsTableAndJSON() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -200,7 +200,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func plainListsTheWindowTheGapsAndTheStallsInAStableColumnOrder() async throws {
+  func plainListsWindowGapsAndStallsInStableColumnOrder() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -221,7 +221,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func humanOutputIsOneBlockPerControllerWithTheStallRule() async throws {
+  func humanOutputIsOneBlockPerControllerWithStallRule() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -246,7 +246,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func humanOutputOfTheWholeRingSaysThatStallsNeedFrames() async throws {
+  func humanOutputOfWholeRingSaysThatStallsNeedFrames() async throws {
     let fixture = ControllerFrameTimings.fixture
     let summary = fixture.summary
     let ring = ControllerFrameTimings(
@@ -273,7 +273,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func jsonCarriesTheSummaryOfEachController() async throws {
+  func jsonCarriesSummaryOfEachController() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -297,7 +297,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aStoppedServiceSkipsItsChecksAndNeverExits69() async throws {
+  func stoppedServiceSkipsItsChecksAndNeverExits69() async throws {
     let result = await run(["--json"], socketPath: temporarySocketPath())
 
     #expect(result.code == 0, "\(result.standardError)")
@@ -324,7 +324,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aFailingUSBScanWarnsButDoesNotFail() async throws {
+  func failingUSBScanWarnsButDoesNotFail() async throws {
     struct ScanError: Error {}
     let failingScan: @Sendable () async throws -> Int = { throw ScanError() }
     let result = await run(["--json"], socketPath: temporarySocketPath(), usb: failingScan)
@@ -370,7 +370,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func outputWritesAFileAndNamesItInJSON() async throws {
+  func outputWritesFileAndNamesItInJSON() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
@@ -385,7 +385,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func outputReadsTheFiveStageStampsOfTheNewestFrames() async throws {
+  func outputReadsFiveStageStampsOfNewestFrames() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -415,7 +415,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func outputWithAStoppedServiceHasNoTimings() async throws {
+  func outputWithStoppedServiceHasNoTimings() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
@@ -432,7 +432,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aMissingBundleParentIsAUsageError() async {
+  func missingBundleParentIsUsageError() async {
     let path = "/tmp/\(UUID().uuidString)/missing/support.json"
 
     let result = await run(["--output", path], socketPath: temporarySocketPath())
@@ -501,7 +501,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func withoutFramesTheRequestCoversTheWholeRingAndNothingWaits() async throws {
+  func withoutFramesRequestCoversWholeRingAndNothingWaits() async throws {
     let socketPath = temporarySocketPath()
     let requests = Locked<[Int?]>([])
     let server = try serve(socketPath: socketPath) { arguments in
@@ -524,7 +524,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func soakAddsARuntimeHealthCheckThatSamplesTheService() async throws {
+  func soakAddsRuntimeHealthCheckThatSamplesService() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -550,7 +550,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aSkippedControllerRecordWarnsButDoesNotFail() async throws {
+  func skippedControllerRecordWarnsButDoesNotFail() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-diagnose-\(UUID().uuidString)",
       isDirectory: true
@@ -572,7 +572,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func anIgnoredDefaultsFileOrSkippedVirtualDeviceWarnsButDoesNotFail() async throws {
+  func ignoredDefaultsFileOrSkippedVirtualDeviceWarnsButDoesNotFail() async throws {
     let support = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-diagnose-\(UUID().uuidString)",
       isDirectory: true
@@ -611,7 +611,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aPersonasFolderWarnsButDoesNotFail() async throws {
+  func personasFolderWarnsButDoesNotFail() async throws {
     let support = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-diagnose-\(UUID().uuidString)",
       isDirectory: true

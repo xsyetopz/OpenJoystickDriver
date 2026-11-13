@@ -47,7 +47,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setWithAControllerWritesThatModelsPatch() async throws {
+  func setWithControllerWritesThatModelsPatch() async throws {
     let directory = Directory()
     let result = await run(
       ["set", "stickDeadzone", "0.08", "--controller", Self.model, "--json"],
@@ -72,7 +72,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setWithoutAControllerWritesAllPatchJSON() async throws {
+  func setWithoutControllerWritesAllPatchJSON() async throws {
     let directory = Directory()
     let result = await run(["set", "stickDeadzone", "0.05", "--json"], in: directory)
 
@@ -90,7 +90,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setNamesThePreviousValueAndPrintsHumanOutput() async throws {
+  func setNamesPreviousValueAndPrintsHumanOutput() async throws {
     let directory = Directory()
     _ = await run(["set", "stickDeadzone", "0.1"], in: directory)
     let result = await run(["set", "stickDeadzone", "0.2", "--json"], in: directory)
@@ -105,7 +105,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func unsetWithAControllerRemovesTheKeyAndTheEmptyPatch() async throws {
+  func unsetWithControllerRemovesKeyAndEmptyPatch() async throws {
     let directory = Directory()
     _ = await run(["set", "stickDeadzone", "0.08", "--controller", Self.model], in: directory)
     _ = await run(["set", "frameQueueCapacity", "32", "--controller", Self.model], in: directory)
@@ -132,7 +132,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func unsetWithoutAControllerRemovesTheKeyFromAllPatchJSON() async throws {
+  func unsetWithoutControllerRemovesKeyFromAllPatchJSON() async throws {
     let directory = Directory()
     _ = await run(["set", "stickDeadzone", "0.05"], in: directory)
 
@@ -191,7 +191,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test(arguments: ["0.15", ".15", "00.15", "0.150"])
-  func setAcceptsAPlainDecimalNumber(_ value: String) async throws {
+  func setAcceptsPlainDecimalNumber(_ value: String) async throws {
     let directory = Directory()
     let result = await run(["set", "stickDeadzone", value, "--json"], in: directory)
 

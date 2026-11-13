@@ -35,7 +35,7 @@ extension TransportFacadeTests {
   }
 
   @Test
-  func observedDriverKitOwnerWinsOnlyForTheSamePhysicalDevice() {
+  func observedDriverKitOwnerWinsOnlyForSamePhysicalDevice() {
     let directClaimed = device(
       route: .rawUSB,
       serviceID: 1,
@@ -69,7 +69,7 @@ extension TransportFacadeTests {
   }
 
   @Test
-  func oneDiscoveryBackendCanOperateWhenTheOtherIsUnavailable() async throws {
+  func oneDiscoveryBackendCanOperateWhenOtherIsUnavailable() async throws {
     let directDevice = device(route: .rawUSB, serviceID: 1)
     let direct = FakeUSBTransportProvider(devicesResult: .success([directDevice]))
     let unavailable = FakeUSBTransportProvider(devicesResult: .failure(.disconnected))

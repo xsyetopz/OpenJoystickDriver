@@ -5,7 +5,7 @@ import Testing
 @testable import OpenJoystickDriverMacOSPlatform
 
 struct GameControllerListingTests {
-  /// D16: macOS serves a pad only while GameController lists a controller for it.
+  /// macOS serves a pad only while GameController lists a controller for it.
   @Test(arguments: [
     (true, GameControllerListing.settling, true),
     (true, .listed, true),

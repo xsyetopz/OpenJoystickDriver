@@ -22,7 +22,7 @@ struct StreamConstructionTests {
   /// Holds on a host without a matching device.
   @Test
   @MainActor
-  func eachDeviceEventsUsesANewManager() throws {
+  func eachDeviceEventsUsesNewManager() throws {
     let stream = HIDDeviceStream()
     let first = stream.deviceEvents()
     let firstManager = try #require(stream.manager)

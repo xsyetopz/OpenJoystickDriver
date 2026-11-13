@@ -9,7 +9,7 @@ extension JoyConPairCharacterizationTests {
   /// The left half holds SL (bound to L), ZL, Minus, d-pad up and its stick while the right half
   /// taps buttons and moves its stick: no right-half step releases a left-half control.
   @Test
-  func rightHalfNeverReleasesTheLeftHalf() async throws {
+  func rightHalfNeverReleasesLeftHalf() async throws {
     let session = try await pairedSession()
     defer { session.harness.removeFiles() }
     let held: UInt32 = 0x20_0000 | 0x80_0000 | 0x100 | 0x2_0000
@@ -42,7 +42,7 @@ extension JoyConPairCharacterizationTests {
 
   /// The reverse: the right half holds A, R, Plus and its stick while the left half taps.
   @Test
-  func leftHalfNeverReleasesTheRightHalf() async throws {
+  func leftHalfNeverReleasesRightHalf() async throws {
     let session = try await pairedSession()
     defer { session.harness.removeFiles() }
     let held: UInt32 = 0x4 | 0x40 | 0x200
@@ -74,7 +74,7 @@ extension JoyConPairCharacterizationTests {
   /// Stopping the right half ends the pair: the shared device releases everything, including the
   /// left half's held controls, and the left half returns to virtual output.
   @Test
-  func stoppingOneHalfReleasesThePair() async throws {
+  func stoppingOneHalfReleasesPair() async throws {
     let session = try await pairedSession()
     defer { session.harness.removeFiles() }
     var lines = try await session.run([

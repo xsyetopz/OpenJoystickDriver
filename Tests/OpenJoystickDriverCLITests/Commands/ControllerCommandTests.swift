@@ -43,7 +43,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func anUnknownSelectorFailsAndListsTheConnectedControllers() async throws {
+  func unknownSelectorFailsAndListsConnectedControllers() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -56,7 +56,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func aModelSelectorMatchingTwoControllersFailsAndListsBoth() async throws {
+  func modelSelectorMatchingTwoControllersFailsAndListsBoth() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1", outputs: .dualMainRumble),
       ApplicationServiceDeviceDescription.fixture(
@@ -73,7 +73,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func aModelSelectorMatchingOneControllerResolvesIt() async throws {
+  func modelSelectorMatchingOneControllerResolvesIt() async throws {
     let service = try FakeService(
       devices: [
         ApplicationServiceDeviceDescription.fixture(id: "pad-1"),
@@ -98,7 +98,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func rumbleWarnsAboutAMissingTriggerMotorAndSucceedsWhenAMainMotorRan() async throws {
+  func rumbleWarnsAboutMissingTriggerMotorAndSucceedsWhenMainMotorRan() async throws {
     let service = try FakeService(
       devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered(dropping: [.leftTrigger, .leftHaptic, .rightHaptic])
@@ -121,7 +121,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func rumbleOnAWiiRemoteSendsTheLowFrequencyLevelOfItsOneBinaryMotor() async throws {
+  func rumbleOnWiiRemoteSendsLowFrequencyLevelOfItsOneBinaryMotor() async throws {
     let wii = PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency],
       lightingFeatures: [.playerIndicator],
@@ -162,7 +162,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func playerNamesTheControllerLikeTheOtherOutputMessages() async throws {
+  func playerNamesControllerLikeOtherOutputMessages() async throws {
     let service = try FakeService(
       devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered()
@@ -186,7 +186,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func rumbleWithEveryIntensityAtZeroStopsTheMotors() async throws {
+  func rumbleWithEveryIntensityAtZeroStopsMotors() async throws {
     let service = try FakeService(
       devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
       respond: Self.delivered()
@@ -199,7 +199,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func anUnsupportedOutputFailsWithExitOne() async throws {
+  func unsupportedOutputFailsWithExitOne() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -212,7 +212,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func watchFirstPressPrintsTheFirstNewlyPressedControl() async throws {
+  func watchFirstPressPrintsFirstNewlyPressedControl() async throws {
     let reads = Counter()
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
@@ -232,7 +232,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func watchFirstPressFailsWhenTheDurationPassesFirst() async throws {
+  func watchFirstPressFailsWhenDurationPassesFirst() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -251,7 +251,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func suspendingASuspendedControllerSucceedsWithoutAChange() async throws {
+  func suspendingSuspendedControllerSucceedsWithoutChange() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -267,7 +267,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func disconnectOfABluetoothLEControllerNamesTheLimitAndTheManualRoute() async throws {
+  func disconnectOfBluetoothLEControllerNamesLimitAndManualRoute() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -285,7 +285,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showPrintsTheControllerReport() async throws {
+  func showPrintsControllerReport() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -296,7 +296,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showLabelsOwnershipInTheSameStyleAsTheOtherValues() async throws {
+  func showLabelsOwnershipInSameStyleAsOtherValues() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -336,7 +336,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showSpellsEachSideOfABindingWithAVariantInKebabCase() async throws {
+  func showSpellsEachSideOfBindingWithVariantInKebabCase() async throws {
     let device = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
       protocolBinding: ProtocolBindingID(.xboxXUSB, variant: .receiver)
@@ -357,7 +357,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showPrintsWhyTheControllerIsNotPublished() async throws {
+  func showPrintsWhyControllerIsNotPublished() async throws {
     var device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     device.publication = ApplicationServicePublicationStatus.notPublished(
       .systemGamepad,
@@ -380,7 +380,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showPrintsTheFailureTextOfAFailedPublication() async throws {
+  func showPrintsFailureTextOfFailedPublication() async throws {
     var device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     device.publication = .failed("send failed", target: .generic)
     let service = try FakeService(devices: [device])
@@ -399,7 +399,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showLeavesOutPublicationWhenTheServiceSendsNone() async throws {
+  func showLeavesOutPublicationWhenServiceSendsNone() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -456,7 +456,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showPrintsThePowerState() async throws {
+  func showPrintsPowerState() async throws {
     let service = try FakeService(devices: Self.poweredDevices())
     let json = await service.run(["controller", "show", token("pad-1"), "--json"])
     let plain = await service.run(["controller", "show", token("pad-2"), "--plain"])
@@ -480,7 +480,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func watchOutputPrintsTheVirtualGamepadNextToTheInput() async throws {
+  func watchOutputPrintsVirtualGamepadNextToInput() async throws {
     var virtual = VirtualGamepadState()
     virtual.buttons = 0x11
     virtual.hat = .east
@@ -529,7 +529,7 @@ struct ControllerCommandTests {
   /// The virtual gamepad is read before the input, so an `out` line never shows a value before
   /// the input that produced it.
   @Test
-  func watchOutputReadsTheVirtualGamepadBeforeTheInput() async throws {
+  func watchOutputReadsVirtualGamepadBeforeInput() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -569,7 +569,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func outputChecksNameTheControllerByIDWhenAnotherSharesItsModel() async throws {
+  func outputChecksNameControllerByIDWhenAnotherSharesItsModel() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1", outputs: .dualMainRumble),
       ApplicationServiceDeviceDescription.fixture(id: "pad-2", outputs: .dualMainRumble),
@@ -624,7 +624,7 @@ struct ControllerCommandTests {
   )
 
   @Test
-  func showReportsABundledRecord() async throws {
+  func showReportsBundledRecord() async throws {
     let json = try await Self.show(["--json"])
     let human = try await Self.show([])
     let plain = try await Self.show(["--plain"])
@@ -638,7 +638,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showReportsAUserRecordAndItsFile() async throws {
+  func showReportsUserRecordAndItsFile() async throws {
     let json = try await Self.show(["--json"], userRecord: Self.userPatch)
     let human = try await Self.show([], userRecord: Self.userPatch)
     let plain = try await Self.show(["--plain"], userRecord: Self.userPatch)
@@ -671,7 +671,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func showReportsTheInputMapping() async throws {
+  func showReportsInputMapping() async throws {
     let json = try await Self.show(["--json"])
     let human = try await Self.show([])
     let plain = try await Self.show(["--plain"])
@@ -703,7 +703,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func resumeAndDisconnectReportTheSession() async throws {
+  func resumeAndDisconnectReportSession() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -744,7 +744,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func watchPrintsTheStateAsJSONLines() async throws {
+  func watchPrintsStateAsJSONLines() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -804,7 +804,7 @@ struct ControllerCommandTests {
   }
 
   @Test
-  func watchAllPrefixesEachHumanAndPlainLineWithTheController() async throws {
+  func watchAllPrefixesEachHumanAndPlainLineWithController() async throws {
     let input = ControllerState(pressed: [.south])
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")

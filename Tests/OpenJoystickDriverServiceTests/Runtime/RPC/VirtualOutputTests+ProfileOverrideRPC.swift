@@ -236,7 +236,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func overrideRequestsRoundTripThroughTheLocalRPCBridge() async throws {
+  func overrideRequestsRoundTripThroughLocalRPCBridge() async throws {
     let fixture = await profileOverrideServer()
     let set = try await localRPC(
       fixture.server,

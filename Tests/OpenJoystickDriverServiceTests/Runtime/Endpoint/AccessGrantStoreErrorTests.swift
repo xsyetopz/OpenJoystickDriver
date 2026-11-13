@@ -44,7 +44,7 @@ struct AccessGrantStoreErrorTests {
   ]
 
   @Test(arguments: cases)
-  func theMessageLeadsWithTheCodeAndItsLocalizedText(_ item: Case) {
+  func messageLeadsWithCodeAndItsLocalizedText(_ item: Case) {
     let message = item.error.errorDescription ?? ""
     let text = item.code.localizedExplanation
     #expect(item.error.code == item.code)

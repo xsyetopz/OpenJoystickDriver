@@ -88,7 +88,7 @@ struct ControllerSpeakerCommandTests {
   }
 
   @Test
-  func playCutsTheClipAtSpeakerMaxSeconds() async throws {
+  func playCutsClipAtSpeakerMaxSeconds() async throws {
     let service = try FakeService(devices: [Self.remote(maxSeconds: 1)], respond: Self.answering())
     let path = try Self.wav(seconds: 3, channels: 1)
     let result = await service.run(["controller", "speaker", "play", token("wii-1"), path])
@@ -98,7 +98,7 @@ struct ControllerSpeakerCommandTests {
   }
 
   @Test
-  func aVolumeAboveOneIsRefused() async throws {
+  func volumeAboveOneIsRefused() async throws {
     let service = try FakeService(devices: [Self.remote()], respond: Self.answering())
     let path = try Self.wav(seconds: 1)
     let result = await service.run(
@@ -109,7 +109,7 @@ struct ControllerSpeakerCommandTests {
   }
 
   @Test
-  func aFileThatIsNotWAVIsRefusedAndNothingIsSent() async throws {
+  func fileThatIsNotWAVIsRefusedAndNothingIsSent() async throws {
     let service = try FakeService(devices: [Self.remote()], respond: Self.answering())
     let path = try Self.write(Data("not audio".utf8), named: "clip.mp3")
     let result = await service.run(["controller", "speaker", "play", token("wii-1"), path])
@@ -119,7 +119,7 @@ struct ControllerSpeakerCommandTests {
   }
 
   @Test
-  func aWAVFileThatIsNotPCMIsRefused() async throws {
+  func wavFileThatIsNotPCMIsRefused() async throws {
     let service = try FakeService(devices: [Self.remote()], respond: Self.answering())
     let path = try Self.wav(seconds: 1, format: 3)
     let result = await service.run(["controller", "speaker", "play", token("wii-1"), path])
@@ -129,7 +129,7 @@ struct ControllerSpeakerCommandTests {
   }
 
   @Test
-  func aControllerWithoutASpeakerFailsWithSpeakerUnavailable() async throws {
+  func controllerWithoutSpeakerFailsWithSpeakerUnavailable() async throws {
     let service = try FakeService(
       devices: [.fixture(id: "pad-1")],
       respond: Self.answering()
@@ -146,7 +146,7 @@ struct ControllerSpeakerCommandTests {
   }
 
   @Test
-  func stopSendsTheStopRequestForTheController() async throws {
+  func stopSendsStopRequestForController() async throws {
     let service = try FakeService(devices: [Self.remote()], respond: Self.answering())
     let result = await service.run(["controller", "speaker", "stop", token("wii-1")])
     #expect(result.code == 0, "\(result.standardError)")

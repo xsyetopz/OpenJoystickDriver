@@ -59,7 +59,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func statusPrintsHumanRowsAndTheRegistrationRecord() async {
+  func statusPrintsHumanRowsAndRegistrationRecord() async {
     let result = await status(
       [],
       ExtensionStatus(bundle: .present, registration: .inactive("record line"))
@@ -74,7 +74,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func statusExitsOneWhenMacOSDoesNotReportTheRegistration() async {
+  func statusExitsOneWhenMacOSDoesNotReportRegistration() async {
     let result = await status(
       ["--plain"],
       ExtensionStatus(bundle: .present, registration: .unavailable("probe failed"))
@@ -87,7 +87,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func activateReportsTheStateAndSubmitsOneActivation() async throws {
+  func activateReportsStateAndSubmitsOneActivation() async throws {
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
     let jsonRun = await submit("activate", ["--json"], outcome: .active, actions: actions)
@@ -101,7 +101,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func deactivateSubmitsADeactivation() async throws {
+  func deactivateSubmitsDeactivation() async throws {
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
     let result = await submit("deactivate", ["--plain"], outcome: .inactive, actions: actions)

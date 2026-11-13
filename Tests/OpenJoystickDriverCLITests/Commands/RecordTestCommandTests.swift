@@ -44,7 +44,7 @@ struct RecordTestCommandTests {
   }
 
   @Test
-  func aMatchingStateExitsZero() async throws {
+  func matchingStateExitsZero() async throws {
     let directory = Directory()
     let packets = try directory.write(Self.capture, as: "capture.jsonl")
     let expect = try directory.write(ControllerState(pressed: [.south]), as: "expect.json")
@@ -62,7 +62,7 @@ struct RecordTestCommandTests {
   }
 
   @Test
-  func aMismatchExitsOneWithE2022AndNamesTheDifferingFields() async throws {
+  func mismatchExitsOneWithE2022AndNamesDifferingFields() async throws {
     let directory = Directory()
     let packets = try directory.write(Self.capture, as: "capture.jsonl")
     let expect = try directory.write(ControllerState(pressed: [.east]), as: "expect.json")
@@ -83,7 +83,7 @@ struct RecordTestCommandTests {
   }
 
   @Test
-  func anUnreadableCaptureExitsOneWithoutComparing() async throws {
+  func unreadableCaptureExitsOneWithoutComparing() async throws {
     let directory = Directory()
     let expect = try directory.write(ControllerState(pressed: [.south]), as: "expect.json")
     let garbled = try directory.write("not json\n", as: "garbled.jsonl")
@@ -111,7 +111,7 @@ struct RecordTestCommandTests {
   }
 
   @Test
-  func anUnknownRecordExitsOne() async throws {
+  func unknownRecordExitsOne() async throws {
     let directory = Directory()
     let packets = try directory.write(Self.capture, as: "capture.jsonl")
     let expect = try directory.write(ControllerState(), as: "expect.json")

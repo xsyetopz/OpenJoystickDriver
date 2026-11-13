@@ -216,7 +216,7 @@ struct ProfileSchemaTests {
     """#
 
   @Test
-  func aRichProfileIsAcceptedByTheDecoderAndTheSchema() throws {
+  func richProfileIsAcceptedByDecoderAndSchema() throws {
     let profile = try RemappingProfileFileStore.load(
       from: PropertyListFixture.data(json: Self.richDocument)
     )
@@ -288,7 +288,7 @@ struct ProfileSchemaTests {
       #""kind": "Off", "startPosition": 0, "strength": 0.7"#
     ),
   ])
-  func aBrokenProfileIsRejectedByTheDecoderAndTheSchema(
+  func brokenProfileIsRejectedByDecoderAndSchema(
     problem: String,
     original: String,
     replacement: String
@@ -366,7 +366,7 @@ struct ProfileSchemaTests {
   }
 
   @Test
-  func schemaEnumsMatchTheSwiftCases() throws {
+  func schemaEnumsMatchSwiftCases() throws {
     let pairs: [(String, [String])] = [
       ("button", Self.raw(Control.self)),
       ("axis", Self.raw(RemappingAxis.self)),
@@ -417,7 +417,7 @@ struct ProfileSchemaTests {
   }
 
   @Test
-  func vocabularyAndKeyboardEnumsMatchTheSwiftCases() throws {
+  func vocabularyAndKeyboardEnumsMatchSwiftCases() throws {
     let vocabulary = try #require(
       try JSONSchemaFiles.document(named: "vocabulary.schema.json")["$defs"] as? [String: Any]
     )

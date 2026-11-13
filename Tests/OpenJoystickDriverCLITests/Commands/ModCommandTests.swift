@@ -63,7 +63,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func validateReportsThePackageAndWritesNothing() async throws {
+  func validateReportsPackageAndWritesNothing() async throws {
     let support = Support()
     let folder = try support.makePackage()
 
@@ -80,7 +80,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func aRefusedPackageExitsOneWithItsCode() async throws {
+  func refusedPackageExitsOneWithItsCode() async throws {
     let support = Support()
     let empty = support.root.appendingPathComponent("empty").path
     try FileManager.default.createDirectory(atPath: empty, withIntermediateDirectories: true)
@@ -99,7 +99,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func aManifestWithAnUnsupportedAPIVersionIsRefusedWithE5001() async throws {
+  func manifestWithUnsupportedAPIVersionIsRefusedWithE5001() async throws {
     let support = Support()
     let folder = try support.makePackage()
     let manifestURL = URL(fileURLWithPath: folder).appendingPathComponent("mod.plist")
@@ -147,7 +147,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func installRefusesAnExistingNameUnlessForced() async throws {
+  func installRefusesExistingNameUnlessForced() async throws {
     let support = Support()
     let folder = try support.makePackage()
     _ = await run(["install", folder], in: support)
@@ -163,7 +163,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func forceNeverOverridesRequiresOrAClash() async throws {
+  func forceNeverOverridesRequiresOrClash() async throws {
     let support = Support()
     let first = try support.makePackage("first-pack")
     let rival = try support.makePackage("rival-pack")
@@ -205,7 +205,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func removeOfAMissingPackageIsE4006AndTouchesOnlyItsFolder() async throws {
+  func removeOfMissingPackageIsE4006AndTouchesOnlyItsFolder() async throws {
     let support = Support()
     _ = await run(["install", try support.makePackage()], in: support)
 
@@ -221,7 +221,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func listNamesAPackageThatRequiresExcludesWithItsE4002Reason() async throws {
+  func listNamesPackageThatRequiresExcludesWithItsE4002Reason() async throws {
     let support = Support()
     _ = await run(["install", try support.makePackage()], in: support)
 

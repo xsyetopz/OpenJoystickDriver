@@ -66,7 +66,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func theLaunchedProgramSeesTheMappingOfTheGenericPersona() async throws {
+  func launchedProgramSeesMappingOfGenericPersona() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .generic)])
     let (run, printed) = try await Self.launch(service, ["virtual", "launch", "/usr/bin/env"])
 
@@ -78,7 +78,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func theGameControllerBackendOptionAddsExactlyItsHintsToTheProgramEnvironment() async throws {
+  func gameControllerBackendOptionAddsExactlyItsHintsToProgramEnvironment() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .sdlCompatible)])
     let (run, printed) = try await Self.launch(
       service,
@@ -99,7 +99,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func withoutTheOptionNoJoystickHintIsSet() async throws {
+  func withoutOptionNoJoystickHintIsSet() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .generic)])
     let (run, printed) = try await Self.launch(service, ["virtual", "launch", "/usr/bin/env"])
 
@@ -108,7 +108,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func theGameControllerBackendOptionStillFailsWithoutAVirtualGamepad() async throws {
+  func gameControllerBackendOptionStillFailsWithoutVirtualGamepad() async throws {
     let service = try FakeService(devices: [])
     let (run, printed) = try await Self.launch(
       service,
@@ -121,7 +121,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func aNameOnPathAndTheArgumentsOfTheProgramReachIt() async throws {
+  func nameOnPathAndArgumentsOfProgramReachIt() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .generic)])
     let (run, printed) = try await Self.launch(
       service,
@@ -133,7 +133,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func everyPersonaMappingFollowsAValueThatIsAlreadySet() async throws {
+  func everyPersonaMappingFollowsValueThatIsAlreadySet() async throws {
     let service = try FakeService(devices: [
       Self.device("pad-1", .sdlCompatible), Self.device("pad-2", .generic),
       Self.device("pad-3", .gameControllerCompatible),
@@ -162,7 +162,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func withoutAVirtualGamepadItFailsAndRunsNothing() async throws {
+  func withoutVirtualGamepadItFailsAndRunsNothing() async throws {
     let service = try FakeService(devices: [])
     let (run, printed) = try await Self.launch(service, ["virtual", "launch", "/usr/bin/env"])
 
@@ -173,7 +173,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func aProgramThatDoesNotExistFailsWithTheLaunchCode() async throws {
+  func programThatDoesNotExistFailsWithLaunchCode() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .generic)])
     for program in ["/nonexistent/ojd-program", "ojd-no-such-program", "/nonexistent/Game.app"] {
       let (run, printed) = try await Self.launch(service, ["virtual", "launch", program])
@@ -185,7 +185,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func theExitStatusOfTheProgramIsTheExitStatusOfOJD() async throws {
+  func exitStatusOfProgramIsExitStatusOfOJD() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .generic)])
     let failed = try await Self.launch(service, ["virtual", "launch", "/usr/bin/false"])
     #expect(failed.run.code == 1)
@@ -203,7 +203,7 @@ struct VirtualLaunchCommandTests {
   }
 
   @Test
-  func jsonAndPlainAndAMissingProgramAreUsageErrors() async throws {
+  func jsonAndPlainAndMissingProgramAreUsageErrors() async throws {
     let service = try FakeService(devices: [Self.device("pad-1", .generic)])
     for arguments in [
       ["virtual", "launch", "--json", "/usr/bin/env"],

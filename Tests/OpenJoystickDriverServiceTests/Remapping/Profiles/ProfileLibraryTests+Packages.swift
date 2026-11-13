@@ -80,7 +80,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func userProfilesCannotTakeAPackageProfileName() async throws {
+  func userProfilesCannotTakePackageProfileName() async throws {
     try await withLibrary { library, directory in
       try installPackage("arcade-pack", [makeProfile(name: "Arcade")], in: directory)
       let own = makeProfile(name: "Mine")
@@ -116,7 +116,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func removedPackageBehavesLikeAMissingProfile() async throws {
+  func removedPackageBehavesLikeMissingProfile() async throws {
     try await withLibrary { library, directory in
       let shipped = makeProfile(name: "Arcade")
       try installPackage("arcade-pack", [shipped], in: directory)
@@ -138,7 +138,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func writesNeverTouchThePackagesFolder() async throws {
+  func writesNeverTouchPackagesFolder() async throws {
     try await withLibrary { library, directory in
       let shipped = makeProfile(name: "Arcade")
       try installPackage("arcade-pack", [shipped], in: directory)
