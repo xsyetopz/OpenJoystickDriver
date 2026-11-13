@@ -237,7 +237,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func slowConsumerKeepsTheQueueBoundedAndDeliversTheNewestFrame() async throws {
+  func slowConsumerKeepsQueueBoundedAndDeliversNewestFrame() async throws {
     let capacity = 4
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
@@ -269,7 +269,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func fullQueueNeverEvictsAHostReplyAndFailsItWhenNoFrameCanYield() async throws {
+  func fullQueueNeverEvictsHostReplyAndFailsItWhenNoFrameCanYield() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
     let sender = UserSpaceReportSender(queueCapacity: 2)
@@ -301,7 +301,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func suppressionBetweenReportsSkipsTheRemainingReportAndCanResume() async throws {
+  func suppressionBetweenReportsSkipsRemainingReportAndCanResume() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
     let sender = UserSpaceReportSender()
@@ -384,7 +384,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func closeCancelsAStalledCurrentSend() async {
+  func closeCancelsStalledCurrentSend() async {
     let backend = CancellableReportBackend()
     let sender = UserSpaceReportSender()
     sender.attach(backend)
@@ -408,7 +408,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func nativeSendThatNeverFinishesTimesOutAtTheDeadline() async {
+  func nativeSendThatNeverFinishesTimesOutAtDeadline() async {
     let backend = NonCooperativeReportBackend()
     let deadline: UInt64 = 50_000_000
     let timer = ManualDeadlineTimer()
@@ -434,7 +434,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func closeCompletesOnlyAfterTheNativeDeviceHasBeenTornDown() async {
+  func closeCompletesOnlyAfterNativeDeviceHasBeenTornDown() async {
     let backend = SlowTeardownBackend()
     let sender = UserSpaceReportSender()
     sender.attach(backend)

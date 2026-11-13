@@ -28,7 +28,7 @@ struct PhysicalHIDOutputSerialQueueTests {
   /// An operation runs at the queue's own priority, whatever the caller's, on a queue and on a
   /// queue created after another.
   @Test
-  func operationsRunAtTheQueuePriorityWhateverTheCallerPriority() async {
+  func operationsRunAtQueuePriorityWhateverCallerPriority() async {
     let queue = PhysicalHIDOutputSerialQueue()
     let outcome = await Task(priority: .utility) {
       await queue.perform { _ in Task.currentPriority }

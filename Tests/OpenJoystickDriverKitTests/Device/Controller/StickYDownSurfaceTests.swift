@@ -8,7 +8,7 @@ struct StickYDownSurfaceTests {
   private static let up = ControllerState(leftStick: StickPosition(x: 0, y: -1))
 
   @Test
-  func theWatchJSONCarriesANegativeYForAStickPushedUp() throws {
+  func watchJSONCarriesNegativeYForStickPushedUp() throws {
     let data = try JSONEncoder().encode(Self.up)
     let object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
     let stick = try #require(object["leftStick"] as? [String: Any])
@@ -17,7 +17,7 @@ struct StickYDownSurfaceTests {
   }
 
   @Test
-  func anEndpointFrameWithANegativeYReachesTheVirtualGamepadAsANegativeY() throws {
+  func endpointFrameWithNegativeYReachesVirtualGamepadAsNegativeY() throws {
     let frame = try JSONDecoder().decode(
       VirtualFeedFrame.self,
       from: Data(#"{"axes":{"LeftStickY":-1}}"#.utf8)
@@ -26,7 +26,7 @@ struct StickYDownSurfaceTests {
   }
 
   @Test
-  func theRemappingEngineSeesAStickPushedUpAsNegativeY() {
+  func remappingEngineSeesStickPushedUpAsNegativeY() {
     let changes = RemappingEngineState.changes(from: .neutral, to: Self.up)
     #expect(changes == [.leftStick(x: 0, y: -1)])
   }

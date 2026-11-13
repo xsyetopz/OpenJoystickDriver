@@ -10,7 +10,7 @@ extension StartupLifetimeTests {
   ///
   /// The GameSir connections are synthetic, as in `HIDLocationRoutingTests`.
   @Test
-  func controllerRecordReloadReadmitsOnlyTrackedHIDConnectionsOfTheChangedModel() async throws {
+  func controllerRecordReloadReadmitsOnlyTrackedHIDConnectionsOfChangedModel() async throws {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()

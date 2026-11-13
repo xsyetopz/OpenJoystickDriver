@@ -6,7 +6,7 @@ import Testing
 
 struct LogicalControllerIDTests {
   @Test
-  func logDescriptionNotesASerialWithoutRevealingIt() {
+  func logDescriptionNotesSerialWithoutRevealingIt() {
     let identifier = LogicalControllerID(
       vendorID: 0x054C,
       productID: 0x09CC,
@@ -20,7 +20,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func hardwareIdentityIgnoresTheAddress() {
+  func hardwareIdentityIgnoresAddress() {
     let first = LogicalControllerID(
       vendorID: 0x045E,
       productID: 0x0719,
@@ -142,7 +142,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func virtualIdentityOfASerialControllerSurvivesAPortChange() {
+  func virtualIdentityOfSerialControllerSurvivesPortChange() {
     let before = LogicalControllerID(
       vendorID: 0x045E,
       productID: 0x0B12,
@@ -198,7 +198,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func firstSameSerialControllerKeepsThePlainIdentity() {
+  func firstSameSerialControllerKeepsPlainIdentity() {
     var registry = VirtualIdentityRegistry()
     let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000))
 
@@ -231,7 +231,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func locationIDCollisionResolvesToTheNextFreeValue() {
+  func locationIDCollisionResolvesToNextFreeValue() {
     let (a, b) = Self.collidingPads()
     #expect(
       UserSpaceVirtualDeviceConstants.locationID(for: a)
@@ -259,7 +259,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func applicationServiceEncodingsCarryTheSessionTokenAndNotTheSerial() throws {
+  func applicationServiceEncodingsCarrySessionTokenAndNotSerial() throws {
     let serial = "RPC-Private-Serial"
     let identifier = LogicalControllerID(vendorID: 0x045E, productID: 0x028E, serialNumber: serial)
     let token = ControllerSessionToken.issue()

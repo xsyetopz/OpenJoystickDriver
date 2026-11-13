@@ -28,7 +28,7 @@ struct RemappingRPCTests {
   /// A profile that fails to decode in a request gets the invalid-profile code, the same code the
   /// store gives the same document.
   @Test
-  func aRequestWithAnInvalidProfileFailsWithTheInvalidProfileCode() throws {
+  func requestWithInvalidProfileFailsWithInvalidProfileCode() throws {
     let version = OpenJoystickDriverAPI.version
     let document = #"{"apiVersion":"\#(version)","kind":"Profile","name":"Pad"}"#
     let request = Data(#"{"profile":\#(document)}"#.utf8)
@@ -65,7 +65,7 @@ struct RemappingRPCTests {
   /// A profile with a missing or unsupported `apiVersion` gets the unsupported-version code in a
   /// request, the same code the store gives the same document.
   @Test
-  func aRequestWithAnUnsupportedAPIVersionFailsWithTheUnsupportedAPIVersionCode() throws {
+  func requestWithUnsupportedAPIVersionFailsWithUnsupportedAPIVersionCode() throws {
     let documents = [
       #"{"kind":"Profile","name":"Pad"}"#,
       #"{"apiVersion":"ojd/v0","kind":"Profile","name":"Pad"}"#,
@@ -101,7 +101,7 @@ struct RemappingRPCTests {
   }
 
   @Test
-  func aProfileIssueWithoutAKindFailsToDecode() {
+  func profileIssueWithoutKindFailsToDecode() {
     let id = UUID().uuidString
     let issue = Data(#"{"id":"\#(id)","code":"E3008","message":"m"}"#.utf8)
     #expect(throws: DecodingError.self) {
@@ -315,7 +315,7 @@ struct RemappingRPCTests {
   }
 
   @Test
-  func argumentLimitLeavesRoomForTheBase64FramedEnvelope() throws {
+  func argumentLimitLeavesRoomForBase64FramedEnvelope() throws {
     let arguments = Data(count: ApplicationServiceRemappingRPC.maximumArgumentBytes)
     let request = LocalServiceRPCRequest(method: "createRemappingProfile", arguments: arguments)
     let encodedRequest = try JSONEncoder().encode(request)

@@ -60,7 +60,7 @@ struct PhysicalOutputOwnershipTests {
   }
 
   @Test
-  func deviceCleanupCannotAffectAReplacementIdentifier() {
+  func deviceCleanupCannotAffectReplacementIdentifier() {
     var ownership = PhysicalOutputOwnership()
     let stale = LogicalControllerID(vendorID: 1, productID: 2, locationID: 3)
     let replacement = LogicalControllerID(vendorID: 1, productID: 2, locationID: 4)

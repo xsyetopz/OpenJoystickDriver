@@ -236,7 +236,7 @@ struct StartupLifetimeTests {
   }
 
   @Test
-  func aReconnectKeepsTheLogicalControllerIDAndGetsANewSessionToken() async throws {
+  func reconnectKeepsLogicalControllerIDAndGetsNewSessionToken() async throws {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey

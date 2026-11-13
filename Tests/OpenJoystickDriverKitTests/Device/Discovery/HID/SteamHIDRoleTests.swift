@@ -7,7 +7,7 @@ import Testing
 
 /// Steam Controller HID roles.
 ///
-/// The interface layouts follow Linux `hid-steam.c` (hid-steam.c:1098–1108) through
+/// The interface layouts follow Linux `hid-steam.c` (hid-steam.c:1098-1108) through
 /// ``steamHIDInterface(number:gamepad:)``; they are not a macOS capture.
 struct SteamHIDRoleTests {
   static let dongleLocation: UInt32 = 0x0031_0000
@@ -32,7 +32,7 @@ struct SteamHIDRoleTests {
     await manager.scheduleHIDInitializationsForTest(connections)
     await Self.waitForInitializations(of: manager)
 
-    // Interface 0 has no feature report, so it is no role; slots 1–4 each run a pipeline.
+    // Interface 0 has no feature report, so it is no role; slots 1-4 each run a pipeline.
     let slots = (1...4).map { Self.slot($0) }
     #expect(Set(await manager.pipelines.keys) == Set(slots))
     #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.interfaceContractMismatch])
@@ -190,7 +190,7 @@ struct SteamHIDRoleTests {
   }
 
   /// SDL `HIDAPI_DriverSteamTriton_IsSupportedDevice`: dongle controllers live on interfaces
-  /// 2–5; the Bluetooth LE controller has no USB interface number.
+  /// 2-5; the Bluetooth LE controller has no USB interface number.
   @Test
   func tritonDongleSlotsAreInterfacesTwoToFiveAndBluetoothIsItsLocation() {
     let registry = ProtocolDriverRegistry()

@@ -6,7 +6,7 @@ import Testing
 
 struct USBLifecycleWriteTests {
   @Test
-  func keepAliveKeepsItsIntervalWhileReadsBlockAndStopsWithTheRun() async {
+  func keepAliveKeepsItsIntervalWhileReadsBlockAndStopsWithRun() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(
         keepAliveChannels: [.usb],
@@ -31,7 +31,7 @@ struct USBLifecycleWriteTests {
   }
 
   @Test
-  func keepAliveStopsWhileTheSessionIsSuspendedAndReturnsOnResume() async {
+  func keepAliveStopsWhileSessionIsSuspendedAndReturnsOnResume() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(
         keepAliveChannels: [.usb],
@@ -58,7 +58,7 @@ struct USBLifecycleWriteTests {
   }
 
   @Test
-  func handleChangeStopsConnectionWritesButKeepsTheConsumedStateChange() async {
+  func handleChangeStopsConnectionWritesButKeepsConsumedStateChange() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(requiresInputConnectionBeforeOutput: true),
       connection: [Self.write(endpoint: 0x02, bytes: [1]), Self.write(endpoint: 0x02, bytes: [2])]
@@ -121,7 +121,7 @@ struct USBLifecycleWriteTests {
   ///
   /// The pipeline resets it once and keeps retrying.
   @Test
-  func startupFailingAsDisconnectedResetsTheDeviceOnce() async {
+  func startupFailingAsDisconnectedResetsDeviceOnce() async {
     let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])
     let session = LifecycleUSBSession(rejections: [[0x10]: .disconnected])
     let provider = LifecycleUSBProvider(session: session)
@@ -145,7 +145,7 @@ struct USBLifecycleWriteTests {
 
   /// A startup that the device rejects for another reason does not reset the device.
   @Test
-  func startupFailingForAnotherReasonDoesNotResetTheDevice() async {
+  func startupFailingForAnotherReasonDoesNotResetDevice() async {
     let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])
     let session = LifecycleUSBSession(rejections: [[0x10]: .inputOutput])
     let provider = LifecycleUSBProvider(session: session)

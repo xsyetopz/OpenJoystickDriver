@@ -7,7 +7,7 @@ import Testing
 @Suite("Application service lifecycle")
 struct LifecycleTests {
   @Test("login registration is skipped while the settings file is rejected")
-  func loginRegistrationDoesNotProceedOnAnUnreadableSettingsFile() throws {
+  func loginRegistrationDoesNotProceedOnUnreadableSettingsFile() throws {
     let root = RootedDataDirectory.temporary()
     let store = SettingsStore(directory: root)
     try FileManager.default.createDirectory(

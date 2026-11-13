@@ -8,7 +8,7 @@ import Testing
 @Suite(.timeLimit(.minutes(2)), .removingTemporarySockets)
 struct LocalServiceRPCCancellationTests {
   @Test(.timeLimit(.minutes(1)))
-  func cancellingACallToASilentServerEndsPromptlyWithCancellationError() async throws {
+  func cancellingCallToSilentServerEndsPromptlyWithCancellationError() async throws {
     let socketPath = temporarySocketPath()
     let listener = try silentListener(socketPath: socketPath)
     defer {

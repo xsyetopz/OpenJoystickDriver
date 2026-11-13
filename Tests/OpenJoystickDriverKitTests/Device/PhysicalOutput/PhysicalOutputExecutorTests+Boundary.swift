@@ -7,7 +7,7 @@ import Testing
 extension PhysicalOutputExecutorTests {
   /// A release through the sink drops the remapping claim and writes the released channel.
   @Test
-  func aReleaseThroughTheSinkReleasesTheMappingClaims() async throws {
+  func releaseThroughSinkReleasesMappingClaims() async throws {
     let started = try await startSixaxis(locationID: 540)
     let manager = started.manager
     let claim = MappingOutputClaim(
@@ -27,7 +27,7 @@ extension PhysicalOutputExecutorTests {
 
   /// A profile colour, and its removal, are accepted through the sink for a connected controller.
   @Test
-  func aProfileColorThroughTheSinkIsAcceptedForAConnectedController() async throws {
+  func profileColorThroughSinkIsAcceptedForConnectedController() async throws {
     let started = try await startSixaxis(locationID: 541)
     let manager = started.manager
     let color = ControllerColor(red: 0, green: 128, blue: 255)
@@ -38,7 +38,7 @@ extension PhysicalOutputExecutorTests {
 
   /// A release whose channel write fails is refused through the sink.
   @Test
-  func aReleaseThroughTheSinkIsRefusedWhenTheWriteFails() async throws {
+  func releaseThroughSinkIsRefusedWhenWriteFails() async throws {
     let started = try await startSixaxis(locationID: 542)
     let manager = started.manager
     let claim = MappingOutputClaim(
@@ -59,7 +59,7 @@ extension PhysicalOutputExecutorTests {
 
   /// A profile colour whose lightbar write fails is refused through the sink.
   @Test
-  func aProfileColorThroughTheSinkIsRefusedWhenTheWriteFails() async throws {
+  func profileColorThroughSinkIsRefusedWhenWriteFails() async throws {
     let started = try await startSixaxis(locationID: 543, productID: 0x05C4)
     let manager = started.manager
     await started.backend.disableOutputReports()

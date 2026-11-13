@@ -54,7 +54,7 @@ struct XboxOne02D1DetectionTests {
   }
 
   @Test
-  func extensionMatchesTheModel() {
+  func extensionMatchesModel() {
     #expect(USBDriverKitExtensionConfiguration.microsoftProductIDs.contains(Self.productID))
   }
 
@@ -155,7 +155,7 @@ struct XboxOne02D1DetectionTests {
   }
 
   @Test
-  func facadeKeepsTheModelOffDirectIOUSBHostWithoutADextService() {
+  func facadeKeepsModelOffDirectIOUSBHostWithoutDextService() {
     let direct = USBTransportDevice(
       route: .rawUSB,
       serviceID: 42,

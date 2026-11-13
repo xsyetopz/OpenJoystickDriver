@@ -18,14 +18,14 @@ struct PersonaControlMappingTests {
   ]
 
   @Test
-  func theClassicSteamControllerRightPadIsItsRightStick() {
+  func classicSteamControllerRightPadIsItsRightStick() {
     #expect(Dispatcher.rightPadIsRightStick(Self.steamControllerWired))
     let pad = Dispatcher.virtualControl(.rightTrackpadClick, rightPadIsRightStick: true)
     #expect(Dispatcher.buttonBit(for: pad) == 7)
   }
 
   @Test
-  func aDeckAndATritonKeepTheirRealRightStickClick() {
+  func deckAndTritonKeepTheirRealRightStickClick() {
     for identifier in [Self.steamDeck, Self.steamTriton] {
       #expect(!Dispatcher.rightPadIsRightStick(identifier))
       let pad = Dispatcher.virtualControl(.rightTrackpadClick, rightPadIsRightStick: false)
@@ -36,7 +36,7 @@ struct PersonaControlMappingTests {
   }
 
   @Test
-  func reportMappingAppliesTheRightPadRule() {
+  func reportMappingAppliesRightPadRule() {
     let input = ControllerState(pressed: [.rightTrackpadClick])
     func buttons(rightPadIsRightStick: Bool) -> UInt32 {
       var state = VirtualGamepadState()
@@ -73,7 +73,7 @@ struct PersonaControlMappingTests {
 
   /// The rule reads the resolved record: a record or patch that changes the capability changes it.
   @Test
-  func theRuleFollowsTheRecordsCapabilities() throws {
+  func ruleFollowsRecordsCapabilities() throws {
     func record(_ identifier: LogicalControllerID) throws -> DeviceRuntimeProfile {
       try #require(DeviceCatalog.current.withLock { $0 }.record(for: identifier.model))
     }

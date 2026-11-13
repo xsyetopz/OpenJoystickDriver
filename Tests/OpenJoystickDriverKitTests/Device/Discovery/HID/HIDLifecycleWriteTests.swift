@@ -54,7 +54,7 @@ struct HIDLifecycleWriteTests {
   }
 
   @Test
-  func failedStartupReportStillSendsTheLaterOnesAtThePlanInterval() async throws {
+  func failedStartupReportStillSendsLaterOnesAtPlanInterval() async throws {
     let startup = Switch1Driver().startupWrites().hidOutputs
     // The description's handshake commands go first; the driver adds the counter-stamped reports.
     let declared = PhysicalProtocolID.nintendoSwitch1.protocolDescription.startupWrites(
@@ -86,7 +86,7 @@ struct HIDLifecycleWriteTests {
   }
 
   @Test
-  func failedFeatureReportStillSendsTheRest() async {
+  func failedFeatureReportStillSendsRest() async {
     let activation = SteamControllerDriver().activationWrites().hidFeatures
     let started = await start(
       vendorID: 0x28DE,

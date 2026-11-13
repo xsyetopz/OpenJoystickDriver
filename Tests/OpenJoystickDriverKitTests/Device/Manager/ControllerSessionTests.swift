@@ -66,7 +66,7 @@ private final class AbsoluteStickParser: PhysicalProtocolDriver {
 @Suite(.timeLimit(.minutes(2)))
 struct ControllerSessionTests {
   @Test
-  func absoluteSnapshotsCenterTheStickWithoutAReleaseDelta() async {
+  func absoluteSnapshotsCenterStickWithoutReleaseDelta() async {
     let output = ControllerSessionOutputProbe()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 1, productID: 2),

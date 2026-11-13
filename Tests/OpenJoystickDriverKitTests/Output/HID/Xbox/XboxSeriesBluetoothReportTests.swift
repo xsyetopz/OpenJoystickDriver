@@ -40,7 +40,7 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func theDpadTravelsOnlyInTheHat() {
+  func dpadTravelsOnlyInHat() {
     for button in [GamepadHIDDescriptor.ButtonBit.dpadUp, .dpadDown, .dpadLeft, .dpadRight] {
       #expect(report(buttonBit: button) == Self.neutral)
     }
@@ -78,14 +78,14 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func theHatCarriesTheDpad() {
+  func hatCarriesDpad() {
     #expect(format.buildInputReport(from: VirtualGamepadState(hat: .north))[13] == 0x01)
     #expect(format.buildInputReport(from: VirtualGamepadState(hat: .east))[13] == 0x03)
     #expect(format.buildInputReport(from: VirtualGamepadState(hat: .neutral))[13] == 0x00)
   }
 
   @Test
-  func theDescriptorHasFifteenButtonsShareAndTheRumbleReport() throws {
+  func descriptorHasFifteenButtonsShareAndRumbleReport() throws {
     let parsed = try #require(
       HIDReportDescriptorParser.parse(descriptor: XboxSeriesBluetoothHIDDescriptor.descriptor)
     )

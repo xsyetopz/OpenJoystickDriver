@@ -6,7 +6,7 @@ import Testing
 
 struct USBExclusiveOwnerTests {
   @Test
-  func aUserSpaceOwnerCarriesItsProcessIDAndName() {
+  func userSpaceOwnerCarriesItsProcessIDAndName() {
     #expect(
       USBExclusiveOwner(registryValue: "pid 11070, steam_osx")
         == USBExclusiveOwner(processID: 11070, name: "steam_osx")
@@ -14,7 +14,7 @@ struct USBExclusiveOwnerTests {
   }
 
   @Test
-  func aKernelDriverOwnerCarriesOnlyItsName() {
+  func kernelDriverOwnerCarriesOnlyItsName() {
     #expect(
       USBExclusiveOwner(registryValue: "AppleUSB20Hub")
         == USBExclusiveOwner(processID: nil, name: "AppleUSB20Hub")
@@ -26,12 +26,12 @@ struct USBExclusiveOwnerTests {
   }
 
   @Test
-  func anEmptyValueNamesNoOwner() {
+  func emptyValueNamesNoOwner() {
     #expect(USBExclusiveOwner(registryValue: "  ") == nil)
   }
 
   @Test
-  func theHeldMessageNamesTheOwnerOrSaysThereIsNone() {
+  func heldMessageNamesOwnerOrSaysThereIsNone() {
     let catalog = [
       "status.controllerOwner.named": "%1$@ pid %2$@",
       "status.controllerOwner.nameOnly": "name %@",
@@ -64,7 +64,7 @@ struct USBExclusiveOwnerRecoveryTests {
   )
 
   @Test
-  func theReleaseEventReopensTheInterfaceWithoutPolling() async {
+  func releaseEventReopensInterfaceWithoutPolling() async {
     let owner = "pid 11070, steam_osx"
     let session = RecoveryUSBSession(readError: .timeout)
     let provider = RecoveryUSBProvider(sessions: [session])

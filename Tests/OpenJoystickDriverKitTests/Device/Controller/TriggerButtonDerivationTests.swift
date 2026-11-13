@@ -27,7 +27,7 @@ struct TriggerButtonDerivationTests {
   }
 
   @Test
-  func policyReusesTheRemappingDigitalActivationDefaults() {
+  func policyReusesRemappingDigitalActivationDefaults() {
     #expect(
       TriggerButtonDerivation.pressThreshold
         == UnipolarValue(normalized: Float(RemappingAxisTuning.defaultDigitalActivationThreshold))
@@ -46,7 +46,7 @@ struct TriggerButtonDerivationTests {
   }
 
   @Test
-  func pressesAtTheThresholdAndReleasesOnlyBelowTheHysteresisBand() {
+  func pressesAtThresholdAndReleasesOnlyBelowHysteresisBand() {
     #expect(derive(left: 32_766).isEmpty)
     #expect(derive(left: 32_767) == [.leftTrigger])
     #expect(derive(left: 0, right: 65_535) == [.rightTrigger])
@@ -58,7 +58,7 @@ struct TriggerButtonDerivationTests {
   }
 
   @Test
-  func aDeclaredDigitalTriggerIsNeverDerived() {
+  func declaredDigitalTriggerIsNeverDerived() {
     #expect(derive(left: 65_535, capabilities: Self.digital).isEmpty)
     var state = snapshot(.press(.rightTrigger))
     state.rightTrigger = .min
@@ -71,7 +71,7 @@ struct TriggerButtonDerivationTests {
   }
 
   @Test
-  func aDigitalOnlyTriggerDerivesNothing() {
+  func digitalOnlyTriggerDerivesNothing() {
     let digitalOnly = ControllerCapabilities(
       controls: Control.xboxLayout.subtracting([.leftTrigger, .rightTrigger]),
       digitalTriggers: [.leftTrigger, .rightTrigger]
@@ -91,7 +91,7 @@ struct TriggerButtonDerivationTests {
   }
 
   @Test
-  func digitalTriggersAreOptionalInTheStoredForm() throws {
+  func digitalTriggersAreOptionalInStoredForm() throws {
     let encoded = try JSONEncoder().encode(Self.analogOnly)
     #expect(!(String(data: encoded, encoding: .utf8) ?? "").contains("digitalTriggers"))
     #expect(try JSONDecoder().decode(ControllerCapabilities.self, from: encoded) == Self.analogOnly)
@@ -105,7 +105,7 @@ struct TriggerButtonDerivationTests {
   /// The pipeline derives the button with hysteresis against its last normalized state, and a
   /// resumed session starts that memory from neutral.
   @Test
-  func pipelineDerivesTriggerButtonsAndResumeForgetsTheHysteresis() async {
+  func pipelineDerivesTriggerButtonsAndResumeForgetsHysteresis() async {
     let driver = OutputCharacterizationTests.ScriptedBatches([
       [.leftTrigger(0.6)], [.leftTrigger(0.47)], [.leftTrigger(0.4)], [.leftTrigger(0.47)],
     ])

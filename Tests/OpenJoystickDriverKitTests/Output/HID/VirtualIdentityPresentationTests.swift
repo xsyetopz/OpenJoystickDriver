@@ -31,7 +31,7 @@ struct VirtualIdentityPresentationTests {
   }
 
   @Test
-  func publishedUSBIdentityLabelsNameTheOfficialProduct() {
+  func publishedUSBIdentityLabelsNameOfficialProduct() {
     let adaptive = VirtualDeviceProfile.sdlCompatible
     #expect(adaptive.productName == "Xbox Adaptive Controller")
     #expect(adaptive.publishedUSBIdentityLabel == "Xbox Adaptive Controller (045E:0B0C)")

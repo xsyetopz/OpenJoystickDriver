@@ -123,7 +123,7 @@ struct OwnershipObservationTests {
   }
 
   @Test
-  func competingOwnerIsVisibleWithoutStartingOrPublishingThePipeline() async throws {
+  func competingOwnerIsVisibleWithoutStartingOrPublishingPipeline() async throws {
     let dispatcher = OwnershipOutputRecorder()
     let manager = DeviceManager(dispatcher: dispatcher, installationKey: testPortKeyInstallationKey)
     let identifier = LogicalControllerID(vendorID: 0x1234, productID: 0x5678, locationID: 77)
@@ -154,7 +154,7 @@ struct OwnershipObservationTests {
 
   /// A pad OJD seizes while GameController also lists it reaches the summary as a duplicate.
   @Test(arguments: [true, false])
-  func servedPadThatTheSystemAlsoListsIsADuplicate(_ systemListsGameController: Bool) async throws {
+  func servedPadThatSystemAlsoListsIsDuplicate(_ systemListsGameController: Bool) async throws {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey
@@ -188,7 +188,7 @@ struct OwnershipObservationTests {
   }
 
   @Test(arguments: [HIDInputOwnership.ownedByAnotherClient, .acquisitionFailed])
-  func unseizedConnectionIsRetriedAndRestartsWhenTheSeizeSucceeds(
+  func unseizedConnectionIsRetriedAndRestartsWhenSeizeSucceeds(
     _ initial: HIDInputOwnership
   ) async throws {
     let backend = ClaimRecordingHIDAccessBackend()
@@ -234,7 +234,7 @@ struct OwnershipObservationTests {
   }
 
   @Test
-  func exclusiveHIDOwnershipIsReportedByTheLiveManagerAndPayload() async throws {
+  func exclusiveHIDOwnershipIsReportedByLiveManagerAndPayload() async throws {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey

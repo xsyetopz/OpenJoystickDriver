@@ -5,7 +5,7 @@ import Testing
 
 struct ReceiptTimeTests {
   @Test
-  func hidAndUSBParsingDeliverReceiptTimeToTheProtocolHook() async throws {
+  func hidAndUSBParsingDeliverReceiptTimeToProtocolHook() async throws {
     let (calls, continuation) = AsyncStream<ReceiptTimeParser.Call>.makeStream()
     var iterator = calls.makeAsyncIterator()
     let parser = ReceiptTimeParser(continuation: continuation)

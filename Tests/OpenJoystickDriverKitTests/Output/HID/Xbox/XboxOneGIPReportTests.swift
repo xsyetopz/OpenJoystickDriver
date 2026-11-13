@@ -41,7 +41,7 @@ struct XboxOneGIPHIDReportFormatTests {
   }
 
   @Test
-  func neverSetsShareAndTheStateDpadButtonsCarryNothing() {
+  func neverSetsShareAndStateDpadButtonsCarryNothing() {
     let neutral = ProtocolPacketFixtures.XboxOneGIP.neutralInputReport
     for button in [
       GamepadHIDDescriptor.ButtonBit.share, .dpadUp, .dpadDown, .dpadLeft, .dpadRight,
@@ -51,7 +51,7 @@ struct XboxOneGIPHIDReportFormatTests {
   }
 
   @Test
-  func theHatSetsTheDpadBits() {
+  func hatSetsDpadBits() {
     let cases: [(GamepadHIDDescriptor.Hat, UInt8)] = [
       (.neutral, 0x00), (.north, 0x01), (.northEast, 0x09), (.east, 0x08), (.southEast, 0x0A),
       (.south, 0x02), (.southWest, 0x06), (.west, 0x04), (.northWest, 0x05),
@@ -88,7 +88,7 @@ struct XboxOneGIPHIDReportFormatTests {
   }
 
   @Test
-  func guideTravelsInTheVirtualKeyPacket() {
+  func guideTravelsInVirtualKeyPacket() {
     let pressed = format.buildAuxiliaryInputReports(
       from: VirtualGamepadState(buttons: 1 << UInt32(GamepadHIDDescriptor.ButtonBit.guide.rawValue))
     )
@@ -100,7 +100,7 @@ struct XboxOneGIPHIDReportFormatTests {
   }
 
   @Test
-  func identityAndDescriptorDeclareTheGIPReports() throws {
+  func identityAndDescriptorDeclareGIPReports() throws {
     let profile = VirtualHIDProfileID.sdlCompatible.identity
     let parsed = try #require(
       HIDReportDescriptorParser.parse(descriptor: XboxOneGIPHIDDescriptor.descriptor)

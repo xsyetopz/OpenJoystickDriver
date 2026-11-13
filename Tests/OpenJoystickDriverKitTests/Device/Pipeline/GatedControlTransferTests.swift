@@ -67,19 +67,19 @@ struct GatedControlTransferTests {
   }
 
   @Test
-  func aMatchingManufacturerReceivesAllThreeReadsInOrder() async throws {
+  func matchingManufacturerReceivesAllThreeReadsInOrder() async throws {
     let sent = try await Self.sentRequests(to: Self.device(manufacturer: "SHANWAN"))
     #expect(sent == [1, 2, 3])
   }
 
   @Test
-  func aDifferentManufacturerReceivesNone() async throws {
+  func differentManufacturerReceivesNone() async throws {
     let sent = try await Self.sentRequests(to: Self.device(manufacturer: "OTHER"))
     #expect(sent.isEmpty)
   }
 
   @Test
-  func aDeviceWithoutAManufacturerReceivesNone() async throws {
+  func deviceWithoutManufacturerReceivesNone() async throws {
     let sent = try await Self.sentRequests(to: Self.device(manufacturer: nil))
     #expect(sent.isEmpty)
   }

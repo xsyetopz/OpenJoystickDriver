@@ -43,7 +43,7 @@ struct ReceiverPowerOffPipelineTests {
   }
 
   @Test
-  func stopSendsThePowerOffPacketOnceBeforeTheHandleCloses() async throws {
+  func stopSendsPowerOffPacketOnceBeforeHandleCloses() async throws {
     let session = RecoveryUSBSession(
       readResults: [.success([UInt8](Receiver.presenceConnected))],
       readError: .timeout
@@ -61,7 +61,7 @@ struct ReceiverPowerOffPipelineTests {
   }
 
   @Test
-  func stopWithoutAConnectedControllerSendsNoPowerOff() async throws {
+  func stopWithoutConnectedControllerSendsNoPowerOff() async throws {
     let session = RecoveryUSBSession(readError: .timeout)
     let pipeline = try makePipeline(sessions: [session])
     let start = Task { await pipeline.start() }
@@ -74,7 +74,7 @@ struct ReceiverPowerOffPipelineTests {
   }
 
   @Test
-  func aLostSessionClosesWithoutThePowerOffPacket() async throws {
+  func lostSessionClosesWithoutPowerOffPacket() async throws {
     let lost = RecoveryUSBSession(
       readResults: [.success([UInt8](Receiver.presenceConnected))],
       readError: .disconnected

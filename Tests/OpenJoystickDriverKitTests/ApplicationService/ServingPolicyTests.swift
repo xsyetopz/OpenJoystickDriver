@@ -5,7 +5,7 @@ import Testing
 
 struct ServingPolicyTests {
   @Test(arguments: ServingFixture.all)
-  func theFixtureSetGetsItsRoute(_ fixture: ServingFixture) {
+  func fixtureSetGetsItsRoute(_ fixture: ServingFixture) {
     let first = ServingPolicy.route(fixture.input)
     let again = ServingPolicy.route(fixture.input)
     #expect(first == fixture.route, "\(fixture.name)")
@@ -13,7 +13,7 @@ struct ServingPolicyTests {
   }
 
   @Test(arguments: ServingFixture.all)
-  func aDescriptionGetsTheRouteOfItsInput(_ fixture: ServingFixture) {
+  func descriptionGetsRouteOfItsInput(_ fixture: ServingFixture) {
     let route = ServingPolicy.route(
       for: fixture.device,
       outputEnabled: fixture.outputEnabled,
@@ -23,7 +23,7 @@ struct ServingPolicyTests {
   }
 
   @Test
-  func aRecordThatGivesANativeControllerToOJDTurnsPassThroughIntoAVirtualGamepad() {
+  func recordThatGivesNativeControllerToOJDTurnsPassThroughIntoVirtualGamepad() {
     var input = ServingInput(observation: .systemGamepad)
     #expect(ServingPolicy.route(input) == .nativePassThrough(.none))
     input.server = .ojd
@@ -31,7 +31,7 @@ struct ServingPolicyTests {
   }
 
   @Test
-  func theAutomaticPersonaIsSDLCompatible() {
+  func automaticPersonaIsSDLCompatible() {
     #expect(
       ServingPolicy.route(ServingInput(observation: .exclusiveHID)) == .virtualHID(.sdlCompatible)
     )
@@ -48,7 +48,7 @@ struct ServingPolicyTests {
   }
 
   @Test
-  func duplicateRiskFollowsTheObservation() {
+  func duplicateRiskFollowsObservation() {
     #expect(DuplicateExposureRisk(observation: .systemHIDVisible) == .systemHIDVisible)
     #expect(DuplicateExposureRisk(observation: .systemGamepad) == DuplicateExposureRisk.none)
     #expect(DuplicateExposureRisk(observation: .upstreamVirtualDevice) == .upstreamVirtualDevice)
@@ -57,7 +57,7 @@ struct ServingPolicyTests {
   }
 
   @Test
-  func systemServedOwnershipsAreExactlyTheNativeOnes() {
+  func systemServedOwnershipsAreExactlyNativeOnes() {
     let served: Set<ControllerOwnershipObservation> = [.systemGamepad, .systemHIDVisible]
     for observation in ControllerOwnershipObservation.allCases {
       #expect(observation.isServedBySystem == served.contains(observation), "\(observation)")

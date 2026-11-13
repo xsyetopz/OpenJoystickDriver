@@ -9,7 +9,7 @@ struct VirtualDeviceTests {
     #""apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"VirtualDevice""#
 
   @Test
-  func theBundledRecordsDefineBothPersonasWithTheirIdentities() throws {
+  func bundledRecordsDefineBothPersonasWithTheirIdentities() throws {
     let generic = try #require(VirtualDevice.definition(of: .generic).profile)
     #expect((generic.vendorID, generic.productID) == (0x1209, 0x4A4F))
     let sdl = try #require(VirtualDevice.definition(of: .sdlCompatible).profile)
@@ -23,7 +23,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func aDefinitionWithoutOrWithAMalformedHintsFieldIsRefused() throws {
+  func definitionWithoutOrWithMalformedHintsFieldIsRefused() throws {
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
@@ -47,7 +47,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func aSelectionRecordHoldsNoHintsField() {
+  func selectionRecordHoldsNoHintsField() {
     let document =
       "{\(Self.header),\"persona\":\"Generic\","
       + "\"match\":{\"vendorID\":1,\"productID\":2},\"worksWithDefaultSDLHints\":true}"
@@ -66,7 +66,7 @@ struct VirtualDeviceTests {
     #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Persona","persona":"Generic"}"#,
     #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","persona":"Generic"}"#,
   ])
-  func aBadHeaderIsRefusedWithE5001(document: String) {
+  func badHeaderIsRefusedWithE5001(document: String) {
     let problem = #expect(throws: DocumentHeaderProblem.self) {
       try VirtualDevice.decode(
         PropertyListFixture.bytes(json: document),
@@ -79,7 +79,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func aDocumentWithAnUnknownPersonaIsRefused() {
+  func documentWithUnknownPersonaIsRefused() {
     let document = "{\(Self.header),\"persona\":\"NotAPersona\"}"
     #expect(throws: ControllerRecordProblem.self) {
       try VirtualDevice.decode(
@@ -91,7 +91,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func aProblemWithAVirtualDeviceIsAnInvalidControllerRecord() {
+  func problemWithVirtualDeviceIsInvalidControllerRecord() {
     let document = "{\(Self.header),\"persona\":\"NotAPersona\"}"
     let problem = #expect(throws: ControllerRecordProblem.self) {
       try VirtualDevice.decode(
@@ -110,7 +110,7 @@ struct VirtualDeviceTests {
     #""persona":"Generic","match":{"vendorID":"1","productID":2}"#,
     #""persona":"Generic","match":{"vendorID":1,"productID":2,"colour":1}"#,
   ])
-  func aFileThatIsNotTheSchemaIsRefusedWithE5007(members: String) {
+  func fileThatIsNotSchemaIsRefusedWithE5007(members: String) {
     let document = "{\(Self.header),\(members)}"
     let problem = #expect(throws: ControllerRecordProblem.self) {
       try VirtualDevice.decode(
@@ -147,7 +147,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func aKindOfAnotherDocumentIsRefusedWithE5001() {
+  func kindOfAnotherDocumentIsRefusedWithE5001() {
     let document =
       #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Controller","colour":1}"#
     let problem = #expect(throws: DocumentHeaderProblem.self) {
@@ -161,7 +161,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func aSelectionIsDecodedWithItsMatch() throws {
+  func selectionIsDecodedWithItsMatch() throws {
     let document =
       "{\(Self.header),\"persona\":\"Generic\",\"match\":{\"vendorID\":1,\"productID\":2}}"
     let device = try VirtualDevice.decode(
