@@ -5,6 +5,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Where the documented families come from: the user's `Protocols` folder and mod packages.
+///
+/// Serialized, because a user description of `VendorFlydigi` replaces the bundled family for the
+/// whole process while its test runs.
+@Suite(.serialized)
 struct DocumentedFamilyLoadingTests {
   private static func description(
     _ name: String,
