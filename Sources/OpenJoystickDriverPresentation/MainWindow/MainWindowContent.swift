@@ -188,20 +188,21 @@
         }
       ).background(ErrorCodeExplainerSheetHost(model: screens.errorCodeExplainer)).background(
         WhatsNewSheetHost(model: screens.whatsNew)
-      ).alert(
-        isPresented: $navigation.isDiscardConfirmationPresented
-      ) {
-        Alert(
-          title: Text(OJDLocalized.string("ui.settings.advanced.discardTitle")),
-          message: Text(OJDLocalized.string("ui.settings.advanced.discardProfileMessage")),
-          primaryButton: .destructive(
-            Text(OJDLocalized.string("ui.settings.advanced.discardAction"))
-          ) {
-            navigation.discardPendingArea()
-          },
-          secondaryButton: .cancel { navigation.cancelPendingArea() }
-        )
-      }
+      ).background(
+        // An alert on this VStack would keep the areas inside it from presenting their own.
+        Color.clear.alert(isPresented: $navigation.isDiscardConfirmationPresented) {
+          Alert(
+            title: Text(OJDLocalized.string("ui.settings.advanced.discardTitle")),
+            message: Text(OJDLocalized.string("ui.settings.advanced.discardProfileMessage")),
+            primaryButton: .destructive(
+              Text(OJDLocalized.string("ui.settings.advanced.discardAction"))
+            ) {
+              navigation.discardPendingArea()
+            },
+            secondaryButton: .cancel { navigation.cancelPendingArea() }
+          )
+        }
+      )
     }
 
     /// The setup steps that are still open.
