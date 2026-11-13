@@ -218,7 +218,8 @@
             active ? Color.accentColor : Color(NSColor.separatorColor),
             lineWidth: 1
           )
-        ).ojdAccessibilityLabel(title).ojdAccessibilityValue(
+        ).accessibilityElement(children: .combine).ojdAccessibilityLabel(title)
+        .ojdAccessibilityValue(
           [
             active
               ? OJDLocalized.string("ui.inputTest.pressed")
