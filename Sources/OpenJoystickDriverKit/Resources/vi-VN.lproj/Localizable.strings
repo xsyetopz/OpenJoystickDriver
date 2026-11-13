@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "Không thể cấp quyền cho ứng dụng khách có loại chữ ký này, vì bất kỳ chương trình cục bộ nào cũng có thể mạo nhận chữ ký của nó. Hãy ký bằng Developer ID và thử lại.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "Hãy chọn ít nhất một phạm vi để cấp.";
+"error.E2026.message" = "Chưa chỉ định phạm vi để cấp. Hãy chọn ít nhất một phạm vi để cấp.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "Dịch vụ đang dừng. Hãy khởi động dịch vụ, rồi thử lại.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "Hành động không chạy vì quyền truy cập Tự động hóa chưa được cấp. Hãy cấp quyền này cho OpenJoystickDriver rồi thử lại.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "Hành động không chạy vì Secure Input đang bật. Hãy đóng ứng dụng đã bật nó, chẳng hạn ô mật khẩu, rồi thử lại.";
+"error.E3032.message" = "Văn bản không được nhập vì Secure Input đang bật. Hãy đóng ứng dụng đã bật nó, rồi thử lại.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "Hành động đã thất bại. Hãy thử lại.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

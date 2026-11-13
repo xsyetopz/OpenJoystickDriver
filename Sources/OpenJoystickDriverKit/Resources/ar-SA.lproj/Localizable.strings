@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "لا يمكن منح الوصول لعميل بهذا النوع من التوقيع، لأن أي برنامج محلي يمكنه ادعاء توقيعه. وقّعه باستخدام Developer ID وحاول مرة أخرى.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "اختر نطاقًا واحدًا على الأقل لمنحه.";
+"error.E2026.message" = "لم يحدد الأمر أي نطاق للمنح. اختر نطاقًا واحدًا على الأقل لمنحه.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "الخدمة قيد الإيقاف. شغّلها، ثم حاول مرة أخرى.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "لم يتم تنفيذ الإجراء لأن إذن الأتمتة غير ممنوح. امنحه لـ OpenJoystickDriver وحاول مرة أخرى.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "لم يُنفَّذ الإجراء لأن Secure Input قيد التشغيل. أغلق التطبيق الذي شغّله، مثل حقل كلمة المرور، ثم حاول مرة أخرى.";
+"error.E3032.message" = "لم يُكتب النص لأن Secure Input قيد التشغيل. أغلق التطبيق الذي شغّله، ثم حاول مرة أخرى.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "فشل الإجراء. حاول مرة أخرى.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

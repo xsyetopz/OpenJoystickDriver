@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "Een client met dit soort handtekening kan geen toegang krijgen, omdat elk lokaal programma die handtekening kan claimen. Onderteken hem met een Developer ID en probeer het opnieuw.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "Kies minstens één bereik om te verlenen.";
+"error.E2026.message" = "Bij het verlenen is geen bereik opgegeven. Kies minstens één bereik om te verlenen.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "De service wordt gestopt. Start hem en probeer het opnieuw.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -3750,7 +3750,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "De actie is niet uitgevoerd omdat toegang tot Automatisering niet is verleend. Verleen die toegang aan OpenJoystickDriver en probeer het opnieuw.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "De actie is niet uitgevoerd omdat Secure Input aan staat. Sluit de app die het aanzet, zoals een wachtwoordveld, en probeer het opnieuw.";
+"error.E3032.message" = "De tekst is niet getypt omdat Secure Input aan staat. Sluit de app die het heeft aangezet en probeer het opnieuw.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "De actie is mislukt. Probeer het opnieuw.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "Einem Client mit dieser Art von Signatur kann kein Zugriff erteilt werden, weil jedes lokale Programm seine Signatur vortäuschen kann. Signiere ihn mit einer Developer ID und versuche es erneut.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "Wähle mindestens einen Bereich zum Erteilen.";
+"error.E2026.message" = "Die Erteilung nennt keinen Bereich. Wähle mindestens einen Bereich zum Erteilen.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "Der Dienst wird beendet. Starte ihn und versuche es dann erneut.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -3750,7 +3750,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "Die Aktion wurde nicht ausgeführt, weil der Automation-Zugriff nicht erteilt ist. Erteile ihn OpenJoystickDriver und versuche es noch einmal.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "Die Aktion wurde nicht ausgeführt, weil Secure Input aktiv ist. Schließe die App, die es aktiviert hat, etwa ein Passwortfeld, und versuche es noch einmal.";
+"error.E3032.message" = "Der Text wurde nicht eingegeben, weil Secure Input aktiv ist. Schließe die App, die es aktiviert hat, und versuche es noch einmal.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "Die Aktion ist fehlgeschlagen. Versuche es noch einmal.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

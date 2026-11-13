@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "Клиенту с таким видом подписи нельзя предоставить доступ, потому что любая локальная программа может выдать себя за него. Подпишите его через Developer ID и повторите попытку.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "Выберите хотя бы одну область для предоставления.";
+"error.E2026.message" = "Для предоставления не указана область. Выберите хотя бы одну область для предоставления.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "Служба останавливается. Запустите её и повторите попытку.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "Действие не выполнено, потому что доступ к автоматизации не предоставлен. Предоставьте его OpenJoystickDriver и повторите попытку.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "Действие не выполнено, потому что включён Secure Input. Закройте приложение, которое его включило, например поле пароля, и повторите попытку.";
+"error.E3032.message" = "Текст не введён, потому что включён Secure Input. Закройте приложение, которое его включило, и повторите попытку.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "Действие не удалось. Повторите попытку.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
