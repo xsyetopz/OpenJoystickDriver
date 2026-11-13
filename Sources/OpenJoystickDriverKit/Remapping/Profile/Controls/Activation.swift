@@ -18,9 +18,7 @@ public struct RemappingLongHold: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a long-hold action.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `durationMs`.
     case durationMs
-    /// The JSON key of `destination`.
     case destination
   }
 
@@ -57,11 +55,8 @@ public struct RemappingMultiTap: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a tap-count action.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `count`.
     case count
-    /// The JSON key of `windowMs`.
     case windowMs
-    /// The JSON key of `destination`.
     case destination
   }
 

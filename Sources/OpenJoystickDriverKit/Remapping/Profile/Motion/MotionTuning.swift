@@ -90,31 +90,18 @@ public struct RemappingMotionTuning: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a motion tuning.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `space`.
     case space
-    /// The JSON key of `pitchSensitivity`.
     case pitchSensitivity
-    /// The JSON key of `yawSensitivity`.
     case yawSensitivity
-    /// The JSON key of `invertPitch`.
     case invertPitch
-    /// The JSON key of `invertYaw`.
     case invertYaw
-    /// The JSON key of `smoothingHalfTimeMs`.
     case smoothingHalfTimeMs
-    /// The JSON key of `thresholdDegreesPerSecond`.
     case thresholdDegreesPerSecond
-    /// The JSON key of `automaticBias`.
     case automaticBias
-    /// The JSON key of `yawRelaxation`.
     case yawRelaxation
-    /// The JSON key of `sideReductionThreshold`.
     case sideReductionThreshold
-    /// The JSON key of `gravityCorrectionRate`.
     case gravityCorrectionRate
-    /// The JSON key of `lean`.
     case lean
-    /// The JSON key of `steering`.
     case steering
   }
 

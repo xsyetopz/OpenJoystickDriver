@@ -38,19 +38,12 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
 
   /// Profile document keys of an action.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `destination`.
     case destination
-    /// The JSON key of `behavior`.
     case behavior
-    /// The JSON key of `turbo`.
     case turbo
-    /// The JSON key of `pulseDurationMs`.
     case pulseDurationMs
-    /// The JSON key of `longHold`.
     case longHold
-    /// The JSON key of `multiTap`.
     case multiTap
   }
 

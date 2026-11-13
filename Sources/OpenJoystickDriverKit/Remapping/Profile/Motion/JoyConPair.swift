@@ -22,7 +22,6 @@ public struct RemappingJoyConPairSettings: Codable, Equatable, Sendable {
 
   /// Profile document keys of the pair settings.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `gyroSelection`.
     case gyroSelection
   }
 

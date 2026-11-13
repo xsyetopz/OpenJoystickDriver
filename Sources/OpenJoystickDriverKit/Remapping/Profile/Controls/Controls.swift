@@ -97,29 +97,17 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
-    /// The `Button` case.
     case button = "Button"
-    /// The `Dpad` case.
     case dpad = "Dpad"
-    /// The `Axis` case.
     case axis = "Axis"
-    /// The `AxisDirection` case.
     case axisDirection = "AxisDirection"
-    /// The `TriggerStage` case.
     case triggerStage = "TriggerStage"
-    /// The `MotionLean` case.
     case motionLean = "MotionLean"
-    /// The `TouchContact` case.
     case touchContact = "TouchContact"
-    /// The `TouchGrid` case.
     case touchGrid = "TouchGrid"
-    /// The `TouchSwipe` case.
     case touchSwipe = "TouchSwipe"
-    /// The `StickRegion` case.
     case stickRegion = "StickRegion"
-    /// The `TriggerBand` case.
     case triggerBand = "TriggerBand"
-    /// The `TouchArea` case.
     case touchArea = "TouchArea"
 
     /// Keys that a profile document may give for this case, which `type` selects.
@@ -143,53 +131,29 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a source, merged across all cases.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `button`.
     case button
-    /// The JSON key of `direction`.
     case direction
-    /// The JSON key of `axis`.
     case axis
-    /// The JSON key of `surface`.
     case surface
-    /// The JSON key of `columns`.
     case columns
-    /// The JSON key of `rows`.
     case rows
-    /// The JSON key of `column`.
     case column
-    /// The JSON key of `row`.
     case row
-    /// The JSON key of `minimumDistance`.
     case minimumDistance
-    /// The JSON key of `trigger`.
     case trigger
-    /// The JSON key of `stage`.
     case stage
-    /// The JSON key of `stick`.
     case stick
-    /// The JSON key of `innerRadius`.
     case innerRadius
-    /// The JSON key of `outerRadius`.
     case outerRadius
-    /// The JSON key of `fromDegrees`.
     case fromDegrees
-    /// The JSON key of `toDegrees`.
     case toDegrees
-    /// The JSON key of `hysteresis`.
     case hysteresis
-    /// The JSON key of `from`.
     case from
-    /// The JSON key of `to`.
     case to
-    /// The JSON key of `x`.
     case x
-    /// The JSON key of `y`.
     case y
-    /// The JSON key of `width`.
     case width
-    /// The JSON key of `height`.
     case height
   }
 
