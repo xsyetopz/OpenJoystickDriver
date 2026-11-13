@@ -16,7 +16,7 @@ struct ModPackageScriptTests {
   }
 
   @Test(arguments: ["generate.js", "Controllers/generate.js"])
-  func aScriptInAPackageIsSkippedAndNeverRun(path: String) throws {
+  func scriptInPackageSkippedAndNeverRun(path: String) throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let record = try Fixture.record(0x1234, 0xABCD)
@@ -38,7 +38,7 @@ struct ModPackageScriptTests {
   }
 
   @Test
-  func aFileThatIsNotAScriptIsStillRefused() throws {
+  func fileNotScriptStillRefused() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)])
@@ -49,7 +49,7 @@ struct ModPackageScriptTests {
   }
 
   @Test
-  func aScriptBesideAnInstalledPackageDoesNotChangeItsLoading() throws {
+  func scriptBesideInstalledPackageDoesNotChangeItsLoading() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)])
@@ -66,7 +66,7 @@ struct ModPackageScriptTests {
   }
 
   @Test(arguments: ["Sources/OpenJoystickDriverKit", "Sources/OpenJoystickDriverService"])
-  func noPackageLoadingSourceImportsAScriptEngine(folder: String) throws {
+  func noPackageLoadingSourceImportsScriptEngine(folder: String) throws {
     var root = URL(fileURLWithPath: #filePath)
     for _ in 0..<4 { root.deleteLastPathComponent() }
     let enumerator = try #require(

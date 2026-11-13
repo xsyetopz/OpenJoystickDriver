@@ -329,7 +329,7 @@ struct ControllerModeMatchTests {
   ///
   /// The same signature on a raw-USB mode is accepted.
   @Test
-  func aHIDModeWithEndpointsIsRefusedAndARawUSBModeIsNot() {
+  func hidModeWithEndpointsRefusedAndRawUSBModeNot() {
     let endpoints: [[String: Any]] = [["direction": "In", "transferType": "Interrupt"]]
     let match: [String: Any] = ["interfaceSignature": Self.signature(endpoints: endpoints)]
     let hid = Self.problem([Self.mode("x", match: match)])
@@ -515,7 +515,7 @@ struct ControllerModeMatchTests {
   // MARK: Decoder rejections, matched by the Python schema tests
 
   @Test
-  func theDecoderRejectsTheSameBadModesAsTheSchema() {
+  func decoderRejectsSameBadModesAsSchema() {
     let usb = ["link": "USB"]
     let cases: [(String, [[String: Any]], String)] = [
       ("no match", [["id": "x", "protocol": ["family": "SonySixaxis"]]], "match"),
@@ -655,7 +655,7 @@ struct ControllerModeMatchTests {
   }
 
   @Test
-  func theDecoderRejectsAModeListWithTwoDefaults() {
+  func decoderRejectsModeListWithTwoDefaults() {
     func decode(_ modes: [[String: Any]]?) -> String? {
       var record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,

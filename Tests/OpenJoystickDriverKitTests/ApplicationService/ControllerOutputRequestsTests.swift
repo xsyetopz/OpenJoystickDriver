@@ -13,7 +13,7 @@ struct ControllerOutputRequestsTests {
   }
 
   @Test
-  func theDurationIsAboveZeroAndWithinTheMaximum() {
+  func durationAboveZeroAndWithinMaximum() {
     #expect(ControllerOutput.isValidRumbleDuration(0.45))
     #expect(ControllerOutput.isValidRumbleDuration(RumbleDuration.maximumSeconds))
     for seconds in [0, -1, RumbleDuration.maximumSeconds + 0.001, .nan, .infinity] {
@@ -22,7 +22,7 @@ struct ControllerOutputRequestsTests {
   }
 
   @Test
-  func aRumbleRoundsTheDurationUpToOneMillisecondAndStopsWhenNoMotorIsNamed() {
+  func rumbleRoundsDurationUpToOneMillisecondAndStopsWhenNoMotorNamed() {
     let short = ControllerOutput.rumble(
       RumbleIntensities(lowFrequency: UnipolarValue(byte: 1)),
       seconds: 0.0001
@@ -36,7 +36,7 @@ struct ControllerOutputRequestsTests {
   }
 
   @Test
-  func aLightNamesOnlyTheValuesGiven() {
+  func lightNamesOnlyValuesGiven() {
     #expect(ControllerOutput.light(color: nil, brightness: nil).isEmpty)
     #expect(ControllerOutput.light(color: nil, brightness: 3).map(\.name) == ["brightness"])
     #expect(
@@ -46,7 +46,7 @@ struct ControllerOutputRequestsTests {
   }
 
   @Test
-  func everyOutcomeButDeliveredFailsWithTheControllerRequestFailedCode() throws {
+  func everyOutcomeButDeliveredFailsWithControllerRequestFailedCode() throws {
     let request = ControllerOutput.player(.player1)
     try ControllerOutput.check(ControllerOutputResult(.delivered), request, pad)
     for outcome in ControllerOutputResult.Outcome.allCases where outcome != .delivered {
@@ -59,7 +59,7 @@ struct ControllerOutputRequestsTests {
   }
 
   @Test
-  func aRumbleFailsWhenNoRequestedMotorRanAndReportsTheDroppedTriggers() throws {
+  func rumbleFailsWhenNoRequestedMotorRanAndReportsDroppedTriggers() throws {
     let all: [PhysicalRumbleMotor] = [.lowFrequency, .highFrequency, .leftHaptic, .rightHaptic]
     let none = ControllerOutputResult(.delivered, droppedRumbleChannels: all)
     let thrown = failure {
@@ -85,7 +85,7 @@ struct ControllerOutputRequestsTests {
   }
 
   @Test
-  func aReferenceNamesTheOneConnectedControllerOrFailsWithNotFound() throws {
+  func referenceNamesOneConnectedControllerOrFailsWithNotFound() throws {
     let other = ApplicationServiceDeviceDescription.fixture(id: "B", name: "Pad B", unit: "Q")
     #expect(try ControllerReference.device(named: token("A"), in: [pad, other]).name == "Pad A")
     #expect(

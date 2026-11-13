@@ -20,7 +20,7 @@ struct VirtualPersonaMatchMessageTests {
   }
 
   @Test
-  func aMatchTakenByAUserFileNamesThatFile() {
+  func matchTakenByUserFileNamesFile() {
     #expect(
       Self.message("error.E5007.virtualDevice.matchTakenByUserFile", arguments: ["mine.plist"])
         == "1234-abcd.plist, match: A persona file must not repeat the match of the user file "
@@ -29,7 +29,7 @@ struct VirtualPersonaMatchMessageTests {
   }
 
   @Test
-  func aMatchTakenByAPackageFileNamesThatFile() {
+  func matchTakenByPackageFileNamesFile() {
     #expect(
       Self.message("error.E5007.virtualDevice.matchTakenByPackageFile", arguments: ["pack.plist"])
         == "1234-abcd.plist, match: A persona file must not repeat the match of the package file "

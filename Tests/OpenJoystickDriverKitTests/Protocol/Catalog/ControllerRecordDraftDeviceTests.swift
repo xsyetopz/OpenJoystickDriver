@@ -66,7 +66,7 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   @Test
-  func aBundledModelWithoutAHIDModeGetsAPatchThatAddsAHIDDescriptorMode() throws {
+  func bundledModelWithoutAHIDModeGetsPatchAddsAHIDDescriptorMode() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.gameSir, device: Self.dongle(model: Self.gameSir))
     )
@@ -97,7 +97,7 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   @Test
-  func aNewModelWithAHIDGamepadGetsAHIDDescriptorController() throws {
+  func newModelWithAHIDGamepadGetsAHIDDescriptorController() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.unbundled, device: Self.dongle(model: Self.unbundled))
     )
@@ -108,7 +108,7 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   @Test
-  func aVendorClassDeviceGetsTheIdentityAndOneModePerInterfaceSignature() throws {
+  func vendorClassDeviceGetsIdentityAndOneModePerInterfaceSignature() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.unbundled, device: Self.vendorDevice(model: Self.unbundled))
     )
@@ -130,7 +130,7 @@ struct ControllerRecordDraftDeviceTests {
   /// Everything but the named missing input section passes `ojd record validate`: the one
   /// failure is the input layout the draft's family needs.
   @Test
-  func theVendorClassDraftFailsValidationOnlyOnTheInputSection() throws {
+  func vendorClassDraftFailsValidationOnlyOnInputSection() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.unbundled, device: Self.vendorDevice(model: Self.unbundled))
     )
@@ -141,7 +141,7 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   @Test
-  func aDeviceWithNoInterfaceGetsNoDraft() {
+  func deviceWithNoInterfaceGetsNoDraft() {
     let device = PhysicalDevice(
       vendorID: Self.unbundled.vendorID,
       productID: Self.unbundled.productID

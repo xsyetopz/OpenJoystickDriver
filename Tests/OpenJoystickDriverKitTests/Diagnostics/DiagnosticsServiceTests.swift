@@ -124,7 +124,7 @@ struct DiagnosticsServiceTests {
   }
 
   @Test
-  func diagnoseSkipsWhenTheRecordHasNoPlaceholderSerial() throws {
+  func diagnoseSkipsWhenRecordHasNoPlaceholderSerial() throws {
     let record = try ControllerRecordSet.makeRecord(
       OrderedJSON(foundation: [
         "apiVersion": "openjoystickdriver/v1alpha3",

@@ -37,19 +37,19 @@ struct UnservedDeviceNextStepTests {
   )
 
   @Test
-  func identityIsTheHexPairOjdPrints() {
+  func identityHexPairOjdPrints() {
     #expect(Self.unbound(.noProtocolMatch, backend: .rawUSB).identity == "3537:1010")
   }
 
   @Test
-  func aHIDGamepadOffersTheDraftCommand() {
+  func hidGamepadOffersDraftCommand() {
     let pad = Self.unbound(.descriptorContractMismatch, backend: .hid, interfaces: [Self.gamepad])
     #expect(pad.isHIDGamepad)
     #expect(pad.draftCommand == "ojd record draft 3537:1010")
   }
 
   @Test
-  func aDeviceWithoutAHIDGamepadOffersNoDraft() {
+  func deviceWithoutAHIDGamepadOffersNoDraft() {
     #expect(Self.unbound(.noProtocolMatch, backend: .rawUSB).draftCommand == nil)
     #expect(Self.unbound(.noProtocolMatch, backend: .hid).draftCommand == nil)
     let raw = Self.unbound(.deviceInUse, backend: .rawUSB, interfaces: [Self.gamepad])
@@ -57,7 +57,7 @@ struct UnservedDeviceNextStepTests {
   }
 
   @Test
-  func onlyNoProtocolMatchOffersTheCaptureCommand() {
+  func onlyNoProtocolMatchOffersCaptureCommand() {
     for reason in ProtocolBindingReason.allCases {
       let command = Self.unbound(reason, backend: .rawUSB).captureCommand
       if reason == .noProtocolMatch {

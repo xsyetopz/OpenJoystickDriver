@@ -42,7 +42,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func sdlCompatibleProfileAdaptsTheXboxOneGIPLayout() {
+  func sdlCompatibleProfileAdaptsXboxOneGIPLayout() {
     let profile = VirtualHIDProfileID.sdlCompatible.makeProfile()
     #expect(profile.identity == .sdlCompatible)
     #expect(profile.identity.vendorID == 0x045E && profile.identity.productID == 0x0B0C)
@@ -53,7 +53,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileAdaptsTheCurrentOJDGenericGamepad() {
+  func genericProfileAdaptsCurrentOJDGenericGamepad() {
     let profile = VirtualHIDProfileID.generic.makeProfile()
     #expect(profile.identity == .generic)
     #expect(profile.descriptor == GamepadHIDDescriptor.descriptor)
@@ -124,7 +124,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileIsInputOnlyAndDecodesNoOutputReport() {
+  func genericProfileInputOnlyAndDecodesNoOutputReport() {
     let profile = VirtualHIDProfileID.generic.makeProfile()
     #expect(profile.identity.vendorID == 0x1209)
     #expect(profile.identity.productID == 0x4A4F)

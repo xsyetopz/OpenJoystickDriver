@@ -31,7 +31,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func everyReasonForNotServingAControllerHasASentenceAndANextStepInEveryLocale() {
+  func everyReasonForNotServingControllerHasSentenceAndNextStepInEveryLocale() {
     for locale in Localization.availableLocalizations() {
       let keys = LocalizationCatalogAudit.keys(for: locale)
       for reason in ProtocolBindingReason.allCases {

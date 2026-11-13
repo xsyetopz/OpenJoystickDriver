@@ -113,7 +113,7 @@ extension ControllerSessionTests {
   }
 
   @Test
-  func minimalBluetoothDS4ReportsKeepInputLivePastTheLivenessTimeout() async {
+  func minimalBluetoothDS4ReportsKeepInputLivePastLivenessTimeout() async {
     let identifier = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let clock = ManualUptime()
     let output = ControllerSessionOutputProbe()

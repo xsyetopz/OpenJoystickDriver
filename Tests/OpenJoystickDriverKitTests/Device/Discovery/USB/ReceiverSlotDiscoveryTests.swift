@@ -227,7 +227,7 @@ struct ReceiverSlotDiscoveryTests {
   }
 
   @Test
-  func emptySlotsAreNotListedOrEligibleForPublication() async {
+  func emptySlotsNotListedOrEligibleForPublication() async {
     let sessions = slotSessions { _ in [] }
     let provider = ReceiverSlotProvider(sessions: sessions)
     let dispatcher = ReceiverSlotDispatcher()
@@ -260,7 +260,7 @@ struct ReceiverSlotDiscoveryTests {
   }
 
   @Test
-  func onlyTheSlotReceivingARealReportIsListedAndSelectableByModel() async throws {
+  func onlySlotReceivingRealReportListedAndSelectableByModel() async throws {
     let sessions = slotSessions { interface in
       interface == 0 ? [.success([UInt8](Receiver.capture02A9))] : []
     }

@@ -9,7 +9,7 @@ struct DetectedServerTests {
     (false, false, .system),
     (true, false, .system),
   ])
-  func aPadMacOSCanServeButLeftToOJDIsServedByOJD(
+  func padMacOSCanServeButLeftToOJDServedByOJD(
     _ native: Bool,
     _ supported: Bool,
     _ server: ControllerServer

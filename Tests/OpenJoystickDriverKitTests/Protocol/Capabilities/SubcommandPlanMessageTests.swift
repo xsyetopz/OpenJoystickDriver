@@ -19,7 +19,7 @@ struct SubcommandPlanMessageTests {
   }
 
   @Test
-  func aCounterModulusOutsideItsRangeNamesTheRange() throws {
+  func counterModulusOutsideItsRangeNamesRange() throws {
     let indicator = try PlayerIndicatorSubcommand(
       subcommand: 0x30,
       patterns: Dictionary(uniqueKeysWithValues: PhysicalPlayerIndicator.allCases.map { ($0, 0) })
@@ -39,7 +39,7 @@ struct SubcommandPlanMessageTests {
   }
 
   @Test
-  func aPlayerIndicatorWithoutPatternsNamesTheIndicators() {
+  func playerIndicatorWithoutPatternsNamesIndicators() {
     #expect(
       Self.message { _ = try PlayerIndicatorSubcommand(subcommand: 0x30, patterns: [:]) }
         == "057e-2009.plist, session.subcommands.playerIndicator.patterns: A player indicator "
@@ -49,7 +49,7 @@ struct SubcommandPlanMessageTests {
   }
 
   @Test
-  func aRequestWithoutDataNamesTheCount() {
+  func requestWithoutDataNamesCount() {
     #expect(
       Self.message { _ = try SubcommandRequest(subcommand: 1, data: []) }
         == "057e-2009.plist, session.subcommands.requests[].data: A subcommand request must "
@@ -58,7 +58,7 @@ struct SubcommandPlanMessageTests {
   }
 
   @Test
-  func anSPIReadLengthOutsideItsRangeNamesTheRange() {
+  func spiReadLengthOutsideItsRangeNamesRange() {
     let read = SubcommandRequest.SPIRead(address: 0, length: 0, purpose: .factoryMotionCalibration)
     #expect(
       Self.message { _ = try SubcommandRequest(subcommand: 0x10, spiRead: read) }

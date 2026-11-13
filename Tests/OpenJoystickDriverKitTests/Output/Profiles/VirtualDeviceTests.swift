@@ -17,7 +17,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func theRecordsStateWhichPersonaWorksWithDefaultSDLHints() {
+  func recordsStatePersonaWorksWithDefaultSDLHints() {
     #expect(VirtualDevice.definition(of: .generic).worksWithDefaultSDLHints == true)
     #expect(VirtualDevice.definition(of: .sdlCompatible).worksWithDefaultSDLHints == true)
   }
@@ -123,7 +123,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func anArrayIsRefusedWithE5007() {
+  func arrayRefusedWithE5007() {
     let problem = #expect(throws: ControllerRecordProblem.self) {
       try VirtualDevice.decode(
         PropertyListFixture.bytes(json: "[]"),
@@ -135,7 +135,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func textThatIsNoPropertyListIsRefusedWithTheDocumentFormCode() {
+  func textNoPropertyListRefusedWithDocumentFormCode() {
     let problem = #expect(throws: ControllerRecordProblem.self) {
       try VirtualDevice.decode(
         PropertyListFixture.bytes(json: "{"),

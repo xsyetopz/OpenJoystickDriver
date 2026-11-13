@@ -246,7 +246,7 @@ struct Switch2BluetoothLEHubTests {
   /// End to end over the manager: the catalog binds the GATT connection to the Bluetooth LE
   /// driver, startup commands reach the command characteristic, and input reaches the dispatcher.
   @Test
-  func managerDrivesABluetoothLEProController() async {
+  func managerDrivesBluetoothLEProController() async {
     let writer = RecordingSwitch2Writer()
     let (hub, address) = Self.connectedHub(writer: writer)
     writer.reply = { command in

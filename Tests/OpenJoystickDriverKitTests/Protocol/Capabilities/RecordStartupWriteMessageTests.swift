@@ -19,7 +19,7 @@ struct RecordStartupWriteMessageTests {
   }
 
   @Test
-  func aWrongByteCountNamesTheCountTheReportTakes() {
+  func wrongByteCountNamesCountReportTakes() {
     let report = ControllerTemplateReport(kind: .output, reportID: 1, length: 7)
     #expect(
       Self.message { _ = try RecordStartupWrite(report: report, bytes: [0, 1, 2]) }
@@ -29,7 +29,7 @@ struct RecordStartupWriteMessageTests {
   }
 
   @Test
-  func anInputReportNamesFileKeyPathRuleAndFix() {
+  func inputReportNamesFileKeyPathRuleAndFix() {
     let report = ControllerTemplateReport(kind: .input, reportID: 1, length: 7)
     #expect(
       Self.message { _ = try RecordStartupWrite(report: report, bytes: []) }
@@ -39,7 +39,7 @@ struct RecordStartupWriteMessageTests {
   }
 
   @Test
-  func aUSBTimeoutOutsideItsRangeNamesTheRange() {
+  func usbTimeoutOutsideItsRangeNamesRange() {
     #expect(
       Self.message { _ = try USBStartupWrite(bytes: [1], timeoutMilliseconds: 0) }
         == "046d-c21d.plist, session.startup[].timeoutMilliseconds: A USB startup timeout must "

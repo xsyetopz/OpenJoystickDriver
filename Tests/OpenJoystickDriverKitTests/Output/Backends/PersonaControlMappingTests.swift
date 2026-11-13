@@ -53,7 +53,7 @@ struct PersonaControlMappingTests {
   }
 
   @Test(arguments: [VirtualHIDProfileID.generic, .sdlCompatible])
-  func noPersonaCarriesAnUncarriedControl(_ id: VirtualHIDProfileID) {
+  func noPersonaCarriesUncarriedControl(_ id: VirtualHIDProfileID) {
     let profile = id.makeProfile()
     let neutral = profile.inputReport(for: .neutral)
     for control in Self.uncarried {
@@ -63,7 +63,7 @@ struct PersonaControlMappingTests {
   }
 
   @Test
-  func captureIsCarriedByTheGenericPersonaOnly() {
+  func captureCarriedByGenericPersonaOnly() {
     let capture = ControllerState(pressed: [.capture])
     let generic = VirtualHIDProfileID.generic.makeProfile()
     #expect(generic.inputReport(for: capture) != generic.inputReport(for: .neutral))
@@ -106,7 +106,7 @@ struct PersonaControlMappingTests {
   /// The passthrough reads the catalog record once per update, however many buttons are held, and
   /// maps the held pad click by that one answer.
   @Test(arguments: [true, false])
-  func passthroughLooksTheRecordUpOncePerUpdate(padIsRightStick: Bool) {
+  func passthroughLooksRecordUpOncePerUpdate(padIsRightStick: Bool) {
     final class Lookups: @unchecked Sendable { var count = 0 }
     let lookups = Lookups()
     let profile = RemappingProfile(

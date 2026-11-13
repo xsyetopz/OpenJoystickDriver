@@ -214,7 +214,7 @@ struct StickDeliveryLatencyTests {
   /// Every button edge inside a burst reaches the virtual device in order; a coalescing fix must
   /// keep this green, for the report format of each persona.
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func everyButtonEdgeInsideABurstIsDelivered(persona: VirtualHIDProfileID) async {
+  func everyButtonEdgeInsideBurstDelivered(persona: VirtualHIDProfileID) async {
     let format = RecordingReportFormat(persona: persona)
     let batches: [[InputChange]] = [
       [.leftStick(x: 0.1, y: 0)], [.press(.south)], [.leftStick(x: 0.2, y: 0)],

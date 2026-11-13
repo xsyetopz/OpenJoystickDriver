@@ -42,14 +42,14 @@ struct BootloaderRecordTests {
   }
 
   @Test(arguments: identities)
-  func theBundledRecordIdlesWithTheBootloaderReason(productID: UInt16) throws {
+  func bundledRecordIdlesWithBootloaderReason(productID: UInt16) throws {
     let record = try #require(DeviceCatalog().record(for: Self.model(productID)))
     #expect(record.idleReason == .bootloader)
     #expect(record.modes.isEmpty)
   }
 
   @Test(arguments: identities)
-  func aGamepadDescriptorDoesNotBindTheBootloaderIdentity(productID: UInt16) {
+  func gamepadDescriptorDoesNotBindBootloaderIdentity(productID: UInt16) {
     let device = PhysicalDevice(
       vendorID: 0x2DC8,
       productID: productID,
@@ -64,7 +64,7 @@ struct BootloaderRecordTests {
   }
 
   @Test
-  func onlyTheTwoBootloaderIdentitiesIdleAsBootloaders() {
+  func onlyTwoBootloaderIdentitiesIdleAsBootloaders() {
     let catalog = DeviceCatalog()
     let bootloaders = catalog.documents.keys.filter {
       catalog.record(for: $0)?.idleReason == .bootloader
@@ -73,7 +73,7 @@ struct BootloaderRecordTests {
   }
 
   @Test
-  func theProductIDOfAnotherVendorIsNotABootloader() {
+  func productIDOfAnotherVendorNotBootloader() {
     let device = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0x3208,
@@ -86,7 +86,7 @@ struct BootloaderRecordTests {
   }
 
   @Test(arguments: identities, layers)
-  func aControllerFileForTheIdentityIsRefused(
+  func controllerFileForIdentityRefused(
     productID: UInt16,
     layer: ControllerRecordLayer
   )
@@ -97,7 +97,7 @@ struct BootloaderRecordTests {
   }
 
   @Test(arguments: identities, layers)
-  func aPatchThatServesTheIdentityIsRefused(
+  func patchServesIdentityRefused(
     productID: UInt16,
     layer: ControllerRecordLayer
   )
@@ -111,7 +111,7 @@ struct BootloaderRecordTests {
   }
 
   @Test
-  func theUserDirectoryListsTheRefusedFileAndKeepsTheBundledRecord() throws {
+  func userDirectoryListsRefusedFileAndKeepsBundledRecord() throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-bootloader-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

@@ -64,7 +64,7 @@ struct USBResolutionRuntimeTests {
   }
 
   @Test
-  func usbDiscoveryRetainsObservationUntilTheExactServiceDetaches() async {
+  func usbDiscoveryRetainsObservationUntilExactServiceDetaches() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 27,

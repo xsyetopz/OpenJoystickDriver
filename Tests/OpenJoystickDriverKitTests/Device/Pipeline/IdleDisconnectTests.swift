@@ -43,7 +43,7 @@ struct IdleDisconnectTests {
   private var pressed: ControllerState { ControllerState.neutral.applying([.press(.south)]) }
 
   @Test
-  func theSettingIsOffOnAFreshInstallation() throws {
+  func settingOffOnFreshInstallation() throws {
     let store = SettingsStore(directory: RootedDataDirectory.temporary())
 
     #expect(try store.idleDisconnectMinutes() == nil)
@@ -51,7 +51,7 @@ struct IdleDisconnectTests {
   }
 
   @Test
-  func theSettingRoundTripsThroughTheUserFile() throws {
+  func settingRoundTripsThroughUserFile() throws {
     let store = SettingsStore(directory: RootedDataDirectory.temporary())
 
     try store.setIdleDisconnectMinutes(15)
@@ -62,7 +62,7 @@ struct IdleDisconnectTests {
   }
 
   @Test
-  func fifteenMinutesWithoutChangedInputOnBluetoothIsDue() async {
+  func fifteenMinutesWithoutChangedInputOnBluetoothDue() async {
     let pipeline = pipeline(variant: .bluetoothClassic)
 
     clock.advance(minutes: 14)
@@ -73,7 +73,7 @@ struct IdleDisconnectTests {
   }
 
   @Test
-  func changedInputRestartsTheTime() async {
+  func changedInputRestartsTime() async {
     let pipeline = pipeline(variant: .bluetoothClassic)
     clock.advance(minutes: 14)
 
@@ -86,7 +86,7 @@ struct IdleDisconnectTests {
   }
 
   @Test
-  func repeatedUnchangedReportsDoNotRestartTheTime() async {
+  func repeatedUnchangedReportsDoNotRestartTime() async {
     let pipeline = pipeline(variant: .bluetoothClassic)
     await pipeline.handleParsedEvent(report(pressed), now: clock.now)
 
@@ -101,7 +101,7 @@ struct IdleDisconnectTests {
   /// macOS keeps a Bluetooth LE HID link up after `IOBluetoothDevice.closeConnection()` returns
   /// success, so no idle disconnect can end it.
   @Test(arguments: [PhysicalProtocolVariantID.usb, .wired, .receiver, .dongle, .bluetoothLE])
-  func aCableReceiverOrBluetoothLELinkNeverDisconnects(variant: PhysicalProtocolVariantID) async {
+  func cableReceiverOrBluetoothLELinkNeverDisconnects(variant: PhysicalProtocolVariantID) async {
     let pipeline = pipeline(variant: variant)
 
     clock.advance(minutes: 600)
@@ -110,7 +110,7 @@ struct IdleDisconnectTests {
   }
 
   @Test
-  func restartingTheWindowDelaysTheNextAttempt() async {
+  func restartingWindowDelaysNextAttempt() async {
     let pipeline = pipeline(variant: .bluetoothClassic)
     clock.advance(minutes: 15)
 

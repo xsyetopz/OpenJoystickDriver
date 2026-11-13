@@ -4,7 +4,7 @@ import Testing
 
 struct PhysicalHIDTrackingReenumerationTests {
   @Test
-  func removalBeforeTheSuccessorDisconnects() {
+  func removalBeforeSuccessorDisconnects() {
     var hid = PhysicalHIDBackendEventAdapter()
     hid.add(deviceID: 1, locationID: 9, syntheticProperty: false, enumerationKey: "linked")
     #expect(hid.remove(deviceID: 1).shouldEmitDisconnect)
@@ -13,7 +13,7 @@ struct PhysicalHIDTrackingReenumerationTests {
   }
 
   @Test
-  func removalAfterTheSuccessorDisconnects() {
+  func removalAfterSuccessorDisconnects() {
     var hid = PhysicalHIDBackendEventAdapter()
     hid.add(deviceID: 1, locationID: 9, syntheticProperty: false, enumerationKey: "linked")
     hid.add(deviceID: 2, locationID: 9, syntheticProperty: false, enumerationKey: "idle")
@@ -25,7 +25,7 @@ struct PhysicalHIDTrackingReenumerationTests {
   }
 
   @Test
-  func aSuccessorWithAnotherSerialSupersedesTheEarlierDevice() {
+  func successorWithAnotherSerialSupersedesEarlierDevice() {
     var hid = PhysicalHIDBackendEventAdapter()
     hid.add(deviceID: 1, locationID: 9, syntheticProperty: false, enumerationKey: "A1|pad")
     hid.add(deviceID: 2, locationID: 9, syntheticProperty: false, enumerationKey: "B2|pad")
@@ -33,7 +33,7 @@ struct PhysicalHIDTrackingReenumerationTests {
   }
 
   @Test
-  func siblingInterfacesOfOneEnumerationKeepTheLocationRule() {
+  func siblingInterfacesOfOneEnumerationKeepLocationRule() {
     var hid = PhysicalHIDBackendEventAdapter()
     hid.add(deviceID: 1, locationID: 9, syntheticProperty: false, enumerationKey: "A1|pad")
     hid.add(deviceID: 2, locationID: 9, syntheticProperty: false, enumerationKey: "A1|pad")
@@ -42,7 +42,7 @@ struct PhysicalHIDTrackingReenumerationTests {
   }
 
   @Test
-  func devicesWithoutAKeyKeepTheLocationRule() {
+  func devicesWithoutKeyKeepLocationRule() {
     var hid = PhysicalHIDBackendEventAdapter()
     hid.add(deviceID: 1, locationID: 9, syntheticProperty: false)
     hid.add(deviceID: 2, locationID: 9, syntheticProperty: false, enumerationKey: "idle")

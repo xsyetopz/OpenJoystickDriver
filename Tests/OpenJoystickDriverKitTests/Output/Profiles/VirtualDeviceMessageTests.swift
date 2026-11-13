@@ -28,7 +28,7 @@ struct VirtualDeviceMessageTests {
   }
 
   @Test
-  func anUnknownPersonaNamesTheKnownOnes() {
+  func unknownPersonaNamesKnownOnes() {
     #expect(
       Self.message(#""persona":"Nope""#)
         == "personas.plist, persona: The persona must be one of SDLCompatible, Generic, "
@@ -37,7 +37,7 @@ struct VirtualDeviceMessageTests {
   }
 
   @Test
-  func aUserFileWithoutMatchNamesTheKeyToAdd() {
+  func userFileWithoutMatchNamesKeyToAdd() {
     #expect(
       Self.message(#""persona":"Generic""#, requiresMatch: true)
         == "personas.plist, match: A file in the user folder must hold match. Fix: Add match "
@@ -46,7 +46,7 @@ struct VirtualDeviceMessageTests {
   }
 
   @Test
-  func aSelectionWithALayoutNamesTheKeysToRemove() {
+  func selectionWithLayoutNamesKeysToRemove() {
     #expect(
       Self.message(
         #""persona":"Generic","match":{"vendorID":1,"productID":2},"transport":"USB""#
@@ -58,7 +58,7 @@ struct VirtualDeviceMessageTests {
   }
 
   @Test
-  func aVendorIDOutsideItsRangeNamesTheKeyAndTheLowestValue() {
+  func vendorIDOutsideItsRangeNamesKeyAndLowestValue() {
     #expect(
       Self.message(#""persona":"Generic","match":{"vendorID":0,"productID":2}"#)
         == "personas.plist, match.vendorID: An ID must be 1...65535. Fix: Set match.vendorID "
@@ -67,7 +67,7 @@ struct VirtualDeviceMessageTests {
   }
 
   @Test
-  func anEmptyIdentityNameNamesTheKey() {
+  func emptyIdentityNameNamesKey() {
     #expect(
       Self.message(
         #""persona":"Generic","match":{"vendorID":1,"productID":2},"#

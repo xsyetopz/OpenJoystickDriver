@@ -436,7 +436,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func invalidModesAreRejected() {
+  func invalidModesRejected() {
     let probe: [String: Any] = ["report": 160, "length": 8, "expect": "Answers"]
     func mode(
       _ id: String,

@@ -279,7 +279,7 @@ struct ControllerRecordDocumentTests {
   /// The `HIDReportLayout` family cannot run without an input layout, and every family but
   /// `HIDDescriptor` may hold one.
   @Test
-  func inputLayoutIsRequiredForTheReportLayoutFamilyAndRefusedByHIDDescriptorOnly() throws {
+  func inputLayoutRequiredForReportLayoutFamilyAndRefusedByHIDDescriptorOnly() throws {
     let gip = try decode(protocol: ["family": "XboxGIP"], extra: ["input": Self.minimalInput])
     #expect(gip.inputLayouts?.controls == [.south])
     let document = try decode(

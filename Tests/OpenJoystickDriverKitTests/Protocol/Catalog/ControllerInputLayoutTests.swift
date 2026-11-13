@@ -205,7 +205,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aDecodedLayoutProblemReadsInTheChosenLanguage() {
+  func decodedLayoutProblemReadsInChosenLanguage() {
     let english = Localization(preferredLanguages: ["en-US"])
     do {
       _ = try inputLayout(

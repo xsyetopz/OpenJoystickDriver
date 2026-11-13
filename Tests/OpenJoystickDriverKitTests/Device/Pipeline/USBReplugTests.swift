@@ -29,7 +29,7 @@ struct USBReplugTests {
     [0x00, 0x14, 0x00, 0x10] + [UInt8](repeating: 0, count: 16)
 
   @Test
-  func replugStartsTheSameSessionAndDeliversInput() async throws {
+  func replugStartsSameSessionAndDeliversInput() async throws {
     let first = RecoveryUSBSession(
       readResults: [.success(Self.reportWithA)],
       readError: .timeout

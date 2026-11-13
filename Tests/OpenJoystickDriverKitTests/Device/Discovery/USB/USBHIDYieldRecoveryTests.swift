@@ -62,7 +62,7 @@ struct USBHIDYieldRecoveryTests {
   }
 
   @Test
-  func refusedRawUSBOpenReadmitsTheYieldedHIDConnection() async {
+  func refusedRawUSBOpenReadmitsYieldedHIDConnection() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let provider = OpenRefusingProvider(device: device, observation: observation)
     let manager = DeviceManager(

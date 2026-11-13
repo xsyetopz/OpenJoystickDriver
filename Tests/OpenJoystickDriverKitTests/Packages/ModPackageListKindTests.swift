@@ -27,7 +27,7 @@ struct ModPackageListKindTests {
   }
 
   @Test(arguments: ["records", "personas"])
-  func recordsAndPersonasAreUnknownKeys(key: String) {
+  func recordsAndPersonasUnknownKeys(key: String) {
     let alone = refusal {
       _ = try ModPackageManifest.parse(manifest(["controllers": nil, key: ["1234-abcd.plist"]]))
     }

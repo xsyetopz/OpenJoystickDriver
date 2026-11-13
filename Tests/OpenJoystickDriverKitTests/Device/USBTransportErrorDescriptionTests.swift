@@ -7,7 +7,7 @@ import Testing
 /// the error had no `LocalizedError` description, which hid the failure behind a bare case number.
 struct USBTransportErrorDescriptionTests {
   @Test
-  func everyCaseDescribesItselfInWordsRatherThanACaseNumber() {
+  func everyCaseDescribesItselfInWordsRatherThanCaseNumber() {
     let cases: [USBTransportError] = [
       .timeout, .disconnected, .inputOutput, .accessDenied,
       .ownedByAnotherClient(owner: nil), .notFound, .notSupported,
@@ -20,7 +20,7 @@ struct USBTransportErrorDescriptionTests {
   }
 
   @Test
-  func aPlatformErrorNamesItsCodeAndMessage() {
+  func platformErrorNamesItsCodeAndMessage() {
     let text = USBTransportError.platform(code: -536_870_160, message: "Unable to copy pipe.")
       .localizedDescription
     #expect(text.contains("-536870160"))
@@ -28,7 +28,7 @@ struct USBTransportErrorDescriptionTests {
   }
 
   @Test
-  func theOwnerOfAHeldInterfaceIsNamed() {
+  func ownerOfHeldInterfaceNamed() {
     let text = USBTransportError.ownedByAnotherClient(owner: "com.apple.AppleUserHIDDrivers")
       .localizedDescription
     #expect(text.contains("com.apple.AppleUserHIDDrivers"))

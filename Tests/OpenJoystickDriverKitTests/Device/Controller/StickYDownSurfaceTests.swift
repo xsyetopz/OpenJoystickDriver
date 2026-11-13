@@ -32,7 +32,7 @@ struct StickYDownSurfaceTests {
   }
 
   @Test
-  func theVirtualReportCarriesTheNegativeYAsIs() {
+  func virtualReportCarriesNegativeYAs() {
     let profile = VirtualHIDProfileID.generic.makeProfile()
     let report = profile.inputReport(for: Self.up)
     let y = Int16(bitPattern: UInt16(report[4]) | UInt16(report[5]) << 8)

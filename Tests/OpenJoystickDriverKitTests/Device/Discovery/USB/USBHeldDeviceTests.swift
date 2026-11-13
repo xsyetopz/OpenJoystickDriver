@@ -94,7 +94,7 @@ struct USBHeldDeviceTests {
       ("  IDLE \n", "IDLE"), ("   ", nil), ("", nil), (nil, nil),
     ] as [(String?, String?)]
   )
-  func theUnboundDeviceCarriesTheObservedProductName(observed: String?, name: String?) async {
+  func unboundDeviceCarriesObservedProductName(observed: String?, name: String?) async {
     let named = USBTransportDevice(
       route: .rawUSB,
       serviceID: device.serviceID,

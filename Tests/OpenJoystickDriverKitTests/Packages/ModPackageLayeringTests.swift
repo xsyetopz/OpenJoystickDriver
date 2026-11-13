@@ -104,7 +104,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aUserPatchBeatsAPackagePatchAndARemoveDeletesTheKey() throws {
+  func userPatchBeatsPackagePatchAndRemoveDeletesKey() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       let packaged = try Fixture.patch(0x1234, 0xABCD, ["tuning": ["stickDeadzone": 0.1]])

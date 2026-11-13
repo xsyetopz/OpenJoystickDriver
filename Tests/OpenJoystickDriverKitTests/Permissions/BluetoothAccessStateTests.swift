@@ -5,7 +5,7 @@ import Testing
 
 struct BluetoothAccessStateTests {
   @Test
-  func statusCarriesTheBluetoothAccessThroughJSON() throws {
+  func statusCarriesBluetoothAccessThroughJSON() throws {
     let payload = ApplicationServiceStatusPayload(
       inputRead: .granted,
       inputInject: .granted,
@@ -18,7 +18,7 @@ struct BluetoothAccessStateTests {
   }
 
   @Test
-  func aStatusWithoutBluetoothAccessDecodesAsNil() throws {
+  func statusWithoutBluetoothAccessDecodesAsNil() throws {
     let payload = ApplicationServiceStatusPayload(
       inputRead: .granted,
       inputInject: .granted,
@@ -30,7 +30,7 @@ struct BluetoothAccessStateTests {
   }
 
   @Test
-  func onlyAnUndecidedOrDeniedAccessNeedsAStep() {
+  func onlyUndecidedOrDeniedAccessNeedsStep() {
     #expect(BluetoothAccessState.notAsked.needsStep)
     #expect(BluetoothAccessState.denied.needsStep)
     #expect(!BluetoothAccessState.granted.needsStep)

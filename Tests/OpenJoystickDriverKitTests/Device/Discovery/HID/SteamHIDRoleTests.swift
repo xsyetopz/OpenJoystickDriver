@@ -154,7 +154,7 @@ struct SteamHIDRoleTests {
   }
 
   @Test
-  func onlyTheSteamFamilyDeclaresRoles() {
+  func onlySteamFamilyDeclaresRoles() {
     let registry = ProtocolDriverRegistry()
     #expect(
       Set(registry.hidRoleModels)

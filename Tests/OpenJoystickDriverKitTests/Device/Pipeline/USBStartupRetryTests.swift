@@ -16,7 +16,7 @@ struct USBStartupRetryTests {
   )
 
   @Test
-  func stopsRetryingAfterTheFixedNumberOfFailedHandshakes() async {
+  func stopsRetryingAfterFixedNumberOfFailedHandshakes() async {
     let provider = FailingHandshakeProvider()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 0x3537, productID: 0x1010),

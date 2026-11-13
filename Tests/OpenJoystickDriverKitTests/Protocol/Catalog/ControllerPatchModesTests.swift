@@ -47,7 +47,7 @@ struct ControllerPatchModesTests {
     """
 
   @Test
-  func aPatchOfOneEndpointOfOneModeKeepsTheOtherModes() throws {
+  func patchOfOneEndpointOfOneModeKeepsOtherModes() throws {
     let patch = try Self.patch(
       patch: """
         {"modes": [{"id": "usb-b", "match": {"interfaceSignature": {"endpoints":
@@ -70,7 +70,7 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aPatchWithANewModeIDAddsAMode() throws {
+  func patchWithNewModeIDAddsMode() throws {
     let patch = try Self.patch(
       patch: """
         {"modes": [{"id": "hid", "protocol": {"family": "HIDDescriptor"},
@@ -84,21 +84,21 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func theRemovePathModesIDRemovesOneMode() throws {
+  func removePathModesIDRemovesOneMode() throws {
     let patch = try Self.patch(remove: ["modes.usb-b"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.twoModes))
     #expect(Self.modeIDs(result) == ["default"])
   }
 
   @Test
-  func theRemovePathModesIDOfAnAbsentModeRemovesNothing() throws {
+  func removePathModesIDOfAbsentModeRemovesNothing() throws {
     let patch = try Self.patch(remove: ["modes.gone"])
     let record = try Self.json(Self.twoModes)
     #expect(ControllerPatchMerge.apply(patch, to: record) == record)
   }
 
   @Test
-  func aRemovedModeCanBeAddedAgainByTheSamePatch() throws {
+  func removedModeCanAddedAgainBySamePatch() throws {
     let patch = try Self.patch(
       patch: #"{"modes": [{"id": "usb-b", "protocol": {"family": "HIDDescriptor"}}]}"#,
       remove: ["modes.usb-b"]
@@ -112,7 +112,7 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aPatchSetsCapabilitiesAndTheIdleOfAMode() throws {
+  func patchSetsCapabilitiesAndIdleOfMode() throws {
     let patch = try Self.patch(
       patch:
         #"{"capabilities": {"rumble": "Absent"}, "modes": [{"id": "usb-b", "idle": "Bootloader"}]}"#
@@ -123,7 +123,7 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aPatchOfARecordLevelIdleIsRefused() {
+  func patchOfRecordLevelIdleRefused() {
     #expect(throws: ControllerRecordProblem.self) {
       _ = try Self.patch(patch: #"{"idle": "NoControllerLinked"}"#)
     }
@@ -131,7 +131,7 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aPatchThatSetsTheIdentityIsRefused() throws {
+  func patchSetsIdentityRefused() throws {
     for key in ["vendorID", "productID", "apiVersion", "kind"] {
       #expect(throws: ControllerRecordProblem.self, "\(key)") {
         _ = try Self.patch(patch: #"{"\#(key)": 1}"#)
@@ -140,7 +140,7 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aRemovePathNamesAModeByAValidIDOnly() throws {
+  func removePathNamesModeByValidIDOnly() throws {
     for path in ["modes.", "modes.a.b", "modes.Bad_ID", "modes.1a", "identity", "vendorID"] {
       #expect(throws: ControllerRecordProblem.self, "\(path)") {
         _ = try Self.patch(remove: [path])
@@ -151,7 +151,7 @@ struct ControllerPatchModesTests {
   /// The patch #63 needs for `3537:1022`: the bundled record keeps its `XboxGIP` mode and its
   /// rumble capability and gains a `HIDDescriptor` mode matched on the dongle's HID interface.
   @Test
-  func thePatchOfTheGameSirDongleGivesARecordThatPassesTheRecordRules() throws {
+  func patchOfGameSirDongleGivesRecordPassesRecordRules() throws {
     let model = ControllerModelID(vendorID: 0x3537, productID: 0x1022)
     let patch = try Self.patch(
       patch: """
@@ -172,7 +172,7 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aRecordOfTwoDriversHoldsACapabilityOnlyIfSomeModeDriverDeclaresIt() throws {
+  func recordOfTwoDriversHoldsCapabilityOnlyIfSomeModeDriverDeclaresIt() throws {
     func decode(_ family: String, capabilities: String) throws -> ControllerRecordDocument {
       try JSONDecoder().decode(
         ControllerRecordDocument.self,

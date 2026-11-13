@@ -46,7 +46,7 @@ struct ControllerPatchRemoveTests {
     """#
 
   @Test
-  func aRemovedKeyIsGone() throws {
+  func removedKeyGone() throws {
     let patch = try Self.parse(remove: ["usb.configuration"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
     let expected = try Self.json(
@@ -60,7 +60,7 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aRemovedSectionIsGone() throws {
+  func removedSectionGone() throws {
     let patch = try Self.parse(remove: ["input"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
     #expect(result["input"] == nil)
@@ -68,14 +68,14 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aNestedDottedPathRemovesOnlyItsKey() throws {
+  func nestedDottedPathRemovesOnlyItsKey() throws {
     let patch = try Self.parse(remove: ["input.hidUsageMap.usages"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
     #expect(result["input"] == (try Self.json(#"{"hidUsageMap": {"reportID": 1}}"#)))
   }
 
   @Test
-  func aPathTheRecordLacksChangesNothing() throws {
+  func pathRecordLacksChangesNothing() throws {
     let record = try Self.json(Self.record)
     let patch = try Self.parse(remove: ["bluetoothLE.name", "usb.interface.deeper", "server"])
     #expect(ControllerPatchMerge.apply(patch, to: record) == record)
@@ -90,14 +90,14 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aPatchThatOnlyRemovesIsAValidFile() throws {
+  func patchOnlyRemovesValidFile() throws {
     let patch = try Self.parse(remove: ["tuning.stickDeadzone"])
     #expect(patch.remove == [["tuning", "stickDeadzone"]])
     #expect(patch.body.members?.isEmpty == true)
   }
 
   @Test
-  func aPathOutsideTheRecordSchemaIsRefusedByName() throws {
+  func pathOutsideRecordSchemaRefusedByName() throws {
     let paths = [
       "bogus", "bogus.key", "tuning.bogus", "usb..interface", ".usb", "usb.", "",
       "apiVersion", "vendorID",
@@ -110,7 +110,7 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aMalformedRemoveListIsRefused() throws {
+  func malformedRemoveListRefused() throws {
     let duplicate = try #require(Self.refusal(Self.document(remove: ["usb", "usb"])))
     #expect(duplicate.description == "remove path usb is listed twice")
     #expect(Self.refusal(Self.document(remove: [])) != nil)
@@ -123,7 +123,7 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func anAllPatchRefusesARemoveOutsideTuningKeys() throws {
+  func allPatchRefusesRemoveOutsideTuningKeys() throws {
     for path in ["usb", "tuning", "usb.interface"] {
       let problem = try #require(
         Self.refusal(Self.document(remove: [path], selector: .all)),

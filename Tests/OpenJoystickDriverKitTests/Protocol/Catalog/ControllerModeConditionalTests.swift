@@ -171,7 +171,7 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func presentControlsAreDeclaredByTheDriverOfSomeMode() {
+  func presentControlsDeclaredByDriverOfSomeMode() {
     let present =
       (ProtocolDescription.bundled[.sonyDualSense]?.recordCapabilities.presentControls ?? [])
       .map(\.rawValue).sorted()

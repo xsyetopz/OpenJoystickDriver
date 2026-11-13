@@ -42,7 +42,7 @@ struct IdleDisconnectManagerTests {
   }
 
   @Test
-  func anIdleBluetoothControllerDisconnectsThroughTheMenusPath() async {
+  func idleBluetoothControllerDisconnectsThroughMenusPath() async {
     let probe = DisconnectProbe()
     let manager = DeviceManager(
       dispatcher: ControllerSessionOutputProbe(),
@@ -59,7 +59,7 @@ struct IdleDisconnectManagerTests {
   }
 
   @Test
-  func aCableConnectionIsLeftAlone() async {
+  func cableConnectionLeftAlone() async {
     let probe = DisconnectProbe()
     let manager = DeviceManager(
       dispatcher: ControllerSessionOutputProbe(),

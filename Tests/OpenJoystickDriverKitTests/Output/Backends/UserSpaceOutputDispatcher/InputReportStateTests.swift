@@ -31,7 +31,7 @@ struct UserSpaceInputReportStateTests {
   }
 
   @Test
-  func guideChangesClaimTheSeparateGuideReportOnce() {
+  func guideChangesClaimSeparateGuideReportOnce() {
     let state = UserSpaceInputReportState(format: XboxOneGIPHIDReportFormat())
     #expect(state.claimChangedAuxiliaryReports().isEmpty)
 

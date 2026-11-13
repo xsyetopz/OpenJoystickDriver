@@ -24,7 +24,7 @@ struct GIPSessionTests {
   )
 
   @Test
-  func aPadThatSendsInputAndNoAnnounceDeliversItsFirstInput() async {
+  func padSendsInputAndNoAnnounceDeliversItsFirstInput() async {
     let pad = SilentGIPPadSession()
     let dispatcher = InputRecordingDispatcher()
     let pipeline = DevicePipeline(
