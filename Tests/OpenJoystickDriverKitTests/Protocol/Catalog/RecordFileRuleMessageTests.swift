@@ -22,13 +22,13 @@ struct RecordFileRuleMessageTests {
   func bundledPersonaRulesNamePersona() {
     #expect(
       Self.message("virtualDevice.bundledMissing", ["Generic"])
-        == "046d-c21d.plist, persona: The bundled records must hold a record for the persona "
-        + "Generic. Fix: Reinstall OpenJoystickDriver."
+        == "046d-c21d.plist, persona: The bundled records must hold a record for the virtual "
+        + "gamepad Generic. Fix: Reinstall OpenJoystickDriver."
     )
     #expect(
       Self.message("virtualDevice.bundledPersona", ["Generic"])
-        == "046d-c21d.plist, persona: A bundled record must define the persona Generic and hold "
-        + "no match. Fix: Reinstall OpenJoystickDriver."
+        == "046d-c21d.plist, persona: A bundled record must define the virtual gamepad Generic "
+        + "and hold no match. Fix: Reinstall OpenJoystickDriver."
     )
   }
 

@@ -51,8 +51,8 @@ struct VirtualDeviceMessageTests {
       Self.message(
         #""persona":"Generic","match":{"vendorID":1,"productID":2},"transport":"USB""#
       )
-        == "personas.plist, match: A file with match selects a persona, so it cannot hold "
-        + "layout, transport or worksWithDefaultSDLHints. Fix: Remove layout, transport and "
+        == "personas.plist, match: A file with match selects a virtual gamepad, so it cannot "
+        + "hold layout, transport or worksWithDefaultSDLHints. Fix: Remove layout, transport and "
         + "worksWithDefaultSDLHints, or remove match."
     )
   }
@@ -74,8 +74,8 @@ struct VirtualDeviceMessageTests {
           + #""identity":{"vendorID":1,"productID":2,"version":1,"productName":"","#
           + #""manufacturer":"X"}"#
       )
-        == "personas.plist, identity.productName: A persona identity needs a nonempty "
-        + "productName. Fix: Give productName a nonempty string."
+        == "personas.plist, identity.productName: A virtual gamepad identity needs a "
+        + "nonempty productName. Fix: Give productName a nonempty string."
     )
   }
 }

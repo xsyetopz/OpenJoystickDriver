@@ -23,8 +23,9 @@ struct VirtualPersonaMatchMessageTests {
   func matchTakenByUserFileNamesFile() {
     #expect(
       Self.message("error.E5007.virtualDevice.matchTakenByUserFile", arguments: ["mine.plist"])
-        == "1234-abcd.plist, match: A persona file must not repeat the match of the user file "
-        + "mine.plist. Fix: Give each model one persona file, or change match in one of the two."
+        == "1234-abcd.plist, match: A virtual gamepad file must not repeat the match of the user "
+        + "file mine.plist. Fix: Give each model one virtual gamepad file, or change match in "
+        + "one of the two."
     )
   }
 
@@ -32,8 +33,9 @@ struct VirtualPersonaMatchMessageTests {
   func matchTakenByPackageFileNamesFile() {
     #expect(
       Self.message("error.E5007.virtualDevice.matchTakenByPackageFile", arguments: ["pack.plist"])
-        == "1234-abcd.plist, match: A persona file must not repeat the match of the package file "
-        + "pack.plist. Fix: Give each model one persona file, or change match in one of the two."
+        == "1234-abcd.plist, match: A virtual gamepad file must not repeat the match of the "
+        + "package file pack.plist. Fix: Give each model one virtual gamepad file, or change "
+        + "match in one of the two."
     )
   }
 }
