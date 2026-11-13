@@ -129,7 +129,7 @@ struct NativePassThroughTests {
   }
 
   @Test
-  func siblingInterfaceOfANativeControllerIsLeftToMacOS() async {
+  func siblingInterfaceOfNativeControllerIsLeftToMacOS() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -155,7 +155,7 @@ struct NativePassThroughTests {
   }
 
   @Test
-  func nativeBindsWhenItCancelsASiblingInitializationAtItsLocation() async throws {
+  func nativeBindsWhenItCancelsSiblingInitializationAtItsLocation() async throws {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey,
@@ -173,7 +173,7 @@ struct NativePassThroughTests {
   }
 
   @Test
-  func rejectedSiblingIsNotReclaimedWhenTheNativeControllerBinds() async {
+  func rejectedSiblingIsNotReclaimedWhenNativeControllerBinds() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -245,7 +245,7 @@ struct NativePassThroughTests {
   }
 
   @Test
-  func passThroughDevicesRoundTripThroughTheStatusPayload() throws {
+  func passThroughDevicesRoundTripThroughStatusPayload() throws {
     let device = ApplicationServicePassThroughDevice(
       vendorID: 0x054C,
       productID: 0x0268,

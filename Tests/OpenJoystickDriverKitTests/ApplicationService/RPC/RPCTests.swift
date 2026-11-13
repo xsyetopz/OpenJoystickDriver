@@ -66,7 +66,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func authenticationReceivesThePeerFromItsAuditToken() async throws {
+  func authenticationReceivesPeerFromItsAuditToken() async throws {
     let socketPath = temporarySocketPath()
     let peers = PeerRecorder()
     let server = LocalServiceRPCServer(
@@ -123,7 +123,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func eachRestartedServerAnswersOnItsOwnAndAStoppedServerAnswersNothing() async throws {
+  func eachRestartedServerAnswersOnItsOwnAndStoppedServerAnswersNothing() async throws {
     var stopped: [String] = []
     for generation in 0..<20 {
       let socketPath = temporarySocketPath()
@@ -175,7 +175,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func errorCodeRawValuesAreTheWireStrings() throws {
+  func errorCodeRawValuesAreWireStrings() throws {
     #expect(LocalServiceRPCErrorCode.peerRejected.rawValue == "peerRejected")
     let response = try JSONDecoder().decode(
       LocalServiceRPCResponse.self,
@@ -342,7 +342,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func heldStatusWaitReportsAnEndOfStreamAsTheServiceClosingTheConnection() async throws {
+  func heldStatusWaitReportsEndOfStreamAsServiceClosingConnection() async throws {
     let socketPath = temporarySocketPath()
     let listener = try ClosingSocketListener(path: socketPath)
     defer { listener.stop() }
@@ -360,7 +360,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func heldStatusWaitReportsARejectingReplyAsAPeerRejection() async throws {
+  func heldStatusWaitReportsRejectingReplyAsPeerRejection() async throws {
     let socketPath = temporarySocketPath()
     let server = LocalServiceRPCServer(
       socketPath: socketPath,
@@ -396,7 +396,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aClientThatLeavesCancelsOnlyTheRequestsThatHoldTheirReplyOpen() async throws {
+  func clientThatLeavesCancelsOnlyRequestsThatHoldTheirReplyOpen() async throws {
     let socketPath = temporarySocketPath()
     let started = Locked<Set<String>>([])
     let ended = Locked<[String: Bool]>([:])
@@ -432,7 +432,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func aHeldRequestWhoseWakePipeCannotBeMadeIsAnsweredWithTheConnectionFailureAndNeverRuns()
+  func heldRequestWhoseWakePipeCannotBeMadeIsAnsweredWithConnectionFailureAndNeverRuns()
     async throws
   {
     let socketPath = temporarySocketPath()
@@ -464,7 +464,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func theWakePipeOfAHeldRequestIsClosedOnExec() async throws {
+  func wakePipeOfHeldRequestIsClosedOnExec() async throws {
     let socketPath = temporarySocketPath()
     let ends = Locked<[Int32]>([])
     let flags = Locked<[Int32]>([])
@@ -497,7 +497,7 @@ struct LocalServiceRPCTests {
   }
 
   @Test
-  func aFailedPollIsReportedAndCancelsTheHeldRequest() async throws {
+  func failedPollIsReportedAndCancelsHeldRequest() async throws {
     let socketPath = temporarySocketPath()
     let reports = Locked<[String]>([])
     let (never, neverGate) = AsyncStream.makeStream(of: Void.self)

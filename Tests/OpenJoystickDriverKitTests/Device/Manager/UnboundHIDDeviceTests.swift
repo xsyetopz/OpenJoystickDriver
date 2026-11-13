@@ -40,7 +40,7 @@ struct UnboundHIDDeviceTests {
   }
 
   @Test
-  func rejectedHIDDeviceAtABoundPipelineLocationKeepsTheClaim() async throws {
+  func rejectedHIDDeviceAtBoundPipelineLocationKeepsClaim() async throws {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -135,7 +135,7 @@ struct UnboundHIDDeviceTests {
   }
 
   @Test
-  func unboundDevicesRoundTripThroughTheStatusPayload() throws {
+  func unboundDevicesRoundTripThroughStatusPayload() throws {
     let device = ApplicationServiceUnboundDevice(
       vendorID: 0x045E,
       productID: 0x02EA,

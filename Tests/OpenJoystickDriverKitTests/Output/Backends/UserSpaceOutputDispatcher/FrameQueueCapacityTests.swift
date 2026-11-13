@@ -29,7 +29,7 @@ struct FrameQueueCapacityTests {
   }
 
   @Test
-  func theTuningDefaultAndRangeAreTheSchemas() throws {
+  func tuningDefaultAndRangeAreSchemas() throws {
     let url = Self.repository.appendingPathComponent("Resources/Schemas/controller.schema.json")
     let schema = try #require(
       try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
@@ -45,14 +45,14 @@ struct FrameQueueCapacityTests {
   }
 
   @Test
-  func noBundledDescriptionRepeatsTheDefault() {
+  func noBundledDescriptionRepeatsDefault() {
     for (family, description) in ProtocolDescription.bundled {
       #expect(description.tuning?.frameQueueCapacity == nil, "\(family)")
     }
   }
 
   @Test
-  func aControllerWithNoRecordGetsTheDefault() {
+  func controllerWithNoRecordGetsDefault() {
     #expect(
       VirtualGamepadReportMapping.frameQueueCapacity(of: nil)
         == ControllerTuning.defaultFrameQueueCapacity
@@ -60,7 +60,7 @@ struct FrameQueueCapacityTests {
   }
 
   @Test
-  func aRecordWhoseFamilySetsNoValueGetsTheDefault() throws {
+  func recordWhoseFamilySetsNoValueGetsDefault() throws {
     #expect(
       VirtualGamepadReportMapping.frameQueueCapacity(of: try bareRecord().record)
         == ControllerTuning.defaultFrameQueueCapacity
@@ -68,7 +68,7 @@ struct FrameQueueCapacityTests {
   }
 
   @Test
-  func aFamilyDescriptionValueBeatsTheDefault() throws {
+  func familyDescriptionValueBeatsDefault() throws {
     let record = try bareRecord().record
     let description = try ProtocolDescriptionFixture.decode(
       family: .xboxGIP,
@@ -84,7 +84,7 @@ struct FrameQueueCapacityTests {
   }
 
   @Test
-  func aRecordValueBeatsItsFamilyDescription() throws {
+  func recordValueBeatsItsFamilyDescription() throws {
     let model = try bareRecord().model
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-frame-queue-\(UUID().uuidString)",
@@ -115,7 +115,7 @@ struct FrameQueueCapacityTests {
   }
 
   @Test(arguments: [0, 1_025])
-  func aDescriptionCapacityOutsideTheRangeIsRefused(capacity: Int) {
+  func descriptionCapacityOutsideRangeIsRefused(capacity: Int) {
     #expect(throws: ProtocolDescriptionProblem.self) {
       try ProtocolDescriptionFixture.decode(
         family: .xboxGIP,

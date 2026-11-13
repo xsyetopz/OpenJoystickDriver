@@ -15,7 +15,7 @@ struct PortKeyInstallationStoreTests {
   private func bytes(_ key: SymmetricKey) -> Data { unsafe key.withUnsafeBytes { unsafe Data($0) } }
 
   @Test
-  func aMissingKeyIsCreatedOncePrivatelyAndThenReused() throws {
+  func missingKeyIsCreatedOncePrivatelyAndThenReused() throws {
     defer { try? FileManager.default.removeItem(at: directory.url(for: .applicationData)) }
     let store = PortKeyInstallationStore(directory: directory)
 
@@ -33,7 +33,7 @@ struct PortKeyInstallationStoreTests {
   }
 
   @Test
-  func aKeyFileOfTheWrongSizeFailsAndStaysUnchanged() throws {
+  func keyFileOfWrongSizeFailsAndStaysUnchanged() throws {
     defer { try? FileManager.default.removeItem(at: directory.url(for: .applicationData)) }
     try FileManager.default.createDirectory(
       at: keyURL.deletingLastPathComponent(),
@@ -49,7 +49,7 @@ struct PortKeyInstallationStoreTests {
   }
 
   @Test
-  func theMessageLeadsWithTheCodeAndItsLocalizedText() {
+  func messageLeadsWithCodeAndItsLocalizedText() {
     let error = PortKeyInstallationError.damaged(path: "/k")
     let text = ErrorCode.damagedPortKey.localizedExplanation
 

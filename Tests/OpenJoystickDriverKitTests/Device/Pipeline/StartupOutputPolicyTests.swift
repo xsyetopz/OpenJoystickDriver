@@ -18,7 +18,7 @@ struct USBStartupOutputPolicyTests {
   }
 
   @Test
-  func defersVirtualOutputUntilThePhysicalUSBSessionOpens() async {
+  func defersVirtualOutputUntilPhysicalUSBSessionOpens() async {
     let identifier = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
     let provider = ScriptedUSBTransportProvider(failuresBeforeSuccess: .max)
     let dispatcher = StartupRecordingOutputDispatcher()
@@ -42,7 +42,7 @@ struct USBStartupOutputPolicyTests {
   }
 
   @Test
-  func publishesVirtualOutputAfterARecoveredPhysicalUSBHandshake() async {
+  func publishesVirtualOutputAfterRecoveredPhysicalUSBHandshake() async {
     let identifier = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
     let provider = ScriptedUSBTransportProvider(failuresBeforeSuccess: 3)
     let dispatcher = StartupRecordingOutputDispatcher()

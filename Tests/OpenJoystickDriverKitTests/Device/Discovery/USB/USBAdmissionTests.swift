@@ -6,7 +6,7 @@ import Testing
 @Suite(.timeLimit(.minutes(2)))
 struct USBDetectionAdmissionTests {
   @Test
-  func claimedInterfaceOutsideTheBoundContractIsLeftUnbound() async {
+  func claimedInterfaceOutsideBoundContractIsLeftUnbound() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 2,
@@ -244,7 +244,7 @@ struct USBDetectionAdmissionTests {
   }
 
   @Test
-  func physicalObservationMustIdentifyTheExactEnumeratedService() async {
+  func physicalObservationMustIdentifyExactEnumeratedService() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 11,

@@ -4,7 +4,7 @@ import Testing
 
 struct ControllerDomainTests {
   @Test
-  func bipolarValueClampsTheAsymmetricMinimum() {
+  func bipolarValueClampsAsymmetricMinimum() {
     #expect(BipolarValue(Int16.min).rawValue == -32767)
     #expect(BipolarValue(-32767).rawValue == -32767)
     #expect(BipolarValue(0) == .center)
@@ -13,7 +13,7 @@ struct ControllerDomainTests {
   }
 
   @Test
-  func unipolarValueSpansTheFullUnsignedRange() {
+  func unipolarValueSpansFullUnsignedRange() {
     #expect(UnipolarValue.min.rawValue == 0)
     #expect(UnipolarValue.max.rawValue == 65535)
   }
@@ -28,7 +28,7 @@ struct ControllerDomainTests {
   }
 
   @Test
-  func controlIDsMatchTheStandardControlList() {
+  func controlIDsMatchStandardControlList() {
     let standardControls = [
       "South", "East", "West", "North", "LeftShoulder", "RightShoulder", "LeftTrigger",
       "RightTrigger", "Back", "Start", "LeftStickClick", "RightStickClick", "DpadUp", "DpadDown",

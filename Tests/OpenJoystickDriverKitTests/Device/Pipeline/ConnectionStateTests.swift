@@ -60,7 +60,7 @@ struct ConnectionStateTests {
   ]
 
   @Test(arguments: cases)
-  func transportComesFromTheVariantOrLinkEvidence(_ testCase: Case) async {
+  func transportComesFromVariantOrLinkEvidence(_ testCase: Case) async {
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 1, productID: 2),
       transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),

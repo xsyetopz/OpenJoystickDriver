@@ -112,7 +112,7 @@ struct USBResolutionRuntimeTests {
   }
 
   @Test
-  func usbDetectionReResolvesChangedFactsForTheSameServiceIdentity() async {
+  func usbDetectionReResolvesChangedFactsForSameServiceIdentity() async {
     let original = USBTransportDevice(
       route: .rawUSB,
       serviceID: 37,

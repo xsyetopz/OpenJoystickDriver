@@ -5,15 +5,10 @@ import Testing
 struct GenericGamepadHIDTests {
   @Test
   func identityAndDescriptorBytesRemainStable() {
-    // Arrange
     let profile = VirtualDeviceProfile.generic
-
-    // Act
     let descriptorHash = GamepadHIDDescriptor.descriptor.reduce(UInt64(0xCBF2_9CE4_8422_2325)) {
       ($0 ^ UInt64($1)) &* 0x0000_0100_0000_01B3
     }
-
-    // Assert
     #expect(profile.vendorID == 0x1209)
     #expect(profile.productID == 0x4A4F)
     #expect(profile.versionNumber == 0x0408)
@@ -26,16 +21,11 @@ struct GenericGamepadHIDTests {
 
   @Test
   func descriptorPublishesBlinkButtonsAndSixAxes() throws {
-    // Arrange
     let parsed = try #require(
       HIDReportDescriptorParser.parse(descriptor: GamepadHIDDescriptor.descriptor)
     )
-
-    // Act
     let buttons = parsed.fields.filter { $0.usagePage == 0x09 }
     let axes = parsed.fields.filter { $0.usagePage == 0x01 }
-
-    // Assert
     #expect(parsed.payloadSizeBytesByReportID[0] == 14)
     #expect(buttons.map(\.usage) == Array(1...6) + Array(9...18))
     #expect(buttons.map(\.bitOffset) == Array(0...15))
@@ -47,7 +37,6 @@ struct GenericGamepadHIDTests {
 
   @Test
   func normalizedButtonsSerializeToTheirPublishedUsages() {
-    // Arrange
     let mappings: [(GamepadHIDDescriptor.ButtonBit, usage: Int)] = [
       (.a, 1), (.b, 2), (.x, 3), (.y, 4), (.leftBumper, 5), (.rightBumper, 6), (.back, 9),
       (.start, 10), (.leftStick, 11), (.rightStick, 12), (.dpadUp, 13), (.dpadDown, 14),
@@ -57,8 +46,6 @@ struct GenericGamepadHIDTests {
     let fields = HIDReportDescriptorParser.parse(descriptor: format.descriptor)?.fields.filter {
       $0.usagePage == 0x09
     }
-
-    // Act and assert
     for (destination, mapping) in mappings.enumerated() {
       let report = format.buildInputReport(
         from: VirtualGamepadState(buttons: 1 << UInt32(mapping.0.rawValue))
@@ -72,7 +59,6 @@ struct GenericGamepadHIDTests {
 
   @Test
   func reportContainsSixAxesInBlinkOrder() {
-    // Arrange
     let format = OJDGenericGamepadFormat()
     let state = VirtualGamepadState(
       leftStickX: 0x0102,
@@ -82,11 +68,7 @@ struct GenericGamepadHIDTests {
       leftTrigger: 0x090A,
       rightTrigger: 0x0B0C
     )
-
-    // Act
     let report = format.buildInputReport(from: state)
-
-    // Assert
     #expect(report.count == 14)
     #expect(
       Array(report[2...13]) == [
@@ -97,13 +79,10 @@ struct GenericGamepadHIDTests {
 
   @Test
   func analogTriggersPreserveNeutralPartialFullAndReleaseValues() {
-    // Arrange
     let format = OJDGenericGamepadFormat()
     let values: [(Int16, [UInt8])] = [
       (0, [0x00, 0x00]), (16_384, [0x00, 0x40]), (32_767, [0xFF, 0x7F]), (0, [0x00, 0x00]),
     ]
-
-    // Act and assert
     for (value, expectedBytes) in values {
       let report = format.buildInputReport(
         from: VirtualGamepadState(leftTrigger: value, rightTrigger: value)
@@ -115,29 +94,19 @@ struct GenericGamepadHIDTests {
 
   @Test
   func digitalTriggersUseFullScaleAxesWithoutButtonDuplicates() {
-    // Arrange
     let format = OJDGenericGamepadFormat()
-
-    // Act
     let report = format.buildInputReport(
       from: VirtualGamepadState(leftTriggerPressed: true, rightTriggerPressed: true)
     )
-
-    // Assert
     #expect(Array(report[0...1]) == [0, 0])
     #expect(Array(report[10...13]) == [0xFF, 0x7F, 0xFF, 0x7F])
   }
 
   @Test
   func descriptorAndFormatAreInputOnly() throws {
-    // Arrange
     let format = OJDGenericGamepadFormat()
     let parsed = try #require(HIDReportDescriptorParser.parse(descriptor: format.descriptor))
-
-    // Act
     let outputItems = Self.mainItemCount(tag: 0x9, in: format.descriptor)
-
-    // Assert
     #expect(outputItems == 0)
     #expect(!parsed.containsFeatureItem)
     #expect(format.outputReportPayloadSize == nil)

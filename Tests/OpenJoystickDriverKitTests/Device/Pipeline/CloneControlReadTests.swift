@@ -52,7 +52,7 @@ struct CloneControlReadTests {
   }
 
   @Test
-  func theRecordHoldsTheFixtureTableWithItsGateAndTimeout() throws {
+  func recordHoldsFixtureTableWithItsGateAndTimeout() throws {
     let record = try #require(ControllerRecordSet.bundled.records[Self.model])
     let transfers = record.profile.session.controlTransfers
     #expect(
@@ -74,7 +74,7 @@ struct CloneControlReadTests {
   }
 
   @Test
-  func aShanwanPadGetsTheThreeReadsInOrderBeforeTheFirstStartupWrite() async throws {
+  func shanwanPadGetsThreeReadsInOrderBeforeFirstStartupWrite() async throws {
     let events = try await Self.startupEvents(manufacturer: Fixture.manufacturer)
     let reads = Fixture.reads.map { "control \($0.bmRequestType) \($0.bRequest) \($0.wValue)" }
     #expect(Array(events.prefix(reads.count)) == reads)

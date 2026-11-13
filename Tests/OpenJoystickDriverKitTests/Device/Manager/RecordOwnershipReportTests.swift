@@ -12,7 +12,7 @@ struct RecordOwnershipReportTests {
   /// The value `DeviceManager.deviceDescription` reports comes from the catalog that the
   /// bundled, package, and user layers produce, so a user patch shows as `ojd`.
   @Test
-  func theCatalogRecordCarriesTheOwnershipOfTheMergedLayers() throws {
+  func catalogRecordCarriesOwnershipOfMergedLayers() throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-record-ownership-\(UUID().uuidString)",
       isDirectory: true
@@ -35,7 +35,7 @@ struct RecordOwnershipReportTests {
   }
 
   @Test
-  func theDescriptionEncodesAndDecodesTheRecordOwnership() throws {
+  func descriptionEncodesAndDecodesRecordOwnership() throws {
     let device = ApplicationServiceDeviceDescription.fixture(id: "A")
     #expect(device.recordServer == .system)
     let object = try Self.object(of: device)
@@ -47,7 +47,7 @@ struct RecordOwnershipReportTests {
   }
 
   @Test(arguments: ["recordServer", "recordAccessRoute"])
-  func aPayloadWithoutARecordOwnershipFieldFailsToDecode(field: String) throws {
+  func payloadWithoutRecordOwnershipFieldFailsToDecode(field: String) throws {
     var object = try Self.object(of: .fixture(id: "A"))
     object[field] = nil
 

@@ -8,7 +8,7 @@ import Testing
 /// crosswalk to SDL and the system HID names.
 struct ControlVocabularyTests {
   @Test
-  func anIDOutsideTheVocabularyDoesNotDecode() {
+  func idOutsideVocabularyDoesNotDecode() {
     let data = Data("\"x\(UUID().uuidString)\"".utf8)
 
     #expect(throws: DecodingError.self) {
@@ -27,7 +27,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func schemaDefinitionsMatchTheSwiftCases() throws {
+  func schemaDefinitionsMatchSwiftCases() throws {
     let definitions = try Self.vocabularyDefinitions()
     func values(_ name: String) -> [String]? {
       (definitions[name] as? [String: Any])?["enum"] as? [String]
@@ -141,7 +141,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func crosswalkKeepsTheDocumentedFixedPoints() throws {
+  func crosswalkKeepsDocumentedFixedPoints() throws {
     let rows = try Self.crosswalk().controls
     #expect(rows["South"]?.sdl == "SOUTH")
     #expect(rows["South"]?.w3cButton == 0)
@@ -155,7 +155,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func crosswalkRecordsASourcePerColumn() throws {
+  func crosswalkRecordsSourcePerColumn() throws {
     let crosswalk = try Self.crosswalk()
     #expect(Set(crosswalk.sources.keys) == ["w3c", "sdl", "evdev", "hid", "apple"])
     for (column, source) in crosswalk.sources {
@@ -172,7 +172,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func crosswalkHoldsTheSourcedCells() throws {
+  func crosswalkHoldsSourcedCells() throws {
     let rows = try Self.crosswalk().controls
     #expect(rows["LeftTrigger"]?.hid.contains(.init(page: "Simulation", usage: 197)) == true)
     #expect(rows["RightTrigger"]?.hid.contains(.init(page: "Simulation", usage: 196)) == true)
@@ -213,7 +213,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func crosswalkSchemaRejectsAPlantedBadFile() throws {
+  func crosswalkSchemaRejectsPlantedBadFile() throws {
     func rejects(_ name: String, _ edit: @escaping (inout [String: Any]) -> Void) throws {
       let issues = try JSONSchemaFiles.issues(
         inObject: Self.crosswalkTree(editing: edit),

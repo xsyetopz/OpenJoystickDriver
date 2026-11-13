@@ -78,7 +78,7 @@ extension PhysicalOutputExecutorTests {
   /// A failed rumble that was the newest claim writes the effective rumble once more, so the
   /// controller shows the delivered claim it fell back to.
   @Test
-  func failedNewestRumbleRewritesTheEffectiveRumble() async throws {
+  func failedNewestRumbleRewritesEffectiveRumble() async throws {
     let started = try await startSixaxis(locationID: 534)
     let manager = started.manager
     let earlier = RumbleIntensities(lowFrequency: UnipolarValue(byte: 0x40))

@@ -118,7 +118,7 @@ struct USBDescriptorTransportResolverTests {
   }
 
   @Test
-  func descriptorSelectionAcceptsTheXIDClassAndSkipsHIDInterfaces() throws {
+  func descriptorSelectionAcceptsXIDClassAndSkipsHIDInterfaces() throws {
     let selected = USBDescriptorTransportResolver.discover(
       interfaces: [
         interface(
@@ -302,7 +302,7 @@ struct USBControlTransferRequestTests {
   }
 
   @Test
-  func dataStageLengthsOutsideTheSetupPacketAreRejected() {
+  func dataStageLengthsOutsideSetupPacketAreRejected() {
     #expect(throws: USBTransportError.notSupported) {
       try USBControlTransferRequest(
         kind: .vendor,

@@ -99,7 +99,7 @@ private final class FirstStickDispatchHeldRecorder: OutputDispatcher, @unchecked
 }
 
 /// Measures how stick reports reach the virtual device when a native send is slower than the
-/// controller's report interval (REQ-23).
+/// controller's report interval.
 ///
 /// The service handles HID events in one loop that awaits each input report's publication
 /// (`DeviceManager+HIDDetection.swift`). These tests drive that loop's batching, its
@@ -188,7 +188,7 @@ struct StickDeliveryLatencyTests {
   /// Once that send completes, the newest position must be next, within about one send time, and
   /// no older position may follow a newer one. Holds for the report format of each persona.
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func newestStickPositionFollowsTheSlowSendWithoutStaleBacklog(
+  func newestStickPositionFollowsSlowSendWithoutStaleBacklog(
     persona: VirtualHIDProfileID
   ) async {
     let format = RecordingReportFormat(persona: persona)
@@ -236,7 +236,7 @@ struct StickDeliveryLatencyTests {
   /// `frameQueueCapacity`, default 64) behind a slow send neither closes the device nor
   /// delivers stale positions; the burst collapses to its newest position.
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func longBurstKeepsTheDeviceOpenAndEndsOnTheNewestPosition(
+  func longBurstKeepsDeviceOpenAndEndsOnNewestPosition(
     persona: VirtualHIDProfileID
   ) async {
     let format = RecordingReportFormat(persona: persona)
@@ -254,7 +254,7 @@ struct StickDeliveryLatencyTests {
   /// A frame that finds the queue full of host replies fails as superseded, so the dispatcher
   /// returns without closing the device, and the next frame still publishes.
   @Test
-  func frameBehindAQueueOfHostRepliesLeavesTheDeviceOpen() async throws {
+  func frameBehindQueueOfHostRepliesLeavesDeviceOpen() async throws {
     let backend = FirstSendHeldBackend()
     let dispatcher = UserSpaceOutputDispatcher(
       testBackendFactory: { _ in backend },
@@ -294,7 +294,7 @@ struct StickDeliveryLatencyTests {
   /// A last queued report that carries no input still publishes the newest stick position the
   /// reports before it left undispatched.
   @Test
-  func positionLeftForAnEmptyLastReportIsPublished() async {
+  func positionLeftForEmptyLastReportIsPublished() async {
     let batches: [[InputChange]] = [
       [.leftStick(x: 0.1, y: 0)], [.leftStick(x: 0.5, y: 0)], [.leftStick(x: 0.9, y: 0)],
     ]
@@ -307,7 +307,7 @@ struct StickDeliveryLatencyTests {
   /// Only a later report of the same connection supersedes an input report, and any other event
   /// between them keeps both.
   @Test
-  func onlyALaterReportOfTheSameConnectionSupersedesAReport() {
+  func onlyLaterReportOfSameConnectionSupersedesReport() {
     let other = UUID()
     let batch: [HIDDeviceEvent] = [
       Self.report([1]), Self.report([1], connectionID: other), Self.report([2]),
@@ -339,8 +339,8 @@ struct StickDeliveryLatencyTests {
     #expect(end == nil)
   }
 
-  /// Design hypothesis 1: an unchanged state is not published again, at the pipeline and at the
-  /// dispatcher, so a resting stick produces no reports.
+  /// An unchanged state is not published again, at the pipeline and at the dispatcher, so a
+  /// resting stick produces no reports.
   @Test
   func unchangedStickStateIsPublishedOnce() async {
     let backend = UserSpaceDispatcherTestBackend()
@@ -365,7 +365,7 @@ struct StickDeliveryLatencyTests {
   ///
   /// The backend is instant. The bound is loose on purpose; the measured mean is in the message.
   @Test
-  func oneStickReportCostsFarLessThanAReportInterval() async {
+  func oneStickReportCostsFarLessThanReportInterval() async {
     let count = 1_000
     let distinct = 200
     let positions: [Float] = (0..<distinct).map { Float($0) / Float(distinct) }
@@ -455,7 +455,7 @@ struct StickDeliveryLatencyTests {
   /// An input held for a later report is dropped when the session is suspended, so a report with
   /// no input after the resume does not replay the stick position from before it.
   @Test
-  func suspendDropsTheHeldInput() async {
+  func suspendDropsHeldInput() async {
     let recorder = FirstStickDispatchHeldRecorder()
     let pipeline = DevicePipeline(
       identifier: Self.identifier,
@@ -483,7 +483,7 @@ struct StickDeliveryLatencyTests {
   /// The service's detection loop, fed by a HID backend, publishes only the newest of the stick
   /// reports queued behind a slow dispatch.
   @Test
-  func detectionLoopPublishesOnlyTheNewestQueuedStickReport() async throws {
+  func detectionLoopPublishesOnlyNewestQueuedStickReport() async throws {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()
@@ -530,7 +530,7 @@ struct StickDeliveryLatencyTests {
 
   /// Finishing wakes a waiting consumer with nil, and so does cancelling it.
   @Test
-  func eventBatchesEndAWaitingConsumer() async {
+  func eventBatchesEndWaitingConsumer() async {
     let finished = DeviceManager.EventBatches<Int>()
     let waiting = Task { await finished.next() }
     await waitUntil("the consumer waits for events") { finished.hasWaitingConsumer }

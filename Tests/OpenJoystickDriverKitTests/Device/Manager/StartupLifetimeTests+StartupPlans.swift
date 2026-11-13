@@ -55,7 +55,7 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func staleStartupDoesNotReplaceTheReconnectHeartbeatTask() async throws {
+  func staleStartupDoesNotReplaceReconnectHeartbeatTask() async throws {
     let dispatcher = GatedStartupOutputDispatcher()
     let manager = DeviceManager(dispatcher: dispatcher, installationKey: testPortKeyInstallationKey)
     let firstConnection = gameSirConnection(
@@ -122,7 +122,7 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func startupPlanRequiresAnActivePipeline() async {
+  func startupPlanRequiresActivePipeline() async {
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 0x057E, productID: 0x2009),
       transport: .hid(address: .ioKit(locationID: 82, interfaceNumber: nil)),
@@ -140,7 +140,7 @@ extension StartupLifetimeTests {
   /// The pipeline runs the driver's plan with the record's tuning; untuned fields keep the driver
   /// defaults.
   @Test
-  func pipelinePlanAppliesTheRecordTuning() async throws {
+  func pipelinePlanAppliesRecordTuning() async throws {
     let identifier = LogicalControllerID(vendorID: 0x057E, productID: 0x2009)
     let record = try #require(ProtocolDriverRegistry().record(for: identifier.model))
     let tuning = ControllerTuning(
@@ -180,13 +180,13 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func featureReadsFollowTheBoundVariant() {
+  func featureReadsFollowBoundVariant() {
     #expect(DualShock4Driver(prefersBluetooth: true).startupFeatureReads().map(\.reportID) == [5])
     #expect(DualShock4Driver().startupFeatureReads().map(\.reportID) == [2])
   }
 
   @Test
-  func ds4BluetoothStartupEnablesFullInputWithoutChangingTheLight() {
+  func ds4BluetoothStartupEnablesFullInputWithoutChangingLight() {
     let provider = DualShock4Driver(prefersBluetooth: true)
     let reports = PhysicalProtocolID.sonyDualShock4.protocolDescription.startupWrites(
       phase: .startup,

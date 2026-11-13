@@ -68,7 +68,7 @@ struct VirtualHostReportTests {
   }
 
   @Test
-  func setReportOnTheInputOnlyGenericFormatProducesNoCommand() async throws {
+  func setReportOnInputOnlyGenericFormatProducesNoCommand() async throws {
     let input = UserSpaceInputReportState(format: OJDGenericGamepadFormat())
     let sender = UserSpaceReportSender()
     let isOpen: @Sendable () -> Bool = { true }

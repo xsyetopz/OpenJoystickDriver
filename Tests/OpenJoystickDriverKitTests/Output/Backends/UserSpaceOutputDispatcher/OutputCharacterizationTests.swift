@@ -3,8 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Pins what reaches the virtual gamepad, audited line by line across the move from delta
-/// events to full state snapshots.
+/// Pins what reaches the virtual gamepad, line by line.
 ///
 /// Each step applies one batch of changes to the controller's previous snapshot and feeds the
 /// resulting snapshot (virtual output path), or one engine transition (remapped path), to two

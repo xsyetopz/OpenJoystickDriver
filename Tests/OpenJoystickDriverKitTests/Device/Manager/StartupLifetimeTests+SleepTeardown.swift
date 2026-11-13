@@ -60,7 +60,7 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func sleepSendsHIDShutdownReportsBeforeDetectionClosesTheSession() async throws {
+  func sleepSendsHIDShutdownReportsBeforeDetectionClosesSession() async throws {
     let backend = ScriptedHIDAccessBackend(closesSessionWhenStreamEnds: true)
     await backend.enableFeatureReports()
     let manager = DeviceManager(
@@ -176,7 +176,7 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func duringTeardownOnlyTeardownScopedWritesReachTheController() async throws {
+  func duringTeardownOnlyTeardownScopedWritesReachController() async throws {
     let backend = ScriptedHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -219,7 +219,7 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func startIssuedAfterSleepBeforeTheFirstStartWaitsForWake() async {
+  func startIssuedAfterSleepBeforeFirstStartWaitsForWake() async {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey,

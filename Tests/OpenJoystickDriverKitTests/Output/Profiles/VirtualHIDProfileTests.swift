@@ -6,7 +6,7 @@ import Testing
 
 struct VirtualHIDProfileTests {
   @Test
-  func exactlyTheThreeApprovedProfileIDsExist() {
+  func exactlyThreeApprovedProfileIDsExist() {
     #expect(
       VirtualHIDProfileID.allCases.map(\.rawValue) == [
         "SDLCompatible", "Generic", "GameControllerCompatible",
@@ -142,7 +142,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func xboxProfileRepresentsTheSpecXboxLayout() {
+  func xboxProfileRepresentsSpecXboxLayout() {
     let profile = VirtualHIDProfileID.sdlCompatible
     let layout: Set<Control> = Control.dpad.union([
       .south, .east, .west, .north, .leftShoulder, .rightShoulder,
@@ -153,7 +153,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileRepresentsTheSpecGenericLayout() {
+  func genericProfileRepresentsSpecGenericLayout() {
     let profile = VirtualHIDProfileID.generic
     let buttons: [Control] = [
       .south, .east, .west, .north, .leftShoulder, .rightShoulder,
@@ -166,7 +166,7 @@ struct VirtualHIDProfileTests {
     let hatAndAxes = Control.dpad.union([
       .leftStickX, .leftStickY, .rightStickX, .rightStickY, .leftTrigger, .rightTrigger,
     ])
-    // The frozen 32 button slots held Share and Capture apart; one id, Capture, now fills both.
+    // The frozen 32 button slots held Share and Capture apart; one id, Capture, fills both.
     #expect(buttons.count == 31)
     #expect(profile.representableControls == Set(buttons).union(hatAndAxes))
     #expect(

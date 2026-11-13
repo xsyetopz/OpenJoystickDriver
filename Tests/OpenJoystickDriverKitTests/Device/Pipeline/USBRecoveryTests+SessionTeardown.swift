@@ -197,7 +197,7 @@ extension USBPipelineRecoveryTests {
   }
 
   @Test
-  func controllerRecordReloadReadmitsOnlyTheChangedModelAndKeepsItsSuspension() async throws {
+  func controllerRecordReloadReadmitsOnlyChangedModelAndKeepsItsSuspension() async throws {
     let other = USBTransportDevice(
       route: .rawUSB,
       serviceID: 2,

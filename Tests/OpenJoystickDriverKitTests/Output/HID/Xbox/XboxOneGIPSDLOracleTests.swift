@@ -101,7 +101,7 @@ struct XboxOneGIPSDLOracleTests {
   }
 
   @Test
-  func guideTravelsInTheVirtualKeyPacketSDLReadsAsGuide() {
+  func guideTravelsInVirtualKeyPacketSDLReadsAsGuide() {
     let pressed = format.buildAuxiliaryInputReports(
       from: VirtualGamepadState(buttons: 1 << UInt32(GamepadHIDDescriptor.ButtonBit.guide.rawValue))
     )

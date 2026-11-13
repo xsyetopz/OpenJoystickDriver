@@ -61,7 +61,7 @@ struct DevicePipelineStatusAnnouncementTests {
   }
 
   @Test
-  func aChangedPowerAnnouncesOnceAndTheSamePowerAnnouncesNothing() async {
+  func changedPowerAnnouncesOnceAndSamePowerAnnouncesNothing() async {
     let driver = PowerDriver()
     let pipeline = makePipeline(driver)
     let (posts, observer) = observe(pipeline)
@@ -79,7 +79,7 @@ struct DevicePipelineStatusAnnouncementTests {
   }
 
   @Test
-  func aChangedStartupStatusAnnouncesOnce() async {
+  func changedStartupStatusAnnouncesOnce() async {
     let pipeline = makePipeline(PowerDriver())
     let (posts, observer) = observe(pipeline)
     defer { NotificationCenter.default.removeObserver(observer) }
@@ -91,7 +91,7 @@ struct DevicePipelineStatusAnnouncementTests {
   }
 
   @Test
-  func aChangedInputConnectionAnnouncesOnce() async {
+  func changedInputConnectionAnnouncesOnce() async {
     let pipeline = makePipeline(PowerDriver())
     let (posts, observer) = observe(pipeline)
     defer { NotificationCenter.default.removeObserver(observer) }

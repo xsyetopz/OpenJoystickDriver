@@ -44,7 +44,7 @@ struct ApplicationServiceRemappingSnapshotPayloadTests {
 
   /// Every list is required, so a payload without one fails to decode instead of listing none.
   @Test(arguments: ["joyConPairs", "profileIssues", "packageProfiles", "lastUsed"])
-  func aMissingListFailsToDecode(key: String) throws {
+  func missingListFailsToDecode(key: String) throws {
     let payload = ApplicationServiceRemappingSnapshotPayload(
       profiles: [],
       activeProfiles: [],

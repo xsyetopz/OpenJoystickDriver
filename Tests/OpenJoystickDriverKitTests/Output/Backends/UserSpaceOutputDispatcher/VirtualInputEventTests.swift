@@ -110,7 +110,7 @@ struct VirtualInputEventTests {
   /// Without a profile the virtual sticks follow the controller; dead zones belong to the profile
   /// and the game.
   @Test
-  func unprofiledSticksReachTheVirtualReportWithoutADeadZone() {
+  func unprofiledSticksReachVirtualReportWithoutDeadZone() {
     let zd = LogicalControllerID(vendorID: 0x413D, productID: 0x2104)
     for (x, y) in [(Float(0.12), Float(0.12)), (0.14, 0)] {
       var state = VirtualGamepadState()
@@ -126,7 +126,7 @@ struct VirtualInputEventTests {
 
   /// A record's `tuning.stickDeadzone` reaches the dispatcher as a rescaling dead zone.
   @Test
-  func recordTuningSetsTheStickDeadZone() {
+  func recordTuningSetsStickDeadZone() {
     let tuned = LogicalControllerID(vendorID: 0x11C1, productID: 0x5600)
     #expect(
       VirtualGamepadReportMapping.stickTransfer(for: tuned)
