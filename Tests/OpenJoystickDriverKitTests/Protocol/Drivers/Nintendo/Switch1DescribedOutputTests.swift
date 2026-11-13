@@ -101,7 +101,7 @@ struct Switch1DescribedOutputTests {
 
   /// A description holds the rumble report and the player-indicator patterns.
   @Test
-  func theDescriptionNamesTheRumbleReportAndPlayerIndicatorPatterns() throws {
+  func descriptionNamesRumbleReportAndPlayerIndicatorPatterns() throws {
     let description = PhysicalProtocolID.nintendoSwitch1.protocolDescription
     let template = try #require(description.rumbleTemplate(variant: .usb))
     #expect(template.report == ControllerTemplateReport(kind: .output, reportID: 0x10, length: 10))
@@ -114,7 +114,7 @@ struct Switch1DescribedOutputTests {
 
   /// A record's template replaces the description's for its controller.
   @Test
-  func aRecordTemplateOverridesTheDescriptionsTemplate() throws {
+  func recordTemplateOverridesDescriptionsTemplate() throws {
     let template = try RumbleOutputTemplate(
       target: .hid(ControllerTemplateReport(kind: .output, reportID: 0x10, length: 10)),
       motors: [.lowFrequency: .init(byte: 2, encoding: .switchHDRumble)],
@@ -143,7 +143,7 @@ struct Switch1DescribedOutputTests {
   /// A record template places the motors where it names them, and a Joy-Con still drives only its
   /// own side.
   @Test
-  func aRecordTemplateOnAJoyConKeepsTheOtherSideOff() throws {
+  func recordTemplateOnJoyConKeepsOtherSideOff() throws {
     let driver = Switch1Driver(layout: .leftJoyCon, rumbleTemplate: try Self.recordTemplate())
     let rumble = RumbleIntensities(
       lowFrequency: UnipolarValue(0xFF00),
@@ -155,7 +155,7 @@ struct Switch1DescribedOutputTests {
 
   /// The Bluetooth driver encodes from the description's template for its variant.
   @Test
-  func theBluetoothDriverEncodesFromTheDescriptionsTemplate() throws {
+  func bluetoothDriverEncodesFromDescriptionsTemplate() throws {
     let driver = Switch1Driver(layout: .rightJoyCon, isBluetooth: true)
     let rumble = RumbleIntensities(
       lowFrequency: UnipolarValue(0xFF00),
@@ -167,7 +167,7 @@ struct Switch1DescribedOutputTests {
 
   /// A record's template reaches the driver the registry builds.
   @Test
-  func theRegistryPassesTheRecordsTemplateToTheDriver() throws {
+  func registryPassesRecordsTemplateToDriver() throws {
     let proController = ControllerModelID(vendorID: 0x057E, productID: 0x2009)
     var profile = try #require(ControllerRecordSet.bundled.records[proController]?.profile)
     #expect(profile.physicalProtocolID == .nintendoSwitch1)

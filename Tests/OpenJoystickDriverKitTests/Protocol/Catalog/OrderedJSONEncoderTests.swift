@@ -114,7 +114,7 @@ struct OrderedJSONEncoderTests {
   }
 
   @Test
-  func aFloatingPointNumberIsWrittenAsJSONEncoderWritesIt() throws {
+  func floatingPointNumberIsWrittenAsJSONEncoderWritesIt() throws {
     #expect(try Self.written(Floats()) == (try Self.reference(Floats())))
   }
 
@@ -140,7 +140,7 @@ struct OrderedJSONEncoderTests {
   }
 
   @Test
-  func theMembersAreSortedAsJSONEncoderSortsThem() throws {
+  func membersAreSortedAsJSONEncoderSortsThem() throws {
     let value = [
       "b": 1, "a": 2, "B": 3, "é": 4, "\u{FF5E}": 5, "\u{10000}": 6, "10": 7, "9": 8, "": 9,
     ]
@@ -153,21 +153,21 @@ struct OrderedJSONEncoderTests {
   }
 
   @Test
-  func aSingleValueContainerWritesTheValueItself() throws {
+  func singleValueContainerWritesValueItself() throws {
     let value = Single(value: .min)
     #expect(try Self.written(value) == (try Self.reference(value)))
     #expect(try Self.written([value, value]) == (try Self.reference([value, value])))
   }
 
   @Test
-  func aSuperEncoderWritesUnderItsKeyOrAtTheNextIndex() throws {
+  func superEncoderWritesUnderItsKeyOrAtNextIndex() throws {
     #expect(try Self.written(WithUnkeyedSuper()) == (try Self.reference(WithUnkeyedSuper())))
     let keyed = try OrderedJSONEncoder().encode(WithKeyedSuper())
     #expect(keyed.compact() == #"{"first":1,"super":{"id":7,"tags":["t"]}}"#)
   }
 
   @Test
-  func aTopLevelFoundationValueAndANonFiniteDecimalAreHandledAsJSONEncoderHandlesThem() throws {
+  func topLevelFoundationValueAndNonFiniteDecimalAreHandledAsJSONEncoderHandlesThem() throws {
     let data = Data([1, 2, 3])
     #expect(try OrderedJSONEncoder().encode(data) == .string("AQID"))
     #expect(try OrderedJSONEncoder().encode(Decimal(string: "0.08")) == .number("0.08"))

@@ -54,7 +54,7 @@ struct Switch2DriverTests {
   static let model = ControllerModelID(vendorID: 0x057E, productID: 0x2066)
 
   @Test
-  func switch2RowsBindNintendoSwitch2AndBuildTheSwitch2Driver() throws {
+  func switch2RowsBindNintendoSwitch2AndBuildSwitch2Driver() throws {
     let models = [0x2066, 0x2067, 0x2069, 0x2073].map {
       ControllerModelID(vendorID: 0x057E, productID: $0)
     }
@@ -83,7 +83,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func decodesTheDPadBitsIntoTheHat() throws {
+  func decodesDPadBitsIntoHat() throws {
     let cases: [(UInt32, HatDirection)] = [
       (0x02, .north), (0x06, .northEast), (0x04, .east), (0x05, .southEast), (0x01, .south),
       (0x09, .southWest), (0x08, .west), (0x0A, .northWest), (0x03, .neutral),
@@ -148,7 +148,7 @@ struct Switch2DriverTests {
 
   /// SDL reads a solo right Joy-Con's stick with the primary calibration slot.
   @Test
-  func rightJoyConReadsThePrimaryCalibrationSlot() throws {
+  func rightJoyConReadsPrimaryCalibrationSlot() throws {
     let driver = Switch2Driver(layout: .rightJoyCon)
     let calibration = Switch2Report.calibration(neutral: 1048, max: 1000, min: 1000)
     driver.consumeUSBCommandReply(
@@ -168,7 +168,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func gameCubeTriggersScaleFromTheFlashZeroPoint() throws {
+  func gameCubeTriggersScaleFromFlashZeroPoint() throws {
     let driver = Switch2Driver(layout: .gameCube)
     driver.consumeUSBCommandReply(Switch2Report.flashReply(address: 0x13140, data: [0: [32, 32]]))
     let report = Switch2Report.state(buttons: 0x0000_0080 | 0x0080_0000, triggers: (132, 240))
@@ -187,7 +187,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func startupReadsCalibrationThenRunsTheInitSequence() {
+  func startupReadsCalibrationThenRunsInitSequence() {
     let pro = Switch2Driver(layout: .pro).startupWrites().usbPackets
     #expect(pro.count == 14)
     #expect(pro.allSatisfy { $0.endpoint == 0x02 })
@@ -208,7 +208,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func bluetoothLELinkMarksEveryCommandAndSendsTheConsoleInitSequence() {
+  func bluetoothLELinkMarksEveryCommandAndSendsConsoleInitSequence() {
     let driver = Switch2Driver(layout: .pro, link: .bluetoothLE)
     let packets = driver.startupWrites().usbPackets
     #expect(packets.count == 9)
@@ -225,7 +225,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func playerIndicatorTravelsOnTheCommandChannel() {
+  func playerIndicatorTravelsOnCommandChannel() {
     let packet = Switch2Driver().encoded(.setPlayerIndicator(.player2)).onlyPacket
     #expect(packet.endpoint == 0x02)
     #expect(packet.bytes == [0x09, 0x91, 0x00, 0x07, 0x00, 0x08, 0, 0, 0x03, 0, 0, 0, 0, 0, 0, 0])
@@ -277,7 +277,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func recordsBindTheLayoutOfTheirController() throws {
+  func recordsBindLayoutOfTheirController() throws {
     let layouts: [(UInt16, Switch2ControllerLayout)] = [
       (0x2066, .rightJoyCon), (0x2067, .leftJoyCon), (0x2069, .pro), (0x2073, .gameCube),
     ]
@@ -310,7 +310,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func syntheticCaptureFileDecodesThroughTheDriver() throws {
+  func syntheticCaptureFileDecodesThroughDriver() throws {
     let capture = try ProtocolPacketFixtures.Switch2.load("synthetic-pro-usb")
     #expect(capture.isSynthetic)
     #expect(capture.controller == "057E:2069")

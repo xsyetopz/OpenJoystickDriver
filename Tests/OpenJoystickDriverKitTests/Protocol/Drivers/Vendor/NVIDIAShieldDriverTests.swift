@@ -82,7 +82,7 @@ struct NVIDIAShieldDriverTests {
   }
 
   @Test
-  func v103TouchReportCarriesTheTouchpadClick() throws {
+  func v103TouchReportCarriesTouchpadClick() throws {
     let driver = v103
     #expect(
       try driver.parseReport(Data([0x02, 0x01, 0, 0, 0]))?.state == snapshot(.press(.touchpadClick))
@@ -98,7 +98,7 @@ struct NVIDIAShieldDriverTests {
   }
 
   @Test
-  func v103RumbleUsesTheSDLOutputReport() throws {
+  func v103RumbleUsesSDLOutputReport() throws {
     let command = ControllerOutputCommand.setRumble(
       RumbleIntensities(
         lowFrequency: UnipolarValue(byte: 0x40),

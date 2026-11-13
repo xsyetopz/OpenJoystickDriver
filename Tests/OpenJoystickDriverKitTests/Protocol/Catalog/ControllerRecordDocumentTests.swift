@@ -70,7 +70,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func rejectsDualSenseModelParametersWithoutTheThirdPartyMaker() {
+  func rejectsDualSenseModelParametersWithoutThirdPartyMaker() {
     for vendorID in [0x054C, 0x1532] {
       for parameters in [["role": "Receiver"], ["unprobedTouchpad": true]]
         as [[String: any Sendable]]
@@ -101,7 +101,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test(arguments: PhysicalProtocolID.allCases.filter { !$0.storesVariant })
-  func rejectsVariantsTheTransportDecides(family: PhysicalProtocolID) throws {
+  func rejectsVariantsTransportDecides(family: PhysicalProtocolID) throws {
     // A report-layout row must carry its layout; any other row must not.
     let extra: [String: any Sendable] =
       family == .hidReportLayout ? ["input": Self.minimalInput] : [:]
@@ -149,7 +149,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func rejectsAnUnknownRecordField() {
+  func rejectsUnknownRecordField() {
     #expect(throws: DecodingError.self) {
       try decode(protocol: ["family": "XboxGIP"], extra: ["notAField": "usb"])
     }
@@ -170,7 +170,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func presentControlsAreOnlyTheDualSenseEdgeSet() throws {
+  func presentControlsAreOnlyDualSenseEdgeSet() throws {
     let edge = ["LeftPaddle1", "RightPaddle1", "Auxiliary1", "Auxiliary2"]
     let dualSense: [String: any Sendable] = ["family": "SonyDualSense"]
     let document = try decode(protocol: dualSense, capabilities: ["present": edge])
@@ -212,7 +212,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func noCatalogRowNamesAnAssemblyPolicy() {
+  func noCatalogRowNamesAssemblyPolicy() {
     let registry = ProtocolDriverRegistry()
     for model in registry.hidModels + registry.rawUSBModels {
       let record = registry.record(for: model)
@@ -231,7 +231,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func schemaVocabularyMatchesTheSwiftEnums() throws {
+  func schemaVocabularyMatchesSwiftEnums() throws {
     let schema = try Self.controllerSchema()
     let definitions = try #require(schema["$defs"] as? [String: Any])
     // The description defines the ids; the schema holds only their shape.
@@ -304,7 +304,7 @@ struct ControllerRecordDocumentTests {
   ]
 
   @Test
-  func decodesTuningWhereADriverReadsIt() throws {
+  func decodesTuningWhereDriverReadsIt() throws {
     let ds4 = try decode(
       protocol: ["family": "SonyDualShock4"],
       extra: ["tuning": ["stickDeadzone": 0.05, "inputLivenessTimeoutMs": 1_500]]
@@ -417,7 +417,7 @@ struct ControllerRecordDocumentTests {
   ]
 
   @Test
-  func decodesTheBluetoothLEVibrationCharacteristicOfASwitch2Controller() throws {
+  func decodesBluetoothLEVibrationCharacteristicOfSwitch2Controller() throws {
     let document = try decode(
       protocol: Self.switch2,
       extra: ["bluetoothLE": ["vibrationCharacteristic": Self.vibrationUUID]]

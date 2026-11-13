@@ -15,7 +15,7 @@ struct ProtocolBindingIDTests {
   }
 
   @Test
-  func spellsEachSideOfTheBindingInKebabCaseOnTheCommandLine() {
+  func spellsEachSideOfBindingInKebabCaseOnCommandLine() {
     #expect(
       ProtocolBindingID(.xboxXUSB, variant: .receiver).commandLineName == "xbox-xusb:receiver"
     )
@@ -36,7 +36,7 @@ struct ProtocolBindingIDTests {
     // A binding is resolved: families with variants always name one.
     "XboxGIP", "XboxXUSB", "VendorGameSir", "SonyDualSense",
   ])
-  func rejectsUnknownFamiliesAndVariantsOutsideTheFamily(_ text: String) throws {
+  func rejectsUnknownFamiliesAndVariantsOutsideFamily(_ text: String) throws {
     #expect(ProtocolBindingID(rawValue: text) == nil)
     let json = try JSONEncoder().encode([text])
     #expect(throws: DecodingError.self) {

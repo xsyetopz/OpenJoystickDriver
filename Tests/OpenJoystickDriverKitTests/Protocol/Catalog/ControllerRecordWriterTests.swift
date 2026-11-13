@@ -66,7 +66,7 @@ struct ControllerRecordWriterTests {
   }
 
   @Test
-  func missingFileBecomesAPatchOfOnlyOwnership() throws {
+  func missingFileBecomesPatchOfOnlyOwnership() throws {
     try Self.withDirectory { directory, _ in
       let change = try Self.change(Self.bundledHID, to: .ojd, in: directory)
       #expect(change.created)
@@ -108,7 +108,7 @@ struct ControllerRecordWriterTests {
   /// A model that only an installed package has gets a patch over the package record, which
   /// keeps the package's other fields.
   @Test
-  func packageOnlyModelGetsAPatchOverThePackageRecord() throws {
+  func packageOnlyModelGetsPatchOverPackageRecord() throws {
     try Self.withDirectory { directory, fixture in
       let record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
@@ -146,7 +146,7 @@ struct ControllerRecordWriterTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() throws {
+  func modelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory, _ in
       #expect(throws: ControllerRecordWriter.Failure.noRecord(Self.unbundled)) {
         try Self.change(Self.unbundled, to: .ojd, in: directory)

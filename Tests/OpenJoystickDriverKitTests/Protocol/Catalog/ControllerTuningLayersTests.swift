@@ -65,7 +65,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func withoutAFileEveryKeyIsADriverDefault() throws {
+  func withoutFileEveryKeyIsDriverDefault() throws {
     let root = Root()
     let record = try #require(root.load().records[try bareRecord().model])
 
@@ -75,7 +75,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aGlobalDefaultFillsAKeyTheRecordLeavesUnset() throws {
+  func globalDefaultFillsKeyRecordLeavesUnset() throws {
     let root = Root()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#)
     let bare = try bareRecord()
@@ -87,7 +87,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aUserRecordBeatsTheGlobalDefaultAndKeysLayerIndividually() throws {
+  func userRecordBeatsGlobalDefaultAndKeysLayerIndividually() throws {
     let root = Root()
     let bare = try bareRecord()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#)
@@ -100,7 +100,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aPatchOverridesTheFrameQueueCapacityOfOneModelOnly() throws {
+  func patchOverridesFrameQueueCapacityOfOneModelOnly() throws {
     let root = Root()
     let bare = try bareRecord()
     try root.writeDefaults(#"{"frameQueueCapacity":16}"#)
@@ -117,7 +117,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aGlobalDefaultBeatsTheBundledTuningOfAKey() throws {
+  func globalDefaultBeatsBundledTuningOfKey() throws {
     let root = Root()
     // The bundled HID record 11C1:5600 sets `stickDeadzone` to 0.02.
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
@@ -173,7 +173,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aUserPatchOfOneTuningKeyKeepsTheBundledOthers() throws {
+  func userPatchOfOneTuningKeyKeepsBundledOthers() throws {
     let root = Root()
     // The bundled HID record 11C1:5600 sets `stickDeadzone` to 0.02.
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
@@ -189,7 +189,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aGlobalKeyOutsideTheFamilyScopeDoesNotApply() throws {
+  func globalKeyOutsideFamilyScopeDoesNotApply() throws {
     let root = Root()
     try root.writeDefaults(#"{"inputLivenessTimeoutMs":2500}"#)
     let bare = try bareRecord()
@@ -203,7 +203,7 @@ struct ControllerTuningLayersTests {
   @Test(arguments: [
     #"{"stickDeadzone":3}"#, #"{"unknownKey":1}"#, #"{"stickDeadzone":"0.2"}"#,
   ])
-  func anInvalidDefaultsFileIsIgnoredWholeAndReported(tuning: String) throws {
+  func invalidDefaultsFileIsIgnoredWholeAndReported(tuning: String) throws {
     let root = Root()
     try root.writeDefaults(tuning)
     let bare = try bareRecord()
@@ -215,7 +215,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func anUnsupportedAPIVersionMakesTheDefaultsFileInvalid() throws {
+  func unsupportedAPIVersionMakesDefaultsFileInvalid() throws {
     let root = Root()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#, apiVersion: "unsupported.example/v9")
 

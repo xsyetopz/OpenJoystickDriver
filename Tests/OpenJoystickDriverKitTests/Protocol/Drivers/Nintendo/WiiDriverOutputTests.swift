@@ -14,7 +14,7 @@ struct WiiDriverOutputTests {
   }
 
   @Test(arguments: [false, true])
-  func everyOutputReportCarriesTheRumbleBit(rumbling: Bool) throws {
+  func everyOutputReportCarriesRumbleBit(rumbling: Bool) throws {
     let session = WiiSession(irFormat: .irExtended)
     if rumbling { _ = try session.driver.encode(Self.on) }
     session.note(session.driver.startupWrites())
@@ -35,7 +35,7 @@ struct WiiDriverOutputTests {
   }
 
   @Test
-  func theIRSequenceMatchesTheFixtureWithTheRumbleBitOn() throws {
+  func irSequenceMatchesFixtureWithRumbleBitOn() throws {
     let session = WiiSession(irFormat: .irExtended)
     _ = try session.driver.encode(Self.on)
     try session.startUp()
@@ -45,7 +45,7 @@ struct WiiDriverOutputTests {
   }
 
   @Test
-  func theMotorIsBinaryAndRunsForAnyIntensityAboveZero() throws {
+  func motorIsBinaryAndRunsForAnyIntensityAboveZero() throws {
     let driver = WiiDriver(tuning: nil, irFormat: nil)
     let faint = ControllerOutputCommand.setRumble(
       RumbleIntensities(lowFrequency: UnipolarValue(1)),

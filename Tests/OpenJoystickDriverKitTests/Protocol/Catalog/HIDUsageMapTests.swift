@@ -53,7 +53,7 @@ struct HIDUsageMapTests {
   // MARK: - Buttons
 
   @Test
-  func aButtonUsagePressesItsControlWhileNonzero() throws {
+  func buttonUsagePressesItsControlWhileNonzero() throws {
     let driver = try makeDriver(#"{"kind":"Button","page":9,"usage":3,"control":"West"}"#)
     #expect(
       state(driver, element(page: 9, usage: 3, 1, range: 0...1))?.pressed.contains(.west)
@@ -68,7 +68,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aReportIDRestrictsTheMapToThatReport() throws {
+  func reportIDRestrictsMapToThatReport() throws {
     let driver = try makeDriver(
       #"{"kind":"Button","page":9,"usage":1,"control":"South"}"#,
       reportID: 6
@@ -90,7 +90,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aStickAxisScalesTheLogicalRangeToMinusOneToOne() throws {
+  func stickAxisScalesLogicalRangeToMinusOneToOne() throws {
     let driver = try makeDriver(axisEntry(control: "LeftStickX"))
     #expect(state(driver, element(usage: 48, 255))?.leftStick.x.normalized == 1)
     #expect(state(driver, element(usage: 48, 0))?.leftStick.x.normalized == -1)
@@ -100,14 +100,14 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func anInvertedStickNegatesTheAxis() throws {
+  func invertedStickNegatesAxis() throws {
     let driver = try makeDriver(axisEntry(control: "LeftStickX", #","inverted":true"#))
     #expect(state(driver, element(usage: 48, 255))?.leftStick.x.normalized == -1)
     #expect(state(driver, element(usage: 48, 0))?.leftStick.x.normalized == 1)
   }
 
   @Test
-  func anAxisRangeOverridesTheElementsLogicalRange() throws {
+  func axisRangeOverridesElementsLogicalRange() throws {
     let driver = try makeDriver(
       axisEntry(control: "LeftStickX", #","range":{"min":0,"max":100}"#)
     )
@@ -118,7 +118,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aStickDeadZoneReadsZeroInsideAndRescalesOutside() throws {
+  func stickDeadZoneReadsZeroInsideAndRescalesOutside() throws {
     let driver = try makeDriver(
       axisEntry(control: "LeftStickX", #","range":{"min":-100,"max":100},"deadZone":0.2"#)
     )
@@ -133,7 +133,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aTriggerAxisReadsZeroToOneAndSupportsInversionAndDeadZone() throws {
+  func triggerAxisReadsZeroToOneAndSupportsInversionAndDeadZone() throws {
     let plain = try makeDriver(axisEntry(control: "RightTrigger"))
     #expect(state(plain, element(usage: 48, 255))?.rightTrigger.normalized == 1)
     #expect(state(plain, element(usage: 48, 0))?.rightTrigger.normalized == 0)
@@ -149,7 +149,7 @@ struct HIDUsageMapTests {
 
   /// Spec scenario "Swapped trigger axes": a record maps usage Z to the right trigger.
   @Test
-  func swappedTriggerAxesFollowTheRecord() throws {
+  func swappedTriggerAxesFollowRecord() throws {
     let driver = try makeDriver(
       #"{"kind":"Axis","page":1,"usage":50,"control":"RightTrigger"},"#
         + #"{"kind":"Axis","page":1,"usage":53,"control":"LeftTrigger"}"#
@@ -160,7 +160,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func anAxisWithNoSpanReadsZero() throws {
+  func axisWithNoSpanReadsZero() throws {
     let driver = try makeDriver(axisEntry(control: "LeftStickX"))
     #expect(state(driver, element(usage: 48, 5, range: 0...0))?.leftStick.x.normalized == 0)
   }
@@ -170,7 +170,7 @@ struct HIDUsageMapTests {
   private let hatEntry = #"{"kind":"Hat","page":1,"usage":57}"#
 
   @Test
-  func aHatReadsFromTheElementsLogicalMinimumByDefault() throws {
+  func hatReadsFromElementsLogicalMinimumByDefault() throws {
     let driver = try makeDriver(hatEntry)
     #expect(state(driver, element(usage: 57, 0, range: 0...7))?.hat == .north)
     #expect(state(driver, element(usage: 57, 3, range: 0...7))?.hat == .southEast)
@@ -180,7 +180,7 @@ struct HIDUsageMapTests {
   }
 
   @Test(arguments: [(0, 8), (1, 9)])
-  func aHatRangeNamesWhereNorthIs(first: Int, nullValue: Int) throws {
+  func hatRangeNamesWhereNorthIs(first: Int, nullValue: Int) throws {
     let range = "{\"min\":\(first),\"max\":\(first + 7)}"
     let driver = try makeDriver(
       #"{"kind":"Hat","page":1,"usage":57,"range":\#(range)}"#
@@ -194,7 +194,7 @@ struct HIDUsageMapTests {
   // MARK: - Rejections
 
   @Test
-  func theDecoderRejectsInvalidUsages() {
+  func decoderRejectsInvalidUsages() {
     let button = #"{"kind":"Button","page":9,"usage":1,"control":"South"}"#
     let invalid = [
       // The same usage twice.
@@ -233,7 +233,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aUsageMapBelongsToHIDDescriptorRecordsOnly() throws {
+  func usageMapBelongsToHIDDescriptorRecordsOnly() throws {
     let button = #"{"kind":"Button","page":9,"usage":1,"control":"South"}"#
     #expect(try decode(button).hidUsageMap?.entries.count == 1)
     #expect(throws: (any Error).self) { try decode(button, family: "SonyDualShock4") }
@@ -255,7 +255,7 @@ struct HIDUsageMapTests {
   private func z(_ value: Int) -> HIDElementValue { element(usage: 50, value, range: -100...100) }
 
   @Test
-  func aCombinedTriggerAxisReadsEachHalfAsOneTrigger() throws {
+  func combinedTriggerAxisReadsEachHalfAsOneTrigger() throws {
     let driver = try makeDriver(
       half("HalfAxis", "Positive", "LeftTrigger") + ","
         + half("HalfAxis", "Negative", "RightTrigger")
@@ -271,14 +271,14 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aHalfAxisMayBeInverted() throws {
+  func halfAxisMayBeInverted() throws {
     let driver = try makeDriver(half("HalfAxis", "Positive", "LeftTrigger", #","inverted":true"#))
     #expect(state(driver, z(100))?.leftTrigger.normalized == 0)
     #expect(state(driver, z(0))?.leftTrigger.normalized == 1)
   }
 
   @Test
-  func anAxisDpadPressesTheDirectionAtOrPastTheThreshold() throws {
+  func axisDpadPressesDirectionAtOrPastThreshold() throws {
     let driver = try makeDriver(
       half("AxisDpad", "Negative", "DpadLeft", #","threshold":0.5"#)
     )
@@ -289,7 +289,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func anAxisAndAHatDriveTheSameDirectionTogether() throws {
+  func axisAndHatDriveSameDirectionTogether() throws {
     let driver = try makeDriver(
       half("AxisDpad", "Negative", "DpadLeft", #","threshold":0.5"#)
         + #",{"kind":"Hat","page":1,"usage":57}"#
@@ -301,7 +301,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func anAxisButtonPressesTheButtonAtOrPastTheThreshold() throws {
+  func axisButtonPressesButtonAtOrPastThreshold() throws {
     let driver = try makeDriver(
       half("AxisButton", "Positive", "East", #","threshold":0.75"#)
     )
@@ -312,7 +312,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func aButtonTriggerReadsOneWhileTheButtonIsNonzero() throws {
+  func buttonTriggerReadsOneWhileButtonIsNonzero() throws {
     let driver = try makeDriver(
       #"{"kind":"ButtonTrigger","page":9,"usage":7,"control":"RightTrigger"}"#
     )
@@ -336,7 +336,7 @@ struct HIDUsageMapTests {
   }
 
   @Test
-  func theDecoderRejectsInvalidHalfBindings() {
+  func decoderRejectsInvalidHalfBindings() {
     let invalid = [
       // A missing, zero or full threshold.
       half("AxisButton", "Positive", "East"),

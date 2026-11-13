@@ -14,7 +14,7 @@ struct WiiDriverTests {
   }
 
   @Test
-  func theRegistryBuildsTheDriverForTheFamily() throws {
+  func registryBuildsDriverForFamily() throws {
     let donor = ControllerModelID(vendorID: 0x045E, productID: 0x02EA)
     let record = try #require(ProtocolDriverRegistry().record(for: donor))
     let built = ProtocolDriverRegistry.makeUnobservedDriver(
@@ -32,12 +32,12 @@ struct WiiDriverTests {
   }
 
   @Test
-  func aButtonPressesSouthAndNothingElse() throws {
+  func buttonPressesSouthAndNothingElse() throws {
     #expect(try driver.parseReport(Data([0x30, 0x00, 0x08]))?.state.pressed == [.south])
   }
 
   @Test
-  func everyCoreButtonOfTheDescriptionMapsToItsControl() throws {
+  func everyCoreButtonOfDescriptionMapsToItsControl() throws {
     let wii = try #require(Self.family.protocolDescription.wiiRemote)
     for button in wii.coreButtons {
       var bytes: [UInt8] = [0x30, 0, 0]
@@ -47,7 +47,7 @@ struct WiiDriverTests {
   }
 
   @Test
-  func accelerometerReassemblesTenBitsFromTheHighByteAndTheLowBits() throws {
+  func accelerometerReassemblesTenBitsFromHighByteAndLowBits() throws {
     _ = try driver.parseReport(Data([0x31, 0x40, 0x00, 0x84, 0x00, 0x00]))
     #expect(driver.acceleration?.x == 0x212)
   }
@@ -59,7 +59,7 @@ struct WiiDriverTests {
   }
 
   @Test
-  func theAccelerometerFixtureDecodesButtonsAndReading() throws {
+  func accelerometerFixtureDecodesButtonsAndReading() throws {
     let event = try event("31-core-accelerometer")
     #expect(event?.state.pressed == [.dpadUp, .south])
     #expect(driver.acceleration == WiiDriver.RawAcceleration(x: 0x212, y: 0x200, z: 0x264))
@@ -76,14 +76,14 @@ struct WiiDriverTests {
   }
 
   @Test
-  func aReportWithoutButtonsOrAShortOneGivesNoEvent() throws {
+  func reportWithoutButtonsOrShortOneGivesNoEvent() throws {
     #expect(try event("3D-extension21") == nil)
     #expect(try driver.parseReport(Data([0x31, 0x00, 0x00])) == nil)
     #expect(try driver.parseReport(Data()) == nil)
   }
 
   @Test
-  func halfTheBatteryByteIsFiftyPercent() throws {
+  func halfBatteryByteIsFiftyPercent() throws {
     #expect(try event("20-status-no-extension") == nil)
     #expect(driver.power?.battery.percentage == 50...50)
     #expect(driver.isBatteryLow == false)
@@ -106,7 +106,7 @@ struct WiiDriverTests {
   }
 
   @Test
-  func startupRequestsStatusAndSetsTheAccelerometerMode() {
+  func startupRequestsStatusAndSetsAccelerometerMode() {
     #expect(
       driver.startupWrites() == [
         .hidOutput(PhysicalHIDOutputReport(reportID: 0x15, bytes: [0x15, 0x00])),

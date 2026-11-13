@@ -10,13 +10,13 @@ struct ProtocolDescriptionDriverTimingTests {
   private static let millisecond = DeviceTransportProfile.nanosecondsPerMillisecond
 
   @Test
-  func steamTritonReadsTheLizardResend() {
+  func steamTritonReadsLizardResend() {
     #expect(SteamTritonDriver().lizardResendTicks == 75)
     #expect(SteamTritonDriver(tuning: .init(lizardResendTicks: 9)).lizardResendTicks == 9)
   }
 
   @Test
-  func switch2ReadsTheCommandChannel() {
+  func switch2ReadsCommandChannel() {
     let channel = PhysicalProtocolID.nintendoSwitch2.protocolDescription.commandChannel
     #expect(channel?.interface == 1)
     #expect(channel?.inEndpoint == 0x82)
@@ -33,7 +33,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func switch2ReadsTheTrailingStopPackets() {
+  func switch2ReadsTrailingStopPackets() {
     let count = PhysicalProtocolID.nintendoSwitch2.described(limit: \.trailingStopPackets)
     #expect(count == 2)
     let driver = Switch2Driver(layout: .pro)
@@ -45,7 +45,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func switch2ReadsTheCommandTimeout() {
+  func switch2ReadsCommandTimeout() {
     #expect(Switch2Driver().commandTimeoutMilliseconds == 1_000)
     let tuned = Switch2Driver(tuning: .init(usbCommandTimeoutMilliseconds: 250))
     #expect(tuned.commandTimeoutMilliseconds == 250)
@@ -57,7 +57,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func gameSirReadsTheUSBTimeout() {
+  func gameSirReadsUSBTimeout() {
     #expect(GameSirDriver(protocol: .g7ProUSB).usbTimeoutMilliseconds == 2_000)
     let tuned = GameSirDriver(
       protocol: .g7ProUSB,
@@ -67,7 +67,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func gipReadsTheAnnounceResendAndTheHandshakePacing() {
+  func gipReadsAnnounceResendAndHandshakePacing() {
     let driver = GIPDriver()
     #expect(driver.announceResendInterval == 4)
     #expect(driver.sessionPlan.usbStartupIntervalNanoseconds == 50 * Self.millisecond)
@@ -88,7 +88,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func gipReadsTheHandshakeAttemptsAndTheAnnounceResendLimit() {
+  func gipReadsHandshakeAttemptsAndAnnounceResendLimit() {
     let description = PhysicalProtocolID.xboxGIP.protocolDescription
     #expect(description.handshakeAttempts == 3)
     #expect(description.announceResendLimit == 8)
@@ -96,7 +96,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func xusbReadsTheTransferTimeout() {
+  func xusbReadsTransferTimeout() {
     #expect(XUSBDriver().usbTimeoutMilliseconds == 2_000)
     #expect(
       XUSBDriver(tuning: .init(usbTransferTimeoutMilliseconds: 750)).usbTimeoutMilliseconds == 750
@@ -104,7 +104,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func xidReadsTheTransferTimeout() {
+  func xidReadsTransferTimeout() {
     let plain = try? xidDriver().encode(.stopRumble)
     #expect(plain.onlyPacket.timeoutMilliseconds == 2_000)
     let tuned = xidDriver(tuning: .init(usbTransferTimeoutMilliseconds: 750))
@@ -113,7 +113,7 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func sonyAdaptersReadTheDisconnectDelay() {
+  func sonyAdaptersReadDisconnectDelay() {
     #expect(DualShock4Driver().adapterDisconnectNanoseconds == 500 * Self.millisecond)
     #expect(DualSenseDriver().dongleDisconnectNanoseconds == 500 * Self.millisecond)
     let tuning = ControllerTuning(adapterDisconnectDelayMilliseconds: 40)

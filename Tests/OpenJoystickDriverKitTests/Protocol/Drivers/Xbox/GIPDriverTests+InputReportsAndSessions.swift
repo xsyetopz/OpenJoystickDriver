@@ -83,7 +83,7 @@ extension GIPDriverTests {
   /// Linux xpad reads `data[len - 26]` of the whole packet; SDL reads payload byte 18 of the
   /// 44-byte Series X firmware 5.5 payload and byte 14 of the 40-byte firmware 5.1 payload.
   @Test
-  func testShareOffsetReadsShareFromTheEndRelativeGIPPacking() throws {
+  func testShareOffsetReadsShareFromEndRelativeGIPPacking() throws {
     for (count, shareIndex) in [(44, 18), (40, 14)] {
       let parser = GIPDriver(shareButtonFromEnd: 26)
       var payload = Data(repeating: 0, count: count)
@@ -122,7 +122,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func announceBeforeFirstInputResendsTheStartupSequenceBounded() throws {
+  func announceBeforeFirstInputResendsStartupSequenceBounded() throws {
     let parser = GIPDriver()
     let startupCommands = parser.startupWrites().usbBytes.map(\.first)
     let limit = PhysicalProtocolID.xboxGIP.described(limit: \.announceResendLimit)
@@ -141,7 +141,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func resetStartsANewSessionForReconnect() throws {
+  func resetStartsNewSessionForReconnect() throws {
     let parser = GIPDriver()
     let firstAttachStartup = GIPDriver().startupWrites().usbBytes
     _ = parser.startupWrites()
@@ -162,7 +162,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func announceAfterInputDoesNotResendTheStartupSequence() throws {
+  func announceAfterInputDoesNotResendStartupSequence() throws {
     let parser = GIPDriver()
     _ = try parser.parseReport(Data([0x20, 0x00, 0x01, 0x0E] + [UInt8](repeating: 0, count: 14)))
     _ = parser.drainPendingWrites()
@@ -178,7 +178,7 @@ extension GIPDriverTests {
   )
 
   @Test
-  func sessionResetForgetsAGuideHeldOnlyByVirtualKeyFrames() throws {
+  func sessionResetForgetsGuideHeldOnlyByVirtualKeyFrames() throws {
     let parser = GIPDriver()
     #expect(
       try parser.parseReport(Data([0x07, 0x20, 0x00, 0x02, 0x01, 0x5B])).contains(.press(.guide))
@@ -191,7 +191,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func overlongHeaderVarintIsDiscardedSoTheNextTransferParses() throws {
+  func overlongHeaderVarintIsDiscardedSoNextTransferParses() throws {
     let parser = GIPDriver()
     #expect(throws: GIPError.self) {
       try parser.parseReport(Data([0x20, 0x00, 0x01, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80]))

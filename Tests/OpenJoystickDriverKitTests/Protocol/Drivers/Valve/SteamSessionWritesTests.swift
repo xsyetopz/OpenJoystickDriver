@@ -50,7 +50,7 @@ struct SteamSessionWritesTests {
   /// The same sequence in report-3 segments of 20 bytes, with `SETTING_WIRELESS_PACKET_VERSION`
   /// (49) set to 2 after the four settings.
   @Test
-  func steamControllerActivationOverBluetoothLEFramesTheSameSequence() {
+  func steamControllerActivationOverBluetoothLEFramesSameSequence() {
     let driver = SteamControllerDriver(isBluetooth: true)
     expect(
       driver.activationWrites(),

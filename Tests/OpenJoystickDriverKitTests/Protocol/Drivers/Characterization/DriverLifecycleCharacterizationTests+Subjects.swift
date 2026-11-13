@@ -252,7 +252,7 @@ extension DriverLifecycleCharacterizationTests {
   ]
 
   @Test
-  func everySubjectBindsItsFamilyAndVariantThroughTheRegistry() throws {
+  func everySubjectBindsItsFamilyAndVariantThroughRegistry() throws {
     for subject in Self.subjects {
       let record = try #require(Self.registry.record(for: subject.model))
       let device = PhysicalDevice(

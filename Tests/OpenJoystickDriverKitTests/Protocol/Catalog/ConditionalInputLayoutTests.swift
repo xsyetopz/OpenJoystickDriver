@@ -52,7 +52,7 @@ private let disjointLayouts: [[String]] = [
 @Suite
 struct ConditionalInputLayoutTests {
   @Test
-  func theLayoutWithTheReportIDDecodesTheReport() throws {
+  func layoutWithReportIDDecodesReport() throws {
     let driver = try driver(layout(id: 1), layout(id: 2, control: "East"))
     #expect(try driver.parseReport(Data([1, 1]))?.state == snapshot(.press(.south)))
     driver.resetProtocolState()
@@ -60,7 +60,7 @@ struct ConditionalInputLayoutTests {
   }
 
   @Test
-  func theLengthRuleSelectsTheLayout() throws {
+  func lengthRuleSelectsLayout() throws {
     let driver = try driver(
       layout(length: #""exactly": 2"#),
       layout(length: #""atLeast": 3"#, control: "East")
@@ -74,7 +74,7 @@ struct ConditionalInputLayoutTests {
   }
 
   @Test(arguments: overlappingLayouts)
-  func rejectsLayoutsThatSelectTheSameReport(entries: [String]) {
+  func rejectsLayoutsThatSelectSameReport(entries: [String]) {
     #expect(throws: DecodingError.self) { try layouts(entries[0], entries[1]) }
   }
 
@@ -84,7 +84,7 @@ struct ConditionalInputLayoutTests {
   }
 
   @Test
-  func aReportNoLayoutSelectsIsIgnored() throws {
+  func reportNoLayoutSelectsIsIgnored() throws {
     let driver = try driver(layout(id: 1), layout(id: 2, control: "East"))
     #expect(try driver.parseReport(Data([3, 1])) == nil)
     #expect(try driver.parseReport(Data([1])) == nil)
@@ -92,7 +92,7 @@ struct ConditionalInputLayoutTests {
   }
 
   @Test
-  func aLayoutChangesOnlyTheControlsItNames() throws {
+  func layoutChangesOnlyControlsItNames() throws {
     let driver = try driver(
       layout(
         id: 1,
@@ -113,13 +113,13 @@ struct ConditionalInputLayoutTests {
   }
 
   @Test
-  func theRecordsControlsAreTheUnionAcrossLayouts() throws {
+  func recordsControlsAreUnionAcrossLayouts() throws {
     let all = try layouts(layout(id: 1), layout(id: 2, control: "East"))
     #expect(all.controls == [.south, .east])
   }
 
   @Test
-  func rejectsAnEmptyListAndUnknownKeys() {
+  func rejectsEmptyListAndUnknownKeys() {
     let decode = { (json: String) throws in
       try JSONDecoder().decode(ControllerRecordDocument.InputLayouts.self, from: Data(json.utf8))
     }
@@ -131,7 +131,7 @@ struct ConditionalInputLayoutTests {
   }
 
   @Test
-  func aLayoutLongerThanTheCeilingIsRejected() {
+  func layoutLongerThanCeilingIsRejected() {
     #expect(throws: DecodingError.self) {
       try layouts(layout(length: #""atLeast": 65"#))
     }

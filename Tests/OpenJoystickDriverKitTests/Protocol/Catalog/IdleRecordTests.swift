@@ -87,7 +87,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func aRecordWithoutIdleIsNotIdle() throws {
+  func recordWithoutIdleIsNotIdle() throws {
     #expect(try Self.catalog([:]).record(for: Self.model)?.idleReason == nil)
   }
 

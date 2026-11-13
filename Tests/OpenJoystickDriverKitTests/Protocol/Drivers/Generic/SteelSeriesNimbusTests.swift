@@ -56,7 +56,7 @@ struct SteelSeriesNimbusTests {
   }
 
   @Test
-  func descriptorHoldsTheLayoutByteForByte() throws {
+  func descriptorHoldsLayoutByteForByte() throws {
     let fields = try #require(HIDReportDescriptorParser.parse(descriptor: Self.descriptor)).fields
     #expect(fields.count == 17)
     let layout = fields.map { "\($0.usagePage)/\($0.usage)@\($0.bitOffset)" }
@@ -68,7 +68,7 @@ struct SteelSeriesNimbusTests {
   }
 
   @Test
-  func dpadPressesAboveHalfTheRangeFromCenter() throws {
+  func dpadPressesAboveHalfRangeFromCenter() throws {
     let driver = try driver()
     let directions: [(usage: UInt32, hat: HatDirection)] = [
       (0x90, .north), (0x91, .south), (0x92, .east), (0x93, .west),
@@ -93,7 +93,7 @@ struct SteelSeriesNimbusTests {
   }
 
   @Test
-  func lowerPressureIsNotAPress() throws {
+  func lowerPressureIsNotPress() throws {
     let driver = try driver()
     #expect(parse(driver, page: 9, usage: 1, 40)?.state.pressed.contains(.south) == false)
   }
@@ -107,7 +107,7 @@ struct SteelSeriesNimbusTests {
   }
 
   @Test
-  func menuIsTheConsumerHomeBit() throws {
+  func menuIsConsumerHomeBit() throws {
     let driver = try driver()
     let press = parse(driver, page: 12, usage: 547, 1, range: 0...1)
     #expect(press.contains(.press(.start)))
@@ -140,15 +140,15 @@ struct SteelSeriesNimbusTests {
   }
 
   @Test
-  func capabilitiesListOnlyWhatTheDescriptorDeclares() throws {
+  func capabilitiesListOnlyWhatDescriptorDeclares() throws {
     let controls = try driver().capabilities.controls
     #expect(controls.isSuperset(of: [.south, .east, .west, .north, .dpadUp, .dpadLeft, .start]))
     #expect(controls.isSuperset(of: [.leftShoulder, .rightShoulder]))
     #expect(controls.isDisjoint(with: [.back, .leftStickClick, .rightStickClick, .guide]))
   }
 
-  /// SDL's mapping, converted against the descriptor's elements, no longer claims the back,
-  /// start and stick-click controls that SDL does not map for this pad.
+  /// SDL's mapping, converted against the descriptor's elements, claims none of the back,
+  /// start, and stick-click controls that SDL does not map for this pad.
   @Test
   func sdlMappedControlsListOnlyWhatSDLMaps() throws {
     var order = 0

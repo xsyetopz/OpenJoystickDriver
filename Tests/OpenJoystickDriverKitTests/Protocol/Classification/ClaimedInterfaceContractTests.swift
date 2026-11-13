@@ -10,7 +10,7 @@ struct ClaimedInterfaceContractTests {
   )
 
   @Test
-  func gipDataInterfaceWithTheProfileEndpointsPasses() {
+  func gipDataInterfaceWithProfileEndpointsPasses() {
     #expect(violation(.xboxGIP, .usb, [interface(0, 0xFF, 0x47, 0xD0)]) == nil)
   }
 
@@ -55,7 +55,7 @@ struct ClaimedInterfaceContractTests {
   }
 
   @Test
-  func theResolvedAlternateSettingIsTheOneChecked() {
+  func resolvedAlternateSettingIsOneChecked() {
     let bare = PhysicalInterfaceSignature(
       interfaceNumber: 0,
       alternateSetting: 0,
@@ -80,7 +80,7 @@ struct ClaimedInterfaceContractTests {
   }
 
   @Test
-  func xusbVariantMustMatchTheInterfaceProtocol() {
+  func xusbVariantMustMatchInterfaceProtocol() {
     #expect(violation(.xboxXUSB, .wired, [interface(0, 0xFF, 0x5D, 0x01)]) == nil)
     #expect(
       violation(.xboxXUSB, .receiver, [interface(0, 0xFF, 0x5D, 0x01)])
@@ -96,7 +96,7 @@ struct ClaimedInterfaceContractTests {
   }
 
   @Test
-  func gameSirVendorUSBRequiresAVendorClassInterface() {
+  func gameSirVendorUSBRequiresVendorClassInterface() {
     #expect(violation(.vendorGameSir, .usb, [interface(0, 0xFF, 0x5D, 0x01)]) == nil)
     #expect(
       violation(.vendorGameSir, .usb, [interface(0, 0xFF, 0x00, 0x00, extraEndpoint: true)]) == nil

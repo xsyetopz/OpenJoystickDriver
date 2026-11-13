@@ -26,7 +26,7 @@ struct GIPGuideVirtualKeyTests {
   }
 
   @Test
-  func guidePressAndReleaseReachTheStateAndAreAcknowledgedWithTheirSequence() throws {
+  func guidePressAndReleaseReachStateAndAreAcknowledgedWithTheirSequence() throws {
     let parser = GIPDriver()
     let options = GIPOption.acknowledge | GIPOption.internal
 
@@ -49,7 +49,7 @@ struct GIPGuideVirtualKeyTests {
 
   /// `xpad.c` reads only `data[4]`, the first payload byte, and never the key (line 1063).
   @Test(arguments: [[UInt8(1)], [1, 0x00], [1, 0x5C]])
-  func guideReadsTheFirstPayloadByteWhateverTheKey(payload: [UInt8]) throws {
+  func guideReadsFirstPayloadByteWhateverKey(payload: [UInt8]) throws {
     let parser = GIPDriver()
     let header: [UInt8] = [GIPCommand.virtualKey, GIPOption.internal, 0x07, UInt8(payload.count)]
     #expect(try parser.parseReport(Data(header + payload)).contains(.press(.guide)))

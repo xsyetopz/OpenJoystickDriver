@@ -30,7 +30,7 @@ struct HIDUsageLayoutEquivalenceTests {
     0xC4, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x02, 0x81, 0x02, 0xC0,
   ])
 
-  /// Each layout comes from the record or description that now declares it.
+  /// Each layout comes from the record or description that declares it.
   private func drivers() throws -> [(name: String, driver: HIDDescriptorDriver)] {
     let model = ControllerModelID(vendorID: 0xFFFE, productID: 1)
     return [
@@ -186,7 +186,7 @@ struct HIDUsageLayoutEquivalenceTests {
   }
 
   @Test
-  func everyUsageTableMatchesTheCodedOutput() throws {
+  func everyUsageTableMatchesCodedOutput() throws {
     let rendered = try render()
     let file = EquivalenceSnapshotStore.directory.deletingLastPathComponent()
       .appendingPathComponent("HIDUsageGolden/hid-usage-layouts.txt")

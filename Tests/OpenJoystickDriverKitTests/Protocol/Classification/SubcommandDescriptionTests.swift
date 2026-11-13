@@ -58,7 +58,7 @@ struct SubcommandDescriptionTests {
   }
 
   @Test
-  func acceptsTheRequestsAndTheCounterRule() throws {
+  func acceptsRequestsAndCounterRule() throws {
     let description = try decode(
       family: .nintendoSwitch1,
       switch1(plan(modulus: 4, [Self.plain, Self.factoryRead]))
@@ -72,7 +72,7 @@ struct SubcommandDescriptionTests {
   }
 
   @Test
-  func theBundledSwitch1DescriptionHoldsTheFiveStartupRequests() throws {
+  func bundledSwitch1DescriptionHoldsFiveStartupRequests() throws {
     let subcommands = try #require(
       PhysicalProtocolID.nintendoSwitch1.protocolDescription.subcommands
     )
@@ -161,7 +161,7 @@ struct SubcommandDescriptionTests {
   }
 
   @Test
-  func theBundledSwitch1DescriptionHoldsThePlayerPatterns() throws {
+  func bundledSwitch1DescriptionHoldsPlayerPatterns() throws {
     let indicator = try #require(
       PhysicalProtocolID.nintendoSwitch1.protocolDescription.subcommands?.playerIndicator
     )

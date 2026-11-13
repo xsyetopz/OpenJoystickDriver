@@ -66,7 +66,7 @@ struct GameSirDriverTests {
   }
 
   @Test
-  func enhancedParametersSelectInnerGripsAndTheLightingSlotRequest() throws {
+  func enhancedParametersSelectInnerGripsAndLightingSlotRequest() throws {
     let grips = GameSirDriver(protocol: .enhancedHID, hasInnerGrips: true)
     let slots = GameSirDriver(protocol: .enhancedHID, usesLightingSlots: true)
     let innerGrips: Set<Control> = [.leftPaddle2, .rightPaddle2]
@@ -160,7 +160,7 @@ struct GameSirDriverTests {
   /// A brightness request before the slot reply is not ready and must not change the brightness
   /// the next colour record carries.
   @Test
-  func brightnessBeforeTheSlotReplyLeavesTheColourRecordUnchanged() throws {
+  func brightnessBeforeSlotReplyLeavesColourRecordUnchanged() throws {
     let parser = GameSirDriver(protocol: .enhancedHID, usesLightingSlots: true)
     let dark = ControllerOutputCommand.setLightBrightness(.min)
     #expect(throws: ControllerOutputError.notReady) { try parser.encode(dark) }
@@ -223,7 +223,7 @@ struct GameSirDriverTests {
   }
 
   @Test
-  func g7BrightnessUsesTheBoundOutputEndpoint() throws {
+  func g7BrightnessUsesBoundOutputEndpoint() throws {
     let parser = GameSirDriver(protocol: .g7ProUSB, outEndpoint: 0x05)
     var report = [UInt8](repeating: 0, count: 20)
     report[1] = 0x14

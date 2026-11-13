@@ -39,7 +39,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func xidResendsTheLastReportWhileAMotorRunsThenStops() throws {
+  func xidResendsLastReportWhileMotorRunsThenStops() throws {
     let driver = xidDriver(rumbleTemplate: try Self.usbTemplate(resend: 40))
     #expect(driver.sessionPlan.usbKeepAliveIntervalNanoseconds == 40_000_000)
     #expect(driver.keepAliveWrites().isEmpty)
@@ -52,7 +52,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func aZeroSetRumbleStopsTheResends() throws {
+  func zeroSetRumbleStopsResends() throws {
     let driver = xidDriver(rumbleTemplate: try Self.usbTemplate(resend: 40))
     _ = try driver.encode(.setRumble(Self.running, duration: .held))
     _ = try driver.encode(.setRumble(.off, duration: .held))
@@ -60,7 +60,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func aNewSessionStopsTheResends() throws {
+  func newSessionStopsResends() throws {
     let driver = xidDriver(rumbleTemplate: try Self.usbTemplate(resend: 40))
     _ = try driver.encode(.setRumble(Self.running, duration: .held))
     driver.resetProtocolState()
@@ -68,7 +68,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func withoutAResendIntervalThereIsNoKeepAlive() throws {
+  func withoutResendIntervalThereIsNoKeepAlive() throws {
     let driver = xidDriver(rumbleTemplate: try Self.usbTemplate(resend: nil))
     _ = try driver.encode(.setRumble(Self.running, duration: .held))
     #expect(driver.sessionPlan.usbKeepAliveIntervalNanoseconds == nil)
@@ -76,7 +76,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func xusbResendsOnTheUSBChannel() throws {
+  func xusbResendsOnUSBChannel() throws {
     let driver = XUSBDriver(rumbleTemplate: try Self.usbTemplate(resend: 25))
     #expect(driver.sessionPlan.usbKeepAliveIntervalNanoseconds == 25_000_000)
     #expect(driver.sessionPlan.hidKeepAliveIntervalNanoseconds == nil)
@@ -87,7 +87,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func shieldResendsOnTheHIDChannel() throws {
+  func shieldResendsOnHIDChannel() throws {
     let driver = NVIDIAShieldDriver(
       isShield2015: true,
       rumbleTemplate: try Self.hidTemplate(resend: 30)
@@ -100,7 +100,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func switch1ResendTakesAFreshCounter() throws {
+  func switch1ResendTakesFreshCounter() throws {
     let driver = Switch1Driver(rumbleTemplate: try Self.hidTemplate(resend: 50))
     #expect(driver.sessionPlan.hidKeepAliveIntervalNanoseconds == 50_000_000)
     let first = hidBytes(try driver.encode(.setRumble(Self.running, duration: .held)).writes)
@@ -114,7 +114,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func aReceiverResendsOnlyWhileItsControllerIsConnected() throws {
+  func receiverResendsOnlyWhileItsControllerIsConnected() throws {
     let driver = try #require(
       XUSBDriver(slotOrdinal: 0, rumbleTemplate: try Self.usbTemplate(resend: 25))
     )
@@ -128,7 +128,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func reportLayoutResendsOnTheHIDChannel() throws {
+  func reportLayoutResendsOnHIDChannel() throws {
     let layout = try inputLayout(
       #"{"report": {"length": {"atLeast": 2}}, "#
         + #""buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}"#
@@ -151,7 +151,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func ps3ThirdPartyResendsOnTheHIDChannel() throws {
+  func ps3ThirdPartyResendsOnHIDChannel() throws {
     let driver = PS3ThirdPartyDriver(
       model: ControllerModelID(vendorID: 0x0E8F, productID: 0x3075),
       rumbleTemplate: try Self.hidTemplate(resend: 35)
@@ -164,7 +164,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func aJoyConResendFollowsItsSideFilter() throws {
+  func joyConResendFollowsItsSideFilter() throws {
     let both = RumbleIntensities(
       lowFrequency: UnipolarValue(0x8000),
       highFrequency: UnipolarValue(0x4000)
@@ -183,7 +183,7 @@ struct RumbleResendTests {
   }
 
   @Test
-  func switch1WithoutAResendIntervalHasNoKeepAlive() throws {
+  func switch1WithoutResendIntervalHasNoKeepAlive() throws {
     let driver = Switch1Driver(rumbleTemplate: try Self.hidTemplate(resend: nil))
     _ = try driver.encode(.setRumble(Self.running, duration: .held))
     #expect(driver.sessionPlan.hidKeepAliveIntervalNanoseconds == nil)

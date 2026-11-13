@@ -20,7 +20,7 @@ struct MotionTimestampTests {
   }
 
   @Test
-  func dualSenseResetReanchorsAtReceiptKeepsDeltasAndFeedsTheEngine() throws {
+  func dualSenseResetReanchorsAtReceiptKeepsDeltasAndFeedsEngine() throws {
     let parser = DualSenseDriver()
     var engine = RemappingMotionProcessor()
     var samples: [ControllerMotionSample] = []
@@ -60,7 +60,7 @@ struct MotionTimestampTests {
   }
 
   @Test
-  func separateNintendoSessionsShareTheEventTimeDomain() throws {
+  func separateNintendoSessionsShareEventTimeDomain() throws {
     var report = [UInt8](repeating: 0, count: 49)
     report[0] = 0x30
     let early = Switch1Driver()

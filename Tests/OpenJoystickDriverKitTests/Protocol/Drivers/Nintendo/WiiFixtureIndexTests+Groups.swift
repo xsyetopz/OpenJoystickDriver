@@ -12,7 +12,7 @@ extension WiiFixtureIndexTests {
   ]
 
   @Test
-  func everyExtensionKindOfTheDescriptionHasAnIdReplyThatEqualsItsId() throws {
+  func everyExtensionKindOfDescriptionHasIdReplyThatEqualsItsId() throws {
     let extensions = try #require(Self.remote).extensions
     let folder = WiiFixtureFolder.extensions
     for kind in extensions {
@@ -36,7 +36,7 @@ extension WiiFixtureIndexTests {
   }
 
   @Test
-  func everyIRFormatHasAFixtureOfItsLength() throws {
+  func everyIRFormatHasFixtureOfItsLength() throws {
     let folder = WiiFixtureFolder.ir
     let names = try folder.names()
     for (prefix, kind) in [
@@ -55,7 +55,7 @@ extension WiiFixtureIndexTests {
   }
 
   @Test
-  func everySequenceHasBothRumbleVariantsThatEqualTheDescriptionScripts() throws {
+  func everySequenceHasBothRumbleVariantsThatEqualDescriptionScripts() throws {
     let remote = try #require(Self.remote)
     let folder = WiiFixtureFolder.sequences
     for name in Self.sequenceNames {

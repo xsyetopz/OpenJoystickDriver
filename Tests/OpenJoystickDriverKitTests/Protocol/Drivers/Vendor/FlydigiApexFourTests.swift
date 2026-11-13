@@ -47,7 +47,7 @@ struct FlydigiApexFourTests {
   @Test(arguments: [
     (UInt8(0x01), HatDirection.north), (0x02, .east), (0x04, .south), (0x08, .west),
   ])
-  func directionBitsMoveTheHat(mask: UInt8, direction: HatDirection) throws {
+  func directionBitsMoveHat(mask: UInt8, direction: HatDirection) throws {
     let driver = try Self.driver()
     #expect(try driver.parseReport(SourceReport.with([9: mask])).contains(.hat(direction)))
   }
@@ -69,7 +69,7 @@ struct FlydigiApexFourTests {
 
   /// A digital trigger bit reads as a fully pulled trigger.
   @Test(arguments: [(UInt8(0x10), true), (0x20, false)])
-  func digitalTriggerBitsPullTheTrigger(mask: UInt8, left: Bool) throws {
+  func digitalTriggerBitsPullTrigger(mask: UInt8, left: Bool) throws {
     let driver = try Self.driver()
     let state = try #require(try driver.parseReport(SourceReport.with([10: mask]))).state
     #expect((left ? state.leftTrigger : state.rightTrigger).rawValue == UInt16.max)

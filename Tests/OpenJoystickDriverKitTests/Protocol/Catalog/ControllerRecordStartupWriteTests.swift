@@ -107,14 +107,14 @@ struct ControllerRecordStartupWriteTests {
       #""when": {"parameter": "layout", "is": ["Pro"]}"#,
     ]
   )
-  func rejectsAMalformedOrDescriptionOnlyHIDField(field: String) {
+  func rejectsMalformedOrDescriptionOnlyHIDField(field: String) {
     #expect(throws: DecodingError.self) {
       try decode(Self.startup("[{\(Self.hidReport), \(field)}]"))
     }
   }
 
   @Test
-  func rejectsACRCWriteWithoutRoomForTheTrailer() {
+  func rejectsCRCWriteWithoutRoomForTrailer() {
     #expect(throws: DecodingError.self) {
       try decode(
         Self.startup(
@@ -126,7 +126,7 @@ struct ControllerRecordStartupWriteTests {
   }
 
   @Test
-  func decodesRawUSBStartupWritesForTheFamiliesThatCarryThem() throws {
+  func decodesRawUSBStartupWritesForFamiliesThatCarryThem() throws {
     let write =
       #"{"bytes": "01 02", "endpoint": 2, "timeoutMilliseconds": 500, "#
       + #""delayMilliseconds": 5, "sessionByte": 1, "toleratesRejection": true}"#
@@ -145,14 +145,14 @@ struct ControllerRecordStartupWriteTests {
       #""variants": ["USB"]"#, #""when": {"parameter": "layout", "is": ["Pro"]}"#,
     ]
   )
-  func rejectsAMalformedRawUSBStartupWrite(field: String) {
+  func rejectsMalformedRawUSBStartupWrite(field: String) {
     #expect(throws: DecodingError.self) {
       try decode(Self.startup(#"[{"bytes": "01", \#(field)}]"#, Self.gip))
     }
   }
 
   @Test
-  func rejectsRawUSBStartupWritesWhereTheFamilyDoesNotCarryThem() {
+  func rejectsRawUSBStartupWritesWhereFamilyDoesNotCarryThem() {
     for family in [
       #"{"family": "SonySixaxis"}"#, #"{"family": "VendorGameSir", "variant": "USB"}"#,
     ] {
@@ -178,7 +178,7 @@ struct ControllerRecordStartupWriteTests {
   }
 
   @Test
-  func rejectsAnEmptySession() {
+  func rejectsEmptySession() {
     #expect(throws: DecodingError.self) { try decode(Self.modes(Self.sixaxis, "{}")) }
   }
 

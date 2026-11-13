@@ -21,7 +21,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testInvalidBluetoothReportLeavesTheLastValidState() throws {
+  func testInvalidBluetoothReportLeavesLastValidState() throws {
     let parser = DualShock4Driver(prefersBluetooth: true)
     _ = try parser.parseReport(makeDS4BluetoothReport(buttons0: 0x28, sensorTimestamp: 1))
     var invalidReport = Array(makeDS4BluetoothReport(sensorTimestamp: 2))
@@ -70,7 +70,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testLevelTenRetainsTheObservedWiredPower() throws {
+  func testLevelTenRetainsObservedWiredPower() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report(status: 0x0A))
     #expect(parser.power == ds4Power(.discharging, 100...100, wired: false))

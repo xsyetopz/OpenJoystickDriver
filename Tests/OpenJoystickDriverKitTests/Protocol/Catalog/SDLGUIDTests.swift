@@ -29,7 +29,7 @@ struct SDLGUIDTests {
   // MARK: - GUID
 
   @Test
-  func crc16IsTheArcChecksum() {
+  func crc16IsArcChecksum() {
     #expect(SDLGUID.crc16(Array("123456789".utf8)) == 0xBB3D)
   }
 
@@ -85,7 +85,7 @@ struct SDLGUIDTests {
   }
 
   @Test
-  func aLineWithAnotherVersionMatchesOnlyWithoutTheVersion() throws {
+  func lineWithAnotherVersionMatchesOnlyWithoutVersion() throws {
     let other = SDLGUID(vendorID: 1, productID: 2, version: 9, manufacturer: nil, product: "Pad")
     let database = try Self.database([other.withoutVersion])
     #expect(database.match(other)?.tier == .guidWithoutVersion)
@@ -93,20 +93,20 @@ struct SDLGUIDTests {
   }
 
   @Test
-  func aLineWithAnotherCRCAndVersionMatchesNothing() throws {
+  func lineWithAnotherCRCAndVersionMatchesNothing() throws {
     let other = SDLGUID(vendorID: 1, productID: 2, version: 3, manufacturer: nil, product: "Other")
     #expect(try Self.database([other]).match(Self.pad) == nil)
   }
 
   @Test
-  func aPadWithoutALineHasNoMatch() throws {
+  func padWithoutLineHasNoMatch() throws {
     #expect(try Self.database([]).match(Self.pad) == nil)
   }
 
   // MARK: - Duplicates and text
 
   @Test
-  func theLastLineWithTheSameGUIDWins() throws {
+  func lastLineWithSameGUIDWins() throws {
     let database = try Self.database([Self.pad, Self.pad], names: ["first", "second"])
     #expect(database.match(Self.pad)?.name == "second")
   }
@@ -120,7 +120,7 @@ struct SDLGUIDTests {
   }
 
   @Test
-  func aMalformedLineNamesItsNumber() {
+  func malformedLineNamesItsNumber() {
     #expect(throws: SDLDatabaseProblem.self) {
       try SDLGameControllerDatabase(text: "# header\nnot-a-guid,Pad,a:b0,\n")
     }
@@ -134,7 +134,7 @@ struct SDLGUIDTests {
   }
 
   @Test
-  func theBundledDatabaseHoldsTheMacLines() throws {
+  func bundledDatabaseHoldsMacLines() throws {
     let fc30 = SDLGUID(
       vendorID: 0x2DC8,
       productID: 0x9000,
@@ -148,7 +148,7 @@ struct SDLGUIDTests {
   }
 
   @Test
-  func indexingTheBundledFileTakesUnderASecond() throws {
+  func indexingBundledFileTakesUnderSecond() throws {
     let text = SDLGameControllerDatabase.bundledText
     let elapsed = try ContinuousClock().measure { _ = try SDLGameControllerDatabase(text: text) }
     print("[SDLGUIDTests] indexed \(text.utf8.count) bytes in \(elapsed)")

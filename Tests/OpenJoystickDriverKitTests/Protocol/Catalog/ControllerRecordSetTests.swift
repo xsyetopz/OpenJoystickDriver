@@ -126,7 +126,7 @@ struct ControllerRecordSetTests {
 
   /// A same-family patch adds its parameters to the bundled parameters instead of replacing them.
   @Test
-  func modesPatchOverridesTheBundledParameters() throws {
+  func modesPatchOverridesBundledParameters() throws {
     let dualShock4 = ControllerModelID(vendorID: 0x054C, productID: 0x09CC)
     let patched = try Self.record(
       Self.patch(
@@ -150,7 +150,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func tuningPatchSetsTheRecordTuning() throws {
+  func tuningPatchSetsRecordTuning() throws {
     let record = try Self.record(
       Self.patch(Self.bundledHID, set: ["tuning": ["inputLivenessTimeoutMs": 2_500]])
     )
@@ -159,7 +159,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func aControllerFileForANewIdentityIsAUserRecord() throws {
+  func controllerFileForNewIdentityIsUserRecord() throws {
     let validated = try ControllerRecordSet.validate(Self.add(Self.unbundled, family: "XboxGIP"))
     let record = try #require(validated.record)
     #expect(validated.operation == .add)
@@ -201,7 +201,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func recordsThatDoNotFitTheCatalogAreRejected() throws {
+  func recordsThatDoNotFitCatalogAreRejected() throws {
     #expect(
       Self.problem(try Self.add(Self.bundledGIP, family: "XboxGIP"))
         == "366C:0005 is a bundled controller; use a patch to change it"
@@ -270,7 +270,7 @@ struct ControllerRecordSetTests {
   /// A missing or unsupported version, or a kind that is not one it is read as, is rejected and
   /// named.
   @Test
-  func aMissingOrUnsupportedHeaderIsRejected() throws {
+  func missingOrUnsupportedHeaderIsRejected() throws {
     let supported = "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
     let unsupportedAPIVersionValue = "unsupported.example/v9"
     let body = ControllerPatch.document(
@@ -329,7 +329,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func loadAppliesValidFilesAndReportsTheRest() throws {
+  func loadAppliesValidFilesAndReportsRest() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-records-\(UUID().uuidString)",
       isDirectory: true
@@ -375,7 +375,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func aUserPatchWithTheSupportedAPIVersionLoadsWithoutProblems() throws {
+  func userPatchWithSupportedAPIVersionLoadsWithoutProblems() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-supported-patch-\(UUID().uuidString)",
       isDirectory: true
@@ -401,7 +401,7 @@ struct ControllerRecordSetTests {
     #"{"apiVersion":"unsupported.example/v9","kind":"ControllerPatch","#
       + #""selector":{"vendorID":13932,"productID":5},"patch":{}}"#,
   ])
-  func aUserPatchWithoutTheSupportedAPIVersionIsReportedWithE5001(document: String) throws {
+  func userPatchWithoutSupportedAPIVersionIsReportedWithE5001(document: String) throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-stored-patch-\(UUID().uuidString)",
       isDirectory: true
@@ -423,7 +423,7 @@ struct ControllerRecordSetTests {
   /// A file it can read keeps working; a file it cannot read is dropped, reported with its reason,
   /// and left as it was.
   @Test
-  func aStoredFileKeepsWorkingOrIsDroppedUnchanged() throws {
+  func storedFileKeepsWorkingOrIsDroppedUnchanged() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-stored-records-\(UUID().uuidString)",
       isDirectory: true
@@ -476,7 +476,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func aMissingDirectoryHoldsNoRecords() {
+  func missingDirectoryHoldsNoRecords() {
     let set = ControllerRecordSet.load(
       userDirectory: URL(fileURLWithPath: "/nonexistent-\(UUID().uuidString)")
     )
@@ -499,7 +499,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func anUnreadableDirectoryIsReportedAndKeepsTheBundledRecords() throws {
+  func unreadableDirectoryIsReportedAndKeepsBundledRecords() throws {
     // A regular file stands in for a directory that cannot be listed.
     let path = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-records-\(UUID().uuidString)"
@@ -514,7 +514,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func activatingTheSameRecordsChangesNothing() {
+  func activatingSameRecordsChangesNothing() {
     #expect(ControllerRecordSet.bundled.activate().isEmpty)
   }
 

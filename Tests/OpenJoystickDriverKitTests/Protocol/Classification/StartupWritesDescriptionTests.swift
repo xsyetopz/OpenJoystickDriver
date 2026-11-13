@@ -55,8 +55,7 @@ struct StartupWritesDescriptionTests {
   }
 
   @Test(arguments: [Switch2Link.usb, .bluetoothLE], switch2Layouts)
-  func switch2SendsExactlyTheDescriptionsPackets(link: Switch2Link, layout: Switch2ControllerLayout)
-  {
+  func switch2SendsExactlyDescriptionsPackets(link: Switch2Link, layout: Switch2ControllerLayout) {
     let variant: PhysicalProtocolVariantID = link == .usb ? .usb : .bluetoothLE
     let described = PhysicalProtocolID.nintendoSwitch2.protocolDescription.usbStartupWrites(
       variant: variant,
@@ -77,7 +76,7 @@ struct StartupWritesDescriptionTests {
   }
 
   @Test(arguments: [false, true])
-  func xusbSendsExactlyTheDescriptionsPackets(isWirelessReceiver: Bool) {
+  func xusbSendsExactlyDescriptionsPackets(isWirelessReceiver: Bool) {
     let described = PhysicalProtocolID.xboxXUSB.protocolDescription.usbStartupWrites(
       variant: isWirelessReceiver ? .receiver : .wired,
       parameters: .none
@@ -94,7 +93,7 @@ struct StartupWritesDescriptionTests {
   }
 
   @Test
-  func gipSendsExactlyTheDescriptionsPackets() {
+  func gipSendsExactlyDescriptionsPackets() {
     let described = PhysicalProtocolID.xboxGIP.protocolDescription.usbStartupWrites(
       variant: .usb,
       parameters: .none
@@ -110,7 +109,7 @@ struct StartupWritesDescriptionTests {
   }
 
   @Test
-  func aRecordsUSBWritesReplaceTheDescriptionsAndAreSentAsNamed() throws {
+  func recordsUSBWritesReplaceDescriptionsAndAreSentAsNamed() throws {
     let write = try USBStartupWrite(bytes: [9, 9], endpoint: 3, timeoutMilliseconds: 40)
     let driver = Switch2Driver(usbStartupWrites: [write])
     #expect(driver.startupWrites().usbBytes == [[9, 9]])
@@ -120,7 +119,7 @@ struct StartupWritesDescriptionTests {
   /// The HID startup writes a family declares are the description's, so its driver returns none
   /// of them.
   @Test
-  func hidFamiliesLeaveTheirDeclaredWritesToTheDescription() {
+  func hidFamiliesLeaveTheirDeclaredWritesToDescription() {
     for gameSir in [
       GameSirDriver(protocol: .g7ProUSB),
       GameSirDriver(protocol: .enhancedHID),

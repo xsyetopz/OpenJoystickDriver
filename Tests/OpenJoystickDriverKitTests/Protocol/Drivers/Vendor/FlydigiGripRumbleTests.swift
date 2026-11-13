@@ -51,7 +51,7 @@ struct FlydigiGripRumbleTests {
   private enum ReportError: Error { case notHID }
 
   @Test
-  func gripAndTriggerLevelsFillTheFourMotorBytesOfOneFrame() throws {
+  func gripAndTriggerLevelsFillFourMotorBytesOfOneFrame() throws {
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(0x8080),
       highFrequency: UnipolarValue(0x4040),
@@ -68,7 +68,7 @@ struct FlydigiGripRumbleTests {
   }
 
   @Test
-  func theCommandLineLevelsLeft128AndRight64SendOneFrame() throws {
+  func commandLineLevelsLeft128AndRight64SendOneFrame() throws {
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(byte: 128),
       highFrequency: UnipolarValue(byte: 64)
@@ -80,7 +80,7 @@ struct FlydigiGripRumbleTests {
   }
 
   @Test
-  func stopRumbleZeroesTheMotorBytesAndKeepsTheEnvelope() throws {
+  func stopRumbleZeroesMotorBytesAndKeepsEnvelope() throws {
     let report = try Self.report(of: try Self.driver().encode(.stopRumble).writes)
     #expect(Array(report.bytes[0..<9]) == [0x03, 0x5A, 0xA5, 0x12, 0x06, 0, 0, 0, 0])
   }

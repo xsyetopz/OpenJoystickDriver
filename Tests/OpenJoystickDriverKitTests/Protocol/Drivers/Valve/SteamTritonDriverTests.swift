@@ -93,7 +93,7 @@ struct SteamTritonDriverTests {
   }
 
   @Test
-  func releasesAGripWhenItsBitClears() throws {
+  func releasesGripWhenItsBitClears() throws {
     let grip = ProtocolPacketFixtures.Triton.Grip.self
     let driver = SteamTritonDriver()
     _ = try driver.parseReport(TritonReport.state(buttons: grip.right | grip.left))
@@ -103,7 +103,7 @@ struct SteamTritonDriverTests {
   }
 
   @Test
-  func decodesTheDPadBitsIntoTheHat() throws {
+  func decodesDPadBitsIntoHat() throws {
     let cases: [(UInt32, HatDirection)] = [
       (0x2000, .north), (0x2800, .northEast), (0x0800, .east), (0x0C00, .southEast),
       (0x0400, .south), (0x1400, .southWest), (0x1000, .west), (0x3000, .northWest),
@@ -128,7 +128,7 @@ struct SteamTritonDriverTests {
   }
 
   @Test
-  func timestampedLayoutMovesTheTrackpadsAndKeepsTheSticks() throws {
+  func timestampedLayoutMovesTrackpadsAndKeepsSticks() throws {
     let words: [Int: Int16] = [10: 32767, 20: 32767, 24: 16384, 26: -32768]
     let report = TritonReport.state(id: 0x47, buttons: 0x0220_0000, words: words)
     let event = try #require(try SteamTritonDriver().parseReport(report))
@@ -149,7 +149,7 @@ struct SteamTritonDriverTests {
   }
 
   @Test
-  func motionKeepsTheRawAxesAndSkipsARepeatedTimestamp() throws {
+  func motionKeepsRawAxesAndSkipsRepeatedTimestamp() throws {
     let driver = SteamTritonDriver()
     let report = TritonReport.state(words: [36: 16384, 40: 16384], imuCounter: 1000)
     let sample = try #require(try driver.parseReport(report)?.motion.first)

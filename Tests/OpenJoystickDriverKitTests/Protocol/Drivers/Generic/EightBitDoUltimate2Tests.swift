@@ -15,7 +15,7 @@ struct EightBitDoUltimate2Tests {
   }
 
   @Test
-  func replaysTheUltimate2CUsages() throws {
+  func replaysUltimate2CUsages() throws {
     let parser = try parser()
     for (usage, button) in Base.buttonTable {
       let press = Base.parse(parser, page: 9, usage: usage, 1)
@@ -58,7 +58,7 @@ struct EightBitDoUltimate2Tests {
   }
 
   @Test
-  func ultimate3ModeReplaysTheXboxButtonOrder() throws {
+  func ultimate3ModeReplaysXboxButtonOrder() throws {
     let model = ControllerModelID(vendorID: 0x2DC8, productID: 0x901B)
     let parser = HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, 0x901B))
     let order: [Control] = [

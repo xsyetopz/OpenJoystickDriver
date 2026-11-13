@@ -7,29 +7,29 @@ import Testing
 /// A value spelled as before the naming rule is an unknown name, like a random word.
 struct RecordValueSpellingTests {
   @Test(arguments: ["xbox.gip", "hid.descriptor", "vendor.ps3-third-party", "banana"])
-  func aFamilyInTheEarlierSpellingIsUnknown(name: String) {
+  func familyInEarlierSpellingIsUnknown(name: String) {
     #expect(PhysicalProtocolID(rawValue: name) == nil)
     #expect(ProtocolBindingID(rawValue: name) == nil)
   }
 
   @Test(arguments: ["usb", "bluetooth-le", "bluetooth-classic", "enhanced-hid", "wired", "banana"])
-  func aVariantInTheEarlierSpellingIsUnknown(name: String) {
+  func variantInEarlierSpellingIsUnknown(name: String) {
     #expect(PhysicalProtocolVariantID(rawValue: name) == nil)
     #expect(PhysicalTransport(rawValue: name) == nil)
   }
 
   @Test(arguments: ["north", "northEast", "neutral", "banana"])
-  func aHatDirectionInTheEarlierSpellingIsUnknown(name: String) {
+  func hatDirectionInEarlierSpellingIsUnknown(name: String) {
     #expect(HatDirection(rawValue: name) == nil)
   }
 
   @Test(arguments: ["ojd", "system", "banana"])
-  func aServerInTheEarlierSpellingIsUnknown(name: String) {
+  func serverInEarlierSpellingIsUnknown(name: String) {
     #expect(ControllerServer(rawValue: name) == nil)
   }
 
   @Test
-  func protocolDescriptionFilesAreTheKebabCaseFamily() {
+  func protocolDescriptionFilesAreKebabCaseFamily() {
     #expect(PhysicalProtocolID.xboxGIP.descriptionFileStem == "xbox-gip")
     #expect(PhysicalProtocolID.hidDescriptor.descriptionFileStem == "hid-descriptor")
     #expect(PhysicalProtocolID.vendorPS3ThirdParty.descriptionFileStem == "vendor-ps3-third-party")
@@ -218,7 +218,7 @@ struct RecordValueSpellingTests {
   }
 
   @Test(arguments: recordCases)
-  func aRecordValueInTheEarlierSpellingIsUnknown(_ spelling: RecordCase) {
+  func recordValueInEarlierSpellingIsUnknown(_ spelling: RecordCase) {
     #expect(
       Self.problem(spelling.fields.replacingOccurrences(of: "VALUE", with: spelling.current))
         == nil
@@ -296,7 +296,7 @@ struct RecordValueSpellingTests {
   ]
 
   @Test(arguments: descriptionCases)
-  func aDescriptionValueInTheEarlierSpellingIsUnknown(_ spelling: DescriptionCase) {
+  func descriptionValueInEarlierSpellingIsUnknown(_ spelling: DescriptionCase) {
     func code(_ value: String) -> ErrorCode? {
       let body = spelling.body.replacingOccurrences(of: "VALUE", with: value)
       do {

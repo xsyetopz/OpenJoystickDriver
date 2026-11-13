@@ -109,7 +109,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProUsbHandshakeIsTheDescriptionsStartupWrites() {
+  func testSwitchProUsbHandshakeIsDescriptionsStartupWrites() {
     let commands = { (layout: ProtocolParameters.Layout?, variant: PhysicalProtocolVariantID) in
       PhysicalProtocolID.nintendoSwitch1.protocolDescription.startupWrites(
         phase: .startup,
