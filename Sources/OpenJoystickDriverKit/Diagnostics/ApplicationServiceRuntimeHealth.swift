@@ -302,7 +302,7 @@ public enum ApplicationServiceRuntimeHealthAnalyzer {
       ? .growthObserved : .stable
   }
 
-  /// The share of steps between neighbouring `values` that did not decrease; 0 for fewer than two
+  /// The share of steps between neighboring `values` that did not decrease; 0 for fewer than two
   /// values.
   private static func stepRatio<T: Comparable>(_ values: [T]) -> Double {
     let stepCount = max(0, values.count - 1)

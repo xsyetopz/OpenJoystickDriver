@@ -115,10 +115,10 @@ public actor PermissionManager {
 
   /// Requests every HID permission that is not already granted.
   ///
-  /// Input Monitoring is deliberately requested before Accessibility. macOS
+  /// Input Monitoring is requested before Accessibility. macOS
   /// registers the caller in the Input Monitoring list asynchronously; a
   /// short delay lets that registration complete before the second request.
-  /// The system's request results are deliberately ignored. The
+  /// The system's request results are ignored. The
   /// authoritative post-request state is the system's access state.
   @discardableResult
   public func requestRequiredAccess() async -> Snapshot {

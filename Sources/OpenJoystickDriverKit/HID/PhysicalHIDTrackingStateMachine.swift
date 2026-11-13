@@ -38,7 +38,7 @@ public enum UserSpaceVirtualDeviceConstants {
 
   /// Fail-closed admission check used by the IOKit physical HID input backend.
   ///
-  /// Virtual HID profiles intentionally spoof third-party product names, transports, and
+  /// Virtual HID profiles spoof third-party product names, transports, and
   /// VID/PID tuples. Apple does not guarantee that every property is surfaced on every callback,
   /// so no single marker is sufficient. Any OJD-owned marker, Apple's synthetic marker
   /// (`GCSyntheticDevice`), or a

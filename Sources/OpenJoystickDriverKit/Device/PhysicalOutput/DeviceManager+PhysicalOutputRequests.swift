@@ -49,11 +49,11 @@ extension DeviceManager {
     rumbleStopTokens.remove(identifier)
   }
 
-  /// Previews a colour on the controller until ``releasePhysicalColorPreview(for:token:)``.
+  /// Previews a color on the controller until ``releasePhysicalColorPreview(for:token:)``.
   ///
-  /// The preview wins over every other colour claim. A failed write rolls the claims back.
+  /// The preview wins over every other color claim. A failed write rolls the claims back.
   ///
-  /// - Returns: Whether the controller supports a programmable colour and the write was delivered.
+  /// - Returns: Whether the controller supports a programmable color and the write was delivered.
   public func previewPhysicalColor(
     for controller: ControllerReference,
     token: UUID,
@@ -77,7 +77,7 @@ extension DeviceManager {
     return delivered
   }
 
-  /// Ends the colour preview of `token` and writes the effective colour.
+  /// Ends the color preview of `token` and writes the effective color.
   ///
   /// - Returns: True when no controller matches, or when the write was delivered.
   public func releasePhysicalColorPreview(
@@ -91,10 +91,10 @@ extension DeviceManager {
     return await applyPhysicalChannel(.color, for: key, pipeline: pipeline) == .delivered
   }
 
-  /// Sets the profile colour of `identifier` that the colour channel falls back to; nil removes it.
+  /// Sets the profile color of `identifier` that the color channel falls back to; nil removes it.
   ///
   /// - Returns: False while the manager stops. True when no pipeline runs or the controller has no
-  ///   programmable colour, and otherwise whether the write was delivered.
+  ///   programmable color, and otherwise whether the write was delivered.
   public func setProfilePhysicalColor(
     _ color: ControllerColor?,
     for identifier: LogicalControllerID

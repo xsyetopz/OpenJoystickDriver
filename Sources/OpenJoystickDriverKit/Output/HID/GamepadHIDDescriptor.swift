@@ -2,7 +2,7 @@ import Foundation
 
 /// Standard HID GamePad report descriptor used by OpenJoystickDriver virtual devices.
 ///
-/// This descriptor is intentionally generic (HID Usage Page: Generic Desktop, Usage: GamePad).
+/// This descriptor is generic (HID Usage Page: Generic Desktop, Usage: GamePad).
 /// Do not assume consumers will apply device-specific parsing based on VID/PID.
 ///
 /// Report layout (14 bytes total):

@@ -18,7 +18,7 @@ public enum GameControllerProbeConfiguration {
 /// A user-reviewable, machine-readable snapshot for controller support requests.
 ///
 /// Raw serial values, filesystem paths, packet payloads, HID location IDs, and
-/// free-form DriverKit discovery text are intentionally not represented.
+/// free-form DriverKit discovery text are not represented.
 public struct SupportReport: Codable, Sendable {
   /// The CloudEvents `type` of a support report.
   public static let supportDiagnosticType = "com.openjoystickdriver.support.diagnostic"

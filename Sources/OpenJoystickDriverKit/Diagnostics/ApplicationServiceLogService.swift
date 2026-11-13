@@ -72,7 +72,7 @@ public enum ApplicationServiceLogService {
 
   /// Redirects the host process streams to fresh, user-private files for this session.
   ///
-  /// Headless commands deliberately do not call this function so their output remains
+  /// Headless commands do not call this function so their output remains
   /// attached to the invoking terminal. A second app process fails here before it empties the
   /// logs of the running one.
   public static func beginCurrentSessionCapture() throws {
