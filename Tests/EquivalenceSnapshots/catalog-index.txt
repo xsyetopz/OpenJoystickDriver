@@ -6838,7 +6838,7 @@ tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-parameters=usageLayout=ZRzBrakeLeft
+parameters=usageLayout=ZRzBrakeLeftPaddles
 
 ## 2DC8:301C
 protocol=hid-descriptor variant=- ownership=macos
@@ -6847,7 +6847,7 @@ tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-parameters=usageLayout=ZRzBrakeLeft
+parameters=usageLayout=ZRzBrakeLeftPaddles
 
 ## 2DC8:301D
 protocol=hid-descriptor variant=- ownership=macos

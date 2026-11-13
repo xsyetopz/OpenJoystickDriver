@@ -32,6 +32,16 @@
 				</dict>
 				<dict>
 					<key>control</key>
+					<string>LeftPaddle1</string>
+					<key>kind</key>
+					<string>Button</string>
+					<key>page</key>
+					<integer>9</integer>
+					<key>usage</key>
+					<integer>3</integer>
+				</dict>
+				<dict>
+					<key>control</key>
 					<string>West</string>
 					<key>kind</key>
 					<string>Button</string>
@@ -49,6 +59,16 @@
 					<integer>9</integer>
 					<key>usage</key>
 					<integer>5</integer>
+				</dict>
+				<dict>
+					<key>control</key>
+					<string>RightPaddle1</string>
+					<key>kind</key>
+					<string>Button</string>
+					<key>page</key>
+					<integer>9</integer>
+					<key>usage</key>
+					<integer>6</integer>
 				</dict>
 				<dict>
 					<key>control</key>

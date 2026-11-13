@@ -192,7 +192,8 @@ extension EquivalenceSnapshotCatalogTests {
   /// whose map equals the profile's.
   private static let legacyUsageLayouts: [(name: String, vendorID: UInt16, productID: UInt16)] = [
     ("Wr007", 0x11C1, 0x5600), ("ScufEnvision", 0x2E95, 0x434D),
-    ("ZRzBrakeLeft", 0x2DC8, 0x301B), ("DragonRise", 0x0079, 0x0006),
+    ("ZRzBrakeLeft", 0x2DC8, 0x301D), ("ZRzBrakeLeftPaddles", 0x2DC8, 0x301B),
+    ("DragonRise", 0x0079, 0x0006),
   ]
 
   private static func usageLayoutEntries(_ profile: DeviceRuntimeProfile) -> [String] {

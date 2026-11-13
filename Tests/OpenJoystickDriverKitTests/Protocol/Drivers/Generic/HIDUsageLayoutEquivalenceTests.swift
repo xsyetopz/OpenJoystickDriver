@@ -42,7 +42,7 @@ struct HIDUsageLayoutEquivalenceTests {
       ),
       (
         "ZRzBrakeLeft",
-        HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, 0x301B))
+        HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, 0x301D))
       ),
       (
         "DragonRise",

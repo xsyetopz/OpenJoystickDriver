@@ -87,7 +87,7 @@ The trigger rows follow the press order: the OJD capture lists LeftTrigger befor
 
 Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture records no charge level. At 100%, as `system_profiler SPBluetoothDataType` reads it from the pad's Bluetooth battery service, byte 10 reads `00` in all 653 reports (`2c-bluetooth-301b/battery-100-percent.txt`). At 90%, as the macOS Bluetooth menu shows it, byte 10 reads `00` in all 545 reports (`2c-bluetooth-301b/battery-90-percent.txt`). The byte is constant, and the report carries no charge level.
 
-Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); `tasks.md` 2.3 names them L4 and R4. The decode in `ojd-watch-120s.txt` lists neither bit, because the record maps neither.
+Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); `tasks.md` 2.3 names them L4 and R4. The decode in `ojd-watch-120s.txt`, from `0.6.0-alpha.2`, lists neither bit; the record maps them as `LeftPaddle1` and `RightPaddle1`.
 
 Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer reports one rumble when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`). With a user patch that gives the mode a rumble template for output report 5, OJD's session sends the write while OJD serves the pad, and it fails with the same `kIOReturnNotFound` (`2c-bluetooth-301b/rumble-writes.txt`). Over Bluetooth LE the record declares no rumble.
 
@@ -123,7 +123,7 @@ The record binds `HIDDescriptor` with the same layout as the GameSir G7 SE:
 | 14 | L3 |
 | 15 | R3 |
 
-Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital bits. They are not mapped, and `Rx` and `Ry` (usages 51 and 52) map to nothing. The `301C` and `301D` records use this table and the same stick. The receiver's descriptor as `301C` puts button usage n on bit n - 1 of bytes 1 and 2, `X`, `Y`, `Z`, `Rz` on bytes 4 to 7, Accelerator on byte 8 and Brake on byte 9, so each control of the `301C` capture lands on the usage of this table. The rear buttons of the 2C default to L3 and R3 on the pad, so no record maps a paddle until a capture shows a separate bit.
+Usages 3 and 6 are the rear buttons: the `301B` and `301C` records map usage 3 to `LeftPaddle1` (L4) and usage 6 to `RightPaddle1` (R4), the bits the captures show while the pad gives them no assignment. With an assignment, the pad sends the assigned button's bit instead. Usages 9 and 10 repeat the triggers as digital bits and are not mapped, and `Rx` and `Ry` (usages 51 and 52) map to nothing. The `301C` and `301D` records use this table and the same stick; `301D` maps no rear button, because no capture of it exists. The receiver's descriptor as `301C` puts button usage n on bit n - 1 of bytes 1 and 2, `X`, `Y`, `Z`, `Rz` on bytes 4 to 7, Accelerator on byte 8 and Brake on byte 9, so each control of the `301C` capture lands on the usage of this table. As `310A`, by receiver or cable, the rear buttons send no bit of their own, so OJD sees them only through an assignment the pad makes.
 
 ## Bootloader Identities
 
