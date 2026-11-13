@@ -25,7 +25,7 @@ struct HIDDescriptorRumbleTests {
   }
 
   @Test
-  func templateGivesDriverRumbleAndEncodesItIntoAHIDReport() throws {
+  func templateGivesDriverRumbleAndEncodesItIntoHIDReport() throws {
     let driver = HIDDescriptorDriver(
       model: Self.model,
       usageMap: nil,

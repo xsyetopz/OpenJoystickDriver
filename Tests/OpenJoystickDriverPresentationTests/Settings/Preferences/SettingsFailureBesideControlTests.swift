@@ -55,7 +55,7 @@ struct SettingsFailureBesideControlTests {
   func refusedPauseShortcutShowsBesideShortcutRow() {
     let model = makeModel()
 
-    model.pauseShortcutWasRefused()
+    model.pauseShortcutRefused()
 
     #expect(
       model.failure(beside: .pauseShortcut)
@@ -69,7 +69,7 @@ struct SettingsFailureBesideControlTests {
   @MainActor
   func storedPauseShortcutClearsItsFailure() {
     let model = makeModel()
-    model.pauseShortcutWasRefused()
+    model.pauseShortcutRefused()
 
     model.setPauseShortcut(nil)
 

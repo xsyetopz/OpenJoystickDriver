@@ -23,7 +23,7 @@ struct HIDSeizeDecisionTests {
   }
 
   @Test
-  func hidDeviceOfAHIDModelSeized() throws {
+  func hidDeviceOfHIDModelSeized() throws {
     let catalog = DeviceCatalog()
     let model = try #require(catalog.hidModels.first)
 

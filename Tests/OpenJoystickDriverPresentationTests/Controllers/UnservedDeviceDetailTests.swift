@@ -55,7 +55,7 @@ struct UnservedDeviceDetailTests {
   }
 
   @Test
-  func detailOffersDraftRecordOnlyForAHIDPad() {
+  func detailOffersDraftRecordOnlyForHIDPad() {
     let pad = RuntimeUnservedDevice(
       Self.unbound(.descriptorContractMismatch, backend: .hid, interfaces: [Self.gamepad])
     )

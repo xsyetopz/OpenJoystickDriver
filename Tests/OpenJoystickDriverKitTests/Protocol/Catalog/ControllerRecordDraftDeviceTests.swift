@@ -66,7 +66,7 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   @Test
-  func bundledModelWithoutAHIDModeGetsPatchAddsAHIDDescriptorMode() throws {
+  func bundledModelWithoutHIDModeGetsPatchAddsHIDDescriptorMode() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.gameSir, device: Self.dongle(model: Self.gameSir))
     )
@@ -97,7 +97,7 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   @Test
-  func newModelWithAHIDGamepadGetsAHIDDescriptorController() throws {
+  func newModelWithHIDGamepadGetsHIDDescriptorController() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.unbundled, device: Self.dongle(model: Self.unbundled))
     )

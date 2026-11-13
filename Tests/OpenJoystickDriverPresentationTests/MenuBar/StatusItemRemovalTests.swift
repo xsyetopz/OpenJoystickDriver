@@ -25,7 +25,7 @@ struct StatusItemRemovalTests {
     let model = makeModel(settings)
     #expect(model.showInMenuBar && !model.showInDock)
 
-    #expect(model.menuBarItemWasRemoved())
+    #expect(model.menuBarItemRemoved())
 
     #expect(!model.showInMenuBar && model.showInDock)
     #expect(try !settings.value(of: .showInMenuBar))
@@ -40,7 +40,7 @@ struct StatusItemRemovalTests {
     try settings.set(.showInDock, to: true)
     let model = makeModel(settings)
 
-    #expect(model.menuBarItemWasRemoved())
+    #expect(model.menuBarItemRemoved())
 
     #expect(!model.showInMenuBar && model.showInDock)
     #expect(try settings.value(of: .showInDock))
@@ -58,7 +58,7 @@ struct StatusItemRemovalTests {
     )
     try Data("not a property list".utf8).write(to: settings.userFileURL)
 
-    #expect(!model.menuBarItemWasRemoved())
+    #expect(!model.menuBarItemRemoved())
 
     #expect(model.showInMenuBar && !model.showInDock)
     #expect(model.errorMessage != nil)

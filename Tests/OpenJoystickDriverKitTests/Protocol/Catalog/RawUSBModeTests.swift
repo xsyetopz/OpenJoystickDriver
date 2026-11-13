@@ -121,7 +121,7 @@ struct RawUSBModeTests {
   }
 
   @Test
-  func rawUSBModeKeepsInterfaceAndAHIDSessionOut() {
+  func rawUSBModeKeepsInterfaceAndHIDSessionOut() {
     let hidWrite: [String: Any] = [
       "report": ["kind": "Feature", "id": 1, "length": 2], "bytes": "02",
     ]

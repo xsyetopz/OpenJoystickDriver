@@ -49,7 +49,7 @@ struct UnservedDeviceNextStepTests {
   }
 
   @Test
-  func deviceWithoutAHIDGamepadOffersNoDraft() {
+  func deviceWithoutHIDGamepadOffersNoDraft() {
     #expect(Self.unbound(.noProtocolMatch, backend: .rawUSB).draftCommand == nil)
     #expect(Self.unbound(.noProtocolMatch, backend: .hid).draftCommand == nil)
     let raw = Self.unbound(.deviceInUse, backend: .rawUSB, interfaces: [Self.gamepad])
