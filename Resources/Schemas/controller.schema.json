@@ -25,7 +25,7 @@
       "$ref": "#/$defs/modes"
     },
     "name": {
-      "description": "The model's USB product string (iProduct, which macOS reports as kIOHIDProductKey), copied verbatim from the device; the app lists the model by it in place of the VID:PID.",
+      "description": "The model's USB product string (iProduct), copied verbatim from the device; the app lists the model by it.",
       "type": "string",
       "minLength": 1
     },
