@@ -131,7 +131,7 @@
     /// Sets the color and the brightness that are given.
     ///
     /// - Throws: ``CodedFailure`` with the code that `ojd controller light` prints, and
-    ///   ``LightRequestError`` when the color is no `RRGGBB` or neither value is given.
+    ///   ``LightRequestError`` when the color is not `RRGGBB` or neither value is given.
     func perform() async throws -> some IntentResult {
       let parsed = color.flatMap(ControllerColor.init(hex:))
       guard (color == nil) == (parsed == nil), color != nil || brightness != nil else {

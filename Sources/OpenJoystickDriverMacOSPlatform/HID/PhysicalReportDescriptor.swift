@@ -8,7 +8,7 @@ package enum PhysicalReportDescriptor {
   /// Copies the HID report descriptor from a currently connected physical HID device,
   /// preferring a wired USB device over any other transport.
   ///
-  /// This function explicitly filters out OpenJoystickDriver-created virtual devices.
+  /// Skips virtual devices that OJD creates.
   package static func copy(
     vendorID: Int,
     productID: Int
@@ -55,7 +55,6 @@ package enum PhysicalReportDescriptor {
     func score(_ dev: IOHIDDevice) -> Int {
       let transport = strProp(dev, kIOHIDTransportKey as String)
       let serial = strProp(dev, kIOHIDSerialNumberKey as String) ?? strProp(dev, "SerialNumber")
-      // Exclude OJD virtual devices.
       if UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial)
         || !PhysicalHIDBackendEventAdapter().acceptsDescriptor(
           syntheticProperty: IOHIDDeviceGetProperty(

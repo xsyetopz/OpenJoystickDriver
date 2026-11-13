@@ -22,7 +22,7 @@ private struct PlatformPostEventAccessProbe: CoreGraphicsPostEventAccessProbing 
 
 /// Reads and requests the CoreGraphics permission used for keyboard and pointer injection.
 ///
-/// This is deliberately separate from the IOHID post-event permission used to
+/// This is separate from the IOHID post-event permission used to
 /// create a virtual output controller.
 public struct CoreGraphicsPostEventAccess: Sendable {
   /// The probe of the permission.
@@ -41,7 +41,7 @@ public struct CoreGraphicsPostEventAccess: Sendable {
 
   /// Requests access and then reads the authoritative state back from preflight.
   ///
-  /// The return value from `CGRequestPostEventAccess` is intentionally ignored;
+  /// The return value from `CGRequestPostEventAccess` is ignored;
   /// it is not accepted as evidence that event posting is authorized.
   @discardableResult
   public func requestAccess() -> RemappingPostEventAccessState {
