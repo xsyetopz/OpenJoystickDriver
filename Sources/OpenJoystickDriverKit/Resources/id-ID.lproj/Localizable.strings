@@ -4666,6 +4666,10 @@
 "cli.update.check.ahead" = "OpenJoystickDriver %1$@ lebih baru daripada rilis terbaru yang dipublikasikan (%2$@).";
 /* Result of the update check: the installed version is newer than the latest release. */
 "ui.settings.general.updateAhead" = "Lebih baru dari rilis terbaru";
+/* Result of the update check in the Updates section of the settings window when only prerelease versions exist and the check leaves them out. %@ is the title of the switch that includes prerelease versions. */
+"ui.settings.general.updateOnlyPrereleases" = "Belum ada rilis stabil yang dipublikasikan. Aktifkan “%@” untuk memeriksa rilis prarilis.";
+/* Error of 'ojd update check' when only prerelease versions exist and the check leaves them out. --prerelease stays as written. */
+"cli.update.check.onlyPrereleases" = "Belum ada rilis stabil yang dipublikasikan. Tambahkan --prerelease untuk menyertakan rilis prarilis.";
 /* Label of the installed version in the General pane of the settings window. */
 "ui.settings.general.version" = "Versi";
 /* Line in the Updates section of the settings window. %@ is the version of the latest release. */

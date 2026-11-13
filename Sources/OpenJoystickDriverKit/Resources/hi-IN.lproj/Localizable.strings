@@ -4666,6 +4666,10 @@
 "cli.update.check.ahead" = "OpenJoystickDriver %1$@ प्रकाशित नवीनतम रिलीज़ (%2$@) से नया है।";
 /* Result of the update check: the installed version is newer than the latest release. */
 "ui.settings.general.updateAhead" = "नवीनतम रिलीज़ से नया";
+/* Result of the update check in the Updates section of the settings window when only prerelease versions exist and the check leaves them out. %@ is the title of the switch that includes prerelease versions. */
+"ui.settings.general.updateOnlyPrereleases" = "अभी तक कोई स्थिर रिलीज़ प्रकाशित नहीं हुआ है। प्री-रिलीज़ जाँचने के लिए “%@” चालू करें।";
+/* Error of 'ojd update check' when only prerelease versions exist and the check leaves them out. --prerelease stays as written. */
+"cli.update.check.onlyPrereleases" = "अभी तक कोई स्थिर रिलीज़ प्रकाशित नहीं हुआ है। प्री-रिलीज़ शामिल करने के लिए --prerelease जोड़ें।";
 /* Label of the installed version in the General pane of the settings window. */
 "ui.settings.general.version" = "संस्करण";
 /* Line in the Updates section of the settings window. %@ is the version of the latest release. */

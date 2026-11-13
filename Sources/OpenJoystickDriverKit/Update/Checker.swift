@@ -21,7 +21,7 @@ public struct UpdateInfo: Equatable, Sendable {
 public enum UpdateCheckFailureReason: Equatable, Sendable {
   /// The running version is not a SemVer version.
   case invalidCurrentVersion
-  /// No tag is a SemVer version, or a stable one when prereleases are left out.
+  /// No tag is a SemVer version.
   case noValidTags
   /// The tag pages link to a page that was already read.
   case paginationCycle
@@ -61,6 +61,8 @@ public enum UpdateCheckState: Equatable, Sendable {
   case available(UpdateInfo)
   /// The running version is newer than the latest release.
   case aheadOfLatestRelease(current: String, latest: String)
+  /// Only prereleases are published, and the check leaves them out.
+  case onlyPrereleases
   /// The check failed.
   case failed(UpdateCheckFailure)
 }
@@ -153,6 +155,8 @@ public struct UpdateChecker: Sendable {
         return .aheadOfLatestRelease(current: rawCurrentVersion, latest: candidate.tag.name)
       }
       return .upToDate(current: rawCurrentVersion, latest: candidate.tag.name)
+    } catch is OnlyPrereleasesPublished {
+      return .onlyPrereleases
     } catch let error as UpdateCheckerError {
       return .failed(UpdateCheckFailure(reason: error.reason, message: error.message))
     } catch {
@@ -162,18 +166,18 @@ public struct UpdateChecker: Sendable {
 
   /// The tag with the highest version.
   ///
-  /// - Throws: An error with ``UpdateCheckFailureReason/noValidTags`` when no tag qualifies, or the
-  ///   error of reading the tags.
+  /// - Throws: An error with ``UpdateCheckFailureReason/noValidTags`` when no tag is a version,
+  ///   `OnlyPrereleasesPublished` when every version is a prerelease that is left out, or the error
+  ///   of reading the tags.
   private func latestTag(includePrereleases: Bool) async throws -> Candidate {
     let tags = try await allTags()
-    let candidates = tags.compactMap { tag -> Candidate? in
-      guard let version = SemanticVersion(tag.name) else { return nil }
-      guard includePrereleases || version.prerelease.isEmpty else { return nil }
-      return Candidate(tag: tag, version: version)
+    let versioned = tags.compactMap { tag -> Candidate? in
+      SemanticVersion(tag.name).map { Candidate(tag: tag, version: $0) }
     }
+    let candidates = versioned.filter { includePrereleases || $0.version.prerelease.isEmpty }
     guard let latest = candidates.max(by: { $0.version < $1.version }) else {
-      let channel = includePrereleases ? "" : " stable"
-      throw UpdateCheckerError(.noValidTags, "No\(channel) SemVer GitHub tags found")
+      if !versioned.isEmpty { throw OnlyPrereleasesPublished() }
+      throw UpdateCheckerError(.noValidTags, "No release versions found")
     }
     return latest
   }
@@ -263,6 +267,9 @@ public struct UpdateChecker: Sendable {
     repositoryURL.appendingPathComponent("tree").appendingPathComponent(tagName)
   }
 }
+
+/// Every version tag is a prerelease while prereleases are left out.
+private struct OnlyPrereleasesPublished: Error {}
 
 /// A failure of the update check with its reason.
 private struct UpdateCheckerError: Error {

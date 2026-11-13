@@ -71,6 +71,12 @@ struct UpdateStatusPresentation: Equatable {
         "ui.settings.general.latestRelease",
         Self.versionText(ofTag: latest)
       )
+    case .onlyPrereleases:
+      indicator = .symbol(name: "info.circle.fill", tone: .informational)
+      title = OJDLocalized.formatted(
+        "ui.settings.general.updateOnlyPrereleases",
+        OJDLocalized.string("ui.settings.general.prereleaseUpdates")
+      )
     case .failed(let failure):
       indicator = .symbol(name: "xmark.circle.fill", tone: .failure)
       title = failure.message

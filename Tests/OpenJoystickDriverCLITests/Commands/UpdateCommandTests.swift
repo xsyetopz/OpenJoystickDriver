@@ -87,6 +87,18 @@ struct UpdateCommandTests {
   }
 
   @Test
+  func onlyPrereleasesPublishedPointsToThePrereleaseFlag() async {
+    let result = await run(["update", "check"], state: .onlyPrereleases)
+
+    let reason = CLILocalized.text("cli.update.check.onlyPrereleases")
+    #expect(reason.contains("--prerelease"))
+    #expect(
+      result.standardError
+        == "error[E2019]: " + CLILocalized.format("cli.update.check.failedReason", reason) + "\n"
+    )
+  }
+
+  @Test
   func onlyANetworkFailureSuggestsCheckingTheConnection() async {
     let network = UpdateCheckFailure(reason: .transport, message: "timed out")
     let version = UpdateCheckFailure(reason: .invalidCurrentVersion, message: "not SemVer")

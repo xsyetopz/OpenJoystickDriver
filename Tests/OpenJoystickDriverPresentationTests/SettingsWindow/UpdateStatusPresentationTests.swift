@@ -48,6 +48,18 @@ struct UpdateStatusPresentationTests {
   }
 
   @Test
+  func onlyPrereleasesPublishedNamesTheSettingWithoutFailureMark() {
+    let status = UpdateStatusPresentation(state: .onlyPrereleases, runningVersion: "1.0.0")
+    let setting = OJDLocalized.string("ui.settings.general.prereleaseUpdates")
+    #expect(
+      status.title == OJDLocalized.formatted("ui.settings.general.updateOnlyPrereleases", setting)
+    )
+    #expect(status.title.contains(setting))
+    #expect(status.indicator == .symbol(name: "info.circle.fill", tone: .informational))
+    #expect(status.version == "1.0.0")
+  }
+
+  @Test
   func anAvailableUpdateShowsTheReleaseVersion() {
     let info = UpdateInfo(
       tagName: "v9.0.0",

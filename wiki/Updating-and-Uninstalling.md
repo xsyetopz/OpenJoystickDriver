@@ -25,7 +25,7 @@ This section explains how to check for a new OpenJoystickDriver (OJD) version an
 
 OJD checks for updates only when you ask. It has no timer and does not check in the background. An update check never downloads or installs anything.
 
-A check reads the version tags of the OJD repository on GitHub and reports the highest version. By default it ignores prerelease versions. A prerelease build is newer than every stable release, so a default check run from it finds nothing. To include prereleases, turn on **Include prerelease updates** in **Settings**. In the command line, add `--prerelease` to `update check`.
+A check reads the version tags of the OJD repository on GitHub and reports the highest version. By default it ignores prerelease versions. A prerelease build is newer than every stable release, so a default check run from it finds nothing. To include prereleases, turn on **Include prerelease updates** in **Settings**. In the command line, add `--prerelease` to `update check`. When only prerelease versions are published and the setting is off, **Settings** says that no stable release is published yet and names **Include prerelease updates**; this is not an error.
 
 When a newer version exists, **View Update** opens the tag page in your browser. You download and install the new version yourself.
 

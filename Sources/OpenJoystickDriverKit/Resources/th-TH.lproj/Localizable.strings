@@ -4666,6 +4666,10 @@
 "cli.update.check.ahead" = "OpenJoystickDriver %1$@ ใหม่กว่ารุ่นล่าสุดที่เผยแพร่ (%2$@)";
 /* Result of the update check: the installed version is newer than the latest release. */
 "ui.settings.general.updateAhead" = "ใหม่กว่ารุ่นล่าสุด";
+/* Result of the update check in the Updates section of the settings window when only prerelease versions exist and the check leaves them out. %@ is the title of the switch that includes prerelease versions. */
+"ui.settings.general.updateOnlyPrereleases" = "ยังไม่มีรุ่นเสถียรที่เผยแพร่ เปิด “%@” เพื่อตรวจสอบรุ่นก่อนเผยแพร่";
+/* Error of 'ojd update check' when only prerelease versions exist and the check leaves them out. --prerelease stays as written. */
+"cli.update.check.onlyPrereleases" = "ยังไม่มีรุ่นเสถียรที่เผยแพร่ เพิ่ม --prerelease เพื่อรวมรุ่นก่อนเผยแพร่";
 /* Label of the installed version in the General pane of the settings window. */
 "ui.settings.general.version" = "เวอร์ชัน";
 /* Line in the Updates section of the settings window. %@ is the version of the latest release. */
