@@ -1,11 +1,11 @@
 1794525141.546 ^D[1mScripts/Diagnostics/backend.sh sdl3 --seconds 45 --wait-devices 5[0m
 1794525142.039 Building SDL3 probe (native)...
 1794525142.186 [0m[38;2;0;255;0;1m[100%]:[0m [38;2;0;255;0;1mbuild ok, spent 0.015s[0m
-1794525142.189 
+1794525142.189
 1794525142.189 Running SDLGamepadProbe --seconds 45 --wait-devices 5
 1794525142.189 Tip: if it prints 'Found 0 joystick(s)', grant Input Monitoring to your terminal app:
 1794525142.189   System Settings -> Privacy & Security -> Input Monitoring
-1794525142.189 
+1794525142.189
 1794525142.350 SDL linked version: 3.4.20 (raw=3004020)
 1794525142.350 SDL platform: macOS
 1794525142.350 SDL_JOYSTICK_MFI=(unset)
@@ -13,7 +13,7 @@
 1794525142.350 SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=(unset)
 1794525142.350 SDL_JOYSTICK_HIDAPI_XBOX=(unset)
 1794525142.350 SDL_JOYSTICK_HIDAPI_XBOX_ONE=(unset)
-1794525144.420 
+1794525144.420
 1794525144.421 Found 1 joystick(s)
 1794525144.421 - id=1 vid=0x045e pid=0x0b0c ver=0x0000 guid=0300faeb5e0400000c0b000000006800
 1794525144.421   joystick_name=Xbox Adaptive Controller
@@ -21,7 +21,7 @@
 1794525144.421   mapping=0300faeb5e0400000c0b000000006800,*,a:b0,b:b1,back:b4,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b5,leftshoulder:b9,leftstick:b7,lefttrigger:a4,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b8,righttrigger:a5,rightx:a2,righty:a3,start:b6,x:b2,y:b3,crc:ebfa,
 1794525144.421   gamepad_axes: a0=0 a1=0 a2=0 a3=0 a4=0 a5=0
 1794525144.421   gamepad_buttons: b0=0 b1=0 b2=0 b3=0 b4=0 b5=0 b6=0 b7=0 b8=0 b9=0 b10=0 b11=0 b12=0 b13=0 b14=0 b15=0 b16=0 b17=0 b18=0 b19=0 b20=0 b21=0 b22=0 b23=0 b24=0 b25=0
-1794525144.421 
+1794525144.421
 1794525144.421 Listening for 45s (press buttons now) ...
 1794525144.421 GAMEPAD_ADDED which=1 ms=2069
 1794525154.053 GAMEPAD_REMOVED which=1 ms=11702

@@ -1,7 +1,7 @@
 # started: 2026-11-12T23:18:54Z
-DuckStation.app	exe-links-GameController=0	bundled-SDL=libSDL3.0.dylib 
+DuckStation.app	exe-links-GameController=0	bundled-SDL=libSDL3.0.dylib
 OpenJoystickDriver.app	exe-links-GameController=2	bundled-SDL=none
-PCSX2-v2.8.2.app	exe-links-GameController=0	bundled-SDL=libSDL3.0.dylib 
+PCSX2-v2.8.2.app	exe-links-GameController=0	bundled-SDL=libSDL3.0.dylib
 Melvor2.app	exe-links-GameController=2	bundled-SDL=none
 ## SDL3 links GameController:
 DuckStation.app: 2

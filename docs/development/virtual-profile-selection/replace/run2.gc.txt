@@ -1,12 +1,12 @@
 1794525200.710 ^D[1mScripts/Diagnostics/backend.sh gamecontroller --seconds 45[0m
 1794525201.204 GameController probe
 1794525201.204 Listening for 45s
-1794525201.204 
+1794525201.204
 1794525201.290 HID GamePad support:
 1794525201.291 - 045E:028E "GamePad-1" transport=Virtual gamecontroller=yes
 1794525201.292 - 045E:0B0C "Xbox Adaptive Controller" transport=Virtual gamecontroller=yes
 1794525201.292 - 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
-1794525201.292 
+1794525201.292
 1794525201.292 Initial controllers: 0
 1794525213.239 connect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
 1794525213.239 inputs: buttons=[Button A,Button B,Button Home,Button Menu,Button Options,Button Share,Button X,Button Y,Direction Pad Down,Direction Pad Left,Direction Pad Right,Direction Pad Up,Left Shoulder,Left Thumbstick Button,Left Thumbstick Down,Left Thumbstick Left,Left Thumbstick Right,Left Thumbstick Up,Left Trigger,Right Shoulder,Right Thumbstick Button,Right Thumbstick Down,Right Thumbstick Left,Right Thumbstick Right,Right Thumbstick Up,Right Trigger] xbox=true share=true paddles=0
