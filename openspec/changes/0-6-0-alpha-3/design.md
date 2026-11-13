@@ -258,12 +258,12 @@ A stored document is a file that carries `apiVersion` and `kind`: records, patch
 
 Reasons: the data fits (818 of 819 files without loss, and the one exception has a fix below); `PropertyListDecoder` is as strict as the JSON decoder; Xcode and `plutil` edit and check the files; Apple's own controller catalog has this shape. Speed is not a reason: every form parses 706 records in under 4 ms.
 
-- **One form.** Files are XML, UTF-8. A binary property list is refused with a named error, so every stored file stays readable and comparable (`single_format`).
+- **One form.** Files are XML, UTF-8. A binary property list is refused with a named error, so every stored file stays readable and comparable (`useSingleFormat`).
 - **Schema.** JSON Schema Draft 2020-12 stays the contract, and the schema files stay JSON. A validator reads the property list into objects and checks the objects. `date` and `data` values match no schema type and are refused. Apple's device-management repository uses the same split: a schema file beside the property lists it describes.
 - **No `null`.** The crosswalk states "no equivalent" by leaving the key out. A patch deletes keys through `remove` (D12).
 - **Messages.** `ojd --json` output, the local endpoint, and report files stay JSON: their readers are scripts, browsers, and `Scripts/SDK/reference_client.py`.
 - **Bundled files** are written exactly as `PropertyListSerialization` writes them (sorted keys, no comment), and a test enforces it. A user file may hold XML comments; OJD drops them when it rewrites the file.
-- Property names stay lowerCamelCase (`single_format`).
+- Property names stay lowerCamelCase (`useSingleFormat`).
 
 Alternative considered: keep JSON. It needs no migration and has editor support for JSON Schema. Rejected by this design, not by an instruction: the maintainer allowed the move ("if the jsons could become .plist, that's fine, too") and asked for "a more Apple-native solution that satisfies both the users and the app runtime itself"; the data fits, and a property list is the format macOS tools and Foundation treat as native. The cost is the migration in D4 and the larger files in the table above, so the maintainer can still choose JSON by dropping D1 and D12; D2 to D11 and D13 to D15 do not depend on the file format.
 
@@ -316,7 +316,7 @@ A 0.5 document (no `apiVersion`) gets `failed` with reason "written by 0.5; re-c
 
 A step would therefore serve only two single-mode records, which tasks 8.9 and 8.10 re-create by hand with their authors credited.
 
-Alternative considered: readers that accept old versions or JSON. Rejected by `single_format`.
+Alternative considered: readers that accept old versions or JSON. Rejected by `useSingleFormat`.
 
 ### D5. The driver extension is requested only by the user, and unowned models use the direct route
 
@@ -555,13 +555,13 @@ InputConfig's 456 library presets are data under MIT. Task 16.10 measures whethe
 
 ### D25. A profile applies to a list of apps
 
-`applicationScope` of type `Application` holds `appIDs`, a list of one or more bundle identifiers; `appID` leaves the schema, the reader refuses it (`single_format`), and migration converts it. `--app` repeats on the commands that take it. The profile sheet and the editor offer running and installed apps with icon and name, plus "Other..." for an open panel. The menu bar item and the controller detail show the profile in force and name the app that selected it.
+`applicationScope` of type `Application` holds `appIDs`, a list of one or more bundle identifiers; `appID` leaves the schema, the reader refuses it (`useSingleFormat`), and migration converts it. `--app` repeats on the commands that take it. The profile sheet and the editor offer running and installed apps with icon and name, plus "Other..." for an open panel. The menu bar item and the controller detail show the profile in force and name the app that selected it.
 
 Reason: the service already selects a profile by the app in front; the gaps are the typed identifier, one app per profile, and no sign of which profile is in force.
 
 A virtual gamepad kind per app stays research (task 9.14): replacing the published gamepad disconnects it from a running game, and that cost is not measured.
 
-Alternative considered: keep `appID` and add `appIDs` beside it. Rejected by `single_format`.
+Alternative considered: keep `appID` and add `appIDs` beside it. Rejected by `useSingleFormat`.
 
 ### D26. A tester build is a public pre-release
 
@@ -608,7 +608,7 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - The direct route for `02D1`, `02DD`, `02E3`, `0B0A` has hardware proof for `02D1` only → the other three stay marked unverified until a reporter confirms.
 - A user who relied on automatic activation for an Apple-held model gets macOS's own driver → the controller row says "Served by macOS" and offers Claim.
 - The receiver hypothesis (D8) may be wrong → task 2.1 runs first and D8 names the other outcome.
-- Removing descriptions loses knowledge → each removed fact that still holds moves to the wiki in the same commit (`stale_doc`).
+- Removing descriptions loses knowledge → each removed fact that still holds moves to the wiki in the same commit (`noStaleDocs`).
 - `2DC8:2027` may fail below OJD (libusb fails too) → the release notes list it as unsupported unless the reporter confirms a tester build.
 - Generators are the least-tested part → group 6 depends on group 1 only, and can leave the release without changing any other group.
 - The change holds 19 task groups for one alpha release → groups 13, 15, and 16 are separable (Release order), and the maintainer cuts them without touching a fix.

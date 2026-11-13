@@ -1,6 +1,6 @@
 # Tasks: 0.6.0-alpha.3
 
-A task marked **hardware** is ticked only with a capture from that hardware (`hardware_tick_without_capture`). "Maintainer" hardware is on the maintainer's desk; "reporter" hardware waits for the named issue. Each code task names the caller outside `Tests/` that reaches it (`unwired_feature`). Posting a comment, closing an issue, and merging a pull request are the maintainer's actions; a task here prepares the text.
+A task marked **hardware** is ticked only with a capture from that hardware (`noUnfinishedTasks`). "Maintainer" hardware is on the maintainer's desk; "reporter" hardware waits for the named issue. Each code task names the caller outside `Tests/` that reaches it (`noUnfinishedTasks`). Posting a comment, closing an issue, and merging a pull request are the maintainer's actions; a task here prepares the text.
 
 A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where a record cannot state the fact, the task adds the general record ability from group 9 and no branch for one model.
 
