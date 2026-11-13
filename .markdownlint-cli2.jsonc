@@ -2,5 +2,11 @@
 	"$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/v0.24.0/schema/markdownlint-cli2-config-schema.json",
 	"globs": ["**/*.md"],
 	"gitignore": true,
-	"ignores": ["**/node_modules/**", "**/target/**", "**/.build/**"],
+	"ignores": [
+		"**/node_modules/**",
+		"**/target/**",
+		"**/.build/**",
+		".claude/**",
+		"openspec/**",
+	],
 }

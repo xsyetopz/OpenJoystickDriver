@@ -6,6 +6,6 @@ let package = Package(
   name: "BuildTools",
   platforms: [.macOS(.v12)],
   dependencies: [
-    .package(url: "https://github.com/xsyetopz/bedrock", revision: "swift-bedrock-v0.1.2")
+    .package(url: "https://github.com/xsyetopz/bedrock", revision: "swift-bedrock-v0.1.3")
   ]
 )
