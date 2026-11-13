@@ -57,6 +57,8 @@ Every 8BitDo `2DC8` identity that has a record. Only `2DC8:310A` is Community-Ve
 | --- | --- | --- |
 | `2DC8:2000`, `2DC8:2002` | No source names the model | `XboxGIP` |
 | `2DC8:200F` | No source names the model | `XboxGIP`, with the Share button read from the end of the report |
+| `2DC8:2019` | Ultimate Mini Wired Controller for Xbox | `XboxGIP` |
+| `2DC8:2027` | Ultimate C Wired Controller for Xbox | `XboxGIP` |
 | `2DC8:3106`, `2DC8:6001` | No source names the model | `XboxXUSB`, wired |
 | `2DC8:3107` | Ultimate 2 dongle | Idle |
 | `2DC8:3109` | Ultimate 2C USB adapter | `XboxXUSB`, wired |
