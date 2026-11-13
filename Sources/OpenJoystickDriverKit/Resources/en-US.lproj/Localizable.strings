@@ -43,7 +43,7 @@
 /* Button of the capture assignment sheet and of the profile editor sections that adds an assignment to the profile. */
 "action.addAssignment" = "Add Assignment";
 /* Label and tooltip of the button that removes one assignment from the profile. */
-"action.removeAssignment" = "Remove assignment";
+"action.removeAssignment" = "Remove Assignment";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
 "action.adjust" = "Adjust...";
 /* Toolbar button that creates a copy of the selected profile. */
@@ -97,23 +97,23 @@
 /* Title of the switch that turns on the developer tools in the Advanced pane of the settings window. */
 "ui.settings.advanced.enableDeveloperTools" = "Enable Developer Tools";
 /* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Settings is the name of the macOS app. */
-"platform.macos.ui.settings.notifications.notificationBannersAndSoundOff" = "Banners and sounds are disabled in System Settings.";
+"platform.macos.ui.settings.notifications.notificationBannersAndSoundOff" = "Banners and sounds are turned off in System Settings.";
 /* Value of the notification row in the Access area when macOS has turned off banners for the app. */
 "ui.settings.notifications.notificationBannersOff" = "Banners off";
 /* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. */
-"platform.macos.ui.settings.notifications.notificationBannersOffDetail" = "Notification banners are disabled in System Settings.";
+"platform.macos.ui.settings.notifications.notificationBannersOffDetail" = "Notification banners are turned off in System Settings.";
 /* Status text in the Notifications pane of the settings window when the user has not allowed notifications in macOS. */
 "ui.settings.notifications.notificationPermissionRequired" = "Permission is required before notifications can be delivered.";
 /* Value of the notification row in the Access area when macOS has turned off sounds for the app. */
 "ui.settings.notifications.notificationSoundOff" = "Sound off";
 /* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Settings is the name of the macOS app. */
-"platform.macos.ui.settings.notifications.notificationSoundOffDetail" = "Notification sounds are disabled in System Settings.";
+"platform.macos.ui.settings.notifications.notificationSoundOffDetail" = "Notification sounds are turned off in System Settings.";
 /* Title of the switch in the Notifications pane of the settings window that plays a sound with a notification. */
 "ui.settings.notifications.notificationSounds" = "Play a sound";
 /* Name of the notification permission in the Access area. */
 "ui.settings.notifications.notifications" = "Notifications";
 /* Error shown when the user turns on notifications in the app while macOS denies them. System Settings is the name of the macOS app. OpenJoystickDriver is the product name. */
-"platform.macos.ui.settings.notifications.notificationsDenied" = "Notifications are disabled for OpenJoystickDriver in System Settings.";
+"platform.macos.ui.settings.notifications.notificationsDenied" = "Notifications are turned off for OpenJoystickDriver in System Settings.";
 /* Button in the Notifications pane of the settings window that opens the notification settings of macOS. */
 "ui.settings.general.openNotificationSettings" = "Open Notification Settings";
 /* Button in a pane of the settings window that opens System Settings, the macOS app. */

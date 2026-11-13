@@ -60,7 +60,7 @@ Each controller control can appear in only one assignment in a profile.
 6. Click **Add assignment**.
 7. Click **Save**.
 
-The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **Sticks**, **Triggers**, **Stick clicks**, **Touch**, **Motion**, and **System controls**. To remove an assignment, use its **Remove assignment** button.
+The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **Sticks**, **Triggers**, **Stick clicks**, **Touch**, **Motion**, and **System controls**. To remove an assignment, use its **Remove Assignment** button.
 
 ### Add an Assignment With the Command Line
 
