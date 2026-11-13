@@ -7,7 +7,7 @@ import Testing
 
 struct CoreGraphicsSinkTests {
   @Test
-  func everySymbolicKeyboardKeyHasAnOfficialVirtualKey() {
+  func everySymbolicKeyboardKeyHasOfficialVirtualKey() {
     let translator = MacVirtualKeyTranslator()
     for key in RemappingKeyboardKey.allCases {
       #expect(translator.virtualKey(for: key) != nil, "Missing virtual key for \(key)")

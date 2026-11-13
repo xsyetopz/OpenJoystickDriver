@@ -87,7 +87,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func settingAnOverridePersistsAndRetargetsTheController() async {
+  func settingOverridePersistsAndRetargetsController() async {
     let fixture = await profileOverrideServer()
 
     let result = await fixture.change(.set("Generic"))
@@ -107,7 +107,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func resettingAnOverrideReturnsTheControllerToAutomaticSelection() async {
+  func resettingOverrideReturnsControllerToAutomaticSelection() async {
     let fixture = await profileOverrideServer()
     _ = await fixture.change(.set("Generic"))
 
@@ -128,7 +128,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func anUnknownProfileIsRejectedWithoutPersisting() async {
+  func unknownProfileRejectedWithoutPersisting() async {
     let fixture = await profileOverrideServer()
 
     let result = await fixture.change(.set("xone-hid"))
@@ -142,7 +142,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func anUnmatchedControllerIsNotFoundAndNothingIsPersisted() async {
+  func unmatchedControllerNotFoundAndNothingPersisted() async {
     let fixture = await profileOverrideServer()
 
     let otherModel = await fixture.change(
@@ -161,7 +161,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func disabledOutputStillPersistsTheOverride() async {
+  func disabledOutputStillPersistsOverride() async {
     let fixture = await profileOverrideServer(outputEnabled: false)
 
     let result = await fixture.change(.set("Generic"))
@@ -180,7 +180,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aStoppedServerRejectsOverrideChangesWithoutPersisting() async {
+  func stoppedServerRejectsOverrideChangesWithoutPersisting() async {
     let fixture = await profileOverrideServer()
     await fixture.server.stop()
 
@@ -193,7 +193,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func failedActivationRestoresThePriorStoredOverride() async {
+  func failedActivationRestoresPriorStoredOverride() async {
     let fixture = await profileOverrideServer(failure: (.sdlCompatible, .activation)) {
       VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest()
     }
@@ -215,7 +215,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func anOverrideRetargetsEveryControllerOfTheModel() async {
+  func overrideRetargetsEveryControllerOfModel() async {
     let first = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
     let second = LogicalControllerID(vendorID: 1, productID: 2, locationID: 2)
     let fixture = await profileOverrideServer([first, second])
@@ -293,7 +293,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aTimedOutRetargetRestoresThePriorStoredOverride() async {
+  func timedOutRetargetRestoresPriorStoredOverride() async {
     let gate = InstallationGate()
     let fixture = await profileOverrideServer(
       activationGate: (.sdlCompatible, gate),

@@ -8,7 +8,7 @@ struct HIDSeizeDecisionTests {
   /// A HID object of a model the record reaches through raw USB is not a device OJD serves over
   /// HID, so the stream never seizes it.
   @Test
-  func aHIDDeviceOfARawUSBModelIsNotSeized() throws {
+  func hidDeviceOfRawUSBModelNotSeized() throws {
     let catalog = DeviceCatalog()
     let model = try #require(catalog.rawUSBModels.first)
 
@@ -23,7 +23,7 @@ struct HIDSeizeDecisionTests {
   }
 
   @Test
-  func aHIDDeviceOfAHIDModelIsSeized() throws {
+  func hidDeviceOfAHIDModelSeized() throws {
     let catalog = DeviceCatalog()
     let model = try #require(catalog.hidModels.first)
 
@@ -39,7 +39,7 @@ struct HIDSeizeDecisionTests {
 
   /// A model with no record is served from its HID descriptor, so it is seized.
   @Test
-  func aHIDDeviceWithNoRecordIsSeized() {
+  func hidDeviceWithNoRecordSeized() {
     #expect(
       HIDDeviceStream.seizesInput(
         model: ControllerModelID(vendorID: 0xFFFF, productID: 0xFFFF),
@@ -51,7 +51,7 @@ struct HIDSeizeDecisionTests {
   }
 
   @Test
-  func aNativeGamepadAndItsSiblingAreNotSeized() throws {
+  func nativeGamepadAndItsSiblingNotSeized() throws {
     let catalog = DeviceCatalog()
     let model = try #require(catalog.hidModels.first)
 

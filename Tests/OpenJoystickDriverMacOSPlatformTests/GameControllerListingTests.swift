@@ -13,7 +13,7 @@ struct GameControllerListingTests {
     (false, .settling, false),
     (false, .listed, false),
   ])
-  func aPadWithNoStatedServerFollowsTheListing(
+  func padWithNoStatedServerFollowsListing(
     supportsHIDDevice: Bool,
     listing: GameControllerListing,
     native: Bool
@@ -28,7 +28,7 @@ struct GameControllerListingTests {
   }
 
   @Test(arguments: [GameControllerListing.settling, .listed, .unlisted])
-  func aStatedServerOverridesTheListing(listing: GameControllerListing) {
+  func statedServerOverridesListing(listing: GameControllerListing) {
     #expect(
       !HIDDeviceStream.nativePassThrough(
         supportsHIDDevice: true,
@@ -46,7 +46,7 @@ struct GameControllerListingTests {
   }
 
   @Test
-  func aControllerIsListedWhenItsVendorNameIsTheProductName() {
+  func controllerListedWhenItsVendorNameProductName() {
     let names = ["Xbox Wireless Controller"]
     let listing = { GameControllerListing(productName: $0, vendorNames: names) }
     #expect(listing("Xbox Wireless Controller") == .listed)

@@ -29,7 +29,7 @@ struct Switch2BluetoothLECentralLaunchTests {
   }
 
   @Test(arguments: [CBManagerAuthorization.notDetermined, .denied, .restricted])
-  func launchCreatesNoManagerWhileBluetoothIsNotGranted(authorization: CBManagerAuthorization) {
+  func launchCreatesNoManagerWhileBluetoothNotGranted(authorization: CBManagerAuthorization) {
     let counter = ManagerCounter()
     let central = makeCentral(authorization: authorization, counter: counter)
     central.start()
@@ -38,7 +38,7 @@ struct Switch2BluetoothLECentralLaunchTests {
   }
 
   @Test
-  func launchCreatesTheManagerWhenBluetoothIsAlreadyGranted() {
+  func launchCreatesManagerWhenBluetoothAlreadyGranted() {
     let counter = ManagerCounter()
     let central = makeCentral(authorization: .allowedAlways, counter: counter)
     central.start()
@@ -47,7 +47,7 @@ struct Switch2BluetoothLECentralLaunchTests {
   }
 
   @Test
-  func theUserRequestCreatesTheManagerWhileBluetoothIsNotDetermined() {
+  func userRequestCreatesManagerWhileBluetoothNotDetermined() {
     let counter = ManagerCounter()
     let central = makeCentral(authorization: .notDetermined, counter: counter)
     central.start()

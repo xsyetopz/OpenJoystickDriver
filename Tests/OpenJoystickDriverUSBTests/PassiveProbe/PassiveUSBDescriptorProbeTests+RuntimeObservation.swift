@@ -60,7 +60,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func identicalAliasesParseAndDifferentAliasesAreAmbiguous() {
+  func identicalAliasesParseAndDifferentAliasesAmbiguous() {
     let bytes = ProtocolPacketFixtures.PassiveUSB.emptyConfiguration
     let root = PassiveUSBRegistryNode(
       serviceClass: "IOUSBHostDevice",

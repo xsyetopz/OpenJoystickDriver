@@ -36,7 +36,7 @@ struct EndpointListStreamTests {
   }
 
   @Test
-  func aProfilesSubscriptionSendsTheListAtOnceAndAgainOnlyWhenItChanges() async throws {
+  func profilesSubscriptionSendsListAtOnceAndAgainOnlyWhenItChanges() async throws {
     let racing = FakeAutomation.profile("Racing")
     let automation = FakeAutomation(profiles: [racing])
     try await withEndpointServer(automation: automation) { server, _ in
@@ -56,7 +56,7 @@ struct EndpointListStreamTests {
   }
 
   @Test
-  func aProfilesSubscriptionOfNoProfilesSendsAnEmptyList() async throws {
+  func profilesSubscriptionOfNoProfilesSendsEmptyList() async throws {
     try await withEndpointServer { server, _ in
       let client = try await subscribed(server, stream: "Profiles")
       #expect((try await schemaLine(client)["profiles"] as? [Any])?.isEmpty == true)
@@ -64,7 +64,7 @@ struct EndpointListStreamTests {
   }
 
   @Test
-  func aModsSubscriptionSendsTheListAtOnceAndAgainAfterARemoval() async throws {
+  func modsSubscriptionSendsListAtOnceAndAgainAfterRemoval() async throws {
     let store = try EndpointModTests().store(holding: "arcade-pack")
     try await withEndpointServer(modStore: store) { server, _ in
       let client = try await subscribed(server, stream: "Mods")
@@ -78,7 +78,7 @@ struct EndpointListStreamTests {
   }
 
   @Test
-  func aListSubscriptionNeedsTheReadScope() async throws {
+  func listSubscriptionNeedsReadScope() async throws {
     for stream in ["Profiles", "Mods"] {
       try await withEndpointServer { server, _ in
         let client = try await subscribed(server, scopes: [.control], stream: stream)
@@ -92,7 +92,7 @@ struct EndpointListStreamTests {
   }
 
   @Test
-  func onlyTheControllersStreamTakesOutput() async throws {
+  func onlyControllersStreamTakesOutput() async throws {
     for stream in ["Profiles", "Mods"] {
       try await withEndpointServer { server, _ in
         let client = try await subscribed(server, stream: stream, members: #","output":true"#)
@@ -106,7 +106,7 @@ struct EndpointListStreamTests {
   }
 
   @Test
-  func aLineAfterAListSubscriptionEndsTheConnection() async throws {
+  func lineAfterListSubscriptionEndsConnection() async throws {
     try await withEndpointServer { server, _ in
       let client = try await subscribed(server, stream: "Mods")
       #expect(try await schemaLine(client)["kind"] as? String == "Mods")

@@ -12,7 +12,7 @@ struct Switch2BluetoothLECentralAccessTests {
       (.denied, .denied), (.restricted, .restricted), (.allowedAlways, .granted),
     ]
   )
-  func theAuthorizationMapsToTheAccessState(
+  func authorizationMapsToAccessState(
     pair: (CBManagerAuthorization, BluetoothAccessState)
   ) {
     let central = Switch2BluetoothLECentral(
@@ -24,7 +24,7 @@ struct Switch2BluetoothLECentralAccessTests {
   }
 
   @Test
-  func theAccessControlRequestsThroughTheCentral() {
+  func accessControlRequestsThroughCentral() {
     let central = Switch2BluetoothLECentral(
       hub: Switch2BluetoothLEHub(),
       authorization: { .notDetermined },

@@ -7,7 +7,7 @@ import Testing
 
 extension ProfileLibraryTests {
   @Test
-  func aJSONProfileOfAnEarlierAlphaIsNamedWithE5001() async throws {
+  func jsonProfileOfEarlierAlphaNamedWithE5001() async throws {
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")
       try await library.create(valid)
@@ -27,7 +27,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func aJSONFileOJDDidNotWriteIsLeftOutOfTheIssues() async throws {
+  func jsonFileOJDDidNotWriteLeftOutOfIssues() async throws {
     try await withLibrary { library, _ in
       try await library.create(makeProfile(name: "Valid"))
       let notes = library.profilesDirectory.appendingPathComponent("notes.json")

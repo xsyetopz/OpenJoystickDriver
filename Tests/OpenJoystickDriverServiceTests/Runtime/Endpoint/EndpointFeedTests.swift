@@ -317,7 +317,7 @@ struct EndpointFeedTests {
   }
 
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func everyPersonaOpensAFeedSession(persona: VirtualHIDProfileID) async throws {
+  func everyPersonaOpensFeedSession(persona: VirtualHIDProfileID) async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await welcomed(server)
@@ -333,7 +333,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aRefusedPersonaNamesItAndListsTheAcceptedOnes() async throws {
+  func refusedPersonaNamesItAndListsAcceptedOnes() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await welcomed(server)

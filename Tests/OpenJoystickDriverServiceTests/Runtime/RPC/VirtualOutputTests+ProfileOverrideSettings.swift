@@ -7,7 +7,7 @@ import Testing
 
 extension VirtualOutputTests {
   @Test
-  func anOverrideChangeAndASettingsResetRunOneAtATime() async {
+  func overrideChangeAndSettingsResetRunOneAtTime() async {
     let gate = InstallationGate()
     let fixture = await profileOverrideServer(activationGate: (.generic, gate))
     let resetFinished = CompletionFlag()
@@ -45,7 +45,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aHangingRetargetDuringResetSettingsTimesOut() async {
+  func hangingRetargetDuringResetSettingsTimesOut() async {
     let gate = InstallationGate()
     let fixture = await profileOverrideServer(
       activationGate: (.sdlCompatible, gate),
@@ -74,7 +74,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aLateRetargetReselectsOnlyAfterEarlierQueuedChanges() async {
+  func lateRetargetReselectsOnlyAfterEarlierQueuedChanges() async {
     let gate = InstallationGate()
     // The per-controller timeout fires when the test says, once the activation waits at the gate.
     // A real 50 ms timer also bounded the setup activation, which a loaded machine overran.
@@ -127,7 +127,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func statusReportsEachControllersProfileAndTheStoredOverride() async {
+  func statusReportsEachControllersProfileAndStoredOverride() async {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let fixture = await profileOverrideServer([id])
     _ = await fixture.change(.set("Generic"))
@@ -158,7 +158,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func statusNamesTheProfileInForceForEachController() async throws {
+  func statusNamesProfileInForceForEachController() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let fixture = await profileOverrideServer([id])
     let profile = RemappingProfile(

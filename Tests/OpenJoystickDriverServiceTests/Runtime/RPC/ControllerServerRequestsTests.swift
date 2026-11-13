@@ -59,7 +59,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
-  func aModelTheBundledRecordGivesToOJDIsReleasedAndClaimedBack() throws {
+  func modelBundledRecordGivesToOJDReleasedAndClaimedBack() throws {
     try Self.withDirectory { directory in
       let ultimate2C = (vendorID: 0x2DC8, productID: 0x301B)
       let released = Self.set(ultimate2C, to: .system, native: true, in: directory)
@@ -76,7 +76,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
-  func claimingTheUpstreamServerBackDropsAPatchThatRemovesIt() throws {
+  func claimingUpstreamServerBackDropsPatchRemovesIt() throws {
     try Self.withDirectory { directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let file = directory.appendingPathComponent("2dc8-301b.patch.plist")
@@ -103,7 +103,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
-  func modelApplesDriverHoldsIsRefusedAndNothingIsWritten() throws {
+  func modelApplesDriverHoldsRefusedAndNothingWritten() throws {
     try Self.withDirectory { directory in
       let result = Self.set((0x045E, 0x02EA), to: .ojd, native: true, in: directory)
       #expect(result.failure == .rawUSB)

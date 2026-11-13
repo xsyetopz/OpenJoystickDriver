@@ -29,7 +29,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aProfileRequestActivatesAndDeactivatesAProfileByName() async throws {
+  func profileRequestActivatesAndDeactivatesProfileByName() async throws {
     let racing = FakeAutomation.profile("Racing")
     try await withEndpointServer(automation: FakeAutomation(profiles: [racing])) { server, _ in
       let client = try await welcomed(server)
@@ -52,7 +52,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aProfileRequestSetsOneValueAndTheConnectionStaysOpen() async throws {
+  func profileRequestSetsOneValueAndConnectionStaysOpen() async throws {
     let racing = FakeAutomation.profile("Racing")
     let automation = FakeAutomation(profiles: [racing])
     try await withEndpointServer(automation: automation) { server, _ in
@@ -76,7 +76,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aRefusedRequestAnswersWithTheCodeOfOjdAndKeepsTheConnectionOpen() async throws {
+  func refusedRequestAnswersWithCodeOfOjdAndKeepsConnectionOpen() async throws {
     let racing = FakeAutomation.profile("Racing")
     try await withEndpointServer(automation: FakeAutomation(profiles: [racing])) { server, _ in
       let client = try await welcomed(server)
@@ -102,7 +102,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aSetWithoutAKeyOrAValueEndsTheConnection() async throws {
+  func setWithoutKeyOrValueEndsConnection() async throws {
     try await withEndpointServer(
       automation: FakeAutomation(profiles: [FakeAutomation.profile("Racing")])
     ) { server, _ in
@@ -122,7 +122,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aProfileRequestNeedsTheControlScope() async throws {
+  func profileRequestNeedsControlScope() async throws {
     try await withEndpointServer(
       automation: FakeAutomation(profiles: [FakeAutomation.profile("Racing")])
     ) { server, _ in

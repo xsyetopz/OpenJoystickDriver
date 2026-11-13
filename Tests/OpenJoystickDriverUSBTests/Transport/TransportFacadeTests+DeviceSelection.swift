@@ -139,7 +139,7 @@ extension TransportFacadeTests {
 
 extension TransportFacadeTests {
   @Test
-  func unownedMicrosoftModelTakesTheDirectRoute() {
+  func unownedMicrosoftModelTakesDirectRoute() {
     let direct = device(route: .rawUSB, serviceID: 1, vendorID: 0x045E, productID: 0x02D1)
 
     #expect(
@@ -153,7 +153,7 @@ extension TransportFacadeTests {
   }
 
   @Test
-  func extensionRouteNeedsAnActiveExtensionThatMatchedTheDevice() {
+  func extensionRouteNeedsActiveExtensionMatchedDevice() {
     let direct = device(
       route: .rawUSB,
       serviceID: 1,
@@ -198,7 +198,7 @@ extension TransportFacadeTests {
   }
 
   @Test(arguments: [UInt16(0x02EA), 0x0B00, 0x0B12])
-  func modelApplesDriverHoldsGetsNoSessionWithoutTheExtension(productID: UInt16) {
+  func modelApplesDriverHoldsGetsNoSessionWithoutExtension(productID: UInt16) {
     let direct = device(route: .rawUSB, serviceID: 1, vendorID: 0x045E, productID: productID)
 
     #expect(

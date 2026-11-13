@@ -34,7 +34,7 @@ struct OwnershipReevaluationTests {
   /// A served device is admitted again when GameController starts or stops listing it, so the
   /// second-controller warning follows the list; a device macOS serves has no such warning.
   @Test(arguments: [(false, true), (true, false)])
-  func reevaluationCyclesOnlyAServedDeviceWhoseListingChanged(native: Bool, cycles: Bool) {
+  func reevaluationCyclesOnlyServedDeviceWhoseListingChanged(native: Bool, cycles: Bool) {
     let device = Self.gameSir(productID: 0x100B, locationID: 1, native: native)
 
     let cycled = HIDDeviceStream.ownershipReevaluation(

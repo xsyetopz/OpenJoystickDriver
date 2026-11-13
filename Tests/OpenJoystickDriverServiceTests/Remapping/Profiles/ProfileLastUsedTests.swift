@@ -40,7 +40,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func aNeverActivatedProfileHasNoLastUse() async throws {
+  func neverActivatedProfileHasNoLastUse() async throws {
     try await Self.withLibrary(clock: Clock(100)) { library, _ in
       try await library.create(Self.profile("Idle"))
       #expect(try await library.snapshot().lastUsed.isEmpty)
@@ -48,7 +48,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func activatingAProfileRecordsTheTime() async throws {
+  func activatingProfileRecordsTime() async throws {
     let clock = Clock(1_000)
     try await Self.withLibrary(clock: clock) { library, _ in
       let first = Self.profile("First")
@@ -68,7 +68,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func theLastUseSurvivesANewLibraryInstance() async throws {
+  func lastUseSurvivesNewLibraryInstance() async throws {
     let clock = Clock(1_000)
     try await Self.withLibrary(clock: clock) { library, directory in
       let profile = Self.profile("Kept")
@@ -81,7 +81,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func deactivatingAProfileKeepsItsLastUse() async throws {
+  func deactivatingProfileKeepsItsLastUse() async throws {
     try await Self.withLibrary(clock: Clock(1_000)) { library, _ in
       let profile = Self.profile("Kept")
       try await library.create(profile)
@@ -92,7 +92,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func aRefusedActivationRecordsNothing() async throws {
+  func refusedActivationRecordsNothing() async throws {
     try await Self.withLibrary(clock: Clock(1_000)) { library, directory in
       let missing = UUID()
       await #expect(throws: RemappingProfileLibraryError.profileNotFound(missing)) {
@@ -109,7 +109,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func aDeletedProfileLeavesTheLastUseList() async throws {
+  func deletedProfileLeavesLastUseList() async throws {
     try await Self.withLibrary(clock: Clock(1_000)) { library, _ in
       let profile = Self.profile("Gone")
       try await library.create(profile)
@@ -120,7 +120,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func aDamagedLastUseFileDoesNotBlockActivationAndIsReplaced() async throws {
+  func damagedLastUseFileDoesNotBlockActivationAndReplaced() async throws {
     try await Self.withLibrary(clock: Clock(1_000)) { library, directory in
       let profile = Self.profile("Resilient")
       try await library.create(profile)
@@ -135,7 +135,7 @@ struct ProfileLastUsedTests {
   }
 
   @Test
-  func theLastUseFileHoldsOnlyTextAndNumbers() async throws {
+  func lastUseFileHoldsOnlyTextAndNumbers() async throws {
     try await Self.withLibrary(clock: Clock(1_000)) { library, directory in
       let profile = Self.profile("Plain")
       try await library.create(profile)

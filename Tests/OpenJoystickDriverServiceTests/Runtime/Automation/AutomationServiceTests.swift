@@ -284,7 +284,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func settingAProfileValueReturnsTheProfileAsSaved() async throws {
+  func settingProfileValueReturnsProfileAsSaved() async throws {
     let racing = Self.profile("Racing")
     let service = FakeService(profiles: [racing, Self.profile("Menus")], active: [racing.id])
 
@@ -300,7 +300,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func settingAProfileValuePassesOnTheRefusalsOfTheSharedCode() async throws {
+  func settingProfileValuePassesOnRefusalsOfSharedCode() async throws {
     let service = FakeService(profiles: [Self.profile("Racing")])
 
     let unknown = await #expect(throws: CodedFailure.self) {

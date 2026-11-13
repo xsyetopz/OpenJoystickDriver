@@ -63,7 +63,7 @@ struct EndpointModTests {
   }
 
   @Test
-  func aModListAnswersTheInstalledPackagesAndTheConnectionStaysOpen() async throws {
+  func modListAnswersInstalledPackagesAndConnectionStaysOpen() async throws {
     let store = try store(holding: "arcade-pack")
     try await withEndpointServer(modStore: store) { server, _ in
       let client = try await welcomed(server, scopes: [.read])
@@ -82,7 +82,7 @@ struct EndpointModTests {
   }
 
   @Test
-  func anEmptyStoreAnswersAnEmptyList() async throws {
+  func emptyStoreAnswersEmptyList() async throws {
     try await withEndpointServer(modStore: try store(holding: nil)) { server, _ in
       let client = try await welcomed(server, scopes: [.read])
       await client.send(clientLine("ModList"))
@@ -91,7 +91,7 @@ struct EndpointModTests {
   }
 
   @Test
-  func aModListNeedsTheReadScopeAndNotTheControlScope() async throws {
+  func modListNeedsReadScopeAndNotControlScope() async throws {
     try await withEndpointServer { server, _ in
       let client = try await welcomed(server, scopes: [.control])
       await client.send(clientLine("ModList"))
@@ -101,7 +101,7 @@ struct EndpointModTests {
   }
 
   @Test
-  func aModListMayFollowAProfileRequest() async throws {
+  func modListMayFollowProfileRequest() async throws {
     try await withEndpointServer(
       automation: FakeAutomation(profiles: [FakeAutomation.profile("Racing")])
     ) { server, _ in

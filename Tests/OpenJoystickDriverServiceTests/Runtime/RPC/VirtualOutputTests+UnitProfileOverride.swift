@@ -44,7 +44,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aUnitOverrideForAControllerWithoutAUnitIDIsNotFound() async {
+  func unitOverrideForControllerWithoutUnitIDNotFound() async {
     let fixture = await profileOverrideServer()
 
     let result = await fixture.change(.set("Generic"), unit: true)

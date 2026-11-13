@@ -8,7 +8,7 @@ import Testing
 /// `kIOReturnBadArgument` to any other value there.
 struct USBInterruptTimeoutTests {
   @Test
-  func interruptPipesGetZeroWhateverTheRequestedTimeout() async {
+  func interruptPipesGetZeroWhateverRequestedTimeout() async {
     let policy = USBPipeTimeoutPolicy { _ in 0x03 }
 
     #expect(await policy.timeout(endpoint: 0x81, requestedMilliseconds: 2_000) == 0)
@@ -16,14 +16,14 @@ struct USBInterruptTimeoutTests {
   }
 
   @Test
-  func bulkPipesKeepTheRequestedTimeout() async {
+  func bulkPipesKeepRequestedTimeout() async {
     let policy = USBPipeTimeoutPolicy { _ in 0x02 }
 
     #expect(await policy.timeout(endpoint: 0x02, requestedMilliseconds: 2_000) == 2_000)
   }
 
   @Test
-  func anUnreadablePipeKeepsTheRequestedTimeoutAndIsAskedAgain() async {
+  func unreadablePipeKeepsRequestedTimeoutAndAskedAgain() async {
     let lookups = LookupCounter()
     let policy = USBPipeTimeoutPolicy { _ in
       await lookups.increment()
@@ -36,7 +36,7 @@ struct USBInterruptTimeoutTests {
   }
 
   @Test
-  func eachEndpointIsLookedUpOnce() async {
+  func eachEndpointLookedUpOnce() async {
     let lookups = LookupCounter()
     let policy = USBPipeTimeoutPolicy { endpoint in
       await lookups.increment()

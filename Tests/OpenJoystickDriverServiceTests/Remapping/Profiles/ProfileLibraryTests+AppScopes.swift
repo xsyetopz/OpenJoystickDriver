@@ -15,7 +15,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func aProfileForTwoAppsIsInForceForTheSecond() async throws {
+  func profileForTwoAppsInForceForSecond() async throws {
     try await withLibrary { library, _ in
       let global = makeProfile(name: "Everywhere")
       let scoped = makeAppProfile(
@@ -47,7 +47,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func theSelectionNamesTheAppThatChoseTheProfile() async throws {
+  func selectionNamesAppChoseProfile() async throws {
     try await withLibrary { library, _ in
       let global = makeProfile(name: "Everywhere")
       let scoped = makeAppProfile(

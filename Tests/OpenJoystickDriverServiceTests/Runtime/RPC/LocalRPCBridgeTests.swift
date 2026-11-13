@@ -63,7 +63,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func requestBluetoothAccessAsksTheControlAndGetStatusReportsItsState() async throws {
+  func requestBluetoothAccessAsksControlAndGetStatusReportsItsState() async throws {
     let requests = RequestCounter()
     let control = BluetoothAccessControl(
       state: { requests.hasRequest ? .granted : .notAsked },
@@ -85,7 +85,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aServerWithoutBluetoothReportsItUnavailable() async throws {
+  func serverWithoutBluetoothReportsItUnavailable() async throws {
     try await withServer { server in
       #expect(server.requestBluetoothAccess() == .unavailable)
     }

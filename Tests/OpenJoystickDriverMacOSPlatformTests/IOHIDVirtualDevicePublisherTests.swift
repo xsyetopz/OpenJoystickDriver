@@ -164,7 +164,7 @@ struct IOHIDVirtualDevicePublisherTests {
   /// A custom persona replaces the identity strings and IDs of the published device, and keeps the
   /// built-in descriptor, the transport, and the virtual LocationID.
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func personaIdentityIsPublishedOverTheBuiltInDescriptor(_ profileID: VirtualHIDProfileID) {
+  func personaIdentityPublishedOverBuiltInDescriptor(_ profileID: VirtualHIDProfileID) {
     let builtIn = profileID.makeProfile()
     let persona = VirtualPersona.Identity(
       vendorID: 0x1234,

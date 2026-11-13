@@ -152,7 +152,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func anInvalidRewriteLeavesTheEarlierRecordInForce() async throws {
+  func invalidRewriteLeavesEarlierRecordInForce() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true

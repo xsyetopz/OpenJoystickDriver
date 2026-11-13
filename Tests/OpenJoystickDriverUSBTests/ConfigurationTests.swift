@@ -27,7 +27,7 @@ struct USBDriverKitExtensionConfigurationTests {
   }
 
   @Test
-  func bundledRecordsMarkExactlyTheAppleHeldModels() {
+  func bundledRecordsMarkExactlyAppleHeldModels() {
     let held = USBDriverKitExtensionConfiguration.appleHeldModels(in: ControllerRecordSet.bundled)
 
     #expect(
