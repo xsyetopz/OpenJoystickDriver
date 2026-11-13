@@ -6,11 +6,12 @@ Capture paths in this page are relative to `openspec/changes/0-6-0-alpha-3/evide
 
 | Mode | VID:PID | Route | Status |
 | --- | --- | --- | --- |
-| 2.4 GHz receiver, XInput | `2DC8:310A` | `XboxXUSB` | Captured: every control reports (`2c-receiver-310a/ordered-controls-100s.txt`); rumble packets sent, felt result not in the capture; rear buttons Unverified |
-| Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Captured: every control raw and decoded (`2c-bluetooth-301b/ordered-controls-120s.txt`, `2c-bluetooth-301b/ojd-watch-120s.txt`); battery byte reads 0; rumble write fails |
-| Wired, DInput | `2DC8:301D` | `HIDDescriptor` | Unverified: no capture of this identity exists, and no capture shows which pad mode produces it |
-| USB adapter | `2DC8:3109` | `XboxXUSB` | Unverified: no capture of this identity exists, and no capture shows which pad mode produces it |
-| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the mode `unlinked` matches the product string `IDLE`, is `idle: NoControllerLinked` and reports `NoControllerLinked`; the default mode serves the linked pad with the HID descriptor and has no input map until the capture is mapped to usages; unassigned L4 Unverified |
+| 2.4 GHz receiver, XInput | `2DC8:310A` | `XboxXUSB` | Captured: every control reports (`2c-receiver-310a/ordered-controls-100s.txt`); rumble packets sent, felt result not in the capture; unassigned rear buttons send no bit (`2c-receiver-310a/rear-unassigned-with-a-b-45s.txt`) |
+| Cable, XInput or DInput | `2DC8:310A` | `XboxXUSB` | Captured: the cable enumerates as `310A` after X + Home and after B + Home (`2c-cable/mode-attempts.txt`); same report as the receiver's `310A`; unassigned rear buttons send no bit (`2c-cable/310a-rear-unassigned-45s.txt`) |
+| Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Captured: every control raw and decoded (`2c-bluetooth-301b/ordered-controls-120s.txt`, `2c-bluetooth-301b/ojd-watch-120s.txt`); battery byte reads 0 at 100% and at 90%; rumble write fails |
+| Unknown | `2DC8:301D` | `HIDDescriptor` | Unverified: no mode of the pad enumerated as this identity (`2c-cable/mode-attempts.txt`) |
+| Unknown | `2DC8:3109` | `XboxXUSB` | Unverified: no mode of the pad enumerated as this identity (`2c-cable/mode-attempts.txt`); the maintainer owns no 8BitDo adapter other than the pad's receiver |
+| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the mode `unlinked` matches the product string `IDLE`, is `idle: NoControllerLinked` and reports `NoControllerLinked`; the default mode serves the linked pad with the HID descriptor and has no input map until the capture is mapped to usages; unassigned L4 sets byte 1 bit 2 and unassigned R4 sets bit 5 (`2c-receiver-301c/rear-unassigned-60s.txt`) |
 
 ## Results
 
@@ -34,7 +35,11 @@ Source: `2c-receiver-310a/ordered-controls-100s.txt`. One report is 20 bytes: `0
 
 At rest (`2c-receiver-310a/idle-12s.txt`) buttons, triggers and sticks read 0 in the first 200 reports; three later reports carry small stick values, and 100 more read 0.
 
-The rear buttons: `2c-receiver-310a/rear-square-star-45s.txt` holds seven presses. They report byte 2 = `20`, byte 3 = `10`, byte 2 = `10`, byte 2 = `10`, byte 3 = `10`, byte 3 = `10`, byte 3 = `10`: only bits that other controls own, and no report holds a separate rear bit. The tail of `ordered-controls-100s.txt` shows the same: bytes 2 = `20`, `10` and byte 3 = `10` only.
+The rear buttons: `2c-receiver-310a/rear-square-star-45s.txt` holds seven presses. They report byte 2 = `20`, byte 3 = `10`, byte 2 = `10`, byte 2 = `10`, byte 3 = `10`, byte 3 = `10`, byte 3 = `10`: only bits that other controls own, and no report holds a separate rear bit. The tail of `ordered-controls-100s.txt` shows the same: bytes 2 = `20`, `10` and byte 3 = `10` only. With both assignments cleared (the pad's mapping light stays dark on a press), `2c-receiver-310a/rear-unassigned-with-a-b-45s.txt` holds A, L4, L4, B, R4, R4, A: the reports change only to byte 3 = `10`, `20`, `10`, so A and B report and the rear buttons send nothing. `rear-unassigned-60s.txt` holds five presses each of L4 and R4, as the maintainer reports them, and also changes only to byte 3 = `10` and `20`. An unassigned rear button sends no bit as `310A`.
+
+### Cable
+
+Source: `2c-cable/mode-attempts.txt`. By cable the pad enumerates as `2DC8:310A` after X + Home, after B + Home, and after it was moved from the receiver in DInput mode. The report has the `310A` layout; its last six bytes read `1A 1B 30 6D 00 00` or `11 1B 30 6D 00 00` instead of the receiver's constant `10 1C 30 64 00 10`. In `2c-cable/310a-rear-unassigned-45s.txt` the first reports carry byte 3 = `40`, X held from X + Home; then A (`10`) and B (`20`) report, and the unassigned rear buttons send nothing.
 
 Rumble: `2c-receiver-310a/rumble-6s.txt` shows two writes, `00 08 00 00 C8 00 00 00` and 1.5 s later `00 08 00 00 00 00 00 00`. The capture does not record whether a motor ran. Two testers reported rumble working on `0.5.0-beta.4` tester build `1.5.71`; no capture file backs that report.
 
@@ -56,6 +61,7 @@ Source: `2c-receiver-301c/ordered-controls-150s.txt`, pad in DInput mode. One re
 Rear buttons:
 
 - `2c-receiver-301c/rear-r4-cleared-45s.txt`: with the R4 assignment cleared, R4 reports byte 1 = `20` (bit 5), twice at 11.07 s and 11.32 s; the other presses report byte 2 = `04` and byte 1 = `01`.
+- `2c-receiver-301c/rear-unassigned-60s.txt`: with both assignments cleared, L4 reports byte 1 = `04` (bit 2) in 164 reports and R4 reports byte 1 = `20` (bit 5) in 142 reports, five presses each.
 - `2c-receiver-301c/rear-l4-assigned-60s.txt`: with L4 assigned, no report sets byte 1 bit 2 (`04`) or bit 5 (`20`); the presses report byte 2 = `04` and byte 1 = `01`.
 - `2c-receiver-301c/ordered-controls-150s.txt`: the presses after the sticks (28 s to 39 s) report byte 2 = `04`, byte 1 = `01` and byte 2 = `08` only; no report sets byte 1 bit 2 or bit 5.
 
@@ -79,7 +85,7 @@ Raw source: `2c-bluetooth-301b/ordered-controls-120s.txt`. OJD decode source: `2
 
 The trigger rows follow the press order: the OJD capture lists LeftTrigger before RightTrigger, and the raw capture raises byte 7 before byte 6.
 
-Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture records no charge level. At 100%, as `system_profiler SPBluetoothDataType` reads it from the pad's Bluetooth battery service, byte 10 reads `00` in all 653 reports (`2c-bluetooth-301b/battery-100-percent.txt`).
+Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture records no charge level. At 100%, as `system_profiler SPBluetoothDataType` reads it from the pad's Bluetooth battery service, byte 10 reads `00` in all 653 reports (`2c-bluetooth-301b/battery-100-percent.txt`). At 90%, as the macOS Bluetooth menu shows it, byte 10 reads `00` in all 545 reports (`2c-bluetooth-301b/battery-90-percent.txt`). The byte is constant, and the report carries no charge level.
 
 Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); `tasks.md` 2.3 names them L4 and R4. The decode in `ojd-watch-120s.txt` lists neither bit, because the record maps neither.
 
@@ -89,14 +95,9 @@ Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of ou
 
 | Row | Missing |
 | --- | --- |
-| `2DC8:301C`, L4 unassigned | A capture of L4 with no assignment. `rear-l4-assigned-60s.txt` holds L4 assigned. |
-| `2DC8:310A`, both rear buttons unassigned | A capture of L4 and R4 with no assignment. `rear-square-star-45s.txt` holds assigned rear buttons. |
-| `2DC8:301B`, battery at a second charge level | A capture of byte 10 below 100%. At 100% it reads 0. |
-| Rear buttons by cable | A capture with a cable connected, for each rear button. |
-| Pad mode that produces `2DC8:301D` | A capture of that identity, and the mode that enumerates as it. |
-| Pad mode that produces `2DC8:3109` | A capture of that identity, and the mode that enumerates as it. |
+| Device that produces `2DC8:301D` | A capture of that identity. Receiver, cable, and Bluetooth LE in XInput and DInput produce `310A`, `301C`, and `301B` only (`2c-cable/mode-attempts.txt`). |
+| Device that produces `2DC8:3109` | A capture of that identity, from an 8BitDo adapter other than the pad's receiver. |
 | `2DC8:301C` rumble | A write of vendor report `0x81` or on the interrupt OUT pipe that the maintainer feels. |
-| `2DC8:301B` rumble from OJD's session | The report 5 write repeated while OJD serves the pad. |
 
 ## Why Bluetooth Needs a Record
 
