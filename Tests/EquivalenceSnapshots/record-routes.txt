@@ -1882,6 +1882,12 @@ raw-access
 ## 2DC8:200F
 raw-access
 
+## 2DC8:2019
+raw-access
+
+## 2DC8:2027
+raw-access
+
 ## 2DC8:301B
 system ownership=ojd
 
