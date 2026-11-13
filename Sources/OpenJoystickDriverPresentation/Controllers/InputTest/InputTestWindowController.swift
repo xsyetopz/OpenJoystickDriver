@@ -166,7 +166,7 @@
     /// - Parameters:
     ///   - _: The toolbar.
     ///   - itemIdentifier: The identifier of the item.
-    ///   - _: Whether the toolbar inserts the item now.
+    ///   - _: Whether the toolbar inserts the item.
     /// - Returns: The Refresh item, or nil for any other identifier.
     func toolbar(
       _: NSToolbar,
