@@ -203,6 +203,7 @@ final class LibraryViewModel: ObservableObject {
   func reload() {
     records = store.records()
     mods = store.installedMods()
+    recordDetail = nil
     select(selection)
   }
 
@@ -221,11 +222,18 @@ final class LibraryViewModel: ObservableObject {
   }
 
   /// Shows `selection`; a record or mod that the list does not show selects nothing.
+  ///
+  /// The record is read from the store once: selecting the record that is already shown, as the
+  /// list's binding and a change of the search text do, keeps the detail read before.
   func select(_ selection: LibrarySelection?) {
     switch selection {
     case .record(let model)?:
-      recordDetail =
-        visibleRecords.contains { $0.model == model } ? store.recordDetail(model) : nil
+      if recordDetail?.item.model != model {
+        recordDetail =
+          visibleRecords.contains { $0.model == model } ? store.recordDetail(model) : nil
+      } else if !visibleRecords.contains(where: { $0.model == model }) {
+        recordDetail = nil
+      }
       self.selection = recordDetail == nil ? nil : selection
     case .mod(let name)?:
       recordDetail = nil

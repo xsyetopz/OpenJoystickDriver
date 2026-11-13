@@ -98,7 +98,7 @@ struct LibraryRecordDetail: Equatable {
   let claimedByUSBExtension: Bool?
   /// The top-level fields of the record, with the layer that sets each.
   let fields: [LibraryRecordField]
-  /// The effective record as colored JSON text.
+  /// The effective record as colored property list text.
   let record: LibraryRecordDocument
 }
 

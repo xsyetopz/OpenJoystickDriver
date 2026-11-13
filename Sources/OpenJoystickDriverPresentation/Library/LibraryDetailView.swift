@@ -124,7 +124,7 @@
       Section { recordDocument(detail) }
     }
 
-    /// The Record section: the record JSON, or a line that says the text cannot be shown.
+    /// The Record section: the record property list, or a line that says the text cannot be shown.
     @ViewBuilder
     private func recordDocument(_ detail: LibraryRecordDetail) -> some View {
       switch detail.record {

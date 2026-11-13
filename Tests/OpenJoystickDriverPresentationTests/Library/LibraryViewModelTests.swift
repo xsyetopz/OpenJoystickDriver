@@ -31,7 +31,12 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
 
   func records() -> LibraryRecordListing { listing }
 
-  func recordDetail(_ model: ControllerModelID) -> LibraryRecordDetail? { details[model] }
+  var detailReads = 0
+
+  func recordDetail(_ model: ControllerModelID) -> LibraryRecordDetail? {
+    detailReads += 1
+    return details[model]
+  }
 
   func testRecord(
     _ model: ControllerModelID,
@@ -241,11 +246,13 @@ struct LibraryViewModelTests {
       notes: [],
       claimedByUSBExtension: nil,
       fields: [],
-      record: LibraryRecordDocument(document: "{}\n")
+      record: LibraryRecordDocument(document: "<dict/>\n")
     )
     let model = makeModel(store)
     model.reload()
     model.select(.record(item.model))
+    model.select(.record(item.model))
+    #expect(store.detailReads == 1)
 
     model.requestRemoveSelection()
     #expect(store.removedRecords.isEmpty)

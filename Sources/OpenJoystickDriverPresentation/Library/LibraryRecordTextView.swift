@@ -4,7 +4,7 @@
   import Foundation
   import SwiftUI
 
-  extension JSONSyntaxKind {
+  extension RecordSyntaxKind {
     /// The appearances a record color has a shade for, in the order of ``shades``.
     static let appearances: [NSAppearance.Name] = [
       .aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua,
@@ -58,14 +58,14 @@
   }
 
   extension LibraryRecordText {
-    /// The record JSON, colored by token, without the line break that ends the document.
+    /// The record property list, colored by token, without the line break that ends the document.
     var highlighted: AttributedString {
       var shown = tokens
       if let last = shown.last, last.kind == .space, last.text.hasSuffix("\n") {
         shown.removeLast()
         let kept = String(last.text.dropLast())
         if !kept.isEmpty {
-          shown.append(JSONSyntaxToken(kind: .space, text: kept, depth: last.depth))
+          shown.append(RecordSyntaxToken(kind: .space, text: kept, depth: last.depth))
         }
       }
       var result = AttributedString()
@@ -78,7 +78,7 @@
     }
   }
 
-  /// The record JSON in the Library detail: the code is one selectable block, and each
+  /// The record property list in the Library detail: the code is one selectable block, and each
   /// identifier reading sits after its line as a separate element that selection and copying
   /// leave out.
   struct LibraryRecordTextView: View {
@@ -117,7 +117,7 @@
               .accessibilityHidden(true)
             if let reading = text.identifierReadings[index] {
               Text(reading.hexadecimal).font(Self.font)
-                .foregroundColor(Color(JSONSyntaxKind.punctuation.color))
+                .foregroundColor(Color(RecordSyntaxKind.punctuation.color))
                 .ojdAccessibilityLabel(
                   OJDLocalized.formatted(
                     "a11y.library.recordHexadecimal",

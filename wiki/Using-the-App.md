@@ -196,6 +196,8 @@ For more information, see [Profiles](Remapping-Profiles.md).
 
 The **Library** area lists the **Controller records** and the **Mods** that are installed (needs the **All Controls** interface).
 Select an item to see its fields and files.
+The **Record** section shows the record as its XML property list, colored by part, with the hexadecimal form of the vendor and product IDs beside their lines.
+**Copy All** copies the property list without those readings.
 
 - **Install** adds a controller record file or a mod folder.
   **Validate...** checks it first.

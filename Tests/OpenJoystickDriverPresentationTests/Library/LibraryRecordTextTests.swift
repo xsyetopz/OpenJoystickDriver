@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -8,78 +9,97 @@ import Testing
 /// runs there.
 @MainActor
 struct LibraryRecordTextTests {
-  private static let document = """
-    {
+  /// A record text as the catalog holds it: the `plistData()` of a record.
+  private static let document: String = {
+    let record: [String: Any] = [
       "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Controller",
       "vendorID": 13629,
       "productID": 4296,
-      "modes": [
-        {
-          "id": "default",
-          "vendorID": 99,
-          "protocol": {
-            "family": "XboxGIP"
-          }
-        }
-      ]
-    }
-
-    """
+      "scale": 0.5,
+      "enabled": true,
+      "note": "a < b & c",
+      "modes": [["id": "default", "vendorID": 99, "protocol": ["family": "XboxGIP"]]],
+      "empty": [String](),
+    ]
+    guard let data = try? OrderedJSON(foundation: record).plistData(),
+      let text = String(bytes: data, encoding: .utf8)
+    else { fatalError("the record does not encode") }
+    return text
+  }()
 
   private func text() throws -> LibraryRecordText {
     try LibraryRecordText(document: Self.document)
   }
 
+  private func line(_ text: LibraryRecordText, containing part: String) throws -> Int {
+    try #require(text.lines.firstIndex { $0.contains(part) })
+  }
+
+  @Test
+  func theTextTheCatalogHoldsIsAnXMLPropertyList() {
+    #expect(Self.document.hasPrefix("<?xml"))
+    #expect(!Self.document.hasPrefix("{"))
+  }
+
   @Test
   func onlyTheTopLevelVendorAndProductLinesGetAReading() throws {
     let text = try text()
+    let vendor = try line(text, containing: "<integer>13629</integer>")
+    let product = try line(text, containing: "<integer>4296</integer>")
 
     #expect(
       text.identifierReadings == [
-        3: .init(key: "vendorID", hexadecimal: "0x353D"),
-        4: .init(key: "productID", hexadecimal: "0x10C8"),
+        vendor: .init(key: "vendorID", hexadecimal: "0x353D"),
+        product: .init(key: "productID", hexadecimal: "0x10C8"),
       ]
     )
-    #expect(text.lines[3] == "  \"vendorID\": 13629,")
-    #expect(text.lines[4] == "  \"productID\": 4296,")
+    #expect(text.lines[vendor - 1].contains("<key>vendorID</key>"))
   }
 
   @Test
   func aNestedVendorIDGetsNoReading() throws {
     let text = try text()
+    let nested = try line(text, containing: "<integer>99</integer>")
 
-    #expect(text.lines[8] == "      \"vendorID\": 99,")
-    #expect(text.identifierReadings[8] == nil)
+    #expect(text.identifierReadings[nested] == nil)
   }
 
   @Test
   func readingsUseUppercaseHexWithFourDigits() throws {
-    let text = try LibraryRecordText(document: "{\n  \"vendorID\": 1,\n  \"productID\": 65535\n}\n")
+    let text = try LibraryRecordText(
+      document:
+        "<plist><dict>\n<key>vendorID</key>\n<integer>1</integer>\n<key>productID</key>\n"
+        + "<integer>65535</integer>\n</dict></plist>\n"
+    )
 
-    #expect(text.identifierReadings.mapValues(\.hexadecimal) == [1: "0x0001", 2: "0xFFFF"])
+    #expect(text.identifierReadings.mapValues(\.hexadecimal) == [2: "0x0001", 4: "0xFFFF"])
   }
 
   @Test
   func aVendorIDKeyWithAStringValueGetsNoReading() throws {
-    let text = try LibraryRecordText(document: "{\n  \"vendorID\": \"13629\"\n}\n")
+    let text = try LibraryRecordText(
+      document: "<plist><dict>\n<key>vendorID</key>\n<string>13629</string>\n</dict></plist>\n"
+    )
 
     #expect(text.identifierReadings.isEmpty)
   }
 
   @Test
   func aNumberOutsideTheIdentifierRangeGetsNoReading() throws {
-    let text = try LibraryRecordText(document: "{\n  \"vendorID\": 70000\n}\n")
+    let text = try LibraryRecordText(
+      document: "<plist><dict>\n<key>vendorID</key>\n<integer>70000</integer>\n</dict></plist>\n"
+    )
 
     #expect(text.identifierReadings.isEmpty)
   }
 
   @Test
-  func copyTextIsTheDocumentAndValidJSON() throws {
+  func copyTextIsTheDocumentAndAPropertyList() throws {
     let text = try text()
 
     #expect(text.copyText == Self.document)
-    let object = try JSONSerialization.jsonObject(with: Data(text.copyText.utf8))
+    let object = try DocumentCoder.read(Data(text.copyText.utf8), file: "record.plist")
     #expect((object as? [String: Any])?["vendorID"] as? Int == 13629)
     #expect(!text.copyText.contains("0x"))
   }
@@ -91,6 +111,23 @@ struct LibraryRecordTextTests {
     #expect(text.lines.joined(separator: "\n") + "\n" == Self.document)
     #expect(text.lines.allSatisfy { !$0.contains("0x") })
     #expect(text.tokens.map(\.text).joined() == Self.document)
+  }
+
+  @Test
+  func theTokensColorKeysValuesAndTags() throws {
+    let tokens = try text().tokens
+
+    func kinds(of text: String) -> Set<RecordSyntaxKind> {
+      Set(tokens.filter { $0.text == text }.map(\.kind))
+    }
+    #expect(kinds(of: "vendorID") == [.key])
+    #expect(kinds(of: "Controller") == [.string])
+    #expect(kinds(of: "13629") == [.number])
+    #expect(kinds(of: "0.5") == [.number])
+    #expect(kinds(of: "<true/>") == [.literal])
+    #expect(kinds(of: "a &lt; b &amp; c") == [.string])
+    #expect(kinds(of: "<dict>") == [.punctuation])
+    #expect(kinds(of: "<array/>") == [.punctuation])
   }
 
   @Test
@@ -135,16 +172,16 @@ struct LibraryRecordTextTests {
     return ratio
   }
 
-  private static let coloredKinds: [JSONSyntaxKind] = [
+  private static let coloredKinds: [RecordSyntaxKind] = [
     .key, .string, .number, .literal, .punctuation,
   ]
 
   /// The contrast of each shade of `kind`, by appearance index.
-  private static func contrasts(_ kind: JSONSyntaxKind) throws -> [Double] {
+  private static func contrasts(_ kind: RecordSyntaxKind) throws -> [Double] {
     let shades = try #require(kind.shades)
-    #expect(shades.count == JSONSyntaxKind.appearances.count)
-    return try zip(shades, JSONSyntaxKind.appearances).map { shade, appearance in
-      try contrast(JSONSyntaxKind.color(shade), in: appearance)
+    #expect(shades.count == RecordSyntaxKind.appearances.count)
+    return try zip(shades, RecordSyntaxKind.appearances).map { shade, appearance in
+      try contrast(RecordSyntaxKind.color(shade), in: appearance)
     }
   }
 
@@ -152,7 +189,7 @@ struct LibraryRecordTextTests {
   func everyShadeReadsAtLeast4_5To1AndSevenWithIncreasedContrast() throws {
     for kind in Self.coloredKinds {
       let ratios = try Self.contrasts(kind)
-      for (ratio, appearance) in zip(ratios, JSONSyntaxKind.appearances) {
+      for (ratio, appearance) in zip(ratios, RecordSyntaxKind.appearances) {
         let increased =
           appearance == .accessibilityHighContrastAqua
           || appearance == .accessibilityHighContrastDarkAqua
@@ -163,30 +200,30 @@ struct LibraryRecordTextTests {
 
   @Test(arguments: [NSAppearance.Name.aqua, .darkAqua])
   func theColorTakesTheShadeOfTheAppearance(_ appearance: NSAppearance.Name) throws {
-    let index = try #require(JSONSyntaxKind.appearances.firstIndex(of: appearance))
+    let index = try #require(RecordSyntaxKind.appearances.firstIndex(of: appearance))
     for kind in Self.coloredKinds {
       let shade = try #require(kind.shades)[index]
       #expect(
         try Self.contrast(kind.color, in: appearance)
-          == Self.contrast(JSONSyntaxKind.color(shade), in: appearance)
+          == Self.contrast(RecordSyntaxKind.color(shade), in: appearance)
       )
     }
-    #expect(JSONSyntaxKind.space.color == .labelColor)
+    #expect(RecordSyntaxKind.space.color == .labelColor)
   }
 
   @Test
   func anAppearanceMatchingNoneOfTheFourGetsTheLightShade() {
-    #expect(JSONSyntaxKind.shadeIndex(matching: nil) == JSONSyntaxKind.lightShadeIndex)
-    #expect(JSONSyntaxKind.appearances[JSONSyntaxKind.lightShadeIndex] == .aqua)
-    for (index, name) in JSONSyntaxKind.appearances.enumerated() {
-      #expect(JSONSyntaxKind.shadeIndex(matching: name) == index)
+    #expect(RecordSyntaxKind.shadeIndex(matching: nil) == RecordSyntaxKind.lightShadeIndex)
+    #expect(RecordSyntaxKind.appearances[RecordSyntaxKind.lightShadeIndex] == .aqua)
+    for (index, name) in RecordSyntaxKind.appearances.enumerated() {
+      #expect(RecordSyntaxKind.shadeIndex(matching: name) == index)
     }
-    #expect(JSONSyntaxKind.shadeIndex(matching: .darkAqua) == 1)
+    #expect(RecordSyntaxKind.shadeIndex(matching: .darkAqua) == 1)
   }
 
   @Test
   func everyKindHasAColorAndPunctuationRecedes() throws {
-    for index in JSONSyntaxKind.appearances.indices {
+    for index in RecordSyntaxKind.appearances.indices {
       let shades = Self.coloredKinds.compactMap { $0.shades?[index] }
       #expect(Set(shades).count == Self.coloredKinds.count)
     }
@@ -202,26 +239,27 @@ struct LibraryRecordTextTests {
   func theStoreSaysWhenTheTokenizerCannotReadTheDocument() {
     var logged: [String] = []
     #expect(
-      LibraryRecordDocument(document: "[1 2]") { logged.append($0) }
-        == .unreadable(
-          JSONSyntaxError(offset: 3, reason: "unexpected \"2\" where JSON expects , or ]")
-        )
+      LibraryRecordDocument(document: "<dict>") { logged.append($0) }
+        == .unreadable(RecordSyntaxError(offset: 6, reason: "<dict> is not closed"))
     )
     #expect(
       logged == [
-        "[Library] The record text cannot be shown: JSON text, scalar 3: unexpected \"2\" "
-          + "where JSON expects , or ]\n"
+        "[Library] The record text cannot be shown: record text, scalar 6: <dict> is not closed\n"
       ]
     )
-    guard case .text(let text) = LibraryRecordDocument(document: Self.document) else {
+    logged = []
+    let read = LibraryRecordDocument(document: Self.document) { logged.append($0) }
+    guard case .text(let text) = read else {
       Issue.record("the document is not read")
       return
     }
     #expect(text.copyText == Self.document)
+    #expect(logged.isEmpty)
   }
 
   @Test
   func textTheTokenizerCannotReadThrows() {
-    #expect(throws: JSONSyntaxError.self) { try LibraryRecordText(document: "{ vendorID: 1 }") }
+    #expect(throws: RecordSyntaxError.self) { try LibraryRecordText(document: "{ vendorID: 1 }") }
+    #expect(throws: RecordSyntaxError.self) { try LibraryRecordText(document: "<a></b>") }
   }
 }
