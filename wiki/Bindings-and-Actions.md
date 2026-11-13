@@ -56,7 +56,7 @@ Each controller control can appear in only one assignment in a profile.
 2. Click **Add assignment**.
 3. In the **Press a controller control** sheet, select a control in the **Controller control** list. Or click **Listen for control** and press the control on the controller.
 4. Select a **Destination**.
-5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press Escape to cancel the capture.
+5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press Esc to cancel the capture.
 6. Click **Add assignment**.
 7. Click **Save**.
 
@@ -110,7 +110,7 @@ The behavior decides how a press turns into output.
 | **Press only** | OJD sends only the press. |
 | **Release only** | OJD sends only the release. |
 
-The table describes each behavior by its name. Hardware results are not verified. The command line option is `--behavior hold|toggle|tap-on-press|tap-on-release|pulse|press|release`. Use `--pulse-ms 1...5000` with `pulse`.
+Hardware results are not verified. The command line option is `--behavior hold|toggle|tap-on-press|tap-on-release|pulse|press|release`. Use `--pulse-ms 1...5000` with `pulse`.
 
 ### Turbo, Long Hold, and Multi-Tap
 
@@ -198,8 +198,8 @@ SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
 
 ### Restore Or Clear Assignments
 
-- To remove every assignment, select **Clear all inputs**.
-- To return to pass-through, select **Restore Default Input** in the **Profile actions** menu.
+- To remove every assignment, click **Clear all inputs**.
+- To return to pass-through, choose **Restore Default Input** from the **Profile actions** menu.
 
 ## Switch Profiles, Set Layers, and Pause
 
@@ -235,7 +235,7 @@ These destinations make the Mac do something instead of sending a key or a butto
 - **Run Shortcut** runs a shortcut of the Shortcuts app by name. A shortcut that asks for input waits for you. OJD does not wait for it to finish.
 - **Type text** types a fixed string as keyboard events. While macOS has secure input on, such as in a password field, macOS may not deliver the keys, and OJD reports that secure input is on.
 
-Each action uses one public macOS API. None of the new ones needs a permission in the Privacy & Security pane.
+Each action uses one public macOS API. None of them needs a permission in the Privacy & Security pane.
 
 | Action | Public API | Permission | Source |
 | --- | --- | --- | --- |
@@ -246,7 +246,7 @@ Each action uses one public macOS API. None of the new ones needs a permission i
 
 Apple's pages for `openApplication` state no permission for launching an app. The Launchpad, Screenshot, and bundle-identifier rows are read from the NSWorkspace API and the bundle identifiers on macOS 27.2, not stated by Apple's pages.
 
-**Lock Screen** and **Show Desktop** are not actions: macOS has no public API for either. Lock Screen would need the private `SACLockScreenImmediate` or the retired `CGSession` tool, and a search of Apple's documentation finds no call to show the desktop. To get either, assign the keyboard shortcut that you set in System Settings, such as <kbd>Control</kbd>+<kbd>Command</kbd>+<kbd>Q</kbd>, to a keyboard destination.
+**Lock Screen** and **Show Desktop** are not actions: macOS has no public API for either. Lock Screen would need the private `SACLockScreenImmediate` or the retired `CGSession` tool, and a search of Apple's documentation finds no call to show the desktop. To get either, assign the keyboard shortcut that you set in System Settings, such as Control-Command-Q, to a keyboard destination.
 
 All of them except System key act once when you press the control and do nothing on release. They take the behaviors **Hold**, **Tap on press**, **Tap on release**, and **Press**. **Toggle**, **Release**, and **Pulse** fail validation. A failed action writes its error to the Activity log and the service log, and the profile keeps working. To read the log, run `ojd log`.
 

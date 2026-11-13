@@ -343,7 +343,7 @@ The virtual gamepad is a standard gamepad. Each profile has a fixed set of butto
 
 ## Use AppleScript or JavaScript for Automation
 
-The app has no AppleScript dictionary. A script runs `ojd` through `do shell script`, whose `PATH` lacks `/usr/local/bin`, so it names the link in full. Turn the link on in Settings first. These examples read another path from the `OJD` environment variable.
+The app has no AppleScript dictionary. A script runs `ojd` through `do shell script`, whose `PATH` lacks `/usr/local/bin`, so it names the link in full. Turn on the link in Settings first. These examples read another path from the `OJD` environment variable.
 
 ```applescript
 set ojd to system attribute "OJD"
@@ -387,7 +387,7 @@ On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
 
 The actions run in the app, so the app must be installed. They do not use `ojd`.
 
-When you pick a controller, the list shows each connected controller, and then one entry for each connected model. A shortcut stores the controller in the same forms as `CONTROLLER` in [Name a Controller](#name-a-controller):
+When you choose a controller, the list shows each connected controller, and then one entry for each connected model. A shortcut stores the controller in the same forms as `CONTROLLER` in [Name a Controller](#name-a-controller):
 
 - A single controller is stored by its unit ID, or by its `ojd controller list` ID when it has no unit ID. The unit ID changes when you connect the controller to a different USB port, and the list ID changes each time the controller connects.
 - A model entry is stored as `VVVV:PPPP`. It finds the connected controller of that model on any port. When two connected controllers have the same model, the action fails and lists them. You can also type `VVVV:PPPP` in the search field.
