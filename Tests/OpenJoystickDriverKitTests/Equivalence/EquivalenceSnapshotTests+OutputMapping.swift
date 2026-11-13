@@ -8,7 +8,7 @@ import Testing
 /// frames, so a change to the control-to-bit mapping shows as a snapshot difference.
 ///
 /// Every control id of the vocabulary is driven alone: a button is pressed, a D-pad direction is
-/// the hat, a stick axis goes to each extreme, and a trigger goes to its maximum. The centre is
+/// the hat, a stick axis goes to each extreme, and a trigger goes to its maximum. The center is
 /// the `neutral` frame, and `combined` holds several controls at once. A control whose frames
 /// leave the report equal to the neutral one has no bit in that persona and is recorded as
 /// `unmapped`.

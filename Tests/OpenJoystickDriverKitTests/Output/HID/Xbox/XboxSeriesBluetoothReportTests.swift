@@ -5,7 +5,7 @@ import Testing
 struct XboxSeriesBluetoothHIDReportFormatTests {
   private let format = XboxSeriesBluetoothHIDReportFormat()
 
-  /// Report 1 at rest: sticks at the unsigned centre `0x8000`, triggers, hat, buttons and Share
+  /// Report 1 at rest: sticks at the unsigned center `0x8000`, triggers, hat, buttons and Share
   /// clear.
   private static let neutral: [UInt8] = [
     1, 0, 128, 0, 128, 0, 128, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0,

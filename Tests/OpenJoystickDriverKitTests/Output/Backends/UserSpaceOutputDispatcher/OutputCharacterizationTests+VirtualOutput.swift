@@ -182,7 +182,7 @@ extension OutputCharacterizationTests {
       ("-rs", [.release(.rightStickClick)]), ("+start", [.press(.start)]),
       ("+opt", [.press(.start)]),
       ("-opt", [.release(.start)]), ("-start", [.release(.start)]),
-      // D-pad buttons fold into the one hat, as the pipeline folded them: a later hat replaces
+      // D-pad buttons fold into the one hat: a later hat replaces
       // a held button, and a button held with a hat direction adds its own.
       ("+dup,east", [.hat(.east)]), ("hat0", [.hat(.neutral)]), ("east,+dup", [.hat(.northEast)]),
       ("-dup", [.hat(.east)]), ("hat0", [.hat(.neutral)]),

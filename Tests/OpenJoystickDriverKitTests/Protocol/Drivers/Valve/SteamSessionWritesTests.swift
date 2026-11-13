@@ -33,7 +33,7 @@ struct SteamSessionWritesTests {
   /// It sends `81`, `8E 00`, then one settings write with
   /// `SETTING_LEFT_TRACKPAD_MODE` (7) and `SETTING_RIGHT_TRACKPAD_MODE` (8) set to `TRACKPAD_NONE`
   /// (7), `SETTING_SMOOTH_ABSOLUTE_MOUSE` (24) set to 0 and `SETTING_IMU_MODE` (48) set to `0x18`.
-  /// Not checked on hardware (task H5).
+  /// Not checked on hardware.
   @Test
   func steamControllerActivationOverUSBLoadsDefaultsAndClearsSmoothAbsoluteMouse() {
     let driver = SteamControllerDriver()

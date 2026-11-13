@@ -60,7 +60,7 @@ extension DriverLifecycleCharacterizationTests {
     _ row: String
   ) {
     // Advertised implies writes, so a nil encoder implies an absent capability. The converse
-    // does not hold: GameSir USB encodes a HID rumble report and has a default colour without
+    // does not hold: GameSir USB encodes a HID rumble report and has a default color without
     // advertising either (pinned in its transcript).
     func expect(_ plan: PhysicalOutputPlan?, advertised: Bool, _ output: String) {
       guard advertised else { return }

@@ -6,11 +6,12 @@ import Testing
 
 /// Pins the `HIDDescriptor` usage tables to the output the coded tables produced.
 ///
-/// `Tests/HIDUsageGolden/hid-usage-layouts.txt` was rendered by the driver before its tables moved
-/// into records. These samples are hand-written element values, not hardware captures: every button
-/// usage, every Generic Desktop axis and hat value, and the Simulation and Consumer usages the
-/// tables name, each fed to every layout over several logical ranges and both with and without a
-/// report ID. The golden holds one line per step, so a changed table names the step that moved.
+/// `Tests/HIDUsageGolden/hid-usage-layouts.txt` was rendered by the driver from its coded tables,
+/// before the tables came from records. These samples are hand-written element values, not
+/// hardware captures: every button usage, every Generic Desktop axis and hat value, and the
+/// Simulation and Consumer usages the tables name, each fed to every layout over several logical
+/// ranges and both with and without a report ID. The golden holds one line per step, so a
+/// changed table names the step that moved.
 struct HIDUsageLayoutEquivalenceTests {
   private typealias Parse = DriverParseCharacterizationTests
 

@@ -147,7 +147,7 @@ struct HIDUsageMapTests {
     #expect(state(dead, element(usage: 48, 255))?.leftTrigger.normalized == 1)
   }
 
-  /// Spec scenario "Swapped trigger axes": a record maps usage Z to the right trigger.
+  /// Swapped trigger axes: a record maps usage Z to the right trigger.
   @Test
   func swappedTriggerAxesFollowRecord() throws {
     let driver = try makeDriver(

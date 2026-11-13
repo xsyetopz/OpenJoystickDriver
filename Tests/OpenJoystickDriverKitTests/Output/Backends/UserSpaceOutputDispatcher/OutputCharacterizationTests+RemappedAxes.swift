@@ -60,7 +60,7 @@ extension OutputCharacterizationTests {
       ("-l2", [.release(.leftTrigger)]), ("+r2", [.press(.rightTrigger)]),
       ("rt0,-r2", [.rightTrigger(0), .release(.rightTrigger)]), ("ne", [.hat(.northEast)]),
       ("sw", [.hat(.southWest)]), ("hat0", [.hat(.neutral)]),
-      // D-pad buttons fold into the one hat, as the pipeline folded them.
+      // D-pad buttons fold into the one hat.
       ("+dup,east", [.hat(.east)]), ("hat0", [.hat(.neutral)]), ("east,+dup", [.hat(.northEast)]),
       ("-dup", [.hat(.east)]), ("hat0", [.hat(.neutral)]), ("ls", [.leftStick(x: 0.5, y: -0.25)]),
       ("ls0", [.leftStick(x: 0, y: 0)]), ("rs", [.rightStick(x: -1, y: 1.5)]),

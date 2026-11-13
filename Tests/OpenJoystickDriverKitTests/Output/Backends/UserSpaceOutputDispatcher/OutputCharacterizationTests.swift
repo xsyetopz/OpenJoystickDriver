@@ -129,7 +129,7 @@ extension OutputCharacterizationTests {
     private func append(_ lines: [String]) { lock.withLock { recorded += lines } }
   }
 
-  /// One engine over one recorder, stepping one profile through labelled event batches.
+  /// One engine over one recorder, stepping one profile through labeled event batches.
   struct EngineSession {
     let recorder = EngineRecorder()
     let engine: RemappingEventEngine

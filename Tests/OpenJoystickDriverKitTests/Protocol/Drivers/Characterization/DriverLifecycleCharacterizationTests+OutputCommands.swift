@@ -116,7 +116,7 @@ extension DriverLifecycleCharacterizationTests {
       + playerLines(driver, .player2)
   }
 
-  /// Rumble, colour, then player 2 on one Bluetooth driver; each report advances the sequence.
+  /// Rumble, color, then player 2 on one Bluetooth driver; each report advances the sequence.
   func dualSenseBluetoothSequenceLines() throws -> [String] {
     let driver = try driver(Self.dualSenseBluetooth)
     return rumbleLines(driver, Self.rumbleIntensities, durationMs: 100, label: "rumble")
@@ -159,7 +159,7 @@ extension DriverLifecycleCharacterizationTests {
       )
   }
 
-  /// Colour then brightness 0x80 on a fresh driver per readiness stage: no input, the slot reply
+  /// Color then brightness 0x80 on a fresh driver per readiness stage: no input, the slot reply
   /// alone, the session-readying report alone, and both.
   func gameSirReadinessLines(_ subject: Subject) throws -> [String] {
     let input = subject.readyingInput

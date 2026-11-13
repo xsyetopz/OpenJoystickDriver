@@ -4,7 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A value spelled as before the naming rule is an unknown name, like a random word.
+/// A value in a spelling the naming rule rejects is an unknown name, like a random word.
 struct RecordValueSpellingTests {
   @Test(arguments: ["xbox.gip", "hid.descriptor", "vendor.ps3-third-party", "banana"])
   func familyInEarlierSpellingIsUnknown(name: String) {

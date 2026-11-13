@@ -158,7 +158,7 @@ struct GameSirDriverTests {
   }
 
   /// A brightness request before the slot reply is not ready and must not change the brightness
-  /// the next colour record carries.
+  /// the next color record carries.
   @Test
   func brightnessBeforeSlotReplyLeavesColourRecordUnchanged() throws {
     let parser = GameSirDriver(protocol: .enhancedHID, usesLightingSlots: true)

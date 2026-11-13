@@ -4,7 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Pins what each registry-built protocol driver decodes from input today, so replacing the delta
+/// Pins what each registry-built protocol driver decodes from input, so replacing the delta
 /// `[InputChange]` model with full state snapshots can be audited line by line.
 ///
 /// Each step feeds one report (or, for `HIDDescriptorDriver`, one element value) at a fixed receipt
@@ -13,13 +13,13 @@ import Testing
 /// - Pressed controls are `Control` names in declaration order.
 /// - The hat renders as a `HatDirection` kebab name.
 /// - Sticks render as their `BipolarValue` and triggers as their `UnipolarValue`. Y is rendered
-///   down-positive (the canonical Y negated), the frame S1 pinned each driver's output in.
+///   down-positive (the canonical Y negated), the frame each driver's output is pinned in.
 /// - `motion=`/`touch=` count the samples one step emitted; each sample follows on its own line.
 ///   Motion renders angular velocity `w=` in rad/s and acceleration `a=` in m/s², both in the
 ///   canonical frame, at four decimals so one count of the finest sensor scale stays visible.
 /// - `fresh`/`stale` renders the latest input's freshness, only for a driver with a liveness
 ///   timeout.
-/// - Battery renders in today's percentage-and-range form, on its own line whenever it changes.
+/// - Battery renders in percentage-and-range form, on its own line whenever it changes.
 /// - A step whose parse throws renders `threw=<error>` and the state it leaves behind.
 struct DriverParseCharacterizationTests {
   static let receivedAt: UInt64 = 1_000_000_000
@@ -114,7 +114,7 @@ struct DriverParseCharacterizationTests {
 
   // MARK: - Rendering
 
-  /// Pressed controls in `Control` order; stick Y rendered down-positive, as S1 pinned it.
+  /// Pressed controls in `Control` order; stick Y rendered down-positive.
   func render(_ state: ControllerState) -> String {
     let pressed = Control.allCases.filter(state.pressed.contains).map(\.rawValue)
     return "[\(pressed.joined(separator: ","))] hat=\(state.hat.rawValue)"
@@ -202,11 +202,11 @@ struct DriverParseCharacterizationTests {
     }
   }
 
-  /// Signed 16-bit stick extremes, then centre: `Int16.min`, `-Int16.max`, `Int16.max`, 0.
+  /// Signed 16-bit stick extremes, then center: `Int16.min`, `-Int16.max`, `Int16.max`, 0.
   ///
-  /// Ending on centre returns the report to neutral, so a following repeat of the base is
+  /// Ending on center returns the report to neutral, so a following repeat of the base is
   /// identical.
   static let signedWordExtremes: [UInt16] = [0x8000, 0x8001, 0x7FFF, 0]
-  /// Unsigned byte extremes and centres around 0x80: 0, 0x7F, 0x80, 0x81, 0xFF.
+  /// Unsigned byte extremes and centers around 0x80: 0, 0x7F, 0x80, 0x81, 0xFF.
   static let byteExtremes: [UInt8] = [0x00, 0x7F, 0x80, 0x81, 0xFF]
 }

@@ -26,7 +26,7 @@ struct Switch1SubcommandBytesTests {
     return lines
   }
 
-  /// The bytes of each report as `reportID:hex`, captured before the subcommands moved into the
+  /// The bytes of each report as `reportID:hex`, captured before the subcommands came from the
   /// description: startup, a recovery round, a rumble, the player indicators, and ten stop-rumble
   /// reports that carry the counter past its wrap.
   private static let proUSB = [
