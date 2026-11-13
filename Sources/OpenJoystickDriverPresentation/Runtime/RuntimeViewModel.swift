@@ -252,8 +252,8 @@ final class RuntimeViewModel: ObservableObject {
         permissions = RuntimePermissionSummary(status: payload)
         authoritativePermissionSummary = permissions
       } else {
-        // A newer permission request owns the visible permission state.  Until its response is
-        // available, replace the payload's value with an honest checking state.
+        // A newer permission request owns the visible permission state. Until its response
+        // arrives, show unknown instead of the payload's value.
         permissions =
           authoritativePermissionSummary
           ?? RuntimePermissionSummary(inputRead: .unknown, inputInject: .unknown)
@@ -287,8 +287,8 @@ final class RuntimeViewModel: ObservableObject {
         authoritativePostEventAccess = currentPostEventAccess
         postEventAccessState = .available(currentPostEventAccess)
       } else {
-        // A newer access request owns the visible state.  Do not let this older snapshot roll its
-        // result back while the newer request is loading or has already completed.
+        // A newer access request owns the visible state; this older snapshot must not roll its
+        // result back, whether the request is loading or done.
         postEventAccess = authoritativePostEventAccess
       }
       updateStatusRemappingSnapshot(snapshot, postEventAccess: postEventAccess)

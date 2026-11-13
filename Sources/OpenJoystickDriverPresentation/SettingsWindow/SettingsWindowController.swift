@@ -129,11 +129,11 @@
       let hostingView = NSHostingView(
         rootView: SettingsWindowContent(panes: panes, content: makeContent)
       )
-      // The window height follows the pane through `paneChanged`, capped to the screen. The
-      // hosting view sits in a container that positions it by autoresizing and has no
-      // constraints, so on every macOS version the content's ideal height cannot become the
-      // window's minimum size (on macOS 12, which has no `sizingOptions`, this container is the
-      // only guard); macOS 13 and later also stop the hosting view from sizing itself.
+      // `paneChanged` sets the window height from the pane, capped to the screen. The hosting
+      // view sits in a container that positions it by autoresizing and has no constraints, so the
+      // content's ideal height cannot become the window's minimum size. macOS 12 has no
+      // `sizingOptions`, so there the container is the only guard; macOS 13 and later also stop
+      // the hosting view from sizing itself.
       if #available(macOS 13, *) { hostingView.sizingOptions = [] }
       let container = NSView(
         frame: NSRect(x: 0, y: 0, width: SettingsWindowPane.contentWidth, height: 0)

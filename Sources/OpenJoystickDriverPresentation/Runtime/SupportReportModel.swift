@@ -80,9 +80,9 @@ final class SupportReportModel: ObservableObject {
     // Like `ojd diagnose --output`, an unreachable service leaves the timings empty.
     let frameTimings = (try? await gateway.frameTimings(lastSeconds: nil).controllers) ?? []
 
-    // A separate Collect action may supersede the diagnostics display while this report is
-    // being assembled. The report remains an independent user operation and must still reach a
-    // terminal saved/error state; only avoid replacing newer diagnostics on screen.
+    // A Collect action may replace the diagnostics display while this report is assembled. The
+    // report is a separate operation and still ends saved or failed; it only must not overwrite
+    // the newer diagnostics on screen.
     if diagnosticsGeneration == supportDiagnosticsGeneration {
       if let virtualDiagnostics {
         supportDiagnosticsState = .available(
@@ -107,8 +107,8 @@ final class SupportReportModel: ObservableObject {
       if reportGeneration == supportReportGeneration { supportReportState = .saved }
     } catch {
       if reportGeneration == supportReportGeneration {
-        // Keep filesystem details out of the ordinary Debug pane.  The selected destination is
-        // already visible in the save panel and the user can choose another path on retry.
+        // The Debug pane omits filesystem details: the save panel already showed the destination,
+        // and a retry can choose another one.
         supportReportState = .error(
           OJDLocalized.string(
             "ui.error.supportReportSave"

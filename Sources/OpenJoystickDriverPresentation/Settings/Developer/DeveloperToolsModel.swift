@@ -401,8 +401,8 @@
     /// ``observedExtraInputs``.
     private func updateObservedExtraInputs(from state: ControllerState?) {
       guard let state else { return }
-      // Core face/shoulder/stick/dpad set only. Share, Mute, touchpad, and future paddles
-      // must surface here so packet-mapped extras are visible in Developer Tools.
+      // Share, Mute, touchpad and paddle controls fall outside the core set, so they show here
+      // as packet-mapped extras.
       let observed = state.pressed.subtracting(InputTestButtonPresentation.coreDiagnosticControls)
       let extras = Set(observedExtraInputs).union(observed)
       observedExtraInputs = Control.allCases.filter(extras.contains)

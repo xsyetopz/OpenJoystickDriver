@@ -248,8 +248,6 @@
 
       switch viewModel.remappingState {
       case .available(let snapshot):
-        // Several active profiles may share a model (one per app scope); use the one routing
-        // picks without a frontmost app.
         var names: [String: String] = [:]
         for active in snapshot.activeProfiles {
           let key = "\(active.vendorID):\(active.productID)"

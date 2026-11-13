@@ -2,7 +2,8 @@
 
   import OpenJoystickDriverKit
 
-  // While `needsAttention`, the pane offers the Notifications pane of System Settings.
+  /// What the Notifications pane says about delivery; while `needsAttention`, the pane offers the
+  /// Notifications pane of System Settings.
   struct NotificationDeliveryPresentation: Equatable {
     /// What macOS allows the app to do with notifications.
     let settings: RuntimeNotificationSettings
