@@ -282,8 +282,10 @@
       controllerLiveUpdates = nil
     }
 
-    // The Show in menu bar change then removes the item and opens the main window; when the
-    // setting cannot be stored the item comes back.
+    /// Handles the user dragging the status item out of the menu bar.
+    ///
+    /// The Show in Menu Bar setting turns off, which removes the item and opens the main window.
+    /// The item returns when the setting cannot be stored.
     private func statusItemRemoved() {
       guard let item = statusItem, !item.isVisible else { return }
       if !preferences.menuBarItemRemoved() { item.isVisible = true }

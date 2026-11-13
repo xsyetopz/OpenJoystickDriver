@@ -45,10 +45,8 @@ enum MainWindowToolbarAction: String, CaseIterable {
   /// Runs the diagnostic checks.
   case runDiagnostics
 
-  /// The level of the item, from `docs/development/interface-audit.md`: T02 to T07 are Simple,
-  /// T08 to T12 and T15 to T21 are Advanced, T13 and T14 are Developer.
-  ///
-  /// Converting a profile has no audit row; it sits with the other profile items.
+  /// The interface level that shows the item: profile items are Simple, Library and Activity items
+  /// are Advanced, and Access items are Developer.
   var interfaceRowLevel: InterfaceRowLevel {
     switch self {
     case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,

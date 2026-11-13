@@ -4,11 +4,8 @@
   import Foundation
   import OpenJoystickDriverKit
 
-  // Presents the macOS privacy flow for a user-initiated access request from the Access area or
-  // the status item. The runtime gateway performs the request; this type opens System Settings
-  // when access is still missing.
-  /// Opens the macOS privacy settings for a user-requested access, which the runtime gateway asks
-  /// the service to request.
+  /// Opens the macOS privacy settings for an access the user requested from the Access area or the
+  /// status item, when the service's request leaves it ungranted.
   enum PermissionAccessActions {
     /// Requests a controller access and opens its Privacy & Security pane when it is not granted.
     ///

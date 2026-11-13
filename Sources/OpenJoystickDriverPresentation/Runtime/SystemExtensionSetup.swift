@@ -39,7 +39,9 @@ package protocol SystemExtensionSetupClient: Sendable {
   func requestDeactivation() async -> SystemExtensionSetupRequestResult
 }
 
-// Only ``repair()`` and ``uninstall()`` send a request to macOS; a read never does.
+/// Works out the state of the driver extension and requests its activation and deactivation.
+///
+/// Only ``repair()`` and ``uninstall()`` send a request to macOS; a read never does.
 @MainActor
 package final class SystemExtensionSetupCoordinator {
   /// Inspects, activates and deactivates the extension.

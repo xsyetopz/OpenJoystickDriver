@@ -338,7 +338,6 @@
 
     /// Hides the window instead of closing it and returns false.
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-      // Hiding keeps the selected area, the screens' state and the window geometry.
       sender.orderOut(nil)
       updateLogFollowing(area: navigation.selectedArea)
       visibilityChanged(false)

@@ -240,7 +240,7 @@
       }
     }
 
-    /// Runs the fix that a problem in the banner offers.
+    /// Runs the fix that a setup step offers.
     private func performSetupStep(_ step: SetupStep) {
       switch step.kind {
       case .permission(.inputRead):
