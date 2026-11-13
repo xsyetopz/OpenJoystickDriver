@@ -18,8 +18,6 @@ private let gipRumbleSubCommandLength: UInt8 = 0x09
 private let gipRumbleDefaultDuration: UInt8 = 0xFF
 /// Motor levels are percentages ([MS-GIPUSB] Table 56).
 private let gipRumbleLevelMax: Double = 100
-/// The Xbox button's key code in a virtual key frame: `VK_LWIN` ([MS-GIPUSB] Table 2).
-private let gipXboxButtonKeyCode: UInt8 = 0x5B
 
 /// One GIP frame taken from the transfer buffer.
 private struct GIPFrame {
@@ -284,8 +282,11 @@ public final class GIPDriver: PhysicalProtocolDriver {
       return decodeMainInput(payload: frame.payload, into: &next)
     case GIPCommand.virtualKey:
       hasReceivedInput = true
-      guard frame.payload.count >= 2, frame.payload[1] == gipXboxButtonKeyCode else { return false }
-      next.set(.guide, pressed: frame.payload[0] & gipGuideButtonMask != 0)
+      // [MS-GIPUSB] Table 2 names the key `VK_LWIN` (0x5B), but Linux xpad, which serves
+      // third-party pads such as PowerA's, reads only the first byte, so a pad that sends another
+      // key or none still presses Xbox (#53).
+      guard let down = frame.payload.first else { return false }
+      next.set(.guide, pressed: down & gipGuideButtonMask != 0)
       return true
     case GIPCommand.announce:
       resendStartupAfterAnnounce()

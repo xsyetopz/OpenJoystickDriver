@@ -282,15 +282,6 @@ extension GIPDriverTests {
     #expect(events.contains(.release(.guide)))
   }
 
-  /// The Xbox button is the key code `0x5B` (`VK_LWIN`, [MS-GIPUSB] Table 2; SDL
-  /// `GIP_HandleCommandGuideButtonStatus`); another key code is no Guide press.
-  @Test
-  func testVirtualKeyOtherThanTheXboxButtonIsNoGuide() throws {
-    let parser = GIPDriver()
-    #expect(try parser.parseReport(Data([7, 32, 0, 2, 1, 0x5C])) == nil)
-    #expect(try parser.parseReport(Data([7, 32, 1, 1, 1])) == nil)
-  }
-
   /// Motor levels are percentages, `0x00...0x64` ([MS-GIPUSB] Table 56; SDL
   /// `HIDAPI_DriverGIP_RumbleJoystick` divides a 16-bit strength by 655).
   @Test
