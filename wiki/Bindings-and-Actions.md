@@ -56,7 +56,7 @@ Each controller control can appear in only one assignment in a profile.
 2. Click **Add assignment**.
 3. In the **Press a controller control** sheet, select a control in the **Controller control** list. Or click **Listen for control** and press the control on the controller.
 4. Select a **Destination**.
-5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press <kbd>Escape</kbd> to cancel the capture.
+5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press Escape to cancel the capture.
 6. Click **Add assignment**.
 7. Click **Save**.
 

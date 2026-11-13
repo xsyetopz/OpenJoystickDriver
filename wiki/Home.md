@@ -57,7 +57,6 @@ Pick the goal that fits you.
 - [Error codes](Error-Codes.md): Look up the meaning of an error code and how to fix it.
 - [FAQ](FAQ.md): Read short answers to common questions.
 - [Glossary](Glossary.md): Look up what each term in the app and this wiki means.
-- [Glossary](Glossary.md): Look up what each term in the app and this wiki means.
 - [Reporting a bug](Reporting-a-Bug.md): Learn what to include in a bug report.
 
 ## Advanced
