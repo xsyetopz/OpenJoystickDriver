@@ -53,16 +53,18 @@
       )
       OJDLabeledValue(OJDLocalized.string("ui.developer.route"), routeName(device.discoverySource))
       OJDLabeledValue(OJDLocalized.string("ui.developer.connection"), device.connection)
-      OJDLabeledValue(
-        OJDLocalized.string("ui.developer.usbEndpoints"),
-        unsafe String(
-          format: "%@ 0x%02X · %@ 0x%02X",
-          OJDLocalized.string("term.inputEndpoint"),
-          device.inputEndpoint,
-          OJDLocalized.string("term.outputEndpoint"),
-          device.outputEndpoint
+      if device.hasUSBEndpoints {
+        OJDLabeledValue(
+          OJDLocalized.string("ui.developer.usbEndpoints"),
+          unsafe String(
+            format: "%@ 0x%02X · %@ 0x%02X",
+            OJDLocalized.string("term.inputEndpoint"),
+            device.inputEndpoint,
+            OJDLocalized.string("term.outputEndpoint"),
+            device.outputEndpoint
+          )
         )
-      )
+      }
       OJDLabeledValue(
         OJDLocalized.string("ui.developer.buttons"),
         buttonValue(model.latestInput?.pressed)
