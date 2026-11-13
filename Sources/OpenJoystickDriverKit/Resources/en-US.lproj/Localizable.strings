@@ -3658,7 +3658,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "A client with this kind of signature cannot be granted, because any local program can claim its signature. Sign it with a Developer ID and try again.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "Choose at least one scope to grant.";
+"error.E2026.message" = "The grant named no scope. Choose at least one scope to grant.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "The service is stopping. Start it, then try again.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -3750,7 +3750,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "The action did not run because Automation access is not granted. Grant it to OpenJoystickDriver and try again.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "The action did not run because Secure Input is on. Close the app that has it on, such as a password field, and try again.";
+"error.E3032.message" = "The text was not typed because Secure Input is on. Close the app that turned it on, then try again.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "The action failed. Try again.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

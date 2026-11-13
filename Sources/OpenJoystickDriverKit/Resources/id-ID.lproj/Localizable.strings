@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "Klien dengan jenis tanda tangan ini tidak dapat diberi akses, karena program lokal mana pun dapat mengklaim tanda tangannya. Tandatangani dengan Developer ID dan coba lagi.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "Pilih setidaknya satu cakupan untuk diberikan.";
+"error.E2026.message" = "Pemberian akses tidak menyebut cakupan. Pilih setidaknya satu cakupan untuk diberikan.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "Layanan sedang berhenti. Mulai layanan itu, lalu coba lagi.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "Tindakan tidak dijalankan karena akses Otomatisasi belum diberikan. Berikan akses itu ke OpenJoystickDriver dan coba lagi.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "Tindakan tidak dijalankan karena Secure Input aktif. Tutup aplikasi yang mengaktifkannya, misalnya kolom kata sandi, lalu coba lagi.";
+"error.E3032.message" = "Teks tidak diketik karena Secure Input aktif. Tutup aplikasi yang mengaktifkannya, lalu coba lagi.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "Tindakan gagal. Coba lagi.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

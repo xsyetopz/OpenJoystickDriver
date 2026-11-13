@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "이 종류의 서명을 가진 클라이언트에는 접근을 허용할 수 없습니다. 어떤 로컬 프로그램이든 그 서명을 사칭할 수 있기 때문입니다. Developer ID로 서명한 뒤 다시 시도하세요.";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "허용할 범위를 하나 이상 선택하세요.";
+"error.E2026.message" = "허용할 범위가 지정되지 않았습니다. 허용할 범위를 하나 이상 선택하세요.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "서비스가 중지되는 중입니다. 서비스를 시작한 다음 다시 시도하세요.";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "자동화 접근 권한이 허용되지 않아 동작이 실행되지 않았습니다. OpenJoystickDriver에 권한을 허용하고 다시 시도하십시오.";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "Secure Input이 켜져 있어 동작이 실행되지 않았습니다. 암호 입력란처럼 이를 켠 앱을 닫고 다시 시도하세요.";
+"error.E3032.message" = "Secure Input이 켜져 있어 텍스트가 입력되지 않았습니다. 이를 켠 앱을 닫고 다시 시도하세요.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "동작에 실패했습니다. 다시 시도하세요.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "無法對具有這種簽章的用戶端授予存取權限，因為任何本機程式都可以冒用其簽章。請使用 Developer ID 簽署後重試。";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "請至少選擇一個要授予的範圍。";
+"error.E2026.message" = "未指定要授予的範圍。請至少選擇一個要授予的範圍。";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "服務正在停止。請啟動服務，然後重試。";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "動作未執行，因為未授予自動化存取權限。請對 OpenJoystickDriver 授予該權限，然後重試。";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "由於 Secure Input 已開啟,動作未執行。請關閉開啟它的 App(例如密碼欄位),然後再試一次。";
+"error.E3032.message" = "由於 Secure Input 已開啟，文字未輸入。請關閉開啟它的 App，然後再試一次。";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "動作失敗。請重試。";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

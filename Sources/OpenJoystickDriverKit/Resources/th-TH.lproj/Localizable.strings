@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "ไม่สามารถให้สิทธิ์แก่ไคลเอนต์ที่มีลายเซ็นชนิดนี้ได้ เพราะโปรแกรมในเครื่องใดก็อ้างลายเซ็นนั้นได้ ลงนามด้วย Developer ID แล้วลองอีกครั้ง";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "เลือกขอบเขตที่จะให้อย่างน้อยหนึ่งรายการ";
+"error.E2026.message" = "ไม่ได้ระบุขอบเขตที่จะให้ เลือกขอบเขตที่จะให้อย่างน้อยหนึ่งรายการ";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "บริการกำลังหยุด เริ่มบริการ แล้วลองอีกครั้ง";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "ไม่ได้ดำเนินการเพราะยังไม่ได้ให้สิทธิ์เข้าถึงระบบอัตโนมัติ ให้สิทธิ์นี้แก่ OpenJoystickDriver แล้วลองอีกครั้ง";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "ไม่ได้เรียกใช้การทำงานเพราะ Secure Input เปิดอยู่ ปิดแอปที่เปิดไว้ เช่น ช่องรหัสผ่าน แล้วลองอีกครั้ง";
+"error.E3032.message" = "ไม่ได้พิมพ์ข้อความเพราะ Secure Input เปิดอยู่ ปิดแอปที่เปิดไว้ แล้วลองอีกครั้ง";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "การทำงานล้มเหลว ลองอีกครั้ง";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */

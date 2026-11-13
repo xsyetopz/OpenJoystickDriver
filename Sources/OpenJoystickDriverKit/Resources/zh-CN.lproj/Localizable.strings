@@ -3132,7 +3132,7 @@
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
 "error.E2025.message" = "无法向具有这种签名的客户端授予访问权限，因为任何本地程序都可以冒用其签名。请使用 Developer ID 签名后重试。";
 /* Text of error E2026, printed when a grant names no scope. */
-"error.E2026.message" = "请至少选择一个要授予的范围。";
+"error.E2026.message" = "未指定要授予的范围。请至少选择一个要授予的范围。";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
 "error.E2027.message" = "服务正在停止。请启动服务，然后重试。";
 /* Text of error E2028, printed when a token with the chosen name exists. */
@@ -4332,7 +4332,7 @@
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "操作未执行，因为未授予自动化访问权限。请向 OpenJoystickDriver 授予该权限，然后重试。";
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
-"error.E3032.message" = "由于 Secure Input 已开启,操作未执行。请关闭开启它的 App(例如密码输入框),然后重试。";
+"error.E3032.message" = "由于 Secure Input 已开启，文本未输入。请关闭开启它的 App，然后重试。";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "操作失败。请重试。";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
