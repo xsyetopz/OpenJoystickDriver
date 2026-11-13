@@ -53,6 +53,10 @@ struct StickDeadzoneSetting: Equatable {
     return next < value ? next : nil
   }
 
+  /// Whether a step down removes the user's value, because none is left below the user's value
+  /// inside `range`.
+  var decrementClears: Bool { canReset && decreased == nil }
+
   /// Returns `value` without the binary noise of a sum, such as `0.07 + 0.01`.
   ///
   /// - Parameter value: The number to round.

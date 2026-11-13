@@ -74,6 +74,14 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
+  func lowestUserValueDecrementClears() throws {
+    #expect(try Self.setting(userValue: 0.01).decrementClears)
+    #expect(try Self.setting(userValue: 0.005).decrementClears)
+    #expect(try !Self.setting(userValue: 0.02).decrementClears)
+    #expect(try !Self.setting(userValue: nil).decrementClears)
+  }
+
+  @Test
   func aStepNeverMovesTheValueTheWrongWay() throws {
     let below = try Self.setting(userValue: 0.005)
     #expect(below.decreased == nil)
