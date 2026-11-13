@@ -31,7 +31,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func rumbleWithoutAConnectedControllerFailsWithTheReason() async {
+  func rumbleWithoutConnectedControllerFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: Self.allOutputs, connected: false, gateway: gateway)
     model.testRumble()
@@ -42,7 +42,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func rumbleOnAControllerWithoutMotorsFailsWithTheReason() async {
+  func rumbleOnControllerWithoutMotorsFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: .none, connected: true, gateway: gateway)
     model.testRumble()
@@ -53,7 +53,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func playerIndicatorWithoutAConnectedControllerFailsWithTheReason() async {
+  func playerIndicatorWithoutConnectedControllerFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: Self.allOutputs, connected: false, gateway: gateway)
     model.choosePlayerIndicator(.player2)
@@ -65,7 +65,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func playerIndicatorOnAControllerWithoutOneFailsWithTheReason() async {
+  func playerIndicatorOnControllerWithoutOneFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: .none, connected: true, gateway: gateway)
     model.applyPlayerIndicator()
@@ -76,7 +76,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func colorWithoutAConnectedControllerFailsWithTheReason() async {
+  func colorWithoutConnectedControllerFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: Self.allOutputs, connected: false, gateway: gateway)
     model.applyColor()
@@ -87,7 +87,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func colorOnAControllerWithoutOneFailsWithTheReason() async {
+  func colorOnControllerWithoutOneFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: .none, connected: true, gateway: gateway)
     model.applyColor()
@@ -98,7 +98,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func brightnessWithoutAConnectedControllerFailsWithTheReason() async {
+  func brightnessWithoutConnectedControllerFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: Self.allOutputs, connected: false, gateway: gateway)
     model.applyBrightness()
@@ -109,7 +109,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func brightnessOnAControllerWithoutItFailsWithTheReason() async {
+  func brightnessOnControllerWithoutItFailsWithReason() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: .none, connected: true, gateway: gateway)
     model.applyBrightness()
@@ -120,7 +120,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func stopIsUnavailableWhileNoRumbleRuns() {
+  func stopUnavailableWhileNoRumbleRuns() {
     let model = model(
       capabilities: Self.allOutputs,
       connected: true,
@@ -133,7 +133,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func choosingAPlayerIndicatorAppliesItWithoutAnApplyButton() async {
+  func choosingPlayerIndicatorAppliesItWithoutApplyButton() async {
     let gateway = InputTestGatewayStub()
     let model = model(capabilities: Self.allOutputs, connected: true, gateway: gateway)
     model.choosePlayerIndicator(.player4)

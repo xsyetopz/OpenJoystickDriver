@@ -9,7 +9,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func everyToolbarActionHasAMenuCommand() throws {
+  func everyToolbarActionHasMenuCommand() throws {
     for action in MainWindowToolbarAction.allCases {
       let item = try #require(
         MainMenuModel.item(forToolbar: action),
@@ -20,7 +20,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func newCommandsKeepTheToolbarTitleAndTheOthersReuseExistingItems() throws {
+  func newCommandsKeepToolbarTitleAndOthersReuseExistingItems() throws {
     var added = 0
     for action in MainWindowToolbarAction.allCases {
       let item = try #require(MainMenuModel.item(forToolbar: action))
@@ -48,7 +48,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func everyCommandHasTheToolbarItemsTitle() throws {
+  func everyCommandHasToolbarItemsTitle() throws {
     for action in MainWindowToolbarAction.allCases where action.menuAction != .find {
       let item = try #require(MainMenuModel.item(forToolbar: action))
       // A File command may name what it acts on ("Install Record or Mod") where the toolbar
@@ -61,7 +61,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func everyCommandIsAvailableWhenAndOnlyWhenTheToolbarItemIs() throws {
+  func everyCommandAvailableWhenAndOnlyWhenToolbarItem() throws {
     for action in MainWindowToolbarAction.allCases where action.menuAction != .find {
       let item = try #require(MainMenuModel.item(forToolbar: action))
       var state = MainMenuState(hasSelectedProfile: true, hasMainWindow: true)
@@ -80,7 +80,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func commandsAreEnabledWhenTheToolbarItemIs() throws {
+  func commandsEnabledWhenToolbarItem() throws {
     let item = try #require(MainMenuModel.item(forToolbar: .duplicateProfile))
     var state = MainMenuState(hasMainWindow: true)
     #expect(!MainMenuModel.isEnabled(item, state: state))
@@ -91,7 +91,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func profileCommandsSitInTheProfileMenuAndActivityOnesInView() throws {
+  func profileCommandsSitInProfileMenuAndActivityOnesInView() throws {
     #expect(
       try section("profile").items.map(\.action) == [
         .activateProfile, .deactivateProfile, .toolbar(.newProfile), .toolbar(.duplicateProfile),
@@ -105,7 +105,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func findIsInTheEditMenuWithCommandF() throws {
+  func findInEditMenuWithCommandF() throws {
     let find = try #require(try section("edit").items.first { $0.action == .find })
     #expect(find.keyEquivalent == "f")
     #expect(find.modifiers == [.command])
@@ -120,7 +120,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func findTargetsTheSearchFieldOfTheListInView() {
+  func findTargetsSearchFieldOfListInView() {
     #expect(MainWindowArea.library.searchAction(activityMode: .log) == .searchLibrary)
     #expect(MainWindowArea.activity.searchAction(activityMode: .log) == .activitySearch)
     #expect(MainWindowArea.activity.searchAction(activityMode: .diagnostics) == nil)

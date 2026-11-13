@@ -13,7 +13,7 @@ struct MainMenuAreaHelpTests {
     .appendingPathComponent("wiki", isDirectory: true)
 
   @Test
-  func everyAreaMapsToAWikiPageThatExists() {
+  func everyAreaMapsToWikiPageExists() {
     for area in MainWindowArea.allCases {
       let file = Self.wiki.appendingPathComponent("\(area.wikiPage).md")
       #expect(
@@ -24,7 +24,7 @@ struct MainMenuAreaHelpTests {
   }
 
   @Test
-  func everyAreaOpensItsPageOnTheProjectWiki() {
+  func everyAreaOpensItsPageOnProjectWiki() {
     for area in MainWindowArea.allCases {
       #expect(
         area.wikiURL.absoluteString
@@ -34,7 +34,7 @@ struct MainMenuAreaHelpTests {
   }
 
   @Test
-  func theHelpMenuHoldsHelpForThisArea() throws {
+  func helpMenuHoldsHelpForThisArea() throws {
     let help = try #require(MainMenuModel.sections.first { $0.id == "help" })
     let item = try #require(help.items.first { $0.action == .openAreaHelp })
     #expect(item.titleKey == "ui.menu.help.helpForThisArea")

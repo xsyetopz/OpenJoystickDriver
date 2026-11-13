@@ -86,7 +86,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func statusReadsInputActiveOnlyAfterAControlLeavesRest() async {
+  func statusReadsInputActiveOnlyAfterControlLeavesRest() async {
     var pressed = ControllerState.neutral
     pressed.pressed = [.south]
     let gateway = InputTestGatewayStub(inputSequence: [.neutral, pressed, .neutral])
@@ -107,7 +107,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func aStickLeavingCenterOrATriggerPressedCountsAsInput() {
+  func stickLeavingCenterOrTriggerPressedCountsAsInput() {
     var stick = ControllerState.neutral
     stick.leftStick.x = BipolarValue(normalized: 0.5)
     var trigger = ControllerState.neutral

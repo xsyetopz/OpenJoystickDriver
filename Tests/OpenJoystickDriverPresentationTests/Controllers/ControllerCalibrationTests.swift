@@ -52,7 +52,7 @@ struct ControllerCalibrationTests {
   }
 
   @Test
-  func tunedIsNilWithoutVirtualGamepad() {
+  func tunedNilWithoutVirtualGamepad() {
     let rows = ControllerCalibrationRows.rows(input: Self.input, output: nil, deadZone: nil)
     #expect(rows.allSatisfy { $0.tuned == nil && $0.deadZone == nil })
   }
@@ -65,7 +65,7 @@ struct ControllerCalibrationTests {
   }
 
   @Test
-  func refreshReadsBothValuesFromTheGateway() async {
+  func refreshReadsBothValuesFromGateway() async {
     let gateway = GatewayStub(inputState: Self.input)
     await gateway.setVirtualOutput(Self.output)
     let model = ControllerCalibrationModel()

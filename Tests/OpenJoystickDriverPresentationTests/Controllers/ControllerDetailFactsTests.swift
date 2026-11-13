@@ -70,7 +70,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theAppThatSelectedTheProfileIsAFactShownByItsName() {
+  func appSelectedProfileFactShownByItsName() {
     var selected = device()
     selected.profileInForce = ApplicationServiceProfileInForce(
       name: "Racing",
@@ -122,7 +122,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theCableShowsOnlyWhileTheChargingStateIsUnknown() {
+  func cableShowsOnlyWhileChargingStateUnknown() {
     let cabled = ControllerConnectionState.Power(
       charging: .unknown,
       battery: BatteryLevel(percentage: 80...80),
@@ -134,7 +134,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func publicationOmitsTheWaitForInputTheInputRowSays() {
+  func publicationOmitsWaitForInputInputRowSays() {
     let waiting = ApplicationServicePublicationStatus.notPublished(.noInputYet)
     #expect(
       ControllerDetailFacts.publicationText(waiting, omittingNoInputYet: true)
@@ -165,7 +165,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theParserFactSpellsTheBindingAsOJDDoes() {
+  func parserFactSpellsBindingAsOJDDoes() {
     let binding = ProtocolBindingID(.xboxXUSB, variant: .receiver)
     let facts = ControllerDetailFacts.advanced(for: device(binding: binding), record: nil)
     #expect(
@@ -175,7 +175,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func advancedRowsSayWordsAndKeepTheRawIdentifierBesideThem() throws {
+  func advancedRowsSayWordsAndKeepRawIdentifierBesideThem() throws {
     #expect(ControllerDetailFacts.controlText(.dpadUp) == "D-pad up (DpadUp)")
     #expect(ControllerDetailFacts.controlText(.leftStickX) == "Left stick horizontal (LeftStickX)")
     #expect(
@@ -251,7 +251,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theRecordSourceIsWordsNotAnIdentifier() {
+  func recordSourceWordsNotIdentifier() {
     #expect(ControllerDetailFacts.recordText(nil) == "none (no record matches)")
   }
 

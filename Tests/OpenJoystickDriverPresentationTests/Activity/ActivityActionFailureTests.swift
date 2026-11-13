@@ -5,7 +5,7 @@ import Testing
 @Suite
 struct ActivityActionFailureTests {
   @Test
-  func theTextJoinsTheTitleAndTheMessage() {
+  func textJoinsTitleAndMessage() {
     #expect(
       ActivityActionFailure(title: "Save failed", message: "Disk full").text
         == "Save failed Disk full"
@@ -25,7 +25,7 @@ struct ActivityCheckFixFailureTests {
   }
 
   @Test
-  func aFailedFixShowsOnItsCheckRowAndNotInTheAreaRow() {
+  func failedFixShowsOnItsCheckRowAndNotInAreaRow() {
     let model = model(failing: "Could not request access")
 
     model.perform(.requestInputRead, forCheck: "input-read")
@@ -35,7 +35,7 @@ struct ActivityCheckFixFailureTests {
   }
 
   @Test
-  func aFixThatWorksClearsTheFailureOfItsCheckRow() {
+  func fixWorksClearsFailureOfItsCheckRow() {
     let model = model(failing: nil)
     model.fixFailures["input-read"] = "Could not request access"
 

@@ -28,7 +28,7 @@ struct MenuInterfaceRowsTests {
   ]
 
   @Test
-  func everyMenuItemLevelMatchesTheAudit() throws {
+  func everyMenuItemLevelMatchesAudit() throws {
     let audit = try InterfaceRowAuditTests.auditLevels()
     for id in (10...17).map({ "M\($0)" }) + ["M08"] {
       #expect(audit[id] == "Simple", "\(id)")
@@ -44,7 +44,7 @@ struct MenuInterfaceRowsTests {
   }
 
   @Test
-  func simpleItemsAreASubsetOfAdvancedAndHideTheHiddenControls() {
+  func simpleItemsSubsetOfAdvancedAndHideHiddenControls() {
     for section in MainMenuModel.sections {
       let simple = Set(
         MainMenuModel.visibleEntries(of: section, level: .simple).compactMap(\.item?.id)
@@ -84,7 +84,7 @@ struct MenuInterfaceRowsTests {
   }
 
   @Test
-  func developerCommandsNeedTheDeveloperSwitch() throws {
+  func developerCommandsNeedDeveloperSwitch() throws {
     let file = try #require(MainMenuModel.sections.first { $0.id == "file" })
     func actions(_ developer: Bool) -> [MainMenuAction] {
       MainMenuModel.visibleEntries(

@@ -25,7 +25,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func theLastChangeMadeWhileOneIsInFlightIsWrittenAfterIt() async {
+  func lastChangeMadeWhileOneInFlightWrittenAfterIt() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
@@ -44,7 +44,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func aResetMadeWhileOneIsInFlightIsWrittenAfterIt() async {
+  func resetMadeWhileOneInFlightWrittenAfterIt() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()

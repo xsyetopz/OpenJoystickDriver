@@ -14,14 +14,14 @@ struct VirtualGamepadKindTitleTests {
   ]
 
   @Test
-  func simpleShowsThePhraseAlone() {
+  func simpleShowsPhraseAlone() {
     for (kind, phrase) in Self.phrases {
       #expect(VirtualHIDProfileKinds.optionTitle(for: kind, level: .simple) == phrase)
     }
   }
 
   @Test
-  func advancedShowsThePhraseWithTheIdentifier() {
+  func advancedShowsPhraseWithIdentifier() {
     for (kind, phrase) in Self.phrases {
       #expect(
         VirtualHIDProfileKinds.optionTitle(for: kind, level: .advanced)
@@ -31,7 +31,7 @@ struct VirtualGamepadKindTitleTests {
   }
 
   @Test
-  func everyKindHasAPhrase() {
+  func everyKindHasPhrase() {
     #expect(Set(Self.phrases.map(\.0)) == Set(VirtualHIDProfileID.allCases))
   }
 }

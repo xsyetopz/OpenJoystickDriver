@@ -148,7 +148,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func theControlIsRunningUntilTheServiceConfirmsAndAnotherChoiceIsIgnored() async {
+  func controlRunningUntilServiceConfirmsAndAnotherChoiceIgnored() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device()
@@ -166,7 +166,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func aRefusalStaysBelowThePickerUntilTheNextChoiceStarts() async {
+  func refusalStaysBelowPickerUntilNextChoiceStarts() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setServerFailure(.noRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -186,7 +186,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func aModelWithoutARecordOffersNoChoiceAndSaysWhy() {
+  func modelWithoutRecordOffersNoChoiceAndSaysWhy() {
     let viewModel = RuntimeViewModel(gateway: GatewayStub())
     #expect(
       viewModel.controllerServerUnavailableReason(hasRecord: false)

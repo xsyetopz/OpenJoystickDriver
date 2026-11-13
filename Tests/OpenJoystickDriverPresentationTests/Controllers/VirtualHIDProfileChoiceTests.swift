@@ -47,7 +47,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func theKindInForceAndTheStoredKindAreNamedWhenTheyDiffer() {
+  func kindInForceAndStoredKindNamedWhenTheyDiffer() {
     let device = Self.device(profile: Self.status(inForce: .generic, stored: .sdlCompatible))
     #expect(
       VirtualHIDProfileKinds.inForceText(for: device)
@@ -60,7 +60,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func noKindInForceIsNamedAsNone() {
+  func noKindInForceNamedAsNone() {
     let device = Self.device(profile: Self.status(inForce: nil, stored: .sdlCompatible))
     #expect(
       VirtualHIDProfileKinds.inForceText(for: device)
@@ -73,7 +73,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func nothingIsSaidWhenTheStoredKindIsInForceOrNoneIsStored() {
+  func nothingSaidWhenStoredKindInForceOrNoneStored() {
     let same = Self.device(profile: Self.status(inForce: .generic, stored: .generic))
     let automatic = Self.device(profile: Self.status(inForce: .generic, stored: nil))
     #expect(VirtualHIDProfileKinds.inForceText(for: same) == nil)
@@ -82,7 +82,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func theListHoldsTheAcceptedKindsAndAStoredKindTheServiceWouldNotAccept() {
+  func listHoldsAcceptedKindsAndStoredKindServiceWouldNotAccept() {
     let accepted = VirtualHIDProfileKinds.accepted(for: Self.device())
     #expect(!accepted.isEmpty)
     #expect(VirtualHIDProfileKinds.offered(for: Self.device()) == accepted)
@@ -99,7 +99,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func choosingTheStoredKindShowsThatNothingChanged() async {
+  func choosingStoredKindShowsNothingChanged() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(profile: Self.status(inForce: .generic, stored: .generic))
@@ -114,7 +114,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func choosingAutomaticWhenNothingIsStoredShowsThatNothingChanged() async {
+  func choosingAutomaticWhenNothingStoredShowsNothingChanged() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -128,7 +128,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func automaticForAUnitWhoseModelHoldsTheOverrideSaysSo() async {
+  func automaticForUnitWhoseModelHoldsOverrideSaysSo() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(
@@ -145,7 +145,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func automaticForTheModelWhoseUnitHoldsTheOverrideSaysSo() async {
+  func automaticForModelWhoseUnitHoldsOverrideSaysSo() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(
@@ -162,7 +162,7 @@ struct VirtualHIDProfileChoiceTests {
   }
 
   @Test
-  func aChoiceThatChangesSomethingIsSentInTheChosenScopeAndClearsTheNotice() async {
+  func choiceChangesSomethingSentInChosenScopeAndClearsNotice() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(profile: Self.status(inForce: .generic, stored: .generic))

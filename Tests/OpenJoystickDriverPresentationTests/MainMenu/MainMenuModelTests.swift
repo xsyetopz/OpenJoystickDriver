@@ -501,7 +501,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func theHelpMenuHoldsActivityLogExplainErrorCodeReportProblemAndProjectWebsite() throws {
+  func helpMenuHoldsActivityLogExplainErrorCodeReportProblemAndProjectWebsite() throws {
     let help = try section("help")
     let titles = help.items.map { OJDLocalized.string($0.titleKey) }
     for title in [

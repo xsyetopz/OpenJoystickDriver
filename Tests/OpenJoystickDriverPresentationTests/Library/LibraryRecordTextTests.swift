@@ -37,7 +37,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func theTextTheCatalogHoldsIsAnXMLPropertyList() {
+  func textCatalogHoldsXMLPropertyList() {
     #expect(Self.document.hasPrefix("<?xml"))
     #expect(!Self.document.hasPrefix("{"))
   }
@@ -95,7 +95,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func copyTextIsTheDocumentAndAPropertyList() throws {
+  func copyTextDocumentAndPropertyList() throws {
     let text = try text()
 
     #expect(text.copyText == Self.document)
@@ -114,7 +114,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func theTokensColorKeysValuesAndTags() throws {
+  func tokensColorKeysValuesAndTags() throws {
     let tokens = try text().tokens
 
     func kinds(of text: String) -> Set<RecordSyntaxKind> {

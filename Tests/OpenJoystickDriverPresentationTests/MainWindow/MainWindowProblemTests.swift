@@ -127,7 +127,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func theDriverProblemNeedsAConnectedControllerRoutedThroughTheExtension() {
+  func driverProblemNeedsConnectedControllerRoutedThroughExtension() {
     for connected in [false, true] {
       let problems = MainWindowProblem.current(
         permissions: permissions(.granted),
@@ -143,7 +143,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func aRunningRequestShowsProgressWithADisabledButton() {
+  func runningRequestShowsProgressWithDisabledButton() {
     let problem = MainWindowProblem.driver(.running)
     #expect(problem.detailKey == "ui.setup.runningDetail")
     #expect(problem.actionTitleKey == "ui.setup.repairRunning")
@@ -196,7 +196,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func anUnreadableOverrideStoreIsABannerProblemNotAControlProblem() {
+  func unreadableOverrideStoreBannerProblemNotControlProblem() {
     let unreadable = RuntimeStatusState.available(
       RuntimeStatusPresentation(
         payload: ApplicationServiceStatusPayload(
@@ -282,20 +282,20 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func aBannerRowWithAButtonOffersTheFixOfTheMatchingControllerCard() {
+  func bannerRowWithButtonOffersFixOfMatchingControllerCard() {
     #expect(MainWindowProblem.driver(.needsApproval).offersFix(of: .setUpDriver))
     #expect(MainWindowProblem.driver(.needsActivation).offersFix(of: .setUpDriver))
     #expect(MainWindowProblem.accessMissing.offersFix(of: .openAccess))
   }
 
   @Test
-  func aDriverRowWithoutAButtonLeavesTheCardsButton() {
+  func driverRowWithoutButtonLeavesCardsButton() {
     #expect(!MainWindowProblem.driver(.missingEmbedded).offersFix(of: .setUpDriver))
     #expect(!MainWindowProblem.driver(.invalid).offersFix(of: .setUpDriver))
   }
 
   @Test
-  func aBannerRowOffersOnlyTheFixOfItsOwnProblem() {
+  func bannerRowOffersOnlyFixOfItsOwnProblem() {
     #expect(!MainWindowProblem.accessMissing.offersFix(of: .setUpDriver))
     #expect(!MainWindowProblem.driver(.needsApproval).offersFix(of: .openAccess))
     #expect(!MainWindowProblem.accessMissing.offersFix(of: .openInputTest))

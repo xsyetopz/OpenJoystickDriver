@@ -31,7 +31,7 @@ struct ControllerReadinessTests {
   }
 
   @Test(arguments: ProtocolBindingReason.allCases)
-  func everyUnservedReasonMapsToANonWorkingState(reason: ProtocolBindingReason) {
+  func everyUnservedReasonMapsToNonWorkingState(reason: ProtocolBindingReason) {
     let state = ControllerReadiness.resolve(.init(subject: .unserved(reason)))
     #expect(state != .working)
     switch reason {
@@ -64,7 +64,7 @@ struct ControllerReadinessTests {
   }
 
   @Test
-  func notSupportedOpensTheSupportedControllersWikiPage() {
+  func notSupportedOpensSupportedControllersWikiPage() {
     #expect(
       ControllerReadinessAction.openSupportedControllers.wikiURL?.absoluteString
         == "https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers"
@@ -73,7 +73,7 @@ struct ControllerReadinessTests {
   }
 
   @Test
-  func theThreeStatesDifferInSymbolShape() {
+  func threeStatesDifferInSymbolShape() {
     let symbols = [
       ControllerReadiness.working, .needsStep(.grantAccess), .notSupported,
     ].map(\.symbolName)
@@ -84,7 +84,7 @@ struct ControllerReadinessTests {
   }
 
   @Test
-  func everyStateTextExistsInTheCatalog() {
+  func everyStateTextExistsInCatalog() {
     let states: [ControllerReadiness] = [
       .working, .needsStep(.grantAccess), .needsStep(.setUpDriver), .needsStep(.otherStep),
       .notSupported,

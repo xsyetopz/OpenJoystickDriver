@@ -74,7 +74,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func controllerDetailRowsMatchTheAuditLevels() throws {
+  func controllerDetailRowsMatchAuditLevels() throws {
     let rows = ControllerDetailRow.allCases
     try expectMatchesAudit(rows)
     #expect(
@@ -86,7 +86,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func inputTestRowsMatchTheAuditLevels() throws {
+  func inputTestRowsMatchAuditLevels() throws {
     let rows = InputTestRow.allCases
     try expectMatchesAudit(rows)
     #expect(
@@ -95,7 +95,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func profilesRowsMatchTheAuditLevels() throws {
+  func profilesRowsMatchAuditLevels() throws {
     let rows = ProfilesRow.allCases
     try expectMatchesAudit(rows)
     let ids = Set((18...20).map { "C\($0)" } + (8...24).map { $0 < 10 ? "S0\($0)" : "S\($0)" })
@@ -103,7 +103,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func profilesSimpleRowsAreASubsetOfAdvanced() {
+  func profilesSimpleRowsSubsetOfAdvanced() {
     let simple = Set(ProfilesRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(ProfilesRow.shown(at: .advanced, developerToolsEnabled: false))
     #expect(simple.isSubset(of: advanced))
@@ -111,7 +111,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func accessRowsMatchTheAuditLevels() throws {
+  func accessRowsMatchAuditLevels() throws {
     let rows = AccessRow.allCases
     try expectMatchesAudit(rows)
     #expect(
@@ -121,21 +121,21 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func activityRowsMatchTheAuditLevels() throws {
+  func activityRowsMatchAuditLevels() throws {
     let rows = ActivityRow.allCases
     try expectMatchesAudit(rows)
     #expect(Set(rows.flatMap(\.auditIDs)) == Set(["C28", "C29", "S05"]))
   }
 
   @Test
-  func libraryRowsMatchTheAuditLevels() throws {
+  func libraryRowsMatchAuditLevels() throws {
     let rows = LibraryRow.allCases
     try expectMatchesAudit(rows)
     #expect(Set(rows.flatMap(\.auditIDs)) == Set(["C21", "C22", "C23", "S04"]))
   }
 
   @Test
-  func accessSimpleRowsAreASubsetOfAdvanced() {
+  func accessSimpleRowsSubsetOfAdvanced() {
     let simple = Set(AccessRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(AccessRow.shown(at: .advanced, developerToolsEnabled: false))
     let developer = Set(AccessRow.shown(at: .advanced, developerToolsEnabled: true))
@@ -146,7 +146,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func activitySimpleRowsAreASubsetOfAdvanced() {
+  func activitySimpleRowsSubsetOfAdvanced() {
     let simple = Set(ActivityRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(ActivityRow.shown(at: .advanced, developerToolsEnabled: false))
     #expect(simple.isEmpty)
@@ -155,7 +155,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func librarySimpleRowsAreASubsetOfAdvanced() {
+  func librarySimpleRowsSubsetOfAdvanced() {
     let simple = Set(LibraryRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(LibraryRow.shown(at: .advanced, developerToolsEnabled: false))
     #expect(simple.isEmpty)
@@ -164,7 +164,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func toolbarItemsAreGatedByTheAuditLevels() throws {
+  func toolbarItemsGatedByAuditLevels() throws {
     let audit = try Self.auditLevels()
     let gated: [(MainWindowToolbarAction, String)] = [
       (.newProfile, "T02"), (.importProfile, "T03"), (.validateProfileFile, "T04"),
@@ -218,7 +218,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func controllerDetailSimpleRowsAreASubsetOfAdvanced() {
+  func controllerDetailSimpleRowsSubsetOfAdvanced() {
     let simple = Set(ControllerDetailRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(ControllerDetailRow.shown(at: .advanced, developerToolsEnabled: false))
     #expect(simple.isSubset(of: advanced))
@@ -226,14 +226,14 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func inputTestSimpleRowsAreASubsetOfAdvanced() {
+  func inputTestSimpleRowsSubsetOfAdvanced() {
     let simple = Set(InputTestRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(InputTestRow.shown(at: .advanced, developerToolsEnabled: false))
     #expect(simple.isSubset(of: advanced))
   }
 
   @Test
-  func settingsRowsMatchTheAuditLevels() throws {
+  func settingsRowsMatchAuditLevels() throws {
     let rows = SettingsRow.allCases
     try expectMatchesAudit(rows)
     let ids = (1...18).map { $0 < 10 ? "P0\($0)" : "P\($0)" }
@@ -246,7 +246,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func settingsSimpleRowsAreASubsetOfAdvanced() {
+  func settingsSimpleRowsSubsetOfAdvanced() {
     let simple = Set(SettingsRow.shown(at: .simple, developerToolsEnabled: true))
     let advanced = Set(SettingsRow.shown(at: .advanced, developerToolsEnabled: false))
     #expect(simple.isSubset(of: advanced))
@@ -257,7 +257,7 @@ struct InterfaceRowAuditTests {
   }
 
   @Test
-  func developerRowsShowOnlyInAdvancedWithTheSwitch() {
+  func developerRowsShowOnlyInAdvancedWithSwitch() {
     #expect(
       !ControllerDetailRow.shown(at: .advanced, developerToolsEnabled: false)
         .contains(.developerActions)

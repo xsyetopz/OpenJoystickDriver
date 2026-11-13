@@ -13,7 +13,7 @@ struct AccessPermissionStateTests {
   }
 
   @Test
-  func onlyStatesWhoseValueLeavesSomethingOutHaveASentence() {
+  func onlyStatesWhoseValueLeavesSomethingOutHaveSentence() {
     let explained = AccessPermissionState.allCases.filter { $0.messageKey != nil }
     #expect(explained == [.denied, .notNeeded, .limited])
     let keys = explained.compactMap(\.messageKey)
@@ -22,7 +22,7 @@ struct AccessPermissionStateTests {
   }
 
   @Test(arguments: AccessPermissionRow.Kind.allCases)
-  func everyPermissionSaysWhatItIsFor(kind: AccessPermissionRow.Kind) {
+  func everyPermissionSaysWhatItFor(kind: AccessPermissionRow.Kind) {
     #expect(OJDLocalized.string(kind.purposeKey) != kind.purposeKey)
   }
 

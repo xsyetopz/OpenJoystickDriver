@@ -11,7 +11,7 @@ struct ActivityLogSeverityTests {
   }
 
   @Test
-  func standardOutputIsInfoWithTheDefaultLabelColor() {
+  func standardOutputInfoWithDefaultLabelColor() {
     let severity = entry(.standardOutput, "Service started").severity
     #expect(severity == .info)
     #expect(severity.tone == nil)
@@ -19,7 +19,7 @@ struct ActivityLogSeverityTests {
   }
 
   @Test
-  func libraryRecordWarningIsAWarningInOrange() {
+  func libraryRecordWarningWarningInOrange() {
     let severity = entry(.standardError, "[Library] The record text cannot be shown: x").severity
     #expect(severity == .warning)
     #expect(severity.tone == .attention)
@@ -28,7 +28,7 @@ struct ActivityLogSeverityTests {
   }
 
   @Test
-  func failedLinesAreErrorsInRedWithTheirOwnSymbol() {
+  func failedLinesErrorsInRedWithTheirOwnSymbol() {
     for text in ["Error: no device", "[Service] Failed to start", "fatal: stop"] {
       let severity = entry(.standardError, text).severity
       #expect(severity == .error)
@@ -39,7 +39,7 @@ struct ActivityLogSeverityTests {
   }
 
   @Test
-  func iconAndColorComeFromTheSameSeverity() {
+  func iconAndColorComeFromSameSeverity() {
     #expect(ActivityLogSeverity.warning.tone != ActivityLogSeverity.error.tone)
     #expect(ActivityLogSeverity.warning.symbolName != ActivityLogSeverity.error.symbolName)
   }

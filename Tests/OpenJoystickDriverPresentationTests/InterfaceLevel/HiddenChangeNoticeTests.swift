@@ -37,7 +37,7 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func theNoticeShowsOnlyInSimpleWithAChange() {
+  func noticeShowsOnlyInSimpleWithChange() {
     #expect(!HiddenChangeNotice.Content.changed(0).isShown(at: .simple))
     #expect(HiddenChangeNotice.Content.changed(1).isShown(at: .simple))
     #expect(!HiddenChangeNotice.Content.changed(1).isShown(at: .advanced))
@@ -46,13 +46,13 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func theNoticeTextIsLocalizedWithAPluralForm() {
+  func noticeTextLocalizedWithPluralForm() {
     #expect(HiddenChangeNotice.Content.changed(1).message != "ui.interface.hiddenChanges")
     #expect(HiddenChangeNotice.Content.needsAdvanced.message != "ui.interface.areaNeedsAdvanced")
   }
 
   @Test
-  func aControllerWithOnlyDefaultsCountsNothing() {
+  func controllerWithOnlyDefaultsCountsNothing() {
     let rows = ControllerDetailRow.changedHiddenRows(
       virtualGamepadOverride: nil,
       stickDeadzone: nil
@@ -61,7 +61,7 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func aSetVirtualGamepadKindCountsOne() {
+  func setVirtualGamepadKindCountsOne() {
     let rows = ControllerDetailRow.changedHiddenRows(
       virtualGamepadOverride: .generic,
       stickDeadzone: nil
@@ -70,12 +70,12 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func aDefaultProfileCountsNothing() {
+  func defaultProfileCountsNothing() {
     #expect(ProfilesRow.changedHiddenRows(in: Self.profile()).isEmpty)
   }
 
   @Test
-  func aChangedOutputPolicyCounts() {
+  func changedOutputPolicyCounts() {
     let mapped = RemappingOutputPolicy(virtualGamepad: .mapped, physicalInput: .shared)
     let exclusive = RemappingOutputPolicy(virtualGamepad: .disabled, physicalInput: .exclusive)
     #expect(
@@ -87,7 +87,7 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func anAdjustedAxisCountsAndADefaultAdjustmentDoesNot() {
+  func adjustedAxisCountsAndDefaultAdjustmentDoesNot() {
     let axis = RemappingSource.axis(.leftStickX)
     let destination = RemappingDestination.mouseButton(.left)
     let adjusted = RemappingBinding(
@@ -116,7 +116,7 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func aPointerSpeedCounts() {
+  func pointerSpeedCounts() {
     let speed = RemappingPointerSpeed(
       driver: RemappingPointerSpeedDriver(type: .trigger, side: .left),
       minScale: 0.5,
@@ -138,7 +138,7 @@ struct HiddenChangeNoticeTests {
   }
 
   @Test
-  func aRegionSourceCounts() {
+  func regionSourceCounts() {
     let region = RemappingSource.stickRegion(
       RemappingStickRegionSource(stick: .left, innerRadius: 0.5, outerRadius: 1)
     )

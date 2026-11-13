@@ -163,7 +163,7 @@ struct MainWindowAreaTests {
 
   @Test
   @MainActor
-  func theLibrarySearchFieldShowsItsLabelForVoiceOver() throws {
+  func librarySearchFieldShowsItsLabelForVoiceOver() throws {
     let item = try #require(
       MainWindowToolbarLayout.makeItem(for: .searchLibrary) as? NSSearchToolbarItem
     )

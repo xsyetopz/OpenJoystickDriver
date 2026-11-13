@@ -10,7 +10,7 @@ struct MainWindowTourTests {
   }
 
   @Test
-  func eachStepNamesItsAreaTitleAndASummary() {
+  func eachStepNamesItsAreaTitleAndSummary() {
     for step in MainWindowTour().steps {
       #expect(step.titleKey == step.area.titleKey)
       #expect(step.summaryKey == "ui.tour.\(step.area.rawValue).summary")
@@ -18,7 +18,7 @@ struct MainWindowTourTests {
   }
 
   @Test
-  func walksForwardAndBackAndStopsAtTheEnds() {
+  func walksForwardAndBackAndStopsAtEnds() {
     var tour = MainWindowTour()
     tour.back()
     #expect(tour.isFirst)
@@ -40,7 +40,7 @@ struct MainWindowTourTests {
   }
 
   @Test
-  func theHelpMenuHoldsTheTour() throws {
+  func helpMenuHoldsTour() throws {
     let help = try #require(MainMenuModel.sections.first { $0.id == "help" })
     let item = try #require(help.items.first { $0.action == .showMainWindowTour })
     #expect(item.titleKey == "ui.menu.help.mainWindowTour")

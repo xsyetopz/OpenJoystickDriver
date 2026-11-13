@@ -13,7 +13,7 @@ struct MainMenuInterfaceLevelTests {
   }
 
   @Test
-  func theViewMenuHasSimpleThenAdvanced() throws {
+  func viewMenuHasSimpleThenAdvanced() throws {
     let view = try #require(MainMenuModel.sections.first { $0.id == "view" })
     let actions = view.items.map(\.action)
     let simple = try #require(actions.firstIndex(of: .setInterfaceLevel(.simple)))
@@ -25,7 +25,7 @@ struct MainMenuInterfaceLevelTests {
   }
 
   @Test
-  func theItemsAreEnabledAndPointToTheGeneralPane() throws {
+  func itemsEnabledAndPointToGeneralPane() throws {
     for (_, item) in try levelItems() {
       #expect(MainMenuModel.isEnabled(item, state: MainMenuState()))
       #expect(item.guiCounterpart == .settingsPane(.general))
@@ -35,7 +35,7 @@ struct MainMenuInterfaceLevelTests {
 
   @Test(arguments: InterfaceLevel.allCases)
   @MainActor
-  func theCheckmarkFollowsTheLevel(level: InterfaceLevel) throws {
+  func checkmarkFollowsLevel(level: InterfaceLevel) throws {
     var state = MainMenuState()
     state.interfaceLevel = level
     for (itemLevel, item) in try levelItems() {
@@ -46,13 +46,13 @@ struct MainMenuInterfaceLevelTests {
   }
 
   @Test
-  func theDefaultStateChecksSimple() throws {
+  func defaultStateChecksSimple() throws {
     let checked = try levelItems().filter { MainMenuModel.isChecked($0.1, state: MainMenuState()) }
     #expect(checked.map(\.0) == [.simple])
   }
 
   @Test
-  func noOtherItemShowsACheckmark() {
+  func noOtherItemShowsCheckmark() {
     var state = MainMenuState()
     state.interfaceLevel = .advanced
     for item in MainMenuModel.allItems {

@@ -90,7 +90,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aServiceErrorThatStartsWithACodeKeepsThatCode() {
+  func serviceErrorStartsWithCodeKeepsCode() {
     let stale = AccessFailure(LocalServiceRPCError.remote("E5001: AccessGrants.plist is v1alpha2."))
     let unlabeled = AccessFailure(LocalServiceRPCError.remote("something broke"))
 

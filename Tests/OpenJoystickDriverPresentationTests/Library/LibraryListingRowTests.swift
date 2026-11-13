@@ -20,24 +20,24 @@ struct LibraryListingRowTests {
   }
 
   @Test
-  func aRowCaptionIsTheFamilyAndTheLayer() {
+  func rowCaptionFamilyAndLayer() {
     #expect(item().subtitle == "Xbox (XID) · Built-in")
   }
 
   @Test
-  func aClaimedRecordEndsItsCaptionWithAppleSigned() {
+  func claimedRecordEndsItsCaptionWithAppleSigned() {
     #expect(item(signed: true).subtitle == "Xbox (XID) · Built-in · Apple-signed")
   }
 
   @Test
-  func searchMatchesAppleSignedOnlyOnAClaimedRecord() {
+  func searchMatchesAppleSignedOnlyOnClaimedRecord() {
     #expect(item(signed: true).matches("apple-signed"))
     #expect(!item(signed: false).matches("apple-signed"))
     #expect(item(signed: true).matches("05fd:1007"))
   }
 
   @Test
-  func theStoreMarksOnlyTheRecordsTheExtensionClaims() throws {
+  func storeMarksOnlyRecordsExtensionClaims() throws {
     let raw = ControllerRecordSet.bundled.records.values.filter(\.usesRawUSB)
       .map(\.model).sorted()
     let claimed = try #require(raw.first)

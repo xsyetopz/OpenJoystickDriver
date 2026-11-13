@@ -18,7 +18,7 @@ struct LibraryDeferredUpdateTests {
   }
 
   @Test
-  func reloadAfterRenderPublishesOnlyAfterTheCallbackReturns() async {
+  func reloadAfterRenderPublishesOnlyAfterCallbackReturns() async {
     let store = FakeLibraryStore()
     let model = makeModel(store)
 
@@ -30,7 +30,7 @@ struct LibraryDeferredUpdateTests {
   }
 
   @Test
-  func selectAfterRenderPublishesOnlyAfterTheCallbackReturns() async {
+  func selectAfterRenderPublishesOnlyAfterCallbackReturns() async {
     let store = FakeLibraryStore()
     let model = makeModel(store)
     model.reload()
