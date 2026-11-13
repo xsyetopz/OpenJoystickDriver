@@ -11,4 +11,24 @@ Each line is the output of `hidcap 2dc8 301c <seconds> <bytes>`: IOHIDDeviceSetR
 0.002 tx len=5 05 64 64 00 00 result=0
 0.001 tx len=5 05 00 00 00 00 result=0
 
-Not tried: the 63-byte vendor output report 0x81, and a write on the interrupt OUT pipe.
+2026-11-13, 17:33:30 to 17:34:20. Same receiver, pad linked in DInput (B + Home), `ojd service stop` first so the HID manager can open it.
+Tool: `hidset 2DC8 301C output <reportID> <bytes>` (evidence/2c-bluetooth-301b/hidset.swift). It passes reportID to IOHIDDeviceSetReport and the remaining bytes as the buffer.
+Rows 4 and 6 also put the report ID first in the buffer, the way hidapi's mac/hid.c set_report sends a numbered report.
+The Mac said each number aloud. Each pattern was held 4 s, then the same report with eight zero bytes, then 3 s of silence. Every write returned result=0. The maintainer felt no vibration at any number.
+
+#1 report 1   05 ff ff 00 00 00 00 00            (SDL_hidapi_8bitdo.c rumble layout)
+#2 report 1   00 08 00 ff ff 00 00 00            (XInput-style layout)
+#3 report 1   ff ff ff ff ff ff ff ff
+#4 report 1   01 05 ff ff 00 00 00               (report ID first)
+#5 report 81  05 ff ff + 60 zero bytes           (63-byte vendor output report)
+#6 report 81  81 05 ff ff + 59 zero bytes        (report ID first)
+
+USB configuration descriptor (IOUSBHostDevice.configurationDescriptor, /tmp tool usbdesc):
+09 02 29 00 01 01 00 80 f0      configuration, 1 interface
+09 04 00 00 02 03 00 00 00      interface 0, 2 endpoints, class HID
+09 21 11 01 00 01 22 91 00      HID 1.11, report descriptor 0x91 bytes
+07 05 84 03 40 00 04            endpoint 0x84 IN, interrupt, 64 bytes
+07 05 05 03 40 00 01            endpoint 0x05 OUT, interrupt, 64 bytes, interval 1
+
+Not written: a raw transfer on endpoint 0x05. AppleUserUSBHostHIDDevice owns interface 0 while macOS runs. A raw pipe write needs that driver detached from the interface.
+SDL's SDL_hidapi_8bitdo.c says of the Ultimate 2C: "no sensor or rumble support".
