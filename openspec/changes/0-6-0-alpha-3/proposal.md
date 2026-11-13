@@ -37,6 +37,7 @@ One rule orders all of it: a controller works when it is plugged in; in the rare
 - **BREAKING**: schemas follow one description style taken from Apple's published conventions: one sentence fragment that says what the value is. Prose-only properties leave the schemas and the bundled documents.
 - Each open issue and pull request gets its fix, its record, or a named gate (reporter evidence or hardware).
 - **A patch reaches every section of a record and changes one mode by its `id`**, so the controller of #63 is fixed by a patch on the user's Mac. `ojd record draft` works for a controller OJD does not serve. A controller whose record fits none of its interfaces falls back to its HID descriptor.
+- **The user sees what holds a controller.** `ojd controller show` and the controller detail list each app that has the controller open, by process ID and name, say whether OJD holds it exclusively, and offer Suspend or Resume beside the list. Both read one payload from the service.
 - **Every control acts or says why it cannot.** A choice applies when chosen; a refusal appears beside the control; a control offers only what the service accepts and shows the value in force.
 - **The menu bar item has a stated purpose**: controller state, profile choice, pause, open, quit. Each controller is a row with its battery and profile, a problem row names the problem and opens its fix, and the menu is two levels deep.
 - **The toolbar buttons of the main window stay.** They are intended, and Apple Notes uses the same form. Each gets a menu command.
@@ -67,7 +68,7 @@ One rule orders all of it: a controller works when it is plugged in; in the rare
 - `terminology`: the glossary and the one term each concept has in the app, the command line, and the wiki.
 - `per-app-profiles`: choosing apps for a profile from a list, several apps per profile, and showing the profile in force.
 - `mapper-features`: the live controller view, calibration, templates, profile conversion, the pause shortcut, idle disconnect, system actions, and the changes shown after an update.
-- `status-reporting`: when Input Test reports activity, the sentence and next step for each reason a controller is not served, and the content of a document refusal.
+- `status-reporting`: when Input Test reports activity, the sentence and next step for each reason a controller is not served, the processes that hold a controller, and the content of a document refusal.
 - `release-distribution`: public tester builds and how the update check finds them.
 
 ### Modified Capabilities

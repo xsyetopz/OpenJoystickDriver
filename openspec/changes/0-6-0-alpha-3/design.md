@@ -584,6 +584,12 @@ Not implemented in 8.11. The key touches `modeMatch` in the schema, `ControllerR
 
 What 8.11 did for #35: records `045e-02e0` (Bluetooth XInput, two layouts by report ID, unsigned 16-bit axes through the default centre, 10-bit triggers) and the `05 0F L R` rumble of `04b4-2412` (the reporter drove the motors on the dongle and states the frame, the latch, and the 10 Hz resend; records carry no comment field, so the source is named here and in the changelog). The `04b4-2412` record selects its report by report ID 4 and length 32, not by interface index; whether the bundled record reaches the `0xFFA0` vendor interface when the composite enumerates in another order (#35) is not tested, and no hardware of ours has confirmed either record.
 
+### D28. Each controller lists its holders from the I/O Registry, the same in the CLI and the app
+
+During the 2C procedure a rumble probe on `2DC8:301C` got `kIOReturnExclusiveAccess` while OJD served the pad, and `ioreg` showed user clients from Google Chrome, WindowServer, and OJD on the device (`evidence/2c-procedure/dinput-24ghz-rumble-probe.txt`). Nothing in OJD showed that: the owner is reported only when OJD's own open fails (`IOUSBHostTransport.swift:108`, printed by `ControllerCommand.swift:70,392`), and suspend lives in the Controller menu and the status item, away from any explanation.
+
+Choice: the service reads each `IOUserClient` child of the controller's HID device and USB interfaces, parses `IOUserClientCreator` (`pid <n>, <name>`) with the parser `HIDInputReportQueue.swift:74-97` already has, and adds the list and OJD's exclusive flag to the device description the RPC sends. The CLI and the app render that one payload, so they cannot disagree. The list is read when a client asks, not watched. Reading the registry needs no permission and sends nothing to the device. The controller detail puts Suspend or Resume beside the holders; the menu commands stay.
+
 ### Release order
 
 Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13, 15, and 16 add features, and each can leave this release without changing another group. Within group 16 each task stands alone. The maintainer decides which stay (Open Questions).
