@@ -35,7 +35,7 @@ struct SoakCheckLocalizationTests {
   }
 
   @Test
-  func theDetailIsWordedByTheCatalogAndNeverStartsWithTheMachineIdentifier() throws {
+  func detailIsWordedByCatalogAndNeverStartsWithMachineIdentifier() throws {
     let summary = try stableSummary()
     #expect(summary.soakVerdict == .stable)
 
@@ -50,7 +50,7 @@ struct SoakCheckLocalizationTests {
   }
 
   @Test
-  func everyVerdictAndErrorHasAResolvedEntryInEveryLocale() {
+  func everyVerdictAndErrorHasResolvedEntryInEveryLocale() {
     let verdictKeys = RuntimeSoakVerdict.allCases.map(DiagnosticsService.verdictKey)
     let errorKeys = [
       "cli.diagnose.group.soakErrorProcessUnavailable",
@@ -74,7 +74,7 @@ struct SoakCheckLocalizationTests {
   }
 
   @Test
-  func samplingErrorsAreDescribedByTheCatalog() {
+  func samplingErrorsAreDescribedByCatalog() {
     #expect(
       RuntimeHealthSamplingError.processUnavailable(4_242).errorDescription
         == "Could not read runtime information for service process \(integer(4_242))."

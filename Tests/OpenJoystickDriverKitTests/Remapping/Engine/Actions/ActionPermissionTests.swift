@@ -8,7 +8,7 @@ struct ActionPermissionTests {
   private let virtual = RemappingDestination.gamepadButton(.south)
 
   @Test
-  func missingPostEventAccessThrowsANamedErrorAndSendsNothing() async {
+  func missingPostEventAccessThrowsNamedErrorAndSendsNothing() async {
     let performer = StubSystemActionPerformer(missing: [.postEvent])
     let expected = RemappingSystemActionError.permissionMissing(.postEvent, action: "VolumeUp")
     await #expect(throws: expected) { try await performer.postSystemKey(.volumeUp, pressed: true) }
@@ -19,7 +19,7 @@ struct ActionPermissionTests {
   }
 
   @Test
-  func missingAutomationAccessThrowsANamedErrorAndSendsNothing() async {
+  func missingAutomationAccessThrowsNamedErrorAndSendsNothing() async {
     let performer = StubSystemActionPerformer(missing: [.automation])
     let expected = RemappingSystemActionError.permissionMissing(.automation, action: "RunShortcut")
     await #expect(throws: expected) { try await performer.runShortcut(name: "Morning") }
@@ -27,7 +27,7 @@ struct ActionPermissionTests {
   }
 
   @Test
-  func theErrorCodeNamesThePermissionAndTheMessageNamesTheAction() {
+  func errorCodeNamesPermissionAndMessageNamesAction() {
     let postEvent = RemappingSystemActionError.permissionMissing(.postEvent, action: "VolumeUp")
     let automation = RemappingSystemActionError.permissionMissing(
       .automation,
@@ -40,7 +40,7 @@ struct ActionPermissionTests {
   }
 
   @Test
-  func grantedPermissionSendsTheAction() async throws {
+  func grantedPermissionSendsAction() async throws {
     let performer = StubSystemActionPerformer(missing: [])
     try await performer.postSystemKey(.mute, pressed: false)
     #expect(performer.sent == ["Mute"])

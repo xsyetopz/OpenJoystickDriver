@@ -14,7 +14,7 @@ struct GyroStickTemplateTests {
   }
 
   @Test
-  func theRightStickTemplateHoldsToActivateAndPassesEveryControlThrough() throws {
+  func rightStickTemplateHoldsToActivateAndPassesEveryControlThrough() throws {
     let profile = try RemappingGyroStickTemplate.profile(
       name: "Gyro",
       device: Self.device,
@@ -42,7 +42,7 @@ struct GyroStickTemplateTests {
   }
 
   @Test
-  func theLeftStickTemplateWithoutActivationIsAlwaysOn() throws {
+  func leftStickTemplateWithoutActivationIsAlwaysOn() throws {
     let profile = try RemappingGyroStickTemplate.profile(
       name: "Gyro",
       device: Self.device,
@@ -59,7 +59,7 @@ struct GyroStickTemplateTests {
   }
 
   @Test
-  func aModelWithoutAMotionSensorFailsNamingTheModel() {
+  func modelWithoutMotionSensorFailsNamingModel() {
     #expect(throws: RemappingGyroStickTemplate.Failure.noMotionSensor(Self.model)) {
       try RemappingGyroStickTemplate.profile(
         name: "Gyro",

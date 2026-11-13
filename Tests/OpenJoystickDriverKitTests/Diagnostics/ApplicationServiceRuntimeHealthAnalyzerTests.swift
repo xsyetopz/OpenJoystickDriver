@@ -65,7 +65,7 @@ struct ApplicationServiceRuntimeHealthAnalyzerTests {
   }
 
   @Test
-  func descriptorOrThreadGrowthIsAResourceFinding() throws {
+  func descriptorOrThreadGrowthIsResourceFinding() throws {
     let summary = try #require(
       ApplicationServiceRuntimeHealthAnalyzer.summarize(
         samples(

@@ -6,7 +6,7 @@ import Testing
 
 struct DiagnosticsServiceTests {
   @Test
-  func aVirtualDeviceErrorShowsItsMessageOnce() {
+  func virtualDeviceErrorShowsItsMessageOnce() {
     let status = ApplicationServiceStatusPayload(
       inputRead: .granted,
       inputInject: .granted,
@@ -49,7 +49,7 @@ struct DiagnosticsServiceTests {
   }
 
   @Test
-  func aRejectedSDLLineWarnsUnderItsCode() {
+  func rejectedSDLLineWarnsUnderItsCode() {
     let pad = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
       name: "Test Pad",
@@ -63,7 +63,7 @@ struct DiagnosticsServiceTests {
   }
 
   @Test
-  func theInputMappingCheckPassesWithoutARejectionAndSkipsWithoutAStatus() {
+  func inputMappingCheckPassesWithoutRejectionAndSkipsWithoutStatus() {
     let pad = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     #expect(DiagnosticsService.inputMappingCheck(snapshot(devices: [pad])).status == .pass)
     #expect(DiagnosticsService.inputMappingCheck(snapshot(devices: nil)).status == .skip)

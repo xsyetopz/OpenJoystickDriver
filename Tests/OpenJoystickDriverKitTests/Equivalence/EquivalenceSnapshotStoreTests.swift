@@ -44,7 +44,7 @@ struct EquivalenceSnapshotStoreTests {
   }
 
   @Test
-  func writeModeRewritesTheSnapshot() throws {
+  func writeModeRewritesSnapshot() throws {
     let directory = try temporaryDirectory()
     defer { try? FileManager.default.removeItem(at: directory) }
     let rendered = EquivalenceSnapshotStore.render([(title: "0001:0002", lines: ["a=1"])])

@@ -21,7 +21,7 @@ struct MultiTapTests {
   }
 
   @Test
-  func countNotReachedFiresOnlyTheReachedCountAfterTheWindow() {
+  func countNotReachedFiresOnlyReachedCountAfterWindow() {
     var state = RemappingEngineState()
     let profile = profile(taps: [(2, 300, .b), (3, 300, .c)])
     var actions: [RemappingEngineAction] = []
@@ -48,7 +48,7 @@ struct MultiTapTests {
   }
 
   @Test
-  func baseDestinationWaitsForTheLongestWindow() {
+  func baseDestinationWaitsForLongestWindow() {
     var state = RemappingEngineState()
     let profile = profile(taps: [(2, 200, .b), (3, 300, .c)])
     #expect(press(&state, profile, at: 0).isEmpty)

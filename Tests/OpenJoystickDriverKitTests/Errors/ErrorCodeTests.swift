@@ -24,7 +24,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func theActiveCatalogEntriesAreTheCases() throws {
+  func activeCatalogEntriesAreCases() throws {
     let data = try Data(contentsOf: repositoryResource("Resources/ErrorCodes.plist"))
     let active = try PropertyListDecoder().decode(Catalog.self, from: data).codes
     #expect(active.map(\.code) == ErrorCode.allCases.map(\.rawValue))
@@ -33,7 +33,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func ojdFailsWithTheExitStatusesThatTheCommandLinePageDocuments() throws {
+  func ojdFailsWithExitStatusesThatCommandLinePageDocuments() throws {
     #expect(ErrorCode.commandLineExitStatuses == [1, 64, 69, 77, 127])
     let page = try String(
       contentsOf: repositoryResource("wiki/Command-Line.md"),
@@ -45,7 +45,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func theCatalogListsTheExitStatusOfEachCommandLineCodeAndNoOther() throws {
+  func catalogListsExitStatusOfEachCommandLineCodeAndNoOther() throws {
     let data = try Data(contentsOf: repositoryResource("Resources/ErrorCodes.plist"))
     let entries = try PropertyListDecoder().decode(Catalog.self, from: data).codes
     for (entry, code) in zip(entries, ErrorCode.allCases) {
@@ -57,7 +57,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func everyCodeStartsWithThePrefixOfItsDomain() {
+  func everyCodeStartsWithPrefixOfItsDomain() {
     let prefixes = ErrorCode.Domain.allCases.map(\.codePrefix)
     #expect(Set(prefixes).count == prefixes.count)
     for code in ErrorCode.allCases {
@@ -66,7 +66,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func theHeaderCodesAreEndpointCodes() {
+  func headerCodesAreEndpointCodes() {
     #expect(
       [ErrorCode.unsupportedEndpointVersion, .unexpectedKind, .missingHeader].allSatisfy {
         $0.domain == .endpoint
@@ -75,7 +75,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func eachRemappingCodeIsTheCatalogEntryOfItsWireValue() throws {
+  func eachRemappingCodeIsCatalogEntryOfItsWireValue() throws {
     let data = try Data(contentsOf: repositoryResource("Resources/ErrorCodes.plist"))
     let remapping = try PropertyListDecoder().decode(Catalog.self, from: data).codes.filter {
       $0.wire != nil
@@ -91,7 +91,7 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func everyCodeHasAnExplanationInTheEnglishCatalog() throws {
+  func everyCodeHasExplanationInEnglishCatalog() throws {
     let english = try String(
       contentsOf: repositoryResource(
         "Sources/OpenJoystickDriverKit/Resources/en-US.lproj/Localizable.strings"
@@ -104,14 +104,14 @@ struct ErrorCodeTests {
   }
 
   @Test
-  func theExplanationIsLocalized() {
+  func explanationIsLocalized() {
     for code in ErrorCode.allCases {
       #expect(code.localizedExplanation != "error.\(code.rawValue).message")
     }
   }
 
   @Test
-  func theRawValueIsTheWireValue() throws {
+  func rawValueIsWireValue() throws {
     let data = try JSONEncoder().encode([ErrorCode.tooSlow])
     #expect(String(bytes: data, encoding: .utf8) == "[\"E1006\"]")
   }

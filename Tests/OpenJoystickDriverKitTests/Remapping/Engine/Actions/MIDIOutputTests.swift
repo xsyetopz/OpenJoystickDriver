@@ -97,7 +97,7 @@ struct MIDIOutputTests {
   }
 
   @Test
-  func controlChangeFitsAnAxisAndNoteDoesNot() throws {
+  func controlChangeFitsAxisAndNoteDoesNot() throws {
     let tuning = RemappingAxisTuning(deadzone: 0, gain: 1)
     try profile(
       .midiControlChange(channel: 1, controller: 1),
@@ -138,7 +138,7 @@ struct MIDIOutputTests {
   }
 
   @Test
-  func controlChangeOnAButtonSends127ThenZero() {
+  func controlChangeOnButtonSends127ThenZero() {
     var state = RemappingEngineState()
     let cc = profile(.midiControlChange(channel: 3, controller: 7))
     let down = state.process(inputs: [.press(.south)], from: identifier, profile: cc, at: 0)
@@ -148,7 +148,7 @@ struct MIDIOutputTests {
   }
 
   @Test
-  func controlChangeOnATriggerScalesAndNeverRepeatsAValue() {
+  func controlChangeOnTriggerScalesAndNeverRepeatsValue() {
     var state = RemappingEngineState()
     let cc = profile(
       .midiControlChange(channel: 2, controller: 1),
@@ -171,7 +171,7 @@ struct MIDIOutputTests {
   }
 
   @Test
-  func theSourceOpensBeforeTheNoteAndClosesAfterTheNoteOff() async throws {
+  func sourceOpensBeforeNoteAndClosesAfterNoteOff() async throws {
     let midi = RecordingMIDIOutput()
     let engine = RemappingEventEngine(sink: RemappingTestSink(), midiOutput: midi)
     let note = profile(.midiNote(channel: 1, note: 60, velocity: 100))
@@ -181,7 +181,7 @@ struct MIDIOutputTests {
   }
 
   @Test
-  func aProfileWithoutMIDIOpensNoSource() async throws {
+  func profileWithoutMIDIOpensNoSource() async throws {
     let midi = RecordingMIDIOutput()
     let engine = RemappingEventEngine(sink: RemappingTestSink(), midiOutput: midi)
     let keys = profile(.keyboard(key: .a, modifiers: []))
@@ -190,7 +190,7 @@ struct MIDIOutputTests {
   }
 
   @Test
-  func aRefusedSourceNamesTheErrorAndSendsNothing() async {
+  func refusedSourceNamesErrorAndSendsNothing() async {
     let refusal = RemappingMIDIError.sourceRefused(status: -10844)
     let midi = RecordingMIDIOutput(refusal: refusal)
     let engine = RemappingEventEngine(sink: RemappingTestSink(), midiOutput: midi)

@@ -69,7 +69,7 @@ struct RemappingActionCollectionTests {
   }
 
   @Test
-  func continuousAdditionalActionUsesTheSameInputSample() {
+  func continuousAdditionalActionUsesSameInputSample() {
     let profile = profile(
       binding: RemappingBinding(
         source: .axis(.leftStickX),

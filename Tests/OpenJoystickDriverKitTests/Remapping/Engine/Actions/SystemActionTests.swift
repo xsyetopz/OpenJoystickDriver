@@ -155,7 +155,7 @@ struct SystemActionTests {
   }
 
   @Test
-  func failingPerformerReportsANamedError() async throws {
+  func failingPerformerReportsNamedError() async throws {
     let performer = StubPerformer(
       failure: RemappingSystemActionError.failed(action: "RunShortcut", reason: "missing")
     )

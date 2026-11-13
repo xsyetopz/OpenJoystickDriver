@@ -192,7 +192,7 @@ struct SupportReportBindingTests {
   }
 
   @Test
-  func reportCarriesTheFiveStageStampsOfEachFrame() throws {
+  func reportCarriesFiveStageStampsOfEachFrame() throws {
     let decoded = try JSONDecoder().decode(
       SupportReport.self,
       from: report(frameTimings: [Self.timings]).encodedJSON()

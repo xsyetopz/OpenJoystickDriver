@@ -73,7 +73,7 @@ struct RegionSourceTests {
   }
 
   @Test
-  func outerRingIsAButtonWithHysteresisOnItsInnerEdge() throws {
+  func outerRingIsButtonWithHysteresisOnItsInnerEdge() throws {
     let profile = profile([(ring(0.8, 1), .a)])
     try profile.validate()
     var engine = RemappingEngineState()
@@ -86,7 +86,7 @@ struct RegionSourceTests {
   }
 
   @Test
-  func regionOfOneStickIgnoresTheOther() {
+  func regionOfOneStickIgnoresOther() {
     let profile = profile([(ring(0.5, 1), .a)])
     var engine = RemappingEngineState()
     #expect(run(&engine, profile, .rightStick(x: 1, y: 0)).isEmpty)
@@ -138,7 +138,7 @@ struct RegionSourceTests {
   }
 
   @Test
-  func threeTriggerBandsPressOnlyTheBandOfThePull() throws {
+  func threeTriggerBandsPressOnlyBandOfPull() throws {
     let profile = profile([(band(0.1, 0.4), .a), (band(0.4, 0.8), .b), (band(0.8, 1), .c)])
     try profile.validate()
     var engine = RemappingEngineState()
@@ -163,7 +163,7 @@ struct RegionSourceTests {
   }
 
   @Test
-  func touchRectangleIsDownWhileAContactLiesInIt() throws {
+  func touchRectangleIsDownWhileContactLiesInIt() throws {
     let profile = profile([(area(0, 0, 0.5, 0.5), .a)])
     try profile.validate()
     func touch(_ active: Bool, _ x: Double, _ y: Double) -> InputChange {
@@ -217,7 +217,7 @@ struct RegionSourceTests {
   }
 
   @Test
-  func commandLineSourcesParseToTheRegions() throws {
+  func commandLineSourcesParseToRegions() throws {
     #expect(
       try RemappingCommandValueParser.source("stick-region:left:0.8-1")
         == .stickRegion(RemappingStickRegionSource(stick: .left, innerRadius: 0.8, outerRadius: 1))
@@ -256,7 +256,7 @@ struct RegionSourceTests {
   }
 
   @Test
-  func sourcesRoundTripThroughTheProfileDocumentAndRejectForeignKeys() throws {
+  func sourcesRoundTripThroughProfileDocumentAndRejectForeignKeys() throws {
     let sources = [
       ring(0.8, 1, from: 45, to: 90), ring(0.8, 1), band(0.1, 0.4), area(0, 0, 0.5, 1),
     ]

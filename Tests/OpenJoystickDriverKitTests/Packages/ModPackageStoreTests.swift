@@ -16,7 +16,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func theErrorCodesBelongToTheModDomain() {
+  func errorCodesBelongToModDomain() {
     let codes: [ErrorCode] = [
       .invalidManifest, .requiresExcludesVersion, .invalidPackageContent, .packageClash,
       .packageAlreadyInstalled, .packageNotInstalled,
@@ -26,7 +26,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func aValidPackageInstallsListsAndRemoves() throws {
+  func validPackageInstallsListsAndRemoves() throws {
     try Fixture.with { fixture in
       let folder = try fixture.makePackage(
         controllers: [try Fixture.record(0x1234, 0xABCD)],
@@ -50,7 +50,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func installingANameThatIsInstalledNeedsReplace() throws {
+  func installingNameThatIsInstalledNeedsReplace() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try store.install(try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)]))
@@ -92,7 +92,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func aBadManifestIsRefused() throws {
+  func badManifestIsRefused() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       let store = fixture.store()
@@ -158,7 +158,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func aClashWithTheUserOrAnotherPackageIsRefusedAndForceDoesNotOverrideIt() throws {
+  func clashWithUserOrAnotherPackageIsRefusedAndForceDoesNotOverrideIt() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let record = try Fixture.record(0x1234, 0xABCD)

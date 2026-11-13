@@ -72,7 +72,7 @@ struct SystemGamepadSupportAuditTests {
   }
 
   @Test
-  func bundledRecordsAreTheModelsOfTheLoadedCatalog() throws {
+  func bundledRecordsAreModelsOfLoadedCatalog() throws {
     let resources = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent()  // Diagnostics
       .deletingLastPathComponent()  // OpenJoystickDriverKitTests

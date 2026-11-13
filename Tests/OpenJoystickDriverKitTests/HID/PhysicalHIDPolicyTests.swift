@@ -63,7 +63,7 @@ struct PhysicalHIDPolicyTests {
   }
 
   @Test
-  func secondDeviceObjectForTheSameServiceIsNotAdmitted() {
+  func secondDeviceObjectForSameServiceIsNotAdmitted() {
     // IOHIDManager creates one device object per matching dictionary a service satisfies, e.g. a
     // DualShock 4 that matches both the GamePad usage and its profile VID/PID.
     let adapter = SynchronizedPhysicalHIDBackendEventAdapter()
@@ -218,7 +218,7 @@ struct PhysicalHIDPolicyTests {
   }
 
   @Test
-  func bothProductionBackendsUseTheCentralSyntheticPolicy() {
+  func bothProductionBackendsUseCentralSyntheticPolicy() {
     let events: [UserSpaceVirtualDeviceConstants.PhysicalHIDEvent] = [
       .deviceAdded, .inputReport, .inputValue, .deviceRemoved, .descriptorDiscovery, .feedback,
     ]

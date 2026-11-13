@@ -15,7 +15,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aPackageRecordLayersBetweenBundledAndUser() throws {
+  func packageRecordLayersBetweenBundledAndUser() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try install(try fixture.makePackage(controllers: [record]), in: fixture)
@@ -40,7 +40,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aUserRecordBeatsAPackageRecordAndTheLoserIsListed() throws {
+  func userRecordBeatsPackageRecordAndLoserIsListed() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try install(try fixture.makePackage(controllers: [record]), in: fixture)
@@ -56,7 +56,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func amongPackagesTheFirstByNameWinsAndTheLoserIsListed() throws {
+  func amongPackagesFirstByNameWinsAndLoserIsListed() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       // Packages may not clash when installed, so a clash made by hand stands for one that
@@ -88,7 +88,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aUserPatchLayersOverAPackageRecord() throws {
+  func userPatchLayersOverPackageRecord() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try install(try fixture.makePackage(controllers: [record]), in: fixture)
@@ -130,7 +130,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aPackageWithAnInvalidManifestIsListedAndAppliesNothing() throws {
+  func packageWithInvalidManifestIsListedAndAppliesNothing() throws {
     try Fixture.with { fixture in
       let broken = fixture.packages.appendingPathComponent("broken-pack", isDirectory: true)
       try FileManager.default.createDirectory(at: broken, withIntermediateDirectories: true)
@@ -145,7 +145,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aPackagePersonaLayersUnderTheUserPersona() throws {
+  func packagePersonaLayersUnderUserPersona() throws {
     try Fixture.with { fixture in
       let fromPackage = Fixture.persona(0x1234, 0xABCD, descriptor: "Generic")
       try install(try fixture.makePackage(virtualDevices: [fromPackage]), in: fixture)
@@ -164,7 +164,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func amongPackagesTheFirstPersonaByNameWins() throws {
+  func amongPackagesFirstPersonaByNameWins() throws {
     try Fixture.with { fixture in
       try FileManager.default.createDirectory(
         at: fixture.packages,
@@ -189,7 +189,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func settingAPackagePersonaWritesAUserFileAndLeavesThePackageFile() throws {
+  func settingPackagePersonaWritesUserFileAndLeavesPackageFile() throws {
     try Fixture.with { fixture in
       let fromPackage = Fixture.persona(0x1234, 0xABCD, descriptor: "Generic")
       try install(try fixture.makePackage(virtualDevices: [fromPackage]), in: fixture)

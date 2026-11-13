@@ -137,7 +137,7 @@ struct RemappingProfileTests {
   }
 
   @Test
-  func aMissingOrUnsupportedHeaderIsRejectedAndNamed() throws {
+  func missingOrUnsupportedHeaderIsRejectedAndNamed() throws {
     let profile = RemappingProfile(
       name: "Current",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),

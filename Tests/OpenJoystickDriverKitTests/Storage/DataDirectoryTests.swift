@@ -21,7 +21,7 @@ struct DataDirectoryTests {
   }
 
   @Test
-  func macOSDirectoryKeepsTheShippedLocations() {
+  func macOSDirectoryKeepsShippedLocations() {
     let directory = MacOSDataDirectory()
     let home = FileManager.default.homeDirectoryForCurrentUser.path
     #expect(
@@ -42,7 +42,7 @@ struct DataDirectoryTests {
   }
 
   @Test
-  func logAndSocketPathsFollowTheInjectedDirectory() {
+  func logAndSocketPathsFollowInjectedDirectory() {
     let directory = RootedDataDirectory(
       root: MacOSDataDirectory().url(for: .temporary).appendingPathComponent(UUID().uuidString)
     )

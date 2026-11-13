@@ -63,7 +63,7 @@ struct ModPackageListKindTests {
   }
 
   @Test
-  func aPatchIsAppliedOverTheControllerOfItsPackage() throws {
+  func patchIsAppliedOverControllerOfItsPackage() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       let patch = try Fixture.patch(0x1234, 0xABCD, ["tuning": ["stickDeadzone": 0.3]])
@@ -80,7 +80,7 @@ struct ModPackageListKindTests {
   }
 
   @Test
-  func aControllerFileUnderPatchesIsRefused() throws {
+  func controllerFileUnderPatchesIsRefused() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let record = try Fixture.record(0x1234, 0xABCD)
@@ -97,7 +97,7 @@ struct ModPackageListKindTests {
   }
 
   @Test
-  func aPatchFileUnderControllersIsRefused() throws {
+  func patchFileUnderControllersIsRefused() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let patch = try Fixture.patch(0x1234, 0xABCD, ["tuning": ["stickDeadzone": 0.3]])
@@ -116,7 +116,7 @@ struct ModPackageListKindTests {
   }
 
   @Test
-  func aFolderNamedPersonasIsNotPartOfAPackage() throws {
+  func folderNamedPersonasIsNotPartOfPackage() throws {
     try Fixture.with { fixture in
       let device = Fixture.persona(0x1234, 0xABCD)
       let folder = try fixture.makePackage(virtualDevices: [device])

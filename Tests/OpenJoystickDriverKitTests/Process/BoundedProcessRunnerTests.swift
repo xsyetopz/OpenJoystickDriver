@@ -19,7 +19,7 @@ struct BoundedProcessRunnerTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aChildIsGivenTheDeadlineItWasAskedFor() throws {
+  func childIsGivenDeadlineItWasAskedFor() throws {
     let deadlines = Locked<[TimeInterval]>([])
     let result = try BoundedProcessRunner.run(
       executableURL: URL(fileURLWithPath: "/bin/sleep"),

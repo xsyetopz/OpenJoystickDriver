@@ -8,7 +8,7 @@ struct RemappingProfileStrictDecodingTests {
     "", "bindings.0", "bindings.0.source", "bindings.0.destination", "stickMappings.0",
     "gyroOutput", "layers.0", "layers.0.activator", "outputPolicy", "device", "applicationScope",
   ])
-  func unknownKeyAnywhereRejectsTheProfile(path: String) throws {
+  func unknownKeyAnywhereRejectsProfile(path: String) throws {
     let components = path.split(separator: ".").map(String.init)
     let document = try inject("unexpected", into: sampleDocument(), at: components[...])
     let data = try JSONSerialization.data(withJSONObject: document)

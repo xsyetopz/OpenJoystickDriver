@@ -25,7 +25,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func removeRefusesNamesThatLeaveTheStoreAndDeletesNothing() throws {
+  func removeRefusesNamesThatLeaveStoreAndDeletesNothing() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try store.install(plainPackage(fixture))
@@ -44,7 +44,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aLinkInsideThePackageOrAsItsRootIsRefused() throws {
+  func linkInsidePackageOrAsItsRootIsRefused() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let outside = fixture.root.appendingPathComponent("outside.json")
@@ -74,7 +74,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aFailedInstallLeavesNoStagingFolderAndAnOldPackageIntact() throws {
+  func failedInstallLeavesNoStagingFolderAndOldPackageIntact() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try store.install(plainPackage(fixture))
@@ -87,7 +87,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func theInstalledCopyHasOnlyTheValidatedFiles() throws {
+  func installedCopyHasOnlyValidatedFiles() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try plainPackage(fixture)
@@ -108,7 +108,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aDanglingLinkInThePlaceOfAPackageIsHandled() throws {
+  func danglingLinkInPlaceOfPackageIsHandled() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try FileManager.default.createDirectory(
@@ -132,7 +132,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aPackageFileThatCannotBeReadIsContentNotARawError() throws {
+  func packageFileThatCannotBeReadIsContentNotRawError() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try plainPackage(fixture)
@@ -147,7 +147,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aFileNamedForAnotherIdentityIsContentWhenItsNameIsAllowedByTheManifest() throws {
+  func fileNamedForAnotherIdentityIsContentWhenItsNameIsAllowedByManifest() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let record = try Fixture.record(0x1234, 0xabcd)
@@ -162,7 +162,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aFolderWhoseNameDiffersFromItsManifestIsReportedAsAProblem() throws {
+  func folderWhoseNameDiffersFromItsManifestIsReportedAsProblem() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try store.install(plainPackage(fixture))
@@ -178,7 +178,7 @@ struct ModPackageStoreHardeningTests {
   }
 
   @Test
-  func aStoreThatCannotBeWrittenIsE4007AndKeepsTheInstalledPackage() throws {
+  func storeThatCannotBeWrittenIsE4007AndKeepsInstalledPackage() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try store.install(plainPackage(fixture))
