@@ -30,8 +30,9 @@ extension GameSirDriverTests: ParserSuite {}
 extension NVIDIAShieldDriverTests: ParserSuite {}
 extension WiiDriverTests: ParserSuite {}
 
-/// Every physical protocol family has a parser suite that declares the family it covers, and no
-/// two suites claim the same family, so a new family cannot ship without a parser test.
+/// Every built-in or bundled documented family has a parser suite that declares the family it
+/// covers, and no two suites claim the same family, so a new family cannot ship without a parser
+/// test.
 struct ProtocolParserCoverageTests {
   static var parserSuites: [any ParserSuite.Type] {
     [
@@ -48,7 +49,8 @@ struct ProtocolParserCoverageTests {
   @Test
   func everyProtocolFamilyHasExactlyOneParserSuite() {
     let families = Self.parserSuites.map { $0.family.rawValue }.sorted()
-    #expect(families == PhysicalProtocolID.allCases.map(\.rawValue).sorted())
+    let bundled = DocumentedProtocolFamilies.bundled(besides: []).map(\.name)
+    #expect(families == (PhysicalProtocolID.allCases.map(\.rawValue) + bundled).sorted())
   }
 
   /// A suite's family is the family the registry binds its model to and builds the driver for,
