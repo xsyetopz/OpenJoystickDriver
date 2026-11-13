@@ -8,7 +8,7 @@ struct ProfileAppChoice: Equatable, Identifiable {
   let name: String
   /// The app bundle, for its icon.
   let url: URL?
-  /// Whether the app runs now.
+  /// Whether the app is running.
   var isRunning = false
 
   /// The bundle identifier.
