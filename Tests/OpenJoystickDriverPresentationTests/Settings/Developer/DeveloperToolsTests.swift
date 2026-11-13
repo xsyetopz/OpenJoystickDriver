@@ -10,7 +10,7 @@ import Testing
 struct DeveloperToolsTests {
   @Test
   @MainActor
-  func closingDuringARefreshLeavesTheDiagnosticsNotLoaded() async {
+  func closingDuringRefreshLeavesDiagnosticsNotLoaded() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let model = DeveloperToolsViewModel(gateway: gateway)
@@ -26,7 +26,7 @@ struct DeveloperToolsTests {
 
   @Test(.timeLimit(.minutes(1)))
   @MainActor
-  func closingCancelsARunningSoakTest() async {
+  func closingCancelsRunningSoakTest() async {
     let probe = SoakSamplerProbe()
     let model = DeveloperToolsViewModel(
       gateway: GatewayStub(),
@@ -55,7 +55,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func showingAdvancedWithDeveloperToolsOnLoadsTheDiagnostics() async throws {
+  func showingAdvancedWithDeveloperToolsOnLoadsDiagnostics() async throws {
     let gateway = GatewayStub(statusPayload: statusPayload(device: device()))
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.developerTools, to: true)
@@ -84,7 +84,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func aRefreshShowsLoadingAtOnceEvenFromAReadyState() async {
+  func refreshShowsLoadingAtOnceEvenFromReadyState() async {
     let gateway = GatewayStub(statusPayload: statusPayload(device: device()))
     let model = DeveloperToolsViewModel(gateway: gateway)
     await model.refresh()
@@ -115,7 +115,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func reportsTheNoControllerStateExplicitly() async {
+  func reportsNoControllerStateExplicitly() async {
     let model = DeveloperToolsViewModel(gateway: GatewayStub())
 
     await model.refresh()
@@ -229,7 +229,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func captureIgnoresTheBaselineAndAppendsNewPackets() async throws {
+  func captureIgnoresBaselineAndAppendsNewPackets() async throws {
     PlatformHosts.install(FakePlatformHost())
     let first = try packetEntry(timestamp: 1, hex: "01")
     let second = try packetEntry(timestamp: 2, hex: "02")
@@ -253,7 +253,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func refreshStopsAnActiveCapture() async throws {
+  func refreshStopsActiveCapture() async throws {
     let baseline = try packetEntry(timestamp: 1, hex: "01")
     let later = try packetEntry(timestamp: 2, hex: "02")
     let gateway = GatewayStub(
@@ -296,7 +296,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func staleSnapshotCannotReplaceTheSelectedController() async throws {
+  func staleSnapshotCannotReplaceSelectedController() async throws {
     let firstDevice = device(sessionToken: "controller-1")
     let secondDevice = device(sessionToken: "controller-2")
     let firstPacket = try packetEntry(timestamp: 1, hex: "01")

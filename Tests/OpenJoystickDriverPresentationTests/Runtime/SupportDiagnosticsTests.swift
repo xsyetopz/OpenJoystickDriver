@@ -53,7 +53,7 @@ struct SupportDiagnosticsTests {
   }
 
   @Test
-  func newerRetryWinsOverAnOlderResponse() async {
+  func newerRetryWinsOverOlderResponse() async {
     let gateway = SupportDiagnosticsGatewayStub(
       diagnosticsPayloads: [
         ApplicationServiceVirtualDeviceDiagnosticsPayload(
@@ -169,7 +169,7 @@ struct SupportDiagnosticsTests {
   }
 
   @Test
-  func reportCarriesTheFrameTimingsOfTheService() async throws {
+  func reportCarriesFrameTimingsOfService() async throws {
     let timings = ControllerFrameTimings.fixture
 
     let report = try await savedReport(SupportDiagnosticsGatewayStub(frameTimings: [timings]))
@@ -178,7 +178,7 @@ struct SupportDiagnosticsTests {
   }
 
   @Test
-  func reportHasNoFrameTimingsWhenTheServiceIsUnreachable() async throws {
+  func reportHasNoFrameTimingsWhenServiceIsUnreachable() async throws {
     let report = try await savedReport(SupportDiagnosticsGatewayStub(frameTimings: nil))
 
     #expect(report.data.frameTimings.isEmpty)

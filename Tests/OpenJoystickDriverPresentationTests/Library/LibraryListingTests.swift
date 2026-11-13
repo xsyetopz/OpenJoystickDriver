@@ -60,7 +60,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func changingScopeClearsTheSelection() {
+  func changingScopeClearsSelection() {
     let (model, _) = loadedModel()
     model.select(.record(userModel))
 
@@ -71,7 +71,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func selectingARecordShowsItsDetail() {
+  func selectingRecordShowsItsDetail() {
     let (model, _) = loadedModel()
 
     model.select(.record(userModel))
@@ -81,7 +81,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func selectingAModShowsTheMod() {
+  func selectingModShowsMod() {
     let (model, _) = loadedModel()
 
     model.select(.mod("arcade"))
@@ -100,7 +100,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func removeAndTestFollowTheSelection() {
+  func removeAndTestFollowSelection() {
     let (model, _) = loadedModel()
     #expect(!model.canRemoveSelection)
     #expect(!model.canTestSelection)
@@ -121,7 +121,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func testingARecordKeepsItsResultUntilTheSelectionChanges() {
+  func testingRecordKeepsItsResultUntilSelectionChanges() {
     let (model, store) = loadedModel()
     store.testOutcome = ControllerRecordTestResult(
       inputReports: 2,
@@ -142,7 +142,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func aTestRefusalShowsAFailure() {
+  func testRefusalShowsFailure() {
     let (model, store) = loadedModel()
     store.refusal = LibraryFailure(message: "bad capture", code: .invalidInputFile)
     model.select(.record(userModel))
@@ -176,7 +176,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func removingAPatchClearsTheSelectionOfAModelNoLongerInstalled() {
+  func removingPatchClearsSelectionOfModelNoLongerInstalled() {
     let (model, store) = loadedModel()
     model.select(.record(userModel))
     store.listing = LibraryRecordListing(builtIn: store.listing.builtIn)
@@ -188,7 +188,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func aRecordTheListDoesNotShowCannotBeSelected() {
+  func recordListDoesNotShowCannotBeSelected() {
     let (model, _) = loadedModel()
 
     model.select(.record(builtInModel))
@@ -197,7 +197,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func aSearchThatHidesTheSelectionClearsIt() {
+  func searchThatHidesSelectionClearsIt() {
     let (model, _) = loadedModel()
     model.select(.record(userModel))
 
@@ -209,7 +209,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func aSearchThatKeepsTheSelectionVisibleKeepsIt() {
+  func searchThatKeepsSelectionVisibleKeepsIt() {
     let (model, _) = loadedModel()
     model.select(.record(userModel))
 
@@ -219,7 +219,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func theBuiltInListIsTheWholeBundledCatalog() throws {
+  func builtInListIsWholeBundledCatalog() throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,
       isDirectory: true
@@ -234,7 +234,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func searchAppliesInTheBuiltInScope() {
+  func searchAppliesInBuiltInScope() {
     let (model, _) = loadedModel()
     model.scope = .builtIn
 
@@ -245,12 +245,12 @@ struct LibraryListingTests {
   }
 
   @Test
-  func theLibraryToolbarEndsWithSearch() {
+  func libraryToolbarEndsWithSearch() {
     #expect(MainWindowArea.library.toolbarActions(activityMode: .log).last == .searchLibrary)
   }
 
   @Test
-  func theLibraryToolbarLabelsResolve() {
+  func libraryToolbarLabelsResolve() {
     for action in MainWindowArea.library.toolbarActions(activityMode: .log) {
       #expect(OJDLocalized.string(action.labelKey) != action.labelKey)
       if let key = action.descriptionKey {
@@ -261,7 +261,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func theStoreListsTheBundledRecordsApartFromInstalledOnes() throws {
+  func storeListsBundledRecordsApartFromInstalledOnes() throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,
       isDirectory: true

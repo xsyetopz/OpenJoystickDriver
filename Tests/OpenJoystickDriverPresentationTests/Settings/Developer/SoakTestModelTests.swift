@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct SoakTestFormTests {
   @Test
-  func theFormStartsAtTheValuesOfTheCommand() throws {
+  func formStartsAtValuesOfCommand() throws {
     let settings = try SoakTestForm().settings().get()
 
     #expect(
@@ -22,7 +22,7 @@ struct SoakTestFormTests {
   }
 
   @Test
-  func theLimitsBecomeTheHealthPolicyWhereZeroMeansNoLimit() throws {
+  func limitsBecomeHealthPolicyWhereZeroMeansNoLimit() throws {
     var form = SoakTestForm()
     form.residentLimit = "300"
     form.footprintLimit = "0"
@@ -33,7 +33,7 @@ struct SoakTestFormTests {
   }
 
   @Test
-  func textThatIsNotAWholeNumberNamesItsField() {
+  func textThatIsNotWholeNumberNamesItsField() {
     var form = SoakTestForm()
     form.interval = "fast"
 
@@ -45,7 +45,7 @@ struct SoakTestFormTests {
   }
 
   @Test
-  func everyFieldIsHeldToTheRangeOfItsOption() {
+  func everyFieldIsHeldToRangeOfItsOption() {
     let outOfRange: [(SoakTestField, String)] = [
       (.seconds, "0"), (.seconds, "86401"), (.interval, "99"), (.interval, "60001"),
       (.residentLimit, "-1"), (.residentLimit, "65537"), (.footprintLimit, "65537"),
@@ -68,7 +68,7 @@ struct SoakTestFormTests {
   }
 
   @Test
-  func aRunOfTooManySamplesIsRefused() {
+  func runOfTooManySamplesIsRefused() {
     var form = SoakTestForm()
     form.seconds = "86400"
     form.interval = "100"
@@ -77,7 +77,7 @@ struct SoakTestFormTests {
   }
 
   @Test
-  func theProblemMessageNamesTheFieldAndItsRange() {
+  func problemMessageNamesFieldAndItsRange() {
     let label = OJDLocalized.string(SoakTestField.interval.labelKey)
 
     #expect(
@@ -154,7 +154,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func aStableRunPassesAndSamplesTheServiceWithTheEnteredSettings() async throws {
+  func stableRunPassesAndSamplesServiceWithEnteredSettings() async throws {
     let recorder = Recorder()
     let summary = try Self.summary(residentBytes: 50 * 1_048_576)
     let model = Self.model(recorder: recorder) { _, _ in summary }
@@ -185,7 +185,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func aLimitThatTheServiceExceedsFails() async throws {
+  func limitThatServiceExceedsFails() async throws {
     let policy = RuntimeHealthPolicy(residentLimitMiB: 0, footprintLimitMiB: 10)
     let summary = try Self.summary(residentBytes: 50 * 1_048_576, policy: policy)
     let model = Self.model { _, _ in summary }
@@ -200,7 +200,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func aStoppedServiceIsSkippedWithoutSampling() async {
+  func stoppedServiceIsSkippedWithoutSampling() async {
     let recorder = Recorder()
     let model = Self.model(availability: .stopped, recorder: recorder) { _, _ in
       throw CancellationError()
@@ -217,7 +217,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func aServiceWithoutAProcessIsSkipped() async {
+  func serviceWithoutProcessIsSkipped() async {
     let model = Self.model(processID: nil) { _, _ in throw CancellationError() }
 
     await finish(model)
@@ -230,7 +230,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func aSamplingFailureIsShownAsAFailure() async {
+  func samplingFailureIsShownAsFailure() async {
     let model = Self.model { _, _ in throw RuntimeHealthSamplingError.processUnavailable(4_242) }
 
     await finish(model)
@@ -244,7 +244,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func invalidSettingsDoNotStartARun() {
+  func invalidSettingsDoNotStartRun() {
     let recorder = Recorder()
     let model = Self.model(recorder: recorder) { _, _ in throw CancellationError() }
     model.form.seconds = "0"
@@ -257,7 +257,7 @@ struct SoakTestModelTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func stoppingARunCancelsTheSamplerAndShowsTheEntryAgain() async {
+  func stoppingRunCancelsSamplerAndShowsEntryAgain() async {
     let probe = SoakSamplerProbe()
     let model = Self.model(sample: probe.sample)
 
@@ -271,7 +271,7 @@ struct SoakTestModelTests {
   }
 
   @Test
-  func stoppingWithoutARunLeavesAResultInPlace() async throws {
+  func stoppingWithoutRunLeavesResultInPlace() async throws {
     let summary = try Self.summary(residentBytes: 50 * 1_048_576)
     let model = Self.model { _, _ in summary }
     await finish(model)

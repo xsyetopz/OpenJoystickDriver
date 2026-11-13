@@ -90,7 +90,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func aWiiRemoteListsItsModeExtensionAndMotionPlus() {
+  func wiiRemoteListsItsModeExtensionAndMotionPlus() {
     let status = WiiRemoteStatus(
       reportMode: 0x35,
       extensionKind: .motionPlusClassic,
@@ -143,7 +143,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func capabilitiesTheControllerLacksAreHidden() {
+  func capabilitiesControllerLacksAreHidden() {
     let none = ControllerDetailFacts.general(for: device()).map(\.kind)
     #expect(!none.contains(.rumble) && !none.contains(.lighting) && !none.contains(.motion))
     #expect(!none.contains(.adaptiveTriggers) && !none.contains(.touchContacts))
@@ -262,7 +262,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theSelectedProfileShowsWhetherOrNotItIsPublished() {
+  func selectedProfileShowsWhetherOrNotItIsPublished() {
     let published = ApplicationServicePublicationStatus.published(target: .sdlCompatible)
     let notPublished = ApplicationServicePublicationStatus.notPublished(
       .noInputYet,
@@ -292,13 +292,13 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theProfileIsPublishedOnlyInThePicker() {
+  func profileIsPublishedOnlyInPicker() {
     let facts = ControllerDetailFacts.general(for: device(override: .sdlCompatible))
     #expect(!facts.map(\.label).contains(OJDLocalized.string("cli.controller.show.labelPersona")))
   }
 
   @Test
-  func theAutomaticChoiceNamesTheProfileTheServiceSelected() {
+  func automaticChoiceNamesProfileServiceSelected() {
     var pad = device()
     pad.virtualHIDProfile = ApplicationServiceVirtualHIDProfileStatus(
       profile: .generic,
@@ -313,7 +313,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theAutomaticChoiceIsPlainWithAnOverrideOrWithoutASelection() {
+  func automaticChoiceIsPlainWithOverrideOrWithoutSelection() {
     #expect(ControllerDetailFacts.automaticProfileLabel(device(override: .generic)) == "Automatic")
     #expect(
       ControllerDetailFacts.automaticProfileLabel(device(ownership: .systemGamepad)) == "Automatic"
@@ -363,7 +363,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func inputHealthNamesTheStateAndItsFailure() {
+  func inputHealthNamesStateAndItsFailure() {
     let facts = ControllerDetailFacts.general(for: device())
     #expect(
       Self.value(.inputHealth, in: facts)
@@ -372,7 +372,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func aControllerWaitingForItsGuidePressSaysToPressIt() {
+  func controllerWaitingForItsGuidePressSaysToPressIt() {
     let waiting = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
       inputHealth: ControllerInputHealth(state: .stale, failureReason: .guideNotPressed)
@@ -382,7 +382,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func everyStateTheDetailNamesHasEnglishText() {
+  func everyStateDetailNamesHasEnglishText() {
     var keys: [String] = []
     keys += ControllerOwnershipObservation.allCases.map(ControllerDetailLabels.physicalOwnershipKey)
     keys += [
@@ -405,7 +405,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func closingAWirelessLinkAsksForConfirmationNamingTheController() {
+  func closingWirelessLinkAsksForConfirmationNamingController() {
     let confirmation = WirelessDisconnectConfirmation(controllerName: "Pad A")
     #expect(confirmation.title != "ui.controllers.disconnectWirelessConfirmTitle")
     #expect(confirmation.message.contains("Pad A"))
@@ -414,7 +414,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func aWirelessDisconnectRequestKeepsTheControllerItWasMadeFor() {
+  func wirelessDisconnectRequestKeepsControllerItWasMadeFor() {
     let target = device()
     let request = WirelessDisconnectRequest(device: target)
     #expect(request.device.sessionToken == target.sessionToken)
@@ -435,7 +435,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theDuplicateExposureRiskIsNamedForEveryCase() {
+  func duplicateExposureRiskIsNamedForEveryCase() {
     #expect(
       ControllerDetailFacts.duplicateExposureText(.none) == OJDLocalized.string("status.none")
     )
@@ -448,7 +448,7 @@ struct ControllerDetailFactsTests {
 
 extension ControllerDetailFactsTests {
   @Test
-  func tuningRowsListOnlyValuesALayerSets() throws {
+  func tuningRowsListOnlyValuesLayerSets() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let rows = ControllerTuningRows.rows(for: record, activeProfile: nil)
@@ -461,7 +461,7 @@ extension ControllerDetailFactsTests {
   }
 
   @Test
-  func theServerSourceNamesTheLayerAsTheLibraryDoes() throws {
+  func serverSourceNamesLayerAsLibraryDoes() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let layer = record.fieldLayers["server"] ?? .driver

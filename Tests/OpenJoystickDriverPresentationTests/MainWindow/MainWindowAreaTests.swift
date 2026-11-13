@@ -14,34 +14,34 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func everyAreaHasATitleKey() {
+  func everyAreaHasTitleKey() {
     for area in MainWindowArea.allCases {
       #expect(area.titleKey == "ui.sidebar.\(area.rawValue).title")
     }
   }
 
   @Test
-  func everyAreaTitleKeyIsInTheCatalog() {
+  func everyAreaTitleKeyIsInCatalog() {
     for area in MainWindowArea.allCases {
       #expect(OJDLocalized.string(area.titleKey) != area.titleKey, "\(area.titleKey)")
     }
   }
 
   @Test
-  func onlyControllersProfilesAndLibraryHaveAListColumn() {
+  func onlyControllersProfilesAndLibraryHaveListColumn() {
     #expect(MainWindowArea.allCases.filter(\.hasListColumn) == [.controllers, .profiles, .library])
   }
 
   @Test
   @MainActor
-  func theWindowOpensOnControllersWhenNoAreaWasChosen() {
+  func windowOpensOnControllersWhenNoAreaWasChosen() {
     let navigation = MainWindowNavigationModel(persistence: MemoryAreaPersistence())
     #expect(navigation.selectedArea == .controllers)
   }
 
   @Test
   @MainActor
-  func commandTwoSelectsProfilesAndTheTitleFollows() {
+  func commandTwoSelectsProfilesAndTitleFollows() {
     let navigation = MainWindowNavigationModel(persistence: MemoryAreaPersistence())
     let area = MainWindowArea.allCases.first { $0.keyEquivalent == "2" }
     #expect(area == .profiles)
@@ -51,7 +51,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func toolbarHoldsTheSidebarToggleAndNoAreaSwitcher() {
+  func toolbarHoldsSidebarToggleAndNoAreaSwitcher() {
     #expect(
       MainWindowToolbarLayout.fixedItems == [
         .toggleSidebar, .sidebarTrackingSeparator, .flexibleSpace,
@@ -67,7 +67,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func eachAreaShowsItsOwnActionsAfterTheFixedItems() {
+  func eachAreaShowsItsOwnActionsAfterFixedItems() {
     #expect(MainWindowArea.controllers.toolbarActions(activityMode: .log).isEmpty)
     let profileActions: [MainWindowToolbarAction] = [
       .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
@@ -90,7 +90,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func profileActionsFollowTheSelectionTheBlockAndUnsavedChanges() {
+  func profileActionsFollowSelectionBlockAndUnsavedChanges() {
     func enabled(_ action: MainWindowToolbarAction, _ state: ProfileToolbarState) -> Bool {
       action.isEnabled(profile: state)
     }
@@ -124,7 +124,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func activityActionsFollowTheViewItShows() {
+  func activityActionsFollowViewItShows() {
     #expect(
       MainWindowArea.activity.toolbarActions(activityMode: .log) == [
         .activityMode, .activityFilter, .activitySearch, .copyActivityLog,
@@ -171,7 +171,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func onlyControllersHasASummaryLineWhileTheServiceIsUnavailable() {
+  func onlyControllersHasSummaryLineWhileServiceIsUnavailable() {
     for area in MainWindowArea.allCases {
       #expect(MainWindowSummary.text(for: area, status: .loading).isEmpty)
     }

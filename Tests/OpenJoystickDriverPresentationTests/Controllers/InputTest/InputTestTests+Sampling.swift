@@ -39,7 +39,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func closeCancelsTheActiveLookup() async {
+  func closeCancelsActiveLookup() async {
     var first = ControllerState.neutral
     first.pressed = [.south]
     let gateway = InputTestGatewayStub(inputSequence: [first], inputDelayNanoseconds: 200_000_000)
@@ -144,7 +144,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func liveInputUpdatesDoNotInvalidateTheSessionAndOutputModel() {
+  func liveInputUpdatesDoNotInvalidateSessionAndOutputModel() {
     let model = InputTestViewModel(gateway: InputTestGatewayStub())
     model.selectDevice(makeInputTestDevice())
     var broadInvalidations = 0
@@ -162,7 +162,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func outputControlChangesDoNotInvalidateTheSessionModel() {
+  func outputControlChangesDoNotInvalidateSessionModel() {
     let model = InputTestViewModel(gateway: InputTestGatewayStub())
     model.selectDevice(makeInputTestDevice())
     var broadInvalidations = 0
@@ -178,7 +178,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func repeatedUnavailableSamplesStopTheLoopWithoutUnboundedRetry() async {
+  func repeatedUnavailableSamplesStopLoopWithoutUnboundedRetry() async {
     let gateway = InputTestGatewayStub()
     let model = InputTestViewModel(gateway: gateway, sampleIntervalNanoseconds: 1_000_000)
     model.selectDevice(makeInputTestDevice())
@@ -195,7 +195,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func statusRefreshRecoversAStoppedAutomaticSession() async {
+  func statusRefreshRecoversStoppedAutomaticSession() async {
     let gateway = InputTestGatewayStub()
     let model = InputTestViewModel(gateway: gateway, sampleIntervalNanoseconds: 1_000_000)
     let device = makeInputTestDevice()
@@ -229,7 +229,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func repeatedFailuresRetainTheLastSnapshotAndFinishStale() async {
+  func repeatedFailuresRetainLastSnapshotAndFinishStale() async {
     var snapshot = ControllerState.neutral
     snapshot.pressed = [.south]
     let gateway = InputTestGatewayStub(inputSequence: [snapshot])
@@ -371,7 +371,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func explicitRumbleStopCancelsTheWaitAndSendsOneZeroCommand() async {
+  func explicitRumbleStopCancelsWaitAndSendsOneZeroCommand() async {
     let gateway = InputTestGatewayStub()
     let rumbleSleep: InputTestViewModel.Sleep = { _ in try await Task.sleep(nanoseconds: .max) }
     let model = InputTestViewModel(gateway: gateway, rumbleSleep: rumbleSleep)

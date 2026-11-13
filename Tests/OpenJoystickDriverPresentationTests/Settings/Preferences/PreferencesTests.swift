@@ -9,7 +9,7 @@ import Testing
 struct PreferencesTests {
   @Test
   @MainActor
-  func startAtLoginReflectsTheNativeControllerResult() {
+  func startAtLoginReflectsNativeControllerResult() {
     let launch = LaunchAtLoginStub(isEnabled: false)
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
@@ -135,7 +135,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aDeniedPermissionIsADeniedOutcomeAndDeliversNothing() async {
+  func deniedPermissionIsDeniedOutcomeAndDeliversNothing() async {
     let delivery = PreferencesNotificationDeliverySpy()
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
@@ -151,7 +151,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func answeringAnAnnouncementShowsTheNotificationAndReportsTheOutcome() async {
+  func answeringAnnouncementShowsNotificationAndReportsOutcome() async {
     let requester = TestNotificationRequestStub()
     let delivery = PreferencesNotificationDeliverySpy()
     let model = SettingsPreferencesModel(
@@ -173,7 +173,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aDeliveryTheSystemRejectsIsAFailedOutcomeWithTheSystemsReason() async {
+  func deliverySystemRejectsIsFailedOutcomeWithSystemsReason() async {
     struct Rejected: LocalizedError { var errorDescription: String? { "the system rejected it" } }
     let delivery = PreferencesNotificationDeliverySpy()
     delivery.failure = Rejected()
@@ -190,7 +190,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aMissingNotificationCenterIsAFailedOutcomeWithItsNamedText() async {
+  func missingNotificationCenterIsFailedOutcomeWithItsNamedText() async {
     let delivery = PreferencesNotificationDeliverySpy()
     delivery.failure = RuntimeNotificationDeliveryError.noNotificationCenter
     let model = SettingsPreferencesModel(
@@ -208,7 +208,7 @@ struct PreferencesTests {
   }
 
   @Test
-  func anAuthorizationRequestWithoutANotificationCenterCarriesTheNamedText() {
+  func authorizationRequestWithoutNotificationCenterCarriesNamedText() {
     let (state, description) =
       SystemNotificationAuthorizationController.requestResultWithoutNotificationCenter
 
@@ -218,7 +218,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aFailedDeliveryIsReportedAsFailedNotShown() async {
+  func failedDeliveryIsReportedAsFailedNotShown() async {
     let requester = TestNotificationRequestStub()
     let delivery = PreferencesNotificationDeliverySpy()
     delivery.failure = RuntimeNotificationDeliveryError.noNotificationCenter
@@ -241,7 +241,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aReportTheServiceNoLongerWaitsForShowsTheLostReportMessage() async {
+  func reportServiceNoLongerWaitsForShowsLostReportMessage() async {
     let requester = TestNotificationRequestStub(reportAccepted: false)
     let model = SettingsPreferencesModel(
       testNotifications: requester,
@@ -301,7 +301,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aShownOutcomeClearsAnEarlierMessage() async {
+  func shownOutcomeClearsEarlierMessage() async {
     let requester = TestNotificationRequestStub(outcome: .noAnswer)
     let model = SettingsPreferencesModel(
       testNotifications: requester,
@@ -321,7 +321,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func refreshPublishesAuthorizationGrantedOutsideTheApp() async {
+  func refreshPublishesAuthorizationGrantedOutsideApp() async {
     let authorization = NotificationAuthorizationStub(state: .denied)
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
@@ -358,7 +358,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func prereleaseChoiceAndUpdateCheckShareTheCLIUpdateEngine() async throws {
+  func prereleaseChoiceAndUpdateCheckShareCLIUpdateEngine() async throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let checker = UpdateCheckerStub(result: .upToDate(current: "1.2.3", latest: "v1.2.3"))
     let model = SettingsPreferencesModel(
@@ -381,7 +381,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func theMenuBarAndDockChoicesAreNeverBothOff() throws {
+  func menuBarAndDockChoicesAreNeverBothOff() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
@@ -480,7 +480,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aGoodReloadClearsTheErrorOfAFailedSettingsRead() throws {
+  func goodReloadClearsErrorOfFailedSettingsRead() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),

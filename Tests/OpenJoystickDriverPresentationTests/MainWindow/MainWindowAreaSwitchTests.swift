@@ -15,7 +15,7 @@ struct MainWindowAreaSwitchTests {
   /// At Simple, Activity shows a "Show All Controls" button and Controllers with no controller
   /// shows only text, so a button left in the detail is Activity drawn under Controllers.
   @Test
-  func theDetailShowsTheAreaChosenAfterAnother() throws {
+  func detailShowsAreaChosenAfterAnother() throws {
     let (controller, cleanup) = try MainWindowController.offScreen()
     defer { cleanup() }
     let detail = controller.splitViewController.splitViewItems[2].viewController.view

@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct UpdateStatusPresentationTests {
   @Test
-  func upToDateShowsTheRunningVersion() {
+  func upToDateShowsRunningVersion() {
     let status = UpdateStatusPresentation(
       state: .upToDate(current: "0.6.0-alpha.1", latest: "v0.6.0-alpha.1"),
       runningVersion: "0.6.0-alpha.1"
@@ -18,7 +18,7 @@ struct UpdateStatusPresentationTests {
   }
 
   @Test
-  func aNewerRunningVersionShowsBothVersions() {
+  func newerRunningVersionShowsBothVersions() {
     let status = UpdateStatusPresentation(
       state: .aheadOfLatestRelease(current: "0.6.0-alpha.1", latest: "v0.5.0-beta.4"),
       runningVersion: "0.6.0-alpha.1"
@@ -32,7 +32,7 @@ struct UpdateStatusPresentationTests {
   }
 
   @Test
-  func beforeAnyCheckTheRowIsTheRunningVersion() {
+  func beforeAnyCheckRowIsRunningVersion() {
     let status = UpdateStatusPresentation(state: .idle, runningVersion: "0.6.0-alpha.1")
     #expect(status.title == OJDLocalized.string("ui.settings.general.version"))
     #expect(status.version == "0.6.0-alpha.1")
@@ -40,7 +40,7 @@ struct UpdateStatusPresentationTests {
   }
 
   @Test
-  func aFailureIsTheLabelAndKeepsTheRunningVersion() {
+  func failureIsLabelAndKeepsRunningVersion() {
     let failure = UpdateCheckFailure(reason: .transport, message: "offline")
     let status = UpdateStatusPresentation(state: .failed(failure), runningVersion: "1.0.0")
     #expect(status.title == "offline")
@@ -60,7 +60,7 @@ struct UpdateStatusPresentationTests {
   }
 
   @Test
-  func anAvailableUpdateShowsTheReleaseVersion() {
+  func availableUpdateShowsReleaseVersion() {
     let info = UpdateInfo(
       tagName: "v9.0.0",
       version: SemanticVersion("9.0.0")!,

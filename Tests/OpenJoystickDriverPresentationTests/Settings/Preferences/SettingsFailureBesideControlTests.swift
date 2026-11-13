@@ -5,8 +5,8 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// Task 12.7: a failure of the login item, the pause shortcut or Send Test Notification shows
-/// beside its control; only the unreadable settings file keeps the section.
+/// A failure of the login item, the pause shortcut, or Send Test Notification shows beside its
+/// control; only an unreadable settings file keeps the section.
 @Suite
 struct SettingsFailureBesideControlTests {
   @MainActor

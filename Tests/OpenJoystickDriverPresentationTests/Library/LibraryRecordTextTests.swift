@@ -43,7 +43,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func onlyTheTopLevelVendorAndProductLinesGetAReading() throws {
+  func onlyTopLevelVendorAndProductLinesGetReading() throws {
     let text = try text()
     let vendor = try line(text, containing: "<integer>13629</integer>")
     let product = try line(text, containing: "<integer>4296</integer>")
@@ -58,7 +58,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func aNestedVendorIDGetsNoReading() throws {
+  func nestedVendorIDGetsNoReading() throws {
     let text = try text()
     let nested = try line(text, containing: "<integer>99</integer>")
 
@@ -77,7 +77,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func aVendorIDKeyWithAStringValueGetsNoReading() throws {
+  func vendorIDKeyWithStringValueGetsNoReading() throws {
     let text = try LibraryRecordText(
       document: "<plist><dict>\n<key>vendorID</key>\n<string>13629</string>\n</dict></plist>\n"
     )
@@ -86,7 +86,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func aNumberOutsideTheIdentifierRangeGetsNoReading() throws {
+  func numberOutsideIdentifierRangeGetsNoReading() throws {
     let text = try LibraryRecordText(
       document: "<plist><dict>\n<key>vendorID</key>\n<integer>70000</integer>\n</dict></plist>\n"
     )
@@ -105,7 +105,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func theShownLinesAreTheDocumentLinesWithNoReading() throws {
+  func shownLinesAreDocumentLinesWithNoReading() throws {
     let text = try text()
 
     #expect(text.lines.joined(separator: "\n") + "\n" == Self.document)
@@ -131,7 +131,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func theHighlightedTextHoldsNoReading() throws {
+  func highlightedTextHoldsNoReading() throws {
     let text = try text()
     let shown = String(text.highlighted.characters)
 
@@ -199,7 +199,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test(arguments: [NSAppearance.Name.aqua, .darkAqua])
-  func theColorTakesTheShadeOfTheAppearance(_ appearance: NSAppearance.Name) throws {
+  func colorTakesShadeOfAppearance(_ appearance: NSAppearance.Name) throws {
     let index = try #require(RecordSyntaxKind.appearances.firstIndex(of: appearance))
     for kind in Self.coloredKinds {
       let shade = try #require(kind.shades)[index]
@@ -212,7 +212,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func anAppearanceMatchingNoneOfTheFourGetsTheLightShade() {
+  func appearanceMatchingNoneOfFourGetsLightShade() {
     #expect(RecordSyntaxKind.shadeIndex(matching: nil) == RecordSyntaxKind.lightShadeIndex)
     #expect(RecordSyntaxKind.appearances[RecordSyntaxKind.lightShadeIndex] == .aqua)
     for (index, name) in RecordSyntaxKind.appearances.enumerated() {
@@ -222,7 +222,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func everyKindHasAColorAndPunctuationRecedes() throws {
+  func everyKindHasColorAndPunctuationRecedes() throws {
     for index in RecordSyntaxKind.appearances.indices {
       let shades = Self.coloredKinds.compactMap { $0.shades?[index] }
       #expect(Set(shades).count == Self.coloredKinds.count)
@@ -236,7 +236,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func theStoreSaysWhenTheTokenizerCannotReadTheDocument() {
+  func storeSaysWhenTokenizerCannotReadDocument() {
     var logged: [String] = []
     #expect(
       LibraryRecordDocument(document: "<dict>") { logged.append($0) }
@@ -258,7 +258,7 @@ struct LibraryRecordTextTests {
   }
 
   @Test
-  func textTheTokenizerCannotReadThrows() {
+  func textTokenizerCannotReadThrows() {
     #expect(throws: RecordSyntaxError.self) { try LibraryRecordText(document: "{ vendorID: 1 }") }
     #expect(throws: RecordSyntaxError.self) { try LibraryRecordText(document: "<a></b>") }
   }

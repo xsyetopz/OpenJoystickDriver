@@ -46,8 +46,8 @@ struct InterfaceRowAuditTests {
         cells.count > 3
         && cells[1].range(of: #"^[A-Z]\d{2}$"#, options: .regularExpression) != nil
       guard isControl else { continue }
-      // The 12.12 comparison table repeats S01 to S24 later with text after the level; the first
-      // row with a real level, in section 2, is the one with the Level column.
+      // A later comparison table repeats S01 to S24 with text after the level; the first row
+      // with a real level, in section 2, is the one with the Level column.
       let level = cells[cells.count - 3]
       if levels[cells[1]] == nil, InterfaceRowLevel(rawValue: level.lowercased()) != nil {
         levels[cells[1]] = level

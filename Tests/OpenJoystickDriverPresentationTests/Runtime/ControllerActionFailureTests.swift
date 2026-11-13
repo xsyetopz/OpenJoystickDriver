@@ -24,7 +24,7 @@ struct ControllerActionFailureTests {
   }
 
   @Test
-  func rejectedSuspendStaysVisibleForThatControllerAfterTheRefresh() async {
+  func rejectedSuspendStaysVisibleForThatControllerAfterRefresh() async {
     // The stub gateway rejects session changes with `notFound`.
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -42,7 +42,7 @@ struct ControllerActionFailureTests {
   }
 
   @Test
-  func failedWirelessDisconnectShowsALocalizedMessageWithoutServiceIdentifiers() async {
+  func failedWirelessDisconnectShowsLocalizedMessageWithoutServiceIdentifiers() async {
     let viewModel = RuntimeViewModel(gateway: GatewayStub())
 
     await viewModel.disconnectWirelessController(Self.device(sessionToken: "pad-b"))
@@ -55,7 +55,7 @@ struct ControllerActionFailureTests {
   }
 
   @Test
-  func theNextActionClearsTheControllersPreviousFailure() async {
+  func nextActionClearsControllersPreviousFailure() async {
     let viewModel = RuntimeViewModel(gateway: GatewayStub())
     viewModel.controllerActionFailures = [token("pad-c"): "earlier", token("pad-d"): "other"]
 

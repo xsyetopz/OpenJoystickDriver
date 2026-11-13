@@ -72,7 +72,7 @@ struct ProfileMutationTests {
   }
 
   @Test
-  func aConfirmedActivationOfAnEmptyProfileReachesTheGatewayWithTheAllowance() async {
+  func confirmedActivationOfEmptyProfileReachesGatewayWithAllowance() async {
     let profile = makeProfile(name: "Empty")
     let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [profile]))
     let library = await MainActor.run {
@@ -89,7 +89,7 @@ struct ProfileMutationTests {
   }
 
   @Test
-  func deleteCallsGatewayAndImmediatelyPublishesTheReturnedProfileList() async {
+  func deleteCallsGatewayAndImmediatelyPublishesReturnedProfileList() async {
     let deleted = makeProfile(name: "Delete Me")
     let retained = makeProfile(name: "Keep Me")
     let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [deleted, retained]))
@@ -143,7 +143,7 @@ struct ProfileMutationTests {
   }
 
   @Test
-  func preflightValidationReturnsTheExactRequestWithoutStartingRuntime() async {
+  func preflightValidationReturnsExactRequestWithoutStartingRuntime() async {
     let original = makeProfile(name: "Original")
     let invalid = makeProfile(id: original.id, name: "")
     let request = RuntimeMutationRequest(operation: .update(profileID: original.id))
@@ -190,7 +190,7 @@ struct ProfileMutationTests {
   }
 
   @Test
-  func failedDeleteReturnsTheExactRequestAndLeavesRuntimeIdle() async {
+  func failedDeleteReturnsExactRequestAndLeavesRuntimeIdle() async {
     let profile = makeProfile()
     let request = RuntimeMutationRequest(operation: .delete(profileID: profile.id))
     let gateway = GatewayStub(
@@ -214,7 +214,7 @@ struct ProfileMutationTests {
   }
 
   @Test
-  func overlappingMutationsRejectTheSecondRequestWhileSaving() async {
+  func overlappingMutationsRejectSecondRequestWhileSaving() async {
     let original = makeProfile(name: "Original")
     let proposed = makeProfile(id: original.id, name: "Proposed")
     let ignored = makeProfile(id: original.id, name: "Ignored")

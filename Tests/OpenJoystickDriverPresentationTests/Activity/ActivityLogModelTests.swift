@@ -28,7 +28,7 @@ struct ActivityLogFilterTests {
   }
 
   @Test
-  func filterSegmentsFollowTheToolbarOrder() {
+  func filterSegmentsFollowToolbarOrder() {
     #expect(ActivityLogFilter.allCases.map(\.rawValue) == [0, 1, 2])
     #expect(
       ActivityLogFilter.allCases.map(\.titleKey) == [
@@ -38,7 +38,7 @@ struct ActivityLogFilterTests {
   }
 
   @Test
-  func lineCountChoicesStayInsideTheServiceRange() {
+  func lineCountChoicesStayInsideServiceRange() {
     #expect(
       ActivityLogLineCount.choices.allSatisfy {
         ApplicationServiceLogService.linesRange.contains($0)
@@ -67,7 +67,7 @@ struct ActivityLogModelTests {
   }
 
   @Test
-  func startReadsTheRequestedLineCountOfBothStreams() {
+  func startReadsRequestedLineCountOfBothStreams() {
     let requested = Locked<[Int]>([])
     let model = ActivityLogModel(
       source: ActivityLogSource(
@@ -89,7 +89,7 @@ struct ActivityLogModelTests {
   }
 
   @Test
-  func followedLinesAreAppendedAfterTheTailFromTheTailsEnd() async {
+  func followedLinesAreAppendedAfterTailFromTailsEnd() async {
     let offsets = Locked<[UInt64]>([])
     let model = ActivityLogModel(
       source: ActivityLogSource(
@@ -116,7 +116,7 @@ struct ActivityLogModelTests {
   }
 
   @Test
-  func anUnreadableLogShowsTheFailureAndNoEntries() {
+  func unreadableLogShowsFailureAndNoEntries() {
     struct Unreadable: LocalizedError { var errorDescription: String? { "denied" } }
     let model = ActivityLogModel(
       source: ActivityLogSource(
@@ -132,7 +132,7 @@ struct ActivityLogModelTests {
   }
 
   @Test
-  func copyTextHoldsTheShownLinesOnly() {
+  func copyTextHoldsShownLinesOnly() {
     let model = ActivityLogModel(
       source: ActivityLogSource(
         tail: { stream, _ in

@@ -50,7 +50,7 @@ struct ProfileRegionDraftTests {
   }
 
   @Test
-  func unreadableNumbersNameTheKind() {
+  func unreadableNumbersNameKind() {
     var draft = ProfileRegionDraft()
     draft.outerRadius = "abc"
     #expect(throws: RemappingValidationError.invalidStickRegion) { try draft.source() }
@@ -67,7 +67,7 @@ struct ProfileRegionDraftTests {
   }
 
   @Test
-  func readingsFollowTheInputState() {
+  func readingsFollowInputState() {
     var state = ControllerState(
       leftStick: StickPosition(x: .max, y: .center),
       rightTrigger: UnipolarValue(UInt16.max / 2)

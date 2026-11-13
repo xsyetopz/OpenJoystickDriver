@@ -31,7 +31,7 @@ struct AccessLayoutTests {
   }
 
   @Test
-  func anEmptyEndpointShowsNoList() {
+  func emptyEndpointShowsNoList() {
     let layout = AccessLayout(payload())
 
     #expect(!layout.showsGrants)

@@ -60,7 +60,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func theEditorStaysBusyUntilTheRecordIsRead() async {
+  func editorStaysBusyUntilRecordIsRead() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
@@ -75,7 +75,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func aRefusedChangeDoesNotReadTheRecordAndFreesTheEditor() async {
+  func refusedChangeDoesNotReadRecordAndFreesEditor() async {
     let gateway = GatewayStub()
     await gateway.setTuningFailure(.invalidRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)

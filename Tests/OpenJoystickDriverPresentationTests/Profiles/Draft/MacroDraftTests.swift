@@ -18,7 +18,7 @@ struct MacroDraftTests {
   }
 
   @Test
-  func addingAMacroKeepsItAndReplacesByID() throws {
+  func addingMacroKeepsItAndReplacesByID() throws {
     let macro = Self.macro()
     let added = try RuntimeProfileDraft(profile: Self.profile).settingMacro(macro)
     #expect(added.profile.macros == [macro])
@@ -34,14 +34,14 @@ struct MacroDraftTests {
   }
 
   @Test
-  func removingAMacroDropsIt() throws {
+  func removingMacroDropsIt() throws {
     let macro = Self.macro()
     let draft = try RuntimeProfileDraft(profile: Self.profile).settingMacro(macro)
     #expect(try draft.removingMacro(macro.id).profile.macros.isEmpty)
   }
 
   @Test
-  func removingAUsedMacroIsRefused() throws {
+  func removingUsedMacroIsRefused() throws {
     let macro = Self.macro()
     let draft = try RuntimeProfileDraft(profile: Self.profile).settingMacro(macro)
       .addingBinding(source: .button(.south), destination: .macro(macro.id))
@@ -74,7 +74,7 @@ struct MacroDraftTests {
   }
 
   @Test
-  func destinationLabelNamesTheMacro() {
+  func destinationLabelNamesMacro() {
     let macro = Self.macro()
     #expect(RuntimePresentation.destinationLabel(.macro(macro.id), macros: [macro]) == "Combo")
   }
