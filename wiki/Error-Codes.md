@@ -60,7 +60,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E2022 | Command line | The state that the record's parser produced from the captured reports differs from the expected state. Read the fields that the command lists. Exit code 1. |
 | E2023 | Command line | This controller cannot be claimed or released: its protocol family uses raw USB, or the system does not serve it natively. The message names the reason. Exit code 1. |
 | E2024 | Command line | No endpoint client or token has this ID. Run ojd access to list the IDs, then use one of them. Exit code 1. |
-| E2025 | Command line | A client with this kind of signature cannot be granted, because any local program can claim its signature. Exit code 1. |
+| E2025 | Command line | A client with this kind of signature cannot be granted, because any local program can claim its signature. Sign it with a Developer ID and try again. Exit code 1. |
 | E2026 | Command line | Choose at least one scope to grant. Exit code 64. |
 | E2027 | Command line | The service is stopping. Start it, then try again. Exit code 1. |
 | E2028 | Command line | A token with this name exists. Revoke it first, or choose another name. Exit code 64. |
@@ -108,7 +108,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3030 | Remapping | The action did not run because Post Event access is not granted. Grant it to OpenJoystickDriver and try again. Wire value `post_event_access_missing`. |
 | E3031 | Remapping | The action did not run because Automation access is not granted. Grant it to OpenJoystickDriver and try again. Wire value `automation_access_missing`. |
 | E3032 | Remapping | The action did not run because Secure Input is on. Close the app that has it on, such as a password field, and try again. Wire value `secure_input_enabled`. |
-| E3033 | Remapping | The action failed. Wire value `system_action_failed`. |
+| E3033 | Remapping | The action failed. Try again. Wire value `system_action_failed`. |
 | E3034 | Remapping | The MIDI action did not run because the system refused to create the MIDI source OpenJoystickDriver. Try again. Wire value `midi_source_refused`. |
 | E4001 | Mod packages | The package manifest mod.plist is missing or invalid. Check it against the mod-package schema and run the command again. |
 | E4002 | Mod packages | The package requires a different version of OpenJoystickDriver than the one that runs. Install a package version that supports this version, or update OpenJoystickDriver. |

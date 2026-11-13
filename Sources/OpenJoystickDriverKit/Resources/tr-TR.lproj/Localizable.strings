@@ -3130,7 +3130,7 @@
 /* Text of error E2024, printed when no endpoint client or token has the given ID. ojd access is the command that lists the IDs and stays as written. */
 "error.E2024.message" = "Bu kimliğe sahip bir uç nokta istemcisi veya belirteci yok. Kimlikleri listelemek için ojd access çalıştırın, sonra birini kullanın.";
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
-"error.E2025.message" = "Bu tür imzaya sahip bir istemciye erişim verilemez, çünkü her yerel program onun imzasını öne sürebilir.";
+"error.E2025.message" = "Bu tür imzaya sahip bir istemciye erişim verilemez, çünkü her yerel program onun imzasını öne sürebilir. Bir Developer ID ile imzalayın ve yeniden deneyin.";
 /* Text of error E2026, printed when a grant names no scope. */
 "error.E2026.message" = "Vermek için en az bir kapsam seçin.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
@@ -4334,7 +4334,7 @@
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
 "error.E3032.message" = "Eylem, Secure Input açık olduğu için çalışmadı. Onu açan uygulamayı, örneğin bir parola alanını, kapatıp yeniden deneyin.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
-"error.E3033.message" = "Eylem başarısız oldu.";
+"error.E3033.message" = "Eylem başarısız oldu. Yeniden deneyin.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "Sistem OpenJoystickDriver MIDI kaynağını oluşturmayı reddettiği için MIDI eylemi çalışmadı. Yeniden deneyin.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */

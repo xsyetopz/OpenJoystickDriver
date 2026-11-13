@@ -3130,7 +3130,7 @@
 /* Text of error E2024, printed when no endpoint client or token has the given ID. ojd access is the command that lists the IDs and stays as written. */
 "error.E2024.message" = "किसी एंडपॉइंट क्लाइंट या टोकन की यह ID नहीं है। ID देखने के लिए ojd access चलाएँ, फिर उनमें से एक उपयोग करें।";
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
-"error.E2025.message" = "इस प्रकार के हस्ताक्षर वाले क्लाइंट को एक्सेस नहीं दिया जा सकता, क्योंकि कोई भी स्थानीय प्रोग्राम उसका हस्ताक्षर होने का दावा कर सकता है।";
+"error.E2025.message" = "इस प्रकार के हस्ताक्षर वाले क्लाइंट को एक्सेस नहीं दिया जा सकता, क्योंकि कोई भी स्थानीय प्रोग्राम उसका हस्ताक्षर होने का दावा कर सकता है। उसे Developer ID से हस्ताक्षरित करें और फिर कोशिश करें।";
 /* Text of error E2026, printed when a grant names no scope. */
 "error.E2026.message" = "देने के लिए कम से कम एक स्कोप चुनें।";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
@@ -4334,7 +4334,7 @@
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
 "error.E3032.message" = "Secure Input चालू होने के कारण क्रिया नहीं चली। इसे चालू करने वाला ऐप, जैसे पासवर्ड फ़ील्ड, बंद करें और फिर से कोशिश करें।";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
-"error.E3033.message" = "क्रिया विफल रही।";
+"error.E3033.message" = "क्रिया विफल रही। फिर कोशिश करें।";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "MIDI क्रिया नहीं चली क्योंकि सिस्टम ने MIDI स्रोत OpenJoystickDriver बनाने से मना कर दिया। फिर कोशिश करें।";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */

@@ -3130,7 +3130,7 @@
 /* Text of error E2024, printed when no endpoint client or token has the given ID. ojd access is the command that lists the IDs and stays as written. */
 "error.E2024.message" = "이 ID를 가진 엔드포인트 클라이언트나 토큰이 없습니다. ojd access를 실행해 ID 목록을 확인한 다음 그중 하나를 사용하세요.";
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
-"error.E2025.message" = "이 종류의 서명을 가진 클라이언트에는 접근을 허용할 수 없습니다. 어떤 로컬 프로그램이든 그 서명을 사칭할 수 있기 때문입니다.";
+"error.E2025.message" = "이 종류의 서명을 가진 클라이언트에는 접근을 허용할 수 없습니다. 어떤 로컬 프로그램이든 그 서명을 사칭할 수 있기 때문입니다. Developer ID로 서명한 뒤 다시 시도하세요.";
 /* Text of error E2026, printed when a grant names no scope. */
 "error.E2026.message" = "허용할 범위를 하나 이상 선택하세요.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
@@ -4334,7 +4334,7 @@
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
 "error.E3032.message" = "Secure Input이 켜져 있어 동작이 실행되지 않았습니다. 암호 입력란처럼 이를 켠 앱을 닫고 다시 시도하세요.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
-"error.E3033.message" = "동작에 실패했습니다.";
+"error.E3033.message" = "동작에 실패했습니다. 다시 시도하세요.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "시스템이 MIDI 소스 OpenJoystickDriver 생성을 거부하여 MIDI 동작이 실행되지 않았습니다. 다시 시도하십시오.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */

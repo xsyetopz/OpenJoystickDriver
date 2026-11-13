@@ -3130,7 +3130,7 @@
 /* Text of error E2024, printed when no endpoint client or token has the given ID. ojd access is the command that lists the IDs and stays as written. */
 "error.E2024.message" = "沒有端點用戶端或權杖使用此 ID。執行 ojd access 列出 ID，然後使用其中一個。";
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
-"error.E2025.message" = "無法向具有這種簽名的用戶端授予存取權限，因為任何本機程式都可以冒用其簽名。";
+"error.E2025.message" = "無法向具有這種簽名的用戶端授予存取權限，因為任何本機程式都可以冒用其簽名。請使用 Developer ID 簽署後重試。";
 /* Text of error E2026, printed when a grant names no scope. */
 "error.E2026.message" = "請至少選擇一個要授予的範圍。";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
@@ -4334,7 +4334,7 @@
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
 "error.E3032.message" = "由於 Secure Input 已開啟,動作未執行。請關閉開啟它的 App(例如密碼欄位),然後再試一次。";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
-"error.E3033.message" = "動作失敗。";
+"error.E3033.message" = "動作失敗。請重試。";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "系統拒絕建立 MIDI 來源 OpenJoystickDriver，因此 MIDI 操作未執行。請重試。";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
