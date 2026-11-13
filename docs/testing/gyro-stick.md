@@ -6,7 +6,7 @@ This page is the hardware check of the `gyro-stick` profile template. For the us
 
 Not checked. Constructed tests cover gyro output to the left and right stick; no controller has run this check. Fill in the record below and change the wiki line from `Not checked` only with that record.
 
-## Test Setup
+## Test setup
 
 Use a controller with a motion sensor, for example a DualSense `054C:0CE6`. Run the service and keep the app open.
 

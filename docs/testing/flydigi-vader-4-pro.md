@@ -2,7 +2,7 @@
 
 Bluetooth Low Energy identity `D7D7:0041`, firmware 6.9.5.5, observed on macOS 26.5. The 2.4 GHz dongle and wired modes enumerate as different identities and are not covered by this record.
 
-## Why the Record Exists
+## Why the record exists
 
 The device advertises Generic Desktop GamePad usage, so descriptor-driven discovery finds it, but three descriptor properties defeat the generic parser:
 
@@ -12,7 +12,7 @@ The device advertises Generic Desktop GamePad usage, so descriptor-driven discov
 
 Observed generic-parser behavior before the record: right stick drove the triggers, LT and RT reported stick clicks, X reported Y, Y reported left bumper, RB reported Start, LB reported Back, Select reported Guide, Start reported nothing, and left-stick Y was inverted. The D-pad was correct.
 
-## Report Layout
+## Report layout
 
 Report ID `0x01`, 15 bytes. Neutral: `01 FF FF FF FF 00 00 00 00 00 00 00 00 00 00`.
 

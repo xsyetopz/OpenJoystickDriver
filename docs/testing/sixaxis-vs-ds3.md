@@ -2,14 +2,14 @@
 
 Sony's SIXAXIS (CECHZC1) and DUALSHOCK 3 (CECHZC2) both enumerate as `054C:0268`. The SIXAXIS has no rumble motors. OJD's `SonySixaxis` driver advertises the left and right motors for every `054C:0268`, so on a SIXAXIS the rumble commands succeed and nothing moves. The doc comment on `SixaxisDriver` records this.
 
-## What Other Drivers Do
+## What other drivers do
 
 - Linux `drivers/hid/hid-sony.c` gives both models the one `SIXAXIS_CONTROLLER` quirk and registers force feedback for all of them (`SONY_FF_SUPPORT`, `sony_init_ff`).
 - SDL `src/joystick/hidapi/SDL_hidapi_ps3.c` has no model check either.
 
 Neither project tells the two apart, so no known prior art gives a detection method.
 
-## What the Host Can Read
+## What the host can read
 
 Measured on macOS 27.0 with one CECHZC1E SIXAXIS and one CECHZC2 DUALSHOCK 3, both over USB. The models were matched to their USB locations by unplugging the SIXAXIS and checking which location remained.
 

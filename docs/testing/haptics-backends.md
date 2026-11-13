@@ -17,7 +17,7 @@ Rumble that an application writes to a virtual controller reaches the physical c
 
 The GameController diagnostic checks the supported public controller and haptics path. `IOHIDUserDevice` publication alone does not synthesize a public `GCController.haptics` engine.
 
-## GameSir G7 SE Observations
+## GameSir G7 SE observations
 
 On September 2, 2026, the four physical GIP output channels were isolated with:
 

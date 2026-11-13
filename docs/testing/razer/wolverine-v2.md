@@ -10,7 +10,7 @@ Validation is signing-free. This pair is not in the current production Apple USB
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/19
 
-## Validate the Bundled Record
+## Validate the bundled record
 
 From the repository root:
 
@@ -26,7 +26,7 @@ Expected result:
 RECORD_VALIDATION result=valid
 ```
 
-## Run the Raw USB Probe
+## Run the raw USB probe
 
 Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 
@@ -40,7 +40,7 @@ Confirm the controller remains powered, `RECORD_HANDSHAKE` succeeds, and `USB_RX
 
 If the interface is unavailable, preserve the selected route and registry owner; there is no detach or cross-transport fallback.
 
-## Check Physical Output With an Installed App
+## Check physical output with an installed app
 
 Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](../physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../../wiki/Command-Line.md)):
 

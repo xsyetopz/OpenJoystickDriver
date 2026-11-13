@@ -2,7 +2,7 @@
 
 The Switch 2 Pro Controller is `0x057e:0x2069`. The Joy-Con 2 are `0x2066` (right) and `0x2067` (left). The NSO GameCube controller is `0x2073`. The `NintendoSwitch2` family selects `Switch2Driver`, and the `layout` parameter (`JoyConLeft`, `JoyConRight` or `GameCube`) selects the layout. The USB driver follows SDL `SDL_hidapi_switch2.c`. The Bluetooth LE transport follows [ndeadly's switch2_controller_research][1] and [joycon2cpp][2]. None of these controllers is hardware-verified.
 
-## What the Driver Does
+## What the driver does
 
 - Opens the vendor bulk interface 1 (OUT `0x02`, IN `0x82`) next to HID interface 0.
 - Reads the stick calibration from flash, then sends SDL's init sequence. A user calibration replaces the factory calibration when its marker is present.
@@ -10,10 +10,9 @@ The Switch 2 Pro Controller is `0x057e:0x2069`. The Joy-Con 2 are `0x2066` (righ
 - Sets the player LEDs through the bulk interface.
 - Sends HD rumble on the Pro Controller and Joy-Con 2, and PWM rumble on the GameCube controller. The driver resends rumble every 12 ms and sends two stop packets after a stop.
 - A single Joy-Con 2 uses its half of the full layout. OJD does not rotate it sideways.
-
 - Two Joy-Con 2 can be paired as one controller from the Profiles pair sheet, the same way as the first-generation Joy-Con.
 
-Motion is not supported yet.
+Motion is not supported.
 
 ## Bluetooth LE
 

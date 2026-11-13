@@ -8,7 +8,7 @@ The input mapping and output details have no capture. Validation is signing-free
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/14
 
-## Validate the Bundled Record
+## Validate the bundled record
 
 Run from the repository root:
 
@@ -24,7 +24,7 @@ Expected result:
 PROFILE_VALIDATION result=valid
 ```
 
-## Run the USB Probe
+## Run the USB probe
 
 Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 

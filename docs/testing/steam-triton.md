@@ -11,7 +11,7 @@ The 2026 Steam Controller talks a protocol that differs from the original Steam 
 
 The driver follows SDL `src/joystick/hidapi/SDL_hidapi_steam_triton.c` and `steam/controller_structs.h` at `release-3.4.16`. None of these identities is checked on hardware with OJD.
 
-## HID Roles
+## HID roles
 
 - A dongle carries controllers on USB interfaces 2 to 5 only, as in SDL. Each interface is its own controller, and each one starts with no controller connected.
 - The Bluetooth LE link has one HID service and no USB interface number, so that connection is the controller of its location.
