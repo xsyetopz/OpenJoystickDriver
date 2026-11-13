@@ -40,7 +40,7 @@ A package folder holds nothing else. OJD refuses a package with a file or folder
 
 ## The Manifest
 
-The `mod.plist` file names the package and lists every file it holds. Each file of a package is an XML property list. This is the sample manifest:
+The `mod.plist` file names the package and lists every file it holds. This is the sample manifest:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

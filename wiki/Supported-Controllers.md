@@ -13,7 +13,7 @@ Xbox and PlayStation names in the UI are trademarks of Microsoft and Sony. This 
 
 ## Supported Controllers
 
-This section sorts controllers into three tiers. The tiers are a documentation classification. The app shows no tier and no warning. A tier records how much hardware testing confirms a controller. Official and Community-verified mean that people tested the controller on real hardware and it worked. Unverified means that nobody confirmed the controller yet. Somebody verified a controller only in the connection mode that they tested. The other modes have no verification and may work. A controller that works over USB may not work over Bluetooth or a dongle. For more information, see [Connection types](Connecting-Controllers.md#connection-types).
+This section sorts controllers into three tiers. The tiers are a documentation classification. The app shows no tier and no warning. A tier records how much hardware testing confirms a controller. Official and Community-verified mean that people tested the controller on real hardware and it worked. Unverified means that nobody has confirmed the controller. Somebody verified a controller only in the connection mode that they tested. The other modes have no verification and may work. A controller that works over USB may not work over Bluetooth or a dongle. For more information, see [Connection types](Connecting-Controllers.md#connection-types).
 
 ### Official
 
