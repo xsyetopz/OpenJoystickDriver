@@ -35,7 +35,7 @@ import Foundation
 public enum GamepadHIDDescriptor {
   // MARK: - Report descriptor bytes
 
-  // Indentation reflects HID descriptor hierarchy — intentionally not vertically aligned.
+  // Indentation follows the HID descriptor hierarchy, so the bytes are not vertically aligned.
   /// Raw HID report descriptor that describes the virtual gamepad layout.
   public static let descriptor: [UInt8] = [
     // ----- Usage Page: Generic Desktop -----
