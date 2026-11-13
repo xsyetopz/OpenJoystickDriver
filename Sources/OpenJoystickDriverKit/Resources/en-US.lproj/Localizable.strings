@@ -79,7 +79,7 @@
 /* Value of the connection state of a controller in the Controllers detail: the controller is connected. */
 "ui.settings.notifications.controllerConnectedShort" = "Connected";
 /* Button of a permission row in the Access area that asks macOS for the permission. %@ is the name of the permission. */
-"ui.settings.notifications.requestAccess" = "Request %@ access";
+"ui.settings.notifications.requestAccess" = "Request %@ Access";
 /* VoiceOver label of the switch for notifications about a controller that disconnects. */
 "ui.settings.notifications.controllerDisconnectedNotifications" = "Controller disconnected";
 /* Title of the switch for notifications about a controller that disconnects, and value of the connection state of a controller that is not connected. */
@@ -5165,7 +5165,7 @@
 /* Button in the General pane of the settings window that starts recording the pause shortcut. */
 "ui.settings.general.pauseShortcutRecord" = "Record Shortcut";
 /* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
-"ui.settings.general.pauseShortcutRecording" = "Press the Shortcut...";
+"ui.settings.general.pauseShortcutRecording" = "Press the shortcut...";
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "Another app already uses this shortcut. Record a different one.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
