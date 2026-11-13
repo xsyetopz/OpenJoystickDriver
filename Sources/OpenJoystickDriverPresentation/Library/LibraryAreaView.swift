@@ -74,7 +74,7 @@
             }
           }
         }.listStyle(InsetListStyle())
-      }.onAppear { model.reload() }
+      }.onAppear { model.reloadAfterRender() }
     }
 
     /// Whether the search field holds text other than spaces.
@@ -84,7 +84,7 @@
 
     /// The selected row, which reads and sets the selection of ``model``.
     private var selection: Binding<LibrarySelection?> {
-      Binding(get: { model.selection }, set: { model.select($0) })
+      Binding(get: { model.selection }, set: { model.selectAfterRender($0) })
     }
 
     /// The header of the records section; the Built-in scope shows only the number of records.

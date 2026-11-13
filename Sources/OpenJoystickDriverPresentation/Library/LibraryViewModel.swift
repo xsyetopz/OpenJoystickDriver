@@ -206,6 +206,20 @@ final class LibraryViewModel: ObservableObject {
     select(selection)
   }
 
+  /// Runs ``reload()`` after the current view update.
+  ///
+  /// The list calls this while it appears, inside NSTableView's delegate, where publishing a
+  /// change to the list's own rows is a reentrant operation.
+  func reloadAfterRender() {
+    Task { @MainActor in reload() }
+  }
+
+  /// Runs ``select(_:)`` after the list's selection callback returns, for the same reason as
+  /// ``reloadAfterRender()``.
+  func selectAfterRender(_ selection: LibrarySelection?) {
+    Task { @MainActor in select(selection) }
+  }
+
   /// Shows `selection`; a record or mod that the list does not show selects nothing.
   func select(_ selection: LibrarySelection?) {
     switch selection {
