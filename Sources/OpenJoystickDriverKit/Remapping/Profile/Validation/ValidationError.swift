@@ -174,123 +174,170 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     switch self {
     case .invalidStickMapping(let source): "Review the settings for the \(source.rawValue) stick."
     case .duplicateStickMapping(let source):
-      "The \(source.rawValue) stick has multiple mode mappings."
+      "The \(source.rawValue) stick has multiple mode mappings. Keep one."
     case .invalidTriggerMapping(let source):
       "Review the settings for the \(source.rawValue) dual-stage trigger."
     case .duplicateTriggerMapping(let source):
-      "The \(source.rawValue) trigger has multiple stage mappings."
+      "The \(source.rawValue) trigger has multiple stage mappings. Keep one."
     case .triggerStageWithoutMapping(let source):
-      "The \(source.rawValue) trigger stage requires a dual-stage trigger mapping."
-    case .motionLeanWithoutMapping: "Motion lean sources require motion lean settings."
+      "The \(source.rawValue) trigger stage requires a dual-stage trigger mapping. Add one."
+    case .motionLeanWithoutMapping:
+      "Motion lean sources require motion lean settings. Add them or remove the sources."
     case .invalidTouchMapping(let surface):
       "Review the continuous mapping for the \(surface.rawValue) touch surface."
     case .duplicateTouchMapping(let surface):
-      "The \(surface.rawValue) touch surface has multiple continuous mappings."
-    case .invalidTouchGrid: "A touch grid source has invalid dimensions or cell coordinates."
-    case .invalidTouchSwipe: "A touch swipe source has an invalid minimum distance."
+      "The \(surface.rawValue) touch surface has multiple continuous mappings. Keep one."
+    case .invalidTouchGrid:
+      "A touch grid source has invalid dimensions or cell coordinates. Use 1 to 16 rows and "
+        + "columns, and cells inside the grid."
+    case .invalidTouchSwipe:
+      "A touch swipe source has an invalid minimum distance. Use 0.01 to 1."
     case .invalidStickRegion:
       "A stick region needs 0 <= inner < outer <= 1, both angles or none, hysteresis 0 to 0.25."
     case .invalidTriggerBand: "A trigger band needs 0 <= from < to <= 1 and hysteresis 0 to 0.25."
-    case .invalidTouchArea: "A touch area must be nonempty and inside the surface."
+    case .invalidTouchArea:
+      "A touch area must be nonempty and inside the surface. Resize it to fit."
     case .triggerBandWithDualStage(let trigger):
-      "The \(trigger.rawValue) trigger has bands and a dual-stage mapping."
-    case .overlappingRegions: "Regions of one stick, or bands of one trigger, must not overlap."
+      "The \(trigger.rawValue) trigger has bands and a dual-stage mapping. Remove one."
+    case .overlappingRegions:
+      "Regions of one stick, or bands of one trigger, must not overlap. Narrow or remove one."
     case .invalidMotionTuning(let error): error.localizedDescription
     case .invalidGyroOutput(let error): error.localizedDescription
     case .invalidPointerSpeed: "Pointer speed scales must be finite numbers from 0 to 10."
     case .unsupportedPointerSpeedDriver:
-      "The pointer speed reads a trigger or stick that the controller does not report."
+      "The pointer speed reads a trigger or stick that the controller does not report. "
+        + "Choose a driver the controller reports."
     case .invalidJoyConPairDevice:
       "Joy-Con pair profiles must target a Nintendo left Joy-Con model (057e:2006 or 057e:2067)."
     case .bindingBehaviorConflict(let index):
       "Binding \(index) uses a behavior incompatible with its destination or activation settings."
     case .unsupportedGamepadButton(let button):
-      "The virtual controller cannot output \(button.rawValue)."
+      "The virtual controller cannot output \(button.rawValue). Choose another button."
     case .unsupportedGamepadAxis(let axis):
-      "The virtual controller cannot output \(axis.rawValue)."
-    case .virtualOutputRequired: "Gamepad destinations require virtual gamepad output."
-    case .invalidPhysicalOutput: "A physical-controller output value is invalid."
+      "The virtual controller cannot output \(axis.rawValue). Choose another axis."
+    case .virtualOutputRequired:
+      "Gamepad destinations require virtual gamepad output. Turn it on or change the destination."
+    case .invalidPhysicalOutput:
+      "A physical-controller output value is invalid. Choose an output the controller supports."
     case .invalidProfileName: "Profile names must contain 1 through 80 printable characters."
-    case .tooManyBindings(let count): "A remapping profile cannot contain \(count) bindings."
+    case .tooManyBindings(let count):
+      "A remapping profile cannot contain \(count) bindings. Remove some; the limit is 512."
     case .duplicateBindingID(let id): "The binding identifier \(id.uuidString) is duplicated."
     case .duplicateLayerID(let id): "The layer identifier \(id.uuidString) is duplicated."
-    case .duplicateSource: "Each controller source can appear in only one binding."
+    case .duplicateSource:
+      "Each controller source can appear in only one binding. Remove the extra binding."
     case .invalidAppID(let identifier):
-      "The target application bundle identifier is invalid: \(identifier)."
+      "The target application bundle identifier is invalid: \(identifier). Use 3 to 255 ASCII "
+        + "letters, digits and hyphens in dot-separated parts, such as com.example.app."
     case .noAppIDs: "An application target needs at least one bundle identifier."
     case .duplicateAppID(let identifier):
-      "The target application bundle identifier is listed twice: \(identifier)."
-    case .axisTuningRequired(let index): "Binding \(index) requires axis tuning."
-    case .axisTuningNotApplicable(let index): "Binding \(index) cannot have axis tuning."
+      "The target application bundle identifier is listed twice: \(identifier). Remove one."
+    case .axisTuningRequired(let index): "Binding \(index) requires axis tuning. Add it."
+    case .axisTuningNotApplicable(let index):
+      "Binding \(index) cannot have axis tuning. Remove it."
     case .incompatibleSourceAndDestination(let index):
-      "Binding \(index) combines incompatible source and destination types."
-    case .nonFiniteTuning(let index, let field): "Binding \(index) has a non-finite \(field)."
-    case .tuningOutOfRange(let index, let field): "Binding \(index) has an out-of-range \(field)."
-    case .turboNotSupported(let index): "Binding \(index) uses turbo with a continuous destination."
-    case .nonFiniteTurbo(let index, let field): "Binding \(index) has a non-finite turbo \(field)."
+      "Binding \(index) combines incompatible source and destination types. Change one."
+    case .nonFiniteTuning(let index, let field):
+      "Binding \(index) has a non-finite \(field). Enter a finite number."
+    case .tuningOutOfRange(let index, let field):
+      "Binding \(index) has an out-of-range \(field). Deadzone is 0 to 0.95, gain 0.1 to 10, "
+        + "digital activation threshold 0.01 to 1."
+    case .turboNotSupported(let index):
+      "Binding \(index) uses turbo with a continuous destination. Remove turbo or change the "
+        + "destination."
+    case .nonFiniteTurbo(let index, let field):
+      "Binding \(index) has a non-finite turbo \(field). Enter a finite number."
     case .turboOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range turbo \(field)."
+      "Binding \(index) has an out-of-range turbo \(field). Repeat rate is 1 to 60 Hz, "
+        + "duty cycle 0.05 to 0.95, initial delay 0 to 2500 ms, max repeats 1 to 500."
     case .longHoldNotSupported(let index):
-      "Binding \(index) uses long-hold with a continuous source or destination."
+      "Binding \(index) uses long-hold with a continuous source or destination. Remove long-hold "
+        + "or use button sources and destinations."
     case .nonFiniteLongHold(let index, let field):
-      "Binding \(index) has a non-finite long-hold \(field)."
+      "Binding \(index) has a non-finite long-hold \(field). Enter a finite number."
     case .longHoldOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range long-hold \(field)."
+      "Binding \(index) has an out-of-range long-hold \(field). Use 100 to 5000 ms."
     case .nonFiniteMultiTap(let index, let field):
-      "Binding \(index) has a non-finite multi-tap \(field)."
+      "Binding \(index) has a non-finite multi-tap \(field). Enter a finite number."
     case .multiTapOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range multi-tap \(field)."
+      "Binding \(index) has an out-of-range multi-tap \(field). Use a count of 2 to 5 and a "
+        + "window of 50 to 1000 ms."
     case .duplicateMultiTapCount(let index):
-      "Binding \(index) has two multi-tap entries with the same count."
+      "Binding \(index) has two multi-tap entries with the same count. Give each its own count."
     case .turboAndActivationConflict(let index):
-      "Binding \(index) cannot combine turbo with long-hold or multi-tap."
-    case .chordWindowOutOfRange(let index): "Chord \(index) has an out-of-range window."
-    case .chordTooFewSources(let index): "Chord \(index) must have at least two sources."
-    case .chordContinuousSource(let index): "Chord \(index) uses a continuous (axis) source."
-    case .chordContinuousDestination(let index): "Chord \(index) uses a continuous destination."
-    case .duplicateChordSources(let index): "Chord \(index) duplicates another chord's source set."
-    case .sequenceTooFewSources(let index): "Sequence \(index) must have at least two sources."
-    case .sequenceContinuousSource(let index): "Sequence \(index) uses a continuous (axis) source."
+      "Binding \(index) cannot combine turbo with long-hold or multi-tap. Remove one."
+    case .chordWindowOutOfRange(let index):
+      "Chord \(index) has an out-of-range window. Use 1 to 1000 ms."
+    case .chordTooFewSources(let index):
+      "Chord \(index) must have at least two sources. Add one."
+    case .chordContinuousSource(let index):
+      "Chord \(index) uses a continuous (axis) source. Use button sources."
+    case .chordContinuousDestination(let index):
+      "Chord \(index) uses a continuous destination. Choose a button destination."
+    case .duplicateChordSources(let index):
+      "Chord \(index) duplicates another chord's source set. Remove one."
+    case .sequenceTooFewSources(let index):
+      "Sequence \(index) must have at least two sources. Add one."
+    case .sequenceContinuousSource(let index):
+      "Sequence \(index) uses a continuous (axis) source. Use button sources."
     case .sequenceContinuousDestination(let index):
-      "Sequence \(index) uses a continuous destination."
-    case .sequenceWindowOutOfRange(let index): "Sequence \(index) has an out-of-range window."
+      "Sequence \(index) uses a continuous destination. Choose a button destination."
+    case .sequenceWindowOutOfRange(let index):
+      "Sequence \(index) has an out-of-range window. Use 200 to 10000 ms."
     case .duplicateSequenceSources(let index):
-      "Sequence \(index) duplicates another sequence's source ordering."
-    case .bindingRemarkInvalid(let index): "Binding \(index) has an invalid remark."
-    case .layerNameInvalid(let index): "Layer \(index) has an invalid name."
+      "Sequence \(index) duplicates another sequence's source ordering. Remove one."
+    case .bindingRemarkInvalid(let index):
+      "Binding \(index) has an invalid remark. Use 1 to 200 characters."
+    case .layerNameInvalid(let index):
+      "Layer \(index) has an invalid name. Use 1 to 40 characters."
     case .layerActivatorNotDiscrete(let index):
-      "Layer \(index) has a non-discrete (axis) activator."
-    case .duplicateLayerActivator(let index): "Layer \(index) duplicates another layer's activator."
+      "Layer \(index) has a non-discrete (axis) activator. Use a button source."
+    case .duplicateLayerActivator(let index):
+      "Layer \(index) duplicates another layer's activator. Choose a different source."
     case .layerActivatorAlsoBound(let index):
-      "Layer \(index) activator is also bound as a regular source."
-    case .tooManyMacros(let count): "A remapping profile cannot contain \(count) macros."
+      "Layer \(index) activator is also bound as a regular source. Remove that binding or "
+        + "choose another activator."
+    case .tooManyMacros(let count):
+      "A remapping profile cannot contain \(count) macros. Remove some; the limit is 16."
     case .duplicateMacroID(let id): "The macro identifier \(id.uuidString) is duplicated."
-    case .duplicateMacroName(let index): "Macro \(index) repeats the name of an earlier macro."
-    case .invalidMacro(let index, let field): "Macro \(index) has an invalid \(field)."
+    case .duplicateMacroName(let index):
+      "Macro \(index) repeats the name of an earlier macro. Rename it."
+    case .invalidMacro(let index, let field):
+      "Macro \(index) has an invalid \(field). Names are 1 to 40 characters, steps 1 to 32, "
+        + "repeat 1 to 500, and each delay 0 to 5000 ms."
     case .invalidMacroStepDestination(let index, let step):
-      "Step \(step) of macro \(index) has a destination that a macro step cannot use."
+      "Step \(step) of macro \(index) has a destination that a macro step cannot use. Use a key, "
+        + "pointer button, or gamepad button or d-pad direction."
     case .macroNestingNotAllowed(let index, let step):
-      "Step \(step) of macro \(index) runs a macro, which a macro step cannot do."
+      "Step \(step) of macro \(index) runs a macro, which a macro step cannot do. Remove the step."
     case .macroRunTimeExceeded(let index, let limit):
-      "Macro \(index) runs longer than the \(limit) limit."
+      "Macro \(index) runs longer than the \(limit) limit. One pass takes at most 30 seconds and "
+        + "all repeats at most 300 seconds; shorten delays or lower the repeat."
     case .unknownMacro(let id):
-      "A destination runs the macro \(id.uuidString), which does not exist."
-    case .invalidSystemAction(let action): "The \(action) destination has an invalid value."
+      "A destination runs the macro \(id.uuidString), which does not exist. "
+        + "Choose an existing macro."
+    case .invalidSystemAction(let action):
+      "The \(action) destination has an invalid value. Review the value."
     case .unknownLayer(let id):
-      "A destination sets the layer \(id.uuidString), which does not exist."
+      "A destination sets the layer \(id.uuidString), which does not exist. "
+        + "Choose an existing layer."
     case .unknownSwitchProfile(let id):
-      "A destination switches to the profile \(id.uuidString), which does not exist."
+      "A destination switches to the profile \(id.uuidString), which does not exist. "
+        + "Choose an existing profile."
     case .switchProfileForOtherModel(let id):
-      "A destination switches to the profile \(id.uuidString), which is for another model."
-    case .invalidSpeech(let field): "A Speak destination has an invalid \(field)."
+      "A destination switches to the profile \(id.uuidString), which is for another model. "
+        + "Choose a profile for this model."
+    case .invalidSpeech(let field):
+      "A Speak destination has an invalid \(field). Text is 1 to 128 characters."
     case .unknownSpeechVoice(let voice):
-      "A Speak destination names the voice \(voice), which this Mac does not have."
+      "A Speak destination names the voice \(voice), which this Mac does not have. "
+        + "Choose an installed voice or the system voice."
     case .invalidMIDIDestination:
       "A MIDI destination needs a channel of 1 to 16, a note or controller of 0 to 127, and a "
         + "velocity of 1 to 127."
-    case .encodingFailed: "The remapping profile could not be encoded."
+    case .encodingFailed: "The remapping profile could not be encoded. Review its values."
     case .encodedSizeExceeded(let size):
-      "The encoded remapping profile is too large (\(size) bytes)."
+      "The encoded remapping profile is too large (\(size) bytes). Keep it under 4 MiB."
     }
   }
 }
