@@ -301,7 +301,7 @@ struct ProtocolDriverRegistryTests {
         ? [ProtocolBindingID(id, variant: nil).rawValue]
         : id.variants.map { ProtocolBindingID(id, variant: $0).rawValue }
     }
-    #expect(built == Set(registered))
+    #expect(built.subtracting(DocumentedProtocolFamilies.families.map(\.name)) == Set(registered))
   }
 
   @Test
@@ -424,7 +424,7 @@ struct ProtocolDriverRegistryTests {
     return switch id {
     case .hidDescriptor: driver is HIDDescriptorDriver
     case .hidReportLayout: driver is ReportLayoutDriver
-    case .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi:
+    case .xboxXID, .nintendoSwitchInputOnly:
       decodesTheDescribedLayout(driver, of: id)
     case .xboxXUSB: driver is XUSBDriver
     case .xboxGIP: driver is GIPDriver

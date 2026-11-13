@@ -100,7 +100,7 @@ No parser claim exists. Product descriptions do not provide a packet layout. Cap
 
 ## Flydigi Vader 4 Pro (Bluetooth)
 
-The bundled HID record for `D7D7:0041` binds `VendorFlydigi` instead of `HIDDescriptor`. Input is packet-backed from captured 15-byte BLE reports. Consumer-visible virtual input, reconnect, rumble, and the 2.4 GHz/wired identities still need the [Vader 4 Pro hardware test](../testing/flydigi-vader-4-pro.md). See also [pull request #30](https://github.com/xsyetopz/OpenJoystickDriver/pull/30).
+The bundled HID record for `D7D7:0041` binds the bundled documented family `VendorFlydigi` instead of `HIDDescriptor`; a `VendorFlydigi.plist` in the user's `Protocols` folder replaces its description. Input is packet-backed from captured 15-byte BLE reports. Consumer-visible virtual input, reconnect, rumble, and the 2.4 GHz/wired identities still need the [Vader 4 Pro hardware test](../testing/flydigi-vader-4-pro.md). See also [pull request #30](https://github.com/xsyetopz/OpenJoystickDriver/pull/30).
 
 ## WR-007 USB HID Receiver
 

@@ -1013,8 +1013,8 @@ struct ProtocolDescriptionTests {
       .nintendoSwitchInputOnly: ([.usb, .bluetoothClassic], false),
       .valveSteamController: ([.wired, .dongle, .bluetoothLE], true),
       .valveSteamTriton: ([.wired, .dongle, .bluetoothLE], true),
-      .valveSteamDeck: ([], false), .vendorFlydigi: ([], false),
-      .vendorPS3ThirdParty: ([], false), .vendorGameSir: ([.usb, .enhancedHID], true),
+      .valveSteamDeck: ([], false), .vendorPS3ThirdParty: ([], false),
+      .vendorGameSir: ([.usb, .enhancedHID], true),
       .vendorNVIDIAShield: ([], false), .nintendoWii: ([.bluetoothClassic], false),
     ]
     #expect(Set(expected.keys) == Set(PhysicalProtocolID.allCases))

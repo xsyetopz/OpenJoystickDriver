@@ -298,9 +298,9 @@ ojd protocol list
 
 - `protocol validate`: Check a description file without installing it: that it is valid, that the family name is UpperCamelCase and equals the file name, that it is not a built-in family, and that it sets `displayName` and `defaults.input.layouts`. It exits with code 1 and the `E5002` or `E5003` code when the file is refused.
 - `protocol install`: Check the file and copy it to `Protocols/FAMILY.plist` in the OpenJoystickDriver folder. A description of the same family that is installed is replaced. `--dry-run` (`-n`) checks the file and writes nothing.
-- `protocol list`: List the built-in families and the documented families with their source: built in, your `Protocols` folder, or a mod package. A description that is refused is not listed.
+- `protocol list`: List the built-in families and the documented families with their source: built in or bundled, your `Protocols` folder, or a mod package. A description that is refused is not listed.
 
-With `--json`, `protocol validate` prints a `ProtocolValidation` with `valid`, and `name` and `displayName`, or `code` and `problem` when the file is refused. `protocol install` prints a `ProtocolInstall` with `installed`, `replaced`, `dryRun`, `name`, and `displayName`. `protocol list` prints a `ProtocolList` whose items have `name`, `displayName`, `source` (`BuiltIn`, `User`, or `Package`), and `package` and `file` for a documented family. With `--plain`, `protocol list` prints `name`, `displayName`, `source`, `package`, and `file`.
+With `--json`, `protocol validate` prints a `ProtocolValidation` with `valid`, and `name` and `displayName`, or `code` and `problem` when the file is refused. `protocol install` prints a `ProtocolInstall` with `installed`, `replaced`, `dryRun`, `name`, and `displayName`. `protocol list` prints a `ProtocolList` whose items have `name`, `displayName`, `source` (`BuiltIn`, `Bundled`, `User`, or `Package`), and `package` and `file` for a documented family. With `--plain`, `protocol list` prints `name`, `displayName`, `source`, `package`, and `file`.
 
 ## service
 

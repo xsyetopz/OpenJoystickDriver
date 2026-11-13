@@ -17,7 +17,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let vendorID: UInt16
   /// USB product ID.
   public let productID: UInt16
-  /// Bound protocol family and resolved variant (e.g. `XboxGIP:USB`, `VendorFlydigi`).
+  /// Bound protocol family and resolved variant (e.g. `XboxGIP:USB`, `ValveSteamDeck`).
   public let protocolBinding: ProtocolBindingID
   /// Connection type (e.g. "USB", "HID").
   public let connection: String

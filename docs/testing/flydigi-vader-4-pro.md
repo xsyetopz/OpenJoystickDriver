@@ -53,7 +53,7 @@ ojd controller list
 ojd controller show D7D7:0041
 ```
 
-`show` should report the protocol `VendorFlydigi`. Then check each control:
+`show` should report the protocol `VendorFlydigi`, a documented family that the app bundles; `ojd protocol list` shows it with source `Bundled`, and a `VendorFlydigi.plist` installed with `ojd protocol install` replaces it. Then check each control:
 
 ```bash
 ojd controller watch D7D7:0041

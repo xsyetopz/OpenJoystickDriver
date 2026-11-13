@@ -29,7 +29,7 @@ struct ProtocolCommandTests {
       let source = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         .deletingLastPathComponent().appendingPathComponent(
-          "Resources/Protocols/vendor-flydigi.plist"
+          "Resources/Protocols/VendorFlydigi.plist"
         )
       var tree = try #require(
         try PropertyListFixture.tree(Data(contentsOf: source)) as? [String: Any]
@@ -162,6 +162,8 @@ struct ProtocolCommandTests {
     let items = try #require(try json.json()["items"] as? [[String: Any]])
     func entry(_ name: String) -> [String: Any]? { items.first { $0["name"] as? String == name } }
     #expect(entry("XboxGIP")?["source"] as? String == "BuiltIn")
+    #expect(entry("VendorFlydigi")?["source"] as? String == "Bundled")
+    #expect(entry("VendorFlydigi")?["displayName"] as? String == "Flydigi")
     #expect(entry("VendorCliUser")?["source"] as? String == "User")
     #expect(entry("VendorCliPack")?["source"] as? String == "Package")
     #expect(entry("VendorCliPack")?["package"] as? String == "family-pack")

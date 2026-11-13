@@ -311,6 +311,8 @@
 			</array>
 		</dict>
 	</dict>
+	<key>displayName</key>
+	<string>Flydigi</string>
 	<key>endpoints</key>
 	<dict>
 		<key>in</key>

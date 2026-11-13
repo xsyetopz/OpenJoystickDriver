@@ -2266,7 +2266,7 @@
                 "type": "string"
               },
               "source": {
-                "enum": ["BuiltIn", "User", "Package"]
+                "enum": ["BuiltIn", "Bundled", "User", "Package"]
               }
             }
           }
