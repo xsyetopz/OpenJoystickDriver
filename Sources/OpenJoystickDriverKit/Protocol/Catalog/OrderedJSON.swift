@@ -59,7 +59,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
       /// The text breaks the JSON grammar, in words.
       case syntax(String)
       /// A Foundation value JSON cannot hold, in words.
-      case notAJSONValue(String)
+      case notJSONValue(String)
     }
 
     /// Why the text or value was refused.
@@ -80,7 +80,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
         case .equivalentMembers(let first, let second):
           "the members \(OrderedJSON.quoted(first)) and \(OrderedJSON.quoted(second)) have "
             + "different scalars but count as one name in Swift; write the name one way"
-        case .syntax(let words), .notAJSONValue(let words): words
+        case .syntax(let words), .notJSONValue(let words): words
         }
       return offset.map { "JSON text, byte \($0): \(message)" } ?? message
     }
@@ -149,7 +149,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
         self = .number(try Self.text(of: number))
       }
     default:
-      throw Problem(reason: .notAJSONValue("\(type(of: value)) is not a JSON value"), offset: nil)
+      throw Problem(reason: .notJSONValue("\(type(of: value)) is not a JSON value"), offset: nil)
     }
   }
 
@@ -177,7 +177,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     }
     guard number.doubleValue.isFinite else {
       throw Problem(
-        reason: .notAJSONValue("JSON cannot hold a number that is not finite"),
+        reason: .notJSONValue("JSON cannot hold a number that is not finite"),
         offset: nil
       )
     }
