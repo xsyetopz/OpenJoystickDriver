@@ -157,6 +157,12 @@ package protocol HIDAccessBackend: Sendable {
   func reacquireInputClaim(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult
   /// Re-runs the seize of an address's devices whose earlier attempt was refused or failed.
   func retryInputClaim(address: ControllerConnectionAddress) async
+  /// Closes every device handle at `address`, seized or shared, so another process can open the
+  /// devices.
+  func closeDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult
+  /// Opens again the device handles ``closeDeviceHandles(address:)`` closed, seizing the devices
+  /// that were seized.
+  func reopenDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult
   /// Delivers the decoded element values of `connection` to the driver that parses them.
   func routeElementValues(connection: HIDDeviceConnection) async
   /// Admits again each device of a model in `models` whose native pass-through changed with
@@ -171,6 +177,20 @@ extension HIDAccessBackend {
     request: PhysicalHIDFeatureReadRequest
   ) async -> PhysicalHIDReportResult<Data> {
     await getFeatureReport(connection: connection, request: request)
+  }
+
+  /// A backend that opens no device handle has none to close.
+  package func closeDeviceHandles(
+    address _: ControllerConnectionAddress
+  ) -> PhysicalHIDClaimResult {
+    .unavailable
+  }
+
+  /// A backend that opens no device handle has none to open again.
+  package func reopenDeviceHandles(
+    address _: ControllerConnectionAddress
+  ) -> PhysicalHIDClaimResult {
+    .unavailable
   }
 
   /// A backend whose devices never pass through to macOS has nothing to re-evaluate.
@@ -289,6 +309,20 @@ public final class HIDManager: Sendable {
     address: ControllerConnectionAddress
   ) async -> PhysicalHIDClaimResult {
     await backend.reacquireInputClaim(address: address)
+  }
+
+  /// Closes every device handle at `address`, so another process can open the devices.
+  public func closeDeviceHandles(
+    address: ControllerConnectionAddress
+  ) async -> PhysicalHIDClaimResult {
+    await backend.closeDeviceHandles(address: address)
+  }
+
+  /// Opens again the device handles that ``closeDeviceHandles(address:)`` closed.
+  public func reopenDeviceHandles(
+    address: ControllerConnectionAddress
+  ) async -> PhysicalHIDClaimResult {
+    await backend.reopenDeviceHandles(address: address)
   }
 
   /// Runs the seize again for the devices at `address` whose earlier attempt was refused or failed.

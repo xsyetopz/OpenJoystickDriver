@@ -137,6 +137,18 @@ final class BluetoothLECompositeHIDBackend: HIDAccessBackend {
     return .reacquired
   }
 
+  /// Closes the device handles at the primary backend; a hub link holds no IOHID handle.
+  func closeDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult {
+    guard hub.owns(address) else { return await primary.closeDeviceHandles(address: address) }
+    return .unavailable
+  }
+
+  /// Opens the device handles again at the primary backend; a hub link holds no IOHID handle.
+  func reopenDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult {
+    guard hub.owns(address) else { return await primary.reopenDeviceHandles(address: address) }
+    return .unavailable
+  }
+
   /// Retries the input claim at the primary backend; a hub link needs none.
   func retryInputClaim(address: ControllerConnectionAddress) async {
     guard !hub.owns(address) else { return }

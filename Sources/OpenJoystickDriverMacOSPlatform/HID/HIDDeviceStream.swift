@@ -38,6 +38,8 @@ package final class HIDDeviceStream: @unchecked Sendable {
   var seizedByLocation: [UInt32: [IOHIDDevice]] = [:]
   /// The devices whose input claim is released, by location ID.
   var releasedByLocation: [UInt32: [IOHIDDevice]] = [:]
+  /// The devices whose handles are closed, by location ID, with whether each was seized.
+  var closedByLocation: [UInt32: [ClosedDevice]] = [:]
   /// The connections of the tracked devices, by device ID.
   var connectionsByDeviceID: [UInt64: HIDDeviceConnection] = [:]
   /// Admitted devices this stream opened for shared input, with their input report buffers.
@@ -100,6 +102,14 @@ package final class HIDDeviceStream: @unchecked Sendable {
     let device: IOHIDDevice
     /// The buffer that receives the input reports of the device.
     let reportBuffer: UnsafeMutableBufferPointer<UInt8>
+  }
+
+  /// A device whose handle was closed, kept to open it the way it was open.
+  struct ClosedDevice {
+    /// The closed device.
+    let device: IOHIDDevice
+    /// Whether the handle was a seize.
+    let seized: Bool
   }
 
   // MARK: - C-convention callbacks

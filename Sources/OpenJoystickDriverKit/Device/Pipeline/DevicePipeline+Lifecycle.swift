@@ -23,7 +23,9 @@ extension DevicePipeline {
     startIdleMonitor()
 
     switch transport {
-    case .usb(let device): startUSBRun(device: device)
+    case .usb(let device):
+      // A pipeline admitted suspended holds no session; its resume opens one.
+      if sessionState == .active { startUSBRun(device: device) }
     case .hid:
       // HID pipeline: data fed via feedHIDData(); no separate startup loop needed
       print("[DevicePipeline] HID pipeline ready" + " for \(identifier)")

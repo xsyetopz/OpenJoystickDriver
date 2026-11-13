@@ -1,8 +1,9 @@
 import Foundation
 
 extension DevicePipeline {
-  /// Suspends the controller session: releases the output, drops the held input and tells the
-  /// dispatcher that the controller stopped.
+  /// Suspends the controller session: releases the output, drops the held input, tells the
+  /// dispatcher that the controller stopped and closes the USB session, so another process can open
+  /// the interface.
   ///
   /// - Returns: False when the pipeline is inactive or its session is not active.
   func suspendControllerSession() async -> Bool {
@@ -16,11 +17,30 @@ extension DevicePipeline {
     currentInputState = .neutral
     foregroundMask = nil
     await notifyControllerDidStop()
+    await closeUSBSession()
     return true
   }
 
-  /// Resumes a suspended session with neutral input and restarted liveness monitoring, then
-  /// activates the output.
+  /// Ends the USB run and closes its session; a HID pipeline has none.
+  ///
+  /// A bumped generation stops the run from opening the device again, and a session still being
+  /// opened is closed when the open returns.
+  func closeUSBSession() async {
+    guard case .usb = transport else { return }
+    usbRunGeneration &+= 1
+    let task = runTask
+    runTask = nil
+    task?.cancel()
+    stopUSBKeepAlive()
+    guard let handle = usbHandle else { return }
+    usbHandle = nil
+    await handle.close()
+    await task?.value
+    driver.resetProtocolState()
+  }
+
+  /// Resumes a suspended session with neutral input and restarted liveness monitoring, opens the
+  /// USB session again, then activates the output.
   ///
   /// - Returns: False when the pipeline is inactive or its session is not suspended.
   func resumeControllerSession() async -> Bool {
@@ -32,17 +52,16 @@ extension DevicePipeline {
     armStaleWatch()
     awaitingNeutralAfterLivenessLoss = false
     sessionState = .active
+    if case .usb(let device) = transport { startUSBRun(device: device) }
     await activateOutput()
     return true
   }
 
   /// Starts the resumed session from a reset driver, so input the controller changed while the
-  /// session was suspended is not replayed from before, then repeats USB startup output.
-  func restartUSBStartupOutputForResume() async -> Bool {
-    driver.resetProtocolState()
-    guard case .usb = transport, let handle = usbHandle else { return true }
-    return await performUSBHandshake(handle: handle)
-  }
+  /// session was suspended is not replayed from before.
+  ///
+  /// The USB startup output follows from the run that ``resumeControllerSession()`` starts.
+  func resetDriverForResume() { driver.resetProtocolState() }
 
   /// Reads the power state and the Wii Remote facts of the driver into ``currentPower`` and
   /// ``currentWiiRemote``.

@@ -58,6 +58,23 @@ struct USBLifecycleWriteTests {
   }
 
   @Test
+  func suspendClosesTheUSBSessionAndResumeOpensItAgain() async {
+    let session = LifecycleUSBSession()
+    let provider = LifecycleUSBProvider(session: session)
+    let pipeline = Self.pipeline(driver: LifecycleWriteDriver(), provider: provider)
+
+    await pipeline.start()
+    await waitUntil("session.readCount >= 1") { await session.readCount >= 1 }
+    #expect(await pipeline.suspendControllerSession())
+    #expect(await session.isClosed)
+
+    #expect(await pipeline.resumeControllerSession())
+    await waitUntil("provider.openCount == 2") { await provider.openCount == 2 }
+    #expect(await !session.isClosed)
+    await pipeline.stop()
+  }
+
+  @Test
   func handleChangeStopsConnectionWritesButKeepsTheConsumedStateChange() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(requiresInputConnectionBeforeOutput: true),
@@ -254,10 +271,12 @@ private actor LifecycleUSBSession: USBTransportSession {
   private(set) var readCount = 0
   private let rejections: [[UInt8]: USBTransportError]
   private var onWrite: (@Sendable () async -> Void)?
-  private var isClosed = false
+  private(set) var isClosed = false
   private var blockedRead: CheckedContinuation<Void, Never>?
 
   init(rejections: [[UInt8]: USBTransportError] = [:]) { self.rejections = rejections }
+
+  func reopen() { isClosed = false }
 
   func setOnWrite(_ hook: @escaping @Sendable () async -> Void) { onWrite = hook }
 
@@ -298,8 +317,12 @@ private actor LifecycleUSBProvider: USBTransportProvider {
 
   func devices() -> [USBTransportDevice] { [] }
 
-  func open(_: USBTransportDevice, options _: USBTransportOpenOptions) -> any USBTransportSession {
+  func open(
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
+  ) async -> any USBTransportSession {
     openCount += 1
+    await session.reopen()
     return session
   }
 

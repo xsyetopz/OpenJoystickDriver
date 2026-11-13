@@ -281,6 +281,41 @@ struct ControllerSessionTests {
   }
 
   @Test
+  func suspendClosesTheHIDHandlesOfTheControllerAndResumeReopensThem() async throws {
+    let backend = ClaimRecordingHIDAccessBackend()
+    let manager = DeviceManager(
+      dispatcher: ControllerSessionOutputProbe(),
+      installationKey: testPortKeyInstallationKey,
+      hidManager: HIDManager(backend: backend)
+    )
+    await manager.handleHIDEvent(
+      .connected(
+        connection: HIDDeviceConnection(
+          physicalDevice: PhysicalDevice(
+            vendorID: 0x054C,
+            productID: 0x09CC,
+            productName: "Controller",
+            transportProperty: "USB",
+            physicalLocationIdentifier: 76,
+            interfaces: [hostHIDInterface(.usb)]
+          ),
+          routingAddress: .ioKit(locationID: 76, interfaceNumber: nil),
+        ),
+        ownership: .exclusive
+      )
+    )
+    await backend.openHandle(at: 76)
+    let device = try #require(await manager.connectedDeviceDescriptions().first)
+
+    #expect(await manager.suspendController(.session(device.sessionToken)).failure == nil)
+    #expect(!(await backend.hasOpenHandle(at: 76)))
+
+    #expect(await manager.resumeController(.session(device.sessionToken)).failure == nil)
+    #expect(await backend.hasOpenHandle(at: 76))
+    await manager.stop()
+  }
+
+  @Test
   func delayedPowerEventFromStoppedSessionCannotMutateRestartedManager() async {
     let manager = DeviceManager(
       dispatcher: ControllerSessionOutputProbe(),
