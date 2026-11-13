@@ -19,6 +19,14 @@ struct SemanticStatePresentationTests {
   }
 
   @Test
+  func attentionOrangeTriangleFailureRedOctagon() {
+    #expect(SemanticState.attention.presentation.tone == .attention)
+    #expect(SemanticState.attention.presentation.symbolName == "exclamationmark.triangle")
+    #expect(SemanticState.failure.presentation.tone == .failure)
+    #expect(SemanticState.failure.presentation.symbolName == "xmark.octagon")
+  }
+
+  @Test
   func symbolResolutionUsesSupportedSymbolThenLocalizedText() {
     #expect(
       SystemSymbolPolicy.resolution(
