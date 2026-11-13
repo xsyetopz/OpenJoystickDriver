@@ -5,7 +5,7 @@ import Testing
 
 struct TriggerMappingTests {
   @Test
-  func allModesRoundTripInTheSchemaThreeProfile() throws {
+  func allModesRoundTripInSchemaThreeProfile() throws {
     for mode in RemappingDualStageTriggerMode.allCases {
       let mapping = RemappingTriggerMapping(
         source: .left,

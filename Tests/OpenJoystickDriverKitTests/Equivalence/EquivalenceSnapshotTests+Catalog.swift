@@ -5,7 +5,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 @testable import OpenJoystickDriverUSB
 
-/// Snapshots the behavior the bundled catalog drives today: each record's resolved runtime
+/// Snapshots the behavior the bundled catalog drives: each record's resolved runtime
 /// behavior and the route that reaches its controller.
 struct EquivalenceSnapshotCatalogTests {
   static let records = ControllerRecordSet.bundled.records.values.sorted {

@@ -92,7 +92,7 @@ struct RemappingTouchRoutingTests {
   }
 
   @Test
-  func aJumpWithinOneContactIsMotionAndALiftThenRetouchStartsAFreshContact() async throws {
+  func jumpWithinOneContactIsMotionAndLiftThenRetouchStartsFreshContact() async throws {
     let recorder = TouchOutputRecorder()
     let engine = RemappingEventEngine(sink: recorder)
     let profile = makeProfile(touchMappings: [

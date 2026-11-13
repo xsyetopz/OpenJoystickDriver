@@ -24,7 +24,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func everySettingRoundTripsThroughTheUserFile() throws {
+  func everySettingRoundTripsThroughUserFile() throws {
     for key in ApplicationSettingKey.allCases {
       for value in [true, false] {
         // Show in menu bar and Show in Dock are never both off.
@@ -39,7 +39,7 @@ struct SettingsStoreTests {
   @Test(arguments: [
     #", "showInMenuBar": false, "showInDock": false"#, #", "showInMenuBar": false"#,
   ])
-  func aFileThatTurnsOffEveryEntryPointFailsToLoad(body: String) throws {
+  func fileThatTurnsOffEveryEntryPointFailsToLoad(body: String) throws {
     try write(header(body), to: .applicationData)
 
     #expect(throws: SettingsStoreError.self) { try store.load() }
@@ -76,10 +76,10 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func theDockIconIsOffByDefault() throws { #expect(try !store.value(of: .showInDock)) }
+  func dockIconIsOffByDefault() throws { #expect(try !store.value(of: .showInDock)) }
 
   @Test
-  func turningOffTheLastEntryPointFails() throws {
+  func turningOffLastEntryPointFails() throws {
     #expect(throws: SettingsStoreError.noVisibleEntryPoint) {
       try store.set(.showInMenuBar, to: false)
     }
@@ -97,13 +97,13 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func theMenuBarItemIsOnAndAutomaticUpdateChecksAreOffByDefault() throws {
+  func menuBarItemIsOnAndAutomaticUpdateChecksAreOffByDefault() throws {
     #expect(try store.value(of: .showInMenuBar))
     #expect(try !store.value(of: .updatesCheckAutomatically))
   }
 
   @Test
-  func theDocumentEncodesAndDecodesToItself() throws {
+  func documentEncodesAndDecodesToItself() throws {
     var document = SettingsDocument()
     for (index, key) in ApplicationSettingKey.allCases.enumerated() {
       document[key] = index.isMultiple(of: 2)
@@ -118,7 +118,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func theUserFileCarriesTheHeaderAndTheDocumentedShape() throws {
+  func userFileCarriesHeaderAndDocumentedShape() throws {
     try store.update([.notifySounds: false, .updatesIncludePrereleases: true])
 
     let object = try PropertyListFixture.dictionary(at: store.userFileURL)
@@ -129,14 +129,14 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func missingFilesGiveTheBuiltInDefaults() throws {
+  func missingFilesGiveBuiltInDefaults() throws {
     for key in ApplicationSettingKey.allCases {
       #expect(try store.value(of: key) == key.defaultValue, "\(key.rawValue)")
     }
   }
 
   @Test
-  func theUserFileOverridesTheBuiltInDefaults() throws {
+  func userFileOverridesBuiltInDefaults() throws {
     try write(
       header(
         #", "notify": {"sounds": false, "controllerConnected": true}, "developerTools": true"#
@@ -189,7 +189,7 @@ struct SettingsStoreTests {
     #"{"apiVersion": "openjoystickdriver/v0", "kind": "Settings"}"#,
     #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings"}"#,
   ])
-  func aMissingOrUnsupportedAPIVersionIsE5001NamingTheFile(json: String) throws {
+  func missingOrUnsupportedAPIVersionIsE5001NamingFile(json: String) throws {
     try write(json, to: .applicationData)
 
     do {
@@ -203,7 +203,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func aWrongKindIsRejectedWithoutACode() throws {
+  func wrongKindIsRejectedWithoutCode() throws {
     try write(
       #"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Profile"}"#,
       to: .applicationData
@@ -226,7 +226,7 @@ struct SettingsStoreTests {
     #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "interfaceLevel": "Pro"}"#,
     #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "interfaceLevel": 1}"#,
   ])
-  func aDamagedFileIsAnErrorNotAnEmptyLayer(json: String) throws {
+  func damagedFileIsErrorNotEmptyLayer(json: String) throws {
     try write(json, to: .applicationData)
 
     #expect(throws: SettingsStoreError.damaged(file: store.userFileURL.path)) {
@@ -249,7 +249,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func moveToTrashMakesARejectedFileUsableAgain() throws {
+  func moveToTrashMakesRejectedFileUsableAgain() throws {
     try write(header(#", "showInMenuBar": false"#), to: .applicationData)
     let (store, trash) = trashingStore
     #expect(throws: SettingsStoreError.self) { try store.load() }
@@ -270,7 +270,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func moveToTrashWithoutAFileMovesNothing() throws {
+  func moveToTrashWithoutFileMovesNothing() throws {
     let (store, trash) = trashingStore
 
     #expect(try !store.moveToTrash())
@@ -278,7 +278,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func aFileThatCannotBeTrashedIsReportedNotIgnored() throws {
+  func fileThatCannotBeTrashedIsReportedNotIgnored() throws {
     try write(header(#", "showInMenuBar": false"#), to: .applicationData)
     let store = SettingsStore(directory: root) { _ in throw CocoaError(.fileWriteNoPermission) }
 
@@ -289,7 +289,7 @@ struct SettingsStoreTests {
   }
 
   @Test
-  func everyErrorIsLocalizedAndNamesTheRecovery() throws {
+  func everyErrorIsLocalizedAndNamesRecovery() throws {
     let file = "/tmp/Settings.plist"
     let errors: [SettingsStoreError] = [
       .damaged(file: file), .unwritable(file: file), .cannotReset(file: file),

@@ -27,7 +27,7 @@ struct DeviceManagerFrameTimingsTests {
   /// A real HID report through the detection loop, the pipeline, and the manager's query surface:
   /// the snapshot the `getFrameTimings` request answers lists every stage, endpoint delivery last.
   @Test
-  func aHIDReportAndItsEndpointDeliveryAppearInTheSnapshot() async throws {
+  func hidReportAndItsEndpointDeliveryAppearInSnapshot() async throws {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()

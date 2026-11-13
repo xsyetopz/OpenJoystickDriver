@@ -34,7 +34,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aSinkRefusesWhatItDoesNotConsume() async {
+  func sinkRefusesWhatItDoesNotConsume() async {
     let sink = BareSink()
     await #expect(throws: StreamBoundaryError.unsupported(.physicalOutput)) {
       try await sink.consume(.gamepad(RemappingGamepadState(), for: Self.identifier)) {}
@@ -45,7 +45,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aDispatcherConsumesControllerFrames() async throws {
+  func dispatcherConsumesControllerFrames() async throws {
     let dispatcher = RecordingDispatcher()
     let delivered = Locked(0)
     let event = ControllerEvent([.leftStick(x: 0.5, y: 0)])
@@ -61,7 +61,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aDispatcherWithoutAGamepadSinkRefusesGamepadFrames() async {
+  func dispatcherWithoutGamepadSinkRefusesGamepadFrames() async {
     let dispatcher = RecordingDispatcher()
     await #expect(throws: StreamBoundaryError.unsupported(.virtualDevice)) {
       try await dispatcher.consume(.gamepad(RemappingGamepadState(), for: Self.identifier)) {}
@@ -69,7 +69,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aDispatcherConsumesAnActivationFrameAndReportsItDelivered() async throws {
+  func dispatcherConsumesActivationFrameAndReportsItDelivered() async throws {
     let dispatcher = RecordingDispatcher()
     let delivered = Locked(0)
 
@@ -80,7 +80,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aDispatcherRefusesAFeedFrame() async {
+  func dispatcherRefusesFeedFrame() async {
     let dispatcher = RecordingDispatcher()
     await #expect(throws: StreamBoundaryError.unsupported(.virtualDevice)) {
       try await dispatcher.consume(.feed(VirtualFeedFrame(buttons: [], axes: [:]))) {}
@@ -89,7 +89,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aSinkRefusesAMappingOutputClaimUnlessItAppliesOne() async {
+  func sinkRefusesMappingOutputClaimUnlessItAppliesOne() async {
     await #expect(throws: StreamBoundaryError.unsupported(.physicalOutput)) {
       try await BareSink().consume(
         MappingOutputClaim(.brightness(0.5), active: true, owner: UUID()),
@@ -99,7 +99,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aSinkRefusesAMappingReleaseAndAProfileColorUnlessItAppliesThem() async {
+  func sinkRefusesMappingReleaseAndProfileColorUnlessItAppliesThem() async {
     await #expect(throws: StreamBoundaryError.unsupported(.physicalOutput)) {
       try await BareSink().consume(MappingOutputRelease(), for: Self.identifier)
     }
@@ -109,7 +109,7 @@ struct StreamBoundaryTests {
   }
 
   @Test
-  func aPipelineIsAPhysicalControllerSourceThatFeedsItsDispatcherThroughTheSink() async {
+  func pipelineIsPhysicalControllerSourceThatFeedsItsDispatcherThroughSink() async {
     let dispatcher = RecordingDispatcher()
     let pipeline = DevicePipeline(
       identifier: Self.identifier,

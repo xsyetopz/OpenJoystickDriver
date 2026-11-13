@@ -14,7 +14,7 @@ struct LockedTests {
   }
 
   @Test
-  func withLockReturnsTheBodyResult() {
+  func withLockReturnsBodyResult() {
     let names = Locked(["a"])
     let count = names.withLock { names -> Int in
       names.append("b")

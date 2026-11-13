@@ -45,7 +45,7 @@ struct GATTPeripheralLinkTests {
   }
 
   @Test
-  func aMockPeripheralDeliversInputFramesThroughTheLink() async throws {
+  func mockPeripheralDeliversInputFramesThroughLink() async throws {
     let (link, peripheral, hub) = try Self.makeLink()
     var events = hub.events().makeAsyncIterator()
     link.admit()
@@ -118,7 +118,7 @@ struct GATTPeripheralLinkTests {
   }
 
   @Test
-  func anAdmittedLinkDoesNotKeepTheHubAlive() throws {
+  func admittedLinkDoesNotKeepHubAlive() throws {
     weak var weakHub: Switch2BluetoothLEHub?
     var link: GATTPeripheralLink?
     do {
@@ -149,7 +149,7 @@ struct GATTPeripheralLinkTests {
   }
 
   @Test
-  func aProductWithoutAVibrationCharacteristicHasNoLink() {
+  func productWithoutVibrationCharacteristicHasNoLink() {
     let link = GATTPeripheralLink(
       peripheral: MockGATTPeripheral(),
       productID: 0x2009,
@@ -160,7 +160,7 @@ struct GATTPeripheralLinkTests {
   }
 
   @Test
-  func onlyTheUSBAccessBackendsUseRawUSB() {
+  func onlyUSBAccessBackendsUseRawUSB() {
     #expect(DeviceAccessBackend.gatt.rawValue == "GATT")
     #expect(!DeviceAccessBackend.gatt.usesRawUSB)
     #expect(!DeviceAccessBackend.hid.usesRawUSB)

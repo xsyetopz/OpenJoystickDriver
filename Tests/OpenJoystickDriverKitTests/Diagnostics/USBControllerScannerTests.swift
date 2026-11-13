@@ -93,7 +93,7 @@ struct USBControllerScannerTests {
   }
 
   @Test
-  func driverKitRouteClassifiesWithTheDriverKitBackend() async throws {
+  func driverKitRouteClassifiesWithDriverKitBackend() async throws {
     let device = USBTransportDevice(
       route: .usbExtension,
       serviceID: 8,
@@ -242,7 +242,7 @@ struct USBControllerScannerTests {
   }
 
   @Test
-  func uncataloguedSignatureDeviceListsItsBindingLikeACatalogRow() async throws {
+  func uncataloguedSignatureDeviceListsItsBindingLikeCatalogRow() async throws {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 41,

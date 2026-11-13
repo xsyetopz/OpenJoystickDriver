@@ -125,7 +125,7 @@ struct EquivalenceSnapshotOutputMappingTests {
   }
 
   @Test
-  func aChangedBitFailsTheComparison() throws {
+  func changedBitFailsComparison() throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-output-mapping-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

@@ -49,7 +49,7 @@ struct FrameTimingsTests {
   private let identifier = LogicalControllerID(vendorID: 1, productID: 2)
 
   @Test
-  func aDispatchedFrameListsEveryStageItReachedInPipelineOrder() async {
+  func dispatchedFrameListsEveryStageItReachedInPipelineOrder() async {
     let ticks = Locked<UInt64>(1_000)
     let recorder = FrameTimingRecorder()
     let pipeline = DevicePipeline(
@@ -81,7 +81,7 @@ struct FrameTimingsTests {
   }
 
   @Test(arguments: [PublishingDispatcher.Outcome.fails, .suppressed])
-  func aFrameThatNeverReachedTheVirtualDeviceHasNoDeliveryStage(
+  func frameThatNeverReachedVirtualDeviceHasNoDeliveryStage(
     outcome: PublishingDispatcher.Outcome
   ) async {
     let ticks = Locked<UInt64>(1_000)
@@ -107,7 +107,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func theRouterReportsAPublicationOnlyWhileOutputIsNotSuppressed() async throws {
+  func routerReportsPublicationOnlyWhileOutputIsNotSuppressed() async throws {
     let router = VirtualOutputRouter()
     router.setBackend(PublishingDispatcher(.publishes))
     let published = Locked(0)
@@ -130,7 +130,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func endpointDeliveryAttachesToTheNewestFrame() {
+  func endpointDeliveryAttachesToNewestFrame() {
     let recorder = FrameTimingRecorder()
     recorder.parsed(for: identifier, read: 1, parse: 2)
     let sequence = recorder.dispatched(for: identifier, at: 3)
@@ -145,7 +145,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func theRingKeepsOnlyTheNewestFrames() {
+  func ringKeepsOnlyNewestFrames() {
     let recorder = FrameTimingRecorder()
     for index in 0..<(FrameTimingRecorder.listedFrames + 3) {
       recorder.parsed(for: identifier, read: UInt64(index), parse: UInt64(index))
@@ -159,12 +159,12 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func theWindowHoldsAtLeastTenSecondsAtOneKilohertz() {
+  func windowHoldsAtLeastTenSecondsAtOneKilohertz() {
     #expect(FrameTimingRecorder.windowCapacity >= 10 * 1_000)
   }
 
   @Test
-  func theWindowKeepsTheNewestFramesAndNoMore() {
+  func windowKeepsNewestFramesAndNoMore() {
     let recorder = FrameTimingRecorder()
     let total = FrameTimingRecorder.windowCapacity + 25
     for index in 0..<total {
@@ -181,14 +181,14 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func theWindowSecondsSetTheCapacityAtOneKilohertz() {
+  func windowSecondsSetCapacityAtOneKilohertz() {
     #expect(FrameTimingRecorder.windowSeconds == 15)
     #expect(FrameTimingRecorder.windowCapacity == FrameTimingRecorder.windowSeconds * 1_000)
     #expect(FrameTimingRecorder.windowSecondsRange == 1...15)
   }
 
   @Test
-  func framesReadBeforeTheLastSecondsLeaveTheWindow() {
+  func framesReadBeforeLastSecondsLeaveWindow() {
     let recorder = FrameTimingRecorder()
     let second: UInt64 = 1_000_000_000
     for read in [2 * second, 4 * second, 7 * second, 9 * second, 10 * second] {
@@ -207,7 +207,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func aFrameReadExactlyTheLastSecondsBeforeNowStaysInTheWindow() {
+  func frameReadExactlyLastSecondsBeforeNowStaysInWindow() {
     let recorder = FrameTimingRecorder()
     let second: UInt64 = 1_000_000_000
     recorder.parsed(for: identifier, read: 7 * second, parse: 7 * second + 1)
@@ -218,7 +218,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func theWindowOfAShortUptimeStartsAtTheClockOrigin() {
+  func windowOfShortUptimeStartsAtClockOrigin() {
     let recorder = FrameTimingRecorder()
     recorder.parsed(for: identifier, read: 5, parse: 6)
     _ = recorder.dispatched(for: identifier, at: 7)
@@ -227,7 +227,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func aDeliveryForAFrameTheWindowDroppedStampsNoOtherFrame() {
+  func deliveryForFrameWindowDroppedStampsNoOtherFrame() {
     let recorder = FrameTimingRecorder()
     let total = FrameTimingRecorder.windowCapacity + 1
     var sequences: [UInt64] = []
@@ -246,7 +246,7 @@ struct FrameTimingsTests {
   }
 
   @Test
-  func aDispatchWithoutAParsedReportLeavesNoFrame() {
+  func dispatchWithoutParsedReportLeavesNoFrame() {
     let recorder = FrameTimingRecorder()
 
     #expect(recorder.dispatched(for: identifier, at: 1) == nil)

@@ -35,7 +35,7 @@ struct RemappingPhysicalOutputTests {
   }
 
   @Test
-  func drainReleasesAnActivePhysicalClaim() async throws {
+  func drainReleasesActivePhysicalClaim() async throws {
     let sink = RecordingPhysicalOutputSink()
     let engine = RemappingEventEngine(sink: RemappingTestSink(), physicalOutputSink: sink)
     let identifier = LogicalControllerID(vendorID: 1, productID: 2, locationID: 3)
@@ -54,7 +54,7 @@ struct RemappingPhysicalOutputTests {
   }
 
   @Test
-  func rejectedPhysicalDeliveryFailsClosedForTheExactDevice() async {
+  func rejectedPhysicalDeliveryFailsClosedForExactDevice() async {
     let sink = RecordingPhysicalOutputSink(rejectSets: true)
     let engine = RemappingEventEngine(sink: RemappingTestSink(), physicalOutputSink: sink)
     let identifier = LogicalControllerID(vendorID: 1, productID: 2, locationID: 3)

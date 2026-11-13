@@ -176,7 +176,7 @@ struct SupportReportTests {
   }
 
   @Test
-  func unavailableServiceProducesAnExplicitPartialReport() {
+  func unavailableServiceProducesExplicitPartialReport() {
     let report = SupportReport(
       generatedAt: Date(timeIntervalSince1970: 0),
       buildIdentity: BuildIdentity(

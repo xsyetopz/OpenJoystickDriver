@@ -5,7 +5,7 @@ import Testing
 
 struct JoyConPairProfileTests {
   @Test(arguments: RemappingJoyConGyroSelection.allCases)
-  func pairSettingsRoundTripInTheCurrentProfileContract(
+  func pairSettingsRoundTripInCurrentProfileContract(
     _ selection: RemappingJoyConGyroSelection
   ) throws {
     let profile = RemappingProfile(
@@ -35,7 +35,7 @@ struct JoyConPairProfileTests {
   }
 
   @Test
-  func switch2LeftJoyConIsAPairableProfileModel() throws {
+  func switch2LeftJoyConIsPairableProfileModel() throws {
     let profile = RemappingProfile(
       name: "Switch 2 pair",
       device: RemappingDeviceScope(vendorID: 0x057E, productID: 0x2067),

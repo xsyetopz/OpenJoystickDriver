@@ -17,7 +17,7 @@ struct ReportValueNamesTests {
   }
 
   @Test
-  func theCurrentNamesDecode() {
+  func currentNamesDecode() {
     #expect(decodes(PhysicalTransport.self, "BluetoothLE"))
     #expect(decodes(DeviceAccessBackend.self, "USBExtension"))
     #expect(decodes(ProtocolBindingResult.Outcome.self, "Bound"))

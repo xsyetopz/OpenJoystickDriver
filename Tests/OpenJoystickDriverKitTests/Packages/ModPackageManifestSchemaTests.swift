@@ -92,7 +92,7 @@ struct ModPackageManifestSchemaTests {
   }
 
   @Test
-  func theSchemaAndTheDecoderAcceptTheSameManifests() throws {
+  func schemaAndDecoderAcceptSameManifests() throws {
     for document in Self.accepted() {
       #expect(try schemaAccepts(document), "schema: \(document)")
       #expect(try swiftAccepts(document), "swift: \(document)")
@@ -100,7 +100,7 @@ struct ModPackageManifestSchemaTests {
   }
 
   @Test
-  func theSchemaAndTheDecoderRejectTheSameManifests() throws {
+  func schemaAndDecoderRejectSameManifests() throws {
     for document in Self.rejected() {
       #expect(try !schemaAccepts(document), "schema: \(document)")
       #expect(try !swiftAccepts(document), "swift: \(document)")

@@ -37,7 +37,7 @@ struct SourceBaselineTests {
   }
 
   @Test
-  func endingASourceForgetsItsBaselineAndProfileChangesKeepIt() async throws {
+  func endingSourceForgetsItsBaselineAndProfileChangesKeepIt() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     try await engine.process(

@@ -5,7 +5,7 @@ import Testing
 
 struct ProfileValueSpellingTests {
   @Test
-  func bindingBehaviorRejectsASnakeCaseSpelling() {
+  func bindingBehaviorRejectsSnakeCaseSpelling() {
     #expect(throws: DecodingError.self) {
       try JSONDecoder().decode(
         RemappingBindingBehavior.self,
@@ -16,14 +16,14 @@ struct ProfileValueSpellingTests {
   }
 
   @Test
-  func responseCurveRejectsASnakeCaseSpelling() {
+  func responseCurveRejectsSnakeCaseSpelling() {
     #expect(throws: DecodingError.self) {
       try JSONDecoder().decode(RemappingResponseCurve.self, from: Data(#""ease_in""#.utf8))
     }
   }
 
   @Test
-  func rumbleMotorRejectsTheNamesBeforeTheActuatorNames() {
+  func rumbleMotorRejectsNamesBeforeActuatorNames() {
     for name in ["leftMain", "rightMain", "leftTrigger", "left_main"] {
       #expect(throws: DecodingError.self) {
         try JSONDecoder().decode(PhysicalRumbleMotor.self, from: Data(#""\#(name)""#.utf8))
@@ -33,7 +33,7 @@ struct ProfileValueSpellingTests {
   }
 
   @Test
-  func aSourceTypeInLowerCaseIsRejected() {
+  func sourceTypeInLowerCaseIsRejected() {
     #expect(throws: DecodingError.self) {
       try JSONDecoder().decode(
         RemappingSource.self,
@@ -49,7 +49,7 @@ struct ProfileValueSpellingTests {
   }
 
   @Test
-  func commandLineSpellingsSelectTheCaseWhoseKebabNameTheyAre() {
+  func commandLineSpellingsSelectCaseWhoseKebabNameTheyAre() {
     #expect(
       CommandLineName.value(of: "tap-on-press", in: RemappingBindingBehavior.self) == .tapOnPress
     )
@@ -72,7 +72,7 @@ struct ProfileValueSpellingTests {
   }
 
   @Test
-  func theCommandValueParserTakesKebabWordsAndRefusesTheDocumentSpelling() throws {
+  func commandValueParserTakesKebabWordsAndRefusesDocumentSpelling() throws {
     #expect(
       try RemappingCommandValueParser.source("trigger:left:soft") == .triggerStage(.left, .soft)
     )
@@ -93,7 +93,7 @@ struct ProfileValueSpellingTests {
     (try? JSONDecoder().decode(Kind.self, from: Data("\"\(spelling)\"".utf8))) != nil
   }
 
-  /// Each renamed kind takes its UpperCamelCase value and refuses the spelling it replaced.
+  /// Each kind takes its UpperCamelCase value and refuses the `replaced` spelling.
   @Test
   func everyRenamedKindRefusesItsEarlierSpelling() {
     typealias Case = (kind: String, current: String, replaced: String, accepts: (String) -> Bool)

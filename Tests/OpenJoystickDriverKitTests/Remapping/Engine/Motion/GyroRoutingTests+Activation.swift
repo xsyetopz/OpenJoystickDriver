@@ -216,7 +216,7 @@ extension GyroRoutingTests {
   }
 
   @Test
-  func gyroTimeoutPreservesOtherBindingsOnTheSameStick() {
+  func gyroTimeoutPreservesOtherBindingsOnSameStick() {
     var engine = RemappingEngineState()
     let device = LogicalControllerID(vendorID: 1, productID: 2)
     let profile = RemappingProfile(

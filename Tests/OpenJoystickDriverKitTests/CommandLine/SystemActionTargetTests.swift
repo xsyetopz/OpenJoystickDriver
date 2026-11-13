@@ -23,7 +23,7 @@ struct SystemActionTargetTests {
   }
 
   @Test
-  func anUnknownSystemKeyOrActionIsRejected() {
+  func unknownSystemKeyOrActionIsRejected() {
     for text in ["system-key:nope", "system:nope"] {
       #expect(throws: RemappingCommandValueError.self) {
         try RemappingCommandValueParser.destination(text)

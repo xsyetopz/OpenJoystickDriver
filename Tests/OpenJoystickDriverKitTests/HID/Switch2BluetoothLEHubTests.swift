@@ -48,7 +48,7 @@ struct Switch2BluetoothLEHubTests {
   }
 
   @Test
-  func advertisementsNameTheSwitch2ProductOnly() {
+  func advertisementsNameSwitch2ProductOnly() {
     let pro = Data([0x53, 0x05, 0x01, 0x00, 0x03, 0x7E, 0x05, 0x69, 0x20, 0x00])
     #expect(Switch2BluetoothLEProfile.productID(manufacturerData: pro) == 0x2069)
     var otherCompany = pro
@@ -61,7 +61,7 @@ struct Switch2BluetoothLEHubTests {
   }
 
   @Test
-  func vibrationCharacteristicsComeFromTheBundledRecords() {
+  func vibrationCharacteristicsComeFromBundledRecords() {
     let expected: [UInt16: String] = [
       0x2066: "FA19B0FB-CD1F-46A7-84A1-BBB09E00C149",
       0x2067: "289326CB-A471-485D-A8F4-240C14F18241",
@@ -156,7 +156,7 @@ struct Switch2BluetoothLEHubTests {
   }
 
   @Test
-  func disconnectEndsAWaitingRead() async throws {
+  func disconnectEndsWaitingRead() async throws {
     let hub = Self.connectedHub().0
     let session = Switch2BluetoothLECommandSession(hub: hub, peripheralID: Self.peripheral)
     let waiting = Task { try await session.read(endpoint: 0x82, length: 64, timeout: 5_000) }
@@ -168,7 +168,7 @@ struct Switch2BluetoothLEHubTests {
   }
 
   @Test
-  func vibrationKeepsTheUSBLayoutWithAZeroReportIDSlotIn42Bytes() {
+  func vibrationKeepsUSBLayoutWithZeroReportIDSlotIn42Bytes() {
     let writer = RecordingSwitch2Writer()
     let hub = Self.connectedHub(writer: writer).0
     let driver = Switch2Driver(layout: .pro, link: .bluetoothLE)
@@ -183,7 +183,7 @@ struct Switch2BluetoothLEHubTests {
   }
 
   @Test
-  func compositeRoutingSendsHubAddressesToGATTAndTheRestToIOHID() async throws {
+  func compositeRoutingSendsHubAddressesToGATTAndRestToIOHID() async throws {
     let writer = RecordingSwitch2Writer()
     let (hub, address) = Self.connectedHub(writer: writer)
     let primary = ScriptedHIDAccessBackend()
