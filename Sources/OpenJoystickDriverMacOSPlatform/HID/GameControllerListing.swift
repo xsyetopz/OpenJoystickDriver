@@ -1,7 +1,7 @@
 import Foundation
 import GameController
 
-/// Whether GameController lists a controller for a HID pad (D16).
+/// Whether GameController lists a controller for a HID pad.
 enum GameControllerListing: Equatable, Sendable {
   /// The settle time since the device arrived has not passed.
   case settling
@@ -10,9 +10,9 @@ enum GameControllerListing: Equatable, Sendable {
   /// GameController lists no controller for the device after the settle time.
   case unlisted
 
-  /// GameController lists OJD's virtual gamepad 16 to 18 ms after its HID device arrives
-  /// (`openspec/changes/0-6-0-alpha-3/evidence/system-serving/`); no physical pad that macOS lists
-  /// was measured, so the wait is about 50 times that.
+  /// GameController lists OJD's virtual gamepad 16 to 18 ms after its HID device arrives.
+  ///
+  /// No physical pad that macOS lists was measured, so the wait is about 50 times that.
   static let settleTime: DispatchTimeInterval = .seconds(1)
 
   /// GameController names no HID device, and a listed controller's `vendorName` is the HID
@@ -21,7 +21,7 @@ enum GameControllerListing: Equatable, Sendable {
     self = productName.map(vendorNames.contains) == true ? .listed : .unlisted
   }
 
-  /// The listing GameController holds now for a device with this product name.
+  /// The listing GameController holds for a device with this product name.
   @MainActor
   static func current(productName: String?) -> Self {
     Self(productName: productName, vendorNames: GCController.controllers().compactMap(\.vendorName))

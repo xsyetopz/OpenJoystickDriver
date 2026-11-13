@@ -65,7 +65,7 @@ extension HIDDeviceStream {
   /// ignores negative property keys) and a second object for any service that satisfies more
   /// than one matching dictionary. `handleDeviceAdded` opens only admitted devices.
   private func registerCallbacks() {
-    // The service is never frontmost; D16 measured the list with this set.
+    // The service is never frontmost, and the controller list was measured with this set.
     GCController.shouldMonitorBackgroundEvents = true
     let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     self.manager = manager
