@@ -45,7 +45,7 @@ struct IntentCommandTests {
   }
 
   @Test
-  func everyIntentHasAnOJDCommand() throws {
+  func everyIntentHasOJDCommand() throws {
     let declared = try Self.declaredIntents()
     #expect(!declared.isEmpty)
     let missing = declared.subtracting(Self.commands.keys).sorted()
@@ -53,7 +53,7 @@ struct IntentCommandTests {
   }
 
   @Test
-  func everyListedIntentExistsAndItsCommandIsReal() throws {
+  func everyListedIntentExistsAndItsCommandReal() throws {
     let declared = try Self.declaredIntents()
     let paths = CLICommandTree.paths()
     for (intent, command) in Self.commands {

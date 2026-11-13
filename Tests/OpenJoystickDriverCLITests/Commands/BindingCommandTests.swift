@@ -35,7 +35,7 @@ struct BindingCommandTests {
   }
 
   @Test
-  func replacingABindingKeepsItsRemark() async throws {
+  func replacingBindingKeepsItsRemark() async throws {
     let noted = RemappingBinding(
       source: .button(.south),
       destination: .keyboard(key: .space, modifiers: []),

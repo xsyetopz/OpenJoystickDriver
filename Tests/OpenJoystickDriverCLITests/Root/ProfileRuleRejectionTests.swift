@@ -84,7 +84,7 @@ struct ProfileRuleRejectionTests {
       region(0, 1, sector: #", "fromDegrees": 90, "toDegrees": 90"#)
     ),
   ])
-  func aRegionRuleIsRefusedByTheDecoderOnly(problem: String, source: String) throws {
+  func regionRuleRefusedByDecoderOnly(problem: String, source: String) throws {
     let json = document(bindings: [key(1, source: source)])
     do {
       _ = try load(json)
@@ -110,7 +110,7 @@ struct ProfileRuleRejectionTests {
     ),
     ("trigger bands overlap", band(0.1, 0.5), band(0.4, 0.9)),
   ])
-  func overlappingRegionsAreRefusedByTheDecoderOnly(
+  func overlappingRegionsRefusedByDecoderOnly(
     problem: String,
     first: String,
     second: String
@@ -126,7 +126,7 @@ struct ProfileRuleRejectionTests {
   }
 
   @Test
-  func regionsThatTouchOrBelongToOtherSticksAreAccepted() throws {
+  func regionsTouchOrBelongToOtherSticksAccepted() throws {
     let json = document(bindings: [
       key(1, source: region(0.2, 0.5)), key(2, source: region(0.5, 1)),
       key(3, source: region(0.2, 1, stick: "Right")),
@@ -138,7 +138,7 @@ struct ProfileRuleRejectionTests {
 
   /// The document of a profile switch is valid; the check needs the other profiles.
   @Test
-  func aProfileSwitchToAnotherModelIsRefusedByTheLibraryCheckOnly() throws {
+  func profileSwitchToAnotherModelRefusedByLibraryCheckOnly() throws {
     let foreign = try load(
       document(id: secondID, productID: 9999, bindings: [key(1, source: south)])
     )
@@ -160,7 +160,7 @@ struct ProfileRuleRejectionTests {
 
   /// The document of a `Speak` destination is valid; the check needs the voices of this Mac.
   @Test
-  func aSpeakVoiceThatTheMacLacksIsRefusedByTheLibraryCheckOnly() throws {
+  func speakVoiceMacLacksRefusedByLibraryCheckOnly() throws {
     let json = document(bindings: [
       binding(
         1,

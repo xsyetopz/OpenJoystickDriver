@@ -48,7 +48,7 @@ struct ControllerShowUnservedTests {
   }
 
   @Test
-  func humanOutputGivesTheReasonTheNextStepAndTheCaptureCommand() async throws {
+  func humanOutputGivesReasonNextStepAndCaptureCommand() async throws {
     let result = try await Self.show([Self.unbound(.noProtocolMatch)])
     #expect(result.code == 0, "\(result.standardError)")
     let out = result.standardOutput
@@ -59,7 +59,7 @@ struct ControllerShowUnservedTests {
   }
 
   @Test
-  func aHIDPadNamesTheDraftCommand() async throws {
+  func hidPadNamesDraftCommand() async throws {
     let pad = Self.unbound(
       .descriptorContractMismatch,
       backend: .hid,
@@ -71,7 +71,7 @@ struct ControllerShowUnservedTests {
   }
 
   @Test
-  func jsonValidatesAndCarriesTheReasonAndCommands() async throws {
+  func jsonValidatesAndCarriesReasonAndCommands() async throws {
     let result = try await Self.show([Self.unbound(.noProtocolMatch)], ["--json"])
     #expect(result.code == 0, "\(result.standardError)")
     let json = try result.json()
@@ -83,7 +83,7 @@ struct ControllerShowUnservedTests {
   }
 
   @Test
-  func plainRowsCarryTheReasonAndTheCommands() async throws {
+  func plainRowsCarryReasonAndCommands() async throws {
     let result = try await Self.show([Self.unbound(.noProtocolMatch)], ["--plain"])
     #expect(result.standardOutput.contains("reason\tno-protocol-match\n"))
     #expect(result.standardOutput.contains("capture-command\tojd controller capture 3537:1010"))
@@ -100,13 +100,13 @@ struct ControllerShowUnservedTests {
   }
 
   @Test
-  func aDeviceThatIsNeitherConnectedNorUnservedStillFails() async throws {
+  func deviceNeitherConnectedNorUnservedStillFails() async throws {
     let result = try await Self.show([Self.unbound(.noProtocolMatch)], identity: "3537:9999")
     #expect(result.code == 1)
   }
 
   @Test
-  func aConnectedControllerWinsOverAnUnservedDeviceOfTheSameModel() async throws {
+  func connectedControllerWinsOverUnservedDeviceOfSameModel() async throws {
     let fixture = try #require(ServingFixture.all.first)
     var device = fixture.device
     device.publication = nil

@@ -80,7 +80,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func validateReportsTheFamilyAndWritesNothing() async throws {
+  func validateReportsFamilyAndWritesNothing() async throws {
     let support = Support()
     let file = try support.description("VendorCliValid")
 
@@ -96,7 +96,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func validateRefusesABuiltInNameAMissingLayoutAndAWrongStem() async throws {
+  func validateRefusesBuiltInNameMissingLayoutAndWrongStem() async throws {
     let support = Support()
     let builtIn = try support.description("XboxGIP")
     let noLayouts = try support.description("VendorCliBare") { $0["defaults"] = nil }
@@ -114,7 +114,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func installCopiesTheFileToTheProtocolsFolderAndReplacesAnInstalledOne() async throws {
+  func installCopiesFileToProtocolsFolderAndReplacesInstalledOne() async throws {
     let support = Support()
     let file = try support.description("VendorCliInstall")
 
@@ -132,7 +132,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func installWritesNothingForADryRunOrARefusedFile() async throws {
+  func installWritesNothingForDryRunOrRefusedFile() async throws {
     let support = Support()
     let file = try support.description("VendorCliDry")
     let refused = try support.description("XboxGIP")

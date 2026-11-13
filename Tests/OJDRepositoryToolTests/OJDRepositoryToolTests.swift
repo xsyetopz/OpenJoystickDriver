@@ -157,7 +157,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aRecordThatIsNoXMLPropertyListGetsTheReasonOfTheRecordSet() throws {
+  func recordNoXMLPropertyListGetsReasonOfRecordSet() throws {
     let tree = try PropertyListFixture.tree(Self.resource(Self.recordPath))
     let faulty: [(reason: String, data: Data)] = [
       ("holds JSON text", try JSONSerialization.data(withJSONObject: tree)),
@@ -458,7 +458,7 @@ struct OJDRepositoryToolTests {
   private static let identity = #"{"vendorID": 1406, "productID": 8294}"#
 
   @Test
-  func applyPatchesKeepsTheValuesOfARecordNoPatchChanges() throws {
+  func applyPatchesKeepsValuesOfRecordNoPatchChanges() throws {
     try Self.applyPatches(
       record: Self.upstream,
       patches: [
@@ -611,7 +611,7 @@ struct OJDRepositoryToolTests {
   // MARK: property lists
 
   @Test
-  func toPlistWritesTheCanonicalFormBesideTheJSONFileAndKeepsNumberTypes() throws {
+  func toPlistWritesCanonicalFormBesideJSONFileAndKeepsNumberTypes() throws {
     try Self.scratch { directory in
       let json = directory.appendingPathComponent("a.json")
       try Data(#"{"b": 2, "a": [1.5, 9007199254740993, true, "x"], "c": {}}"#.utf8).write(to: json)
@@ -642,7 +642,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func formatPlistRewritesAFileInTheCanonicalForm() throws {
+  func formatPlistRewritesFileInCanonicalForm() throws {
     try Self.scratch { directory in
       let file = directory.appendingPathComponent("a.plist")
       let loose = """

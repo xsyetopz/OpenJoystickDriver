@@ -18,7 +18,7 @@ struct SettingPauseShortcutCommandTests {
   }
 
   @Test
-  func theShortcutIsUnsetOnAFreshInstallation() async throws {
+  func shortcutUnsetOnFreshInstallation() async throws {
     let human = await run(["get", "pauseShortcut"])
     let json = await run(["get", "pauseShortcut", "--json"])
 
@@ -29,7 +29,7 @@ struct SettingPauseShortcutCommandTests {
   }
 
   @Test
-  func setStoresTheShortcutAndGetReadsItBack() async throws {
+  func setStoresShortcutAndGetReadsItBack() async throws {
     let set = await run(["set", "pauseShortcut", "Control+Option+P", "--json"])
     let get = await run(["get", "pauseShortcut"])
 
@@ -40,7 +40,7 @@ struct SettingPauseShortcutCommandTests {
   }
 
   @Test
-  func noneClearsTheShortcut() async throws {
+  func noneClearsShortcut() async throws {
     try store.setPauseShortcut(try PauseShortcut(parsing: "command+shift+P"))
 
     let cleared = await run(["set", "pauseShortcut", "none"])
@@ -50,7 +50,7 @@ struct SettingPauseShortcutCommandTests {
   }
 
   @Test(arguments: ["P", "shift+P", "command+Home", "hyper+P", "command+"])
-  func aValueThatIsNotAShortcutExitsSixtyFourAndChangesNothing(value: String) async throws {
+  func valueNotShortcutExitsSixtyFourAndChangesNothing(value: String) async throws {
     let result = await run(["set", "pauseShortcut", value])
 
     #expect(result.code == 64)

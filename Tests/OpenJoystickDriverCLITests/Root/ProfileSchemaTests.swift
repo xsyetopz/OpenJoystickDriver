@@ -306,7 +306,7 @@ struct ProfileSchemaTests {
     ("binding remark with a space at the end", #""remark": "Jump ""#),
     ("binding remark that is not text", #""remark": 5"#),
   ])
-  func aBrokenBindingRemarkIsRejectedByTheDecoderAndTheSchema(
+  func brokenBindingRemarkRejectedByDecoderAndSchema(
     problem: String,
     replacement: String
   ) throws {
@@ -349,7 +349,7 @@ struct ProfileSchemaTests {
       #""pulseDurationMs": 200, "multiTap": [{"#
     ),
   ])
-  func aRuleAcrossFieldsIsRefusedByTheDecoderOnly(
+  func ruleAcrossFieldsRefusedByDecoderOnly(
     problem: String,
     original: String,
     replacement: String

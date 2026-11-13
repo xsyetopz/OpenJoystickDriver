@@ -23,7 +23,7 @@ struct ServiceConnectionTests {
   /// `--timeout` bounds each reply, so a busy service gets the time the user gave it; a shorter
   /// `--timeout` keeps the client's own reply limit.
   @Test(arguments: [(30.0, 30.0), (0.5, 5.0)])
-  func eachReplyWaitsForTheTimeoutOption(timeout: Double, replyLimit: Double) async throws {
+  func eachReplyWaitsForTimeoutOption(timeout: Double, replyLimit: Double) async throws {
     let service = try FakeService(devices: [])
     var context = CLIContext()
     context.timeout = timeout

@@ -86,7 +86,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func aRecordThatBreaksARuleReportsE5007() async {
+  func recordBreaksRuleReportsE5007() async {
     let directory = Directory()
     let invalid = PropertyListFixture.bytes(
       json: """
@@ -277,7 +277,7 @@ struct RecordCommandTests {
 
   /// The text of `record draft` is what `record install -` reads.
   @Test
-  func theDraftTextPipesIntoInstall() async throws {
+  func draftTextPipesIntoInstall() async throws {
     let reads = Counter()
     let packets = """
       [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
@@ -343,7 +343,7 @@ struct RecordCommandTests {
   /// A device that the service does not serve: a HID gamepad interface gets a patch that adds a
   /// `HIDDescriptor` mode to the bundled record of the model (#63).
   @Test
-  func draftOfAnUnservedHIDGamepadPatchesTheBundledRecord() async throws {
+  func draftOfUnservedHIDGamepadPatchesBundledRecord() async throws {
     let gamepad = PhysicalInterfaceSignature(
       interfaceClass: 3,
       interfaceSubclass: 0,
@@ -368,7 +368,7 @@ struct RecordCommandTests {
   /// A device with only vendor-class interfaces gets one mode for each signature, and the command
   /// names the input section as missing.
   @Test
-  func draftOfAnUnservedVendorClassDeviceNamesTheMissingInput() async throws {
+  func draftOfUnservedVendorClassDeviceNamesMissingInput() async throws {
     let pad = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -391,7 +391,7 @@ struct RecordCommandTests {
 
   /// `E2012` is for a device that is not connected.
   @Test
-  func draftOfADeviceThatIsNotConnectedExitsOneWithE2012() async throws {
+  func draftOfDeviceNotConnectedExitsOneWithE2012() async throws {
     let result = try await draftUnserved("1234:5678", pad: nil)
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2012]: "))
@@ -480,7 +480,7 @@ struct RecordCommandTests {
 
   /// `record show --json` ends in one newline and keeps the members of the envelope sorted by name.
   @Test
-  func showJSONSortsTheEnvelopeAndEndsInOneNewline() async throws {
+  func showJSONSortsEnvelopeAndEndsInOneNewline() async throws {
     let directory = Directory()
     let record = PropertyListFixture.bytes(
       json: """
@@ -505,7 +505,7 @@ struct RecordCommandTests {
   /// No record field takes an integer of 25 digits, so the command refuses it and does not
   /// round it to a `Double` and accept it.
   @Test
-  func anIntegerBeyond64BitsInATuningValueIsRefused() async {
+  func integerBeyond64BitsInTuningValueRefused() async {
     let directory = Directory()
     let patch = PropertyListFixture.bytes(
       json: """

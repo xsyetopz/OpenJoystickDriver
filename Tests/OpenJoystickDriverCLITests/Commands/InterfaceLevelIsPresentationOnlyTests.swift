@@ -8,7 +8,7 @@ import Testing
 /// The interface level only changes what the app shows: the service never reads it and `ojd`
 /// prints the same for both values.
 @Suite(.serialized, .removingTemporarySockets)
-struct InterfaceLevelIsPresentationOnlyTests {
+struct InterfaceLevelPresentationOnlyTests {
   /// The source folders that make up the service: its target and the two it depends on besides the
   /// kit, which owns the setting.
   private static let serviceFolders = [
@@ -24,7 +24,7 @@ struct InterfaceLevelIsPresentationOnlyTests {
   }
 
   @Test(arguments: serviceFolders)
-  func theServiceReadsNoInterfaceLevel(folder: String) throws {
+  func serviceReadsNoInterfaceLevel(folder: String) throws {
     let root = Self.sources.appendingPathComponent(folder, isDirectory: true)
     let files = try #require(
       FileManager.default.enumerator(at: root, includingPropertiesForKeys: nil)
@@ -86,7 +86,7 @@ struct InterfaceLevelIsPresentationOnlyTests {
   }
 
   @Test
-  func ojdPrintsTheSameForBothInterfaceLevels() async throws {
+  func ojdPrintsSameForBothInterfaceLevels() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }

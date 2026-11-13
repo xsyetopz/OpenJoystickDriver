@@ -18,7 +18,7 @@ struct SettingIdleDisconnectCommandTests {
   }
 
   @Test
-  func theSettingIsOffOnAFreshInstallation() async throws {
+  func settingOffOnFreshInstallation() async throws {
     let human = await run(["get", "idleDisconnectMinutes"])
     let json = await run(["get", "idleDisconnectMinutes", "--json"])
 
@@ -29,7 +29,7 @@ struct SettingIdleDisconnectCommandTests {
   }
 
   @Test
-  func setStoresTheMinutesAndGetReadsThemBack() async throws {
+  func setStoresMinutesAndGetReadsThemBack() async throws {
     let set = await run(["set", "idleDisconnectMinutes", "15"])
     let get = await run(["get", "idleDisconnectMinutes"])
 
@@ -49,7 +49,7 @@ struct SettingIdleDisconnectCommandTests {
   }
 
   @Test(arguments: ["0", "481", "-5", "soon", "1.5", ""])
-  func aValueThatIsNotMinutesExitsSixtyFourAndChangesNothing(value: String) async throws {
+  func valueNotMinutesExitsSixtyFourAndChangesNothing(value: String) async throws {
     let result = await run(["set", "idleDisconnectMinutes", value])
 
     #expect(result.code == 64)

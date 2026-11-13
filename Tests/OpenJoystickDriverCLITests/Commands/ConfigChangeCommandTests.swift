@@ -145,7 +145,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func aGlobalOptionAfterANegativeValueStaysAnOption() async {
+  func globalOptionAfterNegativeValueStaysOption() async {
     let result = await run(["set", "stickDeadzone", "-0.5", "--json"], in: Directory())
 
     #expect(result.code == 64)
@@ -154,7 +154,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test(arguments: ["0", "1", "1.5", "-0.5"])
-  func setRefusesAValueOutOfRangeAndWritesNothing(_ value: String) async {
+  func setRefusesValueOutOfRangeAndWritesNothing(_ value: String) async {
     let directory = Directory()
     for options in [["--controller", Self.model], []] {
       let result = await run(["set", "stickDeadzone", value] + options, in: directory)
@@ -169,7 +169,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setRefusesAValueThatIsNotANumberAndAnUnknownKey() async {
+  func setRefusesValueNotNumberAndUnknownKey() async {
     let directory = Directory()
     let text = await run(["set", "stickDeadzone", "wide"], in: directory)
     let unknown = await run(["set", "stickDeadzon", "0.1"], in: directory)
@@ -181,7 +181,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test(arguments: ["0x1p-3", "nan", "inf", "-inf", "1e-1", "1_0", " 0.1", "0.1 ", "+0.1", "."])
-  func setAcceptsOnlyAPlainDecimalNumber(_ value: String) async {
+  func setAcceptsOnlyPlainDecimalNumber(_ value: String) async {
     let directory = Directory()
     let result = await run(["set", "stickDeadzone", value], in: directory)
 
@@ -200,7 +200,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func unsetRefusesAKeyThatIsNotSet() async {
+  func unsetRefusesKeyNotSet() async {
     let directory = Directory()
     for options in [["--controller", Self.model], []] {
       let result = await run(["unset", "stickDeadzone"] + options, in: directory)
@@ -212,7 +212,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setRefusesAModelWithoutARecord() async {
+  func setRefusesModelWithoutRecord() async {
     let directory = Directory()
     let result = await run(
       ["set", "stickDeadzone", "0.1", "--controller", "1234:ABCD"],
@@ -225,7 +225,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setRefusesAKeyTheModelsDriverDoesNotRead() async {
+  func setRefusesKeyModelsDriverDoesNotRead() async {
     let directory = Directory()
     let result = await run(
       ["set", "lizardResendTicks", "10", "--controller", Self.model],

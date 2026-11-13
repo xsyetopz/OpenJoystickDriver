@@ -18,7 +18,7 @@ struct SettingInterfaceLevelCommandTests {
   }
 
   @Test
-  func theLevelIsSimpleOnAFreshInstallation() async throws {
+  func levelSimpleOnFreshInstallation() async throws {
     let human = await run(["get", "interfaceLevel"])
     let json = await run(["get", "interfaceLevel", "--json"])
 
@@ -29,7 +29,7 @@ struct SettingInterfaceLevelCommandTests {
   }
 
   @Test
-  func setStoresTheLevelAndGetReadsItBack() async throws {
+  func setStoresLevelAndGetReadsItBack() async throws {
     let set = await run(["set", "interfaceLevel", "Advanced", "--json"])
     let get = await run(["get", "interfaceLevel"])
 
@@ -44,7 +44,7 @@ struct SettingInterfaceLevelCommandTests {
   }
 
   @Test(arguments: ["Expert", "advanced", "true", ""])
-  func aValueThatIsNotALevelExitsSixtyFourAndChangesNothing(value: String) async throws {
+  func valueNotLevelExitsSixtyFourAndChangesNothing(value: String) async throws {
     let result = await run(["set", "interfaceLevel", value])
 
     #expect(result.code == 64)

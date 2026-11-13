@@ -28,7 +28,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func anEndlessScriptIsEndedAtTheTimeLimit() async throws {
+  func endlessScriptEndedAtTimeLimit() async throws {
     let path = try script("while (true) {}")
     let start = Date()
 
@@ -65,7 +65,7 @@ struct GenerateCommandTests {
     ("var generate = 3;", "calling the function failed"),
     ("var other = 1;", "defines no generate function"),
   ])
-  func aResultThatIsNoDocumentIsRefused(source: String, message: String) async throws {
+  func resultNoDocumentRefused(source: String, message: String) async throws {
     let path = try script(source)
 
     let result = await run([path, "--output", out])
@@ -88,8 +88,7 @@ struct GenerateCommandTests {
     ("function generate( {", "line 1", "SyntaxError"),
     ("const pad: number = 1;\nfunction generate() {}", "line 1", "SyntaxError"),
   ])
-  func aScriptErrorIsReportedWithItsLine(source: String, line: String, message: String) async throws
-  {
+  func scriptErrorReportedWithItsLine(source: String, line: String, message: String) async throws {
     let path = try script(source)
 
     let result = await run([path, "--output", out])
@@ -101,7 +100,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func aThrownStringIsReportedWithoutALine() async throws {
+  func thrownStringReportedWithoutLine() async throws {
     let path = try script("function generate() { throw 'plain'; }")
 
     let result = await run([path])
@@ -111,7 +110,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func aMissingScriptIsRefused() async {
+  func missingScriptRefused() async {
     let result = await run([folder.appendingPathComponent("none.js").path])
 
     #expect(result.code == 1)
@@ -119,7 +118,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func aRecordIsWrittenWithTheStoreNameAndIntegerTypes() async throws {
+  func recordWrittenWithStoreNameAndIntegerTypes() async throws {
     let path = try script("function generate() { return \(Self.record(1)); }")
 
     let result = await run([path, "--output", out])
@@ -135,7 +134,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func aListOfRecordsWritesOneFileEach() async throws {
+  func listOfRecordsWritesOneFileEach() async throws {
     let record = Self.record(0).replacingOccurrences(of: "productID: 0", with: "productID: id")
     let path = try script(
       "function generate() { return [1, 2, 3].map(function (id) { return \(record); }); }"
@@ -150,7 +149,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func oneInvalidDocumentWritesNoFileAndNamesTheDocumentAndKeyPath() async throws {
+  func oneInvalidDocumentWritesNoFileAndNamesDocumentAndKeyPath() async throws {
     let broken = Self.record(2).replacingOccurrences(of: "vendorID: 0xFFF1", with: "vendorID: 'x'")
     let path = try script(
       "function generate() { return [\(Self.record(1)), \(broken), \(Self.record(3))]; }"
@@ -166,7 +165,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func aNullInsideADocumentNamesItsKeyPath() async throws {
+  func nullInsideDocumentNamesItsKeyPath() async throws {
     let path = try script(
       "function generate() { return \(Self.record(1, extra: ", note: { deep: [1, null] }")); }"
     )
@@ -181,7 +180,7 @@ struct GenerateCommandTests {
   @Test(arguments: [
     #"{ apiVersion: "x", kind: "Settings" }"#, #"{ apiVersion: "x" }"#,
   ])
-  func aKindNoGeneratorWritesIsRefused(document: String) async throws {
+  func kindNoGeneratorWritesRefused(document: String) async throws {
     let path = try script("function generate() { return \(document); }")
 
     let result = await run([path, "--output", out])
@@ -203,7 +202,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func anEqualFileIsUnchangedAndADifferingFileStopsTheRunUnlessReplaced() async throws {
+  func equalFileUnchangedAndDifferingFileStopsRunUnlessReplaced() async throws {
     let path = try script("function generate() { return [\(Self.record(1)), \(Self.record(2))]; }")
     _ = await run([path, "--output", out])
     let first = folder.appendingPathComponent("out/fff1-0001.plist")
@@ -229,7 +228,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func withoutAnOutputFolderTheDocumentsAreOnlyPrinted() async throws {
+  func withoutOutputFolderDocumentsOnlyPrinted() async throws {
     let path = try script("function generate() { return \(Self.record(1)); }")
 
     let human = await run([path])
@@ -244,7 +243,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func theScriptOnTheWikiPageWritesRecordsThatOJDLoads() async throws {
+  func scriptOnWikiPageWritesRecordsOJDLoads() async throws {
     var root = URL(fileURLWithPath: #filePath)
     for _ in 0..<4 { root.deleteLastPathComponent() }
     let page = try String(

@@ -77,7 +77,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func everyScannedFileGetsAVerdictAndAForeignFileDoesNotFail() async throws {
+  func everyScannedFileGetsVerdictAndForeignFileDoesNotFail() async throws {
     try write(Self.settings, "Settings.json")
     try write(#"{"name": "mine"}"#, "Profiles/notes.json")
     try write(
@@ -93,7 +93,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func aFolderArgumentIsScannedInsteadOfTheSupportFolder() async throws {
+  func folderArgumentScannedInsteadOfSupportFolder() async throws {
     try write(Self.settings, "Settings.json")
     try write(Self.settings, "Other/Settings.json")
     let folder = support.appendingPathComponent("Other").path
@@ -112,7 +112,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func aZeroFiveFileFailsWithE5009() async throws {
+  func zeroFiveFileFailsWithE5009() async throws {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
 
     let result = await run([])

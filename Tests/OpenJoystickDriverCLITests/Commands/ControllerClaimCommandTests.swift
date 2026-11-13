@@ -335,7 +335,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func claimOfAModelAppleHoldsSendsTheActivationRequestAndWritesNoRecord() async throws {
+  func claimOfModelAppleHoldsSendsActivationRequestAndWritesNoRecord() async throws {
     let directory = Directory()
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
@@ -353,7 +353,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func releaseOfAModelAppleHoldsSendsNoRequest() async throws {
+  func releaseOfModelAppleHoldsSendsNoRequest() async throws {
     let directory = Directory()
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
@@ -369,7 +369,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func showNamesAModelAppleHoldsAsServedByMacOS() async throws {
+  func showNamesModelAppleHoldsAsServedByMacOS() async throws {
     let directory = Directory()
     let device = try Self.appleHeldDevice()
     let plain = try await Self.run(

@@ -87,7 +87,7 @@ struct UpdateCommandTests {
   }
 
   @Test
-  func onlyPrereleasesPublishedPointsToThePrereleaseFlag() async {
+  func onlyPrereleasesPublishedPointsToPrereleaseFlag() async {
     let result = await run(["update", "check"], state: .onlyPrereleases)
 
     let reason = CLILocalized.text("cli.update.check.onlyPrereleases")

@@ -147,7 +147,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func convertCreatesACopyForTheTargetModelAndListsWhatItLeavesOut() async throws {
+  func convertCreatesCopyForTargetModelAndListsWhatItLeavesOut() async throws {
     let kept = RemappingBinding(
       source: .button(.south),
       destination: .keyboard(key: .space, modifiers: [])
@@ -338,7 +338,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func createTakesTheAppOptionMoreThanOnce() async throws {
+  func createTakesAppOptionMoreThanOnce() async throws {
     let library = FakeProfileLibrary([])
     let service = try Self.service(library)
 
@@ -357,7 +357,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func importWithAppReplacesTheScopeOfTheImportedProfile() async throws {
+  func importWithAppReplacesScopeOfImportedProfile() async throws {
     let original = FakeProfileLibrary.profile("Pad")
     let library = FakeProfileLibrary([])
     let service = try Self.service(library)
