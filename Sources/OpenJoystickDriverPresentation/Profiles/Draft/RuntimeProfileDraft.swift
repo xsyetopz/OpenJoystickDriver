@@ -78,9 +78,8 @@ struct DestinationOption: Hashable {
   /// Open application, open URL, run Shortcut, type text and speak carry a value, so each is listed
   /// once with a starting value that the destination fields change.
   static let all: [Self] = {
-    // Keep the ordinary keyboard destination first so source changes can fall back to a useful,
-    // conventional choice instead of an arbitrary enum ordering.  Modifier combinations are
-    // limited to arrow and function keys; capture can still preserve any custom destination.
+    // Space comes first so a source change falls back to a familiar choice instead of enum order.
+    // Modifier combinations cover only arrow and function keys; capture keeps other destinations.
     let keyboardKeys =
       [RemappingKeyboardKey.space] + RemappingKeyboardKey.allCases.filter { $0 != .space }
     let plainKeyboard = keyboardKeys.map { key in
