@@ -394,6 +394,37 @@ struct StatusTests {
   }
 
   @Test
+  func deviceCountLabelCountsUnservedDevices() {
+    let unserved = ApplicationServiceUnboundDevice(
+      vendorID: 0x2DC8,
+      productID: 0x310A,
+      connection: "USB",
+      accessBackend: .rawUSB,
+      reason: .deviceInUse,
+      rejectedCandidates: [],
+      interfaces: []
+    )
+    func presentation(served: [ApplicationServiceDeviceDescription]) -> RuntimeStatusPresentation {
+      RuntimeStatusPresentation(
+        payload: ApplicationServiceStatusPayload(
+          inputRead: .granted,
+          inputInject: .granted,
+          connectedDevices: served,
+          unboundDevices: [unserved],
+          userSpaceVirtualDeviceEnabled: true,
+          userSpaceVirtualDeviceStatus: .backend("ready")
+        )
+      )
+    }
+
+    #expect(presentation(served: []).deviceCountLabel == RuntimePresentation.deviceCountLabel(1))
+    #expect(
+      presentation(served: [testPad(sessionToken: "device-served")]).deviceCountLabel
+        == RuntimePresentation.deviceCountLabel(2)
+    )
+  }
+
+  @Test
   func controllersPageTitlesAnUnservedDeviceWithItsNameNotItsIDs() {
     func title(_ name: String?, _ reason: ProtocolBindingReason) -> String {
       RuntimeUnservedDevice(

@@ -91,8 +91,10 @@ extension RuntimeStatusPresentation {
   /// The label of the readiness.
   var readinessLabel: String { RuntimePresentation.readinessLabel(readiness) }
 
-  /// The phrase for the number of connected controllers.
-  var deviceCountLabel: String { RuntimePresentation.deviceCountLabel(devices.count) }
+  /// The phrase for the number of connected controllers, those OJD serves and those it does not.
+  var deviceCountLabel: String {
+    RuntimePresentation.deviceCountLabel(devices.count + unservedDevices.count)
+  }
 
   /// Service-wide problems with stored virtual HID profile overrides, one line each.
   var virtualHIDProfileOverrideStoreMessages: [String] {
