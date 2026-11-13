@@ -410,7 +410,11 @@
 
     /// Gives the window its unified toolbar, with no user customization.
     private func configureToolbar(for window: NSWindow) {
-      let toolbar = NSToolbar(identifier: MainWindowToolbarLayout.toolbar)
+      // AppKit keeps toolbars that share an identifier showing the same items, and each window
+      // shows its own area's actions, so each toolbar gets its own identifier.
+      let toolbar = NSToolbar(
+        identifier: "\(MainWindowToolbarLayout.toolbar).\(UUID().uuidString)"
+      )
       toolbar.delegate = self
       toolbar.allowsUserCustomization = false
       toolbar.autosavesConfiguration = false

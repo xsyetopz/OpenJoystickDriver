@@ -51,7 +51,7 @@
     /// The width of a toolbar search field, as in Mail and Finder.
     static let searchFieldWidth: CGFloat = 220
 
-    /// The identifier of the main window's toolbar.
+    /// The prefix of each main window toolbar's identifier.
     static let toolbar = NSToolbar.Identifier("OpenJoystickDriver.MainWindowToolbar")
 
     /// The items that every area shows, before its actions.
