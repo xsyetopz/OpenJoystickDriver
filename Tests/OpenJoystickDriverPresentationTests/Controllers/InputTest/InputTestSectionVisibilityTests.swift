@@ -14,7 +14,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func motionShowsWithAGyroscopeAndLightingWithALightingFeature() {
+  func motionShowsWithGyroscopeAndLightingWithLightingFeature() {
     let model = InputTestViewModel(gateway: InputTestGatewayStub())
     model.selectDevice(
       makeInputTestDevice(
@@ -32,7 +32,7 @@ extension InputTestTests {
 extension InputTestTests {
   @Test
   @MainActor
-  func rumbleDurationReachesTheServiceMaximumAndNoFurther() {
+  func rumbleDurationReachesServiceMaximumAndNoFurther() {
     #expect(InputTestViewModel.rumbleDurationRange == 100...5_000)
     #expect(InputTestViewModel.clampedRumbleDuration(5_000) == 5_000)
     #expect(InputTestViewModel.clampedRumbleDuration(9_000) == 5_000)

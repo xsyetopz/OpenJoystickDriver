@@ -46,7 +46,7 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func aModelWithoutAValueShowsNotSetAndStepsUpToTheLowestValue() throws {
+  func modelWithoutValueShowsNotSetAndStepsUpToLowestValue() throws {
     let setting = try Self.setting(userValue: nil)
     #expect(setting.value == nil)
     #expect(setting.text == OJDLocalized.string("status.notSet"))
@@ -56,7 +56,7 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func aUserValueShowsStepsAndCanBeReset() throws {
+  func userValueShowsStepsAndCanBeReset() throws {
     let setting = try Self.setting(userValue: 0.08)
     #expect(setting.value == 0.08)
     #expect(setting.text == "0.08")
@@ -66,7 +66,7 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func stepsStayInsideTheRangeARecordAccepts() throws {
+  func stepsStayInsideRangeRecordAccepts() throws {
     #expect(try Self.setting(userValue: 0.01).decreased == nil)
     #expect(try Self.setting(userValue: 0.99).increased == nil)
     #expect(try Self.setting(userValue: 0.02).decreased == 0.01)
@@ -82,7 +82,7 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func aStepNeverMovesTheValueTheWrongWay() throws {
+  func stepNeverMovesValueWrongWay() throws {
     let below = try Self.setting(userValue: 0.005)
     #expect(below.decreased == nil)
     #expect(below.increased == 0.015)
@@ -92,14 +92,14 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func aStepKeepsTheValuesOffTheTwoDecimalGrid() throws {
+  func stepKeepsValuesOffTwoDecimalGrid() throws {
     let setting = try Self.setting(userValue: 0.025)
     #expect(setting.increased == 0.035)
     #expect(setting.decreased == 0.015)
   }
 
   @Test(arguments: [0.07, nil])
-  func aChangeCallsTheGatewayWithTheModelTheKeyAndTheValue(_ value: Double?) async {
+  func changeCallsGatewayWithModelKeyAndValue(_ value: Double?) async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device()
@@ -116,7 +116,7 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func aRefusalShowsTheMessageWithTheServiceDetail() async {
+  func refusalShowsMessageWithServiceDetail() async {
     let gateway = GatewayStub()
     await gateway.setTuningFailure(.invalidRecord, detail: "stickDeadzone is out of range")
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -133,7 +133,7 @@ struct StickDeadzoneSettingTests {
   }
 
   @Test
-  func removingAValueTheRecordDoesNotSetShowsTheNotSetMessage() async {
+  func removingValueRecordDoesNotSetShowsNotSetMessage() async {
     let gateway = GatewayStub()
     await gateway.setTuningFailure(.notSet)
     let viewModel = RuntimeViewModel(gateway: gateway)

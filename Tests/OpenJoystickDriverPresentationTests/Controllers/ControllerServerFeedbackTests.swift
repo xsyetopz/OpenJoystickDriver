@@ -44,7 +44,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func anAcceptedToggleRefreshesUntilTheStatusCarriesTheNewOwnership() async {
+  func acceptedToggleRefreshesUntilStatusCarriesNewOwnership() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -58,7 +58,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func thePickerShowsTheChosenServerUntilTheServiceConfirmsIt() async {
+  func pickerShowsChosenServerUntilServiceConfirmsIt() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -73,7 +73,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func thePickerReturnsToTheRecordWhenTheChangeIsNotConfirmed() async {
+  func pickerReturnsToRecordWhenChangeIsNotConfirmed() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -83,7 +83,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func thePickerReturnsToTheRecordWhenTheServiceRefuses() async {
+  func pickerReturnsToRecordWhenServiceRefuses() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setServerFailure(.noRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -94,7 +94,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func anAcceptedToggleStopsRefreshingAfterTwoSeconds() async {
+  func acceptedToggleStopsRefreshingAfterTwoSeconds() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -105,7 +105,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func aRefusedToggleRefreshesOnce() async {
+  func refusedToggleRefreshesOnce() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setServerFailure(.noRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)

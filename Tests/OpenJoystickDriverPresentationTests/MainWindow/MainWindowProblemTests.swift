@@ -31,7 +31,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func aHealthyAppHasNoProblemAndNoBanner() {
+  func healthyAppHasNoProblemAndNoBanner() {
     #expect(
       MainWindowProblem.current(
         permissions: permissions(.granted),
@@ -55,7 +55,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func theAccessProblemFollowsTheSameRuleAsTheStatusItemAndTheAccessArea() {
+  func accessProblemFollowsSameRuleAsStatusItemAndAccessArea() {
     let cases: [(RuntimePermissionLoadState, RuntimeStatusState, Bool)] = [
       (permissions(.granted), status(inputRead: .denied), false),
       (permissions(.denied), status(inputRead: .granted), true),
@@ -171,7 +171,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func onlyProblemsThatNeedTheServiceOrAReinstallAreFailures() {
+  func onlyProblemsThatNeedServiceOrReinstallAreFailures() {
     #expect(MainWindowProblem.service(.stopped, "down").isFailure)
     #expect(MainWindowProblem.driver(.missingEmbedded).isFailure)
     #expect(!MainWindowProblem.driver(.needsApproval).isFailure)
@@ -179,7 +179,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func pollingInsteadOfLiveUpdatesIsAQuietProblemWithItsReason() {
+  func pollingInsteadOfLiveUpdatesIsQuietProblemWithItsReason() {
     let problems = MainWindowProblem.current(
       permissions: permissions(.granted),
       status: status(inputRead: .granted),
@@ -227,7 +227,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func anEmptyOrMissingValueShowsNone() {
+  func emptyOrMissingValueShowsNone() {
     #expect(OJDValue(nil).displayText == OJDLocalized.string("status.none"))
     #expect(OJDValue("").displayText == OJDLocalized.string("status.none"))
     #expect(OJDValue(nil).accessibilityKey == "status.none")
@@ -248,14 +248,14 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func sentencesReadAMissingValueAsAWordAndNotAHyphen() {
+  func sentencesReadMissingValueAsWordAndNotHyphen() {
     #expect(OJDValue.none.spokenText == OJDLocalized.string("status.none"))
     #expect(OJDValue.none.spokenText != "-")
     #expect(OJDValue.text("x").spokenText == "x")
   }
 
   @Test
-  func theSerialNumberStartsHiddenAndTheEyeTogglesIt() {
+  func serialNumberStartsHiddenAndEyeTogglesIt() {
     var visibility = SerialNumberVisibility()
     let serial = OJDValue.text("ABC123")
     #expect(visibility.presentation(of: serial).isObscured)
@@ -274,7 +274,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func aMissingSerialNumberShowsNoneWithoutAnEye() {
+  func missingSerialNumberShowsNoneWithoutEye() {
     let presentation = SerialNumberVisibility().presentation(of: .none)
     #expect(!presentation.canToggle)
     #expect(!presentation.isObscured)

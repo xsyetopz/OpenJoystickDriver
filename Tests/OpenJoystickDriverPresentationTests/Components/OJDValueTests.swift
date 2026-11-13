@@ -5,7 +5,7 @@ import Testing
 @Suite
 struct OJDValueTests {
   @Test
-  func aMissingValueIsSpokenAsItIsShown() {
+  func missingValueIsSpokenAsItIsShown() {
     let value = OJDValue(nil)
 
     #expect(value.spokenText == value.displayText)

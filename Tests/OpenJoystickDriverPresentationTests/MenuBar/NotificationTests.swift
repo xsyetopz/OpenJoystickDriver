@@ -18,7 +18,7 @@ struct NotificationTests {
 
   @Test
   @MainActor
-  func permissionModelPublishesTheResolvedAuthorizationState() async {
+  func permissionModelPublishesResolvedAuthorizationState() async {
     let authorization = NotificationPermissionAuthorizationStub(state: .allowed)
     let model = NotificationPermissionModel(authorization: authorization)
 
@@ -100,7 +100,7 @@ struct NotificationTests {
   }
 
   @Test
-  func unavailableSourceDoesNotBlockOrInventEventsForTheOtherSource() {
+  func unavailableSourceDoesNotBlockOrInventEventsForOtherSource() {
     let before = RuntimeNotificationSnapshot(
       controllers: ["old": "Old Controller"],
       activeProfiles: nil
@@ -146,7 +146,7 @@ struct NotificationTests {
 
   @Test
   @MainActor
-  func aDamagedSettingsFileDeliversNoNotification() throws {
+  func damagedSettingsFileDeliversNoNotification() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.notifyControllerConnected, to: true)
     try Data("not json".utf8).write(to: settings.userFileURL)

@@ -7,7 +7,7 @@ import Testing
 @Suite(.serialized)
 struct RuntimePermissionGenerationTests {
   @Test
-  func newerPermissionRequestWinsOverAnOlderRefresh() async {
+  func newerPermissionRequestWinsOverOlderRefresh() async {
     let gateway = PermissionRaceGatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputRead: .denied,
@@ -35,7 +35,7 @@ struct RuntimePermissionGenerationTests {
   }
 
   @Test
-  func newerPermissionRequestWinsInTheFullRefreshStatusSummary() async {
+  func newerPermissionRequestWinsInFullRefreshStatusSummary() async {
     let gateway = PermissionRaceGatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputRead: .denied,
@@ -63,7 +63,7 @@ struct RuntimePermissionGenerationTests {
   }
 
   @Test
-  func newerPostEventRequestWinsOverAnOlderRefresh() async {
+  func newerPostEventRequestWinsOverOlderRefresh() async {
     let gateway = PermissionRaceGatewayStub(
       snapshotPayload: ApplicationServiceRemappingSnapshotPayload(
         profiles: [],
@@ -91,7 +91,7 @@ struct RuntimePermissionGenerationTests {
   }
 
   @Test
-  func newerPostEventRequestWinsInTheFullRefreshStatusSummary() async {
+  func newerPostEventRequestWinsInFullRefreshStatusSummary() async {
     let gateway = PermissionRaceGatewayStub(
       snapshotPayload: ApplicationServiceRemappingSnapshotPayload(
         profiles: [],

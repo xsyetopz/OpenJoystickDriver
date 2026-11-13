@@ -9,7 +9,7 @@ import Testing
 extension InputTestTests {
   @Test
   @MainActor
-  func lightingUsesTheSessionTokenAndDeclaredValues() async {
+  func lightingUsesSessionTokenAndDeclaredValues() async {
     let capabilities = PhysicalControllerOutputCapabilities(lightingFeatures: [
       .playerIndicator, .programmableColor, .programmableBrightness,
     ])
@@ -50,7 +50,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func outputOperationsRemainSerializedWhenAReplacementCancelsTheFirst() async {
+  func outputOperationsRemainSerializedWhenReplacementCancelsFirst() async {
     let capabilities = PhysicalControllerOutputCapabilities(lightingFeatures: [
       .programmableColor, .programmableBrightness,
     ])
@@ -75,7 +75,7 @@ extension InputTestTests {
 
   @Test
   @MainActor
-  func stoppingDelayedRumbleSerializesAZeroCommandAfterCancellation() async {
+  func stoppingDelayedRumbleSerializesZeroCommandAfterCancellation() async {
     // The first rumble call stays in the stub's delay until the stop cancels it.
     let gateway = InputTestGatewayStub(outputDelayNanoseconds: 60_000_000_000)
     let model = InputTestViewModel(gateway: gateway)

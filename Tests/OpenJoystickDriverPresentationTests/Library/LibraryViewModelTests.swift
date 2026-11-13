@@ -109,7 +109,7 @@ struct LibraryViewModelTests {
   ) -> LibraryViewModel { LibraryViewModel(store: store, readFile: read) }
 
   @Test
-  func installingARecordWaitsForConfirmation() {
+  func installingRecordWaitsForConfirmation() {
     let store = FakeLibraryStore()
     let model = makeModel(store)
 
@@ -125,7 +125,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func replacingARecordAsksForAReplaceSheet() {
+  func replacingRecordAsksForReplaceSheet() {
     let store = FakeLibraryStore()
     store.recordCheck = LibraryRecordCheck(
       identity: "045E:028E",
@@ -141,7 +141,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func confirmingInstallsWritesTheReadBytesAndReloads() {
+  func confirmingInstallsWritesReadBytesAndReloads() {
     let store = FakeLibraryStore()
     let bytes = Data("record".utf8)
     let model = makeModel(store) { _ in bytes }
@@ -172,7 +172,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func aReplacedModIsInstalledWithReplace() {
+  func replacedModIsInstalledWithReplace() {
     let store = FakeLibraryStore()
     store.modCheck = LibraryModCheck(
       name: "arcade",
@@ -190,7 +190,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func aRefusalShowsTheCodeAndOpensNoSheet() {
+  func refusalShowsCodeAndOpensNoSheet() {
     let store = FakeLibraryStore()
     store.refusal = LibraryFailure(message: "refused", code: .invalidInputFile)
     let model = makeModel(store)
@@ -202,7 +202,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func anUnreadableFileIsAFileAccessFailure() {
+  func unreadableFileIsFileAccessFailure() {
     struct Unreadable: Error {}
     let model = makeModel(FakeLibraryStore()) { _ in throw Unreadable() }
 
@@ -231,7 +231,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func removingARecordNeedsConfirmationThenRemovesItsModel() {
+  func removingRecordNeedsConfirmationThenRemovesItsModel() {
     let store = FakeLibraryStore()
     let item = LibraryRecordItem(
       model: ControllerModelID(vendorID: 0x045E, productID: 0x028E),
@@ -273,7 +273,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func removingAModRemovesItByName() {
+  func removingModRemovesItByName() {
     let store = FakeLibraryStore()
     store.mods = [
       LibraryModItem(name: "arcade", version: nil, author: nil, files: [], problem: nil)
@@ -302,7 +302,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func anInvalidRecordIsRefusedWithAnInputFileCode() throws {
+  func invalidRecordIsRefusedWithInputFileCode() throws {
     let store = DirectoryLibraryStore(recordsDirectory: try directory())
 
     do {
@@ -314,7 +314,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func removingAMissingRecordIsNotFound() throws {
+  func removingMissingRecordIsNotFound() throws {
     let store = DirectoryLibraryStore(recordsDirectory: try directory())
 
     do {
@@ -326,7 +326,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func anEmptyStoreListsNothing() throws {
+  func emptyStoreListsNothing() throws {
     let store = DirectoryLibraryStore(recordsDirectory: try directory())
 
     #expect(store.records().installed.isEmpty)
@@ -334,7 +334,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func aSkippedFileCarriesItsReason() throws {
+  func skippedFileCarriesItsReason() throws {
     let directory = try directory()
     try PropertyListFixture.data(json: "{}").write(
       to: directory.appendingPathComponent("bad.plist")

@@ -72,7 +72,7 @@ struct StatusTests {
   }
 
   @Test
-  func liveStatusRefreshPublishesControllerDisconnectionWithoutLoadingTheUI() async {
+  func liveStatusRefreshPublishesControllerDisconnectionWithoutLoadingUI() async {
     let device = testPad(sessionToken: "device-live")
     let connected = ApplicationServiceStatusPayload(
       inputRead: .granted,
@@ -152,7 +152,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func controllerInventoryRefreshQueuesASequentialTrailingRequest() async {
+  func controllerInventoryRefreshQueuesSequentialTrailingRequest() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -173,7 +173,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func inventoryRefreshQueuedDuringLiveRefreshRunsAtTheTrailingEdge() async {
+  func inventoryRefreshQueuedDuringLiveRefreshRunsAtTrailingEdge() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -222,7 +222,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func controllersAndMenuBarUseTheSameScopedRefreshCoordinator() async {
+  func controllersAndMenuBarUseSameScopedRefreshCoordinator() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let runtime = RuntimeViewModel(gateway: gateway)
@@ -259,7 +259,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func livePollingDoesNotCancelTheFullProfilesRefresh() async {
+  func livePollingDoesNotCancelFullProfilesRefresh() async {
     let gateway = GatewayStub(statusReadDelayNanoseconds: 100_000_000)
     let viewModel = RuntimeViewModel(gateway: gateway)
     let fullRefresh = Task { await viewModel.refresh() }
@@ -343,7 +343,7 @@ struct StatusTests {
   }
 
   @Test
-  func controllersPageListsAnUnservedDeviceWithTheSentenceOfItsReason() {
+  func controllersPageListsUnservedDeviceWithSentenceOfItsReason() {
     func unbound(_ reason: ProtocolBindingReason) -> ApplicationServiceUnboundDevice {
       ApplicationServiceUnboundDevice(
         vendorID: 0x3537,

@@ -5,7 +5,7 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The removal of the menu bar item by the user, `specs/menu-bar-item/spec.md`.
+/// The user removes the menu bar item.
 @Suite
 struct StatusItemRemovalTests {
   @MainActor

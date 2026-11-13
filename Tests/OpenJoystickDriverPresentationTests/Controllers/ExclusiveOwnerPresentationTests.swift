@@ -30,7 +30,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func theDetailNamesTheHolder() {
+  func detailNamesHolder() {
     let facts = ControllerDetailFacts.general(
       for: device(ownership: .ownedByAnotherClient, owner: owner)
     )
@@ -49,7 +49,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func aHeldControllerShowsNoInputHealth() {
+  func heldControllerShowsNoInputHealth() {
     let held = ControllerDetailFacts.general(
       for: device(ownership: .ownedByAnotherClient, owner: owner)
     )
@@ -61,7 +61,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func theDetailSaysWhenAPauseHoldsTheController() {
+  func detailSaysWhenPauseHoldsController() {
     var paused = device(ownership: .exclusive, owner: nil)
     paused.paused = true
     let fact = ControllerDetailFacts.general(for: paused).first { $0.kind == .paused }
@@ -74,7 +74,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func theDetailSaysWhenMacOSAlsoListsTheController() {
+  func detailSaysWhenMacOSAlsoListsController() {
     let listed = ApplicationServiceDeviceDescription.fixture(
       id: "listed",
       hidInputOwnership: .exclusive,

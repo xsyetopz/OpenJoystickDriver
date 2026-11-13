@@ -5,7 +5,7 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The problem rows and the icon of `specs/menu-bar-item/spec.md`.
+/// The status item's problem rows and icon.
 @Suite
 struct StatusItemProblemTests {
   // A service that does not answer asks the platform host for the login item.

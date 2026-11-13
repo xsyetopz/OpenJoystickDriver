@@ -46,7 +46,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func settingAProfileSendsTheControllerSelectorAndRefreshesInventoryOnce() async {
+  func settingProfileSendsControllerSelectorAndRefreshesInventoryOnce() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device()
@@ -65,7 +65,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func automaticResetsTheOverride() async {
+  func automaticResetsOverride() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -110,7 +110,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func aLaterSuccessClearsTheModelFailure() async {
+  func laterSuccessClearsModelFailure() async {
     let gateway = GatewayStub(overrideFailure: .persistenceFailed)
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device()
@@ -125,7 +125,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func gatewayErrorIsShownAsTheModelFailure() async {
+  func gatewayErrorIsShownAsModelFailure() async {
     let gateway = GatewayStub()
     await gateway.setOverrideError(.timeout)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -165,7 +165,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func padsOfTheSameModelShareTheInFlightRequestAndItsFailure() async {
+  func padsOfSameModelShareInFlightRequestAndItsFailure() async {
     let gateway = GatewayStub(overrideFailure: .controllerNotFound)
     await gateway.gateOverrideRequests()
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -194,7 +194,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func overrideIssuedDuringAFullRefreshEndsWithFreshStatus() async {
+  func overrideIssuedDuringFullRefreshEndsWithFreshStatus() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setStatusReadsAreGated(true)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -251,7 +251,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func overrideStoreProblemsAppearInTheStatusSummary() {
+  func overrideStoreProblemsAppearInStatusSummary() {
     let status = RuntimeStatusPresentation(
       payload: ApplicationServiceStatusPayload(
         inputRead: .granted,
@@ -267,7 +267,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func publishedIdentityComesFromTheLiveVirtualHIDProfile() {
+  func publishedIdentityComesFromLiveVirtualHIDProfile() {
     var xbox = Self.device(
       profile: ApplicationServiceVirtualHIDProfileStatus(
         profile: .sdlCompatible,
@@ -289,7 +289,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func automaticLiveProfileIsThePublishedIdentityInEveryPlace() throws {
+  func automaticLiveProfileIsPublishedIdentityInEveryPlace() throws {
     var pad = Self.device(
       profile: ApplicationServiceVirtualHIDProfileStatus(
         profile: .sdlCompatible,
@@ -342,7 +342,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func aPublishedStatusWithoutASelectionShowsThePhysicalIdentity() {
+  func publishedStatusWithoutSelectionShowsPhysicalIdentity() {
     var pad = Self.device(
       protocolBinding: ProtocolBindingID(.sonySixaxis, variant: .usb),
       ownership: .systemGamepad
@@ -359,7 +359,7 @@ struct VirtualHIDProfileOverrideTests {
   }
 
   @Test
-  func theInputTestShowsTheListGlyphsOrTheGenericOnesWithoutAController() {
+  func inputTestShowsListGlyphsOrGenericOnesWithoutController() {
     #expect(InputTestView.presentation(of: nil) == .generic)
     let pad = Self.device(protocolBinding: ProtocolBindingID(.sonySixaxis, variant: .usb))
     #expect(InputTestView.presentation(of: pad) == pad.publishedIdentityPresentation)

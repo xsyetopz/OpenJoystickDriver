@@ -28,7 +28,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func theStatusLineAndBannerShowTheFailureInProcessAtOnce() async {
+  func statusLineAndBannerShowFailureInProcessAtOnce() async {
     let state = ServiceListenerState()
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)
     let viewModel = await makeViewModel(state, gateway: gateway)
@@ -59,7 +59,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func aRealServerThatStopsAcceptingShowsE2034InTheModelAndTheBanner() async throws {
+  func realServerThatStopsAcceptingShowsE2034InModelAndBanner() async throws {
     let socketPath = temporarySocketPath()
     let statusResult = try JSONEncoder().encode(
       try JSONEncoder().encode(
@@ -161,7 +161,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func withoutAFailureTheStatusLineKeepsTheClientMessage() async {
+  func withoutFailureStatusLineKeepsClientMessage() async {
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)
     let viewModel = await makeViewModel(ServiceListenerState(), gateway: gateway)
 
@@ -174,7 +174,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func restartingTheListenerClearsTheFailure() async {
+  func restartingListenerClearsFailure() async {
     let state = ServiceListenerState()
     state.setRestart { state.set(nil) }
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)
@@ -193,7 +193,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func aRestartThatFailsKeepsTheFailureAndSaysWhy() async {
+  func restartThatFailsKeepsFailureAndSaysWhy() async {
     let state = ServiceListenerState()
     state.setRestart { throw LocalServiceRPCError.connectionFailed(EADDRINUSE) }
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)

@@ -75,7 +75,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func closingTheWindowDuringTheReadLeavesTheDiagnosticsNotLoaded() async throws {
+  func closingWindowDuringReadLeavesDiagnosticsNotLoaded() async throws {
     let gateway = await gatedGateway()
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
@@ -89,7 +89,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func switchingPaneDuringTheReadLeavesTheDiagnosticsNotLoaded() async throws {
+  func switchingPaneDuringReadLeavesDiagnosticsNotLoaded() async throws {
     let gateway = await gatedGateway()
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
@@ -103,7 +103,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func turningDeveloperToolsOffDuringTheReadLeavesTheDiagnosticsNotLoaded() async throws {
+  func turningDeveloperToolsOffDuringReadLeavesDiagnosticsNotLoaded() async throws {
     let gateway = await gatedGateway()
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
@@ -121,7 +121,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func theCommandLineToolLinkIsReadWhenAdvancedIsShownNotWhenTheControllerIsMade() throws {
+  func commandLineToolLinkIsReadWhenAdvancedIsShownNotWhenControllerIsMade() throws {
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
     let model = sandbox.model()

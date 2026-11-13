@@ -44,7 +44,7 @@ struct ActivationPreflightTests {
   }
 
   @Test
-  func aProfileWithGrantedAccessAndNoLaunchActivatesWithoutAsking() {
+  func profileWithGrantedAccessAndNoLaunchActivatesWithoutAsking() {
     let confirmation = ProfileEditorConfirmation.activation(
       of: Self.profile(.keyboard(key: .a, modifiers: [])),
       postEventAccess: .granted

@@ -10,7 +10,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func menuSetIsTheFixedEight() {
+  func menuSetIsFixedEight() {
     #expect(
       MainMenuModel.sections.map(\.id)
         == ["app", "file", "edit", "view", "controller", "profile", "window", "help"]
@@ -24,7 +24,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func everyItemHasATitleAnActionAndAGUICounterpart() {
+  func everyItemHasTitleActionAndGUICounterpart() {
     for item in MainMenuModel.allItems {
       #expect(!item.titleKey.isEmpty, "\(item.id) has no title key")
       #expect(MainMenuModel.item(for: item.action)?.id == item.id, "\(item.id) action is shared")
@@ -44,7 +44,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func guiCounterpartsFollowTheCoverageMatrix() throws {
+  func guiCounterpartsFollowCoverageMatrix() throws {
     func counterpart(_ action: MainMenuAction) throws -> MainMenuGUICounterpart {
       try #require(MainMenuModel.item(for: action)).guiCounterpart
     }
@@ -125,7 +125,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func appMenuHoldsTheStandardItems() throws {
+  func appMenuHoldsStandardItems() throws {
     let actions = try section("app").items.map(\.action)
     #expect(actions == [.about, .settings, .services, .hide, .hideOthers, .showAll, .quit])
     let settings = try #require(MainMenuModel.item(for: .settings))
@@ -134,7 +134,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func fileMenuHoldsTheCommandsAndTheStandardClose() throws {
+  func fileMenuHoldsCommandsAndStandardClose() throws {
     // The File menu order: items that open a file, then Close, then items that write a file.
     let file = try section("file")
     #expect(
@@ -164,7 +164,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func editMenuHoldsTheStandardItemsInOrder() throws {
+  func editMenuHoldsStandardItemsInOrder() throws {
     #expect(
       try section("edit").items.map(\.action) == [
         .undo, .redo, .cut, .copy, .toolbar(.copyActivityLog), .paste, .delete, .selectAll,
@@ -175,7 +175,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func menusAppearInTheStandardOrder() {
+  func menusAppearInStandardOrder() {
     #expect(
       MainMenuModel.sections.map(\.id) == [
         "app", "file", "edit", "view", "controller", "profile", "window", "help",
@@ -184,7 +184,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func keyEquivalentsAreTheStandardOnesPlusTheAreaDigits() {
+  func keyEquivalentsAreStandardOnesPlusAreaDigits() {
     struct Shortcut: Hashable {
       let key: String
       let modifiers: MainMenuModifiers
@@ -305,7 +305,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func fullScreenIsSeparatedFromTheShowHideItems() throws {
+  func fullScreenIsSeparatedFromShowHideItems() throws {
     let entries = try section("view").entries
     let index = try #require(entries.firstIndex { $0.item?.action == .toggleFullScreen })
     #expect(entries[index - 1] == .separator)
@@ -352,7 +352,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func controllerItemsFollowTheControllerState() throws {
+  func controllerItemsFollowControllerState() throws {
     let wired = MainMenuControllerState(
       id: "a",
       name: "A",
@@ -392,7 +392,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func controllerMenuActsOnTheSelectedOfTwoControllers() throws {
+  func controllerMenuActsOnSelectedOfTwoControllers() throws {
     let first = MainMenuControllerState(
       id: "a",
       name: "First",
@@ -431,7 +431,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func controllerTargetRowSaysWhyTheMenuIsDisabled() throws {
+  func controllerTargetRowSaysWhyMenuIsDisabled() throws {
     let target = try #require(MainMenuModel.item(for: .controllerTarget))
     var state = MainMenuState()
     #expect(
@@ -480,7 +480,7 @@ struct MainMenuModelTests {
 
   @Test
   @MainActor
-  func controllerTargetRowTextIsTheNameOrLocalizedText() {
+  func controllerTargetRowTextIsNameOrLocalizedText() {
     #expect(MainMenuRenderer.text(of: .verbatim("Pad")) == "Pad")
     for key in ["ui.menu.controller.noneConnected", "ui.menu.controller.noneSelected"] {
       let text = MainMenuRenderer.text(of: .key(key))
@@ -489,7 +489,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func theHelpMenuListsExplainErrorCodeAndReportProblemWithTheirCounterparts() throws {
+  func helpMenuListsExplainErrorCodeAndReportProblemWithTheirCounterparts() throws {
     let help = try section("help")
     let explain = try #require(help.items.first { $0.action == .explainErrorCode })
     let report = try #require(help.items.first { $0.action == .reportProblem })
@@ -517,7 +517,7 @@ struct MainMenuModelTests {
   }
 
   @Test
-  func saveItemsDoNotNeedAWindow() throws {
+  func saveItemsDoNotNeedWindow() throws {
     let state = MainMenuState()
     for action in [MainMenuAction.saveSupportReport, .saveActivityLog, .copySupportReport] {
       let item = try #require(MainMenuModel.item(for: action))
@@ -565,7 +565,7 @@ struct MainMenuIdentifierTests {
 
   @Test
   @MainActor
-  func identifyingAnItemSetsItsIdentifierAndItsAccessibilityIdentifier() {
+  func identifyingItemSetsItsIdentifierAndItsAccessibilityIdentifier() {
     let item = NSMenuItem(title: "Activate Profile", action: nil, keyEquivalent: "")
     MainMenuRenderer.identify(item, as: "activateProfile")
     #expect(item.identifier?.rawValue == "activateProfile")

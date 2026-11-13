@@ -48,7 +48,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theModelExposesTheTypedErrorOfARejectedFile() throws {
+  func modelExposesTypedErrorOfRejectedFile() throws {
     try writeRejectedFile()
 
     let model = makeModel()
@@ -59,13 +59,13 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aUsableFileLeavesNoError() {
+  func usableFileLeavesNoError() {
     #expect(makeModel().settingsFileError == nil)
   }
 
   @Test
   @MainActor
-  func aChangeThatFailsOnARejectedFileKeepsTheTypedError() throws {
+  func changeThatFailsOnRejectedFileKeepsTypedError() throws {
     let model = makeModel()
     try writeRejectedFile()
 
@@ -77,7 +77,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func resetMovesTheFileToTheTrashAndClearsTheError() throws {
+  func resetMovesFileToTrashAndClearsError() throws {
     try writeRejectedFile()
     let model = makeModel()
 
@@ -96,7 +96,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aResetThatFailsShowsWhyAndKeepsTheError() throws {
+  func resetThatFailsShowsWhyAndKeepsError() throws {
     try writeRejectedFile()
     let failing = SettingsStore(directory: root) { _ in throw CocoaError(.fileWriteNoPermission) }
     let model = SettingsPreferencesModel(
@@ -116,7 +116,7 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test
-  func theStartupOffersRecoveryOnlyForAnUnusableFile() {
+  func startupOffersRecoveryOnlyForUnusableFile() {
     let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     #expect(SettingsFileStartup.decide(settingsError: nil) == .proceed)
@@ -124,7 +124,7 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test(arguments: [true, false])
-  func theMenuBarItemShowsWhileTheSettingsFileCannotBeRead(showInMenuBar: Bool) {
+  func menuBarItemShowsWhileSettingsFileCannotBeRead(showInMenuBar: Bool) {
     let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     #expect(
@@ -138,7 +138,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theAlertDefaultsToShowInFinderAndQuitAnswersEscape() {
+  func alertDefaultsToShowInFinderAndQuitAnswersEscape() {
     let alert = SettingsUnreadableAlert.make(reason: "Reason")
 
     #expect(alert.messageText == OJDLocalized.string("ui.settings.advanced.unreadableTitle"))
@@ -157,7 +157,7 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test
-  func theButtonsMapToTheirChoices() {
+  func buttonsMapToTheirChoices() {
     #expect(SettingsUnreadableChoice(response: .alertFirstButtonReturn) == .showInFinder)
     #expect(SettingsUnreadableChoice(response: .alertSecondButtonReturn) == .resetSettings)
     #expect(SettingsUnreadableChoice(response: .alertThirdButtonReturn) == .quit)
@@ -165,7 +165,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func anAlertThatOffersMigrationHasMigrateFirstAndMapsItsButtons() {
+  func alertThatOffersMigrationHasMigrateFirstAndMapsItsButtons() {
     let alert = SettingsUnreadableAlert.make(reason: "Reason", offersMigration: true)
 
     #expect(alert.buttons.map(\.title).first == OJDLocalized.string("ui.migrate.action"))
@@ -179,7 +179,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theLaunchUpdateCheckSkipsWhileTheSettingsFileCannotBeRead() {
+  func launchUpdateCheckSkipsWhileSettingsFileCannotBeRead() {
     let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
     var checks = 0
 
@@ -195,7 +195,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theLaunchUpdateCheckReportsWhyItDidOrDidNotRun() {
+  func launchUpdateCheckReportsWhyItDidOrDidNotRun() {
     var checks = 0
 
     let enabled = LaunchUpdateCheck(
@@ -215,7 +215,7 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test
-  func theSkipLogNamesTheFeatureTheFileAndTheReason() {
+  func skipLogNamesFeatureFileAndReason() {
     let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     let message = SettingsSkipLog.message(
@@ -230,7 +230,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func notificationsAreNotDeliveredWhileTheSettingsFileCannotBeRead() throws {
+  func notificationsAreNotDeliveredWhileSettingsFileCannotBeRead() throws {
     try store.set(.notifyControllerConnected, to: true)
     let delivery = RecoveryDeliverySpy()
     let monitor = RuntimeNotificationMonitor(settings: store, delivery: delivery)
@@ -254,7 +254,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theErrorStaysWithItsButtonsUntilTheFileIsUsable() throws {
+  func errorStaysWithItsButtonsUntilFileIsUsable() throws {
     try writeRejectedFile()
     let model = makeModel()
 
@@ -266,7 +266,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aResetRunsTheWorkThatWaitedForTheFile() throws {
+  func resetRunsWorkThatWaitedForFile() throws {
     try writeRejectedFile()
     let model = makeModel()
     var recovered = 0
@@ -279,7 +279,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aFailedResetRunsNothing() throws {
+  func failedResetRunsNothing() throws {
     try writeRejectedFile()
     let failing = SettingsStore(directory: root) { _ in throw CocoaError(.fileWriteNoPermission) }
     let model = SettingsPreferencesModel(
@@ -298,7 +298,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theFollowUpRunsTheUpdateCheckAndTheLoginRegistration() {
+  func followUpRunsUpdateCheckAndLoginRegistration() {
     var checks = 0
     var registrations = 0
     let register: () -> Void = { registrations += 1 }

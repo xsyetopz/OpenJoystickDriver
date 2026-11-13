@@ -46,7 +46,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func everyControlHasAnAccessibleName() throws {
+  func everyControlHasAccessibleName() throws {
     let unlabeled = try Self.findings()
     #expect(
       unlabeled.isEmpty,
@@ -55,12 +55,12 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func theAuditCoversTheAppSources() throws {
+  func auditCoversAppSources() throws {
     #expect(try Self.swiftFiles().count > 100)
   }
 
   @Test
-  func aTitledButtonNeedsNoLabel() {
+  func titledButtonNeedsNoLabel() {
     let source = """
       struct V: View {
         var body: some View {
@@ -77,7 +77,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func anIconOnlyControlIsListed() {
+  func iconOnlyControlIsListed() {
     let source = """
       struct V: View {
         var body: some View {
@@ -96,7 +96,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func aTextFieldNeedsALabelBesideItsTitle() {
+  func textFieldNeedsLabelBesideItsTitle() {
     let source = """
       struct V: View {
         var body: some View {
@@ -109,7 +109,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func aSymbolNamesItselfUnlessItsFallbackIsALiteral() {
+  func symbolNamesItselfUnlessItsFallbackIsLiteral() {
     let source = """
       struct V: View {
         var body: some View {
@@ -124,7 +124,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func anAccessibilityLabelOrHiddenImageNamesTheControl() {
+  func accessibilityLabelOrHiddenImageNamesControl() {
     let source = """
       struct V: View {
         var body: some View {
@@ -151,7 +151,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func aCastOrTypeTestIsNotAControl() {
+  func castOrTypeTestIsNotControl() {
     let source = """
       if let search = item as? NSSearchToolbarItem {}
       if let search = item as! NSSearchToolbarItem {}
@@ -162,7 +162,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func aLabelInsideAClosureDoesNotNameTheControl() {
+  func labelInsideClosureDoesNotNameControl() {
     let source = """
       struct V: View {
         var body: some View {
@@ -175,7 +175,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func anEmptyLabelDoesNotNameTheControl() {
+  func emptyLabelDoesNotNameControl() {
     let source = """
       struct V: View {
         var body: some View {
@@ -190,7 +190,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func anImageInAPickerOptionNeedsItsOwnName() {
+  func imageInPickerOptionNeedsItsOwnName() {
     let source = """
       struct V: View {
         var body: some View {
@@ -205,7 +205,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func anAppKitControlNeedsItsOwnLabelCall() {
+  func appKitControlNeedsItsOwnLabelCall() {
     let source = """
       func make() {
         let first = NSPopUpButton(frame: .zero, pullsDown: false)
@@ -222,7 +222,7 @@ struct AccessibilityAuditTests {
   }
 
   @Test
-  func aSliderInTheLabelingRowIsNamedByTheRow() {
+  func sliderInLabelingRowIsNamedByRow() {
     let source = """
       struct V: View {
         var body: some View {

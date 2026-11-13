@@ -9,7 +9,7 @@ import Testing
 struct MainWindowNavigationTests {
   @Test
   @MainActor
-  func theDockIconShowsWhileShowInDockIsOnOrAWindowIsOpen() {
+  func dockIconShowsWhileShowInDockIsOnOrWindowIsOpen() {
     var requestedPolicies: [NSApplication.ActivationPolicy] = []
     let dock = DockIconController(
       setActivationPolicy: { policy in
@@ -42,7 +42,7 @@ struct MainWindowNavigationTests {
 
   @Test(arguments: [DockIconController.Window.workbench, .settings, .inputTest])
   @MainActor
-  func anActiveAppThatTurnsRegularHandsActivationToTheDockAndTakesItBack(
+  func activeAppThatTurnsRegularHandsActivationToDockAndTakesItBack(
     _ window: DockIconController.Window
   ) {
     let fake = FakeActivation()
@@ -67,7 +67,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func showInDockTurningOnWhileTheAppIsActiveHandsActivationToTheDock() {
+  func showInDockTurningOnWhileAppIsActiveHandsActivationToDock() {
     let fake = FakeActivation()
     fake.isActive = true
     let dock = DockIconController(setActivationPolicy: { _ in true }, activation: fake.activation)
@@ -78,7 +78,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func anInactiveAppThatTurnsRegularHandsNothingOff() {
+  func inactiveAppThatTurnsRegularHandsNothingOff() {
     let fake = FakeActivation()
     let dock = DockIconController(setActivationPolicy: { _ in true }, activation: fake.activation)
 
@@ -89,7 +89,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func turningAccessoryBeforeTheResignEndsTheHandOff() {
+  func turningAccessoryBeforeResignEndsHandOff() {
     let fake = FakeActivation()
     fake.isActive = true
     let dock = DockIconController(setActivationPolicy: { _ in true }, activation: fake.activation)
@@ -108,7 +108,7 @@ struct MainWindowNavigationTests {
 
   @Test(arguments: [DockIconController.DockActivation.notRunning, .refused])
   @MainActor
-  func aDockThatDoesNotActivateEndsTheHandOff(_ outcome: DockIconController.DockActivation) {
+  func dockThatDoesNotActivateEndsHandOff(_ outcome: DockIconController.DockActivation) {
     let fake = FakeActivation()
     fake.isActive = true
     fake.dockActivation = outcome
@@ -122,7 +122,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func aRefusedPolicyChangeIsRetriedOnTheNextChange() {
+  func refusedPolicyChangeIsRetriedOnNextChange() {
     var shouldSucceed = false
     var requestedPolicies: [NSApplication.ActivationPolicy] = []
     let fake = FakeActivation()
@@ -147,7 +147,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func menuProfileMutationIsRefusedWhileTheEditorHoldsOneAndRunsOnceReleased() async {
+  func menuProfileMutationIsRefusedWhileEditorHoldsOneAndRunsOnceReleased() async {
     let navigation = MainWindowNavigationModel(
       persistence: UserDefaultsMainWindowAreaPersistence(
         defaults: UserDefaults(suiteName: "MainWindowNavigationTests.\(UUID().uuidString)")!
@@ -188,7 +188,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func actionWaitsForTheDiscardAnswerAndRunsAfterDiscard() {
+  func actionWaitsForDiscardAnswerAndRunsAfterDiscard() {
     let navigation = Self.dirtyNavigation()
     var runs = 0
     #expect(!navigation.perform(in: .library) { runs += 1 })
@@ -201,7 +201,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func actionIsDroppedWhenTheDiscardIsCancelled() {
+  func actionIsDroppedWhenDiscardIsCancelled() {
     let navigation = Self.dirtyNavigation()
     var runs = 0
     navigation.perform(in: .library) { runs += 1 }
@@ -214,7 +214,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func actionRunsAtOnceInTheSelectedAreaAndIsRefusedDuringAMutation() {
+  func actionRunsAtOnceInSelectedAreaAndIsRefusedDuringMutation() {
     let navigation = Self.dirtyNavigation()
     var runs = 0
     #expect(navigation.perform(in: .profiles) { runs += 1 })
@@ -233,7 +233,7 @@ struct MainWindowNavigationTests {
   }
 
   @Test
-  func restoredAndLiveResizeFramesCannotCrossTheContentMinimum() {
+  func restoredAndLiveResizeFramesCannotCrossContentMinimum() {
     let minimum = NSSize(width: 816, height: 604)
     let restored = WindowFramePolicy.fittingFrame(
       NSRect(x: 200, y: 300, width: 640, height: 420),
@@ -251,7 +251,7 @@ struct MainWindowNavigationTests {
   }
 
   @Test
-  func restoredWindowFramesAreClampedToTheUsableScreen() {
+  func restoredWindowFramesAreClampedToUsableScreen() {
     let screen = NSRect(x: 0, y: 0, width: 1_440, height: 900)
     #expect(
       WindowFramePolicy.clampedFrame(NSRect(x: 1_300, y: -100, width: 900, height: 620), to: screen)
@@ -268,7 +268,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func restoresTheLastAcceptedArea() {
+  func restoresLastAcceptedArea() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -318,7 +318,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func canceledDirtySelectionLeavesThePersistedAreaUnchanged() {
+  func canceledDirtySelectionLeavesPersistedAreaUnchanged() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -341,7 +341,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func activeProfileMutationKeepsTheProfilesAreaMountedUntilResolution() {
+  func activeProfileMutationKeepsProfilesAreaMountedUntilResolution() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -378,7 +378,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func overlappingProfileMutationCannotReleaseTheFirstNavigationOwner() {
+  func overlappingProfileMutationCannotReleaseFirstNavigationOwner() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")

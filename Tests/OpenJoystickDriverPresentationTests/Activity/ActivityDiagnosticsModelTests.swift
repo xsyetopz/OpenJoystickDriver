@@ -25,7 +25,7 @@ struct ActivityCheckRowTests {
   }
 
   @Test
-  func aRowKeepsTheCheckIdAndItsFixText() {
+  func rowKeepsCheckIdAndItsFixText() {
     let row = ActivityCheckRow(
       DiagnoseCheck("input-read", .fail, "denied; grant it with 'ojd permission request'")
     )
@@ -58,7 +58,7 @@ struct ActivityDiagnosticsModelTests {
   }
 
   @Test
-  func runIfNeededRunsOnlyBeforeTheFirstResult() async {
+  func runIfNeededRunsOnlyBeforeFirstResult() async {
     let runs = Locked(0)
     let model = ActivityDiagnosticsModel {
       runs.withLock { $0 += 1 }
@@ -73,7 +73,7 @@ struct ActivityDiagnosticsModelTests {
   }
 
   @Test
-  func theCheckComposerKeepsTheReportOrderOfTheCommand() {
+  func checkComposerKeepsReportOrderOfCommand() {
     let snapshot = DiagnoseServiceSnapshot(
       availability: .stopped,
       status: nil,

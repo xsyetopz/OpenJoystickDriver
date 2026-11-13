@@ -27,7 +27,7 @@ struct ServingRouteLabelTests {
   }
 
   @Test(arguments: ServingFixture.all)
-  func detailLabelNamesTheRouteOfTheServingPolicy(_ fixture: ServingFixture) {
+  func detailLabelNamesRouteOfServingPolicy(_ fixture: ServingFixture) {
     let decided = ServingPolicy.decision(fixture.input).route
     #expect(Self.device(fixture).servingRouteLabel == OJDLocalized.string(Self.key(for: decided)))
   }

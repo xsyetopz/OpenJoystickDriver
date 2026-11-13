@@ -3,7 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The menu of `specs/menu-bar-item/spec.md`: one top-level row per controller, at most two levels.
+/// The status item menu has one top-level row per controller and at most two levels.
 @Suite
 struct StatusItemMenuTests {
   private static func controller(

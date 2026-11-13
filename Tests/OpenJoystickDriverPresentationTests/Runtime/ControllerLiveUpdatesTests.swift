@@ -25,7 +25,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func theFirstAnswerRefreshesOnceAndAServiceNotificationRefreshesWithinOneSecond() async {
+  func firstAnswerRefreshesOnceAndServiceNotificationRefreshesWithinOneSecond() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let updates = makeUpdates(source, refreshed: refreshed)
@@ -43,7 +43,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aTestNotificationAnnouncementIsAnsweredAndRefreshesNothing() async {
+  func testNotificationAnnouncementIsAnsweredAndRefreshesNothing() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let answers = Answers()
@@ -63,7 +63,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aHoldTimeAnswerWithNoChangeRefreshesNothing() async {
+  func holdTimeAnswerWithNoChangeRefreshesNothing() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let updates = makeUpdates(source, refreshed: refreshed)
@@ -78,7 +78,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aRestartedServiceWithTheSameCountRefreshes() async {
+  func restartedServiceWithSameCountRefreshes() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let updates = makeUpdates(source, refreshed: refreshed)
@@ -124,7 +124,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aFailureWithChangingTextOfTheSameKindIsReportedOnce() async {
+  func failureWithChangingTextOfSameKindIsReportedOnce() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let modes = Modes()
@@ -148,7 +148,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aRecoveryBeforeTheThresholdNeverReportsPolling() async {
+  func recoveryBeforeThresholdNeverReportsPolling() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let logged = LogLines()
@@ -167,7 +167,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aRestoredWaitAfterAReportedFallbackIsReportedOnceAndRefreshes() async {
+  func restoredWaitAfterReportedFallbackIsReportedOnceAndRefreshes() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let modes = Modes()

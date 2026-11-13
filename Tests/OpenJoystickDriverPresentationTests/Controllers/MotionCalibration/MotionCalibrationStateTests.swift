@@ -32,7 +32,7 @@
       .motionProfileInactive,
       .motionSessionChanged,
     ])
-    func serviceRefusalShowsTheExplanationOfItsCode(
+    func serviceRefusalShowsExplanationOfItsCode(
       code: ApplicationServiceRemappingRPCError.Code
     ) async {
       let gateway = DelayedMotionCalibrationGateway()
@@ -46,7 +46,7 @@
     }
 
     @Test
-    func serviceMotionUnavailableGivesTheRecoveryGuidance() async {
+    func serviceMotionUnavailableGivesRecoveryGuidance() async {
       let gateway = DelayedMotionCalibrationGateway()
       let model = MotionCalibrationViewModel(gateway: gateway)
       model.select(ControllerReference.session(.fixture("first")))
@@ -115,7 +115,7 @@
     }
 
     @Test
-    func statusRefreshesOnlyWhileTheBaselineIsMissingOrSamplesAreCollected() throws {
+    func statusRefreshesOnlyWhileBaselineIsMissingOrSamplesAreCollected() throws {
       let waiting = try Self.status(baseline: false, collecting: false)
       let collecting = try Self.status(baseline: true, collecting: true)
       let settled = try Self.status(baseline: true, collecting: false)
@@ -148,7 +148,7 @@
     }
 
     @Test
-    func failedReadStopsTheLoopAndKeepsTheError() async {
+    func failedReadStopsLoopAndKeepsError() async {
       let gateway = ScriptedMotionCalibrationGateway(results: [
         .failure(RemappingMotionCalibrationError.motionUnavailable)
       ])
@@ -162,7 +162,7 @@
 
   extension MotionCalibrationStateTests {
     @Test
-    func aStatusReadDoesNotMarkTheModelBusy() async throws {
+    func statusReadDoesNotMarkModelBusy() async throws {
       let gateway = QueuedMotionCalibrationGateway()
       let model = MotionCalibrationViewModel(gateway: gateway)
       model.select(ControllerReference.session(.fixture("first")))
@@ -175,7 +175,7 @@
     }
 
     @Test
-    func aCommandDuringAReadIsPerformedAndTheStaleReadIsIgnored() async throws {
+    func commandDuringReadIsPerformedAndStaleReadIsIgnored() async throws {
       let gateway = QueuedMotionCalibrationGateway()
       let model = MotionCalibrationViewModel(gateway: gateway)
       model.select(ControllerReference.session(.fixture("first")))
@@ -195,7 +195,7 @@
     }
 
     @Test
-    func aReadThatStartedDuringACommandCannotOverwriteItsResult() async throws {
+    func readThatStartedDuringCommandCannotOverwriteItsResult() async throws {
       let gateway = QueuedMotionCalibrationGateway()
       let model = MotionCalibrationViewModel(gateway: gateway)
       model.select(ControllerReference.session(.fixture("first")))

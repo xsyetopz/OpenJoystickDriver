@@ -13,7 +13,7 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func theTitleKeyFollowsTheSelectedPane() {
+  func titleKeyFollowsSelectedPane() {
     let model = SettingsWindowPaneModel()
     #expect(model.titleKey == "ui.settings.general.title")
     model.select(.notifications)
@@ -22,7 +22,7 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func selectingByIndexRejectsAPositionOutsideThePanes() {
+  func selectingByIndexRejectsPositionOutsidePanes() {
     let model = SettingsWindowPaneModel()
     #expect(model.select(index: 2))
     #expect(model.selected == .advanced)
@@ -32,7 +32,7 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func everyPaneHasASymbolAndAccessibilityLabel() {
+  func everyPaneHasSymbolAndAccessibilityLabel() {
     for pane in SettingsWindowPane.allCases {
       #expect(!pane.symbolName.isEmpty)
       #expect(pane.accessibilityKey == "a11y.settingsPane.\(pane.rawValue)")
@@ -40,7 +40,7 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func everyPaneKeyIsInTheCatalog() {
+  func everyPaneKeyIsInCatalog() {
     for pane in SettingsWindowPane.allCases {
       for key in [pane.titleKey, pane.accessibilityKey] {
         #expect(OJDLocalized.string(key) != key, "\(key)")
@@ -49,7 +49,7 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func everyPaneSharesOneWidthAndTheHeightFollowsTheContent() {
+  func everyPaneSharesOneWidthAndHeightFollowsContent() {
     let short = SettingsWindowPane.contentSize(fittingHeight: 300, availableHeight: 900)
     let tall = SettingsWindowPane.contentSize(fittingHeight: 600, availableHeight: 900)
     #expect(short.width == SettingsWindowPane.contentWidth)
@@ -59,13 +59,13 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func aPaneTallerThanTheScreenIsCappedAndScrolls() {
+  func paneTallerThanScreenIsCappedAndScrolls() {
     let size = SettingsWindowPane.contentSize(fittingHeight: 2_000, availableHeight: 700)
     #expect(size.height == 700)
   }
 
   @Test
-  func aSmallerScreenCapsAPaneThatFitsALargerOne() {
+  func smallerScreenCapsPaneThatFitsLargerOne() {
     let chrome = 52.0
     let large = SettingsWindowPane.availableContentHeight(
       visibleHeight: 1_000,
@@ -81,7 +81,7 @@ struct SettingsWindowPaneModelTests {
   }
 
   @Test
-  func aPaneKeepsAMinimumHeight() {
+  func paneKeepsMinimumHeight() {
     let size = SettingsWindowPane.contentSize(fittingHeight: 0, availableHeight: 700)
     #expect(size.height == SettingsWindowPane.minimumContentHeight)
   }

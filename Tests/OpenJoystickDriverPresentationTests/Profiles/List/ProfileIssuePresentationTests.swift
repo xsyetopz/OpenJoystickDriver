@@ -13,7 +13,7 @@ struct ProfileIssuePresentationTests {
   }
 
   @Test
-  func aDamagedProfileShowsItsIssueCodeAndText() {
+  func damagedProfileShowsItsIssueCodeAndText() {
     let codes: [ErrorCode] = [
       .invalidProfile, .unsupportedAPIVersion, .duplicateName, .corruptLibrary,
     ]
@@ -47,7 +47,7 @@ struct ProfileIssuePresentationTests {
   }
 
   @Test
-  func anUnusableLibraryShowsItsIssueCodeAndText() {
+  func unusableLibraryShowsItsIssueCodeAndText() {
     let presentation = ProfileIssuePresentation(Self.issue(.unusableLibrary, .corruptLibrary))
     #expect(presentation.code == ErrorCode.corruptLibrary.rawValue)
     #expect(presentation.title == OJDLocalized.string("ui.profiles.damagedLibrary"))
