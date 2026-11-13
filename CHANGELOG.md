@@ -39,6 +39,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - **BREAKING:** the `appID` property of a profile's `applicationScope`, which `appIDs` replaces.
 - The properties that held prose and no data: `rationale` of a protocol description, the `notes` of the catalog rules and of the crosswalk, `$comment` in the schemas, and the system audit caveat of the support report. The facts they stated are in `wiki/Controller-Records.md` and `docs/development/xpad-import.md`.
 
+### Fixed
+
+- **Check Now** with only prerelease releases published reports no error: it states that only prereleases exist and names **Include prerelease updates**.
+- The stick dead zone stepper clears the value ("Not set") when it decrements below the lowest value; before, only **Reset** cleared it.
+- The developer tools show **USB endpoints** only for a controller connected over USB.
+- The Controllers header counts the connected controllers that OJD does not serve.
+- A state that needs attention shows an orange triangle and a failure a red octagon, so the two differ by shape as well as color.
+- `ojd controller claim` and `ojd controller release` (and their `--dry-run`) report when they delete the user's patch file for the model.
+
 ## [0.6.0-alpha.2] - 2026-11-07
 
 ### Added
