@@ -1,7 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
 
-// Headless CLI lookup into the same Kit catalog as the app UI.
 /// Looks up `ojd` text in the catalog that the app UI uses.
 enum CLILocalized {
   /// The catalog resolver for the preferred languages of the process.

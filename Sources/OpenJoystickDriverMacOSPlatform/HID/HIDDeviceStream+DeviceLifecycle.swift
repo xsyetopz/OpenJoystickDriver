@@ -391,7 +391,7 @@ extension HIDDeviceStream {
       return
     }
     if removal.shouldEmitDisconnect { continuation?.yield(.disconnected(connection: connection)) }
-    // The location's remaining devices, if any, now combine to a different ownership.
+    // The location's remaining devices, if any, combine to a different ownership.
     if !removal.locationRemoved {
       continuation?.yield(
         .ownershipChanged(

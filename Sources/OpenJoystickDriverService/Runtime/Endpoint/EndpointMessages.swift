@@ -252,7 +252,7 @@ struct EndpointOutputResult: Encodable, Sendable {
   }
 }
 
-/// The answer to a `ModList`:the installed mod packages, as `ojd mod list` prints them.
+/// The answer to a `ModList`: the installed mod packages, as `ojd mod list` prints them.
 struct EndpointMods: Encodable, Equatable, Sendable {
   /// The version of the endpoint API.
   let apiVersion = OpenJoystickDriverAPI.version

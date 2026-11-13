@@ -162,7 +162,7 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
 /// The translator from profile keys to macOS virtual keys.
 struct MacVirtualKeyTranslator: CoreGraphicsKeyboardTranslating {
   // macOS exposes Help but no distinct Insert virtual key. Both symbolic
-  // profile keys intentionally address the platform Help/Insert key at 0x72.
+  // profile keys address the platform Help/Insert key at 0x72.
   /// Returns the virtual key of `key`; the Help and Insert keys both map to the Help key.
   func virtualKey(for key: RemappingKeyboardKey) -> CGKeyCode? {
     let value: Int
