@@ -1,25 +1,23 @@
 # Updating and Uninstalling
 
-Check for a new OpenJoystickDriver version, and remove the app and its data when you no longer need them.
+Check for a new OpenJoystickDriver (OJD) version, and remove the app and its data when you no longer need them.
 
 ## Contents
 
 - [Update](#update)
   - [How Update Checks Work](#how-update-checks-work)
   - [Release Builds and Tester Builds](#release-builds-and-tester-builds)
-  - [Check For Updates](#check-for-updates)
+  - [Check for Updates](#check-for-updates)
   - [Install a New Version](#install-a-new-version)
   - [Update from an Earlier Alpha](#update-from-an-earlier-alpha)
   - [Get a Fix](#get-a-fix)
 - [Uninstall](#uninstall)
   - [Remove the App](#remove-the-app)
-  - [Files That Stay On Your Mac](#files-that-stay-on-your-mac)
+  - [Files That Stay on Your Mac](#files-that-stay-on-your-mac)
   - [Remove the Data](#remove-the-data)
 - [Further Reading](#further-reading)
 
 ## Update
-
-This section explains how to check for a new OpenJoystickDriver (OJD) version and how to get a fix.
 
 ### How Update Checks Work
 
@@ -90,8 +88,6 @@ If a bug is fixed in the source but not yet released, you have two options:
 The `CHANGELOG.md` file in the repository lists what each build contains.
 
 ## Uninstall
-
-This section explains how to remove OpenJoystickDriver (OJD) and the files it leaves on your Mac.
 
 Removing the app alone leaves a login item, privacy entries, the [Xbox USB driver](Glossary.md#terms), and data files. Follow the steps in order.
 

@@ -5,7 +5,7 @@ Install OpenJoystickDriver (OJD), connect a controller, and see it work in a gam
 ## Steps
 
 1. Open the OpenJoystickDriver disk image, drag **OpenJoystickDriver.app** onto the **Applications** shortcut, and open it from the Applications folder. Keep the app in `/Applications`.
-2. Open OpenJoystickDriver. If the window shows **Permission needed**, click **Grant Access**. In **System Settings** > **Privacy & Security**, allow **OpenJoystickDriver** in **Input Monitoring** and in **Accessibility**. Without the first, OJD cannot read your controller. Without the second, the [virtual gamepad](Glossary.md#terms) does not work.
+2. Open OpenJoystickDriver. If the window shows **Permission needed**, click **Grant Access**. In **System Settings** > **Privacy & Security**, turn on **OpenJoystickDriver** in **Input Monitoring** and in **Accessibility**. Without the first, OJD cannot read your controller. Without the second, the [virtual gamepad](Glossary.md#terms) does not work.
 3. In the app window, open the **Access** area. If the button **Restart OpenJoystickDriver** shows, click it.
 4. Connect the controller with USB, Bluetooth, or a 2.4 GHz dongle.
 5. Open the **Controllers** area, select your controller, and click **Open Input Test...**. Press buttons and move sticks. The window shows each control. If it shows nothing, see [Controller not detected](Troubleshooting.md).

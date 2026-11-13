@@ -19,7 +19,7 @@ OJD binds a controller without a record by its interface signature (Xbox USB and
 
 1. Run `ojd controller list` and find the VID:PID of the controller.
 2. Run `ojd controller show VVVV:PPPP`. It shows the identity, who handles the controller, its capabilities, and its [virtual gamepad](Glossary.md#terms). For a connected device that OJD does not handle it shows the reason and the next step instead.
-3. Open **Open Input Test...** in the **Controllers** area, and press every control.
+3. In the **Controllers** area, click **Open Input Test...** and press every control.
 
 Stop here when every control reads correctly. When the controller is [handled by macOS](Glossary.md#terms) and you want OJD to handle it, run `ojd controller claim VVVV:PPPP`.
 

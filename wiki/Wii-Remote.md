@@ -1,6 +1,6 @@
 # Wii Remote
 
-This page explains how to connect a Wii Remote to OpenJoystickDriver (OJD), what OJD reads from it, what OJD sets on it, and which parts of the remote OJD does not drive. Nothing on this page is verified on a real Wii Remote unless the text says so.
+Connect a Wii Remote to OpenJoystickDriver (OJD), and see what OJD reads from it, what OJD sets on it, and which parts of the remote OJD does not drive. Nothing on this page is verified on a real Wii Remote unless the text says so.
 
 ## Contents
 
@@ -117,7 +117,7 @@ For the sources and targets, see [Bindings and actions](Bindings-and-Actions.md)
 
 ## Speaker
 
-OJD plays a sound file on the speaker of the remote. The speaker plays mono 4-bit ADPCM at 6000 samples per second, so the sound has low quality. The speaker is not verified on a real remote.
+OJD plays a sound file on the speaker of the remote. The speaker plays mono 4-bit ADPCM at 6000 samples per second, so the sound quality is low. The speaker is not verified on a real remote.
 
 To play a file, run this command:
 

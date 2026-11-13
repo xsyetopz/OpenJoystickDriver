@@ -30,7 +30,7 @@ A profile can have one stick mapping for each stick, one trigger mapping for eac
 
 1. In the **Controller** section, click **Adjust** in the **Stick modes** group.
 2. Select **Left stick** or **Right stick**.
-3. Select **Enable pointer output**.
+3. Turn on **Enable pointer output**.
 4. Select a **Stick mode**.
 5. Change the settings for that mode.
 6. Click **Save**.
@@ -64,7 +64,7 @@ A dual-stage trigger has a soft stage and a full stage. You can assign each stag
 
 1. In the **Controller** section, click **Adjust** in the **Trigger stages** group.
 2. Select **Left trigger** or **Right trigger**.
-3. Select **Enable dual-stage trigger**.
+3. Turn on **Enable dual-stage trigger**.
 4. Select a **Stage interaction**.
 5. Set the thresholds and **Release hysteresis**.
 6. Click **Save**.
@@ -87,7 +87,7 @@ On the command line, the settings are the `triggerMappings` entries of the profi
 
 1. In the **Controller** section, click **Adjust** in the **Touch mappings** group.
 2. Select the **Surface**: **Primary surface**, **Left surface**, or **Right surface**.
-3. Select **Enable continuous touch output**.
+3. Turn on **Enable continuous touch output**.
 4. Select a **Touch mode**: **Pointer**, **Left stick**, or **Right stick**.
 5. Set the sensitivity, radius, or deadzone.
 6. Click **Save**.
@@ -124,7 +124,7 @@ On the command line, the sources are `stick-region:SIDE:INNER-OUTER[:FROM-TO]`, 
 Pointer speed scales all pointer movement by the value of a trigger or a stick. It covers the stick pointer modes, the touch pointer, the gyro mouse, and the **Mouse movement** destination. Scrolling does not change.
 
 1. In the **Controller** section, click **Adjust** in the **Pointer speed** group.
-2. Select **Scale pointer speed**.
+2. Turn on **Scale pointer speed**.
 3. Select the **Driver**: **Trigger** or **Stick depth**, and the **Side**.
 4. Set the **Scale at 0** and the **Scale at 1**, and select a **Curve**.
 5. Click **Save**.

@@ -1,6 +1,6 @@
 # Adding Or Changing a Controller Record
 
-This page explains how to add a controller that OpenJoystickDriver does not know, or change how it drives a known one, with your own controller record.
+Add a controller that OpenJoystickDriver does not know, or change how it drives a known one, with your own controller record.
 
 ## Contents
 
@@ -80,7 +80,7 @@ macOS handles some controllers through the Game Controller framework. A controll
 - `System`: macOS drives the controller when it can, whether or not it lists one.
 - `OJD`: OpenJoystickDriver opens the controller exclusively even when macOS supports it, and drives it like a controller macOS does not know.
 
-A raw-USB family, such as `XboxGIP`, has no `server` field, because macOS cannot handle those controllers. A new `server` value applies to a connected controller as soon as the running service reloads the records. You do not need to unplug the controller.
+A raw-USB family, such as `XboxGIP`, has no `server` field, because macOS cannot handle those controllers. A changed `server` value applies to a connected controller as soon as the running service reloads the records. You do not need to unplug the controller.
 
 To change `server` without editing the file, run `ojd controller claim CONTROLLER` or `ojd controller release CONTROLLER`. `claim` sets `OJD`, and `release` sets `System`. The command writes the value to your record for the model, and creates a `ControllerPatch` file when you have none and the bundled catalog or an installed package has a record of the model. When the value equals the `server` of the bundled or package record, the command removes `server` from your `ControllerPatch` instead, and deletes the file when nothing else is left in it. It refuses a raw-USB family, a controller that macOS cannot handle, and a model that has no record at all, with the code E2023. For a model with no record, run `ojd record draft` to start one. `ojd controller show` names the choice and the layer it comes from, `default` when no layer sets `server` and the list check chose, and the route and [virtual gamepad kind](Glossary.md#terms). In the app, the controller detail has the same choice as the **Handled by** picker, shown for a controller that macOS can handle or that a record gives to OpenJoystickDriver, and never for a raw-USB family.
 
