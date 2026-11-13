@@ -2601,7 +2601,11 @@
 "platform.macos.cli.controller.group.serverNotNative" = "macOS가 %@을(를) 기본적으로 처리하지 않으므로 항상 OpenJoystickDriver가 처리합니다.";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "cli.controller.group.serverRawUsb" = "%@은(는) 원시 USB를 사용하므로 항상 OpenJoystickDriver가 처리합니다.";
-/* Message printed after the server of a controller is changed. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
+/* Message printed by 'ojd controller claim' and related commands after the record file is deleted, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. The service picks the change up without a restart. */
+"cli.controller.group.serverRemoved" = "%2$@을(를) 삭제했으므로 %1$@에 번들 레코드가 다시 적용됩니다. 실행 중인 서비스가 지금 적용합니다.";
+/* Message printed by 'ojd controller claim' and related commands with --dry-run when the command would delete the record file, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. */
+"cli.controller.group.serverRemovedDryRun" = "%2$@을(를) 삭제하면 %1$@에 번들 레코드가 다시 적용됩니다.";
+/* Message printed after the server of a controller is changed.%1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
 "cli.controller.group.serverSuccess" = "%1$@을(를) %2$@(으)로 설정했습니다(%3$@). 실행 중인 서비스가 지금 적용합니다.";
 /* One-line summary of 'ojd controller player' in the command list and at the top of its help. */
 "cli.controller.player.abstract" = "컨트롤러의 플레이어 표시등을 설정합니다.";

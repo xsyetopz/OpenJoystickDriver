@@ -2601,7 +2601,11 @@
 "platform.macos.cli.controller.group.serverNotNative" = "macOS は %@ をネイティブに処理しないため、常に OpenJoystickDriver が処理します。";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "cli.controller.group.serverRawUsb" = "%@ は Raw USB を使うため、常に OpenJoystickDriver が処理します。";
-/* Message printed after the server of a controller is changed. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
+/* Message printed by 'ojd controller claim' and related commands after the record file is deleted, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. The service picks the change up without a restart. */
+"cli.controller.group.serverRemoved" = "%2$@ を削除したため、%1$@ には同梱のレコードが再び適用されます。実行中のサービスが今すぐ適用します。";
+/* Message printed by 'ojd controller claim' and related commands with --dry-run when the command would delete the record file, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. */
+"cli.controller.group.serverRemovedDryRun" = "%2$@ を削除すると、%1$@ には同梱のレコードが再び適用されます。";
+/* Message printed after the server of a controller is changed.%1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
 "cli.controller.group.serverSuccess" = "%1$@ を %2$@ に設定しました（%3$@）。実行中のサービスが今すぐ適用します。";
 /* One-line summary of 'ojd controller player' in the command list and at the top of its help. */
 "cli.controller.player.abstract" = "コントローラのプレイヤーインジケータライトを設定します。";

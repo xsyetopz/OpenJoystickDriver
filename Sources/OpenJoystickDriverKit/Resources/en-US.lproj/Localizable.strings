@@ -2601,7 +2601,11 @@
 "platform.macos.cli.controller.group.serverNotNative" = "macOS does not handle %@ natively, so OpenJoystickDriver always handles it.";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "cli.controller.group.serverRawUsb" = "%@ uses raw USB, so OpenJoystickDriver always handles it.";
-/* Message printed after the server of a controller is changed. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
+/* Message printed by 'ojd controller claim' and related commands after the record file is deleted, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. The service picks the change up without a restart. */
+"cli.controller.group.serverRemoved" = "Deleted %2$@, so the bundled record applies to %1$@ again. The running service applies it now.";
+/* Message printed by 'ojd controller claim' and related commands with --dry-run when the command would delete the record file, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. */
+"cli.controller.group.serverRemovedDryRun" = "Would delete %2$@, so the bundled record applies to %1$@ again.";
+/* Message printed after the server of a controller is changed.%1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
 "cli.controller.group.serverSuccess" = "Set %1$@ to %2$@ in %3$@. The running service applies it now.";
 /* One-line summary of 'ojd controller player' in the command list and at the top of its help. */
 "cli.controller.player.abstract" = "Set a controller's player indicator lights.";

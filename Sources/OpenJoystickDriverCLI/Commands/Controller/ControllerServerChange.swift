@@ -70,23 +70,36 @@ enum ControllerServerChange {
           [result.identity, CommandLineName.kebab(result.server.rawValue), result.file]
         ])
       case .human:
+        let removal = change.data == nil
         if dryRun {
           CLIOutput.stdout(
-            CLILocalized.format(
-              "cli.controller.group.serverDryRun",
-              result.identity,
-              CommandLineName.kebab(result.server.rawValue),
-              result.file
-            )
+            removal
+              ? CLILocalized.format(
+                "cli.controller.group.serverRemovedDryRun",
+                result.identity,
+                result.file
+              )
+              : CLILocalized.format(
+                "cli.controller.group.serverDryRun",
+                result.identity,
+                CommandLineName.kebab(result.server.rawValue),
+                result.file
+              )
           )
         } else {
           CLIOutput.success(
-            CLILocalized.format(
-              "cli.controller.group.serverSuccess",
-              result.identity,
-              CommandLineName.kebab(result.server.rawValue),
-              result.file
-            )
+            removal
+              ? CLILocalized.format(
+                "cli.controller.group.serverRemoved",
+                result.identity,
+                result.file
+              )
+              : CLILocalized.format(
+                "cli.controller.group.serverSuccess",
+                result.identity,
+                CommandLineName.kebab(result.server.rawValue),
+                result.file
+              )
           )
         }
       }

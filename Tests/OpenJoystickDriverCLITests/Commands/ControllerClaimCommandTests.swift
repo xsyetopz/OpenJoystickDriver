@@ -97,6 +97,63 @@ struct ControllerClaimCommandTests {
     #expect(Self.server(in: directory) == .system)
   }
 
+  /// Releases `2DC8:301B`, whose bundled record states `OJD`, so its patch sets `System`.
+  private static func releasedBundledOJDModel(
+    in directory: Directory
+  ) async throws -> (device: ApplicationServiceDeviceDescription, patch: URL) {
+    let device = try Self.device(vendorID: 0x2DC8, productID: 0x301B, native: true)
+    let released = try await Self.run(
+      ["controller", "release", token("pad-1"), "--json"],
+      device: device,
+      in: directory
+    )
+    let patch = URL(fileURLWithPath: try #require(try released.json()["file"] as? String))
+    #expect(FileManager.default.fileExists(atPath: patch.path))
+    return (device, patch)
+  }
+
+  @Test
+  func claimDeletingPatchFileReportsDeletion() async throws {
+    let directory = Directory()
+    let (device, patch) = try await Self.releasedBundledOJDModel(in: directory)
+
+    let result = try await Self.run(
+      ["controller", "claim", token("pad-1")],
+      device: device,
+      in: directory
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(!FileManager.default.fileExists(atPath: patch.path))
+    #expect(!result.standardError.contains("Set "))
+    #expect(
+      result.standardError.contains(
+        CLILocalized.format("cli.controller.group.serverRemoved", "2DC8:301B", patch.path)
+      )
+    )
+  }
+
+  @Test
+  func dryRunClaimDeletingPatchFileReportsDeletion() async throws {
+    let directory = Directory()
+    let (device, patch) = try await Self.releasedBundledOJDModel(in: directory)
+
+    let result = try await Self.run(
+      ["controller", "claim", token("pad-1"), "--dry-run"],
+      device: device,
+      in: directory
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(FileManager.default.fileExists(atPath: patch.path))
+    #expect(!result.standardOutput.contains("Would set"))
+    #expect(
+      result.standardOutput.contains(
+        CLILocalized.format("cli.controller.group.serverRemovedDryRun", "2DC8:301B", patch.path)
+      )
+    )
+  }
+
   @Test
   func dryRunWritesNothing() async throws {
     let directory = Directory()

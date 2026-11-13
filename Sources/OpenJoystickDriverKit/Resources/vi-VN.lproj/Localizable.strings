@@ -2601,7 +2601,11 @@
 "platform.macos.cli.controller.group.serverNotNative" = "macOS không xử lý %@ ở chế độ gốc, nên OpenJoystickDriver luôn xử lý nó.";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "cli.controller.group.serverRawUsb" = "%@ dùng USB thô, nên OpenJoystickDriver luôn xử lý nó.";
-/* Message printed after the server of a controller is changed. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
+/* Message printed by 'ojd controller claim' and related commands after the record file is deleted, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. The service picks the change up without a restart. */
+"cli.controller.group.serverRemoved" = "Đã xóa %2$@, nên bản ghi đi kèm lại áp dụng cho %1$@. Dịch vụ đang chạy áp dụng nó ngay bây giờ.";
+/* Message printed by 'ojd controller claim' and related commands with --dry-run when the command would delete the record file, because the bundled record already sets the server. %1$@ is the controller identity and %2$@ is the record file. */
+"cli.controller.group.serverRemovedDryRun" = "Sẽ xóa %2$@, nên bản ghi đi kèm lại áp dụng cho %1$@.";
+/* Message printed after the server of a controller is changed.%1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. The service picks the change up without a restart. */
 "cli.controller.group.serverSuccess" = "Đã đặt %1$@ thành %2$@ trong %3$@. Dịch vụ đang chạy áp dụng nó ngay bây giờ.";
 /* One-line summary of 'ojd controller player' in the command list and at the top of its help. */
 "cli.controller.player.abstract" = "Đặt đèn chỉ báo người chơi của bộ điều khiển.";
