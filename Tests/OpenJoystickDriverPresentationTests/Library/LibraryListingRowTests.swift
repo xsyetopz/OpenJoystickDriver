@@ -21,12 +21,12 @@ struct LibraryListingRowTests {
 
   @Test
   func aRowCaptionIsTheFamilyAndTheLayer() {
-    #expect(item().caption == "Xbox (XID) · Built-in")
+    #expect(item().subtitle == "Xbox (XID) · Built-in")
   }
 
   @Test
   func aClaimedRecordEndsItsCaptionWithAppleSigned() {
-    #expect(item(signed: true).caption == "Xbox (XID) · Built-in · Apple-signed")
+    #expect(item(signed: true).subtitle == "Xbox (XID) · Built-in · Apple-signed")
   }
 
   @Test
@@ -54,7 +54,7 @@ struct LibraryListingRowTests {
     let items = DirectoryLibraryStore(recordsDirectory: directory).records().builtIn
 
     #expect(items.filter(\.appleSigned).map(\.model) == [claimed])
-    #expect(items.first { $0.model == unclaimed }?.caption.contains("Apple-signed") == false)
-    #expect(items.first { $0.model == hid }?.caption.contains("Apple-signed") == false)
+    #expect(items.first { $0.model == unclaimed }?.subtitle.contains("Apple-signed") == false)
+    #expect(items.first { $0.model == hid }?.subtitle.contains("Apple-signed") == false)
   }
 }

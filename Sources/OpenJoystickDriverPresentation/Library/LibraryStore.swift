@@ -27,7 +27,7 @@ struct LibraryRecordItem: Equatable, Identifiable {
 
   /// The row's gray line: the family, the layer, and the Apple-signed text for a controller the
   /// signed USB extension claims.
-  var caption: String {
+  var subtitle: String {
     var segments = [family.displayName, layer.libraryTitle]
     if appleSigned { segments.append(Self.appleSignedText) }
     return segments.dropFirst().reduce(segments[0]) {

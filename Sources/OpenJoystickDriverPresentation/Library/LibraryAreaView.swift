@@ -104,7 +104,7 @@
 
     /// The row of a record: its identity, then its caption, and the file that patches it.
     private func recordRow(_ item: LibraryRecordItem) -> some View {
-      let summary = item.caption
+      let summary = item.subtitle
       return VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Text(item.identity)
         Text(summary).font(.caption).foregroundColor(.secondary)
