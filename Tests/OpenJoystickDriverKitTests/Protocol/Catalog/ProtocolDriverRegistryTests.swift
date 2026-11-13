@@ -93,12 +93,11 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func rawUSBRowObservedThroughHIDIsAnUnsupportedTransportVariant() {
+  func rawUSBRecordOverHIDFallsBackToHIDDescriptor() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02EA)
-    #expect(
-      registry.classify(hidDevice(model, gamepadHIDInterface(host: .usb)), backend: .hid)
-        == rejection(.unsupportedTransportVariant, .xboxGIP, record: "045e-02ea")
-    )
+    let binding = try bound(hidDevice(model, gamepadHIDInterface(host: .usb)))
+    #expect(binding.rule == .hidDescriptor)
+    #expect(binding.inputMapping?.unfitRecordID == "045e-02ea")
   }
 
   @Test

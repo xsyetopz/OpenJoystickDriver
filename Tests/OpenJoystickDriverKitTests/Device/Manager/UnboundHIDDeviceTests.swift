@@ -60,9 +60,8 @@ struct UnboundHIDDeviceTests {
     await manager.handleHIDEvent(.connected(connection: rejected, ownership: .exclusive))
 
     #expect(await manager.connectedDeviceDescriptions().count == 1)
-    #expect(
-      await manager.unboundDeviceDescriptions().map(\.reason) == [.unsupportedTransportVariant]
-    )
+    let unbound = await manager.unboundDeviceDescriptions()
+    #expect(unbound.map(\.reason) == [.interfaceContractMismatch])
     #expect(await backend.releasedLocations().isEmpty)
     await manager.stop()
   }
