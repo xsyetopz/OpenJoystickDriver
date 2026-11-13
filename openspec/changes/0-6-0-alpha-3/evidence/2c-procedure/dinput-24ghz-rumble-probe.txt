@@ -1,0 +1,18 @@
+DInput + 2.4 GHz receiver, 2DC8:301C, release build 1.28.99. OJD suspended for the pad (`ojd controller suspend E-KfR-iLEFP5BUQNM0`) during the run.
+Probe: /tmp/ojd-193/rumble-probe/main.swift, run as `probe 2DC8 301C usb`.
+Before suspending OJD, IOHIDDeviceOpen returned e00002c5 (kIOReturnExclusiveAccess) and every write returned e00002c5.
+
+open 0
+output element page=0x8 usage=0x43 report=1 size=16 count=2
+output element page=0x8 usage=0x44 report=1 size=16 count=2
+output element page=0x8 usage=0x45 report=1 size=16 count=2
+output element page=0x8 usage=0x46 report=1 size=16 count=2
+output element page=0x8 usage=0x3 report=129 size=504 count=63
+2026-11-13T23:12:04Z attempt: report 1, zeroplus
+2026-11-13T23:12:04Z setReport id=1 00 00 02 00 7F 00 7F 00 result=0
+2026-11-13T23:12:06Z setReport id=1 00 00 02 00 00 00 00 00 result=0
+2026-11-13T23:12:08Z attempt: report 1, id first
+2026-11-13T23:12:08Z setReport id=1 01 00 00 02 00 7F 00 7F 00 result=0
+2026-11-13T23:12:10Z setReport id=1 01 00 00 02 00 00 00 00 00 result=0
+
+The pad accepted every write and the maintainer felt no vibration in either burst.

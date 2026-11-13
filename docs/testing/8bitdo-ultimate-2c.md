@@ -6,7 +6,7 @@ Capture paths on this page are relative to the `evidence/` folder of the `0-6-0-
 
 | Mode | VID:PID | Route | Status |
 | --- | --- | --- | --- |
-| 2.4 GHz receiver, XInput | `2DC8:310A` | `XboxXUSB` | Captured: every control reports (`2c-receiver-310a/ordered-controls-100s.txt`); rumble packets sent, felt result not in the capture; unassigned rear buttons send no bit (`2c-receiver-310a/rear-unassigned-with-a-b-45s.txt`) |
+| 2.4 GHz receiver, XInput | `2DC8:310A` | `XboxXUSB` | Captured: every control reports (`2c-receiver-310a/ordered-controls-100s.txt`); rumble felt on release build `1.28.99` (`2c-procedure/modes.txt`); unassigned rear buttons send no bit (`2c-receiver-310a/rear-unassigned-with-a-b-45s.txt`) |
 | Cable, XInput or DInput | `2DC8:310A` | `XboxXUSB` | Captured: the cable enumerates as `310A` after X + Home and after B + Home (`2c-cable/mode-attempts.txt`); same report as the receiver's `310A`; unassigned rear buttons send no bit (`2c-cable/310a-rear-unassigned-45s.txt`) |
 | Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Captured: every control raw and decoded (`2c-bluetooth-301b/ordered-controls-120s.txt`, `2c-bluetooth-301b/ojd-watch-120s.txt`); battery byte reads 0 at 100% and at 90%; rumble write fails |
 | Unknown | `2DC8:301D` | `HIDDescriptor` | Unverified: no mode of the pad enumerated as this identity (`2c-cable/mode-attempts.txt`) |
@@ -41,7 +41,7 @@ The rear buttons: `2c-receiver-310a/rear-square-star-45s.txt` holds seven presse
 
 Source: `2c-cable/mode-attempts.txt`. By cable the pad enumerates as `2DC8:310A` after X + Home, after B + Home, and after it was moved from the receiver in DInput mode. The report has the `310A` layout; its last six bytes read `1A 1B 30 6D 00 00` or `11 1B 30 6D 00 00` instead of the receiver's constant `10 1C 30 64 00 10`. In `2c-cable/310a-rear-unassigned-45s.txt` the first reports carry byte 3 = `40`, X held from X + Home; then A (`10`) and B (`20`) report, and the unassigned rear buttons send nothing.
 
-Rumble: `2c-receiver-310a/rumble-6s.txt` shows two writes, `00 08 00 00 C8 00 00 00` and 1.5 s later `00 08 00 00 00 00 00 00`. The capture does not record whether a motor ran. Two testers reported rumble working on `0.5.0-beta.4` tester build `1.5.71`; no capture file backs that report.
+Rumble: `2c-receiver-310a/rumble-6s.txt` shows two writes, `00 08 00 00 C8 00 00 00` and 1.5 s later `00 08 00 00 00 00 00 00`. The capture does not record whether a motor ran. On release build `1.28.99`, `ojd controller rumble` exits 0 by receiver and by cable, and the maintainer felt both (`2c-procedure/modes.txt`).
 
 ### Receiver as `2DC8:301C`
 
@@ -90,6 +90,25 @@ Battery: byte 10 reads `00` in every report of the capture. `ojd controller show
 Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); the maintainer identifies them as L4 and R4. The decode in `ojd-watch-120s.txt`, from `0.6.0-alpha.2`, lists neither bit; the record maps them as `LeftPaddle1` and `RightPaddle1`.
 
 Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer reports one rumble when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`). With a user patch that gives the mode a rumble template for output report 5, OJD's session sends the write while OJD serves the pad, and it fails with the same `kIOReturnNotFound` (`2c-bluetooth-301b/rumble-writes.txt`). Over Bluetooth LE the record declares no rumble.
+
+### Release build, every mode
+
+Source: `2c-procedure/`, release build `1.28.99`. `watch-all.txt` holds `ojd controller watch --all` across all mode switches, `modes.txt` holds `show` and `rumble` for each mode, and the `*-rumble-probe.txt` and `dinput-ble-gatt.txt` files hold the off-screen rumble probes.
+
+| Mode set on the pad | Enumerates as | Controls | Rumble |
+| --- | --- | --- | --- |
+| XInput, 2.4 GHz receiver | `2DC8:310A` | every button, hat, trigger and stick reports; no rear button bit | `ojd controller rumble` exits 0; the maintainer felt it |
+| XInput, cable | `2DC8:310A` | every button, hat, trigger and stick reports | `ojd controller rumble` exits 0; the maintainer felt it |
+| DInput, cable | `2DC8:310A`, the same unit as XInput by cable | as XInput by cable | as XInput by cable |
+| DInput, 2.4 GHz receiver | `2DC8:301C` | every button, hat, trigger and stick reports, with `LeftPaddle1` and `RightPaddle1` | `E2013`, the record declares none; the probe's report 1 writes in the Zeroplus layout return 0 with OJD suspended, and the maintainer felt nothing (`dinput-24ghz-rumble-probe.txt`) |
+| DInput, Bluetooth LE | `2DC8:301B` | every button, hat, trigger and stick reports; no paddle press in this run | `E2013`; report 5 writes and the Magnitude element value return `e00002f0` (`dinput-ble-rumble-probe.txt`) |
+| XInput, Bluetooth LE | `2DC8:301B`, the same unit as DInput over Bluetooth LE | every button, hat, trigger and stick reports, with `LeftPaddle1` and `RightPaddle1` | as DInput over Bluetooth LE: every probe write returns `e00002f0` |
+
+While OJD serves `301C`, its open of the pad is exclusive, so a probe gets `e00002c5` (`kIOReturnExclusiveAccess`) until `ojd controller suspend` releases it.
+
+Over Bluetooth LE, CoreBluetooth hides the HID service (`0x1812`) from apps. It shows Device Information, Battery, and the vendor service `00010203-0405-0607-0809-0A0B0C0D1912`, whose one writable characteristic names itself `OTA`, the firmware update channel (`dinput-ble-gatt.txt`). No write was sent to it. The buzz the pad gives on connect comes from the pad's own firmware, and the host has no rumble path over Bluetooth LE.
+
+The 8-bit stick modes (`301B`, `301C`) rest at `(-128,-128)`: the pad rests at 127 of 0 to 255, which is 1 step below the center 127.5, and the deflection scale in `HIDUsageMap.swift` maps that step to -128.
 
 ### Unverified
 

@@ -1,0 +1,16 @@
+DInput + Bluetooth LE, 2DC8:301B. GATT layout as CoreBluetooth shows it to an app, read-only.
+Probe: /tmp/ojd-193/gatt-probe/main.swift (CBManager.authorization 3, retrieveConnectedPeripherals, discover, read descriptors).
+
+peripherals ["8BitDo Ultimate 2C Wireless 203CAA44-C6CE-1589-2D0F-BB35860C59FD"]
+service Device Information
+service Battery
+service 00010203-0405-0607-0809-0A0B0C0D1912
+  service Device Information characteristic PnP ID properties 2
+  service Battery characteristic Battery Level properties 18
+  service 00010203-0405-0607-0809-0A0B0C0D1912 characteristic 00010203-0405-0607-0809-0A0B0C0D2B12 properties 22
+    read Battery Level Client Characteristic Configuration 1
+    read 00010203-0405-0607-0809-0A0B0C0D2B12 Client Characteristic Configuration 0
+    read 00010203-0405-0607-0809-0A0B0C0D2B12 Characteristic User Description "OTA"
+
+The HID service (0x1812) is absent from the list: macOS keeps it for its own HID driver.
+The one writable characteristic names itself "OTA", the firmware update channel. No write was sent to it.
