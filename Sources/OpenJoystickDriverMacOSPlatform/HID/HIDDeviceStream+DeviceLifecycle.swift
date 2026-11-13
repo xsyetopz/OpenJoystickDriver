@@ -146,7 +146,7 @@ extension HIDDeviceStream {
 
   /// Whether macOS serves a pad, so OJD only observes its input and never seizes it.
   ///
-  /// macOS serves a pad only while GameController lists a controller for it (D16). A pad still
+  /// macOS serves a pad only while GameController lists a controller for it. A pad still
   /// settling is left to macOS. A record's stated `server` decides instead of the listing.
   static func nativePassThrough(
     supportsHIDDevice: Bool,
