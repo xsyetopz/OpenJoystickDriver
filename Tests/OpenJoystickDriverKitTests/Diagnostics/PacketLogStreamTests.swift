@@ -19,15 +19,21 @@ struct PacketLogStreamTests {
     ]
     let calls = Locked(0)
     var seen: [String] = []
-    try await PacketLogStream.follow(duration: 0.05, interval: 1_000_000) {
-      let index = calls.withLock { call in
-        defer { call += 1 }
-        return min(call, snapshots.count - 1)
+    await #expect(throws: SnapshotsServed.self) {
+      try await PacketLogStream.follow(duration: nil, interval: 1_000_000) {
+        let index = calls.withLock { call in
+          defer { call += 1 }
+          return call
+        }
+        guard index < snapshots.count else { throw SnapshotsServed() }
+        return snapshots[index]
+      } onEntry: {
+        seen.append($0.hex)
       }
-      return snapshots[index]
-    } onEntry: {
-      seen.append($0.hex)
     }
     #expect(seen == ["02", "03"])
   }
 }
+
+/// Ends the follow loop after each snapshot is read, so the test does not depend on timing.
+private struct SnapshotsServed: Error {}
