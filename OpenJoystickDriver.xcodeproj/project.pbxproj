@@ -11,6 +11,8 @@
 		0A0000000000000000000102 /* PlatformHostInstallation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000202 /* PlatformHostInstallation.swift */; };
 		0A0000000000000000000108 /* ControllerIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00000000000000000020C /* ControllerIntents.swift */; };
 		0A0000000000000000000109 /* ProfileIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A00000000000000000020D /* ProfileIntents.swift */; };
+		0A000000000000000000010A /* ModIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020E /* ModIntents.swift */; };
+		0A000000000000000000010B /* ControllerOutputIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020F /* ControllerOutputIntents.swift */; };
 		0A0000000000000000000103 /* AppVersionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000203 /* AppVersionIntent.swift */; };
 		0A0000000000000000000106 /* ControllerEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020A /* ControllerEntity.swift */; };
 		0A0000000000000000000107 /* ProfileEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020B /* ProfileEntity.swift */; };
@@ -40,6 +42,8 @@
 		0A0000000000000000000202 /* PlatformHostInstallation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlatformHostInstallation.swift; path = Sources/OpenJoystickDriver/platform/macos/PlatformHostInstallation.swift; sourceTree = SOURCE_ROOT; };
 		0A00000000000000000020C /* ControllerIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ControllerIntents.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/ControllerIntents.swift; sourceTree = SOURCE_ROOT; };
 		0A00000000000000000020D /* ProfileIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileIntents.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/ProfileIntents.swift; sourceTree = SOURCE_ROOT; };
+		0A000000000000000000020E /* ModIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ModIntents.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/ModIntents.swift; sourceTree = SOURCE_ROOT; };
+		0A000000000000000000020F /* ControllerOutputIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ControllerOutputIntents.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/ControllerOutputIntents.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000203 /* AppVersionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppVersionIntent.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/AppVersionIntent.swift; sourceTree = SOURCE_ROOT; };
 		0A000000000000000000020A /* ControllerEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ControllerEntity.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/ControllerEntity.swift; sourceTree = SOURCE_ROOT; };
 		0A000000000000000000020B /* ProfileEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEntity.swift; path = Sources/OpenJoystickDriver/platform/macos/Intents/ProfileEntity.swift; sourceTree = SOURCE_ROOT; };
@@ -95,6 +99,8 @@
 				0A0000000000000000000203 /* AppVersionIntent.swift */,
 				0A00000000000000000020D /* ProfileIntents.swift */,
 				0A00000000000000000020C /* ControllerIntents.swift */,
+				0A000000000000000000020E /* ModIntents.swift */,
+				0A000000000000000000020F /* ControllerOutputIntents.swift */,
 				0A000000000000000000020A /* ControllerEntity.swift */,
 				0A000000000000000000020B /* ProfileEntity.swift */,
 				0A0000000000000000000206 /* Info.plist */,
@@ -226,6 +232,8 @@
 				0A0000000000000000000103 /* AppVersionIntent.swift in Sources */,
 				0A0000000000000000000109 /* ProfileIntents.swift in Sources */,
 				0A0000000000000000000108 /* ControllerIntents.swift in Sources */,
+				0A000000000000000000010A /* ModIntents.swift in Sources */,
+				0A000000000000000000010B /* ControllerOutputIntents.swift in Sources */,
 				0A0000000000000000000106 /* ControllerEntity.swift in Sources */,
 				0A0000000000000000000107 /* ProfileEntity.swift in Sources */,
 			);
