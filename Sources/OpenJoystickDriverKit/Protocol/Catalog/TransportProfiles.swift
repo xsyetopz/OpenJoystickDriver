@@ -79,7 +79,7 @@ public struct DeviceTransportProfile: Equatable, Sendable {
 
 /// A resolved protocol binding: a family and, exactly when the family has variants, the variant
 /// in use, written `family[:variant]` (for example `XboxXUSB:Receiver`, `XboxGIP:USB` or
-/// `VendorFlydigi`).
+/// `ValveSteamDeck`).
 public struct ProtocolBindingID: Hashable, Sendable, RawRepresentable, Codable,
   CustomStringConvertible
 {

@@ -221,7 +221,7 @@ public final class ProtocolDriverRegistry: Sendable {
       }
     }
     let tuning = protocolID.driverTuning(variant: variant, record: record.tuning)
-    // The families whose description sets the input layout: three built in, and every documented
+    // The families whose description sets the input layout: two built in, and every documented
     // one.
     func describedLayoutDriver() -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
       .success(
@@ -248,7 +248,7 @@ public final class ProtocolDriverRegistry: Sendable {
       // Only a record carries a layout; a family profile has nothing to decode with.
       guard let layouts = record.inputLayouts else { return .failure(.noProtocolMatch) }
       return .success(ReportLayoutDriver(layouts: layouts, rumbleTemplate: record.rumbleTemplate))
-    case .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi: return describedLayoutDriver()
+    case .xboxXID, .nintendoSwitchInputOnly: return describedLayoutDriver()
     case .xboxXUSB:
       guard variant == .receiver else {
         return .success(

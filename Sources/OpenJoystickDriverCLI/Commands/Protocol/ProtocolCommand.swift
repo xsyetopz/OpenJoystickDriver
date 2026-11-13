@@ -81,6 +81,8 @@ struct ProtocolEntry: Encodable, Equatable {
   enum Source: String, Encodable {
     /// OJD builds the family in.
     case builtIn = "BuiltIn"
+    /// A description that the app bundles.
+    case bundled = "Bundled"
     /// A description in the user's `Protocols` folder.
     case user = "User"
     /// A description in a mod package.
@@ -111,7 +113,7 @@ struct ProtocolEntry: Encodable, Equatable {
   init(_ family: DocumentedProtocolFamily) {
     name = family.name
     displayName = family.displayName
-    source = family.package == nil ? .user : .package
+    source = family.isBundled ? .bundled : family.package == nil ? .user : .package
     package = family.package
     file = family.file.path
   }
@@ -119,7 +121,7 @@ struct ProtocolEntry: Encodable, Equatable {
   /// Where the family comes from, in words.
   var sourceText: String {
     switch source {
-    case .builtIn: CLILocalized.text("cli.protocol.list.builtIn")
+    case .builtIn, .bundled: CLILocalized.text("cli.protocol.list.builtIn")
     case .user: CLILocalized.text("cli.protocol.list.user")
     case .package: CLILocalized.format("cli.protocol.list.package", package ?? "")
     }

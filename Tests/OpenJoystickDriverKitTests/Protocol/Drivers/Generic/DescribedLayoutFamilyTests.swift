@@ -4,13 +4,13 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// The families whose descriptions hold the input layout, which `ReportLayoutDriver` decodes:
-/// `XboxXID`, `NintendoSwitchInputOnly` and `VendorFlydigi`.
+/// `XboxXID`, `NintendoSwitchInputOnly` and the bundled documented family `VendorFlydigi`.
 ///
 /// Their decoded frames are pinned by `DriverParseCharacterizationTests`, `XboxXIDFieldSweepTests`
 /// and each family's parser suite.
 struct DescribedLayoutFamilyTests {
   private static let described: [PhysicalProtocolID] = [
-    .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi,
+    .xboxXID, .nintendoSwitchInputOnly, .flydigi,
   ]
 
   @Test(arguments: described)
@@ -42,7 +42,7 @@ struct DescribedLayoutFamilyTests {
     let withLayout = PhysicalProtocolID.allCases.filter {
       $0.protocolDescription.inputLayouts != nil
     }
-    #expect(Set(withLayout) == Set(Self.described))
+    #expect(Set(withLayout) == Set(Self.described.filter { !$0.isDocumented }))
   }
 
   /// `ReportLayoutDriver` traps when a raw-USB rumble template has no USB output, so every
@@ -94,7 +94,7 @@ struct DescribedLayoutFamilyTests {
   @Test
   func flydigiDeclaresExactlyFifteenBytesWithReportID1() throws {
     let layout = try #require(
-      ProtocolDescription.bundled[.vendorFlydigi]?.inputLayouts?.layouts.first
+      PhysicalProtocolID.flydigi.protocolDescription.inputLayouts?.layouts.first
     )
     #expect(layout.reportID == 1)
     #expect(layout.minimumLength == 15)

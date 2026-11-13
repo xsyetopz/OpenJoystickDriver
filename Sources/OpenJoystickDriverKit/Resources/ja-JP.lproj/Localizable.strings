@@ -1028,8 +1028,6 @@
 "term.protocolFamily.valveSteamDeck" = "Valve Steam Deck";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Steam Controller of 2026 by Valve, which has its own protocol and is not the first Steam Controller. The year tells the two apart and stays. Valve Steam Controller is a brand and product name: keep it as written. */
 "term.protocolFamily.valveSteamTriton" = "Valve Steam Controller (2026)";
-/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: controllers by the maker Flydigi, which use a protocol of their own. Flydigi is a brand and product name: keep it as written. */
-"term.protocolFamily.vendorFlydigi" = "Flydigi";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: controllers by the maker GameSir, which run either in a plain USB mode or in an enhanced HID mode; the protocol variant names tell the two apart. GameSir is a brand and product name: keep it as written. */
 "term.protocolFamily.vendorGameSir" = "GameSir";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controllers of the NVIDIA SHIELD by NVIDIA. NVIDIA SHIELD is a brand and product name: keep it as written. */

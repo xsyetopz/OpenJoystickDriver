@@ -17,8 +17,8 @@ public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIter
   public static let allCases: [Self] = [
     .hidDescriptor, .hidReportLayout, .xboxXID, .xboxXUSB, .xboxGIP, .sonySixaxis, .sonyDualShock4,
     .sonyDualSense, .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly,
-    .valveSteamController, .valveSteamTriton, .valveSteamDeck, .vendorFlydigi, .vendorPS3ThirdParty,
-    .vendorGameSir, .vendorNVIDIAShield, .nintendoWii,
+    .valveSteamController, .valveSteamTriton, .valveSteamDeck, .vendorPS3ThirdParty, .vendorGameSir,
+    .vendorNVIDIAShield, .nintendoWii,
   ]
 
   /// The family named `rawValue`: a built-in one, or one a loaded description document names.
@@ -85,8 +85,6 @@ public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIter
   /// Steam Deck built-in controller (SDL `SteamControllerNeptune`): its own state report,
   /// settings, watchdog, and rumble report.
   public static let valveSteamDeck = Self(builtIn: "ValveSteamDeck")
-  /// The Flydigi vendor protocol.
-  public static let vendorFlydigi = Self(builtIn: "VendorFlydigi")
   /// The vendor protocol of third-party PS3 pads.
   public static let vendorPS3ThirdParty = Self(builtIn: "VendorPS3ThirdParty")
   /// The GameSir vendor protocol.

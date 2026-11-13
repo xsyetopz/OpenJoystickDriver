@@ -1,5 +1,10 @@
 @testable import OpenJoystickDriverKit
 
+extension PhysicalProtocolID {
+  /// `VendorFlydigi`, the documented family the app bundles.
+  static let flydigi = Self(documented: "VendorFlydigi")
+}
+
 /// The drivers of the families whose descriptions hold the input layout, built the way the
 /// registry builds them.
 func xidDriver(
@@ -28,7 +33,7 @@ func switchInputOnlyDriver() -> ReportLayoutDriver {
 
 func flydigiDriver() -> ReportLayoutDriver {
   ReportLayoutDriver(
-    describedBy: .vendorFlydigi,
+    describedBy: .flydigi,
     variant: nil,
     rumbleTemplate: nil,
     outEndpoint: 0x02,

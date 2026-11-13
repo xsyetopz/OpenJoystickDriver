@@ -16,7 +16,8 @@ extension DocumentedProtocolFamilies {
   ///   name that is not the family's.
   public static func read(
     _ file: URL,
-    package: String? = nil
+    package: String? = nil,
+    isBundled: Bool = false
   ) throws(ProtocolDescriptionProblem) -> DocumentedProtocolFamily {
     let data: Data
     do { data = try Data(contentsOf: file) } catch {
@@ -38,15 +39,17 @@ extension DocumentedProtocolFamilies {
       displayName: displayName,
       file: file,
       package: package,
+      isBundled: isBundled,
       description: description
     )
   }
 
   /// Registers the families of the user's `Protocols` folder beside `controllers`, then those of
-  /// the installed packages in name order, and returns the families and the files that were
-  /// refused.
+  /// the installed packages in name order, and returns the families, with the bundled ones last,
+  /// and the files that were refused.
   ///
-  /// The first definition of a name wins, so a later file with the same name is refused. A package
+  /// The first definition of a name wins, so a later file with the same name is refused. A family
+  /// of the user or of a package replaces the bundled one of its name, with no refusal. A package
   /// that cannot be used holds nothing.
   public static func load(
     besides controllers: URL
@@ -79,7 +82,7 @@ extension DocumentedProtocolFamilies {
       }
     }
     register(families, owner: controllers.deletingLastPathComponent())
-    return (families, refused)
+    return (families + bundled(besides: families), refused)
   }
 
   /// The `.plist` files of `folder` in file-name order.

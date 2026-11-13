@@ -11,7 +11,7 @@ enum LocalizationCatalogAudit {
     "term.protocolFamily.sonyDualSense", "term.protocolFamily.sonyDualShock4",
     "term.protocolFamily.sonySixaxis", "term.protocolFamily.valveSteamController",
     "term.protocolFamily.valveSteamDeck", "term.protocolFamily.valveSteamTriton",
-    "term.protocolFamily.vendorFlydigi", "term.protocolFamily.vendorGameSir",
+    "term.protocolFamily.vendorGameSir",
     "term.protocolFamily.vendorNvidiaShield", "term.protocolFamily.xboxGip",
     "term.protocolFamily.xboxXid", "term.protocolFamily.xboxXusb",
     "term.protocolVariant.usb",

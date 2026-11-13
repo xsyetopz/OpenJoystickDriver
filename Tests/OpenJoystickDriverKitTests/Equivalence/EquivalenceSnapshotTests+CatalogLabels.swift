@@ -22,7 +22,6 @@ extension EquivalenceSnapshotCatalogTests {
     case .valveSteamController: "valve-steam-controller"
     case .valveSteamTriton: "valve-steam-triton"
     case .valveSteamDeck: "valve-steam-deck"
-    case .vendorFlydigi: "vendor-flydigi"
     case .vendorPS3ThirdParty: "vendor-ps3-third-party"
     case .vendorGameSir: "vendor-game-sir"
     case .vendorNVIDIAShield: "vendor-nvidia-shield"
