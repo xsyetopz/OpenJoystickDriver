@@ -25,7 +25,7 @@ The logs, the error explanations, the support report and the project links are i
 
 **Show in menu bar** and **Show in Dock** in **Settings** > **General** choose where the app shows its icon.
 At least one of them stays on.
-To remove the item, hold Command and drag it out of the menu bar.
+To remove the item, Command-drag it out of the menu bar.
 OJD then stores **Show in menu bar** as off, turns **Show in Dock** on, and opens the app window.
 Turn **Show in menu bar** on again in **Settings** > **General**.
 
@@ -75,7 +75,7 @@ Closing the window with the red button only hides it.
 ## Main Window
 
 The app window has a sidebar with five areas.
-Press <kbd>Command</kbd>+<kbd>1</kbd> to <kbd>Command</kbd>+<kbd>5</kbd> to select them in this order:
+Press Command-1 to Command-5 to select them in this order:
 
 | Area | Use it to |
 | --- | --- |
@@ -105,7 +105,7 @@ The main menu follows the macOS layout:
   In the Simple interface the menu holds only **Import Profile...**, **Close**, **Export Profile...**, and **Save Support Report...**.
   **Install Record or Mod...**, **Validate...**, **Test Record...**, **Remove**, **Save Activity Log...**, and **Show in Finder** need the **All Controls** interface; **Grant a Program...** and **Create a Token...** need the **All Controls** interface and **Enable Developer Tools**.
 - **Edit** has **Undo**, **Redo**, **Cut**, **Copy**, **Copy All** (needs the **All Controls** interface), **Paste**, **Delete**, **Select All**, and **Find**.
-  **Find** (Command-F) moves the keyboard focus to the search field of the list in view: the Library list, or the Activity log.
+  **Find** (Command-F) moves keyboard focus to the search field of the list in view: the Library list, or the Activity log.
   It is unavailable in the other areas, in Activity's diagnostics view, and while the toolbar is hidden.
 - **View** selects the five areas, switches the Activity view (**Activity**), sets the log filter and line count (**Filter**), runs the diagnostic checks (**Run Checks**), and shows or hides the sidebar and the toolbar.
   **Activity**, **Filter**, and **Run Checks** need the **All Controls** interface.
@@ -237,7 +237,7 @@ For more information, see [Permissions](Permissions-and-Security.md#permissions)
 The local endpoint lets other programs read controller state.
 It shows the socket path with **Copy Socket Path**, and the **WebSocket** with its **Port** and pages folder.
 Turning on **Local endpoint** or **WebSocket** asks you to confirm with **Turn On**.
-The two switches, **Port**, the lists below, **Grant a Program...**, and **Create a Token...** (needs the **All Controls** interface and **Enable Developer Tools**).
+The two switches, **Port**, the lists below, **Grant a Program...**, and **Create a Token...** need the **All Controls** interface and **Enable Developer Tools**.
 The permission rows above show in both interfaces.
 
 - **Programs with access** lists each granted program with its scopes, **Read** and **Control**, and **Revoke**.
@@ -268,7 +268,7 @@ For more information, see [Reporting a bug](Reporting-a-Bug.md).
 
 ## Settings Window
 
-Open **Settings** from the app menu or press <kbd>Command</kbd>+<kbd>,</kbd>.
+Open **Settings** from the app menu or press Command-Comma (,).
 The window has three panes.
 
 ### General
@@ -307,7 +307,7 @@ For more information, see [Command reference](Command-Reference.md).
 
 At **All Controls**, the developer tools show in **Settings** > **Advanced** while **Enable Developer Tools** is on.
 At **Simple**, they stay hidden even with **Enable Developer Tools** on.
-Wiki pages mark a control that needs **Advanced** with "(needs the **All Controls** interface)".
+Wiki pages mark a control that needs **All Controls** with "(needs the **All Controls** interface)".
 
 At **Simple**, a row tells you when a hidden setting holds a value other than its default.
 In a controller detail it counts the virtual gamepad kind you set and a stick dead zone from your own record.
