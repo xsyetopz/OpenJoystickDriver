@@ -172,7 +172,12 @@
             if binding.axisTuning != nil {
               Button(OJDLocalized.string("action.adjust")) {
                 openSheet(.layerAdjustment(layer.id, binding))
-              }.ojdInterfaceRow(ProfilesRow.axisAdjustment)
+              }.ojdAccessibilityLabel(
+                OJDLocalized.formatted(
+                  "ui.capture.adjust",
+                  RuntimePresentation.sourceLabel(binding.source)
+                )
+              ).ojdInterfaceRow(ProfilesRow.axisAdjustment)
             }
             Button(OJDLocalized.string("ui.profiles.behavior")) {
               openSheet(.layerBehavior(layer.id, binding))
@@ -346,7 +351,7 @@
         Spacer(minLength: 8)
         OJDCompactSymbolButton(
           symbolName: "pencil",
-          label: OJDLocalized.string("action.adjust")
+          label: OJDLocalized.formatted("ui.capture.adjust", title)
         ) { action() }.disabled(!(enabled ?? supported))
       }.ojdInterfaceRow(row)
     }
