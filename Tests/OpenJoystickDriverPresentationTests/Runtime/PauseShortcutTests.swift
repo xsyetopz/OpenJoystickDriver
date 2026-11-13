@@ -54,7 +54,7 @@ struct PauseShortcutPresentationTests {
   }
 
   @Test
-  func whenEveryControllerIsSuspendedTheShortcutResumesThem() async {
+  func whenEveryControllerSuspendedShortcutResumesThem() async {
     let sent = await requests(for: [pad("a", .suspended), pad("b", .suspended)])
 
     #expect(sent.count == 2)
@@ -62,12 +62,12 @@ struct PauseShortcutPresentationTests {
   }
 
   @Test
-  func withNoControllerNothingIsRequested() async {
+  func withNoControllerNothingRequested() async {
     #expect(await requests(for: []).isEmpty)
   }
 
   @Test
-  func modifiersMapToTheCarbonMasks() {
+  func modifiersMapToCarbonMasks() {
     #expect(
       PauseHotKey.carbonModifiers([.command, .control, .option, .shift])
         == UInt32(cmdKey | controlKey | optionKey | shiftKey)
@@ -76,7 +76,7 @@ struct PauseShortcutPresentationTests {
   }
 
   @Test
-  func theDisplayUsesTheMenuGlyphsInTheMacOSOrder() throws {
+  func displayUsesMenuGlyphsInMacOSOrder() throws {
     #expect(
       try PauseShortcutDisplay.text(PauseShortcut(parsing: "command+control+option+shift+P"))
         == "⌃⌥⇧⌘P"
@@ -86,7 +86,7 @@ struct PauseShortcutPresentationTests {
 
   @Test
   @MainActor
-  func theHotKeyRegistersAndReleasesAShortcut() throws {
+  func hotKeyRegistersAndReleasesShortcut() throws {
     let hotKey = PauseHotKey {}
     try hotKey.register(PauseShortcut(parsing: "control+option+command+shift+F12"))
     #expect(hotKey.isRegistered)
@@ -96,7 +96,7 @@ struct PauseShortcutPresentationTests {
 
   @Test
   @MainActor
-  func theModelStoresAndPublishesTheShortcut() throws {
+  func modelStoresAndPublishesShortcut() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),

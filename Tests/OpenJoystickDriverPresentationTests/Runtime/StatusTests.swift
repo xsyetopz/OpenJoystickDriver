@@ -425,7 +425,7 @@ struct StatusTests {
   }
 
   @Test
-  func controllersPageTitlesAnUnservedDeviceWithItsNameNotItsIDs() {
+  func controllersPageTitlesUnservedDeviceWithItsNameNotItsIDs() {
     func title(_ name: String?, _ reason: ProtocolBindingReason) -> String {
       RuntimeUnservedDevice(
         ApplicationServiceUnboundDevice(

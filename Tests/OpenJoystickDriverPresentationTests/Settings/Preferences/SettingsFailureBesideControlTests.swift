@@ -25,7 +25,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aLoginItemWaitingForApprovalShowsBesideTheSwitch() {
+  func loginItemWaitingForApprovalShowsBesideSwitch() {
     let model = makeModel(launch: LaunchAtLoginStub(isEnabled: false, acceptsChanges: false))
 
     model.setStartAtLogin(true)
@@ -40,7 +40,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aLoginItemThatSucceedsClearsItsFailure() {
+  func loginItemSucceedsClearsItsFailure() {
     let launch = LaunchAtLoginStub(isEnabled: false, acceptsChanges: false)
     let model = makeModel(launch: launch)
     model.setStartAtLogin(true)
@@ -52,7 +52,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aRefusedPauseShortcutShowsBesideTheShortcutRow() {
+  func refusedPauseShortcutShowsBesideShortcutRow() {
     let model = makeModel()
 
     model.pauseShortcutWasRefused()
@@ -67,7 +67,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aStoredPauseShortcutClearsItsFailure() {
+  func storedPauseShortcutClearsItsFailure() {
     let model = makeModel()
     model.pauseShortcutWasRefused()
 
@@ -78,7 +78,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aFailedTestNotificationShowsBesideTheButton() async {
+  func failedTestNotificationShowsBesideButton() async {
     let model = makeModel(outcome: .noAnswer)
 
     model.sendTestNotification()
@@ -90,7 +90,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aLostTestReportShowsBesideTheButton() async {
+  func lostTestReportShowsBesideButton() async {
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(reportAccepted: false),
       settings: SettingsStore(directory: RootedDataDirectory.temporary()),
@@ -110,7 +110,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func aShownTestNotificationClearsItsFailure() async {
+  func shownTestNotificationClearsItsFailure() async {
     let requester = TestNotificationRequestStub(outcome: .noAnswer)
     let model = SettingsPreferencesModel(
       testNotifications: requester,
@@ -130,7 +130,7 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
-  func anUnreadableSettingsFileKeepsItsSectionEvenWhenAControlStartedTheWrite() throws {
+  func unreadableSettingsFileKeepsItsSectionEvenWhenControlStartedWrite() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = makeModel(settings: settings)
     try FileManager.default.createDirectory(

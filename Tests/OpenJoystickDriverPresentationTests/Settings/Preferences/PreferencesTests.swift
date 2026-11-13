@@ -46,7 +46,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func staleRefreshDoesNotOverwriteANewerAuthorizationResult() async {
+  func staleRefreshDoesNotOverwriteNewerAuthorizationResult() async {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let authorization = HeldSettingsAuthorizationStub()
     let model = SettingsPreferencesModel(
@@ -427,7 +427,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func developerToolsShowOnlyAtTheAdvancedLevelWithTheSwitchOn() throws {
+  func developerToolsShowOnlyAtAdvancedLevelWithSwitchOn() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
@@ -453,7 +453,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func aChangeFromAnotherStoreReachesTheModel() async throws {
+  func changeFromAnotherStoreReachesModel() async throws {
     let directory = RootedDataDirectory.temporary()
     let loginItem = LaunchAtLoginStub(isEnabled: false)
     let model = SettingsPreferencesModel(

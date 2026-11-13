@@ -27,7 +27,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func aSectionSplitsIntoHeadingsAndItems() {
+  func sectionSplitsIntoHeadingsAndItems() {
     let blocks = WhatsNewBlock.blocks(
       from: "### Added\n\n- `ojd migrate` converts files.\n- Second.\n"
     )
@@ -37,7 +37,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func theFirstOpeningAfterAnUpdateShowsTheInstalledVersionOnce() throws {
+  func firstOpeningAfterUpdateShowsInstalledVersionOnce() throws {
     try store.setLastShownChangelogVersion("0.5.0")
     let whatsNew = model(installed: "0.6.0")
 
@@ -57,7 +57,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func aFreshInstallationShowsTheInstalledVersion() {
+  func freshInstallationShowsInstalledVersion() {
     let whatsNew = model(installed: "0.5.0")
 
     whatsNew.presentIfNeeded()
@@ -67,7 +67,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func aVersionWithoutASectionShowsNothingAndRecordsNothing() throws {
+  func versionWithoutSectionShowsNothingAndRecordsNothing() throws {
     let whatsNew = model(installed: "0.7.0")
 
     whatsNew.presentIfNeeded()
@@ -77,7 +77,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func aMissingChangelogShowsNothing() {
+  func missingChangelogShowsNothing() {
     let whatsNew = model(installed: "0.6.0", changelog: nil)
 
     whatsNew.presentIfNeeded()
@@ -86,7 +86,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func anUnreadableSettingsFileShowsNothing() throws {
+  func unreadableSettingsFileShowsNothing() throws {
     let url = store.userFileURL
     try FileManager.default.createDirectory(
       at: url.deletingLastPathComponent(),

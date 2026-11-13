@@ -20,13 +20,13 @@ struct InterfaceLevelPreferencesTests {
 
   @Test
   @MainActor
-  func theInterfaceLevelStartsAsTheDefault() {
+  func interfaceLevelStartsAsDefault() {
     #expect(makeModel(RootedDataDirectory.temporary()).interfaceLevel == InterfaceLevel.default)
   }
 
   @Test(arguments: InterfaceLevel.allCases)
   @MainActor
-  func theSetterPersistsTheLevel(level: InterfaceLevel) throws {
+  func setterPersistsLevel(level: InterfaceLevel) throws {
     let directory = RootedDataDirectory.temporary()
     let model = makeModel(directory)
 
@@ -38,7 +38,7 @@ struct InterfaceLevelPreferencesTests {
 
   @Test
   @MainActor
-  func theSetterPublishesTheLevel() {
+  func setterPublishesLevel() {
     let model = makeModel(RootedDataDirectory.temporary())
     var published: [InterfaceLevel] = []
     let subscription = model.$interfaceLevel.sink { published.append($0) }
@@ -52,7 +52,7 @@ struct InterfaceLevelPreferencesTests {
 
   @Test
   @MainActor
-  func aStoredLevelShowsAtStartup() throws {
+  func storedLevelShowsAtStartup() throws {
     let directory = RootedDataDirectory.temporary()
     try SettingsStore(directory: directory).setInterfaceLevel(.advanced)
 
@@ -61,7 +61,7 @@ struct InterfaceLevelPreferencesTests {
 
   @Test
   @MainActor
-  func aChangeFromAnotherStoreReachesTheModel() async throws {
+  func changeFromAnotherStoreReachesModel() async throws {
     let directory = RootedDataDirectory.temporary()
     let model = makeModel(directory)
     #expect(model.interfaceLevel == .simple)

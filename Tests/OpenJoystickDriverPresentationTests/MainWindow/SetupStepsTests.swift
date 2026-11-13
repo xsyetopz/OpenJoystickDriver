@@ -21,13 +21,13 @@ struct SetupStepsTests {
   }
 
   @Test
-  func nothingIsOpenWhenEveryAccessIsGranted() {
+  func nothingOpenWhenEveryAccessGranted() {
     let (permissions, state) = status()
     #expect(SetupSteps.open(permissionState: permissions, statusState: state).isEmpty)
   }
 
   @Test
-  func eachMissingAccessIsOneStepInOrder() {
+  func eachMissingAccessOneStepInOrder() {
     let (permissions, state) = status(
       inputRead: .denied,
       inputInject: .denied,
@@ -38,7 +38,7 @@ struct SetupStepsTests {
   }
 
   @Test
-  func accessibilityIsOneStepWhenInputInjectAndPostEventAreBothOpen() {
+  func accessibilityOneStepWhenInputInjectAndPostEventBothOpen() {
     let payload = ApplicationServiceStatusPayload(
       inputRead: .granted,
       inputInject: .denied,
@@ -57,7 +57,7 @@ struct SetupStepsTests {
   }
 
   @Test
-  func anUndecidedBluetoothStepAsksAndADeniedOneOpensSystemSettings() {
+  func undecidedBluetoothStepAsksAndDeniedOneOpensSystemSettings() {
     let (undecidedPermissions, undecided) = status(bluetooth: .notAsked)
     let asks = SetupSteps.open(permissionState: undecidedPermissions, statusState: undecided)
     #expect(asks.first?.buttonKey == "action.request")
@@ -67,7 +67,7 @@ struct SetupStepsTests {
   }
 
   @Test(arguments: [BluetoothAccessState.restricted, .unavailable])
-  func aBluetoothAccessTheUserCannotChangeIsNoStep(state: BluetoothAccessState) {
+  func bluetoothAccessUserCannotChangeNoStep(state: BluetoothAccessState) {
     let (permissions, status) = status(bluetooth: state)
     #expect(SetupSteps.open(permissionState: permissions, statusState: status).isEmpty)
   }
@@ -88,7 +88,7 @@ struct SetupStepsTests {
   }
 
   @Test
-  func theStepsShowOnlyWhenTheFirstLoadFoundOneOpen() {
+  func stepsShowOnlyWhenFirstLoadFoundOneOpen() {
     var gate = SetupStepsGate()
     gate.update(loaded: false, openSteps: 0)
     #expect(!gate.isShown)
@@ -104,7 +104,7 @@ struct SetupStepsTests {
   }
 
   @Test
-  func dismissingHidesTheStepsForGood() {
+  func dismissingHidesStepsForGood() {
     var gate = SetupStepsGate()
     gate.update(loaded: true, openSteps: 1)
     gate.dismiss()
@@ -114,7 +114,7 @@ struct SetupStepsTests {
 
   @Test
   @MainActor
-  func theBluetoothRequestGoesThroughTheServiceAndUpdatesTheStatus() async {
+  func bluetoothRequestGoesThroughServiceAndUpdatesStatus() async {
     let gateway = GatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputRead: .granted,

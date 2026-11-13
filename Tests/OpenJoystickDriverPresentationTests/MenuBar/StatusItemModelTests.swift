@@ -8,7 +8,7 @@ import Testing
 @Suite
 struct StatusItemModelTests {
   @Test
-  func entryIDsAreUniqueBecauseTheyAreTheAccessibilityIdentifiers() {
+  func entryIDsUniqueBecauseTheyAccessibilityIdentifiers() {
     func controller(_ id: String) -> StatusItemState.Controller {
       var controller = StatusItemState.Controller(
         id: id,

@@ -63,7 +63,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func eachConnectedControllerIsATopLevelRowWithOneSubmenu() {
+  func eachConnectedControllerTopLevelRowWithOneSubmenu() {
     let menu = Self.rows(
       Self.entries([Self.controller("a", name: "One"), Self.controller("b", name: "Two")])
     )
@@ -76,7 +76,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func controllerRowTitleKeepsTheNameAndBatteryOnly() {
+  func controllerRowTitleKeepsNameAndBatteryOnly() {
     let racing = Self.profile("Racing", active: true)
     let menu = Self.rows(
       Self.entries([
@@ -90,7 +90,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func noControllerShowsOneUnavailableRowThatSaysSo() {
+  func noControllerShowsOneUnavailableRowSaysSo() {
     let menu = Self.rows(Self.entries([]))
     #expect(menu.map(\.id) == ["controller.none", "openWindow", "settings", "quit"])
     #expect(menu[0].title == .key("ui.menu.controller.noneConnected"))
@@ -128,7 +128,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func noItemOfAControllerSubmenuOpensASubmenu() throws {
+  func noItemOfControllerSubmenuOpensSubmenu() throws {
     let profiles = (0..<12).map { Self.profile("P\($0)") }
     let menu = Self.entries([
       Self.controller("a", isWireless: true, profiles: profiles), Self.controller("b"),
@@ -140,7 +140,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func oneCheckmarkedListChoosesTheProfile() throws {
+  func oneCheckmarkedListChoosesProfile() throws {
     let active = Self.profile("A", active: true)
     let other = Self.profile("B")
     let menu = Self.entries([Self.controller("a", profiles: [active, other])])
@@ -160,7 +160,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func noProfileIsCheckedWhileNoProfileIsInForce() throws {
+  func noProfileCheckedWhileNoProfileInForce() throws {
     let menu = Self.entries([Self.controller("a", profiles: [Self.profile("A")])])
     let submenu = try #require(menu.first { $0.id == "controller.a" }?.submenu)
     let none = try #require(submenu.first { $0.id == "controller.a.profile.none" })

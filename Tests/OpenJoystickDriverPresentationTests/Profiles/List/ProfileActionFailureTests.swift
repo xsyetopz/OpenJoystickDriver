@@ -9,7 +9,7 @@
   @MainActor
   struct ProfileActionFailureTests {
     @Test
-    func recoveryFailureShowsOnlyBesideTheRecoveryButton() {
+    func recoveryFailureShowsOnlyBesideRecoveryButton() {
       let screen = ProfilesViewModel()
       screen.failProfileAction("The library is locked.", beside: .recovery)
       #expect(screen.profileActionError(beside: .recovery) == "The library is locked.")
@@ -19,7 +19,7 @@
     }
 
     @Test
-    func joyConFailureStaysOutOfTheCommandStrip() {
+    func joyConFailureStaysOutOfCommandStrip() {
       let screen = ProfilesViewModel()
       screen.failProfileAction("No pair.", beside: .joyCon)
       #expect(screen.commandActionError == nil)
@@ -27,7 +27,7 @@
     }
 
     @Test
-    func commandFailureShowsInTheStripOnly() {
+    func commandFailureShowsInStripOnly() {
       let screen = ProfilesViewModel()
       screen.profileActionError = "Change running."
       #expect(screen.commandActionError == "Change running.")
@@ -35,7 +35,7 @@
     }
 
     @Test
-    func successClearsTheFailureAndANewFailureReplacesTheOrigin() {
+    func successClearsFailureAndNewFailureReplacesOrigin() {
       let screen = ProfilesViewModel()
       screen.failProfileAction("First.", beside: .migration)
       screen.failProfileAction("Second.", beside: .recovery)

@@ -44,7 +44,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func olderActiveExtensionWaitsForARepairClick() async {
+  func olderActiveExtensionWaitsForRepairClick() async {
     let client = FakeSetupClient(status: Self.olderActiveStatus)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
@@ -120,7 +120,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func unknownInstalledVersionNeedsAReplacementClick() {
+  func unknownInstalledVersionNeedsReplacementClick() {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -138,7 +138,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func unreadableRegistrationIsUnavailableAndNeverSubmits() async {
+  func unreadableRegistrationUnavailableAndNeverSubmits() async {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -179,7 +179,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func stateIsRunningWhileTheRequestIsPendingAndASecondClickIsVisible() async {
+  func stateRunningWhileRequestPendingAndSecondClickVisible() async {
     let client = FakeSetupClient(status: Self.inactiveStatus, result: .active)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 

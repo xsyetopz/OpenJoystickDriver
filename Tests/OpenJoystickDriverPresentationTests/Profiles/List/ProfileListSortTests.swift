@@ -45,7 +45,7 @@ struct ProfileListSortTests {
   }
 
   @Test
-  func byLastUseListsTheNewestFirstAndTheNeverUsedLastByName() {
+  func byLastUseListsNewestFirstAndNeverUsedLastByName() {
     let old = Self.profile("Old")
     let new = Self.profile("New")
     let never = Self.profile("Never")
@@ -58,7 +58,7 @@ struct ProfileListSortTests {
   }
 
   @Test
-  func byLastUseBreaksATieByName() {
+  func byLastUseBreaksTieByName() {
     let first = Self.profile("A")
     let second = Self.profile("B")
     let sorted = ProfileListSort.lastUsed.sorted(
@@ -69,14 +69,14 @@ struct ProfileListSortTests {
   }
 
   @Test
-  func anEmptyListStaysEmpty() {
+  func emptyListStaysEmpty() {
     for sort in ProfileListSort.allCases {
       #expect(sort.sorted([], lastUsed: [:]).isEmpty)
     }
   }
 
   @Test
-  func theLastUseOfASnapshotIsKeyedByProfile() {
+  func lastUseOfSnapshotKeyedByProfile() {
     let id = UUID()
     let payload = ApplicationServiceRemappingSnapshotPayload(
       profiles: [],

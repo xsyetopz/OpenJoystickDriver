@@ -29,7 +29,7 @@ struct RuntimeProfileRemarkTests {
   }
 
   @Test(arguments: [false, true])
-  func aRemarkIsSetAndCleared(inLayer: Bool) throws {
+  func remarkSetAndCleared(inLayer: Bool) throws {
     let (draft, binding, layerID) = Self.draft(inLayer: inLayer)
     let noted = try draft.settingRemark(
       "Jump",
@@ -42,7 +42,7 @@ struct RuntimeProfileRemarkTests {
   }
 
   @Test(arguments: [false, true])
-  func otherEditsKeepTheRemark(inLayer: Bool) throws {
+  func otherEditsKeepRemark(inLayer: Bool) throws {
     let (draft, binding, layerID) = Self.draft(inLayer: inLayer)
     let noted = try draft.settingRemark(
       "Jump",
@@ -79,7 +79,7 @@ struct RuntimeProfileRemarkTests {
   }
 
   @Test
-  func aRemarkOfBadFormIsRefused() throws {
+  func remarkOfBadFormRefused() throws {
     let (draft, binding, _) = Self.draft(inLayer: false)
     #expect(throws: (any Error).self) { try draft.settingRemark(" padded ", for: binding.id) }
   }

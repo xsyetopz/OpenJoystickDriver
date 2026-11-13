@@ -48,7 +48,7 @@ struct UpdateStatusPresentationTests {
   }
 
   @Test
-  func onlyPrereleasesPublishedNamesTheSettingWithoutFailureMark() {
+  func onlyPrereleasesPublishedNamesSettingWithoutFailureMark() {
     let status = UpdateStatusPresentation(state: .onlyPrereleases, runningVersion: "1.0.0")
     let setting = OJDLocalized.string("ui.settings.general.prereleaseUpdates")
     #expect(

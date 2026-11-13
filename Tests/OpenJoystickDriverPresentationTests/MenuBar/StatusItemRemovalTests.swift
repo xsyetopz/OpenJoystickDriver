@@ -20,7 +20,7 @@ struct StatusItemRemovalTests {
 
   @Test
   @MainActor
-  func removingTheItemStoresMenuBarOffAndTurnsTheDockOn() throws {
+  func removingItemStoresMenuBarOffAndTurnsDockOn() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = makeModel(settings)
     #expect(model.showInMenuBar && !model.showInDock)
@@ -35,7 +35,7 @@ struct StatusItemRemovalTests {
 
   @Test
   @MainActor
-  func removingTheItemKeepsTheDockOnWhenItWasOn() throws {
+  func removingItemKeepsDockOnWhenItOn() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.showInDock, to: true)
     let model = makeModel(settings)
@@ -48,7 +48,7 @@ struct StatusItemRemovalTests {
 
   @Test
   @MainActor
-  func aRemovalThatCannotBeStoredLeavesTheSettingsAsTheyAre() throws {
+  func removalCannotStoredLeavesSettingsAsThey() throws {
     let root = RootedDataDirectory.temporary()
     let settings = SettingsStore(directory: root)
     let model = makeModel(settings)
@@ -65,7 +65,7 @@ struct StatusItemRemovalTests {
   }
 
   @Test
-  func aFileThatTurnsBothOffOpensTheMainWindowAtLaunch() {
+  func fileTurnsBothOffOpensMainWindowAtLaunch() {
     let both = SettingsStoreError.storedNoVisibleEntryPoint(file: "/tmp/Settings.plist")
     #expect(SettingsFileStartup.opensMainWindowAtLaunch(settingsError: both))
     #expect(!SettingsFileStartup.opensMainWindowAtLaunch(settingsError: nil))

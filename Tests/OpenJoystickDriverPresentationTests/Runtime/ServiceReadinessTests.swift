@@ -49,18 +49,18 @@ struct ServiceReadinessTests {
   }
 
   @Test(arguments: ServiceReadiness.allCases)
-  func everyStateSentenceExistsInTheCatalog(state: ServiceReadiness) {
+  func everyStateSentenceExistsInCatalog(state: ServiceReadiness) {
     #expect(OJDLocalized.string(state.messageKey) != state.messageKey)
   }
 
   @Test
-  func everyStateHasADistinctSentence() {
+  func everyStateHasDistinctSentence() {
     let keys = ServiceReadiness.allCases.map(\.messageKey)
     #expect(Set(keys).count == keys.count)
   }
 
   @Test
-  func aStatusThatIsStillLoadingIsChecking() {
+  func statusStillLoadingChecking() {
     #expect(ServiceReadiness.resolve(Self.input(.loading)) == .checking)
     #expect(
       ServiceReadiness.resolve(Self.input(.loading, registration: .requiresApproval)) == .checking
@@ -68,14 +68,14 @@ struct ServiceReadinessTests {
   }
 
   @Test
-  func aServiceThatAnswersWithTheAppsBuildIsRunning() {
+  func serviceAnswersWithAppsBuildRunning() {
     let status = Self.answered(by: Self.build)
     #expect(ServiceReadiness.resolve(Self.input(status)) == .running)
     #expect(ServiceReadiness.resolve(Self.input(status, registration: .notRegistered)) == .running)
   }
 
   @Test
-  func aServiceOfAnotherBuildIsAVersionMismatch() {
+  func serviceOfAnotherBuildVersionMismatch() {
     let other = BuildIdentity(
       semanticVersion: "0.5.0",
       appBundleVersion: "7",
@@ -86,7 +86,7 @@ struct ServiceReadinessTests {
   }
 
   @Test
-  func aServiceThatDoesNotAnswerIsStoppedUnlessTheLoginItemExplainsIt() {
+  func serviceDoesNotAnswerStoppedUnlessLoginItemExplainsIt() {
     let down = RuntimeStatusState.unavailable("down")
     #expect(ServiceReadiness.resolve(Self.input(down)) == .stopped)
     #expect(ServiceReadiness.resolve(Self.input(down, registration: .enabled)) == .stopped)
@@ -100,7 +100,7 @@ struct ServiceReadinessTests {
   }
 
   @Test
-  func aStoppedListenerAndAFailedReadAreTheirOwnStates() {
+  func stoppedListenerAndFailedReadTheirOwnStates() {
     #expect(
       ServiceReadiness.resolve(Self.input(.unavailable("down"), listenerStopped: true))
         == .listenerStopped
@@ -109,7 +109,7 @@ struct ServiceReadinessTests {
   }
 
   @Test
-  func onlyCheckingAndRunningAreNotProblems() {
+  func onlyCheckingAndRunningNotProblems() {
     let quiet = ServiceReadiness.allCases.filter { !$0.isProblem }
     #expect(Set(quiet) == [.checking, .running])
   }

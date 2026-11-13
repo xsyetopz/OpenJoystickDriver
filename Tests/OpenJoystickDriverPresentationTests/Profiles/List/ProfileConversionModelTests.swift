@@ -54,7 +54,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func theTargetStartsAsTheFirstModelThatIsNotTheSources() {
+  func targetStartsAsFirstModelNotSources() {
     let model = ProfileConversionModel(
       source: Self.profile(),
       choices: [Self.choice(Self.sourceModel), Self.choice(Self.targetModel)],
@@ -64,14 +64,14 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func thereIsNoTargetWithoutChoices() {
+  func thereNoTargetWithoutChoices() {
     let model = ProfileConversionModel(source: Self.profile(), choices: [], profiles: [])
     #expect(model.target == nil)
     #expect(model.converted(capabilities: Self.capabilities([])) == nil)
   }
 
   @Test
-  func aPickedModelStaysTheTargetAfterItsSessionLeaves() {
+  func pickedModelStaysTargetAfterItsSessionLeaves() {
     var model = ProfileConversionModel(
       source: Self.profile(),
       choices: [Self.choice(Self.targetModel, group: .connected)],
@@ -85,7 +85,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func theNameStartsAsTheSourceNameAndTheTargetIdentityMadeFree() {
+  func nameStartsAsSourceNameAndTargetIdentityMadeFree() {
     let source = Self.profile()
     var model = ProfileConversionModel(
       source: source,
@@ -100,7 +100,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func aTakenOrBlankNameMakesNoConversion() {
+  func takenOrBlankNameMakesNoConversion() {
     let source = Self.profile()
     var model = ProfileConversionModel(
       source: source,
@@ -115,7 +115,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func theConversionKeepsWhatTheTargetHasAndNamesTheTargetModel() throws {
+  func conversionKeepsWhatTargetHasAndNamesTargetModel() throws {
     let kept = Self.binding(.button(.south))
     let lost = Self.binding(.button(.leftPaddle1))
     let source = Self.profile(bindings: [kept, lost])
@@ -136,7 +136,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func theReportListsEachPartLeftOutAndTheTarget() throws {
+  func reportListsEachPartLeftOutAndTarget() throws {
     let source = Self.profile(bindings: [Self.binding(.button(.leftPaddle1))])
     let model = ProfileConversionModel(
       source: source,
@@ -154,7 +154,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func aConversionThatLeavesNothingOutHasNoLines() throws {
+  func conversionLeavesNothingOutHasNoLines() throws {
     let source = Self.profile(bindings: [Self.binding(.button(.south))])
     let model = ProfileConversionModel(
       source: source,
@@ -166,7 +166,7 @@ struct ProfileConversionModelTests {
   }
 
   @Test
-  func everyLeftOutSectionHasALocalizedName() {
+  func everyLeftOutSectionHasLocalizedName() {
     for section in RemappingProfileConversion.LeftOut.Section.allCases {
       let suffix = section.localizationSuffix
       let key = "ui.profiles.convert.section.\(suffix)"

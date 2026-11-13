@@ -28,7 +28,7 @@ struct ProfileIssuePresentationTests {
   }
 
   @Test
-  func aStaleJSONProfileOffersMigrationAndNamesItsFile() {
+  func staleJSONProfileOffersMigrationAndNamesItsFile() {
     let stale = ApplicationServiceRemappingProfileIssue(
       id: UUID(),
       code: .unsupportedAPIVersion,

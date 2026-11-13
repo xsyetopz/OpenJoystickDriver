@@ -98,7 +98,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func aFailedExportOfThePacketCaptureShowsItsReason() {
+  func failedExportOfPacketCaptureShowsItsReason() {
     let model = DeveloperToolsViewModel(gateway: GatewayStub())
     let missing = FileManager.default.temporaryDirectory
       .appendingPathComponent(UUID().uuidString).appendingPathComponent("capture.json")
@@ -144,7 +144,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func sharePressIsListedAsAnExtraInput() async {
+  func sharePressListedAsExtraInput() async {
     let gateway = GatewayStub(
       statusPayload: statusPayload(device: device()),
       inputState: inputState(button: .capture),
@@ -278,7 +278,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func theControllerPickerIsUnavailableWithAReasonWhileItHasNoOption() async {
+  func controllerPickerUnavailableWithReasonWhileItHasNoOption() async {
     let empty = DeveloperToolsViewModel(
       gateway: GatewayStub(statusPayload: statusPayload(devices: []))
     )

@@ -321,7 +321,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aBindingTemplateProposesItsBindingsAndListsTheControlsTheModelLacks() {
+  func bindingTemplateProposesItsBindingsAndListsControlsModelLacks() {
     let dualSense = Self.device("DualSense", token: "d", vendorID: 0x054C, productID: 0x0CE6)
     let context = Self.context(devices: [dualSense])
     var fields = ProfileCreationFields()
@@ -341,7 +341,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aBindingTemplateForAnUnknownModelSkipsNothing() {
+  func bindingTemplateForUnknownModelSkipsNothing() {
     let context = Self.context(devices: [Self.padA])
     var fields = ProfileCreationFields()
     fields.template = .bindings(.mouseClicks)

@@ -40,7 +40,7 @@
     }
 
     @Test
-    func anEditWhileTheEditorIsOnHoldSaysWhy() {
+    func editWhileEditorOnHoldSaysWhy() {
       let (view, model) = Self.editor(isEditingBlocked: true)
       view.removeAllAssignments()
       #expect(model.localError == OJDLocalized.string("ui.profiles.editBlockedHold"))
@@ -50,7 +50,7 @@
     }
 
     @Test
-    func anEditWhileASaveRunsSaysSo() {
+    func editWhileSaveRunsSaysSo() {
       let (view, model) = Self.editor()
       let request = RuntimeMutationRequest(operation: .update(profileID: view.profile.id))
       let began = model.saveState.begin(request)
@@ -61,14 +61,14 @@
     }
 
     @Test
-    func anActivationWhileEditingIsOnHoldSaysWhy() {
+    func activationWhileEditingOnHoldSaysWhy() {
       let (view, model) = Self.editor(isEditingBlocked: true)
       view.activateProfile(allowEmpty: false)
       #expect(model.localError == OJDLocalized.string("ui.profiles.editBlockedHold"))
     }
 
     @Test
-    func aSaveThatTheListRefusesSaysSo() {
+    func saveListRefusesSaysSo() {
       let (view, model) = Self.editor(
         draftProfile: makeProfile().replacing(name: "Changed")
       ) { _ in false }
@@ -78,14 +78,14 @@
     }
 
     @Test
-    func aSaveWithNothingToSaveLeavesTheSaveButtonUnavailable() {
+    func saveWithNothingToSaveLeavesSaveButtonUnavailable() {
       let (view, _) = Self.editor()
       #expect(view.saveStatus == .saved)
       #expect(!view.canSave)
     }
 
     @Test
-    func theSaveButtonIsAvailableForUnsavedChangesAndNamesThem() {
+    func saveButtonAvailableForUnsavedChangesAndNamesThem() {
       let (view, _) = Self.editor(draftProfile: makeProfile().replacing(name: "Changed"))
       #expect(view.canSave)
       #expect(view.saveStatus == .unsaved)
@@ -93,7 +93,7 @@
     }
 
     @Test
-    func aFailedSaveOfUnsavedEditsStillNamesTheUnsavedEdits() {
+    func failedSaveOfUnsavedEditsStillNamesUnsavedEdits() {
       let (view, model) = Self.editor(draftProfile: makeProfile().replacing(name: "Changed"))
       model.saveError = "boom"
       #expect(view.saveStatus == .error)
@@ -101,13 +101,13 @@
     }
 
     @Test
-    func theFooterShowsTheBlockReasonWhenNoEditWasTried() {
+    func footerShowsBlockReasonWhenNoEditTried() {
       let (view, _) = Self.editor(isEditingBlocked: true)
       #expect(view.footerNotice == OJDLocalized.string("ui.profiles.editBlockedHold"))
     }
 
     @Test
-    func choosingAVirtualGamepadWhileExclusiveInputIsOnResetsItAndSaysSo() {
+    func choosingVirtualGamepadWhileExclusiveInputOnResetsItAndSaysSo() {
       let exclusive = RemappingOutputPolicy(virtualGamepad: .disabled, physicalInput: .exclusive)
       #expect(ProfileOutputPolicyView.resetsPhysicalInput(selecting: .mapped, from: exclusive))
       #expect(
@@ -141,15 +141,15 @@
       return (view, screen)
     }
 
-    private static func holdARequest(_ screen: ProfilesViewModel) {
+    private static func holdRequest(_ screen: ProfilesViewModel) {
       screen.editorTransition.beginMutation(
         RuntimeMutationRequest(operation: .create(profileID: UUID()))
       )
     }
 
     @Test
-    func aProfileActionWhileAChangeRunsShowsTheReasonInTheBanner() {
-      let (view, screen) = Self.profilesView(Self.holdARequest)
+    func profileActionWhileChangeRunsShowsReasonInBanner() {
+      let (view, screen) = Self.profilesView(Self.holdRequest)
       let reason = OJDLocalized.string("ui.profiles.actionBlockedChange")
       #expect(view.profileActionBlock == .changeRunning)
       view.requestProfileAction(.select(UUID()))
@@ -166,7 +166,7 @@
     }
 
     @Test
-    func theBlockReasonsDifferAndAreText() {
+    func blockReasonsDifferAndText() {
       let messages = [ProfileActionBlock.changeRunning, .recoveryRunning, .needsRecovery]
         .map(\.message)
       #expect(Set(messages).count == 3)
@@ -174,7 +174,7 @@
     }
 
     @Test
-    func aRequestThatTheMainWindowRefusesShowsTheReason() {
+    func requestMainWindowRefusesShowsReason() {
       let (view, screen) = Self.profilesView()
       let held = RuntimeMutationRequest(operation: .create(profileID: UUID()))
       #expect(view.navigation.beginProfilesEditorMutation(held))
@@ -183,7 +183,7 @@
     }
 
     @Test
-    func aFreeScreenHasNoBlock() {
+    func freeScreenHasNoBlock() {
       let (view, screen) = Self.profilesView()
       #expect(view.profileActionBlock == nil)
       view.requestProfileAction(.select(UUID()))

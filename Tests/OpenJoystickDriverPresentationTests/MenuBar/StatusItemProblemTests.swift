@@ -31,7 +31,7 @@ struct StatusItemProblemTests {
   }
 
   @Test
-  func missingPermissionRowIsFirstNamesThePermissionAndOpensItsPlaceInAccess() throws {
+  func missingPermissionRowFirstNamesPermissionAndOpensItsPlaceInAccess() throws {
     let menu = Self.rows(Self.state(problems: [.missingPermission(.inputRead)]))
     let first = try #require(menu.first)
     #expect(first.id == "problem.inputRead")
@@ -43,7 +43,7 @@ struct StatusItemProblemTests {
   }
 
   @Test
-  func eachMissingPermissionGetsItsOwnRowBeforeTheControllers() {
+  func eachMissingPermissionGetsItsOwnRowBeforeControllers() {
     let menu = Self.rows(
       Self.state(problems: [.missingPermission(.inputRead), .missingPermission(.inputInject)])
     )
@@ -75,7 +75,7 @@ struct StatusItemProblemTests {
   }
 
   @Test
-  func problemRowsAreTheOnlyAdditionsToTheMenu() {
+  func problemRowsOnlyAdditionsToMenu() {
     let plain = Self.rows(Self.state()).map(\.id)
     let withProblem = Self.rows(Self.state(problems: [.service(.stopped)])).map(\.id)
     #expect(withProblem == ["problem.service"] + plain)
@@ -92,7 +92,7 @@ struct StatusItemProblemTests {
 
   @Test
   @MainActor
-  func deniedInputMonitoringReachesTheMenuAsAProblemThatNamesIt() async {
+  func deniedInputMonitoringReachesMenuAsProblemNamesIt() async {
     let gateway = GatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
         inputRead: .denied,
@@ -108,7 +108,7 @@ struct StatusItemProblemTests {
 
   @Test
   @MainActor
-  func anUnreachableServiceReachesTheMenuAsTheServiceProblem() async {
+  func unreachableServiceReachesMenuAsServiceProblem() async {
     let model = await Self.viewModel(
       gateway: GatewayStub(statusShouldFail: true, statusError: .notConnected)
     )
@@ -117,7 +117,7 @@ struct StatusItemProblemTests {
 
   @Test
   @MainActor
-  func aReadyServiceWithNoControllerHasNoProblem() async {
+  func readyServiceWithNoControllerHasNoProblem() async {
     let model = await Self.viewModel(gateway: GatewayStub())
     #expect(model.statusItemState.problems.isEmpty)
     #expect(model.statusItemState.controllers.isEmpty)
@@ -126,7 +126,7 @@ struct StatusItemProblemTests {
   // MARK: the icon
 
   @Test
-  func theIconChangesShapeWhileAProblemRowExists() {
+  func iconChangesShapeWhileProblemRowExists() {
     let ready = StatusItemModel.symbolName(for: Self.state())
     for problem in [StatusItemProblem.service(.stopped), .missingPermission(.inputRead)] {
       #expect(StatusItemModel.symbolName(for: Self.state(problems: [problem])) != ready)
@@ -134,7 +134,7 @@ struct StatusItemProblemTests {
   }
 
   @Test
-  func noControllerConnectedKeepsTheReadyIcon() {
+  func noControllerConnectedKeepsReadyIcon() {
     #expect(
       StatusItemModel.symbolName(for: Self.state(controllers: []))
         == StatusItemModel.symbolName(for: Self.state())
@@ -142,7 +142,7 @@ struct StatusItemProblemTests {
   }
 
   @Test
-  func theAccessibilityLabelNamesTheState() {
+  func accessibilityLabelNamesState() {
     #expect(StatusItemModel.accessibilityTitle(for: Self.state()) == .key("a11y.menuBar.ready"))
     #expect(
       StatusItemModel.accessibilityTitle(for: Self.state(controllers: []))
