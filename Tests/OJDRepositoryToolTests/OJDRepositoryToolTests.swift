@@ -106,7 +106,7 @@ struct OJDRepositoryToolTests {
   // MARK: records
 
   @Test
-  func aValidRecordDirectoryHasNoProblem() throws {
+  func validRecordDirectoryHasNoProblem() throws {
     try Self.scratch { directory in
       try Self.resource(Self.recordPath).write(
         to: directory.appendingPathComponent("045e-028e.plist")
@@ -118,7 +118,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func theBundledRecordsHaveNoProblem() throws {
+  func bundledRecordsHaveNoProblem() throws {
     let result = try Self.run([
       "validate", "controllers", Self.kitResources.appendingPathComponent("Controllers").path,
     ])
@@ -127,7 +127,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aRecordRuleFailureHasTheCodeThatTheRecordSetReports() throws {
+  func recordRuleFailureHasCodeThatRecordSetReports() throws {
     try Self.scratch { directory in
       var object = try #require(
         PropertyListFixture.tree(Self.resource(Self.recordPath)) as? [String: Any]
@@ -189,7 +189,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aRecordWhoseFileNameIsNotItsOwnIsAProblem() throws {
+  func recordWhoseFileNameIsNotItsOwnIsProblem() throws {
     try Self.scratch { directory in
       try Self.resource(Self.recordPath).write(
         to: directory.appendingPathComponent("045e-0000.plist")
@@ -205,7 +205,7 @@ struct OJDRepositoryToolTests {
   // MARK: descriptions
 
   @Test
-  func theBundledDescriptionsHaveNoProblem() throws {
+  func bundledDescriptionsHaveNoProblem() throws {
     let result = try Self.run([
       "validate", "descriptions", Self.kitResources.appendingPathComponent("Protocols").path,
     ])
@@ -214,7 +214,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aDescriptionFailureHasTheCodeThatDecodeReports() throws {
+  func descriptionFailureHasCodeThatDecodeReports() throws {
     try Self.scratch { directory in
       let source = Self.kitResources.appendingPathComponent("Protocols")
       for name in try FileManager.default.contentsOfDirectory(atPath: source.path) {
@@ -241,7 +241,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aFamilyWithoutADescriptionFileIsAProblem() throws {
+  func familyWithoutDescriptionFileIsProblem() throws {
     try Self.scratch { directory in
       let result = try Self.run(["validate", "descriptions", directory.path])
       #expect(result.status == 1)
@@ -255,7 +255,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aSecondFileThatNamesAFamilyIsAProblem() throws {
+  func secondFileThatNamesFamilyIsProblem() throws {
     try Self.scratch { directory in
       let source = Self.kitResources.appendingPathComponent("Protocols")
       for name in try FileManager.default.contentsOfDirectory(atPath: source.path) {
@@ -288,7 +288,7 @@ struct OJDRepositoryToolTests {
     """#
 
   @Test
-  func aValidAndAnInvalidProfile() throws {
+  func validAndInvalidProfile() throws {
     try Self.scratch { directory in
       let valid = RemappingProfile(
         name: "Portable",
@@ -326,7 +326,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aValidAndAnInvalidPersona() throws {
+  func validAndInvalidPersona() throws {
     try Self.scratch { directory in
       let document = { (persona: String) in
         PropertyListFixture.bytes(
@@ -366,7 +366,7 @@ struct OJDRepositoryToolTests {
   // MARK: patches
 
   @Test
-  func applyPatchesWritesTheEffectiveRecord() throws {
+  func applyPatchesWritesEffectiveRecord() throws {
     try Self.scratch { directory in
       let records = directory.appendingPathComponent("records/057e")
       let patches = directory.appendingPathComponent("patches/057e")
@@ -479,7 +479,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func applyPatchesRefusesAPatchDeeperThanTheLayoutAndWritesNothing() throws {
+  func applyPatchesRefusesPatchDeeperThanLayoutAndWritesNothing() throws {
     let patch = Self.patchDocument(
       selector: Self.identity,
       body: #"{"tuning": {"frameQueueCapacity": 8}}"#
@@ -500,7 +500,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func applyPatchesRefusesAnUnknownFieldAndAPatchOfNoRecord() throws {
+  func applyPatchesRefusesUnknownFieldAndPatchOfNoRecord() throws {
     try Self.applyPatches(
       record: Self.upstream,
       patches: [
@@ -525,7 +525,7 @@ struct OJDRepositoryToolTests {
   // MARK: usage
 
   @Test
-  func aCallThatTheToolRefusesExitsWithTheUsageStatusAndNamesTheCall() throws {
+  func callThatToolRefusesExitsWithUsageStatusAndNamesCall() throws {
     let calls: [(arguments: [String], message: String)] = [
       ([], "no subcommand given"),
       (["frobnicate"], "unknown subcommand frobnicate"),
@@ -556,7 +556,7 @@ struct OJDRepositoryToolTests {
   // MARK: facts
 
   @Test
-  func factsPrintTheConstantsThatSwiftOwns() throws {
+  func factsPrintConstantsThatSwiftOwns() throws {
     let result = try Self.run(["facts"])
     #expect(result.status == 0)
     let object = try #require(
@@ -587,7 +587,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func kebabPrintsTheSpellingThatCommandLineNameGives() throws {
+  func kebabPrintsSpellingThatCommandLineNameGives() throws {
     let values = ["SystemHIDVisible", "ExclusiveRawUSB", "NotFound"]
     let result = try Self.run(["kebab"] + values)
     #expect(result.status == 0)
@@ -600,7 +600,7 @@ struct OJDRepositoryToolTests {
   }
 
   @Test
-  func aFactCallThatTheToolRefusesExitsWith64() throws {
+  func factCallThatToolRefusesExitsWith64() throws {
     for arguments in [["facts", "extra"], ["kebab"]] {
       let result = try Self.run(arguments)
       #expect(result.status == 64, "\(arguments)")

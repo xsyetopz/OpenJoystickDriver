@@ -8,7 +8,7 @@ import Testing
 @Suite(.serialized)
 struct VirtualCommandTests {
   @Test
-  func setSendsTheProfileForTheSelectedControllerAndPrintsTheResult() async throws {
+  func setSendsProfileForSelectedControllerAndPrintsResult() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -39,7 +39,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func aRejectedProfileFailsWithExitOne() async throws {
+  func rejectedProfileFailsWithExitOne() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -63,7 +63,7 @@ struct VirtualCommandTests {
   @Test(arguments: [
     ["virtual", "set", "generic", token("pad-1")], ["virtual", "reset", token("pad-1")],
   ])
-  func aChoiceStoredWhileVirtualOutputIsOffSucceeds(arguments: [String]) async throws {
+  func choiceStoredWhileVirtualOutputIsOffSucceeds(arguments: [String]) async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -94,7 +94,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func resetAllWithoutAPromptOrForceIsAUsageErrorAndChangesNothing() async throws {
+  func resetAllWithoutPromptOrForceIsUsageErrorAndChangesNothing() async throws {
     let service = try FakeService(devices: []) { _, _ in encoded(true) }
     let result = await service.run(["virtual", "reset", "--all", "--no-input"])
     #expect(result.code == 64)
@@ -105,7 +105,7 @@ struct VirtualCommandTests {
   @Test(arguments: [
     ["virtual", "reset", "--all", "--dry-run"], ["virtual", "reset", token("pad-1"), "-n"],
   ])
-  func aDryRunDescribesTheResetAndChangesNothing(arguments: [String]) async throws {
+  func dryRunDescribesResetAndChangesNothing(arguments: [String]) async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { _, _ in
@@ -122,7 +122,7 @@ struct VirtualCommandTests {
     ["virtual", "reset"], ["virtual", "reset", token("pad-1"), "--all"],
     ["virtual", "set", "unknown", token("pad-1")],
   ])
-  func aMissingOrInvalidTargetExitsSixtyFour(arguments: [String]) async throws {
+  func missingOrInvalidTargetExitsSixtyFour(arguments: [String]) async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -132,7 +132,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func showListsEachControllersProfileAndTheChoices() async throws {
+  func showListsEachControllersProfileAndChoices() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -155,7 +155,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func showListsTheChoicesInHumanOutputAsVirtualSetTakesThem() async throws {
+  func showListsChoicesInHumanOutputAsVirtualSetTakesThem() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -181,7 +181,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func exportMappingJSONCarriesTheSDLMappingOfEachPersona() async throws {
+  func exportMappingJSONCarriesSDLMappingOfEachPersona() async throws {
     let service = try FakeService(devices: [])
     let result = await service.run(["virtual", "export-mapping", "--format", "sdl", "--json"])
     #expect(result.code == 0, "\(result.standardError)")
@@ -203,7 +203,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func exportMappingJSONCarriesTheW3CDescriptionOfOnePersona() async throws {
+  func exportMappingJSONCarriesW3CDescriptionOfOnePersona() async throws {
     let service = try FakeService(devices: [])
     let result = await service.run([
       "virtual", "export-mapping", "generic", "--format", "w3c", "--json",
@@ -226,7 +226,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func exportMappingRejectsAnUnknownProfileOrFormatWithExitSixtyFour() async throws {
+  func exportMappingRejectsUnknownProfileOrFormatWithExitSixtyFour() async throws {
     let service = try FakeService(devices: [])
     for arguments in [
       ["virtual", "export-mapping", "nope"], ["virtual", "export-mapping", "--format", "x"],
@@ -237,7 +237,7 @@ struct VirtualCommandTests {
   }
 
   @Test
-  func exportMappingNotesOnlyTheProfileThatNeedsSDLHints() async throws {
+  func exportMappingNotesOnlyProfileThatNeedsSDLHints() async throws {
     let service = try FakeService(devices: [])
     let human = await service.run(["virtual", "export-mapping"])
     let lines = human.standardOutput.split(separator: "\n").map(String.init)

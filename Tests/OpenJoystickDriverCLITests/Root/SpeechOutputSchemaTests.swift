@@ -13,7 +13,7 @@ struct SpeechOutputSchemaTests {
   }
 
   @Test
-  func aSpokenPhraseWithOrWithoutAVoiceIsAccepted() throws {
+  func spokenPhraseWithOrWithoutVoiceIsAccepted() throws {
     for destination in [
       #"{"type": "Speak", "text": "Reloading"}"#,
       #"{"type": "Speak", "text": "Hi", "voice": "com.apple.voice.compact.en-US.Samantha"}"#,
@@ -23,7 +23,7 @@ struct SpeechOutputSchemaTests {
   }
 
   @Test
-  func anEmptyTextAnEmptyVoiceAndTextOf129CharactersAreRejected() throws {
+  func emptyTextEmptyVoiceAndTextOf129CharactersAreRejected() throws {
     let long = String(repeating: "a", count: 129)
     for destination in [
       #"{"type": "Speak", "text": ""}"#,

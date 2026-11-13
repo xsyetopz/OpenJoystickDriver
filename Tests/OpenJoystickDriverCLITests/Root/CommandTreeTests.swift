@@ -7,7 +7,7 @@ import Testing
 
 struct CommandTreeTests {
   @Test
-  func treeHasTheRedesignedCommands() {
+  func treeHasRedesignedCommands() {
     let paths = CLICommandTree.paths()
     #expect(paths.contains(["status"]))
     #expect(paths.contains(["service", "start"]))
@@ -62,7 +62,7 @@ struct CommandTreeTests {
   }
 
   @Test
-  func onlyTheRootHelpListsTheGlobalOptions() async {
+  func onlyRootHelpListsGlobalOptions() async {
     let footer = CLILocalized.text("cli.shared.help.globalOptions")
     let root = await CLIRun.run(["--help"])
     let leaf = await CLIRun.run(["controller", "list", "--help"])
@@ -74,7 +74,7 @@ struct CommandTreeTests {
   }
 
   @Test(arguments: ["zsh", "bash", "fish"])
-  func completionScriptsOfferTheGlobalOptionsOnSubcommands(shell: String) async {
+  func completionScriptsOfferGlobalOptionsOnSubcommands(shell: String) async {
     let result = await CLIRun.run(["--generate-completion-script", shell])
 
     #expect(result.code == 0)
@@ -84,7 +84,7 @@ struct CommandTreeTests {
   }
 
   @Test
-  func environmentFillsOnlyTheUnsetFlags() throws {
+  func environmentFillsOnlyUnsetFlags() throws {
     let environment = ["OJD_NO_INPUT": "1", "OJD_TIMEOUT": "7", "OJD_COLOR": "always"]
     let unset = try GlobalOptions.parse([]).context(environment: environment)
     #expect(unset.noInput && unset.forceColor && !unset.noColor)
@@ -105,14 +105,14 @@ struct CommandTreeTests {
     ["OJD_TIMEOUT": "abc"], ["OJD_TIMEOUT": "0"], ["OJD_TIMEOUT": "nan"], ["OJD_COLOR": "yes"],
     ["OJD_NO_INPUT": "2"], ["OJD_NO_INPUT": "on"],
   ])
-  func anInvalidVariableIsRejected(environment: [String: String]) throws {
+  func invalidVariableIsRejected(environment: [String: String]) throws {
     #expect(throws: ValidationError.self) { try EnvironmentOptions(environment) }
     let options = try GlobalOptions.parse([])
     #expect(throws: ValidationError.self) { try options.context(environment: environment) }
   }
 
   @Test
-  func noInputAcceptsTheUsualBooleanWords() throws {
+  func noInputAcceptsUsualBooleanWords() throws {
     for value in ["1", "true", "YES"] {
       #expect(try EnvironmentOptions(["OJD_NO_INPUT": value]).noInput, "\(value)")
     }
@@ -122,7 +122,7 @@ struct CommandTreeTests {
   }
 
   @Test(arguments: CLICommandTree.leafPaths)
-  func globalOptionsReachTheLeafBeforeAndAfterTheSubcommand(path: [String]) async throws {
+  func globalOptionsReachLeafBeforeAndAfterSubcommand(path: [String]) async throws {
     let flags = ["--json", "--quiet", "--no-color", "--no-input", "--timeout", "2.5"]
     let leaf = path + CLICommandTree.sampleOperands(for: path)
     for arguments in [flags + leaf, leaf + flags] {

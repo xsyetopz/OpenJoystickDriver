@@ -5,7 +5,7 @@ import Testing
 
 extension AutomaticDispatcherCoordinatorTests {
   @Test(.timeLimit(.minutes(1)))
-  func publicationStatusesReportPublishedThenFailedWithTheFailureText() async throws {
+  func publicationStatusesReportPublishedThenFailedWithFailureText() async throws {
     // A recovery delay this long keeps the failed state until the coordinator closes.
     let coordinator = AutomaticDispatcherCoordinator(recoveryDelayNanoseconds: 3_600_000_000_000)
     let backend = InstallationBackend(stage: .none, gate: InstallationGate())
@@ -39,7 +39,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aControllerHeldByAnotherClientPublishesNothingUntilItIsReleased() async throws {
+  func controllerHeldByAnotherClientPublishesNothingUntilItIsReleased() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let backend = InstallationBackend(stage: .none, gate: InstallationGate())
     let lease: () async -> AutomaticBackendLease? = {
@@ -69,7 +69,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aControllerHeldBeforeItsFirstPublicationReportsTheHeldReason() async throws {
+  func controllerHeldBeforeItsFirstPublicationReportsHeldReason() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let backend = InstallationBackend(stage: .none, gate: InstallationGate())
     await coordinator.setHeldByAnotherClient(true, for: identifier)

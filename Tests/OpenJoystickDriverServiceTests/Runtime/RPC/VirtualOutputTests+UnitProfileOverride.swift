@@ -7,7 +7,7 @@ import Testing
 
 extension VirtualOutputTests {
   @Test
-  func aUnitOverrideRetargetsOnlyThatUnitAndResettingItFallsBackToTheModel() async throws {
+  func unitOverrideRetargetsOnlyThatUnitAndResettingItFallsBackToModel() async throws {
     let first = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
     let second = LogicalControllerID(vendorID: 1, productID: 2, locationID: 2)
     let fixture = await profileOverrideServer([first, second])

@@ -87,7 +87,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func listReadsTheRunningServiceAsJSONAndPlainRows() async throws {
+  func listReadsRunningServiceAsJSONAndPlainRows() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(status: (.denied, .granted), socketPath: socketPath)
     defer { server.stop() }
@@ -118,7 +118,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func listFallsBackToThisProcessWhenTheServiceIsStopped() async throws {
+  func listFallsBackToThisProcessWhenServiceIsStopped() async throws {
     let result = await run(["permission", "list", "--json"], socketPath: temporarySocketPath())
 
     #expect(result.code == 0)
@@ -140,7 +140,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func listReportsPostEventAccessNotAuthorizedAndRequiredByTheActiveProfile() async throws {
+  func listReportsPostEventAccessNotAuthorizedAndRequiredByActiveProfile() async throws {
     let socketPath = temporarySocketPath()
     let profile = RemappingProfile(
       name: "Keys",
@@ -182,7 +182,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func requestWithoutAServiceExitsWithServiceUnavailable() async {
+  func requestWithoutServiceExitsWithServiceUnavailable() async {
     let result = await run(["permission", "request"], socketPath: temporarySocketPath())
 
     #expect(result.code == 69)
@@ -191,7 +191,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func requestRejectsAnUnknownIdBeforeTheServiceIsAsked() async {
+  func requestRejectsUnknownIdBeforeServiceIsAsked() async {
     let result = await run(["permission", "request", "camera"], socketPath: temporarySocketPath())
 
     #expect(result.code == 64)
@@ -200,7 +200,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func requestThatLeavesAPermissionDeniedExitsWith77() async throws {
+  func requestThatLeavesPermissionDeniedExitsWith77() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(
       snapshot: .init(inputRead: .denied, inputInject: .granted),
@@ -221,7 +221,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func requestOnlyJudgesTheRequestedIds() async throws {
+  func requestOnlyJudgesRequestedIds() async throws {
     let socketPath = temporarySocketPath()
     let received = Locked<[String]>([])
     let server = try serve(
@@ -239,7 +239,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func requestThatGrantsEverythingSucceedsAndPrintsTheStates() async throws {
+  func requestThatGrantsEverythingSucceedsAndPrintsStates() async throws {
     let socketPath = temporarySocketPath()
     let received = Locked<[String]>([])
     let server = try serve(socketPath: socketPath, received: received)
@@ -255,7 +255,7 @@ struct PermissionCommandTests {
   }
 
   @Test
-  func permissionMissingNamesThePermissionAndTheRequestCommand() {
+  func permissionMissingNamesPermissionAndRequestCommand() {
     let failure = CLIFailure.permissionMissing("Accessibility")
 
     #expect(failure.code == .permissionDenied)

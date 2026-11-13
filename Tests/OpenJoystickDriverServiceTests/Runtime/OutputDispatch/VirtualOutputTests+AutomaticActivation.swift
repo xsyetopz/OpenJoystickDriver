@@ -87,7 +87,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func automaticActivationFailureClosesTheEntireChildSet() async {
+  func automaticActivationFailureClosesEntireChildSet() async {
     let identifiers = [
       LogicalControllerID(vendorID: 1, productID: 2),
       LogicalControllerID(vendorID: 3, productID: 4),

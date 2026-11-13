@@ -52,7 +52,7 @@ struct ListenerFailureCommandTests {
   }
 
   @Test
-  func statusNamesTheStoppedListenerWhenTheServiceIsUnreachable() async throws {
+  func statusNamesStoppedListenerWhenServiceIsUnreachable() async throws {
     let socketPath = temporarySocketPath()
     try failure.write(socketPath: socketPath)
     defer { try? ServiceListenerFailure.clear(socketPath: socketPath) }
@@ -82,7 +82,7 @@ struct ListenerFailureCommandTests {
   }
 
   @Test
-  func statusWithoutTheFileReportsNoListenerFailure() async throws {
+  func statusWithoutFileReportsNoListenerFailure() async throws {
     let json = await runStatus(["--json"], socketPath: temporarySocketPath())
 
     let report = try service(json)
@@ -91,7 +91,7 @@ struct ListenerFailureCommandTests {
   }
 
   @Test
-  func statusReportsAMalformedFileAsItsOwnProblem() async throws {
+  func statusReportsMalformedFileAsItsOwnProblem() async throws {
     let socketPath = temporarySocketPath()
     let path = ServiceListenerFailure.path(forSocket: socketPath)
     try Data("{\"apiVersion\":\"openjoystickdriver/v1alpha3\"}".utf8)
@@ -113,7 +113,7 @@ struct ListenerFailureCommandTests {
   }
 
   @Test
-  func diagnoseFailsTheServiceCheckWithTheListenerFailure() async throws {
+  func diagnoseFailsServiceCheckWithListenerFailure() async throws {
     let socketPath = temporarySocketPath()
     try failure.write(socketPath: socketPath)
     defer { try? ServiceListenerFailure.clear(socketPath: socketPath) }
@@ -128,7 +128,7 @@ struct ListenerFailureCommandTests {
   }
 
   @Test
-  func diagnoseFailsTheServiceCheckForAMalformedFile() async throws {
+  func diagnoseFailsServiceCheckForMalformedFile() async throws {
     let socketPath = temporarySocketPath()
     let path = ServiceListenerFailure.path(forSocket: socketPath)
     try Data("not json".utf8).write(to: URL(fileURLWithPath: path))
@@ -143,7 +143,7 @@ struct ListenerFailureCommandTests {
   }
 
   @Test
-  func aRecordOfAnEndedServiceInformsWithoutFailing() async throws {
+  func recordOfEndedServiceInformsWithoutFailing() async throws {
     let socketPath = temporarySocketPath()
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/true")

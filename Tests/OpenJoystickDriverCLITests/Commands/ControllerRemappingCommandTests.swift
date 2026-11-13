@@ -8,7 +8,7 @@ import Testing
 @Suite(.serialized)
 struct ControllerRemappingCommandTests {
   @Test
-  func calibrateSendsTheActionAndReportsTheStatus() async throws {
+  func calibrateSendsActionAndReportsStatus() async throws {
     let status = Data(
       (#"{"hasMotionBaseline":false,"isCollecting":true,"#
         + #""offsetDegreesPerSecond":{"x":0.5,"y":0,"z":-0.25}}"#).utf8
@@ -53,7 +53,7 @@ struct ControllerRemappingCommandTests {
   }
 
   @Test
-  func calibrateNamesTheControllerWhenTheServiceCannotReachIt() {
+  func calibrateNamesControllerWhenServiceCannotReachIt() {
     let device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     let error = ApplicationServiceRemappingRPCError(
       code: .controllerUnavailable,

@@ -7,7 +7,7 @@ import Testing
 
 struct BluetoothControllerDisconnectorTests {
   @Test
-  func successfulCloseReturnsThePlatformResult() async {
+  func successfulCloseReturnsPlatformResult() async {
     let disconnector = BluetoothControllerDisconnector { address, _ in
       .init(
         status: address == "AA:BB:CC:DD:EE:FF" ? kIOReturnSuccess : kIOReturnNotFound,
@@ -24,7 +24,7 @@ struct BluetoothControllerDisconnectorTests {
   }
 
   @Test
-  func timeoutReturnsBeforeALateCloseCompletes() async {
+  func timeoutReturnsBeforeLateCloseCompletes() async {
     let releaseClose = DispatchSemaphore(value: 0)
     let disconnector = BluetoothControllerDisconnector { _, _ in
       releaseClose.wait()

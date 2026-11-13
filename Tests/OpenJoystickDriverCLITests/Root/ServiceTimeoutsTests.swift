@@ -6,7 +6,7 @@ import Testing
 
 struct ServiceTimeoutsTests {
   @Test
-  func theContextFallsBackToTheKitTimeouts() {
+  func contextFallsBackToKitTimeouts() {
     let context = CLIContext()
 
     #expect(context.requestTimeout == ServiceTimeouts.request)
@@ -15,12 +15,12 @@ struct ServiceTimeoutsTests {
   }
 
   @Test
-  func aDisconnectRequestOutlastsTheServiceBluetoothWait() {
+  func disconnectRequestOutlastsServiceBluetoothWait() {
     #expect(ServiceTimeouts.bluetoothDisconnectRequest > ServiceTimeouts.bluetoothDisconnect)
   }
 
   @Test
-  func theTimeoutHelpNamesTheKitDefaults() {
+  func timeoutHelpNamesKitDefaults() {
     let help = Localization().formatted(
       "cli.shared.option.timeout",
       locale: Locale(identifier: "en_US_POSIX"),
@@ -33,7 +33,7 @@ struct ServiceTimeoutsTests {
   }
 
   @Test(arguments: [0.5, 1, 3600, Double.leastNonzeroMagnitude])
-  func aPositiveFiniteNumberIsValidSeconds(seconds: Double) {
+  func positiveFiniteNumberIsValidSeconds(seconds: Double) {
     #expect(isPositiveSeconds(seconds))
   }
 
@@ -43,14 +43,14 @@ struct ServiceTimeoutsTests {
   }
 
   @Test(arguments: ["0", "-1", "nan", "inf", "x"])
-  func theEnvironmentTimeoutUsesTheSameRule(value: String) {
+  func environmentTimeoutUsesSameRule(value: String) {
     #expect(throws: (any Error).self) {
       try EnvironmentOptions(["OJD_TIMEOUT": value])
     }
   }
 
   @Test
-  func aPositiveEnvironmentTimeoutIsAccepted() throws {
+  func positiveEnvironmentTimeoutIsAccepted() throws {
     #expect(try EnvironmentOptions(["OJD_TIMEOUT": "2.5"]).timeout == 2.5)
   }
 }

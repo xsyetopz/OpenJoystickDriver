@@ -66,7 +66,7 @@ struct RemappingProfileSwitchBridgeTests {
   }
 
   @Test
-  func nextActivatesThroughTheServiceAndLogsBothNames() async throws {
+  func nextActivatesThroughServiceAndLogsBothNames() async throws {
     try await withFixture { fixture in
       await fixture.bridge.switchProfile(
         .next,
@@ -79,7 +79,7 @@ struct RemappingProfileSwitchBridgeTests {
   }
 
   @Test
-  func anActivationFailureIsLogged() async throws {
+  func activationFailureIsLogged() async throws {
     try await withFixture(failure: Failure()) { fixture in
       await fixture.bridge.switchProfile(
         .next,
@@ -94,7 +94,7 @@ struct RemappingProfileSwitchBridgeTests {
   }
 
   @Test
-  func aTargetOfAnotherModelIsLoggedNotActivated() async throws {
+  func targetOfAnotherModelIsLoggedNotActivated() async throws {
     try await withFixture { fixture in
       await fixture.bridge.switchProfile(
         .profile(fixture.foreign.id),

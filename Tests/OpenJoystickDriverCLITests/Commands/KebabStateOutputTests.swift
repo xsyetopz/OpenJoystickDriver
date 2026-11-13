@@ -30,7 +30,7 @@ struct KebabStateOutputTests {
   }
 
   @Test
-  func theUnboundReasonIsKebabCaseInPlainAndHumanOutput() async throws {
+  func unboundReasonIsKebabCaseInPlainAndHumanOutput() async throws {
     let unbound = ApplicationServiceUnboundDevice(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -81,7 +81,7 @@ struct KebabStateOutputTests {
   }
 
   @Test
-  func aDeviceHeldByAnotherProgramIsExplainedInHumanOutputOnly() async throws {
+  func deviceHeldByAnotherProgramIsExplainedInHumanOutputOnly() async throws {
     let held = ApplicationServiceUnboundDevice(
       vendorID: 0x3537,
       productID: 0x1010,
@@ -125,7 +125,7 @@ struct KebabStateOutputTests {
   }
 
   @Test
-  func theInputHealthIsKebabCaseInPlainAndHumanOutput() async throws {
+  func inputHealthIsKebabCaseInPlainAndHumanOutput() async throws {
     let service = try FakeService(devices: [
       .fixture(id: "pad-1"),
       .fixture(

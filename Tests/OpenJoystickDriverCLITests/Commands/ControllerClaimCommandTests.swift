@@ -58,7 +58,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func claimWritesTheUserRecord() async throws {
+  func claimWritesUserRecord() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1"), "--json"],
@@ -78,7 +78,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func releaseGivesAClaimedModelBack() async throws {
+  func releaseGivesClaimedModelBack() async throws {
     let directory = Directory()
     let device = try Self.device(native: false)
     _ = try await Self.run(
@@ -86,7 +86,7 @@ struct ControllerClaimCommandTests {
       device: Self.device(native: true),
       in: directory
     )
-    // OJD seized the controller, so it no longer reports as a native gamepad.
+    // OJD seized the controller, so it does not report as a native gamepad.
     let result = try await Self.run(
       ["controller", "release", token("pad-1"), "--plain"],
       device: device,
@@ -194,7 +194,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() async throws {
+  func modelWithoutRecordIsRefused() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1")],
@@ -207,7 +207,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func claimRefusesARawUSBControllerWithoutWriting() async throws {
+  func claimRefusesRawUSBControllerWithoutWriting() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1"), "--json"],
@@ -220,7 +220,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func theOldOwnershipWordIsAnUnknownCommand() async throws {
+  func oldOwnershipWordIsUnknownCommand() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "ownership", token("pad-1"), "virtual"],
@@ -232,7 +232,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func showReportsTheChoiceAndItsSource() async throws {
+  func showReportsChoiceAndItsSource() async throws {
     let directory = Directory()
     let device = try Self.device(native: true)
     let before = try await Self.run(
@@ -270,7 +270,7 @@ struct ControllerClaimCommandTests {
     (ControllerOwnershipObservation.exclusiveRawUSB, ControllerAccessRoute.rawAccess),
     (.exclusiveHID, .system),
   ])
-  func showNamesOJDForAControllerTheSystemDoesNotServe(
+  func showNamesOJDForControllerSystemDoesNotServe(
     observation: ControllerOwnershipObservation,
     accessRoute: ControllerAccessRoute
   ) async throws {

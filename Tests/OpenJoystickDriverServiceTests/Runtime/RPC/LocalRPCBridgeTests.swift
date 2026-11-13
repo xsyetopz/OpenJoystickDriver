@@ -32,14 +32,14 @@ struct LocalRPCBridgeTests {
   ]
 
   @Test
-  func theServersFeedsKeepTheProductionIdleTimeout() async throws {
+  func serversFeedsKeepProductionIdleTimeout() async throws {
     try await withServer { server in
       #expect(server.virtualFeeds.idleTimeout == 2)
     }
   }
 
   @Test
-  func methodRawValuesAreTheWireNames() {
+  func methodRawValuesAreWireNames() {
     #expect(
       Set(ApplicationServiceRPCMethod.allCases.map(\.rawValue))
         == Self.controllerMethodNames.union(Self.remappingMethodNames)
@@ -92,7 +92,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func unknownMethodNameFailsWithTheUnknownMethodMessage() async throws {
+  func unknownMethodNameFailsWithUnknownMethodMessage() async throws {
     try await withServer { server in
       let response = await handle(server, method: "noSuchMethod", arguments: Data("{}".utf8))
 
@@ -102,7 +102,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func remappingFailureTravelsInTheStructuredErrorField() async throws {
+  func remappingFailureTravelsInStructuredErrorField() async throws {
     try await withServer { server in
       let arguments = try JSONEncoder().encode(
         ApplicationServiceRemappingProfileIDArguments(profileID: UUID())
@@ -116,7 +116,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func remappingFailureArrivesAtTheClientAsTheTypedError() async throws {
+  func remappingFailureArrivesAtClientAsTypedError() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -137,7 +137,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aStatusNotificationReachesAWaitingClient() async throws {
+  func statusNotificationReachesWaitingClient() async throws {
     let statusCenter = NotificationCenter()
     try await withServer(statusCenter: statusCenter) { server in
       let socketPath = unregisteredSocketPath()
@@ -161,7 +161,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func sendTestNotificationEndsWithTheAppsReport() async throws {
+  func sendTestNotificationEndsWithAppsReport() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -193,7 +193,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aClientThatClosesDuringAHeldWaitLeavesTheHeldCountAndMissesTheAnnouncement() async throws {
+  func clientThatClosesDuringHeldWaitLeavesHeldCountAndMissesAnnouncement() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -241,7 +241,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aClientThatClosesASendTestNotificationRequestWithdrawsIt() async throws {
+  func clientThatClosesSendTestNotificationRequestWithdrawsIt() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -280,7 +280,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func frameTimingsDecodeTheLastSecondsAndTheEmptyRequest() async throws {
+  func frameTimingsDecodeLastSecondsAndEmptyRequest() async throws {
     try await withServer { server in
       for lastSeconds in [nil, 1, FrameTimingRecorder.windowSeconds] {
         let arguments = try JSONEncoder().encode(
@@ -304,7 +304,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func frameTimingsRefuseALastSecondsOutsideTheWindowAsInvalidRequest() async throws {
+  func frameTimingsRefuseLastSecondsOutsideWindowAsInvalidRequest() async throws {
     try await withServer { server in
       for lastSeconds in [-1, 0, FrameTimingRecorder.windowSeconds + 1] {
         let arguments = try JSONEncoder().encode(
@@ -324,7 +324,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aReportOfNoAnswerIsRefusedWithItsOwnText() async throws {
+  func reportOfNoAnswerIsRefusedWithItsOwnText() async throws {
     try await withServer { server in
       let arguments = try JSONEncoder().encode(
         TestNotificationReport(announcement: UUID(), outcome: .noAnswer)
@@ -345,7 +345,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aVirtualOutputStatusChangeAnnouncesOnceAfterTheLockIsReleased() async throws {
+  func virtualOutputStatusChangeAnnouncesOnceAfterLockIsReleased() async throws {
     try await withServer { server in
       let lockHeldDuringPost = LockedFlag()
       let observer = NotificationCenter.default.addObserver(
@@ -372,7 +372,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aRepeatedVirtualOutputStatusAnnouncesNothing() async throws {
+  func repeatedVirtualOutputStatusAnnouncesNothing() async throws {
     try await withServer { server in
       #expect(
         await Self.announcements(from: server) {
@@ -383,7 +383,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aProfileReloadAnnouncesFromTheRemappingCoordinator() async throws {
+  func profileReloadAnnouncesFromRemappingCoordinator() async throws {
     try await withServer { server in
       #expect(
         await Self.announcements(from: server.remappingRequests) {
@@ -394,7 +394,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func anOverrideResetAnnouncesFromTheServer() async throws {
+  func overrideResetAnnouncesFromServer() async throws {
     try await withServer { server in
       #expect(
         await Self.announcements(from: server) { _ = server.resetVirtualHIDProfileSettings() } == 1
@@ -423,7 +423,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aListenerRestartAfterStopBeginsRefusesAsStopping() async throws {
+  func listenerRestartAfterStopBeginsRefusesAsStopping() async throws {
     let socketPath = temporarySocketPath()
     try await withServer { server in
       let listener = LocalServiceRPCServer(

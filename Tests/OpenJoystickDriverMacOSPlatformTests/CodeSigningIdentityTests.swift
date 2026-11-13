@@ -6,7 +6,7 @@ import Testing
 
 struct CodeSigningIdentityTests {
   @Test
-  func theProcessAtTheOtherEndOfASocketResolvesToCode() throws {
+  func processAtOtherEndOfSocketResolvesToCode() throws {
     var descriptors: [Int32] = [0, 0]
     unsafe #expect(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0)
     defer { for descriptor in descriptors { close(descriptor) } }
@@ -28,7 +28,7 @@ struct CodeSigningIdentityTests {
   }
 
   @Test
-  func teamRequirementPinsTheTeam() {
+  func teamRequirementPinsTeam() {
     let identity = CodeSigningIdentity(
       kind: .signed,
       identifier: "com.example.\"tool\"",

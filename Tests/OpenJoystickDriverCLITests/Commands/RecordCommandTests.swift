@@ -48,7 +48,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func validateReportsTheRecordAndItsTransport() async throws {
+  func validateReportsRecordAndItsTransport() async throws {
     let directory = Directory()
 
     let json = await run(["validate", "-", "--json"], in: directory, stdin: Self.patch)
@@ -67,7 +67,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func anInvalidRecordExitsOneAndNamesTheProblem() async throws {
+  func invalidRecordExitsOneAndNamesProblem() async throws {
     let directory = Directory()
     let invalid = PropertyListFixture.bytes(json: #"{"operation": "patch"}"#)
 
@@ -102,7 +102,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func installWritesTheFileThatListAndShowReport() async throws {
+  func installWritesFileThatListAndShowReport() async throws {
     let directory = Directory()
 
     let install = await run(["install", "-", "--json"], in: directory, stdin: Self.patch)
@@ -141,7 +141,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func listNamesSkippedFilesAndBundledListsTheCatalogAlone() async throws {
+  func listNamesSkippedFilesAndBundledListsCatalogAlone() async throws {
     let directory = Directory()
     try directory.write(Self.patch, as: "wrong.plist")
 
@@ -160,7 +160,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func showAnUnknownModelExitsOne() async {
+  func showUnknownModelExitsOne() async {
     let result = await run(["show", "1234:ABCD"], in: Directory())
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2012]: "))
@@ -168,7 +168,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func validateAndShowNoteThatASwitch2RecordWithoutBluetoothLEIsUSBOnly() async throws {
+  func validateAndShowNoteThatSwitch2RecordWithoutBluetoothLEIsUSBOnly() async throws {
     let directory = Directory()
     let switch2 = PropertyListFixture.bytes(
       json: """
@@ -193,7 +193,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func installNeedsForceToReplaceWithoutATerminalAndHonorsDryRun() async throws {
+  func installNeedsForceToReplaceWithoutTerminalAndHonorsDryRun() async throws {
     let directory = Directory()
     let installed = PropertyListFixture.bytes(json: "{}")
     let dryRun = await run(
@@ -220,7 +220,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func removeNeedsForceWithoutATerminalAndHonorsDryRun() async throws {
+  func removeNeedsForceWithoutTerminalAndHonorsDryRun() async throws {
     let directory = Directory()
     try directory.write(Self.patch, as: "366c-0005.patch.plist")
 
@@ -242,7 +242,7 @@ struct RecordCommandTests {
   private static let noDescriptor: @Sendable (Int, Int) -> [UInt8]? = { _, _ in nil }
 
   @Test
-  func draftPrintsARecordFromTheCapturedReports() async throws {
+  func draftPrintsRecordFromCapturedReports() async throws {
     let reads = Counter()
     let packets = """
       [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
@@ -311,7 +311,7 @@ struct RecordCommandTests {
 
   /// A bundled model whose descriptor maps nothing keeps its bundled family.
   @Test
-  func draftOfABundledModelWithoutALayoutExitsOne() async throws {
+  func draftOfBundledModelWithoutLayoutExitsOne() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -446,7 +446,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func fromSDLOfAPadWithNoDatabaseLineExitsOneWithE2012() async throws {
+  func fromSDLOfPadWithNoDatabaseLineExitsOneWithE2012() async throws {
     let result = try await draftFromSDL(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -457,7 +457,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func fromSDLOfALineThatDoesNotConvertExitsOneWithE5008() async throws {
+  func fromSDLOfLineThatDoesNotConvertExitsOneWithE5008() async throws {
     let result = try await draftFromSDL(
       vendorID: 0x358A,
       productID: 0x0201,
@@ -468,7 +468,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func fromSDLOfABundledModelExitsOneWithE2013() async throws {
+  func fromSDLOfBundledModelExitsOneWithE2013() async throws {
     let result = try await draftFromSDL(
       vendorID: 0x045E,
       productID: 0x028E,

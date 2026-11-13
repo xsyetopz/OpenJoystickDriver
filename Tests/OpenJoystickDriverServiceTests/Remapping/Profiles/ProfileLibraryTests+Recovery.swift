@@ -96,7 +96,7 @@ extension ProfileLibraryTests {
   /// Each profile file the library cannot use is reported with the code a request gives the same
   /// failure.
   @Test
-  func damagedProfileIssuesCarryTheCodeOfTheirSituation() async throws {
+  func damagedProfileIssuesCarryCodeOfTheirSituation() async throws {
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")
       try await library.create(valid)
@@ -266,7 +266,7 @@ extension ProfileLibraryTests {
   /// A stored profile that spells a kind in the way before the UpperCamelCase rule is damaged with
   /// the invalid-profile code, and its bytes stay as they were.
   @Test(arguments: 0..<17)
-  func profileWithAnUnknownKindSpellingIsRecoveredAsDamaged(index: Int) async throws {
+  func profileWithUnknownKindSpellingIsRecoveredAsDamaged(index: Int) async throws {
     let kind = Self.renamedKinds[index]
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")
@@ -291,7 +291,7 @@ extension ProfileLibraryTests {
   }
 
   @Test(arguments: 0..<17)
-  func profileWithTheCurrentKindSpellingLoads(index: Int) async throws {
+  func profileWithCurrentKindSpellingLoads(index: Int) async throws {
     let kind = Self.renamedKinds[index]
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")

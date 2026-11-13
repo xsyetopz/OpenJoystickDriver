@@ -10,7 +10,7 @@ struct ServiceConnectionTests {
   /// With nothing listening on the socket, `open()` reports the service as stopped after one
   /// probe: it adds no wait and no retry.
   @Test
-  func aStoppedServiceIsUnavailableAfterOneProbe() async {
+  func stoppedServiceIsUnavailableAfterOneProbe() async {
     let client = ApplicationServiceClient(socketPath: temporarySocketPath())
 
     await #expect(throws: CLIFailure.serviceUnavailable) {

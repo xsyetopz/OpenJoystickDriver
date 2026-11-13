@@ -50,7 +50,7 @@ struct CLIOutputSchemaTests {
   }
 
   @Test
-  func outputKindsComeFromTheKindTable() {
+  func outputKindsComeFromKindTable() {
     #expect(CLI.outputKind(of: ControllerShowCommand.self) == "Controller")
     #expect(CLI.outputKind(of: AccessWebEnableCommand.self) == "WebAccess")
     #expect(CLI.outputKind(of: StatusCommand.self) == "SystemStatus")
@@ -79,7 +79,7 @@ struct CLIOutputSchemaTests {
   }
 
   @Test(arguments: ["USBPacket", "JoyConPair", "rawReport"])
-  func aStreamLineOfAnUnknownKindIsRefused(kind: String) throws {
+  func streamLineOfUnknownKindIsRefused(kind: String) throws {
     let line =
       #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"\#(kind)","#
       + #""direction":"Rx","hex":"01 02","length":2,"captureTime":"1970-01-01T00:00:01.500Z"}"#
@@ -87,7 +87,7 @@ struct CLIOutputSchemaTests {
   }
 
   @Test
-  func theCurrentPairAndSessionDocumentsPass() throws {
+  func currentPairAndSessionDocumentsPass() throws {
     let pair =
       #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ControllerPair","gyro":"Left","#
       + #""left":"a","profile":"p","right":"b","session":"01234567-89AB-CDEF-0123-456789ABCDEF"}"#
@@ -99,7 +99,7 @@ struct CLIOutputSchemaTests {
   }
 
   @Test(arguments: ["JoyConPair", "controllerPair", "RawReport"])
-  func aPairDocumentOfAnUnknownKindIsRefused(kind: String) throws {
+  func pairDocumentOfUnknownKindIsRefused(kind: String) throws {
     let document =
       #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"\#(kind)","gyro":"Left","#
       + #""left":"a","profile":"p","right":"b","session":"01234567-89AB-CDEF-0123-456789ABCDEF"}"#
@@ -107,7 +107,7 @@ struct CLIOutputSchemaTests {
   }
 
   @Test(arguments: ["active", "suspended", "disconnected"])
-  func aSessionOfAnUnknownSpellingIsRefused(session: String) throws {
+  func sessionOfUnknownSpellingIsRefused(session: String) throws {
     let document =
       #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ControllerSession","#
       + #""changed":false,"controller":"c","session":"\#(session)"}"#
@@ -117,7 +117,7 @@ struct CLIOutputSchemaTests {
   }
 
   @Test
-  func eachLineOfAStreamIsChecked() throws {
+  func eachLineOfStreamIsChecked() throws {
     let good =
       #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RawReport","#
       + #""direction":"Rx","hex":"01 02","length":2,"captureTime":"1970-01-01T00:00:01.500Z"}"#

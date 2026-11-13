@@ -18,7 +18,7 @@ struct ProfileWatcherPackageTests {
   /// The service's profile watcher reloads when a package is installed into, and removed from,
   /// the library's `Packages/` folder.
   @Test
-  func changesWhenAPackageIsInstalledAndRemoved() async throws {
+  func changesWhenPackageIsInstalledAndRemoved() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-profile-watch-\(UUID().uuidString)",
       isDirectory: true

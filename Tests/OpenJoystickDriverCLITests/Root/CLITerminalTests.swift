@@ -6,7 +6,7 @@ struct CLITerminalTests {
   private let terminal: (Int32) -> Bool = { _ in true }
 
   @Test
-  func colorNeedsATerminalWithoutOptOuts() {
+  func colorNeedsTerminalWithoutOptOuts() {
     #expect(
       CLITerminal.usesColor(on: .standardOutput, context: CLIContext(), environment: [:]) { _ in
         true
@@ -46,7 +46,7 @@ struct CLITerminalTests {
   }
 
   @Test
-  func forceColorBeatsTheEnvironmentButNotTheNoColorFlag() {
+  func forceColorBeatsEnvironmentButNotNoColorFlag() {
     var context = CLIContext()
     context.forceColor = true
     let environment = ["NO_COLOR": "1", "TERM": "dumb"]

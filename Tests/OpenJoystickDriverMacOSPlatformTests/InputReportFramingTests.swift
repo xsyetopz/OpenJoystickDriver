@@ -4,7 +4,7 @@ import Testing
 
 struct InputReportFramingTests {
   @Test
-  func numberedReportWithoutItsIDGetsTheIDPrefixed() {
+  func numberedReportWithoutItsIDGetsIDPrefixed() {
     #expect(
       HIDDeviceStream.framedInputReport(reportID: 0x11, bytes: [0xC0, 0x00]) == [0x11, 0xC0, 0x00]
     )

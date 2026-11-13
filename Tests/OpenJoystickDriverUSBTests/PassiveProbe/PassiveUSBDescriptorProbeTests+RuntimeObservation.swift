@@ -7,7 +7,7 @@ import Testing
 
 extension PassiveUSBDescriptorProbeTests {
   @Test
-  func runtimeObservationSelectsOnlyTheExactRegistryEntry() throws {
+  func runtimeObservationSelectsOnlyExactRegistryEntry() throws {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 12,

@@ -78,7 +78,7 @@ struct SettingCommandTests {
   }
 
   @Test
-  func getPrintsTheBareValueOrJSON() async throws {
+  func getPrintsBareValueOrJSON() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(settings: [.developerTools: true], socketPath: socketPath)
     defer { server.stop() }
@@ -93,7 +93,7 @@ struct SettingCommandTests {
   }
 
   @Test
-  func setAppliesTheValueAndReportsOnStandardError() async throws {
+  func setAppliesValueAndReportsOnStandardError() async throws {
     let socketPath = temporarySocketPath()
     let received = Locked<[String]>([])
     let server = try serve(socketPath: socketPath, received: received)
@@ -110,7 +110,7 @@ struct SettingCommandTests {
   }
 
   @Test
-  func setPrintsTheNewValueAsJSON() async throws {
+  func setPrintsNewValueAsJSON() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath, received: Locked<[String]>([]))
     defer { server.stop() }
@@ -126,7 +126,7 @@ struct SettingCommandTests {
   }
 
   @Test
-  func showInDockIsASettingKeyThatDefaultsToOff() async throws {
+  func showInDockIsSettingKeyThatDefaultsToOff() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath, received: Locked<[String]>([]))
     defer { server.stop() }
@@ -142,7 +142,7 @@ struct SettingCommandTests {
   }
 
   @Test
-  func setExitsOneWhenMacOSLeavesTheSettingOff() async throws {
+  func setExitsOneWhenMacOSLeavesSettingOff() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(refused: [.launchAtLogin], socketPath: socketPath)
     defer { server.stop() }

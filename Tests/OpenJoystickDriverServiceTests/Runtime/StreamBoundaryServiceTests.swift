@@ -47,7 +47,7 @@ struct StreamBoundaryServiceTests {
   // MARK: VirtualFeedDeviceSink
 
   @Test
-  func theFeedDeviceSinkSendsGamepadFramesAndReportsThemDelivered() async throws {
+  func feedDeviceSinkSendsGamepadFramesAndReportsThemDelivered() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     _ = try await registry.open(profile: "Generic")
@@ -64,7 +64,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test
-  func theFeedDeviceSinkRefusesOtherShapesAndSendsNothing() async throws {
+  func feedDeviceSinkRefusesOtherShapesAndSendsNothing() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     _ = try await registry.open(profile: "Generic")
@@ -81,7 +81,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test
-  func aFailedSendDoesNotReportDelivery() async throws {
+  func failedSendDoesNotReportDelivery() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     _ = try await registry.open(profile: "Generic")
@@ -100,7 +100,7 @@ struct StreamBoundaryServiceTests {
   // MARK: Session origins
 
   @Test
-  func aFeedSessionsOriginFollowsItsPool() async throws {
+  func feedSessionsOriginFollowsItsPool() async throws {
     let registry = FakeFeedFactory().registry()
     let rpc = try await registry.open(profile: "Generic", pool: .rpc)
     let endpoint = try await registry.open(profile: "Generic", pool: .endpoint)
@@ -117,7 +117,7 @@ struct StreamBoundaryServiceTests {
   // MARK: Host feedback to a feed client
 
   @Test(.timeLimit(.minutes(1)))
-  func feedbackWaitsForTheClientThenArrivesInOrderAndIsNotPolled() async throws {
+  func feedbackWaitsForClientThenArrivesInOrderAndIsNotPolled() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let sink = RecordingSink()
@@ -145,7 +145,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFeedKeepsTheNewestFeedbackWhenTheClientIsSlowToStart() async throws {
+  func feedKeepsNewestFeedbackWhenClientIsSlowToStart() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let sink = RecordingSink()
@@ -163,7 +163,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFeedWithoutAReturnSinkStillReturnsFeedbackToThePoller() async throws {
+  func feedWithoutReturnSinkStillReturnsFeedbackToPoller() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -175,7 +175,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func theEndpointReturnSinkWritesARumbleLineAndRefusesAClosingConnection() async throws {
+  func endpointReturnSinkWritesRumbleLineAndRefusesClosingConnection() async throws {
     let descriptors = Self.socketPair()
     try LocalServiceRPCTransport.setTimeout(descriptors[1], seconds: 5)
     defer { close(descriptors[1]) }
@@ -200,7 +200,7 @@ struct StreamBoundaryServiceTests {
   // MARK: Client to registry
 
   @Test(.timeLimit(.minutes(1)))
-  func theIntakeSinkQueuesFeedFramesAndRefusesOtherShapesAndClosedFeeds() async throws {
+  func intakeSinkQueuesFeedFramesAndRefusesOtherShapesAndClosedFeeds() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic", pool: .endpoint)
@@ -226,7 +226,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func theIntakeSinkPushesBackWhenTheQueueIsFull() async throws {
+  func intakeSinkPushesBackWhenQueueIsFull() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic", pool: .endpoint)
@@ -253,7 +253,7 @@ struct StreamBoundaryServiceTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFeedSourceIsAnEndpointFeedOriginAndClosesWithItsFeed() async throws {
+  func feedSourceIsEndpointFeedOriginAndClosesWithItsFeed() async throws {
     let descriptors = Self.socketPair()
     defer { close(descriptors[1]) }
     let connection = EndpointConnection(descriptor: descriptors[0])
@@ -274,7 +274,7 @@ struct StreamBoundaryServiceTests {
   // MARK: Endpoint stream generation guard
 
   @Test
-  func anEndpointSubscriberSinkOfAnOlderGenerationDeliversNothing() async throws {
+  func endpointSubscriberSinkOfOlderGenerationDeliversNothing() async throws {
     try await withEndpointServer { server, _ in
       let event = ControllerWatchEvent(
         type: .added,

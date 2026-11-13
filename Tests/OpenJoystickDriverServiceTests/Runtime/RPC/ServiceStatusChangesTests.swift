@@ -34,7 +34,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aNilRevisionReadsTheCurrentOneAtOnce() async {
+  func nilRevisionReadsCurrentOneAtOnce() async {
     let instance = UUID()
     let changes = Self.isolated(instance: instance)
 
@@ -48,7 +48,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aWaitReturnsOnAStatusNotification() async {
+  func waitReturnsOnStatusNotification() async {
     let center = NotificationCenter()
     let changes = Self.isolated(center: center)
     let baseline = await Self.revision(changes)
@@ -63,7 +63,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aChangeBeforeTheWaitAnswersAtOnce() async {
+  func changeBeforeWaitAnswersAtOnce() async {
     let center = NotificationCenter()
     let changes = Self.isolated(center: center)
     let baseline = await Self.revision(changes)
@@ -73,7 +73,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aWaitWithNoChangeReturnsTheSameRevisionAfterTheHoldTime() async {
+  func waitWithNoChangeReturnsSameRevisionAfterHoldTime() async {
     let changes = Self.isolated()
     let baseline = await Self.revision(changes)
 
@@ -84,7 +84,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aRestartedServiceDiffersEvenWithTheSameGeneration() async {
+  func restartedServiceDiffersEvenWithSameGeneration() async {
     let old = ServiceStatusRevision(instance: UUID(), generation: 0)
     let changes = Self.isolated()
 
@@ -95,7 +95,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func anApplicationActivationIsAStatusChange() async {
+  func applicationActivationIsStatusChange() async {
     let workspace = NotificationCenter()
     let changes = ServiceStatusChanges(center: NotificationCenter(), workspaceCenter: workspace)
     let baseline = await Self.revision(changes)
@@ -106,7 +106,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aCancelledWaitReturnsAtOnceWithoutWaitingForTheHoldTime() async {
+  func cancelledWaitReturnsAtOnceWithoutWaitingForHoldTime() async {
     let changes = Self.isolated()
     let baseline = await Self.revision(changes)
     // The hold time exceeds the test's time limit, so only the cancellation can end the wait.
@@ -117,7 +117,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func theSharedPostAnnouncesAChange() async {
+  func sharedPostAnnouncesChange() async {
     let changes = ServiceStatusChanges(workspaceCenter: NotificationCenter())
     let baseline = await Self.revision(changes)
 
@@ -134,7 +134,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aHeldWaitTakesTheAnnouncementAndTheReportEndsTheRequest() async throws {
+  func heldWaitTakesAnnouncementAndReportEndsRequest() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let baseline = await Self.revision(changes)
     let registered = Self.heldWaits(changes)
@@ -152,7 +152,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func anAnnouncementBetweenWaitsIsTakenByTheNextWait() async throws {
+  func announcementBetweenWaitsIsTakenByNextWait() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let baseline = await Self.revision(changes)
     async let outcome = changes.announceTestNotification()
@@ -166,7 +166,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aFailedReportCarriesTheReason() async throws {
+  func failedReportCarriesReason() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     async let outcome = changes.announceTestNotification()
     try await Task.sleep(nanoseconds: 20_000_000)
@@ -177,7 +177,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func noWaitBeforeThePickupDeadlineEndsWithNoAnswer() async {
+  func noWaitBeforePickupDeadlineEndsWithNoAnswer() async {
     let changes = ServiceStatusChanges(center: NotificationCenter(), pickupSeconds: 0.05)
 
     #expect(await changes.announceTestNotification() == .noAnswer)
@@ -186,7 +186,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aTakenAnnouncementWithNoReportEndsWithNoAnswer() async throws {
+  func takenAnnouncementWithNoReportEndsWithNoAnswer() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter(), answerSeconds: 0.05)
     async let outcome = changes.announceTestNotification()
     try await Task.sleep(nanoseconds: 20_000_000)
@@ -196,7 +196,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aCancelledWaitEndsAsHoldElapsedAndDoesNotTakeTheAnnouncement() async {
+  func cancelledWaitEndsAsHoldElapsedAndDoesNotTakeAnnouncement() async {
     let changes = ServiceStatusChanges(center: NotificationCenter(), pickupSeconds: 0.05)
     let baseline = await Self.revision(changes)
     let cancelled = Task { await changes.wait(after: baseline, holdSeconds: 30) }
@@ -208,7 +208,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aHeldWaitCancelledAsItTakesTheAnnouncementGivesItBackForTheNextWait() async throws {
+  func heldWaitCancelledAsItTakesAnnouncementGivesItBackForNextWait() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let baseline = await Self.revision(changes)
     let registered = Self.heldWaits(changes)
@@ -225,7 +225,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func anAnnouncementGivenBackAfterThePickupDeadlineExpiresInsteadOfReachingAHeldWait()
+  func announcementGivenBackAfterPickupDeadlineExpiresInsteadOfReachingHeldWait()
     async throws
   {
     let changes = ServiceStatusChanges(
@@ -266,7 +266,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aRequestWhileOneIsPendingJoinsIt() async throws {
+  func requestWhileOneIsPendingJoinsIt() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     async let first = changes.announceTestNotification()
     try await Task.sleep(nanoseconds: 20_000_000)
@@ -288,7 +288,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aCallerThatLeavesAbandonsTheAnnouncementAndLaterReportsAreRefused() async throws {
+  func callerThatLeavesAbandonsAnnouncementAndLaterReportsAreRefused() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let baseline = await Self.revision(changes)
     let caller = Task { await changes.announceTestNotification() }
@@ -303,7 +303,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aRequestKeepsTheAnnouncementWhileAnotherCallerStaysAfterOneLeaves() async throws {
+  func requestKeepsAnnouncementWhileAnotherCallerStaysAfterOneLeaves() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let leaving = Task { await changes.announceTestNotification() }
     try await Task.sleep(nanoseconds: 20_000_000)
@@ -319,7 +319,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aStalePickupDeadlineCannotEndATakenAnnouncement() async throws {
+  func stalePickupDeadlineCannotEndTakenAnnouncement() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     async let outcome = changes.announceTestNotification()
     try await Task.sleep(nanoseconds: 20_000_000)

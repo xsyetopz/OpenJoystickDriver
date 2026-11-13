@@ -270,7 +270,7 @@ extension RemappingOutputRouterTests {
   }
 
   @Test
-  func routeTransitionsNeutralizeBeforeTheNewRouteEmits() async throws {
+  func routeTransitionsNeutralizeBeforeNewRouteEmits() async throws {
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
     let device = remappingRouterDevice(1)

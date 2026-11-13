@@ -16,7 +16,7 @@ struct ControllerRecordWatcherTests {
   )
 
   @Test
-  func appliesAtStartAndAgainWhenAFileArrives() async throws {
+  func appliesAtStartAndAgainWhenFileArrives() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true
@@ -48,7 +48,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func appliesAgainWhenAFileIsRewrittenInPlace() async throws {
+  func appliesAgainWhenFileIsRewrittenInPlace() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true
@@ -82,7 +82,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func appliesAgainWhenTheDirectoryIsDeletedAndRecreated() async throws {
+  func appliesAgainWhenDirectoryIsDeletedAndRecreated() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true
@@ -115,7 +115,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func appliesOnceADirectoryThatCouldNotBeCreatedExists() async throws {
+  func appliesOnceDirectoryThatCouldNotBeCreatedExists() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)",
       isDirectory: true

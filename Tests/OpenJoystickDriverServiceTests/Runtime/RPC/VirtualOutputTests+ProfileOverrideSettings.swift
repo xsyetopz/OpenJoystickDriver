@@ -185,7 +185,7 @@ extension VirtualOutputTests {
   }
 
   @Test(arguments: ControllerOwnershipObservation.allCases)
-  func statusDropsAStaleSelectionExactlyWhenTheSystemServesTheController(
+  func statusDropsStaleSelectionExactlyWhenSystemServesController(
     ownership: ControllerOwnershipObservation
   ) async {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
@@ -252,7 +252,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aResetThatKeepsAPersonaWithAnIdentityFails() async throws {
+  func resetThatKeepsPersonaWithIdentityFails() async throws {
     var file: URL?
     let fixture = await profileOverrideServer { directory in
       try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

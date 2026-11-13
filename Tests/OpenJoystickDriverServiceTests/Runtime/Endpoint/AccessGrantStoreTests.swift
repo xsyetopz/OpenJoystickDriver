@@ -18,7 +18,7 @@ struct AccessGrantStoreTests {
   )
 
   @Test
-  func aMissingFileIsAnEndpointThatIsOffWithNoGrants() throws {
+  func missingFileIsEndpointThatIsOffWithNoGrants() throws {
     try withStore { store, _ in
       let file = try store.load()
       #expect(file == AccessGrantFile())
@@ -26,7 +26,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func grantsRoundTripAndTheFileMatchesItsSchema() throws {
+  func grantsRoundTripAndFileMatchesItsSchema() throws {
     try withStore { store, _ in
       var file = AccessGrantFile()
       file.enabled = true
@@ -59,7 +59,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func grantingAgainMergesScopesAndKeepsTheLatestPath() {
+  func grantingAgainMergesScopesAndKeepsLatestPath() {
     var file = AccessGrantFile()
     file.grant(tool, scopes: [.control], path: "/old/Tool", at: Date(timeIntervalSince1970: 0))
     let grant = file.grant(
@@ -76,7 +76,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func revokingSomeScopesKeepsTheRestAndRevokingAllRemovesTheGrant() throws {
+  func revokingSomeScopesKeepsRestAndRevokingAllRemovesGrant() throws {
     var file = AccessGrantFile()
     file.grant(tool, scopes: [.read, .control], path: "/Tool", at: Date())
 
@@ -90,7 +90,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aDamagedFileIsAnErrorAndIsNotReplaced() throws {
+  func damagedFileIsErrorAndIsNotReplaced() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       for text in [
@@ -116,7 +116,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aDamagedFileErrorCarriesItsCodeAndALocalizedText() {
+  func damagedFileErrorCarriesItsCodeAndLocalizedText() {
     let message = AccessGrantStoreError.damaged.errorDescription ?? ""
     #expect(message == "E5005: \(ErrorCode.damagedAccessGrants.localizedExplanation)")
     #expect(message.contains(AccessGrantStore.fileName))
@@ -129,7 +129,7 @@ struct AccessGrantStoreTests {
     #""publisher":{"kind":"Signed","id":"ABCDE12345"},"identifier":7"#,
     #""kind":"Signed","identifier":"a.out""#,
   ])
-  func aFileThatIsNotTheCurrentShapeIsDamagedAndLeftAsItWas(grant: String) throws {
+  func fileThatIsNotCurrentShapeIsDamagedAndLeftAsItWas(grant: String) throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let text =
@@ -151,7 +151,7 @@ struct AccessGrantStoreTests {
       + #""origins":[],"scopes":["Read"],"grantedAt":"x","unexpected":1}],"#
       + #""web":{"enabled":false,"port":47614}"#,
   ])
-  func anUnknownKeyInTheFileTokensOrWebSettingsIsDamagedAndLeftAsItWas(rest: String) throws {
+  func unknownKeyInFileTokensOrWebSettingsIsDamagedAndLeftAsItWas(rest: String) throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let text =
@@ -165,7 +165,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aMissingOrUnsupportedHeaderIsRefusedWithWhatWasFound() throws {
+  func missingOrUnsupportedHeaderIsRefusedWithWhatWasFound() throws {
     let supported = "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
     let body = #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":false}}"#
     let cases: [(String, ErrorCode?, String)] = [
@@ -212,7 +212,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aTokenGrantStoresOnlyTheHashOfItsToken() throws {
+  func tokenGrantStoresOnlyHashOfItsToken() throws {
     try withStore { store, _ in
       var file = AccessGrantFile()
       let (token, grant) = try file.grantToken(
@@ -289,7 +289,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func revokingATokenGrantByItsID() throws {
+  func revokingTokenGrantByItsID() throws {
     var file = AccessGrantFile()
     try file.grantToken(name: "overlay", origins: [], scopes: [.read, .control], at: Date())
 
@@ -302,7 +302,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aDamagedTokenGrantOrWebSettingIsAnError() throws {
+  func damagedTokenGrantOrWebSettingIsError() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let hash = String(repeating: "a", count: 64)
@@ -370,7 +370,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func controlStoredBeforeItWorkedDamagesTheFileAndIsNeverHonored() throws {
+  func controlStoredBeforeItWorkedDamagesFileAndIsNeverHonored() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let hash = String(repeating: "a", count: 64)
@@ -412,7 +412,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aTokenWithOriginsCannotHoldControl() {
+  func tokenWithOriginsCannotHoldControl() {
     var file = AccessGrantFile()
     #expect(throws: AccessGrantStoreError.originsWithControl) {
       try file.grantToken(
@@ -426,7 +426,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test(arguments: [#"["read","control"]"#, #"["control"]"#])
-  func aTokenWithOriginsHoldingControlIsDamagedAndLeftAsItWas(scopes: String) throws {
+  func tokenWithOriginsHoldingControlIsDamagedAndLeftAsItWas(scopes: String) throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let text =
@@ -444,7 +444,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func refusedTokensAreKeptForADayByNameOriginAndTransport() {
+  func refusedTokensAreKeptForDayByNameOriginAndTransport() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)
     log.recordToken(name: nil, origin: nil, transport: .socket, scopes: [.read], at: start)
@@ -465,7 +465,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func refusedClientsAreKeptForADay() {
+  func refusedClientsAreKeptForDay() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)
     log.record(tool, path: "/Tool", scopes: [.read], at: start)
@@ -481,7 +481,7 @@ struct AccessGrantStoreTests {
 
   /// The Python reference client checks its proof against the same vector.
   @Test
-  func aTokenAcceptsTheSharedProofVector() throws {
+  func tokenAcceptsSharedProofVector() throws {
     let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()  // Endpoint
       .deletingLastPathComponent()  // Runtime
       .deletingLastPathComponent()  // OpenJoystickDriverServiceTests

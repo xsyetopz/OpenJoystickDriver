@@ -17,7 +17,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func aMappedKeyboardOnlyProfileActivatesWithoutAllowEmpty() async throws {
+  func mappedKeyboardOnlyProfileActivatesWithoutAllowEmpty() async throws {
     try await withLibrary { library, _ in
       let keyboard = RemappingProfile(
         id: UUID(),
@@ -40,7 +40,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func activatingAProfileThatProducesNoOutputNeedsAllowEmpty() async throws {
+  func activatingProfileThatProducesNoOutputNeedsAllowEmpty() async throws {
     try await withLibrary { library, _ in
       let empty = makeEmptyProfile()
       try await library.create(empty)
@@ -56,7 +56,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func theRefusalReachesRPCClientsAsE3025() {
+  func refusalReachesRPCClientsAsE3025() {
     let error = RemappingRequestCoordinator.rpcError(
       RemappingProfileLibraryError.profileProducesNoOutput(UUID())
     )

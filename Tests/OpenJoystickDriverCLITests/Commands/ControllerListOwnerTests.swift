@@ -9,7 +9,7 @@ import Testing
 @Suite(.serialized)
 struct ControllerListOwnerTests {
   @Test
-  func plainListPrintsTheOwnerColumnsAfterTheUnit() async throws {
+  func plainListPrintsOwnerColumnsAfterUnit() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(
         id: "pad-1",

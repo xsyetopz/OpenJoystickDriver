@@ -6,7 +6,7 @@ import Testing
 
 extension TransportFacadeTests {
   @Test
-  func uncataloguedDirectDevicesAreAdmittedOnlyWithAKnownSignature() async throws {
+  func uncataloguedDirectDevicesAreAdmittedOnlyWithKnownSignature() async throws {
     let razer = device(route: .rawUSB, serviceID: 1, vendorID: 0x1532, productID: 0x0A15)
     let plain = device(route: .rawUSB, serviceID: 2, vendorID: 0x1234, productID: 0x5678)
     let provider = OpenJoystickDriverUSBTransportProvider(
@@ -30,7 +30,7 @@ extension TransportFacadeTests {
   }
 
   @Test
-  func configurationObservationIsReadOnlyThroughIOUSBHostForTheSameService() async throws {
+  func configurationObservationIsReadOnlyThroughIOUSBHostForSameService() async throws {
     let direct = device(route: .rawUSB, serviceID: 3)
     let calls = ConfigurationCallRecorder()
     let provider = OpenJoystickDriverUSBTransportProvider(
@@ -70,7 +70,7 @@ private final class ConfigurationCallRecorder: @unchecked Sendable {
 
 extension TransportFacadeTests {
   @Test
-  func signatureAdmissionIsCachedWhileTheServiceStaysEnumerated() async throws {
+  func signatureAdmissionIsCachedWhileServiceStaysEnumerated() async throws {
     let razer = device(route: .rawUSB, serviceID: 5, vendorID: 0x1532, productID: 0x0A15)
     let plain = device(route: .rawUSB, serviceID: 6, vendorID: 0x1234, productID: 0x5678)
     let pending = device(route: .rawUSB, serviceID: 7, vendorID: 0x1234, productID: 0x9999)

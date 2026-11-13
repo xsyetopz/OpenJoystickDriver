@@ -204,7 +204,7 @@ struct IOHIDVirtualDevicePublisherTests {
   }
 
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func publishedIdentityMatchesTheProfileForEveryProductionProfile(
+  func publishedIdentityMatchesProfileForEveryProductionProfile(
     _ profileID: VirtualHIDProfileID
   ) throws {
     let profile = profileID.makeProfile()
@@ -268,7 +268,7 @@ struct IOHIDVirtualDevicePublisherTests {
   }
 
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func publishedIdentityIsByteIdenticalAcrossCallsForTheSameIdentifier(
+  func publishedIdentityIsByteIdenticalAcrossCallsForSameIdentifier(
     _ profileID: VirtualHIDProfileID
   ) {
     let profile = profileID.makeProfile()

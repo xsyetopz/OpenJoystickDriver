@@ -74,7 +74,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func everyFrameReachesTheFeedInOrderAndTheFeedClosesWhenTheInputEnds() async throws {
+  func everyFrameReachesFeedInOrderAndFeedClosesWhenInputEnds() async throws {
     let service = try Self.service()
     let result = await Self.run(
       service,
@@ -102,7 +102,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func framesTheFeedDidNotAcceptAreSentAgainInOrder() async throws {
+  func framesFeedDidNotAcceptAreSentAgainInOrder() async throws {
     let service = try Self.service(accepting: 1)
     let input = [#"{"buttons":["South"]}"#, "{}", #"{"dpad":["DpadUp"]}"#, "{}"]
     let result = await Self.run(service, input: input)
@@ -118,7 +118,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func theFeedClosesOnlyAfterItPlayedEveryFrame() async throws {
+  func feedClosesOnlyAfterItPlayedEveryFrame() async throws {
     let service = try Self.service(queued: [3, 2, 1])
     let result = await Self.run(service, input: ["{}"])
 
@@ -161,7 +161,7 @@ struct VirtualFeedCommandTests {
     #"{"dpad":["DpadUp","DpadUp"]}"#,
     #"{"button":["South"]}"#,
   ])
-  func aLineThatIsNotAFrameExitsSixtyFourAndClosesTheFeed(line: String) async throws {
+  func lineThatIsNotFrameExitsSixtyFourAndClosesFeed(line: String) async throws {
     let service = try Self.service()
     let result = await Self.run(service, input: ["{}", "", line])
 
@@ -171,7 +171,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func aFeedTheServiceClosedExitsOne() async throws {
+  func feedServiceClosedExitsOne() async throws {
     let service = try Self.service(
       result: VirtualFeedExchangeResult(feedback: [], closed: true)
     )
@@ -182,7 +182,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func anUnknownProfileIsAUsageError() async throws {
+  func unknownProfileIsUsageError() async throws {
     let service = try Self.service()
     let result = await service.run(["virtual", "feed", "--as", "unknown"])
 
@@ -191,7 +191,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func plainIsAUsageError() async throws {
+  func plainIsUsageError() async throws {
     let service = try Self.service()
     let result = await Self.run(service, input: ["{}"], ["--plain"])
 
@@ -201,7 +201,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func aCloseThatWasInterruptedIsReportedWithItsOwnLocalizedText() {
+  func closeThatWasInterruptedIsReportedWithItsOwnLocalizedText() {
     let failure = VirtualFeedCommand.closeFailure(CancellationError())
 
     #expect(failure.id == .serviceRequestFailed)
@@ -210,7 +210,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func aCloseThatTimedOutKeepsItsOwnFailure() {
+  func closeThatTimedOutKeepsItsOwnFailure() {
     #expect(
       VirtualFeedCommand.closeFailure(CLIFailure.timedOut(seconds: 3))
         == CLIFailure.timedOut(seconds: 3)

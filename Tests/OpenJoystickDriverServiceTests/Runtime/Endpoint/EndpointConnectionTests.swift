@@ -10,7 +10,7 @@ import Testing
 /// the writer and later lines wait in the connection's queue.
 struct EndpointConnectionTests {
   @Test
-  func waitingInputLinesOfAControllerAreReplacedByTheLatest() throws {
+  func waitingInputLinesOfControllerAreReplacedByLatest() throws {
     let (connection, reader) = try Self.pair()
     connection.subscribe(output: false, snapshot: [])
     for index in 0..<100 { connection.deliver(Self.connected("pad-\(index)")) }
@@ -38,7 +38,7 @@ struct EndpointConnectionTests {
   }
 
   @Test
-  func aClientThatFallsTooFarBehindIsClosedWithTooSlow() throws {
+  func clientThatFallsTooFarBehindIsClosedWithTooSlow() throws {
     let (connection, reader) = try Self.pair()
     connection.subscribe(output: false, snapshot: [])
     for index in 0..<1_000 { connection.deliver(Self.connected("pad-\(index)")) }
@@ -50,7 +50,7 @@ struct EndpointConnectionTests {
   }
 
   @Test
-  func closingDropsTheRumbleLinesThatWait() throws {
+  func closingDropsRumbleLinesThatWait() throws {
     let (connection, reader) = try Self.pair()
     // Small buffers, so the writer blocks after a few rumble lines.
     var size: Int32 = 2_048

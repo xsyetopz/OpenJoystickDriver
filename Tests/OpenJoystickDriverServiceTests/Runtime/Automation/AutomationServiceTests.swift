@@ -163,7 +163,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func controllersUseTheUnitIDAndFallBackToTheRuntimeID() async {
+  func controllersUseUnitIDAndFallBackToRuntimeID() async {
     let service = FakeService(devices: [
       Self.device("Pad A", runtimeID: "pad-1", unitID: "unit-1"),
       Self.device("Pad B", runtimeID: "pad-2", unitID: nil),
@@ -178,7 +178,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func controllersReportTheBatteryChargeAsTheDeviceReportsIt() async throws {
+  func controllersReportBatteryChargeAsDeviceReportsIt() async throws {
     let service = FakeService(devices: [
       Self.device(
         "Pad A",
@@ -207,7 +207,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func aModelIDResolvesToTheOneConnectedControllerOfThatModel() async throws {
+  func modelIDResolvesToOneConnectedControllerOfThatModel() async throws {
     let service = FakeService(devices: [
       Self.device("Pad A", runtimeID: "pad-1", unitID: "unit-1"),
       Self.device("Pad B", runtimeID: "pad-2", unitID: nil, productID: 0x0B12),
@@ -222,7 +222,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func aModelIDThatMatchesSeveralControllersThrows() async {
+  func modelIDThatMatchesSeveralControllersThrows() async {
     let service = FakeService(devices: [
       Self.device("Pad A", runtimeID: "pad-1", unitID: "unit-1"),
       Self.device("Pad B", runtimeID: "pad-2", unitID: nil),
@@ -276,7 +276,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func profileQueriesPassOnASnapshotError() async {
+  func profileQueriesPassOnSnapshotError() async {
     await #expect(throws: SnapshotUnavailable.self) { try await FailingService().profiles() }
     await #expect(throws: SnapshotUnavailable.self) {
       try await FailingService().profiles(ids: [UUID()])
@@ -322,7 +322,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func activatingAndDeactivatingReturnTheProfileInItsNewState() async throws {
+  func activatingAndDeactivatingReturnProfileInItsNewState() async throws {
     let racing = Self.profile("Racing")
     let service = FakeService(profiles: [racing])
 
@@ -336,7 +336,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func activatingAProfileMissingFromTheResultThrowsNotFound() async {
+  func activatingProfileMissingFromResultThrowsNotFound() async {
     let missing = UUID()
 
     await #expect(throws: RemappingProfileLibraryError.profileNotFound(missing)) {

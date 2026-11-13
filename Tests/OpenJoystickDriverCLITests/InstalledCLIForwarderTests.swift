@@ -100,7 +100,7 @@ struct InstalledCLIForwarderTests {
   }
 
   @Test
-  func execFailureReportsE2021WithTheSystemReasonAndExits127() {
+  func execFailureReportsE2021WithSystemReasonAndExits127() {
     let failure = InstalledCLIForwarder.execFailure("reason-from-strerror")
 
     #expect(failure.line.hasPrefix("error[E2021]: "))

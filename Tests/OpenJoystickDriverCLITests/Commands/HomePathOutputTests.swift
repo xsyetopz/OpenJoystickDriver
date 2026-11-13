@@ -26,7 +26,7 @@ struct HomePathOutputTests {
   private struct Document: Encodable { let path: String }
 
   @Test
-  func humanTextShowsTheTildeAndEveryOtherWriteKeepsTheHomePath() throws {
+  func humanTextShowsTildeAndEveryOtherWriteKeepsHomePath() throws {
     let path = "\(Self.home)/Library/x"
     let written = try capture {
       CLIOutput.stdout("out \(path)")
@@ -47,7 +47,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func logShowPrintsTheTildeAndLogPathKeepsTheAbsoluteFolder() async throws {
+  func logShowPrintsTildeAndLogPathKeepsAbsoluteFolder() async throws {
     let logs = URL(fileURLWithPath: "\(Self.home)/Library/Logs/OpenJoystickDriver")
     let environment = LogEnvironment(
       directory: { logs },
@@ -85,7 +85,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func modInstallDryRunPrintsTheTildeAndJSONAndPlainKeepTheAbsolutePath() async throws {
+  func modInstallDryRunPrintsTildeAndJSONAndPlainKeepAbsolutePath() async throws {
     let source = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-home-mod-\(UUID().uuidString)", isDirectory: true)
     defer { try? FileManager.default.removeItem(at: source) }
@@ -128,7 +128,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func recordInstallDryRunPrintsTheTildeAndJSONAndPlainKeepTheAbsolutePath() async throws {
+  func recordInstallDryRunPrintsTildeAndJSONAndPlainKeepAbsolutePath() async throws {
     let patch = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
@@ -159,7 +159,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func accessListPrintsTheTildeForAClientPathAndJSONKeepsItAbsolute() async throws {
+  func accessListPrintsTildeForClientPathAndJSONKeepsItAbsolute() async throws {
     let program = "\(Self.home)/Applications/Reader.app"
     let identity = CodeSigningIdentity(
       kind: .signed,

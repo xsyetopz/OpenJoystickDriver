@@ -15,7 +15,7 @@ struct ExplainCommandTests {
   }
 
   @Test
-  func aCommandLineCodeShowsItsExitCode() async throws {
+  func commandLineCodeShowsItsExitCode() async throws {
     let human = await CLIRun.run(["explain", "E2004"])
     let json = await CLIRun.run(["explain", "E2004", "--json"])
 
@@ -29,7 +29,7 @@ struct ExplainCommandTests {
   }
 
   @Test
-  func aRemappingCodeShowsItsWireValueAndIgnoresCase() async throws {
+  func remappingCodeShowsItsWireValueAndIgnoresCase() async throws {
     let human = await CLIRun.run(["explain", "e3013"])
     let json = await CLIRun.run(["explain", "e3013", "--json"])
 
@@ -41,7 +41,7 @@ struct ExplainCommandTests {
   }
 
   @Test
-  func anUnknownCodeIsAUsageFailure() async {
+  func unknownCodeIsUsageFailure() async {
     let run = await CLIRun.run(["explain", "E9999"])
 
     #expect(run.code == 64)
@@ -51,7 +51,7 @@ struct ExplainCommandTests {
   }
 
   @Test
-  func everyCodeHasAnExplanation() async throws {
+  func everyCodeHasExplanation() async throws {
     for id in ErrorCode.allCases {
       let json = try await CLIRun.run(["explain", id.rawValue, "--json"]).json()
       let text = try #require(json["explanation"] as? String)
@@ -60,7 +60,7 @@ struct ExplainCommandTests {
   }
 
   @Test
-  func theExitCodeOfEachCommandLineCodeIsTheCatalogOne() throws {
+  func exitCodeOfEachCommandLineCodeIsCatalogOne() throws {
     let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()  // Commands
       .deletingLastPathComponent()  // OpenJoystickDriverCLITests
       .deletingLastPathComponent()  // Tests
