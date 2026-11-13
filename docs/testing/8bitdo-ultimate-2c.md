@@ -11,7 +11,7 @@ Capture paths in this page are relative to `openspec/changes/0-6-0-alpha-3/evide
 | Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Captured: every control raw and decoded (`2c-bluetooth-301b/ordered-controls-120s.txt`, `2c-bluetooth-301b/ojd-watch-120s.txt`); battery byte reads 0 at 100% and at 90%; rumble write fails |
 | Unknown | `2DC8:301D` | `HIDDescriptor` | Unverified: no mode of the pad enumerated as this identity (`2c-cable/mode-attempts.txt`) |
 | Unknown | `2DC8:3109` | `XboxXUSB` | Unverified: no mode of the pad enumerated as this identity (`2c-cable/mode-attempts.txt`); the maintainer owns no 8BitDo adapter other than the pad's receiver |
-| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the mode `unlinked` matches the product string `IDLE`, is `idle: NoControllerLinked` and reports `NoControllerLinked`; the default mode serves the linked pad with the HID descriptor and has no input map until the capture is mapped to usages; unassigned L4 sets byte 1 bit 2 and unassigned R4 sets bit 5 (`2c-receiver-301c/rear-unassigned-60s.txt`) |
+| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the mode `unlinked` matches the product string `IDLE`, is `idle: NoControllerLinked` and reports `NoControllerLinked`; the default mode serves the linked pad with the HID descriptor and the Bluetooth LE usage table, which the receiver's descriptor and the capture match; unassigned L4 sets byte 1 bit 2 and unassigned R4 sets bit 5 (`2c-receiver-301c/rear-unassigned-60s.txt`) |
 
 ## Results
 
@@ -123,7 +123,7 @@ The record binds `HIDDescriptor` with the same layout as the GameSir G7 SE:
 | 14 | L3 |
 | 15 | R3 |
 
-Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital bits. They are not mapped, and `Rx` and `Ry` (usages 51 and 52) map to nothing. The `301D` record uses this table and the same stick. The rear buttons of the 2C default to L3 and R3 on the pad, so no record maps a paddle until a capture shows a separate bit.
+Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital bits. They are not mapped, and `Rx` and `Ry` (usages 51 and 52) map to nothing. The `301C` and `301D` records use this table and the same stick. The receiver's descriptor as `301C` puts button usage n on bit n - 1 of bytes 1 and 2, `X`, `Y`, `Z`, `Rz` on bytes 4 to 7, Accelerator on byte 8 and Brake on byte 9, so each control of the `301C` capture lands on the usage of this table. The rear buttons of the 2C default to L3 and R3 on the pad, so no record maps a paddle until a capture shows a separate bit.
 
 ## Bootloader Identities
 

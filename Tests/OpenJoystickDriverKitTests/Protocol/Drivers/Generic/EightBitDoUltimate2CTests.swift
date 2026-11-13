@@ -73,14 +73,13 @@ struct EightBitDoUltimate2CTests {
   func receiverServesLinkedPadThroughItsDescriptor() throws {
     let record = try #require(ProtocolDriverRegistry().record(for: Self.receiver))
     #expect(!record.isIdle)
-    #expect(record.hidUsageMap == nil)
   }
 
-  @Test
-  func wiredDInputReplaysTheBluetoothUsages() throws {
+  @Test(arguments: [UInt16(0x301C), 0x301D])
+  func dinputIdentitiesReplayTheBluetoothUsages(productID: UInt16) throws {
     let parser = HIDDescriptorDriver(
-      model: Self.wired,
-      usageMap: try catalogUsageMap(0x2DC8, 0x301D)
+      model: ControllerModelID(vendorID: 0x2DC8, productID: productID),
+      usageMap: try catalogUsageMap(0x2DC8, productID)
     )
     for (usage, button) in Self.buttonTable {
       let press = Self.parse(parser, page: 9, usage: usage, 1)
@@ -90,16 +89,16 @@ struct EightBitDoUltimate2CTests {
     #expect(Self.parse(parser, usage: 0x33, 255) == nil)
   }
 
-  /// The reports of `ordered-controls-120s.txt`, each as the bytes after the report ID.
-  private static func capturedReports() throws -> [[UInt8]] {
+  /// The reports of a capture under `evidence/`, each as the bytes after the report ID.
+  private static func capturedReports(_ path: String, length: Int) throws -> [[UInt8]] {
     var root = URL(fileURLWithPath: #filePath)
     for _ in 0..<6 { root.deleteLastPathComponent() }
-    let capture = root.appendingPathComponent(
-      "openspec/changes/0-6-0-alpha-3/evidence/2c-bluetooth-301b/ordered-controls-120s.txt"
-    )
-    return try String(contentsOf: capture, encoding: .utf8).split(separator: "\n").map {
-      $0.split(separator: " ").suffix(11).dropFirst().compactMap { UInt8($0, radix: 16) }
-    }
+    let capture = root.appendingPathComponent("openspec/changes/0-6-0-alpha-3/evidence/\(path)")
+    return try String(contentsOf: capture, encoding: .utf8).split(separator: "\n")
+      .filter { $0.contains(" rx ") }
+      .map {
+        $0.split(separator: " ").suffix(length).dropFirst().compactMap { UInt8($0, radix: 16) }
+      }
   }
 
   /// The sign of a stick byte: 0 to 255 spans the axis, so the rest byte `7F` reads just below
@@ -114,7 +113,8 @@ struct EightBitDoUltimate2CTests {
       model: Self.bluetooth,
       usageMap: try catalogUsageMap(0x2DC8, 0x301B)
     )
-    let reports = try Self.capturedReports()
+    let capture = "2c-bluetooth-301b/ordered-controls-120s.txt"
+    let reports = try Self.capturedReports(capture, length: 11)
     var rightStickMoved = false
     var leftTriggerPressed = false
     var rightTriggerPressed = false
@@ -139,5 +139,40 @@ struct EightBitDoUltimate2CTests {
     #expect(rightStickMoved && rightTriggerPressed && leftTriggerPressed)
     let rest = try #require(reports.first)
     #expect(rest[5] == 0 && rest[6] == 0)
+  }
+
+  /// The receiver's descriptor puts button usage `n` on bit `n - 1` of bytes 1 and 2, X, Y, Z
+  /// and Rz on bytes 4 to 7, Accelerator on byte 8 and Brake on byte 9.
+  @Test
+  func capturedReceiverReportsDecodeEveryButtonStickAndTrigger() throws {
+    let parser = HIDDescriptorDriver(
+      model: Self.receiver,
+      usageMap: try catalogUsageMap(0x2DC8, 0x301C)
+    )
+    let pressed = Dictionary(uniqueKeysWithValues: Self.buttonTable.map { ($0.usage, $0.button) })
+    var seen = Set<Control>()
+    let capture = "2c-receiver-301c/ordered-controls-150s.txt"
+    for bytes in try Self.capturedReports(capture, length: 10) {
+      var event: ControllerEvent?
+      for (usage, page, byte) in [
+        (0x30, 1, bytes[3]), (0x31, 1, bytes[4]), (0x32, 1, bytes[5]), (0x35, 1, bytes[6]),
+        (196, 2, bytes[7]), (197, 2, bytes[8]),
+      ] {
+        event = Self.parse(parser, page: UInt32(page), usage: UInt32(usage), Int(byte)) ?? event
+      }
+      for (usage, button) in pressed {
+        let bits = UInt16(bytes[0]) | UInt16(bytes[1]) << 8
+        let down = bits >> (usage - 1) & 1
+        event = Self.parse(parser, page: 9, usage: usage, Int(down)) ?? event
+        if down == 1 { seen.insert(button) }
+        #expect(try #require(event).state.pressed.contains(button) == (down == 1), "usage \(usage)")
+      }
+      let state = try #require(event).state
+      #expect(state.rightStick.x.rawValue.signum() == Self.direction(of: bytes[5]))
+      #expect(state.leftStick.y.rawValue.signum() == Self.direction(of: bytes[4]))
+      #expect((state.rightTrigger == UnipolarValue(normalized: 0)) == (bytes[7] == 0))
+      #expect((state.leftTrigger == UnipolarValue(normalized: 0)) == (bytes[8] == 0))
+    }
+    #expect(seen == Set(pressed.values))
   }
 }
