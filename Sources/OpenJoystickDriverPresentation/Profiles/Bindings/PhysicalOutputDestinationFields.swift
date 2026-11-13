@@ -90,7 +90,8 @@
           }
         }.padding(.leading, 8)
       } else if let field = valueField {
-        TextField(field.title, text: field.text).padding(.leading, 8)
+        TextField(field.title, text: field.text).ojdAccessibilityLabel(field.title)
+          .padding(.leading, 8)
       } else if case .speak(let text, let voice) = destination {
         VStack(alignment: .leading, spacing: OJDSpacing.small) {
           TextField(
@@ -104,7 +105,7 @@
                 )
               }
             )
-          )
+          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.text"))
           TextField(
             OJDLocalized.string("ui.profiles.speak.voice"),
             text: Binding(
@@ -112,7 +113,7 @@
               set: { destination = .speak(text: text, voice: $0.isEmpty ? nil : $0) }
             ),
             prompt: Text(OJDLocalized.string("ui.profiles.speak.voicePlaceholder"))
-          )
+          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.voice"))
         }.padding(.leading, 8)
       }
     }

@@ -33,6 +33,7 @@
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
+          .ojdAccessibilityLabel(label(key))
       }
     }
 

@@ -57,28 +57,22 @@
       presentationMode.wrappedValue.dismiss()
     }
 
+    /// A text field titled and labeled with the name of `field`.
+    private func field(_ field: SoakTestField, _ text: Binding<String>) -> some View {
+      let title = OJDLocalized.string(field.labelKey)
+      return TextField(title, text: text).ojdAccessibilityLabel(title)
+    }
+
     /// The entry fields, the running indicator or the result, as the state of the test says.
     @ViewBuilder
     private var content: some View {
       switch model.state {
       case .idle:
         Form {
-          TextField(
-            OJDLocalized.string(SoakTestField.seconds.labelKey),
-            text: $model.form.seconds
-          )
-          TextField(
-            OJDLocalized.string(SoakTestField.interval.labelKey),
-            text: $model.form.interval
-          )
-          TextField(
-            OJDLocalized.string(SoakTestField.residentLimit.labelKey),
-            text: $model.form.residentLimit
-          )
-          TextField(
-            OJDLocalized.string(SoakTestField.footprintLimit.labelKey),
-            text: $model.form.footprintLimit
-          )
+          field(.seconds, $model.form.seconds)
+          field(.interval, $model.form.interval)
+          field(.residentLimit, $model.form.residentLimit)
+          field(.footprintLimit, $model.form.footprintLimit)
           Text(OJDLocalized.string("ui.developer.soakLimitHint")).font(.caption)
             .foregroundColor(Color(NSColor.secondaryLabelColor))
           if let problem = model.problem {

@@ -37,7 +37,7 @@
         Text(OJDLocalized.string("ui.console.explain.title")).font(.headline)
         TextField(OJDLocalized.string("ui.console.explain.prompt"), text: $model.typedCode) {
           model.explain()
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.console.explain.prompt"))
         answer.frame(maxWidth: .infinity, minHeight: 64, alignment: .topLeading)
         HStack {
           Spacer()

@@ -96,6 +96,19 @@ struct AccessibilityAuditTests {
   }
 
   @Test
+  func aTextFieldNeedsALabelBesideItsTitle() {
+    let source = """
+      struct V: View {
+        var body: some View {
+          TextField("Name", text: $text)
+          TextField("Name", text: $text).ojdAccessibilityLabel("Name")
+        }
+      }
+      """
+    #expect(AccessibilityAudit.audit(source: source, path: "V.swift").map(\.line) == [3])
+  }
+
+  @Test
   func aSymbolNamesItselfUnlessItsFallbackIsALiteral() {
     let source = """
       struct V: View {

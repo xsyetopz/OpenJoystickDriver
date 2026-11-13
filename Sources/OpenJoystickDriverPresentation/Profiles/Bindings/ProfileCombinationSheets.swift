@@ -218,6 +218,7 @@
     var body: some View {
       ProfileSheetScaffold(title: OJDLocalized.string("ui.profiles.addLayer")) {
         TextField(OJDLocalized.string("ui.profiles.layerName"), text: $name)
+          .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.layerName"))
         Picker(
           OJDLocalized.string("ui.profiles.activator"),
           selection: $activator

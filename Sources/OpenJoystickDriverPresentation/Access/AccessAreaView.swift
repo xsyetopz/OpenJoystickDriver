@@ -266,9 +266,10 @@
           OJDLocalized.string("ui.access.web.port"),
           text: $model.portText,
           prompt: Text(model.portPlaceholder)
-        )
+        ).ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
       } else {
         TextField(model.portPlaceholder, text: $model.portText)
+          .ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
       }
     }
 

@@ -24,7 +24,7 @@
             Text(label("yaw")).tag(RemappingGyroTrackballAxes.yaw)
             Text(label("both")).tag(RemappingGyroTrackballAxes.both)
           }
-          TextField(label("decay"), text: $draft.decay)
+          TextField(label("decay"), text: $draft.decay).ojdAccessibilityLabel(label("decay"))
           Text(label("decayHint"))
             .font(.body)
           Toggle(

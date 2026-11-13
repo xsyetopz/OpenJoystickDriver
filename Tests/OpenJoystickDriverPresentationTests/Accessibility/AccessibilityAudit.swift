@@ -12,7 +12,8 @@ struct UnlabeledControl: Equatable, CustomStringConvertible {
 /// Text scan of Swift sources for controls without an accessible name.
 ///
 /// A SwiftUI control is named when its first argument is a title, when its label closure holds
-/// a `Text` or `Label`, or when an accessibility label modifier is present. An image is named
+/// a `Text` or `Label`, or when an accessibility label modifier is present; a `TextField` only by
+/// the modifier. An image is named
 /// when it carries an accessibility label or is hidden from accessibility, or when it sits
 /// inside another control. An AppKit control is named when its function sets an accessibility
 /// label, a toolbar item label, or an accessibility description.
@@ -30,6 +31,10 @@ enum AccessibilityAudit {
     "Button", "Toggle", "Slider", "Stepper", "Link", "NavigationLink", "ColorPicker",
     "DatePicker",
   ]
+
+  /// Controls whose title macOS shows as the placeholder, not as the accessible name, so they need
+  /// an accessibility label beside it.
+  static let placeholderTitledControls: Set<String> = ["TextField"]
 
   static let imageKinds: Set<String> = ["Image", "OJDSystemSymbol"]
 
@@ -129,6 +134,9 @@ enum AccessibilityAudit {
       if item.arguments?.hasPrefix("decorative") == true { return nil }
       let enclosed = all.contains { isInsideLabel(item, of: $0) }
       return enclosed ? nil : "\(name) without an accessibility label or hidden trait"
+    }
+    if placeholderTitledControls.contains(name) {
+      return "\(name) without an accessibility label"
     }
     if let first = item.arguments, titleArgument(first) { return nil }
     if let label = item.closures.first(where: { $0.label == "label" }) {

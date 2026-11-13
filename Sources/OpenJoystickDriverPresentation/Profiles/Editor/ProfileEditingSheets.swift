@@ -72,11 +72,11 @@
           TextField(
             OJDLocalized.string("ui.profiles.vendorID"),
             text: $vendorID
-          )
+          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.vendorID"))
           TextField(
             OJDLocalized.string("ui.profiles.productID"),
             text: $productID
-          )
+          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.productID"))
         }
         Text(
           OJDLocalized.string(

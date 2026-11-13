@@ -24,12 +24,12 @@
             TextField(
               label("pointerScale"),
               text: $draft.pointerPointsPerDegree
-            )
+            ).ojdAccessibilityLabel(label("pointerScale"))
           } else {
             TextField(
               label("stickScale"),
               text: $draft.fullStickDegreesPerSecond
-            )
+            ).ojdAccessibilityLabel(label("stickScale"))
           }
           Picker(label("activation"), selection: $draft.activationMode) {
             Text(label("always")).tag(RemappingGyroActivationMode.always)
