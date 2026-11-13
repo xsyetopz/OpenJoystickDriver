@@ -1,6 +1,6 @@
 # Terminology survey
 
-Input to task 14.1 of `openspec/changes/0-6-0-alpha-3`: which terms the app, the command line, and the wiki use for each concept of the table in design D22. The maintainer adopted the terms D22 proposes, and `wiki/Glossary.md` holds them.
+Which terms the app, the command line, and the wiki use for each concept below. The maintainer adopted the terms in `wiki/Glossary.md`.
 
 ## How the counts are made
 
@@ -23,8 +23,9 @@ Reading the numbers:
 
 - Only one module holds an `en-US.lproj`: `OpenJoystickDriverKit`. Every GUI and CLI string lives there (`LOCALIZATION.md`).
 - A count is the number of lines whose text matches the regex, case-insensitive. A line with two matches counts once. Keys are not searched, only values, help prose, and wiki text.
-- Terms overlap. "profile" includes "remapping profile"; "driver (any)" includes "Xbox USB driver"; "persona" appears under concepts 2 and 3 because D22 lists it for both. A count is not a share of a concept.
-- Help text for most commands is built from `cli.*` and `platform.macos.cli.*` values, so a help line often repeats a string.- `Strings` counts the `.stringsdict` plural values too, so a figure can exceed the one in D22, which counted `.strings` values only (for example "Xbox USB driver": 12 here, 7 in D22).
+- Terms overlap. "profile" includes "remapping profile"; "driver (any)" includes "Xbox USB driver"; "persona" appears under concepts 2 and 3 because it names both. A count is not a share of a concept.
+- Help text for most commands is built from `cli.*` and `platform.macos.cli.*` values, so a help line often repeats a string.
+- `Strings` counts the `.stringsdict` plural values too, so a figure can exceed a count of `.strings` values only (for example "Xbox USB driver": 12 here, 7 in `.strings` alone).
 - The wiki figures include command examples, so `SDLCompatible` and `GameControllerCompatible` count the identifiers, not a phrase.
 - Example locations are the first two matching lines of each source: `Localizable.strings:N` or `Localizable.stringsdict:N` in `Sources/OpenJoystickDriverKit/Resources/en-US.lproj/`, the help page's command, and `Page.md:N` in `wiki/`. `-` marks no match.
 - The `Regex` column is the exact Perl pattern; `\b` is a word boundary.
@@ -90,7 +91,7 @@ A term counts as in use when a source has a nonzero count that names the concept
 
 - 1 Profile: one term ("profile"; "remapping profile" is the same word with a modifier). "mapping" (14 strings) and "preset" (0) were searched as rivals; whether "mapping" names the same concept is the maintainer's reading.
 - 2 Virtual gamepad: five terms in strings: "virtual gamepad" (46), "virtual HID" (7), "virtual device" (6), "persona" (12), "virtual controller" (2). The wiki adds "virtual controller" (46 lines, 17 pages); the help uses "virtual gamepad" (22) and one "virtual device".
-- 3 Virtual gamepad kind: "persona" (12 strings, 15 wiki lines), the identifiers `SDLCompatible` and `GameControllerCompatible` (wiki only, 27 and 12 lines), "SDL-compatible" (help 3, wiki 6), "Generic". The proposed option labels ("For Steam and SDL games", "For Apple Game Controller games") occur nowhere yet.
+- 3 Virtual gamepad kind: "persona" (12 strings, 15 wiki lines), the identifiers `SDLCompatible` and `GameControllerCompatible` (wiki only, 27 and 12 lines), "SDL-compatible" (help 3, wiki 6), "Generic". The proposed option labels ("For Steam and SDL games", "For Apple Game Controller games") occur nowhere.
 - 4 Who reads the controller: "Served by" (5 strings, 2 wiki lines), "Left to macOS" (1), "macOS (native)" (2), "OpenJoystickDriver (virtual)" (1). "Handled by" occurs nowhere. The help does not contain "Served by".
 - 5 DriverKit extension: "Xbox USB driver" (12 strings, 22 wiki lines), "Driver Extension" (7, 28), "system extension" (4, 11; help 1), "transport extension" (4 strings, 6 help lines, 12 wiki lines; also a command name), "DriverKit" (1 string, 2 help, 8 wiki), "dext" (1, 1).
 - 6 How a controller reaches the Mac: "connection" (18 strings, 7 help, 44 wiki), "transport" (12, 6, 31), "Wireless Link" (2, 0, 2).

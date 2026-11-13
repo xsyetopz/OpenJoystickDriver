@@ -1,6 +1,6 @@
 # Virtual profile selection: what GameController and SDL3 read
 
-Tasks 9.13 and 9.14 of `openspec/changes/0-6-0-alpha-3/tasks.md`. Question for 9.13: is there one virtual gamepad profile that both GameController.framework and SDL read? Question for 9.14: what would it take to choose the profile by the app in front? This document records measurements for a later change. It changes no profile selection code.
+Two questions: is there one virtual gamepad profile that both GameController.framework and SDL read, and what would it take to choose the profile by the app in front? This document records measurements and changes no profile selection code.
 
 Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with the installed app `0.6.0-alpha.2+build.1.27.48.sha.448cfab83661.dirty`, SDL 3.4.20, and an 8BitDo Ultimate 2C Wireless (`2DC8:301B`) over Bluetooth LE.
 

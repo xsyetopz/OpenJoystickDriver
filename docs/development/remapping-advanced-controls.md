@@ -8,7 +8,7 @@ Native `stickMappings` entries select the left or right stick. Aim integrates ra
 
 The CLI has no stick options. Edit `stickMappings` with `ojd profile edit <profile>`, or export the profile, change the file, and import it. The profile document validation applies to the saved file. Radial inner and outer deadzones must sum to less than one; response exponent shapes normalized radial strength. Flick threshold and hysteresis control engagement and rearming; hysteresis must be smaller than the threshold.
 
-A mapped stick suppresses its original virtual axes. Explicit axis bindings still run, allowing additional destinations; this does not hide the physical controller from other processes. Angular stick modes require system-input access. The profile editor’s Stick modes sheet edits both sticks, preserves hidden mode settings, and validates both drafts before applying them. Reset disables the selected stick mapping; Cancel discards sheet edits. Rendered layout, keyboard navigation, VoiceOver, translated labels/help, and physical feel/direction validation remain pending.
+A mapped stick suppresses its original virtual axes. Explicit axis bindings still run, allowing additional destinations; this does not hide the physical controller from other processes. Angular stick modes require system-input access. The profile editor's Stick modes sheet edits both sticks, preserves hidden mode settings, and validates both drafts before applying them. Reset disables the selected stick mapping; Cancel discards sheet edits. Rendered layout, keyboard navigation, VoiceOver, translated labels/help, and physical feel/direction validation remain pending.
 
 ### Area, Ring, Scroll, and Steering Stick Modes
 
