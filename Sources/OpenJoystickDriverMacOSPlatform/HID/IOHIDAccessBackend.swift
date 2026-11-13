@@ -101,6 +101,18 @@ private final class IOHIDAccessBackend: HIDAccessBackend, Sendable {
     return await MainActor.run { stream.reacquireInputClaim(locationID: locationID) }
   }
 
+  /// Closes every device handle at `address`; unavailable without a location ID.
+  func closeDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult {
+    guard let locationID = address.locationID else { return .unavailable }
+    return await MainActor.run { stream.closeDeviceHandles(locationID: locationID) }
+  }
+
+  /// Opens again the device handles at `address`; unavailable without a location ID.
+  func reopenDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult {
+    guard let locationID = address.locationID else { return .unavailable }
+    return await MainActor.run { stream.reopenDeviceHandles(locationID: locationID) }
+  }
+
   /// Retries the input claim of the device at `address`.
   func retryInputClaim(address: ControllerConnectionAddress) async {
     guard let locationID = address.locationID else { return }

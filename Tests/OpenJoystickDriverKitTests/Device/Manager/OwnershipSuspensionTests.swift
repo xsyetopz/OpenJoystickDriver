@@ -21,7 +21,7 @@ struct OwnershipSuspensionTests {
   /// Like `HIDDeviceStream`, the backend's disconnect and its new connection reach the manager
   /// after `reloadControllerRecords` returns.
   @Test
-  func aRecordReloadThatAdmitsTheControllerAgainKeepsItsSuspension() async throws {
+  func recordReloadThatAdmitsControllerAgainKeepsItsSuspension() async throws {
     let (manager, backend, old) = try await Self.suspendedController()
     let new = Self.gameSir()
     await backend.replace(old, with: new)
@@ -40,7 +40,7 @@ struct OwnershipSuspensionTests {
   /// A reload that leaves the connection in place marks nothing, so a later unplug of the same
   /// connection ends the suspension.
   @Test
-  func aPhysicalDisconnectAfterAReloadThatKeptTheConnectionEndsTheSuspension() async throws {
+  func physicalDisconnectAfterReloadThatKeptConnectionEndsSuspension() async throws {
     let (manager, _, old) = try await Self.suspendedController()
 
     await manager.reloadControllerRecords(changing: [Self.model])
@@ -57,7 +57,7 @@ struct OwnershipSuspensionTests {
   /// A controller unplugged while the reload cycles it is gone from the backend, so its suspension
   /// ends and its next plug-in starts active.
   @Test
-  func aControllerUnpluggedDuringTheReloadLosesItsSuspension() async throws {
+  func controllerUnpluggedDuringReloadLosesItsSuspension() async throws {
     let (manager, backend, old) = try await Self.suspendedController()
     await backend.remove(old)
 

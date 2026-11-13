@@ -17,15 +17,14 @@ extension USBPipelineRecoveryTests {
     #expect(suspended.state == .suspended)
 
     // Two cycles: the intent must survive a sleep during which the controller stayed suspended.
-    for cycle in 1...2 {
+    for _ in 1...2 {
       await manager.systemWillSleep()
       let presenceBeforeWake = dispatcher.presenceCount
-      let ownershipBeforeWake = dispatcher.ownershipReports.count
       await manager.systemDidWake()
-      await waitUntil("dispatcher.ownershipReports.count > ownershipBeforeWake") {
-        dispatcher.ownershipReports.count > ownershipBeforeWake
+      await waitUntil("manager.pipelines[identifier] != nil") {
+        await manager.pipelines[identifier] != nil
       }
-      #expect(await sessions[cycle].writeCount > 0)
+      #expect(await provider.openCount == 1)
       let pipeline = try #require(await manager.pipelines[identifier])
       #expect(await pipeline.controllerSessionState() == .suspended)
       #expect(dispatcher.presenceCount == presenceBeforeWake)
@@ -35,7 +34,7 @@ extension USBPipelineRecoveryTests {
     #expect(resumed.state == .active)
     await manager.systemWillSleep()
     await manager.systemDidWake()
-    await waitUntil("sessions[3].writeCount > 0") { await sessions[3].writeCount > 0 }
+    await waitUntil("sessions[2].writeCount > 0") { await sessions[2].writeCount > 0 }
     let pipeline = try #require(await manager.pipelines[identifier])
     #expect(await pipeline.controllerSessionState() == .active)
     await manager.stop()
@@ -216,11 +215,15 @@ extension USBPipelineRecoveryTests {
     let changedSession = sessions[try #require(opened.firstIndex(of: device))]
     let otherSession = sessions[try #require(opened.firstIndex(of: other))]
 
+    let before = try #require(await manager.pipelines[identifier])
     await manager.reloadControllerRecords(changing: [identifier.model])
-    await waitUntil("provider.openCount == 3") { await provider.openCount == 3 }
+    await waitUntil("pipeline readmitted") {
+      guard let current = await manager.pipelines[identifier] else { return false }
+      return current !== before
+    }
     #expect(await changedSession.closeCount == 1)
     #expect(await otherSession.closeCount == 0)
-    #expect(await provider.openedDevices.last == device)
+    #expect(await provider.openCount == 2)
     let pipeline = try #require(await manager.pipelines[identifier])
     #expect(await pipeline.controllerSessionState() == .suspended)
     await manager.stop()

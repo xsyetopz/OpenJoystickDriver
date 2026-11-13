@@ -1,7 +1,8 @@
 import Foundation
 
 extension DeviceManager {
-  /// Suspends the session of `controller` and neutralizes its physical outputs.
+  /// Suspends the session of `controller`, neutralizes its physical outputs and closes every HID
+  /// and USB handle OJD holds on it, so another process can open the controller.
   ///
   /// The suspension lasts until ``resumeController(_:)``, a physical disconnect or ``stop()``;
   /// sleep keeps it.
@@ -23,6 +24,9 @@ extension DeviceManager {
     guard await pipeline.suspendControllerSession() else {
       return ControllerSuspendResult(state: .active, failure: .notFound)
     }
+    if let address = identifier.hidRoutingAddress {
+      _ = await hidManager.closeDeviceHandles(address: address)
+    }
     suspendedControllerIdentities.insert(identifier)
     notifyServiceStatusChanged()
     return ControllerSuspendResult(state: .suspended)
@@ -30,8 +34,9 @@ extension DeviceManager {
 
   /// Resumes the suspended session of `controller`.
   ///
-  /// The pipeline sends its startup output again first. Each step checks that the pipeline and its
-  /// HID connection are still current, because a detach can replace them while resume awaits. A
+  /// The HID handles open again, and the pipeline sends its startup output again, first. Each step
+  /// checks that the pipeline and its HID connection are still current, because a detach can
+  /// replace them while resume awaits. A
   /// stale or failed resume leaves the session suspended with the failure
   /// ``ControllerSessionMutationFailure/notFound``.
   ///
@@ -63,9 +68,31 @@ extension DeviceManager {
     guard pipelines[identifier] === pipeline,
       hidConnection.map({ isCurrentHIDStartupConnection(pipeline, connection: $0) }) ?? true
     else { return ControllerResumeResult(state: .suspended, failure: .notFound) }
-    guard await pipeline.restartUSBStartupOutputForResume() else {
-      return ControllerResumeResult(state: .suspended, failure: .notFound)
+    if let hidConnection {
+      let address = hidConnection.routingAddress
+      if case .failed = await hidManager.reopenDeviceHandles(address: address) {
+        return ControllerResumeResult(state: .suspended, failure: .notFound)
+      }
+      if await pipeline.sessionPlan().parsesHIDElementValues {
+        await hidManager.routeElementValues(connection: hidConnection)
+      }
     }
+    let result = await finishResume(identifier, pipeline: pipeline, hidConnection: hidConnection)
+    // A failed resume leaves the session suspended, so it holds no handle either. A detach that
+    // replaced the pipeline owns the handles at this address now.
+    if result.failure != nil, let hidConnection, pipelines[identifier] === pipeline {
+      _ = await hidManager.closeDeviceHandles(address: hidConnection.routingAddress)
+    }
+    return result
+  }
+
+  /// Restarts the output of the suspended `pipeline` and activates its session.
+  private func finishResume(
+    _ identifier: LogicalControllerID,
+    pipeline: DevicePipeline,
+    hidConnection: HIDDeviceConnection?
+  ) async -> ControllerResumeResult {
+    await pipeline.resetDriverForResume()
     guard pipelines[identifier] === pipeline,
       hidConnection.map({ isCurrentHIDStartupConnection(pipeline, connection: $0) }) ?? true
     else { return ControllerResumeResult(state: .suspended, failure: .notFound) }

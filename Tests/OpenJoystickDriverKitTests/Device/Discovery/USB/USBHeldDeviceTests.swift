@@ -132,7 +132,7 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func theDetectionLoopReadsAHeldDeviceOnceAcrossPolls() async {
+  func detectionLoopReadsHeldDeviceOnceAcrossPolls() async {
     let provider = makeProvider(owner: "pid 11070, steam_osx")
     let manager = makeManager(provider)
     let detection = Task { await manager.runUSBDetection() }
@@ -189,7 +189,7 @@ struct USBHeldDeviceTests {
   /// The sequence seen with Steam: the read is refused while Steam holds the device, Steam quits,
   /// and the next poll admits the controller with no re-plug.
   @Test
-  func theDetectionLoopAdmitsAHeldDeviceOnceItsOwnerQuits() async {
+  func detectionLoopAdmitsHeldDeviceOnceItsOwnerQuits() async {
     let provider = makeProvider(owner: "pid 11070, steam_osx")
     let manager = makeManager(provider)
     let detection = Task { await manager.runUSBDetection() }
@@ -211,7 +211,7 @@ struct USBHeldDeviceTests {
 
   /// Steam holds only interface 0: the device names no owner, so the interface owner decides.
   @Test
-  func anInterfaceOwnerHoldsTheServiceUntilItReleasesWithoutReenumeration() async {
+  func interfaceOwnerHoldsServiceUntilItReleasesWithoutReenumeration() async {
     let provider = makeProvider(owner: nil, interfaceOwner: "pid 11070, steam_osx")
     let manager = makeManager(provider)
     var enumeration = USBEnumerationTracker()
@@ -241,7 +241,7 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func anUnreadableOwnerEndsTheWatchWithTheUnreadableReason() async {
+  func unreadableOwnerEndsWatchWithUnreadableReason() async {
     let provider = makeProvider(owner: "pid 11070, steam_osx")
     let manager = makeManager(provider)
     var enumeration = USBEnumerationTracker()
@@ -269,7 +269,7 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func deniedReadWithoutAnOwnerIsUnreadableUntilReenumeration() async {
+  func deniedReadWithoutOwnerIsUnreadableUntilReenumeration() async {
     let provider = makeProvider(owner: nil)
     let manager = makeManager(provider)
     var enumeration = USBEnumerationTracker()
@@ -306,7 +306,7 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func aSuccessfulReadResetsTheFailedReadCount() async {
+  func successfulReadResetsFailedReadCount() async {
     let provider = makeProvider(owner: nil, readError: .inputOutput)
     let manager = makeManager(provider)
     var enumeration = USBEnumerationTracker()
@@ -323,7 +323,7 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func aServiceThatLeavesBeforeAcknowledgementDropsItsFailedReadCount() async {
+  func serviceThatLeavesBeforeAcknowledgementDropsItsFailedReadCount() async {
     let provider = makeProvider(owner: nil, readError: .inputOutput)
     let manager = makeManager(provider)
     var enumeration = USBEnumerationTracker()
@@ -336,7 +336,7 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func stopDuringTheOwnerReadLeavesNoHold() async {
+  func stopDuringOwnerReadLeavesNoHold() async {
     let provider = makeProvider(owner: "pid 11070, steam_osx")
     await provider.blockOwnerRead()
     let manager = makeManager(provider)

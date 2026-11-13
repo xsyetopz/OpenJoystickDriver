@@ -362,6 +362,12 @@ extension HIDDeviceStream {
     let (connection, sharedOpen) = unsafe seizeLock.withLock {
       let connection = connectionsByDeviceID.removeValue(forKey: deviceID)
       let sharedOpen = unsafe sharedOpenByDeviceID.removeValue(forKey: deviceID)
+      for locationID in Array(closedByLocation.keys) {
+        closedByLocation[locationID]?.removeAll { CFEqual($0.device, device) }
+        if closedByLocation[locationID]?.isEmpty == true {
+          closedByLocation.removeValue(forKey: locationID)
+        }
+      }
       for locationID in Array(releasedByLocation.keys) {
         releasedByLocation[locationID]?.removeAll { CFEqual($0, device) }
         if releasedByLocation[locationID]?.isEmpty == true {

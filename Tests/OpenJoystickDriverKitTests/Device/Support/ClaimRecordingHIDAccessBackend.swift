@@ -7,6 +7,26 @@ actor ClaimRecordingHIDAccessBackend: HIDAccessBackend {
   private var reacquired: [UInt32] = []
   private var retried: [UInt32] = []
   private var elementValueRoutes: [UInt32] = []
+  private var openHandles: Set<UInt32> = []
+
+  /// Whether a test marked the device handle at `locationID` open and nothing closed it since.
+  func hasOpenHandle(at locationID: UInt32) -> Bool { openHandles.contains(locationID) }
+
+  /// Marks the device handle at `locationID` open, as the platform backend leaves it on admission.
+  func openHandle(at locationID: UInt32) { openHandles.insert(locationID) }
+
+  func closeDeviceHandles(address: ControllerConnectionAddress) -> PhysicalHIDClaimResult {
+    guard let locationID = address.locationID, openHandles.remove(locationID) != nil else {
+      return .unavailable
+    }
+    return .released
+  }
+
+  func reopenDeviceHandles(address: ControllerConnectionAddress) -> PhysicalHIDClaimResult {
+    guard let locationID = address.locationID else { return .unavailable }
+    openHandles.insert(locationID)
+    return .reacquired
+  }
 
   func releasedLocations() -> [UInt32] { released }
   func elementValueLocations() -> [UInt32] { elementValueRoutes }
