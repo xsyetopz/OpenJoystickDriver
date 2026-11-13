@@ -71,7 +71,7 @@ extension RemappingEngineState {
     return actions
   }
 
-  /// Whether a source belongs to a chord that is selected now.
+  /// Whether a source belongs to a selected chord.
   func sourceCompletesChord(_ source: RemappingSource, in device: RemappingDeviceState) -> Bool {
     device.selectedChords().contains { $0.sources.contains(source) }
   }

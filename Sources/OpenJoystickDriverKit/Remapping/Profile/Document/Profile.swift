@@ -28,8 +28,7 @@ public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
 
   /// Decodes a device scope from a profile document.
   /// - Throws: `DecodingError` for an unknown key, a missing key, a bad value, or a `unit` that is
-  ///   not a
-  ///   port key.
+  ///   not a port key.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -570,8 +569,7 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
   /// Omitted optional sections take their defaults. The document header must name the profile kind
   /// and a supported API version.
   /// - Throws: `DecodingError` for an unknown key, a missing key or a bad value, or the header
-  ///   problem
-  ///   of a document of another kind or version.
+  ///   problem of a document of another kind or version.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -148,8 +148,7 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
   /// Each numeric field must be finite and inside its range, and ``flickHysteresis`` must be below
   /// ``flickThreshold``.
   /// - Throws: ``RemappingStickMappingError/invalidField(_:)`` with the snake_case field name, or
-  ///   the
-  ///   ``RemappingStickTuningError`` of ``tuning``.
+  ///   the ``RemappingStickTuningError`` of ``tuning``.
   public func validate() throws {
     try tuning.validate()
     let fields: [(String, Double, ClosedRange<Double>)] = [

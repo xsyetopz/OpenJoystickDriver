@@ -37,8 +37,7 @@ public enum RemappingProfileFileStore {
 
   /// Encodes a validated profile as an XML property list.
   /// - Throws: the error of ``RemappingProfile/validate()``, or ``RemappingValidationError`` when
-  ///   the
-  ///   encoding fails or is too large.
+  ///   the encoding fails or is too large.
   public static func encodedPlist(_ profile: RemappingProfile) throws -> String {
     let data = try encodedData(profile)
     guard let text = String(data: data, encoding: .utf8) else {
