@@ -65,7 +65,7 @@ Rear buttons:
 - `2c-receiver-301c/rear-l4-assigned-60s.txt`: with L4 assigned, no report sets byte 1 bit 2 (`04`) or bit 5 (`20`); the presses report byte 2 = `04` and byte 1 = `01`.
 - `2c-receiver-301c/ordered-controls-150s.txt`: the presses after the sticks (28 s to 39 s) report byte 2 = `04`, byte 1 = `01` and byte 2 = `08` only; no report sets byte 1 bit 2 or bit 5.
 
-Rumble: `2c-receiver-301c/rumble-writes.txt` lists eight `IOHIDDeviceSetReport` writes (report 1 with `C8`, `64` and `FF` payloads, each followed by zeros, and report 5 `64 64 00 00` then zeros). The same file lists six more writes: report 1 in the SDL, XInput, and all-`FF` layouts, and the 63-byte vendor report `0x81`, each with and without the report ID first. Every write returns `result=0`, and the maintainer felt no rumble. The receiver's one interface has an interrupt OUT endpoint, `0x05`, 64 bytes. macOS's `AppleUserUSBHostHIDDevice` owns that interface, so no raw transfer on the endpoint ran. SDL's `SDL_hidapi_8bitdo.c` gives the Ultimate 2C no rumble support. The `301C` record declares no rumble.
+Rumble: `2c-receiver-301c/rumble-writes.txt` lists eight `IOHIDDeviceSetReport` writes (report 1 with `C8`, `64` and `FF` payloads, each followed by zeros, and report 5 `64 64 00 00` then zeros). The same file lists six more writes: report 1 in the SDL, XInput, and all-`FF` layouts, and the 63-byte vendor report `0x81`, each with and without the report ID first. Every write returns `result=0`, and the maintainer felt no rumble. The receiver's one interface has an interrupt OUT endpoint, `0x05`, 64 bytes. With macOS's HID driver detached through `deviceCapture` (root), six patterns sent straight to that endpoint, including report 1, report 5 in SDL's rumble layout, and report `0x81`, each went out in full, and the maintainer felt no rumble. SDL's `SDL_hidapi_8bitdo.c` gives the Ultimate 2C no rumble support. The `301C` record declares no rumble.
 
 ### Bluetooth LE as `2DC8:301B`
 
@@ -97,7 +97,6 @@ Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of ou
 | --- | --- |
 | Device that produces `2DC8:301D` | A capture of that identity. Receiver, cable, and Bluetooth LE in XInput and DInput produce `310A`, `301C`, and `301B` only (`2c-cable/mode-attempts.txt`). |
 | Device that produces `2DC8:3109` | A capture of that identity, from an 8BitDo adapter other than the pad's receiver. |
-| `2DC8:301C` rumble | A raw transfer on interrupt OUT endpoint `0x05`, with macOS's HID driver detached, that the maintainer feels. |
 
 ## Why Bluetooth Needs a Record
 

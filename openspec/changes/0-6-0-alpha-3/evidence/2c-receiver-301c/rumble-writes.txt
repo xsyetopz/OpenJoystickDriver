@@ -30,5 +30,27 @@ USB configuration descriptor (IOUSBHostDevice.configurationDescriptor, /tmp tool
 07 05 84 03 40 00 04            endpoint 0x84 IN, interrupt, 64 bytes
 07 05 05 03 40 00 01            endpoint 0x05 OUT, interrupt, 64 bytes, interval 1
 
-Not written: a raw transfer on endpoint 0x05. AppleUserUSBHostHIDDevice owns interface 0 while macOS runs. A raw pipe write needs that driver detached from the interface.
+2026-11-13, 15:39:51 to 15:40:40 UTC. Raw transfers on interrupt OUT endpoint 0x05, run as root (osascript `with administrator privileges`) by `usbout 2DC8 301C` (`usbout.swift` beside this file; `usbdesc.swift` printed the descriptor above).
+The tool opens the device with IOUSBHostObjectInitOptions.deviceCapture, which detaches macOS's HID driver. It sets configuration 1 without interface matching, opens interface 0, and copies pipe 0x05. Each pattern is sent with IOUSBHostPipe sendIORequest, followed 4 s later by its stop transfer, then 3 s of silence; the Mac said each number aloud. Without root the capture fails with -536870207 (kIOReturnNotPrivileged).
+On release the device resets, and `ojd controller list` lists 2DC8:301C again.
+The maintainer felt no vibration at any number.
+
+#1 2026-11-13 15:39:51 +0000
+ep05 len=9 sent=9 [01 05 ff ff 00 00 00 00 00]
+ep05 len=9 sent=9 [01 00 00 00 00 00 00 00 00]
+#2 2026-11-13 15:39:59 +0000
+ep05 len=9 sent=9 [01 00 08 00 ff ff 00 00 00]
+ep05 len=9 sent=9 [01 00 00 00 00 00 00 00 00]
+#3 2026-11-13 15:40:08 +0000
+ep05 len=9 sent=9 [01 ff ff ff ff ff ff ff ff]
+ep05 len=9 sent=9 [01 00 00 00 00 00 00 00 00]
+#4 2026-11-13 15:40:16 +0000
+ep05 len=5 sent=5 [05 ff ff 00 00]
+ep05 len=5 sent=5 [05 00 00 00 00]
+#5 2026-11-13 15:40:25 +0000
+ep05 len=64 sent=64 [81 05 ff ff 00 00 00 00 00]   (81 05 ff ff + 60 zero bytes)
+ep05 len=64 sent=64 [81 00 00 00 00 00 00 00 00]
+#6 2026-11-13 15:40:33 +0000
+ep05 len=8 sent=8 [00 08 00 ff ff 00 00 00]
+ep05 len=8 sent=8 [00 08 00 00 00 00 00 00]
 SDL's SDL_hidapi_8bitdo.c says of the Ultimate 2C: "no sensor or rumble support".
