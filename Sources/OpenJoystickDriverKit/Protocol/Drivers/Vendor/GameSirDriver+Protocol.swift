@@ -2,7 +2,7 @@ public import Foundation
 
 extension GameSirDriver {
 
-  // Share is emitted but not yet declared until per-model evidence confirms it.
+  // Share is emitted but stays undeclared until per-model evidence confirms it.
   /// Keep-alives run on the USB and HID channels of the wired G7 Pro, and on the HID channel
   /// otherwise.
   public var sessionPlan: DriverSessionPlan {

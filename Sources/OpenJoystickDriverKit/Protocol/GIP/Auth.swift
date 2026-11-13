@@ -42,13 +42,11 @@ final class GIPAuthHandler {
 
     print("[GIPAuth] Received \(deviceAuthState)")
 
-    // Transition to ENROLL on first auth message
     if deviceState == .start {
       deviceState = .enroll
       print("[GIPAuth] State -> \(deviceState)")
     }
 
-    // Transition to FULL_POWER on completion/status
     if deviceAuthState == .devComplete || deviceAuthState == .devStatus {
       if deviceState == .enroll {
         deviceState = .fullPower
@@ -56,7 +54,6 @@ final class GIPAuthHandler {
       }
     }
 
-    // Return a response if one is expected for this device state.
     guard let responseState = Self.responseMap[deviceAuthState] else {
       print("[GIPAuth] No response needed for \(deviceAuthState)")
       return nil
@@ -89,7 +86,6 @@ final class GIPAuthHandler {
     let seq = sequencer.next(for: GIPCommand.authenticate, options: GIPOption.internal)
     var packet: [UInt8] = [GIPCommand.authenticate, GIPOption.internal, seq]
 
-    // Length encoding: if payload > 127 bytes, use extended 2-byte length
     if payload.count > 127 {
       let len = payload.count
       packet.append(UInt8((len >> 8) & 0x7F) | 0x80)

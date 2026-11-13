@@ -167,7 +167,7 @@ struct SteamHIDRoleTests {
     )
     let slot = Self.dongle(interface: 1).physicalDevice
     #expect(registry.hidConnectionRole(of: slot) == .interface(1))
-    #expect(registry.hidConnectionRole(of: Self.dongle(interface: 0).physicalDevice) == .notARole)
+    #expect(registry.hidConnectionRole(of: Self.dongle(interface: 0).physicalDevice) == .notRole)
     // A gamepad interface whose USB interface number was not observed fails closed.
     let unnumbered = PhysicalDevice(
       vendorID: 0x28DE,
@@ -180,7 +180,7 @@ struct SteamHIDRoleTests {
         )
       ]
     )
-    #expect(registry.hidConnectionRole(of: unnumbered) == .notARole)
+    #expect(registry.hidConnectionRole(of: unnumbered) == .notRole)
     let gameSir = PhysicalDevice(
       vendorID: 0x3537,
       productID: 0x100B,
@@ -201,7 +201,7 @@ struct SteamHIDRoleTests {
           productID: productID,
           interfaces: [steamHIDInterface(number: number)]
         )
-        let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notARole
+        let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notRole
         #expect(registry.hidConnectionRole(of: dongle) == expected)
       }
     }

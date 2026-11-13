@@ -2,8 +2,7 @@ import Foundation
 
 /// Physical protocol families with an implemented OJD parser.
 ///
-/// The taxonomy in the protocol specification names more families; a family joins
-/// this enum only when a driver for it exists.
+/// A family joins this enum only when a driver for it exists.
 public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIterable, Codable {
   /// The family's name, UpperCamelCase.
   public let rawValue: String
