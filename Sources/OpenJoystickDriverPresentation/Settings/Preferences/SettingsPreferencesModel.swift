@@ -355,7 +355,7 @@
     }
 
     /// Shows beside the pause shortcut row that the system refused the shortcut.
-    func pauseShortcutWasRefused() {
+    func pauseShortcutRefused() {
       failControl(.pauseShortcut, OJDLocalized.string("ui.settings.general.pauseShortcutTaken"))
     }
 
@@ -370,7 +370,7 @@
     ///
     /// Returns whether the write succeeded; a failure shows in ``errorMessage`` and leaves both
     /// switches as they were.
-    func menuBarItemWasRemoved() -> Bool {
+    func menuBarItemRemoved() -> Bool {
       guard persist([.showInMenuBar: false, .showInDock: true]) else { return false }
       showInMenuBar = false
       showInDock = true

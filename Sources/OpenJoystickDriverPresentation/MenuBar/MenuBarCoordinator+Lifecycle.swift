@@ -72,7 +72,7 @@
       pauseHotKey = hotKey
       pauseShortcutObservation = preferences.$pauseShortcut.removeDuplicates().sink {
         [preferences] shortcut in
-        do { try hotKey.register(shortcut) } catch { preferences.pauseShortcutWasRefused() }
+        do { try hotKey.register(shortcut) } catch { preferences.pauseShortcutRefused() }
       }
       if SettingsFileStartup.opensMainWindowAtLaunch(settingsError: preferences.settingsFileError) {
         mainWindow?.showMainWindow(area: nil)
@@ -262,7 +262,7 @@
       item.isVisible = true
       statusItemVisibilityObservation = item.observe(\.isVisible) { [weak self] item, _ in
         guard !item.isVisible else { return }
-        Task { @MainActor in self?.statusItemWasRemoved() }
+        Task { @MainActor in self?.statusItemRemoved() }
       }
       if let button = item.button {
         button.toolTip = OJDLocalized.string("term.app.name")
@@ -284,9 +284,9 @@
 
     // The Show in menu bar change then removes the item and opens the main window; when the
     // setting cannot be stored the item comes back.
-    private func statusItemWasRemoved() {
+    private func statusItemRemoved() {
       guard let item = statusItem, !item.isVisible else { return }
-      if !preferences.menuBarItemWasRemoved() { item.isVisible = true }
+      if !preferences.menuBarItemRemoved() { item.isVisible = true }
     }
 
     /// Removes the menu-bar item and its menu.

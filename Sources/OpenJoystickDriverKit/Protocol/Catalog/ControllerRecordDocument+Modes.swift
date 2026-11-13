@@ -429,7 +429,7 @@ extension ControllerRecordDocument {
         )
       }
     }
-    guard capabilitiesAreDeclared(byAnyOf: modes.map(\.protocolInfo.protocolID)) else {
+    guard capabilitiesDeclared(byAnyOf: modes.map(\.protocolInfo.protocolID)) else {
       throw fail(
         "error.E5007.modes.capabilities",
         "capabilities must be deltas the driver of some mode declares"

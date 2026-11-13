@@ -50,7 +50,7 @@ final class BridgeProcessTests {
 
   /// A bad argument prints the usage to standard error and exits with status 1.
   @Test
-  func aBadArgumentPrintsUsageToStandardErrorAndExitsNonZero() throws {
+  func badArgumentPrintsUsageToStandardErrorAndExitsNonZero() throws {
     let result = try run(["--bad"])
     #expect(result.status == 1)
     #expect(result.error.hasPrefix("usage: ojd-webrtc-bridge"), Comment(rawValue: result.error))

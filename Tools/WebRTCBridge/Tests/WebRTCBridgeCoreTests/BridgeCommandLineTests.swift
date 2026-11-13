@@ -6,7 +6,7 @@ import Testing
 final class BridgeCommandLineTests {
   /// `--help` alone gives `.help`.
   @Test
-  func helpIsRecognisedAlone() {
+  func helpRecognisedAlone() {
     #expect(BridgeCommandLine.parse(["--help"]) == .help)
   }
 
@@ -19,7 +19,7 @@ final class BridgeCommandLineTests {
 
   /// Values group by option name in order, and no arguments give no options.
   @Test
-  func optionsAreGroupedByName() {
+  func optionsGroupedByName() {
     #expect(
       BridgeCommandLine.parse(["--role", "host", "--ice-server", "a", "--ice-server", "b"])
         == .options(["role": ["host"], "ice-server": ["a", "b"]])
@@ -29,7 +29,7 @@ final class BridgeCommandLineTests {
 
   /// An argument without `--`, or an option without a value, gives `.invalid`.
   @Test
-  func aBadArgumentIsInvalid() {
+  func badArgumentInvalid() {
     #expect(BridgeCommandLine.parse(["role", "host"]) == .invalid)
     #expect(BridgeCommandLine.parse(["--role"]) == .invalid)
   }

@@ -150,7 +150,7 @@ struct ControllerRecordDocument: Decodable {
   /// The rule holds per capability: each one must be declared by the family of at least one mode,
   /// so a record may hold modes of two drivers when each capability belongs to one of them. A mode
   /// whose driver does not declare a capability does not act on it.
-  func capabilitiesAreDeclared(byAnyOf protocolIDs: [PhysicalProtocolID]) -> Bool {
+  func capabilitiesDeclared(byAnyOf protocolIDs: [PhysicalProtocolID]) -> Bool {
     let rules = protocolIDs.map { $0.protocolDescription.recordCapabilities }
     return
       (capabilities.presentControls.isEmpty

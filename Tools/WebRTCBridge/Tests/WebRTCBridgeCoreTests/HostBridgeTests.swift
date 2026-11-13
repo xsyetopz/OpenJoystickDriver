@@ -57,7 +57,7 @@ extension ListeningSocketSuites {
 
     /// Invalid peer messages produce no write to the endpoint.
     @Test
-    func anInvalidPeerMessageProducesNoEndpointWrite() async throws {
+    func invalidPeerMessageProducesNoEndpointWrite() async throws {
       let endpoint = try FakeEndpoint()
       let (bridge, channel) = try started(endpoint)
       channel.peerSends("not json")
@@ -72,7 +72,7 @@ extension ListeningSocketSuites {
 
     /// One frame is sent once, and an idle feed gets only `KeepAlive` lines.
     @Test
-    func aFrameIsSentOnceAndAnIdleFeedGetsOnlyKeepAlive() async throws {
+    func frameSentOnceAndIdleFeedGetsOnlyKeepAlive() async throws {
       let endpoint = try FakeEndpoint()
       let (bridge, channel) = try started(endpoint)
       channel.peerSends(#"{\#(Self.header),"kind":"Frame","buttons":["South"]}"#)
@@ -87,7 +87,7 @@ extension ListeningSocketSuites {
 
     /// Only a valid, short `RumbleCommand` of the endpoint is sent to the peer.
     @Test
-    func onlyAValidRumbleCommandOfTheEndpointGoesToThePeer() async throws {
+    func onlyValidRumbleCommandOfEndpointGoesToPeer() async throws {
       let rumble: [String: Any] = [
         "apiVersion": endpointAPIVersion, "kind": "RumbleCommand", "type": "StopRumble",
       ]

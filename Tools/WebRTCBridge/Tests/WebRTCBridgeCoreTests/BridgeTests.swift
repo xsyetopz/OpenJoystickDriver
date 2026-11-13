@@ -9,7 +9,7 @@ extension ListeningSocketSuites {
   final class BridgeTests {
     /// The proof equals the values that the reference client computes.
     @Test
-    func proofMatchesTheReferenceClientVectors() {
+    func proofMatchesReferenceClientVectors() {
       // Computed with `proof()` of Scripts/SDK/reference_client.py, not with this package.
       #expect(
         EndpointSession.proof(token: "ojd_x", nonce: "abc")
@@ -25,7 +25,7 @@ extension ListeningSocketSuites {
 
     /// A `MODIFIED` watch line becomes a `Frame` with only known buttons and scaled axes.
     @Test
-    func aWatchLineBecomesAFrame() throws {
+    func watchLineBecomesFrame() throws {
       let line = Self.modified(pressed: ["South", "unknown-control"], hat: "NorthEast")
       let (id, frame) = try #require(FrameTranslation.frame(fromWatchLine: line))
       #expect(id == "pad-1")
@@ -40,7 +40,7 @@ extension ListeningSocketSuites {
 
     /// The endpoint refuses a wrong token, and the error carries the endpoint's code.
     @Test
-    func aWrongTokenIsRefused() throws {
+    func wrongTokenRefused() throws {
       let endpoint = try FakeEndpoint()
       endpoint.serve(connections: 1)
       let error = #expect(throws: BridgeError.self) {
@@ -57,7 +57,7 @@ extension ListeningSocketSuites {
     /// Two bridges in one process, joined by a real data channel: a controller frame goes from the
     /// player to the host's virtual gamepad, and the rumble command goes back.
     @Test
-    func loopbackPassesAFrameOneWayAndRumbleBack() async throws {
+    func loopbackPassesFrameOneWayAndRumbleBack() async throws {
       let rumble: [String: Any] = [
         "apiVersion": endpointAPIVersion, "kind": "RumbleCommand", "type": "SetRumble",
         "intensities": [
@@ -145,7 +145,7 @@ extension ListeningSocketSuites {
 
     /// The scan finds the listening socket of a fake endpoint that has not served.
     @Test
-    func theScanSeesAListeningSocket() throws {
+    func scanSeesListeningSocket() throws {
       let endpoint = try FakeEndpoint()
       #expect(ListeningSockets.ofThisProcess().count == 1)
       endpoint.serve(connections: 0)

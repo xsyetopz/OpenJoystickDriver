@@ -33,7 +33,7 @@ final class PeerMessageTests {
 
   /// The frame lists of ``PeerMessage`` equal the enumerations of the schemas.
   @Test
-  func theFrameListsMatchTheSchemas() throws {
+  func frameListsMatchSchemas() throws {
     let control = try schemaEnum("vocabulary.schema.json", "control")
     let withoutButtons = try schemaEnum("vocabulary.schema.json", "dpadControl")
       .union(schemaEnum("vocabulary.schema.json", "stickAxis"))
@@ -44,7 +44,7 @@ final class PeerMessageTests {
 
   /// A valid frame is rebuilt from the checked fields.
   @Test
-  func aValidFrameIsRebuiltFromTheCheckedFields() throws {
+  func validFrameRebuiltFromCheckedFields() throws {
     let line = try #require(
       PeerMessage.frame(
         from: frame(
@@ -60,14 +60,14 @@ final class PeerMessageTests {
 
   /// A frame longer than `maximumBytes` is rejected.
   @Test
-  func aFrameThatIsTooLongIsRejected() {
+  func frameTooLongRejected() {
     let padding = String(repeating: " ", count: PeerMessage.maximumBytes)
     #expect(PeerMessage.frame(from: Data((frame().utf8String + padding).utf8)) == nil)
   }
 
   /// Frames with the wrong shape, values or members are rejected.
   @Test
-  func aFrameThatIsNotShapedLikeAFrameIsRejected() {
+  func frameNotShapedLikeFrameRejected() {
     let rejected = [
       Data("not json".utf8),
       Data("[]".utf8),
@@ -101,7 +101,7 @@ final class PeerMessageTests {
 
   /// Valid `SetRumble` and `StopRumble` commands are accepted.
   @Test
-  func aValidRumbleCommandIsAccepted() throws {
+  func validRumbleCommandAccepted() throws {
     let line = try #require(
       PeerMessage.rumble(
         from: rumble(#","type":"SetRumble",\#(Self.allIntensities),"durationMilliseconds":5000"#)
@@ -118,7 +118,7 @@ final class PeerMessageTests {
 
   /// Rumble commands with the wrong shape, values or length are rejected.
   @Test
-  func aRumbleCommandThatIsNotShapedLikeOneIsRejected() {
+  func rumbleCommandNotShapedLikeOneRejected() {
     let all = Self.allIntensities
     let rejected = [
       Data("not json".utf8),
@@ -158,7 +158,7 @@ final class PeerMessageTests {
 
   /// A mailbox returns only the newest frame, and then nothing.
   @Test
-  func theMailboxKeepsOnlyTheNewestFrame() {
+  func mailboxKeepsOnlyNewestFrame() {
     let mailbox = FrameMailbox()
     for index in 1...3 { mailbox.post(["n": index]) }
     #expect((mailbox.next(timeout: 1)?["n"] as? Int) == 3)
@@ -167,7 +167,7 @@ final class PeerMessageTests {
 
   /// A post that races the timeout is returned once and leaves nothing behind.
   @Test
-  func aPostThatRacesTheTimeoutIsNeitherLostNorRepeated() {
+  func postRacesTimeoutNeitherLostNorRepeated() {
     let mailbox = FrameMailbox()
     var received = 0
     for index in 0..<300 {
@@ -188,7 +188,7 @@ final class PeerMessageTests {
 
   /// A blob longer than `maximumBytes` is refused, with the limit in the error.
   @Test
-  func aBlobThatIsTooLongIsRefused() {
+  func blobTooLongRefused() {
     let blob = String(repeating: "A", count: PeerMessage.maximumBytes + 1)
     let error = #expect(throws: BridgeError.self) { try PeerLink.decode(blob) }
     #expect(error.map { "\($0)".contains("65536") } == true, "\(String(describing: error))")
