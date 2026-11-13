@@ -4130,7 +4130,7 @@
 /* Title of the alert that removes an installed record. %@ is the controller model. */
 "ui.library.record.remove.title" = "Remove the record for %@?";
 /* Message of the alert that removes an installed record. OpenJoystickDriver is the product name. */
-"ui.library.record.remove.message" = "OpenJoystickDriver deletes the record file from your controller records folder. Controllers that use the record are no longer known by it.";
+"ui.library.record.remove.message" = "OpenJoystickDriver deletes the record file from your controller records folder. Controllers that use the record are no longer recognized.";
 /* Notice after a record is removed. %@ is the controller model. */
 "ui.library.record.removed" = "Removed the record for %@.";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
@@ -4352,7 +4352,7 @@
 /* Heading of the list of programs and tokens that the endpoint refused in the last 24 hours. */
 "ui.access.refused" = "Refused Recently";
 /* Footer of the list of refused programs and tokens. */
-"ui.access.refused.message" = "Programs and tokens that the endpoint turned away in the last 24 hours.";
+"ui.access.refused.message" = "Programs and tokens that the endpoint refused in the last 24 hours.";
 /* Heading of the list of connections that are open at the moment in the Access area. */
 "ui.access.connections" = "Connected Now";
 /* Name of the read scope. It lets a program read controller state. */
