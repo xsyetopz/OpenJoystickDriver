@@ -3130,7 +3130,7 @@
 /* Text of error E2024, printed when no endpoint client or token has the given ID. ojd access is the command that lists the IDs and stays as written. */
 "error.E2024.message" = "Ningún cliente ni token del endpoint tiene este ID. Ejecuta ojd access para ver los ID y usa uno de ellos.";
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
-"error.E2025.message" = "No se puede conceder acceso a un cliente con este tipo de firma, porque cualquier programa local puede reclamar su firma.";
+"error.E2025.message" = "No se puede conceder acceso a un cliente con este tipo de firma, porque cualquier programa local puede reclamar su firma. Fírmalo con un Developer ID y vuelve a intentarlo.";
 /* Text of error E2026, printed when a grant names no scope. */
 "error.E2026.message" = "Elige al menos un alcance que conceder.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
@@ -3752,7 +3752,7 @@
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
 "error.E3032.message" = "La acción no se ejecutó porque Secure Input está activado. Cierra la app que lo activa, por ejemplo un campo de contraseña, e inténtalo de nuevo.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
-"error.E3033.message" = "La acción falló.";
+"error.E3033.message" = "La acción falló. Inténtalo de nuevo.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "La acción MIDI no se ejecutó porque el sistema rechazó crear la fuente MIDI OpenJoystickDriver. Inténtalo de nuevo.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */

@@ -3130,7 +3130,7 @@
 /* Text of error E2024, printed when no endpoint client or token has the given ID. ojd access is the command that lists the IDs and stays as written. */
 "error.E2024.message" = "Không có ứng dụng khách hay mã thông báo endpoint nào có ID này. Chạy ojd access để liệt kê các ID, rồi dùng một ID trong đó.";
 /* Text of error E2025, printed when a client with a signature that any local program can claim cannot be granted. */
-"error.E2025.message" = "Không thể cấp quyền cho ứng dụng khách có loại chữ ký này, vì bất kỳ chương trình cục bộ nào cũng có thể mạo nhận chữ ký của nó.";
+"error.E2025.message" = "Không thể cấp quyền cho ứng dụng khách có loại chữ ký này, vì bất kỳ chương trình cục bộ nào cũng có thể mạo nhận chữ ký của nó. Hãy ký bằng Developer ID và thử lại.";
 /* Text of error E2026, printed when a grant names no scope. */
 "error.E2026.message" = "Hãy chọn ít nhất một phạm vi để cấp.";
 /* Text of error E2027, printed when the service is shutting down while the command runs. */
@@ -4334,7 +4334,7 @@
 /* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
 "error.E3032.message" = "Hành động không chạy vì Secure Input đang bật. Hãy đóng ứng dụng đã bật nó, chẳng hạn ô mật khẩu, rồi thử lại.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
-"error.E3033.message" = "Hành động đã thất bại.";
+"error.E3033.message" = "Hành động đã thất bại. Hãy thử lại.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "Hành động MIDI không chạy vì hệ thống từ chối tạo nguồn MIDI OpenJoystickDriver. Hãy thử lại.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
