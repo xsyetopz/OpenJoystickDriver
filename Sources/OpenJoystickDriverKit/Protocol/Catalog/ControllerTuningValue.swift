@@ -4,15 +4,9 @@ import Foundation
 /// the driver default applies, which the driver picks itself.
 public struct ControllerTuningValue: Equatable, Sendable {
   /// The tuning key.
-  ///
-  /// The tuning key. The value of the key; nil when no layer sets it.
   public let key: ControllerTuning.Key
-  /// The layer that sets the value.
-  ///
   /// The value of the key; nil when no layer sets it.
   public let value: Double?
-  /// Creates a value of a tuning key from the layer that sets it.
-  ///
   /// The layer that sets the value.
   public let layer: ControllerRecordLayer
 

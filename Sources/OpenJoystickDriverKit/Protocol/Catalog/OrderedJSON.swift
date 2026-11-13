@@ -101,7 +101,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
   /// keeps the text of the number at the same place in `order` when that text reads as the same
   /// value, so `1e3` and `100.50` stay as written.
   ///
-  /// The controller schema's property order is not a guide: Kit does not bundle the schemas. So a
+  /// Kit does not bundle the schemas, so the controller schema's property order is no guide. A
   /// ``ControllerRecordDraft``, guided by ``recordKeys`` at the top level only, sorts every nested
   /// object. A patch merge works on ``OrderedJSON`` values and needs no guide.
   public init(foundation value: Any, order: Self? = nil) throws {

@@ -137,7 +137,8 @@ extension RepositoryValidation {
 
   /// Reads each property list file under `directory` as a patch and appends a problem to
   /// `problems` for each file that is not a valid patch or that is not stored at the path of its
-  /// selector. - Returns: The patches that read.
+  /// selector.
+  /// - Returns: The patches that read.
   private static func readPatches(
     under directory: URL,
     problems: inout [RepositoryProblem]

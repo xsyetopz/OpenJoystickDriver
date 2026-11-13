@@ -48,7 +48,7 @@ extension DeviceManager {
     }
     // A family's non-role interface carries no controller; its claim is held while a sibling
     // role is bound, through the unbound-claim reconciliation.
-    guard role != .notARole else {
+    guard role != .notRole else {
       await rejectHIDDevice(
         connection,
         identifier: identifier,
