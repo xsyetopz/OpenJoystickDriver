@@ -27,6 +27,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The Flydigi Vader 4 Pro / Apex 4 dongle record `04B4:2412` declares rumble: output report 5, `05 0F <left> <right>`, resent every 100 ms, stopped by the same frame with zero magnitudes. The source is the reporter's hardware test in issue #35 (motors driven directly); not checked on hardware of ours. (8.11)
 
 - The ZD Ultimate Legend wired pad's `413D:2104` report decoding is tested against the captured bytes ([#22](https://github.com/xsyetopz/OpenJoystickDriver/issues/22)). Data by `lunarephemera` (wired captures, 16 of 16 controls) and `127841352` (OUT `0x02` rumble). The dongle `413D:2204` gets no record yet: `gornobatov`'s data holds its descriptors and kernel log but not its XInput interface protocol, endpoints or an input report. Not checked on hardware. (8.13)
+- The 8BitDo Ultimate C Wired Controller for Xbox (`2DC8:2027`) and the Ultimate Mini Wired Controller for Xbox (`2DC8:2019`) have `XboxGIP` records with the GIP defaults. The sources are Linux `xpad.c`, which binds vendor `2DC8` interfaces of class 255, subclass 71, protocol 208 to its Xbox One driver, and the [Linux hardware probes](https://linux-hardware.org/?id=usb:2dc8-2027) [of both](https://linux-hardware.org/?id=usb:2dc8-2019) (class `ff-47-d0`). No source states an endpoint or a report layout, so the records name none, and neither pad has a capture ([#59](https://github.com/xsyetopz/OpenJoystickDriver/issues/59)); unverified, not checked on hardware. (3.4)
 
 ## Changed
 
