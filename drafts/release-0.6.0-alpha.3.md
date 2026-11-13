@@ -20,7 +20,7 @@
 * Thrustmaster Ferrari 458 Spider wheel (`044F:B671`): steering and brake are read. <!-- ed18df398, 87d85c60c -->
 * GameSir G7 Pro dongle (`3537:1022`): OJD can read the dongle's HID gamepad interface. <!-- f5cbcab80 -->
 
-Several of these come from reporters' captures and were not checked on the maintainer's hardware: the Vader 4 Pro records, the Vader 5S startup, the Xbox 360 receiver in the app, the Elite Series 1 and the G7 Pro dongle. <!-- openspec/changes/0-6-0-alpha-3/drafts/changelog-entries.md -->
+Several of these come from reporters' captures and were not checked on the maintainer's hardware: the Vader 4 Pro records, the Vader 5S startup, the Xbox 360 receiver in the app, the Elite Series 1 and the G7 Pro dongle.
 
 ### USB driver extension
 

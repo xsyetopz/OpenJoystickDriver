@@ -112,7 +112,7 @@ Each app reads controllers through its own API, and some SDL apps cannot read th
 
 ## Contributing
 
-Run `just setup` and `just verify` before opening a pull request; see [CONTRIBUTING.md](CONTRIBUTING.md). Bugs and controller test results go through [Reporting a bug][wiki-bug]. [Sponsorship][sponsor] pays for the controllers and Macs that tests run on; if your company uses OJD, please sponsor it.
+Run `just setup` and `just verify` before opening a pull request; see [CONTRIBUTING.md](CONTRIBUTING.md). Bugs and controller test results go through [Reporting a bug][wiki-bug]. [Sponsorship][sponsor] pays for the controllers and Macs that tests run on; if your company uses OJD, sponsor it.
 
 ## License
 
