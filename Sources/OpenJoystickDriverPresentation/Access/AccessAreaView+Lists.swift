@@ -105,7 +105,7 @@
       }
     }
 
-    /// Returns the section of the connections that are open now.
+    /// Returns the section of the connections that are open.
     private func connectionsSection(_ status: AccessStatusPayload) -> some View {
       Section(header: Text(OJDLocalized.string("ui.access.connections"))) {
         ForEach(status.connections, id: \.id) { connection in

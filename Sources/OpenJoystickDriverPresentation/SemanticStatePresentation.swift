@@ -32,7 +32,7 @@
 
   /// The state of an item in OJD's lists and banners, which sets its symbol and ``SemanticTone``.
   enum SemanticState: String, CaseIterable, Sendable {
-    /// In use now, such as the active profile.
+    /// In use, such as the active profile.
     case active
     /// Working and ready.
     case healthy
