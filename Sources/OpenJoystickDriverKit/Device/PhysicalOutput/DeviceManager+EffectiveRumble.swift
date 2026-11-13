@@ -8,7 +8,7 @@ enum PhysicalOutputRequest: Equatable, Sendable {
   /// Every motor's effective intensity at `duration`; all zero is a stop.
   case effectiveRumble(RumbleDuration)
   /// The winning claim of one non-rumble channel, or the channel's neutral value (player off, the
-  /// default colour, brightness 0, trigger effect off) when none claims it.
+  /// default color, brightness 0, trigger effect off) when none claims it.
   case effectiveChannel(PhysicalOutputChannel)
 }
 

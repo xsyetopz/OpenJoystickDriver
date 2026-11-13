@@ -14,7 +14,7 @@ extension DeviceManager {
 
   /// Returns the ownership evidence for the exact connected device identifier.
   ///
-  /// Missing identifiers intentionally fail closed to unknown ownership.
+  /// Missing identifiers fail closed to unknown ownership.
   public func ownershipObservation(
     for identifier: LogicalControllerID
   ) -> ControllerOwnershipObservation { deviceInfos[identifier]?.ownershipObservation ?? .unknown }

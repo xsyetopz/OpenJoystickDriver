@@ -4,7 +4,7 @@ extension DevicePipeline {
     plan.minimumHIDOutputIntervalNanoseconds
   }
 
-  /// The default colour of the controller from the driver; nil when it has none.
+  /// The default color of the controller from the driver; nil when it has none.
   func defaultColor() -> ControllerColor? { driver.defaultColor }
 
   /// Encodes `command` into the writes of the driver.
