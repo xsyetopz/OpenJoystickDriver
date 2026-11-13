@@ -16,7 +16,7 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 - [x] 1.8 Move the Python scripts and repository tests from 1.1 that read documents to `plistlib`. `Scripts/Quality/validate_schemas.py` validates the objects read from each property list.
 - [x] 1.9 Add a repository test that every bundled document equals its canonical form and that no bundled document is a `.json` file.
 - [x] 1.10 Convert the test fixtures, then run `Tests/EquivalenceSnapshots` and the catalog tests. Explain every snapshot difference before accepting it.
-- [x] 1.11 Update `.claude/rules/generated_file_edit.md`, `Resources/Schemas/AGENTS.md`, `Resources/Schemas/README.md`, and `CONTRIBUTING.md` for the `.plist` paths and the property-list rules.
+- [x] 1.11 Update `.claude/rules/noGeneratedFileEdits.md`, `Resources/Schemas/AGENTS.md`, `Resources/Schemas/README.md`, and `CONTRIBUTING.md` for the `.plist` paths and the property-list rules.
 
 ## 2. 8BitDo Ultimate 2C Wireless
 
@@ -173,7 +173,7 @@ No task of groups 11 to 13 changes a view before 10.1 and 10.5 exist (D23).
 - [x] 11.4 Change the icon's symbol while a problem row exists (`MenuBar/MenuBarCoordinator.swift:10-21`), and keep it with no controller connected. Give the item an accessibility label that names the state.
 - [x] 11.5 Check that the Help menu of the main menu holds "Activity Log", "Explain Error Code...", "Report Problem...", and "Project Website", and add each one it lacks. Caller: the main menu.
 - [x] 11.6 Set the status item's `behavior` to `.removalAllowed`, observe its visibility, and on removal by the user store "Show in menu bar" off, turn "Show in Dock" on when it was off, and open the main window. Trace what the app does when a settings file turns both off, and make opening the app from Finder open the main window (`MenuBarCoordinator+Lifecycle.swift:128-135`). Caller: `MenuBarCoordinator`.
-- [x] 11.7 Rewrite `docs/development/menu-bar-settings-architecture.md` and `wiki/Using-the-App.md:22-58` for the menu's purpose and its rows (`stale_doc`).
+- [x] 11.7 Rewrite `docs/development/menu-bar-settings-architecture.md` and `wiki/Using-the-App.md:22-58` for the menu's purpose and its rows (`noStaleDocs`).
 
 ## 12. Window controls and layout
 
