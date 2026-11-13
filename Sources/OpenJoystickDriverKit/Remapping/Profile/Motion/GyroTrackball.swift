@@ -46,13 +46,9 @@ public struct RemappingGyroTrackball: Codable, Equatable, Sendable {
 
   /// Profile document keys of a gyro trackball.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `source`.
     case source
-    /// The JSON key of `axes`.
     case axes
-    /// The JSON key of `decayHalvingsPerSecond`.
     case decayHalvingsPerSecond
-    /// The JSON key of `consumesSource`.
     case consumesSource
   }
 

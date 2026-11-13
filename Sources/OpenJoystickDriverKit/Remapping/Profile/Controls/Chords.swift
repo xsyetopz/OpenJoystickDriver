@@ -41,15 +41,10 @@ public struct RemappingChord: Codable, Equatable, Hashable, Identifiable, Sendab
 
   /// Profile document keys of a chord.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `sources`.
     case sources
-    /// The JSON key of `destination`.
     case destination
-    /// The JSON key of `mode`.
     case mode
-    /// The JSON key of `windowMs`.
     case windowMs
   }
 
@@ -106,13 +101,9 @@ public struct RemappingSequence: Codable, Equatable, Hashable, Identifiable, Sen
 
   /// Profile document keys of a sequence.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `sources`.
     case sources
-    /// The JSON key of `windowMs`.
     case windowMs
-    /// The JSON key of `destination`.
     case destination
   }
 

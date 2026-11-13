@@ -90,19 +90,12 @@ public struct RemappingGyroOutput: Codable, Equatable, Sendable {
 
   /// Profile document keys of a gyro output.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `mode`.
     case mode
-    /// The JSON key of `trackball`.
     case trackball
-    /// The JSON key of `pointerPointsPerDegree`.
     case pointerPointsPerDegree
-    /// The JSON key of `fullStickDegreesPerSecond`.
     case fullStickDegreesPerSecond
-    /// The JSON key of `activationMode`.
     case activationMode
-    /// The JSON key of `activationSource`.
     case activationSource
-    /// The JSON key of `consumesActivationSource`.
     case consumesActivationSource
   }
 

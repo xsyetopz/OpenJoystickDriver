@@ -143,17 +143,11 @@ public struct RemappingTouchMapping: Codable, Equatable, Hashable, Identifiable,
 
   /// Profile document keys of a touch mapping.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `surface`.
     case surface
-    /// The JSON key of `mode`.
     case mode
-    /// The JSON key of `pointerSensitivity`.
     case pointerSensitivity
-    /// The JSON key of `stickRadius`.
     case stickRadius
-    /// The JSON key of `deadzone`.
     case deadzone
   }
 

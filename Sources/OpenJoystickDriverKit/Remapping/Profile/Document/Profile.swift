@@ -18,11 +18,8 @@ public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a device scope.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `vendorID`.
     case vendorID
-    /// The JSON key of `productID`.
     case productID
-    /// The JSON key of `unit`.
     case unit
   }
 
@@ -62,17 +59,13 @@ public enum RemappingApplicationScope: Codable, Equatable, Hashable, Sendable {
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
-    /// The `Application` case.
     case application = "Application"
-    /// The `Global` case.
     case global = "Global"
   }
 
   /// Profile document keys of an application scope.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `appIDs`.
     case appIDs
   }
 
@@ -183,15 +176,10 @@ public struct RemappingAxisTuning: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of an axis tuning.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `deadzone`.
     case deadzone
-    /// The JSON key of `gain`.
     case gain
-    /// The JSON key of `inverted`.
     case inverted
-    /// The JSON key of `responseCurve`.
     case responseCurve
-    /// The JSON key of `digitalActivationThreshold`.
     case digitalActivationThreshold
   }
 
@@ -243,13 +231,9 @@ public struct RemappingTurbo: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a turbo setting.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `repeatRateHz`.
     case repeatRateHz
-    /// The JSON key of `dutyCycle`.
     case dutyCycle
-    /// The JSON key of `initialDelayMs`.
     case initialDelayMs
-    /// The JSON key of `maxRepeats`.
     case maxRepeats
   }
 
@@ -352,27 +336,16 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
 
   /// Profile document keys of a binding.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `source`.
     case source
-    /// The JSON key of `destination`.
     case destination
-    /// The JSON key of `behavior`.
     case behavior
-    /// The JSON key of `pulseDurationMs`.
     case pulseDurationMs
-    /// The JSON key of `axisTuning`.
     case axisTuning
-    /// The JSON key of `turbo`.
     case turbo
-    /// The JSON key of `longHold`.
     case longHold
-    /// The JSON key of `multiTap`.
     case multiTap
-    /// The JSON key of `additionalActions`.
     case additionalActions
-    /// The JSON key of `remark`.
     case remark
   }
 

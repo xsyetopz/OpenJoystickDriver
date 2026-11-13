@@ -119,19 +119,12 @@ public struct RemappingTriggerMapping: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a trigger mapping.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `source`.
     case source
-    /// The JSON key of `mode`.
     case mode
-    /// The JSON key of `hysteresis`.
     case hysteresis
-    /// The JSON key of `passthrough`.
     case passthrough
-    /// The JSON key of `softThreshold`.
     case softThreshold
-    /// The JSON key of `fullThreshold`.
     case fullThreshold
-    /// The JSON key of `skipWindowMs`.
     case skipWindowMs
   }
 

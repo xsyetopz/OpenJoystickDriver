@@ -77,49 +77,27 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
-    /// The `Keyboard` case.
     case keyboard = "Keyboard"
-    /// The `GamepadButton` case.
     case gamepadButton = "GamepadButton"
-    /// The `GamepadDpad` case.
     case gamepadDpad = "GamepadDpad"
-    /// The `GamepadAxis` case.
     case gamepadAxis = "GamepadAxis"
-    /// The `MouseButton` case.
     case mouseButton = "MouseButton"
-    /// The `MouseMovement` case.
     case mouseMovement = "MouseMovement"
-    /// The `PointerPosition` case.
     case pointerPosition = "PointerPosition"
-    /// The `Scroll` case.
     case scroll = "Scroll"
-    /// The `Physical` case.
     case physical = "Physical"
-    /// The `Macro` case.
     case macro = "Macro"
-    /// The `ProfileSwitch` case.
     case profileSwitch = "ProfileSwitch"
-    /// The `LayerSet` case.
     case layerSet = "LayerSet"
-    /// The `Pause` case.
     case pause = "Pause"
-    /// The `SystemKey` case.
     case systemKey = "SystemKey"
-    /// The `SystemAction` case.
     case systemAction = "SystemAction"
-    /// The `OpenApplication` case.
     case openApplication = "OpenApplication"
-    /// The `OpenURL` case.
     case openURL = "OpenURL"
-    /// The `RunShortcut` case.
     case runShortcut = "RunShortcut"
-    /// The `TypeText` case.
     case typeText = "TypeText"
-    /// The `Speak` case.
     case speak = "Speak"
-    /// The `MidiNote` case.
     case midiNote = "MidiNote"
-    /// The `MidiControlChange` case.
     case midiControlChange = "MidiControlChange"
 
     /// Keys that a profile document may give for this case, which `type` selects.
@@ -149,49 +127,27 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a destination, merged across all cases.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `key`.
     case key
-    /// The JSON key of `modifiers`.
     case modifiers
-    /// The JSON key of `button`.
     case button
-    /// The JSON key of `axis`.
     case axis
-    /// The JSON key of `direction`.
     case direction
-    /// The JSON key of `physical`.
     case physical
-    /// The JSON key of `macro`.
     case macro
-    /// The JSON key of `profile`.
     case profile
-    /// The JSON key of `layer`.
     case layer
-    /// The JSON key of `mode`.
     case mode
-    /// The JSON key of `systemKey`.
     case systemKey
-    /// The JSON key of `action`.
     case action
-    /// The JSON key of `bundleIdentifier`.
     case bundleIdentifier
-    /// The JSON key of `url`.
     case url
-    /// The JSON key of `name`.
     case name
-    /// The JSON key of `text`.
     case text
-    /// The JSON key of `voice`.
     case voice
-    /// The JSON key of `channel`.
     case channel
-    /// The JSON key of `note`.
     case note
-    /// The JSON key of `velocity`.
     case velocity
-    /// The JSON key of `controller`.
     case controller
   }
 

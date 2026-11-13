@@ -171,37 +171,21 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a stick mapping.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `source`.
     case source
-    /// The JSON key of `mode`.
     case mode
-    /// The JSON key of `tuning`.
     case tuning
-    /// The JSON key of `aimDegreesPerSecond`.
     case aimDegreesPerSecond
-    /// The JSON key of `pointerPointsPerDegree`.
     case pointerPointsPerDegree
-    /// The JSON key of `flickDurationMs`.
     case flickDurationMs
-    /// The JSON key of `flickThreshold`.
     case flickThreshold
-    /// The JSON key of `flickHysteresis`.
     case flickHysteresis
-    /// The JSON key of `pointerRadiusPoints`.
     case pointerRadiusPoints
-    /// The JSON key of `scrollDegreesPerLine`.
     case scrollDegreesPerLine
-    /// The JSON key of `scrollAxis`.
     case scrollAxis
-    /// The JSON key of `rotationDirection`.
     case rotationDirection
-    /// The JSON key of `steeringDegreesAtFullScale`.
     case steeringDegreesAtFullScale
-    /// The JSON key of `steeringReturnDegreesPerSecond`.
     case steeringReturnDegreesPerSecond
-    /// The JSON key of `steeringOutput`.
     case steeringOutput
-    /// The JSON key of `passthrough`.
     case passthrough
   }
 

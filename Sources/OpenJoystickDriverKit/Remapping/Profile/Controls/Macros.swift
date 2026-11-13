@@ -68,15 +68,10 @@ public enum RemappingMacroStep: Codable, Equatable, Hashable, Sendable {
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
-    /// The `Tap` case.
     case tap = "Tap"
-    /// The `Press` case.
     case press = "Press"
-    /// The `Release` case.
     case release = "Release"
-    /// The `Chord` case.
     case chord = "Chord"
-    /// The `Wait` case.
     case wait = "Wait"
 
     /// Keys that a profile document may give for this case, which `type` selects.
@@ -91,15 +86,10 @@ public enum RemappingMacroStep: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a step, merged across all cases.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `destination`.
     case destination
-    /// The JSON key of `destinations`.
     case destinations
-    /// The JSON key of `holdMs`.
     case holdMs
-    /// The JSON key of `durationMs`.
     case durationMs
   }
 
@@ -212,17 +202,12 @@ public struct RemappingMacro: Codable, Equatable, Hashable, Identifiable, Sendab
 
   /// Profile document keys of a macro.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `name`.
     case name
-    /// The JSON key of `steps`.
     case steps
     /// The JSON key of `repeat`, which holds ``repeatMode``.
     case repeatMode = "repeat"
-    /// The JSON key of `whileRunning`.
     case whileRunning
-    /// The JSON key of `interruptOnRelease`.
     case interruptOnRelease
   }
 

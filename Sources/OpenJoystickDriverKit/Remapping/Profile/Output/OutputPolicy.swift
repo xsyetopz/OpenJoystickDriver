@@ -44,9 +44,7 @@ public struct RemappingOutputPolicy: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of an output policy.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `virtualGamepad`.
     case virtualGamepad
-    /// The JSON key of `physicalInput`.
     case physicalInput
   }
 

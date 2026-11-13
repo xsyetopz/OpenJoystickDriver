@@ -50,21 +50,13 @@ public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendab
 
   /// Profile document keys of a layer.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `name`.
     case name
-    /// The JSON key of `activationMode`.
     case activationMode
-    /// The JSON key of `activator`.
     case activator
-    /// The JSON key of `bindings`.
     case bindings
-    /// The JSON key of `chords`.
     case chords
-    /// The JSON key of `sequences`.
     case sequences
-    /// The JSON key of `motionTuning`.
     case motionTuning
   }
 
