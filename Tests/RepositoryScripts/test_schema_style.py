@@ -1,8 +1,8 @@
 """Style rule for every `description` in Resources/Schemas.
 
 A description is one sentence fragment of at most 120 characters that ends with a period and says what
-the value is. It names no Swift type, path, command, error code, or validator. No schema holds a
-`$comment`. A failure names the schema file and the JSON pointer of the keyword.
+the value is. It states no numeric range, which a keyword holds. It names no Swift type, path,
+command, error code, or validator. No schema holds a `$comment`. A failure names the schema file and the JSON pointer of the keyword.
 """
 
 from __future__ import annotations
@@ -32,6 +32,13 @@ PATH = re.compile(
 )
 COMMAND = re.compile(r"\bojd\b")
 ERROR_CODE = re.compile(r"\bE\d{4}\b")
+NUMBER = r"-?\d+(?:\.\d+)?"
+RANGE = re.compile(
+    rf"{NUMBER}\s*(?:-|\u2013|\.\.|to|through|and)\s*{NUMBER}"
+    rf"|\b(?:at least|at most|up to|no more than|no fewer than|between|minimum|maximum)\b[^.]*?{NUMBER}"
+    rf"|{NUMBER}\s*or (?:more|fewer|less)",
+    re.IGNORECASE,
+)
 VALIDATOR_WORDING = re.compile(
     r"\b(?:must|required|requires?|validators?|validat\w*|rejects?|rejected|schema)\b",
     re.IGNORECASE,
@@ -80,6 +87,8 @@ def problems(text: str, types: set[str]) -> list[str]:
         found.append("names an ojd command")
     if ERROR_CODE.search(text):
         found.append("names an error code")
+    if RANGE.search(text):
+        found.append("states a numeric range")
     if VALIDATOR_WORDING.search(text):
         found.append("uses validator wording")
     return found
@@ -114,6 +123,7 @@ class SchemaStyleTests(unittest.TestCase):
     def test_the_rules_accept_a_plain_fragment_and_reject_each_breach(self) -> None:
         types = {"ControllerRecord"}
         self.assertEqual(problems("The USB vendor identifier.", types), [])
+        self.assertEqual(problems("The player number, or 0 for none.", types), [])
         for text in (
             "One. Two.",
             "x" * 120 + ".",
@@ -124,6 +134,9 @@ class SchemaStyleTests(unittest.TestCase):
             "Set by ojd record.",
             "Fails with E5007.",
             "The value must be set.",
+            "The player number from 1 to 4.",
+            "A level from -1 to 1.",
+            "At most 8 entries.",
         ):
             with self.subTest(text=text):
                 self.assertNotEqual(problems(text, types), [])

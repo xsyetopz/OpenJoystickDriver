@@ -176,12 +176,14 @@ struct AccessGrantStoreTests {
       (
         #"{"apiVersion":"unsupported.example/v9","kind":"AccessGrants","# + body,
         .unsupportedAPIVersion,
-        "apiVersion unsupported.example/v9 is not supported; \(supported)"
+        "apiVersion unsupported.example/v9 is not supported; \(supported); "
+          + "run `ojd migrate` to convert"
       ),
       (
         #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"AccessGrants","# + body,
         .unsupportedAPIVersion,
-        "apiVersion openjoystickdriver/v1alpha1 is not supported; \(supported)"
+        "apiVersion openjoystickdriver/v1alpha1 is not supported; \(supported); "
+          + "run `ojd migrate` to convert"
       ),
       (
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","# + body,

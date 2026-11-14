@@ -146,11 +146,33 @@ struct DocumentMigratorTests {
 
   @Test
   func fileOfAnotherProgramForeignAndUntouched() throws {
-    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+    try write("not json", "Profiles/notes.json")
     try write("not json", "Controllers/readme.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.foreign, .foreign])
     #expect(exists("Profiles/notes.json"))
+  }
+
+  @Test
+  func storeFileWithoutAPIVersionFailsWithReasonAndStaysUntouched() throws {
+    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.failed])
+    #expect(entries.first?.detail == "has no apiVersion")
+    #expect(try read("Profiles/notes.json") == Data(#"{"name": "mine"}"#.utf8))
+  }
+
+  @Test
+  func stalePersonaAndPackageDocumentsAreConverted() throws {
+    try write(MigrationFixtures.userRecord, "Personas/1234-abcd.json")
+    try write(MigrationFixtures.userRecord, "Packages/mine/records/1234-abcd.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(
+      entries.map(\.file) == ["Packages/mine/records/1234-abcd.json", "Personas/1234-abcd.json"]
+    )
+    #expect(entries.map(\.verdict) == [.migrated, .migrated], "\(entries)")
+    #expect(exists("Personas/1234-abcd.plist"))
+    #expect(exists("Packages/mine/records/1234-abcd.plist"))
   }
 
   @Test

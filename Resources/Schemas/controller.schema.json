@@ -571,61 +571,61 @@
           "default": 64
         },
         "leftStickCenterX": {
-          "description": "Where the left stick X axis rests, from -1 to 1; the stored centre reads as 0.",
+          "description": "Where the left stick X axis rests; the stored centre reads as 0.",
           "type": "number",
           "minimum": -1,
           "maximum": 1
         },
         "leftStickCenterY": {
-          "description": "Where the left stick Y axis rests, from -1 to 1; the stored centre reads as 0.",
+          "description": "Where the left stick Y axis rests; the stored centre reads as 0.",
           "type": "number",
           "minimum": -1,
           "maximum": 1
         },
         "rightStickCenterX": {
-          "description": "Where the right stick X axis rests, from -1 to 1; the stored centre reads as 0.",
+          "description": "Where the right stick X axis rests; the stored centre reads as 0.",
           "type": "number",
           "minimum": -1,
           "maximum": 1
         },
         "rightStickCenterY": {
-          "description": "Where the right stick Y axis rests, from -1 to 1; the stored centre reads as 0.",
+          "description": "Where the right stick Y axis rests; the stored centre reads as 0.",
           "type": "number",
           "minimum": -1,
           "maximum": 1
         },
         "leftStickRange": {
-          "description": "The left stick deflection from its centre that reads as full, in 0.05 to 2.",
+          "description": "The left stick deflection from its centre that reads as full.",
           "type": "number",
           "minimum": 0.05,
           "maximum": 2
         },
         "rightStickRange": {
-          "description": "The right stick deflection from its centre that reads as full, in 0.05 to 2.",
+          "description": "The right stick deflection from its centre that reads as full.",
           "type": "number",
           "minimum": 0.05,
           "maximum": 2
         },
         "leftTriggerRest": {
-          "description": "Where the left trigger rests, from 0 to 0.95, below leftTriggerFull.",
+          "description": "Where the left trigger rests, below leftTriggerFull.",
           "type": "number",
           "minimum": 0,
           "maximum": 0.95
         },
         "leftTriggerFull": {
-          "description": "Where the left trigger reads fully pressed, from 0.05 to 1, above leftTriggerRest.",
+          "description": "Where the left trigger reads fully pressed, above leftTriggerRest.",
           "type": "number",
           "minimum": 0.05,
           "maximum": 1
         },
         "rightTriggerRest": {
-          "description": "Where the right trigger rests, from 0 to 0.95, below rightTriggerFull.",
+          "description": "Where the right trigger rests, below rightTriggerFull.",
           "type": "number",
           "minimum": 0,
           "maximum": 0.95
         },
         "rightTriggerFull": {
-          "description": "Where the right trigger reads fully pressed, from 0.05 to 1, above rightTriggerRest.",
+          "description": "Where the right trigger reads fully pressed, above rightTriggerRest.",
           "type": "number",
           "minimum": 0.05,
           "maximum": 1

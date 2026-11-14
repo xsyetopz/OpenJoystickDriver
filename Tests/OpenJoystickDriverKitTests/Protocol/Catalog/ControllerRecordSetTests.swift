@@ -285,7 +285,8 @@ struct ControllerRecordSetTests {
     let unsupportedVersion = body.merging(["apiVersion": unsupportedAPIVersionValue]) { $1 }
     #expect(
       Self.problem(try Self.json(unsupportedVersion))
-        == "E5001: apiVersion \(unsupportedAPIVersionValue) is not supported; \(supported)"
+        == "E5001: apiVersion \(unsupportedAPIVersionValue) is not supported; \(supported); "
+        + "run `ojd migrate` to convert"
     )
     #expect(Self.problemCode(try Self.json(unsupportedVersion)) == .unsupportedAPIVersion)
     let noKind = body.filter { $0.key != "kind" }
@@ -326,6 +327,25 @@ struct ControllerRecordSetTests {
       _ = try ControllerDefaults.validate(defaultsWrongKind)
       Issue.record("the wrong kind was accepted")
     } catch { #expect(ControllerRecordSet.problemCode(error) == .invalidControllerRecord) }
+  }
+
+  @Test
+  func staleJSONRecordIsListedAsStaleAndNotLoaded() throws {
+    let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
+      "ojd-records-\(UUID().uuidString)",
+      isDirectory: true
+    )
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try Self.add(Self.unbundled, family: "XboxGIP").write(
+      to: directory.appendingPathComponent("1234-abcd.json")
+    )
+
+    let set = ControllerRecordSet.load(userDirectory: directory)
+
+    #expect(set.records[Self.unbundled] == nil)
+    #expect(set.problems.map(\.url.lastPathComponent) == ["1234-abcd.json"])
+    #expect(set.problems.first?.problem == DocumentMigrator.staleProblem)
   }
 
   @Test
@@ -464,7 +484,8 @@ struct ControllerRecordSetTests {
     #expect(
       set.problems.first?.problem
         == "E5001: 1234-abcd.plist: apiVersion unsupported.example/v9 is not supported; "
-        + "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
+        + "the supported apiVersion is \(OpenJoystickDriverAPI.version); "
+        + "run `ojd migrate` to convert"
     )
     #expect(
       set.problems.last?.problem

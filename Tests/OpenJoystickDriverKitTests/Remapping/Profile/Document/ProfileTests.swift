@@ -149,7 +149,8 @@ struct RemappingProfileTests {
       ("apiVersion", nil, .unsupportedAPIVersion, "no apiVersion found; \(supported)"),
       (
         "apiVersion", "unsupported.example/v9", .unsupportedAPIVersion,
-        "apiVersion unsupported.example/v9 is not supported; \(supported)"
+        "apiVersion unsupported.example/v9 is not supported; \(supported); "
+          + "run `ojd migrate` to convert"
       ),
       ("kind", nil, nil, "no kind found; expected Profile"),
       ("kind", "Controller", nil, "expected Profile, found Controller"),

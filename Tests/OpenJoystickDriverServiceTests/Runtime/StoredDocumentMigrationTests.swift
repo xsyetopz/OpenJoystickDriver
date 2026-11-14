@@ -32,7 +32,7 @@ struct StoredDocumentMigrationTests {
     #expect(try SettingsStore(directory: directory).load().showInDock == true)
     unsafe #expect(lines.count == 3, "\(lines)")
     unsafe #expect(lines.contains("[Migrate] Migrated Settings.json"))
-    unsafe #expect(lines.contains("[Migrate] Foreign Profiles/notes.json: has no apiVersion"))
+    unsafe #expect(lines.contains("[Migrate] Failed Profiles/notes.json: has no apiVersion"))
     unsafe #expect(
       lines.contains("[Migrate] Failed RemappingProfiles.json: written by 0.5; re-create it")
     )

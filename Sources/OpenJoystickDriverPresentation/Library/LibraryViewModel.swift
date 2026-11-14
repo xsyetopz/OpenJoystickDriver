@@ -245,6 +245,18 @@ final class LibraryViewModel: ObservableObject {
     if testRun?.model != recordDetail?.item.model { testRun = nil }
   }
 
+  /// Converts the stale documents of the support folder, then reloads; a document that cannot be
+  /// converted shows as the failure.
+  func migrate(_ migrator: DocumentMigrator = DocumentMigrator()) {
+    failure =
+      migrator.run(dryRun: false).contains { $0.verdict == .failed }
+      ? LibraryFailure(
+        message: OJDLocalized.string("platform.macos.ui.migrate.failed"),
+        code: .unsupportedAPIVersion
+      ) : nil
+    reload()
+  }
+
   /// Clears the failure.
   func dismissFailure() { failure = nil }
 

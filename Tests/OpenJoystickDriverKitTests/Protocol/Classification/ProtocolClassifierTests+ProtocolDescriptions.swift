@@ -71,7 +71,8 @@ extension ProtocolClassifierTests {
           apiVersion: "unsupported.example/v9"
         ),
         "apiVersion unsupported.example/v9 is not supported; "
-          + "the supported apiVersion is \(OpenJoystickDriverAPI.version)",
+          + "the supported apiVersion is \(OpenJoystickDriverAPI.version); "
+          + "run `ojd migrate` to convert",
         .unsupportedAPIVersion
       ),
       (

@@ -58,7 +58,7 @@ final class ControllerRecordWatcher {
     let started = FileChangeWatcher(
       directories: [directory, packages],
       watchesFile: {
-        $0.pathExtension == "plist"
+        ["plist", "json"].contains($0.pathExtension)
           || $0.deletingLastPathComponent().standardizedFileURL == packages.standardizedFileURL
       },
       onChange: { [weak self] in

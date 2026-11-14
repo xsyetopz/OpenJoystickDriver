@@ -30,16 +30,25 @@ extension ControllerRecordSet {
     )
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
     let urls: [URL]
+    let stale: [ControllerRecordFile]
     do {
-      urls = try FileManager.default.contentsOfDirectory(
+      let listed = try FileManager.default.contentsOfDirectory(
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "plist" }.sorted {
-        $0.lastPathComponent < $1.lastPathComponent
+      ).sorted { $0.lastPathComponent < $1.lastPathComponent }
+      urls = listed.filter { $0.pathExtension == "plist" }
+      stale = listed.filter { $0.pathExtension == "json" }.map {
+        ControllerRecordFile(
+          url: $0,
+          model: nil,
+          operation: nil,
+          problem: DocumentMigrator.staleProblem
+        )
       }
     } catch CocoaError.fileReadNoSuchFile {
       urls = []
+      stale = []
     } catch {
       let file = ControllerRecordFile(
         url: directory,
@@ -73,7 +82,8 @@ extension ControllerRecordSet {
     }
     return Self(
       records: records,
-      userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + packaged.files,
+      userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + stale
+        + packaged.files,
       defaults: defaults
     )
   }
