@@ -25,6 +25,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - **Recalibrate** in the Input Test window and the controller detail, and `ojd controller calibrate CONTROLLER sticks [--step rest|circle|triggers]`, measure the stick centres, stick ranges and trigger ends and store them in your record of the model as the tuning keys `leftStickCenterX`, `leftStickCenterY`, `rightStickCenterX`, `rightStickCenterY`, `leftStickRange`, `rightStickRange`, `leftTriggerRest`, `leftTriggerFull`, `rightTriggerRest` and `rightTriggerFull`, which OJD applies before profile mapping. A control that does not move keeps its stored value and is named. **Reset** and `ojd controller calibrate CONTROLLER reset` remove them and the gyro offset. Not verified on hardware.
 - Recalibrate has a gyro step: **Measure gyro** and `ojd controller calibrate CONTROLLER sticks --step gyro` average the angular velocity while the controller lies still and store it as the tuning keys `gyroOffsetX`, `gyroOffsetY` and `gyroOffsetZ`. OJD removes the offset from each motion sample before profile mapping, `reset` removes the keys, and a controller with no gyro skips the step. The calibration rows in the controller detail draw the stick dead zone, the same `stickDeadzone` that `ojd controller show` reports.
 - The app bundle holds `PrivacyInfo.xcprivacy`: no tracking, and other diagnostic data, linked to the user and not used for tracking, collected for app functionality when a user sends a check or report.
+- `just release-bump-version <part>` sets the app version in `Info.plist` by SemVer part (`major`, `minor`, `patch`, `release`, `prerelease`, `alpha`, `beta` or `rc`) or to an exact version.
 
 ### Changed
 
@@ -53,6 +54,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- A pad that the macOS Xbox 360 driver handles, such as the NITHO MLT-KRMA-K on its 2.4G receiver (`045E:028E`), reads its D-pad from buttons 12 to 15, its triggers from Z and Rz, and its sticks with Y up as positive. It had no D-pad, and its buttons and right stick were mismapped.
 - The **Measure Rest**, **Measure Circle**, **Measure Triggers** and **Measure Gyro** buttons use title-style capitalization.
 - The **Tuning** group of the controller detail lists every tuning key, with `Driver default` or `Not set` for a key no layer sets, as `ojd config show --controller` does; before, it was empty for a controller whose record sets no tuning.
 - A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it. When that report reads as the start of a longer GIP frame, its bytes are dropped instead of prefixing the next frame.

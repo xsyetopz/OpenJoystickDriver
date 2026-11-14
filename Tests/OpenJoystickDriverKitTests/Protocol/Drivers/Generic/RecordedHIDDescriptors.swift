@@ -1,8 +1,30 @@
 import Foundation
 
-/// HID report descriptors that xpadneo recorded from Linux sysfs (`docs/descriptors`), kept here as
-/// byte evidence only.
+/// HID report descriptors that xpadneo recorded from Linux sysfs (`docs/descriptors`), and one
+/// that macOS publishes, kept here as byte evidence only.
 enum RecordedHIDDescriptors {
+  /// The descriptor that macOS publishes for an Xbox 360 pad.
+  ///
+  /// The macOS Xbox 360 driver (`com.apple.gamecontroller.driver.XboxGamepad`) publishes it. It was
+  /// read from the IORegistry `ReportDescriptor` of a NITHO MLT-KRMA-K on its 2.4 GHz receiver
+  /// (`045E:028E`, made by "shanwan"). Its 20-byte input report is the pad's own Xbox 360
+  /// report: no hat switch, the D-pad on buttons 12-15, and Y up positive.
+  static let macOSXbox360 = descriptor(
+    """
+    05 01 09 05 a1 01 05 01 09 3a a1 02 75 08 95 02 05 01 09 3f
+    09 3b 81 01 75 01 15 00 25 01 35 00 45 01 95 04 05 09 19 0c
+    29 0f 81 02 75 01 15 00 25 01 35 00 45 01 95 04 05 09 09 09
+    09 0a 09 07 09 08 81 02 75 01 15 00 25 01 35 00 45 01 95 03
+    05 09 09 05 09 06 09 0b 81 02 75 01 95 01 81 01 75 01 15 00
+    25 01 35 00 45 01 95 04 05 09 19 01 29 04 81 02 75 08 15 00
+    26 ff 00 35 00 46 ff 00 95 02 05 01 09 32 09 35 81 02 75 10
+    16 00 80 26 ff 7f 36 00 80 46 ff 7f 05 01 09 01 a1 00 95 02
+    05 01 09 30 09 31 81 02 c0 05 01 09 01 a1 00 95 02 05 01 09
+    33 09 34 81 02 c0 75 08 95 06 81 01 06 00 ff 15 00 26 ff 00
+    85 31 09 01 75 08 95 4d 91 02 c0 c0
+    """
+  )
+
   /// Xbox One S (`045E:02FD`) over Bluetooth, Linux mode (`xb1s_linux.md`).
   ///
   /// It ends with a zero byte after the last End Collection.
