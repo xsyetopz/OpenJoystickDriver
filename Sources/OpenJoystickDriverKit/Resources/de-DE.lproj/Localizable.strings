@@ -3079,6 +3079,8 @@
 "cli.record.draft.sdl.noLine" = "SDL_GameControllerDB hat keine Zeile für %1$@ (GUID %2$@).";
 /* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
 "cli.record.draft.sdl.noPad" = "%@ ist nicht als HID-Gerät verbunden, das dieser Befehl lesen kann.";
+/* Message of 'ojd record draft' when no USB interface of a controller that is not served reports a class, so no draft exists. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.noInterfaceClass" = "%@ meldet keine USB-Schnittstellenklasse, daher gibt es nichts, woraus sich ein Eintrag entwerfen ließe.";
 /* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
 "cli.record.draft.sdl.rejected" = "SDL_GameControllerDB-Zeile für %1$@ abgelehnt: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
@@ -3877,8 +3879,6 @@
 "error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: Die interfaceSignature eines HID-Modus hat keine endpoints, weil nur der Raw-USB-Scanner einen Endpunktsatz liest. Lösung: Entferne endpoints aus der interfaceSignature.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
 "error.E5007.modes.inputLayoutNeeded" = "%1$@, input: Ein HIDReportLayout-Modus braucht die Eingabelayouts des Eintrags. Lösung: Füge input mit den Layouts hinzu oder verwende ein anderes Protokoll.";
-/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
-"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: Ein HIDDescriptor-Modus liest eine Usage-Map, keine Eingabelayouts. Lösung: Ersetze die Eingabelayouts durch eine Usage-Map.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
 "error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: Eine HID-Usage-Map gilt nur, wenn der Treiber jedes Modus eine liest. Lösung: Entferne die Usage-Map oder verwende nur Treiber, die eine lesen.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */

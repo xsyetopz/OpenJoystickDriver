@@ -322,7 +322,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public var startupWrites: [RecordStartupWrite] { session.startupWrites }
   /// Raw-USB startup packets; empty runs the family description's.
   public var usbStartupWrites: [USBStartupWrite] { session.usbStartupWrites }
-  /// The record's input-report layouts; set exactly for the `HIDReportLayout` family.
+  /// The record's input-report layouts; set for a `HIDReportLayout` record and any record that
+  /// holds `input.layouts`.
   public let inputLayouts: ControllerInputLayouts?
   /// The record's HID usage map; set only for a `HIDDescriptor` record that declares one.
   var hidUsageMap: HIDUsageMap?

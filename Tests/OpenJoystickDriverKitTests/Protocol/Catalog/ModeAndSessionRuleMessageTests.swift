@@ -118,12 +118,6 @@ struct ModeAndSessionRuleMessageTests {
         + "or use another protocol."
     )
     #expect(
-      Self.message("modes.usageMapNotLayouts")
-        == "046d-c21d.plist, input: A HIDDescriptor mode reads a usage "
-        + "map, not input layouts. Fix: Replace the input layouts with a "
-        + "usage map."
-    )
-    #expect(
       Self.message("modes.usageMapDriver")
         == "046d-c21d.plist, input.usageMap: A HID usage map applies only "
         + "if the driver of every mode reads one. Fix: Remove the usage "

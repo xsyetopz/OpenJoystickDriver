@@ -452,14 +452,6 @@ struct ControllerModeTests {
       var extras: [String: Any] = [:]
       let expected: String
     }
-    let layout: [String: Any] = [
-      "layouts": [
-        [
-          "report": ["length": ["atLeast": 8]],
-          "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1]],
-        ]
-      ]
-    ]
     let rumble: [String: Any] = [
       "rumble": [
         "report": ["kind": "Output", "id": 2, "length": 8],
@@ -533,13 +525,6 @@ struct ControllerModeTests {
         name: "report above 255",
         modes: [mode("a", probe: probe.merging(["report": 256]) { $1 })],
         expected: "a probe reads report 0...255 with a length of 1...65535"
-      ),
-      Case(
-        name: "input layout beside a HIDDescriptor mode",
-        modes: [mode("a", family: "HIDDescriptor")],
-        family: "HIDReportLayout",
-        extras: ["input": layout],
-        expected: "a HIDDescriptor mode reads a usage map, not input layouts"
       ),
       Case(
         name: "HIDReportLayout mode without the input layout",

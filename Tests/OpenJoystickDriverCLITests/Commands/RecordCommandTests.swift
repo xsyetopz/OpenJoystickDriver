@@ -389,6 +389,20 @@ struct RecordCommandTests {
     #expect(human.standardError.contains("input section"))
   }
 
+  /// A device whose interfaces report no class triple has nothing to draft from; the message says
+  /// so and does not blame the HID connection that `--from-sdl` needs.
+  @Test
+  func draftOfUnservedDeviceWithNoInterfaceClassSaysSo() async throws {
+    let pad = PhysicalDevice(
+      vendorID: 0x1234,
+      productID: 0x5678,
+      interfaces: [PhysicalInterfaceSignature(hostTransport: .usb)]
+    )
+    let result = try await draftUnserved("1234:5678", pad: pad)
+    #expect(result.code == 1)
+    #expect(result.standardError.contains("no USB interface class"), "\(result.standardError)")
+  }
+
   /// `E2012` is for a device that is not connected.
   @Test
   func draftOfDeviceNotConnectedExitsOneWithE2012() async throws {

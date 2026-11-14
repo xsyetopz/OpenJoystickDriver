@@ -3079,6 +3079,8 @@
 "cli.record.draft.sdl.noLine" = "SDL_GameControllerDB tidak memiliki baris untuk %1$@ (GUID %2$@).";
 /* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
 "cli.record.draft.sdl.noPad" = "%@ tidak terhubung sebagai perangkat HID yang dapat dibaca perintah ini.";
+/* Message of 'ojd record draft' when no USB interface of a controller that is not served reports a class, so no draft exists. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.noInterfaceClass" = "%@ tidak melaporkan kelas antarmuka USB, sehingga tidak ada yang dapat dijadikan dasar draf rekaman.";
 /* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
 "cli.record.draft.sdl.rejected" = "Baris SDL_GameControllerDB untuk %1$@ ditolak: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
@@ -4461,8 +4463,6 @@
 "error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: interfaceSignature mode HID tidak memiliki endpoints, karena hanya pemindai raw-USB yang membaca kumpulan endpoint. Perbaikan: hapus endpoints dari interfaceSignature.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
 "error.E5007.modes.inputLayoutNeeded" = "%1$@, input: mode HIDReportLayout memerlukan tata letak input record. Perbaikan: tambahkan input dengan tata letaknya, atau gunakan protokol lain.";
-/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
-"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: mode HIDDescriptor membaca peta penggunaan, bukan tata letak input. Perbaikan: ganti tata letak input dengan peta penggunaan.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
 "error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: peta penggunaan HID hanya berlaku jika driver setiap mode membacanya. Perbaikan: hapus peta penggunaan, atau gunakan hanya driver yang membacanya.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */

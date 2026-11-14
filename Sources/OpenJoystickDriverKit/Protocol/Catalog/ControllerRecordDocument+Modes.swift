@@ -414,12 +414,6 @@ extension ControllerRecordDocument {
           "a HIDReportLayout mode needs the record's input layout"
         )
       }
-      if inputLayouts != nil, info.protocolID == .hidDescriptor {
-        throw fail(
-          "error.E5007.modes.usageMapNotLayouts",
-          "a HIDDescriptor mode reads a usage map, not input layouts"
-        )
-      }
       if hidUsageMap != nil,
         !info.protocolID.protocolDescription.recordSections.contains(.hidUsageMap)
       {

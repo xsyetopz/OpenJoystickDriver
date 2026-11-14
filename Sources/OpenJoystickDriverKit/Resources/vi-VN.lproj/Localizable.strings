@@ -3079,6 +3079,8 @@
 "cli.record.draft.sdl.noLine" = "SDL_GameControllerDB không có dòng nào cho %1$@ (GUID %2$@).";
 /* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
 "cli.record.draft.sdl.noPad" = "%@ không được kết nối như một thiết bị HID mà lệnh này đọc được.";
+/* Message of 'ojd record draft' when no USB interface of a controller that is not served reports a class, so no draft exists. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.noInterfaceClass" = "%@ không báo cáo lớp giao diện USB nên không có gì để soạn bản nháp bản ghi.";
 /* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
 "cli.record.draft.sdl.rejected" = "Dòng SDL_GameControllerDB của %1$@ bị từ chối: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
@@ -4461,8 +4463,6 @@
 "error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: interfaceSignature của chế độ HID không có endpoints, vì chỉ trình quét raw-USB đọc tập điểm cuối. Cách sửa: bỏ endpoints khỏi interfaceSignature.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
 "error.E5007.modes.inputLayoutNeeded" = "%1$@, input: chế độ HIDReportLayout cần bố cục đầu vào của bản ghi. Cách sửa: thêm input cùng các bố cục, hoặc dùng giao thức khác.";
-/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
-"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: chế độ HIDDescriptor đọc bản đồ sử dụng, không đọc bố cục đầu vào. Cách sửa: thay các bố cục đầu vào bằng bản đồ sử dụng.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
 "error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: bản đồ sử dụng HID chỉ áp dụng nếu trình điều khiển của mọi chế độ đọc nó. Cách sửa: bỏ bản đồ sử dụng, hoặc chỉ dùng trình điều khiển đọc nó.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */

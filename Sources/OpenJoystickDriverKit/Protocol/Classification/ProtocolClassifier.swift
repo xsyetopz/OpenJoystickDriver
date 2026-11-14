@@ -448,7 +448,17 @@ enum ProtocolClassifier {
       case .bootloader?: return .unsupported(.bootloaderIdentity)
       case nil: break
       }
-      if !record.hasDefaultMode, modeID == nil { return .unsupported(.noModeMatched) }
+      if !record.hasDefaultMode, modeID == nil {
+        // No mode matches the device, so no mode of the record fits what it exposes.
+        guard backend == .hid, !interfaces.isEmpty else { return .unsupported(.noModeMatched) }
+        return descriptorFallback(
+          for: record,
+          device: device,
+          interfaces: interfaces,
+          backend: backend,
+          database: database
+        ) ?? .unsupported(.noModeMatched)
+      }
       let result =
         otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
         ?? bind(record, interfaces: interfaces, backend: backend)

@@ -1,7 +1,7 @@
 import Foundation
 
 extension ControllerRecordDocument {
-  /// The record's `input` section: the fixed report layouts for the `HIDReportLayout` family.
+  /// The record's `input` section: the fixed report layouts of any protocol family.
   struct InputLayouts: Decodable {
     /// The decoded layouts.
     let layouts: ControllerInputLayouts

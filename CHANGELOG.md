@@ -9,7 +9,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 ### Added
 
 - The `SystemAction` destination has `Launchpad`, `Screenshot`, `LockScreen` and `ShowDesktop`. `Launchpad` opens Launchpad (or Apps where macOS has no Launchpad). `Screenshot` takes a screenshot, `LockScreen` locks the screen and `ShowDesktop` shows the desktop, each by pressing its system shortcut (Shift-Command-3, Control-Command-Q, F11), so they need Accessibility access. `ojd binding set` takes `system:launchpad`, `system:screenshot`, `system:lock-screen` and `system:show-desktop`.
-- Layouts apply to every protocol family: a record of any family but `HIDDescriptor` may hold `input.layouts`. The family driver decodes every report and the layout that selects a report overrides the controls it names, so a device with its own report shape is a record. The Xbox wheel `044F:B671` reads its steering and brake through such a layout.
+- Layouts apply to every protocol family: a record of any family, `HIDDescriptor` included, may hold `input.layouts`. The family driver decodes every report and the layout that selects a report overrides the controls it names, so a device with its own report shape is a record. The Xbox wheel `044F:B671` reads its steering and brake through such a layout.
 - A patch reaches every record property (`capabilities`, `idle`, `modes`, `name`, `placeholderSerial`, `usb`, `bluetoothLE`, `server`, `route`, `heldByAppleDriver`, `input` and `tuning`), and the selector still names the identity. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the remove path `modes.<id>` drops one.
 - A patch has a `remove` list of dotted key paths, such as `input.hidUsageMap`, that OJD applies before `patch`. A path outside the record schema is refused with `E5007`.
 - `ojd migrate [--dry-run] [FOLDER]` converts `v1alpha1` and `v1alpha2` JSON documents of every kind to `v1alpha3` property lists. It scans the root files, `ActiveProfiles`, `Profiles/`, `Controllers/`, `VirtualDevices/`, `Personas/` and `Packages/`, gives each file the verdict `Migrated`, `Current`, `Failed` or `Foreign`, and keeps each original under `Migrated/` with its relative path. A file written by 0.5 fails with "written by 0.5; re-create it". The service migrates the stored documents at start and logs each verdict, and the app offers **Migrate** for `E5001` and names a stale `.json` profile.
@@ -52,6 +52,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it.
+- A controller whose record has no default mode and no mode matching the device falls back to its HID descriptor, as a record that fits no interface does; before, it was refused with `NoModeMatched`.
+- OJD seizes a HID device with no record only when the classifier binds it; before, it seized every such device and released the refused ones afterwards.
+- `ojd record draft` for a device whose interfaces report no class says so; before, it said the device is not connected as a HID device.
+- The numbered steps of the Support Ladder wiki page continue after each XML example instead of restarting at 1.
 - **Check Now** with only prerelease releases published reports no error: it states that only prereleases exist and names **Include prerelease updates**.
 - The stick dead zone stepper clears the value ("Not set") when it decrements below the lowest value; before, only **Reset** cleared it.
 - The developer tools show **USB endpoints** only for a controller connected over USB.

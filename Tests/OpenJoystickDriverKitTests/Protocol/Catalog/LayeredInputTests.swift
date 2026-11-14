@@ -3,7 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A record of any family but `HIDDescriptor` may hold `input.layouts`; the driver of the family
+/// A record of any family may hold `input.layouts`; the driver of the family
 /// reads every report and the layouts decide the controls they name.
 struct LayeredInputTests {
   private func layout(
@@ -100,12 +100,42 @@ struct LayeredInputTests {
   }
 
   @Test
-  func hidDescriptorRecordRefusesLayouts() {
+  func hidDescriptorRecordTakesLayouts() throws {
     let input = layout(
       report: ["length": ["atLeast": 1] as [String: Int]],
       button: "South",
       bitOffset: 0
     )
-    #expect(throws: (any Error).self) { try driver(family: "HIDDescriptor", input: input) }
+    let driver = try driver(family: "HIDDescriptor", input: input)
+    let event = try #require(try driver.parseReport(Data([0x01])))
+    #expect(event.state.pressed.contains(.south))
+  }
+
+  @Test
+  func gipRecordReadsLayoutOfReportThatIsNoGIPFrame() throws {
+    // The layout selects report 0x07 of 8 bytes; its length field never ends, so GIP throws
+    // on it.
+    let input = layout(
+      report: ["id": 0x07, "length": ["exactly": 8] as [String: Int]],
+      button: "West",
+      bitOffset: 8
+    )
+    let driver = try driver(family: "XboxGIP", input: input, runtimeVariant: "USB")
+    let report: [UInt8] = [0x07, 0x01, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
+    let event = try #require(try driver.parseReport(Data(report)))
+    #expect(event.state.pressed.contains(.west))
+  }
+
+  @Test
+  func gipRecordStillThrowsOnMalformedReportNoLayoutSelects() throws {
+    let input = layout(
+      report: ["id": 0x07, "length": ["exactly": 8] as [String: Int]],
+      button: "West",
+      bitOffset: 8
+    )
+    let driver = try driver(family: "XboxGIP", input: input, runtimeVariant: "USB")
+    #expect(throws: (any Error).self) {
+      try driver.parseReport(Data([0x07, 0x01, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]))
+    }
   }
 }
