@@ -5482,9 +5482,9 @@
 /* Tooltip of the banner button that restarts the request listener of the service. */
 "ui.help.restartListener" = "सेवा का अनुरोध श्रोता फिर से शुरू करें";
 /* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
-"platform.macos.ui.help.openDriverApproval" = "सिस्टम सेटिंग्स में ड्राइवर एक्सटेंशन को मंज़ूरी दें";
+"platform.macos.ui.help.openDriverApproval" = "सिस्टम सेटिंग्स में Xbox USB ड्राइवर को मंज़ूरी दें";
 /* Tooltip of the banner button that repairs the driver extension. */
-"ui.help.repairDriver" = "ड्राइवर एक्सटेंशन की मरम्मत करें";
+"ui.help.repairDriver" = "Xbox USB ड्राइवर की मरम्मत करें";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
 "ui.help.requestMissingPermissions" = "पहुँच क्षेत्र में छूटी हुई अनुमतियाँ माँगें";
 /* Tooltip of the Import Profile toolbar button. */
@@ -5564,7 +5564,7 @@
 /* Tooltip of the Send Test Notification button in the Notifications settings. */
 "ui.help.testNotification" = "अभी एक नमूना सूचना दिखाएँ";
 /* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
-"ui.help.uninstallDriver" = "ड्राइवर एक्सटेंशन को सिस्टम से हटाएँ";
+"ui.help.uninstallDriver" = "Xbox USB ड्राइवर को सिस्टम से हटाएँ";
 /* Tooltip of the Interface popup in the General settings. */
 "ui.help.interfaceLevel" = "चुनें कि ऐप कितने नियंत्रण दिखाए";
 /* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */

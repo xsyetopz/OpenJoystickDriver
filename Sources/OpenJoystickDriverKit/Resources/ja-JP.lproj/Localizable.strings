@@ -5482,9 +5482,9 @@
 /* Tooltip of the banner button that restarts the request listener of the service. */
 "ui.help.restartListener" = "サービスのリクエストリスナーを再起動する";
 /* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
-"platform.macos.ui.help.openDriverApproval" = "システム設定でドライバ拡張を承認する";
+"platform.macos.ui.help.openDriverApproval" = "システム設定で Xbox USB ドライバを承認する";
 /* Tooltip of the banner button that repairs the driver extension. */
-"ui.help.repairDriver" = "ドライバ拡張を修復する";
+"ui.help.repairDriver" = "Xbox USB ドライバを修復する";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
 "ui.help.requestMissingPermissions" = "アクセス領域で不足している権限を要求する";
 /* Tooltip of the Import Profile toolbar button. */
@@ -5564,7 +5564,7 @@
 /* Tooltip of the Send Test Notification button in the Notifications settings. */
 "ui.help.testNotification" = "サンプル通知を今すぐ表示する";
 /* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
-"ui.help.uninstallDriver" = "ドライバ拡張をシステムから削除する";
+"ui.help.uninstallDriver" = "Xbox USB ドライバをシステムから削除する";
 /* Tooltip of the Interface popup in the General settings. */
 "ui.help.interfaceLevel" = "アプリが表示するコントロールの数を選ぶ";
 /* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */

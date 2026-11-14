@@ -5482,9 +5482,9 @@
 /* Tooltip of the banner button that restarts the request listener of the service. */
 "ui.help.restartListener" = "서비스의 요청 리스너를 다시 시작";
 /* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
-"platform.macos.ui.help.openDriverApproval" = "시스템 설정에서 드라이버 확장 승인";
+"platform.macos.ui.help.openDriverApproval" = "시스템 설정에서 Xbox USB 드라이버 승인";
 /* Tooltip of the banner button that repairs the driver extension. */
-"ui.help.repairDriver" = "드라이버 확장 복구";
+"ui.help.repairDriver" = "Xbox USB 드라이버 복구";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
 "ui.help.requestMissingPermissions" = "접근 영역에서 부족한 권한 요청";
 /* Tooltip of the Import Profile toolbar button. */
@@ -5564,7 +5564,7 @@
 /* Tooltip of the Send Test Notification button in the Notifications settings. */
 "ui.help.testNotification" = "지금 샘플 알림 표시";
 /* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
-"ui.help.uninstallDriver" = "시스템에서 드라이버 확장 제거";
+"ui.help.uninstallDriver" = "시스템에서 Xbox USB 드라이버 제거";
 /* Tooltip of the Interface popup in the General settings. */
 "ui.help.interfaceLevel" = "앱이 보여 줄 컨트롤 수 선택";
 /* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
