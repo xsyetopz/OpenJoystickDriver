@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "कच्चा %1$@, ट्यूनिंग के बाद %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "कोई वर्चुअल गेमपैड नहीं";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "फिर से कैलिब्रेट करें";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "विश्राम स्थिति मापें";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "वृत्त मापें";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "ट्रिगर मापें";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "कंट्रोलर पढ़ा जा रहा है…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "हर चरण कंट्रोलर को लगभग दो सेकंड पढ़ता है। विश्राम के लिए स्टिक और ट्रिगर छोड़ दें। वृत्त के लिए हर स्टिक को उसके पूरे वृत्त में घुमाएँ। ट्रिगर के लिए हर ट्रिगर को पूरा दबाएँ।";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "मापे गए मान सहेज लिए गए।";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "%@ में कोई गति नहीं मापी गई, इसलिए उनके सहेजे गए मान बने रहते हैं।";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "सहेजा गया स्टिक और ट्रिगर कैलिब्रेशन हटा दिया गया।";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "सहेजा गया स्टिक और ट्रिगर कैलिब्रेशन और जाइरो ऑफ़सेट हटा दिया गया।";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "अनुरोध में विक्रेता या उत्पाद ID सीमा से बाहर है। कुछ नहीं बदला।";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

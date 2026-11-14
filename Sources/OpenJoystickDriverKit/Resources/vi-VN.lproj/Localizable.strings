@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Thô %1$@, sau khi tinh chỉnh %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "không có tay cầm ảo";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Hiệu chỉnh lại";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Đo vị trí nghỉ";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Đo vòng tròn";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Đo cò";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Đang đọc tay cầm…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Mỗi bước đọc tay cầm khoảng hai giây. Với vị trí nghỉ, hãy thả các cần analog và cò. Với vòng tròn, hãy xoay mỗi cần analog hết vòng tròn của nó. Với cò, hãy nhấn mỗi cò hết cỡ.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Đã lưu các giá trị đã đo.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Không đo được chuyển động của %@, nên giá trị đã lưu được giữ nguyên.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Đã xóa hiệu chỉnh cần analog và cò đã lưu.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Đã xóa hiệu chỉnh cần analog và cò đã lưu cùng độ lệch con quay.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Yêu cầu nêu một ID nhà cung cấp hoặc ID sản phẩm nằm ngoài phạm vi. Không có gì thay đổi.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

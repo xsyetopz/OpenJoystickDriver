@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "ค่าดิบ %1$@, หลังปรับแต่ง %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "ไม่มีเกมแพดเสมือน";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "ปรับเทียบใหม่";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "วัดตำแหน่งนิ่ง";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "วัดวงกลม";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "วัดทริกเกอร์";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "กำลังอ่านค่าจากคอนโทรลเลอร์…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "แต่ละขั้นตอนจะอ่านคอนโทรลเลอร์ประมาณสองวินาที สำหรับตำแหน่งนิ่ง ให้ปล่อยสติ๊กและทริกเกอร์ สำหรับวงกลม ให้หมุนสติ๊กแต่ละอันรอบวงกลมเต็มวง สำหรับทริกเกอร์ ให้กดทริกเกอร์แต่ละอันจนสุด";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "บันทึกค่าที่วัดได้แล้ว";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "ไม่พบการเคลื่อนไหวของ %@ จึงคงค่าที่บันทึกไว้";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "ลบการปรับเทียบสติ๊กและทริกเกอร์ที่บันทึกไว้แล้ว";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "ลบการปรับเทียบสติ๊กและทริกเกอร์ที่บันทึกไว้ และค่าชดเชยไจโรแล้ว";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "คำขอระบุรหัสผู้ผลิตหรือรหัสผลิตภัณฑ์ที่อยู่นอกช่วง ไม่มีการเปลี่ยนแปลงใดๆ";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

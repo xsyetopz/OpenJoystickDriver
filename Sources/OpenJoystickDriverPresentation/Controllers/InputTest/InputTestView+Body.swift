@@ -120,6 +120,13 @@
             }.ojdInterfaceRow(InputTestRow.lighting)
           }
         }
+        Section(header: Text(OJDLocalized.string("ui.controllers.recalibrate.title"))) {
+          ControllerRecalibrationControls(
+            gateway: model.gateway,
+            selector: model.isDeviceConnected
+              ? model.device.map { .session($0.sessionToken) } : nil
+          )
+        }
       }.ojdGroupedForm().onReceive(runtimeViewModel.$statusState) { state in
         guard case .available(let status) = state else { return }
         model.reconcileStatus(status)

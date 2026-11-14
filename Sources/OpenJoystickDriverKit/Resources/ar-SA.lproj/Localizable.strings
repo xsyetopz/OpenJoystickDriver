@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "الخام %1$@، بعد الضبط %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "لا توجد وحدة تحكم افتراضية";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "إعادة المعايرة";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "قياس وضع الراحة";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "قياس الدائرة";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "قياس الزنادات";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "جارٍ قراءة وحدة التحكم…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "تقرأ كل خطوة وحدة التحكم لمدة ثانيتين تقريباً. في وضع الراحة، حرّر العصي والزنادات. في الدائرة، حرّك كل عصا حول دائرتها الكاملة. في الزنادات، اضغط كل زناد حتى النهاية.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "تم تخزين القيم المقاسة.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "لم تُقَس أي حركة لـ %@، لذلك تبقى قيمها المخزنة.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "تمت إزالة معايرة العصي والزنادات المخزنة.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "تمت إزالة معايرة العصي والزنادات المخزنة وإزاحة الجيروسكوب.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "يحدد الطلب معرّف مورّد أو معرّف منتج خارج النطاق. لم يتغير شيء.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

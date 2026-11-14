@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Sin procesar %1$@, tras el ajuste %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "sin mando virtual";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Recalibrar";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Medir reposo";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Medir círculo";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Medir gatillos";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Leyendo el mando…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Cada paso lee el mando durante unos dos segundos. Para el reposo, suelta las palancas y los gatillos. Para el círculo, gira cada palanca por su círculo completo. Para los gatillos, pulsa cada gatillo a fondo.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Se guardaron los valores medidos.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "No se midió movimiento en %@, así que se conservan sus valores guardados.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Se quitó la calibración guardada de las palancas y los gatillos.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Se quitó la calibración guardada de las palancas y los gatillos y el desfase del giroscopio.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "La solicitud indica un ID de fabricante o de producto fuera de rango. No se ha cambiado nada.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

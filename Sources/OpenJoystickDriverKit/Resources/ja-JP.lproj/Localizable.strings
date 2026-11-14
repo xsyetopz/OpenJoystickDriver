@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "生の値 %1$@、調整後 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "仮想ゲームパッドなし";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "再キャリブレーション";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "静止位置を測定";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "円を測定";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "トリガーを測定";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "コントローラーを読み取り中…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "各ステップはコントローラーを約2秒間読み取ります。静止位置では、スティックとトリガーから手を離します。円では、各スティックを一周させます。トリガーでは、各トリガーを奥まで押し込みます。";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "測定した値を保存しました。";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "%@の動きは測定できなかったため、保存済みの値はそのままです。";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "保存されていたスティックとトリガーのキャリブレーションを削除しました。";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "保存されていたスティックとトリガーのキャリブレーションとジャイロオフセットを削除しました。";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "リクエストのベンダIDまたはプロダクトIDが範囲外です。何も変更されていません。";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

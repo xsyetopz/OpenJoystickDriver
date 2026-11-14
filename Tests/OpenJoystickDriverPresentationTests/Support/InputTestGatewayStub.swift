@@ -18,6 +18,13 @@ struct RecordedRumble: Equatable, Sendable {
 enum InputTestGatewayError: Error { case outputFailed }
 
 actor InputTestGatewayStub: InputTestDeviceGateway {
+  func recalibrateController(
+    _: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) -> ControllerRecalibrationResult {
+    ControllerRecalibrationResult(action: action)
+  }
+
   func motionCalibration(
     for _: ControllerReference,
     command _: RemappingMotionCalibrationCommand?

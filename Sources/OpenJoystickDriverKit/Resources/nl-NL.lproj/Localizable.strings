@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Ruw %1$@, na afstelling %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "geen virtuele gamepad";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Opnieuw kalibreren";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Rustpositie meten";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Cirkel meten";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Triggers meten";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Controller wordt gelezen…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Elke stap leest de controller ongeveer twee seconden. Laat voor de rustpositie de sticks en triggers los. Beweeg voor de cirkel elke stick rond zijn volledige cirkel. Druk voor de triggers elke trigger helemaal in.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "De gemeten waarden zijn opgeslagen.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Voor %@ is geen beweging gemeten, dus de opgeslagen waarden blijven.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "De opgeslagen stick- en triggerkalibratie is verwijderd.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "De opgeslagen stick- en triggerkalibratie en de gyro-offset zijn verwijderd.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Het verzoek noemt een leveranciers- of product-ID buiten het bereik. Er is niets gewijzigd.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

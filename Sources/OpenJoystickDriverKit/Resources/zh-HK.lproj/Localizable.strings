@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "原始值 %1$@，調整後 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "沒有虛擬遊戲控制器";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "重新校準";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "量度靜止位置";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "量度圓周";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "量度扳機";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "正在讀取手掣…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "每一步會讀取手掣約兩秒。量度靜止位置時，請鬆開搖桿和扳機。量度圓周時，請將每個搖桿沿完整的圓轉動一圈。量度扳機時，請將每個扳機完全按到底。";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "已儲存量度的值。";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "未量度到%@的移動，因此保留其已儲存的值。";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "已移除儲存的搖桿和扳機校準。";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "已移除儲存的搖桿和扳機校準以及陀螺儀偏移。";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "要求中的供應商 ID 或產品 ID 超出範圍。未作任何更改。";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Исходное %1$@, после настройки %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "нет виртуального геймпада";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Перекалибровать";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Измерить покой";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Измерить окружность";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Измерить триггеры";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Чтение контроллера…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Каждый шаг читает контроллер около двух секунд. Для покоя отпустите стики и триггеры. Для окружности проведите каждым стиком по полному кругу. Для триггеров нажмите каждый триггер до упора.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Измеренные значения сохранены.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Движение не измерено для: %@. Сохранённые значения остаются.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Сохранённая калибровка стиков и триггеров удалена.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Сохранённая калибровка стиков и триггеров и смещение гироскопа удалены.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "В запросе указан идентификатор производителя или продукта вне допустимого диапазона. Ничего не изменено.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

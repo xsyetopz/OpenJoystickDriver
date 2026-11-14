@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Ham %1$@, ayardan sonra %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "sanal oyun kontrolcüsü yok";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Yeniden Kalibre Et";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Dinlenme konumunu ölç";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Daireyi ölç";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Tetikleri ölç";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Kumanda okunuyor…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Her adım kumandayı yaklaşık iki saniye okur. Dinlenme konumu için çubukları ve tetikleri bırakın. Daire için her çubuğu tam dairesi boyunca döndürün. Tetikler için her tetiği sonuna kadar basın.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Ölçülen değerler kaydedildi.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "%@ için hareket ölçülmedi, bu yüzden kayıtlı değerleri korunur.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Kayıtlı çubuk ve tetik kalibrasyonu kaldırıldı.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Kayıtlı çubuk ve tetik kalibrasyonu ile jiroskop ofseti kaldırıldı.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "İstek, aralık dışında bir üretici veya ürün kimliği belirtiyor. Hiçbir şey değişmedi.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

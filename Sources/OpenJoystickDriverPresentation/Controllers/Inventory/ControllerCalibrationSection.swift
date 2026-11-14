@@ -27,6 +27,12 @@
         ForEach(model.rows) { row in
           OJDLabeledValue(Self.label(row.control), Self.text(row))
         }
+        OJDLabeledRow(OJDLocalized.string("ui.controllers.recalibrate.title")) {
+          ControllerRecalibrationControls(
+            gateway: viewModel.gateway,
+            selector: .session(device.sessionToken)
+          )
+        }
       }.task(id: device.sessionToken.rawValue) {
         await model.run(device: device, deadZone: { setting.value }, gateway: viewModel.gateway)
       }

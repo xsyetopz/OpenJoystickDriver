@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "원시값 %1$@, 조정 후 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "가상 게임패드 없음";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "다시 보정";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "정지 상태 측정";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "원 측정";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "트리거 측정";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "컨트롤러를 읽는 중…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "각 단계는 컨트롤러를 약 2초 동안 읽습니다. 정지 상태에서는 스틱과 트리거에서 손을 뗍니다. 원에서는 각 스틱을 끝까지 한 바퀴 돌립니다. 트리거에서는 각 트리거를 끝까지 누릅니다.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "측정한 값을 저장했습니다.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "%@의 움직임이 측정되지 않아 저장된 값을 유지합니다.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "저장된 스틱과 트리거 보정을 제거했습니다.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "저장된 스틱과 트리거 보정과 자이로 오프셋을 제거했습니다.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "요청한 공급업체 ID 또는 제품 ID가 범위를 벗어났습니다. 변경된 항목이 없습니다.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */

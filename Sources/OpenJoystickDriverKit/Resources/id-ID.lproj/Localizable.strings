@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Mentah %1$@, setelah penyetelan %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "tidak ada gamepad virtual";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Kalibrasi Ulang";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Ukur posisi diam";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Ukur lingkaran";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Ukur pemicu";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Membaca kontroler…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Setiap langkah membaca kontroler sekitar dua detik. Untuk posisi diam, lepaskan stik dan pemicu. Untuk lingkaran, putar setiap stik mengelilingi lingkaran penuhnya. Untuk pemicu, tekan setiap pemicu sampai habis.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Nilai yang diukur telah disimpan.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Tidak ada gerakan yang terukur untuk %@, jadi nilai yang tersimpan tetap dipakai.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Kalibrasi stik dan pemicu yang tersimpan telah dihapus.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Kalibrasi stik dan pemicu yang tersimpan serta offset giroskop telah dihapus.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Permintaan menyebut ID vendor atau produk yang di luar rentang. Tidak ada yang berubah.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
