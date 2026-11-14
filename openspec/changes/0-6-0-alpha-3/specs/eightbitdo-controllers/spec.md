@@ -47,7 +47,7 @@ OJD SHALL serve the Ultimate 2C Wireless over Bluetooth LE (`2DC8:301B`) with th
 #### Scenario: Bluetooth pad with no user document
 
 - **WHEN** the pad connects over Bluetooth LE and the user's `Controllers/` folder holds no document for it
-- **THEN** `ojd controller show 2DC8:301B` reports `Served by OJD` and, after the first input, publication as published
+- **THEN** `ojd controller show 2DC8:301B` reports `Handled by` `OJD` and, after the first input, publication as published
 
 #### Scenario: Bluetooth pad in a GameController game
 

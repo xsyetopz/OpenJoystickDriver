@@ -90,4 +90,4 @@ The repository check SHALL run a test that applies these rules to every schema f
 #### Scenario: Full check
 
 - **WHEN** `just check-schemas` runs
-- **THEN** the schema style test runs over all 15 schema files and passes
+- **THEN** the schema style test runs over all 16 schema files and passes

@@ -635,7 +635,7 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - A crosswalk key left out does not show whether the author checked that standard → `test_crosswalk_table.py` keeps its coverage rule for the standards that need a value.
 - Automatic migration rewrites user files → each original is kept in `Migrated/`, the run is logged, and `--dry-run` prints the plan.
 - The direct route for `02D1`, `02DD`, `02E3`, `0B0A` has hardware proof for `02D1` only → the other three stay marked unverified until a reporter confirms.
-- A user who relied on automatic activation for an Apple-held model gets macOS's own driver → the controller row says "Served by macOS" and offers Claim.
+- A user who relied on automatic activation for an Apple-held model gets macOS's own driver → the controller row says "Handled by macOS" and offers Claim.
 - The receiver hypothesis (D8) may be wrong → task 2.1 runs first and D8 names the other outcome.
 - Removing descriptions loses knowledge → each removed fact that still holds moves to the wiki in the same commit (`noStaleDocs`).
 - `2DC8:2027` may fail below OJD (libusb fails too) → the release notes list it as unsupported unless the reporter confirms a tester build.
