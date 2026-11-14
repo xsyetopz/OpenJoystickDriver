@@ -3631,7 +3631,7 @@
 "ui.shortcuts.action.removeMod.description" = "Verwijdert een geïnstalleerd modpakket op naam.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "Naam";
-/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. The argument is the model as VVVV:PPPP, such as 2DC8:310A. */
+/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. %@ is the model as VVVV:PPPP, such as 2DC8:310A. */
 "ui.shortcuts.controller.anyOfModel" = "Elke verbonden %@";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Model";
@@ -5312,8 +5312,8 @@
 "ui.inputTest.guidedCheck.skip" = "Overslaan";
 /* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
 "ui.inputTest.guidedCheck.title" = "Resultaat van de begeleide controle";
-/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
-"ui.inputTest.guidedCheck.summary" = "%1$d van de %2$d bedieningselementen reageerden.";
+/* Summary line of the guided check result: a label, a colon, then the counts. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "Bedieningselementen die reageerden: %1$d van %2$d.";
 /* Result of a guided check step: the control left rest. */
 "ui.inputTest.guidedCheck.responded" = "Reageerde";
 /* Result of a guided check step: the user skipped it. */

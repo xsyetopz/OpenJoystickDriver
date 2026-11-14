@@ -4213,7 +4213,7 @@
 "ui.shortcuts.action.removeMod.description" = "Удаляет установленный пакет мода по имени.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "Имя";
-/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. The argument is the model as VVVV:PPPP, such as 2DC8:310A. */
+/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. %@ is the model as VVVV:PPPP, such as 2DC8:310A. */
 "ui.shortcuts.controller.anyOfModel" = "Любой подключённый %@";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Модель";
@@ -5311,7 +5311,7 @@
 "ui.inputTest.guidedCheck.skip" = "Пропустить";
 /* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
 "ui.inputTest.guidedCheck.title" = "Результат пошаговой проверки";
-/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+/* Summary line of the guided check result: a label, a colon, then the counts. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
 "ui.inputTest.guidedCheck.summary" = "Откликнулись элементов управления: %1$d из %2$d.";
 /* Result of a guided check step: the control left rest. */
 "ui.inputTest.guidedCheck.responded" = "Откликнулся";

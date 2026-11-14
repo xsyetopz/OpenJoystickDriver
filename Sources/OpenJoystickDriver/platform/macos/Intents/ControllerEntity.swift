@@ -38,12 +38,10 @@
     var displayRepresentation: DisplayRepresentation {
       // A model entry and the controller it resolves to share a name, so the subtitle tells them
       // apart.
-      DisplayRepresentation(
-        title: "\(name)",
-        subtitle: isModelMatch
-          ? "\(Localization().string("ui.shortcuts.controller.anyOfModel", model))"
-          : "\(model)  \(id)"
-      )
+      let subtitle =
+        isModelMatch
+        ? Localization().string("ui.shortcuts.controller.anyOfModel", model) : "\(model)  \(id)"
+      return DisplayRepresentation(title: "\(name)", subtitle: "\(subtitle)")
     }
   }
 

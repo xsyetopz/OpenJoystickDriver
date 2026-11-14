@@ -4213,7 +4213,7 @@
 "ui.shortcuts.action.removeMod.description" = "按名稱移除已安裝的模組套件。";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "名稱";
-/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. The argument is the model as VVVV:PPPP, such as 2DC8:310A. */
+/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. %@ is the model as VVVV:PPPP, such as 2DC8:310A. */
 "ui.shortcuts.controller.anyOfModel" = "任一已連接的 %@";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "型號";
@@ -5311,8 +5311,8 @@
 "ui.inputTest.guidedCheck.skip" = "略過";
 /* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
 "ui.inputTest.guidedCheck.title" = "引導式檢查結果";
-/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
-"ui.inputTest.guidedCheck.summary" = "%2$d 個控制項中有 %1$d 個有回應。";
+/* Summary line of the guided check result: a label, a colon, then the counts. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "有回應的控制項：%1$d / %2$d。";
 /* Result of a guided check step: the control left rest. */
 "ui.inputTest.guidedCheck.responded" = "有回應";
 /* Result of a guided check step: the user skipped it. */

@@ -145,6 +145,12 @@ NOT_A_COUNT: dict[str, str] = {
     "ui.developer.soakOutOfRange": (
         "the numbers are the bounds of a range of the allowed value"
     ),
+    "ui.inputTest.guidedCheck.step": (
+        "the numbers are a position in a sequence and its length (step 2 of 9), with no noun"
+    ),
+    "ui.inputTest.guidedCheck.summary": (
+        "the number follows its label (after a colon or in parentheses), so no noun agrees with it"
+    ),
     "ui.inputTest.durationValue": (
         "the number is a duration in milliseconds, written with the unit symbol ms"
     ),
