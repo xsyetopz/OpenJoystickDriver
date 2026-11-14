@@ -9421,6 +9421,96 @@
         ],
         "server": "OJD"
       }
+    },
+    {
+      "name": "calibration: rejects a stick range of zero",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftStickRange": 0 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick range above 2",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightStickRange": 2.5 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick centre above 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftStickCenterX": 1.5 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick centre below -1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightStickCenterY": -1.1 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger rest of 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftTriggerRest": 1 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger full press of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightTriggerFull": 0 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger whose rest is not below its full press",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftTriggerRest": 0.8, "leftTriggerFull": 0.5 }
+      }
     }
   ]
 }

@@ -240,6 +240,8 @@ extension DevicePipeline {
     state.connection = currentConnectionState()
     return state
   }
+  /// The latest observed state as the driver reported it, before the stored calibration.
+  func rawInputState() -> ControllerState { currentRawInputState }
   /// The state of the controller session.
   func controllerSessionState() -> ControllerSessionState { sessionState }
   /// The link and power state of the controller.

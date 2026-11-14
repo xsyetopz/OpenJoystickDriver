@@ -17,6 +17,7 @@ extension DevicePipeline {
     // samples still go out with this one.
     let held = coalescedInput
     coalescedInput = nil
+    if let parsed { currentRawInputState = parsed.state }
     let event = parsed.map(normalized)
     if event != nil {
       if lastObservedInputReportNanoseconds == nil {
@@ -127,12 +128,12 @@ extension DevicePipeline {
     await dispatch(pending)
   }
 
-  /// Applies the normalization a driver leaves to the pipeline: each trigger button the driver's
-  /// protocol has no digital signal for is derived from its analog trigger, with hysteresis
-  /// against the last normalized state.
+  /// Applies the normalization a driver leaves to the pipeline: the stored calibration, then each
+  /// trigger button the driver's protocol has no digital signal for, derived from its analog
+  /// trigger with hysteresis against the last normalized state.
   func normalized(_ event: ControllerEvent) -> ControllerEvent {
     let state = TriggerButtonDerivation.applying(
-      to: event.state,
+      to: calibration().applying(to: event.state),
       previous: currentInputState,
       capabilities: driver.capabilities
     )

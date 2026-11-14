@@ -124,6 +124,10 @@ actor DevicePipeline {
   let interface: PhysicalInterfaceSignature?
   /// The controller's latest observed state, including input hidden from output.
   var currentInputState = ControllerState.neutral
+  /// The latest observed state as the driver reported it, before the stored calibration.
+  var currentRawInputState = ControllerState.neutral
+  /// The stored calibration of the controller's model, read for each report.
+  let calibration: @Sendable () -> ControllerCalibration
   /// When the input state last changed, for the idle disconnect.
   var idleInput: IdleInputTracker
   /// The state last sent to the dispatcher, without connection; neutral once the dispatcher was
@@ -275,7 +279,8 @@ actor DevicePipeline {
     sessionState: ControllerSessionState = .active,
     idleTimeoutNanoseconds _: UInt64 = 30_000_000_000,
     idleMonitorIntervalNanoseconds: UInt64 = defaultIdleMonitorIntervalNanoseconds,
-    uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds }
+    uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+    calibration: (@Sendable () -> ControllerCalibration)? = nil
   ) {
     self.identifier = identifier
     self.transport = transport
@@ -293,6 +298,10 @@ actor DevicePipeline {
     self.usbRecoveryPolicy = usbRecoveryPolicy
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.frameTimings = frameTimings
+    self.calibration =
+      calibration ?? {
+        DeviceCatalog.current.withLock { $0.calibration(of: identifier.model) }
+      }
     self.uptimeNanoseconds = uptimeNanoseconds
     self.idleInput = IdleInputTracker(now: uptimeNanoseconds())
     self.externalOutputAllowed = externalOutputAllowed

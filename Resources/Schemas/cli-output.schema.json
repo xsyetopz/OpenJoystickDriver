@@ -3449,7 +3449,17 @@
         "irWriteIntervalMs",
         "speakerMaxSeconds",
         "replyTimeoutMs",
-        "frameQueueCapacity"
+        "frameQueueCapacity",
+        "leftStickCenterX",
+        "leftStickCenterY",
+        "rightStickCenterX",
+        "rightStickCenterY",
+        "leftStickRange",
+        "rightStickRange",
+        "leftTriggerRest",
+        "leftTriggerFull",
+        "rightTriggerRest",
+        "rightTriggerFull"
       ]
     },
     "sharedServer": {

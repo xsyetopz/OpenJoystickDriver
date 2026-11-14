@@ -39,14 +39,39 @@ extension ControllerTuning {
     case replyTimeoutMs
     /// The capacity of the frame queue.
     case frameQueueCapacity
+    /// The stored centre of the left stick X axis.
+    case leftStickCenterX
+    /// The stored centre of the left stick Y axis.
+    case leftStickCenterY
+    /// The stored centre of the right stick X axis.
+    case rightStickCenterX
+    /// The stored centre of the right stick Y axis.
+    case rightStickCenterY
+    /// The stored left stick deflection that reads as full.
+    case leftStickRange
+    /// The stored right stick deflection that reads as full.
+    case rightStickRange
+    /// The stored rest value of the left trigger.
+    case leftTriggerRest
+    /// The stored fully pressed value of the left trigger.
+    case leftTriggerFull
+    /// The stored rest value of the right trigger.
+    case rightTriggerRest
+    /// The stored fully pressed value of the right trigger.
+    case rightTriggerFull
 
     /// Whether the driver picks a value while no layer sets the key.
     ///
-    /// No driver picks a stick deadzone, so none applies until a layer sets one.
-    public var hasDriverValue: Bool { self != .stickDeadzone }
+    /// No driver picks a stick deadzone or a calibration value, so none applies until a layer
+    /// sets one.
+    public var hasDriverValue: Bool {
+      self != .stickDeadzone && !ControllerCalibration.keys.contains(self)
+    }
 
     /// The keys every driver reads, whatever its family.
-    static let alwaysRead: Set<Key> = [.stickDeadzone, .frameQueueCapacity]
+    static let alwaysRead: Set<Key> = ControllerCalibration.keys.union([
+      .stickDeadzone, .frameQueueCapacity,
+    ])
   }
 
   /// The keys this tuning sets.
@@ -72,6 +97,10 @@ extension ControllerTuning {
     case .speakerMaxSeconds: speakerMaxSeconds.map(String.init)
     case .replyTimeoutMs: replyTimeoutMilliseconds.map(String.init)
     case .frameQueueCapacity: frameQueueCapacity.map(String.init)
+    case .leftStickCenterX, .leftStickCenterY, .rightStickCenterX, .rightStickCenterY,
+      .leftStickRange, .rightStickRange, .leftTriggerRest, .leftTriggerFull, .rightTriggerRest,
+      .rightTriggerFull:
+      calibration.values[key].map { "\($0)" }
     }
   }
 
@@ -104,7 +133,10 @@ extension ControllerTuning {
         ?? irWriteIntervalMilliseconds,
       speakerMaxSeconds: higher.speakerMaxSeconds ?? speakerMaxSeconds,
       replyTimeoutMilliseconds: higher.replyTimeoutMilliseconds ?? replyTimeoutMilliseconds,
-      frameQueueCapacity: higher.frameQueueCapacity ?? frameQueueCapacity
+      frameQueueCapacity: higher.frameQueueCapacity ?? frameQueueCapacity,
+      calibration: ControllerCalibration(
+        values: calibration.values.merging(higher.calibration.values) { $1 }
+      )
     )
   }
 
@@ -138,7 +170,10 @@ extension ControllerTuning {
         ? irWriteIntervalMilliseconds : nil,
       speakerMaxSeconds: keys.contains(.speakerMaxSeconds) ? speakerMaxSeconds : nil,
       replyTimeoutMilliseconds: keys.contains(.replyTimeoutMs) ? replyTimeoutMilliseconds : nil,
-      frameQueueCapacity: keys.contains(.frameQueueCapacity) ? frameQueueCapacity : nil
+      frameQueueCapacity: keys.contains(.frameQueueCapacity) ? frameQueueCapacity : nil,
+      calibration: ControllerCalibration(
+        values: calibration.values.filter { keys.contains($0.key) }
+      )
     )
   }
 }
