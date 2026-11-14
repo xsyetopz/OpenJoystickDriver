@@ -4202,7 +4202,7 @@
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
 "ui.library.record.patchedBy" = "Patched by %@";
 /* Label of the field in the record detail that tells whether the USB extension claims the controller. */
-"ui.library.field.usbClaim" = "USB extension";
+"ui.library.field.usbClaim" = "Xbox USB driver";
 /* Value of the USB extension field: the extension claims the controller. */
 "ui.library.claim.claimed" = "Claims this controller";
 /* Value of the USB extension field: the extension does not claim the controller. */
@@ -4918,7 +4918,7 @@
 /* Value of the owner of the physical controller: the app holds it exclusively over raw USB. */
 "ui.controllers.physicalOwnership.exclusiveRawUSB" = "Exclusive raw USB";
 /* Value of the owner of the physical controller: the driver extension holds it over USB. */
-"ui.controllers.physicalOwnership.extensionOwnedUSB" = "USB extension";
+"ui.controllers.physicalOwnership.extensionOwnedUSB" = "Xbox USB driver";
 /* Value of the owner of the physical controller: macOS holds it as an HID device that the app can also see. */
 "ui.controllers.physicalOwnership.systemHIDVisible" = "System HID";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */

@@ -260,7 +260,7 @@ One JavaScript file whose `generate` function returns the records of a product f
 
 ## Step 5: Source
 
-A protocol family OJD lacks needs source: a handshake, an encryption, or a transport that no document can state. Before you write Swift, check that steps 2 and 3 cannot state the fact: a fact about one model is a record field and never a model branch in Swift. [CONTRIBUTING.md](../CONTRIBUTING.md) lists the setup and the checks, and [Reporting a bug](Reporting-a-Bug.md) lists what to include with a capture.
+A protocol family OJD lacks needs source: a handshake, an encryption, or a connection that no document can state. Before you write Swift, check that steps 2 and 3 cannot state the fact: a fact about one model is a record field and never a model branch in Swift. [CONTRIBUTING.md](../CONTRIBUTING.md) lists the setup and the checks, and [Reporting a bug](Reporting-a-Bug.md) lists what to include with a capture.
 
 ## Further Reading
 

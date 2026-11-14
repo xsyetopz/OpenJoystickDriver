@@ -206,7 +206,7 @@ The **Record** section shows the record as its XML property list, colored by par
 **Copy All** copies the property list without those readings.
 
 Each record row has the VID:PID as its title and a gray line with the protocol family and where the record comes from.
-The gray line ends with **Apple-signed** for a controller that the Apple-signed USB extension claims.
+The gray line ends with **Apple-signed** for a controller that the Apple-signed Xbox USB driver claims.
 
 - **Install** adds a controller record file or a mod folder.
   **Validate...** checks it first.

@@ -20,11 +20,11 @@ Pick the goal that fits you.
 ## Controllers
 
 - [Supported controllers](Supported-Controllers.md): See which controllers people tested, what each tier means, and how OJD treats clone and generic HID controllers.
-- [Connecting controllers](Connecting-Controllers.md): Learn how USB, Bluetooth, and dongle connections differ, find the VID:PID of your controller, and use the Xbox USB driver.
+- [Connecting controllers](Connecting-Controllers.md): Learn how USB, Bluetooth, and dongle connections differ, find the VID:PID of your controller, and use the [Xbox USB driver](Glossary.md#terms).
 - [Wii Remote](Wii-Remote.md): Pair a Wii Remote with macOS, and see what OJD reads from it and its extensions.
 - [Support ladder](Support-Ladder.md): Support a controller with the first step that works: nothing, a patch, a record, a generator script, or source.
 - [Controller records](Controller-Records.md): Add a controller that OJD does not know, or change how OJD drives a known one.
-- [Writing controller mods](Writing-Controller-Mods.md): Package controllers, patches, profiles, and virtual gamepads in a folder, and install it with `ojd mod`.
+- [Writing controller mods](Writing-Controller-Mods.md): Package controllers, patches, profiles, and [virtual gamepads](Glossary.md#terms) in a folder, and install it with `ojd mod`.
 - [Generating documents with scripts](Generating-Documents-with-Scripts.md): Write a JavaScript file that returns many records, and write them with `ojd generate`.
 
 ## Games

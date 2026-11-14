@@ -11,7 +11,7 @@ Each term below names one concept in the app, the menus, the command line prose,
 | virtual gamepad kind | The form of the virtual gamepad, chosen by what reads it: "For Steam and SDL games", "For Apple Game Controller games", or "Generic HID gamepad". | "persona", "profile" for this choice, the raw identifiers in Simple | `SDLCompatible`, `GameControllerCompatible`, `Generic` |
 | Handled by macOS | macOS reads the physical controller, and OpenJoystickDriver shows no virtual gamepad for it. | "Served by", "Left to macOS", "macOS (native)" | `server` `system` (`System` in JSON), `ojd controller release` |
 | Handled by OpenJoystickDriver | OpenJoystickDriver reads the physical controller and shows a virtual gamepad to games. | "Served by", "OpenJoystickDriver (virtual)" | `server` `ojd` (`OJD` in JSON), `ojd controller claim` |
-| Xbox USB driver | The driver that OpenJoystickDriver installs in macOS to read Xbox controllers over USB. | "driver extension", "system extension", "transport extension", "DriverKit", "dext" | `ojd transport-extension` |
+| Xbox USB driver | The driver that OpenJoystickDriver installs in macOS to read Xbox controllers over USB. | "driver extension", "system extension", "transport extension", "USB extension", "DriverKit", "dext" | `ojd transport-extension` |
 | connection | How a controller reaches the Mac: cable, receiver, or Bluetooth. | "transport", "Wireless Link" | `connection` |
 | mode | The setting that a switch or button combination on the controller selects, such as XInput or DInput. | "protocol" where it names this setting | `modes` in a controller record |
 
