@@ -40,6 +40,29 @@ struct UnboundHIDDeviceTests {
   }
 
   @Test
+  func recordWhoseModeIsIdleReleasesTheClaimSeizedBeforeTheModeWasKnown() async {
+    let backend = ClaimRecordingHIDAccessBackend()
+    let manager = DeviceManager(
+      dispatcher: LoggingOutputDispatcher(),
+      installationKey: testPortKeyInstallationKey,
+      hidManager: HIDManager(backend: backend)
+    )
+    let connection = Self.connection(
+      vendorID: 0x2DC8,
+      productID: 0x6013,
+      locationID: 92,
+      interface: gamepadHIDInterface(host: .usb)
+    )
+
+    await manager.handleHIDEvent(.connected(connection: connection, ownership: .exclusive))
+
+    #expect(await manager.connectedDeviceDescriptions().isEmpty)
+    #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.noControllerLinked])
+    #expect(await backend.releasedLocations() == [92])
+    await manager.stop()
+  }
+
+  @Test
   func rejectedHIDDeviceAtBoundPipelineLocationKeepsClaim() async throws {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
