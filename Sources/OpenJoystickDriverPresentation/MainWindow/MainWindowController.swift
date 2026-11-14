@@ -547,12 +547,11 @@
           screens.libraryArea.testSelectedRecord(capture: capture, expectation: expectation)
         }
       case .removeLibraryItem: screens.libraryArea.requestRemoveSelection()
-      case .searchLibrary: break
       case .copyActivityLog: screens.activity.log.copyVisible()
       case .saveActivityLog: saveActivityLog()
       case .showActivityLogInFinder: showActivityLogInFinder()
       case .runDiagnostics: Task { await screens.activity.diagnostics.run() }
-      case .activityMode, .activityFilter, .activitySearch:
+      case .activityMode, .activityFilter, .activitySearch, .searchLibrary:
         preconditionFailure("\(action) has its own control action")
       }
     }
