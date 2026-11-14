@@ -66,9 +66,18 @@ extension HIDDeviceStream {
         enumerationKey: "\(serial ?? "")|\(productName ?? "")"
       )
     else { return nil }
+    let physicalDevice = physicalDeviceObservation(
+      for: device,
+      vendorID: model.vendorID,
+      productID: model.productID,
+      transportProperty: transport.isEmpty ? nil : transport,
+      nativePassThrough: nativePassThrough,
+      systemListsGameController: listing == .listed,
+      gameControllerSupported: supportsHIDDevice
+    )
     // macOS keeps every interface of a native controller, so a sibling is never seized either.
     let wantsSeize = Self.seizesInput(
-      model: model,
+      device: physicalDevice,
       nativePassThrough: nativePassThrough,
       siblingIsNative: eventAdapter.hasNativeDevice(locationID: locationID)
     )
@@ -79,15 +88,6 @@ extension HIDDeviceStream {
       return failure
     }
     if wantsSeize { record(claim, device: device, deviceID: deviceID, locationID: locationID) }
-    let physicalDevice = physicalDeviceObservation(
-      for: device,
-      vendorID: model.vendorID,
-      productID: model.productID,
-      transportProperty: transport.isEmpty ? nil : transport,
-      nativePassThrough: nativePassThrough,
-      systemListsGameController: listing == .listed,
-      gameControllerSupported: supportsHIDDevice
-    )
     let connection = HIDDeviceConnection(
       physicalDevice: physicalDevice,
       routingAddress: .ioKit(locationID: locationID, interfaceNumber: nil)
@@ -133,15 +133,15 @@ extension HIDDeviceStream {
 
   /// Whether OJD seizes a device: only after the serving decision says OJD serves it over HID.
   ///
-  /// A native gamepad, a sibling of one, and a model the catalog reaches through raw USB or the
-  /// extension are not seized.
+  /// A native gamepad, a sibling of one, a model the catalog reaches through raw USB or the
+  /// extension, and a device with no record that the classifier refuses are not seized.
   static func seizesInput(
-    model: ControllerModelID,
+    device: PhysicalDevice,
     nativePassThrough: Bool,
     siblingIsNative: Bool,
     catalog: DeviceCatalog = DeviceCatalog.current.withLock { $0 }
   ) -> Bool {
-    catalog.servesOverHID(model) && !nativePassThrough && !siblingIsNative
+    catalog.servesOverHID(device) && !nativePassThrough && !siblingIsNative
   }
 
   /// Whether macOS serves a pad, so OJD only observes its input and never seizes it.

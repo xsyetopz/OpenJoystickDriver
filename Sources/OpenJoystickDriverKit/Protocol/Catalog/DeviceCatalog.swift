@@ -54,13 +54,22 @@ package struct DeviceCatalog: Sendable {
     record(for: model).flatMap { $0.statesServer ? $0.server : nil }
   }
 
-  /// Whether a HID device of this model is one OJD serves over HID: its record reaches the
-  /// controller through the system HID stack, or no record exists and the HID descriptor serves it.
+  /// Whether OJD decides to serve a HID device: its record reaches the controller through the
+  /// system HID stack, or no record exists and the classifier binds it.
   ///
   /// A model whose record reaches the controller through raw USB or the extension is served by
-  /// that route, so its HID object belongs to the system.
-  package func servesOverHID(_ model: ControllerModelID) -> Bool {
-    record(for: model).map { $0.accessRoute == .system } ?? true
+  /// that route, so its HID object belongs to the system. A device with no record that the
+  /// classifier refuses is not served.
+  package func servesOverHID(_ device: PhysicalDevice) -> Bool {
+    if let vendorID = device.vendorID, let productID = device.productID,
+      let record = record(for: ControllerModelID(vendorID: vendorID, productID: productID))
+    {
+      return record.accessRoute == .system
+    }
+    guard case .bound = ProtocolClassifier.classify(device, backend: .hid, catalog: self) else {
+      return false
+    }
+    return true
   }
 
   /// The runtime profile for one decoded record; the record probe plan builds on it too.
