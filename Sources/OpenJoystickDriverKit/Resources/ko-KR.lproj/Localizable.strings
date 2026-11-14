@@ -1374,7 +1374,7 @@
 "platform.macos.cli.controller.show.servedByMacOS" = "macOS가 처리 중입니다. 확장 프로그램을 활성화하고 컨트롤러를 가져오려면 `ojd controller claim %@`를 실행하세요.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "macOS가 처리 중";
-/* Gray segment in a records list row for a controller that the Apple-signed USB extension claims. Apple is the company that signs the extension. */
+/* Gray segment in a records list row for a controller that the Apple-signed Xbox USB driver claims. Apple is the company that signs the extension. */
 "platform.macos.ui.library.record.appleSigned" = "Apple 서명됨";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "가져오기";
@@ -3181,14 +3181,14 @@
 "error.E2039.message" = "지원하지 않는 오디오 파일입니다. 압축하지 않은 PCM WAV 파일을 사용한 다음 다시 시도하세요.";
 /* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
 "error.E2040.message" = "컨트롤러의 확장 장치가 설정에 응답하지 않았습니다. 확장 장치를 다시 연결한 다음 다시 시도하세요.";
-/* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
-"platform.macos.cli.record.group.usbNotClaimed" = "이 제품군은 원시 USB를 사용하며, 제품 목록이 Apple에서 서명되어 있으므로 USB 확장 프로그램이 이 컨트롤러를 점유할 수 없습니다. OJD는 macOS가 허용하는 경우에만 직접 USB 접근으로 이 컨트롤러에 도달합니다.";
+/* Note about a controller record whose raw USB family the Xbox USB driver cannot claim because Apple signs its product list. OJD is the short product name. */
+"platform.macos.cli.record.group.usbNotClaimed" = "이 제품군은 원시 USB를 사용하며, 제품 목록이 Apple에서 서명되어 있으므로 Xbox USB 드라이버가 이 컨트롤러를 점유할 수 없습니다. OJD는 macOS가 허용하는 경우에만 직접 USB 접근으로 이 컨트롤러에 도달합니다.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
 "cli.record.group.usbOnlySwitch2" = "USB 전용: 컨트롤러를 Bluetooth LE로 연결하려면 이 Switch 2 레코드에 bluetoothLE.vibrationCharacteristic을 추가하세요.";
 /* One-line summary of 'ojd record validate' in the command list and at the top of its help. */
 "cli.record.validate.abstract" = "컨트롤러 레코드를 설치하지 않고 확인합니다.";
-/* Long description in the help of 'ojd record validate'. It lists what the check covers and says that the exit status is 1 for an invalid record. The USB extension is the driver extension that gives raw USB access; the exit status 1 stays as written. */
-"cli.record.validate.discussion" = "레코드의 형식, 필드 간 일치 여부, 번들 카탈로그와의 적합성을 확인하고 컨트롤러에 USB 확장 프로그램이 필요한지 알려 줍니다. 레코드가 올바르지 않으면 종료 코드 1로 끝납니다.";
+/* Long description in the help of 'ojd record validate'. It lists what the check covers and says that the exit status is 1 for an invalid record. The Xbox USB driver gives raw USB access; the exit status 1 stays as written. */
+"cli.record.validate.discussion" = "레코드의 형식, 필드 간 일치 여부, 번들 카탈로그와의 적합성을 확인하고 컨트롤러에 Xbox USB 드라이버가 필요한지 알려 줍니다. 레코드가 올바르지 않으면 종료 코드 1로 끝납니다.";
 /* Message printed by 'ojd record validate' for a correct record. %1$@ is the file path, %2$@ is the operation in kebab case such as install, %3$@ is the controller model and %4$@ is the protocol family. The command in quotes stays as written. */
 "cli.record.validate.valid" = "%1$@은(는) 유효한 %2$@ 레코드입니다(대상: %3$@, %4$@). ‘ojd record install’로 설치하세요.";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
@@ -3617,11 +3617,11 @@
 "ui.library.mod.removed" = "모드 %@을(를) 제거했습니다.";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
 "ui.library.record.patchedBy" = "%@이(가) 패치함";
-/* Label of the field in the record detail that tells whether the USB extension claims the controller. */
+/* Label of the field in the record detail that tells whether the Xbox USB driver claims the controller. */
 "ui.library.field.usbClaim" = "Xbox USB 드라이버";
-/* Value of the USB extension field: the extension claims the controller. */
+/* Value of the Xbox USB driver field: the driver claims the controller. */
 "ui.library.claim.claimed" = "이 컨트롤러를 담당함";
-/* Value of the USB extension field: the extension does not claim the controller. */
+/* Value of the Xbox USB driver field: the driver does not claim the controller. */
 "ui.library.claim.unclaimed" = "이 컨트롤러를 담당하지 않음";
 /* Placeholder of the search field in the toolbar of the Library area. */
 "ui.library.search" = "검색";
@@ -4916,7 +4916,7 @@
 "ui.controllers.physicalOwnership.exclusiveHID" = "단독 HID";
 /* Value of the owner of the physical controller: the app holds it exclusively over raw USB. */
 "ui.controllers.physicalOwnership.exclusiveRawUSB" = "단독 원시 USB";
-/* Value of the owner of the physical controller: the driver extension holds it over USB. */
+/* Value of the owner of the physical controller: the Xbox USB driver holds it over USB. */
 "ui.controllers.physicalOwnership.extensionOwnedUSB" = "Xbox USB 드라이버";
 /* Value of the owner of the physical controller: macOS holds it as an HID device that the app can also see. */
 "ui.controllers.physicalOwnership.systemHIDVisible" = "시스템 HID";
