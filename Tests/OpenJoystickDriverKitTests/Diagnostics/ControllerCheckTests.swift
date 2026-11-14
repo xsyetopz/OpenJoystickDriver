@@ -184,6 +184,28 @@ struct ControllerCheckTests {
   }
 
   @Test
+  func eachPrefilledFieldNamesAFieldOfItsForm() throws {
+    let templates = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent().appendingPathComponent(".github/ISSUE_TEMPLATE")
+    let validated = check(steps: [step("South")])
+
+    for url in [
+      ControllerCheckIssue.supportURL(for: validated),
+      ControllerCheckIssue.validationURL(for: validated),
+    ] {
+      let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+      let name = try #require(items.first { $0.name == "template" }?.value)
+      let form = try String(contentsOf: templates.appendingPathComponent(name), encoding: .utf8)
+      for item in items where item.name != "template" {
+        #expect(form.contains("id: \(item.name)\n"), "\(name) has no field \(item.name)")
+      }
+      let connection = try #require(items.first { $0.name == "connection" }?.value)
+      #expect(form.contains("- \(connection)\n"), "\(name) offers no option \(connection)")
+    }
+  }
+
+  @Test
   func documentTextAddsTheEnvelopeToTheFields() throws {
     let text = try check(steps: [step("South")]).documentText()
     let object = try #require(
