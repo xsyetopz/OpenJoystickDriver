@@ -51,9 +51,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - The properties that held prose and no data: `rationale` of a protocol description, the `notes` of the catalog rules and of the crosswalk, `$comment` in the schemas, and the system audit caveat of the support report. The facts they stated are in `wiki/Controller-Records.md` and `docs/development/xpad-import.md`.
 
 ### Fixed
+
 - The **Measure Rest**, **Measure Circle**, **Measure Triggers** and **Measure Gyro** buttons use title-style capitalization.
 - The **Tuning** group of the controller detail lists every tuning key, with `Driver default` or `Not set` for a key no layer sets, as `ojd config show --controller` does; before, it was empty for a controller whose record sets no tuning.
-
 - A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it.
 - A controller whose record has no default mode and no mode matching the device falls back to its HID descriptor, as a record that fits no interface does; before, it was refused with `NoModeMatched`.
 - OJD seizes a HID device with no record only when the classifier binds it; before, it seized every such device and released the refused ones afterwards.
