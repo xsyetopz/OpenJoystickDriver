@@ -29,7 +29,8 @@ public enum OpenJoystickDriverAPI {
     guard (apiVersion as? String) == version else {
       return DocumentHeaderProblem(
         code: .unsupportedAPIVersion,
-        "apiVersion \(apiVersion) is not supported; the supported apiVersion is \(version)"
+        "apiVersion \(apiVersion) is not supported; the supported apiVersion is \(version); "
+          + "run `ojd migrate` to convert"
       )
     }
     guard let kind else {

@@ -2030,7 +2030,7 @@
           }
         }
       },
-      "message": "E5001: apiVersion unsupported.example/v9 is not supported; the supported apiVersion is openjoystickdriver/v1alpha3"
+      "message": "E5001: apiVersion unsupported.example/v9 is not supported; the supported apiVersion is openjoystickdriver/v1alpha3; run `ojd migrate` to convert"
     },
     {
       "name": "an unknown kind",

@@ -188,6 +188,7 @@ struct SettingsStoreTests {
     #"{"kind": "Settings"}"#,
     #"{"apiVersion": "openjoystickdriver/v0", "kind": "Settings"}"#,
     #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha2", "kind": "Settings"}"#,
   ])
   func missingOrUnsupportedAPIVersionIsE5001NamingFile(json: String) throws {
     try write(json, to: .applicationData)
@@ -199,6 +200,12 @@ struct SettingsStoreTests {
       #expect(problem.code == .unsupportedAPIVersion)
       #expect(problem.description.hasPrefix("E5001: "))
       #expect(problem.description.contains(store.userFileURL.path))
+      if json.contains("v1alpha2") {
+        #expect(problem.description.contains("openjoystickdriver/v1alpha2"))
+      }
+      if json.contains("apiVersion") {
+        #expect(problem.description.contains("ojd migrate"))
+      }
     }
   }
 
