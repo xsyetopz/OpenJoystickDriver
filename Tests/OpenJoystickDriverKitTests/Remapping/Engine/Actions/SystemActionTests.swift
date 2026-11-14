@@ -15,6 +15,8 @@ struct SystemActionTests {
       (.systemAction(.missionControl), #"{"action":"MissionControl","type":"SystemAction"}"#),
       (.systemAction(.launchpad), #"{"action":"Launchpad","type":"SystemAction"}"#),
       (.systemAction(.screenshot), #"{"action":"Screenshot","type":"SystemAction"}"#),
+      (.systemAction(.lockScreen), #"{"action":"LockScreen","type":"SystemAction"}"#),
+      (.systemAction(.showDesktop), #"{"action":"ShowDesktop","type":"SystemAction"}"#),
       (
         .openApplication(bundleIdentifier: "com.apple.TextEdit"),
         #"{"bundleIdentifier":"com.apple.TextEdit","type":"OpenApplication"}"#
@@ -37,7 +39,7 @@ struct SystemActionTests {
     let rejected = [
       #"{"type":"SystemKey","systemKey":"Eject"}"#,
       #"{"type":"SystemKey","systemKey":"Mute","text":"a"}"#,
-      #"{"type":"SystemAction","action":"LockScreen"}"#,
+      #"{"type":"SystemAction","action":"Sleep"}"#,
       #"{"type":"TypeText"}"#,
       #"{"type":"OpenURL","name":"x"}"#,
     ]
@@ -114,6 +116,8 @@ struct SystemActionTests {
       (.systemAction(.missionControl), .missionControl),
       (.systemAction(.launchpad), .launchpad),
       (.systemAction(.screenshot), .screenshot),
+      (.systemAction(.lockScreen), .lockScreen),
+      (.systemAction(.showDesktop), .showDesktop),
       (
         .openApplication(bundleIdentifier: "com.apple.TextEdit"),
         .openApplication("com.apple.TextEdit")
@@ -138,6 +142,8 @@ struct SystemActionTests {
       (.systemAction(.missionControl), "missionControl"),
       (.systemAction(.launchpad), "launchpad"),
       (.systemAction(.screenshot), "screenshot"),
+      (.systemAction(.lockScreen), "lockScreen"),
+      (.systemAction(.showDesktop), "showDesktop"),
       (.openApplication(bundleIdentifier: "com.apple.TextEdit"), "app:com.apple.TextEdit"),
       (.openURL("https://example.com"), "url:https://example.com"),
       (.runShortcut("Morning"), "shortcut:Morning"),
@@ -253,7 +259,9 @@ private final class StubPerformer: RemappingSystemActionPerforming, @unchecked S
   }
   func openMissionControl() async throws { try record("missionControl") }
   func openLaunchpad() async throws { try record("launchpad") }
-  func openScreenshot() async throws { try record("screenshot") }
+  func takeScreenshot() async throws { try record("screenshot") }
+  func lockScreen() async throws { try record("lockScreen") }
+  func showDesktop() async throws { try record("showDesktop") }
   func openApplication(bundleIdentifier: String) async throws {
     try record("app:\(bundleIdentifier)")
   }
