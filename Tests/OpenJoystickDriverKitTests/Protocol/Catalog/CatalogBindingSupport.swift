@@ -70,10 +70,12 @@ func catalogUsageMap(_ vendorID: UInt16, _ productID: UInt16) throws -> HIDUsage
 /// runtime would construct.
 ///
 /// A HID row is observed over `host`, or its default host; a raw-USB row claims `transportProfile`,
-/// or the record's profile, without interface facts.
+/// or the record's profile, without interface facts. `modeID` names the mode the classifier binds,
+/// or the one a catalog row binds by default.
 func catalogParser(
   _ model: ControllerModelID,
   host: PhysicalTransport? = nil,
+  modeID: String? = nil,
   transportProfile: DeviceTransportProfile? = nil,
   registry: ProtocolDriverRegistry = ProtocolDriverRegistry()
 ) throws -> any PhysicalProtocolDriver {
@@ -87,7 +89,7 @@ func catalogParser(
   let classification = registry.classify(
     device,
     backend: isRawUSB ? .rawUSB : .hid,
-    modeID: classificationModeID(of: record)
+    modeID: modeID ?? classificationModeID(of: record)
   )
   guard case .bound(let binding) = classification else {
     Issue.record("\(model) did not bind: \(classification)")

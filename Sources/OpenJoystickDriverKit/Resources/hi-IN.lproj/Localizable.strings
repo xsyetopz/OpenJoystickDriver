@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: BigEndian फ़ील्ड बाइट सीमा से शुरू होता है और 16, 24 या 32 बिट का होता है। समाधान: 8 के गुणज से शुरू करें और bitSize 16, 24 या 32 रखें, या LittleEndian इस्तेमाल करें।";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: बटन एक डिजिटल कंट्रोल का नाम देता है, D-pad या स्टिक अक्ष का नहीं। समाधान: किसी बटन कंट्रोल का नाम दें, या प्रविष्टि को axes या hat में ले जाएँ।";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: टच स्पॉट किसी बटन, D-pad दिशा या ट्रिगर का नाम देता है, स्टिक अक्ष का नहीं। समाधान: कोई अन्य कंट्रोल चुनें, या स्टिक अक्ष को touch.sticks में ले जाएँ।";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes में अलग-अलग स्टिक अक्षों के नाम होने चाहिए। समाधान: हर स्टिक अक्ष का नाम एक बार दें।";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

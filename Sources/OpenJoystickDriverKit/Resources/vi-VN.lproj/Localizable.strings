@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: trường BigEndian bắt đầu ở ranh giới byte và có 16, 24 hoặc 32 bit. Cách sửa: bắt đầu ở bội số của 8 với bitSize 16, 24 hoặc 32, hoặc dùng LittleEndian.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: một nút nêu điều khiển số, không phải D-pad hay trục cần analog. Cách sửa: nêu một điều khiển nút hoặc chuyển mục sang axes hoặc hat.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: một điểm chạm nêu một nút, một hướng D-pad hoặc một cò, không phải trục cần analog. Cách sửa: nêu một điều khiển khác hoặc chuyển trục cần analog sang touch.sticks.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes phải nêu các trục cần analog khác nhau. Cách sửa: nêu mỗi trục cần analog một lần.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

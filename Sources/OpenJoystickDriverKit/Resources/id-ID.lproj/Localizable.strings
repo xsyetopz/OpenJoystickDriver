@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: bidang BigEndian dimulai pada batas byte dan berukuran 16, 24, atau 32 bit. Perbaikan: mulai pada kelipatan 8 dengan bitSize 16, 24, atau 32, atau gunakan LittleEndian.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: tombol menyebut kontrol digital, bukan D-pad atau sumbu stik. Perbaikan: sebut kontrol tombol, atau pindahkan entri ke axes atau hat.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: titik sentuh menyebut tombol, arah D-pad, atau pemicu, bukan sumbu stik. Perbaikan: sebut kontrol lain, atau pindahkan sumbu stik ke touch.sticks.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes harus menyebut sumbu stik yang berbeda. Perbaikan: sebut setiap sumbu stik sekali.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

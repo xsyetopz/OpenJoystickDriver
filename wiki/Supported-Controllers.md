@@ -43,7 +43,8 @@ A controller record can also carry a `validations` list: one entry per mode that
 | ZD Ultimate Legend | `413D:2204` | 2.4 GHz dongle, XInput mode | Input, OJD rumble, back-button keyboard bindings, mode switching | Not recorded |
 | Xbox Nano Controller | `045E:0B4F` | Bluetooth LE, `game-controller-compatible` [profile](Glossary.md#terms) | Buttons, sticks, triggers, D-pad, stick clicks. The Xbox button and Share do not work | Rumble, Steam |
 | NITHO MLT-KRMA-K | `054C:05C4` | Bluetooth, M mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home. M1 and M2 send nothing until a macro is recorded on them | Rumble and light, which macOS drives |
-| NITHO MLT-KRMA-K | `045E:028E` | 2.4G receiver | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home | Rumble, X, S and V3 modes |
+| NITHO MLT-KRMA-K | `045E:028E` | 2.4G receiver | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home | Rumble, X and S modes |
+| NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, V3 mode | A, LT as on or off, D-pad down, L3, sticks. RB, View, Menu, Home, M1 and M2 send no input in V3 | B, X, Y, LB, RT, R3, other D-pad directions |
 
 Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One tester (gornobatov) tested the ZD Ultimate Legend on macOS 26.7.1. For the 8BitDo details, see [the test record](../docs/testing/8bitdo-ultimate-2c.md).
 
@@ -83,7 +84,7 @@ The Ultimate 3-mode record (`2DC8:901B`) has no capture; see [the Ultimate 2 tes
 
 The Wii Remote (`057E:0306` and `057E:0330`) has bundled records and no hardware test. For what OJD reads from it, see [Wii Remote](Wii-Remote.md).
 
-OJD includes a built-in catalog of 712 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
+OJD includes a built-in catalog of 713 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
 
 An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken or fake.
 

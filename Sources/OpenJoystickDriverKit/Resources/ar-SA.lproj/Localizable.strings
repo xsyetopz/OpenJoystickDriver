@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: يبدأ حقل BigEndian عند حد بايت وحجمه 16 أو 24 أو 32 بتًا. الإصلاح: ابدأ عند مضاعف للعدد 8 بحجم bitSize يساوي 16 أو 24 أو 32 أو استخدم LittleEndian.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: الزر يسمّي عنصر تحكم رقميًا لا لوحة الاتجاهات ولا محور عصا. الإصلاح: سمِّ عنصر زر أو انقل الإدخال إلى axes أو hat.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: نقطة اللمس تسمّي زرًا أو اتجاهًا في لوحة الاتجاهات أو زنادًا، لا محور عصا. الإصلاح: سمِّ عنصر تحكم آخر أو انقل محور العصا إلى touch.sticks.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: يجب أن يسمّي axes محاور عصا مختلفة. الإصلاح: سمِّ كل محور عصا مرة واحدة.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

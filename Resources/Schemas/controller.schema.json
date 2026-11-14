@@ -896,6 +896,9 @@
         },
         "rightTrigger": {
           "$ref": "#/$defs/inputTrigger"
+        },
+        "touch": {
+          "$ref": "#/$defs/inputTouch"
         }
       }
     },
@@ -1413,6 +1416,142 @@
         "signed": ["bitOffset"],
         "min": ["bitOffset"],
         "max": ["bitOffset"]
+      }
+    },
+    "inputTouch": {
+      "description": "Touch contacts that drive the stick or the nearest spot within radius of where each first touches, until it lifts.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contacts", "radius"],
+      "anyOf": [{ "required": ["spots"] }, { "required": ["sticks"] }],
+      "properties": {
+        "contacts": {
+          "$ref": "#/$defs/inputTouchContacts"
+        },
+        "radius": {
+          "description": "The distance from a spot or stick center within which a contact starts on it.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "spots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/inputTouchSpot"
+          }
+        },
+        "sticks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/inputTouchStick"
+          }
+        }
+      }
+    },
+    "inputTouchContacts": {
+      "description": "The contact slots of the report, whose tip, id, x and y count from the start of each slot.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bitOffset", "stride", "slots", "count", "tip", "id", "x", "y"],
+      "properties": {
+        "bitOffset": {
+          "description": "The first bit of slot 0.",
+          "$ref": "#/$defs/reportBitOffset"
+        },
+        "stride": {
+          "description": "The bits from one slot to the next.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "slots": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "count": {
+          "description": "The number of leading slots that hold a contact.",
+          "$ref": "#/$defs/inputField"
+        },
+        "tip": {
+          "description": "The tip switch, set while the contact touches.",
+          "$ref": "#/$defs/inputField"
+        },
+        "id": {
+          "$ref": "#/$defs/inputField"
+        },
+        "x": {
+          "$ref": "#/$defs/inputField"
+        },
+        "y": {
+          "$ref": "#/$defs/inputField"
+        }
+      }
+    },
+    "inputTouchSpot": {
+      "description": "A place that holds a button, a D-pad direction, or a trigger pulled fully.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["control", "x", "y"],
+      "properties": {
+        "control": {
+          "allOf": [
+            {
+              "$ref": "vocabulary.schema.json#/$defs/control"
+            },
+            {
+              "not": {
+                "$ref": "vocabulary.schema.json#/$defs/stickAxis"
+              }
+            }
+          ]
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        }
+      }
+    },
+    "inputTouchStick": {
+      "description": "A stick a contact drags from its center.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "travel", "alongX", "alongY"],
+      "properties": {
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        },
+        "travel": {
+          "description": "The distance from the center that reads as full deflection.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "alongX": {
+          "$ref": "#/$defs/inputTouchStickAxis"
+        },
+        "alongY": {
+          "$ref": "#/$defs/inputTouchStickAxis"
+        }
+      }
+    },
+    "inputTouchStickAxis": {
+      "description": "The stick axis one touch axis drives.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["control"],
+      "properties": {
+        "control": {
+          "$ref": "vocabulary.schema.json#/$defs/stickAxis"
+        },
+        "inverted": {
+          "description": "Whether a larger touch position reads as a smaller axis value.",
+          "type": "boolean"
+        }
       }
     },
     "startupReport": {

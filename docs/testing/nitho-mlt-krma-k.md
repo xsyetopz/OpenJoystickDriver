@@ -1,6 +1,6 @@
 # NITHO MLT-KRMA-K Test Record
 
-This page records the maintainer's test of the NITHO MLT-KRMA-K in its MFi and 2.4G modes.
+This page records the maintainer's test of the NITHO MLT-KRMA-K in its MFi, 2.4G and V3 modes.
 
 ## Test setup
 
@@ -17,7 +17,8 @@ The mode switch on the back of the pad picks the identity. The manual names X (B
 | M, Bluetooth | `054C:05C4` | `DUALSHOCK 4 Wireless Controller` | `sony-dual-shock4:bluetooth-classic` | Every control |
 | 2.4G receiver | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
 | By cable | `054C:0268`, `054C:05C4`, `045E:028E` | PS3, `Wireless Controller`, `Xbox360 For Windows` | | Identity only |
-| X, S, V3 | | | | Not tested |
+| V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | A, LT, D-pad down, L3, left stick, right stick |
+| X, S | | | | Not tested |
 
 ## M Mode over Bluetooth
 
@@ -42,6 +43,38 @@ macOS binds its Xbox 360 driver to the receiver. That driver publishes a HID des
 | 4, 5 | LT and RT, `0x00` to `0xFF` |
 | 6-13 | Left X, left Y, right X, right Y, signed 16-bit little-endian |
 
+## V3 Mode over Bluetooth LE
+
+In V3 the pad is a Bluetooth LE multi-touch digitizer (HID page `0x0D`, usage `0x04`) for a phone app that maps screen taps to game controls. Each control taps a fixed place, and each stick drags a contact from a fixed center. Report 1 is 18 bytes: four contact slots of 4 bytes from byte 1, then the contact count in byte 17.
+
+| Slot byte | Contents |
+| --- | --- |
+| 0 | Tip `0x01`, in range `0x02`, contact ID in the high nibble |
+| 1, 2 | X, 12 bits little-endian, 0 to 3500 |
+| 2, 3 | Y, the upper 4 bits of byte 2 then byte 3, 0 to 4095 |
+
+The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and reads the contacts through a `touch` layout. A contact that starts within 150 of a stick center drags that stick until it lifts, with 800 as full deflection. Any other contact holds the nearest spot within 150. The table lists the spots, from a capture with one press every 2 seconds:
+
+| Control | X, Y |
+| --- | --- |
+| A | 1069, 3834 |
+| B | 291, 3435 |
+| X | 340, 3792 |
+| Y | 3386, 3917 |
+| LB | 2401, 3184 |
+| LT | 1698, 3849 |
+| RT | 1762, 392 |
+| L3 | 249, 1337 |
+| R3 | 265, 2734 |
+| D-pad up | 2184, 2730 |
+| D-pad right | 447, 2358 |
+| D-pad down | 1088, 2774 and 1351, 2060, two contacts |
+| D-pad left | 447, 1821 |
+| Left stick center | 875, 665; up is +X, right is +Y |
+| Right stick center | 1782, 3222; up is +X, right is +Y |
+
+RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
+
 ## M1 and M2
 
-The M1 and M2 buttons on the back sent no input in M mode, and the 2.4G capture shows no report bit other than the controls listed above. The manual describes them as macro buttons: hold SELECT and press M1 or M2 to record up to 12 presses. With no macro recorded, they do nothing.
+The M1 and M2 buttons on the back sent no input in M or V3 mode, and the 2.4G capture shows no report bit other than the controls listed above. The manual describes them as macro buttons: hold SELECT and press M1 or M2 to record up to 12 presses. With no macro recorded, they do nothing.

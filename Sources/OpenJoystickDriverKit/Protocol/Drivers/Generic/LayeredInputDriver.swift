@@ -40,23 +40,31 @@ final class LayeredInputDriver: PhysicalProtocolDriver {
     if event == nil { family.discardPartialInput() }
     let layout = layers.layouts.layouts[index]
     var state = lastState
-    for button in layout.buttons {
-      state.set(button.control, pressed: layered.state.pressed.contains(button.control))
+    let touched = layout.touch?.controls ?? []
+    let analog = Control.dpad.union(Control.stickAxes).union([.leftTrigger, .rightTrigger])
+    for control in Set(layout.buttons.map(\.control)).union(touched.subtracting(analog)) {
+      state.set(control, pressed: layered.state.pressed.contains(control))
     }
     var sticks = [state.leftStick.x, state.leftStick.y, state.rightStick.x, state.rightStick.y]
     let layeredSticks = [
       layered.state.leftStick.x, layered.state.leftStick.y,
       layered.state.rightStick.x, layered.state.rightStick.y,
     ]
-    for axis in layout.axes {
-      guard let slot = Control.stickAxes.firstIndex(of: axis.control) else { continue }
+    let layeredAxes = Set(layout.axes.map(\.control)).union(touched)
+    for (slot, control) in Control.stickAxes.enumerated() where layeredAxes.contains(control) {
       sticks[slot] = layeredSticks[slot]
     }
     state.leftStick = StickPosition(x: sticks[0], y: sticks[1])
     state.rightStick = StickPosition(x: sticks[2], y: sticks[3])
-    if !layout.hat.isEmpty { state.hat = layered.state.hat }
-    if layout.leftTrigger != nil { state.leftTrigger = layered.state.leftTrigger }
-    if layout.rightTrigger != nil { state.rightTrigger = layered.state.rightTrigger }
+    if !layout.hat.isEmpty || !touched.isDisjoint(with: Control.dpad) {
+      state.hat = layered.state.hat
+    }
+    if layout.leftTrigger != nil || touched.contains(.leftTrigger) {
+      state.leftTrigger = layered.state.leftTrigger
+    }
+    if layout.rightTrigger != nil || touched.contains(.rightTrigger) {
+      state.rightTrigger = layered.state.rightTrigger
+    }
     return ControllerEvent(
       timestamp: receivedAt,
       state: state,

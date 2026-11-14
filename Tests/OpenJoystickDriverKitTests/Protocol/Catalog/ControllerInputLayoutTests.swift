@@ -241,7 +241,8 @@ struct ControllerInputLayoutTests {
           axes: [],
           hat: [],
           leftTrigger: nil,
-          rightTrigger: nil
+          rightTrigger: nil,
+          touch: nil
         )
         return nil
       } catch {

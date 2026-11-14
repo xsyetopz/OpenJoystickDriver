@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: BigEndian 필드는 바이트 경계에서 시작하며 16, 24 또는 32비트입니다. 해결: 8의 배수에서 bitSize 16, 24 또는 32로 시작하거나 LittleEndian을 쓰세요.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: 버튼은 디지털 컨트롤을 가리켜야 하며 방향 패드나 스틱 축은 안 됩니다. 해결: 버튼 컨트롤을 지정하거나 항목을 axes 또는 hat으로 옮기세요.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: 터치 지점은 버튼, 방향 패드 방향 또는 트리거를 가리켜야 하며 스틱 축은 안 됩니다. 해결: 다른 컨트롤을 지정하거나 스틱 축을 touch.sticks로 옮기세요.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes는 서로 다른 스틱 축을 가리켜야 합니다. 해결: 각 스틱 축을 한 번만 지정하세요.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

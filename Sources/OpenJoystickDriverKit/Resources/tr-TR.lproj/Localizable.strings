@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: BigEndian alanı bayt sınırında başlar ve 16, 24 veya 32 bittir. Düzeltme: 8’in katında 16, 24 veya 32 bitSize ile başlayın ya da LittleEndian kullanın.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: bir düğme dijital bir denetim adlandırır; yön tuşunu veya analog çubuk eksenini değil. Düzeltme: bir düğme denetimi adlandırın veya girdiyi axes ya da hat altına taşıyın.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: bir dokunma noktası bir düğme, yön tuşu yönü veya tetik adlandırır; analog çubuk eksenini değil. Düzeltme: başka bir denetim adlandırın veya çubuk eksenini touch.sticks altına taşıyın.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes ayrı analog çubuk eksenleri adlandırmalıdır. Düzeltme: her analog çubuk eksenini bir kez adlandırın.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

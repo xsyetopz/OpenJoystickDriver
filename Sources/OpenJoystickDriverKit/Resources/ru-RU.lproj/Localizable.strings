@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: поле BigEndian начинается на границе байта и занимает 16, 24 или 32 бита. Исправление: начните с числа, кратного 8, с bitSize 16, 24 или 32 либо используйте LittleEndian.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: кнопка называет цифровой элемент, а не крестовину или ось стика. Исправление: назовите элемент-кнопку или перенесите запись в axes или hat.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: точка касания называет кнопку, направление крестовины или курок, а не ось стика. Исправление: назовите другой элемент или перенесите ось стика в touch.sticks.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes должен называть разные оси стиков. Исправление: назовите каждую ось стика один раз.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

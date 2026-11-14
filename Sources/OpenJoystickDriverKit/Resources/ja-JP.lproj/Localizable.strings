@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@、input.layouts[]: BigEndian フィールドはバイト境界から始まり、16、24、または 32 ビットです。対処: 8 の倍数から始めて bitSize を 16、24、または 32 にするか、LittleEndian を使ってください。";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@、input.layouts[].buttons: ボタンが指すのはデジタルコントロールで、方向パッドやスティック軸ではありません。対処: ボタンのコントロールを指定するか、項目を axes または hat に移してください。";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@、input.layouts[].touch.spots: タッチ位置が指すのはボタン、方向パッドの方向、トリガーのいずれかで、スティック軸ではありません。対処: 別のコントロールを指定するか、スティック軸を touch.sticks に移してください。";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@、input.layouts[].axes: axes には異なるスティック軸を指定する必要があります。対処: 各スティック軸を 1 回だけ指定してください。";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

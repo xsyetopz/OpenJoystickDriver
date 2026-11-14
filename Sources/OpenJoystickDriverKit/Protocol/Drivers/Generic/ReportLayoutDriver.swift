@@ -30,6 +30,8 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
   private let describedCapabilities: ControllerCapabilities?
   /// Per layout and hat source, whether its 8-way field has been nonzero in this session.
   private var hatSourceIsLive: [[Bool]]
+  /// What each touching contact drives, by contact ID.
+  private var touchRoles: [Int: ControllerInputLayout.Touch.Role] = [:]
   /// The state after the latest report.
   private var state = ControllerState.neutral
   /// The rumble of the latest rumble command, which a resend repeats.
@@ -51,9 +53,10 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
     hatSourceIsLive = Self.idleHatSources(of: layouts)
   }
 
-  /// Clears the state of the session: neutral input, no rumble and no live hat source.
+  /// Clears the state of the session: neutral input, no rumble, no live hat source and no contact.
   public func resetProtocolState() {
     state = .neutral
+    touchRoles = [:]
     lastRumble = .off
     hatSourceIsLive = Self.idleHatSources(of: layouts)
   }
@@ -138,13 +141,69 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
       }
       sticks[index] = BipolarValue(normalized: axis.value(in: bytes))
     }
-    next.leftStick = StickPosition(x: sticks[0], y: sticks[1])
-    next.rightStick = StickPosition(x: sticks[2], y: sticks[3])
     if !layout.hat.isEmpty { next.hat = hat(bytes, of: layout, at: layoutIndex) }
     if let trigger = layout.leftTrigger { next.leftTrigger = trigger.value(in: bytes) }
     if let trigger = layout.rightTrigger { next.rightTrigger = trigger.value(in: bytes) }
+    if let touch = layout.touch { apply(touch, in: bytes, to: &next, sticks: &sticks) }
+    next.leftStick = StickPosition(x: sticks[0], y: sticks[1])
+    next.rightStick = StickPosition(x: sticks[2], y: sticks[3])
     state = next
     return ControllerEvent(timestamp: receivedAt, state: next)
+  }
+
+  /// Sets the controls the touch names from the contacts in `bytes`.
+  ///
+  /// A contact keeps the role of the place it first touched; a stick no contact drags centers.
+  private func apply(
+    _ touch: ControllerInputLayout.Touch,
+    in bytes: [UInt8],
+    to state: inout ControllerState,
+    sticks: inout [BipolarValue]
+  ) {
+    let touches = touch.touches(in: bytes)
+    touchRoles = touches.reduce(into: [:]) { roles, contact in
+      roles[contact.id] =
+        roles[contact.id] ?? touchRoles[contact.id] ?? touch.role(x: contact.x, y: contact.y)
+    }
+    var held: Set<Control> = []
+    var deflection: [Control: Float] = [:]
+    for stick in touch.sticks {
+      deflection[stick.alongX.control] = 0
+      deflection[stick.alongY.control] = 0
+    }
+    for contact in touches {
+      switch touchRoles[contact.id, default: .none] {
+      case .spot(let control): held.insert(control)
+      case .stick(let index):
+        let stick = touch.sticks[index]
+        for (axis, offset) in [
+          (stick.alongX, contact.x - stick.x), (stick.alongY, contact.y - stick.y),
+        ] {
+          let value = max(-1, min(1, Float(offset) / Float(stick.travel)))
+          deflection[axis.control] = axis.isInverted ? -value : value
+        }
+      case .none: break
+      }
+    }
+    for (slot, control) in Control.stickAxes.enumerated() {
+      if let value = deflection[control] { sticks[slot] = BipolarValue(normalized: value) }
+    }
+    for control in Set(touch.spots.map(\.control)) {
+      switch control {
+      case .leftTrigger:
+        state.leftTrigger = UnipolarValue(normalized: held.contains(control) ? 1 : 0)
+      case .rightTrigger:
+        state.rightTrigger = UnipolarValue(normalized: held.contains(control) ? 1 : 0)
+      case .dpadUp, .dpadDown, .dpadLeft, .dpadRight:
+        state.hat = HatDirection(
+          up: held.contains(.dpadUp),
+          right: held.contains(.dpadRight),
+          down: held.contains(.dpadDown),
+          left: held.contains(.dpadLeft)
+        )
+      default: state.set(control, pressed: held.contains(control))
+      }
+    }
   }
 
   /// The first source's direction that is not neutral.

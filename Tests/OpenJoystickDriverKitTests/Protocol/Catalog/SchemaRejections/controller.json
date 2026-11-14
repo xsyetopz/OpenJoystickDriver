@@ -4092,6 +4092,549 @@
       }
     },
     {
+      "name": "rejects invalid touch layouts: neither spots nor sticks",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: radius of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 0,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: spot on a stick axis",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "LeftStickX",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stride of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 0,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stick drives one axis twice",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickY"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: slot past the report length",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 5,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stick axis a layout axis also names",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              },
+              "axes": [
+                {
+                  "control": "LeftStickX",
+                  "bitOffset": 8,
+                  "bitSize": 8
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "rejects invalid report layouts: axis past the report length",
       "code": "E5007",
       "document": {

@@ -4054,6 +4054,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: un champ BigEndian commence sur une limite d’octet et fait 16, 24 ou 32 bits. Correction : commencez à un multiple de 8 avec un bitSize de 16, 24 ou 32, ou utilisez LittleEndian.";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: un bouton nomme un contrôle numérique, pas la croix directionnelle ni un axe de stick. Correction : nommez un contrôle de bouton ou déplacez l’entrée vers axes ou hat.";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: un point tactile nomme un bouton, une direction de la croix directionnelle ou une gâchette, pas un axe de stick. Correction : nommez un autre contrôle ou déplacez l’axe de stick vers touch.sticks.";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes doit nommer des axes de stick distincts. Correction : nommez chaque axe de stick une seule fois.";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

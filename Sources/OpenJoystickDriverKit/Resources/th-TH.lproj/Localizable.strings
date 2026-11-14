@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: ฟิลด์ BigEndian เริ่มที่ขอบไบต์และมี 16, 24 หรือ 32 บิต วิธีแก้: เริ่มที่จำนวนที่หาร 8 ลงตัวโดยให้ bitSize เป็น 16, 24 หรือ 32 หรือใช้ LittleEndian";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: ปุ่มต้องระบุตัวควบคุมดิจิทัล ไม่ใช่ปุ่มทิศทางหรือแกนจอยสติ๊ก วิธีแก้: ระบุตัวควบคุมแบบปุ่ม หรือย้ายรายการไปไว้ที่ axes หรือ hat";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@, input.layouts[].touch.spots: จุดสัมผัสต้องระบุปุ่ม ทิศทางของปุ่มทิศทาง หรือไกปืน ไม่ใช่แกนจอยสติ๊ก วิธีแก้: ระบุตัวควบคุมอื่น หรือย้ายแกนจอยสติ๊กไปไว้ที่ touch.sticks";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes ต้องระบุแกนจอยสติ๊กที่ไม่ซ้ำกัน วิธีแก้: ระบุแต่ละแกนจอยสติ๊กเพียงครั้งเดียว";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

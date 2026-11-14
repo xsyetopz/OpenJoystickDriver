@@ -4638,6 +4638,8 @@
 "error.E5007.inputLayout.bigEndian" = "%1$@，input.layouts[]：BigEndian 字段从字节边界开始，为 16、24 或 32 位。修复：从 8 的倍数开始，bitSize 设为 16、24 或 32，或改用 LittleEndian。";
 /* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
 "error.E5007.inputLayout.buttonControl" = "%1$@，input.layouts[].buttons：按钮指向数字控件，不能是方向键或摇杆轴。修复：指定按钮控件，或将条目移到 axes 或 hat。";
+/* Error E5007, shown when an input layout of a record fails: a touch spot names a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.touchSpotControl" = "%1$@，input.layouts[].touch.spots：触摸点指向按钮、方向键方向或扳机，不能是摇杆轴。修复：指定其他控件，或将摇杆轴移到 touch.sticks。";
 /* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
 "error.E5007.inputLayout.axesDistinct" = "%1$@，input.layouts[].axes：axes 必须指定互不相同的摇杆轴。修复：每个摇杆轴只指定一次。";
 /* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */

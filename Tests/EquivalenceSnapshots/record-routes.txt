@@ -1396,6 +1396,9 @@ raw-access
 ## 17EF:6182
 raw-access
 
+## 1949:0402
+system ownership=macos
+
 ## 1949:041A
 raw-access
 
