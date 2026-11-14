@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "失敗したこのチェックの修復を実行します";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "macOSとOpenJoystickDriverのどちらがこのコントローラーを処理するか選びます";
+"platform.macos.ui.help.serverPicker" = "macOSとOpenJoystickDriverのどちらがこのコントローラーを処理するか選びます";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "識別子とエンドポイントの表示と非表示を切り替えます";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "プログラムが仮想ゲームパッドを操作できるようにする";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "保存済みの書類を現在のバージョンに変換する";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "失敗した操作をもう一度実行する";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "コントローラ用のプロファイルを作成する";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "セットアップを終えてアプリに進む";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "このシートを閉じる";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "サービスの状態をもう一度読み取る";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "実行中の耐久テストを停止する";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "リストに表示するパケットを選ぶ";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "選択したコントローラのパケットを記録する";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "パケットの記録を停止する";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "読み取れない設定を初期値に置き換える";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "このメッセージを隠す";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "選択したコントロールの割り当てを追加";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "割り当てるコントローラ入力を選択";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "カウントされるスティックの傾きを設定";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "入力の動作を選択";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "待ち受けるコントローラを選択";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "押したとみなされる軸の移動量を設定";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "軸の反応の強さを調整";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "軸の向きを反転";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "コントローラの入力を押して自動で選択";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "軸の値の形状を選択";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "割り当てるタッチセルの列を選択";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "タッチ面を分割する列数を設定";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "割り当てるタッチセルの行を選択";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "タッチ面を分割する行数を設定";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "スワイプとみなされる指の移動量を設定";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "既定の設定に戻す";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "この設定を保存して閉じる";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "選択したライブラリ操作を実行";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "すべてのレコードをクリップボードにコピー";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "この通知を非表示にする";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "操作の対象となる項目を選択";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "このステップと同時に押すキーを追加";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "選択したステップをマクロに追加";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "追加するステップの種類を選択";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "マクロを保存して閉じる";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "キーを押し続ける時間を設定";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "コントロールを離したらマクロを停止";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "このステップをマクロの後ろへ移動";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "このステップをマクロの前へ移動";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "マクロを識別する名前を入力";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "このキーをステップから削除";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "このステップをマクロから削除";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "マクロを複数回実行";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "マクロの実行回数を設定";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "このステップの動作を選択";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "次のステップまでの待ち時間を設定";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "コントロールを押している間は繰り返す";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "データを新しいライブラリへ移行開始";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "このプロファイルの他の操作を表示";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "レイヤが有効になるタイミングを選択";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "レイヤをオンにするコントロールを選択";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "この割り当てに別の操作を追加";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "このプロファイルを適用するアプリを選択";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "Macからアプリを選択";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "コントロールを新しい宛先に割り当てる";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "同時に押すコントロールの組み合わせを追加";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "組み合わせをプロファイルに追加";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "選択したコントロールを組み合わせに追加";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "レイヤが有効な間のコントロールを割り当てる";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "他のコントロールを変更するレイヤを追加";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "新しいマクロを作成";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "独自の結果を持つタップ回数を追加";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "順に押すコントロールを追加";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "入力の動作を細かく調整";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "一覧にないアプリを選択";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "動作を保存して閉じる";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "変更を保存して閉じる";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "入力が結果を起動する方法を選択";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "入力が結果を起動する方法を選択";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "コントロールを押す方法を選択";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "押す操作の間隔の短さを設定";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "組み合わせに使うコントロールを選択";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "この入力の設定を開く";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "プロファイルの対象コントローラを選択";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "新しい対象向けに変換したコピーを作成";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "変換先のコントローラの種類を選択";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "プロファイルを作成して開く";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "このプロファイルの適用を停止";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "壊れたファイルを削除してやり直す";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "このプロファイルの名前とコントローラを編集";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "このプロファイルのコピーを作成";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "このマクロのステップを変更";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "プロファイルの別の部分へ移動";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "実際のコントローラを他のアプリから隠す";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "ジャイロ出力が有効になるタイミングを選択";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "有効化コントロール自体の動作を防止";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "ジャイロで操作する対象を選択";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "1度あたりのポインタの移動量を設定";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "ジャイロを有効にするコントロールを選択";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "スティック全開になる回転速度を設定";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "カウントされるまでの長押し時間を設定";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "動きを提供するJoy-Conを選択";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "ペアリングする左のJoy-Conを選択";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "2つのJoy-Conを1台のコントローラとして使用";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "ペアリングする右のJoy-Conを選択";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "未保存の編集を残したまま続行";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "このレイヤのモーション設定を編集";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "レイヤを識別する名前を入力";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "コントローラのライトの色を選択";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "長押し用の2つ目の結果を追加";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "コントローラ静止中の緩やかなドリフトを補正";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "重力が傾きを補正する速さを設定";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "プロファイルのモーション設定を使用";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "上下の向きを反転";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "左右の向きを反転";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "コントローラを横に傾けて結果を起動";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "傾きのちらつきを防ぐ余裕を設定";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "傾き操作を起動する傾斜角を設定";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "上下の回転への反応の強さを調整";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "横方向の動きを減らす量を設定";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "滑らかにするため動きを平均する時間を設定";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "動きを測定する軸を選択";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "中心付近で無視する回転量を設定";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "コントローラをハンドルのように回す";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "ステアリング全開になる回転量を設定";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "ステアリングの向きを反転";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "ステアリングで動かすスティックを選択";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "回転に応じた反応の伸び方を設定";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "ノイズとして無視する回転速度を設定";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "ヨーが静止状態に戻る速さを設定";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "左右の回転への反応の強さを調整";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "この操作を順序の後ろへ移動";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "この操作を順序の前へ移動";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "プロファイルを識別する名前を入力";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "2つのJoy-Conを1台のコントローラに結合";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Joy-Conのペアを1台のコントローラに結合";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "先に左右のJoy-Conを接続";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "ライトの色の青成分を設定";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "ライトの明るさを設定";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "適用するトリガーエフェクトを選択";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "ライトの色の緑成分を設定";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "振動の強さを設定";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "制御する振動モーターを選択";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "点灯するプレイヤーランプを選択";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "ライトの色の赤成分を設定";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "トリガーエフェクトの開始位置を設定";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "トリガーエフェクトの強さを設定";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "エフェクトを受けるトリガーを選択";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "ポインタ速度を変える入力を選択";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "入力でポインタ速度を変更";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "ポインタ速度の最大倍率を設定";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "ポインタ速度の最小倍率を設定";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "ポインタ速度を変えるスティックを選択";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "コントローラが報告するプロダクトIDを入力";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "各パルスの長さを設定";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "領域の開始角度を設定";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "領域の開始位置の押し込みを設定";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "領域の高さを設定";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "中心から領域が始まる距離を設定";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "領域が監視する入力を選択";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "領域が対象とする入力の種類を選択";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "中心から領域が終わる距離を設定";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "領域の終了角度を設定";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "領域の終了位置の押し込みを設定";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "領域の幅を設定";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "領域の水平方向の開始位置を設定";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "領域の垂直方向の開始位置を設定";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "編集を破棄して保存済みのプロファイルを読み込む";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "この動作についてのメモを入力";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "この操作を割り当てから削除";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "このプロファイルのアプリへの適用を停止";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "この割り当てを削除";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "この組み合わせを削除";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "このコントロールを組み合わせから削除";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "このレイヤを削除";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "このマクロを削除";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "このタップ回数を削除";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "このシーケンスを削除";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "ライブラリを消去してやり直す";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "このコントロールを通常の機能に戻す";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "編集内容をプロファイルに保存";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "押す操作の間に許される時間を設定";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "このプロファイルの適用を開始";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "プロファイルの並べ替え方法を選択";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "読み上げる言葉を入力";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "読み上げる音声を選択";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "スティック全開時の回転速度を設定";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "このスティックを再割り当て";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "傾きに応じた反応の伸び方を設定";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "フリックの長さを設定";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "フリックの再起動を防ぐ余裕を設定";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "中心付近で無視する傾きを設定";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "左右の向きを反転";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "上下の向きを反転";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "スティックの動作を選択";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "全開とみなす傾きを設定";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "変更のないスティックも送信";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "ポインタ領域の大きさを設定";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "1度あたりのポインタの移動量を設定";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "回転をカウントする向きを選択";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "ホイールのスクロール方向を選択";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "1行分に必要な回転量を設定";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "編集するスティックを選択";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "ステアリング全開になる回転量を設定";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "ステアリングで動かすスティックを選択";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "ステアリングが中心に戻る速さを設定";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "フリックを起動する傾きを設定";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "開くアプリを入力";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "実行するショートカットを入力";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "開くアドレスを入力";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "この結果を起動するタップ回数を設定";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "タップの間に許される時間を設定";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "プロファイルがエミュレートするコントローラを選択";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "用意済みの割り当てセットから開始";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "無視するタッチ距離を設定";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "このタッチ面を再割り当て";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "タッチの動作を選択";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "1回のスワイプあたりのポインタの移動量を設定";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "スティック全開になるタッチ距離を設定";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "編集するタッチ面を選択";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "トラックボールが回転する軸を選択";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "元のコントロール自体の動作を防止";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "回転が減速する速さを設定";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "ジャイロ回転後もポインタを転がし続ける";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "トラックボールをつかむコントロールを選択";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "このトリガーを再割り当て";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "完全に押したとみなす引き込みを設定";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "押下のちらつきを防ぐ余裕を設定";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "軽い引き込みと完全な引き込みの組み合わせ方を選択";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "変更のないトリガーも送信";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "軽い引き込みが完全な引き込みを待つ時間を設定";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "軽く押したとみなす引き込みを設定";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "編集するトリガーを選択";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "ライブラリを再読み込み";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "ターボが始まるまでの待ち時間を設定";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "各サイクルでボタンを押している割合を設定";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "コントロールを押している間は押下を繰り返す";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "決まった回数でターボを停止";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "ターボが送信する押下回数を設定";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "ターボが1秒間に送信する押下回数を設定";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "キー入力として送信するテキストを入力";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "ペアを2台のコントローラに分離";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "コントローラが起動時に持つ色を維持";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "コントローラが報告するベンダーIDを入力";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "ゲームに仮想ゲームパッドを表示";

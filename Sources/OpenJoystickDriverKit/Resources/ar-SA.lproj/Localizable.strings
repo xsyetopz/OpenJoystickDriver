@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "تشغيل الإصلاح لهذا الفحص الفاشل";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "اختيار ما إذا كان macOS أو OpenJoystickDriver يتولى وحدة التحكم هذه";
+"platform.macos.ui.help.serverPicker" = "اختيار ما إذا كان macOS أو OpenJoystickDriver يتولى وحدة التحكم هذه";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "إظهار المعرّفات ونقاط النهاية أو إخفاؤها";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "السماح للبرنامج بتشغيل وحدة ألعاب افتراضية";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "تحويل المستندات المخزنة إلى الإصدار الحالي";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "تشغيل الإجراء الذي فشل مرة أخرى";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "إنشاء ملف تعريف لوحدة تحكم";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "إنهاء الإعداد والانتقال إلى التطبيق";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "إغلاق هذه الورقة";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "قراءة حالة الخدمة مرة أخرى";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "إيقاف اختبار التحمل الجاري";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "اختيار الحزم التي تعرضها القائمة";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "تسجيل حزم وحدة التحكم المحددة";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "إيقاف تسجيل الحزم";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "استبدال الإعدادات غير المقروءة بالإعدادات الافتراضية";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "إخفاء هذه الرسالة";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "أضف تعيينًا للتحكم المحدد";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "اختر مُدخل وحدة التحكم المراد تعيينه";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "اضبط مقدار تحريك العصا ليُحتسب";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "اختر ما يفعله المُدخل";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "اختر وحدة التحكم المراد الاستماع إليها";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "اضبط مقدار تحريك المحور ليُحتسب كمضغوط";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "عدّل قوة استجابة المحور";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "اعكس اتجاه المحور";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "اضغط مُدخلًا في وحدة التحكم لاختياره تلقائيًا";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "اختر شكل منحنى قيمة المحور";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "اختر عمود خلية اللمس المراد تعيينها";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "اضبط عدد الأعمدة التي تُقسَّم إليها سطح اللمس";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "اختر صف خلية اللمس المراد تعيينها";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "اضبط عدد الصفوف التي تُقسَّم إليها سطح اللمس";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "اضبط المسافة التي يتحركها الإصبع ليُحتسب سحبًا";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "استعد الإعدادات الافتراضية";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "احتفظ بهذه الإعدادات وأغلق";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "شغّل إجراء المكتبة المحدد";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "انسخ كل السجلات إلى الحافظة";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "أخفِ هذا الإشعار";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "اختر العناصر التي يشملها الإجراء";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "أضف مفتاحًا يُضغط مع هذه الخطوة";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "أضف الخطوة المحددة إلى الماكرو";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "اختر نوع الخطوة المراد إضافتها";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "احتفظ بالماكرو وأغلق";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "اضبط مدة بقاء المفتاح مضغوطًا";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "أوقف الماكرو عند ترك عنصر التحكم";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "انقل هذه الخطوة إلى موضع لاحق في الماكرو";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "انقل هذه الخطوة إلى موضع أسبق في الماكرو";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "اكتب اسمًا للتعرف على الماكرو";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "أزل هذا المفتاح من الخطوة";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "احذف هذه الخطوة من الماكرو";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "شغّل الماكرو أكثر من مرة";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "اضبط عدد مرات تشغيل الماكرو";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "اختر ما تفعله هذه الخطوة";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "اضبط التوقف قبل الخطوة التالية";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "واصل التكرار ما دام عنصر التحكم مضغوطًا";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "ابدأ نقل بياناتك إلى المكتبة الجديدة";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "اعرض مزيدًا من الإجراءات لهذا الملف التعريفي";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "اختر وقت تفعيل الطبقة";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "اختر عنصر التحكم الذي يشغّل الطبقة";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "أضف إجراءً آخر إلى هذا التعيين";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "اختر التطبيق الذي ينطبق عليه هذا الملف التعريفي";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "اختر تطبيقًا من جهاز Mac";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "اربط عنصر تحكم بوجهة جديدة";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "أضف مجموعة عناصر تحكم تُضغط معًا";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "أضف المجموعة إلى الملف التعريفي";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "أضف عنصر التحكم المحدد إلى المجموعة";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "اربط عنصر تحكم أثناء تفعيل الطبقة";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "أضف طبقة تغيّر عناصر تحكم أخرى";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "أنشئ ماكرو جديدًا";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "أضف عدد نقرات له نتيجة خاصة";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "أضف عناصر تحكم تُضغط واحدًا تلو الآخر";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "اضبط سلوك المُدخل بدقة";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "اختر تطبيقًا غير موجود في القائمة";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "احتفظ بالسلوك وأغلق";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "احتفظ بالتغييرات وأغلق";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "اختر كيف يُطلق المُدخل النتيجة";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "اختر كيف يُطلق المُدخل النتيجة";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "اختر كيفية ضغط عناصر التحكم";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "اضبط مدى تقارب الضغطات زمنيًا";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "اختر عنصر تحكم للمجموعة";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "افتح إعدادات هذا المُدخل";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "اختر وحدة التحكم التي يخصها الملف التعريفي";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "أنشئ نسخة محوّلة للهدف الجديد";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "اختر نوع وحدة التحكم المراد التحويل إليها";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "أنشئ الملف التعريفي وافتحه";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "أوقف تطبيق هذا الملف التعريفي";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "احذف الملفات التالفة لتبدأ من جديد";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "عدّل اسم هذا الملف التعريفي ووحدة التحكم";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "أنشئ نسخة من هذا الملف التعريفي";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "غيّر خطوات هذا الماكرو";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "انتقل إلى جزء آخر من الملف التعريفي";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "أخفِ وحدة التحكم الفعلية عن التطبيقات الأخرى";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "اختر وقت تفعيل خرج الجيروسكوب";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "امنع عنصر التفعيل من العمل بمفرده";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "اختر ما يتحكم فيه الجيروسكوب";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "اضبط المسافة التي يتحركها المؤشر لكل درجة";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "اختر عنصر التحكم الذي يفعّل الجيروسكوب";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "اضبط سرعة الدوران التي تبلغ العصا الكاملة";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "اضبط مدة الضغط المطلوبة ليُحتسب";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "اختر Joy-Con الذي يوفر الحركة";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "اختر Joy-Con الأيسر للاقتران";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "استخدم Joy-Con اثنين كوحدة تحكم واحدة";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "اختر Joy-Con الأيمن للاقتران";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "تابع مع الاحتفاظ بالتعديلات غير المحفوظة";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "عدّل إعدادات الحركة لهذه الطبقة";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "اكتب اسمًا للتعرف على الطبقة";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "اختر لون ضوء وحدة التحكم";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "أضف نتيجة ثانية للضغط المطوّل";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "صحّح الانجراف البطيء أثناء سكون وحدة التحكم";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "اضبط سرعة تصحيح الجاذبية للميل";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "استخدم إعدادات الحركة للملف التعريفي";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "اعكس اتجاه الأعلى والأسفل";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "اعكس اتجاه اليسار واليمين";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "أمِل وحدة التحكم جانبًا لإطلاق نتيجة";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "اضبط الهامش الذي يمنع وميض الميل";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "اضبط زاوية الميل التي تطلق الاتكاء";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "عدّل قوة الاستجابة للدوران لأعلى ولأسفل";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "اضبط مقدار تقليل الحركة الجانبية";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "اضبط مدة حساب متوسط الحركة للتنعيم";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "اختر المحاور التي تُقاس عليها الحركة";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "اضبط الدوران المُهمل قرب المركز";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "دوّر وحدة التحكم كعجلة قيادة";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "اضبط الدوران الذي يمنح التوجيه الكامل";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "اعكس اتجاه التوجيه";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "اختر العصا التي يحركها التوجيه";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "اضبط كيفية نمو الاستجابة مع الدوران";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "اضبط سرعة الدوران المُهملة كضوضاء";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "اضبط سرعة عودة الانعراج إلى السكون";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "عدّل قوة الاستجابة للدوران يسارًا ويمينًا";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "انقل هذا الإجراء إلى موضع لاحق في الترتيب";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "انقل هذا الإجراء إلى موضع أسبق في الترتيب";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "اكتب اسمًا للتعرف على الملف التعريفي";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "ادمج Joy-Con اثنين في وحدة تحكم واحدة";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "ادمج زوج Joy-Con في وحدة تحكم واحدة";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "صِل Joy-Con الأيسر والأيمن أولًا";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "اضبط المكوّن الأزرق للون الضوء";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "اضبط سطوع الضوء";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "اختر تأثير الزناد المراد تطبيقه";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "اضبط المكوّن الأخضر للون الضوء";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "اضبط شدة الاهتزاز";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "اختر محرك الاهتزاز المراد تشغيله";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "اختر ضوء اللاعب المراد إضاءته";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "اضبط المكوّن الأحمر للون الضوء";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "اضبط موضع بدء تأثير الزناد";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "اضبط شدة تأثير الزناد";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "اختر الزناد الذي يتلقى التأثير";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "اختر المُدخل الذي يغيّر سرعة المؤشر";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "غيّر سرعة المؤشر بمُدخل";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "اضبط أسرع معامل لسرعة المؤشر";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "اضبط أبطأ معامل لسرعة المؤشر";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "اختر العصا التي تغيّر سرعة المؤشر";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "اكتب معرّف المنتج الذي تبلغ عنه وحدة التحكم";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "اضبط مدة كل نبضة";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "اضبط الزاوية التي تبدأ منها المنطقة";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "اضبط مقدار الضغط الذي تبدأ عنده المنطقة";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "اضبط ارتفاع المنطقة";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "اضبط بُعد بداية المنطقة عن المركز";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "اختر المُدخل الذي تراقبه المنطقة";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "اختر نوع المُدخل الذي تشمله المنطقة";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "اضبط بُعد نهاية المنطقة عن المركز";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "اضبط الزاوية التي تنتهي عندها المنطقة";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "اضبط مقدار الضغط الذي تنتهي عنده المنطقة";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "اضبط عرض المنطقة";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "اضبط موضع بدء المنطقة أفقيًا";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "اضبط موضع بدء المنطقة رأسيًا";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "تجاهل التعديلات وحمّل الملف التعريفي المحفوظ";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "اكتب ملاحظة عن هذا السلوك";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "احذف هذا الإجراء من التعيين";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "أوقف تطبيق هذا الملف التعريفي على التطبيق";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "احذف هذا التعيين";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "احذف هذه المجموعة";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "أزل عنصر التحكم هذا من المجموعة";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "احذف هذه الطبقة";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "احذف هذا الماكرو";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "احذف عدد النقرات هذا";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "احذف هذا التسلسل";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "امسح المكتبة وابدأ من جديد";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "أعد عنصر التحكم هذا إلى وظيفته المعتادة";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "احفظ تعديلاتك في الملف التعريفي";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "اضبط الوقت المتاح بين الضغطات";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "ابدأ تطبيق هذا الملف التعريفي";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "اختر كيفية ترتيب الملفات التعريفية";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "اكتب الكلمات التي تُنطق بصوت عالٍ";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "اختر الصوت الذي ينطق";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "اضبط سرعة الدوران عند العصا الكاملة";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "أعد ربط هذه العصا";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "اضبط كيفية نمو الاستجابة مع الانحراف";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "اضبط مدة النقرة السريعة";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "اضبط الهامش الذي يمنع إعادة إطلاق النقرة السريعة";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "اضبط الانحراف المُهمل قرب المركز";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "اعكس اتجاه اليسار واليمين";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "اعكس اتجاه الأعلى والأسفل";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "اختر كيفية عمل العصا";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "اضبط الانحراف المحتسب كاملًا";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "أرسل العصا غير المتغيرة أيضًا";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "اضبط حجم منطقة المؤشر";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "اضبط المسافة التي يتحركها المؤشر لكل درجة";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "اختر الاتجاه الذي يُحتسب فيه الدوران";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "اختر اتجاه تمرير العجلة";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "اضبط مقدار الدوران لسطر واحد";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "اختر العصا المراد تعديلها";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "اضبط الدوران الذي يمنح التوجيه الكامل";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "اختر العصا التي يحركها التوجيه";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "اضبط سرعة عودة التوجيه إلى المركز";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "اضبط الانحراف الذي يطلق النقرة السريعة";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "اكتب التطبيق المراد فتحه";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "اكتب الاختصار المراد تشغيله";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "اكتب العنوان المراد فتحه";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "اضبط عدد النقرات التي تطلق هذه النتيجة";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "اضبط الوقت المتاح بين النقرات";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "اختر وحدة التحكم التي يحاكيها الملف التعريفي";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "ابدأ من مجموعة تعيينات جاهزة";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "اضبط مسافة اللمس المُهملة";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "أعد ربط سطح اللمس هذا";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "اختر كيفية عمل اللمس";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "اضبط المسافة التي يتحركها المؤشر لكل سحبة";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "اضبط مسافة اللمس التي تمنح العصا الكاملة";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "اختر سطح اللمس المراد تعديله";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "اختر المحاور التي تدور عليها كرة التتبع";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "امنع عنصر التحكم المصدر من العمل بمفرده";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "اضبط سرعة تباطؤ الدوران";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "دع المؤشر يواصل التدحرج بعد دوران الجيروسكوب";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "اختر عنصر التحكم الذي يمسك كرة التتبع";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "أعد ربط هذا الزناد";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "اضبط مقدار السحب المحتسب ضغطًا كاملًا";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "اضبط الهامش الذي يمنع وميض الضغط";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "اختر كيفية دمج السحب الخفيف والكامل";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "أرسل الزناد غير المتغير أيضًا";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "اضبط مدة انتظار السحب الخفيف للسحب الكامل";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "اضبط مقدار السحب المحتسب ضغطًا خفيفًا";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "اختر الزناد المراد تعديله";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "أعد تحميل المكتبة";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "اضبط التوقف قبل بدء التيربو";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "اضبط جزء كل دورة الذي يكون فيه الزر مضغوطًا";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "كرّر الضغط ما دام عنصر التحكم مضغوطًا";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "أوقف التيربو بعد عدد ثابت من الضغطات";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "اضبط عدد الضغطات التي يرسلها التيربو";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "اضبط عدد الضغطات في الثانية التي يرسلها التيربو";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "اكتب النص المُرسل كضغطات مفاتيح";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "افصل الزوج إلى وحدتي تحكم";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "احتفظ باللون الذي تبدأ به وحدة التحكم";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "اكتب معرّف المورّد الذي تبلغ عنه وحدة التحكم";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "اعرض وحدة تحكم افتراضية للألعاب";

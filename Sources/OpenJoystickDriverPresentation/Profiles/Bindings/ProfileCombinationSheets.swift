@@ -145,7 +145,7 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
-            OJDLocalized.string("ui.help.cancel")
+            OJDLocalized.string("ui.help.cancelSheet")
           )
           Button(OJDLocalized.string("action.add")) {
             let window = kind == .chord && chordMode == .modifier ? 50 : windowMs
@@ -248,7 +248,7 @@
       } footer: {
         Spacer()
         Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
-          OJDLocalized.string("ui.help.cancel")
+          OJDLocalized.string("ui.help.cancelSheet")
         )
         Button(OJDLocalized.string("action.add")) {
           onSave(name.trimmingCharacters(in: .whitespacesAndNewlines), activator, activationMode)
@@ -312,7 +312,7 @@
       } footer: {
         Spacer()
         Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
-          OJDLocalized.string("ui.help.cancel")
+          OJDLocalized.string("ui.help.cancelSheet")
         )
         Button(OJDLocalized.string("action.add")) {
           onSave(source, destination)

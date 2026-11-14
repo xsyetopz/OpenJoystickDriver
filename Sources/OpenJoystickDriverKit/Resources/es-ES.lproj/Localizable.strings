@@ -5433,7 +5433,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "Ejecutar la corrección de esta comprobación fallida";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "Elegir si macOS u OpenJoystickDriver gestiona este mando";
+"platform.macos.ui.help.serverPicker" = "Elegir si macOS u OpenJoystickDriver gestiona este mando";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "Mostrar u ocultar los identificadores y los puntos de conexión";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5474,14 +5474,10 @@
 "ui.help.scopeControl" = "Permitir que el programa maneje un mando virtual";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "Convertir los documentos guardados a la versión actual";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "Ejecutar de nuevo la acción que falló";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "Crear un perfil para un mando";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "Terminar la configuración y pasar a la app";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "Cerrar esta hoja";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "Leer de nuevo el estado del servicio";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5542,8 +5538,6 @@
 "ui.help.soakStop" = "Detener la prueba de resistencia en curso";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "Elegir qué paquetes muestra la lista";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "Grabar los paquetes del mando seleccionado";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "Dejar de grabar paquetes";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5602,3 +5596,678 @@
 "ui.help.resetSettings" = "Sustituir los ajustes ilegibles por los predeterminados";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "Ocultar este mensaje";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "Añade la asignación del control elegido";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "Elige la entrada del mando que asignar";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "Define cuánto se mueve la palanca para contar";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "Elige qué hace la entrada";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "Elige a qué mando escuchar";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "Define cuánto se mueve el eje para contar como pulsado";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "Escala la intensidad de respuesta del eje";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "Invierte la dirección del eje";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "Pulsa una entrada del mando para elegirla automáticamente";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "Elige cómo se modela el valor del eje";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "Elige la columna de la celda táctil que asignar";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "Define en cuántas columnas se divide la superficie táctil";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "Elige la fila de la celda táctil que asignar";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "Define en cuántas filas se divide la superficie táctil";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "Define cuánto recorre un dedo para contar como deslizamiento";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "Restaura los ajustes predeterminados";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "Conserva estos ajustes y cierra";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "Ejecuta la acción de biblioteca elegida";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "Copia todos los registros al portapapeles";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "Oculta este aviso";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "Elige qué elementos abarca la acción";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "Añade una tecla que se pulsa junto con este paso";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "Añade el paso elegido a la macro";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "Elige qué tipo de paso añadir";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "Conserva la macro y cierra";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "Define cuánto tiempo se mantiene la tecla pulsada";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "Detiene la macro al soltar el control";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "Mueve este paso más tarde en la macro";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "Mueve este paso más pronto en la macro";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "Escribe un nombre para reconocer la macro";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "Quita esta tecla del paso";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "Elimina este paso de la macro";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "Ejecuta la macro más de una vez";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "Define cuántas veces se ejecuta la macro";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "Elige qué hace este paso";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "Define cuánto esperar antes del siguiente paso";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "Sigue repitiendo mientras se mantiene el control";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "Empieza a mover tus datos a la nueva biblioteca";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "Muestra más acciones de este perfil";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "Elige cuándo está activa la capa";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "Elige el control que activa la capa";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "Añade otra acción a esta asignación";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "Elige una app a la que se aplica este perfil";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "Elige una app de tu Mac";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "Asigna un control a un destino nuevo";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "Añade una combinación de controles mantenidos juntos";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "Añade la combinación al perfil";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "Añade el control elegido a la combinación";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "Asigna un control mientras la capa está activa";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "Añade una capa que cambia otros controles";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "Crea una macro nueva";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "Añade un número de toques con su propio resultado";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "Añade controles pulsados uno tras otro";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "Ajusta con precisión cómo se comporta la entrada";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "Elige una app que no está en la lista";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "Conserva el comportamiento y cierra";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "Conserva los cambios y cierra";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "Elige cómo la entrada activa el resultado";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "Elige cómo la entrada activa el resultado";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "Elige cómo hay que pulsar los controles";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "Define cuánto pueden distar en el tiempo las pulsaciones";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "Elige un control para la combinación";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "Abre los ajustes de esta entrada";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "Elige para qué mando es el perfil";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "Crea una copia convertida para el nuevo destino";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "Elige el tipo de mando al que convertir";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "Crea el perfil y ábrelo";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "Deja de aplicar este perfil";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "Elimina los archivos dañados para empezar de nuevo";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "Edita el nombre y el mando de este perfil";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "Crea una copia de este perfil";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "Cambia los pasos de esta macro";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "Cambia a otra parte del perfil";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "Oculta el mando real a otras apps";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "Elige cuándo está activa la salida del giroscopio";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "Evita que el control de activación actúe por sí solo";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "Elige qué controla el giroscopio";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "Define cuánto se mueve el puntero por grado";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "Elige el control que activa el giroscopio";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "Define la velocidad de giro que alcanza la palanca completa";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "Define cuánto mantener pulsado para que cuente";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "Elige qué Joy-Con aporta el movimiento";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "Elige el Joy-Con izquierdo que emparejar";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "Usa dos Joy-Con como un solo mando";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "Elige el Joy-Con derecho que emparejar";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "Continúa con tus cambios sin guardar";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "Edita los ajustes de movimiento de esta capa";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "Escribe un nombre para reconocer la capa";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "Elige el color de la luz del mando";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "Añade un segundo resultado para una pulsación larga";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "Corrige la deriva lenta mientras el mando está en reposo";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "Define con qué rapidez la gravedad corrige la inclinación";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "Usa los ajustes de movimiento del perfil";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "Invierte la dirección arriba y abajo";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "Invierte la dirección izquierda y derecha";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "Gira el mando de lado para activar un resultado";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "Define el margen que evita que la inclinación parpadee";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "Define el ángulo de inclinación que activa el giro lateral";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "Escala la intensidad de respuesta a giros arriba y abajo";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "Define cuánto se reduce el movimiento lateral";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "Define durante cuánto tiempo se promedia el movimiento";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "Elige en qué ejes se mide el movimiento";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "Define el giro que se ignora cerca del centro";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "Gira el mando como un volante";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "Define el giro que da el volante completo";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "Invierte la dirección del volante";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "Elige qué palanca mueve el volante";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "Define cómo crece la respuesta con el giro";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "Define la velocidad de giro que se ignora como ruido";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "Define con qué rapidez el guiñado vuelve al reposo";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "Escala la intensidad de respuesta a giros izquierda y derecha";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "Mueve esta acción más tarde en el orden";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "Mueve esta acción más pronto en el orden";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "Escribe un nombre para reconocer el perfil";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "Combina los dos Joy-Con en un solo mando";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Combina dos Joy-Con en un solo mando";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "Conecta primero un Joy-Con izquierdo y uno derecho";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "Define la parte azul del color de la luz";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "Define cuánto brilla la luz";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "Elige el efecto de gatillo que aplicar";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "Define la parte verde del color de la luz";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "Define la intensidad de la vibración";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "Elige qué motor de vibración accionar";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "Elige qué luz de jugador encender";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "Define la parte roja del color de la luz";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "Define dónde empieza el efecto de gatillo";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "Define la intensidad del efecto de gatillo";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "Elige qué gatillo recibe el efecto";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "Elige la entrada que cambia la velocidad del puntero";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "Cambia la velocidad del puntero con una entrada";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "Define el factor de velocidad del puntero más rápido";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "Define el factor de velocidad del puntero más lento";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "Elige qué palanca cambia la velocidad del puntero";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "Escribe el ID de producto que indica el mando";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "Define cuánto dura cada pulso";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "Define el ángulo donde empieza la región";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "Define la pulsación donde empieza la región";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "Define la altura de la región";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "Define a qué distancia del centro empieza la región";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "Elige qué entrada vigila la región";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "Elige el tipo de entrada que abarca la región";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "Define a qué distancia del centro termina la región";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "Define el ángulo donde termina la región";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "Define la pulsación donde termina la región";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "Define la anchura de la región";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "Define dónde empieza la región en horizontal";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "Define dónde empieza la región en vertical";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "Descarta tus cambios y carga el perfil guardado";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "Escribe una nota sobre este comportamiento";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "Elimina esta acción de la asignación";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "Deja de aplicar este perfil a la app";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "Elimina esta asignación";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "Elimina esta combinación";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "Quita este control de la combinación";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "Elimina esta capa";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "Elimina esta macro";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "Elimina este número de toques";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "Elimina esta secuencia";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "Borra la biblioteca y empieza de nuevo";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "Devuelve este control a su función normal";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "Guarda tus cambios en el perfil";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "Define cuánto tiempo tienes entre pulsaciones";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "Empieza a aplicar este perfil";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "Elige cómo se ordenan los perfiles";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "Escribe las palabras que decir en voz alta";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "Elige la voz que habla";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "Define la velocidad de giro con la palanca completa";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "Reasigna esta palanca";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "Define cómo crece la respuesta con la inclinación";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "Define cuánto dura un flick";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "Define el margen que evita que el flick se repita";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "Define la inclinación que se ignora cerca del centro";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "Invierte la dirección izquierda y derecha";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "Invierte la dirección arriba y abajo";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "Elige cómo actúa la palanca";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "Define la inclinación que cuenta como completa";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "Envía también la palanca sin cambios";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "Define el tamaño del área del puntero";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "Define cuánto se mueve el puntero por grado";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "Elige en qué sentido cuenta un giro";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "Elige hacia dónde se desplaza la rueda";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "Define cuánto girar para una línea";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "Elige qué palanca editar";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "Define el giro que da el volante completo";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "Elige qué palanca mueve el volante";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "Define con qué rapidez el volante vuelve al centro";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "Define la inclinación que activa un flick";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "Escribe la app que abrir";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "Escribe el atajo que ejecutar";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "Escribe la dirección que abrir";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "Define cuántos toques activan este resultado";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "Define cuánto tiempo tienes entre toques";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "Elige el mando que imita el perfil";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "Empieza con un conjunto de asignaciones prediseñado";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "Define la distancia táctil que se ignora";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "Reasigna esta superficie táctil";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "Elige cómo actúa el tacto";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "Define cuánto se mueve el puntero por deslizamiento";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "Define la distancia táctil que da la palanca completa";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "Elige qué superficie táctil editar";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "Elige en qué ejes gira el trackball";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "Evita que el control de origen actúe por sí solo";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "Define con qué rapidez se frena el giro";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "Mantén el puntero rodando tras un giro del giroscopio";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "Elige el control que agarra el trackball";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "Reasigna este gatillo";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "Define la pulsación que cuenta como completa";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "Define el margen que evita que la pulsación parpadee";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "Elige cómo se combinan las pulsaciones suave y completa";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "Envía también el gatillo sin cambios";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "Define cuánto espera una pulsación suave a una completa";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "Define la pulsación que cuenta como suave";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "Elige qué gatillo editar";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "Vuelve a cargar la biblioteca";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "Define la pausa antes de que empiece el turbo";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "Define qué parte de cada ciclo está pulsado el botón";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "Repite la pulsación mientras se mantiene el control";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "Detiene el turbo tras un número fijo de pulsaciones";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "Define cuántas pulsaciones envía el turbo";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "Define cuántas pulsaciones por segundo envía el turbo";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "Escribe el texto que enviar como pulsaciones de teclas";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "Divide la pareja en dos mandos";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "Conserva el color con el que arranca el mando";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "Escribe el ID de fabricante que indica el mando";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "Muestra un mando virtual a los juegos";

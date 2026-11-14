@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "실패한 이 점검의 해결 작업을 실행합니다";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "macOS와 OpenJoystickDriver 중 누가 이 컨트롤러를 처리할지 고릅니다";
+"platform.macos.ui.help.serverPicker" = "macOS와 OpenJoystickDriver 중 누가 이 컨트롤러를 처리할지 고릅니다";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "식별자와 엔드포인트를 표시하거나 숨깁니다";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "프로그램이 가상 게임패드를 조작하도록 허용";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "저장된 문서를 현재 버전으로 변환";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "실패한 동작을 다시 실행";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "컨트롤러용 프로필 만들기";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "설정을 마치고 앱으로 이동";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "이 시트 닫기";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "서비스 상태를 다시 읽기";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "실행 중인 내구성 테스트 중지";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "목록에 보일 패킷 선택";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "선택한 컨트롤러의 패킷 기록";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "패킷 기록 중지";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "읽을 수 없는 설정을 기본값으로 바꾸기";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "이 메시지 숨기기";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "선택한 컨트롤의 할당 추가";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "할당할 컨트롤러 입력 선택";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "인식될 스틱 이동량 설정";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "입력이 하는 동작 선택";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "수신할 컨트롤러 선택";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "눌린 것으로 인식될 축 이동량 설정";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "축 반응 강도 조절";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "축 방향 반전";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "컨트롤러 입력을 눌러 자동으로 선택";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "축 값의 곡선 모양 선택";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "할당할 터치 셀의 열 선택";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "터치 표면을 나눌 열 수 설정";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "할당할 터치 셀의 행 선택";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "터치 표면을 나눌 행 수 설정";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "스와이프로 인식될 손가락 이동 거리 설정";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "기본 설정으로 복원";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "이 설정을 저장하고 닫기";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "선택한 라이브러리 작업 실행";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "모든 레코드를 클립보드에 복사";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "이 알림 숨기기";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "작업이 적용될 항목 선택";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "이 단계와 함께 누를 키 추가";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "선택한 단계를 매크로에 추가";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "추가할 단계의 종류 선택";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "매크로를 저장하고 닫기";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "키를 누르고 있을 시간 설정";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "컨트롤을 놓으면 매크로 중지";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "이 단계를 매크로에서 뒤로 이동";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "이 단계를 매크로에서 앞으로 이동";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "매크로를 알아볼 이름 입력";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "이 키를 단계에서 제거";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "이 단계를 매크로에서 삭제";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "매크로를 여러 번 실행";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "매크로 실행 횟수 설정";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "이 단계가 하는 동작 선택";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "다음 단계 전 대기 시간 설정";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "컨트롤을 누르고 있는 동안 계속 반복";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "데이터를 새 라이브러리로 옮기기 시작";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "이 프로필의 다른 동작 표시";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "레이어가 활성화되는 시점 선택";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "레이어를 켜는 컨트롤 선택";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "이 할당에 다른 동작 추가";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "이 프로필이 적용될 앱 선택";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "Mac에서 앱 선택";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "컨트롤을 새 대상에 매핑";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "함께 누르는 컨트롤 조합 추가";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "조합을 프로필에 추가";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "선택한 컨트롤을 조합에 추가";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "레이어가 활성화된 동안 컨트롤 매핑";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "다른 컨트롤을 바꾸는 레이어 추가";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "새 매크로 만들기";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "자체 결과를 가진 탭 횟수 추가";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "차례로 누르는 컨트롤 추가";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "입력의 동작 방식을 세밀하게 조정";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "목록에 없는 앱 선택";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "동작을 저장하고 닫기";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "변경 사항을 저장하고 닫기";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "입력이 결과를 실행하는 방식 선택";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "입력이 결과를 실행하는 방식 선택";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "컨트롤을 누르는 방식 선택";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "누르는 시간 간격이 얼마나 가까워야 하는지 설정";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "조합에 사용할 컨트롤 선택";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "이 입력의 설정 열기";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "프로필 대상 컨트롤러 선택";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "새 대상용으로 변환한 사본 만들기";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "변환할 컨트롤러 종류 선택";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "프로필을 만들고 열기";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "이 프로필 적용 중단";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "손상된 파일을 삭제하고 다시 시작";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "이 프로필의 이름과 컨트롤러 편집";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "이 프로필의 사본 만들기";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "이 매크로의 단계 변경";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "프로필의 다른 부분으로 이동";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "실제 컨트롤러를 다른 앱에서 숨기기";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "자이로 출력이 활성화되는 시점 선택";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "활성화 컨트롤이 단독으로 동작하지 않게 하기";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "자이로가 제어할 대상 선택";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "1도당 포인터 이동 거리 설정";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "자이로를 활성화하는 컨트롤 선택";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "스틱이 최대가 되는 회전 속도 설정";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "인식되기 위해 눌러야 하는 시간 설정";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "움직임을 제공할 Joy-Con 선택";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "페어링할 왼쪽 Joy-Con 선택";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "Joy-Con 두 개를 하나의 컨트롤러로 사용";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "페어링할 오른쪽 Joy-Con 선택";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "저장하지 않은 편집을 유지한 채 계속";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "이 레이어의 모션 설정 편집";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "레이어를 알아볼 이름 입력";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "컨트롤러 조명 색상 선택";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "길게 누르기용 두 번째 결과 추가";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "컨트롤러가 정지한 동안의 느린 드리프트 보정";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "중력이 기울기를 보정하는 속도 설정";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "프로필의 모션 설정 사용";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "위아래 방향 반전";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "좌우 방향 반전";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "컨트롤러를 옆으로 기울여 결과 실행";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "기울기 깜박임을 막는 여유 설정";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "기대기를 실행하는 기울기 각도 설정";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "위아래 회전 반응 강도 조절";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "옆 방향 움직임을 줄이는 정도 설정";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "부드럽게 하려고 움직임을 평균 낼 시간 설정";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "움직임을 측정할 축 선택";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "중앙 근처에서 무시할 회전량 설정";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "컨트롤러를 핸들처럼 돌리기";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "조향이 최대가 되는 회전량 설정";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "조향 방향 반전";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "조향이 움직일 스틱 선택";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "회전에 따라 반응이 커지는 방식 설정";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "노이즈로 무시할 회전 속도 설정";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "요가 정지 상태로 돌아가는 속도 설정";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "좌우 회전 반응 강도 조절";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "이 동작을 순서에서 뒤로 이동";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "이 동작을 순서에서 앞으로 이동";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "프로필을 알아볼 이름 입력";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "Joy-Con 두 개를 하나의 컨트롤러로 결합";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Joy-Con 한 쌍을 하나의 컨트롤러로 결합";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "먼저 왼쪽과 오른쪽 Joy-Con 연결";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "조명 색상의 파랑 성분 설정";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "조명 밝기 설정";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "적용할 트리거 효과 선택";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "조명 색상의 초록 성분 설정";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "진동 세기 설정";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "제어할 진동 모터 선택";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "켤 플레이어 램프 선택";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "조명 색상의 빨강 성분 설정";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "트리거 효과가 시작되는 위치 설정";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "트리거 효과의 세기 설정";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "효과를 받을 트리거 선택";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "포인터 속도를 바꿀 입력 선택";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "입력으로 포인터 속도 변경";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "가장 빠른 포인터 속도 배율 설정";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "가장 느린 포인터 속도 배율 설정";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "포인터 속도를 바꿀 스틱 선택";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "컨트롤러가 보고하는 제품 ID 입력";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "각 펄스가 지속될 시간 설정";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "영역이 시작되는 각도 설정";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "영역이 시작되는 눌림 정도 설정";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "영역의 높이 설정";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "중심에서 영역이 시작되는 거리 설정";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "영역이 감시할 입력 선택";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "영역이 포함할 입력 종류 선택";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "중심에서 영역이 끝나는 거리 설정";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "영역이 끝나는 각도 설정";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "영역이 끝나는 눌림 정도 설정";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "영역의 너비 설정";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "영역이 가로로 시작되는 위치 설정";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "영역이 세로로 시작되는 위치 설정";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "편집을 버리고 저장된 프로필 불러오기";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "이 동작에 대한 메모 입력";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "이 동작을 할당에서 삭제";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "이 프로필을 앱에 적용하는 것 중단";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "이 할당 삭제";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "이 조합 삭제";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "이 컨트롤을 조합에서 제거";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "이 레이어 삭제";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "이 매크로 삭제";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "이 탭 횟수 삭제";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "이 시퀀스 삭제";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "라이브러리를 지우고 다시 시작";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "이 컨트롤을 일반 기능으로 되돌리기";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "편집 내용을 프로필에 저장";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "누르는 사이에 허용되는 시간 설정";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "이 프로필 적용 시작";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "프로필 정렬 방식 선택";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "소리 내어 읽을 단어 입력";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "말할 음성 선택";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "스틱이 최대일 때의 회전 속도 설정";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "이 스틱 다시 매핑";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "기울기에 따라 반응이 커지는 방식 설정";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "플릭이 지속될 시간 설정";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "플릭이 다시 실행되는 것을 막는 여유 설정";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "중앙 근처에서 무시할 기울기 설정";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "좌우 방향 반전";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "위아래 방향 반전";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "스틱이 동작하는 방식 선택";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "최대로 인식될 기울기 설정";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "변경되지 않은 스틱도 전송";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "포인터 영역의 크기 설정";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "1도당 포인터 이동 거리 설정";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "회전이 인식될 방향 선택";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "휠이 스크롤되는 방향 선택";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "한 줄에 필요한 회전량 설정";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "편집할 스틱 선택";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "조향이 최대가 되는 회전량 설정";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "조향이 움직일 스틱 선택";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "조향이 중앙으로 돌아오는 속도 설정";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "플릭을 실행하는 기울기 설정";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "열 앱 입력";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "실행할 단축어 입력";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "열 주소 입력";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "이 결과를 실행하는 탭 횟수 설정";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "탭 사이에 허용되는 시간 설정";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "프로필이 에뮬레이트할 컨트롤러 선택";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "미리 준비된 할당 세트로 시작";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "무시할 터치 거리 설정";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "이 터치 표면 다시 매핑";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "터치가 동작하는 방식 선택";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "스와이프당 포인터 이동 거리 설정";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "스틱이 최대가 되는 터치 거리 설정";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "편집할 터치 표면 선택";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "트랙볼이 회전할 축 선택";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "원본 컨트롤이 단독으로 동작하지 않게 하기";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "회전이 느려지는 속도 설정";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "자이로 회전 후에도 포인터가 계속 구르게 하기";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "트랙볼을 잡는 컨트롤 선택";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "이 트리거 다시 매핑";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "완전히 눌린 것으로 인식될 당김 정도 설정";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "눌림 깜박임을 막는 여유 설정";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "가벼운 당김과 완전한 당김을 결합하는 방식 선택";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "변경되지 않은 트리거도 전송";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "가벼운 당김이 완전한 당김을 기다리는 시간 설정";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "가볍게 눌린 것으로 인식될 당김 정도 설정";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "편집할 트리거 선택";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "라이브러리 다시 불러오기";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "터보가 시작되기 전 대기 시간 설정";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "각 주기 중 버튼이 눌려 있는 비율 설정";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "컨트롤을 누르고 있는 동안 누름 반복";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "정해진 횟수 후 터보 중지";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "터보가 보낼 누름 횟수 설정";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "터보가 초당 보낼 누름 횟수 설정";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "키 입력으로 보낼 텍스트 입력";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "쌍을 컨트롤러 두 개로 분리";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "컨트롤러가 시작될 때의 색상 유지";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "컨트롤러가 보고하는 공급업체 ID 입력";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "게임에 가상 게임패드 표시";

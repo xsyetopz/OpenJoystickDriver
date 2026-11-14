@@ -130,7 +130,7 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
-            OJDLocalized.string("ui.help.cancel")
+            OJDLocalized.string("ui.help.cancelSheet")
           )
           Button(OJDLocalized.string("action.apply")) {
             onSave(

@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "Jalankan perbaikan untuk pemeriksaan yang gagal ini";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "Pilih apakah macOS atau OpenJoystickDriver yang menangani pengontrol ini";
+"platform.macos.ui.help.serverPicker" = "Pilih apakah macOS atau OpenJoystickDriver yang menangani pengontrol ini";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "Tampilkan atau sembunyikan pengenal dan titik akhir";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "Izinkan program mengendalikan gamepad virtual";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "Ubah dokumen tersimpan ke versi saat ini";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "Jalankan lagi tindakan yang gagal";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "Buat profil untuk sebuah pengontrol";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "Selesaikan penyiapan dan lanjut ke app";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "Tutup lembar ini";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "Baca ulang status layanan";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "Hentikan uji ketahanan yang berjalan";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "Pilih paket yang ditampilkan daftar";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "Rekam paket dari pengontrol yang dipilih";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "Hentikan perekaman paket";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "Ganti pengaturan yang tak terbaca dengan bawaan";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "Sembunyikan pesan ini";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "Tambahkan penetapan untuk kontrol yang dipilih";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "Pilih input pengontrol yang akan ditetapkan";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "Atur seberapa jauh stik bergerak agar dihitung";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "Pilih apa yang dilakukan input";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "Pilih pengontrol yang didengarkan";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "Atur seberapa jauh sumbu bergerak agar dihitung sebagai ditekan";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "Skalakan seberapa kuat sumbu merespons";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "Balik arah sumbu";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "Tekan input pengontrol untuk memilihnya secara otomatis";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "Pilih bagaimana nilai sumbu dibentuk";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "Pilih kolom sel sentuh yang akan ditetapkan";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "Atur jumlah kolom pembagian permukaan sentuh";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "Pilih baris sel sentuh yang akan ditetapkan";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "Atur jumlah baris pembagian permukaan sentuh";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "Atur seberapa jauh jari bergerak agar dihitung sebagai geseran";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "Pulihkan pengaturan default";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "Simpan pengaturan ini lalu tutup";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "Jalankan tindakan pustaka yang dipilih";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "Salin semua catatan ke papan klip";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "Sembunyikan pemberitahuan ini";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "Pilih item yang dicakup tindakan";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "Tambahkan tombol yang ditekan bersama langkah ini";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "Tambahkan langkah yang dipilih ke makro";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "Pilih jenis langkah yang ditambahkan";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "Simpan makro lalu tutup";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "Atur berapa lama tombol tetap ditekan";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "Hentikan makro saat kontrol dilepas";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "Pindahkan langkah ini lebih akhir dalam makro";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "Pindahkan langkah ini lebih awal dalam makro";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "Ketik nama untuk mengenali makro";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "Hapus tombol ini dari langkah";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "Hapus langkah ini dari makro";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "Jalankan makro lebih dari sekali";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "Atur berapa kali makro dijalankan";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "Pilih apa yang dilakukan langkah ini";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "Atur jeda sebelum langkah berikutnya";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "Terus ulangi selama kontrol tetap ditahan";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "Mulai memindahkan data Anda ke pustaka baru";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "Tampilkan tindakan lain untuk profil ini";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "Pilih kapan lapisan aktif";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "Pilih kontrol yang mengaktifkan lapisan";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "Tambahkan tindakan lain ke penetapan ini";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "Pilih aplikasi tempat profil ini berlaku";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "Pilih aplikasi dari Mac Anda";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "Petakan kontrol ke tujuan baru";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "Tambahkan kombinasi kontrol yang ditahan bersamaan";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "Tambahkan kombinasi ke profil";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "Tambahkan kontrol yang dipilih ke kombinasi";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "Petakan kontrol saat lapisan aktif";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "Tambahkan lapisan yang mengubah kontrol lain";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "Buat makro baru";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "Tambahkan jumlah ketukan dengan hasil tersendiri";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "Tambahkan kontrol yang ditekan satu per satu";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "Setel halus perilaku input";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "Pilih aplikasi yang tidak ada di daftar";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "Simpan perilaku lalu tutup";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "Simpan perubahan lalu tutup";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "Pilih bagaimana input memicu hasil";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "Pilih bagaimana input memicu hasil";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "Pilih bagaimana kontrol harus ditekan";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "Atur seberapa berdekatan waktu penekanan";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "Pilih kontrol untuk kombinasi";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "Buka pengaturan input ini";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "Pilih pengontrol yang dituju profil";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "Buat salinan hasil konversi untuk target baru";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "Pilih jenis pengontrol tujuan konversi";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "Buat profil lalu buka";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "Berhenti menerapkan profil ini";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "Hapus file yang rusak agar bisa memulai ulang";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "Edit nama dan pengontrol profil ini";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "Buat salinan profil ini";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "Ubah langkah makro ini";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "Pindah ke bagian profil lain";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "Sembunyikan pengontrol asli dari aplikasi lain";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "Pilih kapan keluaran giroskop aktif";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "Cegah kontrol aktivasi bekerja sendiri";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "Pilih apa yang dikendalikan giroskop";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "Atur seberapa jauh penunjuk bergerak per derajat";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "Pilih kontrol yang mengaktifkan giroskop";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "Atur kecepatan putar yang mencapai stik penuh";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "Atur berapa lama harus ditahan agar dihitung";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "Pilih Joy-Con yang menyediakan gerakan";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "Pilih Joy-Con kiri untuk dipasangkan";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "Gunakan dua Joy-Con sebagai satu pengontrol";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "Pilih Joy-Con kanan untuk dipasangkan";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "Lanjutkan dengan hasil edit yang belum disimpan";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "Edit pengaturan gerakan lapisan ini";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "Ketik nama untuk mengenali lapisan";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "Pilih warna lampu pengontrol";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "Tambahkan hasil kedua untuk penekanan lama";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "Koreksi pergeseran lambat saat pengontrol diam";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "Atur seberapa cepat gravitasi mengoreksi kemiringan";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "Gunakan pengaturan gerakan profil";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "Balik arah atas dan bawah";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "Balik arah kiri dan kanan";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "Miringkan pengontrol ke samping untuk memicu hasil";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "Atur margin yang mencegah kemiringan berkedip";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "Atur sudut kemiringan yang memicu condong";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "Skalakan seberapa kuat putaran atas dan bawah direspons";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "Atur seberapa banyak gerakan samping dikurangi";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "Atur durasi perataan gerakan untuk penghalusan";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "Pilih sumbu tempat gerakan diukur";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "Atur putaran yang diabaikan dekat tengah";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "Putar pengontrol seperti kemudi";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "Atur putaran yang memberi kemudi penuh";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "Balik arah kemudi";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "Pilih stik yang digerakkan kemudi";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "Atur bagaimana respons tumbuh seiring putaran";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "Atur kecepatan putar yang diabaikan sebagai derau";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "Atur seberapa cepat yaw kembali ke posisi diam";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "Skalakan seberapa kuat putaran kiri dan kanan direspons";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "Pindahkan tindakan ini lebih akhir dalam urutan";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "Pindahkan tindakan ini lebih awal dalam urutan";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "Ketik nama untuk mengenali profil";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "Gabungkan kedua Joy-Con menjadi satu pengontrol";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Gabungkan dua Joy-Con menjadi satu pengontrol";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "Hubungkan Joy-Con kiri dan kanan terlebih dahulu";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "Atur bagian biru dari warna lampu";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "Atur seberapa terang lampu";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "Pilih efek pemicu yang diterapkan";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "Atur bagian hijau dari warna lampu";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "Atur seberapa kuat getaran";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "Pilih motor getar yang dijalankan";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "Pilih lampu pemain yang dinyalakan";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "Atur bagian merah dari warna lampu";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "Atur di mana efek pemicu dimulai";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "Atur seberapa kuat efek pemicu";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "Pilih pemicu yang menerima efek";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "Pilih input yang mengubah kecepatan penunjuk";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "Ubah kecepatan penunjuk dengan sebuah input";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "Atur faktor kecepatan penunjuk tercepat";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "Atur faktor kecepatan penunjuk terlambat";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "Pilih stik yang mengubah kecepatan penunjuk";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "Ketik ID produk yang dilaporkan pengontrol";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "Atur berapa lama setiap denyut berlangsung";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "Atur sudut tempat wilayah dimulai";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "Atur tarikan tempat wilayah dimulai";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "Atur tinggi wilayah";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "Atur seberapa jauh dari tengah wilayah dimulai";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "Pilih input yang diamati wilayah";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "Pilih jenis input yang dicakup wilayah";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "Atur seberapa jauh dari tengah wilayah berakhir";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "Atur sudut tempat wilayah berakhir";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "Atur tarikan tempat wilayah berakhir";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "Atur lebar wilayah";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "Atur posisi mulai wilayah secara horizontal";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "Atur posisi mulai wilayah secara vertikal";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "Buang hasil edit dan muat profil yang tersimpan";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "Ketik catatan tentang perilaku ini";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "Hapus tindakan ini dari penetapan";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "Berhenti menerapkan profil ini ke aplikasi";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "Hapus penetapan ini";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "Hapus kombinasi ini";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "Hapus kontrol ini dari kombinasi";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "Hapus lapisan ini";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "Hapus makro ini";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "Hapus jumlah ketukan ini";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "Hapus urutan ini";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "Hapus pustaka dan mulai ulang";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "Kembalikan kontrol ini ke fungsi normalnya";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "Simpan hasil edit Anda di profil";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "Atur waktu yang tersedia di antara penekanan";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "Mulai menerapkan profil ini";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "Pilih bagaimana profil diurutkan";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "Ketik kata yang diucapkan dengan lantang";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "Pilih suara yang berbicara";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "Atur kecepatan putar pada stik penuh";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "Petakan ulang stik ini";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "Atur bagaimana respons tumbuh seiring defleksi";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "Atur berapa lama flick berlangsung";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "Atur margin yang mencegah flick terpicu ulang";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "Atur defleksi yang diabaikan dekat tengah";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "Balik arah kiri dan kanan";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "Balik arah atas dan bawah";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "Pilih bagaimana stik bekerja";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "Atur defleksi yang dihitung penuh";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "Kirim juga stik tanpa perubahan";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "Atur ukuran area penunjuk";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "Atur seberapa jauh penunjuk bergerak per derajat";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "Pilih ke arah mana putaran dihitung";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "Pilih ke arah mana roda menggulir";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "Atur seberapa jauh memutar untuk satu baris";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "Pilih stik yang diedit";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "Atur putaran yang memberi kemudi penuh";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "Pilih stik yang digerakkan kemudi";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "Atur seberapa cepat kemudi kembali ke tengah";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "Atur defleksi yang memicu flick";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "Ketik aplikasi yang dibuka";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "Ketik pintasan yang dijalankan";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "Ketik alamat yang dibuka";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "Atur berapa ketukan yang memicu hasil ini";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "Atur waktu yang tersedia di antara ketukan";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "Pilih pengontrol yang ditiru profil";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "Mulai dari kumpulan penetapan siap pakai";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "Atur jarak sentuh yang diabaikan";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "Petakan ulang permukaan sentuh ini";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "Pilih bagaimana sentuhan bekerja";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "Atur seberapa jauh penunjuk bergerak per geseran";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "Atur jarak sentuh yang memberi stik penuh";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "Pilih permukaan sentuh yang diedit";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "Pilih sumbu tempat trackball berputar";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "Cegah kontrol sumber bekerja sendiri";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "Atur seberapa cepat putaran melambat";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "Biarkan penunjuk terus bergulir setelah putaran giroskop";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "Pilih kontrol yang menahan trackball";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "Petakan ulang pemicu ini";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "Atur tarikan yang dihitung sebagai tekan penuh";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "Atur margin yang mencegah penekanan berkedip";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "Pilih bagaimana tarikan ringan dan penuh digabungkan";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "Kirim juga pemicu tanpa perubahan";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "Atur berapa lama tarikan ringan menunggu tarikan penuh";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "Atur tarikan yang dihitung sebagai tekan ringan";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "Pilih pemicu yang diedit";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "Muat ulang pustaka";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "Atur jeda sebelum turbo dimulai";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "Atur bagian setiap siklus saat tombol ditekan";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "Ulangi penekanan selama kontrol ditahan";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "Hentikan turbo setelah sejumlah penekanan tertentu";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "Atur berapa penekanan yang dikirim turbo";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "Atur berapa penekanan per detik yang dikirim turbo";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "Ketik teks yang dikirim sebagai ketukan tombol";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "Pisahkan pasangan menjadi dua pengontrol";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "Pertahankan warna awal pengontrol";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "Ketik ID vendor yang dilaporkan pengontrol";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "Tampilkan gamepad virtual ke game";

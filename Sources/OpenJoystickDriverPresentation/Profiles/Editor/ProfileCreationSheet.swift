@@ -129,7 +129,7 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancel"))
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.create")) {
             guard let proposedProfile else { return }
             onCreate(proposedProfile)
@@ -207,7 +207,7 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancel"))
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.duplicate")) {
             guard let duplicate else { return }
             onDuplicate(duplicate)

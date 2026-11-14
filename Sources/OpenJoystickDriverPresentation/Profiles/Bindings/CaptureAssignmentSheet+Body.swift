@@ -86,7 +86,7 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { cancelCapture() }
-            .help(OJDLocalized.string("ui.help.cancel"))
+            .help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.addAssignment")) {
             onAdd(source, destination)
             viewModel.cancelInputCapture()

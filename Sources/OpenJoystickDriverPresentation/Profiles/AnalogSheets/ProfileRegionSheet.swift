@@ -67,7 +67,7 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { presentationMode.wrappedValue.dismiss() }
-            .help(OJDLocalized.string("ui.help.cancel"))
+            .help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.addAssignment")) { add() }.help(
             OJDLocalized.string("ui.profiles.addAssignmentHelp")
           )

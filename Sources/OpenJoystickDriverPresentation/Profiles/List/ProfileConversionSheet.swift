@@ -56,7 +56,7 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancel"))
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.convert")) {
             guard let conversion else { return }
             onConvert(conversion)
@@ -134,7 +134,7 @@
           Button(OJDLocalized.string("action.done")) {
             presentationMode.wrappedValue.dismiss()
           }.keyboardShortcut(.defaultAction)
-            .help(OJDLocalized.string("ui.help.done"))
+            .help(OJDLocalized.string("ui.help.closeSheet"))
         }
       }.ojdSheet(.compact)
     }

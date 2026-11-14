@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "इस विफल जाँच का समाधान चलाएँ";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "चुनें कि macOS या OpenJoystickDriver इस कंट्रोलर को संभाले";
+"platform.macos.ui.help.serverPicker" = "चुनें कि macOS या OpenJoystickDriver इस कंट्रोलर को संभाले";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "पहचानकर्ता और एंडपॉइंट दिखाएँ या छिपाएँ";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "प्रोग्राम को वर्चुअल गेमपैड चलाने दें";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "सहेजे गए दस्तावेज़ों को मौजूदा संस्करण में बदलें";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "असफल रही कार्रवाई दोबारा चलाएँ";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "किसी कंट्रोलर के लिए प्रोफ़ाइल बनाएँ";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "सेटअप पूरा करें और ऐप पर जाएँ";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "इस शीट को बंद करें";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "सेवा की स्थिति दोबारा पढ़ें";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "चल रहा टिकाऊपन परीक्षण रोकें";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "चुनें कि सूची कौन-से पैकेट दिखाए";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "चुने हुए कंट्रोलर के पैकेट रिकॉर्ड करें";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "पैकेट रिकॉर्ड करना रोकें";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "न पढ़ी जा सकने वाली सेटिंग को डिफ़ॉल्ट से बदलें";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "इस संदेश को छिपाएँ";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "चुने गए नियंत्रण के लिए असाइनमेंट जोड़ें";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "असाइन करने के लिए कंट्रोलर इनपुट चुनें";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "तय करें कि स्टिक कितनी हिले तो गिना जाए";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "चुनें कि इनपुट क्या करे";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "सुनने के लिए कंट्रोलर चुनें";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "तय करें कि एक्सिस कितना हिले तो दबा हुआ गिना जाए";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "एक्सिस की प्रतिक्रिया की तीव्रता बदलें";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "एक्सिस की दिशा उलटें";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "अपने आप चुनने के लिए कंट्रोलर इनपुट दबाएँ";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "चुनें कि एक्सिस का मान किस आकार में ढले";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "असाइन करने के लिए टच सेल का कॉलम चुनें";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "तय करें कि टच सतह कितने कॉलम में बँटे";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "असाइन करने के लिए टच सेल की पंक्ति चुनें";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "तय करें कि टच सतह कितनी पंक्तियों में बँटे";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "तय करें कि उँगली कितनी चले तो स्वाइप गिना जाए";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "डिफ़ॉल्ट सेटिंग वापस लाएँ";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "ये सेटिंग रखें और बंद करें";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "चुनी गई लाइब्रेरी कार्रवाई चलाएँ";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "सभी रिकॉर्ड क्लिपबोर्ड पर कॉपी करें";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "यह सूचना छिपाएँ";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "चुनें कि कार्रवाई किन आइटम पर लागू हो";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "इस चरण के साथ दबाई जाने वाली कुंजी जोड़ें";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "चुना गया चरण मैक्रो में जोड़ें";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "चुनें कि किस प्रकार का चरण जोड़ना है";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "मैक्रो रखें और बंद करें";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "तय करें कि कुंजी कितनी देर दबी रहे";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "नियंत्रण छोड़ने पर मैक्रो रोकें";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "इस चरण को मैक्रो में बाद में ले जाएँ";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "इस चरण को मैक्रो में पहले ले जाएँ";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "मैक्रो पहचानने के लिए नाम लिखें";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "इस कुंजी को चरण से हटाएँ";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "इस चरण को मैक्रो से हटाएँ";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "मैक्रो को एक से अधिक बार चलाएँ";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "तय करें कि मैक्रो कितनी बार चले";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "चुनें कि यह चरण क्या करे";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "अगले चरण से पहले का विराम तय करें";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "नियंत्रण दबा रहने तक दोहराते रहें";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "अपना डेटा नई लाइब्रेरी में ले जाना शुरू करें";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "इस प्रोफ़ाइल के और कार्य दिखाएँ";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "चुनें कि लेयर कब सक्रिय हो";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "चुनें कि कौन सा नियंत्रण लेयर चालू करे";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "इस असाइनमेंट में एक और कार्य जोड़ें";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "चुनें कि यह प्रोफ़ाइल किस ऐप पर लागू हो";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "अपने Mac से ऐप चुनें";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "नियंत्रण को नए गंतव्य से जोड़ें";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "साथ दबाए जाने वाले नियंत्रणों का संयोजन जोड़ें";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "संयोजन को प्रोफ़ाइल में जोड़ें";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "चुना गया नियंत्रण संयोजन में जोड़ें";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "लेयर सक्रिय रहने पर नियंत्रण जोड़ें";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "दूसरे नियंत्रण बदलने वाली लेयर जोड़ें";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "नया मैक्रो बनाएँ";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "अपने परिणाम वाली टैप संख्या जोड़ें";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "एक के बाद एक दबाए जाने वाले नियंत्रण जोड़ें";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "इनपुट के व्यवहार को बारीकी से ट्यून करें";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "सूची में न दिखने वाला ऐप चुनें";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "व्यवहार रखें और बंद करें";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "बदलाव रखें और बंद करें";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "चुनें कि इनपुट परिणाम कैसे शुरू करे";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "चुनें कि इनपुट परिणाम कैसे शुरू करे";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "चुनें कि नियंत्रण कैसे दबाए जाएँ";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "तय करें कि दबाव समय में कितने पास हों";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "संयोजन के लिए नियंत्रण चुनें";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "इस इनपुट की सेटिंग खोलें";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "चुनें कि प्रोफ़ाइल किस कंट्रोलर के लिए है";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "नए लक्ष्य के लिए बदली हुई प्रति बनाएँ";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "चुनें कि किस प्रकार के कंट्रोलर में बदलना है";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "प्रोफ़ाइल बनाएँ और खोलें";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "इस प्रोफ़ाइल को लागू करना बंद करें";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "दोबारा शुरू करने के लिए खराब फ़ाइलें हटाएँ";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "इस प्रोफ़ाइल का नाम और कंट्रोलर संपादित करें";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "इस प्रोफ़ाइल की प्रति बनाएँ";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "इस मैक्रो के चरण बदलें";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "प्रोफ़ाइल के दूसरे हिस्से पर जाएँ";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "असली कंट्रोलर को दूसरे ऐप से छिपाएँ";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "चुनें कि जाइरो आउटपुट कब सक्रिय हो";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "सक्रिय करने वाले नियंत्रण को अपने आप काम करने से रोकें";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "चुनें कि जाइरो क्या नियंत्रित करे";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "तय करें कि पॉइंटर प्रति डिग्री कितना चले";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "चुनें कि कौन सा नियंत्रण जाइरो सक्रिय करे";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "तय करें कि किस घूमने की गति पर स्टिक पूरी हो";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "तय करें कि गिने जाने के लिए कितनी देर दबाना है";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "चुनें कि कौन सा Joy-Con गति दे";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "जोड़ने के लिए बायाँ Joy-Con चुनें";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "दो Joy-Con को एक कंट्रोलर की तरह इस्तेमाल करें";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "जोड़ने के लिए दायाँ Joy-Con चुनें";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "बिना सहेजे संपादनों के साथ जारी रखें";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "इस लेयर की गति सेटिंग संपादित करें";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "लेयर पहचानने के लिए नाम लिखें";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "कंट्रोलर की लाइट का रंग चुनें";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "देर तक दबाने के लिए दूसरा परिणाम जोड़ें";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "कंट्रोलर स्थिर रहने पर धीमा बहाव सुधारें";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "तय करें कि गुरुत्व झुकाव को कितनी तेज़ी से सुधारे";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "प्रोफ़ाइल की गति सेटिंग इस्तेमाल करें";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "ऊपर और नीचे की दिशा उलटें";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "बाएँ और दाएँ की दिशा उलटें";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "परिणाम शुरू करने के लिए कंट्रोलर को बगल में झुकाएँ";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "झुकाव की झिलमिलाहट रोकने वाला अंतर तय करें";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "झुककर टिकने को शुरू करने वाला कोण तय करें";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "ऊपर और नीचे घुमाव की प्रतिक्रिया की तीव्रता बदलें";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "तय करें कि बगल की गति कितनी घटे";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "चिकना करने के लिए गति का औसत समय तय करें";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "चुनें कि गति किन एक्सिस पर मापी जाए";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "केंद्र के पास अनदेखा किया जाने वाला घुमाव तय करें";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "कंट्रोलर को स्टीयरिंग व्हील की तरह घुमाएँ";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "पूरी स्टीयरिंग देने वाला घुमाव तय करें";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "स्टीयरिंग की दिशा उलटें";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "चुनें कि स्टीयरिंग कौन सी स्टिक हिलाए";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "तय करें कि घुमाव के साथ प्रतिक्रिया कैसे बढ़े";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "शोर मानकर अनदेखी की जाने वाली घुमाव गति तय करें";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "तय करें कि यॉ कितनी तेज़ी से स्थिर स्थिति में लौटे";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "बाएँ और दाएँ घुमाव की प्रतिक्रिया की तीव्रता बदलें";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "इस कार्य को क्रम में बाद में ले जाएँ";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "इस कार्य को क्रम में पहले ले जाएँ";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "प्रोफ़ाइल पहचानने के लिए नाम लिखें";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "दोनों Joy-Con को एक कंट्रोलर में मिलाएँ";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Joy-Con की जोड़ी को एक कंट्रोलर में मिलाएँ";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "पहले बायाँ और दायाँ Joy-Con कनेक्ट करें";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "लाइट के रंग का नीला हिस्सा तय करें";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "लाइट की चमक तय करें";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "लागू करने के लिए ट्रिगर प्रभाव चुनें";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "लाइट के रंग का हरा हिस्सा तय करें";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "कंपन की तीव्रता तय करें";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "चलाने के लिए कंपन मोटर चुनें";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "जलाने के लिए प्लेयर लाइट चुनें";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "लाइट के रंग का लाल हिस्सा तय करें";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "तय करें कि ट्रिगर प्रभाव कहाँ से शुरू हो";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "ट्रिगर प्रभाव की तीव्रता तय करें";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "चुनें कि कौन सा ट्रिगर प्रभाव पाए";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "चुनें कि कौन सा इनपुट पॉइंटर की गति बदले";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "इनपुट से पॉइंटर की गति बदलें";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "पॉइंटर गति का सबसे तेज़ गुणक तय करें";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "पॉइंटर गति का सबसे धीमा गुणक तय करें";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "चुनें कि कौन सी स्टिक पॉइंटर की गति बदले";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "कंट्रोलर द्वारा बताई गई उत्पाद आईडी लिखें";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "तय करें कि हर पल्स कितनी देर चले";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "तय करें कि क्षेत्र किस कोण से शुरू हो";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "तय करें कि क्षेत्र किस दबाव से शुरू हो";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "क्षेत्र की ऊँचाई तय करें";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "तय करें कि क्षेत्र केंद्र से कितनी दूर शुरू हो";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "चुनें कि क्षेत्र किस इनपुट को देखे";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "चुनें कि क्षेत्र किस प्रकार का इनपुट समेटे";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "तय करें कि क्षेत्र केंद्र से कितनी दूर खत्म हो";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "तय करें कि क्षेत्र किस कोण पर खत्म हो";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "तय करें कि क्षेत्र किस दबाव पर खत्म हो";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "क्षेत्र की चौड़ाई तय करें";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "तय करें कि क्षेत्र आड़े में कहाँ से शुरू हो";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "तय करें कि क्षेत्र खड़े में कहाँ से शुरू हो";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "संपादन छोड़ें और सहेजी गई प्रोफ़ाइल लोड करें";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "इस व्यवहार के बारे में टिप्पणी लिखें";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "इस कार्य को असाइनमेंट से हटाएँ";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "इस प्रोफ़ाइल को ऐप पर लागू करना बंद करें";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "इस असाइनमेंट को हटाएँ";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "इस संयोजन को हटाएँ";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "इस नियंत्रण को संयोजन से हटाएँ";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "इस लेयर को हटाएँ";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "इस मैक्रो को हटाएँ";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "इस टैप संख्या को हटाएँ";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "इस अनुक्रम को हटाएँ";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "लाइब्रेरी मिटाएँ और दोबारा शुरू करें";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "इस नियंत्रण को उसके सामान्य कार्य पर लौटाएँ";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "अपने संपादन प्रोफ़ाइल में सहेजें";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "दबावों के बीच मिलने वाला समय तय करें";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "इस प्रोफ़ाइल को लागू करना शुरू करें";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "चुनें कि प्रोफ़ाइल कैसे क्रमबद्ध हों";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "ज़ोर से बोले जाने वाले शब्द लिखें";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "बोलने वाली आवाज़ चुनें";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "स्टिक पूरी होने पर घूमने की गति तय करें";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "इस स्टिक को फिर से जोड़ें";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "तय करें कि झुकाव के साथ प्रतिक्रिया कैसे बढ़े";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "तय करें कि फ़्लिक कितनी देर चले";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "फ़्लिक दोबारा शुरू होने से रोकने वाला अंतर तय करें";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "केंद्र के पास अनदेखा किया जाने वाला झुकाव तय करें";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "बाएँ और दाएँ की दिशा उलटें";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "ऊपर और नीचे की दिशा उलटें";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "चुनें कि स्टिक कैसे काम करे";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "तय करें कि कितना झुकाव पूरा गिना जाए";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "अपरिवर्तित स्टिक भी भेजें";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "पॉइंटर क्षेत्र का आकार तय करें";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "तय करें कि पॉइंटर प्रति डिग्री कितना चले";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "चुनें कि घुमाव किस दिशा में गिना जाए";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "चुनें कि पहिया किस दिशा में स्क्रॉल करे";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "तय करें कि एक पंक्ति के लिए कितना घुमाना है";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "संपादित करने के लिए स्टिक चुनें";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "पूरी स्टीयरिंग देने वाला घुमाव तय करें";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "चुनें कि स्टीयरिंग कौन सी स्टिक हिलाए";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "तय करें कि स्टीयरिंग कितनी तेज़ी से केंद्र पर लौटे";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "फ़्लिक शुरू करने वाला झुकाव तय करें";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "खोलने के लिए ऐप का नाम लिखें";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "चलाने के लिए शॉर्टकट लिखें";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "खोलने के लिए पता लिखें";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "तय करें कि कितने टैप से यह परिणाम शुरू हो";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "टैप के बीच मिलने वाला समय तय करें";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "चुनें कि प्रोफ़ाइल किस कंट्रोलर की नकल करे";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "तैयार असाइनमेंट के सेट से शुरू करें";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "अनदेखी की जाने वाली स्पर्श दूरी तय करें";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "इस टच सतह को फिर से जोड़ें";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "चुनें कि स्पर्श कैसे काम करे";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "तय करें कि पॉइंटर प्रति स्वाइप कितना चले";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "तय करें कि कितनी स्पर्श दूरी पर स्टिक पूरी हो";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "संपादित करने के लिए टच सतह चुनें";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "चुनें कि ट्रैकबॉल किन एक्सिस पर घूमे";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "मूल नियंत्रण को अपने आप काम करने से रोकें";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "तय करें कि घुमाव कितनी तेज़ी से धीमा हो";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "जाइरो घुमाव के बाद पॉइंटर को लुढ़कने दें";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "चुनें कि कौन सा नियंत्रण ट्रैकबॉल को पकड़े";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "इस ट्रिगर को फिर से जोड़ें";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "तय करें कि कितना खिंचाव पूरा दबाव गिना जाए";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "दबाव की झिलमिलाहट रोकने वाला अंतर तय करें";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "चुनें कि हल्का और पूरा खिंचाव कैसे मिलें";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "अपरिवर्तित ट्रिगर भी भेजें";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "तय करें कि हल्का खिंचाव पूरे खिंचाव का कितना इंतज़ार करे";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "तय करें कि कितना खिंचाव हल्का दबाव गिना जाए";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "संपादित करने के लिए ट्रिगर चुनें";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "लाइब्रेरी दोबारा लोड करें";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "टर्बो शुरू होने से पहले का विराम तय करें";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "तय करें कि हर चक्र में बटन कितना दबा रहे";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "नियंत्रण दबा रहने तक दबाव दोहराएँ";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "तय संख्या के दबावों के बाद टर्बो रोकें";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "तय करें कि टर्बो कितने दबाव भेजे";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "तय करें कि टर्बो प्रति सेकंड कितने दबाव भेजे";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "कुंजी दबाव के रूप में भेजा जाने वाला टेक्स्ट लिखें";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "जोड़ी को दो कंट्रोलर में बाँटें";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "कंट्रोलर के शुरू होने का रंग बनाए रखें";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "कंट्रोलर द्वारा बताई गई विक्रेता आईडी लिखें";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "गेम को वर्चुअल गेमपैड दिखाएँ";

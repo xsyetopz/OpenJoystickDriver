@@ -76,7 +76,7 @@
         } icon: {
           Image(nsImage: Self.icon(at: choice.url))
         }
-      }.help(OJDLocalized.string("ui.profiles.addAppItemHelp"))
+      }.help(OJDLocalized.string("platform.macos.ui.profiles.addAppItemHelp"))
     }
 
     /// The running or installed app with `bundleID`.

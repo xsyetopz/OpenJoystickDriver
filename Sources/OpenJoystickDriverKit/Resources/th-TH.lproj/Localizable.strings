@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "เรียกใช้การแก้ไขสำหรับการตรวจสอบที่ล้มเหลวนี้";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "เลือกว่า macOS หรือ OpenJoystickDriver เป็นผู้ดูแลคอนโทรลเลอร์นี้";
+"platform.macos.ui.help.serverPicker" = "เลือกว่า macOS หรือ OpenJoystickDriver เป็นผู้ดูแลคอนโทรลเลอร์นี้";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "แสดงหรือซ่อนตัวระบุและปลายทางเชื่อมต่อ";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "อนุญาตให้โปรแกรมควบคุมเกมแพดเสมือน";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "แปลงเอกสารที่บันทึกไว้เป็นเวอร์ชันปัจจุบัน";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "เรียกใช้การทำงานที่ล้มเหลวอีกครั้ง";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "สร้างโปรไฟล์สำหรับคอนโทรลเลอร์";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "ตั้งค่าให้เสร็จและไปที่แอป";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "ปิดชีตนี้";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "อ่านสถานะของบริการอีกครั้ง";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "หยุดการทดสอบความทนทานที่กำลังรัน";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "เลือกแพ็กเก็ตที่รายการแสดง";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "บันทึกแพ็กเก็ตของคอนโทรลเลอร์ที่เลือก";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "หยุดบันทึกแพ็กเก็ต";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "แทนที่การตั้งค่าที่อ่านไม่ได้ด้วยค่าเริ่มต้น";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "ซ่อนข้อความนี้";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "เพิ่มการกำหนดสำหรับตัวควบคุมที่เลือก";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "เลือกอินพุตของคอนโทรลเลอร์ที่จะกำหนด";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "ตั้งระยะที่ต้องโยกสติ๊กจึงจะนับ";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "เลือกสิ่งที่อินพุตทำ";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "เลือกคอนโทรลเลอร์ที่จะรับฟัง";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "ตั้งระยะที่แกนต้องเคลื่อนจึงนับว่ากด";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "ปรับความแรงในการตอบสนองของแกน";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "กลับทิศทางของแกน";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "กดอินพุตของคอนโทรลเลอร์เพื่อเลือกอัตโนมัติ";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "เลือกรูปทรงของค่าแกน";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "เลือกคอลัมน์ของเซลล์สัมผัสที่จะกำหนด";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "ตั้งจำนวนคอลัมน์ที่แบ่งพื้นผิวสัมผัส";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "เลือกแถวของเซลล์สัมผัสที่จะกำหนด";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "ตั้งจำนวนแถวที่แบ่งพื้นผิวสัมผัส";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "ตั้งระยะที่นิ้วต้องเคลื่อนจึงนับว่าปัด";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "คืนค่าเป็นการตั้งค่าเริ่มต้น";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "เก็บการตั้งค่านี้และปิด";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "เรียกใช้การดำเนินการของคลังที่เลือก";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "คัดลอกเรกคอร์ดทั้งหมดไปยังคลิปบอร์ด";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "ซ่อนการแจ้งเตือนนี้";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "เลือกรายการที่การดำเนินการครอบคลุม";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "เพิ่มปุ่มที่กดพร้อมกับขั้นตอนนี้";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "เพิ่มขั้นตอนที่เลือกลงในมาโคร";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "เลือกประเภทของขั้นตอนที่จะเพิ่ม";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "เก็บมาโครและปิด";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "ตั้งระยะเวลาที่กดปุ่มค้างไว้";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "หยุดมาโครเมื่อปล่อยตัวควบคุม";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "เลื่อนขั้นตอนนี้ไปหลังในมาโคร";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "เลื่อนขั้นตอนนี้ไปก่อนในมาโคร";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "พิมพ์ชื่อเพื่อให้จำมาโครได้";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "นำปุ่มนี้ออกจากขั้นตอน";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "ลบขั้นตอนนี้ออกจากมาโคร";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "เรียกใช้มาโครมากกว่าหนึ่งครั้ง";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "ตั้งจำนวนครั้งที่มาโครทำงาน";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "เลือกสิ่งที่ขั้นตอนนี้ทำ";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "ตั้งเวลาหยุดก่อนขั้นตอนถัดไป";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "ทำซ้ำต่อไปขณะที่กดตัวควบคุมค้างไว้";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "เริ่มย้ายข้อมูลของคุณไปยังคลังใหม่";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "แสดงการดำเนินการเพิ่มเติมสำหรับโปรไฟล์นี้";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "เลือกเวลาที่เลเยอร์ทำงาน";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "เลือกตัวควบคุมที่เปิดเลเยอร์";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "เพิ่มการดำเนินการอื่นลงในการกำหนดนี้";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "เลือกแอปที่โปรไฟล์นี้ใช้กับ";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "เลือกแอปจาก Mac ของคุณ";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "แมปตัวควบคุมไปยังปลายทางใหม่";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "เพิ่มชุดตัวควบคุมที่กดค้างพร้อมกัน";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "เพิ่มชุดค่าผสมลงในโปรไฟล์";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "เพิ่มตัวควบคุมที่เลือกลงในชุดค่าผสม";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "แมปตัวควบคุมขณะที่เลเยอร์ทำงาน";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "เพิ่มเลเยอร์ที่เปลี่ยนตัวควบคุมอื่น";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "สร้างมาโครใหม่";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "เพิ่มจำนวนการแตะที่มีผลลัพธ์ของตัวเอง";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "เพิ่มตัวควบคุมที่กดทีละตัว";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "ปรับแต่งพฤติกรรมของอินพุตอย่างละเอียด";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "เลือกแอปที่ไม่อยู่ในรายการ";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "เก็บพฤติกรรมและปิด";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "เก็บการเปลี่ยนแปลงและปิด";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "เลือกวิธีที่อินพุตเรียกผลลัพธ์";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "เลือกวิธีที่อินพุตเรียกผลลัพธ์";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "เลือกวิธีกดตัวควบคุม";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "ตั้งว่าการกดต้องห่างกันในเวลาใกล้แค่ไหน";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "เลือกตัวควบคุมสำหรับชุดค่าผสม";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "เปิดการตั้งค่าของอินพุตนี้";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "เลือกคอนโทรลเลอร์ที่โปรไฟล์ใช้กับ";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "สร้างสำเนาที่แปลงแล้วสำหรับเป้าหมายใหม่";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "เลือกประเภทคอนโทรลเลอร์ที่จะแปลงไป";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "สร้างโปรไฟล์และเปิดขึ้นมา";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "หยุดใช้โปรไฟล์นี้";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "ลบไฟล์ที่เสียหายเพื่อเริ่มใหม่";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "แก้ไขชื่อและคอนโทรลเลอร์ของโปรไฟล์นี้";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "สร้างสำเนาของโปรไฟล์นี้";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "เปลี่ยนขั้นตอนของมาโครนี้";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "ข้ามไปยังส่วนอื่นของโปรไฟล์";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "ซ่อนคอนโทรลเลอร์จริงจากแอปอื่น";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "เลือกเวลาที่เอาต์พุตไจโรทำงาน";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "ป้องกันไม่ให้ตัวควบคุมเปิดใช้ทำงานเอง";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "เลือกสิ่งที่ไจโรควบคุม";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "ตั้งระยะที่ตัวชี้เคลื่อนต่อองศา";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "เลือกตัวควบคุมที่เปิดใช้ไจโร";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "ตั้งความเร็วหมุนที่ถึงสติ๊กเต็ม";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "ตั้งระยะเวลาที่ต้องกดค้างจึงนับ";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "เลือก Joy-Con ที่ให้การเคลื่อนไหว";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "เลือก Joy-Con ซ้ายที่จะจับคู่";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "ใช้ Joy-Con สองตัวเป็นคอนโทรลเลอร์เดียว";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "เลือก Joy-Con ขวาที่จะจับคู่";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "ทำต่อโดยเก็บการแก้ไขที่ยังไม่ได้บันทึก";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "แก้ไขการตั้งค่าการเคลื่อนไหวของเลเยอร์นี้";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "พิมพ์ชื่อเพื่อให้จำเลเยอร์ได้";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "เลือกสีไฟของคอนโทรลเลอร์";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "เพิ่มผลลัพธ์ที่สองสำหรับการกดค้าง";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "แก้การเลื่อนไหลช้าขณะคอนโทรลเลอร์นิ่ง";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "ตั้งความเร็วที่แรงโน้มถ่วงแก้การเอียง";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "ใช้การตั้งค่าการเคลื่อนไหวของโปรไฟล์";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "กลับทิศทางขึ้นและลง";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "กลับทิศทางซ้ายและขวา";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "เอียงคอนโทรลเลอร์ไปด้านข้างเพื่อเรียกผลลัพธ์";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "ตั้งส่วนต่างที่ป้องกันการเอียงกะพริบ";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "ตั้งมุมเอียงที่เรียกการเอนตัว";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "ปรับความแรงในการตอบสนองต่อการหมุนขึ้นและลง";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "ตั้งปริมาณที่ลดการเคลื่อนที่ด้านข้าง";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "ตั้งช่วงเวลาที่หาค่าเฉลี่ยการเคลื่อนไหวเพื่อให้เรียบ";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "เลือกแกนที่วัดการเคลื่อนไหว";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "ตั้งการหมุนที่ไม่นับใกล้ตรงกลาง";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "หมุนคอนโทรลเลอร์เหมือนพวงมาลัย";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "ตั้งการหมุนที่ให้การเลี้ยวเต็ม";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "กลับทิศทางการเลี้ยว";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "เลือกสติ๊กที่การเลี้ยวขยับ";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "ตั้งวิธีที่การตอบสนองเพิ่มตามการหมุน";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "ตั้งความเร็วหมุนที่ไม่นับเป็นสัญญาณรบกวน";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "ตั้งความเร็วที่ยอว์กลับสู่ตำแหน่งนิ่ง";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "ปรับความแรงในการตอบสนองต่อการหมุนซ้ายและขวา";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "เลื่อนการดำเนินการนี้ไปหลังในลำดับ";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "เลื่อนการดำเนินการนี้ไปก่อนในลำดับ";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "พิมพ์ชื่อเพื่อให้จำโปรไฟล์ได้";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "รวม Joy-Con สองตัวเป็นคอนโทรลเลอร์เดียว";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "รวมคู่ Joy-Con เป็นคอนโทรลเลอร์เดียว";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "เชื่อมต่อ Joy-Con ซ้ายและขวาก่อน";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "ตั้งส่วนสีน้ำเงินของสีไฟ";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "ตั้งความสว่างของไฟ";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "เลือกเอฟเฟกต์ทริกเกอร์ที่จะใช้";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "ตั้งส่วนสีเขียวของสีไฟ";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "ตั้งความแรงของการสั่น";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "เลือกมอเตอร์สั่นที่จะควบคุม";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "เลือกไฟผู้เล่นที่จะเปิด";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "ตั้งส่วนสีแดงของสีไฟ";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "ตั้งตำแหน่งที่เอฟเฟกต์ทริกเกอร์เริ่ม";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "ตั้งความแรงของเอฟเฟกต์ทริกเกอร์";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "เลือกทริกเกอร์ที่รับเอฟเฟกต์";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "เลือกอินพุตที่เปลี่ยนความเร็วตัวชี้";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "เปลี่ยนความเร็วตัวชี้ด้วยอินพุต";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "ตั้งตัวคูณความเร็วตัวชี้ที่เร็วที่สุด";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "ตั้งตัวคูณความเร็วตัวชี้ที่ช้าที่สุด";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "เลือกสติ๊กที่เปลี่ยนความเร็วตัวชี้";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "พิมพ์รหัสผลิตภัณฑ์ที่คอนโทรลเลอร์รายงาน";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "ตั้งระยะเวลาของแต่ละพัลส์";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "ตั้งมุมที่ภูมิภาคเริ่ม";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "ตั้งแรงบีบที่ภูมิภาคเริ่ม";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "ตั้งความสูงของภูมิภาค";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "ตั้งระยะที่ภูมิภาคเริ่มห่างจากกึ่งกลาง";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "เลือกอินพุตที่ภูมิภาคเฝ้าดู";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "เลือกชนิดอินพุตที่ภูมิภาคครอบคลุม";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "ตั้งระยะที่ภูมิภาคสิ้นสุดห่างจากกึ่งกลาง";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "ตั้งมุมที่ภูมิภาคสิ้นสุด";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "ตั้งแรงบีบที่ภูมิภาคสิ้นสุด";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "ตั้งความกว้างของภูมิภาค";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "ตั้งตำแหน่งเริ่มของภูมิภาคในแนวนอน";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "ตั้งตำแหน่งเริ่มของภูมิภาคในแนวตั้ง";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "ทิ้งการแก้ไขและโหลดโปรไฟล์ที่บันทึกไว้";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "พิมพ์บันทึกเกี่ยวกับพฤติกรรมนี้";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "ลบการดำเนินการนี้ออกจากการกำหนด";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "หยุดใช้โปรไฟล์นี้กับแอป";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "ลบการกำหนดนี้";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "ลบชุดค่าผสมนี้";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "นำตัวควบคุมนี้ออกจากชุดค่าผสม";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "ลบเลเยอร์นี้";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "ลบมาโครนี้";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "ลบจำนวนการแตะนี้";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "ลบลำดับนี้";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "ลบคลังและเริ่มใหม่";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "คืนตัวควบคุมนี้ให้ทำงานตามปกติ";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "บันทึกการแก้ไขของคุณลงในโปรไฟล์";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "ตั้งเวลาที่มีระหว่างการกด";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "เริ่มใช้โปรไฟล์นี้";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "เลือกวิธีเรียงลำดับโปรไฟล์";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "พิมพ์คำที่จะพูดออกเสียง";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "เลือกเสียงที่พูด";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "ตั้งความเร็วหมุนเมื่อสติ๊กเต็ม";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "แมปสติ๊กนี้ใหม่";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "ตั้งวิธีที่การตอบสนองเพิ่มตามการโยก";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "ตั้งระยะเวลาของการสะบัด";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "ตั้งส่วนต่างที่ป้องกันการสะบัดถูกเรียกซ้ำ";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "ตั้งการโยกที่ไม่นับใกล้ตรงกลาง";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "กลับทิศทางซ้ายและขวา";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "กลับทิศทางขึ้นและลง";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "เลือกวิธีที่สติ๊กทำงาน";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "ตั้งการโยกที่นับว่าเต็ม";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "ส่งสติ๊กที่ไม่เปลี่ยนด้วย";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "ตั้งขนาดของพื้นที่ตัวชี้";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "ตั้งระยะที่ตัวชี้เคลื่อนต่อองศา";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "เลือกทิศทางที่นับการหมุน";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "เลือกทิศทางที่ล้อเลื่อน";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "ตั้งระยะหมุนต่อหนึ่งบรรทัด";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "เลือกสติ๊กที่จะแก้ไข";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "ตั้งการหมุนที่ให้การเลี้ยวเต็ม";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "เลือกสติ๊กที่การเลี้ยวขยับ";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "ตั้งความเร็วที่การเลี้ยวกลับสู่กึ่งกลาง";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "ตั้งการโยกที่เรียกการสะบัด";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "พิมพ์แอปที่จะเปิด";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "พิมพ์ชอร์ตคัตที่จะเรียกใช้";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "พิมพ์ที่อยู่ที่จะเปิด";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "ตั้งจำนวนการแตะที่เรียกผลลัพธ์นี้";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "ตั้งเวลาที่มีระหว่างการแตะ";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "เลือกคอนโทรลเลอร์ที่โปรไฟล์จำลอง";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "เริ่มจากชุดการกำหนดสำเร็จรูป";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "ตั้งระยะสัมผัสที่ไม่นับ";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "แมปพื้นผิวสัมผัสนี้ใหม่";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "เลือกวิธีที่การสัมผัสทำงาน";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "ตั้งระยะที่ตัวชี้เคลื่อนต่อการปัด";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "ตั้งระยะสัมผัสที่ให้สติ๊กเต็ม";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "เลือกพื้นผิวสัมผัสที่จะแก้ไข";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "เลือกแกนที่แทร็กบอลหมุน";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "ป้องกันไม่ให้ตัวควบคุมต้นทางทำงานเอง";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "ตั้งความเร็วที่การหมุนช้าลง";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "ให้ตัวชี้กลิ้งต่อหลังการหมุนไจโร";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "เลือกตัวควบคุมที่จับแทร็กบอล";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "แมปทริกเกอร์นี้ใหม่";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "ตั้งการดึงที่นับเป็นกดเต็ม";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "ตั้งส่วนต่างที่ป้องกันการกดกะพริบ";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "เลือกวิธีรวมการดึงเบาและการดึงเต็ม";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "ส่งทริกเกอร์ที่ไม่เปลี่ยนด้วย";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "ตั้งระยะเวลาที่การดึงเบารอการดึงเต็ม";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "ตั้งการดึงที่นับเป็นกดเบา";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "เลือกทริกเกอร์ที่จะแก้ไข";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "โหลดคลังใหม่";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "ตั้งเวลาหยุดก่อนเทอร์โบเริ่ม";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "ตั้งสัดส่วนของแต่ละรอบที่ปุ่มถูกกด";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "ทำการกดซ้ำขณะที่กดตัวควบคุมค้างไว้";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "หยุดเทอร์โบหลังกดครบจำนวนที่กำหนด";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "ตั้งจำนวนการกดที่เทอร์โบส่ง";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "ตั้งจำนวนการกดต่อวินาทีที่เทอร์โบส่ง";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "พิมพ์ข้อความที่ส่งเป็นการกดแป้น";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "แยกคู่เป็นคอนโทรลเลอร์สองตัว";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "คงสีที่คอนโทรลเลอร์ใช้ตอนเริ่ม";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "พิมพ์รหัสผู้จำหน่ายที่คอนโทรลเลอร์รายงาน";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "แสดงเกมแพดเสมือนให้เกม";

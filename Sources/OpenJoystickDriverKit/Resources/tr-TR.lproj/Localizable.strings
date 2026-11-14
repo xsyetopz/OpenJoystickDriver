@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "Başarısız olan bu kontrol için düzeltmeyi çalıştır";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "Bu kontrolcüyü macOS’in mi OpenJoystickDriver’ın mı yöneteceğini seç";
+"platform.macos.ui.help.serverPicker" = "Bu kontrolcüyü macOS’in mi OpenJoystickDriver’ın mı yöneteceğini seç";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "Tanımlayıcıları ve uç noktaları göster veya gizle";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "Programın sanal bir oyun kumandasını sürmesine izin ver";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "Kayıtlı belgeleri güncel sürüme dönüştür";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "Başarısız olan eylemi yeniden çalıştır";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "Bir denetleyici için profil oluştur";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "Kurulumu bitir ve uygulamaya geç";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "Bu sayfayı kapat";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "Hizmet durumunu yeniden oku";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "Çalışan dayanıklılık testini durdur";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "Listenin hangi paketleri göstereceğini seç";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "Seçili denetleyicinin paketlerini kaydet";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "Paket kaydını durdur";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "Okunamayan ayarları varsayılanlarla değiştir";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "Bu iletiyi gizle";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "Seçili kontrol için atamayı ekle";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "Atanacak denetleyici girişini seç";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "Sayılması için çubuğun ne kadar hareket edeceğini belirle";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "Girişin ne yaptığını seç";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "Hangi denetleyicinin dinleneceğini seç";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "Eksenin basılmış sayılması için ne kadar hareket edeceğini belirle";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "Eksenin ne kadar güçlü yanıt vereceğini ölçekle";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "Eksenin yönünü ters çevir";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "Otomatik seçmek için denetleyicide bir girişe bas";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "Eksen değerinin nasıl biçimlendirileceğini seç";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "Atanacak dokunmatik hücre sütununu seç";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "Dokunmatik yüzeyin kaç sütuna bölüneceğini belirle";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "Atanacak dokunmatik hücre satırını seç";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "Dokunmatik yüzeyin kaç satıra bölüneceğini belirle";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "Kaydırma sayılması için parmağın ne kadar gideceğini belirle";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "Varsayılan ayarları geri yükle";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "Bu ayarları koru ve kapat";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "Seçili kitaplık eylemini çalıştır";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "Tüm kayıtları panoya kopyala";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "Bu bildirimi gizle";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "Eylemin hangi öğeleri kapsayacağını seç";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "Bu adımla birlikte basılacak bir tuş ekle";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "Seçili adımı makroya ekle";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "Eklenecek adım türünü seç";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "Makroyu koru ve kapat";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "Tuşun ne kadar basılı kalacağını belirle";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "Kontrol bırakıldığında makroyu durdur";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "Bu adımı makroda daha sona taşı";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "Bu adımı makroda daha öne taşı";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "Makroyu tanımak için bir ad yaz";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "Bu tuşu adımdan kaldır";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "Bu adımı makrodan sil";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "Makroyu birden fazla kez çalıştır";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "Makronun kaç kez çalışacağını belirle";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "Bu adımın ne yaptığını seç";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "Sonraki adımdan önce ne kadar bekleneceğini belirle";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "Kontrol basılı tutulduğu sürece tekrarlamaya devam et";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "Verilerini yeni kitaplığa taşımaya başla";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "Bu profil için daha fazla eylem göster";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "Katmanın ne zaman etkin olacağını seç";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "Katmanı açan kontrolü seç";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "Bu atamaya başka bir eylem ekle";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "Bu profilin uygulanacağı bir uygulama seç";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "Mac’inden bir uygulama seç";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "Bir kontrolü yeni bir hedefe ata";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "Birlikte basılı tutulan kontrollerin birleşimini ekle";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "Birleşimi profile ekle";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "Seçili kontrolü birleşime ekle";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "Katman etkinken bir kontrol ata";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "Diğer kontrolleri değiştiren bir katman ekle";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "Yeni bir makro oluştur";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "Kendi sonucu olan bir dokunma sayısı ekle";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "Art arda basılan kontroller ekle";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "Girişin davranışına ince ayar yap";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "Listede olmayan bir uygulama seç";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "Davranışı koru ve kapat";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "Değişiklikleri koru ve kapat";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "Girişin sonucu nasıl tetikleyeceğini seç";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "Girişin sonucu nasıl tetikleyeceğini seç";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "Kontrollere nasıl basılması gerektiğini seç";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "Basışların zamanda ne kadar yakın olacağını belirle";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "Birleşim için bir kontrol seç";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "Bu girişin ayarlarını aç";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "Profilin hangi denetleyici için olduğunu seç";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "Yeni hedef için dönüştürülmüş bir kopya oluştur";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "Dönüştürülecek denetleyici türünü seç";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "Profili oluştur ve aç";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "Bu profili uygulamayı bırak";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "Baştan başlamak için hasarlı dosyaları sil";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "Bu profilin adını ve denetleyicisini düzenle";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "Bu profilin bir kopyasını oluştur";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "Bu makronun adımlarını değiştir";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "Profilin başka bir bölümüne geç";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "Gerçek denetleyiciyi diğer uygulamalardan gizle";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "Jiroskop çıkışının ne zaman etkin olacağını seç";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "Etkinleştirme kontrolünün tek başına çalışmasını engelle";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "Jiroskopun neyi denetlediğini seç";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "İşaretçinin derece başına ne kadar hareket edeceğini belirle";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "Jiroskopu etkinleştiren kontrolü seç";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "Tam çubuğa ulaşan dönüş hızını belirle";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "Sayılması için ne kadar basılı tutulacağını belirle";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "Hareketi hangi Joy-Con’un sağlayacağını seç";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "Eşlenecek sol Joy-Con’u seç";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "İki Joy-Con’u tek denetleyici olarak kullan";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "Eşlenecek sağ Joy-Con’u seç";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "Kaydedilmemiş düzenlemelerinle devam et";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "Bu katmanın hareket ayarlarını düzenle";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "Katmanı tanımak için bir ad yaz";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "Denetleyici ışığının rengini seç";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "Uzun basış için ikinci bir sonuç ekle";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "Denetleyici dururken yavaş sapmayı düzelt";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "Yerçekiminin eğimi ne kadar hızlı düzelteceğini belirle";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "Profilin hareket ayarlarını kullan";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "Yukarı ve aşağı yönünü ters çevir";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "Sol ve sağ yönünü ters çevir";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "Sonucu tetiklemek için denetleyiciyi yana yatır";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "Yatmanın titremesini önleyen payı belirle";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "Yatmayı tetikleyen eğim açısını belirle";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "Yukarı ve aşağı dönüşlerin ne kadar güçlü yanıt vereceğini ölçekle";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "Yan hareketin ne kadar azaltılacağını belirle";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "Hareketin ne kadar sürede ortalanacağını belirle";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "Hareketin hangi eksenlerde ölçüleceğini seç";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "Merkez yakınında yok sayılan dönüşü belirle";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "Denetleyiciyi direksiyon gibi çevir";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "Tam direksiyon veren dönüşü belirle";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "Direksiyon yönünü ters çevir";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "Direksiyonun hangi çubuğu hareket ettireceğini seç";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "Yanıtın dönüşle nasıl artacağını belirle";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "Gürültü olarak yok sayılan dönüş hızını belirle";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "Sapmanın ne kadar hızlı duruma döneceğini belirle";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "Sol ve sağ dönüşlerin ne kadar güçlü yanıt vereceğini ölçekle";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "Bu eylemi sırada daha sona taşı";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "Bu eylemi sırada daha öne taşı";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "Profili tanımak için bir ad yaz";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "İki Joy-Con’u tek denetleyicide birleştir";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Joy-Con çiftini tek denetleyicide birleştir";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "Önce bir sol ve bir sağ Joy-Con bağla";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "Işık renginin mavi payını belirle";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "Işığın ne kadar parlak olacağını belirle";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "Uygulanacak tetik efektini seç";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "Işık renginin yeşil payını belirle";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "Titreşimin ne kadar güçlü olacağını belirle";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "Hangi titreşim motorunun sürüleceğini seç";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "Hangi oyuncu ışığının yanacağını seç";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "Işık renginin kırmızı payını belirle";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "Tetik efektinin nerede başlayacağını belirle";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "Tetik efektinin ne kadar güçlü olacağını belirle";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "Efektin hangi tetiğe uygulanacağını seç";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "İşaretçi hızını değiştiren girişi seç";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "İşaretçi hızını bir girişle değiştir";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "En hızlı işaretçi hızı çarpanını belirle";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "En yavaş işaretçi hızı çarpanını belirle";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "İşaretçi hızını hangi çubuğun değiştireceğini seç";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "Denetleyicinin bildirdiği ürün kimliğini yaz";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "Her darbenin ne kadar süreceğini belirle";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "Bölgenin başladığı açıyı belirle";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "Bölgenin başladığı çekişi belirle";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "Bölgenin yüksekliğini belirle";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "Bölgenin merkezden ne kadar uzakta başlayacağını belirle";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "Bölgenin hangi girişi izleyeceğini seç";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "Bölgenin kapsadığı giriş türünü seç";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "Bölgenin merkezden ne kadar uzakta biteceğini belirle";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "Bölgenin bittiği açıyı belirle";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "Bölgenin bittiği çekişi belirle";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "Bölgenin genişliğini belirle";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "Bölgenin yatayda nerede başlayacağını belirle";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "Bölgenin dikeyde nerede başlayacağını belirle";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "Düzenlemelerini at ve kayıtlı profili yükle";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "Bu davranış hakkında bir not yaz";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "Bu eylemi atamadan sil";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "Bu profilin uygulamaya uygulanmasını durdur";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "Bu atamayı sil";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "Bu birleşimi sil";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "Bu kontrolü birleşimden kaldır";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "Bu katmanı sil";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "Bu makroyu sil";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "Bu dokunma sayısını sil";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "Bu diziyi sil";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "Kitaplığı sil ve baştan başla";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "Bu kontrolü normal işlevine döndür";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "Düzenlemelerini profilde sakla";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "Basışlar arasındaki süreyi belirle";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "Bu profili uygulamaya başla";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "Profillerin nasıl sıralanacağını seç";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "Sesli söylenecek sözcükleri yaz";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "Konuşacak sesi seç";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "Tam çubukta dönüş hızını belirle";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "Bu çubuğu yeniden ata";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "Yanıtın sapmayla nasıl artacağını belirle";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "Bir flick’in ne kadar süreceğini belirle";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "Flick’in yeniden tetiklenmesini önleyen payı belirle";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "Merkez yakınında yok sayılan sapmayı belirle";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "Sol ve sağ yönünü ters çevir";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "Yukarı ve aşağı yönünü ters çevir";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "Çubuğun nasıl davranacağını seç";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "Tam sayılan sapmayı belirle";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "Çubuğu ayrıca değiştirmeden gönder";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "İşaretçi alanının boyutunu belirle";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "İşaretçinin derece başına ne kadar hareket edeceğini belirle";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "Bir dönüşün hangi yönde sayılacağını seç";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "Tekerleğin hangi yöne kaydıracağını seç";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "Bir satır için ne kadar çevrileceğini belirle";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "Düzenlenecek çubuğu seç";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "Tam direksiyon veren dönüşü belirle";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "Direksiyonun hangi çubuğu hareket ettireceğini seç";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "Direksiyonun ne kadar hızlı merkeze döneceğini belirle";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "Flick’i tetikleyen sapmayı belirle";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "Açılacak uygulamayı yaz";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "Çalıştırılacak kısayolu yaz";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "Açılacak adresi yaz";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "Bu sonucu kaç dokunmanın tetikleyeceğini belirle";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "Dokunmalar arasındaki süreyi belirle";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "Profilin taklit ettiği denetleyiciyi seç";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "Hazır bir atama kümesiyle başla";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "Yok sayılan dokunma mesafesini belirle";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "Bu dokunmatik yüzeyi yeniden ata";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "Dokunmanın nasıl davranacağını seç";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "İşaretçinin kaydırma başına ne kadar hareket edeceğini belirle";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "Tam çubuk veren dokunma mesafesini belirle";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "Düzenlenecek dokunmatik yüzeyi seç";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "İzleme topunun hangi eksenlerde döneceğini seç";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "Kaynak kontrolün tek başına çalışmasını engelle";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "Dönüşün ne kadar hızlı yavaşlayacağını belirle";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "Jiroskop dönüşünden sonra işaretçiyi yuvarlanmaya devam ettir";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "İzleme topunu yakalayan kontrolü seç";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "Bu tetiği yeniden ata";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "Tam basış sayılan çekişi belirle";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "Basışın titremesini önleyen payı belirle";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "Hafif ve tam çekişin nasıl birleşeceğini seç";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "Tetiği ayrıca değiştirmeden gönder";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "Hafif çekişin tam çekişi ne kadar bekleyeceğini belirle";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "Hafif basış sayılan çekişi belirle";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "Düzenlenecek tetiği seç";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "Kitaplığı yeniden yükle";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "Turbo başlamadan önceki beklemeyi belirle";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "Düğmenin her döngünün ne kadarında basılı olacağını belirle";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "Kontrol basılı tutulduğu sürece basışı tekrarla";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "Belirli sayıda basıştan sonra turboyu durdur";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "Turbonun kaç basış göndereceğini belirle";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "Turbonun saniyede kaç basış göndereceğini belirle";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "Tuş vuruşu olarak gönderilecek metni yaz";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "Çifti iki denetleyiciye ayır";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "Denetleyicinin başladığı rengi koru";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "Denetleyicinin bildirdiği üretici kimliğini yaz";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "Oyunlara sanal bir oyun kumandası göster";

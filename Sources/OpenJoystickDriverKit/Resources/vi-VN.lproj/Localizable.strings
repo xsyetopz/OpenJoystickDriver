@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "Chạy bản sửa cho lần kiểm tra thất bại này";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "Chọn macOS hay OpenJoystickDriver xử lý bộ điều khiển này";
+"platform.macos.ui.help.serverPicker" = "Chọn macOS hay OpenJoystickDriver xử lý bộ điều khiển này";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "Hiện hoặc ẩn các mã định danh và điểm cuối";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "Cho phép chương trình điều khiển một tay cầm ảo";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "Chuyển đổi tài liệu đã lưu sang phiên bản hiện tại";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "Chạy lại thao tác đã thất bại";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "Tạo hồ sơ cho một bộ điều khiển";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "Hoàn tất thiết lập và chuyển sang ứng dụng";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "Đóng trang tính này";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "Đọc lại trạng thái của dịch vụ";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "Dừng bài kiểm tra độ bền đang chạy";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "Chọn gói tin mà danh sách hiện";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "Ghi các gói tin của bộ điều khiển đã chọn";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "Dừng ghi gói tin";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "Thay cài đặt không đọc được bằng giá trị mặc định";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "Ẩn thông báo này";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "Thêm phần gán cho điều khiển đã chọn";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "Chọn đầu vào của tay cầm để gán";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "Đặt mức cần gạt cần analog để được tính";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "Chọn việc mà đầu vào thực hiện";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "Chọn tay cầm để lắng nghe";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "Đặt mức cần dịch trục để được tính là đã nhấn";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "Điều chỉnh độ mạnh phản hồi của trục";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "Đảo chiều của trục";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "Nhấn một đầu vào trên tay cầm để tự động chọn";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "Chọn cách định hình giá trị của trục";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "Chọn cột của ô cảm ứng để gán";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "Đặt số cột chia của bề mặt cảm ứng";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "Chọn hàng của ô cảm ứng để gán";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "Đặt số hàng chia của bề mặt cảm ứng";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "Đặt quãng ngón tay di chuyển để được tính là vuốt";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "Khôi phục các thiết lập mặc định";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "Giữ các thiết lập này và đóng";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "Chạy thao tác thư viện đã chọn";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "Sao chép mọi bản ghi vào bảng nhớ tạm";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "Ẩn thông báo này";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "Chọn các mục mà thao tác áp dụng";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "Thêm một phím được nhấn cùng bước này";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "Thêm bước đã chọn vào macro";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "Chọn loại bước cần thêm";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "Giữ macro và đóng";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "Đặt thời gian phím được giữ xuống";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "Dừng macro khi nhả điều khiển";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "Dời bước này xuống sau trong macro";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "Dời bước này lên trước trong macro";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "Nhập tên để nhận ra macro";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "Bỏ phím này khỏi bước";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "Xóa bước này khỏi macro";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "Chạy macro nhiều lần";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "Đặt số lần macro chạy";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "Chọn việc mà bước này thực hiện";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "Đặt thời gian nghỉ trước bước kế tiếp";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "Tiếp tục lặp lại khi điều khiển còn được giữ";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "Bắt đầu chuyển dữ liệu của bạn sang thư viện mới";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "Hiện thêm thao tác cho hồ sơ này";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "Chọn thời điểm lớp được kích hoạt";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "Chọn điều khiển bật lớp";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "Thêm một thao tác khác vào phần gán này";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "Chọn ứng dụng mà hồ sơ này áp dụng";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "Chọn ứng dụng từ máy Mac của bạn";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "Gán một điều khiển cho đích mới";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "Thêm tổ hợp các điều khiển được giữ cùng lúc";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "Thêm tổ hợp vào hồ sơ";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "Thêm điều khiển đã chọn vào tổ hợp";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "Gán một điều khiển khi lớp đang kích hoạt";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "Thêm một lớp làm thay đổi các điều khiển khác";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "Tạo một macro mới";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "Thêm số lần chạm với kết quả riêng";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "Thêm các điều khiển được nhấn lần lượt";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "Tinh chỉnh cách đầu vào hoạt động";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "Chọn ứng dụng không có trong danh sách";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "Giữ hành vi và đóng";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "Giữ các thay đổi và đóng";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "Chọn cách đầu vào kích hoạt kết quả";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "Chọn cách đầu vào kích hoạt kết quả";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "Chọn cách phải nhấn các điều khiển";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "Đặt các lần nhấn phải sát nhau về thời gian đến mức nào";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "Chọn một điều khiển cho tổ hợp";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "Mở các thiết lập của đầu vào này";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "Chọn tay cầm mà hồ sơ dành cho";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "Tạo bản sao đã chuyển đổi cho đích mới";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "Chọn loại tay cầm để chuyển đổi sang";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "Tạo hồ sơ và mở nó";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "Ngừng áp dụng hồ sơ này";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "Xóa các tệp bị hỏng để bắt đầu lại";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "Sửa tên và tay cầm của hồ sơ này";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "Tạo bản sao của hồ sơ này";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "Thay đổi các bước của macro này";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "Chuyển sang phần khác của hồ sơ";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "Ẩn tay cầm thật khỏi các ứng dụng khác";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "Chọn thời điểm đầu ra con quay được kích hoạt";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "Ngăn điều khiển kích hoạt tự hoạt động";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "Chọn thứ mà con quay điều khiển";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "Đặt quãng con trỏ di chuyển trên mỗi độ";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "Chọn điều khiển kích hoạt con quay";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "Đặt tốc độ xoay đạt mức cần analog tối đa";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "Đặt thời gian phải giữ để được tính";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "Chọn Joy-Con cung cấp chuyển động";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "Chọn Joy-Con trái để ghép đôi";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "Dùng hai Joy-Con như một tay cầm";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "Chọn Joy-Con phải để ghép đôi";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "Tiếp tục với các chỉnh sửa chưa lưu";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "Sửa các thiết lập chuyển động của lớp này";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "Nhập tên để nhận ra lớp";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "Chọn màu đèn của tay cầm";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "Thêm kết quả thứ hai cho lần nhấn giữ lâu";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "Sửa độ lệch chậm khi tay cầm nằm yên";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "Đặt tốc độ trọng lực hiệu chỉnh độ nghiêng";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "Dùng các thiết lập chuyển động của hồ sơ";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "Đảo chiều lên và xuống";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "Đảo chiều trái và phải";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "Nghiêng tay cầm sang bên để kích hoạt kết quả";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "Đặt biên độ ngăn việc nghiêng bị nhấp nháy";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "Đặt góc nghiêng kích hoạt việc ngả người";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "Điều chỉnh độ mạnh phản hồi khi xoay lên và xuống";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "Đặt mức giảm chuyển động ngang";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "Đặt thời gian lấy trung bình chuyển động để làm mượt";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "Chọn các trục để đo chuyển động";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "Đặt góc xoay bị bỏ qua gần tâm";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "Xoay tay cầm như vô lăng";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "Đặt góc xoay cho đánh lái đầy đủ";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "Đảo chiều đánh lái";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "Chọn cần analog mà đánh lái di chuyển";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "Đặt cách phản hồi tăng theo góc xoay";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "Đặt tốc độ xoay bị bỏ qua như nhiễu";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "Đặt tốc độ yaw trở về trạng thái nghỉ";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "Điều chỉnh độ mạnh phản hồi khi xoay trái và phải";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "Dời thao tác này xuống sau trong thứ tự";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "Dời thao tác này lên trước trong thứ tự";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "Nhập tên để nhận ra hồ sơ";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "Gộp hai Joy-Con thành một tay cầm";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "Gộp cặp Joy-Con thành một tay cầm";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "Hãy kết nối Joy-Con trái và phải trước";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "Đặt thành phần xanh dương của màu đèn";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "Đặt độ sáng của đèn";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "Chọn hiệu ứng cò để áp dụng";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "Đặt thành phần xanh lá của màu đèn";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "Đặt độ mạnh của rung";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "Chọn động cơ rung để điều khiển";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "Chọn đèn người chơi để bật";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "Đặt thành phần đỏ của màu đèn";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "Đặt vị trí bắt đầu của hiệu ứng cò";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "Đặt độ mạnh của hiệu ứng cò";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "Chọn cò nhận hiệu ứng";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "Chọn đầu vào làm thay đổi tốc độ con trỏ";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "Thay đổi tốc độ con trỏ bằng một đầu vào";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "Đặt hệ số tốc độ con trỏ nhanh nhất";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "Đặt hệ số tốc độ con trỏ chậm nhất";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "Chọn cần analog làm thay đổi tốc độ con trỏ";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "Nhập ID sản phẩm mà tay cầm báo cáo";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "Đặt thời gian mỗi xung kéo dài";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "Đặt góc bắt đầu của vùng";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "Đặt mức bóp bắt đầu của vùng";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "Đặt chiều cao của vùng";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "Đặt vùng bắt đầu cách tâm bao xa";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "Chọn đầu vào mà vùng theo dõi";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "Chọn loại đầu vào mà vùng bao phủ";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "Đặt vùng kết thúc cách tâm bao xa";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "Đặt góc kết thúc của vùng";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "Đặt mức bóp kết thúc của vùng";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "Đặt chiều rộng của vùng";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "Đặt vị trí bắt đầu của vùng theo chiều ngang";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "Đặt vị trí bắt đầu của vùng theo chiều dọc";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "Bỏ các chỉnh sửa và tải hồ sơ đã lưu";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "Nhập ghi chú về hành vi này";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "Xóa thao tác này khỏi phần gán";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "Ngừng áp dụng hồ sơ này cho ứng dụng";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "Xóa phần gán này";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "Xóa tổ hợp này";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "Bỏ điều khiển này khỏi tổ hợp";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "Xóa lớp này";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "Xóa macro này";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "Xóa số lần chạm này";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "Xóa chuỗi này";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "Xóa thư viện và bắt đầu lại";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "Trả điều khiển này về chức năng bình thường";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "Lưu các chỉnh sửa vào hồ sơ";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "Đặt khoảng thời gian giữa các lần nhấn";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "Bắt đầu áp dụng hồ sơ này";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "Chọn cách sắp xếp các hồ sơ";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "Nhập những từ cần đọc thành tiếng";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "Chọn giọng đọc";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "Đặt tốc độ xoay khi cần analog đầy";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "Gán lại cần analog này";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "Đặt cách phản hồi tăng theo độ gạt";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "Đặt thời gian một cú flick kéo dài";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "Đặt biên độ ngăn flick bị kích hoạt lại";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "Đặt độ gạt bị bỏ qua gần tâm";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "Đảo chiều trái và phải";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "Đảo chiều lên và xuống";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "Chọn cách cần analog hoạt động";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "Đặt độ gạt được tính là đầy";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "Gửi cả cần analog không thay đổi";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "Đặt kích thước vùng con trỏ";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "Đặt quãng con trỏ di chuyển trên mỗi độ";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "Chọn chiều mà một vòng xoay được tính";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "Chọn hướng cuộn của bánh xe";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "Đặt góc cần xoay cho một dòng";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "Chọn cần analog để sửa";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "Đặt góc xoay cho đánh lái đầy đủ";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "Chọn cần analog mà đánh lái di chuyển";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "Đặt tốc độ đánh lái trở về tâm";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "Đặt độ gạt kích hoạt một cú flick";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "Nhập ứng dụng cần mở";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "Nhập phím tắt cần chạy";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "Nhập địa chỉ cần mở";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "Đặt số lần chạm kích hoạt kết quả này";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "Đặt khoảng thời gian giữa các lần chạm";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "Chọn tay cầm mà hồ sơ mô phỏng";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "Bắt đầu từ một bộ phần gán dựng sẵn";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "Đặt khoảng cách chạm bị bỏ qua";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "Gán lại bề mặt cảm ứng này";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "Chọn cách cảm ứng hoạt động";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "Đặt quãng con trỏ di chuyển trên mỗi lần vuốt";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "Đặt khoảng cách chạm cho cần analog đầy";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "Chọn bề mặt cảm ứng để sửa";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "Chọn các trục mà bi xoay quay theo";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "Ngăn điều khiển nguồn tự hoạt động";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "Đặt tốc độ chậm dần của vòng quay";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "Giữ con trỏ tiếp tục lăn sau khi xoay con quay";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "Chọn điều khiển giữ bi xoay";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "Gán lại cò này";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "Đặt mức bóp được tính là nhấn đầy";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "Đặt biên độ ngăn lần nhấn bị nhấp nháy";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "Chọn cách kết hợp mức bóp nhẹ và đầy";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "Gửi cả cò không thay đổi";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "Đặt thời gian mức bóp nhẹ chờ mức bóp đầy";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "Đặt mức bóp được tính là nhấn nhẹ";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "Chọn cò để sửa";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "Tải lại thư viện";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "Đặt thời gian nghỉ trước khi turbo bắt đầu";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "Đặt phần chu kỳ mà nút được nhấn xuống";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "Lặp lại lần nhấn khi điều khiển còn được giữ";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "Dừng turbo sau một số lần nhấn cố định";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "Đặt số lần nhấn mà turbo gửi";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "Đặt số lần nhấn mỗi giây mà turbo gửi";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "Nhập văn bản cần gửi dưới dạng gõ phím";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "Tách cặp thành hai tay cầm";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "Giữ màu mà tay cầm khởi động với";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "Nhập ID nhà cung cấp mà tay cầm báo cáo";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "Hiện tay cầm ảo cho các trò chơi";

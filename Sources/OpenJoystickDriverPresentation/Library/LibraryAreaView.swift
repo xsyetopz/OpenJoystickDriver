@@ -174,7 +174,7 @@
           Button(OJDLocalized.string("action.cancel"), action: cancel).keyboardShortcut(
             .cancelAction
           ).ojdAccessibilityLabel(OJDLocalized.string("a11y.library.cancel"))
-            .help(OJDLocalized.string("ui.help.cancel"))
+            .help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(confirmation.confirmTitle, action: confirm).keyboardShortcut(.defaultAction)
             .ojdAccessibilityLabel(confirmation.confirmTitle)
             .help(OJDLocalized.string("ui.library.confirmHelp"))

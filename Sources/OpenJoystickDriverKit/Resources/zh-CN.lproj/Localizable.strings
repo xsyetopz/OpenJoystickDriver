@@ -5432,7 +5432,7 @@
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
 "ui.help.runFix" = "为这项失败的检查运行修复";
 /* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
-"ui.help.serverPicker" = "选择由 macOS 还是 OpenJoystickDriver 处理此控制器";
+"platform.macos.ui.help.serverPicker" = "选择由 macOS 还是 OpenJoystickDriver 处理此控制器";
 /* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
 "ui.help.showAdvanced" = "显示或隐藏标识符和端点";
 /* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
@@ -5473,14 +5473,10 @@
 "ui.help.scopeControl" = "允许程序驱动虚拟游戏手柄";
 /* Tooltip of the Migrate button in the Access error banner. */
 "ui.help.migrate" = "将已存储的文档转换为当前版本";
-/* Tooltip of the Try Again button of an error state. */
-"ui.help.tryAgain" = "重新执行失败的操作";
 /* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
 "ui.help.newProfile" = "为控制器创建配置文件";
 /* Tooltip of the Done button of the setup steps screen. */
 "ui.help.finishSetup" = "完成设置并进入应用";
-/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
-"ui.help.closeSheet" = "关闭此表单";
 /* Tooltip of the button of the banner that reads the status of the service again. */
 "ui.help.retryService" = "重新读取服务状态";
 /* Tooltip of the banner button that restarts the request listener of the service. */
@@ -5541,8 +5537,6 @@
 "ui.help.soakStop" = "停止正在运行的耐久测试";
 /* Tooltip of the filter switch of the raw packet capture. */
 "ui.help.packetFilter" = "选择列表显示哪些数据包";
-/* Tooltip of the Start Capture button of the developer tools. */
-"ui.help.startCapture" = "记录所选控制器的数据包";
 /* Tooltip of the Stop button of the raw packet capture. */
 "ui.help.stopCapture" = "停止记录数据包";
 /* Tooltip of the Clear button of the raw packet capture. */
@@ -5601,3 +5595,678 @@
 "ui.help.resetSettings" = "用默认值替换无法读取的设置";
 /* Tooltip of the Dismiss button in the settings error banner. */
 "ui.help.dismissMessage" = "隐藏此信息";
+
+/* Tooltip of the Add button of the capture sheet. */
+"ui.capture.addHelp" = "为所选控件添加分配";
+
+/* Tooltip of the control picker. */
+"ui.capture.controlHelp" = "选取要分配的控制器输入";
+
+/* Tooltip of the dead zone slider. */
+"ui.capture.deadZoneHelp" = "设定摇杆需推动多远才算数";
+
+/* Tooltip of the destination picker. */
+"ui.capture.destinationHelp" = "选取输入执行的操作";
+
+/* Tooltip of the device picker of the capture sheet. */
+"ui.capture.deviceHelp" = "选取要监听的控制器";
+
+/* Tooltip of the digital threshold slider. */
+"ui.capture.digitalThresholdHelp" = "设定轴需移动多远才算按下";
+
+/* Tooltip of the gain slider. */
+"ui.capture.gainHelp" = "调整轴的响应强度";
+
+/* Tooltip of the invert axis toggle. */
+"ui.capture.invertAxisHelp" = "反转轴的方向";
+
+/* Tooltip of the listen button. */
+"ui.capture.listenHelp" = "按下控制器输入以自动选取";
+
+/* Tooltip of the response curve picker. */
+"ui.capture.responseCurveHelp" = "选取轴数值的曲线形状";
+
+/* Tooltip of the touch column stepper. */
+"ui.capture.touchColumnHelp" = "选取要分配的触控单元格列";
+
+/* Tooltip of the touch columns stepper. */
+"ui.capture.touchColumnsHelp" = "设定触控表面划分的列数";
+
+/* Tooltip of the touch row stepper. */
+"ui.capture.touchRowHelp" = "选取要分配的触控单元格行";
+
+/* Tooltip of the touch rows stepper. */
+"ui.capture.touchRowsHelp" = "设定触控表面划分的行数";
+
+/* Tooltip of the swipe distance slider. */
+"ui.capture.touchSwipeDistanceHelp" = "设定手指移动多远才算轻扫";
+
+/* Tooltip of the Reset button of a sheet. */
+"ui.help.reset" = "恢复默认设置";
+
+/* Tooltip of the Save button of a sheet. */
+"ui.help.save" = "保存这些设置并关闭";
+
+/* Tooltip of the confirm button of the library scope sheet. */
+"ui.library.confirmHelp" = "运行所选的资源库操作";
+
+/* Tooltip of the Copy All button of the library records. */
+"ui.library.copyAllHelp" = "将所有记录拷贝到剪贴板";
+
+/* Tooltip of the dismiss button of the library notice. */
+"ui.library.dismissHelp" = "隐藏此通知";
+
+/* Tooltip of the library scope picker. */
+"ui.library.scopeHelp" = "选取操作涵盖的项目";
+
+/* Tooltip of the add key button of a macro chord step. */
+"ui.macros.addChordKeyHelp" = "添加与此步骤同时按下的按键";
+
+/* Tooltip of the add step button of the macro sheet. */
+"ui.macros.addStepHelp" = "将所选步骤添加到宏";
+
+/* Tooltip of the step kind picker of the macro sheet. */
+"ui.macros.addStepKindHelp" = "选取要添加的步骤类型";
+
+/* Tooltip of the Apply button of the macro sheet. */
+"ui.macros.applyHelp" = "保存宏并关闭";
+
+/* Tooltip of the hold time slider of a macro step. */
+"ui.macros.holdTimeHelp" = "设定按键保持按下的时长";
+
+/* Tooltip of the interrupt toggle of the macro sheet. */
+"ui.macros.interruptOnReleaseHelp" = "松开控件时停止宏";
+
+/* Tooltip of the move step down button. */
+"ui.macros.moveDownHelp" = "将此步骤在宏中后移";
+
+/* Tooltip of the move step up button. */
+"ui.macros.moveUpHelp" = "将此步骤在宏中前移";
+
+/* Tooltip of the macro name field. */
+"ui.macros.nameHelp" = "输入用于识别宏的名称";
+
+/* Tooltip of the remove chord key button. */
+"ui.macros.removeChordKeyHelp" = "从步骤中移除此按键";
+
+/* Tooltip of the remove step button. */
+"ui.macros.removeStepHelp" = "从宏中删除此步骤";
+
+/* Tooltip of the repeat toggle of the macro sheet. */
+"ui.macros.repeatHelp" = "多次运行宏";
+
+/* Tooltip of the repeat count stepper. */
+"ui.macros.repeatTimesHelp" = "设定宏运行的次数";
+
+/* Tooltip of the destination picker of a macro step. */
+"ui.macros.stepDestinationHelp" = "选取此步骤执行的操作";
+
+/* Tooltip of the wait slider of a macro step. */
+"ui.macros.waitHelp" = "设定下一步之前的等待时间";
+
+/* Tooltip of the repeat while held toggle. */
+"ui.macros.whileRunningHelp" = "控件保持按住期间持续重复";
+
+/* Tooltip of the migration action button. */
+"ui.migrate.actionHelp" = "开始将你的数据迁移到新资源库";
+
+/* Tooltip of the actions menu of the profile editor. */
+"ui.profiles.actionsHelp" = "显示此配置文件的更多操作";
+
+/* Tooltip of the layer activation mode picker. */
+"ui.profiles.activationModeHelp" = "选取图层何时生效";
+
+/* Tooltip of the layer activator picker. */
+"ui.profiles.activatorHelp" = "选取开启图层的控件";
+
+/* Tooltip of the add action button. */
+"ui.profiles.addActionHelp" = "为此分配添加另一项操作";
+
+/* Tooltip of the add app menu. */
+"ui.profiles.addAppHelp" = "选取此配置文件适用的 App";
+
+/* Tooltip of the add app menu item. */
+"platform.macos.ui.profiles.addAppItemHelp" = "从你的 Mac 中选取 App";
+
+/* Tooltip of the Add Assignment button. */
+"ui.profiles.addAssignmentHelp" = "将控件映射到新的目标";
+
+/* Tooltip of the add chord button. */
+"ui.profiles.addChordHelp" = "添加同时按住的控件组合";
+
+/* Tooltip of the add button of the combination sheet. */
+"ui.profiles.addCombinationHelp" = "将组合添加到配置文件";
+
+/* Tooltip of the add control button. */
+"ui.profiles.addControlHelp" = "将所选控件添加到组合";
+
+/* Tooltip of the add layer assignment button. */
+"ui.profiles.addLayerAssignmentHelp" = "在图层生效时映射控件";
+
+/* Tooltip of the add layer button. */
+"ui.profiles.addLayerHelp" = "添加会改变其他控件的图层";
+
+/* Tooltip of the add macro button. */
+"ui.profiles.addMacroHelp" = "创建新的宏";
+
+/* Tooltip of the add multi-tap button. */
+"ui.profiles.addMultiTapHelp" = "添加带有独立结果的点按次数";
+
+/* Tooltip of the add sequence button. */
+"ui.profiles.addSequenceHelp" = "添加依次按下的控件";
+
+/* Tooltip of the adjust button of an assignment. */
+"ui.profiles.adjustHelp" = "微调输入的行为方式";
+
+/* Tooltip of the other app item. */
+"ui.profiles.appOtherHelp" = "选取不在列表中的 App";
+
+/* Tooltip of the Apply button of the behavior sheet. */
+"ui.profiles.applyBehaviorHelp" = "保存行为并关闭";
+
+/* Tooltip of the Apply button of the details sheet. */
+"ui.profiles.applyDetailsHelp" = "保存更改并关闭";
+
+/* Tooltip of the behavior button of an assignment. */
+"ui.profiles.behaviorHelp" = "选取输入触发结果的方式";
+
+/* Tooltip of the behavior picker of the behavior sheet. */
+"ui.profiles.bindingBehaviorHelp" = "选取输入触发结果的方式";
+
+/* Tooltip of the chord mode picker. */
+"ui.profiles.chordModeHelp" = "选取控件的按下方式";
+
+/* Tooltip of the chord window slider. */
+"ui.profiles.chordWindowHelp" = "设定按下之间的时间间隔需多近";
+
+/* Tooltip of the control picker of the combination sheet. */
+"ui.profiles.combinationControlHelp" = "选取用于组合的控件";
+
+/* Tooltip of the configure button. */
+"ui.profiles.configureHelp" = "打开此输入的设置";
+
+/* Tooltip of the controller picker of the new profile sheet. */
+"ui.profiles.controllerHelp" = "选取配置文件对应的控制器";
+
+/* Tooltip of the Convert button. */
+"ui.profiles.convertHelp" = "为新目标创建转换后的副本";
+
+/* Tooltip of the conversion target picker. */
+"ui.profiles.convertTargetHelp" = "选取要转换成的控制器类型";
+
+/* Tooltip of the Create button of the new profile sheet. */
+"ui.profiles.createHelp" = "创建配置文件并打开";
+
+/* Tooltip of the Deactivate button. */
+"ui.profiles.deactivateHelp" = "停止应用此配置文件";
+
+/* Tooltip of the delete damaged library button. */
+"ui.profiles.deleteDamagedHelp" = "删除损坏的文件以重新开始";
+
+/* Tooltip of the Details button. */
+"ui.profiles.detailsHelp" = "编辑此配置文件的名称和控制器";
+
+/* Tooltip of the Duplicate button. */
+"ui.profiles.duplicateHelp" = "创建此配置文件的副本";
+
+/* Tooltip of the edit macro button. */
+"ui.profiles.editMacroHelp" = "更改此宏的步骤";
+
+/* Tooltip of the editor section picker. */
+"ui.profiles.editorSectionHelp" = "跳转到配置文件的其他部分";
+
+/* Tooltip of the exclusive input toggle. */
+"ui.profiles.exclusiveInputHelp" = "对其他 App 隐藏真实控制器";
+
+/* Tooltip of the gyro activation picker. */
+"ui.profiles.gyro.activationHelp" = "选取陀螺仪输出何时生效";
+
+/* Tooltip of the gyro consume toggle. */
+"ui.profiles.gyro.consumeHelp" = "防止激活控件自行起作用";
+
+/* Tooltip of the gyro output picker. */
+"ui.profiles.gyro.outputHelp" = "选取陀螺仪控制的对象";
+
+/* Tooltip of the gyro pointer scale field. */
+"ui.profiles.gyro.pointerScaleHelp" = "设定每度指针移动的距离";
+
+/* Tooltip of the gyro activation source picker. */
+"ui.profiles.gyro.sourceHelp" = "选取激活陀螺仪的控件";
+
+/* Tooltip of the gyro stick scale field. */
+"ui.profiles.gyro.stickScaleHelp" = "设定达到摇杆满幅的旋转速度";
+
+/* Tooltip of the hold duration slider. */
+"ui.profiles.holdDurationHelp" = "设定需按住多久才算数";
+
+/* Tooltip of the Joy-Con gyro picker. */
+"ui.profiles.joyConGyroHelp" = "选取提供动作的 Joy-Con";
+
+/* Tooltip of the left Joy-Con picker. */
+"ui.profiles.joyConLeftHelp" = "选取要配对的左 Joy-Con";
+
+/* Tooltip of the Joy-Con pair toggle. */
+"ui.profiles.joyConPairHelp" = "将两个 Joy-Con 用作一个控制器";
+
+/* Tooltip of the right Joy-Con picker. */
+"ui.profiles.joyConRightHelp" = "选取要配对的右 Joy-Con";
+
+/* Tooltip of the keep editing button. */
+"ui.profiles.keepEditingHelp" = "保留未保存的编辑并继续";
+
+/* Tooltip of the layer motion button. */
+"ui.profiles.layerMotionHelp" = "编辑此图层的动作设置";
+
+/* Tooltip of the layer name field. */
+"ui.profiles.layerNameHelp" = "输入用于识别图层的名称";
+
+/* Tooltip of the lighting color well. */
+"ui.profiles.lightingColorHelp" = "选取控制器指示灯的颜色";
+
+/* Tooltip of the long hold toggle. */
+"ui.profiles.longHoldHelp" = "为长按添加第二个结果";
+
+/* Tooltip of the automatic bias toggle. */
+"ui.profiles.motion.automaticBiasHelp" = "在控制器静止时修正缓慢漂移";
+
+/* Tooltip of the gravity correction slider. */
+"ui.profiles.motion.gravityCorrectionRateHelp" = "设定重力修正倾斜的速度";
+
+/* Tooltip of the inherit button. */
+"ui.profiles.motion.inheritHelp" = "使用配置文件的动作设置";
+
+/* Tooltip of the invert pitch toggle. */
+"ui.profiles.motion.invertPitchHelp" = "反转上下方向";
+
+/* Tooltip of the invert yaw toggle. */
+"ui.profiles.motion.invertYawHelp" = "反转左右方向";
+
+/* Tooltip of the lean toggle. */
+"ui.profiles.motion.leanEnabledHelp" = "将控制器向侧面倾斜以触发结果";
+
+/* Tooltip of the lean hysteresis slider. */
+"ui.profiles.motion.leanHysteresisDegreesHelp" = "设定防止倾斜闪烁的余量";
+
+/* Tooltip of the lean threshold slider. */
+"ui.profiles.motion.leanThresholdDegreesHelp" = "设定触发倾靠的倾斜角度";
+
+/* Tooltip of the pitch sensitivity slider. */
+"ui.profiles.motion.pitchSensitivityHelp" = "调整上下旋转的响应强度";
+
+/* Tooltip of the side reduction slider. */
+"ui.profiles.motion.sideReductionThresholdHelp" = "设定侧向动作的减弱程度";
+
+/* Tooltip of the smoothing slider. */
+"ui.profiles.motion.smoothingHalfTimeMsHelp" = "设定为平滑而对动作取平均的时长";
+
+/* Tooltip of the motion space picker. */
+"ui.profiles.motion.spaceHelp" = "选取测量动作的轴";
+
+/* Tooltip of the steering dead zone slider. */
+"ui.profiles.motion.steeringDeadzoneDegreesHelp" = "设定中心附近忽略的旋转量";
+
+/* Tooltip of the steering toggle. */
+"ui.profiles.motion.steeringEnabledHelp" = "像方向盘一样旋转控制器";
+
+/* Tooltip of the steering full scale slider. */
+"ui.profiles.motion.steeringFullScaleDegreesHelp" = "设定达到满转向的旋转量";
+
+/* Tooltip of the steering invert toggle. */
+"ui.profiles.motion.steeringInvertedHelp" = "反转转向方向";
+
+/* Tooltip of the steering output picker. */
+"ui.profiles.motion.steeringOutputHelp" = "选取转向所移动的摇杆";
+
+/* Tooltip of the steering exponent slider. */
+"ui.profiles.motion.steeringResponseExponentHelp" = "设定响应随旋转增长的方式";
+
+/* Tooltip of the motion threshold slider. */
+"ui.profiles.motion.thresholdDegreesPerSecondHelp" = "设定作为噪声忽略的旋转速度";
+
+/* Tooltip of the yaw relaxation slider. */
+"ui.profiles.motion.yawRelaxationHelp" = "设定偏航回到静止的速度";
+
+/* Tooltip of the yaw sensitivity slider. */
+"ui.profiles.motion.yawSensitivityHelp" = "调整左右旋转的响应强度";
+
+/* Tooltip of the move action down button. */
+"ui.profiles.moveActionDownHelp" = "将此操作在顺序中后移";
+
+/* Tooltip of the move action up button. */
+"ui.profiles.moveActionUpHelp" = "将此操作在顺序中前移";
+
+/* Tooltip of the profile name field. */
+"ui.profiles.nameHelp" = "输入用于识别配置文件的名称";
+
+/* Tooltip of the Pair button of the Joy-Con sheet. */
+"ui.profiles.pairHelp" = "将两个 Joy-Con 合并为一个控制器";
+
+/* Tooltip of the Pair Joy-Cons button. */
+"ui.profiles.pairJoyConsHelp" = "将一对 Joy-Con 合并为一个控制器";
+
+/* Tooltip of the Pair Joy-Cons button while it is disabled. */
+"ui.profiles.pairJoyConsNeedsBothHelp" = "请先连接左右 Joy-Con";
+
+/* Tooltip of the blue slider. */
+"ui.profiles.physical.blueHelp" = "设定指示灯颜色的蓝色分量";
+
+/* Tooltip of the brightness slider. */
+"ui.profiles.physical.brightnessHelp" = "设定指示灯的亮度";
+
+/* Tooltip of the trigger effect picker. */
+"ui.profiles.physical.effectHelp" = "选取要应用的扳机效果";
+
+/* Tooltip of the green slider. */
+"ui.profiles.physical.greenHelp" = "设定指示灯颜色的绿色分量";
+
+/* Tooltip of the rumble intensity slider. */
+"ui.profiles.physical.intensityHelp" = "设定振动的强度";
+
+/* Tooltip of the rumble motor picker. */
+"ui.profiles.physical.motorHelp" = "选取要驱动的振动马达";
+
+/* Tooltip of the player light picker. */
+"ui.profiles.physical.playerHelp" = "选取要点亮的玩家指示灯";
+
+/* Tooltip of the red slider. */
+"ui.profiles.physical.redHelp" = "设定指示灯颜色的红色分量";
+
+/* Tooltip of the trigger effect start slider. */
+"ui.profiles.physical.startPositionHelp" = "设定扳机效果开始的位置";
+
+/* Tooltip of the trigger effect strength slider. */
+"ui.profiles.physical.strengthHelp" = "设定扳机效果的强度";
+
+/* Tooltip of the trigger picker. */
+"ui.profiles.physical.triggerHelp" = "选取接收效果的扳机";
+
+/* Tooltip of the pointer speed driver picker. */
+"ui.profiles.pointerSpeed.driverHelp" = "选取改变指针速度的输入";
+
+/* Tooltip of the pointer speed toggle. */
+"ui.profiles.pointerSpeed.enabledHelp" = "用输入改变指针速度";
+
+/* Tooltip of the pointer speed maximum field. */
+"ui.profiles.pointerSpeed.maxScaleHelp" = "设定最快的指针速度系数";
+
+/* Tooltip of the pointer speed minimum field. */
+"ui.profiles.pointerSpeed.minScaleHelp" = "设定最慢的指针速度系数";
+
+/* Tooltip of the pointer speed stick picker. */
+"ui.profiles.pointerSpeed.sideHelp" = "选取改变指针速度的摇杆";
+
+/* Tooltip of the product ID field. */
+"ui.profiles.productIDHelp" = "输入控制器报告的产品 ID";
+
+/* Tooltip of the pulse duration slider. */
+"ui.profiles.pulseDurationHelp" = "设定每个脉冲持续的时长";
+
+/* Tooltip of the region start angle field. */
+"ui.profiles.region.fromDegreesHelp" = "设定区域开始的角度";
+
+/* Tooltip of the region trigger start field. */
+"ui.profiles.region.fromHelp" = "设定区域开始的按压量";
+
+/* Tooltip of the region height field. */
+"ui.profiles.region.heightHelp" = "设定区域的高度";
+
+/* Tooltip of the region inner radius field. */
+"ui.profiles.region.innerRadiusHelp" = "设定区域从离中心多远处开始";
+
+/* Tooltip of the region input picker. */
+"ui.profiles.region.inputHelp" = "选取区域监视的输入";
+
+/* Tooltip of the region kind picker. */
+"ui.profiles.region.kindHelp" = "选取区域涵盖的输入类型";
+
+/* Tooltip of the region outer radius field. */
+"ui.profiles.region.outerRadiusHelp" = "设定区域在离中心多远处结束";
+
+/* Tooltip of the region end angle field. */
+"ui.profiles.region.toDegreesHelp" = "设定区域结束的角度";
+
+/* Tooltip of the region trigger end field. */
+"ui.profiles.region.toHelp" = "设定区域结束的按压量";
+
+/* Tooltip of the region width field. */
+"ui.profiles.region.widthHelp" = "设定区域的宽度";
+
+/* Tooltip of the region x field. */
+"ui.profiles.region.xHelp" = "设定区域水平方向的起始位置";
+
+/* Tooltip of the region y field. */
+"ui.profiles.region.yHelp" = "设定区域垂直方向的起始位置";
+
+/* Tooltip of the Reload button. */
+"ui.profiles.reloadHelp" = "放弃编辑并载入已保存的配置文件";
+
+/* Tooltip of the behavior remark field. */
+"ui.profiles.remarkHelp" = "输入关于此行为的备注";
+
+/* Tooltip of the remove action button. */
+"ui.profiles.removeActionHelp" = "从分配中删除此操作";
+
+/* Tooltip of the remove app button. */
+"ui.profiles.removeAppHelp" = "停止将此配置文件应用于该 App";
+
+/* Tooltip of the remove assignment button. */
+"ui.profiles.removeAssignmentHelp" = "删除此分配";
+
+/* Tooltip of the remove chord button. */
+"ui.profiles.removeChordHelp" = "删除此组合";
+
+/* Tooltip of the remove control button. */
+"ui.profiles.removeControlHelp" = "从组合中移除此控件";
+
+/* Tooltip of the remove layer button. */
+"ui.profiles.removeLayerHelp" = "删除此图层";
+
+/* Tooltip of the remove macro button. */
+"ui.profiles.removeMacroHelp" = "删除此宏";
+
+/* Tooltip of the remove multi-tap button. */
+"ui.profiles.removeMultiTapHelp" = "删除此点按次数";
+
+/* Tooltip of the remove sequence button. */
+"ui.profiles.removeSequenceHelp" = "删除此序列";
+
+/* Tooltip of the reset library button. */
+"ui.profiles.resetLibraryHelp" = "抹掉资源库并重新开始";
+
+/* Tooltip of the restore default input button. */
+"ui.profiles.restoreDefaultInputHelp" = "让此控件恢复正常功能";
+
+/* Tooltip of the Save button of the profile editor. */
+"ui.profiles.saveHelp" = "将你的编辑保存到配置文件";
+
+/* Tooltip of the sequence window slider. */
+"ui.profiles.sequenceWindowHelp" = "设定按下之间允许的时间";
+
+/* Tooltip of the Set Active button. */
+"ui.profiles.setActiveHelp" = "开始应用此配置文件";
+
+/* Tooltip of the sort picker. */
+"ui.profiles.sortHelp" = "选取配置文件的排序方式";
+
+/* Tooltip of the speak text field. */
+"ui.profiles.speak.textHelp" = "输入要朗读的文字";
+
+/* Tooltip of the speak voice picker. */
+"ui.profiles.speak.voiceHelp" = "选取朗读的声音";
+
+/* Tooltip of the aim rate field. */
+"ui.profiles.stick.aimRateHelp" = "设定摇杆满幅时的旋转速度";
+
+/* Tooltip of the stick enabled toggle. */
+"ui.profiles.stick.enabledHelp" = "重新映射此摇杆";
+
+/* Tooltip of the stick exponent field. */
+"ui.profiles.stick.exponentHelp" = "设定响应随偏转增长的方式";
+
+/* Tooltip of the flick duration field. */
+"ui.profiles.stick.flickDurationHelp" = "设定轻拨持续的时长";
+
+/* Tooltip of the flick hysteresis field. */
+"ui.profiles.stick.hysteresisHelp" = "设定防止轻拨再次触发的余量";
+
+/* Tooltip of the inner dead zone field. */
+"ui.profiles.stick.innerDeadzoneHelp" = "设定中心附近忽略的偏转量";
+
+/* Tooltip of the invert X toggle. */
+"ui.profiles.stick.invertXHelp" = "反转左右方向";
+
+/* Tooltip of the invert Y toggle. */
+"ui.profiles.stick.invertYHelp" = "反转上下方向";
+
+/* Tooltip of the stick mode picker. */
+"ui.profiles.stick.modeHelp" = "选取摇杆的工作方式";
+
+/* Tooltip of the outer dead zone field. */
+"ui.profiles.stick.outerDeadzoneHelp" = "设定算作满幅的偏转量";
+
+/* Tooltip of the stick passthrough toggle. */
+"ui.profiles.stick.passthroughHelp" = "同时发送未变化的摇杆";
+
+/* Tooltip of the pointer radius field. */
+"ui.profiles.stick.pointerRadiusHelp" = "设定指针区域的大小";
+
+/* Tooltip of the stick pointer scale field. */
+"ui.profiles.stick.pointerScaleHelp" = "设定每度指针移动的距离";
+
+/* Tooltip of the rotation direction picker. */
+"ui.profiles.stick.rotationDirectionHelp" = "选取旋转计数的方向";
+
+/* Tooltip of the scroll axis picker. */
+"ui.profiles.stick.scrollAxisHelp" = "选取滚轮的滚动方向";
+
+/* Tooltip of the scroll degrees field. */
+"ui.profiles.stick.scrollDegreesHelp" = "设定旋转多少为一行";
+
+/* Tooltip of the stick source picker. */
+"ui.profiles.stick.sourceHelp" = "选取要编辑的摇杆";
+
+/* Tooltip of the stick steering full scale field. */
+"ui.profiles.stick.steeringFullScaleHelp" = "设定达到满转向的旋转量";
+
+/* Tooltip of the stick steering output picker. */
+"ui.profiles.stick.steeringOutputHelp" = "选取转向所移动的摇杆";
+
+/* Tooltip of the steering return rate field. */
+"ui.profiles.stick.steeringReturnRateHelp" = "设定转向回到中心的速度";
+
+/* Tooltip of the flick threshold field. */
+"ui.profiles.stick.thresholdHelp" = "设定触发轻拨的偏转量";
+
+/* Tooltip of the open app field. */
+"ui.profiles.system.applicationHelp" = "输入要打开的 App";
+
+/* Tooltip of the shortcut field. */
+"ui.profiles.system.shortcutHelp" = "输入要运行的快捷指令";
+
+/* Tooltip of the URL field. */
+"ui.profiles.system.urlHelp" = "输入要打开的地址";
+
+/* Tooltip of the tap count stepper. */
+"ui.profiles.tapCountHelp" = "设定触发此结果所需的点按次数";
+
+/* Tooltip of the tap window slider. */
+"ui.profiles.tapWindowHelp" = "设定点按之间允许的时间";
+
+/* Tooltip of the target picker of the new profile sheet. */
+"ui.profiles.targetHelp" = "选取配置文件模拟的控制器";
+
+/* Tooltip of the template picker. */
+"ui.profiles.templateHelp" = "从现成的分配集开始";
+
+/* Tooltip of the touch dead zone field. */
+"ui.profiles.touch.deadzoneHelp" = "设定忽略的触控距离";
+
+/* Tooltip of the touch enabled toggle. */
+"ui.profiles.touch.enabledHelp" = "重新映射此触控表面";
+
+/* Tooltip of the touch mode picker. */
+"ui.profiles.touch.modeHelp" = "选取触控的工作方式";
+
+/* Tooltip of the touch sensitivity field. */
+"ui.profiles.touch.pointerSensitivityHelp" = "设定每次轻扫指针移动的距离";
+
+/* Tooltip of the touch stick radius field. */
+"ui.profiles.touch.stickRadiusHelp" = "设定达到摇杆满幅的触控距离";
+
+/* Tooltip of the touch surface picker. */
+"ui.profiles.touch.surfaceHelp" = "选取要编辑的触控表面";
+
+/* Tooltip of the trackball axes picker. */
+"ui.profiles.trackball.axesHelp" = "选取轨迹球旋转所围绕的轴";
+
+/* Tooltip of the trackball consume toggle. */
+"ui.profiles.trackball.consumeHelp" = "防止源控件自行起作用";
+
+/* Tooltip of the trackball decay field. */
+"ui.profiles.trackball.decayHelp" = "设定旋转减速的快慢";
+
+/* Tooltip of the trackball toggle. */
+"ui.profiles.trackball.enabledHelp" = "陀螺仪旋转后让指针继续滚动";
+
+/* Tooltip of the trackball source picker. */
+"ui.profiles.trackball.sourceHelp" = "选取抓住轨迹球的控件";
+
+/* Tooltip of the trigger enabled toggle. */
+"ui.profiles.trigger.enabledHelp" = "重新映射此扳机";
+
+/* Tooltip of the full threshold field. */
+"ui.profiles.trigger.fullThresholdHelp" = "设定算作完全按下的扣动量";
+
+/* Tooltip of the trigger hysteresis field. */
+"ui.profiles.trigger.hysteresisHelp" = "设定防止按下闪烁的余量";
+
+/* Tooltip of the trigger mode picker. */
+"ui.profiles.trigger.modeHelp" = "选取轻扣与完全扣动的组合方式";
+
+/* Tooltip of the trigger passthrough toggle. */
+"ui.profiles.trigger.passthroughHelp" = "同时发送未变化的扳机";
+
+/* Tooltip of the skip window field. */
+"ui.profiles.trigger.skipWindowHelp" = "设定轻扣等待完全扣动的时长";
+
+/* Tooltip of the soft threshold field. */
+"ui.profiles.trigger.softThresholdHelp" = "设定算作轻按的扣动量";
+
+/* Tooltip of the trigger source picker. */
+"ui.profiles.trigger.sourceHelp" = "选取要编辑的扳机";
+
+/* Tooltip of the Try Again button. */
+"ui.profiles.tryAgainHelp" = "重新载入资源库";
+
+/* Tooltip of the turbo delay slider. */
+"ui.profiles.turboDelayHelp" = "设定连发开始前的等待时间";
+
+/* Tooltip of the turbo duty slider. */
+"ui.profiles.turboDutyHelp" = "设定每个周期中按钮按下的比例";
+
+/* Tooltip of the turbo toggle. */
+"ui.profiles.turboHelp" = "控件保持按住期间重复按下";
+
+/* Tooltip of the turbo limit toggle. */
+"ui.profiles.turboLimitHelp" = "在固定次数的按下后停止连发";
+
+/* Tooltip of the turbo maximum stepper. */
+"ui.profiles.turboMaxHelp" = "设定连发发送的按下次数";
+
+/* Tooltip of the turbo rate slider. */
+"ui.profiles.turboRateHelp" = "设定连发每秒发送的按下次数";
+
+/* Tooltip of the type text field. */
+"ui.profiles.typeTextHelp" = "输入要作为按键发送的文本";
+
+/* Tooltip of the Unpair Joy-Cons button. */
+"ui.profiles.unpairJoyConsHelp" = "将这一对拆分为两个控制器";
+
+/* Tooltip of the default color toggle. */
+"ui.profiles.useDefaultColorHelp" = "保留控制器启动时的颜色";
+
+/* Tooltip of the vendor ID field. */
+"ui.profiles.vendorIDHelp" = "输入控制器报告的供应商 ID";
+
+/* Tooltip of the virtual output toggle. */
+"ui.profiles.virtualOutputHelp" = "向游戏显示虚拟游戏手柄";
