@@ -12,6 +12,12 @@ extension DeviceManager {
     return await pipelines[key]?.inputState()
   }
 
+  /// Returns the latest state of `identifier` as the controller reports it, before the stored
+  /// calibration; nil when it is not connected.
+  package func rawControllerState(for identifier: LogicalControllerID) async -> ControllerState? {
+    await pipelines[identifier]?.rawInputState()
+  }
+
   /// Returns the ownership evidence for the exact connected device identifier.
   ///
   /// Missing identifiers fail closed to unknown ownership.

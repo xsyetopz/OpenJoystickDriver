@@ -37,7 +37,7 @@ package struct DeviceCatalog: Sendable {
   func record(for model: ControllerModelID) -> DeviceRuntimeProfile? { profiles[model] }
 
   /// The stored calibration of this model; none when it has no record.
-  func calibration(of model: ControllerModelID) -> ControllerCalibration {
+  package func calibration(of model: ControllerModelID) -> ControllerCalibration {
     profiles[model]?.tuning.calibration ?? .none
   }
 

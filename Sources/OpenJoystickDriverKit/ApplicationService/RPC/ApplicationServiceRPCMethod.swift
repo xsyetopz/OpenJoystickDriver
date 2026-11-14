@@ -39,6 +39,8 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case setControllerServer
   /// Sets a tuning value of a controller model.
   case setControllerTuning
+  /// Runs a recalibration step on a controller, or resets its stored calibration.
+  case recalibrateController
   /// Opens a virtual feed.
   case openVirtualFeed
   /// Exchanges frames and output commands with a virtual feed.

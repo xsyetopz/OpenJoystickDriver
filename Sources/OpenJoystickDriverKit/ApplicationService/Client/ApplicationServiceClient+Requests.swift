@@ -301,6 +301,18 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Runs `action` on `controller`: a step reads raw input for about two seconds and stores what it
+  /// measured; `reset` removes the stored calibration and clears the gyro offset.
+  public func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult {
+    try await call(
+      .recalibrateController,
+      ControllerRecalibrationArguments(controller: controller, action: action)
+    )
+  }
+
   /// Returns the selected controller's model, or that unit only when `unit` is true, to automatic
   /// virtual HID profile selection.
   public func resetVirtualHIDProfileOverride(
