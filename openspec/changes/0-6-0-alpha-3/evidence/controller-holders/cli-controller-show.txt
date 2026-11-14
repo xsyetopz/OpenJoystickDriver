@@ -1,0 +1,264 @@
+$ ojd controller show E-pad-2c0000000000   # session Active
+Name              8BitDo Ultimate 2C Wireless
+ID                E-pad-2c0000000000
+Unit ID           none
+Vendor:Product    2DC8:301C
+Connection        USB
+Protocol          hid-descriptor
+Session           active
+Input             healthy
+Ownership         route raw-usb, physical exclusive-hid, HID input exclusive
+Handled by        OJD (from route)
+Serving route     virtual-hid
+Virtual gamepad   sdl-compatible
+Record            bundled
+Input mapping     standard HID usage map
+Controls          none
+Rumble            none
+Lighting          none
+Opened by         Google Chrome He (process 812), OpenJoystickDriv (process 1203)
+Exclusive access  OpenJoystickDriver holds this controller exclusively. Another app can open it after you suspend it.
+Next step         Run 'ojd controller suspend E-pad-2c0000000000' to let another app open it.
+
+$ ojd controller show E-pad-2c0000000000 --plain   # session Active
+id	E-pad-2c0000000000
+identity	2DC8:301C
+name	8BitDo Ultimate 2C Wireless
+connection	USB
+protocol	hid-descriptor
+session	active
+input-health	healthy
+ownership	exclusive-hid
+holder	812	Google Chrome He
+holder	1203	OpenJoystickDriv
+holds-exclusively	true
+server	ojd	route
+serving-route	virtual-hid	
+persona	sdl-compatible
+controls	
+rumble-motors	
+lighting	
+output-owner	ojd
+record	bundled	
+input-mapping	standard-hid-usage-map			
+
+$ ojd controller show E-pad-2c0000000000 --json   # session Active
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "capabilities": {
+    "adaptiveTriggers": [],
+    "binaryRumbleMotors": [],
+    "controls": [],
+    "lightingFeatures": [],
+    "motion": false,
+    "outputOwner": "OJD",
+    "rumbleMotors": [],
+    "touchContactCount": 0
+  },
+  "connection": "USB",
+  "hasSerialNumber": false,
+  "id": "E-pad-2c0000000000",
+  "inputHealth": {
+    "recoveryCount": 0,
+    "state": "Healthy"
+  },
+  "inputMapping": {
+    "source": "StandardHIDUsageMap",
+    "unmapped": []
+  },
+  "kind": "Controller",
+  "name": "8BitDo Ultimate 2C Wireless",
+  "outputChecks": [],
+  "ownership": {
+    "discoverySource": "RawUSB",
+    "duplicateExposureRisk": "UnknownOwnership",
+    "hidInput": "Exclusive",
+    "holders": [
+      {
+        "name": "Google Chrome He",
+        "processID": 812
+      },
+      {
+        "name": "OpenJoystickDriv",
+        "processID": 1203
+      }
+    ],
+    "holdsExclusively": true,
+    "physical": "ExclusiveHID",
+    "server": "OJD",
+    "serverSource": "Route"
+  },
+  "parameters": [],
+  "productID": 12316,
+  "protocol": "HIDDescriptor",
+  "record": {
+    "layer": "Bundled"
+  },
+  "serving": {
+    "persona": "SDLCompatible",
+    "route": "VirtualHID"
+  },
+  "session": "Active",
+  "vendorID": 11720
+}
+
+$ ojd controller list --json   # session Active
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "items": [
+    {
+      "alsoListedBySystem": false,
+      "connection": "USB",
+      "hasSerialNumber": false,
+      "holders": [
+        {
+          "name": "Google Chrome He",
+          "processID": 812
+        },
+        {
+          "name": "OpenJoystickDriv",
+          "processID": 1203
+        }
+      ],
+      "holdsExclusively": true,
+      "id": "E-pad-2c0000000000",
+      "name": "8BitDo Ultimate 2C Wireless",
+      "ownedByAnotherClient": false,
+      "productID": 12316,
+      "protocol": "HIDDescriptor",
+      "session": "Active",
+      "vendorID": 11720,
+      "waitsForGuidePress": false
+    }
+  ],
+  "kind": "ControllerList",
+  "metadata": {}
+}
+
+$ ojd controller show E-pad-2c0000000000   # session Suspended
+Name             8BitDo Ultimate 2C Wireless
+ID               E-pad-2c0000000000
+Unit ID          none
+Vendor:Product   2DC8:301C
+Connection       USB
+Protocol         hid-descriptor
+Session          suspended
+Input            healthy
+Ownership        route raw-usb, physical exclusive-hid, HID input exclusive
+Handled by       OJD (from route)
+Serving route    virtual-hid
+Virtual gamepad  sdl-compatible
+Record           bundled
+Input mapping    standard HID usage map
+Controls         none
+Rumble           none
+Lighting         none
+Opened by        Google Chrome He (process 812)
+Next step        Run 'ojd controller resume E-pad-2c0000000000' to serve it again.
+
+$ ojd controller show E-pad-2c0000000000 --plain   # session Suspended
+id	E-pad-2c0000000000
+identity	2DC8:301C
+name	8BitDo Ultimate 2C Wireless
+connection	USB
+protocol	hid-descriptor
+session	suspended
+input-health	healthy
+ownership	exclusive-hid
+holder	812	Google Chrome He
+holds-exclusively	false
+server	ojd	route
+serving-route	virtual-hid	
+persona	sdl-compatible
+controls	
+rumble-motors	
+lighting	
+output-owner	ojd
+record	bundled	
+input-mapping	standard-hid-usage-map			
+
+$ ojd controller show E-pad-2c0000000000 --json   # session Suspended
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "capabilities": {
+    "adaptiveTriggers": [],
+    "binaryRumbleMotors": [],
+    "controls": [],
+    "lightingFeatures": [],
+    "motion": false,
+    "outputOwner": "OJD",
+    "rumbleMotors": [],
+    "touchContactCount": 0
+  },
+  "connection": "USB",
+  "hasSerialNumber": false,
+  "id": "E-pad-2c0000000000",
+  "inputHealth": {
+    "recoveryCount": 0,
+    "state": "Healthy"
+  },
+  "inputMapping": {
+    "source": "StandardHIDUsageMap",
+    "unmapped": []
+  },
+  "kind": "Controller",
+  "name": "8BitDo Ultimate 2C Wireless",
+  "outputChecks": [],
+  "ownership": {
+    "discoverySource": "RawUSB",
+    "duplicateExposureRisk": "UnknownOwnership",
+    "hidInput": "Exclusive",
+    "holders": [
+      {
+        "name": "Google Chrome He",
+        "processID": 812
+      }
+    ],
+    "holdsExclusively": false,
+    "physical": "ExclusiveHID",
+    "server": "OJD",
+    "serverSource": "Route"
+  },
+  "parameters": [],
+  "productID": 12316,
+  "protocol": "HIDDescriptor",
+  "record": {
+    "layer": "Bundled"
+  },
+  "serving": {
+    "persona": "SDLCompatible",
+    "route": "VirtualHID"
+  },
+  "session": "Suspended",
+  "vendorID": 11720
+}
+
+$ ojd controller list --json   # session Suspended
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "items": [
+    {
+      "alsoListedBySystem": false,
+      "connection": "USB",
+      "hasSerialNumber": false,
+      "holders": [
+        {
+          "name": "Google Chrome He",
+          "processID": 812
+        }
+      ],
+      "holdsExclusively": false,
+      "id": "E-pad-2c0000000000",
+      "name": "8BitDo Ultimate 2C Wireless",
+      "ownedByAnotherClient": false,
+      "productID": 12316,
+      "protocol": "HIDDescriptor",
+      "session": "Suspended",
+      "vendorID": 11720,
+      "waitsForGuidePress": false
+    }
+  ],
+  "kind": "ControllerList",
+  "metadata": {}
+}
+

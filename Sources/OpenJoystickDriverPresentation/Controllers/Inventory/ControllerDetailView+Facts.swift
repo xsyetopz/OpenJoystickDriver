@@ -7,8 +7,9 @@
 
   extension ControllerDetailView {
 
-    /// The detail form: the header, the state with its one button, the suspended session, the
-    /// facts, the server picker, the virtual gamepad rows, the Tuning section and Advanced.
+    /// The detail form: the header, the state with its one button, the exclusive hold or the
+    /// suspended session, the facts, the server picker, the virtual gamepad rows, the Tuning
+    /// section and Advanced.
     var body: some View {
       Form {
         Section { controllerHeader }
@@ -26,6 +27,17 @@
         }
         if showsSessionState {
           Section {
+            if device.holdsExclusively {
+              OJDLabeledRow(OJDLocalized.string("ui.controllers.exclusiveOwner")) {
+                HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
+                  Text(OJDLocalized.string("status.controllerExclusive"))
+                    .fixedSize(horizontal: false, vertical: true)
+                  Button(OJDLocalized.string("ui.menu.controller.suspend")) {
+                    Task { @MainActor in await viewModel.suspendController(device) }
+                  }
+                }
+              }
+            }
             if device.sessionState == .suspended {
               OJDLabeledRow(OJDLocalized.string("ui.controllers.suspended")) {
                 Button(OJDLocalized.string("ui.menu.controller.resume")) {
@@ -171,10 +183,12 @@
       }
     }
 
-    /// Suspending, resuming and disconnecting a wireless link are commands of the Controller menu
-    /// and the status item; the detail shows only a suspended session and a failed command.
+    /// Whether the detail shows the session section: an exclusive hold with Suspend, a suspended
+    /// session with Resume, or a failed command.
+    ///
+    /// Disconnecting a wireless link stays a command of the Controller menu and the status item.
     private var showsSessionState: Bool {
-      device.sessionState == .suspended
+      device.holdsExclusively || device.sessionState == .suspended
         || viewModel.controllerActionFailures[device.sessionToken.rawValue] != nil
     }
 

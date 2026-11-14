@@ -131,6 +131,7 @@ For more information, see [Controller not detected](Troubleshooting.md).
 The details include these fields when the controller reports them:
 
 - **Active profile**.
+- **Opened by**: every process that holds the controller open, with its process number, or **None**.
 - **Publication** (needs the **All Controls** interface): whether OJD publishes a [virtual gamepad](Glossary.md#terms) for the controller.
   A controller that is [handled by macOS](Glossary.md#terms) shows **Native macOS gamepad, not published**.
 - **Serving route** (needs the **All Controls** interface): how the input reaches games, for example **OpenJoystickDriver, virtual gamepad** or **macOS, passed through**.
@@ -138,6 +139,8 @@ The details include these fields when the controller reports them:
 - **Serial number** (needs the **All Controls** interface), blurred until you click its eye button.
 - **Battery**, **Charging state**, and **Cable state**.
 
+An **Exclusive access** row with a **Suspend** button appears while OpenJoystickDriver holds the controller exclusively, so no other app can open it.
+Click **Suspend** to let another app open the controller.
 A **Suspended** row with a **Resume** button appears while the controller is suspended.
 **Open Input Test...** opens the test window.
 For more information, see [Testing a controller](Testing-a-Controller.md).

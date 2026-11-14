@@ -71,6 +71,8 @@ struct ControllerFact: Equatable, Identifiable {
     case outputEndpoint
     /// The client that holds the controller exclusively.
     case exclusiveOwner
+    /// Every process that holds the controller open.
+    case holders
     /// Whether the system also lists the controller.
     case alsoListedBySystem
   }
@@ -186,6 +188,11 @@ enum ControllerDetailFacts {
           )
         )
       ] : []
+    let holders = fact(
+      .holders,
+      "ui.controllers.holders",
+      list(device.holders.map { $0.label(localize: OJDLocalized.string) })
+    )
     let listed =
       device.duplicateExposureRisk == .systemGameController
       ? [
@@ -195,7 +202,7 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("status.controllerAlsoListedBySystem"))
         )
       ] : []
-    return selectedBy + paused + always + input + held + listed
+    return selectedBy + paused + always + input + held + [holders] + listed
       + (power + wiiRemote + capabilities).filter { $0.value != .none }
   }
 

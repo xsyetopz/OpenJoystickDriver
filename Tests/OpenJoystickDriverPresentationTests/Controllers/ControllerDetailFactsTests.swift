@@ -64,7 +64,7 @@ struct ControllerDetailFactsTests {
   func unknownBatteryChargingAndCableAreHidden() {
     let kinds = ControllerDetailFacts.general(for: device(power: .unknown)).map(\.kind)
     #expect(
-      kinds == [.publication, .serving, .serialNumber, .inputHealth]
+      kinds == [.publication, .serving, .serialNumber, .inputHealth, .holders]
     )
     #expect(ControllerDetailFacts.general(for: device()).map(\.kind) == kinds)
   }
