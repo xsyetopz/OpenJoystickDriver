@@ -249,6 +249,8 @@
 			<dict>
 				<key>link</key>
 				<string>BluetoothLE</string>
+				<key>product</key>
+				<string>BSP-G6S</string>
 			</dict>
 			<key>protocol</key>
 			<dict>

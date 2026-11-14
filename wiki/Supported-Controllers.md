@@ -43,7 +43,7 @@ A controller record can also carry a `validations` list: one entry per mode that
 | ZD Ultimate Legend | `413D:2204` | 2.4 GHz dongle, XInput mode | Input, OJD rumble, back-button keyboard bindings, mode switching | Not recorded |
 | Xbox Nano Controller | `045E:0B4F` | Bluetooth LE, `game-controller-compatible` [profile](Glossary.md#terms) | Buttons, sticks, triggers, D-pad, stick clicks. The Xbox button and Share do not work | Rumble, Steam |
 | NITHO MLT-KRMA-K | `054C:05C4` | Bluetooth, M mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home. M1 and M2 send nothing until a macro is recorded on them | Rumble and light, which macOS drives |
-| NITHO MLT-KRMA-K | `045E:028E` | 2.4G receiver | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home | Rumble, X and S modes |
+| NITHO MLT-KRMA-K | `045E:028E` | 2.4G receiver | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home, rumble through macOS | S mode. X mode does not pair with macOS |
 | NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, V3 mode | Buttons, sticks, triggers as on or off, D-pad, stick clicks. Y reads as two short presses. RB, View, Menu, Home, M1 and M2 send no input in V3 | Not recorded |
 
 Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One tester (gornobatov) tested the ZD Ultimate Legend on macOS 26.7.1. For the 8BitDo details, see [the test record](../docs/testing/8bitdo-ultimate-2c.md).

@@ -10,7 +10,7 @@ This page records the maintainer's test of the NITHO MLT-KRMA-K in its MFi, 2.4G
 - Mac: MacBook Pro (`MacBookPro18,2`), Apple M1 Max.
 - Capture: an `IOHIDManager` logger that printed every input report of each HID gamepad, with the OJD service running.
 
-The mode switch on the back of the pad picks the identity. The manual names X (Bluetooth, "Xbox Wireless Controller"), 2.4G (USB receiver), S (Switch), M (MFi, Bluetooth, "DUALSHOCK 4 Wireless Controller") and V3 (Bluetooth HID, "G6"). By cable, the pad takes the identity of the switch position.
+The mode switch on the back of the pad picks the identity. The slider has three positions, M, X and S from left to right; V3 is printed at the left end beside M, and 2.4G at the right end beside S. The manual starts V3 in the left position when X is held while Home turns the pad on, and M otherwise. In this test the left position started V3, with a red light, also without X, and the right position flashed cyan for 2.4G. The manual names X (Bluetooth, "Xbox Wireless Controller"), 2.4G (USB receiver), S (Switch), M (MFi, Bluetooth, "DUALSHOCK 4 Wireless Controller") and V3 (Bluetooth HID, "G6"). By cable, the pad takes the identity of the switch position.
 
 | Mode | VID:PID | Product string | OJD protocol | Tested |
 | --- | --- | --- | --- | --- |
@@ -18,7 +18,9 @@ The mode switch on the back of the pad picks the identity. The manual names X (B
 | 2.4G receiver | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
 | By cable | `054C:0268`, `054C:05C4`, `045E:028E` | PS3, `Wireless Controller`, `Xbox360 For Windows` | | Identity only |
 | V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | Every control it sends |
-| X, S | | | | Not tested |
+| Right position, no receiver, Bluetooth LE | `1949:0402` | `BSP-G6S-HID` | `hid-descriptor` | Connects, sends no input report |
+| X, Bluetooth | | `Xbox Wireless Controller` | | Does not pair with macOS |
+| S | | | | Not reached |
 
 ## M Mode over Bluetooth
 
@@ -34,7 +36,7 @@ The pad sends DUALSHOCK 4 report `0x11` (78 bytes), and the built-in DUALSHOCK 4
 
 ## 2.4G Receiver
 
-macOS binds its Xbox 360 driver to the receiver. That driver publishes a HID descriptor with no hat switch, the D-pad on buttons 12 to 15, Z and Rz as the triggers, and Y up as positive. OJD's `hid-descriptor` protocol has a shape for that descriptor. The 20-byte report is the pad's Xbox 360 report:
+macOS binds its Xbox 360 driver to the receiver. That driver publishes a HID descriptor with no hat switch, the D-pad on buttons 12 to 15, Z and Rz as the triggers, and Y up as positive. OJD's `hid-descriptor` protocol has a shape for that descriptor. macOS drives rumble: a Game Controller haptics engine ran the left and the right motor one at a time, and `ojd controller rumble` reports no motor because macOS owns the output. The 20-byte report is the pad's Xbox 360 report:
 
 | Byte | Contents |
 | --- | --- |
@@ -74,6 +76,14 @@ The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and re
 | Right stick center | 1782, 3222; up is +X, right is +Y |
 
 `ojd controller watch` reported each control of the table, with the sticks at full deflection. RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release, so OJD reports North twice for one Y press. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
+
+## Right Position without the Receiver
+
+With the slider right and no receiver plugged in, the pad pairs over Bluetooth LE as `BSP-G6S-HID` (`1949:0402`, a separate address from V3). Its descriptor is a standard gamepad: report 3 is a 16-bit consumer key, and report 4 (11 bytes) holds X, Y, Z and Rz, a hat, 16 buttons, and Accelerator and Brake. The `1949:0402` record runs its default `HIDDescriptor` mode for it, because the `v3` mode matches the product `BSP-G6S` only. The pad sent no input report in this identity, to OJD or to a plain IOHID client with OJD suspended, so it reads nothing on macOS.
+
+## X Mode
+
+In X mode the pad shows up in a Bluetooth search as `Xbox Wireless Controller`. Connect in System Settings failed with no message, and `blueutil --pair` failed with a page timeout. The test never reached S, which the manual describes as the Switch mode.
 
 ## M1 and M2
 
