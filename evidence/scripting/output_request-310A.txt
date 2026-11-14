@@ -1,0 +1,70 @@
+$ ojd --json controller list  -> exit 0
+  {
+    "apiVersion": "openjoystickdriver/v1alpha3",
+    "items": [
+      {
+        "alsoListedBySystem": false,
+        "connection": "USB",
+        "hasSerialNumber": true,
+        "holders": [
+          {
+            "name": "WindowServer",
+            "processID": 421
+          },
+          {
+            "name": "Google Chrome",
+            "processID": 4040
+          },
+          {
+            "name": "Discord PTB",
+            "processID": 19131
+          },
+          {
+            "name": "Discord PTB Helper (Renderer)",
+            "processID": 19243
+          },
+          {
+            "name": "OpenJoystickDriver",
+            "processID": 22772
+          }
+        ],
+        "holdsExclusively": true,
+        "id": "E-r5SBLLB0FUM6tshH",
+        "name": "8BitDo Ultimate 2C Wireless Controller",
+        "ownedByAnotherClient": false,
+        "power": {
+          "battery": {},
+          "charging": "Unknown"
+        },
+        "productID": 12554,
+        "protocol": "XboxXUSB:Wired",
+        "session": "Active",
+        "unit": "U-kZ7dCdQP-6vkJyz4",
+        "vendorID": 11720,
+        "waitsForGuidePress": false
+      }
+    ],
+    "kind": "ControllerList",
+    "metadata": {}
+  }
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617b", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+== Rumble, Player, Light
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "E-r5SBLLB0FUM6tshH", "action": "Rumble", "left": 120, "duration": 0.5}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","controller":"E-r5SBLLB0FUM6tshH","kind":"OutputResult","results":[{"command":"rumble","droppedRumbleChannels":["LeftHaptic"],"outcome":"Delivered"}]}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "E-r5SBLLB0FUM6tshH", "action": "Player", "player": 1}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","controller":"E-r5SBLLB0FUM6tshH","kind":"OutputResult","results":[{"command":"player","droppedRumbleChannels":[],"outcome":"Delivered"}]}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "E-r5SBLLB0FUM6tshH", "action": "Light", "color": "FF8000", "brightness": 100}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2013","kind":"Status","message":"8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-r5SBLLB0FUM6tshH' to see what it supports.","status":"Failure"}
+== the same through ojd
+$ ojd controller rumble E-r5SBLLB0FUM6tshH --left 120 --duration 0.5  -> exit 0
+  Rumbled low-frequency on 8BitDo Ultimate 2C Wireless Controller.
+$ ojd controller player E-r5SBLLB0FUM6tshH 1  -> exit 0
+  Sent player to 8BitDo Ultimate 2C Wireless Controller.
+$ ojd controller light E-r5SBLLB0FUM6tshH --color FF8000 --brightness 100  -> exit 1
+  error[E2013]: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-r5SBLLB0FUM6tshH' to see what it supports.
+== refusals
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "FFFF:FFFF", "action": "Rumble", "left": 10}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E2012","kind":"Status","message":"No connected controller matches 'FFFF:FFFF'. Use an ID or VVVV:PPPP from this list:\n  E-r5SBLLB0FUM6tshH  U-kZ7dCdQP-6vkJyz4  2DC8:310A  8BitDo Ultimate 2C Wireless Controller","status":"Failure"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "OutputRequest", "controller": "E-r5SBLLB0FUM6tshH", "action": "Rumble", "duration": 9}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1003","kind":"Status","message":"The message is not a valid request of its kind.","status":"Failure"}
