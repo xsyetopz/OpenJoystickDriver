@@ -227,6 +227,16 @@ struct MainWindowNavigationTests {
   }
 
   @Test
+  @MainActor
+  func areaChoiceDuringMutationShowsRefusal() {
+    let navigation = Self.dirtyNavigation()
+    let request = RuntimeMutationRequest(operation: .create(profileID: UUID()))
+    #expect(navigation.beginProfilesEditorMutation(request))
+    #expect(!navigation.requestArea(.library))
+    #expect(navigation.isMutationRefusalPresented)
+  }
+
+  @Test
   func mainWindowUsesStableContentSizingAcrossAreas() {
     #expect(MainWindowSizingPolicy.defaultContentSize == NSSize(width: 1_040, height: 700))
     #expect(MainWindowSizingPolicy.minimumContentHeight == 560)

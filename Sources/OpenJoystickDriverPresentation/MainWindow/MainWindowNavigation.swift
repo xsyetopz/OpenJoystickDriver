@@ -53,8 +53,8 @@
     /// Whether the discard question is shown.
     @Published
     var isDiscardConfirmationPresented = false
-    /// Set when `perform(in:_:)` is refused for a running profile editor mutation; the window
-    /// shows the reason until dismissed.
+    /// Set when an area switch or `perform(in:_:)` is refused for a running profile editor
+    /// mutation; the window shows the reason until dismissed.
     @Published
     var isMutationRefusalPresented = false
     /// Whether the setup steps show instead of the selected area.
@@ -85,15 +85,18 @@
     ///
     /// Returns true when the area is selected on return.
     ///
-    /// Returns false when a profile editor mutation is running, or when unsaved editor changes
-    /// need an answer to the discard question first.
+    /// Returns false when a profile editor mutation is running, which shows the refusal, or when
+    /// unsaved editor changes need an answer to the discard question first.
     @discardableResult
     func requestArea(_ area: MainWindowArea) -> Bool {
       // The setup steps stand in for the area and its alerts and sheets, so an area choice or an
       // area action hides them; otherwise the action would present into a view that is not there.
       dismissSetupSteps()
       guard area != selectedArea else { return true }
-      guard activeProfilesEditorMutation == nil else { return false }
+      guard activeProfilesEditorMutation == nil else {
+        isMutationRefusalPresented = true
+        return false
+      }
       guard profilesEditorIsDirty else {
         selectAcceptedArea(area)
         return true
