@@ -35,6 +35,9 @@ final class LayeredInputDriver: PhysicalProtocolDriver {
     if let event { lastState = event.state }
     guard let index = selected, let layered = layers.parse(report: data, receivedAt: receivedAt)
     else { return event }
+    // A report of the device's own shape that reads as the start of a family frame would
+    // otherwise prefix the next one.
+    if event == nil { family.discardPartialInput() }
     let layout = layers.layouts.layouts[index]
     var state = lastState
     for button in layout.buttons {

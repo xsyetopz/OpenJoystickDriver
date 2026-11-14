@@ -55,7 +55,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 - The **Measure Rest**, **Measure Circle**, **Measure Triggers** and **Measure Gyro** buttons use title-style capitalization.
 - The **Tuning** group of the controller detail lists every tuning key, with `Driver default` or `Not set` for a key no layer sets, as `ojd config show --controller` does; before, it was empty for a controller whose record sets no tuning.
-- A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it.
+- A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it. When that report reads as the start of a longer GIP frame, its bytes are dropped instead of prefixing the next frame.
 - A controller whose record has no default mode and no mode matching the device falls back to its HID descriptor, as a record that fits no interface does; before, it was refused with `NoModeMatched`.
 - OJD seizes a HID device with no record only when the classifier binds it; before, it seized every such device and released the refused ones afterwards.
 - `ojd record draft` for a device whose interfaces report no class says so; before, it said the device is not connected as a HID device.

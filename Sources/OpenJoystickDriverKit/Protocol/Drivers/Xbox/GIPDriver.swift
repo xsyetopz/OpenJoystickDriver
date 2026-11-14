@@ -209,6 +209,9 @@ public final class GIPDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
+  /// Empties the buffer of a frame that a later transfer would complete.
+  public func discardPartialInput() { pendingInput.removeAll() }
+
   /// Takes the next complete frame out of the buffer; nil while the buffer holds less than one.
   /// - Throws: ``GIPError/malformedPacket(_:)`` when a header length field exceeds the largest
   ///   size.

@@ -127,6 +127,22 @@ struct LayeredInputTests {
   }
 
   @Test
+  func gipRecordDropsLayoutReportThatIsAnIncompleteGIPFrame() throws {
+    let input = layout(
+      report: ["id": 0x07, "length": ["exactly": 8] as [String: Int]],
+      button: "West",
+      bitOffset: 8
+    )
+    let driver = try driver(family: "XboxGIP", input: input, runtimeVariant: "USB")
+    // Its length field asks for 16 payload bytes, so GIP waits for more instead of throwing.
+    let layoutReport: [UInt8] = [0x07, 0x01, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00]
+    #expect(try driver.parseReport(Data(layoutReport))?.state.pressed.contains(.west) == true)
+    // Command 0x20 (input), 14 payload bytes; the Menu bit is bit 2 of the first byte.
+    let gipInput: [UInt8] = [0x20, 0x00, 0x01, 0x0E, 0x04] + [UInt8](repeating: 0, count: 13)
+    #expect(try driver.parseReport(Data(gipInput))?.state.pressed.contains(.start) == true)
+  }
+
+  @Test
   func gipRecordStillThrowsOnMalformedReportNoLayoutSelects() throws {
     let input = layout(
       report: ["id": 0x07, "length": ["exactly": 8] as [String: Int]],
