@@ -194,7 +194,8 @@
       EmptyStateView(
         symbol: "slider.horizontal.3",
         title: OJDLocalized.string("ui.profiles.none"),
-        actionTitle: OJDLocalized.string("ui.profiles.new")
+        actionTitle: OJDLocalized.string("ui.profiles.new"),
+        actionHelp: OJDLocalized.string("ui.help.newProfile")
       ) { screen.beginCreatingProfile() }
     }
 

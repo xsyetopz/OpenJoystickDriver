@@ -17,6 +17,8 @@
     let message: String?
     /// The title of the button that fills the empty state, or nil for no button.
     let actionTitle: String?
+    /// The tooltip of the button, or nil for none.
+    let actionHelp: String?
     /// What the button runs.
     let action: (() -> Void)?
 
@@ -26,12 +28,14 @@
       title: String,
       message: String? = nil,
       actionTitle: String? = nil,
+      actionHelp: String? = nil,
       action: (() -> Void)? = nil
     ) {
       self.symbol = symbol
       self.title = title
       self.message = message
       self.actionTitle = actionTitle
+      self.actionHelp = actionHelp
       self.action = action
     }
 
@@ -39,7 +43,7 @@
     @ViewBuilder
     private var actionButton: some View {
       if let actionTitle, let action {
-        Button(actionTitle, action: action)
+        Button(actionTitle, action: action).help(actionHelp ?? "")
       }
     }
 
@@ -112,6 +116,7 @@
               vertical: true
             )
             Button(OJDLocalized.string("action.tryAgain"), action: retry)
+              .help(OJDLocalized.string("ui.help.tryAgain"))
           }
           Spacer(minLength: 0)
         }.padding(4)

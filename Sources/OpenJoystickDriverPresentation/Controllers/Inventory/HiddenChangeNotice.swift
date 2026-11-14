@@ -65,6 +65,7 @@
             symbol: "eye.slash",
             title: content.message,
             actionTitle: showAllControls,
+            actionHelp: OJDLocalized.string("ui.help.showHidden"),
             action: showAdvanced
           )
         }

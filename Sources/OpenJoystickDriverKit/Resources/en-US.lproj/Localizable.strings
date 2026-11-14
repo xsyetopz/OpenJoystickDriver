@@ -4255,9 +4255,9 @@
 "ui.library.test.packets.pick" = "Choose a packet capture.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "Choose the expected controller state.";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "Show details of the error";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "Dismiss the error";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "Dismiss the message";
@@ -4427,13 +4427,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver refused this request.";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "The request failed: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "Show details of the error";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "Dismiss the error";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "Read the access settings again";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "Restart the app so the new permissions apply";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket port; leave empty to keep the saved port. The system picks a port only when none is saved or Automatic is chosen";
@@ -4451,17 +4451,17 @@
 "a11y.access.tokenName" = "Token name";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "Web origins that may use the token, one per line";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "Continue to the confirmation";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "The token";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "Copy the token to the clipboard";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "Close the token";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ scope";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "Cancel and keep the access as it is";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "About %@";
@@ -5456,3 +5456,149 @@
 "ui.help.virtualProfile" = "Choose the virtual gamepad kind that games see";
 /* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
 "ui.help.virtualScope" = "Choose whether the kind applies to one controller or its model";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "Allow this program to use the local endpoint";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "Remove access and close the open connections";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "Ask the system to grant this permission";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "Let the system pick a free port for the WebSocket";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "Copy the socket path to the clipboard";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "Apply the change that the sheet describes";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "Let the program receive controller events";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "Let the program drive a virtual gamepad";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "Convert stored documents to the current version";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "Run the failed action again";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "Create a profile for a controller";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "Finish setup and go on to the app";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "Close this sheet";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "Read the service status again";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "Restart the request listener of the service";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "Approve the driver extension in System Settings";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "Repair the driver extension";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "Request the missing permissions in the Access area";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "Add a profile from a file";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "Check a profile file without importing it";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "Create a copy of the selected profile";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "Change the selected profile to another controller model";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "Save the selected profile to a file";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "Remove the selected profile";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "Check a record file or mod folder without installing it";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "Run the selected record against a packet capture";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "Remove the selected record or mod";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "Find records and mods in the library";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "Choose which view of the activity shows";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "Choose which log stream and how many lines show";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "Find text in the activity log";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "Copy the whole log to the clipboard";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "Save the activity log to a file";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "Show the log file in Finder";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "Run the diagnostic checks on the setup";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "Show controller status and actions";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "Read the connected controllers again";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "Choose the controller to inspect";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "Choose the limits and run a soak test";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "Run the soak test with these limits";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "Run the soak test again";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "Stop the running soak test";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "Choose which packets the list shows";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "Record the packets of the selected controller";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "Stop recording packets";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "Remove the recorded packets from the list";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "Copy every recorded packet to the clipboard";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "Save the recorded packets to a file";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "Press the keys that pause and resume controllers";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "Remove the saved pause shortcut";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "Show a notification when a controller connects or needs attention";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "Show a notification when a controller disconnects";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "Show a notification when a profile activates or switches";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "Show a notification when a profile deactivates";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "Play a sound with each notification";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "Change how the system shows notifications from the app";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "Show a sample notification now";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "Remove the driver extension from the system";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "Choose how many controls the app shows";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "Choose how long a controller may stay idle";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "Open the page of the available release";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "Look for a newer release now";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "Look for a newer release from time to time";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "Include prerelease versions when checking for updates";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "Open the app when you log in";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "Show the app status item in the menu bar";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "Show the app icon in the Dock";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "Show the controller input and USB packet tools";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "Link the ojd command to this app";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "Remove the link of the ojd command";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "Show the unreadable settings file in Finder";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "Replace the unreadable settings with the defaults";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "Hide this message";

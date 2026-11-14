@@ -27,7 +27,7 @@
           if runtime.systemExtensionSetupState == .active {
             Button(OJDLocalized.string("cli.login.group.uninstallAction")) {
               confirmsUninstall = true
-            }
+            }.help(OJDLocalized.string("ui.help.uninstallDriver"))
           }
         }
         if uninstallLeftActive, runtime.systemExtensionSetupState == .active {

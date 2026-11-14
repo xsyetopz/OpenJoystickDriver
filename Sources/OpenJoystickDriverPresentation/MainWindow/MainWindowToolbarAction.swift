@@ -115,30 +115,30 @@ enum MainWindowToolbarAction: String, CaseIterable {
     }
   }
 
-  /// The localization key of the item's tooltip, or nil when the label already says it all.
-  var descriptionKey: String? {
+  /// The localization key of the item's tooltip.
+  var descriptionKey: String {
     switch self {
-    case .newProfile: return nil
-    case .importProfile: return nil
-    case .validateProfileFile: return nil
-    case .duplicateProfile: return nil
-    case .convertProfile: return nil
-    case .exportProfile: return nil
-    case .deleteProfile: return nil
+    case .newProfile: return "ui.help.newProfile"
+    case .importProfile: return "ui.help.importProfile"
+    case .validateProfileFile: return "ui.help.validateProfileFile"
+    case .duplicateProfile: return "ui.help.duplicateProfile"
+    case .convertProfile: return "ui.help.convertProfile"
+    case .exportProfile: return "ui.help.exportProfile"
+    case .deleteProfile: return "ui.help.deleteProfile"
     case .installLibraryItem: return "ui.menu.file.installRecordOrMod"
     case .grantProgram: return "a11y.access.grantProgram"
     case .createToken: return "a11y.access.grantToken"
-    case .validateLibraryItem: return nil
-    case .testLibraryRecord: return nil
-    case .removeLibraryItem: return nil
-    case .searchLibrary: return nil
-    case .activityMode: return nil
-    case .activityFilter: return nil
-    case .activitySearch: return nil
-    case .copyActivityLog: return nil
-    case .saveActivityLog: return nil
-    case .showActivityLogInFinder: return nil
-    case .runDiagnostics: return nil
+    case .validateLibraryItem: return "ui.help.validateLibraryItem"
+    case .testLibraryRecord: return "ui.help.testLibraryRecord"
+    case .removeLibraryItem: return "ui.help.removeLibraryItem"
+    case .searchLibrary: return "ui.help.searchLibrary"
+    case .activityMode: return "ui.help.activityMode"
+    case .activityFilter: return "ui.help.activityFilter"
+    case .activitySearch: return "ui.help.activitySearch"
+    case .copyActivityLog: return "ui.help.copyActivityLog"
+    case .saveActivityLog: return "ui.help.saveActivityLog"
+    case .showActivityLogInFinder: return "platform.macos.ui.help.showActivityLog"
+    case .runDiagnostics: return "ui.help.runDiagnostics"
     }
   }
 

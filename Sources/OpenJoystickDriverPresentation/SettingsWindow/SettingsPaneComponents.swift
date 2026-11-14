@@ -10,6 +10,8 @@
   struct SettingsSwitchRow: View {
     /// The title of the switch.
     let title: String
+    /// The tooltip of the switch while it can be changed.
+    let help: String
     /// The line below the switch.
     var description: String?
     /// Whether the switch is on.
@@ -25,7 +27,7 @@
     /// The toggle with its description and, while it is locked, the reason.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
-        Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? "")
+        Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? help)
         if let description { footnote(description) }
         if let lockReason { footnote(lockReason) }
       }
@@ -93,20 +95,21 @@
             if preferences.notificationAuthorization == .denied {
               Button(OJDLocalized.string("ui.settings.general.openSystemSettings")) {
                 preferences.openNotificationSettings()
-              }
+              }.help(OJDLocalized.string("ui.help.openNotificationSettings"))
             }
             if preferences.settingsFileError != nil {
               Button(
                 OJDLocalized.string("platform.macos.ui.settings.advanced.unreadableShowInFinder")
               ) {
                 preferences.showSettingsFileInFinder()
-              }
+              }.help(OJDLocalized.string("platform.macos.ui.help.showSettingsFile"))
               Button(OJDLocalized.string("ui.settings.advanced.unreadableResetSettings")) {
                 preferences.resetSettings()
-              }
+              }.help(OJDLocalized.string("ui.help.resetSettings"))
             }
             if preferences.settingsFileError == nil {
               Button(OJDLocalized.string("action.dismiss")) { preferences.dismissError() }
+                .help(OJDLocalized.string("ui.help.dismissMessage"))
             }
           }
         }

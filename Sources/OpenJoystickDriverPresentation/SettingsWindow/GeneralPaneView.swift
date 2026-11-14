@@ -17,6 +17,7 @@
         Section {
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.general.startAtLogin"),
+            help: OJDLocalized.string("ui.help.startAtLogin"),
             isOn: Binding(
               get: { preferences.startAtLogin },
               set: { preferences.setStartAtLogin($0) }
@@ -27,6 +28,7 @@
           SettingsBesideError(preferences: preferences, origin: .loginItem)
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.general.showInMenuBar"),
+            help: OJDLocalized.string("ui.help.showInMenuBar"),
             isOn: Binding(
               get: { preferences.showInMenuBar },
               set: { preferences.setShowInMenuBar($0) }
@@ -38,6 +40,7 @@
           ).ojdInterfaceRow(SettingsRow.showInMenuBar)
           SettingsSwitchRow(
             title: OJDLocalized.string("platform.macos.ui.settings.general.showInDock"),
+            help: OJDLocalized.string("platform.macos.ui.help.showInDock"),
             description: OJDLocalized.string(
               "platform.macos.ui.settings.general.showInDockDescription"
             ),
@@ -64,6 +67,7 @@
             Text(OJDLocalized.string("ui.settings.general.interfaceAdvanced"))
               .tag(InterfaceLevel.advanced)
           }
+          .help(OJDLocalized.string("ui.help.interfaceLevel"))
           .ojdInterfaceRow(SettingsRow.interfacePicker)
         }
         updates
@@ -91,14 +95,16 @@
           if case .available = preferences.updateState {
             Button(OJDLocalized.string("ui.settings.general.viewUpdate")) {
               preferences.openAvailableUpdate()
-            }
+            }.help(OJDLocalized.string("ui.help.viewUpdate"))
           }
           Button(OJDLocalized.string("ui.settings.general.checkUpdates")) {
             preferences.checkForUpdates()
           }.disabled(preferences.updateState == .checking)
+            .help(OJDLocalized.string("ui.help.checkUpdates"))
         }.ojdInterfaceRow(SettingsRow.version)
         SettingsSwitchRow(
           title: OJDLocalized.string("ui.settings.general.checkUpdatesAutomatically"),
+          help: OJDLocalized.string("ui.help.checkUpdatesAutomatically"),
           isOn: Binding(
             get: { preferences.checkUpdatesAutomatically },
             set: { preferences.setCheckUpdatesAutomatically($0) }
@@ -110,7 +116,8 @@
             get: { preferences.includePrereleaseUpdates },
             set: { preferences.setIncludePrereleaseUpdates($0) }
           )
-        ).ojdInterfaceRow(SettingsRow.prereleaseUpdates)
+        ).help(OJDLocalized.string("ui.help.prereleaseUpdates"))
+          .ojdInterfaceRow(SettingsRow.prereleaseUpdates)
       }
     }
 

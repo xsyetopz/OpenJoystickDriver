@@ -24,21 +24,24 @@
           Text(OJDLocalized.string("ui.developer.packetFilterAll")).tag(
             DeveloperToolsViewModel.PacketFilter.all
           )
-        }.pickerStyle(.segmented).labelsHidden()
+        }.pickerStyle(.segmented).labelsHidden().help(OJDLocalized.string("ui.help.packetFilter"))
         HStack(spacing: OJDSpacing.small) {
           if model.isCapturing {
             Button(OJDLocalized.string("action.stop"), action: model.stopCapture)
+              .help(OJDLocalized.string("ui.help.stopCapture"))
           } else {
             Button(OJDLocalized.string("ui.developer.startCapture"), action: model.startCapture)
               .disabled(model.selectedDevice == nil)
+              .help(OJDLocalized.string("ui.help.startCapture"))
           }
           Button(OJDLocalized.string("action.clear"), action: model.clearCapture)
             .disabled(model.packets.isEmpty && model.observedExtraInputs.isEmpty)
+            .help(OJDLocalized.string("ui.help.clearCapture"))
           Spacer(minLength: 12)
           Button(OJDLocalized.string("action.copyAll"), action: model.copyPacketCapture)
-            .disabled(model.packets.isEmpty)
+            .disabled(model.packets.isEmpty).help(OJDLocalized.string("ui.help.copyCapture"))
           Button(OJDLocalized.string("action.export"), action: model.exportPacketCapture)
-            .disabled(model.packets.isEmpty)
+            .disabled(model.packets.isEmpty).help(OJDLocalized.string("ui.help.exportCapture"))
         }
         if let exportError = model.exportError {
           Text(exportError).foregroundColor(Color(NSColor.systemOrange)).fixedSize(

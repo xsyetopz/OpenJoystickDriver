@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "選擇封包擷取檔案。";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "選擇預期的控制器狀態。";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "顯示錯誤詳細資料";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "關閉錯誤";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "關閉訊息";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver 拒絕了此要求。";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "要求失敗：%@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "顯示錯誤詳細資料";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "關閉錯誤";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "重新讀取取用權限設定";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "重新啟動 App 以套用新權限";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket 連接埠；留空則保留已儲存的連接埠。僅在沒有已儲存的連接埠或選擇了自動時，系統才會選擇連接埠";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "權杖名稱";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "可使用該權杖的網頁來源，每行一個";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "繼續前往確認";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "權杖";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "將權杖拷貝到剪貼簿";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "關閉權杖";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ 範圍";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "取消並維持取用權限不變";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "關於 %@";
@@ -5455,3 +5455,149 @@
 "ui.help.virtualProfile" = "選擇遊戲所見的虛擬遊戲控制器類型";
 /* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
 "ui.help.virtualScope" = "選擇類型適用於單一控制器還是其型號";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "允許此程式使用本機端點";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "撤銷存取權並關閉已開啟的連線";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "要求系統授予此權限";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "讓系統為 WebSocket 選擇閒置連接埠";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "將 socket 路徑拷貝到剪貼簿";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "套用此表單所述的更動";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "允許程式接收控制器事件";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "允許程式驅動虛擬遊戲手把";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "將已儲存的文件轉換為目前版本";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "重新執行失敗的操作";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "為控制器建立設定檔";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "完成設定並進入 App";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "關閉此表單";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "重新讀取服務狀態";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "重新啟動服務的要求監聽器";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "在系統設定中核准驅動程式擴充功能";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "修復驅動程式擴充功能";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "在「存取」區域要求缺少的權限";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "從檔案加入設定檔";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "檢查設定檔而不匯入";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "建立所選設定檔的拷貝";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "將所選設定檔改為另一種控制器型號";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "將所選設定檔儲存為檔案";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "移除所選設定檔";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "檢查紀錄檔案或模組檔案夾而不安裝";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "用封包擷取執行所選紀錄";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "移除所選紀錄或模組";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "在資料庫中尋找紀錄和模組";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "選擇活動的顯示檢視方式";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "選擇顯示哪個日誌串流和多少行";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "在活動日誌中尋找文字";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "將整份日誌拷貝到剪貼簿";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "將活動日誌儲存為檔案";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "在 Finder 中顯示日誌檔案";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "對設定執行診斷檢查";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "顯示控制器狀態和操作";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "重新讀取已連接的控制器";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "選擇要檢查的控制器";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "選擇上限並執行耐久測試";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "依這些上限執行耐久測試";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "重新執行耐久測試";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "停止正在執行的耐久測試";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "選擇列表顯示哪些封包";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "記錄所選控制器的封包";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "停止記錄封包";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "從列表中清除已記錄的封包";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "將所有已記錄的封包拷貝到剪貼簿";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "將已記錄的封包儲存為檔案";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "按下用來暫停和繼續控制器的按鍵";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "移除已儲存的暫停快速鍵";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "控制器連接或需要注意時顯示通知";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "控制器中斷連線時顯示通知";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "設定檔啟用或切換時顯示通知";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "設定檔停用時顯示通知";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "每則通知都播放聲音";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "更改系統顯示此 App 通知的方式";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "立即顯示一則範例通知";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "從系統中移除驅動程式擴充功能";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "選擇 App 顯示多少控制項";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "選擇控制器可閒置多久";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "開啟可用版本的頁面";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "立即尋找較新的版本";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "不時尋找較新的版本";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "檢查更新時包含預先發行版本";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "登入時開啟 App";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "在選單列中顯示 App 狀態項目";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "在 Dock 中顯示 App 圖像";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "顯示控制器輸入和 USB 封包工具";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "將 ojd 指令連結到此 App";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "移除 ojd 指令的連結";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "在 Finder 中顯示無法讀取的設定檔";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "用預設值取代無法讀取的設定";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "隱藏此訊息";
