@@ -517,6 +517,8 @@
     /// Runs `action` when its toolbar item is enabled.
     func perform(_ action: MainWindowToolbarAction) {
       guard isEnabled(action) else { return }
+      // The area's alerts and sheets hang off the area view, which the setup steps replace.
+      navigation.dismissSetupSteps()
       switch action {
       case .newProfile: screens.profiles.beginCreatingProfile()
       case .importProfile: screens.profiles.chooseProfileToImport()

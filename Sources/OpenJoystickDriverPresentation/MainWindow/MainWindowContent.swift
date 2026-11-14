@@ -143,10 +143,6 @@
     /// alert.
     @State
     private var driverApprovalFailed = false
-    /// Whether the setup steps show instead of the selected area.
-    @State
-    private var setupSteps = SetupStepsGate()
-
     /// The problem banner above the selected area, with the alerts of the main window.
     var body: some View {
       VStack(spacing: OJDSpacing.none) {
@@ -154,9 +150,9 @@
           problems: runtime.mainWindowProblems,
           perform: perform
         )
-        if setupSteps.isShown {
+        if navigation.setupSteps.isShown {
           SetupStepsView(steps: openSetupSteps, perform: performSetupStep) {
-            setupSteps.dismiss()
+            navigation.dismissSetupSteps()
           }
         } else {
           area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -165,9 +161,9 @@
             .environment(\.ojdPreferences, preferences)
         }
       }.onChange(of: openSetupSteps) { steps in
-        setupSteps.update(loaded: runtime.loadState == .available, openSteps: steps.count)
+        navigation.updateSetupSteps(loaded: runtime.loadState == .available, openSteps: steps.count)
       }.onChange(of: runtime.loadState) { state in
-        setupSteps.update(loaded: state == .available, openSteps: openSetupSteps.count)
+        navigation.updateSetupSteps(loaded: state == .available, openSteps: openSetupSteps.count)
       }.frame(
         maxWidth: .infinity,
         minHeight: 0,

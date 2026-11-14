@@ -52,6 +52,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - The Controllers header counts the connected controllers that OJD does not serve.
 - A state that needs attention shows an orange triangle and a failure a red octagon, so the two differ by shape as well as color.
 - `ojd controller claim` and `ojd controller release` (and their `--dry-run`) report when they delete the user's patch file for the model.
+- A toolbar or menu action, or a sidebar choice, while **Finish Setting Up** shows hides it and shows the area, so **Delete** and the other area actions open their alert or sheet. Before, they did nothing.
 
 ## [0.6.0-alpha.2] - 2026-11-07
 

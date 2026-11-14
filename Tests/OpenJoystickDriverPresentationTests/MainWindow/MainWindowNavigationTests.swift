@@ -478,6 +478,31 @@ struct MainWindowNavigationTests {
     #expect(navigation.isDiscardConfirmationPresented)
     #expect(transition.isDirty)
   }
+
+  /// The setup steps replace the area, and with it the area's alerts and sheets, so an action
+  /// there must bring the area back or the action shows nothing.
+  @Test
+  @MainActor
+  func areaActionAndAreaChoiceHideSetupSteps() {
+    let navigation = MainWindowNavigationModel(
+      persistence: UserDefaultsMainWindowAreaPersistence(
+        defaults: UserDefaults(suiteName: "MainWindowNavigationTests.\(UUID().uuidString)")!
+      )
+    )
+    navigation.updateSetupSteps(loaded: true, openSteps: 2)
+    #expect(navigation.setupSteps.isShown)
+    navigation.perform(in: navigation.selectedArea) {}
+    #expect(!navigation.setupSteps.isShown)
+
+    let chooser = MainWindowNavigationModel(
+      persistence: UserDefaultsMainWindowAreaPersistence(
+        defaults: UserDefaults(suiteName: "MainWindowNavigationTests.\(UUID().uuidString)")!
+      )
+    )
+    chooser.updateSetupSteps(loaded: true, openSteps: 1)
+    chooser.requestArea(chooser.selectedArea)
+    #expect(!chooser.setupSteps.isShown)
+  }
 }
 
 /// Records the activation calls of `DockIconController` and delivers resigns on demand.

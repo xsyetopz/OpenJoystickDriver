@@ -57,6 +57,9 @@
     /// shows the reason until dismissed.
     @Published
     var isMutationRefusalPresented = false
+    /// Whether the setup steps show instead of the selected area.
+    @Published
+    private(set) var setupSteps = SetupStepsGate()
 
     /// Where the selected area is saved.
     private let persistence: any MainWindowAreaPersistence
@@ -86,6 +89,9 @@
     /// need an answer to the discard question first.
     @discardableResult
     func requestArea(_ area: MainWindowArea) -> Bool {
+      // The setup steps stand in for the area and its alerts and sheets, so an area choice or an
+      // area action hides them; otherwise the action would present into a view that is not there.
+      dismissSetupSteps()
       guard area != selectedArea else { return true }
       guard activeProfilesEditorMutation == nil else { return false }
       guard profilesEditorIsDirty else {
@@ -116,6 +122,14 @@
       pendingAction = action
       return false
     }
+
+    /// Records a load of the setup steps.
+    func updateSetupSteps(loaded: Bool, openSteps: Int) {
+      setupSteps.update(loaded: loaded, openSteps: openSteps)
+    }
+
+    /// Hides the setup steps for the rest of the run.
+    func dismissSetupSteps() { setupSteps.dismiss() }
 
     /// Records whether the Profiles editor holds unsaved changes.
     func setProfilesEditorDirty(_ dirty: Bool) { profilesEditorIsDirty = dirty }
