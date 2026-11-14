@@ -10,7 +10,7 @@ Users of 0.6.0-alpha.2 and the maintainer report six groups of failures and requ
 4. **Schemas.** The 15 schema files hold 308 descriptions that name Swift types, file paths, commands, and runtime behavior, and some documents carry prose-only properties.
 
 5. **The app's interface.** The maintainer reports that the menu bar item has no clear purpose and its options are hard to navigate, that users say dropdowns and other options in the window do nothing, and that the scale of the window is questionable. Source reading backs each: the menu is three levels deep and its status line can read "Needs attention" with no named problem; several controls return without a message, need a separate Apply button that nothing points to, or show a stored value that is not in force; and one profile, one virtual gamepad, and one driver extension each carry several names.
-6. **What users ask for.** Users ask for per-app profiles they can set without typing an identifier, for the mapper features of InputConfig that OJD lacks, for tester builds they can download, and, in #63, for a controller whose bundled record does not fit its dongle and which no patch can fix.
+6. **What users ask for.** On the community chat users ask for a button that walks them through each control and builds the report, a way to recalibrate a device whose inputs read wrong (a Galaxy S23 as a gyro gamepad), and a mark for community-verified controllers. Users ask for per-app profiles they can set without typing an identifier, for the mapper features of InputConfig that OJD lacks, for tester builds they can download, and, in #63, for a controller whose bundled record does not fit its dongle and which no patch can fix.
 
 A further input is the proposal `controller-schema-migration-proposal.md`: property lists for storage and JavaScriptCore for generator scripts. `design.md` records the checks run on it. Both hold up on the repository's real data, so this change adopts both.
 
@@ -45,6 +45,9 @@ One rule orders all of it: a controller works when it is plugged in; in the rare
 - **One term for one concept**, defined in a glossary and enforced on the English strings: "profile" only for remapping, virtual gamepad kinds named by what reads them, one name for the driver extension.
 - **BREAKING**: a profile's `applicationScope` holds `appIDs`, a list, so one profile serves several apps. The user picks apps from a list of running and installed apps.
 - **Mapper features users ask for**: a live controller view drawn from the record, a calibration view, profile templates that fit any controller, profile conversion between models, a pause shortcut, idle disconnect, more system actions, and in-app help.
+- **A guided check builds the report.** Input Test and `ojd controller check` ask for each control in turn and end in one report the user saves, copies, or opens as a prefilled issue (D29).
+- **Community-verified controllers, as CPU-Z and GPU-Z validate hardware.** A check in which every control responds offers Validate: OJD shows the text and destination, the user submits the issue, and its number is the validation ID. A record mode with an accepted validation shows "Community verified". Lookup opens the controller's entry. The app ships a privacy manifest (D30).
+- **Recalibrate** captures stick centres and ranges, trigger ends, and the gyro offset, and stores them as tuning (D31).
 - Tester builds are public pre-releases, linked from the issue they answer.
 - The interface is measured before it changes: an audit lists each view against its Human Interface Guidelines page and an Apple app on the maintainer's Mac.
 
@@ -70,6 +73,7 @@ One rule orders all of it: a controller works when it is plugged in; in the rare
 - `mapper-features`: the live controller view, calibration, templates, profile conversion, the pause shortcut, idle disconnect, system actions, and the changes shown after an update.
 - `status-reporting`: when Input Test reports activity, the sentence and next step for each reason a controller is not served, the processes that hold a controller, and the content of a document refusal.
 - `release-distribution`: public tester builds and how the update check finds them.
+- `hardware-validation`: consent-first validation of a controller, the data it holds, the community-verified status of a record mode, Lookup, and the privacy manifest.
 
 ### Modified Capabilities
 

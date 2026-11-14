@@ -590,6 +590,29 @@ During the 2C procedure a rumble probe on `2DC8:301C` got `kIOReturnExclusiveAcc
 
 Choice: the service reads each `IOUserClient` child of the controller's HID device and USB interfaces, parses `IOUserClientCreator` (`pid <n>, <name>`) with the parser `HIDInputReportQueue.swift:74-97` already has, and adds the list and OJD's exclusive flag to the device description the RPC sends. The CLI and the app render that one payload, so they cannot disagree. The list is read when a client asks, not watched. Reading the registry needs no permission and sends nothing to the device. The controller detail puts Suspend or Resume beside the holders; the menu commands stay.
 
+### D29. A guided check asks for each control in turn and builds the report
+
+Users on the community chat ask for a button that walks them through every button and builds the report for them, instead of a free-text bug form. The live view of 16.1 already draws every control a record or HID descriptor declares, and `SupportReport` (`SupportReport.swift:22`) already builds the system, permission, and controller facts with a `Privacy` section.
+
+Choice: Input Test gets a Guided Check button, and `ojd controller check <controller>` runs the same steps in the terminal. Each step names one control from the live view's model and waits for that control to leave its rest value; the result per control is `responded`, `otherControl` (a different control moved, named), or `skipped`. A stick or trigger step also stores the range it saw. The run ends in one `ControllerCheck` document: the `SupportReport` controller facts plus the per-control results. The user then saves it, copies it, or opens a GitHub issue. The issue opens through the `controller-support.yml` form with its short fields filled from URL query parameters keyed by field `id`, which GitHub supports, and which fail with `414 URI Too Long` when the URL is too long (GitHub Docs, "Creating an issue from a URL query"). So the full document never rides in the URL: OJD saves it as a file and reveals it, and the form asks the user to attach it. OJD sends nothing over the network.
+
+### D30. A controller is community-verified by a public validation, as CPU-Z and GPU-Z validate hardware
+
+CPU-Z's Validate button submits a hardware dump and returns a permanent public validation ID and page; the record cannot change, and a hardware change needs a new validation. GPU-Z's Validation submits with optional name and e-mail and returns a validation ID, and its Lookup button opens the closest database entry. OJD keeps both parts and changes the transport to fit App Review:
+
+- Guideline 5.1.1(ii) needs consent even for anonymous data and a way to withdraw it; 5.1.1(iii) asks for the least data the purpose needs; 5.1.2(i) needs explicit permission before data leaves, with where it goes. OJD has no server. So Validate builds the `ControllerCheck` of D29, shows its full text and the destination (`github.com/xsyetopz/OpenJoystickDriver`) before anything leaves the Mac, and opens a prefilled `controller-validation.yml` issue in the user's browser. The user submits it under their own GitHub account and can delete it later, which is the withdrawal. The issue number is the validation ID, and its URL is the validation page.
+- Least data: VID:PID, mode `id`, connection, record source (bundled, patch, user), app version, macOS version, and the per-control results. No serial number, unit ID, Bluetooth address, user name, or path.
+- Only a check in which every declared control `responded` offers Validate; any other result offers Report a Problem with the same document.
+- A maintainer accepts a validation by adding it to the record's `validations` list: issue number, mode `id`, app version, and date. A record mode with at least one validation shows "Community verified" in the supported-controllers list, the controller detail, and `ojd record show`; a mode with none shows the existing capture-backed status. Validations are never edited; a new firmware or mode gets a new validation.
+- Lookup opens the controller's entry in `wiki/Supported-Controllers.md`, or, for a model with no record, a GitHub search for its VID:PID.
+- A privacy manifest `PrivacyInfo.xcprivacy` ships in the app with `NSPrivacyTracking` false and one `NSPrivacyCollectedDataTypes` entry: `NSPrivacyCollectedDataTypeOtherDiagnosticData`, linked `true` (the issue sits under the user's GitHub account), tracking `false`, purpose `NSPrivacyCollectedDataTypePurposeAppFunctionality`. The keys come from TN3184; the values come from Xcode's `DVTCorePlistStructDefs` list, since the documentation pages do not list them.
+
+### D31. Recalibration resets a controller's stored centres, ranges, and gyro offset, then captures them again
+
+A Samsung Galaxy S23 acting as a gyro gamepad shows wrong values in Input Test. `ojd controller calibrate` and Input Test's motion section cover only the gyro offset (`ControllerRemappingCommands.swift`, `InputTestView+Body.swift:102`), and the calibration view of 16.2 sets a dead zone by hand. A device whose sticks rest off centre or whose axes do not reach their ends has no way back to correct values.
+
+Choice: Recalibrate, in Input Test and as `ojd controller calibrate <controller> sticks`, runs three timed steps: leave every control at rest (stick centres, trigger rest, gyro offset), move each stick around its full circle, and press each trigger fully. It stores the centres and ranges as tuning for that controller beside the dead zone and applies them before profile mapping. Reset clears them. A step that sees no change keeps the stored value and says which control did not move.
+
 ### Release order
 
 Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13, 15, and 16 add features, and each can leave this release without changing another group. Within group 16 each task stands alone. The maintainer decides which stay (Open Questions).

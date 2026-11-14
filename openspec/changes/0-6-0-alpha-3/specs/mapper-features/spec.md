@@ -23,6 +23,25 @@ OJD SHALL show, for each stick and trigger, the raw value, the value after tunin
 - **WHEN** the user sets a stick's dead zone in the view
 - **THEN** the drawn dead zone and the value after tuning follow it, and `ojd controller show` reports the same value
 
+### Requirement: A Controller Can Be Recalibrated
+
+OJD SHALL offer Recalibrate in Input Test and through `ojd controller calibrate`, which captures each stick's centre and range, each trigger's rest and full press, and the gyro offset in timed steps, and MUST store them as tuning for that controller and apply them before profile mapping.
+
+#### Scenario: Stick rests off centre
+
+- **WHEN** a stick reports 0.2 on X at rest and the user runs Recalibrate
+- **THEN** Input Test and `ojd controller watch` show that stick at 0 at rest afterwards
+
+#### Scenario: Control does not move during a step
+
+- **WHEN** the user leaves a trigger untouched during the trigger step
+- **THEN** OJD keeps that trigger's stored values and names the trigger as not moved
+
+#### Scenario: Reset
+
+- **WHEN** the user resets the calibration
+- **THEN** OJD removes the stored centres, ranges, and gyro offset, and shows the raw values again
+
 ### Requirement: A Profile Template Fits Any Controller
 
 OJD SHALL offer profile templates that bind controls by their standard names, so one template makes a profile for any served controller. A template MUST skip a binding whose control the controller lacks and MUST list each one it skipped.

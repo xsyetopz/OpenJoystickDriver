@@ -50,6 +50,25 @@ OJD SHALL list, for each connected controller, every process that has the contro
 - **WHEN** the user suspends a controller from either surface
 - **THEN** both surfaces stop listing OJD as an exclusive holder and offer Resume
 
+### Requirement: A Guided Check Builds the Controller Report
+
+OJD SHALL offer a Guided Check in Input Test and as `ojd controller check`, which asks for each control the controller declares in turn, records whether it responded, another control moved, or the user skipped it, and MUST end in one report that the user saves, copies, or opens as a prefilled GitHub issue, with nothing sent by OJD.
+
+#### Scenario: Every control responds
+
+- **WHEN** the user presses or moves each control as asked
+- **THEN** the report lists each control as responded
+
+#### Scenario: Wrong control moves
+
+- **WHEN** the step asks for A and the controller reports B
+- **THEN** the report lists A with B named as the control that moved
+
+#### Scenario: Open as an issue
+
+- **WHEN** the user chooses to open the report as an issue
+- **THEN** OJD saves the report as a file, reveals it, and opens the issue form in the browser with the short fields filled, and the URL holds no report body
+
 ### Requirement: A Document Refusal Names the Key Path, the Rule, and the Fix
 
 OJD SHALL report each refusal of a record, patch, or package with the file, the key path, the rule the value breaks, and what to change, in the user's language. Each distinct rule MUST have its own message.
