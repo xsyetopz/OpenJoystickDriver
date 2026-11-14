@@ -23,10 +23,17 @@ final class LayeredInputDriver: PhysicalProtocolDriver {
   var sessionPlan: DriverSessionPlan { family.sessionPlan }
 
   func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
-    let event = try family.parse(report: data, receivedAt: receivedAt)
+    let selected = layers.layouts.indexOfLayout(selecting: [UInt8](data))
+    let event: ControllerEvent?
+    do {
+      event = try family.parse(report: data, receivedAt: receivedAt)
+    } catch {
+      // A report of the device's own shape is no frame of the family; its layout decodes it.
+      guard selected != nil else { throw error }
+      event = nil
+    }
     if let event { lastState = event.state }
-    guard let index = layers.layouts.indexOfLayout(selecting: [UInt8](data)),
-      let layered = layers.parse(report: data, receivedAt: receivedAt)
+    guard let index = selected, let layered = layers.parse(report: data, receivedAt: receivedAt)
     else { return event }
     let layout = layers.layouts.layouts[index]
     var state = lastState
@@ -57,7 +64,9 @@ final class LayeredInputDriver: PhysicalProtocolDriver {
   }
 
   func parse(elementValue: HIDElementValue, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
-    family.parse(elementValue: elementValue, receivedAt: receivedAt)
+    let event = family.parse(elementValue: elementValue, receivedAt: receivedAt)
+    if let event { lastState = event.state }
+    return event
   }
   var latestInputReportFormat: String? { family.latestInputReportFormat }
   var power: ControllerConnectionState.Power? { family.power }

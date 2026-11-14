@@ -3865,8 +3865,6 @@
 "error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: Die interfaceSignature eines HID-Modus hat keine endpoints, weil nur der Raw-USB-Scanner einen Endpunktsatz liest. Lösung: Entferne endpoints aus der interfaceSignature.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
 "error.E5007.modes.inputLayoutNeeded" = "%1$@, input: Ein HIDReportLayout-Modus braucht die Eingabelayouts des Eintrags. Lösung: Füge input mit den Layouts hinzu oder verwende ein anderes Protokoll.";
-/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
-"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: Ein HIDDescriptor-Modus liest eine Usage-Map, keine Eingabelayouts. Lösung: Ersetze die Eingabelayouts durch eine Usage-Map.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
 "error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: Eine HID-Usage-Map gilt nur, wenn der Treiber jedes Modus eine liest. Lösung: Entferne die Usage-Map oder verwende nur Treiber, die eine lesen.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */

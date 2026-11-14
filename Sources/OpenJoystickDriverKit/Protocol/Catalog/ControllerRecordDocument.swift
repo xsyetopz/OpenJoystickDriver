@@ -40,7 +40,7 @@ struct ControllerRecordDocument: Decodable {
   let route: ControllerRecordRoute?
   /// Whether Apple's own driver extension holds the controller's USB interface.
   let heldByAppleDriver: Bool
-  /// Present exactly for the `HIDReportLayout` family.
+  /// Present for a `HIDReportLayout` record and for any record that holds `input.layouts`.
   let inputLayouts: ControllerInputLayouts?
   /// Present only for the `HIDDescriptor` family, which then replaces the description's map.
   let hidUsageMap: HIDUsageMap?

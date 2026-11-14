@@ -180,8 +180,8 @@ public final class ProtocolDriverRegistry: Sendable {
   /// Not a runtime path: profile capabilities and record rendering have no device, and
   /// ``makeDriver(for:model:claimed:)`` calls it only after validation.
   ///
-  /// A record's input layouts of a family that decodes with its own driver are layered over that
-  /// driver (``LayeredInputDriver``).
+  /// A record's input layouts of every family but `HIDReportLayout`, whose driver is the layout
+  /// itself, are layered over the family's driver (``LayeredInputDriver``).
   static func makeUnobservedDriver(
     protocolID: PhysicalProtocolID,
     variant: PhysicalProtocolVariantID?,
@@ -201,7 +201,7 @@ public final class ProtocolDriverRegistry: Sendable {
       reportDescriptor: reportDescriptor
     )
     guard case .success(let driver) = family, let layouts = record.inputLayouts,
-      protocolID != .hidReportLayout, protocolID != .hidDescriptor
+      protocolID != .hidReportLayout
     else { return family }
     return .success(LayeredInputDriver(family: driver, layouts: layouts))
   }
