@@ -187,7 +187,7 @@ The detail also has (needs the **All Controls** interface) **Export mapping**, w
 The **Advanced** section (needs the **All Controls** interface) holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
 **Draft Record...**, **Draft Record from SDL...**, and **Capture Packets...** also need **Enable Developer Tools**.
 The **Stick deadzone** stepper, the calibration readouts of each stick and trigger, **Recalibrate**, and the **Tuning** group also need the **All Controls** interface.
-**Recalibrate** has **Measure rest**, **Measure circle**, **Measure triggers**, and **Reset**, as in the Input Test window; see [Testing a controller](Testing-a-Controller.md#recalibrate).
+**Recalibrate** has **Measure Rest**, **Measure Circle**, **Measure Triggers**, and **Reset**, as in the Input Test window; see [Testing a controller](Testing-a-Controller.md#recalibrate).
 **USB VID/PID** is the vendor and product ID.
 For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
