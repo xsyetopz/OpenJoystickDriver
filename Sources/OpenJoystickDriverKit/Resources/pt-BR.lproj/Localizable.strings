@@ -1374,7 +1374,7 @@
 "platform.macos.cli.controller.show.servedByMacOS" = "Gerenciado pelo macOS. Execute `ojd controller claim %@` para ativar a extensão e assumir o controle.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "Gerenciado pelo macOS";
-/* Gray segment in a records list row for a controller that the Apple-signed USB extension claims. Apple is the company that signs the extension. */
+/* Gray segment in a records list row for a controller that the Apple-signed Xbox USB driver claims. Apple is the company that signs the extension. */
 "platform.macos.ui.library.record.appleSigned" = "Assinado pela Apple";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "Reivindicar";
@@ -3183,14 +3183,14 @@
 "error.E2039.message" = "O arquivo de áudio não é compatível. Use um arquivo WAV PCM sem compactação e tente de novo.";
 /* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
 "error.E2040.message" = "A extensão do controle não respondeu à configuração. Reconecte a extensão e tente de novo.";
-/* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
-"platform.macos.cli.record.group.usbNotClaimed" = "A família usa USB bruto, e a extensão USB não consegue assumir este controle, porque a lista de produtos dela é assinada pela Apple. O OJD só o alcança por acesso USB direto, quando o macOS permite.";
+/* Note about a controller record whose raw USB family the Xbox USB driver cannot claim because Apple signs its product list. OJD is the short product name. */
+"platform.macos.cli.record.group.usbNotClaimed" = "A família usa USB bruto, e o driver USB Xbox não consegue assumir este controle, porque a lista de produtos dela é assinada pela Apple. O OJD só o alcança por acesso USB direto, quando o macOS permite.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
 "cli.record.group.usbOnlySwitch2" = "Somente USB: adicione bluetoothLE.vibrationCharacteristic a este registro do Switch 2 para conectar o controle por Bluetooth LE.";
 /* One-line summary of 'ojd record validate' in the command list and at the top of its help. */
 "cli.record.validate.abstract" = "Verificar um registro de controle sem instalá-lo.";
-/* Long description in the help of 'ojd record validate'. It lists what the check covers and says that the exit status is 1 for an invalid record. The USB extension is the driver extension that gives raw USB access; the exit status 1 stays as written. */
-"cli.record.validate.discussion" = "Verifica a estrutura do registro, seus campos entre si e sua compatibilidade com o catálogo incluído, e informa se o controle precisa da extensão USB. Termina com código 1 quando o registro é inválido.";
+/* Long description in the help of 'ojd record validate'. It lists what the check covers and says that the exit status is 1 for an invalid record. The Xbox USB driver gives raw USB access; the exit status 1 stays as written. */
+"cli.record.validate.discussion" = "Verifica a estrutura do registro, seus campos entre si e sua compatibilidade com o catálogo incluído, e informa se o controle precisa do driver USB Xbox. Termina com código 1 quando o registro é inválido.";
 /* Message printed by 'ojd record validate' for a correct record. %1$@ is the file path, %2$@ is the operation in kebab case such as install, %3$@ is the controller model and %4$@ is the protocol family. The command in quotes stays as written. */
 "cli.record.validate.valid" = "%1$@ é um registro %2$@ válido para %3$@ (%4$@). Instale-o com “ojd record install”.";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
@@ -4203,11 +4203,11 @@
 "ui.library.mod.removed" = "O mod %@ foi removido.";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
 "ui.library.record.patchedBy" = "Modificado por %@";
-/* Label of the field in the record detail that tells whether the USB extension claims the controller. */
-"ui.library.field.usbClaim" = "Extensão USB";
-/* Value of the USB extension field: the extension claims the controller. */
+/* Label of the field in the record detail that tells whether the Xbox USB driver claims the controller. */
+"ui.library.field.usbClaim" = "Driver USB Xbox";
+/* Value of the Xbox USB driver field: the driver claims the controller. */
 "ui.library.claim.claimed" = "Assume este controle";
-/* Value of the USB extension field: the extension does not claim the controller. */
+/* Value of the Xbox USB driver field: the driver does not claim the controller. */
 "ui.library.claim.unclaimed" = "Não assume este controle";
 /* Placeholder of the search field in the toolbar of the Library area. */
 "ui.library.search" = "Buscar";
@@ -4921,8 +4921,8 @@
 "ui.controllers.physicalOwnership.exclusiveHID" = "HID exclusivo";
 /* Value of the owner of the physical controller: the app holds it exclusively over raw USB. */
 "ui.controllers.physicalOwnership.exclusiveRawUSB" = "USB bruto exclusivo";
-/* Value of the owner of the physical controller: the driver extension holds it over USB. */
-"ui.controllers.physicalOwnership.extensionOwnedUSB" = "Extensão USB";
+/* Value of the owner of the physical controller: the Xbox USB driver holds it over USB. */
+"ui.controllers.physicalOwnership.extensionOwnedUSB" = "Driver USB Xbox";
 /* Value of the owner of the physical controller: macOS holds it as an HID device that the app can also see. */
 "ui.controllers.physicalOwnership.systemHIDVisible" = "HID do sistema";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */

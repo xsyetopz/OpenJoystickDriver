@@ -66,7 +66,7 @@ The developer tools show the controller details, including its USB ID, connectio
 
 ## Xbox USB Driver
 
-The Xbox USB driver, `com.openjoystickdriver.XboxUSBDevice`, is a DriverKit driver that OJD installs. It is embedded in the app and owns the USB interfaces of genuine Xbox One and Xbox Series controllers. It only reads Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
+The Xbox USB driver, `com.openjoystickdriver.XboxUSBDevice`, is a driver that OJD installs. It is embedded in the app and owns the USB interfaces of genuine Xbox One and Xbox Series controllers. It only reads Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
 
 - `045E:02D1`
 - `045E:02DD`

@@ -101,6 +101,81 @@ class TranslationTests(unittest.TestCase):
         )
 
 
+class WikiTests(unittest.TestCase):
+    terms: ClassVar[dict[str, list[str]]] = {
+        "virtual gamepad": ["persona"],
+        "virtual gamepad kind": [],
+    }
+
+    def test_the_first_use_of_a_term_must_link_to_the_glossary(self) -> None:
+        pages = {
+            "A.md": guard.wiki_prose(
+                "A virtual gamepad reads. [virtual gamepad](Glossary.md#terms)"
+            ),
+            "B.md": guard.wiki_prose(
+                "A [virtual gamepad](Glossary.md#terms) reads. A virtual gamepad."
+            ),
+            "C.md": guard.wiki_prose(
+                "The [virtual gamepad kind](Glossary.md#terms) is `a virtual gamepad`."
+            ),
+        }
+        self.assertEqual(
+            guard.wiki_first_use_problems(pages, list(self.terms)),
+            ["A.md: first use of 'virtual gamepad' does not link to Glossary.md#terms"],
+        )
+
+    def test_a_replaced_word_in_prose_fails_but_not_in_code(self) -> None:
+        pages = {
+            "A.md": guard.wiki_prose(
+                "The persona. The `persona` key.\n```\npersona\n```"
+            )
+        }
+        self.assertEqual(
+            guard.wiki_replaced_word_problems(pages, self.terms, {}),
+            ["A.md: 'persona' replaced by 'virtual gamepad'"],
+        )
+        self.assertEqual(
+            guard.wiki_replaced_word_problems(
+                pages, self.terms, {("A.md", "persona"): "x"}
+            ),
+            [],
+        )
+
+    def test_a_kept_wiki_word_that_the_page_lost_fails(self) -> None:
+        self.assertEqual(
+            guard.wiki_replaced_word_problems(
+                {"A.md": "Fine."}, self.terms, {("A.md", "persona"): "x"}
+            ),
+            ["kept wiki word ('A.md', 'persona') is not in the page"],
+        )
+
+    def test_the_repository_wiki_names_each_term_once_and_links_it(self) -> None:
+        pages = guard.wiki_pages(guard.ROOT)
+        terms = guard.glossary_terms((guard.ROOT / guard.GLOSSARY).read_text("utf-8"))
+        self.assertEqual(guard.wiki_first_use_problems(pages, list(terms)), [])
+        self.assertEqual(
+            guard.wiki_replaced_word_problems(pages, terms, guard.WIKI_KEPT), []
+        )
+
+
+class TermStringTests(unittest.TestCase):
+    def test_the_repository_strings_name_the_terms_as_the_glossary_does(self) -> None:
+        self.assertEqual(guard.term_string_problems(guard.ROOT), [])
+
+    def test_the_kind_control_holds_no_profile_persona_or_identifier(self) -> None:
+        keys = guard.strings_entries(
+            (guard.ROOT / guard.CATALOG_DIRECTORY / "Localizable.strings").read_text(
+                "utf-8"
+            )
+        )
+        kind = {e.key: e.value for e in keys if guard.KIND_KEYS.match(e.key)}
+        self.assertEqual(len(kind), 4)
+        self.assertEqual(kind["ui.virtualProfile.title"], "Virtual gamepad kind")
+        self.assertFalse(set(kind.values()) & set(guard.KIND_IDENTIFIERS))
+        for value in kind.values():
+            self.assertNotRegex(value.lower(), r"\b(profile|persona)\b")
+
+
 class ScanTests(unittest.TestCase):
     def test_names_the_bundle_of_a_second_translation(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

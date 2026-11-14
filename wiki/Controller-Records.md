@@ -70,7 +70,7 @@ A patch has two parts. `remove` is a list of dotted key paths, such as `input.hi
 
 Several patches can apply to one model. The layers apply from the weakest to the strongest: the bundled record, a bundled patch, a patch from an installed [mod package](Writing-Controller-Mods.md), then your patch. Inside one layer, a patch whose `selector` is `all` set to `true` applies first, a patch whose `selector` has `vendorID` and `productID` next, and a patch whose `selector` has `model` (a string such as `045E-028E`) last. A `Controller` file of yours replaces a package's `Controller` file for the same model. A `ControllerPatch` of yours applies over the package record instead of replacing it. If you remove the package later, OJD lists your patch as a problem and skips it.
 
-A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
+A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [Xbox USB driver](Glossary.md#terms) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
 
 ## Choose Who Drives the Controller
 

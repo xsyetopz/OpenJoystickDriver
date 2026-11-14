@@ -80,4 +80,35 @@ struct ReceiverReenumerationTests {
   func differentSerial(order: Order, oldNative: Bool) async throws {
     try await replay(order: order, oldSerial: "A1", newSerial: nil, oldNative: oldNative)
   }
+
+  @Test(arguments: Order.allCases, [false, true])
+  func linkedAfterIdleStartsServing(order: Order, sameSerial: Bool) async throws {
+    let manager = DeviceManager(
+      dispatcher: LoggingOutputDispatcher(),
+      installationKey: testPortKeyInstallationKey,
+      hidManager: HIDManager(backend: ClaimRecordingHIDAccessBackend())
+    )
+    let idle = Self.dongle(product: "IDLE", serial: "A1", native: false)
+    let linked = Self.dongle(
+      product: "8BitDo Ultimate 2C Wireless Controller",
+      serial: sameSerial ? "A1" : nil,
+      native: false
+    )
+    await manager.handleHIDEvent(.connected(connection: idle, ownership: .exclusive))
+    try #require(await manager.connectedDeviceDescriptions().isEmpty)
+    try #require(await manager.unboundDeviceDescriptions().first?.reason == .noControllerLinked)
+
+    switch order {
+    case .removedThenAdded:
+      await manager.handleHIDEvent(.disconnected(connection: idle))
+      await manager.handleHIDEvent(.connected(connection: linked, ownership: .exclusive))
+    case .addedThenRemoved:
+      await manager.handleHIDEvent(.connected(connection: linked, ownership: .exclusive))
+      await manager.handleHIDEvent(.disconnected(connection: idle))
+    }
+
+    #expect(await manager.connectedDeviceDescriptions().count == 1)
+    #expect(await manager.unboundDeviceDescriptions().isEmpty)
+    await manager.stop()
+  }
 }

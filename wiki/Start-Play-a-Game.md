@@ -15,7 +15,7 @@ To check from Terminal, run `ojd status` and `ojd controller list`. The [command
 
 ## If the game shows no input
 
-- Games made with SDL, and Steam, read the virtual gamepad kind that OJD chooses for you. Do nothing.
+- Games made with SDL, and Steam, read the [virtual gamepad kind](Glossary.md#terms) that OJD chooses for you. Do nothing.
 - A game that uses Apple's GameController framework, such as Safari, needs another virtual gamepad kind. Run `ojd virtual set game-controller-compatible CONTROLLER`, where `CONTROLLER` is an ID from `ojd controller list`. Run `ojd virtual reset CONTROLLER` to go back to the automatic choice.
 - Some games read neither. [Playing games](Playing-Games.md#game-and-app-compatibility) lists what testers found.
 

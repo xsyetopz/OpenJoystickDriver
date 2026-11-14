@@ -21,7 +21,7 @@ Apple notarized the release app, and the maintainer signed it. Tester builds use
 
 ### Xbox USB driver
 
-The [Xbox USB driver](Glossary.md#terms), `com.openjoystickdriver.XboxUSBDevice`, is a DriverKit driver. It runs in user space, not in the kernel. macOS asks for your approval before it starts. OJD uses it only for Xbox One and Xbox Series controllers on USB. The [virtual gamepad](Glossary.md#terms) comes from the app, not from the driver. For more information, see [Xbox USB driver](Connecting-Controllers.md).
+The [Xbox USB driver](Glossary.md#terms), `com.openjoystickdriver.XboxUSBDevice`, is a driver. It runs in user space, not in the kernel. macOS asks for your approval before it starts. OJD uses it only for Xbox One and Xbox Series controllers on USB. The [virtual gamepad](Glossary.md#terms) comes from the app, not from the driver. For more information, see [Xbox USB driver](Connecting-Controllers.md).
 
 ### Data On Your Mac
 

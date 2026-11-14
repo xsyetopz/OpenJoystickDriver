@@ -1,6 +1,6 @@
 # Writing controller mods
 
-The product list of the [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver) is signed by Apple, and a mod package cannot add a controller to it.
+The product list of the [Xbox USB driver](Glossary.md#terms) is signed by Apple, and a mod package cannot add a controller to it.
 
 ## Contents
 

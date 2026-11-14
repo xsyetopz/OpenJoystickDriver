@@ -134,6 +134,22 @@ struct GenerateCommandTests {
   }
 
   @Test
+  func hexadecimalVendorIDIsWrittenAsTheInteger11720() async throws {
+    let record = Self.record(1).replacingOccurrences(of: "0xFFF1", with: "0x2DC8")
+    let path = try script("function generate() { return \(record); }")
+
+    let result = await run([path, "--output", out])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(files() == ["2dc8-0001.plist"])
+    let text = try String(
+      contentsOf: folder.appendingPathComponent("out/2dc8-0001.plist"),
+      encoding: .utf8
+    )
+    #expect(text.contains("<key>vendorID</key>\n\t<integer>11720</integer>"), "\(text)")
+  }
+
+  @Test
   func listOfRecordsWritesOneFileEach() async throws {
     let record = Self.record(0).replacingOccurrences(of: "productID: 0", with: "productID: id")
     let path = try script(
