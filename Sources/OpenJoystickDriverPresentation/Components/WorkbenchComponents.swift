@@ -67,14 +67,16 @@
     }
   }
 
-  /// A borderless button that shows a symbol, with a label for its tooltip and VoiceOver.
+  /// A borderless button that shows a symbol, with a label for VoiceOver and a tooltip.
   struct OJDCompactSymbolButton: View {
     /// The name of the SF Symbol.
     let symbolName: String
     /// The name of a second SF Symbol to try when `symbolName` does not exist.
     let fallbackSymbolName: String?
-    /// The tooltip and VoiceOver label.
+    /// The VoiceOver label.
     let label: String
+    /// The tooltip, which says what the button does.
+    let help: String
     /// Runs when the user presses the button.
     let action: () -> Void
 
@@ -83,11 +85,13 @@
       symbolName: String,
       fallbackSymbolName: String? = nil,
       label: String,
+      help: String,
       action: @escaping () -> Void
     ) {
       self.symbolName = symbolName
       self.fallbackSymbolName = fallbackSymbolName
       self.label = label
+      self.help = help
       self.action = action
     }
 
@@ -96,7 +100,7 @@
       Button(action: action) {
         OJDSystemSymbol(name: symbolName, fallback: label, fallbackSymbolName: fallbackSymbolName)
           .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
-      }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(label).help(label)
+      }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(label).help(help)
     }
   }
 

@@ -69,19 +69,23 @@
           Text(OJDLocalized.string("ui.mapping.touchSurfaceRight")).tag(
             RemappingTouchSurface.right
           ).disabled(!canSelect(.right))
-        }.pickerStyle(SegmentedPickerStyle())
+        }.help(OJDLocalized.string("ui.profiles.touch.surfaceHelp")).pickerStyle(
+          SegmentedPickerStyle()
+        )
         ScrollView { ProfileTouchFields(draft: selectedDraft).padding(.trailing, 8) }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
         HStack {
           Button(OJDLocalized.string("action.reset")) {
             resetSelected()
             errorMessage = nil
-          }
+          }.help(OJDLocalized.string("ui.help.reset"))
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
-          Button(OJDLocalized.string("action.save")) { save() }
+          }.help(OJDLocalized.string("ui.help.cancel"))
+          Button(OJDLocalized.string("action.save")) { save() }.help(
+            OJDLocalized.string("ui.help.save")
+          )
         }
       }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(

@@ -22,9 +22,10 @@
               ForEach(PhysicalRumbleMotor.allCases, id: \.self) {
                 Text(RuntimePresentation.upperCamelWords($0.rawValue)).tag($0)
               }
-            }
+            }.help(OJDLocalized.string("ui.profiles.physical.motorHelp"))
             unitSlider(
               OJDLocalized.string("ui.profiles.physical.intensity"),
+              help: OJDLocalized.string("ui.profiles.physical.intensityHelp"),
               value: rumbleIntensity(motor, intensity: intensity)
             )
           case .playerIndicator(let indicator):
@@ -39,23 +40,27 @@
                     : String($0.rawValue)
                 ).tag($0)
               }
-            }
+            }.help(OJDLocalized.string("ui.profiles.physical.playerHelp"))
           case .color(let color):
             colorSlider(
               OJDLocalized.string("ui.profiles.physical.red"),
+              help: OJDLocalized.string("ui.profiles.physical.redHelp"),
               value: colorComponent(color, component: 0)
             )
             colorSlider(
               OJDLocalized.string("ui.profiles.physical.green"),
+              help: OJDLocalized.string("ui.profiles.physical.greenHelp"),
               value: colorComponent(color, component: 1)
             )
             colorSlider(
               OJDLocalized.string("ui.profiles.physical.blue"),
+              help: OJDLocalized.string("ui.profiles.physical.blueHelp"),
               value: colorComponent(color, component: 2)
             )
           case .brightness(let intensity):
             unitSlider(
               OJDLocalized.string("ui.profiles.physical.brightness"),
+              help: OJDLocalized.string("ui.profiles.physical.brightnessHelp"),
               value: brightness(intensity)
             )
           case .adaptiveTrigger(let trigger, let effect):
@@ -66,7 +71,7 @@
               ForEach(PhysicalAdaptiveTrigger.allCases, id: \.self) {
                 Text(RuntimePresentation.humanized($0.rawValue)).tag($0)
               }
-            }
+            }.help(OJDLocalized.string("ui.profiles.physical.triggerHelp"))
             Picker(
               OJDLocalized.string("ui.profiles.physical.effect"),
               selection: adaptiveKind(trigger, effect: effect)
@@ -74,16 +79,18 @@
               ForEach(PhysicalAdaptiveTriggerEffectKind.allCases, id: \.self) {
                 Text(RuntimePresentation.humanized($0.rawValue)).tag($0)
               }
-            }
+            }.help(OJDLocalized.string("ui.profiles.physical.effectHelp"))
             if effect.kind == .resistance {
               unitSlider(
                 OJDLocalized.string(
                   "ui.profiles.physical.startPosition"
                 ),
+                help: OJDLocalized.string("ui.profiles.physical.startPositionHelp"),
                 value: adaptiveStart(trigger, effect: effect)
               )
               unitSlider(
                 OJDLocalized.string("ui.profiles.physical.strength"),
+                help: OJDLocalized.string("ui.profiles.physical.strengthHelp"),
                 value: adaptiveStrength(trigger, effect: effect)
               )
             }
@@ -91,6 +98,7 @@
         }.padding(.leading, 8)
       } else if let field = valueField {
         TextField(field.title, text: field.text).ojdAccessibilityLabel(field.title)
+          .help(field.help)
           .padding(.leading, 8)
       } else if case .speak(let text, let voice) = destination {
         VStack(alignment: .leading, spacing: OJDSpacing.small) {
@@ -106,6 +114,7 @@
               }
             )
           ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.text"))
+            .help(OJDLocalized.string("ui.profiles.speak.textHelp"))
           TextField(
             OJDLocalized.string("ui.profiles.speak.voice"),
             text: Binding(
@@ -114,32 +123,37 @@
             ),
             prompt: Text(OJDLocalized.string("ui.profiles.speak.voicePlaceholder"))
           ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.voice"))
+            .help(OJDLocalized.string("ui.profiles.speak.voiceHelp"))
         }.padding(.leading, 8)
       }
     }
 
     /// The title and text of the one value that an open application, open URL, run Shortcut or type
     /// text destination holds; `nil` for any other destination.
-    private var valueField: (title: String, text: Binding<String>)? {
+    private var valueField: (title: String, help: String, text: Binding<String>)? {
       switch destination {
       case .openApplication(let value):
         (
           OJDLocalized.string("ui.profiles.system.application"),
+          OJDLocalized.string("ui.profiles.system.applicationHelp"),
           Binding(get: { value }, set: { destination = .openApplication(bundleIdentifier: $0) })
         )
       case .openURL(let value):
         (
           OJDLocalized.string("ui.profiles.system.url"),
+          OJDLocalized.string("ui.profiles.system.urlHelp"),
           Binding(get: { value }, set: { destination = .openURL($0) })
         )
       case .runShortcut(let value):
         (
           OJDLocalized.string("ui.profiles.system.shortcut"),
+          OJDLocalized.string("ui.profiles.system.shortcutHelp"),
           Binding(get: { value }, set: { destination = .runShortcut($0) })
         )
       case .typeText(let value):
         (
           OJDLocalized.string("ui.profiles.speak.text"),
+          OJDLocalized.string("ui.profiles.typeTextHelp"),
           Binding(get: { value }, set: { destination = .typeText($0) })
         )
       default: nil
@@ -271,18 +285,18 @@
     }
 
     /// A slider from 0 to 1 that shows the value as a percentage beside `title`.
-    private func unitSlider(_ title: String, value: Binding<Double>) -> some View {
+    private func unitSlider(_ title: String, help: String, value: Binding<Double>) -> some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text("\(title): \(Int((value.wrappedValue * 100).rounded()))%").font(.body)
-        Slider(value: value, in: 0...1).ojdAccessibilityLabel(title)
+        Slider(value: value, in: 0...1).ojdAccessibilityLabel(title).help(help)
       }
     }
 
     /// A slider from 0 to 255 that shows the value beside `title`.
-    private func colorSlider(_ title: String, value: Binding<Double>) -> some View {
+    private func colorSlider(_ title: String, help: String, value: Binding<Double>) -> some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text("\(title): \(Int(value.wrappedValue.rounded()))").font(.body)
-        Slider(value: value, in: 0...255).ojdAccessibilityLabel(title)
+        Slider(value: value, in: 0...255).ojdAccessibilityLabel(title).help(help)
       }
     }
   }

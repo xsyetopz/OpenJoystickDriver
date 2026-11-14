@@ -101,7 +101,7 @@
         Button(OJDLocalized.string("action.copyAll")) {
           NSPasteboard.general.clearContents()
           NSPasteboard.general.setString(text.copyText, forType: .string)
-        }
+        }.help(OJDLocalized.string("ui.library.copyAllHelp"))
       }
     }
 

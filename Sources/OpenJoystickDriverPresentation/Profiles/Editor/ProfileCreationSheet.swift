@@ -35,6 +35,7 @@
           } else {
             TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
               .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+              .help(OJDLocalized.string("ui.profiles.nameHelp"))
             if let message = nameProblem {
               Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
                 horizontal: false,
@@ -48,6 +49,7 @@
                 }
               }
             }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
+              .help(OJDLocalized.string("ui.profiles.controllerHelp"))
             if context.isLoadingCatalog {
               ProgressView().controlSize(.small)
             }
@@ -70,6 +72,7 @@
                 ProfileScopeKind.application
               )
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.target"))
+              .help(OJDLocalized.string("ui.profiles.targetHelp"))
             if fields.scopeKind == .application {
               ProfileAppChooser(appIDs: $fields.appIDs)
             }
@@ -83,6 +86,7 @@
               Text(OJDLocalized.string("ui.profiles.templateMouseClicks"))
                 .tag(ProfileCreationTemplate.bindings(.mouseClicks))
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.template"))
+              .help(OJDLocalized.string("ui.profiles.templateHelp"))
             if fields.template == .gyroStick {
               Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
                 Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(
@@ -92,6 +96,7 @@
                   RemappingGyroStickTemplate.Stick.right
                 )
               }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.gyro.output"))
+                .help(OJDLocalized.string("ui.profiles.gyro.outputHelp"))
               if fields.lacksMotion(in: context), let controller = fields.controller(in: context) {
                 Text(
                   OJDLocalized.formatted("ui.profiles.templateNoMotion", controller.label)
@@ -124,12 +129,13 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.create")) {
             guard let proposedProfile else { return }
             onCreate(proposedProfile)
             presentationMode.wrappedValue.dismiss()
           }.disabled(proposedProfile == nil)
+            .help(OJDLocalized.string("ui.profiles.createHelp"))
         }
       }.ojdSheet(.regular)
     }
@@ -188,6 +194,7 @@
         Form {
           TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
             .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+            .help(OJDLocalized.string("ui.profiles.nameHelp"))
           if ProfileNaming.isTaken(shownName, in: profiles) {
             Text(OJDLocalized.string("ui.error.duplicateProfile"))
               .foregroundColor(Color(NSColor.systemRed))
@@ -200,12 +207,13 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.duplicate")) {
             guard let duplicate else { return }
             onDuplicate(duplicate)
             presentationMode.wrappedValue.dismiss()
           }.disabled(duplicate == nil)
+            .help(OJDLocalized.string("ui.profiles.duplicateHelp"))
         }
       }.ojdSheet(.compact)
     }

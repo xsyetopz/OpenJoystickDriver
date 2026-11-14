@@ -33,14 +33,17 @@
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         TextField(OJDLocalized.string("ui.macros.name"), text: $draft.name)
           .ojdAccessibilityLabel(OJDLocalized.string("ui.macros.name"))
+          .help(OJDLocalized.string("ui.macros.nameHelp"))
         HStack {
           Text(OJDLocalized.string("ui.macros.steps")).font(.headline)
           Spacer()
           Menu(OJDLocalized.string("ui.macros.addStep")) {
             ForEach(MacroStepKind.allCases) { kind in
-              Button(kind.title) { draft.addStep(kind) }
+              Button(kind.title) { draft.addStep(kind) }.help(
+                OJDLocalized.string("ui.macros.addStepKindHelp")
+              )
             }
-          }.fixedSize()
+          }.fixedSize().help(OJDLocalized.string("ui.macros.addStepHelp"))
         }
         ScrollView {
           VStack(alignment: .leading, spacing: OJDSpacing.medium) {
@@ -52,6 +55,7 @@
           Text(OJDLocalized.string("ui.macros.repeatCounted")).tag(false)
           Text(OJDLocalized.string("ui.macros.repeatWhileHeld")).tag(true)
         }.ojdAccessibilityLabel(OJDLocalized.string("ui.macros.repeat"))
+          .help(OJDLocalized.string("ui.macros.repeatHelp"))
         if case .count(let count) = draft.repeatMode {
           Stepper(
             value: Binding(get: { count }, set: { draft.repeatMode = .count($0) }),
@@ -63,6 +67,7 @@
               Text(String(count)).foregroundColor(Color(NSColor.secondaryLabelColor))
             }
           }.ojdAccessibilityLabel(OJDLocalized.string("ui.macros.repeatTimes"))
+            .help(OJDLocalized.string("ui.macros.repeatTimesHelp"))
         }
         Picker(OJDLocalized.string("ui.macros.whileRunning"), selection: $draft.whileRunning) {
           Text(OJDLocalized.string("ui.macros.whileRunningIgnore"))
@@ -70,14 +75,19 @@
           Text(OJDLocalized.string("ui.macros.whileRunningRestart"))
             .tag(RemappingMacroWhileRunning.restart)
         }.ojdAccessibilityLabel(OJDLocalized.string("ui.macros.whileRunning"))
+          .help(OJDLocalized.string("ui.macros.whileRunningHelp"))
         Toggle(OJDLocalized.string("ui.macros.interruptOnRelease"), isOn: $draft.interruptOnRelease)
+          .help(OJDLocalized.string("ui.macros.interruptOnReleaseHelp"))
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancel")
+          )
           Button(OJDLocalized.string("action.apply")) {
             onSave(draft.macro)
             dismiss()
           }.disabled(draft.macro.name.isEmpty)
+            .help(OJDLocalized.string("ui.macros.applyHelp"))
         }
       }.ojdSheet(.wide)
     }
@@ -97,15 +107,18 @@
         Spacer(minLength: 8)
         OJDCompactSymbolButton(
           symbolName: "arrow.up",
-          label: OJDLocalized.string("ui.macros.moveUp")
+          label: OJDLocalized.string("ui.macros.moveUp"),
+          help: OJDLocalized.string("ui.macros.moveUpHelp")
         ) { draft.moveStep(at: index, by: -1) }.disabled(index == 0)
         OJDCompactSymbolButton(
           symbolName: "arrow.down",
-          label: OJDLocalized.string("ui.macros.moveDown")
+          label: OJDLocalized.string("ui.macros.moveDown"),
+          help: OJDLocalized.string("ui.macros.moveDownHelp")
         ) { draft.moveStep(at: index, by: 1) }.disabled(index == draft.steps.count - 1)
         OJDCompactSymbolButton(
           symbolName: "minus.circle",
-          label: OJDLocalized.string("ui.macros.removeStep")
+          label: OJDLocalized.string("ui.macros.removeStep"),
+          help: OJDLocalized.string("ui.macros.removeStepHelp")
         ) { draft.removeStep(at: index) }
       }
     }
@@ -135,7 +148,8 @@
             if destinations.count > 1 {
               OJDCompactSymbolButton(
                 symbolName: "minus.circle",
-                label: OJDLocalized.string("action.remove")
+                label: OJDLocalized.string("action.remove"),
+                help: OJDLocalized.string("ui.macros.removeChordKeyHelp")
               ) {
                 var changed = destinations
                 changed.remove(at: slot)
@@ -149,12 +163,20 @@
             destinations: destinations + [.keyboard(key: .space, modifiers: [])],
             holdMs: holdMs
           )
-        }
-        delaySlider(OJDLocalized.string("ui.macros.holdTime"), holdMs) {
+        }.help(OJDLocalized.string("ui.macros.addChordKeyHelp"))
+        delaySlider(
+          OJDLocalized.string("ui.macros.holdTime"),
+          holdMs,
+          help: OJDLocalized.string("ui.macros.holdTimeHelp")
+        ) {
           draft.steps[index] = .chord(destinations: destinations, holdMs: $0)
         }
       case .wait(let durationMs):
-        delaySlider(MacroStepKind.wait.title, durationMs) {
+        delaySlider(
+          MacroStepKind.wait.title,
+          durationMs,
+          help: OJDLocalized.string("ui.macros.waitHelp")
+        ) {
           draft.steps[index] = .wait(durationMs: $0)
         }
       }
@@ -170,13 +192,14 @@
         ForEach(stepDestinations(including: destination), id: \.destination) { option in
           Text(option.title).tag(option.destination).disabled(!option.isSupported)
         }
-      }.ojdAccessibilityLabel(title)
+      }.ojdAccessibilityLabel(title).help(OJDLocalized.string("ui.macros.stepDestinationHelp"))
     }
 
     /// A slider of a time in milliseconds, with the value beside the title.
     private func delaySlider(
       _ title: String,
       _ value: Double,
+      help: String,
       set: @escaping (Double) -> Void
     ) -> some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
@@ -191,7 +214,7 @@
           value: Binding(get: { value }, set: set),
           in: RemappingMacro.delayMsRange,
           step: 10
-        ).ojdAccessibilityLabel(title)
+        ).ojdAccessibilityLabel(title).help(help)
       }
     }
 

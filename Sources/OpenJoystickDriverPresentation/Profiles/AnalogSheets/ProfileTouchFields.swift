@@ -11,13 +11,13 @@
     /// The enabled toggle and, while it is on, the mode and the settings of the touch input.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
-        Toggle(label("enabled"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled).help(tooltip("enabled"))
         if draft.enabled {
           Picker(label("mode"), selection: $draft.mode) {
             Text(label("pointer")).tag(RemappingTouchMode.pointer)
             Text(label("leftStick")).tag(RemappingTouchMode.leftStick)
             Text(label("rightStick")).tag(RemappingTouchMode.rightStick)
-          }
+          }.help(tooltip("mode"))
           if draft.mode == .pointer {
             field("pointerSensitivity", $draft.pointerSensitivity)
           } else {
@@ -33,13 +33,18 @@
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
-          .ojdAccessibilityLabel(label(key))
+          .ojdAccessibilityLabel(label(key)).help(tooltip(key))
       }
     }
 
     /// Returns the text of the touch field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.touch." + key)
+    }
+
+    /// Returns the tooltip of the touch field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.touch." + key + "Help")
     }
   }
 #endif

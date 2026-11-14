@@ -43,13 +43,14 @@
           Text(OJDLocalized.string("ui.profiles.releaseOnly")).tag(
             RemappingBindingBehavior.release
           )
-        }.disabled(
+        }.help(OJDLocalized.string("ui.profiles.bindingBehaviorHelp")).disabled(
           binding.destination.isContinuous || turboEnabled || longHoldEnabled
             || !multiTapEntries.isEmpty
         )
         if behavior == .pulse {
           valueSlider(
             title: OJDLocalized.string("ui.profiles.pulseDuration"),
+            help: OJDLocalized.string("ui.profiles.pulseDurationHelp"),
             value: $pulseDurationMs,
             range: RemappingBinding.pulseDurationRange,
             format: "%.0f ms"
@@ -58,6 +59,7 @@
         if showsAdditionalActions {
           TextField(OJDLocalized.string("ui.profiles.remark"), text: $remarkText)
             .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.remark"))
+            .help(OJDLocalized.string("ui.profiles.remarkHelp"))
           ProfileAdditionalActionsView(
             source: binding.source,
             capabilities: capabilities,
@@ -68,16 +70,18 @@
           .disabled(
             !binding.destination.acceptsTurbo || longHoldEnabled || !multiTapEntries.isEmpty
               || behavior != .hold
-          )
+          ).help(OJDLocalized.string("ui.profiles.turboHelp"))
         if turboEnabled {
           valueSlider(
             title: OJDLocalized.string("ui.profiles.turboRate"),
+            help: OJDLocalized.string("ui.profiles.turboRateHelp"),
             value: $turboRate,
             range: RemappingTurbo.repeatRateHzRange,
             format: "%.0f Hz"
           )
           valueSlider(
             title: OJDLocalized.string("ui.profiles.turboDuty"),
+            help: OJDLocalized.string("ui.profiles.turboDutyHelp"),
             value: $turboDuty,
             range: RemappingTurbo.dutyCycleRange,
             format: "%.0f%%",
@@ -85,14 +89,17 @@
           )
           valueSlider(
             title: OJDLocalized.string("ui.profiles.turboDelay"),
+            help: OJDLocalized.string("ui.profiles.turboDelayHelp"),
             value: $turboDelay,
             range: RemappingTurbo.initialDelayMsRange,
             format: "%.0f ms"
           )
           Toggle(OJDLocalized.string("ui.profiles.turboLimit"), isOn: $turboLimitEnabled)
+            .help(OJDLocalized.string("ui.profiles.turboLimitHelp"))
           if turboLimitEnabled {
             valueSlider(
               title: OJDLocalized.string("ui.profiles.turboMax"),
+              help: OJDLocalized.string("ui.profiles.turboMaxHelp"),
               value: $turboMax,
               range: Double(
                 RemappingTurbo.maxRepeatsRange.lowerBound
@@ -108,9 +115,11 @@
           OJDLocalized.string("ui.profiles.longHold"),
           isOn: $longHoldEnabled
         ).disabled(!supportsActivation || turboEnabled || behavior != .hold)
+          .help(OJDLocalized.string("ui.profiles.longHoldHelp"))
         if longHoldEnabled {
           valueSlider(
             title: OJDLocalized.string("ui.profiles.holdDuration"),
+            help: OJDLocalized.string("ui.profiles.holdDurationHelp"),
             value: $longHoldDuration,
             range: RemappingLongHold.durationRange,
             format: "%.0f ms"
@@ -120,7 +129,9 @@
         multiTapSection
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancel")
+          )
           Button(OJDLocalized.string("action.apply")) {
             onSave(
               behavior,
@@ -140,7 +151,7 @@
               trimmedRemark
             )
             dismiss()
-          }
+          }.help(OJDLocalized.string("ui.profiles.applyBehaviorHelp"))
         }
       }.ojdSheet(.regular)
     }
@@ -166,6 +177,7 @@
     ///
     /// - Parameters:
     ///   - title: The text above the slider.
+    ///   - help: The tooltip of the slider.
     ///   - value: The number to edit.
     ///   - range: The values the slider allows.
     ///   - format: The `unsafe String(format:)` pattern of the value shown.
@@ -173,6 +185,7 @@
     /// - Returns: The slider with the title and the formatted value.
     func valueSlider(
       title: String,
+      help: String,
       value: Binding<Double>,
       range: ClosedRange<Double>,
       format: String,
@@ -186,7 +199,7 @@
             Color(NSColor.secondaryLabelColor)
           )
         }
-        Slider(value: value, in: range).ojdAccessibilityLabel(title)
+        Slider(value: value, in: range).ojdAccessibilityLabel(title).help(help)
       }
     }
 
@@ -200,7 +213,7 @@
           ForEach(discreteDestinations(including: selection.wrappedValue), id: \.destination) {
             Text($0.title).tag($0.destination)
           }
-        }
+        }.help(OJDLocalized.string("ui.capture.destinationHelp"))
         PhysicalOutputDestinationFields(destination: selection)
       }
     }

@@ -21,6 +21,7 @@
         combinationGroup(
           title: OJDLocalized.string("ui.profiles.chords"),
           addTitle: OJDLocalized.string("ui.profiles.addChord"),
+          addHelp: OJDLocalized.string("ui.profiles.addChordHelp"),
           isEmpty: profile.chords.isEmpty,
           emptyMessage: OJDLocalized.string("ui.profiles.noChords"),
           add: { openSheet(.chord) },
@@ -35,7 +36,9 @@
                 OJDSystemSymbol(name: "arrow.right", fallback: "->").accessibilityHidden(true)
                 KeyboardDestinationLabel(destination: chord.destination)
                 Spacer()
-                removeButton { removeChord(chord.id) }
+                removeButton(help: OJDLocalized.string("ui.profiles.removeChordHelp")) {
+                  removeChord(chord.id)
+                }
               }
             }
           }
@@ -43,6 +46,7 @@
         combinationGroup(
           title: OJDLocalized.string("ui.profiles.sequences"),
           addTitle: OJDLocalized.string("ui.profiles.addSequence"),
+          addHelp: OJDLocalized.string("ui.profiles.addSequenceHelp"),
           isEmpty: profile.sequences.isEmpty,
           emptyMessage: OJDLocalized.string(
             "ui.profiles.noSequences"
@@ -60,7 +64,9 @@
                 OJDSystemSymbol(name: "arrow.right", fallback: "->").accessibilityHidden(true)
                 KeyboardDestinationLabel(destination: sequence.destination)
                 Spacer()
-                removeButton { removeSequence(sequence.id) }
+                removeButton(help: OJDLocalized.string("ui.profiles.removeSequenceHelp")) {
+                  removeSequence(sequence.id)
+                }
               }
             }
           }
@@ -73,6 +79,7 @@
     /// - Parameters:
     ///   - title: The section title.
     ///   - addTitle: The label of the add button.
+    ///   - addHelp: The tooltip of the add button.
     ///   - isEmpty: Whether there is nothing to list.
     ///   - emptyMessage: The text shown when empty.
     ///   - add: Called when the person chooses the add button.
@@ -81,6 +88,7 @@
     private func combinationGroup<Content: View>(
       title: String,
       addTitle: String,
+      addHelp: String,
       isEmpty: Bool,
       emptyMessage: String,
       add: @escaping () -> Void,
@@ -90,7 +98,7 @@
         header: HStack {
           Text(title)
           Spacer()
-          OJDCompactSymbolButton(symbolName: "plus", label: addTitle, action: add)
+          OJDCompactSymbolButton(symbolName: "plus", label: addTitle, help: addHelp, action: add)
         }
       ) {
         if isEmpty {
@@ -122,7 +130,8 @@
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("ui.profiles.addLayer")
+            label: OJDLocalized.string("ui.profiles.addLayer"),
+            help: OJDLocalized.string("ui.profiles.addLayerHelp")
           ) { openSheet(.layer) }
         }
       ) {
@@ -148,15 +157,19 @@
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("action.addAssignment")
+            label: OJDLocalized.string("action.addAssignment"),
+            help: OJDLocalized.string("ui.profiles.addLayerAssignmentHelp")
           ) { openSheet(.layerBinding(layer)) }
           OJDCompactSymbolButton(
             symbolName: "pencil",
-            label: OJDLocalized.string("ui.profiles.motion.title")
+            label: OJDLocalized.string("ui.profiles.motion.title"),
+            help: OJDLocalized.string("ui.profiles.layerMotionHelp")
           ) { openSheet(.layerMotion(layer)) }.disabled(
             !capabilities.physicalInput.motion && layer.motionTuning == nil
           ).ojdInterfaceRow(ProfilesRow.motion)
-          removeButton { removeLayer(layer.id) }
+          removeButton(help: OJDLocalized.string("ui.profiles.removeLayerHelp")) {
+            removeLayer(layer.id)
+          }
         }
       ) {
         if layer.bindings.isEmpty {
@@ -177,12 +190,16 @@
                   "ui.capture.adjust",
                   RuntimePresentation.sourceLabel(binding.source)
                 )
-              ).ojdInterfaceRow(ProfilesRow.axisAdjustment)
+              ).ojdInterfaceRow(ProfilesRow.axisAdjustment).help(
+                OJDLocalized.string("ui.profiles.adjustHelp")
+              )
             }
             Button(OJDLocalized.string("ui.profiles.behavior")) {
               openSheet(.layerBehavior(layer.id, binding))
+            }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
+            removeButton(help: OJDLocalized.string("ui.profiles.removeAssignmentHelp")) {
+              removeBinding(layer.id, binding.id)
             }
-            removeButton { removeBinding(layer.id, binding.id) }
           }
         }
       }
@@ -351,7 +368,8 @@
         Spacer(minLength: 8)
         OJDCompactSymbolButton(
           symbolName: "pencil",
-          label: OJDLocalized.formatted("ui.capture.adjust", title)
+          label: OJDLocalized.formatted("ui.capture.adjust", title),
+          help: OJDLocalized.string("ui.profiles.configureHelp")
         ) { action() }.disabled(!(enabled ?? supported))
       }.ojdInterfaceRow(row)
     }
@@ -364,7 +382,7 @@
 
   /// A button that removes a row.
   @MainActor
-  private func removeButton(action: @escaping () -> Void) -> some View {
+  private func removeButton(help: String, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       OJDSystemSymbol(name: "minus.circle", fallback: OJDLocalized.string("action.remove")).frame(
         minWidth: 28,
@@ -373,6 +391,6 @@
       .contentShape(Rectangle())
     }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
       OJDLocalized.string("action.remove")
-    )
+    ).help(help)
   }
 #endif

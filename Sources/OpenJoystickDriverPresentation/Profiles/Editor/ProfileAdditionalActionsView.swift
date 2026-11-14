@@ -37,21 +37,23 @@
                     ),
                     id: \.destination
                   ) { Text($0.title).tag($0.destination).disabled(!$0.isSupported) }
-                }
+                }.help(OJDLocalized.string("ui.capture.destinationHelp"))
                 PhysicalOutputDestinationFields(destination: destinationBinding(action))
                 HStack {
                   Button(
                     OJDLocalized.string("ui.profiles.bindingBehavior")
-                  ) { editing = action }
+                  ) { editing = action }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
                   Button(OJDLocalized.string("ui.profiles.moveUp")) {
                     move(action, by: -1)
                   }.disabled(actions.first?.id == action.id)
+                    .help(OJDLocalized.string("ui.profiles.moveActionUpHelp"))
                   Button(OJDLocalized.string("ui.profiles.moveDown")) {
                     move(action, by: 1)
                   }.disabled(actions.last?.id == action.id)
+                    .help(OJDLocalized.string("ui.profiles.moveActionDownHelp"))
                   Button(OJDLocalized.string("action.remove")) {
                     actions.removeAll { $0.id == action.id }
-                  }
+                  }.help(OJDLocalized.string("ui.profiles.removeActionHelp"))
                 }
               }
             }
@@ -63,7 +65,7 @@
           if let firstDestination { actions.append(RemappingAction(destination: firstDestination)) }
         }.disabled(
           firstDestination == nil || actions.count >= RemappingProfile.maximumBindingCount - 1
-        )
+        ).help(OJDLocalized.string("ui.profiles.addActionHelp"))
       }.sheet(item: $editing) { action in
         BindingBehaviorSheet(
           binding: RemappingBinding(

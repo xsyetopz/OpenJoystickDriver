@@ -278,7 +278,8 @@
           )
           OJDCompactSymbolButton(
             symbolName: "pencil",
-            label: OJDLocalized.string("ui.profiles.details")
+            label: OJDLocalized.string("ui.profiles.details"),
+            help: OJDLocalized.string("ui.profiles.detailsHelp")
           ) { activeSheet = .metadata }
           primaryActivationAction
           profileActionMenu
@@ -317,7 +318,9 @@
             ).foregroundColor(Color(NSColor.systemOrange))
             Button(
               OJDLocalized.string("ui.profiles.restoreDefaultInput")
-            ) { restoreDefaultInput() }
+            ) { restoreDefaultInput() }.help(
+              OJDLocalized.string("ui.profiles.restoreDefaultInputHelp")
+            )
           }.font(.body)
         }
       }.padding(.horizontal, 28).padding(.vertical, 18)
@@ -332,6 +335,11 @@
             isActive ? "action.deactivate" : "action.setActive"
           )
         ) { isActive ? deactivateProfile() : requestActivation() }.disabled(isMutationActive)
+          .help(
+            OJDLocalized.string(
+              isActive ? "ui.profiles.deactivateHelp" : "ui.profiles.setActiveHelp"
+            )
+          )
       }
     }
 
@@ -349,7 +357,7 @@
         )
         ForEach(menuActions, id: \.self) { action in Text(action.title).tag(Optional(action)) }
       }.pickerStyle(PopUpButtonPickerStyle()).labelsHidden().frame(width: 132)
-        .disabled(isMutationActive)
+        .disabled(isMutationActive).help(OJDLocalized.string("ui.profiles.actionsHelp"))
     }
 
     /// The picker of the editor section: a segmented control, or a pop-up menu when the editor is
@@ -368,6 +376,8 @@
               Text(section.title).tag(section)
             }
           }.pickerStyle(SegmentedPickerStyle()).labelsHidden()
+            .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.editorSection"))
+            .help(OJDLocalized.string("ui.profiles.editorSectionHelp"))
         } else {
           HStack {
             Text(OJDLocalized.string("ui.profiles.editorSection"))
@@ -378,6 +388,7 @@
               }
             }.labelsHidden().pickerStyle(PopUpButtonPickerStyle()).frame(maxWidth: .infinity)
               .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.editorSection"))
+              .help(OJDLocalized.string("ui.profiles.editorSectionHelp"))
           }
         }
       }.padding(.horizontal, 28).padding(.vertical, 10)

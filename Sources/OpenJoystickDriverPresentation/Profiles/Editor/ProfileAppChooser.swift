@@ -36,7 +36,7 @@
               appIDs.removeAll { $0 == appID }
             }.ojdAccessibilityLabel(
               OJDLocalized.formatted("ui.profiles.removeAppNamed", entry.title)
-            )
+            ).help(OJDLocalized.string("ui.profiles.removeAppHelp"))
           }
         }
         Menu(OJDLocalized.string("ui.profiles.addApp")) {
@@ -59,7 +59,8 @@
             }
           }
           Button(OJDLocalized.string("ui.profiles.appOther")) { chooseOther() }
-        }
+            .help(OJDLocalized.string("ui.profiles.appOtherHelp"))
+        }.help(OJDLocalized.string("ui.profiles.addAppHelp"))
       }.onAppear {
         installed = ProfileAppChoices.installedApps(in: ProfileAppChoices.applicationFolders)
       }
@@ -75,7 +76,7 @@
         } icon: {
           Image(nsImage: Self.icon(at: choice.url))
         }
-      }
+      }.help(OJDLocalized.string("ui.profiles.addAppItemHelp"))
     }
 
     /// The running or installed app with `bundleID`.

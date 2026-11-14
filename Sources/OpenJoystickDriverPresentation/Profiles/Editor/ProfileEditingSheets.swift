@@ -68,15 +68,18 @@
         )
         TextField(OJDLocalized.string("term.profileName"), text: $name)
           .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+          .help(OJDLocalized.string("ui.profiles.nameHelp"))
         HStack(spacing: OJDSpacing.medium) {
           TextField(
             OJDLocalized.string("ui.profiles.vendorID"),
             text: $vendorID
           ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.vendorID"))
+            .help(OJDLocalized.string("ui.profiles.vendorIDHelp"))
           TextField(
             OJDLocalized.string("ui.profiles.productID"),
             text: $productID
           ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.productID"))
+            .help(OJDLocalized.string("ui.profiles.productIDHelp"))
         }
         Text(
           OJDLocalized.string(
@@ -90,14 +93,14 @@
           Text(OJDLocalized.string("ui.profiles.targetApplication")).tag(
             ProfileScopeKind.application
           )
-        }
+        }.help(OJDLocalized.string("ui.profiles.targetHelp"))
         if scopeKind == .application {
           ProfileAppChooser(appIDs: $appIDs)
         }
         Toggle(
           OJDLocalized.string("ui.profiles.joyConPair"),
           isOn: $joyConPairEnabled
-        )
+        ).help(OJDLocalized.string("ui.profiles.joyConPairHelp"))
         if joyConPairEnabled {
           Picker(
             OJDLocalized.string("ui.profiles.joyConGyro"),
@@ -112,7 +115,7 @@
             Text(OJDLocalized.string("ui.profiles.joyConRight")).tag(
               RemappingJoyConGyroSelection.right
             )
-          }
+          }.help(OJDLocalized.string("ui.profiles.joyConGyroHelp"))
         }
         if let errorMessage {
           Text(errorMessage).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
@@ -122,8 +125,12 @@
         }
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
-          Button(OJDLocalized.string("action.apply")) { save() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancel")
+          )
+          Button(OJDLocalized.string("action.apply")) { save() }.help(
+            OJDLocalized.string("ui.profiles.applyDetailsHelp")
+          )
         }
       }.ojdSheet(.compact)
     }

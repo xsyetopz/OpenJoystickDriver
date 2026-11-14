@@ -17,7 +17,7 @@
               to: multiTapEntries,
               destination: .keyboard(key: .space, modifiers: [])
             )
-          }.disabled(
+          }.help(OJDLocalized.string("ui.profiles.addMultiTapHelp")).disabled(
             !supportsActivation || turboEnabled || behavior != .hold
               || MultiTapEntries.unusedCounts(in: multiTapEntries).isEmpty
           )
@@ -67,13 +67,14 @@
               (MultiTapEntries.unusedCounts(in: multiTapEntries) + [count]).sorted(),
               id: \.self
             ) { Text("\($0)").tag($0) }
-          }
+          }.help(OJDLocalized.string("ui.profiles.tapCountHelp"))
           Button(OJDLocalized.string("action.remove")) {
             multiTapEntries = MultiTapEntries.removing(count: count, from: multiTapEntries)
-          }
+          }.help(OJDLocalized.string("ui.profiles.removeMultiTapHelp"))
         }
         valueSlider(
           title: OJDLocalized.string("ui.profiles.tapWindow"),
+          help: OJDLocalized.string("ui.profiles.tapWindowHelp"),
           value: Binding(
             get: { entry.windowMs },
             set: {

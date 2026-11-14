@@ -104,6 +104,7 @@
           if presentation.offersMigration {
             Button(OJDLocalized.string("ui.migrate.action")) { migrateStoredDocuments() }
               .disabled(library.profileRecoveryInFlight)
+              .help(OJDLocalized.string("ui.migrate.actionHelp"))
             besideError(.migration)
           }
           Button(
@@ -116,6 +117,12 @@
               issue.kind == .damagedProfile
               ? .deleteDamagedProfile(issue.id) : .resetLibrary(issue.id)
           }.disabled(library.profileRecoveryInFlight)
+            .help(
+              OJDLocalized.string(
+                issue.kind == .damagedProfile
+                  ? "ui.profiles.deleteDamagedHelp" : "ui.profiles.resetLibraryHelp"
+              )
+            )
           besideError(.recovery)
         }
       }.ojdGroupedForm()
@@ -149,6 +156,12 @@
           Button(
             OJDLocalized.string("ui.profiles.pairJoyCons")
           ) { pairingProfile = profile }.disabled(!hasAvailableJoyConPair || isProfileActionBlocked)
+            .help(
+              OJDLocalized.string(
+                hasAvailableJoyConPair
+                  ? "ui.profiles.pairJoyConsHelp" : "ui.profiles.pairJoyConsNeedsBothHelp"
+              )
+            )
         } else {
           Text(OJDLocalized.string("ui.profiles.joyConPairActive")).font(
             .caption
@@ -161,7 +174,9 @@
                   beside: .joyCon
                 )
               }
-            }.disabled(isProfileActionBlocked)
+            }.disabled(isProfileActionBlocked).help(
+              OJDLocalized.string("ui.profiles.unpairJoyConsHelp")
+            )
           }
         }
         if sessions.isEmpty, !hasAvailableJoyConPair {

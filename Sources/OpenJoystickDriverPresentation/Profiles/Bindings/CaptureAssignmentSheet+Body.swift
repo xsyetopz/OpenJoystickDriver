@@ -28,6 +28,7 @@
           ForEach(SourceOption.options(including: source, capabilities: capabilities), id: \.source)
           { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
         }.ojdAccessibilityLabel(OJDLocalized.string("ui.capture.controllerControl"))
+          .help(OJDLocalized.string("ui.capture.controlHelp"))
 
         touchSourceControls
         if !connectedDevices.isEmpty {
@@ -38,13 +39,16 @@
             ForEach(connectedDevices, id: \.sessionToken) { device in
               Text(device.name).tag(device.sessionToken.rawValue)
             }
-          }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
+          }.ojdAccessibilityLabel(OJDLocalized.string("term.controller")).help(
+            OJDLocalized.string("ui.capture.deviceHelp")
+          )
           if let selector = selectedDeviceSelector {
             Button(
               isListening
                 ? OJDLocalized.string("ui.capture.listeningButton")
                 : OJDLocalized.string("ui.capture.listen")
             ) { beginListening(for: selector) }.disabled(isListening)
+              .help(OJDLocalized.string("ui.capture.listenHelp"))
           }
         } else {
           Text(
@@ -71,6 +75,7 @@
         }.ojdAccessibilityLabel(OJDLocalized.string("term.destination"))
 
           .ojdAccessibilityValue(destinationAccessibilityValue)
+          .help(OJDLocalized.string("ui.capture.destinationHelp"))
         if case .keyboard = destination {
           KeyboardDestinationCaptureView(
             destination: $destination,
@@ -81,10 +86,12 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { cancelCapture() }
+            .help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.addAssignment")) {
             onAdd(source, destination)
             viewModel.cancelInputCapture()
           }.disabled(!canAddAssignment)
+            .help(OJDLocalized.string("ui.capture.addHelp"))
         }
       }.ojdSheet(.regular).accessibilityElement(children: .contain)
         .ojdAccessibilityLabel(OJDLocalized.string("ui.capture.title")).background(
@@ -110,12 +117,12 @@
             ),
             value: touchGridValue(\.columns),
             in: RemappingTouchGridSource.dimensionRange
-          )
+          ).help(OJDLocalized.string("ui.capture.touchColumnsHelp"))
           Stepper(
             OJDLocalized.formatted("ui.capture.touchRows", grid.rows),
             value: touchGridValue(\.rows),
             in: RemappingTouchGridSource.dimensionRange
-          )
+          ).help(OJDLocalized.string("ui.capture.touchRowsHelp"))
           Stepper(
             OJDLocalized.formatted(
               "ui.capture.touchColumn",
@@ -123,12 +130,12 @@
             ),
             value: touchGridValue(\.column),
             in: 0...max(0, grid.columns - 1)
-          )
+          ).help(OJDLocalized.string("ui.capture.touchColumnHelp"))
           Stepper(
             OJDLocalized.formatted("ui.capture.touchRow", grid.row + 1),
             value: touchGridValue(\.row),
             in: 0...max(0, grid.rows - 1)
-          )
+          ).help(OJDLocalized.string("ui.capture.touchRowHelp"))
         }.padding(.leading, 8)
       case .touchSwipe(let swipe):
         VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
@@ -153,6 +160,7 @@
             ),
             in: RemappingTouchSwipeSource.minimumDistanceRange
           ).ojdAccessibilityLabel(OJDLocalized.string("a11y.capture.touchSwipeDistance"))
+            .help(OJDLocalized.string("ui.capture.touchSwipeDistanceHelp"))
             .ojdAccessibilityValue(
               swipe.minimumDistance.formatted(.percent.precision(.fractionLength(0)))
             )

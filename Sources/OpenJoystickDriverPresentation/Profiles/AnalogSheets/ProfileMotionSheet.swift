@@ -64,7 +64,7 @@
               Text(label("local")).tag(RemappingMotionSpace.local)
               Text(label("player")).tag(RemappingMotionSpace.player)
               Text(label("world")).tag(RemappingMotionSpace.world)
-            }
+            }.help(tooltip("space"))
             slider(
               "pitchSensitivity",
               value: $draft.pitchSensitivity,
@@ -97,13 +97,17 @@
               maximum: 100
             )
             Toggle(label("invertPitch"), isOn: $draft.invertPitch)
+              .help(tooltip("invertPitch"))
             Toggle(label("invertYaw"), isOn: $draft.invertYaw)
+              .help(tooltip("invertYaw"))
             Toggle(
               label("automaticBias"),
               isOn: $draft.automaticBias
             )
+            .help(tooltip("automaticBias"))
             Divider()
             Toggle(label("leanEnabled"), isOn: $draft.leanEnabled)
+              .help(tooltip("leanEnabled"))
             if draft.leanEnabled {
               slider(
                 "leanThresholdDegrees",
@@ -117,6 +121,7 @@
               )
             }
             Toggle(label("steeringEnabled"), isOn: $draft.steeringEnabled)
+              .help(tooltip("steeringEnabled"))
             if draft.steeringEnabled {
               Picker(
                 label("steeringOutput"),
@@ -129,6 +134,7 @@
                   RemappingMotionSteeringOutput.rightStickX
                 )
               }
+              .help(tooltip("steeringOutput"))
               slider(
                 "steeringDeadzoneDegrees",
                 value: $draft.steeringDeadzoneDegrees,
@@ -145,6 +151,7 @@
                 maximum: 10
               )
               Toggle(label("steeringInverted"), isOn: $draft.steeringInverted)
+                .help(tooltip("steeringInverted"))
             }
           }.padding(.trailing, 8)
         }
@@ -155,17 +162,17 @@
             numericText = draft.numericText
             gyro = ProfileGyroDraft(.default)
             errorMessage = nil
-          }
+          }.help(OJDLocalized.string("ui.help.reset"))
           if let onInherit {
             Button(OJDLocalized.string("ui.profiles.motion.inherit")) {
               onInherit()
               presentationMode.wrappedValue.dismiss()
-            }
+            }.help(OJDLocalized.string("ui.profiles.motion.inheritHelp"))
           }
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.save")) {
             do {
               let edited = try draft.applyingNumericText(
@@ -178,7 +185,7 @@
               )
               presentationMode.wrappedValue.dismiss()
             } catch { errorMessage = RuntimePresentation.userFacingError(error) }
-          }
+          }.help(OJDLocalized.string("ui.help.save"))
         }
       }.ojdSheet(.regular).frame(height: 600)
     }
@@ -186,6 +193,11 @@
     /// Returns the text of the motion field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.motion." + key)
+    }
+
+    /// Returns the tooltip of the motion field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.motion." + key + "Help")
     }
 
     /// A slider with a text field for the number called `key`, from 0 to `maximum`.
@@ -221,6 +233,7 @@
               }
             )
           ).frame(width: 100).ojdAccessibilityLabel(label(key))
+            .help(tooltip(key))
         }
         Slider(
           value: Binding(
@@ -231,7 +244,7 @@
             }
           ),
           in: 0...maximum
-        ).ojdAccessibilityLabel(label(key))
+        ).ojdAccessibilityLabel(label(key)).help(tooltip(key))
       }
     }
   }

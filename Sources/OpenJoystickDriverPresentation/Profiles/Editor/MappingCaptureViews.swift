@@ -57,16 +57,19 @@
         SliderRow(
           title: OJDLocalized.string("ui.capture.deadZone"),
           value: $deadzone,
+          help: OJDLocalized.string("ui.capture.deadZoneHelp"),
           range: RemappingAxisTuning.deadzoneRange,
           suffix: "%"
         )
         SliderRow(
           title: OJDLocalized.string("ui.capture.gain"),
           value: $gain,
+          help: OJDLocalized.string("ui.capture.gainHelp"),
           range: RemappingAxisTuning.gainRange,
           suffix: "×"
         )
         Toggle(OJDLocalized.string("ui.capture.invertAxis"), isOn: $inverted)
+          .help(OJDLocalized.string("ui.capture.invertAxisHelp"))
         Picker(
           OJDLocalized.string("ui.capture.responseCurve"),
           selection: $curve
@@ -74,10 +77,11 @@
           ForEach(RemappingResponseCurve.allCases, id: \.self) { value in
             Text(value.label).tag(value)
           }
-        }
+        }.help(OJDLocalized.string("ui.capture.responseCurveHelp"))
         SliderRow(
           title: OJDLocalized.string("ui.capture.digitalThreshold"),
           value: $threshold,
+          help: OJDLocalized.string("ui.capture.digitalThresholdHelp"),
           range: RemappingAxisTuning.digitalActivationThresholdRange,
           suffix: "%"
         )
@@ -85,7 +89,7 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.save")) {
             onSave(
               RemappingAxisTuning(
@@ -97,7 +101,7 @@
               )
             )
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.save"))
         }
       }.ojdSheet(.compact)
     }
@@ -122,6 +126,8 @@
     /// The number to edit.
     @Binding
     var value: Double
+    /// The tooltip of the slider.
+    let help: String
     /// The values the slider allows.
     let range: ClosedRange<Double>
     /// The unit after the value; `%` shows the value as a percentage.
@@ -135,7 +141,7 @@
           Spacer()
           Text(formattedValue).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
-        Slider(value: $value, in: range).ojdAccessibilityLabel(title)
+        Slider(value: $value, in: range).ojdAccessibilityLabel(title).help(help)
       }
     }
 
@@ -164,9 +170,10 @@
         ).font(.subheadline.weight(.semibold))
         HStack(spacing: OJDSpacing.medium) {
           Button(OJDLocalized.string("action.reload")) { reload() }
+            .help(OJDLocalized.string("ui.profiles.reloadHelp"))
           Button(OJDLocalized.string("action.keepEditing")) {
             keepEditing()
-          }
+          }.help(OJDLocalized.string("ui.profiles.keepEditingHelp"))
         }
       }.padding(10).background(
         RoundedRectangle(cornerRadius: 6).fill(Color(NSColor.controlBackgroundColor))

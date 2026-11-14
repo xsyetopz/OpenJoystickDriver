@@ -12,7 +12,7 @@
     /// The enabled toggle and, while it is on, the mode and the settings of the stick.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
-        Toggle(label("enabled"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled).help(tooltip("enabled"))
         if draft.enabled {
           Picker(label("mode"), selection: $draft.mode) {
             Text(label("aim")).tag(RemappingStickMode.aim)
@@ -23,12 +23,12 @@
             Text(label("pointerRing")).tag(RemappingStickMode.pointerRing)
             Text(label("scrollWheel")).tag(RemappingStickMode.scrollWheel)
             Text(label("steering")).tag(RemappingStickMode.steering)
-          }
+          }.help(tooltip("mode"))
           field("innerDeadzone", $draft.innerDeadzone)
           field("outerDeadzone", $draft.outerDeadzone)
           field("exponent", $draft.responseExponent)
-          Toggle(label("invertX"), isOn: $draft.invertX)
-          Toggle(label("invertY"), isOn: $draft.invertY)
+          Toggle(label("invertX"), isOn: $draft.invertX).help(tooltip("invertX"))
+          Toggle(label("invertY"), isOn: $draft.invertY).help(tooltip("invertY"))
           if [.aim, .flick, .flickOnly, .rotateOnly].contains(draft.mode) {
             field("pointerScale", $draft.pointerPointsPerDegree)
           }
@@ -50,7 +50,7 @@
             Picker(label("scrollAxis"), selection: $draft.scrollAxis) {
               Text(label("horizontal")).tag(RemappingStickScrollAxis.horizontal)
               Text(label("vertical")).tag(RemappingStickScrollAxis.vertical)
-            }
+            }.help(tooltip("scrollAxis"))
             rotationPicker
           } else if draft.mode == .steering {
             field(
@@ -71,10 +71,10 @@
               Text(label("rightStickX")).tag(
                 RemappingStickSteeringOutput.rightStickX
               )
-            }
+            }.help(tooltip("steeringOutput"))
             rotationPicker
           }
-          Toggle(label("passthrough"), isOn: $draft.passthrough)
+          Toggle(label("passthrough"), isOn: $draft.passthrough).help(tooltip("passthrough"))
         }
       }
     }
@@ -86,7 +86,7 @@
         Text(label("counterclockwise")).tag(
           RemappingStickRotationDirection.counterclockwise
         )
-      }
+      }.help(tooltip("rotationDirection"))
     }
 
     /// A labeled text field for the stick setting called `key`.
@@ -94,13 +94,18 @@
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
-          .ojdAccessibilityLabel(label(key))
+          .ojdAccessibilityLabel(label(key)).help(tooltip(key))
       }
     }
 
     /// Returns the text of the stick field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.stick." + key)
+    }
+
+    /// Returns the tooltip of the stick field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.stick." + key + "Help")
     }
   }
 #endif

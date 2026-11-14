@@ -321,7 +321,7 @@
             Button(
               OJDLocalized.string("action.tryAgain"),
               action: refreshProfiles
-            )
+            ).help(OJDLocalized.string("ui.profiles.tryAgainHelp"))
           }.padding(.horizontal, 14)
         case .available:
           if !profiles.isEmpty || !(currentSnapshot?.profileIssues.isEmpty ?? true) {
@@ -330,7 +330,7 @@
                 ForEach(ProfileListSort.allCases) { sort in
                   Text(OJDLocalized.string(sort.titleKey)).tag(sort)
                 }
-              }.padding(.horizontal, 14)
+              }.help(OJDLocalized.string("ui.profiles.sortHelp")).padding(.horizontal, 14)
             }
             profileListRows
           }

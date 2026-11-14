@@ -37,9 +37,11 @@
               }
             }
           }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
+            .help(OJDLocalized.string("ui.profiles.convertTargetHelp"))
           if isLoadingCatalog { ProgressView().controlSize(.small) }
           TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
             .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+            .help(OJDLocalized.string("ui.profiles.nameHelp"))
           if model.isNameTaken {
             Text(OJDLocalized.string("ui.error.duplicateProfile"))
               .foregroundColor(Color(NSColor.systemRed))
@@ -54,12 +56,13 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.convert")) {
             guard let conversion else { return }
             onConvert(conversion)
             presentationMode.wrappedValue.dismiss()
           }.disabled(conversion == nil)
+            .help(OJDLocalized.string("ui.profiles.convertHelp"))
         }
       }.ojdSheet(.compact)
     }
@@ -131,6 +134,7 @@
           Button(OJDLocalized.string("action.done")) {
             presentationMode.wrappedValue.dismiss()
           }.keyboardShortcut(.defaultAction)
+            .help(OJDLocalized.string("ui.help.done"))
         }
       }.ojdSheet(.compact)
     }

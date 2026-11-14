@@ -62,7 +62,9 @@
           Text(OJDLocalized.string("ui.profiles.trigger.right")).tag(
             RemappingTriggerSource.right
           )
-        }.pickerStyle(SegmentedPickerStyle())
+        }.help(OJDLocalized.string("ui.profiles.trigger.sourceHelp")).pickerStyle(
+          SegmentedPickerStyle()
+        )
         ScrollView {
           ProfileTriggerFields(draft: selected == .left ? $left : $right).padding(.trailing, 8)
         }
@@ -75,11 +77,11 @@
               right = ProfileTriggerDraft(source: .right, mapping: nil)
             }
             errorMessage = nil
-          }
+          }.help(OJDLocalized.string("ui.help.reset"))
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancel"))
           Button(OJDLocalized.string("action.save")) {
             do {
               let separator = Locale.current.decimalSeparator ?? "."
@@ -89,7 +91,7 @@
               try onSave(mappings)
               presentationMode.wrappedValue.dismiss()
             } catch { errorMessage = RuntimePresentation.userFacingError(error) }
-          }
+          }.help(OJDLocalized.string("ui.help.save"))
         }
       }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(

@@ -11,26 +11,28 @@
     /// The enabled toggle and, while it is on, the source and the settings of the trackball.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
-        Toggle(label("enabled"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled).help(tooltip("enabled"))
         if draft.enabled {
           Text(
             label("hint")
           ).font(.body)
           Picker(label("source"), selection: $draft.source) {
             ForEach(sources, id: \.source) { option in Text(option.title).tag(option.source) }
-          }
+          }.help(tooltip("source"))
           Picker(label("axes"), selection: $draft.axes) {
             Text(label("pitch")).tag(RemappingGyroTrackballAxes.pitch)
             Text(label("yaw")).tag(RemappingGyroTrackballAxes.yaw)
             Text(label("both")).tag(RemappingGyroTrackballAxes.both)
-          }
-          TextField(label("decay"), text: $draft.decay).ojdAccessibilityLabel(label("decay"))
+          }.help(tooltip("axes"))
+          TextField(label("decay"), text: $draft.decay).ojdAccessibilityLabel(label("decay")).help(
+            tooltip("decay")
+          )
           Text(label("decayHint"))
             .font(.body)
           Toggle(
             label("consume"),
             isOn: $draft.consumesSource
-          )
+          ).help(tooltip("consume"))
         }
       }
     }
@@ -46,6 +48,11 @@
     /// Returns the text of the trackball field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.trackball." + key)
+    }
+
+    /// Returns the tooltip of the trackball field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.trackball." + key + "Help")
     }
   }
 #endif

@@ -54,7 +54,7 @@
             Text(device.name + " · " + device.sessionToken.rawValue)
               .tag(Optional(device.sessionToken))
           }
-        }
+        }.help(OJDLocalized.string("ui.profiles.joyConLeftHelp"))
         Picker(
           OJDLocalized.string("ui.profiles.joyConRight"),
           selection: $rightSessionToken
@@ -63,7 +63,7 @@
             Text(device.name + " · " + device.sessionToken.rawValue)
               .tag(Optional(device.sessionToken))
           }
-        }
+        }.help(OJDLocalized.string("ui.profiles.joyConRightHelp"))
         Text(
           OJDLocalized.string(
             "ui.profiles.joyConPairSessionHint"
@@ -71,13 +71,16 @@
         ).font(.caption).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true)
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancel")
+          )
           Button(OJDLocalized.string("ui.profiles.pair")) {
             if let leftSessionToken, let rightSessionToken {
               onPair(leftSessionToken, rightSessionToken)
             }
             dismiss()
           }.disabled(leftSessionToken == nil || rightSessionToken == nil)
+            .help(OJDLocalized.string("ui.profiles.pairHelp"))
         }
       }.ojdSheet(.regular)
     }

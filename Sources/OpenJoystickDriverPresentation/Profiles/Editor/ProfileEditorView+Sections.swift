@@ -68,7 +68,8 @@
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("action.addAssignment")
+            label: OJDLocalized.string("action.addAssignment"),
+            help: OJDLocalized.string("ui.profiles.addAssignmentHelp")
           ) { activeSheet = .capture }
         }
       ) {
@@ -121,7 +122,9 @@
             )
           }
           Button(OJDLocalized.string("action.save")) { save() }.disabled(!canSave)
-            .ojdAccessibilityValue(saveButtonAccessibilityValue)
+            .ojdAccessibilityValue(saveButtonAccessibilityValue).help(
+              OJDLocalized.string("ui.profiles.saveHelp")
+            )
         }
       }.padding(.horizontal, 28).padding(.vertical, 14)
     }

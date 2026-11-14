@@ -83,6 +83,7 @@
               Spacer(minLength: 0)
               Button(OJDLocalized.string("ui.library.dismiss")) { model.dismissNotice() }
                 .ojdAccessibilityLabel(OJDLocalized.string("a11y.library.dismissNotice"))
+                .help(OJDLocalized.string("ui.library.dismissHelp"))
             }.accessibilityElement(children: .contain).ojdAccessibilityLabel(notice)
           }
         }

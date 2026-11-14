@@ -49,21 +49,21 @@
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(label("title")).font(.headline)
-        Toggle(label("enabled"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled).help(tooltip("enabled"))
         if draft.enabled {
           Picker(label("driver"), selection: $draft.driverType) {
             Text(label("driverTrigger")).tag(RemappingPointerSpeedDriver.Kind.trigger)
             Text(label("driverStickDepth")).tag(RemappingPointerSpeedDriver.Kind.stickDepth)
-          }
+          }.help(tooltip("driver"))
           Picker(label("side"), selection: $draft.side) {
             Text(label("sideLeft")).tag(RemappingStickSource.left)
             Text(label("sideRight")).tag(RemappingStickSource.right)
-          }
+          }.help(tooltip("side"))
           field("minScale", $draft.minScale)
           field("maxScale", $draft.maxScale)
           Picker(OJDLocalized.string("ui.capture.responseCurve"), selection: $draft.curve) {
             ForEach(RemappingResponseCurve.allCases, id: \.self) { Text($0.label).tag($0) }
-          }
+          }.help(OJDLocalized.string("ui.capture.responseCurveHelp"))
           if let scale = liveScale {
             Text(OJDLocalized.formatted("ui.profiles.pointerSpeed.live", scale))
           }
@@ -74,8 +74,10 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
-          Button(OJDLocalized.string("action.save")) { save() }
+          }.help(OJDLocalized.string("ui.help.cancel"))
+          Button(OJDLocalized.string("action.save")) { save() }.help(
+            OJDLocalized.string("ui.help.save")
+          )
         }
       }.ojdSheet(.compact).task {
         while !Task.isCancelled {
@@ -120,13 +122,18 @@
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
-          .ojdAccessibilityLabel(label(key))
+          .ojdAccessibilityLabel(label(key)).help(tooltip(key))
       }
     }
 
     /// Returns the text of the pointer speed key called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.pointerSpeed." + key)
+    }
+
+    /// Returns the tooltip of the pointerSpeed field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.pointerSpeed." + key + "Help")
     }
   }
 #endif

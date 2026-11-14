@@ -85,7 +85,7 @@
               ForEach(discreteSources(capabilities: capabilities), id: \.source) { option in
                 Text(option.title).tag(option.source).disabled(!option.isSupported)
               }
-            }
+            }.help(OJDLocalized.string("ui.profiles.combinationControlHelp"))
             if sources.count > 2 {
               Button(
                 action: { sources.remove(at: index) },
@@ -97,13 +97,14 @@
                 }
               ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
                 OJDLocalized.string("action.remove")
-              )
+              ).help(OJDLocalized.string("ui.profiles.removeControlHelp"))
             }
           }
         }
         Button(OJDLocalized.string("ui.profiles.addControl")) {
           sources.append(nextSource)
         }.disabled(sources.count >= discreteSources(capabilities: capabilities).count)
+          .help(OJDLocalized.string("ui.profiles.addControlHelp"))
         if kind == .chord {
           Picker(
             OJDLocalized.string("ui.profiles.chordMode"),
@@ -114,10 +115,11 @@
             )
             Text(OJDLocalized.string("ui.profiles.chordModeSimultaneous"))
               .tag(RemappingChordMode.simultaneous)
-          }
+          }.help(OJDLocalized.string("ui.profiles.chordModeHelp"))
           if chordMode == .simultaneous {
             valueSlider(
               title: OJDLocalized.string("ui.profiles.chordWindow"),
+              help: OJDLocalized.string("ui.profiles.chordWindowHelp"),
               value: $windowMs,
               range: RemappingChord.windowRange
             )
@@ -125,6 +127,7 @@
         } else {
           valueSlider(
             title: OJDLocalized.string("ui.profiles.sequenceWindow"),
+            help: OJDLocalized.string("ui.profiles.sequenceWindowHelp"),
             value: $windowMs,
             range: RemappingSequence.windowRange
           )
@@ -137,11 +140,13 @@
             discreteDestinations(including: destination, capabilities: capabilities),
             id: \.destination
           ) { option in Text(option.title).tag(option.destination).disabled(!option.isSupported) }
-        }
+        }.help(OJDLocalized.string("ui.capture.destinationHelp"))
         PhysicalOutputDestinationFields(destination: $destination)
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancel")
+          )
           Button(OJDLocalized.string("action.add")) {
             let window = kind == .chord && chordMode == .modifier ? 50 : windowMs
             onSave(sources, chordMode, window, destination)
@@ -149,7 +154,7 @@
           }.disabled(
             Set(sources).count != sources.count
               || !ProfileCapabilityPolicy.supports(destination, capabilities: capabilities)
-          )
+          ).help(OJDLocalized.string("ui.profiles.addCombinationHelp"))
         }
       }.ojdSheet(.regular)
     }
@@ -176,6 +181,7 @@
     /// A slider for `value` in milliseconds, with `title` and the value beside it.
     private func valueSlider(
       title: String,
+      help: String,
       value: Binding<Double>,
       range: ClosedRange<Double>
     ) -> some View {
@@ -187,7 +193,7 @@
             Color(NSColor.secondaryLabelColor)
           )
         }
-        Slider(value: value, in: range).ojdAccessibilityLabel(title)
+        Slider(value: value, in: range).ojdAccessibilityLabel(title).help(help)
       }
     }
 
@@ -219,6 +225,7 @@
       ProfileSheetScaffold(title: OJDLocalized.string("ui.profiles.addLayer")) {
         TextField(OJDLocalized.string("ui.profiles.layerName"), text: $name)
           .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.layerName"))
+          .help(OJDLocalized.string("ui.profiles.layerNameHelp"))
         Picker(
           OJDLocalized.string("ui.profiles.activator"),
           selection: $activator
@@ -226,7 +233,7 @@
           ForEach(discreteSources(capabilities: capabilities), id: \.source) { option in
             Text(option.title).tag(option.source).disabled(!option.isSupported)
           }
-        }
+        }.help(OJDLocalized.string("ui.profiles.activatorHelp"))
         Picker(
           OJDLocalized.string("ui.profiles.activationMode"),
           selection: $activationMode
@@ -237,14 +244,17 @@
           Text(OJDLocalized.string("ui.profiles.toggle")).tag(
             RemappingLayerActivation.toggle
           )
-        }
+        }.help(OJDLocalized.string("ui.profiles.activationModeHelp"))
       } footer: {
         Spacer()
-        Button(OJDLocalized.string("action.cancel")) { dismiss() }
+        Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+          OJDLocalized.string("ui.help.cancel")
+        )
         Button(OJDLocalized.string("action.add")) {
           onSave(name.trimmingCharacters(in: .whitespacesAndNewlines), activator, activationMode)
           dismiss()
         }.disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+          .help(OJDLocalized.string("ui.profiles.addLayerHelp"))
       }
     }
 
@@ -284,7 +294,7 @@
         ) {
           ForEach(SourceOption.options(including: source, capabilities: capabilities), id: \.source)
           { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
-        }
+        }.help(OJDLocalized.string("ui.capture.controlHelp"))
         Picker(
           OJDLocalized.string("term.destination"),
           selection: $destination
@@ -297,18 +307,20 @@
             ),
             id: \.destination
           ) { option in Text(option.title).tag(option.destination).disabled(!option.isSupported) }
-        }
+        }.help(OJDLocalized.string("ui.capture.destinationHelp"))
         PhysicalOutputDestinationFields(destination: $destination)
       } footer: {
         Spacer()
-        Button(OJDLocalized.string("action.cancel")) { dismiss() }
+        Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+          OJDLocalized.string("ui.help.cancel")
+        )
         Button(OJDLocalized.string("action.add")) {
           onSave(source, destination)
           dismiss()
         }.disabled(
           !ProfileCapabilityPolicy.supports(source, capabilities: capabilities)
             || !ProfileCapabilityPolicy.supports(destination, capabilities: capabilities)
-        )
+        ).help(OJDLocalized.string("ui.capture.addHelp"))
       }
     }
 

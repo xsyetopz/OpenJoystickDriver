@@ -51,6 +51,7 @@
           }
         }.pickerStyle(SegmentedPickerStyle()).labelsHidden().padding(.horizontal, 16)
           .padding(.vertical, 12).ojdInterfaceRow(LibraryRow.scopeSwitch)
+          .help(OJDLocalized.string("ui.library.scopeHelp"))
         List(selection: selection) {
           Section(header: recordsHeader) {
             if model.visibleRecords.isEmpty, isSearching || model.records.skipped.isEmpty {
@@ -124,6 +125,7 @@
           .foregroundColor(.secondary)
         if skipped.offersMigration {
           Button(OJDLocalized.string("ui.migrate.action")) { model.migrate() }
+            .help(OJDLocalized.string("ui.migrate.actionHelp"))
         }
       }.ojdAccessibilityLabel(skipped.path).ojdAccessibilityValue(skipped.problem)
     }
@@ -172,8 +174,10 @@
           Button(OJDLocalized.string("action.cancel"), action: cancel).keyboardShortcut(
             .cancelAction
           ).ojdAccessibilityLabel(OJDLocalized.string("a11y.library.cancel"))
+            .help(OJDLocalized.string("ui.help.cancel"))
           Button(confirmation.confirmTitle, action: confirm).keyboardShortcut(.defaultAction)
             .ojdAccessibilityLabel(confirmation.confirmTitle)
+            .help(OJDLocalized.string("ui.library.confirmHelp"))
         }
       }.ojdSheet(.compact)
     }
