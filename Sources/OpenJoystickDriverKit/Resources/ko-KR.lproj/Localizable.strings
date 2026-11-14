@@ -3268,23 +3268,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "터보는 포인터 이동 또는 스크롤 타깃에서 사용할 수 없습니다.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "컨트롤러의 모션 보정을 표시하거나 변경합니다.";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "수행할 작업: start, pause 또는 reset. 생략하면 보정을 출력합니다.";
+"cli.controller.calibrate.abstract" = "컨트롤러의 보정을 표시하거나 변경합니다.";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "할 일: start, pause, reset 또는 sticks. 생략하면 모션 보정을 출력합니다.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "보정됨";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "수집 중";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "작업을 생략하면 보정을 출력합니다. start는 컨트롤러를 가만히 둔 동안 자이로 드리프트를 수집하고, pause는 수집을 멈추며, reset은 보정을 지웁니다. 모션 기울이기와 조향 할당은 이 보정을 사용합니다.";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "동작을 생략하면 모션 보정을 출력합니다. start는 컨트롤러를 가만히 둔 동안 자이로 드리프트를 수집하고, pause는 수집을 멈춥니다. sticks는 스틱 중심, 스틱 범위, 트리거 끝점을 측정하여 컨트롤러 모델용으로 저장합니다. reset은 저장된 그 값들을 제거하고 모션 보정을 지웁니다. 모션 기울기와 조향 바인딩은 모션 보정을 사용합니다.";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@의 연결이 끊어졌습니다.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@은(는) 모션을 보고하지 않습니다.";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: 저장된 스틱 및 트리거 보정을 지웠습니다.";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, 자이로 오프셋 x %3$@ y %4$@ z %5$@ 도/초";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "sticks가 실행하는 한 단계: rest, circle 또는 triggers. 생략하면 세 단계를 모두 실행합니다.";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "각 스틱을 전체 원을 그리며 돌려 주세요…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "스틱과 트리거에서 손을 떼고 가만히 두세요…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "각 트리거를 끝까지 누르세요…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: %2$@ 단계가 %3$@을(를) 저장했습니다.";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@에는 활성 리매핑 세션이 없습니다. ‘ojd profile activate’로 프로파일을 활성화하세요.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "보정되지 않음";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@이(가) 움직이지 않아 저장된 값을 유지합니다.";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "왼쪽과 오른쪽 Joy-Con을 하나의 컨트롤러로 합칩니다.";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

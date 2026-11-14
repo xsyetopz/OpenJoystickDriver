@@ -3268,23 +3268,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "टर्बो पॉइंटर मूवमेंट या स्क्रोल लक्ष्यों के साथ काम नहीं करता।";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "कंट्रोलर का मोशन कैलिब्रेशन दिखाएँ या बदलें।";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "क्या करना है: start, pause या reset। कैलिब्रेशन प्रिंट करने के लिए इसे छोड़ दें।";
+"cli.controller.calibrate.abstract" = "कंट्रोलर का कैलिब्रेशन दिखाएँ या बदलें।";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "क्या करना है: start, pause, reset या sticks। मोशन कैलिब्रेशन प्रिंट करने के लिए इसे छोड़ दें।";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "कैलिब्रेटेड";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "डेटा जुटाया जा रहा है";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "कार्रवाई के बिना यह कैलिब्रेशन प्रिंट करता है। start कंट्रोलर के स्थिर रखे होने पर जाइरो ड्रिफ़्ट जुटाता है, pause जुटाना रोकता है, और reset कैलिब्रेशन को भुला देता है। मोशन लीन और स्टीयरिंग असाइनमेंट इसी कैलिब्रेशन का उपयोग करते हैं।";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "बिना क्रिया के मोशन कैलिब्रेशन प्रिंट होता है। start तब गायरो ड्रिफ्ट इकट्ठा करता है जब कंट्रोलर स्थिर पड़ा हो, और pause इकट्ठा करना रोकता है। sticks स्टिक के केंद्र, स्टिक की सीमाएँ और ट्रिगर के अंतिम बिंदु मापता है और उन्हें कंट्रोलर के मॉडल के लिए सहेजता है। reset सहेजे गए उन मानों को हटाता है और मोशन कैलिब्रेशन भूल जाता है। मोशन झुकाव और स्टीयरिंग बाइंडिंग मोशन कैलिब्रेशन का उपयोग करती हैं।";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ अब कनेक्ट नहीं है।";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ मोशन की रिपोर्ट नहीं करता।";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: सहेजा गया स्टिक और ट्रिगर कैलिब्रेशन हटा दिया गया।";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, जाइरो ऑफ़सेट x %3$@ y %4$@ z %5$@ डिग्री प्रति सेकंड";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "sticks जो एक चरण चलाता है: rest, circle या triggers। तीनों चलाने के लिए इसे छोड़ दें।";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "हर स्टिक को उसके पूरे घेरे में घुमाएँ…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "स्टिक और ट्रिगर छोड़ दें और उन्हें स्थिर रखें…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "हर ट्रिगर को पूरा दबाएँ…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: %2$@ चरण ने %3$@ सहेजा।";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ का कोई सक्रिय रीमैपिंग सत्र नहीं है। उसके लिए “ojd profile activate” से प्रोफ़ाइल सक्रिय करें।";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "कैलिब्रेट नहीं है";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ नहीं हिला, इसलिए सहेजे गए मान बने रहते हैं।";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "बाएँ और दाएँ Joy-Con को एक कंट्रोलर में जोड़ें।";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

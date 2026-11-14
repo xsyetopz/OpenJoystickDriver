@@ -11,6 +11,15 @@ public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendab
   /// Removes the stored centres, ranges, and trigger ends, and clears the gyro offset.
   case reset
 
+  /// The action that runs `step`.
+  public init(_ step: ControllerCalibration.Step) {
+    switch step {
+    case .rest: self = .rest
+    case .circle: self = .circle
+    case .triggers: self = .triggers
+    }
+  }
+
   /// The step this action measures; nil for `reset`.
   public var step: ControllerCalibration.Step? { .init(rawValue: rawValue) }
 }

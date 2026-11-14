@@ -448,49 +448,113 @@
       }
     },
     "controllerCalibrate": {
-      "type": "object",
-      "required": [
-        "apiVersion",
-        "kind",
-        "calibrated",
-        "collecting",
-        "controller",
-        "offsetDegreesPerSecond"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "apiVersion": {
-          "$ref": "#/$defs/sharedAPIVersion"
-        },
-        "kind": {
-          "const": "Calibration"
-        },
-        "calibrated": {
-          "type": "boolean"
-        },
-        "collecting": {
-          "type": "boolean"
-        },
-        "controller": {
-          "type": "string"
-        },
-        "offsetDegreesPerSecond": {
+      "description": "The motion calibration of a controller, or with kind Recalibration what a sticks step stored or a reset cleared.",
+      "oneOf": [
+        {
           "type": "object",
-          "required": ["x", "y", "z"],
+          "required": [
+            "apiVersion",
+            "kind",
+            "calibrated",
+            "collecting",
+            "controller",
+            "offsetDegreesPerSecond"
+          ],
           "additionalProperties": false,
           "properties": {
-            "x": {
-              "type": "number"
+            "apiVersion": {
+              "$ref": "#/$defs/sharedAPIVersion"
             },
-            "y": {
-              "type": "number"
+            "kind": {
+              "const": "Calibration"
             },
-            "z": {
-              "type": "number"
+            "calibrated": {
+              "type": "boolean"
+            },
+            "collecting": {
+              "type": "boolean"
+            },
+            "controller": {
+              "type": "string"
+            },
+            "offsetDegreesPerSecond": {
+              "type": "object",
+              "required": ["x", "y", "z"],
+              "additionalProperties": false,
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "apiVersion",
+            "kind",
+            "action",
+            "cleared",
+            "controller",
+            "gyroOffsetCleared",
+            "stored",
+            "unmoved"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "apiVersion": {
+              "$ref": "#/$defs/sharedAPIVersion"
+            },
+            "kind": {
+              "const": "Recalibration"
+            },
+            "action": {
+              "description": "The step that ran: rest, circle, or triggers; reset for a reset.",
+              "enum": ["rest", "circle", "triggers", "reset"]
+            },
+            "cleared": {
+              "description": "The tuning keys a reset removed from the user record.",
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/sharedTuningKey"
+              }
+            },
+            "controller": {
+              "type": "string"
+            },
+            "gyroOffsetCleared": {
+              "description": "Whether a reset cleared the gyro offset; false for a controller with no active gyro profile.",
+              "type": "boolean"
+            },
+            "stored": {
+              "description": "The values a step stored, by tuning key.",
+              "type": "object",
+              "propertyNames": {
+                "$ref": "#/$defs/sharedTuningKey"
+              },
+              "additionalProperties": {
+                "type": "number"
+              }
+            },
+            "unmoved": {
+              "description": "The controls that did not move enough to measure; their stored values stay.",
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "vocabulary.schema.json#/$defs/control"
+              }
             }
           }
         }
-      }
+      ]
     },
     "controllerCapture": {
       "type": "object",

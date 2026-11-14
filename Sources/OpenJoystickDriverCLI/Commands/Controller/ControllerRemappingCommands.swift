@@ -42,7 +42,8 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
-  /// The action: `start`, `pause` or `reset`; without one the command only shows the calibration.
+  /// The action: `start`, `pause`, `reset` or `sticks`; without one the command only shows the
+  /// motion calibration.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -51,7 +52,11 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
       valueName: "action"
     )
   )
-  var action: RemappingMotionCalibrationCommand?
+  var action: ControllerCalibrateAction?
+
+  /// The one step `sticks` runs; without it `sticks` runs `rest`, `circle`, and `triggers`.
+  @Option(help: ArgumentHelp(CLILocalized.text("cli.controller.calibrate.step")))
+  var step: ControllerCalibration.Step?
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -59,8 +64,16 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
 
   /// Runs the command.
   func run() async throws {
+    switch action {
+    case .sticks, .reset: try await recalibrate()
+    case .start, .pause, nil: try await showMotion()
+    }
+  }
+
+  /// Prints the motion calibration after the service applies the action.
+  private func showMotion() async throws {
     try await global.run {
-      let (selector, motionAction) = (controller, action)
+      let (selector, motionAction) = (controller, action?.motion)
       let (device, status) = try await ServiceConnection.request { client in
         let device = try await selector.resolve(with: client)
         do {

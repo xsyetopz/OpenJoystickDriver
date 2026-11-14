@@ -3268,23 +3268,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "El turbo no funciona con destinos de movimiento del puntero ni de desplazamiento.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "Muestra o cambia la calibración de movimiento de un mando.";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "Qué hacer: start, pause o reset. Omítelo para imprimir la calibración.";
+"cli.controller.calibrate.abstract" = "Muestra o cambia la calibración de un mando.";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "Qué hacer: start, pause, reset o sticks. Omítelo para imprimir la calibración de movimiento.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "calibrado";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "recopilando";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "Sin acción, imprime la calibración. start recopila la deriva del giroscopio mientras el mando está quieto, pause detiene la recopilación y reset olvida la calibración. Las asignaciones de inclinación y dirección por movimiento usan la calibración.";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "Sin acción, imprime la calibración de movimiento. start recoge la deriva del giroscopio mientras el mando está quieto y pause deja de recogerla. sticks mide los centros y los rangos de los sticks y los extremos de los gatillos, y los guarda para el modelo del mando. reset elimina esos valores guardados y olvida la calibración de movimiento. Los enlaces de inclinación y de dirección por movimiento usan la calibración de movimiento.";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ ya no está conectado.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ no informa del movimiento.";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: calibración guardada de sticks y gatillos borrada.";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, desplazamiento del giroscopio x %3$@ y %4$@ z %5$@ grados por segundo";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "El único paso que ejecuta sticks: rest, circle o triggers. Omítelo para ejecutar los tres.";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "Gira cada stick describiendo su círculo completo…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "Suelta los sticks y los gatillos y mantenlos quietos…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "Pulsa cada gatillo hasta el fondo…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: el paso %2$@ guardó %3$@.";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ no tiene ninguna sesión de reasignación activa. Activa un perfil para él con «ojd profile activate».";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "sin calibrar";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ no se movió, así que se conservan los valores guardados.";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "Une un Joy-Con izquierdo y uno derecho en un solo mando.";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

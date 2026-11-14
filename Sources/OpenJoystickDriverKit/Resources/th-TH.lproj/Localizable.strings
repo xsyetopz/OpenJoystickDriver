@@ -3268,23 +3268,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "เทอร์โบใช้กับปลายทางการเคลื่อนตัวชี้หรือการเลื่อนไม่ได้";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "แสดงหรือเปลี่ยนการปรับเทียบการเคลื่อนไหวของคอนโทรลเลอร์";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "สิ่งที่จะทำ: start, pause หรือ reset หากไม่ระบุ จะพิมพ์การปรับเทียบ";
+"cli.controller.calibrate.abstract" = "แสดงหรือเปลี่ยนการสอบเทียบของคอนโทรลเลอร์";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "สิ่งที่ต้องทำ: start, pause, reset หรือ sticks ละไว้เพื่อพิมพ์การสอบเทียบการเคลื่อนไหว";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "ปรับเทียบแล้ว";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "กำลังรวบรวม";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "หากไม่ระบุการทำงาน จะพิมพ์การปรับเทียบ start รวบรวมค่าเลื่อนของไจโรขณะที่คอนโทรลเลอร์วางนิ่ง pause หยุดการรวบรวม และ reset ลืมการปรับเทียบ การกำหนดการเอียงและการบังคับเลี้ยวของเซนเซอร์การเคลื่อนไหวใช้การปรับเทียบนี้";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "หากไม่ระบุการกระทำ จะพิมพ์การสอบเทียบการเคลื่อนไหว start เก็บค่าดริฟต์ของไจโรขณะที่คอนโทรลเลอร์วางนิ่ง และ pause หยุดการเก็บ sticks วัดจุดกึ่งกลางและช่วงของสติ๊ก รวมถึงปลายทางของทริกเกอร์ แล้วบันทึกไว้สำหรับรุ่นของคอนโทรลเลอร์ reset ลบค่าที่บันทึกไว้เหล่านั้นและล้างการสอบเทียบการเคลื่อนไหว การผูกการเอียงและการบังคับเลี้ยวด้วยการเคลื่อนไหวใช้การสอบเทียบการเคลื่อนไหว";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ ไม่ได้เชื่อมต่ออยู่อีกต่อไป";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ ไม่รายงานการเคลื่อนไหว";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: ล้างการสอบเทียบสติ๊กและทริกเกอร์ที่บันทึกไว้แล้ว";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, ค่าเลื่อนของไจโร x %3$@ y %4$@ z %5$@ องศาต่อวินาที";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "ขั้นตอนเดียวที่ sticks ทำงาน: rest, circle หรือ triggers ละไว้เพื่อทำทั้งสามขั้นตอน";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "หมุนสติ๊กแต่ละอันรอบวงกลมเต็มของมัน…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "ปล่อยสติ๊กและทริกเกอร์แล้วถือให้นิ่ง…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "กดทริกเกอร์แต่ละอันให้สุด…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: ขั้นตอน %2$@ บันทึก %3$@ แล้ว";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ ไม่มีเซสชั่นการแมปใหม่ที่ใช้งานอยู่ เปิดใช้งานโปรไฟล์ให้คอนโทรลเลอร์ด้วย “ojd profile activate”";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "ยังไม่ได้ปรับเทียบ";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ ไม่ขยับ ค่าที่บันทึกไว้จึงคงอยู่";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "รวม Joy-Con ซ้ายและขวาเป็นคอนโทรลเลอร์หนึ่งตัว";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */
