@@ -26,6 +26,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- The `E5001` message for an unsupported `apiVersion` ends with "run `ojd migrate` to convert", after the file, the version found and the supported version.
+- `ojd migrate` reports a store JSON file with no `apiVersion` as `failed` with the reason "has no apiVersion", where it reported it `foreign`; the run exits with a failure status after it has processed every file.
+- A `.json` file left in `Controllers/` or `VirtualDevices/` is listed as stale with `E5001`, and the **Library** area offers **Migrate** beside it.
+- Schema descriptions no longer repeat a numeric range that `minimum` and `maximum` state, and `just check-schemas` runs the schema style test.
 - **BREAKING:** `apiVersion` is `openjoystickdriver/v1alpha3`, and the readers accept only that version.
 - **BREAKING:** stored documents are XML property lists (`.plist`): the bundled records, patches, protocol descriptions, catalog rules, the crosswalk and virtual devices, and every document a user keeps. OJD refuses a binary property list, JSON text, and a `date` or `data` value. `plutil -convert xml1 -o FILE.plist FILE.json` converts a JSON file, and `plutil -convert json -o - FILE.plist` reads a property list as JSON. A user-defined record or patch follows the same schema as a bundled one.
 - **BREAKING:** a patch deletes a key through `remove`, because a property list has no `null`. A `null` in a patch no longer deletes, and the migration turns each one into a `remove` entry. In the crosswalk an absent key states that a control has no equivalent.

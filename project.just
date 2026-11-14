@@ -41,6 +41,7 @@ driverkit-check:
 # Validate the schemas and a live support report.
 check-schemas: schema-env
     {{ schema_python }} -m Scripts.Quality.validate_schemas
+    {{ schema_python }} Tests/RepositoryScripts/test_schema_style.py
 
 # Check the canonical controller records.
 check-profiles: schema-env
