@@ -23,7 +23,7 @@ struct StatusItemProfileOperationTests {
     func showAccess(permission _: AccessPermissionRow.Kind) {}
     func showErrorCodeExplainer() {}
     func showController(id _: String) {}
-    func showInputTest(controllerID _: String) {}
+    func showInputTest(controllerID _: String) -> Bool { true }
     func importProfile() {}
     func exportProfile() {}
     func installRecordOrMod() {}

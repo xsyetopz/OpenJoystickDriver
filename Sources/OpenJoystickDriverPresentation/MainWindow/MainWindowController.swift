@@ -254,18 +254,22 @@
     var selectedArea: MainWindowArea { navigation.selectedArea }
 
     /// Shows the Input Test window for the controller, after selecting it in Controllers.
-    func showInputTest(controllerID: String) {
+    ///
+    /// Returns false when the controller is not in Controllers. A refused area switch shows its own
+    /// alert, so it counts as shown.
+    func showInputTest(controllerID: String) -> Bool {
       guard navigation.requestArea(.controllers) else {
         present()
-        return
+        return true
       }
       showController(id: controllerID)
       guard
         let device = screens.controllers.devices.first(where: {
           $0.sessionToken.rawValue == controllerID
         })
-      else { return }
+      else { return false }
       screens.openInputTest(device)
+      return true
     }
 
     // MARK: Profile mutations from menus

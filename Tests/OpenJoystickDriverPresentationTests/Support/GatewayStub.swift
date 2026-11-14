@@ -191,8 +191,12 @@ actor GatewayStub: ApplicationServiceGateway {
   /// The Bluetooth access requests received.
   private(set) var bluetoothRequests = 0
 
-  func requestBluetoothAccess() -> BluetoothAccessState {
+  /// Whether a Bluetooth access request throws.
+  var bluetoothShouldFail = false
+
+  func requestBluetoothAccess() throws -> BluetoothAccessState {
     bluetoothRequests += 1
+    if bluetoothShouldFail { throw ApplicationServiceClientError.timeout }
     return .granted
   }
 
@@ -440,6 +444,7 @@ actor GatewayStub: ApplicationServiceGateway {
     overrideFailure = failure
   }
 
+  func setBluetoothShouldFail(_ value: Bool) { bluetoothShouldFail = value }
   func setOverrideError(_ error: ApplicationServiceClientError?) { overrideError = error }
 
   func gateOverrideRequests() { overrideRequestsAreGated = true }

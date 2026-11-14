@@ -182,6 +182,14 @@
             dismissButton: .default(Text(OJDLocalized.string("action.ok")))
           )
         }
+      ).background(
+        Color.clear.alert(isPresented: bluetoothFailurePresented) {
+          Alert(
+            title: Text(OJDLocalized.string("ui.extra.actionFailedTitle")),
+            message: Text(runtime.bluetoothRequestFailure ?? ""),
+            dismissButton: .default(Text(OJDLocalized.string("action.ok")))
+          )
+        }
       ).background(ErrorCodeExplainerSheetHost(model: screens.errorCodeExplainer)).background(
         WhatsNewSheetHost(model: screens.whatsNew)
       ).background(
@@ -253,6 +261,14 @@
           opensSettings: step.buttonKey != "action.request"
         )
       }
+    }
+
+    /// Whether the alert for a failed Bluetooth request shows; dismissing clears the failure.
+    private var bluetoothFailurePresented: Binding<Bool> {
+      Binding(
+        get: { runtime.bluetoothRequestFailure != nil },
+        set: { if !$0 { runtime.bluetoothRequestFailure = nil } }
+      )
     }
 
     /// Runs the fix that a problem in the banner offers.

@@ -46,6 +46,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- The Pause, Resume and Disconnect items of the **Controller** menu show an alert when the request fails or the controller is gone; **Test Input** shows one when the controller is gone.
+- Input Test shows a failed rumble stop or color preview release in its error line.
+- A refused Bluetooth access request in the main window shows an alert that says why.
 - **Check Now** with only prerelease releases published reports no error: it states that only prereleases exist and names **Include prerelease updates**.
 - The stick dead zone stepper clears the value ("Not set") when it decrements below the lowest value; before, only **Reset** cleared it.
 - The developer tools show **USB endpoints** only for a controller connected over USB.
