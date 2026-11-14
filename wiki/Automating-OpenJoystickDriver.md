@@ -389,8 +389,8 @@ The actions run in the app, so the app must be installed. They do not use `ojd`.
 
 When you choose a controller, the list shows each connected controller, and then one entry for each connected model. A shortcut stores the controller in the same forms as `CONTROLLER` in [Name a Controller](#name-a-controller):
 
-- A single controller is stored by its unit ID, or by its `ojd controller list` ID when it has no unit ID. The unit ID changes when you connect the controller to a different USB port, and the list ID changes each time the controller connects.
-- A model entry is stored as `VVVV:PPPP`. It finds the connected controller of that model on any port. When two connected controllers have the same model, the action fails and lists them. You can also type `VVVV:PPPP` in the search field.
+- A single controller shows its model and its ID under its name, such as `2DC8:310A  U-kZ7dCdQP-6vkJyz4`. It is stored by its unit ID, or by its `ojd controller list` ID when it has no unit ID. The unit ID changes when you connect the controller to a different USB port, and the list ID changes each time the controller connects.
+- A model entry shows "Any connected" and the model under its name, such as `Any connected 2DC8:310A`, so one connected controller appears twice under the same name. A wireless receiver and its controller are one entry, under the model the receiver reports. A model entry is stored as `VVVV:PPPP`. It finds the connected controller of that model on any port. When two connected controllers have the same model, the action fails and lists them. You can also type `VVVV:PPPP` in the search field.
 
 Get Battery Level fails when the controller reports no battery level. When the controller reports a range, such as `30-39%`, the action returns the lowest value of the range.
 

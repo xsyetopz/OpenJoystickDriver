@@ -4177,6 +4177,8 @@
 "ui.shortcuts.action.removeMod.description" = "설치된 모드 패키지를 이름으로 제거합니다.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "이름";
+/* Subtitle in the Shortcuts app of the controller choice that stands for whichever connected controller has the model, on any port, instead of one controller. The argument is the model as VVVV:PPPP, such as 2DC8:310A. */
+"ui.shortcuts.controller.anyOfModel" = "연결된 %@ 중 하나";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "모델";
 /* Name of the name property of a controller in the Shortcuts app. */

@@ -36,10 +36,13 @@
 
     /// The title and subtitle that Shortcuts shows for the entity.
     var displayRepresentation: DisplayRepresentation {
-      // A model entry shows only the model; a single controller also shows its own ID.
+      // A model entry and the controller it resolves to share a name, so the subtitle tells them
+      // apart.
       DisplayRepresentation(
         title: "\(name)",
-        subtitle: isModelMatch ? "\(model)" : "\(model)  \(id)"
+        subtitle: isModelMatch
+          ? "\(Localization().string("ui.shortcuts.controller.anyOfModel", model))"
+          : "\(model)  \(id)"
       )
     }
   }
