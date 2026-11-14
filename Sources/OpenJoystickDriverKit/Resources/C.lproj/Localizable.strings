@@ -5483,9 +5483,9 @@
 /* Tooltip of the banner button that restarts the request listener of the service. */
 "ui.help.restartListener" = "Restart the request listener of the service";
 /* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
-"platform.macos.ui.help.openDriverApproval" = "Approve the driver extension in System Settings";
+"platform.macos.ui.help.openDriverApproval" = "Approve the Xbox USB driver in System Settings";
 /* Tooltip of the banner button that repairs the driver extension. */
-"ui.help.repairDriver" = "Repair the driver extension";
+"ui.help.repairDriver" = "Repair the Xbox USB driver";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
 "ui.help.requestMissingPermissions" = "Request the missing permissions in the Access area";
 /* Tooltip of the Import Profile toolbar button. */
@@ -5565,7 +5565,7 @@
 /* Tooltip of the Send Test Notification button in the Notifications settings. */
 "ui.help.testNotification" = "Show a sample notification now";
 /* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
-"ui.help.uninstallDriver" = "Remove the driver extension from the system";
+"ui.help.uninstallDriver" = "Remove the Xbox USB driver from the system";
 /* Tooltip of the Interface popup in the General settings. */
 "ui.help.interfaceLevel" = "Choose how many controls the app shows";
 /* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
