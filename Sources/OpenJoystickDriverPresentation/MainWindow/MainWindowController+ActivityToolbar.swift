@@ -85,6 +85,7 @@
           action: #selector(selectActivityFilter(_:)),
           keyEquivalent: ""
         )
+        entry.toolTip = OJDLocalized.string("ui.help.activityFilterChoice")
         entry.target = target
         entry.tag = filter.rawValue
         menu.addItem(entry)
@@ -103,6 +104,7 @@
           action: #selector(selectActivityLineCount(_:)),
           keyEquivalent: ""
         )
+        entry.toolTip = OJDLocalized.string("ui.help.activityLineCount")
         entry.target = target
         entry.tag = count
         menu.addItem(entry)
@@ -119,6 +121,7 @@
           action: #selector(selectActivityModeFromMenu(_:)),
           keyEquivalent: ""
         )
+        entry.toolTip = OJDLocalized.string("ui.help.activityModeChoice")
         entry.tag = mode.rawValue
         menu.addItem(entry)
       }

@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "Tampilkan gamepad virtual ke game";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "Atur seberapa kuat motor ini berjalan saat uji";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "Atur berapa lama getaran uji berlangsung";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "Atur berapa detik yang direkam";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "Atur berapa lama layanan disampel";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "Atur jeda waktu antara dua sampel";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "Atur ukuran resident yang menggagalkan uji; 0 menonaktifkan batas";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "Atur jejak memori yang menggagalkan uji; 0 menonaktifkan batas";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "Ketik kode kesalahan yang ingin dicari";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "Atur port yang didengarkan titik akhir WebSocket";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "Atur nama yang membantu Anda mengenali token ini";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "Daftarkan origin web yang boleh memakai token ini, satu per baris";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "Tampilkan versi dan kredit aplikasi ini";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "Ubah cara kerja aplikasi ini";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "Kirim pilihan ke layanan aplikasi lain";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "Sembunyikan jendela aplikasi ini sampai Anda kembali";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "Sembunyikan jendela semua aplikasi lain";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "Tampilkan jendela semua aplikasi yang disembunyikan";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "Tutup semua jendela dan hentikan aplikasi ini";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "Tambahkan rekaman pengontrol atau mod dari file";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "Tutup jendela terdepan";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "Simpan laporan status aplikasi dan layanan untuk laporan bug";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "Batalkan perubahan terakhir";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "Terapkan kembali perubahan yang dibatalkan";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "Hapus pilihan dan simpan untuk ditempel";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "Simpan salinan pilihan untuk ditempel";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "Sisipkan pilihan yang disimpan di sini";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "Hapus pilihan";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "Pilih semua di jendela terdepan";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "Cari di tampilan saat ini";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "Buka area ini di jendela utama";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "Tampilkan hanya kontrol yang umum";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "Tampilkan semua kontrol, termasuk yang lanjutan";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "Tampilkan atau sembunyikan bilah alat jendela utama";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "Tampilkan atau sembunyikan bar samping jendela utama";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "Alihkan jendela utama ke atau dari layar penuh";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "Sebutkan pengontrol yang dituju perintah di bawah";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "Buka jendela uji input untuk pengontrol ini";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "Tampilkan pengontrol ini di jendela utama";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "Pilih profil yang dipakai pengontrol ini";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "Berhenti memakai profil aktif pada pengontrol ini";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "Pindahkan jendela terdepan ke Dock";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "Perbesar jendela terdepan atau pulihkan ukurannya";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "Tempatkan semua jendela aplikasi ini di depan aplikasi lain";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "Buka area Aktivitas pada log layanan";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "Cari arti sebuah kode kesalahan";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "Salin laporan status aplikasi dan layanan untuk laporan bug";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "Buka bantuan untuk area yang sedang Anda lihat";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "Telusuri jendela utama satu area demi satu area";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "Buka formulir isu untuk melaporkan masalah";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "Buka situs web proyek di peramban";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "Buka Akses pada baris izin yang kurang ini";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "Buka jendela utama pada area yang terakhir ditampilkan";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "Jadikan ini profil aktif";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "Tampilkan hanya baris dari aliran log ini";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "Pertahankan sejumlah baris log ini di tampilan";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "Alihkan Aktivitas ke tampilan ini";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "Tutup pesan ini tanpa mengubah apa pun";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "Aktifkan profil meskipun ada pemberitahuan";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "Lanjut ke area berikutnya dalam tur";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "Kembali ke area sebelumnya dalam tur";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "Akhiri tur";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "Pilih format file pemetaan yang diekspor";
+

@@ -23,6 +23,16 @@ enum SoakTestField: CaseIterable {
     }
   }
 
+  /// The localization key of the field's tooltip.
+  var helpKey: String {
+    switch self {
+    case .seconds: "ui.help.soakDuration"
+    case .interval: "ui.help.soakInterval"
+    case .residentLimit: "ui.help.soakResidentLimit"
+    case .footprintLimit: "ui.help.soakFootprintLimit"
+    }
+  }
+
   /// The values the command accepts: `--soak`, `--interval-ms`, `--rss-limit-mib` and
   /// `--footprint-limit-mib`.
   var range: ClosedRange<Int> {

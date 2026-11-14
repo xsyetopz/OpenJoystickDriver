@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "ゲームに仮想ゲームパッドを表示";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "テスト中にこのモーターが動く強さを設定します";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "テストの振動が続く時間を設定します";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "記録する秒数を設定します";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "サービスをサンプリングする時間を設定します";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "2回のサンプルの間隔を設定します";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "テストを失敗にする常駐サイズを設定します。0 で無効になります";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "テストを失敗にするフットプリントを設定します。0 で無効になります";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "調べるエラーコードを入力します";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "WebSocket エンドポイントが待ち受けるポートを設定します";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "このトークンを見分けやすい名前を設定します";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "このトークンを使える Web オリジンを 1 行に 1 つずつ入力します";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "このアプリのバージョンとクレジットを表示します";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "このアプリの動作を変更します";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "選択内容を別のアプリのサービスに送ります";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "戻るまでこのアプリのウインドウを隠します";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "ほかのすべてのアプリのウインドウを隠します";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "隠れているすべてのアプリのウインドウを表示します";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "すべてのウインドウを閉じてこのアプリを終了します";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "ファイルからコントローラーのレコードまたは Mod を追加します";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "最前面のウインドウを閉じます";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "不具合報告用に、アプリとサービスの状態のレポートを保存します";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "直前の変更を取り消します";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "取り消した変更をやり直します";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "選択内容を削除し、ペースト用に保持します";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "選択内容のコピーをペースト用に保持します";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "保持している選択内容をここにペーストします";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "選択内容を削除します";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "最前面のウインドウ内のすべてを選択します";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "現在の表示内を検索します";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "メインウインドウのこの領域を開きます";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "よく使うコントロールだけを表示します";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "詳細なものを含め、すべてのコントロールを表示します";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "メインウインドウのツールバーを表示または非表示にします";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "メインウインドウのサイドバーを表示または非表示にします";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "メインウインドウをフルスクリーンにする/戻します";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "以下のコマンドが対象とするコントローラーを示します";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "このコントローラーの入力テストウインドウを開きます";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "このコントローラーをメインウインドウに表示します";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "このコントローラーが使うプロファイルを選びます";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "このコントローラーで有効なプロファイルの使用をやめます";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "最前面のウインドウを Dock にしまいます";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "最前面のウインドウを拡大するか、元のサイズに戻します";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "このアプリのすべてのウインドウをほかのアプリより前面に出します";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "アクティビティ領域でサービスのログを開きます";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "エラーコードの意味を調べます";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "不具合報告用に、アプリとサービスの状態のレポートをコピーします";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "今いる領域のヘルプを開きます";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "メインウインドウを領域ごとに案内します";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "問題を報告するため、課題フォームを開きます";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "プロジェクトの Web サイトをブラウザで開きます";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "不足しているこの権限の行でアクセスを開きます";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "メインウインドウを前回表示した領域で開きます";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "これを有効なプロファイルにします";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "このログストリームの行だけを表示します";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "この行数のログを表示したままにします";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "アクティビティをこの表示に切り替えます";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "何も変更せずにこのメッセージを閉じます";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "通知があっても、このプロファイルを有効にします";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "ツアーの次の領域に進みます";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "ツアーの前の領域に戻ります";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "ツアーを終了します";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "書き出すマッピングのファイル形式を選びます";
+

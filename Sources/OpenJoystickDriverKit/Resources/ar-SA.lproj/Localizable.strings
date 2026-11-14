@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "اعرض وحدة تحكم افتراضية للألعاب";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "ضبط شدة تشغيل هذا المحرك أثناء الاختبار";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "ضبط مدة اهتزاز الاختبار";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "ضبط عدد الثواني المراد تسجيلها";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "ضبط مدة أخذ عينات الخدمة";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "ضبط الوقت بين عينتين";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "ضبط الحجم المقيم الذي يفشل عنده الاختبار؛ 0 يوقف الحد";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "ضبط البصمة التي يفشل عندها الاختبار؛ 0 يوقف الحد";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "كتابة رمز الخطأ المراد البحث عنه";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "ضبط المنفذ الذي تستمع إليه نقطة نهاية WebSocket";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "ضبط اسم يساعدك على التعرف على هذا الرمز المميز";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "سرد أصول الويب التي يمكنها استخدام هذا الرمز المميز، واحد في كل سطر";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "إظهار إصدار هذا التطبيق وشكر المساهمين";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "تغيير سلوك هذا التطبيق";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "إرسال التحديد إلى خدمة تطبيق آخر";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "إخفاء نوافذ هذا التطبيق إلى أن تعود إليه";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "إخفاء نوافذ كل التطبيقات الأخرى";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "إظهار نوافذ كل التطبيقات المخفية";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "إغلاق كل النوافذ وإيقاف هذا التطبيق";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "إضافة سجل وحدة تحكم أو تعديل من ملف";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "إغلاق النافذة الأمامية";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "حفظ تقرير بحالة التطبيق والخدمة لاستخدامه في بلاغ عن خطأ";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "التراجع عن آخر تغيير";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "إعادة تطبيق التغيير الذي تم التراجع عنه";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "إزالة التحديد وإبقاؤه للصق";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "الاحتفاظ بنسخة من التحديد للصق";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "إدراج التحديد المحتفظ به هنا";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "إزالة التحديد";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "تحديد كل ما في النافذة الأمامية";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "البحث في العرض الحالي";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "فتح هذا القسم من النافذة الرئيسية";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "إظهار عناصر التحكم الشائعة فقط";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "إظهار كل عناصر التحكم بما فيها المتقدمة";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "إظهار شريط أدوات النافذة الرئيسية أو إخفاؤه";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "إظهار الشريط الجانبي للنافذة الرئيسية أو إخفاؤه";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "تبديل النافذة الرئيسية إلى ملء الشاشة أو منه";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "تحديد وحدة التحكم التي تعمل عليها الأوامر أدناه";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "فتح نافذة اختبار الإدخال لوحدة التحكم هذه";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "إظهار وحدة التحكم هذه في النافذة الرئيسية";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "اختيار ملف التعريف الذي تستخدمه وحدة التحكم هذه";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "التوقف عن استخدام ملف التعريف النشط على وحدة التحكم هذه";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "نقل النافذة الأمامية إلى Dock";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "تكبير النافذة الأمامية أو استعادة حجمها";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "وضع كل نوافذ هذا التطبيق أمام نوافذ التطبيقات الأخرى";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "فتح قسم النشاط على سجل الخدمة";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "البحث عن معنى رمز خطأ";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "نسخ تقرير بحالة التطبيق والخدمة لاستخدامه في بلاغ عن خطأ";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "فتح مساعدة القسم الذي أنت فيه";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "الاطلاع على النافذة الرئيسية قسمًا بعد قسم";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "فتح نموذج المشكلات للإبلاغ عن مشكلة";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "فتح موقع المشروع في المتصفح";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "فتح الوصول عند صف هذا الإذن المفقود";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "فتح النافذة الرئيسية على آخر قسم عُرض";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "جعل هذا ملف التعريف النشط";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "إظهار أسطر مجرى السجل هذا فقط";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "إبقاء هذا العدد من أسطر السجل ظاهرًا";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "تبديل النشاط إلى هذا العرض";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "إغلاق هذه الرسالة دون تغيير أي شيء";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "تفعيل ملف التعريف رغم الإشعار";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "الانتقال إلى القسم التالي من الجولة";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "الرجوع إلى القسم السابق من الجولة";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "إنهاء الجولة";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "اختيار تنسيق ملف التعيين المصدَّر";
+

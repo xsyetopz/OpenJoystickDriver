@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "向游戏显示虚拟游戏手柄";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "设置此马达在测试期间的运行强度";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "设置测试振动持续的时间";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "设置要录制的秒数";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "设置对服务采样的时长";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "设置两次采样之间的间隔";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "设置使测试失败的常驻大小；0 表示关闭";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "设置使测试失败的内存占用；0 表示关闭";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "输入要查询的错误代码";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "设置 WebSocket 端点监听的端口";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "设置便于你识别此令牌的名称";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "列出可使用此令牌的 Web 来源，每行一个";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "显示此 App 的版本和致谢信息";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "更改此 App 的行为";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "将所选内容发送到其他 App 的服务";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "隐藏此 App 的窗口，直到你切换回来";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "隐藏所有其他 App 的窗口";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "显示所有已隐藏 App 的窗口";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "关闭所有窗口并停止此 App";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "从文件添加控制器记录或模组";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "关闭最前面的窗口";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "保存 App 和服务状态的报告，用于提交错误报告";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "撤销最近一次更改";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "重做已撤销的更改";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "移除所选内容并保留以供粘贴";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "保留所选内容的拷贝以供粘贴";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "在此处插入保留的所选内容";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "移除所选内容";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "选择最前面窗口中的全部内容";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "在当前视图中搜索";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "打开主窗口的此区域";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "仅显示常用控件";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "显示所有控件，包括高级控件";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "显示或隐藏主窗口的工具栏";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "显示或隐藏主窗口的边栏";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "将主窗口切换到全屏幕或退出全屏幕";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "指明下面的命令所作用的控制器";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "打开此控制器的输入测试窗口";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "在主窗口中显示此控制器";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "选取此控制器使用的配置文件";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "停止在此控制器上使用活动的配置文件";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "将最前面的窗口收入 Dock";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "放大最前面的窗口或恢复其大小";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "将此 App 的所有窗口置于其他 App 前面";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "在“活动”区域打开服务日志";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "查询错误代码的含义";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "拷贝 App 和服务状态的报告，用于提交错误报告";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "打开你当前所在区域的帮助";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "逐个区域浏览主窗口";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "打开问题表单以报告问题";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "在浏览器中打开项目网站";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "在缺少的此权限所在行打开“访问”";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "在上次显示的区域打开主窗口";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "将此项设为活动的配置文件";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "仅显示此日志流的行";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "在视图中保留这么多行日志";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "将“活动”切换到此视图";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "关闭此信息而不更改任何内容";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "尽管有提示，仍启用此配置文件";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "前往导览的下一个区域";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "返回导览的上一个区域";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "结束导览";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "选取导出映射的文件格式";
+

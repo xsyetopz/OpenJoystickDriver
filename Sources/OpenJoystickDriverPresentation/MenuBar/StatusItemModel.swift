@@ -33,6 +33,27 @@ enum StatusItemAction: Equatable {
   case quit
 }
 
+extension StatusItemAction {
+  /// The localization key of the tooltip of the entry that performs the action.
+  var helpKey: String {
+    switch self {
+    case .suspendController: "ui.help.suspend"
+    case .resumeController: "ui.help.resume"
+    case .testInput: "ui.help.menu.testInput"
+    case .disconnectWireless: "ui.help.disconnectWireless"
+    case .showController: "ui.help.menu.showControllerInWindow"
+    case .activateProfile: "ui.help.menu.profileItem"
+    case .deactivateProfile: "ui.help.menu.deactivateProfile"
+    case .showArea: "ui.help.menu.showArea"
+    case .showPermission: "ui.help.menu.showPermission"
+    case .startService: "ui.help.restartListener"
+    case .openWindow: "ui.help.menu.openWindow"
+    case .showSettings: "ui.help.menu.settings"
+    case .quit: "ui.help.menu.quit"
+    }
+  }
+}
+
 /// An entry title: a localization key, or text that comes from data such as a profile name.
 indirect enum StatusItemTitle: Equatable {
   /// A localization key.

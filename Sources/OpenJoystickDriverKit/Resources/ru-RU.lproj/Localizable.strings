@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "Показывать играм виртуальный геймпад";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "Задать мощность этого мотора во время проверки";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "Задать длительность тестовой вибрации";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "Задать, сколько секунд записывать";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "Задать, как долго опрашивается служба";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "Задать время между двумя замерами";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "Задать резидентный размер, при превышении которого тест провален; 0 отключает";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "Задать объём памяти, при превышении которого тест провален; 0 отключает";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "Введите код ошибки для поиска";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "Задать порт, который слушает конечная точка WebSocket";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "Задайте имя, по которому вы узнаете этот токен";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "Перечислите веб-источники, которым разрешён этот токен, по одному в строке";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "Показать версию и авторов этого приложения";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "Изменить поведение этого приложения";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "Отправить выделенное службе другого приложения";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "Скрыть окна этого приложения, пока вы не вернётесь к нему";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "Скрыть окна всех остальных приложений";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "Показать окна всех скрытых приложений";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "Закрыть все окна и завершить это приложение";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "Добавить запись контроллера или мод из файла";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "Закрыть верхнее окно";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "Сохранить отчёт о состоянии приложения и службы для сообщения об ошибке";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "Отменить последнее изменение";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "Вернуть отменённое изменение";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "Удалить выделенное и сохранить для вставки";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "Сохранить копию выделенного для вставки";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "Вставить сюда сохранённое выделенное";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "Удалить выделенное";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "Выбрать всё в верхнем окне";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "Искать в текущем представлении";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "Открыть этот раздел главного окна";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "Показать только основные элементы управления";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "Показать все элементы управления, включая расширенные";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "Показать или скрыть панель инструментов главного окна";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "Показать или скрыть боковую панель главного окна";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "Переключить главное окно в полноэкранный режим и обратно";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "Показать контроллер, к которому относятся команды ниже";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "Открыть окно проверки ввода для этого контроллера";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "Показать этот контроллер в главном окне";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "Выбрать профиль, который использует этот контроллер";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "Перестать использовать активный профиль на этом контроллере";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "Свернуть верхнее окно в Dock";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "Увеличить верхнее окно или восстановить его размер";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "Вывести все окна этого приложения поверх окон других приложений";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "Открыть раздел «Активность» на журнале службы";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "Узнать значение кода ошибки";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "Скопировать отчёт о состоянии приложения и службы для сообщения об ошибке";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "Открыть справку по разделу, в котором вы находитесь";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "Пройти по главному окну раздел за разделом";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "Открыть форму обращения, чтобы сообщить о проблеме";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "Открыть сайт проекта в браузере";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "Открыть «Доступ» на строке этого недостающего разрешения";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "Открыть главное окно на последнем показанном разделе";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "Сделать этот профиль активным";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "Показывать только строки этого потока журнала";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "Держать на экране столько строк журнала";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "Переключить «Активность» на это представление";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "Закрыть это сообщение, ничего не меняя";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "Активировать профиль, несмотря на уведомление";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "Перейти к следующему разделу обзора";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "Вернуться к предыдущему разделу обзора";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "Завершить обзор";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "Выбрать формат файла экспортируемого сопоставления";
+

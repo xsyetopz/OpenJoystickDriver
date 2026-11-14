@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "Oyunlara sanal bir oyun kumandası göster";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "Testte bu motorun ne kadar güçlü çalışacağını ayarla";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "Test titreşiminin ne kadar süreceğini ayarla";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "Kaç saniye kayıt yapılacağını ayarla";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "Hizmetin ne kadar süreyle örnekleneceğini ayarla";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "İki örnek arasındaki süreyi ayarla";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "Testi başarısız kılan yerleşik boyutu ayarla; 0 sınırı kapatır";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "Testi başarısız kılan bellek ayak izini ayarla; 0 sınırı kapatır";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "Aranacak hata kodunu yaz";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "WebSocket uç noktasının dinlediği bağlantı noktasını ayarla";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "Bu belirteci tanımana yardımcı olacak bir ad belirle";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "Bu belirteci kullanabilecek web kaynaklarını satır başına bir tane olacak şekilde yaz";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "Bu uygulamanın sürümünü ve katkıda bulunanları göster";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "Bu uygulamanın davranışını değiştir";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "Seçimi başka bir uygulamanın hizmetine gönder";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "Geri dönene kadar bu uygulamanın pencerelerini gizle";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "Diğer tüm uygulamaların pencerelerini gizle";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "Gizli olan tüm uygulamaların pencerelerini göster";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "Tüm pencereleri kapat ve bu uygulamayı durdur";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "Bir dosyadan kontrolcü kaydı veya mod ekle";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "Öndeki pencereyi kapat";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "Hata bildirimi için uygulama ve hizmet durumunun raporunu kaydet";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "Son değişikliği geri al";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "Geri alınan değişikliği yeniden uygula";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "Seçimi kaldır ve yapıştırmak üzere sakla";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "Seçimin bir kopyasını yapıştırmak üzere sakla";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "Sakladığın seçimi buraya ekle";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "Seçimi kaldır";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "Öndeki penceredeki her şeyi seç";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "Geçerli görünümde ara";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "Ana pencerenin bu bölümünü aç";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "Yalnızca yaygın denetimleri göster";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "Gelişmiş olanlar dahil tüm denetimleri göster";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "Ana pencerenin araç çubuğunu göster veya gizle";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "Ana pencerenin kenar çubuğunu göster veya gizle";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "Ana pencereyi tam ekrana geçir veya tam ekrandan çıkar";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "Aşağıdaki komutların etki ettiği kontrolcüyü belirt";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "Bu kontrolcü için giriş testi penceresini aç";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "Bu kontrolcüyü ana pencerede göster";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "Bu kontrolcünün kullandığı profili seç";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "Bu kontrolcüde etkin profili kullanmayı bırak";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "Öndeki pencereyi Dock’a küçült";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "Öndeki pencereyi büyüt veya boyutunu geri yükle";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "Bu uygulamanın tüm pencerelerini diğer uygulamaların önüne getir";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "Etkinlik bölümünü hizmetin günlüğünde aç";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "Bir hata kodunun anlamına bak";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "Hata bildirimi için uygulama ve hizmet durumunun raporunu kopyala";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "Bulunduğun bölümün yardımını aç";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "Ana pencerede bölüm bölüm gez";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "Sorun bildirmek için sorun formunu aç";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "Proje web sitesini tarayıcıda aç";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "Eksik olan bu iznin satırında Erişim’i aç";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "Ana pencereyi en son gösterdiği bölümde aç";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "Bunu etkin profil yap";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "Yalnızca bu günlük akışının satırlarını göster";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "Görünümde bu kadar günlük satırı tut";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "Etkinliği bu görünüme geçir";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "Hiçbir şeyi değiştirmeden bu iletiyi kapat";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "Uyarıya rağmen profili etkinleştir";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "Turun sonraki bölümüne geç";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "Turun önceki bölümüne dön";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "Turu bitir";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "Dışa aktarılan eşlemenin dosya biçimini seç";
+

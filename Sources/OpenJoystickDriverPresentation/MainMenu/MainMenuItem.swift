@@ -146,6 +146,59 @@ extension MainMenuAction {
   }
 }
 
+extension MainMenuAction {
+  /// The localization key of the tooltip of the item that performs the action.
+  var helpKey: String {
+    switch self {
+    case .about: "ui.help.menu.about"
+    case .settings: "ui.help.menu.settings"
+    case .services: "ui.help.menu.services"
+    case .hide: "ui.help.menu.hide"
+    case .hideOthers: "ui.help.menu.hideOthers"
+    case .showAll: "ui.help.menu.showAll"
+    case .quit: "ui.help.menu.quit"
+    case .importProfile: "ui.help.importProfile"
+    case .exportProfile: "ui.help.exportProfile"
+    case .installRecordOrMod: "ui.help.menu.installRecordOrMod"
+    case .close: "ui.help.menu.close"
+    case .saveSupportReport: "ui.help.menu.saveSupportReport"
+    case .saveActivityLog: "ui.help.saveActivityLog"
+    case .undo: "ui.help.menu.undo"
+    case .redo: "ui.help.menu.redo"
+    case .cut: "ui.help.menu.cut"
+    case .copy: "ui.help.menu.copy"
+    case .paste: "ui.help.menu.paste"
+    case .delete: "ui.help.menu.delete"
+    case .selectAll: "ui.help.menu.selectAll"
+    case .find: "ui.help.menu.find"
+    case .toolbar(let action): action.descriptionKey
+    case .showArea: "ui.help.menu.showArea"
+    case .toggleToolbar: "ui.help.menu.toggleToolbar"
+    case .toggleSidebar: "ui.help.menu.toggleSidebar"
+    case .toggleFullScreen: "ui.help.menu.toggleFullScreen"
+    case .setInterfaceLevel(let level):
+      level == .simple ? "ui.help.menu.interfaceSimple" : "ui.help.menu.interfaceAdvanced"
+    case .controllerTarget: "ui.help.menu.controllerTarget"
+    case .suspendOrResumeController: "ui.help.suspend"
+    case .testInput: "ui.help.menu.testInput"
+    case .disconnectWirelessLink: "ui.help.disconnectWireless"
+    case .showControllerInWindow: "ui.help.menu.showControllerInWindow"
+    case .activateProfile: "ui.help.menu.activateProfile"
+    case .deactivateProfile: "ui.help.menu.deactivateProfile"
+    case .minimize: "platform.macos.ui.help.menu.minimize"
+    case .zoom: "ui.help.menu.zoom"
+    case .bringAllToFront: "ui.help.menu.bringAllToFront"
+    case .showActivityLog: "ui.help.menu.showActivityLog"
+    case .explainErrorCode: "ui.help.menu.explainErrorCode"
+    case .copySupportReport: "ui.help.menu.copySupportReport"
+    case .openAreaHelp: "ui.help.menu.openAreaHelp"
+    case .showMainWindowTour: "ui.help.menu.showMainWindowTour"
+    case .reportProblem: "ui.help.menu.reportProblem"
+    case .openProjectWebsite: "ui.help.menu.openProjectWebsite"
+    }
+  }
+}
+
 /// A condition on the app state that must hold for an item to be enabled.
 enum MainMenuRequirement: Hashable, Sendable {
   /// The main window exists.

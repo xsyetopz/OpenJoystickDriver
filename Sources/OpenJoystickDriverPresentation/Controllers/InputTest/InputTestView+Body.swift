@@ -36,7 +36,7 @@
           valueText: "\(Int(value.wrappedValue.rounded()))",
           accessibilityLabel: title
         ) {
-          Slider(value: value, in: 0...255)
+          Slider(value: value, in: 0...255).help(OJDLocalized.string("ui.help.rumbleIntensity"))
         }
       }
     }
@@ -210,7 +210,7 @@
                 InputTestViewModel.rumbleDurationRange.upperBound
               ),
               step: 50
-            )
+            ).help(OJDLocalized.string("ui.help.rumbleDuration"))
           }
         }.disabled(!model.canSendOutput || model.isOutputBusy)
         HStack(spacing: OJDSpacing.small) {

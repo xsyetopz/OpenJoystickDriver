@@ -62,6 +62,7 @@
     private func field(_ field: SoakTestField, _ text: Binding<String>) -> some View {
       let title = OJDLocalized.string(field.labelKey)
       return TextField(title, text: text).ojdAccessibilityLabel(title)
+        .help(OJDLocalized.string(field.helpKey))
     }
 
     /// The entry fields, the running indicator or the result, as the state of the test says.

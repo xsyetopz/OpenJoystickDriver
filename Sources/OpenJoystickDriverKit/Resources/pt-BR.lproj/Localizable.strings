@@ -6271,3 +6271,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "Mostre um gamepad virtual aos jogos";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "Definir a intensidade deste motor durante o teste";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "Definir quanto tempo dura a vibração de teste";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "Definir quantos segundos gravar";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "Definir por quanto tempo o serviço é amostrado";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "Definir o tempo entre duas amostras";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "Definir o tamanho residente que reprova o teste; 0 desativa o limite";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "Definir a pegada que reprova o teste; 0 desativa o limite";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "Digitar o código de erro a consultar";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "Definir a porta em que o endpoint WebSocket escuta";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "Definir um nome que ajude a reconhecer este token";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "Listar as origens web que podem usar este token, uma por linha";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "Mostrar a versão e os créditos deste app";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "Alterar o comportamento deste app";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "Enviar a seleção a um serviço de outro app";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "Ocultar as janelas deste app até você voltar a ele";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "Ocultar as janelas de todos os outros apps";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "Mostrar as janelas de todos os apps ocultos";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "Fechar todas as janelas e encerrar este app";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "Adicionar um registro de controle ou um mod a partir de um arquivo";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "Fechar a janela da frente";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "Salvar um relatório do estado do app e do serviço para um relato de erro";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "Reverter a última alteração";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "Aplicar de novo a alteração revertida";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "Remover a seleção e guardá-la para colar";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "Guardar uma cópia da seleção para colar";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "Inserir aqui a seleção guardada";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "Remover a seleção";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "Selecionar tudo na janela da frente";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "Pesquisar na visualização atual";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "Abrir esta área da janela principal";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "Mostrar só os controles comuns";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "Mostrar todos os controles, inclusive os avançados";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "Mostrar ou ocultar a barra de ferramentas da janela principal";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "Mostrar ou ocultar a barra lateral da janela principal";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "Alternar a janela principal entre tela cheia e janela";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "Indicar o controle em que os comandos abaixo atuam";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "Abrir a janela de teste de entrada deste controle";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "Mostrar este controle na janela principal";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "Escolher o perfil que este controle usa";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "Parar de usar o perfil ativo neste controle";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "Mover a janela da frente para o Dock";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "Ampliar a janela da frente ou restaurar o tamanho dela";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "Pôr todas as janelas deste app na frente dos outros apps";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "Abrir a área Atividade no registro do serviço";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "Consultar o significado de um código de erro";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "Copiar um relatório do estado do app e do serviço para um relato de erro";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "Abrir a ajuda da área em que você está";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "Percorrer a janela principal área por área";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "Abrir o formulário de problemas para relatar um problema";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "Abrir o site do projeto em um navegador";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "Abrir Acesso na linha desta permissão ausente";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "Abrir a janela principal na última área exibida";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "Tornar este o perfil ativo";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "Mostrar só as linhas deste fluxo do registro";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "Manter esta quantidade de linhas do registro à vista";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "Mudar Atividade para esta visualização";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "Fechar esta mensagem sem alterar nada";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "Ativar o perfil apesar do aviso";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "Ir para a próxima área do tour";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "Voltar à área anterior do tour";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "Encerrar o tour";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "Escolher o formato de arquivo do mapeamento exportado";
+

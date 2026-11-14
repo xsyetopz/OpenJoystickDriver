@@ -121,6 +121,7 @@
         labelWithString: OJDLocalized.string("ui.controllers.exportMapping.format")
       )
       popup.setAccessibilityTitleUIElement(label)
+      popup.toolTip = OJDLocalized.string("ui.help.exportFormat")
       let stack = NSStackView(views: [label, popup])
       stack.orientation = .horizontal
       stack.spacing = 8

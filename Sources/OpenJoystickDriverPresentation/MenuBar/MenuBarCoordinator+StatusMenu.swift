@@ -75,6 +75,7 @@
         item.submenu = makeStatusMenu(from: submenu, title: title)
       } else if let action = entry.action {
         item.target = self
+        item.toolTip = OJDLocalized.string(action.helpKey)
         item.action = #selector(performStatusItemAction(_:))
         item.representedObject = StatusItemActionBox(action)
         if action == .showSettings {
@@ -181,9 +182,13 @@
         "ui.controllers.disconnectWirelessConfirmMessage",
         device.name
       )
-      alert.addButton(withTitle: OJDLocalized.string("ui.controllers.disconnectWirelessConfirm"))
-        .hasDestructiveAction = true
-      alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
+      let disconnect = alert.addButton(
+        withTitle: OJDLocalized.string("ui.controllers.disconnectWirelessConfirm")
+      )
+      disconnect.hasDestructiveAction = true
+      disconnect.toolTip = OJDLocalized.string("ui.help.disconnectWireless")
+      alert.addButton(withTitle: OJDLocalized.string("action.cancel")).toolTip =
+        OJDLocalized.string("ui.help.cancelAlert")
       guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
       runControllerAction(sessionToken) { device in
         await self.viewModel.disconnectWirelessController(device)
@@ -215,8 +220,10 @@
           alert.messageText = OJDLocalized.string("ui.profiles.emptyActivationTitle")
           alert.informativeText = OJDLocalized.string("ui.profiles.emptyActivationMessage")
         }
-        alert.addButton(withTitle: OJDLocalized.string("action.setActive"))
-        alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
+        alert.addButton(withTitle: OJDLocalized.string("action.setActive")).toolTip =
+          OJDLocalized.string("ui.help.confirmActivation")
+        alert.addButton(withTitle: OJDLocalized.string("action.cancel")).toolTip =
+          OJDLocalized.string("ui.help.cancelAlert")
         return alert.runActivatingApp() == .alertFirstButtonReturn
       }
     }
@@ -246,7 +253,8 @@
       alert.alertStyle = .warning
       alert.messageText = OJDLocalized.string("ui.extra.actionFailedTitle")
       alert.informativeText = message
-      alert.addButton(withTitle: OJDLocalized.string("action.ok"))
+      alert.addButton(withTitle: OJDLocalized.string("action.ok")).toolTip =
+        OJDLocalized.string("ui.help.dismissMessage")
       alert.runActivatingApp()
     }
   }

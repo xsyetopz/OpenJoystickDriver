@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "Hiện tay cầm ảo cho các trò chơi";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "Đặt cường độ chạy của động cơ này trong lúc thử";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "Đặt thời gian rung thử kéo dài";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "Đặt số giây cần ghi";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "Đặt thời gian lấy mẫu của dịch vụ";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "Đặt khoảng thời gian giữa hai lần lấy mẫu";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "Đặt kích thước thường trú làm bài thử thất bại; 0 sẽ tắt giới hạn";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "Đặt dấu chân bộ nhớ làm bài thử thất bại; 0 sẽ tắt giới hạn";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "Nhập mã lỗi cần tra cứu";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "Đặt cổng mà điểm cuối WebSocket lắng nghe";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "Đặt tên giúp bạn nhận ra token này";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "Liệt kê các nguồn web được dùng token này, mỗi dòng một nguồn";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "Hiện phiên bản và lời ghi công của ứng dụng này";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "Thay đổi cách ứng dụng này hoạt động";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "Gửi phần đã chọn đến dịch vụ của ứng dụng khác";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "Ẩn các cửa sổ của ứng dụng này cho đến khi bạn quay lại";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "Ẩn cửa sổ của mọi ứng dụng khác";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "Hiện cửa sổ của mọi ứng dụng đang ẩn";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "Đóng mọi cửa sổ và dừng ứng dụng này";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "Thêm bản ghi bộ điều khiển hoặc mod từ một tệp";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "Đóng cửa sổ ở trên cùng";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "Lưu báo cáo trạng thái ứng dụng và dịch vụ để báo lỗi";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "Hoàn tác thay đổi gần nhất";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "Áp dụng lại thay đổi vừa hoàn tác";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "Xóa phần đã chọn và giữ lại để dán";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "Giữ một bản sao của phần đã chọn để dán";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "Chèn phần đã giữ vào đây";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "Xóa phần đã chọn";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "Chọn mọi thứ trong cửa sổ ở trên cùng";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "Tìm trong chế độ xem hiện tại";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "Mở khu vực này của cửa sổ chính";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "Chỉ hiện các điều khiển thông dụng";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "Hiện mọi điều khiển, gồm cả nâng cao";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "Hiện hoặc ẩn thanh công cụ của cửa sổ chính";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "Hiện hoặc ẩn thanh bên của cửa sổ chính";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "Chuyển cửa sổ chính vào hoặc ra khỏi toàn màn hình";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "Nêu tên bộ điều khiển mà các lệnh bên dưới tác động";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "Mở cửa sổ thử đầu vào cho bộ điều khiển này";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "Hiện bộ điều khiển này trong cửa sổ chính";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "Chọn hồ sơ mà bộ điều khiển này dùng";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "Ngừng dùng hồ sơ đang hoạt động trên bộ điều khiển này";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "Thu cửa sổ ở trên cùng vào Dock";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "Phóng to cửa sổ ở trên cùng hoặc khôi phục kích thước";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "Đưa mọi cửa sổ của ứng dụng này lên trước các ứng dụng khác";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "Mở khu vực Hoạt động tại nhật ký của dịch vụ";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "Tra cứu ý nghĩa của một mã lỗi";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "Sao chép báo cáo trạng thái ứng dụng và dịch vụ để báo lỗi";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "Mở phần trợ giúp cho khu vực bạn đang xem";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "Xem qua cửa sổ chính từng khu vực một";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "Mở biểu mẫu sự cố để báo cáo một vấn đề";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "Mở trang web của dự án trong trình duyệt";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "Mở Truy cập tại dòng của quyền còn thiếu này";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "Mở cửa sổ chính tại khu vực đã hiện lần trước";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "Đặt đây làm hồ sơ đang hoạt động";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "Chỉ hiện các dòng của luồng nhật ký này";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "Giữ chừng này dòng nhật ký trong chế độ xem";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "Chuyển Hoạt động sang chế độ xem này";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "Đóng thông báo này mà không thay đổi gì";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "Kích hoạt hồ sơ dù có thông báo";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "Chuyển đến khu vực tiếp theo của chuyến tham quan";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "Quay lại khu vực trước của chuyến tham quan";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "Kết thúc chuyến tham quan";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "Chọn định dạng tệp của ánh xạ được xuất";
+

@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "게임에 가상 게임패드 표시";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "테스트 중 이 모터가 작동하는 세기를 설정합니다";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "테스트 진동이 지속되는 시간을 설정합니다";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "기록할 시간(초)을 설정합니다";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "서비스를 샘플링할 시간을 설정합니다";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "두 샘플 사이의 시간 간격을 설정합니다";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "테스트를 실패로 처리할 상주 크기를 설정합니다. 0이면 끕니다";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "테스트를 실패로 처리할 메모리 사용량을 설정합니다. 0이면 끕니다";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "찾아볼 오류 코드를 입력합니다";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "WebSocket 엔드포인트가 수신 대기하는 포트를 설정합니다";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "이 토큰을 알아보기 쉬운 이름을 설정합니다";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "이 토큰을 사용할 수 있는 웹 출처를 한 줄에 하나씩 입력합니다";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "이 앱의 버전과 크레딧을 보여 줍니다";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "이 앱의 동작을 변경합니다";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "선택 항목을 다른 앱의 서비스로 보냅니다";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "다시 전환할 때까지 이 앱의 윈도우를 가립니다";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "다른 모든 앱의 윈도우를 가립니다";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "가려진 모든 앱의 윈도우를 보여 줍니다";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "모든 윈도우를 닫고 이 앱을 종료합니다";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "파일에서 컨트롤러 레코드나 모드를 추가합니다";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "맨 앞의 윈도우를 닫습니다";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "버그 신고용으로 앱과 서비스 상태 보고서를 저장합니다";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "마지막 변경을 되돌립니다";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "되돌린 변경을 다시 적용합니다";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "선택 항목을 지우고 붙여넣기용으로 보관합니다";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "선택 항목의 사본을 붙여넣기용으로 보관합니다";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "보관한 선택 항목을 여기에 붙여넣습니다";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "선택 항목을 지웁니다";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "맨 앞 윈도우의 모든 항목을 선택합니다";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "현재 보기에서 검색합니다";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "주 윈도우의 이 영역을 엽니다";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "자주 쓰는 컨트롤만 보여 줍니다";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "고급 컨트롤을 포함해 모든 컨트롤을 보여 줍니다";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "주 윈도우의 도구 막대를 보이거나 가립니다";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "주 윈도우의 사이드바를 보이거나 가립니다";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "주 윈도우를 전체 화면으로 전환하거나 되돌립니다";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "아래 명령이 적용되는 컨트롤러를 알려 줍니다";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "이 컨트롤러의 입력 테스트 윈도우를 엽니다";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "이 컨트롤러를 주 윈도우에 보여 줍니다";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "이 컨트롤러가 사용할 프로필을 선택합니다";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "이 컨트롤러에서 활성 프로필 사용을 중지합니다";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "맨 앞의 윈도우를 Dock으로 최소화합니다";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "맨 앞의 윈도우를 확대하거나 원래 크기로 되돌립니다";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "이 앱의 모든 윈도우를 다른 앱 앞으로 가져옵니다";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "활동 영역에서 서비스 로그를 엽니다";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "오류 코드의 의미를 찾아봅니다";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "버그 신고용으로 앱과 서비스 상태 보고서를 복사합니다";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "현재 있는 영역의 도움말을 엽니다";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "주 윈도우를 영역별로 차례로 안내합니다";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "문제를 보고하기 위해 이슈 양식을 엽니다";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "프로젝트 웹사이트를 브라우저에서 엽니다";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "누락된 이 권한의 행에서 접근을 엽니다";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "주 윈도우를 마지막에 보여 준 영역으로 엽니다";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "이것을 활성 프로필로 지정합니다";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "이 로그 스트림의 줄만 보여 줍니다";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "이 개수의 로그 줄을 화면에 유지합니다";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "활동을 이 보기로 전환합니다";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "아무것도 변경하지 않고 이 메시지를 닫습니다";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "알림이 있어도 프로필을 활성화합니다";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "둘러보기의 다음 영역으로 이동합니다";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "둘러보기의 이전 영역으로 돌아갑니다";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "둘러보기를 마칩니다";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "내보낼 매핑의 파일 형식을 선택합니다";
+

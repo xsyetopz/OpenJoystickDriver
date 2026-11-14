@@ -6270,3 +6270,190 @@
 
 /* Tooltip of the virtual output toggle. */
 "ui.profiles.virtualOutputHelp" = "गेम को वर्चुअल गेमपैड दिखाएँ";
+
+/* Tooltip of the slider for the intensity of one rumble motor in the Input Test window. */
+"ui.help.rumbleIntensity" = "परीक्षण के दौरान इस मोटर की तीव्रता तय करें";
+
+/* Tooltip of the slider for the duration of the test rumble in the Input Test window. */
+"ui.help.rumbleDuration" = "परीक्षण कंपन कितनी देर चले, यह तय करें";
+
+/* Tooltip of the field for the capture duration in the capture packets sheet. */
+"ui.help.captureDuration" = "रिकॉर्ड करने के सेकंड तय करें";
+
+/* Tooltip of the duration field of the Soak Test sheet. */
+"ui.help.soakDuration" = "सेवा का नमूना कितनी देर लिया जाए, यह तय करें";
+
+/* Tooltip of the sample interval field of the Soak Test sheet. */
+"ui.help.soakInterval" = "दो नमूनों के बीच का समय तय करें";
+
+/* Tooltip of the resident size limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakResidentLimit" = "वह रेज़िडेंट आकार तय करें जिस पर परीक्षण विफल हो; 0 से सीमा बंद होती है";
+
+/* Tooltip of the footprint limit field of the Soak Test sheet. A limit of 0 turns it off. */
+"ui.help.soakFootprintLimit" = "वह फ़ुटप्रिंट तय करें जिस पर परीक्षण विफल हो; 0 से सीमा बंद होती है";
+
+/* Tooltip of the field of the error code explainer sheet. */
+"ui.help.errorCodeField" = "खोजने के लिए त्रुटि कोड लिखें";
+
+/* Tooltip of the port field of the WebSocket endpoint in the Access area. */
+"ui.help.webPort" = "वह पोर्ट तय करें जिस पर WebSocket एंडपॉइंट सुनता है";
+
+/* Tooltip of the name field of the token sheet in the Access area. */
+"ui.help.tokenName" = "इस टोकन को पहचानने में मदद करने वाला नाम तय करें";
+
+/* Tooltip of the web origins editor of the token sheet in the Access area. */
+"ui.help.tokenOrigins" = "इस टोकन का उपयोग कर सकने वाले वेब ऑरिजिन सूचीबद्ध करें, प्रति पंक्ति एक";
+
+/* Tooltip of the About item of the app menu. */
+"ui.help.menu.about" = "इस ऐप का संस्करण और श्रेय दिखाएँ";
+
+/* Tooltip of the Settings item of the app menu and of the status menu. */
+"ui.help.menu.settings" = "इस ऐप का व्यवहार बदलें";
+
+/* Tooltip of the Services item of the app menu. */
+"ui.help.menu.services" = "चयन को किसी अन्य ऐप की सेवा को भेजें";
+
+/* Tooltip of the Hide item of the app menu. */
+"ui.help.menu.hide" = "वापस आने तक इस ऐप की विंडो छिपाएँ";
+
+/* Tooltip of the Hide Others item of the app menu. */
+"ui.help.menu.hideOthers" = "अन्य सभी ऐप की विंडो छिपाएँ";
+
+/* Tooltip of the Show All item of the app menu. */
+"ui.help.menu.showAll" = "छिपी हुई सभी ऐप की विंडो दिखाएँ";
+
+/* Tooltip of the Quit item of the app menu and of the status menu, and of the Quit button of the unreadable settings alert. */
+"ui.help.menu.quit" = "सभी विंडो बंद करें और इस ऐप को रोकें";
+
+/* Tooltip of the Install Record or Mod item of the File menu. */
+"ui.help.menu.installRecordOrMod" = "फ़ाइल से कंट्रोलर रिकॉर्ड या मॉड जोड़ें";
+
+/* Tooltip of the Close item of the File menu. */
+"ui.help.menu.close" = "सबसे आगे की विंडो बंद करें";
+
+/* Tooltip of the Save Support Report item of the File menu. */
+"ui.help.menu.saveSupportReport" = "बग रिपोर्ट के लिए ऐप और सेवा की स्थिति की रिपोर्ट सहेजें";
+
+/* Tooltip of the Undo item of the Edit menu. */
+"ui.help.menu.undo" = "पिछला बदलाव पूर्ववत करें";
+
+/* Tooltip of the Redo item of the Edit menu. */
+"ui.help.menu.redo" = "पूर्ववत किया गया बदलाव फिर लागू करें";
+
+/* Tooltip of the Cut item of the Edit menu. */
+"ui.help.menu.cut" = "चयन हटाएँ और चिपकाने के लिए रखें";
+
+/* Tooltip of the Copy item of the Edit menu. */
+"ui.help.menu.copy" = "चयन की प्रति चिपकाने के लिए रखें";
+
+/* Tooltip of the Paste item of the Edit menu. */
+"ui.help.menu.paste" = "रखा गया चयन यहाँ डालें";
+
+/* Tooltip of the Delete item of the Edit menu. */
+"ui.help.menu.delete" = "चयन हटाएँ";
+
+/* Tooltip of the Select All item of the Edit menu. */
+"ui.help.menu.selectAll" = "सबसे आगे की विंडो में सब कुछ चुनें";
+
+/* Tooltip of the Find item of the Edit menu. */
+"ui.help.menu.find" = "वर्तमान दृश्य में खोजें";
+
+/* Tooltip of the items that open an area of the main window, in the View menu and the status menu. */
+"ui.help.menu.showArea" = "मुख्य विंडो का यह क्षेत्र खोलें";
+
+/* Tooltip of the Simple item of the View menu. */
+"ui.help.menu.interfaceSimple" = "केवल सामान्य नियंत्रण दिखाएँ";
+
+/* Tooltip of the All Controls item of the View menu. */
+"ui.help.menu.interfaceAdvanced" = "उन्नत सहित सभी नियंत्रण दिखाएँ";
+
+/* Tooltip of the Show Toolbar and Hide Toolbar item of the View menu. */
+"ui.help.menu.toggleToolbar" = "मुख्य विंडो का टूलबार दिखाएँ या छिपाएँ";
+
+/* Tooltip of the Show Sidebar and Hide Sidebar item of the View menu. */
+"ui.help.menu.toggleSidebar" = "मुख्य विंडो का साइडबार दिखाएँ या छिपाएँ";
+
+/* Tooltip of the Enter Full Screen and Exit Full Screen item of the View menu. */
+"ui.help.menu.toggleFullScreen" = "मुख्य विंडो को पूर्ण स्क्रीन में या उससे बाहर ले जाएँ";
+
+/* Tooltip of the row of the Controller menu that names the controller the commands act on. */
+"ui.help.menu.controllerTarget" = "वह कंट्रोलर बताएँ जिस पर नीचे के आदेश लागू होते हैं";
+
+/* Tooltip of the Test Input item of the Controller menu and of the status menu. */
+"ui.help.menu.testInput" = "इस कंट्रोलर के लिए इनपुट जाँच विंडो खोलें";
+
+/* Tooltip of the Show in Window item of the Controller menu and of the controller rows of the status menu. */
+"ui.help.menu.showControllerInWindow" = "इस कंट्रोलर को मुख्य विंडो में दिखाएँ";
+
+/* Tooltip of the Activate Profile item of the Profile menu, which opens the list of profiles. */
+"ui.help.menu.activateProfile" = "इस कंट्रोलर द्वारा उपयोग की जाने वाली प्रोफ़ाइल चुनें";
+
+/* Tooltip of the Deactivate Profile item of the Profile menu and of the status menu. */
+"ui.help.menu.deactivateProfile" = "इस कंट्रोलर पर सक्रिय प्रोफ़ाइल का उपयोग रोकें";
+
+/* Tooltip of the Minimize item of the Window menu. */
+"platform.macos.ui.help.menu.minimize" = "सबसे आगे की विंडो को Dock में ले जाएँ";
+
+/* Tooltip of the Zoom item of the Window menu. */
+"ui.help.menu.zoom" = "सबसे आगे की विंडो को बड़ा करें या उसका आकार लौटाएँ";
+
+/* Tooltip of the Bring All to Front item of the Window menu. */
+"ui.help.menu.bringAllToFront" = "इस ऐप की सभी विंडो को अन्य ऐप के आगे लाएँ";
+
+/* Tooltip of the Activity Log item of the Help menu. */
+"ui.help.menu.showActivityLog" = "सेवा के लॉग पर गतिविधि क्षेत्र खोलें";
+
+/* Tooltip of the Explain Error Code item of the Help menu. */
+"ui.help.menu.explainErrorCode" = "किसी त्रुटि कोड का अर्थ खोजें";
+
+/* Tooltip of the Copy Support Report item of the Help menu. */
+"ui.help.menu.copySupportReport" = "बग रिपोर्ट के लिए ऐप और सेवा की स्थिति की रिपोर्ट कॉपी करें";
+
+/* Tooltip of the Help for This Area item of the Help menu. */
+"ui.help.menu.openAreaHelp" = "आप जिस क्षेत्र में हैं उसकी सहायता खोलें";
+
+/* Tooltip of the Main Window Tour item of the Help menu. */
+"ui.help.menu.showMainWindowTour" = "मुख्य विंडो को एक-एक क्षेत्र करके देखें";
+
+/* Tooltip of the Report a Problem item of the Help menu. */
+"ui.help.menu.reportProblem" = "समस्या की रिपोर्ट करने के लिए इश्यू फ़ॉर्म खोलें";
+
+/* Tooltip of the Project Website item of the Help menu. */
+"ui.help.menu.openProjectWebsite" = "प्रोजेक्ट की वेबसाइट ब्राउज़र में खोलें";
+
+/* Tooltip of the status menu row of a missing permission. */
+"ui.help.menu.showPermission" = "इस अनुपलब्ध अनुमति की पंक्ति पर एक्सेस खोलें";
+
+/* Tooltip of the row of the status menu that opens the main window. */
+"ui.help.menu.openWindow" = "मुख्य विंडो को उस क्षेत्र पर खोलें जो पिछली बार दिखा था";
+
+/* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
+"ui.help.menu.profileItem" = "इसे सक्रिय प्रोफ़ाइल बनाएँ";
+
+/* Tooltip of the log stream choices of the Activity filter menu. */
+"ui.help.activityFilterChoice" = "केवल इस लॉग स्ट्रीम की पंक्तियाँ दिखाएँ";
+
+/* Tooltip of the line count choices of the Activity filter menu. */
+"ui.help.activityLineCount" = "इतनी लॉग पंक्तियाँ दृश्य में रखें";
+
+/* Tooltip of the view choices of the Activity menu in the View menu. */
+"ui.help.activityModeChoice" = "गतिविधि को इस दृश्य पर बदलें";
+
+/* Tooltip of the Cancel buttons of alerts that ask to confirm a change. */
+"ui.help.cancelAlert" = "कुछ बदले बिना यह संदेश बंद करें";
+
+/* Tooltip of the Set Active button of the alert that warns about a profile before it is activated. */
+"ui.help.confirmActivation" = "सूचना के बावजूद प्रोफ़ाइल सक्रिय करें";
+
+/* Tooltip of the Next button of the main window tour alert. */
+"ui.help.tourNext" = "दौरे के अगले क्षेत्र पर जाएँ";
+
+/* Tooltip of the Back button of the main window tour alert. */
+"ui.help.tourBack" = "दौरे के पिछले क्षेत्र पर लौटें";
+
+/* Tooltip of the Done button on the last step of the main window tour alert. */
+"ui.help.tourDone" = "दौरा समाप्त करें";
+
+/* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
+"ui.help.exportFormat" = "निर्यात किए गए मैपिंग का फ़ाइल प्रारूप चुनें";
+

@@ -96,6 +96,15 @@ enum MainMenuModel {
     }
   }
 
+  /// Returns the localization key of the tooltip of `item` in `state`: the item that resumes a
+  /// suspended controller says so.
+  static func helpKey(of item: MainMenuItem, state: MainMenuState) -> String {
+    if item.action == .suspendOrResumeController, state.controller?.isSuspended == true {
+      return "ui.help.resume"
+    }
+    return item.action.helpKey
+  }
+
   /// Returns the entry of an item.
   ///
   /// The modifiers apply only when `key` is not empty.

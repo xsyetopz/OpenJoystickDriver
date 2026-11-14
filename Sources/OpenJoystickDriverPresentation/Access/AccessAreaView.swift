@@ -267,6 +267,12 @@
     /// "Automatic" when enabling the WebSocket picks a free port.
     @ViewBuilder
     private var portField: some View {
+      portFieldBody.help(OJDLocalized.string("ui.help.webPort"))
+    }
+
+    /// The port field without its tooltip.
+    @ViewBuilder
+    private var portFieldBody: some View {
       if #available(macOS 13, *) {
         TextField(
           OJDLocalized.string("ui.access.web.port"),

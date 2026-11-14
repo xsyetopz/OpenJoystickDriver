@@ -111,6 +111,7 @@
         keyEquivalent: item.keyEquivalent
       )
       identify(menuItem, as: item.id)
+      menuItem.toolTip = OJDLocalized.string(item.action.helpKey)
       menuItem.keyEquivalentModifierMask = modifierMask(item.modifiers)
       switch routing(for: item.action) {
       case .services:

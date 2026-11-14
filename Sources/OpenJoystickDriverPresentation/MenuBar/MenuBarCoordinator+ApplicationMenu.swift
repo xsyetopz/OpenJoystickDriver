@@ -84,6 +84,7 @@
           let item = MainMenuModel.allItems.first(where: { $0.id == id })
         else { continue }
         menuItem.state = MainMenuRenderer.checkmark(of: item, state: state)
+        menuItem.toolTip = OJDLocalized.string(MainMenuModel.helpKey(of: item, state: state))
         if item.action == .controllerTarget {
           menuItem.title = MainMenuRenderer.text(
             of: MainMenuModel.controllerTargetTitle(state: state)
@@ -207,6 +208,7 @@
       let activeIDs = Set(snapshot.activeProfiles.map(\.profileID))
       for profile in snapshot.profiles {
         let item = NSMenuItem(title: profile.name, action: nil, keyEquivalent: "")
+        item.toolTip = OJDLocalized.string("ui.help.menu.profileItem")
         item.representedObject = profile.id
         if activeIDs.contains(profile.id) {
           item.state = .on
@@ -272,7 +274,8 @@
       alert.alertStyle = style
       alert.messageText = title
       alert.informativeText = message
-      alert.addButton(withTitle: OJDLocalized.string("action.ok"))
+      alert.addButton(withTitle: OJDLocalized.string("action.ok")).toolTip =
+        OJDLocalized.string("ui.help.dismissMessage")
       alert.runActivatingApp()
     }
 
@@ -290,9 +293,15 @@
         alert.informativeText = OJDLocalized.string(step.summaryKey)
         for choice in choices {
           switch choice {
-          case .next: alert.addButton(withTitle: OJDLocalized.string("ui.tour.next"))
-          case .back: alert.addButton(withTitle: OJDLocalized.string("ui.tour.back"))
-          case .done: alert.addButton(withTitle: OJDLocalized.string("action.done"))
+          case .next:
+            alert.addButton(withTitle: OJDLocalized.string("ui.tour.next")).toolTip =
+              OJDLocalized.string("ui.help.tourNext")
+          case .back:
+            alert.addButton(withTitle: OJDLocalized.string("ui.tour.back")).toolTip =
+              OJDLocalized.string("ui.help.tourBack")
+          case .done:
+            alert.addButton(withTitle: OJDLocalized.string("action.done")).toolTip =
+              OJDLocalized.string("ui.help.tourDone")
           }
         }
         let first = NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
@@ -313,8 +322,11 @@
       alert.alertStyle = .warning
       alert.messageText = confirmation.title
       alert.informativeText = confirmation.message
-      alert.addButton(withTitle: confirmation.confirmTitle).hasDestructiveAction = true
-      alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
+      let disconnect = alert.addButton(withTitle: confirmation.confirmTitle)
+      disconnect.hasDestructiveAction = true
+      disconnect.toolTip = OJDLocalized.string("ui.help.disconnectWireless")
+      alert.addButton(withTitle: OJDLocalized.string("action.cancel")).toolTip =
+        OJDLocalized.string("ui.help.cancelAlert")
       guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
       runControllerAction(device.sessionToken.rawValue) { device in
         await self.viewModel.disconnectWirelessController(device)
