@@ -42,8 +42,12 @@ public enum RemappingSystemActionKind: String, Codable, CaseIterable, Sendable {
   case missionControl = "MissionControl"
   /// Opens Launchpad, or the Apps app that replaces it where Launchpad is gone.
   case launchpad = "Launchpad"
-  /// Opens the Screenshot app, which shows the capture toolbar.
+  /// Takes a screenshot of the screen, as the system shortcut does.
   case screenshot = "Screenshot"
+  /// Locks the screen, as the system shortcut does.
+  case lockScreen = "LockScreen"
+  /// Shows the desktop, as the system shortcut does.
+  case showDesktop = "ShowDesktop"
 }
 
 /// One call to a ``RemappingSystemActionPerforming``, as the engine produces it.
@@ -54,8 +58,12 @@ enum RemappingSystemActionRequest: Equatable, Sendable {
   case missionControl
   /// Open Launchpad.
   case launchpad
-  /// Open the Screenshot app.
+  /// Take a screenshot.
   case screenshot
+  /// Lock the screen.
+  case lockScreen
+  /// Show the desktop.
+  case showDesktop
   /// Open the application with the bundle identifier.
   case openApplication(String)
   /// Open the URL.
@@ -107,8 +115,12 @@ public protocol RemappingSystemActionPerforming: Sendable {
   func openMissionControl() async throws
   /// Opens Launchpad, or Apps where Launchpad is gone.
   func openLaunchpad() async throws
-  /// Opens the Screenshot app.
-  func openScreenshot() async throws
+  /// Takes a screenshot of the screen.
+  func takeScreenshot() async throws
+  /// Locks the screen.
+  func lockScreen() async throws
+  /// Shows the desktop.
+  func showDesktop() async throws
   /// Opens the application with the bundle identifier.
   func openApplication(bundleIdentifier: String) async throws
   /// Opens the URL.
@@ -126,7 +138,9 @@ extension RemappingSystemActionPerforming {
     case .key(let key, let pressed): try await postSystemKey(key, pressed: pressed)
     case .missionControl: try await openMissionControl()
     case .launchpad: try await openLaunchpad()
-    case .screenshot: try await openScreenshot()
+    case .screenshot: try await takeScreenshot()
+    case .lockScreen: try await lockScreen()
+    case .showDesktop: try await showDesktop()
     case .openApplication(let identifier): try await openApplication(bundleIdentifier: identifier)
     case .openURL(let text):
       guard let url = URL(string: text) else {

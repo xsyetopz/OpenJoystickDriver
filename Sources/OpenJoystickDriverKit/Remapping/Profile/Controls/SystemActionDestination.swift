@@ -7,6 +7,8 @@ extension RemappingSystemActionKind {
     case .missionControl: .missionControl
     case .launchpad: .launchpad
     case .screenshot: .screenshot
+    case .lockScreen: .lockScreen
+    case .showDesktop: .showDesktop
     }
   }
 }

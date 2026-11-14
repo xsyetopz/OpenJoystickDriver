@@ -50,13 +50,19 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
     )
   }
 
-  /// Opens the Screenshot application, which shows the capture toolbar.
-  package func openScreenshot() async throws {
-    let identifier = "com.apple.screenshot.launcher"
-    guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else {
-      throw RemappingSystemActionError.failed(action: "Screenshot", reason: identifier)
-    }
-    try await open(url, action: "Screenshot")
+  /// Takes a screenshot of the screen with the system shortcut Shift-Command-3.
+  package func takeScreenshot() throws {
+    try postShortcut(CGKeyCode(kVK_ANSI_3), [.maskCommand, .maskShift], action: "Screenshot")
+  }
+
+  /// Locks the screen with the system shortcut Control-Command-Q.
+  package func lockScreen() throws {
+    try postShortcut(CGKeyCode(kVK_ANSI_Q), [.maskCommand, .maskControl], action: "LockScreen")
+  }
+
+  /// Shows the desktop with the system shortcut F11.
+  package func showDesktop() throws {
+    try postShortcut(CGKeyCode(kVK_F11), [], action: "ShowDesktop")
   }
 
   /// Opens the application with the bundle identifier.
@@ -111,6 +117,18 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
         unsafe event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
         event.post(tap: .cghidEventTap)
       }
+    }
+  }
+
+  /// Presses and releases the key with the modifiers held.
+  private func postShortcut(_ key: CGKeyCode, _ flags: CGEventFlags, action: String) throws {
+    try requirePostEvent(action)
+    for isDown in [true, false] {
+      guard let event = CGEvent(keyboardEventSource: nil, virtualKey: key, keyDown: isDown) else {
+        throw RemappingSystemActionError.failed(action: action, reason: String(key))
+      }
+      event.flags = flags
+      event.post(tap: .cghidEventTap)
     }
   }
 
