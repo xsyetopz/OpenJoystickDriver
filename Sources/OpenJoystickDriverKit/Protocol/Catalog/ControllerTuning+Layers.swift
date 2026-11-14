@@ -59,6 +59,12 @@ extension ControllerTuning {
     case rightTriggerRest
     /// The stored fully pressed value of the right trigger.
     case rightTriggerFull
+    /// The stored gyro offset about the X axis, in radians per second.
+    case gyroOffsetX
+    /// The stored gyro offset about the Y axis, in radians per second.
+    case gyroOffsetY
+    /// The stored gyro offset about the Z axis, in radians per second.
+    case gyroOffsetZ
 
     /// Whether the driver picks a value while no layer sets the key.
     ///
@@ -99,7 +105,7 @@ extension ControllerTuning {
     case .frameQueueCapacity: frameQueueCapacity.map(String.init)
     case .leftStickCenterX, .leftStickCenterY, .rightStickCenterX, .rightStickCenterY,
       .leftStickRange, .rightStickRange, .leftTriggerRest, .leftTriggerFull, .rightTriggerRest,
-      .rightTriggerFull:
+      .rightTriggerFull, .gyroOffsetX, .gyroOffsetY, .gyroOffsetZ:
       calibration.values[key].map { "\($0)" }
     }
   }

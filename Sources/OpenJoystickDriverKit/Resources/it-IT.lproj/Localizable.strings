@@ -298,14 +298,20 @@
 "ui.controllers.recalibrate.circle" = "Misura il cerchio";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
 "ui.controllers.recalibrate.triggers" = "Misura i grilletti";
+/* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
+"ui.controllers.recalibrate.gyro" = "Misura il giroscopio";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "Lettura del controller…";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
 "ui.controllers.recalibrate.instructions" = "Ogni passaggio legge il controller per circa due secondi. Per il riposo, rilascia stick e grilletti. Per il cerchio, ruota ogni stick lungo il suo cerchio completo. Per i grilletti, premi ogni grilletto a fondo.";
+/* Instruction above the recalibration buttons for the gyro step. gyro names the button next to them. */
+"ui.controllers.recalibrate.gyroInstructions" = "Per il giroscopio, appoggia il controller e tienilo fermo.";
 /* Result after a recalibration step stored its measured values. */
 "ui.controllers.recalibrate.stored" = "I valori misurati sono stati salvati.";
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "Nessun movimento misurato per %@, quindi restano i valori salvati.";
+/* Result after the gyro step of a controller that reports no motion. */
+"ui.controllers.recalibrate.gyroSkipped" = "Questo controller non segnala il movimento, quindi il passo del giroscopio è stato saltato.";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "La calibrazione salvata di stick e grilletti è stata rimossa.";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
@@ -3299,6 +3305,8 @@
 "cli.controller.calibrate.discussion" = "Senza azione, stampa la calibrazione del movimento. start raccoglie la deriva del giroscopio mentre il controller sta fermo e pause interrompe la raccolta. sticks misura i centri e le escursioni degli stick e i fine corsa dei grilletti, e li salva per il modello del controller. reset rimuove quei valori salvati e dimentica la calibrazione del movimento. Le associazioni di inclinazione e sterzo usano la calibrazione del movimento.";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ non è più connesso.";
+/* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
+"cli.controller.calibrate.gyroSkipped" = "%@ non segnala il movimento, quindi il passo del giroscopio è stato saltato.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ non segnala il movimento.";
 /* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
@@ -3306,9 +3314,11 @@
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, offset del giroscopio x %3$@ y %4$@ z %5$@ gradi al secondo";
 /* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
-"cli.controller.calibrate.step" = "L'unico passo che sticks esegue: rest, circle o triggers. Omettilo per eseguirli tutti e tre.";
+"cli.controller.calibrate.step" = "L'unico passo che sticks esegue: rest, circle, triggers o gyro. Omettilo per eseguirli tutti e quattro.";
 /* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepCircle" = "Fai ruotare ogni stick lungo il suo cerchio completo…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the gyro step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepGyro" = "Appoggia il controller e tienilo fermo…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepRest" = "Rilascia stick e grilletti e tienili fermi…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */

@@ -9,7 +9,8 @@ extension ApplicationServiceServer {
   /// Runs the recalibration `arguments` names on the controller they name.
   ///
   /// A step reads raw input for about two seconds and stores what it measured in the model's user
-  /// record; `reset` removes the stored values and clears the gyro offset.
+  /// record; the gyro step stores the mean angular velocity and stores nothing for a controller
+  /// with no gyro. `reset` removes the stored values and clears the gyro bias estimate.
   public func recalibrateController(
     _ arguments: ControllerRecalibrationArguments
   ) async -> ControllerRecalibrationResult {
@@ -21,11 +22,13 @@ extension ApplicationServiceServer {
       )
     }
     var samples: [ControllerState] = []
+    var gyro: [ControllerMotionVector] = []
     if arguments.action.step != nil {
       for _ in 0..<Self.sampleCount {
         if let state = await deviceManager.rawControllerState(for: identifier) {
           samples.append(state)
         }
+        if let rate = await deviceManager.rawAngularVelocity(for: identifier) { gyro.append(rate) }
         try? await Task.sleep(nanoseconds: Self.sampleIntervalNanoseconds)
       }
     }
@@ -43,6 +46,7 @@ extension ApplicationServiceServer {
       arguments.action,
       model: identifier.model,
       samples: samples,
+      gyro: gyro,
       stored: DeviceCatalog.current.withLock { $0.calibration(of: identifier.model) },
       gyroOffsetCleared: gyroOffsetCleared
     )
@@ -50,13 +54,14 @@ extension ApplicationServiceServer {
     return result
   }
 
-  /// Writes what `action` measures from `samples`, or removes the stored values for `reset`, in
-  /// the user record of `model` in `directory`; `stored` gives the centres and rests a later step
-  /// measures from.
+  /// Writes what `action` measures from `samples` and `gyro`, or removes the stored values for
+  /// `reset`, in the user record of `model` in `directory`; `stored` gives the centres and rests a
+  /// later step measures from.
   static func recalibrate(
     _ action: ControllerRecalibrationAction,
     model: ControllerModelID,
     samples: [ControllerState],
+    gyro: [ControllerMotionVector] = [],
     stored: ControllerCalibration,
     gyroOffsetCleared: Bool = false,
     directory: URL = ControllerRecordSet.userDirectory
@@ -100,7 +105,7 @@ extension ApplicationServiceServer {
         gyroOffsetCleared: gyroOffsetCleared
       )
     }
-    let outcome = ControllerCalibration.capture(step, samples: samples, stored: stored)
+    let outcome = ControllerCalibration.capture(step, samples: samples, gyro: gyro, stored: stored)
     for (key, value) in outcome.values.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
       let result = write(key, value)
       if result.failure != nil { return failed(result) }

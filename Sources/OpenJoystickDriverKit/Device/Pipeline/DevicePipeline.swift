@@ -126,6 +126,9 @@ actor DevicePipeline {
   var currentInputState = ControllerState.neutral
   /// The latest observed state as the driver reported it, before the stored calibration.
   var currentRawInputState = ControllerState.neutral
+  /// The latest angular velocity as the driver reported it, before the stored gyro offset; nil
+  /// while the controller has reported no motion.
+  var currentRawAngularVelocity: ControllerMotionVector?
   /// The stored calibration of the controller's model, read for each report.
   let calibration: @Sendable () -> ControllerCalibration
   /// When the input state last changed, for the idle disconnect.

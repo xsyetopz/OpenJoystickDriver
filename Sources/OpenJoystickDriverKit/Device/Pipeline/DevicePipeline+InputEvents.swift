@@ -17,7 +17,10 @@ extension DevicePipeline {
     // samples still go out with this one.
     let held = coalescedInput
     coalescedInput = nil
-    if let parsed { currentRawInputState = parsed.state }
+    if let parsed {
+      currentRawInputState = parsed.state
+      if let latest = parsed.motion.last { currentRawAngularVelocity = latest.angularVelocity }
+    }
     let event = parsed.map(normalized)
     if event != nil {
       if lastObservedInputReportNanoseconds == nil {
@@ -128,20 +131,23 @@ extension DevicePipeline {
     await dispatch(pending)
   }
 
-  /// Applies the normalization a driver leaves to the pipeline: the stored calibration, then each
+  /// Applies the normalization a driver leaves to the pipeline: the stored calibration, which also
+  /// removes the gyro offset from each motion sample, then each
   /// trigger button the driver's protocol has no digital signal for, derived from its analog
   /// trigger with hysteresis against the last normalized state.
   func normalized(_ event: ControllerEvent) -> ControllerEvent {
+    let stored = calibration()
     let state = TriggerButtonDerivation.applying(
-      to: calibration().applying(to: event.state),
+      to: stored.applying(to: event.state),
       previous: currentInputState,
       capabilities: driver.capabilities
     )
-    guard state != event.state else { return event }
+    let motion = event.motion.map(stored.applying)
+    guard state != event.state || motion != event.motion else { return event }
     return ControllerEvent(
       timestamp: event.timestamp,
       state: state,
-      motion: event.motion,
+      motion: motion,
       touchFrames: event.touchFrames,
       isFresh: event.isFresh
     )

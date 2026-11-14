@@ -210,6 +210,15 @@
             },
             "rightTriggerFull": {
               "$ref": "controller.schema.json#/$defs/tuning/properties/rightTriggerFull"
+            },
+            "gyroOffsetX": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/gyroOffsetX"
+            },
+            "gyroOffsetY": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/gyroOffsetY"
+            },
+            "gyroOffsetZ": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/gyroOffsetZ"
             }
           }
         },

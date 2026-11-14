@@ -519,8 +519,8 @@
               "const": "Recalibration"
             },
             "action": {
-              "description": "The step that ran: Rest, Circle, or Triggers; Reset for a reset.",
-              "enum": ["Rest", "Circle", "Triggers", "Reset"]
+              "description": "The step that ran: Rest, Circle, Triggers, or Gyro; Reset for a reset.",
+              "enum": ["Rest", "Circle", "Triggers", "Gyro", "Reset"]
             },
             "cleared": {
               "description": "The tuning keys a reset removed from the user record.",
@@ -3551,7 +3551,10 @@
         "leftTriggerRest",
         "leftTriggerFull",
         "rightTriggerRest",
-        "rightTriggerFull"
+        "rightTriggerFull",
+        "gyroOffsetX",
+        "gyroOffsetY",
+        "gyroOffsetZ"
       ]
     },
     "sharedServer": {

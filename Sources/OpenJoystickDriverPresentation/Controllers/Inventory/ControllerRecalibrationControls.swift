@@ -22,10 +22,13 @@
       VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(OJDLocalized.string("ui.controllers.recalibrate.instructions")).font(.body)
           .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+        Text(OJDLocalized.string("ui.controllers.recalibrate.gyroInstructions")).font(.body)
+          .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
         HStack {
           button("ui.controllers.recalibrate.rest", .rest)
           button("ui.controllers.recalibrate.circle", .circle)
           button("ui.controllers.recalibrate.triggers", .triggers)
+          button("ui.controllers.recalibrate.gyro", .gyro)
           button("action.reset", .reset)
           if model.isBusy {
             ProgressView().controlSize(.small)

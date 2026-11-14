@@ -298,14 +298,20 @@
 "ui.controllers.recalibrate.circle" = "Daireyi ölç";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
 "ui.controllers.recalibrate.triggers" = "Tetikleri ölç";
+/* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
+"ui.controllers.recalibrate.gyro" = "Jiroskopu ölç";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "Kumanda okunuyor…";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
 "ui.controllers.recalibrate.instructions" = "Her adım kumandayı yaklaşık iki saniye okur. Dinlenme konumu için çubukları ve tetikleri bırakın. Daire için her çubuğu tam dairesi boyunca döndürün. Tetikler için her tetiği sonuna kadar basın.";
+/* Instruction above the recalibration buttons for the gyro step. gyro names the button next to them. */
+"ui.controllers.recalibrate.gyroInstructions" = "Jiroskop için kumandayı bırakıp hareketsiz tutun.";
 /* Result after a recalibration step stored its measured values. */
 "ui.controllers.recalibrate.stored" = "Ölçülen değerler kaydedildi.";
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "%@ için hareket ölçülmedi, bu yüzden kayıtlı değerleri korunur.";
+/* Result after the gyro step of a controller that reports no motion. */
+"ui.controllers.recalibrate.gyroSkipped" = "Bu kumanda hareket bildirmiyor, bu yüzden jiroskop adımı atlandı.";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "Kayıtlı çubuk ve tetik kalibrasyonu kaldırıldı.";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
@@ -3299,6 +3305,8 @@
 "cli.controller.calibrate.discussion" = "İşlem verilmezse hareket kalibrasyonunu yazdırır. start, denetleyici hareketsiz dururken jiroskop kaymasını toplar; pause toplamayı durdurur. sticks çubukların merkezlerini ve aralıklarını ile tetiklerin uç noktalarını ölçer ve denetleyicinin modeli için saklar. reset saklanan bu değerleri kaldırır ve hareket kalibrasyonunu unutur. Hareketle eğim ve direksiyon atamaları hareket kalibrasyonunu kullanır.";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ artık bağlı değil.";
+/* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
+"cli.controller.calibrate.gyroSkipped" = "%@ hareket bildirmiyor, bu yüzden jiroskop adımı atlandı.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ hareket bildirmiyor.";
 /* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
@@ -3306,9 +3314,11 @@
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, jiroskop sapması x %3$@ y %4$@ z %5$@ derece/saniye";
 /* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
-"cli.controller.calibrate.step" = "sticks komutunun çalıştırdığı tek adım: rest, circle veya triggers. Üçünü de çalıştırmak için boş bırakın.";
+"cli.controller.calibrate.step" = "sticks komutunun çalıştırdığı tek adım: rest, circle, triggers veya gyro. Dördünü de çalıştırmak için boş bırakın.";
 /* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepCircle" = "Her çubuğu tam dairesi boyunca çevirin…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the gyro step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepGyro" = "Kumandayı bırakıp hareketsiz tutun…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepRest" = "Çubukları ve tetikleri bırakıp hareketsiz tutun…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */

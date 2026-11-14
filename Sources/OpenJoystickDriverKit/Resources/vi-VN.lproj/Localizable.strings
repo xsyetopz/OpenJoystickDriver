@@ -298,14 +298,20 @@
 "ui.controllers.recalibrate.circle" = "Đo vòng tròn";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
 "ui.controllers.recalibrate.triggers" = "Đo cò";
+/* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
+"ui.controllers.recalibrate.gyro" = "Đo con quay hồi chuyển";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "Đang đọc tay cầm…";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
 "ui.controllers.recalibrate.instructions" = "Mỗi bước đọc tay cầm khoảng hai giây. Với vị trí nghỉ, hãy thả các cần analog và cò. Với vòng tròn, hãy xoay mỗi cần analog hết vòng tròn của nó. Với cò, hãy nhấn mỗi cò hết cỡ.";
+/* Instruction above the recalibration buttons for the gyro step. gyro names the button next to them. */
+"ui.controllers.recalibrate.gyroInstructions" = "Với con quay hồi chuyển, hãy đặt tay cầm xuống và giữ yên.";
 /* Result after a recalibration step stored its measured values. */
 "ui.controllers.recalibrate.stored" = "Đã lưu các giá trị đã đo.";
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "Không đo được chuyển động của %@, nên giá trị đã lưu được giữ nguyên.";
+/* Result after the gyro step of a controller that reports no motion. */
+"ui.controllers.recalibrate.gyroSkipped" = "Tay cầm này không báo cáo chuyển động nên bước con quay hồi chuyển đã bị bỏ qua.";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "Đã xóa hiệu chỉnh cần analog và cò đã lưu.";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
@@ -3299,6 +3305,8 @@
 "cli.controller.calibrate.discussion" = "Khi không có thao tác, lệnh in hiệu chuẩn chuyển động. start thu độ trôi con quay hồi chuyển trong khi tay cầm nằm yên, còn pause dừng thu. sticks đo tâm và phạm vi của cần analog cùng điểm cuối của cò, rồi lưu cho kiểu tay cầm. reset xóa các giá trị đã lưu đó và bỏ hiệu chuẩn chuyển động. Các ánh xạ độ nghiêng và lái theo chuyển động dùng hiệu chuẩn chuyển động.";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ không còn được kết nối.";
+/* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
+"cli.controller.calibrate.gyroSkipped" = "%@ không báo cáo chuyển động nên bước con quay hồi chuyển đã bị bỏ qua.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ không báo cáo chuyển động.";
 /* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
@@ -3306,9 +3314,11 @@
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, độ lệch con quay hồi chuyển x %3$@ y %4$@ z %5$@ độ mỗi giây";
 /* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
-"cli.controller.calibrate.step" = "Một bước duy nhất mà sticks chạy: rest, circle hoặc triggers. Bỏ trống để chạy cả ba.";
+"cli.controller.calibrate.step" = "Một bước duy nhất mà sticks chạy: rest, circle, triggers hoặc gyro. Bỏ trống để chạy cả bốn.";
 /* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepCircle" = "Xoay từng cần analog hết một vòng tròn đầy đủ…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the gyro step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepGyro" = "Đặt tay cầm xuống và giữ yên…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepRest" = "Thả các cần analog và cò rồi giữ yên…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */

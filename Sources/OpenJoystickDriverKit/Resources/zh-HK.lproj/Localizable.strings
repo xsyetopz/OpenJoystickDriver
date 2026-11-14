@@ -298,14 +298,20 @@
 "ui.controllers.recalibrate.circle" = "量度圓周";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
 "ui.controllers.recalibrate.triggers" = "量度扳機";
+/* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
+"ui.controllers.recalibrate.gyro" = "量度陀螺儀";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "正在讀取手掣…";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
 "ui.controllers.recalibrate.instructions" = "每一步會讀取手掣約兩秒。量度靜止位置時，請鬆開搖桿和扳機。量度圓周時，請將每個搖桿沿完整的圓轉動一圈。量度扳機時，請將每個扳機完全按到底。";
+/* Instruction above the recalibration buttons for the gyro step. gyro names the button next to them. */
+"ui.controllers.recalibrate.gyroInstructions" = "量度陀螺儀時，請放下手掣並保持不動。";
 /* Result after a recalibration step stored its measured values. */
 "ui.controllers.recalibrate.stored" = "已儲存量度的值。";
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "未量度到%@的移動，因此保留其已儲存的值。";
+/* Result after the gyro step of a controller that reports no motion. */
+"ui.controllers.recalibrate.gyroSkipped" = "此手掣不回報體感資料，因此已略過陀螺儀步驟。";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "已移除儲存的搖桿和扳機校準。";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
@@ -3299,6 +3305,8 @@
 "cli.controller.calibrate.discussion" = "不帶操作時列印體感校準。start 會在手掣靜止時收集陀螺儀漂移，pause 停止收集。sticks 會量度搖桿中心、搖桿範圍和扳機終點，並為該手掣型號儲存。reset 會刪除這些已儲存的值並清除體感校準。體感傾側和轉向綁定會使用體感校準。";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ 已中斷連接。";
+/* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
+"cli.controller.calibrate.gyroSkipped" = "%@ 不回報體感資料，因此已略過陀螺儀步驟。";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ 不回報體感資料。";
 /* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
@@ -3306,9 +3314,11 @@
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@：%2$@，陀螺儀偏移 x %3$@ y %4$@ z %5$@ 度／秒";
 /* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
-"cli.controller.calibrate.step" = "sticks 執行的單一步驟：rest、circle 或 triggers。省略則執行全部三步。";
+"cli.controller.calibrate.step" = "sticks 執行的單一步驟：rest、circle、triggers 或 gyro。省略則執行全部四步。";
 /* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepCircle" = "請將每個搖桿沿完整的圓轉動一圈…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the gyro step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepGyro" = "請放下手掣並保持不動…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepRest" = "請鬆開搖桿和扳機並保持不動…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */

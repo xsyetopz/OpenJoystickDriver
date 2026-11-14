@@ -18,6 +18,14 @@ extension DeviceManager {
     await pipelines[identifier]?.rawInputState()
   }
 
+  /// Returns the latest angular velocity of `identifier` as the controller reports it, before the
+  /// stored gyro offset; nil when it is not connected or has reported no motion.
+  package func rawAngularVelocity(
+    for identifier: LogicalControllerID
+  ) async -> ControllerMotionVector? {
+    await pipelines[identifier]?.rawAngularVelocity()
+  }
+
   /// Returns the ownership evidence for the exact connected device identifier.
   ///
   /// Missing identifiers fail closed to unknown ownership.

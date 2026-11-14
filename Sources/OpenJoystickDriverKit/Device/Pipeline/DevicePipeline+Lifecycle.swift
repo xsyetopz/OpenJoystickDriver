@@ -242,6 +242,9 @@ extension DevicePipeline {
   }
   /// The latest observed state as the driver reported it, before the stored calibration.
   func rawInputState() -> ControllerState { currentRawInputState }
+  /// The latest angular velocity as the driver reported it, before the stored gyro offset; nil
+  /// while the controller has reported no motion.
+  func rawAngularVelocity() -> ControllerMotionVector? { currentRawAngularVelocity }
   /// The state of the controller session.
   func controllerSessionState() -> ControllerSessionState { sessionState }
   /// The link and power state of the controller.

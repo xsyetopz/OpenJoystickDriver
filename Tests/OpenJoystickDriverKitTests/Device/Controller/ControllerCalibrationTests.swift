@@ -122,7 +122,7 @@ struct ControllerCalibrationTests {
   func everyCalibrationKeyIsReadByEveryDriver() {
     #expect(ControllerCalibration.keys.allSatisfy(ControllerTuning.Key.alwaysRead.contains))
     #expect(ControllerCalibration.keys.allSatisfy { !$0.hasDriverValue })
-    #expect(ControllerCalibration.keys.count == 10)
+    #expect(ControllerCalibration.keys.count == 13)
   }
 
   @Test
@@ -161,6 +161,85 @@ struct ControllerCalibrationTests {
     let raw = await pipeline.rawInputState()
     #expect(abs(calibrated.leftStick.x.normalized) < 0.001)
     #expect(abs(raw.leftStick.x.normalized - 0.2) < 0.001)
+    await pipeline.stop()
+  }
+
+  private static func sample(gyro: (Double, Double, Double)) throws -> ControllerMotionSample {
+    try #require(
+      ControllerMotionSample(
+        timestamp: ControllerSampleTimestamp(
+          rawCounter: 0,
+          monotonic: MonotonicTimestamp(nanoseconds: 0),
+          tickNanosecondsNumerator: nil,
+          tickNanosecondsDenominator: nil,
+          sequenceIndex: 0,
+          basis: .hostEstimate
+        ),
+        acceleration: ControllerMotionVector(x: 0, y: 0, z: 9.81),
+        angularVelocity: ControllerMotionVector(x: gyro.0, y: gyro.1, z: gyro.2),
+        calibrationSource: .nominalDeviceScale
+      )
+    )
+  }
+
+  @Test
+  func gyroStepStoresTheMeanAtRestAsTheOffset() {
+    let outcome = ControllerCalibration.capture(
+      .gyro,
+      samples: [],
+      gyro: [
+        ControllerMotionVector(x: 0.02, y: -0.01, z: 0.0),
+        ControllerMotionVector(x: 0.04, y: -0.03, z: 0.02),
+      ],
+      stored: .none
+    )
+    #expect(abs((outcome.values[.gyroOffsetX] ?? 9) - 0.03) < 1e-9)
+    #expect(abs((outcome.values[.gyroOffsetY] ?? 9) + 0.02) < 1e-9)
+    #expect(abs((outcome.values[.gyroOffsetZ] ?? 9) - 0.01) < 1e-9)
+    #expect(outcome.unmoved.isEmpty)
+  }
+
+  @Test
+  func gyroStepOfAControllerWithNoGyroStoresNothing() {
+    let outcome = ControllerCalibration.capture(.gyro, samples: [], gyro: [], stored: .none)
+    #expect(outcome.values.isEmpty)
+    #expect(outcome.unmoved.isEmpty)
+  }
+
+  @Test
+  func storedGyroOffsetIsRemovedFromEachMotionSample() throws {
+    let calibration = ControllerCalibration(values: [.gyroOffsetX: 0.03, .gyroOffsetZ: -0.01])
+    let applied = calibration.applying(to: try Self.sample(gyro: (0.03, 0.5, -0.01)))
+    #expect(applied.angularVelocity == ControllerMotionVector(x: 0, y: 0.5, z: 0))
+    #expect(applied.acceleration == ControllerMotionVector(x: 0, y: 0, z: 9.81))
+    let sample = try Self.sample(gyro: (0.1, 0.2, 0.3))
+    #expect(ControllerCalibration.none.applying(to: sample) == sample)
+  }
+
+  @Test
+  func pipelineKeepsTheRawGyroAndRemovesTheStoredOffsetFromTheEvent() async throws {
+    let sample = try Self.sample(gyro: (0.03, 0, 0))
+    let stored = ControllerCalibration(values: [.gyroOffsetX: 0.03])
+    let storedCalibration: @Sendable () -> ControllerCalibration = { stored }
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x045E, productID: 0x028E),
+      transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
+      driver: OutputCharacterizationTests.ScriptedBatches([[.leftStick(x: 0.2, y: 0)]]),
+      dispatcher: OutputCharacterizationTests.PipelineOutput(),
+      idleTimeoutNanoseconds: 5_000_000_000,
+      idleMonitorIntervalNanoseconds: 5_000_000_000,
+      calibration: storedCalibration
+    )
+    await pipeline.start()
+    let event = ControllerEvent(
+      timestamp: MonotonicTimestamp(nanoseconds: 0),
+      state: .neutral,
+      motion: [sample]
+    )
+    await pipeline.handleParsedEvent(event, now: 0)
+    #expect(await pipeline.rawAngularVelocity() == ControllerMotionVector(x: 0.03, y: 0, z: 0))
+    let normalized = await pipeline.normalized(event)
+    #expect(normalized.motion.map(\.angularVelocity) == [ControllerMotionVector(x: 0, y: 0, z: 0)])
     await pipeline.stop()
   }
 }

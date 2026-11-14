@@ -123,4 +123,35 @@ struct ControllerRecalibrationRequestsTests {
       #expect(result.stored == .none)
     }
   }
+
+  @Test
+  func gyroStepStoresTheOffsetInTheUserRecord() throws {
+    try Self.withDirectory { directory in
+      let result = ApplicationServiceServer.recalibrate(
+        .gyro,
+        model: Self.model,
+        samples: [],
+        gyro: [ControllerMotionVector(x: 0.02, y: 0, z: -0.04)],
+        stored: .none,
+        directory: directory
+      )
+      #expect(result.failure == nil)
+      #expect(abs((result.stored.values[.gyroOffsetX] ?? 9) - 0.02) < 1e-9)
+      let kept = try #require(Self.tuning(in: directory)).calibration
+      #expect(abs((kept.values[.gyroOffsetZ] ?? 9) + 0.04) < 1e-9)
+      let reset = Self.run(.reset, samples: [], in: directory)
+      #expect(reset.cleared.contains(.gyroOffsetX))
+      #expect(Self.tuning(in: directory)?.calibration.values.isEmpty ?? true)
+    }
+  }
+
+  @Test
+  func gyroStepOfAControllerWithNoGyroStoresNothing() throws {
+    try Self.withDirectory { directory in
+      let result = Self.run(.gyro, samples: [Self.state()], in: directory)
+      #expect(result.failure == nil)
+      #expect(result.stored == .none)
+      #expect(result.unmoved.isEmpty)
+    }
+  }
 }
