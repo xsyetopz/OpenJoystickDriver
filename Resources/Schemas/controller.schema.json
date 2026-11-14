@@ -65,6 +65,9 @@
     },
     "tuning": {
       "$ref": "#/$defs/tuning"
+    },
+    "validations": {
+      "$ref": "#/$defs/validations"
     }
   },
   "if": {
@@ -86,10 +89,46 @@
       "route": false,
       "heldByAppleDriver": false,
       "input": false,
-      "tuning": false
+      "tuning": false,
+      "validations": false
     }
   },
   "$defs": {
+    "validations": {
+      "description": "The community validations a maintainer accepted, one per validated mode and firmware. Validations are never edited; a new firmware or mode gets a new one.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/validation"
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["issue", "mode", "appVersion", "date"],
+      "additionalProperties": false,
+      "properties": {
+        "issue": {
+          "description": "The number of the controller-validation issue on github.com/xsyetopz/OpenJoystickDriver.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "mode": {
+          "description": "The id of the validated mode of this record.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*(?!\\n)$"
+        },
+        "appVersion": {
+          "description": "The OJD version that ran the check.",
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "description": "The day the maintainer accepted the validation, as yyyy-MM-dd.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}(?!\\n)$"
+        }
+      }
+    },
     "modes": {
       "description": "The modes of one model.",
       "type": "array",

@@ -35,6 +35,8 @@ The DUALSHOCK 3 does not connect over Bluetooth on macOS 27.0. The test stored t
 
 A tester used the controller on real hardware, and it worked. The table names the mode that the tester used.
 
+A controller record can also carry a `validations` list: one entry per mode that a maintainer accepted from a `controller-validation.yml` issue, with the issue number, the mode `id`, the OJD version and the date. The app shows such a mode as Community verified in the controller detail, with a link to the issue, and `ojd record show` prints the same line. The Lookup button of the controller detail and `ojd controller lookup` open this page for a controller that has a record, at this section when the record has a validation. For a controller with no record they give a GitHub issue search for its `VVVV:PPPP`.
+
 | Controller | VID:PID | Mode tested | What works | Not tested |
 | --- | --- | --- | --- | --- |
 | 8BitDo Ultimate 2C Wireless | `2DC8:310A` | 2.4 GHz dongle, XInput mode | Buttons, sticks, triggers at rest, D-pad, stick clicks, rumble | Not recorded |

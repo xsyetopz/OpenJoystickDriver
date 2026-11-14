@@ -5233,3 +5233,15 @@
 "cli.controller.show.suspendHint" = "다른 앱이 열 수 있게 하려면 ‘ojd controller suspend %@’를 실행하세요.";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "다시 처리하려면 ‘ojd controller resume %@’를 실행하세요.";
+/* Label of the row in the controller detail that marks a controller mode that a public validation confirms. The row's value links to the validation. */
+"ui.controllers.communityVerified" = "커뮤니티 검증됨";
+/* Value of the Community verified row in the controller detail, a link to the validation. %1$@ is the id of the validated mode, such as xinput. %2$@ is the number of the GitHub issue, such as #12. */
+"ui.controllers.communityVerifiedMode" = "모드 %1$@, 이슈 %2$@";
+/* Button in the controller detail that opens the controller's entry in the supported-controllers list, or a GitHub search for its VID:PID when it has no record, in the browser. */
+"ui.controllers.lookup" = "조회";
+/* One-line summary of 'ojd controller lookup' in the command list and at the top of its help. */
+"cli.controller.lookup.abstract" = "컨트롤러 모델의 지원 컨트롤러 페이지를 출력합니다.";
+/* Long description in the help of 'ojd controller lookup'. VID:PID and GitHub stay as written. */
+"cli.controller.lookup.discussion" = "레코드가 있는 모델은 지원 컨트롤러 위키 페이지를, 없는 모델은 해당 VID:PID의 GitHub 이슈 검색 주소를 출력합니다. 아무것도 열지 않습니다.";
+/* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
+"cli.record.show.communityVerified" = "커뮤니티 검증됨: 모드 %1$@, %2$@";

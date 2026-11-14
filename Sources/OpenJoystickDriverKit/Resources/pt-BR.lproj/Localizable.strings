@@ -5234,3 +5234,15 @@
 "cli.controller.show.suspendHint" = "Execute “ojd controller suspend %@” para que outro app possa abri-lo.";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "Execute “ojd controller resume %@” para atendê-lo de novo.";
+/* Label of the row in the controller detail that marks a controller mode that a public validation confirms. The row's value links to the validation. */
+"ui.controllers.communityVerified" = "Verificado pela comunidade";
+/* Value of the Community verified row in the controller detail, a link to the validation. %1$@ is the id of the validated mode, such as xinput. %2$@ is the number of the GitHub issue, such as #12. */
+"ui.controllers.communityVerifiedMode" = "Modo %1$@, issue %2$@";
+/* Button in the controller detail that opens the controller's entry in the supported-controllers list, or a GitHub search for its VID:PID when it has no record, in the browser. */
+"ui.controllers.lookup" = "Consultar";
+/* One-line summary of 'ojd controller lookup' in the command list and at the top of its help. */
+"cli.controller.lookup.abstract" = "Imprime a página de controles compatíveis de um modelo de controle.";
+/* Long description in the help of 'ojd controller lookup'. VID:PID and GitHub stay as written. */
+"cli.controller.lookup.discussion" = "Imprime a página da wiki de controles compatíveis para um modelo com registro, ou uma busca de issues do GitHub pelo seu VID:PID se ele não tiver. Não abre nada.";
+/* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
+"cli.record.show.communityVerified" = "Verificado pela comunidade: modo %1$@, %2$@";

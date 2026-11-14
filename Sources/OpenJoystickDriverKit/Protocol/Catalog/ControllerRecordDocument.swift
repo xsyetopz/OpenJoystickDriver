@@ -46,6 +46,8 @@ struct ControllerRecordDocument: Decodable {
   let hidUsageMap: HIDUsageMap?
   /// The tuning values the record sets.
   let tuning: ControllerTuning
+  /// The accepted community validations; empty when the record has none.
+  let validations: [ControllerValidation]
 
   /// Decodes the record's `apiVersion`, `kind`, IDs, modes, sections and tuning; an unknown key, a
   /// wrong `kind` or an invalid combination of sections is rejected.
@@ -68,6 +70,7 @@ struct ControllerRecordDocument: Decodable {
     try container.rejectUnknown(allowed: [
       "apiVersion", "kind", "vendorID", "productID", "modes", "name", "placeholderSerial", "usb",
       "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input", "tuning",
+      "validations",
     ])
     vendorID = try container.decode(Int.self, for: "vendorID")
     productID = try container.decode(Int.self, for: "productID")
@@ -84,7 +87,7 @@ struct ControllerRecordDocument: Decodable {
     if modes.allSatisfy({ $0.idle != nil }) {
       let controlSections: Set<String> = [
         "usb", "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input",
-        "tuning",
+        "tuning", "validations",
       ]
       guard container.allKeys.allSatisfy({ !controlSections.contains($0.stringValue) }) else {
         throw DecodingError.dataCorrupted(
@@ -144,6 +147,19 @@ struct ControllerRecordDocument: Decodable {
       )
     }
     tuning = try container.decodeOptional(Tuning.self, for: "tuning")?.tuning ?? .none
+    validations =
+      try container.decodeOptional([ControllerValidation].self, for: "validations") ?? []
+    if let index = validations.firstIndex(where: { validation in
+      !modes.contains { $0.id == validation.modeID }
+    }) {
+      let path = ["validations", String(index), "mode"].map(DocumentKey.init)
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: decoder.codingPath + path,
+          debugDescription: "mode \(validations[index].modeID) is not a mode of the record"
+        )
+      )
+    }
     try validateTuning(codingPath: decoder.codingPath)
     try validateTransportSections(codingPath: decoder.codingPath)
     try validateModes(codingPath: decoder.codingPath)
