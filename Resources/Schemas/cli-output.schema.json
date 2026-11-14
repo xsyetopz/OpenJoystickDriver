@@ -606,6 +606,8 @@
               "alsoListedBySystem",
               "connection",
               "hasSerialNumber",
+              "holders",
+              "holdsExclusively",
               "id",
               "name",
               "ownedByAnotherClient",
@@ -625,6 +627,17 @@
                 "type": "string"
               },
               "hasSerialNumber": {
+                "type": "boolean"
+              },
+              "holders": {
+                "description": "Every process that holds the controller's HID device or USB interfaces open, in process ID order.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/sharedExclusiveOwner"
+                }
+              },
+              "holdsExclusively": {
+                "description": "Whether OJD holds the controller exclusively, so another app can open it only after it is suspended.",
                 "type": "boolean"
               },
               "id": {
@@ -926,6 +939,8 @@
             "discoverySource",
             "duplicateExposureRisk",
             "hidInput",
+            "holders",
+            "holdsExclusively",
             "physical"
           ],
           "additionalProperties": false,
@@ -958,6 +973,12 @@
                 "OwnedByAnotherClient",
                 "AcquisitionFailed"
               ]
+            },
+            "holders": {
+              "$ref": "#/$defs/controllerList/properties/items/items/properties/holders"
+            },
+            "holdsExclusively": {
+              "$ref": "#/$defs/controllerList/properties/items/items/properties/holdsExclusively"
             },
             "owner": {
               "$ref": "#/$defs/sharedExclusiveOwner"
@@ -3271,7 +3292,7 @@
       }
     },
     "sharedExclusiveOwner": {
-      "description": "The client that holds the controller's USB interface exclusively.",
+      "description": "A client that holds the controller open: the exclusive holder of its USB interface, or a process with a user client.",
       "type": "object",
       "required": ["name"],
       "additionalProperties": false,
@@ -3443,6 +3464,8 @@
         "apiVersion",
         "connection",
         "hasSerialNumber",
+        "holders",
+        "holdsExclusively",
         "id",
         "kind",
         "name",
@@ -3469,6 +3492,12 @@
         },
         "owner": {
           "$ref": "#/$defs/sharedExclusiveOwner"
+        },
+        "holders": {
+          "$ref": "#/$defs/controllerList/properties/items/items/properties/holders"
+        },
+        "holdsExclusively": {
+          "$ref": "#/$defs/controllerList/properties/items/items/properties/holdsExclusively"
         },
         "connection": {
           "$ref": "#/$defs/controllerList/properties/items/items/properties/connection"

@@ -1,11 +1,11 @@
 import Foundation
 
-/// The client that holds a USB interface open exclusively, as the interface's `UsbExclusiveOwner`
-/// registry property names it.
+/// A client that holds a controller open, as a registry property names it.
 ///
-/// A user-space client is named `pid <number>, <process name>`; the kernel truncates the process
-/// name to 16 characters. A kernel driver is named by its class, such as `AppleUSB20Hub`, and
-/// carries no process ID.
+/// A USB interface's `UsbExclusiveOwner` names its exclusive holder, and a user client's
+/// `IOUserClientCreator` names the process that opened it. A user-space client is named
+/// `pid <number>, <process name>`; the kernel truncates the process name to 16 characters. A
+/// kernel driver is named by its class, such as `AppleUSB20Hub`, and carries no process ID.
 public struct USBExclusiveOwner: Codable, Equatable, Sendable {
   /// The owning process, or nil when a kernel driver holds the interface.
   public let processID: Int32?
@@ -40,7 +40,17 @@ public struct USBExclusiveOwner: Codable, Equatable, Sendable {
     )
   }
 
-  /// Parses the `UsbExclusiveOwner` registry value; nil for an empty value, which names no owner.
+  /// The holder's name with its process ID, or the name alone for a kernel driver.
+  ///
+  /// - Parameter localize: Returns the catalog text of a key.
+  /// - Returns: The localized label.
+  public func label(localize: (String) -> String) -> String {
+    guard let processID else { return name }
+    return unsafe String(format: localize("ui.controllers.holder"), name, String(processID))
+  }
+
+  /// Parses a `UsbExclusiveOwner` or `IOUserClientCreator` registry value; nil for an empty
+  /// value, which names no holder.
   public init?(registryValue: String) {
     let value = registryValue.trimmingCharacters(in: .whitespaces)
     guard !value.isEmpty else { return nil }

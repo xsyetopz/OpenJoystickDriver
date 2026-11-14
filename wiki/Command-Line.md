@@ -41,6 +41,8 @@ The [command reference](Command-Reference.md) lists every command. `ojd --help` 
 
 To start, run `ojd status` to check the service, [Xbox USB driver](Glossary.md#terms), and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
 
+To see which apps hold a controller open, run `ojd controller show CONTROLLER`: its Opened by line names each process with its process ID. While OpenJoystickDriver holds the controller exclusively, no other app can open it. Run `ojd controller suspend CONTROLLER` to let another app open it, and `ojd controller resume CONTROLLER` to serve it again.
+
 ## Shell Completion
 
 `ojd --generate-completion-script SHELL` prints a completion script for `zsh`, `bash`, or `fish`. For example, in zsh:

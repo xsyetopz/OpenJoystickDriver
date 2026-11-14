@@ -5221,3 +5221,13 @@
 "ui.interface.showAdvanced" = "Tüm Denetimleri Göster";
 /* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
 "ui.interface.areaNeedsAdvanced" = "Basit arayüzde gizli";
+/* Label of the row in the controller detail and in the output of 'ojd controller show' that lists every process that holds the controller open. */
+"ui.controllers.holders" = "Açan işlemler";
+/* One process in the Opened by row of the controller detail and of 'ojd controller show'. %1$@ is the process name and %2$@ the process ID. */
+"ui.controllers.holder" = "%1$@ (işlem %2$@)";
+/* Says, in the controller detail and in the output of 'ojd controller show', that OpenJoystickDriver holds the controller open exclusively and that another app can open it once the user suspends the controller. OpenJoystickDriver is the product name. */
+"status.controllerExclusive" = "OpenJoystickDriver bu kontrolcüyü özel olarak tutuyor. Askıya aldıktan sonra başka bir uygulama onu açabilir.";
+/* Next step in the output of 'ojd controller show' while OpenJoystickDriver holds the controller exclusively. %@ is the session token of the controller. */
+"cli.controller.show.suspendHint" = "Başka bir uygulamanın açabilmesi için “ojd controller suspend %@” komutunu çalıştırın.";
+/* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
+"cli.controller.show.resumeHint" = "Yeniden kullanıma almak için “ojd controller resume %@” komutunu çalıştırın.";

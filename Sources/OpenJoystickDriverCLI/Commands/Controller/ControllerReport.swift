@@ -14,6 +14,10 @@ struct ControllerShowReport: Encodable, Equatable {
     /// The client that holds the controller's USB interface exclusively; absent when none does or
     /// the interface names none.
     let owner: USBExclusiveOwner?
+    /// Every process that holds the controller's HID device or USB interfaces open.
+    let holders: [USBExclusiveOwner]
+    /// Whether OJD's own open of the controller is exclusive, so another app cannot open it.
+    let holdsExclusively: Bool
     /// Whether the controller risks being exposed twice to apps.
     let duplicateExposureRisk: String
     /// Who serves the model: the `server` setting, or `ojd` for a controller the system cannot
@@ -322,6 +326,8 @@ struct ControllerShowReport: Encodable, Equatable {
         physical: device.physicalOwnership.rawValue,
         hidInput: device.hidInputOwnership.rawValue,
         owner: device.inputOwner,
+        holders: device.holders,
+        holdsExclusively: device.holdsExclusively,
         duplicateExposureRisk: device.duplicateExposureRisk.rawValue,
         server: offersServerChoice ? record?.statedServer ?? device.recordServer : .ojd,
         serverSource: offersServerChoice

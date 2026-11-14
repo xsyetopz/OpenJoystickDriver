@@ -5221,3 +5221,13 @@
 "ui.interface.showAdvanced" = "모든 컨트롤 보기";
 /* Title of the placeholder that fills the Library and Activity areas in the Simple interface, which hides all their controls; a Show All Controls button sits under it. */
 "ui.interface.areaNeedsAdvanced" = "간단 인터페이스에서 숨겨짐";
+/* Label of the row in the controller detail and in the output of 'ojd controller show' that lists every process that holds the controller open. */
+"ui.controllers.holders" = "연 프로세스";
+/* One process in the Opened by row of the controller detail and of 'ojd controller show'. %1$@ is the process name and %2$@ the process ID. */
+"ui.controllers.holder" = "%1$@(프로세스 %2$@)";
+/* Says, in the controller detail and in the output of 'ojd controller show', that OpenJoystickDriver holds the controller open exclusively and that another app can open it once the user suspends the controller. OpenJoystickDriver is the product name. */
+"status.controllerExclusive" = "OpenJoystickDriver가 이 컨트롤러를 단독으로 사용하고 있습니다. 일시 정지하면 다른 앱이 열 수 있습니다.";
+/* Next step in the output of 'ojd controller show' while OpenJoystickDriver holds the controller exclusively. %@ is the session token of the controller. */
+"cli.controller.show.suspendHint" = "다른 앱이 열 수 있게 하려면 ‘ojd controller suspend %@’를 실행하세요.";
+/* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
+"cli.controller.show.resumeHint" = "다시 처리하려면 ‘ojd controller resume %@’를 실행하세요.";
