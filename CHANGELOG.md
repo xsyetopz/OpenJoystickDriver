@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- Every button, toggle, picker, stepper, disclosure and toolbar item of the Access, Activity, Controllers, Input Capture, Library, Profiles, Settings and developer tools screens has a tooltip that says what it does, in all 22 languages. Icon-only controls keep a VoiceOver label, a text control keeps its visible title as its accessible name, and the diagnostics status symbol is hidden from VoiceOver because the status text names it.
 - The `SystemAction` destination has `Launchpad`, `Screenshot`, `LockScreen` and `ShowDesktop`. `Launchpad` opens Launchpad (or Apps where macOS has no Launchpad). `Screenshot` takes a screenshot, `LockScreen` locks the screen and `ShowDesktop` shows the desktop, each by pressing its system shortcut (Shift-Command-3, Control-Command-Q, F11), so they need Accessibility access. `ojd binding set` takes `system:launchpad`, `system:screenshot`, `system:lock-screen` and `system:show-desktop`.
 - Layouts apply to every protocol family: a record of any family, `HIDDescriptor` included, may hold `input.layouts`. The family driver decodes every report and the layout that selects a report overrides the controls it names, so a device with its own report shape is a record. The Xbox wheel `044F:B671` reads its steering and brake through such a layout.
 - A patch reaches every record property (`capabilities`, `idle`, `modes`, `name`, `placeholderSerial`, `usb`, `bluetoothLE`, `server`, `route`, `heldByAppleDriver`, `input` and `tuning`), and the selector still names the identity. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the remove path `modes.<id>` drops one.
@@ -51,8 +52,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - The properties that held prose and no data: `rationale` of a protocol description, the `notes` of the catalog rules and of the crosswalk, `$comment` in the schemas, and the system audit caveat of the support report. The facts they stated are in `wiki/Controller-Records.md` and `docs/development/xpad-import.md`.
 
 ### Fixed
-- The **Tuning** group of the controller detail lists every tuning key, with `Driver default` or `Not set` for a key no layer sets, as `ojd config show --controller` does; before, it was empty for a controller whose record sets no tuning.
 
+- The **Measure Rest**, **Measure Circle**, **Measure Triggers** and **Measure Gyro** buttons use title-style capitalization.
+- The **Tuning** group of the controller detail lists every tuning key, with `Driver default` or `Not set` for a key no layer sets, as `ojd config show --controller` does; before, it was empty for a controller whose record sets no tuning.
 - A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it.
 - A controller whose record has no default mode and no mode matching the device falls back to its HID descriptor, as a record that fits no interface does; before, it was refused with `NoModeMatched`.
 - OJD seizes a HID device with no record only when the classifier binds it; before, it seized every such device and released the refused ones afterwards.

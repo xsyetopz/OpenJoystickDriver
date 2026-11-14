@@ -607,7 +607,7 @@
         item.toolTip =
           profileToolbarState.hasUnsavedChanges
           ? OJDLocalized.string("ui.profiles.saveFirst")
-          : action.descriptionKey.map { OJDLocalized.string($0) }
+          : OJDLocalized.string(action.descriptionKey)
       }
       return isEnabled(action)
     }

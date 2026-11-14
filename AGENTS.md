@@ -3,6 +3,7 @@
 - Read `CONTRIBUTING.md` (`#ai-agents`), `LOCALIZATION.md`, `wiki/Home.md`, and `Resources/Schemas/AGENTS.md` first.
 - Before you write a function or block, call `mcp__jscpd__check_duplication` and reuse what it finds. Call `mcp__jscpd__get_file_clones` before you refactor a file, and `mcp__jscpd__check_current_directory` after you edit.
 - Write button, menu and disclosure titles in Title Case where the language has it, and end one with `...` only where macOS does or for work in progress, per Apple's HIG and `LOCALIZATION.md`.
+- Give each control a localized `.help` tooltip per the HIG (sentence case, starts with a verb, at most 75 characters) and an accessible name that contains its visible title, to meet the HIG and EN 301 549 clause 11 (WCAG 2.2 AA) together.
 - Ask the user before you pass `--force` past an `ojd` confirmation or grant endpoint access, and revoke each grant you made when its run ends.
 
 <!-- bedrock -->

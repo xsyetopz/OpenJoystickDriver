@@ -29,6 +29,7 @@
         Section {
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.advanced.enableDeveloperTools"),
+            help: OJDLocalized.string("ui.help.developerTools"),
             description: OJDLocalized.string("ui.settings.advanced.developerToolsDescription"),
             isOn: Binding(
               get: { preferences.developerToolsEnabled },

@@ -32,7 +32,7 @@
             Text(OJDLocalized.plural("ui.settings.general.idleDisconnectMinutes", count: minutes))
               .tag(Int?.some(minutes))
           }
-        }.labelsHidden().fixedSize()
+        }.labelsHidden().fixedSize().help(OJDLocalized.string("ui.help.idleDisconnect"))
       }
     }
 

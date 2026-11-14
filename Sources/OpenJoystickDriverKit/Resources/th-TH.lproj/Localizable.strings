@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "เลือกไฟล์บันทึกแพ็กเก็ต";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "เลือกสถานะคอนโทรลเลอร์ที่คาดหวัง";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "แสดงรายละเอียดของข้อผิดพลาด";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "ปิดข้อผิดพลาดทิ้ง";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "ปิดข้อความทิ้ง";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver ปฏิเสธคำขอนี้";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "คำขอล้มเหลว: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "แสดงรายละเอียดของข้อผิดพลาด";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "ปิดข้อผิดพลาดทิ้ง";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "อ่านการตั้งค่าการเข้าถึงอีกครั้ง";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "รีสตาร์ตแอปเพื่อให้สิทธิ์ใหม่มีผล";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "พอร์ต WebSocket เว้นว่างไว้เพื่อใช้พอร์ตที่บันทึกไว้ ระบบจะเลือกพอร์ตให้เฉพาะเมื่อไม่มีพอร์ตที่บันทึกไว้หรือเลือกอัตโนมัติ";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "ชื่อโทเค็น";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "ต้นทางเว็บที่ใช้โทเค็นได้ บรรทัดละหนึ่งรายการ";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "ทำต่อไปยังการยืนยัน";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "โทเค็น";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "คัดลอกโทเค็นไปยังคลิปบอร์ด";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "ปิดโทเค็น";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "ขอบเขต %@";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "ยกเลิกและคงสิทธิ์การเข้าถึงไว้ตามเดิม";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "เกี่ยวกับ %@";
@@ -5352,6 +5352,252 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "โหลดโปรไฟล์ที่บันทึกไว้ซ้ำไม่ได้ การแก้ไขของคุณยังคงอยู่";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "ส่วนขยายไดรเวอร์ยังคงติดตั้งอยู่";
+"ui.setup.uninstallRefused" = "ไดรเวอร์ Xbox USB ยังคงติดตั้งอยู่";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "เปิดเบราว์เซอร์ไม่ได้";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "ส่งค่าที่เลือกไปยังไฟของคอนโทรลเลอร์";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "ปิดแผ่นนี้โดยไม่ใช้การเปลี่ยนแปลงใด ๆ";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "รอปุ่มถัดไปที่คุณกด";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "บันทึกแพ็กเก็ตที่คอนโทรลเลอร์นี้ส่งออก";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "เปิดใช้ไดรเวอร์ Xbox USB เพื่อรับช่วงคอนโทรลเลอร์นี้";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "นำปุ่มที่จับไว้ออกจากปลายทางนี้";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "ปิดแผ่นนี้";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "เปิดรายงานการตรวจสอบบน GitHub";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "ลบค่าของคุณและใช้เดดโซนเริ่มต้น";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "สิ้นสุดการเชื่อมต่อ Bluetooth กับคอนโทรลเลอร์นี้";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "ซ่อนข้อความข้อผิดพลาดนี้";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "เริ่มร่างระเบียนคอนโทรลเลอร์สำหรับอุปกรณ์นี้";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "ร่างระเบียนจากบรรทัด SDL ของคอนโทรลเลอร์นี้";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "ค้นหาความหมายของรหัสข้อผิดพลาดที่พิมพ์";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "บันทึกการแมปของเกมแพดเสมือนลงในไฟล์";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "เปิดแบบฟอร์มตรวจสอบที่กรอกไว้แล้วในเบราว์เซอร์";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "คัดลอกผลการตรวจสอบแบบมีคำแนะนำไปยังคลิปบอร์ด";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "เปิด GitHub issue ที่กรอกไว้แล้วในเบราว์เซอร์";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "บันทึกผลการตรวจสอบแบบมีคำแนะนำลงในไฟล์";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "ไปต่อโดยไม่รอส่วนควบคุมนี้";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "ไล่ดูส่วนควบคุมทีละอันและตรวจว่าตอบสนองหรือไม่";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "ตรวจทานรายงานการตรวจสอบก่อนส่ง";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "เลือกเกมและเปิดด้วยเกมแพดเสมือน";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "เปิดรายการของคอนโทรลเลอร์นี้ในเบราว์เซอร์";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "หยุดเก็บตัวอย่างและคงตัวอย่างที่เก็บไว้แล้ว";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "ทิ้งตัวอย่างที่เก็บไว้และเริ่มใหม่";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "เก็บตัวอย่างไจโรเพื่อวัดค่าเบี่ยงเบนขณะหยุดนิ่ง";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "เลือกไฟผู้เล่นที่คอนโทรลเลอร์แสดง";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "ทำขั้นตอนถัดไปเพื่อให้คอนโทรลเลอร์นี้ใช้งานได้";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "วัดช่วงของสติ๊กขณะที่คุณหมุนแต่ละสติ๊กครบหนึ่งรอบ";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "วัดค่าออฟเซ็ตของไจโรขณะที่คอนโทรลเลอร์วางนิ่ง";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "ลบค่าสอบเทียบที่เก็บไว้ของคอนโทรลเลอร์นี้";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "วัดจุดกึ่งกลางของสติ๊กและตำแหน่งพักของทริกเกอร์ขณะปล่อยทุกส่วน";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "วัดปลายทางของทริกเกอร์ขณะที่คุณกดแต่ละอันจนสุด";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "ล้างตัวเลือกประเภทเกมแพดเสมือนทั้งหมดหลังจากคุณยืนยัน";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "เริ่มรีแมปคอนโทรลเลอร์นี้อีกครั้ง";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "สลับมอเตอร์สั่นนี้ระหว่างปิดกับกำลังเต็ม";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "เรียกใช้การแก้ไขสำหรับการตรวจสอบที่ล้มเหลวนี้";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "เลือกว่า macOS หรือ OpenJoystickDriver เป็นผู้ดูแลคอนโทรลเลอร์นี้";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "แสดงหรือซ่อนตัวระบุและปลายทางเชื่อมต่อ";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "แสดงส่วนควบคุมที่ซ่อนอยู่ในระดับอินเทอร์เฟซปัจจุบัน";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "แสดงหรือซ่อนค่าปรับแต่งของคอนโทรลเลอร์นี้";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "เริ่มบันทึกตามระยะเวลาที่เลือก";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "ปรับว่าจะไม่สนใจระยะเคลื่อนของสติ๊กใกล้จุดกึ่งกลางมากเพียงใด";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "หยุดมอเตอร์สั่นทันที";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "หยุดรีแมปคอนโทรลเลอร์นี้ไว้จนกว่าคุณจะทำต่อ";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "เปิดมอเตอร์สั่นตามระยะเวลาที่เลือก";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "ทำคำขอที่ล้มเหลวซ้ำ";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "เลือกประเภทเกมแพดเสมือนที่เกมมองเห็น";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "เลือกว่าประเภทนี้ใช้กับคอนโทรลเลอร์เครื่องเดียวหรือกับรุ่นของมัน";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "อนุญาตให้โปรแกรมนี้ใช้เอนด์พอยต์ในเครื่อง";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "ยกเลิกสิทธิ์เข้าถึงและปิดการเชื่อมต่อที่เปิดอยู่";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "ขอให้ระบบให้สิทธิ์นี้";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "ให้ระบบเลือกพอร์ตว่างสำหรับ WebSocket";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "คัดลอกพาธซ็อกเก็ตไปยังคลิปบอร์ด";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "ใช้การเปลี่ยนแปลงที่ชีตอธิบายไว้";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "อนุญาตให้โปรแกรมรับเหตุการณ์จากคอนโทรลเลอร์";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "อนุญาตให้โปรแกรมควบคุมเกมแพดเสมือน";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "แปลงเอกสารที่บันทึกไว้เป็นเวอร์ชันปัจจุบัน";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "เรียกใช้การทำงานที่ล้มเหลวอีกครั้ง";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "สร้างโปรไฟล์สำหรับคอนโทรลเลอร์";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "ตั้งค่าให้เสร็จและไปที่แอป";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "ปิดชีตนี้";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "อ่านสถานะของบริการอีกครั้ง";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "เริ่มตัวรับฟังคำขอของบริการใหม่";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "อนุมัติส่วนขยายไดรเวอร์ในการตั้งค่าระบบ";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "ซ่อมส่วนขยายไดรเวอร์";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "ขอสิทธิ์ที่ขาดอยู่ในพื้นที่การเข้าถึง";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "เพิ่มโปรไฟล์จากไฟล์";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "ตรวจไฟล์โปรไฟล์โดยไม่นำเข้า";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "สร้างสำเนาของโปรไฟล์ที่เลือก";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "เปลี่ยนโปรไฟล์ที่เลือกเป็นคอนโทรลเลอร์รุ่นอื่น";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "บันทึกโปรไฟล์ที่เลือกเป็นไฟล์";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "ลบโปรไฟล์ที่เลือก";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "ตรวจไฟล์เรกคอร์ดหรือโฟลเดอร์ม็อดโดยไม่ติดตั้ง";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "เรียกใช้เรกคอร์ดที่เลือกกับการจับแพ็กเก็ต";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "ลบเรกคอร์ดหรือม็อดที่เลือก";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "ค้นหาเรกคอร์ดและม็อดในคลัง";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "เลือกมุมมองกิจกรรมที่จะแสดง";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "เลือกสตรีมบันทึกและจำนวนบรรทัดที่จะแสดง";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "ค้นหาข้อความในบันทึกกิจกรรม";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "คัดลอกบันทึกทั้งหมดไปยังคลิปบอร์ด";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "บันทึกบันทึกกิจกรรมเป็นไฟล์";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "แสดงไฟล์บันทึกใน Finder";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "เรียกใช้การตรวจวินิจฉัยสำหรับการตั้งค่า";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "แสดงสถานะคอนโทรลเลอร์และการทำงาน";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "อ่านคอนโทรลเลอร์ที่เชื่อมต่ออยู่อีกครั้ง";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "เลือกคอนโทรลเลอร์ที่จะตรวจดู";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "เลือกขีดจำกัดและรันการทดสอบความทนทาน";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "รันการทดสอบความทนทานด้วยขีดจำกัดเหล่านี้";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "รันการทดสอบความทนทานอีกครั้ง";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "หยุดการทดสอบความทนทานที่กำลังรัน";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "เลือกแพ็กเก็ตที่รายการแสดง";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "บันทึกแพ็กเก็ตของคอนโทรลเลอร์ที่เลือก";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "หยุดบันทึกแพ็กเก็ต";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "ล้างแพ็กเก็ตที่บันทึกออกจากรายการ";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "คัดลอกแพ็กเก็ตที่บันทึกทั้งหมดไปยังคลิปบอร์ด";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "บันทึกแพ็กเก็ตที่บันทึกไว้เป็นไฟล์";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "กดปุ่มที่หยุดชั่วคราวและเล่นต่อคอนโทรลเลอร์";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "ลบทางลัดหยุดชั่วคราวที่บันทึกไว้";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "แสดงการแจ้งเตือนเมื่อคอนโทรลเลอร์เชื่อมต่อหรือต้องการความสนใจ";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "แสดงการแจ้งเตือนเมื่อคอนโทรลเลอร์ตัดการเชื่อมต่อ";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "แสดงการแจ้งเตือนเมื่อโปรไฟล์เปิดใช้หรือสลับ";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "แสดงการแจ้งเตือนเมื่อโปรไฟล์ปิดใช้";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "เล่นเสียงพร้อมการแจ้งเตือนทุกครั้ง";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "เปลี่ยนวิธีที่ระบบแสดงการแจ้งเตือนจากแอป";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "แสดงการแจ้งเตือนตัวอย่างตอนนี้";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "ลบส่วนขยายไดรเวอร์ออกจากระบบ";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "เลือกจำนวนตัวควบคุมที่แอปแสดง";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "เลือกระยะเวลาที่คอนโทรลเลอร์อยู่เฉยได้";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "เปิดหน้าของรุ่นที่พร้อมใช้งาน";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "ค้นหารุ่นที่ใหม่กว่าตอนนี้";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "ค้นหารุ่นที่ใหม่กว่าเป็นครั้งคราว";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "รวมรุ่นก่อนเผยแพร่เมื่อตรวจหาการอัปเดต";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "เปิดแอปเมื่อคุณเข้าสู่ระบบ";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "แสดงรายการสถานะของแอปในแถบเมนู";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "แสดงไอคอนแอปใน Dock";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "แสดงเครื่องมือสำหรับอินพุตคอนโทรลเลอร์และแพ็กเก็ต USB";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "เชื่อมโยงคำสั่ง ojd กับแอปนี้";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "ลบการเชื่อมโยงของคำสั่ง ojd";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "แสดงไฟล์การตั้งค่าที่อ่านไม่ได้ใน Finder";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "แทนที่การตั้งค่าที่อ่านไม่ได้ด้วยค่าเริ่มต้น";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "ซ่อนข้อความนี้";

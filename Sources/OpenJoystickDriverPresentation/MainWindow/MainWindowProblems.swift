@@ -238,4 +238,15 @@ enum MainWindowProblemAction: Equatable, Sendable {
     case .showAccess: return "ui.extra.grantAccess"
     }
   }
+
+  /// The localization key of the button tooltip.
+  var helpKey: String {
+    switch self {
+    case .retryService: return "ui.help.retryService"
+    case .restartListener: return "ui.help.restartListener"
+    case .openDriverApproval: return "platform.macos.ui.help.openDriverApproval"
+    case .repairDriver: return "ui.help.repairDriver"
+    case .showAccess: return "ui.help.requestMissingPermissions"
+    }
+  }
 }

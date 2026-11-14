@@ -32,7 +32,7 @@
             )
             Spacer(minLength: OJDSpacing.medium)
             Button(OJDLocalized.string(step.buttonKey)) { perform(step) }
-              .disabled(isRequesting).ojdAccessibilityLabel(OJDLocalized.string(step.sentenceKey))
+              .disabled(isRequesting).help(OJDLocalized.string(step.sentenceKey))
           }
         }
         if isRequesting { ProgressView().controlSize(.small) }
@@ -43,7 +43,7 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.done"), action: finish)
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.finishSetup"))
         }
       }.padding(OJDSpacing.large).frame(maxWidth: 560, maxHeight: .infinity, alignment: .center)
         .frame(maxWidth: .infinity)

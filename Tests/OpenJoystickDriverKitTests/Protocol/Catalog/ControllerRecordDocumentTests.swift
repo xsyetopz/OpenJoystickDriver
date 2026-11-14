@@ -276,10 +276,10 @@ struct ControllerRecordDocumentTests {
     }
   }
 
-  /// The `HIDReportLayout` family cannot run without an input layout, and every family but
-  /// `HIDDescriptor` may hold one.
+  /// The `HIDReportLayout` family cannot run without an input layout, and every family may hold
+  /// one.
   @Test
-  func inputLayoutRequiredForReportLayoutFamilyAndRefusedByHIDDescriptorOnly() throws {
+  func inputLayoutRequiredForReportLayoutFamilyAndAcceptedByEveryFamily() throws {
     let gip = try decode(protocol: ["family": "XboxGIP"], extra: ["input": Self.minimalInput])
     #expect(gip.inputLayouts?.controls == [.south])
     let document = try decode(
@@ -288,9 +288,11 @@ struct ControllerRecordDocumentTests {
     )
     #expect(document.inputLayouts?.controls == [.south])
     #expect(throws: DecodingError.self) { try decode(protocol: ["family": "HIDReportLayout"]) }
-    #expect(throws: DecodingError.self) {
-      try decode(protocol: ["family": "HIDDescriptor"], extra: ["input": Self.minimalInput])
-    }
+    let descriptor = try decode(
+      protocol: ["family": "HIDDescriptor"],
+      extra: ["input": Self.minimalInput]
+    )
+    #expect(descriptor.inputLayouts?.controls == [.south])
   }
 
   /// The smallest valid `input` section: one button in a one-byte report.

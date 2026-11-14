@@ -109,9 +109,9 @@
         message: failure.message,
         code: failure.code,
         detailsTitle: OJDLocalized.string("ui.access.details"),
-        detailsAccessibilityLabel: OJDLocalized.string("a11y.access.details"),
+        detailsHelp: OJDLocalized.string("a11y.access.details"),
         actionTitle: OJDLocalized.string(actionTitle),
-        actionAccessibilityLabel: OJDLocalized.string(
+        actionHelp: OJDLocalized.string(
           actionTitle == "ui.access.dismiss" ? "a11y.access.dismissError" : "a11y.access.tryAgain"
         ),
         action: action,
@@ -135,7 +135,7 @@
             OJDLocalized.string("ui.permissions.restartApplication"),
             action: restartApplication
           )
-          .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.restart"))
+          .help(OJDLocalized.string("a11y.access.restart"))
         }
       }
     }
@@ -163,6 +163,7 @@
                   OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
                 )
                 .ojdAccessibilityValue(row.status.value)
+                .help(OJDLocalized.string("ui.help.requestPermission"))
             }
           }
           if let key = state.messageKey {
@@ -170,7 +171,7 @@
               .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
           }
           if row.kind == .notification, let message = notificationPermission.errorMessage {
-            Text(message).font(.caption).foregroundColor(Color(NSColor.systemRed))
+            Text(message).font(.body).foregroundColor(Color(NSColor.systemRed))
               .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
           }
         }
@@ -253,6 +254,7 @@
             Button(OJDLocalized.string("ui.access.web.port.choose")) {
               model.chooseAutomaticPort()
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port.choose"))
+              .help(OJDLocalized.string("ui.help.chooseAutomaticPort"))
           }
           portField.labelsHidden().textFieldStyle(RoundedBorderTextFieldStyle())
             .multilineTextAlignment(.trailing).frame(width: 120)
@@ -283,6 +285,7 @@
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(status.socketPath, forType: .string)
       }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.socket.copy"))
+        .help(OJDLocalized.string("ui.help.copySocketPath"))
     }
   }
 

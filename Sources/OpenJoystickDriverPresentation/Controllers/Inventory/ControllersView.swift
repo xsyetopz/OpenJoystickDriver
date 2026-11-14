@@ -197,16 +197,16 @@
       if device.sessionState == .suspended {
         Button(OJDLocalized.string("ui.menu.controller.resume")) {
           runRowCommand(device) { await viewModel.resumeController(device) }
-        }
+        }.help(OJDLocalized.string("ui.help.resume"))
       } else {
         Button(OJDLocalized.string("ui.menu.controller.suspend")) {
           runRowCommand(device) { await viewModel.suspendController(device) }
-        }
+        }.help(OJDLocalized.string("ui.help.suspend"))
       }
       if device.supportsWirelessDisconnect {
         Button(OJDLocalized.string("ui.menu.controller.disconnectWirelessLink")) {
           wirelessDisconnectRequest = WirelessDisconnectRequest(device: device)
-        }
+        }.help(OJDLocalized.string("ui.help.disconnectWireless"))
       }
     }
 

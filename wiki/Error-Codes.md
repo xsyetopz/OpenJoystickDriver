@@ -6,7 +6,7 @@ This page lists the stable error codes of OpenJoystickDriver (OJD), with the mea
 
 Each code has the form `E` and four digits. The first digit gives the area:
 
-- `E1xxx` is the endpoint. A client of the endpoint gets the code in the `code` field of a `Status` line, whose `status` is `Failure`.
+- `E1xxx` is the endpoint, through which a client can feed [virtual gamepads](Glossary.md#terms). A client of the endpoint gets the code in the `code` field of a `Status` line, whose `status` is `Failure`.
 - `E2xxx` is the command line.
 - `E3xxx` is remapping.
 - `E4xxx` is mod packages.
@@ -31,7 +31,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E1004 | Endpoint | The endpoint already serves 8 connections per transport (socket and WebSocket each). Close a connection that you do not need, and connect again. |
 | E1005 | Endpoint | The grant of this client was removed while it was connected. Grant it again with 'ojd access grant', and connect again. |
 | E1006 | Endpoint | The client read lines too slowly, and 256 lines waited. Read lines as fast as they arrive, and connect again. |
-| E1007 | Endpoint | The service already runs 4 [virtual gamepads](Glossary.md#terms). Close a feed that you do not need, and send feed again. |
+| E1007 | Endpoint | The service already runs 4 virtual gamepads. Close a feed that you do not need, and send feed again. |
 | E1008 | Endpoint | The virtual gamepad closed, or the service runs none. Connect again and send feed. |
 | E1009 | Endpoint | The service does not speak the apiVersion in a line. Send one of the versions in details.supportedAPIVersions, and connect again. |
 | E1010 | Endpoint | A line has a kind that the service does not know, or does not accept at this point. Send Hello first, then Subscription or FeedRequest, then Frame lines, and connect again. |

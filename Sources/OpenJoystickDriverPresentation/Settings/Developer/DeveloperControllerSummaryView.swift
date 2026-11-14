@@ -26,13 +26,15 @@
           }
         }
         .disabled(model.controllerPickerUnavailableReason != nil)
-        .help(model.controllerPickerUnavailableReason ?? "")
+        .help(
+          model.controllerPickerUnavailableReason ?? OJDLocalized.string("ui.help.controllerPicker")
+        )
         if let reason = model.controllerPickerUnavailableReason {
           Text(reason).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         if let device = model.selectedDevice { controllerFacts(device) }
         Button(OJDLocalized.string("action.refresh"), action: model.requestRefresh)
-          .disabled(model.isCapturing)
+          .disabled(model.isCapturing).help(OJDLocalized.string("ui.help.refreshControllers"))
       }
     }
 

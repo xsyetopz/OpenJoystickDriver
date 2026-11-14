@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "パケットキャプチャを選択してください。";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "期待するコントローラの状態を選択してください。";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "エラーの詳細を表示";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "エラーを閉じる";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "メッセージを閉じる";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver はこのリクエストを拒否しました。";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "リクエストに失敗しました: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "エラーの詳細を表示";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "エラーを閉じる";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "アクセス設定をもう一度読み込む";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "新しい権限を反映するために App を再起動";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket のポート。空のままにすると保存済みのポートを保持します。システムがポートを選ぶのは、保存済みのポートがない場合か、自動を選んだ場合だけです";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "トークン名";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "トークンを使用できる Web オリジン（1 行に 1 つ）";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "確認に進む";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "トークン";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "トークンをクリップボードにコピー";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "トークンを閉じる";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ スコープ";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "キャンセルして、アクセスをそのままにする";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "%@ について";
@@ -5352,6 +5352,252 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "保存されたプロファイルを再読み込みできませんでした。編集内容は保持されています。";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "ドライバ拡張機能はまだインストールされています。";
+"ui.setup.uninstallRefused" = "Xbox USB ドライバはまだインストールされています。";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "ブラウザを開けませんでした。";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "選択した値をコントローラーのライトに送信します";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "何も適用せずにこのシートを閉じます";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "次に押すキーを待ち受けます";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "このコントローラーが送るパケットを記録します";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "Xbox USBドライバを有効にしてこのコントローラーを引き継ぎます";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "取り込んだキーをこの割り当て先から削除します";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "このシートを閉じます";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "GitHubで検証レポートを開きます";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "独自の値を削除して既定のデッドゾーンを使います";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "このコントローラーとのBluetooth接続を終了します";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "このエラーメッセージを非表示にします";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "このデバイス用のコントローラーレコードの下書きを開始します";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "このコントローラーのSDL行からレコードの下書きを作成します";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "入力したエラーコードの意味を調べます";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "仮想ゲームパッドのマッピングをファイルに保存します";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "入力済みの検証フォームをブラウザで開きます";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "ガイド付きチェックの結果をクリップボードにコピーします";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "入力済みのGitHub Issueをブラウザで開きます";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "ガイド付きチェックの結果をファイルに保存します";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "このコントロールを待たずに次へ進みます";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "各コントロールを順に確認し、反応するかどうかを調べます";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "送信する前に検証レポートを確認します";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "ゲームを選び、仮想ゲームパッドで起動します";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "このコントローラーの項目をブラウザで開きます";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "サンプルの収集を止め、集めた分を保持します";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "集めたサンプルを破棄して最初からやり直します";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "ジャイロのサンプルを集めて静止時のずれを測定します";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "コントローラーに表示するプレイヤーライトを選びます";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "このコントローラーが動作するように次の手順を進めます";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "各スティックを一周させながら可動範囲を測定します";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "コントローラーを静止させたままジャイロのオフセットを測定します";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "このコントローラーに保存した較正値を削除します";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "操作部を離した状態でスティックの中心とトリガーの静止位置を測定します";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "各トリガーを奥まで押し込んでトリガーの終端を測定します";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "確認後、仮想ゲームパッドの種類の選択をすべて消去します";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "このコントローラーのリマップを再び開始します";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "この振動モーターのオフと最大強度を切り替えます";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "失敗したこのチェックの修復を実行します";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "macOSとOpenJoystickDriverのどちらがこのコントローラーを処理するか選びます";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "識別子とエンドポイントの表示と非表示を切り替えます";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "現在のインターフェイスレベルで隠れているコントロールを表示します";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "このコントローラーの調整値の表示と非表示を切り替えます";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "選んだ長さで記録を開始します";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "中心付近のスティックの動きをどこまで無視するか調整します";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "振動モーターをすぐに止めます";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "再開するまでこのコントローラーのリマップを止めます";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "選んだ長さだけ振動モーターを動かします";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "失敗した要求をもう一度行います";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "ゲームに見える仮想ゲームパッドの種類を選びます";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "種類を1台のコントローラーに適用するか、そのモデルに適用するか選びます";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "このプログラムがローカルのエンドポイントを使えるようにする";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "アクセスを取り消し、開いている接続を閉じる";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "この権限を許可するようシステムに求める";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "WebSocketの空きポートをシステムに選ばせる";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "ソケットのパスをクリップボードにコピーする";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "シートに書かれた変更を適用する";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "プログラムがコントローラのイベントを受け取れるようにする";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "プログラムが仮想ゲームパッドを操作できるようにする";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "保存済みの書類を現在のバージョンに変換する";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "失敗した操作をもう一度実行する";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "コントローラ用のプロファイルを作成する";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "セットアップを終えてアプリに進む";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "このシートを閉じる";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "サービスの状態をもう一度読み取る";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "サービスのリクエストリスナーを再起動する";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "システム設定でドライバ拡張を承認する";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "ドライバ拡張を修復する";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "アクセス領域で不足している権限を要求する";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "ファイルからプロファイルを追加する";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "プロファイルファイルを読み込まずに検証する";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "選択したプロファイルのコピーを作成する";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "選択したプロファイルを別のコントローラモデルに変更する";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "選択したプロファイルをファイルに保存する";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "選択したプロファイルを削除する";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "レコードファイルやModフォルダをインストールせずに検証する";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "選択したレコードをパケットキャプチャで実行する";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "選択したレコードまたはModを削除する";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "ライブラリ内のレコードとModを検索する";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "アクティビティの表示方法を選ぶ";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "表示するログストリームと行数を選ぶ";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "アクティビティログ内のテキストを検索する";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "ログ全体をクリップボードにコピーする";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "アクティビティログをファイルに保存する";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "ログファイルをFinderで表示する";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "セットアップの診断チェックを実行する";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "コントローラの状態と操作を表示する";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "接続中のコントローラをもう一度読み取る";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "調べるコントローラを選ぶ";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "上限を選んで耐久テストを実行する";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "この上限で耐久テストを実行する";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "耐久テストをもう一度実行する";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "実行中の耐久テストを停止する";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "リストに表示するパケットを選ぶ";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "選択したコントローラのパケットを記録する";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "パケットの記録を停止する";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "記録したパケットをリストから消去する";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "記録したすべてのパケットをクリップボードにコピーする";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "記録したパケットをファイルに保存する";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "コントローラを一時停止・再開するキーを押す";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "保存した一時停止ショートカットを削除する";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "コントローラの接続時や要確認時に通知を表示する";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "コントローラの切断時に通知を表示する";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "プロファイルの有効化や切り替え時に通知を表示する";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "プロファイルの無効化時に通知を表示する";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "通知のたびに音を鳴らす";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "システムがアプリの通知を表示する方法を変更する";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "サンプル通知を今すぐ表示する";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "ドライバ拡張をシステムから削除する";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "アプリが表示するコントロールの数を選ぶ";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "コントローラが待機したままでいられる時間を選ぶ";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "利用可能なリリースのページを開く";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "新しいリリースを今すぐ確認する";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "新しいリリースを時々確認する";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "アップデートの確認にプレリリース版を含める";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "ログイン時にアプリを開く";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "アプリのステータス項目をメニューバーに表示する";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "アプリのアイコンをDockに表示する";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "コントローラ入力とUSBパケットのツールを表示する";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "ojdコマンドをこのアプリにリンクする";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "ojdコマンドのリンクを削除する";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "読み取れない設定ファイルをFinderで表示する";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "読み取れない設定を初期値に置き換える";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "このメッセージを隠す";

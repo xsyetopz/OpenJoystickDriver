@@ -50,7 +50,7 @@
       let label = OJDLocalized.string(action.labelKey)
       group.label = ""
       group.paletteLabel = label
-      group.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
+      group.toolTip = OJDLocalized.string(action.descriptionKey)
       group.view?.setAccessibilityLabel(label)
       return group
     }
@@ -63,10 +63,10 @@
       let item = NSMenuToolbarItem(itemIdentifier: action.identifier)
       item.label = OJDLocalized.string(action.labelKey)
       item.paletteLabel = item.label
-      item.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
+      item.toolTip = OJDLocalized.string(action.descriptionKey)
       item.image = NSImage(
         systemSymbolName: action.symbolName,
-        accessibilityDescription: item.toolTip ?? item.label
+        accessibilityDescription: item.label
       )
       item.showsIndicator = true
       item.menu = Self.makeActivityFilterMenu(title: "", target: self)
@@ -142,7 +142,7 @@
       let item = NSSearchToolbarItem(itemIdentifier: action.identifier)
       item.label = OJDLocalized.string(action.labelKey)
       item.paletteLabel = item.label
-      item.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
+      item.toolTip = OJDLocalized.string(action.descriptionKey)
       item.fixSearchFieldWidth()
       item.searchField.placeholderString = item.label
       item.searchField.stringValue = screens.activity.log.searchText

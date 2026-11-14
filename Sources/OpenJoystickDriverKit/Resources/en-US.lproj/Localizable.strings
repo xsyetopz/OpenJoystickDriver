@@ -293,13 +293,13 @@
 /* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
 "ui.controllers.recalibrate.title" = "Recalibrate";
 /* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
-"ui.controllers.recalibrate.rest" = "Measure rest";
+"ui.controllers.recalibrate.rest" = "Measure Rest";
 /* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
-"ui.controllers.recalibrate.circle" = "Measure circle";
+"ui.controllers.recalibrate.circle" = "Measure Circle";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
-"ui.controllers.recalibrate.triggers" = "Measure triggers";
+"ui.controllers.recalibrate.triggers" = "Measure Triggers";
 /* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
-"ui.controllers.recalibrate.gyro" = "Measure gyro";
+"ui.controllers.recalibrate.gyro" = "Measure Gyro";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "Reading the controller...";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
@@ -4255,9 +4255,9 @@
 "ui.library.test.packets.pick" = "Choose a packet capture.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "Choose the expected controller state.";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "Show details of the error";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "Dismiss the error";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "Dismiss the message";
@@ -4427,13 +4427,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver refused this request.";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "The request failed: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "Show details of the error";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "Dismiss the error";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "Read the access settings again";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "Restart the app so the new permissions apply";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket port; leave empty to keep the saved port. The system picks a port only when none is saved or Automatic is chosen";
@@ -4451,17 +4451,17 @@
 "a11y.access.tokenName" = "Token name";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "Web origins that may use the token, one per line";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "Continue to the confirmation";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "The token";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "Copy the token to the clipboard";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "Close the token";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ scope";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "Cancel and keep the access as it is";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "About %@";
@@ -5353,6 +5353,252 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "The stored profile could not be reloaded. Your edits are kept.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "The driver extension is still installed.";
+"ui.setup.uninstallRefused" = "The Xbox USB driver is still installed.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "The browser could not be opened.";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "Send the chosen value to the controller light";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "Close this sheet without applying anything";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "Listen for the next key you press";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "Record the packets this controller sends";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "Activate the Xbox USB driver to take over this controller";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "Remove the captured key from this destination";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "Close this sheet";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "Open the validation report on GitHub";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "Remove your value and use the default deadzone";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "End the Bluetooth connection to this controller";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "Hide this error message";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "Start a draft controller record for this device";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "Draft a record from the SDL database line of this controller";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "Look up the meaning of the typed error code";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "Save the virtual gamepad mapping to a file";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "Open the prefilled validation form in your browser";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "Copy the guided check result to the clipboard";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "Open a prefilled GitHub issue in your browser";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "Save the guided check result to a file";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "Move on without waiting for this control";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "Walk through each control and check that it responds";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "Review the validation report before you send it";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "Choose a game and start it with the virtual gamepad";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "Open the entry of this controller in your browser";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "Stop collecting samples and keep those gathered";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "Discard the gathered samples and start over";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "Collect gyro samples to measure the resting bias";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "Choose which player light the controller shows";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "Take the next step to get this controller working";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "Measure stick ranges while you roll each stick in a full circle";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "Measure the gyro offset while the controller lies still";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "Remove the stored calibration values of this controller";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "Measure stick centers and trigger rests with controls released";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "Measure trigger ends while you press each trigger all the way in";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "Clear every virtual gamepad kind choice after you confirm";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "Start remapping this controller again";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "Switch this rumble motor between off and full strength";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "Run the fix for this failed check";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "Choose whether macOS or OpenJoystickDriver handles this controller";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "Show or hide the identifiers and endpoints";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "Reveal the controls hidden at the current interface level";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "Show or hide the tuning values of this controller";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "Begin recording for the chosen duration";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "Adjust how much stick travel near the center is ignored";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "Stop the rumble motors right away";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "Stop remapping this controller until you resume it";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "Run the rumble motors for the chosen duration";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "Repeat the request that failed";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "Choose the virtual gamepad kind that games see";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "Choose whether the kind applies to one controller or its model";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "Allow this program to use the local endpoint";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "Remove access and close the open connections";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "Ask the system to grant this permission";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "Let the system pick a free port for the WebSocket";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "Copy the socket path to the clipboard";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "Apply the change that the sheet describes";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "Let the program receive controller events";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "Let the program drive a virtual gamepad";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "Convert stored documents to the current version";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "Run the failed action again";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "Create a profile for a controller";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "Finish setup and go on to the app";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "Close this sheet";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "Read the service status again";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "Restart the request listener of the service";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "Approve the driver extension in System Settings";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "Repair the driver extension";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "Request the missing permissions in the Access area";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "Add a profile from a file";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "Check a profile file without importing it";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "Create a copy of the selected profile";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "Change the selected profile to another controller model";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "Save the selected profile to a file";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "Remove the selected profile";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "Check a record file or mod folder without installing it";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "Run the selected record against a packet capture";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "Remove the selected record or mod";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "Find records and mods in the library";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "Choose which view of the activity shows";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "Choose which log stream and how many lines show";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "Find text in the activity log";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "Copy the whole log to the clipboard";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "Save the activity log to a file";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "Show the log file in Finder";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "Run the diagnostic checks on the setup";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "Show controller status and actions";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "Read the connected controllers again";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "Choose the controller to inspect";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "Choose the limits and run a soak test";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "Run the soak test with these limits";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "Run the soak test again";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "Stop the running soak test";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "Choose which packets the list shows";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "Record the packets of the selected controller";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "Stop recording packets";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "Remove the recorded packets from the list";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "Copy every recorded packet to the clipboard";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "Save the recorded packets to a file";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "Press the keys that pause and resume controllers";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "Remove the saved pause shortcut";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "Show a notification when a controller connects or needs attention";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "Show a notification when a controller disconnects";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "Show a notification when a profile activates or switches";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "Show a notification when a profile deactivates";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "Play a sound with each notification";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "Change how the system shows notifications from the app";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "Show a sample notification now";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "Remove the driver extension from the system";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "Choose how many controls the app shows";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "Choose how long a controller may stay idle";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "Open the page of the available release";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "Look for a newer release now";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "Look for a newer release from time to time";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "Include prerelease versions when checking for updates";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "Open the app when you log in";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "Show the app status item in the menu bar";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "Show the app icon in the Dock";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "Show the controller input and USB packet tools";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "Link the ojd command to this app";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "Remove the link of the ojd command";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "Show the unreadable settings file in Finder";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "Replace the unreadable settings with the defaults";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "Hide this message";

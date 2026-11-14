@@ -67,9 +67,9 @@
               message: failure.message,
               code: failure.code,
               detailsTitle: OJDLocalized.string("ui.library.details"),
-              detailsAccessibilityLabel: OJDLocalized.string("a11y.library.details"),
+              detailsHelp: OJDLocalized.string("a11y.library.details"),
               actionTitle: OJDLocalized.string("ui.library.dismiss"),
-              actionAccessibilityLabel: OJDLocalized.string("a11y.library.dismissError")
+              actionHelp: OJDLocalized.string("a11y.library.dismissError")
             ) { model.dismissFailure() }
           }
           if let notice = model.notice {

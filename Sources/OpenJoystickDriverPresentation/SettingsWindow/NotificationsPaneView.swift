@@ -18,12 +18,14 @@
           eventToggle(
             "ui.settings.notifications.controllerConnectedOrAttention",
             "ui.settings.notifications.controllerNotifications",
+            "ui.help.notifyControllerConnected",
             \.controllerNotifications,
             preferences.setControllerNotifications
           )
           eventToggle(
             "ui.settings.notifications.controllerDisconnectedShort",
             "ui.settings.notifications.controllerDisconnectedNotifications",
+            "ui.help.notifyControllerDisconnected",
             \.controllerDisconnectedNotifications,
             preferences.setControllerDisconnectedNotifications
           )
@@ -32,12 +34,14 @@
           eventToggle(
             "ui.settings.notifications.profileActivatedShort",
             "ui.settings.notifications.profileNotifications",
+            "ui.help.notifyProfileActivated",
             \.profileNotifications,
             preferences.setProfileNotifications
           )
           eventToggle(
             "ui.settings.notifications.profileDeactivatedShort",
             "ui.settings.notifications.profileDeactivatedNotifications",
+            "ui.help.notifyProfileDeactivated",
             \.profileDeactivatedNotifications,
             preferences.setProfileDeactivatedNotifications
           )
@@ -49,7 +53,8 @@
               get: { preferences.notificationSounds },
               set: { preferences.setNotificationSounds($0) }
             )
-          ).ojdInterfaceRow(SettingsRow.notificationSound)
+          ).help(OJDLocalized.string("ui.help.notificationSounds"))
+            .ojdInterfaceRow(SettingsRow.notificationSound)
           deliveryRow.ojdInterfaceRow(SettingsRow.notificationPermission)
         }
       }.ojdGroupedForm().ojdSettingsInterfaceLevel(preferences)
@@ -85,18 +90,20 @@
         if delivery.needsAttention {
           Button(OJDLocalized.string("ui.settings.general.openNotificationSettings")) {
             preferences.openNotificationSettings()
-          }
+          }.help(OJDLocalized.string("ui.help.openNotificationSettings"))
         }
         Button(OJDLocalized.string("ui.settings.notifications.testNotification")) {
           preferences.sendTestNotification()
-        }
+        }.help(OJDLocalized.string("ui.help.testNotification"))
       }
     }
 
-    /// Returns the switch of one notification event, with the VoiceOver label `accessibilityKey`.
+    /// Returns the switch of one notification event, with the VoiceOver label `accessibilityKey`
+    /// and the tooltip `helpKey`.
     private func eventToggle(
       _ titleKey: String,
       _ accessibilityKey: String,
+      _ helpKey: String,
       _ value: KeyPath<SettingsPreferencesModel, Bool>,
       _ set: @escaping @MainActor @Sendable (Bool) -> Void
     ) -> some View {
@@ -104,6 +111,7 @@
         OJDLocalized.string(titleKey),
         isOn: Binding(get: { preferences[keyPath: value] }, set: set)
       ).ojdAccessibilityLabel(OJDLocalized.string(accessibilityKey))
+        .help(OJDLocalized.string(helpKey))
     }
   }
 

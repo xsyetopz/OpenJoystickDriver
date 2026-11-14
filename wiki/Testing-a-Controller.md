@@ -54,9 +54,9 @@ For controllers with a gyroscope. Keep the controller still while OJD collects t
 
 Measures where each stick rests, how far it reaches, and where each trigger rests and ends, for a controller whose sticks drift or never reach full. Each step reads the controller for about two seconds:
 
-- **Measure rest**: release the sticks and triggers.
-- **Measure circle**: roll each stick around its full circle.
-- **Measure triggers**: press each trigger all the way in.
+- **Measure Rest**: release the sticks and triggers.
+- **Measure Circle**: roll each stick around its full circle.
+- **Measure Triggers**: press each trigger all the way in.
 
 OJD stores the values in your record of the controller's model and applies them before profile mapping. A control that did not move keeps its stored value, and the group names it. **Reset** removes the stored values and the gyro offset. The model needs a record. `ojd controller calibrate CONTROLLER sticks` and `reset` do the same in a terminal; see [Command Reference](Command-Reference.md).
 

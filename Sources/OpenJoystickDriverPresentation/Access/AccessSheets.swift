@@ -29,10 +29,10 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { model.cancelSheet() }.keyboardShortcut(
             .cancelAction
-          ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.cancel"))
+          ).help(OJDLocalized.string("a11y.access.cancel"))
           Button(confirmation.confirmTitle) { Task { await model.confirm(pending) } }
             .keyboardShortcut(.defaultAction).disabled(grantsNothing)
-            .ojdAccessibilityLabel(confirmation.confirmTitle)
+            .help(OJDLocalized.string("ui.help.confirmChange"))
         }
       }.ojdSheet(.compact)
     }
@@ -68,9 +68,9 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { model.cancelSheet() }.keyboardShortcut(
             .cancelAction
-          ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.cancel"))
+          ).help(OJDLocalized.string("a11y.access.cancel"))
           Button(OJDLocalized.string("ui.access.token.continue")) { model.requestGrantToken() }
-            .keyboardShortcut(.defaultAction).ojdAccessibilityLabel(
+            .keyboardShortcut(.defaultAction).help(
               OJDLocalized.string("a11y.access.tokenContinue")
             )
         }
@@ -98,11 +98,11 @@
           Button(OJDLocalized.string("ui.access.token.copy")) {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(issued.token, forType: .string)
-          }.ojdAccessibilityLabel(OJDLocalized.string("a11y.access.copyToken"))
+          }.help(OJDLocalized.string("a11y.access.copyToken"))
           Spacer()
           Button(OJDLocalized.string("ui.access.done"), action: close).keyboardShortcut(
             .defaultAction
-          ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.done"))
+          ).help(OJDLocalized.string("a11y.access.done"))
         }
       }.ojdSheet(.compact)
     }
@@ -128,7 +128,7 @@
           )
         ).ojdAccessibilityLabel(
           OJDLocalized.formatted("a11y.access.scope", AccessPresentation.scope(scope))
-        )
+        ).help(AccessPresentation.scopeHelp(scope))
       }
     }
   }

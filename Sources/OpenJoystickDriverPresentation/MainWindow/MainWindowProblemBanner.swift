@@ -51,7 +51,7 @@
         if let action = problem.action, let titleKey = problem.actionTitleKey {
           Button(OJDLocalized.string(titleKey)) { perform(action) }.disabled(
             !problem.isActionEnabled
-          )
+          ).help(OJDLocalized.string(action.helpKey))
         }
       }.padding(.horizontal, 12).padding(.vertical, 8).accessibilityElement(children: .combine)
         .ojdAccessibilityLabel(title).ojdAccessibilityValue(detail)

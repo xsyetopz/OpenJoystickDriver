@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "패킷 캡처를 선택하세요.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "예상되는 컨트롤러 상태를 선택하세요.";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "오류 세부사항 보기";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "오류 닫기";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "메시지 닫기";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver가 이 요청을 거부했습니다.";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "요청 실패: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "오류 세부사항 보기";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "오류 닫기";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "접근 설정 다시 읽기";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "새 권한이 적용되도록 앱 재시작";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket 포트. 저장된 포트를 유지하려면 비워 두세요. 시스템은 저장된 포트가 없거나 자동을 선택한 경우에만 포트를 선택합니다";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "토큰 이름";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "토큰을 사용할 수 있는 웹 출처, 한 줄에 하나씩";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "확인 단계로 계속";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "토큰";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "토큰을 클립보드에 복사";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "토큰 닫기";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ 범위";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "취소하고 접근을 그대로 유지";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "%@ 정보";
@@ -5352,6 +5352,252 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "저장된 프로파일을 다시 불러올 수 없습니다. 편집 내용은 유지됩니다.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "드라이버 확장 프로그램이 아직 설치되어 있습니다.";
+"ui.setup.uninstallRefused" = "Xbox USB 드라이버가 아직 설치되어 있습니다.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "브라우저를 열 수 없습니다.";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "선택한 값을 컨트롤러의 라이트로 보냅니다";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "아무것도 적용하지 않고 이 시트를 닫습니다";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "다음에 누르는 키를 기다립니다";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "이 컨트롤러가 보내는 패킷을 기록합니다";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "Xbox USB 드라이버를 활성화해 이 컨트롤러를 가져옵니다";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "캡처한 키를 이 대상에서 제거합니다";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "이 시트를 닫습니다";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "GitHub에서 검증 보고서를 엽니다";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "직접 설정한 값을 지우고 기본 데드존을 사용합니다";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "이 컨트롤러와의 Bluetooth 연결을 끊습니다";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "이 오류 메시지를 숨깁니다";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "이 기기의 컨트롤러 레코드 초안을 시작합니다";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "이 컨트롤러의 SDL 줄로 레코드 초안을 만듭니다";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "입력한 오류 코드의 의미를 찾아봅니다";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "가상 게임패드 매핑을 파일로 저장합니다";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "미리 채워진 검증 양식을 브라우저에서 엽니다";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "안내식 점검 결과를 클립보드에 복사합니다";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "미리 채워진 GitHub 이슈를 브라우저에서 엽니다";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "안내식 점검 결과를 파일로 저장합니다";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "이 컨트롤을 기다리지 않고 넘어갑니다";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "각 컨트롤을 차례로 살펴 반응하는지 확인합니다";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "보내기 전에 검증 보고서를 검토합니다";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "게임을 골라 가상 게임패드로 실행합니다";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "이 컨트롤러의 항목을 브라우저에서 엽니다";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "샘플 수집을 멈추고 모은 샘플은 유지합니다";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "모은 샘플을 버리고 처음부터 다시 시작합니다";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "자이로 샘플을 모아 정지 상태의 편차를 측정합니다";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "컨트롤러가 표시할 플레이어 라이트를 고릅니다";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "이 컨트롤러가 작동하도록 다음 단계를 진행합니다";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "각 스틱을 한 바퀴 돌리는 동안 스틱 범위를 측정합니다";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "컨트롤러를 가만히 둔 채 자이로 오프셋을 측정합니다";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "이 컨트롤러에 저장된 보정값을 제거합니다";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "조작부를 놓은 상태에서 스틱 중심과 트리거 휴지 위치를 측정합니다";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "각 트리거를 끝까지 누르는 동안 트리거 끝점을 측정합니다";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "확인 후 가상 게임패드 종류 선택을 모두 지웁니다";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "이 컨트롤러의 리매핑을 다시 시작합니다";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "이 진동 모터를 꺼짐과 최대 세기 사이에서 전환합니다";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "실패한 이 점검의 해결 작업을 실행합니다";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "macOS와 OpenJoystickDriver 중 누가 이 컨트롤러를 처리할지 고릅니다";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "식별자와 엔드포인트를 표시하거나 숨깁니다";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "현재 인터페이스 수준에서 숨겨진 컨트롤을 표시합니다";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "이 컨트롤러의 조정 값을 표시하거나 숨깁니다";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "선택한 시간 동안 기록을 시작합니다";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "중앙 근처에서 무시할 스틱 이동량을 조절합니다";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "진동 모터를 즉시 멈춥니다";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "다시 시작할 때까지 이 컨트롤러의 리매핑을 멈춥니다";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "선택한 시간 동안 진동 모터를 작동시킵니다";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "실패한 요청을 다시 시도합니다";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "게임이 보는 가상 게임패드 종류를 고릅니다";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "종류를 컨트롤러 하나에 적용할지 모델 전체에 적용할지 고릅니다";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "이 프로그램이 로컬 엔드포인트를 쓰도록 허용";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "접근 권한을 없애고 열린 연결을 닫기";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "이 권한을 허용해 달라고 시스템에 요청";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "WebSocket용 빈 포트를 시스템이 고르게 하기";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "소켓 경로를 클립보드에 복사";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "시트에 설명된 변경 사항을 적용";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "프로그램이 컨트롤러 이벤트를 받도록 허용";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "프로그램이 가상 게임패드를 조작하도록 허용";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "저장된 문서를 현재 버전으로 변환";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "실패한 동작을 다시 실행";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "컨트롤러용 프로필 만들기";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "설정을 마치고 앱으로 이동";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "이 시트 닫기";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "서비스 상태를 다시 읽기";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "서비스의 요청 리스너를 다시 시작";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "시스템 설정에서 드라이버 확장 승인";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "드라이버 확장 복구";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "접근 영역에서 부족한 권한 요청";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "파일에서 프로필 추가";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "프로필 파일을 가져오지 않고 검사";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "선택한 프로필의 사본 만들기";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "선택한 프로필을 다른 컨트롤러 모델로 바꾸기";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "선택한 프로필을 파일로 저장";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "선택한 프로필 삭제";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "레코드 파일이나 모드 폴더를 설치하지 않고 검사";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "선택한 레코드를 패킷 캡처로 실행";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "선택한 레코드나 모드 삭제";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "라이브러리에서 레코드와 모드 찾기";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "활동을 어떤 보기로 볼지 선택";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "표시할 로그 스트림과 줄 수 선택";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "활동 로그에서 텍스트 찾기";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "전체 로그를 클립보드에 복사";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "활동 로그를 파일로 저장";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "Finder에서 로그 파일 보기";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "설정에 대한 진단 검사 실행";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "컨트롤러 상태와 동작 보기";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "연결된 컨트롤러를 다시 읽기";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "살펴볼 컨트롤러 선택";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "한도를 고르고 내구성 테스트 실행";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "이 한도로 내구성 테스트 실행";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "내구성 테스트를 다시 실행";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "실행 중인 내구성 테스트 중지";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "목록에 보일 패킷 선택";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "선택한 컨트롤러의 패킷 기록";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "패킷 기록 중지";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "기록된 패킷을 목록에서 지우기";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "기록된 모든 패킷을 클립보드에 복사";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "기록된 패킷을 파일로 저장";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "컨트롤러를 일시 중지하고 재개하는 키 누르기";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "저장된 일시 중지 단축키 지우기";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "컨트롤러가 연결되거나 확인이 필요할 때 알림 표시";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "컨트롤러 연결이 끊어질 때 알림 표시";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "프로필이 켜지거나 바뀔 때 알림 표시";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "프로필이 꺼질 때 알림 표시";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "알림마다 소리 재생";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "시스템이 앱 알림을 보여 주는 방식 변경";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "지금 샘플 알림 표시";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "시스템에서 드라이버 확장 제거";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "앱이 보여 줄 컨트롤 수 선택";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "컨트롤러가 유휴 상태로 있을 수 있는 시간 선택";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "사용 가능한 릴리스 페이지 열기";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "지금 새 릴리스 확인";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "가끔 새 릴리스 확인";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "업데이트를 확인할 때 사전 릴리스 포함";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "로그인할 때 앱 열기";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "앱 상태 항목을 메뉴 막대에 표시";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "앱 아이콘을 Dock에 표시";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "컨트롤러 입력과 USB 패킷 도구 표시";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "ojd 명령을 이 앱에 연결";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "ojd 명령의 연결 제거";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "읽을 수 없는 설정 파일을 Finder에서 보기";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "읽을 수 없는 설정을 기본값으로 바꾸기";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "이 메시지 숨기기";

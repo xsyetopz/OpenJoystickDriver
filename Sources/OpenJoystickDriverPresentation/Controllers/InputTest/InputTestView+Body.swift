@@ -29,7 +29,7 @@
         Toggle(
           title,
           isOn: Binding(get: { value.wrappedValue > 0 }, set: { value.wrappedValue = $0 ? 255 : 0 })
-        )
+        ).help(OJDLocalized.string("ui.help.rumbleToggle"))
       } else {
         InputTestSliderRow(
           title: title,
@@ -217,8 +217,9 @@
           Button(OJDLocalized.string("ui.inputTest.testRumble")) {
             model.testRumble()
           }.disabled(!model.canSendOutput || model.isOutputBusy)
+            .help(OJDLocalized.string("ui.help.testRumble"))
           Button(OJDLocalized.string("action.stop")) { model.stopRumble() }
-            .disabled(!model.canStopRumble)
+            .disabled(!model.canStopRumble).help(OJDLocalized.string("ui.help.stopRumble"))
           Spacer()
           outputStatus(for: .rumble)
         }
@@ -243,6 +244,7 @@
                 Text("4").tag(PhysicalPlayerIndicator.player4)
               }.pickerStyle(.segmented).labelsHidden()
                 .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.playerIndicator"))
+                .help(OJDLocalized.string("ui.help.playerIndicator"))
               outputStatus(for: .playerIndicator)
             }
           }
@@ -252,6 +254,7 @@
             HStack {
               OJDPhysicalColorWell(color: colorBinding).frame(width: 44, height: 24)
               Button(OJDLocalized.string("action.apply")) { model.applyColor() }
+                .help(OJDLocalized.string("ui.help.applyLight"))
             }
           }
         }
@@ -269,6 +272,7 @@
                 .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.brightness"))
                 .ojdAccessibilityValue("\(Int(model.brightness.rounded()))")
               Button(OJDLocalized.string("action.apply")) { model.applyBrightness() }
+                .help(OJDLocalized.string("ui.help.applyLight"))
             }
           }
         }
