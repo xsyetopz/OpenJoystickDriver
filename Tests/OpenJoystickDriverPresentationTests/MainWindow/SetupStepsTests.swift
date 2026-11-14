@@ -88,6 +88,37 @@ struct SetupStepsTests {
   }
 
   @Test
+  func failedRequestShowsItsMessageAndARequestInFlightIsBusy() {
+    func failure(
+      _ permissions: RuntimePermissionLoadState = .unavailable,
+      _ postEvent: RuntimePostEventAccessLoadState = .loading,
+      settingsOpenFailed: Bool = false
+    ) -> String? {
+      SetupSteps.failure(
+        permissionState: permissions,
+        postEventAccessState: postEvent,
+        settingsOpenFailed: settingsOpenFailed
+      )
+    }
+    #expect(failure() == nil)
+    #expect(failure(.error("no service")) == "no service")
+    #expect(failure(.unavailable, .error("no post event")) == "no post event")
+    #expect(failure(.unavailable, .unavailable("offline")) == "offline")
+    #expect(
+      failure(settingsOpenFailed: true)
+        == OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")
+    )
+    #expect(SetupSteps.isRequesting(permissionState: .requesting, postEventAccessState: .loading))
+    #expect(
+      SetupSteps.isRequesting(
+        permissionState: .loading,
+        postEventAccessState: .requesting
+      )
+    )
+    #expect(!SetupSteps.isRequesting(permissionState: .unavailable, postEventAccessState: .loading))
+  }
+
+  @Test
   func stepsShowOnlyWhenFirstLoadFoundOneOpen() {
     var gate = SetupStepsGate()
     gate.update(loaded: false, openSteps: 0)

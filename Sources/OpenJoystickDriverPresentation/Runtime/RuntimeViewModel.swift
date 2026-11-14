@@ -39,6 +39,9 @@ final class RuntimeViewModel: ObservableObject {
   /// The Post Event access.
   @Published
   var postEventAccessState: RuntimePostEventAccessLoadState = .loading
+  /// Whether the latest attempt to open a Privacy & Security pane failed.
+  @Published
+  var permissionSettingsOpenFailed = false
   /// The pending and failed virtual HID profile override requests, keyed by controller model.
   @Published
   var virtualHIDProfileOverrideStates:

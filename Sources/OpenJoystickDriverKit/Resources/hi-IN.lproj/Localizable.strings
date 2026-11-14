@@ -5337,3 +5337,11 @@
 "ui.inputTest.guidedCheck.leftStick" = "बायाँ स्टिक";
 /* Name of the right stick as a whole, in a guided check step. */
 "ui.inputTest.guidedCheck.rightStick" = "दायाँ स्टिक";
+/* Error in the settings window when the pressed keys cannot be the pause shortcut because the key is not a letter, digit, F key or Space, or no Command, Control or Option key is held. */
+"ui.settings.general.pauseShortcutInvalid" = "Command, Control या Option के साथ कोई अक्षर, अंक, F कुंजी या स्पेस का उपयोग करें।";
+/* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
+"ui.profiles.reloadUnavailable" = "सहेजी गई प्रोफ़ाइल फिर से लोड नहीं हो सकी। आपके बदलाव बने रहेंगे।";
+/* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
+"ui.setup.uninstallRefused" = "ड्राइवर एक्सटेंशन अभी भी इंस्टॉल है।";
+/* Error in the guided check when the browser could not open the issue or validation form. */
+"ui.inputTest.guidedCheck.openFailed" = "ब्राउज़र नहीं खुल सका।";

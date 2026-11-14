@@ -5337,3 +5337,11 @@
 "ui.inputTest.guidedCheck.leftStick" = "Stik kiri";
 /* Name of the right stick as a whole, in a guided check step. */
 "ui.inputTest.guidedCheck.rightStick" = "Stik kanan";
+/* Error in the settings window when the pressed keys cannot be the pause shortcut because the key is not a letter, digit, F key or Space, or no Command, Control or Option key is held. */
+"ui.settings.general.pauseShortcutInvalid" = "Gunakan huruf, angka, tombol F, atau Spasi bersama Command, Control, atau Option.";
+/* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
+"ui.profiles.reloadUnavailable" = "Profil tersimpan tidak dapat dimuat ulang. Suntingan Anda tetap dipertahankan.";
+/* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
+"ui.setup.uninstallRefused" = "Ekstensi driver masih terpasang.";
+/* Error in the guided check when the browser could not open the issue or validation form. */
+"ui.inputTest.guidedCheck.openFailed" = "Peramban tidak dapat dibuka.";

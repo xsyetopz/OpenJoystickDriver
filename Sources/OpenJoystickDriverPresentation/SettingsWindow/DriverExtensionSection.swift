@@ -14,6 +14,9 @@
     /// Whether the Uninstall confirmation alert is open.
     @State
     private var confirmsUninstall = false
+    /// Whether the extension was still active after the latest Uninstall.
+    @State
+    private var uninstallLeftActive = false
 
     /// The driver extension status and its uninstall button, with the confirmation.
     var body: some View {
@@ -27,13 +30,21 @@
             }
           }
         }
+        if uninstallLeftActive, runtime.systemExtensionSetupState == .active {
+          Text(OJDLocalized.string("ui.setup.uninstallRefused")).foregroundColor(
+            Color(NSColor.systemRed)
+          ).fixedSize(horizontal: false, vertical: true)
+        }
       }.alert(isPresented: $confirmsUninstall) {
         Alert(
           title: Text(OJDLocalized.string("cli.login.group.uninstallAction")),
           message: Text(OJDLocalized.string("ui.setup.uninstallDetail")),
           primaryButton: .destructive(Text(OJDLocalized.string("cli.login.group.uninstallAction")))
           {
-            Task { @MainActor in await runtime.uninstallSystemExtension() }
+            Task { @MainActor in
+              await runtime.uninstallSystemExtension()
+              uninstallLeftActive = runtime.systemExtensionSetupState == .active
+            }
           },
           secondaryButton: .cancel()
         )

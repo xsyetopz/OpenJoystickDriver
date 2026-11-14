@@ -24,7 +24,8 @@
         }
         if !isGranted {
           openPrivacySettings(
-            pane: requirement == .inputRead ? "Privacy_ListenEvent" : "Privacy_Accessibility"
+            pane: requirement == .inputRead ? "Privacy_ListenEvent" : "Privacy_Accessibility",
+            viewModel: viewModel
           )
         }
       }
@@ -35,7 +36,7 @@
       Task { @MainActor in
         AppForeground.activate()
         if opensSettings {
-          openPrivacySettings(pane: "Privacy_Bluetooth")
+          openPrivacySettings(pane: "Privacy_Bluetooth", viewModel: viewModel)
         } else {
           await viewModel.requestBluetoothAccess()
         }
@@ -55,7 +56,7 @@
         {
           isGranted = isGranted && access == .granted
         }
-        if !isGranted { openPrivacySettings(pane: "Privacy_Accessibility") }
+        if !isGranted { openPrivacySettings(pane: "Privacy_Accessibility", viewModel: viewModel) }
       }
     }
 
@@ -65,7 +66,9 @@
       Task { @MainActor in
         AppForeground.activate()
         guard let access = await viewModel.requestPostEventAccess() else { return }
-        if access != .granted { openPrivacySettings(pane: "Privacy_Accessibility") }
+        if access != .granted {
+          openPrivacySettings(pane: "Privacy_Accessibility", viewModel: viewModel)
+        }
       }
     }
 
@@ -78,14 +81,16 @@
         AppForeground.activate()
         guard let permissions = await viewModel.requestPermissions() else { return }
         guard permissions.isReady else {
-          openPrivacySettings(for: permissions)
+          openPrivacySettings(for: permissions, viewModel: viewModel)
           return
         }
         guard case .available(let status) = viewModel.statusState,
           AccessReadiness.postEventAccessNeedsRequest(in: status)
         else { return }
         guard let access = await viewModel.requestPostEventAccess() else { return }
-        if access != .granted { openPrivacySettings(pane: "Privacy_Accessibility") }
+        if access != .granted {
+          openPrivacySettings(pane: "Privacy_Accessibility", viewModel: viewModel)
+        }
       }
     }
 
@@ -108,19 +113,23 @@
 
     /// Opens Input Monitoring when it is not granted, else Accessibility.
     @MainActor
-    private static func openPrivacySettings(for permissions: RuntimePermissionSummary) {
+    private static func openPrivacySettings(
+      for permissions: RuntimePermissionSummary,
+      viewModel: RuntimeViewModel
+    ) {
       let pane: String
       if permissions.inputRead != .granted {
         pane = "Privacy_ListenEvent"
       } else {
         pane = "Privacy_Accessibility"
       }
-      openPrivacySettings(pane: pane)
+      openPrivacySettings(pane: pane, viewModel: viewModel)
     }
 
-    /// Opens the Privacy & Security pane `pane`, or System Settings itself when no pane URL opens.
+    /// Opens the Privacy & Security pane `pane`, or System Settings itself when no pane URL opens,
+    /// and records on `viewModel` whether that failed.
     @MainActor
-    private static func openPrivacySettings(pane: String) {
+    private static func openPrivacySettings(pane: String, viewModel: RuntimeViewModel) {
       let urls = privacySettingsURLs(pane: pane)
       for url in urls where NSWorkspace.shared.open(url) { return }
       let fallbackPath: String
@@ -129,7 +138,8 @@
       } else {
         fallbackPath = "/System/Library/PreferencePanes/Security.prefPane"
       }
-      NSWorkspace.shared.open(URL(fileURLWithPath: fallbackPath))
+      viewModel.permissionSettingsOpenFailed =
+        !NSWorkspace.shared.open(URL(fileURLWithPath: fallbackPath))
     }
   }
 

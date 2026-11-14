@@ -96,7 +96,7 @@
                   vendorID: draft.profile.device.vendorID,
                   productID: draft.profile.device.productID
                 )
-                return try? await viewModel.gateway.controllerState(for: .model(model))
+                return try await viewModel.gateway.controllerState(for: .model(model))
               },
               onSave: { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
             )
@@ -286,16 +286,22 @@
         if showingConflict {
           ConflictBanner(
             reload: {
-              showingConflict = false
               Task { @MainActor in
                 await viewModel.refresh()
-                if case .available(let snapshot) = viewModel.remappingState,
-                  let latest = snapshot.profiles.first(where: { $0.id == profile.id })
-                {
+                switch viewModel.remappingState {
+                case .available(let snapshot):
+                  guard let latest = snapshot.profiles.first(where: { $0.id == profile.id })
+                  else {
+                    saveError = OJDLocalized.string("ui.profiles.reloadUnavailable")
+                    return
+                  }
+                  showingConflict = false
                   expectedCurrent = latest
                   draft = RuntimeProfileDraft(profile: latest)
                   saveError = nil
                   reportEditingState()
+                case .unavailable(let message), .error(let message): saveError = message
+                case .loading: saveError = OJDLocalized.string("ui.profiles.reloadUnavailable")
                 }
               }
             },

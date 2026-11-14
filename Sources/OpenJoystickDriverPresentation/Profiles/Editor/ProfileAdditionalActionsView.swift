@@ -57,13 +57,13 @@
             }
           }
         }.frame(height: actions.isEmpty ? 0 : 170)
+        let firstDestination = DestinationOption.options(for: source, capabilities: capabilities)
+          .first?.destination
         Button(OJDLocalized.string("ui.profiles.addAction")) {
-          guard
-            let destination = DestinationOption.options(for: source, capabilities: capabilities)
-              .first?.destination
-          else { return }
-          actions.append(RemappingAction(destination: destination))
-        }.disabled(actions.count >= RemappingProfile.maximumBindingCount - 1)
+          if let firstDestination { actions.append(RemappingAction(destination: firstDestination)) }
+        }.disabled(
+          firstDestination == nil || actions.count >= RemappingProfile.maximumBindingCount - 1
+        )
       }.sheet(item: $editing) { action in
         BindingBehaviorSheet(
           binding: RemappingBinding(

@@ -22,6 +22,13 @@
     /// The Bluetooth link closure that waits for confirmation, or nil.
     @State
     private var wirelessDisconnectRequest: WirelessDisconnectRequest?
+    /// Why the latest list-row command failed, or nil.
+    @State
+    private var rowCommandFailure: String?
+    /// Whether opening System Settings for the driver extension approval failed, which shows an
+    /// alert.
+    @State
+    private var driverApprovalFailed = false
 
     /// Creates the view.
     ///
@@ -54,6 +61,11 @@
           screen.refresh()
         }.onReceive(viewModel.$controllerInventoryGeneration) { _ in
           screen.synchronizeSelection()
+        }.alert(isPresented: $driverApprovalFailed) {
+          Alert(
+            title: Text(OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")),
+            dismissButton: .default(Text(OJDLocalized.string("action.ok")))
+          )
         }
       }
     }
@@ -166,7 +178,14 @@
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
         wirelessDisconnectAlert(for: request)
-      }
+      }.background(
+        Color.clear.alert(isPresented: rowCommandFailurePresented) {
+          Alert(
+            title: Text(rowCommandFailure ?? ""),
+            dismissButton: .default(Text(OJDLocalized.string("action.ok")))
+          )
+        }
+      )
     }
 
     /// The Controller menu's session commands for one controller.
@@ -177,11 +196,11 @@
     private func sessionCommands(for device: ApplicationServiceDeviceDescription) -> some View {
       if device.sessionState == .suspended {
         Button(OJDLocalized.string("ui.menu.controller.resume")) {
-          Task { @MainActor in await viewModel.resumeController(device) }
+          runRowCommand(device) { await viewModel.resumeController(device) }
         }
       } else {
         Button(OJDLocalized.string("ui.menu.controller.suspend")) {
-          Task { @MainActor in await viewModel.suspendController(device) }
+          runRowCommand(device) { await viewModel.suspendController(device) }
         }
       }
       if device.supportsWirelessDisconnect {
@@ -189,6 +208,26 @@
           wirelessDisconnectRequest = WirelessDisconnectRequest(device: device)
         }
       }
+    }
+
+    /// Runs a session command of a list row, then shows its failure, which the detail column shows
+    /// only for the selected controller.
+    private func runRowCommand(
+      _ device: ApplicationServiceDeviceDescription,
+      _ command: @escaping @MainActor () async -> Void
+    ) {
+      Task { @MainActor in
+        await command()
+        rowCommandFailure = viewModel.controllerActionFailures[device.sessionToken.rawValue]
+      }
+    }
+
+    /// Whether the alert of a failed list-row command shows.
+    private var rowCommandFailurePresented: Binding<Bool> {
+      Binding(
+        get: { rowCommandFailure != nil },
+        set: { if !$0 { rowCommandFailure = nil } }
+      )
     }
 
     /// Returns the alert that confirms closing a controller's Bluetooth link.
@@ -202,7 +241,7 @@
         title: Text(confirmation.title),
         message: Text(confirmation.message),
         primaryButton: .destructive(Text(confirmation.confirmTitle)) {
-          Task { @MainActor in await viewModel.disconnectWirelessController(device) }
+          runRowCommand(device) { await viewModel.disconnectWirelessController(device) }
         },
         secondaryButton: .cancel()
       )
@@ -239,7 +278,7 @@
     @ViewBuilder
     private var controllerDetail: some View {
       if let unserved = screen.selectedUnserved {
-        UnservedDeviceDetailView(device: unserved, perform: performUnserved).id(unserved.id)
+        UnservedDeviceDetailView(device: unserved, perform: perform).id(unserved.id)
       } else if let selectedDevice {
         ControllerDetailView(
           device: selectedDevice,
@@ -247,7 +286,7 @@
           retry: refresh,
           viewModel: viewModel,
           readiness: readiness(for: selectedDevice),
-          perform: performSelected
+          perform: performSelected(on: selectedDevice)
         ).id(selectedDevice.sessionToken.rawValue)
       } else {
         switch viewModel.statusState {
@@ -301,31 +340,29 @@
       )
     }
 
-    /// Runs the button of the state of the selected device that OJD does not serve.
-    private func performUnserved(_ action: ControllerReadinessAction) {
-      perform(action, device: nil)
-    }
-
-    /// Runs the button of the state of the selected controller.
-    private func performSelected(_ action: ControllerReadinessAction) {
-      perform(action, device: selectedDevice)
-    }
-
-    /// Runs the button of a controller's state.
+    /// Returns what the button of the state of a controller does.
     ///
-    /// - Parameters:
-    ///   - action: What the button does.
-    ///   - device: The controller, or nil for a device that OJD does not serve.
-    private func perform(
-      _ action: ControllerReadinessAction,
-      device: ApplicationServiceDeviceDescription?
-    ) {
+    /// - Parameter device: The controller.
+    /// - Returns: The function that runs the button's action.
+    private func performSelected(
+      on device: ApplicationServiceDeviceDescription
+    ) -> @MainActor (ControllerReadinessAction) -> Void {
+      { action in
+        if action == .openInputTest { openInputTest(device) } else { perform(action) }
+      }
+    }
+
+    /// Runs the button of the state of a device that OJD does not serve, which is never Open Input
+    /// Test.
+    ///
+    /// - Parameter action: What the button does.
+    private func perform(_ action: ControllerReadinessAction) {
       switch action {
-      case .openInputTest: if let device { openInputTest(device) }
+      case .openInputTest: break
       case .openAccess: openArea(.access)
       case .setUpDriver:
         if viewModel.systemExtensionSetupState == .needsApproval {
-          _ = SystemExtensionApproval.openSystemSettings()
+          driverApprovalFailed = !SystemExtensionApproval.openSystemSettings()
         } else {
           Task { @MainActor in await viewModel.repairSystemExtension() }
         }

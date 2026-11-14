@@ -29,7 +29,7 @@ struct GuidedCheckRenderTests {
       },
       saveDirectory: FileManager.default.temporaryDirectory,
       reveal: { _ in },
-      open: { _ in },
+      open: { _ in true },
       copy: { _ in }
     )
   }

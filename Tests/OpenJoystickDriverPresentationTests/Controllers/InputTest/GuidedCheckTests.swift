@@ -11,6 +11,7 @@ import Testing
 private final class Effects {
   var revealed: [URL] = []
   var opened: [URL] = []
+  var opensSucceed = true
   var copied: [String] = []
   let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
     "guided-check-\(UUID().uuidString)",
@@ -26,7 +27,10 @@ private final class Effects {
       },
       saveDirectory: directory,
       reveal: { self.revealed.append($0) },
-      open: { self.opened.append($0) },
+      open: {
+        self.opened.append($0)
+        return self.opensSucceed
+      },
       copy: { self.copied.append($0) }
     )
   }
@@ -153,6 +157,19 @@ struct GuidedCheckTests {
     #expect(model.failure != nil)
     #expect(effects.revealed.isEmpty)
     #expect(effects.opened.isEmpty)
+  }
+
+  @Test
+  func openIssueReportsAnAddressThatDidNotOpen() {
+    let effects = Effects()
+    effects.opensSucceed = false
+    let model = effects.model()
+    model.start(device)
+    finish(model, responding: true)
+
+    model.openIssue()
+
+    #expect(model.failure == OJDLocalized.string("ui.inputTest.guidedCheck.openFailed"))
   }
 
   @Test

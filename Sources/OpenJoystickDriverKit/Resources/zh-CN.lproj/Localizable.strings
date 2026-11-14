@@ -5337,3 +5337,11 @@
 "ui.inputTest.guidedCheck.leftStick" = "左摇杆";
 /* Name of the right stick as a whole, in a guided check step. */
 "ui.inputTest.guidedCheck.rightStick" = "右摇杆";
+/* Error in the settings window when the pressed keys cannot be the pause shortcut because the key is not a letter, digit, F key or Space, or no Command, Control or Option key is held. */
+"ui.settings.general.pauseShortcutInvalid" = "请使用字母、数字、F 键或空格键，并配合 Command、Control 或 Option 键。";
+/* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
+"ui.profiles.reloadUnavailable" = "无法重新载入已存储的描述文件。您的编辑已保留。";
+/* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
+"ui.setup.uninstallRefused" = "驱动扩展仍处于安装状态。";
+/* Error in the guided check when the browser could not open the issue or validation form. */
+"ui.inputTest.guidedCheck.openFailed" = "无法打开浏览器。";

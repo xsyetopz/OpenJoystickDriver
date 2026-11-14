@@ -50,11 +50,10 @@
       isRecording = true
       monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
         if event.keyCode != 53 {
-          guard let shortcut = Self.shortcut(for: event) else {
-            NSSound.beep()
-            return nil
-          }
-          preferences.setPauseShortcut(shortcut)
+          preferences.recordPauseShortcut(
+            code: UInt32(event.keyCode),
+            modifiers: Self.modifiers(of: event)
+          )
         }
         stopRecording()
         return nil
@@ -67,18 +66,15 @@
       isRecording = false
     }
 
-    /// The shortcut of the key press, or nil when its key has no name or no modifier other than
-    /// Shift is held.
-    static func shortcut(for event: NSEvent) -> PauseShortcut? {
+    /// The modifier keys held in `event`.
+    private static func modifiers(of event: NSEvent) -> Set<PauseShortcut.Modifier> {
       let flags = event.modifierFlags
-      let modifiers = Set(
+      return Set(
         [
           (NSEvent.ModifierFlags.command, PauseShortcut.Modifier.command),
           (.control, .control), (.option, .option), (.shift, .shift),
         ].filter { flags.contains($0.0) }.map(\.1)
       )
-      guard let key = PauseShortcut.keyName(code: UInt32(event.keyCode)) else { return nil }
-      return try? PauseShortcut(key: key, modifiers: modifiers)
     }
   }
 

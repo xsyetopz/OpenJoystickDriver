@@ -14,8 +14,8 @@
     var saveDirectory: URL
     /// Shows a file in the file viewer.
     var reveal: (URL) -> Void
-    /// Opens an address in the browser.
-    var open: (URL) -> Void
+    /// Opens an address in the browser; false when it did not open.
+    var open: (URL) -> Bool
     /// Replaces the pasteboard text.
     var copy: (String) -> Void
 
@@ -95,7 +95,7 @@
     func openIssue() {
       guard let result, let file = write(result) else { return }
       environment.reveal(file)
-      environment.open(ControllerCheckIssue.supportURL(for: result))
+      open(ControllerCheckIssue.supportURL(for: result))
     }
 
     /// Asks where to save the document and writes it there.
@@ -122,7 +122,13 @@
     func confirmValidation() {
       isValidationPresented = false
       guard let result, validationText != nil else { return }
-      environment.open(ControllerCheckIssue.validationURL(for: result))
+      open(ControllerCheckIssue.validationURL(for: result))
+    }
+
+    private func open(_ url: URL) {
+      if !environment.open(url) {
+        failure = OJDLocalized.string("ui.inputTest.guidedCheck.openFailed")
+      }
     }
 
     private func presentIfFinished() {

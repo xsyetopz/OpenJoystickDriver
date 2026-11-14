@@ -67,6 +67,26 @@ struct SettingsFailureBesideControlTests {
 
   @Test
   @MainActor
+  func invalidRecordedPauseShortcutShowsBesideShortcutRow() {
+    let model = makeModel()
+
+    model.recordPauseShortcut(code: 0x23, modifiers: [.shift])
+    #expect(
+      model.failure(beside: .pauseShortcut)
+        == OJDLocalized.string("ui.settings.general.pauseShortcutInvalid")
+    )
+
+    model.recordPauseShortcut(code: 0xFF, modifiers: [.command])
+    #expect(model.pauseShortcut == nil)
+    #expect(model.failure(beside: .pauseShortcut) != nil)
+
+    model.recordPauseShortcut(code: 0x23, modifiers: [.command])
+    #expect(model.pauseShortcut?.text == "Command+P")
+    #expect(model.failure(beside: .pauseShortcut) == nil)
+  }
+
+  @Test
+  @MainActor
   func storedPauseShortcutClearsItsFailure() {
     let model = makeModel()
     model.pauseShortcutRefused()

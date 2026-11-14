@@ -67,6 +67,38 @@ enum SetupSteps {
     return steps
   }
 
+  /// The message of the failed request that the steps screen shows, or nil.
+  ///
+  /// - Parameters:
+  ///   - permissionState: The load state of the Input Read and Input Inject permissions.
+  ///   - postEventAccessState: The load state of the Post Event access.
+  ///   - settingsOpenFailed: Whether opening System Settings failed.
+  /// - Returns: The message of the failed request, or nil when none failed.
+  static func failure(
+    permissionState: RuntimePermissionLoadState,
+    postEventAccessState: RuntimePostEventAccessLoadState,
+    settingsOpenFailed: Bool
+  ) -> String? {
+    if case .error(let message) = permissionState { return message }
+    switch postEventAccessState {
+    case .error(let message), .unavailable(let message): return message
+    case .loading, .requesting, .available: break
+    }
+    return settingsOpenFailed
+      ? OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed") : nil
+  }
+
+  /// Whether a request to macOS is in flight.
+  ///
+  /// - Parameters:
+  ///   - permissionState: The load state of the Input Read and Input Inject permissions.
+  ///   - postEventAccessState: The load state of the Post Event access.
+  /// - Returns: Whether either request is in flight.
+  static func isRequesting(
+    permissionState: RuntimePermissionLoadState,
+    postEventAccessState: RuntimePostEventAccessLoadState
+  ) -> Bool { permissionState == .requesting || postEventAccessState == .requesting }
+
   /// The localization key of the sentence of a permission step.
   private static func sentenceKey(for kind: AccessPermissionRow.Kind) -> String {
     switch kind {

@@ -362,6 +362,19 @@ struct AccessViewModelTests {
   }
 
   @Test
+  func tokenFormClearsStaleFailure() {
+    let model = AccessViewModel(service: FakeAccessService())
+    model.tokenDraft = AccessTokenDraft(name: "  ", originsText: "", scopes: [.read])
+    model.requestGrantToken()
+    #expect(model.failure != nil)
+
+    model.requestTokenForm()
+
+    #expect(model.sheet == .tokenForm)
+    #expect(model.failure == nil)
+  }
+
+  @Test
   func tokenNeedsName() {
     let model = AccessViewModel(service: FakeAccessService())
     model.tokenDraft = AccessTokenDraft(name: "  ", originsText: "", scopes: [.read])
