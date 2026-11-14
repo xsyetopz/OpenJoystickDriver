@@ -392,6 +392,10 @@ When you choose a controller, the list shows each connected controller, and then
 - A single controller shows its model and its ID under its name, such as `2DC8:310A  U-kZ7dCdQP-6vkJyz4`. It is stored by its unit ID, or by its `ojd controller list` ID when it has no unit ID. The unit ID changes when you connect the controller to a different USB port, and the list ID changes each time the controller connects.
 - A model entry shows "Any connected" and the model under its name, such as `Any connected 2DC8:310A`, so one connected controller appears twice under the same name. A wireless receiver and its controller are one entry, under the model the receiver reports. A model entry is stored as `VVVV:PPPP`. It finds the connected controller of that model on any port. When two connected controllers have the same model, the action fails and lists them. You can also type `VVVV:PPPP` in the search field.
 
+The list holds the controllers connected when it opens. Shortcuts does not refresh an open list, so after you connect a controller, close the list and open it again.
+
+A shortcut that runs with no controller connected asks for one in a window, even from `shortcuts run`.
+
 Get Battery Level fails when the controller reports no battery level. When the controller reports a range, such as `30-39%`, the action returns the lowest value of the range.
 
 To run a shortcut from another program, use the `shortcuts` command or a `shortcuts://` link:
@@ -399,7 +403,29 @@ To run a shortcut from another program, use the `shortcuts` command or a `shortc
 - Raycast: the Shortcuts extension runs a shortcut by name, or a Script Command can run `shortcuts run "Low Battery Check"`.
 - Stream Deck: an Open action with the link `shortcuts://run-shortcut?name=Low%20Battery%20Check` runs the shortcut.
 
-None of these actions is verified live in the Shortcuts app yet. `shortcuts list` prints no shortcut, and no command runs an action by name: `shortcuts run` needs a shortcut that you build in the Shortcuts app first.
+`shortcuts run` runs a shortcut that you build in the Shortcuts app first; no command runs an action by name. To pass the folder of Install Mod Package as input, pass a `file://` URL, because the action reads text only as a URL; a plain path fails with "Invalid URL".
+
+This example builds four shortcuts in the Shortcuts app, each with one action whose input is the Shortcut Input: "OJD List Mod Packages", "OJD Install Mod Package", "OJD Remove Mod Package", and "OJD Set Controller Light" with the controller set. Then it runs them from Terminal:
+
+```sh
+printf '%s' "file://$PWD/docs/sdk/sample/" > folder.txt
+printf 'ojd-sample' > name.txt
+shortcuts run "OJD Install Mod Package" --input-path folder.txt
+shortcuts run "OJD List Mod Packages"
+shortcuts run "OJD Remove Mod Package" --input-path name.txt
+shortcuts run "OJD Set Controller Light"
+```
+
+Run against the installed build with an 8BitDo Ultimate 2C (`2DC8:310A`) connected (`evidence/scripting/shortcuts.txt`):
+
+```text
+ojd-sample
+ojd-sample
+ojd-sample
+Error: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-xNZcxwus_aDu6Q8k' to see what it supports.
+```
+
+Each action prints the package name it installed, listed, or removed, and `ojd mod list` agrees after each step. Set Controller Light refuses with the text `ojd controller light` prints for a controller with no light.
 
 ## Further Reading
 

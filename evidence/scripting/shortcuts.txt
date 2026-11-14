@@ -1,0 +1,23 @@
+$ shortcuts run "OJD List Mod Packages" 
+exit 0
+$ shortcuts run "OJD Install Mod Package" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.fBTorENNVd/folder.txt
+exit 0
+ojd-sample
+$ shortcuts run "OJD List Mod Packages" 
+exit 0
+ojd-sample
+$ ojd mod list
+ojd-sample  1.0.0  OpenJoystickDriver
+  Controllers/1209-0001.plist
+  Profiles/sample-pad.plist
+  VirtualDevices/1209-0001.plist
+$ shortcuts run "OJD Remove Mod Package" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.fBTorENNVd/name.txt
+exit 0
+ojd-sample
+$ shortcuts run "OJD List Mod Packages" 
+exit 0
+$ ojd controller list
+E-xNZcxwus_aDu6Q8k  U-kZ7dCdQP-6vkJyz4  2DC8:310A  USB  8BitDo Ultimate 2C Wireless Controller
+$ shortcuts run "OJD Set Controller Light" 
+Error: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-xNZcxwus_aDu6Q8k' to see what it supports.
+exit 1

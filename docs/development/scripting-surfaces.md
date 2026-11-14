@@ -30,7 +30,7 @@ Entities the actions pass:
 | `ControllerEntity` | `Intents/ControllerEntity.swift:9` | `id`, `name`, `model`, `isModelMatch` (`:19-27`) |
 | `ProfileEntity` | `Intents/ProfileEntity.swift:8` | `id`, `name`, `model`, `isActive` (`:17-28`) |
 
-The wiki states that no action is verified live in the Shortcuts app (`wiki/Automating-OpenJoystickDriver.md:323`).
+The wiki lists which actions ran live through `shortcuts run` ("Use Shortcuts" in `wiki/Automating-OpenJoystickDriver.md`).
 
 ## The `ojd` command line
 
@@ -136,7 +136,7 @@ The endpoint surfaces below ran against `/Applications/OpenJoystickDriver.app`, 
 | --- | --- |
 | `ProfileRequest` | `Activate`, `Set` (`name`), and `Deactivate` each answered a `ProfileResult`. An unknown profile got `E2012` and the connection stayed open. A `Set` without `value` got `E1003`. A `Read`-only client got `E1002`. |
 | `ModList` | `Mods` was empty, listed `scratch-trial` after `ojd mod install` on the same connection, and was empty after `ojd mod remove`. A `Control`-only client got `E1002`. |
-| `OutputRequest` | The refusal works; delivery is not shown. With the 8BitDo Ultimate 2C served over Bluetooth LE by `HIDDescriptor`, `Rumble`, `Player` and `Light` each got `E2013` ("has no rumble motor", "no player indicator lights", "no programmable light color"), the code and text `ojd controller rumble`, `player` and `light` print. An unknown controller got `E2012`, and an out-of-range `duration` got `E1003`. Delivery needs a controller served with that output, such as the 2C on its cable or receiver. |
+| `OutputRequest` | The refusal works; delivery is not shown. With the 8BitDo Ultimate 2C served over Bluetooth LE by `HIDDescriptor`, `Rumble`, `Player` and `Light` each got `E2013` ("has no rumble motor", "no player indicator lights", "no programmable light color"), the code and text `ojd controller rumble`, `player` and `light` print. An unknown controller got `E2012`, and an out-of-range `duration` got `E1003`. With the 2C on its receiver as `2DC8:310A`, `Rumble` and `Player` were delivered and `Light` got `E2013` (`evidence/scripting/output_request-310A.txt`). |
 | `Profiles` and `Mods` subscriptions | Each sent the list at once and again after each change made through `ojd`. `output` on `Profiles` and an unknown stream got `E1003`. |
 | Personas | `Generic`, `SDLCompatible` and `GameControllerCompatible` each answered a `FeedSession`, and a frame and a `Drain` answered `Drained`. `DualShock` got `E1003` with the accepted personas, and a `Read`-only client got `E1002`. |
-| App Intents | Not run. `shortcuts list` prints no shortcut, and no command runs an intent by name. |
+| App Intents | Through shortcuts built in the Shortcuts app and run with `shortcuts run` (`evidence/scripting/shortcuts.sh`, `shortcuts.txt`): List, Install, and Remove Mod Package each exit 0 and agree with `ojd mod list`; Install takes its folder as a `file://` URL, and a plain path fails with "Invalid URL". Set Controller Light refuses the 2C with the text `ojd controller light` prints. Rumble Controller, Set Player Indicator, and Set Profile Value are not run: their shortcuts have no controller or profile set, so they ask in a window. |

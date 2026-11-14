@@ -16,7 +16,8 @@ run() {
   rm -f "$work/out.txt"
 }
 
-printf '%s' "$PWD/docs/sdk/sample" >"$work/folder.txt"
+# The folder parameter is a URL, so Shortcuts reads text input only as a `file://` URL.
+printf '%s' "file://$PWD/docs/sdk/sample/" >"$work/folder.txt"
 printf 'ojd-sample' >"$work/name.txt"
 
 run "OJD List Mod Packages"
@@ -28,7 +29,10 @@ run "OJD Remove Mod Package" --input-path "$work/name.txt"
 run "OJD List Mod Packages"
 echo "\$ ojd controller list"
 ojd controller list
-run "OJD Rumble Controller"
-run "OJD Set Player Indicator"
-run "OJD Set Controller Light"
+# With no controller connected, Shortcuts asks for one in a window, so the run stops instead.
+if ojd controller list | grep -q '^No controllers'; then
+  echo "No controller connected: OJD Set Controller Light not run."
+else
+  run "OJD Set Controller Light"
+fi
 rm -rf "$work"
