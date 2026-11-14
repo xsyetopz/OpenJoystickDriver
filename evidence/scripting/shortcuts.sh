@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# 6.9 and 6.17: runs six shortcuts through `shortcuts run`, with no window.
-# Needs the six "OJD ..." shortcuts built in the Shortcuts app against an installed build that
-# publishes the mod and controller output actions, and the sample package at docs/sdk/sample.
+# 6.9 and 6.17: runs nine shortcuts through `shortcuts run`.
+# Needs the "OJD ..." shortcuts in the Shortcuts app against an installed build that publishes
+# the mod, controller output, and profile actions, the sample package at docs/sdk/sample, and a
+# profile named "OJD Shortcut Test" chosen in "OJD Set Profile Value".
 set -u
 cd "$(dirname "$0")/../.." || exit
 work=$(mktemp -d)
@@ -34,5 +35,14 @@ if ojd controller list | grep -q '^No controllers'; then
   echo "No controller connected: OJD Set Controller Light not run."
 else
   run "OJD Set Controller Light"
+  run "OJD Rumble First Controller"
+  run "OJD Set Player First Controller"
 fi
+# The profile shortcut renames the profile chosen in it to its input; ojd renames it back.
+printf 'OJD Shortcut Renamed' >"$work/value.txt"
+run "OJD Set Profile Value" --input-path "$work/value.txt"
+echo "\$ ojd profile list"
+ojd profile list
+echo "\$ ojd profile set \"OJD Shortcut Renamed\" name \"OJD Shortcut Test\""
+ojd profile set "OJD Shortcut Renamed" name "OJD Shortcut Test"
 rm -rf "$work"

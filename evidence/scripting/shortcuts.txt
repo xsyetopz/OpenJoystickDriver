@@ -1,6 +1,6 @@
 $ shortcuts run "OJD List Mod Packages"
 exit 0
-$ shortcuts run "OJD Install Mod Package" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.fBTorENNVd/folder.txt
+$ shortcuts run "OJD Install Mod Package" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.Aed0rMLXeT/folder.txt
 exit 0
 ojd-sample
 $ shortcuts run "OJD List Mod Packages"
@@ -11,13 +11,24 @@ ojd-sample  1.0.0  OpenJoystickDriver
   Controllers/1209-0001.plist
   Profiles/sample-pad.plist
   VirtualDevices/1209-0001.plist
-$ shortcuts run "OJD Remove Mod Package" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.fBTorENNVd/name.txt
+$ shortcuts run "OJD Remove Mod Package" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.Aed0rMLXeT/name.txt
 exit 0
 ojd-sample
 $ shortcuts run "OJD List Mod Packages"
 exit 0
 $ ojd controller list
-E-xNZcxwus_aDu6Q8k  U-kZ7dCdQP-6vkJyz4  2DC8:310A  USB  8BitDo Ultimate 2C Wireless Controller
+E-sZpteqc0iwYiBy5D  U-kZ7dCdQP-6vkJyz4  2DC8:310A  USB  8BitDo Ultimate 2C Wireless Controller
 $ shortcuts run "OJD Set Controller Light"
-Error: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-xNZcxwus_aDu6Q8k' to see what it supports.
+Error: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-sZpteqc0iwYiBy5D' to see what it supports.
 exit 1
+$ shortcuts run "OJD Rumble First Controller"
+exit 0
+$ shortcuts run "OJD Set Player First Controller"
+exit 0
+$ shortcuts run "OJD Set Profile Value" --input-path /var/folders/cl/89dcg0fs7_n4j1vbwn_cf4bm0000gn/T/tmp.Aed0rMLXeT/value.txt
+exit 0
+OJD Shortcut Renamed
+$ ojd profile list
+AC3A22D0-3DA4-4E37-B71F-56458E46E1AE  OJD Shortcut Renamed  2DC8:310A  global
+$ ojd profile set "OJD Shortcut Renamed" name "OJD Shortcut Test"
+Set name in 'OJD Shortcut Test'.

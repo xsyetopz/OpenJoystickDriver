@@ -427,6 +427,19 @@ Error: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. R
 
 Each action prints the package name it installed, listed, or removed, and `ojd mod list` agrees after each step. Set Controller Light refuses with the text `ojd controller light` prints for a controller with no light.
 
+To run a controller action with no controller fixed in the shortcut, start it with Get Controllers and Get Item from List (First Item), and pass that item as the controller. "OJD Rumble First Controller" and "OJD Set Player First Controller" (player 2) built that way each exit 0 from `shortcuts run`. A shortcut whose Set Profile Value has its profile chosen and the Shortcut Input as the value renames the profile:
+
+```sh
+printf 'OJD Shortcut Renamed' > value.txt
+shortcuts run "OJD Set Profile Value" --input-path value.txt
+ojd profile list
+```
+
+```text
+OJD Shortcut Renamed
+AC3A22D0-3DA4-4E37-B71F-56458E46E1AE  OJD Shortcut Renamed  2DC8:310A  global
+```
+
 ## Further Reading
 
 - [Command line](Command-Line.md)
