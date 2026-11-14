@@ -49,7 +49,7 @@ extension ControllerCalibration.Step: ExpressibleByArgument {
 struct ControllerRecalibrationReport: Encodable, Equatable {
   /// The session ID of the controller.
   let controller: String
-  /// The step that ran, or `reset`.
+  /// The step that ran, or `Reset`.
   let action: String
   /// The values a step stored, by tuning key.
   let stored: [String: Double]
@@ -140,7 +140,7 @@ extension ControllerCalibrateCommand {
           CLILocalized.format(
             "cli.controller.calibrate.stored",
             device.name,
-            report.action,
+            CommandLineName.kebab(report.action),
             report.stored.keys.sorted().joined(separator: ", ")
           )
         )

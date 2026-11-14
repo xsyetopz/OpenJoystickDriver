@@ -40,7 +40,7 @@ struct ControllerRecalibrateCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     let json = try result.json()
     #expect(json["kind"] as? String == "Recalibration")
-    #expect(json["action"] as? String == "triggers")
+    #expect(json["action"] as? String == "Triggers")
     #expect((json["stored"] as? [String: Double])?["leftTriggerFull"] == 0.9)
     #expect(json["unmoved"] as? [String] == ["RightTrigger"])
     let arguments = try #require(try sent(by: service).first)

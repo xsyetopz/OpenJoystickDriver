@@ -519,8 +519,8 @@
               "const": "Recalibration"
             },
             "action": {
-              "description": "The step that ran: rest, circle, or triggers; reset for a reset.",
-              "enum": ["rest", "circle", "triggers", "reset"]
+              "description": "The step that ran: Rest, Circle, or Triggers; Reset for a reset.",
+              "enum": ["Rest", "Circle", "Triggers", "Reset"]
             },
             "cleared": {
               "description": "The tuning keys a reset removed from the user record.",

@@ -100,8 +100,8 @@ def violations() -> list[tuple[str, str, str]]:
 
 
 class SchemaStyleTests(unittest.TestCase):
-    def test_there_are_fifteen_schema_files(self) -> None:
-        self.assertEqual(len(list(SCHEMAS.glob("*.schema.json"))), 15)
+    def test_there_are_sixteen_schema_files(self) -> None:
+        self.assertEqual(len(list(SCHEMAS.glob("*.schema.json"))), 16)
 
     def test_every_description_follows_the_style_and_no_schema_holds_a_comment(
         self,

@@ -21,16 +21,16 @@
       "const": "ControllerCheck"
     },
     "controller": {
-      "description": "The controller facts of the support report. The serial number is only reported as present or absent.",
+      "description": "The controller facts of the support report, with the serial number reported only as present or absent.",
       "$ref": "report.schema.json#/$defs/controller"
     },
     "modeID": {
-      "description": "The mode id the controller runs. Absent for a controller with no record.",
+      "description": "The mode id the controller runs, absent for a controller with no record.",
       "type": "string",
       "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
     },
     "recordSource": {
-      "description": "The record layer that supplies the controller's record. Absent for a controller with no record.",
+      "description": "The record layer that supplies the controller's record, absent for a controller with no record.",
       "enum": ["Bundled", "Package", "User"]
     },
     "appVersion": {
@@ -68,14 +68,14 @@
           "enum": ["Responded", "OtherControl", "Skipped"]
         },
         "otherControl": {
-          "description": "The control that moved instead. Present exactly when the outcome is OtherControl.",
+          "description": "The control that moved instead, present exactly when the outcome is OtherControl.",
           "anyOf": [
             { "$ref": "vocabulary.schema.json#/$defs/control" },
             { "enum": ["LeftStick", "RightStick"] }
           ]
         },
         "ranges": {
-          "description": "The lowest and highest raw value each axis of a stick or trigger step showed. Empty for a button.",
+          "description": "The lowest and highest raw value each axis of a stick or trigger step showed, empty for a button.",
           "type": "array",
           "items": {
             "type": "object",

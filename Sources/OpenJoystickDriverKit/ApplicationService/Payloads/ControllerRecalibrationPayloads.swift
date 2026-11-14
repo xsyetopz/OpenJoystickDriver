@@ -3,13 +3,13 @@ import Foundation
 /// What `recalibrateController` does: a calibration step, or a reset of the stored calibration.
 public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendable {
   /// Sticks and triggers released: stores the stick centres and the trigger rests.
-  case rest
+  case rest = "Rest"
   /// Each stick moved through its full circle: stores the stick ranges.
-  case circle
+  case circle = "Circle"
   /// Each trigger pressed fully: stores the trigger ends.
-  case triggers
+  case triggers = "Triggers"
   /// Removes the stored centres, ranges, and trigger ends, and clears the gyro offset.
-  case reset
+  case reset = "Reset"
 
   /// The action that runs `step`.
   public init(_ step: ControllerCalibration.Step) {
@@ -21,7 +21,14 @@ public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendab
   }
 
   /// The step this action measures; nil for `reset`.
-  public var step: ControllerCalibration.Step? { .init(rawValue: rawValue) }
+  public var step: ControllerCalibration.Step? {
+    switch self {
+    case .rest: .rest
+    case .circle: .circle
+    case .triggers: .triggers
+    case .reset: nil
+    }
+  }
 }
 
 /// Arguments of `recalibrateController`: the controller and the action to run on it.
