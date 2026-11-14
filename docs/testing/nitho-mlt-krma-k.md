@@ -17,7 +17,7 @@ The mode switch on the back of the pad picks the identity. The manual names X (B
 | M, Bluetooth | `054C:05C4` | `DUALSHOCK 4 Wireless Controller` | `sony-dual-shock4:bluetooth-classic` | Every control |
 | 2.4G receiver | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
 | By cable | `054C:0268`, `054C:05C4`, `045E:028E` | PS3, `Wireless Controller`, `Xbox360 For Windows` | | Identity only |
-| V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | A, LT, D-pad down, L3, left stick, right stick |
+| V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | Every control it sends |
 | X, S | | | | Not tested |
 
 ## M Mode over Bluetooth
@@ -73,7 +73,7 @@ The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and re
 | Left stick center | 875, 665; up is +X, right is +Y |
 | Right stick center | 1782, 3222; up is +X, right is +Y |
 
-RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
+`ojd controller watch` reported each control of the table, with the sticks at full deflection. RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release, so OJD reports North twice for one Y press. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
 
 ## M1 and M2
 
