@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller-check.schema.json",
+  "title": "OpenJoystickDriver controller check",
+  "description": "The result of a guided check: the support-report facts of one controller and what each control did.",
+  "type": "object",
+  "required": [
+    "apiVersion",
+    "kind",
+    "controller",
+    "appVersion",
+    "osVersion",
+    "steps"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "const": "openjoystickdriver/v1alpha3"
+    },
+    "kind": {
+      "const": "ControllerCheck"
+    },
+    "controller": {
+      "description": "The controller facts of the support report. The serial number is only reported as present or absent.",
+      "$ref": "report.schema.json#/$defs/controller"
+    },
+    "modeID": {
+      "description": "The mode id the controller runs. Absent for a controller with no record.",
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
+    },
+    "recordSource": {
+      "description": "The record layer that supplies the controller's record. Absent for a controller with no record.",
+      "enum": ["Bundled", "Package", "User"]
+    },
+    "appVersion": {
+      "description": "The OpenJoystickDriver version.",
+      "type": "string",
+      "minLength": 1
+    },
+    "osVersion": {
+      "description": "The macOS version as major.minor.patch.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "steps": {
+      "description": "One result per control, in the order the check asked.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    }
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "required": ["control", "outcome", "ranges"],
+      "additionalProperties": false,
+      "properties": {
+        "control": {
+          "description": "The control asked for: a control id, or LeftStick or RightStick.",
+          "anyOf": [
+            { "$ref": "vocabulary.schema.json#/$defs/control" },
+            { "enum": ["LeftStick", "RightStick"] }
+          ]
+        },
+        "outcome": {
+          "enum": ["Responded", "OtherControl", "Skipped"]
+        },
+        "otherControl": {
+          "description": "The control that moved instead. Present exactly when the outcome is OtherControl.",
+          "anyOf": [
+            { "$ref": "vocabulary.schema.json#/$defs/control" },
+            { "enum": ["LeftStick", "RightStick"] }
+          ]
+        },
+        "ranges": {
+          "description": "The lowest and highest raw value each axis of a stick or trigger step showed. Empty for a button.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["axis", "min", "max"],
+            "additionalProperties": false,
+            "properties": {
+              "axis": {
+                "$ref": "vocabulary.schema.json#/$defs/control"
+              },
+              "min": {
+                "type": "integer",
+                "minimum": -32767,
+                "maximum": 65535
+              },
+              "max": {
+                "type": "integer",
+                "minimum": -32767,
+                "maximum": 65535
+              }
+            }
+          }
+        }
+      },
+      "if": {
+        "properties": { "outcome": { "const": "OtherControl" } }
+      },
+      "then": {
+        "required": ["otherControl"]
+      },
+      "else": {
+        "not": { "required": ["otherControl"] }
+      }
+    }
+  }
+}

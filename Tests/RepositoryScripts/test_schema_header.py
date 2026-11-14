@@ -49,6 +49,7 @@ def instances() -> dict[str, dict[str, Any]]:
         "service-listener-failure": load_plist(
             FIXTURES / "service_listener_failure.plist"
         ),
+        "controller-check": load(FIXTURES / "controller_check.json"),
     }
 
 

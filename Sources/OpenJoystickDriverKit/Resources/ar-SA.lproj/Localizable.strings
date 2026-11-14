@@ -5233,3 +5233,25 @@
 "cli.controller.show.suspendHint" = "شغّل «ojd controller suspend %@» ليتمكن تطبيق آخر من فتحها.";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "شغّل «ojd controller resume %@» لتتولاها مجددًا.";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "اطلب كل عنصر تحكم في وحدة التحكم وأبلغ عن العناصر التي تستجيب.";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "يطلب منك تحريك كل عنصر تحكم تعلنه وحدة التحكم، واحدًا تلو الآخر. تنتهي الخطوة عندما يتحرك هذا العنصر، أو عندما يتحرك عنصر آخر أولًا، أو عندما ينتهي وقتها. تحتفظ العصي والزنادات بالنطاق الذي شوهد. مع --json، يطبع مستند فحص وحدة التحكم.";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "تخطَّ عنصر التحكم بعد هذا العدد من الثواني دون حركة. بدونه، انتظر 15 ثانية.";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "بعد فحص استجابت فيه كل عناصر التحكم، اطبع نص التحقق وعنوان النموذج، وافتح النموذج بعد أن تكتب y.";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "عنصر التحكم %1$@ من %2$@: حرّك %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ لا يعلن عن أي عناصر تحكم للفحص.";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "لا يُعرض التحقق: لم تستجب كل عناصر التحكم.";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "يصل هذا النص إلى %@ فقط بعد أن ترسل النموذج:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "عنوان النموذج: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "لم يُفتح النموذج: لا توجد طرفية للسؤال فيها. افتح العنوان أعلاه بنفسك.";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "هل تريد فتح نموذج التحقق في المتصفح؟";

@@ -16,6 +16,7 @@ KINDS = {
     "protocol-description": "ProtocolDescription",
     "settings": "Settings",
     "service-listener-failure": "ServiceListenerFailure",
+    "controller-check": "ControllerCheck",
 }
 
 

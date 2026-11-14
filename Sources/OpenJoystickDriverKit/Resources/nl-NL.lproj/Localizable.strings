@@ -5234,3 +5234,25 @@
 "cli.controller.show.suspendHint" = "Voer ‘ojd controller suspend %@’ uit zodat een andere app hem kan openen.";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "Voer ‘ojd controller resume %@’ uit om hem weer over te nemen.";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "Elk bedieningselement van een controller opvragen en melden welke reageren.";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "Vraagt je elk bedieningselement te bewegen dat de controller opgeeft, één voor één. Een stap eindigt als dat element beweegt, als eerst een ander element beweegt of als de tijd om is. Sticks en triggers houden het geziene bereik bij. Met --json wordt het controllercontroledocument afgedrukt.";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "Sla een bedieningselement over na zoveel seconden zonder beweging. Zonder deze optie 15 seconden wachten.";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "Na een controle waarin elk bedieningselement reageerde, de validatietekst en het formulieradres afdrukken en het formulier openen zodra je y typt.";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "Bedieningselement %1$@ van %2$@: beweeg %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ geeft geen bedieningselementen op om te controleren.";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "Geen validatie aangeboden: niet elk bedieningselement reageerde.";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "Deze tekst gaat pas naar %@ als je het formulier verstuurt:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "Formulieradres: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "Het formulier is niet geopend: er is geen terminal om te vragen. Open het adres hierboven zelf.";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "Het validatieformulier in je browser openen?";

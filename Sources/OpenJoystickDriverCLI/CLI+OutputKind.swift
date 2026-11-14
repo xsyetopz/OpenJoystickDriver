@@ -13,6 +13,7 @@ extension CLI {
       (ControllerShowCommand.self, "Controller"),
       (ControllerWatchCommand.self, "ControllerState"),
       (ControllerCaptureCommand.self, "RawReport"),
+      (ControllerCheckCommand.self, "ControllerCheck"),
       (ControllerCalibrateCommand.self, "Calibration"),
       (ControllerSuspendCommand.self, "ControllerSession"),
       (ControllerResumeCommand.self, "ControllerSession"),

@@ -5234,3 +5234,25 @@
 "cli.controller.show.suspendHint" = "Ejecuta «ojd controller suspend %@» para que otra app pueda abrirlo.";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "Ejecuta «ojd controller resume %@» para atenderlo de nuevo.";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "Pedir cada control de un mando e informar de cuáles responden.";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "Te pide que muevas cada control que declara el mando, uno a uno. Un paso termina cuando ese control se mueve, cuando se mueve otro antes o cuando se agota su tiempo. Los sticks y los gatillos conservan el rango observado. Con --json, imprime el documento de comprobación del mando.";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "Omitir un control tras estos segundos sin movimiento. Sin esta opción, esperar 15 segundos.";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "Tras una comprobación en la que respondió cada control, imprime el texto de validación y la dirección del formulario, y abre el formulario cuando escribas «y».";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "Control %1$@ de %2$@: mueve %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ no declara ningún control que comprobar.";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "No se ofrece la validación: no respondió cada control.";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "Este texto solo llega a %@ cuando envías el formulario:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "Dirección del formulario: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "No se abrió el formulario: no hay terminal donde preguntar. Abre tú la dirección de arriba.";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "¿Abrir el formulario de validación en el navegador?";

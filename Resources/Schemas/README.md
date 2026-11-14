@@ -38,6 +38,7 @@ A stored document is a file that carries `apiVersion` and `kind`. Each is an XML
 - `access-grants.schema.json`: the `AccessGrants.plist` file in which the service keeps whether the endpoint is on and which signed clients may use it. Only the service writes it, through `ojd access`.
 - `settings.schema.json`: the `Settings.plist` file, the user file that `ojd setting set` and the app write. Every setting is optional in the file; a setting it leaves out takes its built-in default.
 - `service-listener-failure.schema.json`: the file beside the service's RPC socket (the socket path plus `.failure.plist`) that the service writes when its request listener stops on a fatal error (code `E2034`, the error number and the time). A successful listener start and an orderly stop delete it, and its `pid` and start time let readers report the failure only while that exact process runs. `ojd status` and `ojd diagnose` read it while the service cannot be reached.
+- `controller-check.schema.json`: the document of a guided controller check (`ojd controller check`, and the Guided Check in Input Test). It embeds the `controller` facts of the support report, the app and macOS versions, and one step per declared control with its outcome (`Responded`, `OtherControl` naming the control that moved, or `Skipped`) and the range a stick or trigger showed. It holds no serial number, only whether one is present.
 - `endpoint.schema.json`: the JSON lines that a granted client and the service exchange on the endpoint socket. The stream lines are the `ojd controller watch --all` events from `cli-output.schema.json`.
 - `error-codes.schema.json`: the authored catalog `Resources/ErrorCodes.plist`, which gives every E#### error code its domain and name. `just errors-regenerate` copies the endpoint codes into `endpoint.schema.json` and the table into `wiki/Error-Codes.md`.
 - `crosswalk.schema.json`: the authored table `Resources/Vocabulary/crosswalk.plist`, which maps each control id to its W3C, SDL, evdev, HID and Apple names and records the source of each column. It describes the shape of that file only; no schema accepts or maps a name in it.
@@ -58,6 +59,7 @@ Each artifact class has one current contract, a flat `<kind>.schema.json` here. 
 | `access-grants.schema.json` | `AccessGrants` |
 | `settings.schema.json` | `Settings` |
 | `service-listener-failure.schema.json` | `ServiceListenerFailure` |
+| `controller-check.schema.json` | `ControllerCheck` |
 | `report.schema.json` | `SupportDiagnostic`, on the `data` payload; the CloudEvents envelope has none |
 
 `cli-output.schema.json` and `endpoint.schema.json` give each message its own `kind` and share the `apiVersion`.

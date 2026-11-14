@@ -116,6 +116,23 @@ enum GUICoverageEntries {
         reason: "scripting option of a stream a window shows continuously"
       )
     }
+    + [
+      CLIOnlyItem(
+        command: ["controller", "check"],
+        option: nil,
+        reason: "the guided check of a window arrives with Input Test"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "check"],
+        option: "--duration",
+        reason: "a window ends a step with its Skip button"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "check"],
+        option: "--validate",
+        reason: "the validation sheet of a window arrives with Input Test"
+      ),
+    ]
     + ["--json", "--plain", "--quiet", "--no-color", "--no-input"].map {
       CLIOnlyItem(command: nil, option: $0, reason: "output-only option")
     }

@@ -5233,3 +5233,25 @@
 "cli.controller.show.suspendHint" = "运行“ojd controller suspend %@”让其他 App 打开它。";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "运行“ojd controller resume %@”重新接管它。";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "逐个请求控制器的每个控制项，并报告哪些有响应。";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "依次要求你操作控制器声明的每个控制项。该控制项动作、其他控制项先动作或时间用完时，该步骤结束。摇杆和扳机会保留所见范围。使用 --json 时，输出控制器检查文档。";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "控制项在这么多秒内没有动作就跳过。不指定时等待 15 秒。";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "在每个控制项都有响应的检查之后，输出验证文本和表单地址，并在你输入 y 后打开表单。";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "控制项 %1$@/%2$@：请操作 %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ 没有声明可检查的控制项。";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "不提供验证：并非每个控制项都有响应。";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "此文本只有在你提交表单后才会发送到 %@：";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "表单地址：%@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "未打开表单：没有可询问的终端。请自行打开上面的地址。";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "要在浏览器中打开验证表单吗？";

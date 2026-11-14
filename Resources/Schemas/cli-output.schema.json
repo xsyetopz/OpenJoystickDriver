@@ -447,6 +447,9 @@
         }
       }
     },
+    "controllerCheck": {
+      "$ref": "controller-check.schema.json"
+    },
     "controllerCalibrate": {
       "type": "object",
       "required": [

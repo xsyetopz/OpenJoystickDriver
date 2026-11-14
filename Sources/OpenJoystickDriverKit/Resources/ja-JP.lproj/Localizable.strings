@@ -5233,3 +5233,25 @@
 "cli.controller.show.suspendHint" = "ほかのアプリで開くには「ojd controller suspend %@」を実行してください。";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "再び処理するには「ojd controller resume %@」を実行してください。";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "コントローラの操作部を一つずつ尋ね、反応した操作部を報告します。";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "コントローラが宣言する操作部を一つずつ動かすよう求めます。その操作部が動いたとき、別の操作部が先に動いたとき、または時間切れになったとき、手順が終わります。スティックとトリガーは観測した範囲を保持します。--json を付けると、コントローラ確認ドキュメントを表示します。";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "この秒数のあいだ動きがない操作部をスキップします。指定しない場合は 15 秒待ちます。";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "すべての操作部が反応した確認のあとで、検証用テキストとフォームのアドレスを表示し、y を入力するとフォームを開きます。";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "操作部 %1$@/%2$@: %3$@ を動かしてください…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ は確認する操作部を宣言していません。";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "検証は提供されません。すべての操作部が反応したわけではありません。";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "このテキストは、フォームを送信した後にのみ %@ に届きます:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "フォームのアドレス: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "フォームは開きませんでした。確認できるターミナルがありません。上のアドレスを自分で開いてください。";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "検証フォームをブラウザで開きますか?";

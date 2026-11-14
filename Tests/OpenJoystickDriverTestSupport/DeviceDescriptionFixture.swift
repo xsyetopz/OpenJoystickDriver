@@ -34,6 +34,7 @@ extension ApplicationServiceDeviceDescription {
     vendorID: UInt16 = 0x045E,
     productID: UInt16 = 0x028E,
     serialNumber: String? = nil,
+    capabilities: ControllerCapabilities = ControllerCapabilities(controls: []),
     outputs: PhysicalControllerOutputCapabilities = .none,
     unit: String? = nil,
     power: ControllerConnectionState.Power? = nil,
@@ -66,6 +67,7 @@ extension ApplicationServiceDeviceDescription {
       recordServer: .system,
       recordAccessRoute: .system,
       tuning: tuning,
+      capabilities: capabilities,
       connectionState: power.map {
         ControllerConnectionState(transport: .usb, backend: .hid, isConnected: true, power: $0)
       },
