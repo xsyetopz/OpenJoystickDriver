@@ -1,13 +1,13 @@
 {
-  "originHash" : "9717cdb8d1891d0f99bf606e4586bfe197bb5d151909fc58945f9963946edaba",
+  "originHash" : "6506e18a92e81c0865e6da0c5ee3f3538f7b5a9d710ae473d20b83b7910ccaad",
   "pins" : [
     {
       "identity" : "bedrock",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xsyetopz/bedrock",
       "state" : {
-        "branch" : "swift-bedrock-v0.1.3",
-        "revision" : "552a8110da332699eb7eb243007dd338617067cf"
+        "branch" : "swift-bedrock-v0.1.4",
+        "revision" : "04a9b2656a2447c0090a9adb3a938c4ab0660cf3"
       }
     }
   ],
