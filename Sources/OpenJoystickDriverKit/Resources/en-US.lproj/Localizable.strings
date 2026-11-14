@@ -5353,6 +5353,6 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "The stored profile could not be reloaded. Your edits are kept.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "The driver extension is still installed.";
+"ui.setup.uninstallRefused" = "The Xbox USB driver is still installed.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "The browser could not be opened.";
