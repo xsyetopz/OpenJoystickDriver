@@ -36,7 +36,7 @@ English text lives only in the `en-US` catalog. A call site passes a key and not
 
 1. Copy the `en-US` key shape and comments into the target `.lproj` pair.
 2. Translate values. Keep keys, placeholders (`%@`, `%1$@`, `%d`, `%#@count@`) and runtime identifiers (names, VID/PID, paths).
-3. One key per label. Follow Apple's capitalization and verb form for the language. Use the native ellipsis only when the command needs more input before it completes (Apple's menu rule); an item that only opens a window or submenu has none.
+3. One key per label. Follow Apple's capitalization and verb form for the language: a button, menu item or disclosure title uses title-style capitalization where the language has it (`Measure Rest`), per the HIG Buttons page. Use the native ellipsis only where macOS does: on a command that needs more input before it completes, such as a push button that opens a window, view or app for that input, and on a text that reports work in progress (`Checking for Updates...`). An item that only shows a window or submenu has none.
 4. Right-to-left languages: check mixed-direction names and paths.
 
 Capability messages describe the controller or active protocol, not a permanent profile error. Compact symbol actions still need localized text for tooltips, accessibility labels and older systems.
