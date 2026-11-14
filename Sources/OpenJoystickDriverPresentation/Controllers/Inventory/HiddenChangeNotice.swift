@@ -58,6 +58,7 @@
               .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
             Button(showAllControls, action: showAdvanced)
+              .help(OJDLocalized.string("ui.help.showHidden"))
           }.padding(.vertical, OJDSpacing.small)
         case .needsAdvanced:
           EmptyStateView(

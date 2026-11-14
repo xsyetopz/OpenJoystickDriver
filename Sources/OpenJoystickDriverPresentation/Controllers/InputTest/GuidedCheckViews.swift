@@ -46,7 +46,7 @@
           )
         } else {
           Button(OJDLocalized.string("ui.inputTest.guidedCheck.start"), action: start)
-            .disabled(!canStart)
+            .disabled(!canStart).help(OJDLocalized.string("ui.help.guidedStart"))
           Spacer()
         }
       }.sheet(isPresented: $check.isEndSheetPresented) { GuidedCheckEndSheet(check: check) }
@@ -66,6 +66,7 @@
         Text(text).font(.headline).fixedSize(horizontal: false, vertical: true)
         Spacer()
         Button(OJDLocalized.string("ui.inputTest.guidedCheck.skip"), action: skip)
+          .help(OJDLocalized.string("ui.help.guidedSkip"))
       }
     }
   }
@@ -105,16 +106,19 @@
         }
         HStack {
           Button(OJDLocalized.string("action.save")) { check.save() }
+            .help(OJDLocalized.string("ui.help.guidedSave"))
           Button(OJDLocalized.string("ui.inputTest.guidedCheck.copy")) { check.copy() }
+            .help(OJDLocalized.string("ui.help.guidedCopy"))
           Button(OJDLocalized.string("ui.inputTest.guidedCheck.openIssue")) { check.openIssue() }
+            .help(OJDLocalized.string("ui.help.guidedOpenIssue"))
           if check.validationText != nil {
             Button(OJDLocalized.string("ui.inputTest.guidedCheck.validate")) {
               check.isValidationPresented = true
-            }
+            }.help(OJDLocalized.string("ui.help.guidedValidate"))
           }
           Spacer()
           Button(OJDLocalized.string("action.done")) { check.isEndSheetPresented = false }
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.closeSheet"))
         }
       }.ojdSheet(.regular).sheet(isPresented: $check.isValidationPresented) {
         GuidedCheckValidationSheet(check: check)
@@ -160,10 +164,10 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { check.isValidationPresented = false }
-            .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("ui.inputTest.guidedCheck.confirm")) {
             check.confirmValidation()
-          }.keyboardShortcut(.defaultAction)
+          }.keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.guidedConfirm"))
         }
       }.ojdSheet(.regular)
     }

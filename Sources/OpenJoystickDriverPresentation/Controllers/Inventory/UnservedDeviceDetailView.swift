@@ -27,7 +27,7 @@
             Button(OJDLocalized.string("ui.controllers.draftRecord")) {
               actions.clearNotice()
               actions.draftUnserved(model: device.modelID)
-            }
+            }.help(OJDLocalized.string("ui.help.draftRecord"))
             if let notice = actions.notice {
               ControllerNoticeText(text: notice.text, isError: notice.isError)
             }

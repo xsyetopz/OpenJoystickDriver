@@ -46,7 +46,7 @@
               VirtualHIDProfileID?.some(profile)
             )
           }
-        }.disabled(overrideState.inFlight)
+        }.disabled(overrideState.inFlight).help(OJDLocalized.string("ui.help.virtualProfile"))
         if let text = VirtualHIDProfileKinds.inForceText(for: device) {
           Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)
@@ -56,7 +56,7 @@
             ForEach(VirtualHIDProfileScopeChoice.offered(for: device), id: \.self) { choice in
               Text(OJDLocalized.string(choice.titleKey)).tag(choice)
             }
-          }.disabled(overrideState.inFlight)
+          }.disabled(overrideState.inFlight).help(OJDLocalized.string("ui.help.virtualScope"))
           if let holder = VirtualHIDProfileOverrideDecision.currentScope(for: device),
             holder != scope
           {

@@ -5355,3 +5355,103 @@
 "ui.setup.uninstallRefused" = "드라이버 확장 프로그램이 아직 설치되어 있습니다.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "브라우저를 열 수 없습니다.";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "선택한 값을 컨트롤러의 라이트로 보냅니다";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "아무것도 적용하지 않고 이 시트를 닫습니다";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "다음에 누르는 키를 기다립니다";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "이 컨트롤러가 보내는 패킷을 기록합니다";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "Xbox USB 드라이버를 활성화해 이 컨트롤러를 가져옵니다";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "캡처한 키를 이 대상에서 제거합니다";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "이 시트를 닫습니다";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "GitHub에서 검증 보고서를 엽니다";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "직접 설정한 값을 지우고 기본 데드존을 사용합니다";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "이 컨트롤러와의 Bluetooth 연결을 끊습니다";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "이 오류 메시지를 숨깁니다";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "이 기기의 컨트롤러 레코드 초안을 시작합니다";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "이 컨트롤러의 SDL 줄로 레코드 초안을 만듭니다";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "입력한 오류 코드의 의미를 찾아봅니다";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "가상 게임패드 매핑을 파일로 저장합니다";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "미리 채워진 검증 양식을 브라우저에서 엽니다";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "안내식 점검 결과를 클립보드에 복사합니다";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "미리 채워진 GitHub 이슈를 브라우저에서 엽니다";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "안내식 점검 결과를 파일로 저장합니다";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "이 컨트롤을 기다리지 않고 넘어갑니다";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "각 컨트롤을 차례로 살펴 반응하는지 확인합니다";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "보내기 전에 검증 보고서를 검토합니다";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "게임을 골라 가상 게임패드로 실행합니다";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "이 컨트롤러의 항목을 브라우저에서 엽니다";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "샘플 수집을 멈추고 모은 샘플은 유지합니다";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "모은 샘플을 버리고 처음부터 다시 시작합니다";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "자이로 샘플을 모아 정지 상태의 편차를 측정합니다";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "컨트롤러가 표시할 플레이어 라이트를 고릅니다";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "이 컨트롤러가 작동하도록 다음 단계를 진행합니다";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "각 스틱을 한 바퀴 돌리는 동안 스틱 범위를 측정합니다";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "컨트롤러를 가만히 둔 채 자이로 오프셋을 측정합니다";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "이 컨트롤러에 저장된 보정값을 제거합니다";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "조작부를 놓은 상태에서 스틱 중심과 트리거 휴지 위치를 측정합니다";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "각 트리거를 끝까지 누르는 동안 트리거 끝점을 측정합니다";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "확인 후 가상 게임패드 종류 선택을 모두 지웁니다";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "이 컨트롤러의 리매핑을 다시 시작합니다";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "이 진동 모터를 꺼짐과 최대 세기 사이에서 전환합니다";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "실패한 이 점검의 해결 작업을 실행합니다";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "macOS와 OpenJoystickDriver 중 누가 이 컨트롤러를 처리할지 고릅니다";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "식별자와 엔드포인트를 표시하거나 숨깁니다";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "현재 인터페이스 수준에서 숨겨진 컨트롤을 표시합니다";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "이 컨트롤러의 조정 값을 표시하거나 숨깁니다";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "선택한 시간 동안 기록을 시작합니다";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "중앙 근처에서 무시할 스틱 이동량을 조절합니다";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "진동 모터를 즉시 멈춥니다";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "다시 시작할 때까지 이 컨트롤러의 리매핑을 멈춥니다";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "선택한 시간 동안 진동 모터를 작동시킵니다";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "실패한 요청을 다시 시도합니다";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "게임이 보는 가상 게임패드 종류를 고릅니다";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "종류를 컨트롤러 하나에 적용할지 모델 전체에 적용할지 고릅니다";

@@ -31,6 +31,7 @@
         if let profile = VirtualGamepadExport.profile(for: device) {
           OJDLabeledRow(OJDLocalized.string("ui.controllers.exportMapping")) {
             Button(OJDLocalized.string("action.export")) { export(profile) }
+              .help(OJDLocalized.string("ui.help.exportMapping"))
           }
           launchRows
 
@@ -40,6 +41,7 @@
         }
         OJDLabeledRow(OJDLocalized.string("ui.controllers.virtual.resetAll")) {
           Button(OJDLocalized.string("action.reset")) { confirmsResetAll = true }
+            .help(OJDLocalized.string("ui.help.resetAll"))
         }
         if let failure = resetAllFailure { ControllerNoticeText(text: failure, isError: true) }
         if let notice = actions.notice, notice.source == .exportMapping {
@@ -67,6 +69,7 @@
           Text(OJDLocalized.string("status.unavailable"))
         } else {
           Button(OJDLocalized.string("ui.controllers.launch.prompt")) { launch() }
+            .help(OJDLocalized.string("ui.help.launch"))
         }
       }
       if let devices = connectedDevices {
@@ -152,15 +155,15 @@
       Button(OJDLocalized.string("ui.controllers.capturePackets")) {
         actions.clearNotice()
         actions.timedKind = .capturePackets
-      }
+      }.help(OJDLocalized.string("ui.help.capturePackets"))
       Button(OJDLocalized.string("ui.controllers.draftRecord")) {
         actions.clearNotice()
         actions.timedKind = .draftRecord
-      }
+      }.help(OJDLocalized.string("ui.help.draftRecord"))
       Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
         actions.clearNotice()
         actions.draftFromSDL(device: device)
-      }
+      }.help(OJDLocalized.string("ui.help.draftRecordFromSDL"))
     }
 
     /// The three buttons and the result of the latest of their actions.
@@ -246,9 +249,10 @@
           }
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { actions.cancelTimed() }
-            .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("ui.developer.startCapture")) { start() }
             .keyboardShortcut(.defaultAction).disabled(seconds == nil || isCapturing)
+            .help(OJDLocalized.string("ui.help.startCapture"))
         }
       }.ojdSheet(.compact)
     }

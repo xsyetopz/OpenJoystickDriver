@@ -17,7 +17,7 @@
     var body: some View {
       Button(OJDLocalized.string("ui.controllers.lookup")) {
         NSWorkspace.shared.open(ControllerLookup.url(for: model, record: record))
-      }
+      }.help(OJDLocalized.string("ui.help.lookup"))
     }
   }
 

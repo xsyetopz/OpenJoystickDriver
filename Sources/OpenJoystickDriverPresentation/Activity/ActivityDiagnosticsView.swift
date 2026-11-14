@@ -34,6 +34,7 @@
               Text(OJDLocalized.string(row.statusKey))
             } icon: {
               Image(systemName: row.symbolName).foregroundColor(Self.color(of: row.status))
+                .accessibilityHidden(true)
             }
           }.width(min: 90, ideal: 110, max: 140)
           TableColumn(OJDLocalized.string("ui.activity.column.check")) { row in
@@ -47,6 +48,7 @@
                 Spacer(minLength: 8)
                 if let fix = row.fix {
                   Button(OJDLocalized.string(fix.titleKey)) { perform(fix, row.id) }
+                    .help(OJDLocalized.string("ui.help.runFix"))
                 }
               }
               if let failure = failures[row.id] {

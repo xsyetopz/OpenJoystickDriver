@@ -104,6 +104,7 @@ struct ActivityActionFailure: Equatable {
             )
             Spacer(minLength: 12)
             Button(OJDLocalized.string("action.dismiss")) { model.failure = nil }
+              .help(OJDLocalized.string("ui.help.dismiss"))
           }.padding(.horizontal, 12).padding(.vertical, 8)
           Divider()
         }

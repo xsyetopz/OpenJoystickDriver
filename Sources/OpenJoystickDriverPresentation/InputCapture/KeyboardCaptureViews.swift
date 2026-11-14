@@ -47,11 +47,11 @@
                 "ui.keyboard.captureStarted"
               )
             )
-          }.disabled(isCapturing)
+          }.disabled(isCapturing).help(OJDLocalized.string("ui.help.captureKey"))
           Button(OJDLocalized.string("action.clear")) {
             isCapturing = false
             isCleared = true
-          }.disabled(isCleared)
+          }.disabled(isCleared).help(OJDLocalized.string("ui.help.clearKey"))
         }
         if isCapturing {
           Text(
