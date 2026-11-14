@@ -9,7 +9,7 @@ work=$(mktemp -d)
 run() {
   local name=$1
   shift
-  echo "\$ shortcuts run \"$name\" $*"
+  echo "\$ shortcuts run \"$name\"${*:+ $*}"
   shortcuts run "$name" "$@" --output-path "$work/out.txt" 2>&1
   echo "exit $?"
   if [[ -s $work/out.txt ]]; then cat "$work/out.txt"; echo; fi
