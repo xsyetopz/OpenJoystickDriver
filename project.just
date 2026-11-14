@@ -173,7 +173,7 @@ shots-capture *args:
 package-tester:
     {{ release }} {{ env }} python3 -m Scripts.Release.package_tester tester
 
-# Set the app release version in Info.plist.
+# Set the app version in Info.plist: an exact SemVer, or major, minor, patch, release, prerelease, alpha, beta, or rc.
 release-bump-version version:
     python3 -m Scripts.Release.bump_version {{ version }}
 
