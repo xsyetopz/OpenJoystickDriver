@@ -6,7 +6,7 @@ This page lists the stable error codes of OpenJoystickDriver (OJD), with the mea
 
 Each code has the form `E` and four digits. The first digit gives the area:
 
-- `E1xxx` is the endpoint. A client of the endpoint gets the code in the `code` field of a `Status` line, whose `status` is `Failure`.
+- `E1xxx` is the endpoint, through which a client can feed [virtual gamepads](Glossary.md#terms). A client of the endpoint gets the code in the `code` field of a `Status` line, whose `status` is `Failure`.
 - `E2xxx` is the command line.
 - `E3xxx` is remapping.
 - `E4xxx` is mod packages.
