@@ -1,5 +1,6 @@
 public import Foundation
 public import OpenJoystickDriverKit
+import OpenJoystickDriverMacOSPlatform
 
 extension ApplicationServiceServer {
   /// Returns the current application service status including input monitoring state and
@@ -8,7 +9,13 @@ extension ApplicationServiceServer {
     let permissions = await permissionManager.refreshAccessState()
     let devices = await describingVirtualHIDProfiles(
       await deviceManager.connectedDeviceDescriptions().map {
-        ($0.logicalControllerID, ApplicationServiceDeviceDescription(snapshot: $0))
+        var device = ApplicationServiceDeviceDescription(snapshot: $0)
+        device.holders = ControllerHolders.holders(
+          vendorID: $0.vendorID,
+          productID: $0.productID,
+          locationID: $0.logicalControllerID.address?.locationID
+        )
+        return ($0.logicalControllerID, device)
       }
     )
     let unboundDevices = await deviceManager.unboundDeviceDescriptions().map(

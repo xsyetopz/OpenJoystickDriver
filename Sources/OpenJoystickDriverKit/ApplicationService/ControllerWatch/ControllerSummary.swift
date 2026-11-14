@@ -26,6 +26,10 @@ public struct ControllerSummary: Encodable, Equatable, Sendable {
   public let ownedByAnotherClient: Bool
   /// The client that holds it; absent when none does or the interface names none.
   public let owner: USBExclusiveOwner?
+  /// Every process that holds the controller's HID device or USB interfaces open.
+  public let holders: [USBExclusiveOwner]
+  /// Whether OJD's own open of the controller is exclusive, so another app cannot open it.
+  public let holdsExclusively: Bool
   /// Whether the system also lists the controller as a second pad that gives no input.
   public let alsoListedBySystem: Bool
   /// Whether the controller has sent no input since its session started and waits for a press of
@@ -47,6 +51,8 @@ public struct ControllerSummary: Encodable, Equatable, Sendable {
     hasSerialNumber = device.serialNumber.map { !$0.isEmpty } ?? false
     ownedByAnotherClient = device.hidInputOwnership == .ownedByAnotherClient
     owner = device.inputOwner
+    holders = device.holders
+    holdsExclusively = device.holdsExclusively
     alsoListedBySystem = device.duplicateExposureRisk == .systemGameController
     waitsForGuidePress = device.inputHealth.failureReason == .guideNotPressed
     power = device.connectionState?.power

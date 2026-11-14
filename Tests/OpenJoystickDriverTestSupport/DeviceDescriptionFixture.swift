@@ -38,6 +38,8 @@ extension ApplicationServiceDeviceDescription {
     unit: String? = nil,
     power: ControllerConnectionState.Power? = nil,
     inputHealth: ControllerInputHealth = ControllerInputHealth(state: .healthy),
+    physicalOwnership: ControllerOwnershipObservation = .unknown,
+    sessionState: ControllerSessionState = .active,
     hidInputOwnership: HIDInputOwnership = .unknown,
     inputOwner: USBExclusiveOwner? = nil,
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
@@ -53,6 +55,7 @@ extension ApplicationServiceDeviceDescription {
       protocolBinding: protocolBinding,
       connection: "USB",
       discoverySource: .rawUSB,
+      physicalOwnership: physicalOwnership,
       hidInputOwnership: hidInputOwnership,
       inputOwner: inputOwner,
       duplicateExposureRisk: duplicateExposureRisk,
@@ -66,6 +69,7 @@ extension ApplicationServiceDeviceDescription {
       connectionState: power.map {
         ControllerConnectionState(transport: .usb, backend: .hid, isConnected: true, power: $0)
       },
+      sessionState: sessionState,
       inputHealth: inputHealth,
       sessionToken: .fixture(id),
       portKey: unit.map(ControllerPortKey.fixture)

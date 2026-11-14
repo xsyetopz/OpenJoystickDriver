@@ -39,6 +39,11 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// The client that holds the controller's USB interface exclusively; nil when none does or the
   /// interface names none.
   public let inputOwner: USBExclusiveOwner?
+  /// Whether OJD's own open of the controller is exclusive.
+  ///
+  /// It is true for an active session on a seized HID device or a claimed USB interface; a
+  /// suspended session holds no open.
+  public let holdsExclusively: Bool
   /// Duplicate-device risk implied by the current physical ownership observation.
   public let duplicateExposureRisk: DuplicateExposureRisk
   /// USB serial number, or nil if not reported.
@@ -95,6 +100,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   ///
   /// It is nil when no profile is active for it. The service sets it when it reports status.
   public var profileInForce: ApplicationServiceProfileInForce?
+  /// Every process with a user client on the controller's HID device or USB interfaces, OJD
+  /// included, in process ID order; set by the service when it reports status.
+  public var holders: [USBExclusiveOwner] = []
 
   /// Creates a device description.
   public init(
@@ -163,6 +171,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.sessionState = sessionState
     self.startupCommandStatus = startupCommandStatus
     self.inputHealth = inputHealth
+    self.holdsExclusively =
+      sessionState == .active && [.exclusiveHID, .exclusiveRawUSB].contains(physicalOwnership)
   }
 
   /// Decodes the value from `decoder`.
@@ -193,6 +203,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       forKey: .hidInputOwnership
     )
     self.inputOwner = try container.decodeIfPresent(USBExclusiveOwner.self, forKey: .inputOwner)
+    self.holdsExclusively = try container.decode(Bool.self, forKey: .holdsExclusively)
     self.duplicateExposureRisk = try container.decode(
       DuplicateExposureRisk.self,
       forKey: .duplicateExposureRisk
@@ -243,6 +254,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       ApplicationServiceProfileInForce.self,
       forKey: .profileInForce
     )
+    self.holders = try container.decode([USBExclusiveOwner].self, forKey: .holders)
   }
 
   /// The keys of the JSON encoding.
@@ -273,6 +285,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case hidInputOwnership
     /// The `inputOwner` key.
     case inputOwner
+    /// The `holdsExclusively` key.
+    case holdsExclusively
     /// The `duplicateExposureRisk` key.
     case duplicateExposureRisk
     /// The `serialNumber` key.
@@ -319,6 +333,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case paused
     /// The `profileInForce` key.
     case profileInForce
+    /// The `holders` key.
+    case holders
   }
 }
 

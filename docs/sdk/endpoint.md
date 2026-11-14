@@ -83,7 +83,7 @@ The program sends it after the `Welcome` to read a stream. `stream` is `Controll
 The endpoint answers with the same `ADDED`, `MODIFIED`, and `DELETED` watch lines as `ojd controller watch --all --json`: first the connected controllers, then each change. A watch line has `type` and `object`, and it has no `apiVersion`. The `object` has the `kind` `Controller`.
 
 ```json
-{"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
+{"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"holders":[],"holdsExclusively":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
 ```
 
 A `Profiles` or `Mods` subscription sends the whole list at once, then the whole list again each time it differs from the one last sent. The endpoint reads the list twice a second, so a burst of changes inside that time gives one line. `Profiles` sends a `Profiles` line with the profiles as a `ProfileResult` shows them, including whether each is active; `Mods` sends the `Mods` line of a `ModList`. A read that fails sends nothing and is tried again.

@@ -118,7 +118,7 @@ package enum HIDInputReportDrops {
   }
 
   /// Copies the registry properties of `entry`, or returns nil when they cannot be read.
-  private static func registryProperties(_ entry: io_registry_entry_t) -> [String: Any]? {
+  static func registryProperties(_ entry: io_registry_entry_t) -> [String: Any]? {
     var properties: Unmanaged<CFMutableDictionary>?
     guard
       unsafe IORegistryEntryCreateCFProperties(entry, &properties, kCFAllocatorDefault, 0)
