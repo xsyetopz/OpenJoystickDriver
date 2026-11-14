@@ -14,6 +14,7 @@ extension CLI {
       (ControllerWatchCommand.self, "ControllerState"),
       (ControllerCaptureCommand.self, "RawReport"),
       (ControllerCalibrateCommand.self, "Calibration"),
+      (ControllerLookupCommand.self, "ControllerLookup"),
       (ControllerSuspendCommand.self, "ControllerSession"),
       (ControllerResumeCommand.self, "ControllerSession"),
       (ControllerDisconnectCommand.self, "ControllerSession"),

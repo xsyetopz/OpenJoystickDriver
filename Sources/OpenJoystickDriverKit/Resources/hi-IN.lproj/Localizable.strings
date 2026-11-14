@@ -5233,3 +5233,15 @@
 "cli.controller.show.suspendHint" = "किसी दूसरे ऐप को इसे खोलने देने के लिए “ojd controller suspend %@” चलाएँ।";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */
 "cli.controller.show.resumeHint" = "इसे फिर से संभालने के लिए “ojd controller resume %@” चलाएँ।";
+/* Label of the row in the controller detail that marks a controller mode that a public validation confirms. The row's value links to the validation. */
+"ui.controllers.communityVerified" = "समुदाय द्वारा सत्यापित";
+/* Value of the Community verified row in the controller detail, a link to the validation. %1$@ is the id of the validated mode, such as xinput. %2$@ is the number of the GitHub issue, such as #12. */
+"ui.controllers.communityVerifiedMode" = "मोड %1$@, इश्यू %2$@";
+/* Button in the controller detail that opens the controller's entry in the supported-controllers list, or a GitHub search for its VID:PID when it has no record, in the browser. */
+"ui.controllers.lookup" = "लुकअप";
+/* One-line summary of 'ojd controller lookup' in the command list and at the top of its help. */
+"cli.controller.lookup.abstract" = "किसी कंट्रोलर मॉडल के लिए समर्थित कंट्रोलर का पेज प्रिंट करें।";
+/* Long description in the help of 'ojd controller lookup'. VID:PID and GitHub stay as written. */
+"cli.controller.lookup.discussion" = "जिस मॉडल का रिकॉर्ड है, उसके लिए समर्थित कंट्रोलर का विकी पेज प्रिंट करता है, और रिकॉर्ड न होने पर उसके VID:PID की GitHub इश्यू खोज। कुछ नहीं खोलता।";
+/* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
+"cli.record.show.communityVerified" = "समुदाय द्वारा सत्यापित: मोड %1$@, %2$@";

@@ -55,8 +55,16 @@ public struct ControllerRecord: Sendable {
   /// The serial number that this model's firmware reports when it has none of its own; nil when
   /// the record names none.
   public let placeholderSerial: String?
+  /// The accepted community validations, oldest first as the record lists them; empty when the
+  /// record has none.
+  public let validations: [ControllerValidation]
   /// The protocol family.
   public let protocolID: PhysicalProtocolID
+  /// The latest validation of mode `modeID`; nil when the mode has none, so it is not community
+  /// verified.
+  public func validation(ofMode modeID: String) -> ControllerValidation? {
+    validations.last { $0.modeID == modeID }
+  }
   /// The protocol family's name, such as `XboxGIP`.
   public var family: String { protocolID.rawValue }
   /// The tuning keys this record's family reads.
@@ -390,6 +398,7 @@ public struct ControllerRecordSet: Sendable {
       packageFile: packageFile,
       name: decoded.document.name,
       placeholderSerial: decoded.document.placeholderSerial,
+      validations: decoded.document.validations,
       protocolID: decoded.document.protocolInfo.protocolID,
       tuningScope: Set(
         ControllerTuning.Key.allCases.filter { decoded.document.tuningScopeViolation($0) == nil }

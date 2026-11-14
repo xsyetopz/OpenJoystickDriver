@@ -9421,6 +9421,114 @@
         ],
         "server": "OJD"
       }
+    },
+    {
+      "name": "rejects a validation of a mode the record does not have",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "xinput",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with an issue number below 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 0,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with a date that is not yyyy-MM-dd",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "14.11.2026"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with an unknown key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14",
+            "verified": true
+          }
+        ]
+      }
     }
   ]
 }

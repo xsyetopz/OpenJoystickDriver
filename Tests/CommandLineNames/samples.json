@@ -18,6 +18,7 @@
     "W3C": "w3c",
     "read": "read",
     "generate": "generate",
+    "lookup": "lookup",
     "raw-usb": "raw-usb"
   },
   "values": [
