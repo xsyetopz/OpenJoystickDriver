@@ -37,10 +37,28 @@ package enum ControllerHolders {
   }
 
   /// The holders the `IOUserClientCreator` values name, one per process, in process ID order.
-  static func holders(creators: [String]) -> [USBExclusiveOwner] {
+  ///
+  /// The registry cuts a process name to 16 characters, so a process `executableName` finds
+  /// takes that name instead.
+  static func holders(
+    creators: [String],
+    executableName: (Int32) -> String? = executableName(of:)
+  ) -> [USBExclusiveOwner] {
     creators.compactMap(USBExclusiveOwner.init(registryValue:))
       .reduce(into: [USBExclusiveOwner]()) { if !$0.contains($1) { $0.append($1) } }
+      .map { owner in
+        owner.processID.flatMap(executableName)
+          .map { USBExclusiveOwner(processID: owner.processID, name: $0) } ?? owner
+      }
       .sorted { ($0.processID ?? -1, $0.name) < ($1.processID ?? -1, $1.name) }
+  }
+
+  /// The executable file name of a running process; nil when no process has that ID.
+  private static func executableName(of processID: Int32) -> String? {
+    var path = [CChar](repeating: 0, count: Int(MAXPATHLEN))
+    guard unsafe proc_pidpath(processID, &path, UInt32(path.count)) > 0 else { return nil }
+    let bytes = path.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
+    return String(bytes: bytes, encoding: .utf8).map { URL(fileURLWithPath: $0).lastPathComponent }
   }
 
   /// The `IOUserClientCreator` values below each `className` service whose properties pass

@@ -1,3 +1,4 @@
+import Foundation
 import OpenJoystickDriverKit
 import Testing
 
@@ -8,12 +9,14 @@ struct ControllerHoldersTests {
   /// from WindowServer and OJD.
   @Test
   func eachProcessIsListedOnceInProcessOrder() {
-    let holders = ControllerHolders.holders(creators: [
-      "pid 812, Google Chrome He",
-      "pid 412, WindowServer",
-      "pid 812, Google Chrome He",
-      "pid 1203, OpenJoystickDriv",
-    ])
+    let holders = ControllerHolders.holders(
+      creators: [
+        "pid 812, Google Chrome He",
+        "pid 412, WindowServer",
+        "pid 812, Google Chrome He",
+        "pid 1203, OpenJoystickDriv",
+      ]
+    ) { _ in nil }
 
     #expect(
       holders == [
@@ -22,6 +25,17 @@ struct ControllerHoldersTests {
         USBExclusiveOwner(processID: 1203, name: "OpenJoystickDriv"),
       ]
     )
+  }
+
+  /// The registry cuts a process name to 16 characters; a running process shows its full name.
+  @Test
+  func runningProcessShowsItsFullName() {
+    let processID = ProcessInfo.processInfo.processIdentifier
+    let fullName = ProcessInfo.processInfo.processName
+
+    let holders = ControllerHolders.holders(creators: ["pid \(processID), \(fullName.prefix(4))"])
+
+    #expect(holders == [USBExclusiveOwner(processID: processID, name: fullName)])
   }
 
   @Test
