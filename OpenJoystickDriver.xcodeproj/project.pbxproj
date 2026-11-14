@@ -18,6 +18,7 @@
 		0A0000000000000000000107 /* ProfileEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A000000000000000000020B /* ProfileEntity.swift */; };
 		0A0000000000000000000104 /* OpenJoystickDriver.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000204 /* OpenJoystickDriver.icns */; };
 		0A0000000000000000000105 /* THIRD_PARTY_NOTICES.md in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */; };
+		0A000000000000000000010C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0A0000000000000000000210 /* PrivacyInfo.xcprivacy */; };
 		0A0000000000000000000111 /* OpenJoystickDriverKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000811 /* OpenJoystickDriverKit */; };
 		0A0000000000000000000112 /* OpenJoystickDriverService in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000812 /* OpenJoystickDriverService */; };
 		0A0000000000000000000113 /* OpenJoystickDriverCLI in Frameworks */ = {isa = PBXBuildFile; productRef = 0A0000000000000000000813 /* OpenJoystickDriverCLI */; };
@@ -50,6 +51,7 @@
 		0A0000000000000000000204 /* OpenJoystickDriver.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = OpenJoystickDriver.icns; path = Sources/OpenJoystickDriver/Resources/OpenJoystickDriver.icns; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = THIRD_PARTY_NOTICES.md; path = THIRD_PARTY_NOTICES.md; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000206 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Sources/OpenJoystickDriver/App/Info.plist; sourceTree = SOURCE_ROOT; };
+		0A0000000000000000000210 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Sources/OpenJoystickDriver/App/PrivacyInfo.xcprivacy; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000207 /* Host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Host.entitlements; path = Sources/OpenJoystickDriver/App/Host.entitlements; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000209 /* OpenJoystickDriver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenJoystickDriver.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D20C0000000000000000A1 /* Bedrock.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Bedrock.xcconfig; path = Config/Bedrock.xcconfig; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				0A000000000000000000020B /* ProfileEntity.swift */,
 				0A0000000000000000000206 /* Info.plist */,
 				0A0000000000000000000207 /* Host.entitlements */,
+				0A0000000000000000000210 /* PrivacyInfo.xcprivacy */,
 				0A0000000000000000000204 /* OpenJoystickDriver.icns */,
 				0A0000000000000000000205 /* THIRD_PARTY_NOTICES.md */,
 			);
@@ -217,6 +220,7 @@
 			files = (
 				0A0000000000000000000104 /* OpenJoystickDriver.icns in Resources */,
 				0A0000000000000000000105 /* THIRD_PARTY_NOTICES.md in Resources */,
+				0A000000000000000000010C /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
