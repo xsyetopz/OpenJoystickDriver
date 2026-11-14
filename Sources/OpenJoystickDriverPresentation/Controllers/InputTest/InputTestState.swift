@@ -101,6 +101,8 @@
     let liveState = InputTestLiveState()
     /// The values of the output controls.
     let outputSettings = InputTestOutputSettings()
+    /// The model of the Guided Check, which reads each sample.
+    let guidedCheck = GuidedCheckModel()
     /// The model of the Motion section.
     let motionCalibration: MotionCalibrationViewModel
 

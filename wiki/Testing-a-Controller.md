@@ -25,6 +25,19 @@ The window header shows a status and the connection, protocol, and VID:PID. The 
 
 For **Input Monitoring permission required**, see [Permissions](Permissions-and-Security.md#permissions).
 
+## Guided Check
+
+**Guided Check** sits under the status while input is active. It asks for each control the controller declares, one at a time, with the step text and a **Skip** button. A step ends when that control leaves rest, when another control moves first (the result names it), or when you click **Skip**. A control held when its step starts counts only after you release it. A stick or trigger ends its step when it returns to rest and keeps the range it showed. Closing the window or changing the controller cancels the check.
+
+The end sheet lists what each control did and has these buttons:
+
+- **Save** writes the `ControllerCheck` document where you choose.
+- **Copy** puts the document on the pasteboard.
+- **Open Issue** saves the document in the Downloads folder, shows it in the file viewer, and opens the `controller-support.yml` form with the version, VID:PID, connection, and mode filled in. The address holds no report body; attach the saved file to the issue.
+- **Validate** appears only after a check in which every control responded. It opens a sheet with the full text, which holds no serial number, unit ID, Bluetooth address, user name, or path, and the address it goes to. **Confirm** then opens the prefilled `controller-validation.yml` form.
+
+`ojd controller check` does the same in a terminal; see [Command Reference](Command-Reference.md).
+
 ## Groups
 
 The window has no tabs. It shows one scrolling page with these groups.

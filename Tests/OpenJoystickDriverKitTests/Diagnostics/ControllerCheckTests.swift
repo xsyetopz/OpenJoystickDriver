@@ -184,6 +184,20 @@ struct ControllerCheckTests {
   }
 
   @Test
+  func documentTextAddsTheEnvelopeToTheFields() throws {
+    let text = try check(steps: [step("South")]).documentText()
+    let object = try #require(
+      JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any]
+    )
+
+    #expect(object["kind"] as? String == "ControllerCheck")
+    #expect(object["apiVersion"] as? String == OpenJoystickDriverAPI.version)
+    #expect(
+      Set(object.keys) == ["apiVersion", "kind", "controller", "appVersion", "osVersion", "steps"]
+    )
+  }
+
+  @Test
   func documentEncodesCamelCaseFieldsWithoutTheSerialNumber() throws {
     let encoded = try JSONEncoder().encode(
       check(steps: [step("South")], serialNumber: "SN-7F3A-SECRET")

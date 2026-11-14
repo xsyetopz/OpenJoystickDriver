@@ -119,19 +119,9 @@ enum GUICoverageEntries {
     + [
       CLIOnlyItem(
         command: ["controller", "check"],
-        option: nil,
-        reason: "the guided check of a window arrives with Input Test"
-      ),
-      CLIOnlyItem(
-        command: ["controller", "check"],
         option: "--duration",
         reason: "a window ends a step with its Skip button"
-      ),
-      CLIOnlyItem(
-        command: ["controller", "check"],
-        option: "--validate",
-        reason: "the validation sheet of a window arrives with Input Test"
-      ),
+      )
     ]
     + ["--json", "--plain", "--quiet", "--no-color", "--no-input"].map {
       CLIOnlyItem(command: nil, option: $0, reason: "output-only option")
@@ -177,6 +167,8 @@ enum GUICoverageEntries {
     leaf("controller list", "ControllersView"),
     leaf("controller show", "ControllerDetailFacts"),
     leaf("controller watch", "InputTestLiveInputView"),
+    leaf("controller check", "GuidedCheckRow"),
+    option("controller check", "--validate", "GuidedCheckValidationSheet"),
     leaf("controller capture", "ControllerPacketCapture"),
     option("controller capture", "--duration", "ControllerTimedActionSheet"),
     leaf("controller rumble", "rumbleCommand"),

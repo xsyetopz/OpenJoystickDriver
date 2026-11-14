@@ -5255,3 +5255,33 @@
 "cli.controller.check.validateNotOpened" = "未開啟表單：沒有可詢問的終端機。請自行開啟上面的位址。";
 /* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
 "cli.controller.check.validateOpen" = "要在瀏覽器中開啟驗證表單嗎？";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "引導式檢查";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "第 %1$d 步，共 %2$d 步：請操作%3$@。";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "略過";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "引導式檢查結果";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "%2$d 個控制項中有 %1$d 個有回應。";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "有回應";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "已略過";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "改為%@有動作";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "拷貝";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "開啟議題";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "驗證";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "你提交表單時，此文字會傳送到 %@。「確認」會在瀏覽器中開啟已預先填寫的表單；在你提交之前不會傳送任何內容。";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "確認";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "左搖桿";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "右搖桿";

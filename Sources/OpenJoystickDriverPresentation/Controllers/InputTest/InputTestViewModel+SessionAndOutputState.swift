@@ -166,6 +166,7 @@
         return
       }
       let oldSelector = device.map { ControllerReference.session($0.sessionToken) }
+      guidedCheck.cancel()
       cancelSampling(nextState: .idle)
       cancelOutput(stopSelector: oldSelector)
       device = selectedDevice
@@ -194,6 +195,7 @@
         })
       else {
         isDeviceConnected = false
+        guidedCheck.cancel()
         motionCalibration.select(nil)
         cancelSampling(nextState: .disconnected)
         cancelOutput(stopSelector: ControllerReference.session(current.sessionToken))
@@ -245,9 +247,23 @@
     /// Marks the window as closed and ends sampling and output.
     func close() {
       isWindowActive = false
+      guidedCheck.cancel()
       cancelSampling(nextState: device == nil ? .disconnected : .idle)
       cancelOutput(stopSelector: device.map { ControllerReference.session($0.sessionToken) })
       motionCalibration.select(nil)
+    }
+
+    /// Whether the Guided Check can start: the controller is connected, sampled, declares a control
+    /// to ask for and no check runs.
+    var canStartGuidedCheck: Bool {
+      guard let device, isSampling, guidedCheck.run == nil else { return false }
+      return isDeviceConnected && !ControllerCheckControl.steps(for: device.capabilities).isEmpty
+    }
+
+    /// Starts the Guided Check of the selected controller.
+    func startGuidedCheck() {
+      guard let device else { return }
+      guidedCheck.start(device)
     }
 
     /// Rumbles the controller for the chosen length.
@@ -391,6 +407,7 @@
           guard generation == samplingGeneration else { return }
           if let snapshot {
             liveState.update(snapshot)
+            guidedCheck.observe(snapshot)
             let next: SessionState =
               sessionState == .live || snapshot.hasControlOffRest ? .live : .receiving
             if sessionState != next { sessionState = next }

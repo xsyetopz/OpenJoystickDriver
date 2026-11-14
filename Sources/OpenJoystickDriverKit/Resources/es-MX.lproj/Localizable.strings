@@ -5256,3 +5256,33 @@
 "cli.controller.check.validateNotOpened" = "No se abrió el formulario: no hay terminal donde preguntar. Abre tú la dirección de arriba.";
 /* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
 "cli.controller.check.validateOpen" = "¿Abrir el formulario de validación en el navegador?";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "Verificación guiada";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "Paso %1$d de %2$d: mueve %3$@.";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "Omitir paso";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "Resultado de la verificación guiada";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "Respondieron %1$d de %2$d elementos de control.";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "Respondió";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "Paso omitido";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "Se movió %@ en su lugar";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "Copiar";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "Abrir reporte";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "Validar control";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "Este texto se envía a %@ cuando mandas el formulario. Confirmar abre el formulario prellenado en tu navegador; no se envía nada hasta que lo mandes tú.";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "Confirmar envío";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "Palanca izquierda";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "Palanca derecha";

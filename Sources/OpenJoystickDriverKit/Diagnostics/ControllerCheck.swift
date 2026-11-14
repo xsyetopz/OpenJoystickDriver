@@ -174,6 +174,27 @@ public struct ControllerCheck: Codable, Equatable, Sendable {
     let version = ProcessInfo.processInfo.operatingSystemVersion
     return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
   }
+
+  /// The document as a file holds it: the fields with `apiVersion` and `kind`, laid out as
+  /// `ojd controller check --json` prints it.
+  ///
+  /// - Throws: The failure of ``OrderedJSONEncoder`` to encode the check.
+  public func documentText() throws -> String {
+    try OrderedJSONEncoder().encode(Envelope(check: self)).formatted()
+  }
+
+  private struct Envelope: Encodable {
+    let check: ControllerCheck
+
+    private enum CodingKeys: String, CodingKey { case apiVersion, kind }
+
+    func encode(to encoder: any Encoder) throws {
+      try check.encode(to: encoder)
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)
+      try container.encode("ControllerCheck", forKey: .kind)
+    }
+  }
 }
 
 /// The state machine of one guided check.

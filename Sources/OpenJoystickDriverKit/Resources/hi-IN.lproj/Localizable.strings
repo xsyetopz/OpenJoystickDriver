@@ -5255,3 +5255,33 @@
 "cli.controller.check.validateNotOpened" = "फ़ॉर्म नहीं खुला: पूछने के लिए कोई टर्मिनल नहीं है। ऊपर का पता खुद खोलें।";
 /* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
 "cli.controller.check.validateOpen" = "सत्यापन फ़ॉर्म ब्राउज़र में खोलें?";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "निर्देशित जाँच";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "चरण %1$d / %2$d: %3$@ को हिलाएँ।";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "छोड़ें";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "निर्देशित जाँच का परिणाम";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "%2$d में से %1$d कंट्रोल ने जवाब दिया।";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "जवाब दिया";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "टाला गया";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "इसके बजाय %@ हिला";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "कॉपी करें";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "इश्यू खोलें";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "सत्यापित करें";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "फ़ॉर्म जमा करने पर यह टेक्स्ट %@ को जाता है। पुष्टि करने पर पहले से भरा फ़ॉर्म आपके ब्राउज़र में खुलता है; आपके जमा करने तक कुछ नहीं भेजा जाता।";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "पुष्टि करें";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "बायाँ स्टिक";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "दायाँ स्टिक";

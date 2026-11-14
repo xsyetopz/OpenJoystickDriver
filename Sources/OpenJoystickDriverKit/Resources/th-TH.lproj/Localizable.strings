@@ -5255,3 +5255,33 @@
 "cli.controller.check.validateNotOpened" = "ไม่ได้เปิดแบบฟอร์ม: ไม่มีเทอร์มินัลให้ถาม โปรดเปิดที่อยู่ด้านบนด้วยตัวเอง";
 /* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
 "cli.controller.check.validateOpen" = "เปิดแบบฟอร์มยืนยันในเบราว์เซอร์หรือไม่?";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "การตรวจสอบแบบมีคำแนะนำ";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "ขั้นตอนที่ %1$d จาก %2$d: ขยับ %3$@";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "ข้าม";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "ผลการตรวจสอบแบบมีคำแนะนำ";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "ตัวควบคุมตอบสนอง %1$d จาก %2$d ตัว";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "ตอบสนอง";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "ข้ามแล้ว";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "%@ ขยับแทน";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "คัดลอก";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "เปิด Issue";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "ยืนยันการทำงาน";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "ข้อความนี้จะถูกส่งไปที่ %@ เมื่อคุณส่งแบบฟอร์ม การยืนยันจะเปิดแบบฟอร์มที่กรอกไว้แล้วในเบราว์เซอร์ และจะไม่มีการส่งอะไรจนกว่าคุณจะส่งเอง";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "ยืนยัน";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "จอยสติ๊กซ้าย";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "จอยสติ๊กขวา";
