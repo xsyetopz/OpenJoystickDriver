@@ -111,7 +111,10 @@ guard-base:
             status=1
         fi
     done
-    if [[ -z "${CI:-}" && "$(git config core.hooksPath || true)" != .githooks ]]; then
+    # A worktree that Claude Code creates rewrites a relative hooks path as an absolute one, so compare resolved paths.
+    root="$(cd "$(git rev-parse --git-common-dir)/.." && pwd -P)"
+    hooks="$(cd "$root" && cd "$(git config core.hooksPath || true)" 2>/dev/null && pwd -P || true)"
+    if [[ -z "${CI:-}" && "$hooks" != "$root/.githooks" ]]; then
         echo "git hooks are off: run just setup" >&2
         status=1
     fi

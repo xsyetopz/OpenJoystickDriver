@@ -167,5 +167,3 @@ excluded:
   - "**/Generated"
   - node_modules
   - "**/*.xcodeproj"
-  - .claude
-  - openspec

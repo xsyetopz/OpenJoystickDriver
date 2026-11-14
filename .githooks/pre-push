@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+# Git hands a hook GIT_DIR and its kin; a test that runs git in a scratch repo would then write to this one.
+for name in $(git rev-parse --local-env-vars); do
+	unset "$name"
+done
+exec just verify
