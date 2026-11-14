@@ -1795,6 +1795,9 @@ raw-access
 ## 2563:0523
 system ownership=macos
 
+## 2563:0526
+system ownership=macos
+
 ## 2563:0575
 system ownership=macos
 

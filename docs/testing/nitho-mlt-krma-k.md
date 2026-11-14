@@ -1,6 +1,6 @@
 # NITHO MLT-KRMA-K Test Record
 
-This page records the maintainer's test of the NITHO MLT-KRMA-K in its MFi, 2.4G and V3 modes.
+This page records the maintainer's test of the NITHO MLT-KRMA-K in its MFi, 2.4G, V3 and wired modes.
 
 ## Test setup
 
@@ -17,6 +17,7 @@ The mode switch on the back of the pad picks the identity. The slider has three 
 | M, Bluetooth | `054C:05C4` | `DUALSHOCK 4 Wireless Controller` | `sony-dual-shock4:bluetooth-classic` | Every control |
 | 2.4G receiver | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
 | By cable | `054C:0268`, `054C:05C4`, `045E:028E` | PS3, `Wireless Controller`, `Xbox360 For Windows` | | Identity only |
+| By cable, left position | `2563:0526` | `Android GamePad` | `hid-descriptor` | Every control |
 | V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | Every control it sends |
 | Right position, no receiver, Bluetooth LE | `1949:0402` | `BSP-G6S-HID` | `hid-descriptor` | Connects, sends no input report |
 | X, Bluetooth | | `Xbox Wireless Controller` | | Does not pair with macOS |
@@ -77,6 +78,20 @@ The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and re
 
 `ojd controller watch` reported each control of the table, with the sticks at full deflection. RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release, so OJD reports North twice for one Y press. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
 
+## Left Position by Cable
+
+With the slider left and a USB cable plugged in, the pad is `2563:0526` `Android GamePad`, with a solid green light. Report 7 (11 bytes) holds X, Y, Z and Rz, a hat, 15 buttons, and Accelerator and Brake:
+
+| Byte | Contents |
+| --- | --- |
+| 1-4 | Left X, left Y, right X, right Y, `0x80` at rest |
+| 5 | Hat in the low nibble (`8` neutral) |
+| 6 | Y `0x01`, B `0x02`, A `0x08`, X `0x10`, LB `0x40`, RB `0x80` |
+| 7 | View `0x04`, Menu `0x08`, Home `0x10`, L3 `0x20`, R3 `0x40` |
+| 8, 9 | RT (Accelerator) and LT (Brake), `0x00` to `0xFF` |
+
+The SDL_GameControllerDB line for this ID maps buttons 1, 4 and 5 to A, X and Y and has no Home, which put A on West, X on North and Y on South. The `2563:0526` record maps the buttons by label, and `ojd controller watch` reported every control, with analog triggers. M1 and M2 send nothing. The record applies to every pad with the shared `2563:0526` ID, so a pad with SDL's layout on that ID reads its face buttons rotated.
+
 ## Right Position without the Receiver
 
 With the slider right and no receiver plugged in, the pad pairs over Bluetooth LE as `BSP-G6S-HID` (`1949:0402`, a separate address from V3). Its descriptor is a standard gamepad: report 3 is a 16-bit consumer key, and report 4 (11 bytes) holds X, Y, Z and Rz, a hat, 16 buttons, and Accelerator and Brake. The `1949:0402` record runs its default `HIDDescriptor` mode for it, because the `v3` mode matches the product `BSP-G6S` only. The pad sent no input report in this identity, to OJD or to a plain IOHID client with OJD suspended, so it reads nothing on macOS.
@@ -87,4 +102,4 @@ In X mode the pad shows up in a Bluetooth search as `Xbox Wireless Controller`. 
 
 ## M1 and M2
 
-The M1 and M2 buttons on the back sent no input in M or V3 mode, and the 2.4G capture shows no report bit other than the controls listed above. The manual describes them as macro buttons: hold SELECT and press M1 or M2 to record up to 12 presses. With no macro recorded, they do nothing.
+The M1 and M2 buttons on the back sent no input in M, V3 or wired mode, and the 2.4G capture shows no report bit other than the controls listed above. The manual describes them as macro buttons: hold SELECT and press M1 or M2 to record up to 12 presses. With no macro recorded, they do nothing.
