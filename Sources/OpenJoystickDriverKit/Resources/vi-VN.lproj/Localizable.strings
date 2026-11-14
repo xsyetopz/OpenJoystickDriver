@@ -6456,4 +6456,3 @@
 
 /* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
 "ui.help.exportFormat" = "Chọn định dạng tệp của ánh xạ được xuất";
-

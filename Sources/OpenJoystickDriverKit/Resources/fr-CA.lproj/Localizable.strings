@@ -6457,4 +6457,3 @@
 
 /* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
 "ui.help.exportFormat" = "Choisir le format de fichier de l’assignation exportée";
-
