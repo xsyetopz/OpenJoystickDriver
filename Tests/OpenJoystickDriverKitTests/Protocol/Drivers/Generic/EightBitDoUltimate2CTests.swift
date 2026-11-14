@@ -87,6 +87,20 @@ struct EightBitDoUltimate2CTests {
     #expect(!record.isIdle)
   }
 
+  /// Each report of the captures leaves the pad's power unset: the battery byte is constant.
+  @Test(arguments: [
+    (UInt16(0x301B), "2c-bluetooth-301b/ordered-controls-120s.txt", 11),
+    (UInt16(0x301C), "2c-receiver-301c/ordered-controls-150s.txt", 10),
+  ])
+  func recordsExposeNoBattery(productID: UInt16, capture: String, length: Int) throws {
+    let model = ControllerModelID(vendorID: 0x2DC8, productID: productID)
+    let parser = HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, productID))
+    for bytes in try Self.capturedReports(capture, length: length) {
+      _ = Self.parse(parser, usage: 0x30, Int(bytes[3]))
+    }
+    #expect(parser.power == nil)
+  }
+
   @Test(arguments: [UInt16(0x301C), 0x301D])
   func dinputIdentitiesReplayBluetoothUsages(productID: UInt16) throws {
     let parser = HIDDescriptorDriver(
