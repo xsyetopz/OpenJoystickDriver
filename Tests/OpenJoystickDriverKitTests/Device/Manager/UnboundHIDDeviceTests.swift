@@ -40,7 +40,7 @@ struct UnboundHIDDeviceTests {
   }
 
   @Test
-  func recordWhoseModeIsIdleReleasesTheClaimSeizedBeforeTheModeWasKnown() async {
+  func recordWithIdleModeReleasesClaimSeizedBeforeModeWasKnown() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),

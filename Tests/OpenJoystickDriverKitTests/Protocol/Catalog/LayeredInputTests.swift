@@ -127,7 +127,7 @@ struct LayeredInputTests {
   }
 
   @Test
-  func gipRecordDropsLayoutReportThatIsAnIncompleteGIPFrame() throws {
+  func gipRecordDropsLayoutReportThatIsIncompleteGIPFrame() throws {
     let input = layout(
       report: ["id": 0x07, "length": ["exactly": 8] as [String: Int]],
       button: "West",
