@@ -23,6 +23,7 @@
             vertical: true
           )
         Button(OJDLocalized.string("ui.developer.soakTestOpen")) { showsSheet = true }
+          .help(OJDLocalized.string("ui.help.soakOpen"))
           .sheet(isPresented: $showsSheet) { SoakTestSheet(model: model) }
       }
     }
@@ -95,7 +96,7 @@
           } icon: {
             Image(systemName: row.symbolName).foregroundColor(
               ActivityDiagnosticsView.color(of: row.status)
-            )
+            ).accessibilityHidden(true)
           }
           Text(row.detail).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
         }
@@ -109,19 +110,20 @@
       switch model.state {
       case .idle:
         Button(OJDLocalized.string("action.cancel")) { presentationMode.wrappedValue.dismiss() }
-          .keyboardShortcut(.cancelAction)
+          .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.closeSheet"))
         Button(OJDLocalized.string("ui.developer.soakStart")) { model.start() }
           .keyboardShortcut(.defaultAction).disabled(model.problem != nil)
+          .help(OJDLocalized.string("ui.help.soakStart"))
       case .running:
         Button(OJDLocalized.string("action.stop")) { model.cancel() }
-          .keyboardShortcut(.cancelAction)
+          .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.soakStop"))
       case .finished:
         Button(OJDLocalized.string("ui.developer.soakStart")) {
           model.reset()
           model.start()
-        }
+        }.help(OJDLocalized.string("ui.help.soakAgain"))
         Button(OJDLocalized.string("action.done")) { dismissFinishedResult() }
-          .keyboardShortcut(.defaultAction)
+          .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.closeSheet"))
         // Escape works without a focused control; the button is for the shortcut only.
         Button("") { dismissFinishedResult() }.keyboardShortcut(.cancelAction).frame(
           width: 0,

@@ -265,7 +265,7 @@
         Task { @MainActor in self?.statusItemRemoved() }
       }
       if let button = item.button {
-        button.toolTip = OJDLocalized.string("term.app.name")
+        button.toolTip = OJDLocalized.string("ui.help.statusItem")
       }
       frontAppObserver = NSWorkspace.shared.notificationCenter.addObserver(
         forName: NSWorkspace.didActivateApplicationNotification,

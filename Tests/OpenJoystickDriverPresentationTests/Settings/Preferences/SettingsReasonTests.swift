@@ -43,6 +43,7 @@
     func lockedSwitchShowsItsReasonAsRowText() {
       let row = SettingsSwitchRow(
         title: "Title",
+        help: "Help",
         description: "Description",
         isOn: .constant(true),
         isEnabled: false,
@@ -52,6 +53,7 @@
       #expect(
         SettingsSwitchRow(
           title: "Title",
+          help: "Help",
           description: "Description",
           isOn: .constant(true),
           disabledReason: "Reason"

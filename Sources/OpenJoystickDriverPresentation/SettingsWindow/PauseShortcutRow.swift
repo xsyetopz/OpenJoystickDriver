@@ -41,8 +41,10 @@
             ? OJDLocalized.string("ui.settings.general.pauseShortcutRecording")
             : OJDLocalized.string("ui.settings.general.pauseShortcutRecord")
         ) { startRecording() }.disabled(isRecording)
+          .help(OJDLocalized.string("ui.help.recordPauseShortcut"))
         Button(OJDLocalized.string("action.clear")) { preferences.setPauseShortcut(nil) }
           .disabled(preferences.pauseShortcut == nil)
+          .help(OJDLocalized.string("ui.help.clearPauseShortcut"))
       }.onDisappear { stopRecording() }
     }
 

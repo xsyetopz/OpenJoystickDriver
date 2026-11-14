@@ -63,7 +63,7 @@
     private var refreshButton: some View {
       Button(OJDLocalized.string("action.refresh")) {
         Task { @MainActor in await model.refresh() }
-      }
+      }.help(OJDLocalized.string("ui.help.refreshControllers"))
     }
 
     /// The Extra Buttons section: the controls pressed beyond the core set.

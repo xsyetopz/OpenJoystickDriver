@@ -84,7 +84,7 @@
             Button(OJDLocalized.string("ui.access.grant")) { model.requestRefusedGrant(client) }
               .disabled(model.busy).ojdAccessibilityLabel(
                 OJDLocalized.formatted("a11y.access.grantRefused", client.identifier)
-              )
+              ).help(OJDLocalized.string("ui.help.grantRefused"))
           }
         }
         ForEach(Array(status.refusedTokens.enumerated()), id: \.offset) { _, token in
@@ -152,7 +152,7 @@
       let choices = AccessViewModel.scopeChoices(of: scopes)
       if choices.isEmpty {
         Button(OJDLocalized.string("ui.access.revoke")) { revoke(nil) }.disabled(model.busy)
-          .ojdAccessibilityLabel(label)
+          .ojdAccessibilityLabel(label).help(OJDLocalized.string("ui.help.revoke"))
       } else {
         Menu(OJDLocalized.string("ui.access.revoke")) {
           Button(OJDLocalized.string("ui.access.revoke.all")) { revoke(nil) }
@@ -160,6 +160,7 @@
             Button(AccessPresentation.scope(scope)) { revoke(scope) }
           }
         }.fixedSize().disabled(model.busy).ojdAccessibilityLabel(label)
+          .help(OJDLocalized.string("ui.help.revoke"))
       }
     }
   }

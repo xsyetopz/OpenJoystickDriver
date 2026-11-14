@@ -96,7 +96,7 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.done")) { model.isPresented = false }
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.closeSheet"))
         }
       }.ojdSheet(.regular)
     }
