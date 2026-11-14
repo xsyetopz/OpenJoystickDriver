@@ -629,6 +629,24 @@
           "type": "number",
           "minimum": 0.05,
           "maximum": 1
+        },
+        "gyroOffsetX": {
+          "description": "The gyro offset about the X axis in radians per second, from -1 to 1; the stored offset reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "gyroOffsetY": {
+          "description": "The gyro offset about the Y axis in radians per second, from -1 to 1; the stored offset reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "gyroOffsetZ": {
+          "description": "The gyro offset about the Z axis in radians per second, from -1 to 1; the stored offset reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
         }
       }
     },

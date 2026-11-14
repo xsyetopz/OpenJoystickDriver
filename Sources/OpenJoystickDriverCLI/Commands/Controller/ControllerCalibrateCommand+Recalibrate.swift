@@ -10,7 +10,7 @@ enum ControllerCalibrateAction: String, CaseIterable, ExpressibleByArgument {
   case pause
   /// Clears the stored stick and trigger calibration and the gyro offset.
   case reset
-  /// Measures stick centres, stick ranges, and trigger ends.
+  /// Measures stick centres, stick ranges, trigger ends, and the gyro offset.
   case sticks
 
   /// The motion calibration command of a gyro action; nil for the stick and reset actions.
@@ -111,6 +111,7 @@ extension ControllerCalibrateCommand {
     switch action {
     case .rest: CLILocalized.text("cli.controller.calibrate.stepRest")
     case .circle: CLILocalized.text("cli.controller.calibrate.stepCircle")
+    case .gyro: CLILocalized.text("cli.controller.calibrate.stepGyro")
     case .triggers, .reset: CLILocalized.text("cli.controller.calibrate.stepTriggers")
     }
   }
@@ -144,6 +145,9 @@ extension ControllerCalibrateCommand {
             report.stored.keys.sorted().joined(separator: ", ")
           )
         )
+      }
+      if result.action == .gyro, report.stored.isEmpty {
+        CLIOutput.stdout(CLILocalized.format("cli.controller.calibrate.gyroSkipped", device.name))
       }
       if !report.unmoved.isEmpty {
         CLIOutput.stdout(

@@ -124,6 +124,12 @@ struct ControllerShowReport: Encodable, Equatable {
     let rightTriggerRest: Double?
     /// The stored fully pressed value of the right trigger.
     let rightTriggerFull: Double?
+    /// The stored gyro offset about the X axis, in radians per second.
+    let gyroOffsetX: Double?
+    /// The stored gyro offset about the Y axis, in radians per second.
+    let gyroOffsetY: Double?
+    /// The stored gyro offset about the Z axis, in radians per second.
+    let gyroOffsetZ: Double?
 
     /// Creates the tuning from `tuning`; nil when the record sets no tuning.
     init?(_ tuning: ControllerTuning) {
@@ -155,6 +161,9 @@ struct ControllerShowReport: Encodable, Equatable {
       leftTriggerFull = tuning.calibration.values[.leftTriggerFull]
       rightTriggerRest = tuning.calibration.values[.rightTriggerRest]
       rightTriggerFull = tuning.calibration.values[.rightTriggerFull]
+      gyroOffsetX = tuning.calibration.values[.gyroOffsetX]
+      gyroOffsetY = tuning.calibration.values[.gyroOffsetY]
+      gyroOffsetZ = tuning.calibration.values[.gyroOffsetZ]
     }
 
     /// The set values as `name=value`, in record-file order.
@@ -187,6 +196,9 @@ struct ControllerShowReport: Encodable, Equatable {
         leftTriggerFull.map { "leftTriggerFull=\($0)" },
         rightTriggerRest.map { "rightTriggerRest=\($0)" },
         rightTriggerFull.map { "rightTriggerFull=\($0)" },
+        gyroOffsetX.map { "gyroOffsetX=\($0)" },
+        gyroOffsetY.map { "gyroOffsetY=\($0)" },
+        gyroOffsetZ.map { "gyroOffsetZ=\($0)" },
       ].compactMap { $0 }
     }
   }

@@ -1,11 +1,11 @@
 import Foundation
 
-/// Stored stick centres, stick ranges, and trigger ends of one controller, applied to each input
-/// state before profile mapping.
+/// Stored stick centres, stick ranges, trigger ends, and gyro offset of one controller, applied to
+/// each input state and motion sample before profile mapping.
 ///
 /// Every value is in the normalized units of the state: a centre is `-1...1`, a stick range is the
-/// deflection from the centre that reads as full, and a trigger end is `0...1`. A key that is not
-/// set leaves its control as the controller reports it.
+/// deflection from the centre that reads as full, a trigger end is `0...1`, and a gyro offset is in
+/// radians per second. A key that is not set leaves its control as the controller reports it.
 public struct ControllerCalibration: Codable, Equatable, Sendable {
   /// The calibration that sets no key.
   public static let none = Self(values: [:])
@@ -14,7 +14,7 @@ public struct ControllerCalibration: Codable, Equatable, Sendable {
   public static let keys: Set<ControllerTuning.Key> = [
     .leftStickCenterX, .leftStickCenterY, .rightStickCenterX, .rightStickCenterY,
     .leftStickRange, .rightStickRange, .leftTriggerRest, .leftTriggerFull, .rightTriggerRest,
-    .rightTriggerFull,
+    .rightTriggerFull, .gyroOffsetX, .gyroOffsetY, .gyroOffsetZ,
   ]
 
   /// The stick deflection or trigger travel below which a capture counts the control as not moved.
@@ -55,6 +55,8 @@ public struct ControllerCalibration: Codable, Equatable, Sendable {
     case circle
     /// Each trigger pressed fully: stores the trigger ends.
     case triggers
+    /// The controller held still: stores the gyro offset; a controller with no gyro skips it.
+    case gyro
 
     /// The controls a step measures.
     public var controls: [Control] {
@@ -62,6 +64,7 @@ public struct ControllerCalibration: Codable, Equatable, Sendable {
       case .rest: Control.stickAxes + [.leftTrigger, .rightTrigger]
       case .circle: Control.stickAxes
       case .triggers: [.leftTrigger, .rightTrigger]
+      case .gyro: []
       }
     }
   }
@@ -124,18 +127,41 @@ public struct ControllerCalibration: Codable, Equatable, Sendable {
     return UnipolarValue(normalized: Float((Double(value.normalized) - low) / span))
   }
 
-  /// What `step` measures from the raw `samples`, with `stored` giving the centres and rests a
-  /// later step measures from.
+  /// This calibration applied to `sample`: the stored gyro offset removed from its angular
+  /// velocity.
+  public func applying(to sample: ControllerMotionSample) -> ControllerMotionSample {
+    guard
+      values[.gyroOffsetX] != nil || values[.gyroOffsetY] != nil || values[.gyroOffsetZ] != nil
+    else { return sample }
+    let rate = sample.angularVelocity
+    return ControllerMotionSample(
+      timestamp: sample.timestamp,
+      acceleration: sample.acceleration,
+      angularVelocity: ControllerMotionVector(
+        x: rate.x - (values[.gyroOffsetX] ?? 0),
+        y: rate.y - (values[.gyroOffsetY] ?? 0),
+        z: rate.z - (values[.gyroOffsetZ] ?? 0)
+      ),
+      calibrationSource: sample.calibrationSource,
+      calibrationRevision: sample.calibrationRevision
+    ) ?? sample
+  }
+
+  /// What `step` measures from the raw `samples` and the raw angular velocities `gyro`, with
+  /// `stored` giving the centres and rests a later step measures from.
   public static func capture(
     _ step: Step,
     samples: [ControllerState],
+    gyro: [ControllerMotionVector] = [],
     stored: Self
   ) -> Outcome {
+    if step == .gyro { return gyroOffset(of: gyro) }
     guard !samples.isEmpty else { return Outcome(values: [:], unmoved: step.controls) }
     switch step {
     case .rest: return rest(of: samples)
     case .circle: return circle(of: samples, stored: stored)
     case .triggers: return triggers(of: samples, stored: stored)
+    case .gyro: return gyroOffset(of: gyro)
     }
   }
 
@@ -156,6 +182,17 @@ public struct ControllerCalibration: Codable, Equatable, Sendable {
       .rightTriggerRest: min(mean(samples) { Double($0.rightTrigger.normalized) }, restCeiling),
     ]
     return Outcome(values: measured, unmoved: [])
+  }
+
+  private static func gyroOffset(of gyro: [ControllerMotionVector]) -> Outcome {
+    guard !gyro.isEmpty else { return Outcome(values: [:], unmoved: []) }
+    func mean(_ read: (ControllerMotionVector) -> Double) -> Double {
+      min(max(gyro.map(read).reduce(0, +) / Double(gyro.count), -1), 1)
+    }
+    return Outcome(
+      values: [.gyroOffsetX: mean(\.x), .gyroOffsetY: mean(\.y), .gyroOffsetZ: mean(\.z)],
+      unmoved: []
+    )
   }
 
   private static func circle(of samples: [ControllerState], stored: Self) -> Outcome {

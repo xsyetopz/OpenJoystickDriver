@@ -298,14 +298,20 @@
 "ui.controllers.recalibrate.circle" = "円を測定";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
 "ui.controllers.recalibrate.triggers" = "トリガーを測定";
+/* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
+"ui.controllers.recalibrate.gyro" = "ジャイロを測定";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "コントローラーを読み取り中…";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
 "ui.controllers.recalibrate.instructions" = "各ステップはコントローラーを約2秒間読み取ります。静止位置では、スティックとトリガーから手を離します。円では、各スティックを一周させます。トリガーでは、各トリガーを奥まで押し込みます。";
+/* Instruction above the recalibration buttons for the gyro step. gyro names the button next to them. */
+"ui.controllers.recalibrate.gyroInstructions" = "ジャイロでは、コントローラーを置いて静止させてください。";
 /* Result after a recalibration step stored its measured values. */
 "ui.controllers.recalibrate.stored" = "測定した値を保存しました。";
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "%@の動きは測定できなかったため、保存済みの値はそのままです。";
+/* Result after the gyro step of a controller that reports no motion. */
+"ui.controllers.recalibrate.gyroSkipped" = "このコントローラーはモーションを報告しないため、ジャイロのステップを省略しました。";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "保存されていたスティックとトリガーのキャリブレーションを削除しました。";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
@@ -3301,6 +3307,8 @@
 "cli.controller.calibrate.discussion" = "操作を省略すると、モーションキャリブレーションを表示します。start はコントローラーを静止させている間にジャイロのドリフトを収集し、pause は収集を止めます。sticks はスティックの中心と範囲、トリガーの端を測定し、コントローラーのモデル用に保存します。reset は保存したそれらの値を削除し、モーションキャリブレーションも破棄します。モーションの傾きとステアリングのバインドは、モーションキャリブレーションを使います。";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ はもう接続されていません。";
+/* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
+"cli.controller.calibrate.gyroSkipped" = "%@ はモーションを報告しないため、ジャイロのステップを省略しました。";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ はモーションを報告しません。";
 /* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
@@ -3308,9 +3316,11 @@
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@、ジャイロのオフセット x %3$@ y %4$@ z %5$@ 度/秒";
 /* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
-"cli.controller.calibrate.step" = "sticks が実行する1つのステップ: rest、circle、triggers。省略すると3つとも実行します。";
+"cli.controller.calibrate.step" = "sticks が実行する1つのステップ: rest、circle、triggers、gyro。省略すると4つとも実行します。";
 /* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepCircle" = "各スティックをぐるりと一周させてください…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the gyro step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepGyro" = "コントローラーを置いて静止させてください…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepRest" = "スティックとトリガーから手を離して静止させてください…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */

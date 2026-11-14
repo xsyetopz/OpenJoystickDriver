@@ -298,14 +298,20 @@
 "ui.controllers.recalibrate.circle" = "वृत्त मापें";
 /* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
 "ui.controllers.recalibrate.triggers" = "ट्रिगर मापें";
+/* Button of the recalibration controls that measures the gyro offset while the controller lies still. */
+"ui.controllers.recalibrate.gyro" = "जाइरो मापें";
 /* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
 "ui.controllers.recalibrate.running" = "कंट्रोलर पढ़ा जा रहा है…";
 /* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
 "ui.controllers.recalibrate.instructions" = "हर चरण कंट्रोलर को लगभग दो सेकंड पढ़ता है। विश्राम के लिए स्टिक और ट्रिगर छोड़ दें। वृत्त के लिए हर स्टिक को उसके पूरे वृत्त में घुमाएँ। ट्रिगर के लिए हर ट्रिगर को पूरा दबाएँ।";
+/* Instruction above the recalibration buttons for the gyro step. gyro names the button next to them. */
+"ui.controllers.recalibrate.gyroInstructions" = "जाइरो के लिए कंट्रोलर को नीचे रखें और उसे स्थिर रखें।";
 /* Result after a recalibration step stored its measured values. */
 "ui.controllers.recalibrate.stored" = "मापे गए मान सहेज लिए गए।";
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "%@ में कोई गति नहीं मापी गई, इसलिए उनके सहेजे गए मान बने रहते हैं।";
+/* Result after the gyro step of a controller that reports no motion. */
+"ui.controllers.recalibrate.gyroSkipped" = "यह कंट्रोलर मोशन की रिपोर्ट नहीं करता, इसलिए जाइरो चरण छोड़ दिया गया।";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "सहेजा गया स्टिक और ट्रिगर कैलिब्रेशन हटा दिया गया।";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
@@ -3301,6 +3307,8 @@
 "cli.controller.calibrate.discussion" = "बिना क्रिया के मोशन कैलिब्रेशन प्रिंट होता है। start तब गायरो ड्रिफ्ट इकट्ठा करता है जब कंट्रोलर स्थिर पड़ा हो, और pause इकट्ठा करना रोकता है। sticks स्टिक के केंद्र, स्टिक की सीमाएँ और ट्रिगर के अंतिम बिंदु मापता है और उन्हें कंट्रोलर के मॉडल के लिए सहेजता है। reset सहेजे गए उन मानों को हटाता है और मोशन कैलिब्रेशन भूल जाता है। मोशन झुकाव और स्टीयरिंग बाइंडिंग मोशन कैलिब्रेशन का उपयोग करती हैं।";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ अब कनेक्ट नहीं है।";
+/* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
+"cli.controller.calibrate.gyroSkipped" = "%@ मोशन की रिपोर्ट नहीं करता, इसलिए जाइरो चरण छोड़ दिया गया।";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ मोशन की रिपोर्ट नहीं करता।";
 /* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
@@ -3308,9 +3316,11 @@
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, जाइरो ऑफ़सेट x %3$@ y %4$@ z %5$@ डिग्री प्रति सेकंड";
 /* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
-"cli.controller.calibrate.step" = "sticks जो एक चरण चलाता है: rest, circle या triggers। तीनों चलाने के लिए इसे छोड़ दें।";
+"cli.controller.calibrate.step" = "sticks जो एक चरण चलाता है: rest, circle, triggers या gyro। चारों चलाने के लिए इसे छोड़ दें।";
 /* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepCircle" = "हर स्टिक को उसके पूरे घेरे में घुमाएँ…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the gyro step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepGyro" = "कंट्रोलर को नीचे रखें और उसे स्थिर रखें…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
 "cli.controller.calibrate.stepRest" = "स्टिक और ट्रिगर छोड़ दें और उन्हें स्थिर रखें…";
 /* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */

@@ -8,7 +8,9 @@ public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendab
   case circle = "Circle"
   /// Each trigger pressed fully: stores the trigger ends.
   case triggers = "Triggers"
-  /// Removes the stored centres, ranges, and trigger ends, and clears the gyro offset.
+  /// The controller held still: stores the gyro offset; a controller with no gyro skips it.
+  case gyro = "Gyro"
+  /// Removes the stored centres, ranges, trigger ends, and gyro offset, and clears the gyro offset.
   case reset = "Reset"
 
   /// The action that runs `step`.
@@ -17,6 +19,7 @@ public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendab
     case .rest: self = .rest
     case .circle: self = .circle
     case .triggers: self = .triggers
+    case .gyro: self = .gyro
     }
   }
 
@@ -26,6 +29,7 @@ public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendab
     case .rest: .rest
     case .circle: .circle
     case .triggers: .triggers
+    case .gyro: .gyro
     case .reset: nil
     }
   }

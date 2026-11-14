@@ -25,7 +25,12 @@
       Group {
         StickDeadzoneRow(viewModel: viewModel, device: device, setting: setting, reload: reload)
         ForEach(model.rows) { row in
-          OJDLabeledValue(Self.label(row.control), Self.text(row))
+          OJDLabeledRow(Self.label(row.control)) {
+            VStack(alignment: .leading, spacing: OJDSpacing.small) {
+              Text(Self.text(row))
+              ControllerDeadZoneGauge(row: row)
+            }
+          }
         }
         OJDLabeledRow(OJDLocalized.string("ui.controllers.recalibrate.title")) {
           ControllerRecalibrationControls(

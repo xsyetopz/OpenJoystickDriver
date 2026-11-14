@@ -65,6 +65,9 @@
       if !result.stored.values.isEmpty {
         parts.append(OJDLocalized.string("ui.controllers.recalibrate.stored"))
       }
+      if result.action == .gyro, result.stored.values.isEmpty {
+        return OJDLocalized.string("ui.controllers.recalibrate.gyroSkipped")
+      }
       let unmoved = ControllerCalibrationRow.Control.allCases.filter {
         result.unmoved.contains(where: $0.covers)
       }
