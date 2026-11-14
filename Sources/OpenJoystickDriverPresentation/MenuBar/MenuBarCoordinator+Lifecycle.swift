@@ -267,6 +267,13 @@
       if let button = item.button {
         button.toolTip = OJDLocalized.string("term.app.name")
       }
+      frontAppObserver = NSWorkspace.shared.notificationCenter.addObserver(
+        forName: NSWorkspace.didActivateApplicationNotification,
+        object: nil,
+        queue: .main
+      ) { [weak self] _ in
+        Task { @MainActor in self?.refreshLiveStatus() }
+      }
       statusMenuTracker.onWillOpen = { [weak self] in self?.refreshLiveStatus() }
       // The menu runs the chosen item's action after it closes; rebuilding first would
       // release that item.
@@ -295,6 +302,8 @@
     private func removeStatusItem() {
       guard let item = statusItem else { return }
       statusItemVisibilityObservation = nil
+      frontAppObserver.map(NSWorkspace.shared.notificationCenter.removeObserver)
+      frontAppObserver = nil
       NSStatusBar.system.removeStatusItem(item)
       statusItem = nil
       statusMenu = nil

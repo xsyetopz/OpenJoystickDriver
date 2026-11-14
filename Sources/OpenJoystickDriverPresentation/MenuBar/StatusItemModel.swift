@@ -81,7 +81,7 @@ struct StatusItemEntry: Equatable {
   let submenu: [Self]?
   /// Whether the entry is a separator line.
   let isSeparator: Bool
-  /// What the entry adds to its title: battery level.
+  /// What the entry adds to its title: battery level, profile in force and paused state.
   let details: [StatusItemTitle]
   /// The SF Symbol the item shows before its title, or nil for none.
   let symbolName: String?
@@ -139,6 +139,8 @@ struct StatusItemState: Equatable {
     let isWireless: Bool
     /// The battery level as the service reports it, or nil when the controller reports none.
     var battery: String?
+    /// The name of the profile in force, with the app that selected it, or nil when none is.
+    var profileInForce: String?
     /// The profiles that apply to this controller (same model, and its unit when a profile names
     /// one). ``Profile/isActive`` tells whether the profile is the one active for it.
     var profiles: [Profile] = []
@@ -237,9 +239,17 @@ enum StatusItemModel {
         id: "controller.\(controller.id)",
         title: .verbatim(controller.name),
         submenu: controllerActions(controller, profileListRead: state.profileListRead),
-        details: controller.battery.map { [.verbatim($0)] } ?? []
+        details: controllerDetails(controller)
       )
     }
+  }
+
+  /// What a controller row adds to its name: battery level, profile in force, paused state.
+  private static func controllerDetails(
+    _ controller: StatusItemState.Controller
+  ) -> [StatusItemTitle] {
+    [controller.battery, controller.profileInForce].compactMap { $0.map(StatusItemTitle.verbatim) }
+      + (controller.isSuspended ? [.key("ui.controllers.paused.value")] : [])
   }
 
   /// Returns the items of one controller's submenu: the profile list, pause or resume, test

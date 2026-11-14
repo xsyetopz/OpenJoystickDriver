@@ -32,7 +32,7 @@
     /// Returns the banner row for `problem`: a symbol, the title, the detail and its button.
     private func row(_ problem: MainWindowProblem) -> some View {
       let state: SemanticState = problem.isFailure ? .failure : .attention
-      let title = OJDLocalized.string(problem.titleKey)
+      let title = problem.title
       let detail = detailText(problem)
       return HStack(alignment: .center, spacing: OJDSpacing.medium) {
         if case .service(let readiness, let message) = problem {
@@ -62,7 +62,7 @@
       if case .service(_, let message) = problem { return message }
       if case .virtualProfileStore(let message) = problem { return message }
       guard let key = problem.detailKey else { return "" }
-      if case .driver(.failed(let failure)) = problem {
+      if case .driver(.failed(let failure), _) = problem {
         return OJDLocalized.formatted(key, failure.domain, failure.code, failure.text)
       }
       return OJDLocalized.string(key)

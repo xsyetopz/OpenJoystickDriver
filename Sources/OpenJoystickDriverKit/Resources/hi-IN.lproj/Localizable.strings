@@ -1408,6 +1408,8 @@
 "ui.service.state.versionMismatch.message" = "सेवा ऐप से अलग संस्करण चला रही है।";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "अनुमति आवश्यक है";
+/* Title of the problem banner when the driver extension is not active. %@ is the name of the controller, or a list of names, whose route is the extension. */
+"ui.banner.driver.title" = "%@ को Xbox USB ड्राइवर चाहिए";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
 "platform.macos.ui.banner.access.detail" = "OpenJoystickDriver को कंट्रोलर पढ़ने और उन्हें गेम में प्रकाशित करने के लिए जो कुछ चाहिए, macOS ने उसकी पूरी अनुमति नहीं दी है।";
 /* Title of the problem banner when the app does not get live changes of controllers from the service. */
@@ -3943,6 +3945,8 @@
 "ui.menu.controller.disconnectWirelessLink" = "ब्लूटूथ कनेक्शन डिस्कनेक्ट करें";
 /* Item of the Controller menu that shows the selected controller in the main window. */
 "ui.menu.controller.showInWindow" = "विंडो में दिखाएँ";
+/* Detail of a controller row in the menu bar menu: the profile in force and the app in front that selected it. %1$@ is the profile name and %2$@ is the app name. */
+"ui.menu.controller.profileForApp" = "%2$@ के लिए %1$@";
 /* Disabled item of the Controller menu and of the status item's Controllers submenu when no controller is connected. */
 "ui.menu.controller.noneConnected" = "कोई कंट्रोलर कनेक्ट नहीं है";
 /* Disabled item of the Controller menu when no controller is selected. */

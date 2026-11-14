@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -12,6 +13,7 @@ struct StatusItemMenuTests {
     isSuspended: Bool = false,
     isWireless: Bool = false,
     battery: String? = nil,
+    profileInForce: String? = nil,
     profiles: [StatusItemState.Profile] = []
   ) -> StatusItemState.Controller {
     var controller = StatusItemState.Controller(
@@ -21,6 +23,7 @@ struct StatusItemMenuTests {
       isWireless: isWireless
     )
     controller.battery = battery
+    controller.profileInForce = profileInForce
     controller.profiles = profiles
     return controller
   }
@@ -76,17 +79,33 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func controllerRowTitleKeepsNameAndBatteryOnly() {
-    let racing = Self.profile("Racing", active: true)
+  func controllerRowShowsBatteryProfileInForceAndPausedState() {
     let menu = Self.rows(
       Self.entries([
-        Self.controller("a", name: "Pad", battery: "80%", profiles: [racing]),
+        Self.controller("a", name: "Pad", battery: "80%", profileInForce: "Racing"),
         Self.controller("b", name: "Stick", isSuspended: true),
+        Self.controller("c", name: "Wheel"),
       ])
     )
     #expect(menu[0].title == .verbatim("Pad"))
-    #expect(menu[0].details == [.verbatim("80%")])
-    #expect(menu[1].details.isEmpty)
+    #expect(menu[0].details == [.verbatim("80%"), .verbatim("Racing")])
+    #expect(menu[1].details == [.key("ui.controllers.paused.value")])
+    #expect(menu[2].details.isEmpty)
+  }
+
+  @Test
+  @MainActor
+  func profileInForceNamesAppThatSelectedIt() {
+    let general = ApplicationServiceProfileInForce(name: "General", appID: nil)
+    let forApp = ApplicationServiceProfileInForce(name: "Racing", appID: "com.example.game")
+    let identity: (String) -> String = { $0 }
+    let game: (String) -> String = { _ in "Game" }
+    #expect(MenuBarViewModel.profileInForceText(general, appName: identity) == "General")
+    #expect(
+      MenuBarViewModel.profileInForceText(forApp, appName: game)
+        == OJDLocalized.formatted("ui.menu.controller.profileForApp", "Racing", "Game")
+    )
+    #expect(MenuBarViewModel.profileInForceText(nil, appName: identity) == nil)
   }
 
   @Test
