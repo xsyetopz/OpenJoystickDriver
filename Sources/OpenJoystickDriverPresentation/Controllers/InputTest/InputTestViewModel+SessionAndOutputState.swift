@@ -469,7 +469,7 @@
         do {
           await previousTask?.value
           if shouldStopPreviousRumble, let previousSelector {
-            _ = try? await gateway.sendControllerOutput(.stopRumble, for: previousSelector)
+            _ = try await gateway.sendControllerOutput(.stopRumble, for: previousSelector)
           }
           try Task.checkCancellation()
           let succeeded = try await body()
@@ -547,13 +547,25 @@
       outputMayRequireRumbleStop = false
       outputState = .idle
       outputError = nil
-      outputTask = Task { [gateway] in
+      let generation = outputGeneration
+      outputTask = Task { [weak self, gateway] in
         await previousTask?.value
-        if shouldStopRumble, let activeSelector {
-          _ = try? await gateway.sendControllerOutput(.stopRumble, for: activeSelector)
-        }
-        if let previewSelector {
-          _ = try? await gateway.releaseColorPreview(for: previewSelector, token: colorPreviewToken)
+        var operation = OutputOperation.rumble
+        do {
+          if shouldStopRumble, let activeSelector {
+            _ = try await gateway.sendControllerOutput(.stopRumble, for: activeSelector)
+          }
+          if let previewSelector {
+            operation = .color
+            _ = try await gateway.releaseColorPreview(
+              for: previewSelector,
+              token: colorPreviewToken
+            )
+          }
+        } catch {
+          guard let self, generation == outputGeneration else { return }
+          outputState = .failed(operation)
+          outputError = RuntimePresentation.userFacingError(error)
         }
       }
     }

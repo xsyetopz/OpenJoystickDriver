@@ -61,6 +61,9 @@ final class RuntimeViewModel: ObservableObject {
   /// Why the latest background status read failed while the last controller list stays visible.
   @Published
   var liveStatusError: String?
+  /// Why the latest Bluetooth access request failed; cleared when the next request starts.
+  @Published
+  var bluetoothRequestFailure: String?
   /// Where the Xbox USB driver extension is.
   @Published
   private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
@@ -401,10 +404,16 @@ final class RuntimeViewModel: ObservableObject {
 
   /// Asks macOS, through the service, for Bluetooth access.
   ///
-  /// Returns the state at the answer, or nil when the request failed. The status shows it at once.
+  /// Returns the state at the answer, or nil when the request failed, with
+  /// ``bluetoothRequestFailure`` saying why. The status shows the answer at once.
   @discardableResult
   func requestBluetoothAccess() async -> BluetoothAccessState? {
-    guard let access = try? await gateway.requestBluetoothAccess() else { return nil }
+    bluetoothRequestFailure = nil
+    let access: BluetoothAccessState
+    do { access = try await gateway.requestBluetoothAccess() } catch {
+      bluetoothRequestFailure = RuntimePresentation.userFacingError(error)
+      return nil
+    }
     if case .available(var presentation) = statusState {
       presentation.bluetoothAccess = access
       statusState = .available(presentation)

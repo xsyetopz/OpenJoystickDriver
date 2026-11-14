@@ -96,6 +96,71 @@ extension InputTestTests {
 
   @Test
   @MainActor
+  func failedStopOfRumbleShowsTheFailure() async {
+    let gateway = InputTestGatewayStub(outputDelayNanoseconds: 60_000_000_000)
+    let model = InputTestViewModel(gateway: gateway)
+    model.selectDevice(makeInputTestDevice())
+    model.rumbleIntensities[.lowFrequency] = 200
+
+    model.testRumble()
+    await gateway.waitForActiveOutputCall()
+    await gateway.setOutputDelay(0)
+    await gateway.setOutputThrows(true)
+    model.stopRumble()
+
+    await waitUntil("the stop failure shows") { model.outputState == .failed(.rumble) }
+    #expect(
+      model.outputError == RuntimePresentation.userFacingError(InputTestGatewayError.outputFailed)
+    )
+  }
+
+  @Test
+  @MainActor
+  func failedStopOfPreviousRumbleShowsTheFailureOfTheNextTest() async {
+    let capabilities = PhysicalControllerOutputCapabilities(
+      rumbleMotors: [.lowFrequency],
+      lightingFeatures: [.programmableBrightness]
+    )
+    let gateway = InputTestGatewayStub(outputDelayNanoseconds: 60_000_000_000)
+    let model = InputTestViewModel(gateway: gateway)
+    model.selectDevice(makeInputTestDevice(capabilities: capabilities))
+    model.rumbleIntensities[.lowFrequency] = 200
+
+    model.testRumble()
+    await gateway.waitForActiveOutputCall()
+    await gateway.setOutputDelay(0)
+    await gateway.setOutputThrows(true)
+    model.applyBrightness()
+
+    await waitUntil("the stop failure shows") { model.outputState == .failed(.brightness) }
+    #expect(
+      model.outputError == RuntimePresentation.userFacingError(InputTestGatewayError.outputFailed)
+    )
+  }
+
+  @Test
+  @MainActor
+  func failedColorPreviewReleaseShowsTheFailure() async {
+    let capabilities = PhysicalControllerOutputCapabilities(lightingFeatures: [
+      .programmableColor
+    ])
+    let gateway = InputTestGatewayStub()
+    let model = InputTestViewModel(gateway: gateway)
+    model.selectDevice(makeInputTestDevice(capabilities: capabilities))
+
+    model.applyColor()
+    await waitUntil("!gateway.colorCalls.isEmpty") { await !gateway.colorCalls.isEmpty }
+    await gateway.setReleaseThrows(true)
+    model.reconcileConnectedDevices([])
+
+    await waitUntil("the release failure shows") { model.outputState == .failed(.color) }
+    #expect(
+      model.outputError == RuntimePresentation.userFacingError(InputTestGatewayError.outputFailed)
+    )
+  }
+
+  @Test
+  @MainActor
   func disconnectedDeviceRejectsEveryPhysicalOutputAction() async {
     let capabilities = PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency],

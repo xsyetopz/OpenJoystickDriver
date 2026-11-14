@@ -134,4 +134,22 @@ struct SetupStepsTests {
     }
     #expect(presentation.bluetoothAccess == .granted)
   }
+
+  @Test
+  @MainActor
+  func failedBluetoothRequestShowsWhyUntilTheNextRequest() async {
+    let gateway = GatewayStub()
+    await gateway.setBluetoothShouldFail(true)
+    let model = RuntimeViewModel(gateway: gateway)
+
+    #expect(await model.requestBluetoothAccess() == nil)
+    #expect(
+      model.bluetoothRequestFailure
+        == RuntimePresentation.userFacingError(ApplicationServiceClientError.timeout)
+    )
+
+    await gateway.setBluetoothShouldFail(false)
+    #expect(await model.requestBluetoothAccess() == .granted)
+    #expect(model.bluetoothRequestFailure == nil)
+  }
 }

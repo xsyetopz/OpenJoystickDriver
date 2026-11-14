@@ -94,8 +94,8 @@ public protocol MainWindowPresenting: AnyObject {
   var selectedControllerID: String? { get }
   /// The area the main window shows.
   var selectedArea: MainWindowArea { get }
-  /// Opens Controllers > Input Test for the controller.
-  func showInputTest(controllerID: String)
+  /// Opens Controllers > Input Test for the controller; false when the controller is not there.
+  func showInputTest(controllerID: String) -> Bool
   /// Opens Profiles, asks for a profile file and imports it through the editor's checks.
   func importProfile()
   /// Whether a profile of the library is selected in the Profiles screen.

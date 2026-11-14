@@ -139,19 +139,15 @@
         // Informational row; it carries no action.
         preconditionFailure("\(action) has no action")
       case .suspendOrResumeController:
-        guard let controller = state.controller, let device = device(for: controller) else {
-          return
-        }
-        Task { @MainActor in
+        guard let controller = state.controller else { return }
+        runControllerAction(controller.id) { device in
           if controller.isSuspended {
-            await viewModel.resumeController(device)
+            await self.viewModel.resumeController(device)
           } else {
-            await viewModel.suspendController(device)
+            await self.viewModel.suspendController(device)
           }
         }
-      case .testInput:
-        guard let controller = state.controller else { return }
-        mainWindow?.showInputTest(controllerID: controller.id)
+      case .testInput: showInputTest(controllerID: state.controller?.id)
       case .disconnectWirelessLink:
         guard let controller = state.controller, let device = device(for: controller) else {
           return
@@ -320,7 +316,9 @@
       alert.addButton(withTitle: confirmation.confirmTitle).hasDestructiveAction = true
       alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
       guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
-      Task { @MainActor in await viewModel.disconnectWirelessController(device) }
+      runControllerAction(device.sessionToken.rawValue) { device in
+        await self.viewModel.disconnectWirelessController(device)
+      }
     }
 
     /// Deactivates the active profile of the controller model of `device`, and shows an alert when

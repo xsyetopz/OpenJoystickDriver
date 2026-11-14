@@ -110,7 +110,7 @@
         runControllerAction(token) { device in await self.viewModel.suspendController(device) }
       case .resumeController(let token):
         runControllerAction(token) { device in await self.viewModel.resumeController(device) }
-      case .testInput(let token): mainWindow?.showInputTest(controllerID: token)
+      case .testInput(let token): showInputTest(controllerID: token)
       case .showController(let token): mainWindow?.showController(id: token)
       case .disconnectWireless(let token): disconnectWirelessController(sessionToken: token)
       case .activateProfile(let id):
@@ -119,6 +119,7 @@
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
       case .showPermission(let kind): mainWindow?.showAccess(permission: kind)
       case .startService:
+        // A failed restart shows in the status line and the problem banner, which `refresh` keeps.
         Task { @MainActor in
           await viewModel.restartListener()
           await viewModel.refresh()
@@ -137,7 +138,7 @@
 
     /// Runs `action` on the connected controller with `sessionToken`, then shows its failure if the
     /// action recorded one.
-    private func runControllerAction(
+    func runControllerAction(
       _ sessionToken: String,
       _ action: @escaping @MainActor (ApplicationServiceDeviceDescription) async -> Void
     ) {
@@ -145,12 +146,24 @@
         let device = menuBarViewModel.devices.first(where: {
           $0.sessionToken.rawValue == sessionToken
         })
-      else { return }
+      else {
+        presentFailure(OJDLocalized.string("ui.inputTest.disconnected"))
+        return
+      }
       Task { @MainActor in
         await action(device)
         if let failure = viewModel.controllerActionFailures[sessionToken] {
           presentFailure(failure)
         }
+      }
+    }
+
+    /// Opens Input Test for the controller with `controllerID`, or shows an alert when there is no
+    /// such controller or the window cannot open it.
+    func showInputTest(controllerID: String?) {
+      guard let controllerID, mainWindow?.showInputTest(controllerID: controllerID) == true else {
+        presentFailure(OJDLocalized.string("ui.inputTest.disconnected"))
+        return
       }
     }
 
@@ -228,7 +241,7 @@
     }
 
     /// Shows an alert that names the failed action and gives `message`.
-    private func presentFailure(_ message: String) {
+    func presentFailure(_ message: String) {
       let alert = NSAlert()
       alert.alertStyle = .warning
       alert.messageText = OJDLocalized.string("ui.extra.actionFailedTitle")

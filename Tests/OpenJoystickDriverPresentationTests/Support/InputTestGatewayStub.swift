@@ -46,6 +46,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
   var brightnessCalls: [(ControllerReference, UInt8)] = []
   var outputResult = true
   var outputThrows = false
+  var releaseThrows = false
   var activeOutputCalls = 0
   var maximumConcurrentOutputCalls = 0
 
@@ -131,8 +132,9 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
     return outputResult
   }
 
-  func releaseColorPreview(for selector: ControllerReference, token: UUID) async -> Bool {
+  func releaseColorPreview(for selector: ControllerReference, token: UUID) async throws -> Bool {
     await Task.yield()
+    if releaseThrows { throw InputTestGatewayError.outputFailed }
     colorReleaseCalls.append((selector, token))
     return outputResult
   }
@@ -149,6 +151,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
 
   func setOutputResult(_ result: Bool) { outputResult = result }
   func setOutputThrows(_ value: Bool) { outputThrows = value }
+  func setReleaseThrows(_ value: Bool) { releaseThrows = value }
   func setOutputDelay(_ nanoseconds: UInt64) { outputDelayNanoseconds = nanoseconds }
 
   func waitForActiveOutputCall() async {
