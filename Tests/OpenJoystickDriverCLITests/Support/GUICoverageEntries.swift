@@ -181,6 +181,7 @@ enum GUICoverageEntries {
     leaf("controller unpair", "unpairRemappingJoyCons"),
     leaf("controller claim", "setControllerServer"),
     leaf("controller release", "setControllerServer"),
+    leaf("controller lookup", "ControllerLookupButton"),
     leaf("config show", "ControllerTuningRows"),
     option("config show", "--controller", "ControllerTuningRows"),
     leaf("config set", "setControllerTuning"),

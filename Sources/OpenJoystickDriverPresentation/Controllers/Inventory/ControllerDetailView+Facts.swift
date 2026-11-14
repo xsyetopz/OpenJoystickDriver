@@ -68,6 +68,24 @@
             }
           }
         }
+        Section {
+          ForEach(record?.validations ?? [], id: \.issue) { validation in
+            OJDLabeledRow(OJDLocalized.string("ui.controllers.communityVerified")) {
+              Link(
+                OJDLocalized.formatted(
+                  "ui.controllers.communityVerifiedMode",
+                  validation.modeID,
+                  "#\(validation.issue)"
+                ),
+                destination: validation.issueURL
+              )
+            }
+          }
+          ControllerLookupButton(
+            model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
+            record: record
+          ).disabled(!hasLoadedRecord)
+        }
         if device.isHeldByAppleDriver {
           Section {
             ControllerClaimButton(viewModel: viewModel)

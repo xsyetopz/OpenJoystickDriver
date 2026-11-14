@@ -23,7 +23,7 @@ struct ControllerCommand: AsyncParsableCommand {
       ControllerResumeCommand.self,
       ControllerDisconnectCommand.self, ControllerCalibrateCommand.self, ControllerPairCommand.self,
       ControllerUnpairCommand.self, ControllerClaimCommand.self,
-      ControllerReleaseCommand.self,
+      ControllerReleaseCommand.self, ControllerLookupCommand.self,
     ]
   )
 

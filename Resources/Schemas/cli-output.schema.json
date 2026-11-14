@@ -687,6 +687,31 @@
         }
       }
     },
+    "controllerLookup": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "identity", "hasRecord", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ControllerLookup"
+        },
+        "identity": {
+          "description": "The controller model as VVVV:PPPP.",
+          "type": "string"
+        },
+        "hasRecord": {
+          "description": "Whether a controller record exists for the model.",
+          "type": "boolean"
+        },
+        "url": {
+          "description": "The supported-controllers page for a model with a record, else a GitHub search for its VID:PID.",
+          "type": "string"
+        }
+      }
+    },
     "controllerPair": {
       "required": ["apiVersion", "kind"],
       "properties": {
