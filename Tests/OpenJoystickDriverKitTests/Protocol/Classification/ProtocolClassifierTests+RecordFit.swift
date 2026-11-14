@@ -43,13 +43,17 @@ extension ProtocolClassifierTests {
     server: String?,
     family: String,
     interface: [String: Int]?,
-    idle: String? = nil
+    idle: String? = nil,
+    match: [String: Any]? = nil
   ) throws -> DeviceCatalog {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-record-fit-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    var mode: [String: Any] = ["id": "default", "protocol": ["family": family]]
+    var mode: [String: Any] = [
+      "id": match == nil ? "default" : "vendor", "protocol": ["family": family],
+    ]
+    mode["match"] = match
     mode["interface"] = interface
     mode["idle"] = idle
     var tree: [String: Any] = [
@@ -154,5 +158,34 @@ extension ProtocolClassifierTests {
     let kept = try bound(ProtocolClassifier.classify(device, backend: .hid, catalog: system))
     #expect(kept.protocolID == .sonyDualShock4)
     #expect(kept.inputMapping?.unfitRecordID == nil)
+  }
+
+  @Test
+  func recordWhoseModesMatchNoInterfaceFallsBackToHIDDescriptor() throws {
+    let device = PhysicalDevice(
+      vendorID: 0x1234,
+      productID: 0xAC02,
+      interfaces: [padInterface(0)]
+    )
+    let match: [String: Any] = [
+      "interfaceSignature": [
+        "interfaceClass": 0xFF, "interfaceSubclass": 0x47, "interfaceProtocol": 0xD0,
+      ]
+    ]
+    let catalog = try fitCatalog(server: nil, family: "XboxGIP", interface: nil, match: match)
+    let binding = try bound(ProtocolClassifier.classify(device, backend: .hid, catalog: catalog))
+    #expect(binding.protocolID == .hidDescriptor)
+    #expect(binding.inputMapping?.unfitRecordID == "1234-ac02")
+
+    let system = try fitCatalog(
+      server: "System",
+      family: "SonyDualShock4",
+      interface: nil,
+      match: match
+    )
+    #expect(
+      ProtocolClassifier.classify(device, backend: .hid, catalog: system)
+        == .unsupported(.noModeMatched)
+    )
   }
 }

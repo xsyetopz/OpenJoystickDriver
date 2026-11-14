@@ -1289,57 +1289,6 @@
       }
     },
     {
-      "name": "validator rejects modes that break record level rules: input layout beside a HIDDescriptor mode",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDReportLayout"
-            }
-          },
-          {
-            "id": "x",
-            "protocol": {
-              "family": "HIDDescriptor"
-            },
-            "match": {
-              "probes": [
-                {
-                  "report": 239,
-                  "length": 64,
-                  "expect": "Answers"
-                }
-              ]
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 8
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "validator rejects modes that break record level rules: HIDReportLayout mode without the input layout",
       "code": "E5007",
       "document": {
@@ -7618,42 +7567,6 @@
         ],
         "tuning": {
           "minimumHIDOutputIntervalMs": 8
-        }
-      }
-    },
-    {
-      "name": "a byte layout belongs to report layout only",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 65534,
-        "productID": 1,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDDescriptor"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 1
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
         }
       }
     },
