@@ -271,13 +271,7 @@
       message: String,
       style: NSAlert.Style = .informational
     ) {
-      let alert = NSAlert()
-      alert.alertStyle = style
-      alert.messageText = title
-      alert.informativeText = message
-      alert.addButton(withTitle: OJDLocalized.string("action.ok")).toolTip =
-        OJDLocalized.string("ui.help.dismissMessage")
-      alert.runActivatingApp()
+      MenuBarAlerts.notice(title: title, message: message, style: style).runActivatingApp()
     }
 
     /// Shows the tour of the main window, one alert per area, until the person is done.
@@ -287,28 +281,12 @@
         let choices = tour.choices
         let step = tour.current
         mainWindow?.showMainWindow(area: step.area)
-        let alert = NSAlert()
-        alert.alertStyle = .informational
-        alert.icon = NSImage(systemSymbolName: step.area.symbolName, accessibilityDescription: nil)
-        alert.messageText = OJDLocalized.string(step.titleKey)
-        alert.informativeText = OJDLocalized.string(step.summaryKey)
-        for choice in choices {
-          switch choice {
-          case .next:
-            alert.addButton(withTitle: OJDLocalized.string("ui.tour.next")).toolTip =
-              OJDLocalized.string("ui.help.tourNext")
-          case .back:
-            alert.addButton(withTitle: OJDLocalized.string("ui.tour.back")).toolTip =
-              OJDLocalized.string("ui.help.tourBack")
-          case .done:
-            alert.addButton(withTitle: OJDLocalized.string("action.done")).toolTip =
-              OJDLocalized.string("ui.help.tourDone")
-          }
+        let alert = MenuBarAlerts.tourStep(step, choices: choices)
+        let response = alert.runActivatingApp()
+        guard let choice = MenuBarAlerts.tourChoice(response: response, choices: choices) else {
+          return
         }
-        let first = NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
-        let pressed = alert.runActivatingApp().rawValue - first
-        guard choices.indices.contains(pressed) else { return }
-        switch choices[pressed] {
+        switch choice {
         case .next: tour.next()
         case .back: tour.back()
         case .done: return
@@ -319,16 +297,8 @@
     /// Asks to confirm, then disconnects the wireless link of `device`.
     private func confirmDisconnectWireless(_ device: ApplicationServiceDeviceDescription) {
       let confirmation = WirelessDisconnectConfirmation(controllerName: device.name)
-      let alert = NSAlert()
-      alert.alertStyle = .warning
-      alert.messageText = confirmation.title
-      alert.informativeText = confirmation.message
-      let disconnect = alert.addButton(withTitle: confirmation.confirmTitle)
-      disconnect.hasDestructiveAction = true
-      disconnect.toolTip = OJDLocalized.string("ui.help.disconnectWireless")
-      alert.addButton(withTitle: OJDLocalized.string("action.cancel")).toolTip =
-        OJDLocalized.string("ui.help.cancelAlert")
-      guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
+      let alert = MenuBarAlerts.disconnectWireless(confirmation)
+      guard MenuBarAlerts.isConfirmed(alert.runActivatingApp()) else { return }
       runControllerAction(device.sessionToken.rawValue) { device in
         await self.viewModel.disconnectWirelessController(device)
       }

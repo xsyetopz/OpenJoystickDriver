@@ -176,21 +176,10 @@
           $0.sessionToken.rawValue == sessionToken
         })
       else { return }
-      let alert = NSAlert()
-      alert.alertStyle = .warning
-      alert.messageText = OJDLocalized.string("ui.controllers.disconnectWirelessConfirmTitle")
-      alert.informativeText = OJDLocalized.formatted(
-        "ui.controllers.disconnectWirelessConfirmMessage",
-        device.name
+      let alert = MenuBarAlerts.disconnectWireless(
+        WirelessDisconnectConfirmation(controllerName: device.name)
       )
-      let disconnect = alert.addButton(
-        withTitle: OJDLocalized.string("ui.controllers.disconnectWirelessConfirm")
-      )
-      disconnect.hasDestructiveAction = true
-      disconnect.toolTip = OJDLocalized.string("ui.help.disconnectWireless")
-      alert.addButton(withTitle: OJDLocalized.string("action.cancel")).toolTip =
-        OJDLocalized.string("ui.help.cancelAlert")
-      guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
+      guard MenuBarAlerts.isConfirmed(alert.runActivatingApp()) else { return }
       runControllerAction(sessionToken) { device in
         await self.viewModel.disconnectWirelessController(device)
       }
@@ -212,20 +201,7 @@
         in: profiles,
         postEventAccess: postEventAccess
       ) { confirmation in
-        let alert = NSAlert()
-        alert.alertStyle = .warning
-        if case .activateNotice(let message) = confirmation {
-          alert.messageText = OJDLocalized.string("ui.profiles.activationTitle")
-          alert.informativeText = message
-        } else {
-          alert.messageText = OJDLocalized.string("ui.profiles.emptyActivationTitle")
-          alert.informativeText = OJDLocalized.string("ui.profiles.emptyActivationMessage")
-        }
-        alert.addButton(withTitle: OJDLocalized.string("action.setActive")).toolTip =
-          OJDLocalized.string("ui.help.confirmActivation")
-        alert.addButton(withTitle: OJDLocalized.string("action.cancel")).toolTip =
-          OJDLocalized.string("ui.help.cancelAlert")
-        return alert.runActivatingApp() == .alertFirstButtonReturn
+        return MenuBarAlerts.isConfirmed(MenuBarAlerts.activation(confirmation).runActivatingApp())
       }
     }
 
@@ -250,13 +226,7 @@
 
     /// Shows an alert that names the failed action and gives `message`.
     func presentFailure(_ message: String) {
-      let alert = NSAlert()
-      alert.alertStyle = .warning
-      alert.messageText = OJDLocalized.string("ui.extra.actionFailedTitle")
-      alert.informativeText = message
-      alert.addButton(withTitle: OJDLocalized.string("action.ok")).toolTip =
-        OJDLocalized.string("ui.help.dismissMessage")
-      alert.runActivatingApp()
+      MenuBarAlerts.failure(message: message).runActivatingApp()
     }
   }
 
