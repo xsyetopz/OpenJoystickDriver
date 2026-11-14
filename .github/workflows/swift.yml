@@ -30,7 +30,7 @@ jobs:
         with:
           path: BuildTools/.build
           key: build-tools-${{ runner.arch }}-${{ steps.versions.outputs.swift }}-${{ hashFiles('BuildTools/Package.swift', 'BuildTools/Package.resolved') }}
-      - run: if [[ -f .just/cpp.just ]]; then brew install llvm; fi
+      - run: if [[ -f .just/cpp.just ]]; then just cpp::setup; fi
       - run: just swift::setup
       - run: if [[ -f .just/cpp.just ]]; then just cpp::verify; fi
       - run: just swift::verify
