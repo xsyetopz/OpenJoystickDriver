@@ -122,6 +122,9 @@
         Text(skipped.displayPath)
         Text(OJDLocalized.formatted("ui.library.record.skipped", skipped.problem)).font(.caption)
           .foregroundColor(.secondary)
+        if skipped.offersMigration {
+          Button(OJDLocalized.string("ui.migrate.action")) { model.migrate() }
+        }
       }.ojdAccessibilityLabel(skipped.path).ojdAccessibilityValue(skipped.problem)
     }
 

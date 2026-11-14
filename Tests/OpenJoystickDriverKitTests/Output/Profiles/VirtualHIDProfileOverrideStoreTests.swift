@@ -138,6 +138,18 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
+  func staleJSONPersonaIsListedAsStale() throws {
+    try withDirectory { directory in
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      try Data("{}".utf8).write(to: directory.appendingPathComponent("045e-02ea.json"))
+      let store = Store(directory: directory)
+
+      #expect(store.problems.map(\.url.lastPathComponent) == ["045e-02ea.json"])
+      #expect(store.problems.first?.problem == DocumentMigrator.staleProblem)
+    }
+  }
+
+  @Test
   func fileWithUnsupportedAPIVersionIsSkipped() throws {
     try withDirectory { directory in
       let unsupported = persona(vendorID: 1, productID: 2).replacingOccurrences(

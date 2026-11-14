@@ -345,5 +345,34 @@ struct DirectoryLibraryStoreTests {
 
     #expect(skipped.count == 1)
     #expect(skipped.allSatisfy { !$0.problem.isEmpty })
+    #expect(skipped.allSatisfy { !$0.offersMigration })
+  }
+
+  @Test
+  func staleJSONFileOffersMigration() throws {
+    let directory = try directory()
+    try Data("{}".utf8).write(to: directory.appendingPathComponent("1234-abcd.json"))
+    let store = DirectoryLibraryStore(recordsDirectory: directory)
+
+    let skipped = store.records().skipped
+
+    #expect(skipped.map(\.offersMigration) == [true])
+    #expect(skipped.first?.problem == DocumentMigrator.staleProblem)
+  }
+
+  @Test
+  @MainActor
+  func migrateReloadsAndReportsAFileThatFailed() throws {
+    let support = RootedDataDirectory.temporary()
+    let model = LibraryViewModel(store: FakeLibraryStore())
+
+    model.migrate(DocumentMigrator(directory: support))
+    #expect(model.failure == nil)
+
+    let profiles = support.url(for: .applicationData).appendingPathComponent("Profiles")
+    try FileManager.default.createDirectory(at: profiles, withIntermediateDirectories: true)
+    try Data("{}".utf8).write(to: profiles.appendingPathComponent("notes.json"))
+    model.migrate(DocumentMigrator(directory: support))
+    #expect(model.failure?.code == .unsupportedAPIVersion)
   }
 }

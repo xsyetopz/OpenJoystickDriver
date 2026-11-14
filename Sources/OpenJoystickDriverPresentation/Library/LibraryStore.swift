@@ -82,6 +82,8 @@ struct LibrarySkippedFile: Equatable, Identifiable {
 
   /// The path, which identifies the file.
   var id: String { path }
+  /// Whether the file is a stale `.json` document that Migrate converts.
+  var offersMigration: Bool { problem == DocumentMigrator.staleProblem }
   /// The path as the Library shows it, with the home folder written as `~`.
   var displayPath: String { HomeFolder.redacting(path) }
 }
