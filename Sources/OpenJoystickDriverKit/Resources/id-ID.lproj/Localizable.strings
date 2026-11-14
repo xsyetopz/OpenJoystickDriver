@@ -5245,3 +5245,55 @@
 "cli.controller.lookup.discussion" = "Mencetak halaman wiki pengontrol yang didukung untuk model yang punya catatan, atau pencarian isu GitHub untuk VID:PID-nya jika tidak punya. Tidak membuka apa pun.";
 /* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
 "cli.record.show.communityVerified" = "Terverifikasi komunitas: mode %1$@, %2$@";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "Minta setiap kontrol pada pengontrol dan laporkan mana yang merespons.";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "Meminta Anda menggerakkan setiap kontrol yang dideklarasikan pengontrol, satu per satu. Satu langkah berakhir saat kontrol itu bergerak, saat kontrol lain bergerak lebih dulu, atau saat waktunya habis. Stik dan pemicu menyimpan rentang yang terlihat. Dengan --json, mencetak dokumen pemeriksaan pengontrol.";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "Lewati kontrol setelah sekian detik tanpa gerakan. Tanpa opsi ini, tunggu 15 detik.";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "Setelah pemeriksaan yang semua kontrolnya merespons, cetak teks validasi dan alamat formulir, lalu buka formulir setelah Anda mengetik y.";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "Kontrol %1$@ dari %2$@: gerakkan %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ tidak mendeklarasikan kontrol untuk diperiksa.";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "Validasi tidak ditawarkan: tidak semua kontrol merespons.";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "Teks ini hanya dikirim ke %@ setelah Anda mengirim formulir:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "Alamat formulir: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "Formulir tidak dibuka: tidak ada terminal untuk bertanya. Buka sendiri alamat di atas.";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "Buka formulir validasi di browser?";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "Pemeriksaan Terpandu";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "Langkah %1$d dari %2$d: gerakkan %3$@.";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "Lewati";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "Hasil Pemeriksaan Terpandu";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "%1$d dari %2$d kontrol merespons.";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "Merespons";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "Dilewati";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "%@ bergerak sebagai gantinya";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "Salin";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "Buka Isu";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "Validasi";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "Teks ini dikirim ke %@ saat Anda mengirim formulir. Konfirmasi membuka formulir yang sudah terisi di peramban Anda; tidak ada yang dikirim sampai Anda mengirimnya.";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "Konfirmasi";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "Stik kiri";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "Stik kanan";

@@ -5245,3 +5245,55 @@
 "cli.controller.lookup.discussion" = "对有记录的型号输出受支持控制器的 Wiki 页面，对没有记录的型号输出按其 VID:PID 搜索 GitHub 议题的地址。不会打开任何内容。";
 /* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
 "cli.record.show.communityVerified" = "社区已验证：模式 %1$@，%2$@";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "逐个请求控制器的每个控制项，并报告哪些有响应。";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "依次要求你操作控制器声明的每个控制项。该控制项动作、其他控制项先动作或时间用完时，该步骤结束。摇杆和扳机会保留所见范围。使用 --json 时，输出控制器检查文档。";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "控制项在这么多秒内没有动作就跳过。不指定时等待 15 秒。";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "在每个控制项都有响应的检查之后，输出验证文本和表单地址，并在你输入 y 后打开表单。";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "控制项 %1$@/%2$@：请操作 %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ 没有声明可检查的控制项。";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "不提供验证：并非每个控制项都有响应。";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "此文本只有在你提交表单后才会发送到 %@：";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "表单地址：%@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "未打开表单：没有可询问的终端。请自行打开上面的地址。";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "要在浏览器中打开验证表单吗？";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "引导式检查";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "第 %1$d 步，共 %2$d 步：请操作%3$@。";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "跳过";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "引导式检查结果";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "%2$d 个控制项中有 %1$d 个有响应。";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "有响应";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "已跳过";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "改为%@有动作";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "拷贝";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "打开议题";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "验证";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "你提交表单时，此文本会发送到 %@。“确认”会在浏览器中打开已预填的表单；在你提交之前不会发送任何内容。";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "确认";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "左摇杆";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "右摇杆";

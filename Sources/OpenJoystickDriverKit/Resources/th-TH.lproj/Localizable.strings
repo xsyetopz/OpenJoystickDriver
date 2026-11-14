@@ -5245,3 +5245,55 @@
 "cli.controller.lookup.discussion" = "พิมพ์หน้าวิกิคอนโทรลเลอร์ที่รองรับสำหรับรุ่นที่มีเรกคอร์ด หรือการค้นหา issue บน GitHub ด้วย VID:PID ของรุ่นนั้นเมื่อไม่มีเรกคอร์ด ไม่เปิดสิ่งใด";
 /* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
 "cli.record.show.communityVerified" = "ชุมชนยืนยันแล้ว: โหมด %1$@, %2$@";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "ขอให้ขยับตัวควบคุมของคอนโทรลเลอร์ทีละตัวและรายงานว่าตัวใดตอบสนอง";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "ขอให้ขยับตัวควบคุมที่คอนโทรลเลอร์ประกาศไว้ทีละตัว ขั้นตอนจบเมื่อตัวควบคุมนั้นขยับ เมื่อมีตัวอื่นขยับก่อน หรือเมื่อหมดเวลา สติ๊กและทริกเกอร์เก็บช่วงค่าที่เห็น เมื่อใช้ --json จะพิมพ์เอกสารตรวจสอบคอนโทรลเลอร์";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "ข้ามตัวควบคุมเมื่อไม่มีการขยับตามจำนวนวินาทีนี้ หากไม่ระบุ จะรอ 15 วินาที";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "หลังการตรวจสอบที่ตัวควบคุมทุกตัวตอบสนอง ให้พิมพ์ข้อความยืนยันและที่อยู่ของแบบฟอร์ม แล้วเปิดแบบฟอร์มเมื่อคุณพิมพ์ y";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "ตัวควบคุม %1$@ จาก %2$@: ขยับ %3$@…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@ ไม่ได้ประกาศตัวควบคุมให้ตรวจสอบ";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "ไม่เสนอการยืนยัน: ตัวควบคุมบางตัวไม่ตอบสนอง";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "ข้อความนี้จะไปถึง %@ เมื่อคุณส่งแบบฟอร์มเท่านั้น:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "ที่อยู่แบบฟอร์ม: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "ไม่ได้เปิดแบบฟอร์ม: ไม่มีเทอร์มินัลให้ถาม โปรดเปิดที่อยู่ด้านบนด้วยตัวเอง";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "เปิดแบบฟอร์มยืนยันในเบราว์เซอร์หรือไม่?";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "การตรวจสอบแบบมีคำแนะนำ";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "ขั้นตอนที่ %1$d จาก %2$d: ขยับ %3$@";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "ข้าม";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "ผลการตรวจสอบแบบมีคำแนะนำ";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "ตัวควบคุมตอบสนอง %1$d จาก %2$d ตัว";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "ตอบสนอง";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "ข้ามแล้ว";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "%@ ขยับแทน";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "คัดลอก";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "เปิด Issue";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "ยืนยันการทำงาน";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "ข้อความนี้จะถูกส่งไปที่ %@ เมื่อคุณส่งแบบฟอร์ม การยืนยันจะเปิดแบบฟอร์มที่กรอกไว้แล้วในเบราว์เซอร์ และจะไม่มีการส่งอะไรจนกว่าคุณจะส่งเอง";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "ยืนยัน";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "จอยสติ๊กซ้าย";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "จอยสติ๊กขวา";

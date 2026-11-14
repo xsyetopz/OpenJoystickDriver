@@ -167,7 +167,7 @@ struct StatusItemState: Equatable {
 /// The fixed status-item layout as data.
 enum StatusItemModel {
   /// The address of the page that starts a problem report.
-  static let problemReport = "https://github.com/xsyetopz/OpenJoystickDriver/issues/new"
+  static let problemReport = ControllerCheckIssue.newIssue
   /// The most profiles one controller's list shows before "More Profiles".
   static let profileListLimit = 10
 

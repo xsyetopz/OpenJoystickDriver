@@ -94,7 +94,14 @@
     /// The form: the controller header and the sections the controller supports.
     var body: some View {
       Form {
-        Section { controllerHeader }.ojdInterfaceRow(InputTestRow.status)
+        Section {
+          controllerHeader
+          GuidedCheckRow(
+            check: model.guidedCheck,
+            canStart: model.canStartGuidedCheck,
+            start: model.startGuidedCheck
+          )
+        }.ojdInterfaceRow(InputTestRow.status)
         ForEach(model.visibleSections, id: \.self) { section in
           switch section {
           case .liveInput: Section { liveInput }.ojdInterfaceRow(InputTestRow.controlDiagram)

@@ -42,7 +42,7 @@ public enum InputStartAction: String, Sendable {
 }
 
 /// A controller's input report health, for diagnostics.
-public struct ControllerInputHealth: Codable, Sendable {
+public struct ControllerInputHealth: Codable, Equatable, Sendable {
   /// The health state.
   public let state: ControllerInputHealthState
   /// The wire format of the latest input report; nil until one arrives.

@@ -5245,3 +5245,55 @@
 "cli.controller.lookup.discussion" = "레코드가 있는 모델은 지원 컨트롤러 위키 페이지를, 없는 모델은 해당 VID:PID의 GitHub 이슈 검색 주소를 출력합니다. 아무것도 열지 않습니다.";
 /* Line of 'ojd record show' for a mode that a public validation confirms. %1$@ is the mode id, such as xinput. %2$@ is the address of the validation issue. */
 "cli.record.show.communityVerified" = "커뮤니티 검증됨: 모드 %1$@, %2$@";
+/* One-line summary of 'ojd controller check' in the command list and at the top of its help. */
+"cli.controller.check.abstract" = "컨트롤러의 각 컨트롤을 차례로 요청하고 반응한 컨트롤을 보고합니다.";
+/* Long description in the help of 'ojd controller check'. --json stays as written. */
+"cli.controller.check.discussion" = "컨트롤러가 선언한 각 컨트롤을 하나씩 움직이도록 요청합니다. 해당 컨트롤이 움직이거나, 다른 컨트롤이 먼저 움직이거나, 시간이 다 되면 단계가 끝납니다. 스틱과 트리거는 관측한 범위를 유지합니다. --json을 사용하면 컨트롤러 확인 문서를 출력합니다.";
+/* Help text of the --duration option of 'ojd controller check'. The default is 15 seconds. */
+"cli.controller.check.duration" = "이 시간(초) 동안 움직임이 없으면 컨트롤을 건너뜁니다. 지정하지 않으면 15초 기다립니다.";
+/* Help text of the --validate flag of 'ojd controller check'. y is the letter the user types and stays as written. */
+"cli.controller.check.validate" = "모든 컨트롤이 반응한 확인 후 검증 텍스트와 양식 주소를 출력하고, y를 입력하면 양식을 엽니다.";
+/* Prompt of 'ojd controller check' for one control. %1$@ is the step number, %2$@ the number of steps and %3$@ the control, such as South or LeftStick. The control name stays as written. */
+"cli.controller.check.step" = "컨트롤 %1$@/%2$@: %3$@을(를) 움직이세요…";
+/* Error of 'ojd controller check' when the controller declares no control to ask for. %@ is the controller name. */
+"cli.controller.check.noControls" = "%@에는 확인할 컨트롤이 선언되어 있지 않습니다.";
+/* Notice of 'ojd controller check --validate' when a check has a control that did not respond. */
+"cli.controller.check.validateUnavailable" = "검증을 제공하지 않습니다. 모든 컨트롤이 반응하지는 않았습니다.";
+/* Heading of the validation text printed by 'ojd controller check --validate'. %@ is the destination, github.com/xsyetopz/OpenJoystickDriver, which stays as written. */
+"cli.controller.check.validateText" = "이 텍스트는 양식을 제출한 후에만 %@(으)로 전달됩니다:";
+/* Line of 'ojd controller check --validate' that shows the address of the prefilled form. %@ is the address. */
+"cli.controller.check.validateAddress" = "양식 주소: %@";
+/* Notice of 'ojd controller check --validate' when no terminal can ask whether to open the form. */
+"cli.controller.check.validateNotOpened" = "양식을 열지 않았습니다. 물어볼 터미널이 없습니다. 위 주소를 직접 여세요.";
+/* Question of 'ojd controller check --validate' before it opens the prefilled form in the browser. The prompt adds [y/N] after it. */
+"cli.controller.check.validateOpen" = "검증 양식을 브라우저에서 여시겠습니까?";
+/* Button in Test Input that starts the guided check, which asks for each control of the controller in turn. */
+"ui.inputTest.guidedCheck.start" = "안내식 점검";
+/* Text of one step of the guided check. %1$d is the number of the step, %2$d is the number of steps, %3$@ is the name of the control to move, such as Left stick. */
+"ui.inputTest.guidedCheck.step" = "%1$d/%2$d단계: %3$@을(를) 움직이세요.";
+/* Button that ends the current step of the guided check without waiting for the control. */
+"ui.inputTest.guidedCheck.skip" = "건너뛰기";
+/* Title of the sheet that shows the result of the guided check, and of the panel that saves it. */
+"ui.inputTest.guidedCheck.title" = "안내식 점검 결과";
+/* Summary line of the guided check result. %1$d is the number of controls that responded, %2$d is the number of controls asked for. */
+"ui.inputTest.guidedCheck.summary" = "컨트롤 %2$d개 중 %1$d개가 반응했습니다.";
+/* Result of a guided check step: the control left rest. */
+"ui.inputTest.guidedCheck.responded" = "반응함";
+/* Result of a guided check step: the user skipped it. */
+"ui.inputTest.guidedCheck.skipped" = "건너뜀";
+/* Result of a guided check step: a different control moved first. %@ is the name of that control. */
+"ui.inputTest.guidedCheck.otherControl" = "대신 %@이(가) 움직임";
+/* Button in the guided check result sheet that copies the check document to the pasteboard. */
+"ui.inputTest.guidedCheck.copy" = "복사";
+/* Button in the guided check result sheet that saves the check document, shows it in the file viewer and opens the GitHub issue form for a controller problem. */
+"ui.inputTest.guidedCheck.openIssue" = "이슈 열기";
+/* Button in the guided check result sheet, and title of the sheet, that offers a check in which every control responded as a validation of the controller. */
+"ui.inputTest.guidedCheck.validate" = "검증";
+/* Notice in the validation sheet, above the text that the form holds. %@ is the GitHub repository the form goes to. */
+"ui.inputTest.guidedCheck.validateText" = "양식을 제출하면 이 텍스트가 %@(으)로 전송됩니다. 확인을 누르면 미리 채워진 양식이 브라우저에서 열리며, 직접 제출하기 전에는 아무것도 전송되지 않습니다.";
+/* Button in the validation sheet that opens the prefilled GitHub form in the browser. */
+"ui.inputTest.guidedCheck.confirm" = "확인";
+/* Name of the left stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.leftStick" = "왼쪽 스틱";
+/* Name of the right stick as a whole, in a guided check step. */
+"ui.inputTest.guidedCheck.rightStick" = "오른쪽 스틱";

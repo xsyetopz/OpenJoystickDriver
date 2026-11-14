@@ -189,6 +189,7 @@ EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
             ("access-grants", "/properties/apiVersion/const"),
             ("cli-output", "/$defs/sharedAPIVersion/const"),
             ("controller", "/properties/apiVersion/const"),
+            ("controller-check", "/properties/apiVersion/const"),
             ("controller-patch", "/properties/apiVersion/const"),
             ("crosswalk", "/properties/apiVersion/const"),
             ("error-codes", "/properties/apiVersion/const"),
