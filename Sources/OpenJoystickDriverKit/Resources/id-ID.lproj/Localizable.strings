@@ -1408,6 +1408,8 @@
 "ui.service.state.versionMismatch.message" = "Layanan menjalankan versi yang berbeda dari app.";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "Izin diperlukan";
+/* Title of the problem banner when the driver extension is not active. %@ is the name of the controller, or a list of names, whose route is the extension. */
+"ui.banner.driver.title" = "%@ memerlukan driver USB Xbox";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
 "platform.macos.ui.banner.access.detail" = "macOS belum mengizinkan semua yang dibutuhkan OpenJoystickDriver untuk membaca pengontrol dan memublikasikannya ke game.";
 /* Title of the problem banner when the app does not get live changes of controllers from the service. */
@@ -3943,6 +3945,8 @@
 "ui.menu.controller.disconnectWirelessLink" = "Putuskan Koneksi Bluetooth";
 /* Item of the Controller menu that shows the selected controller in the main window. */
 "ui.menu.controller.showInWindow" = "Tampilkan di Jendela";
+/* Detail of a controller row in the menu bar menu: the profile in force and the app in front that selected it. %1$@ is the profile name and %2$@ is the app name. */
+"ui.menu.controller.profileForApp" = "%1$@ untuk %2$@";
 /* Disabled item of the Controller menu and of the status item's Controllers submenu when no controller is connected. */
 "ui.menu.controller.noneConnected" = "Tidak ada pengontrol yang terhubung";
 /* Disabled item of the Controller menu when no controller is selected. */

@@ -49,7 +49,7 @@ struct ListenerFailureStatusTests {
         permissions: viewModel.permissionState,
         status: viewModel.statusState,
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: viewModel.listenerFailure
       )
@@ -152,7 +152,7 @@ struct ListenerFailureStatusTests {
         permissions: viewModel.permissionState,
         status: viewModel.statusState,
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: viewModel.listenerFailure
       )

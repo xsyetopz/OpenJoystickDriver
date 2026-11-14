@@ -26,6 +26,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- Each controller row of the menu bar item shows the controller's name, its battery level, the profile in force (with the app that selected it) and `Paused` for a paused controller, and the menu refreshes when another app comes to the front. The driver extension banner names the controllers that need the extension.
 - **BREAKING:** `apiVersion` is `openjoystickdriver/v1alpha3`, and the readers accept only that version.
 - **BREAKING:** stored documents are XML property lists (`.plist`): the bundled records, patches, protocol descriptions, catalog rules, the crosswalk and virtual devices, and every document a user keeps. OJD refuses a binary property list, JSON text, and a `date` or `data` value. `plutil -convert xml1 -o FILE.plist FILE.json` converts a JSON file, and `plutil -convert json -o - FILE.plist` reads a property list as JSON. A user-defined record or patch follows the same schema as a bundled one.
 - **BREAKING:** a patch deletes a key through `remove`, because a property list has no `null`. A `null` in a patch no longer deletes, and the migration turns each one into a `remove` entry. In the crosswalk an absent key states that a control has no equivalent.

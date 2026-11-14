@@ -9,8 +9,9 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The service is in a state that needs attention; the message is the service's own, and empty
   /// when it gave none.
   case service(ServiceReadiness, String)
-  /// The Xbox USB driver extension is not active.
-  case driver(SystemExtensionSetupState)
+  /// The Xbox USB driver extension is not active; the names are those of the connected
+  /// controllers whose route is the extension.
+  case driver(SystemExtensionSetupState, controllers: [String])
   /// macOS has not granted a permission the service needs.
   case accessMissing
   /// The service's change notifications are unavailable for the reason, so the app reads the
@@ -35,11 +36,17 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   var titleKey: String {
     switch self {
     case .service(let readiness, _): return readiness.messageKey
-    case .driver: return "ui.setup.driverTitle"
+    case .driver: return "ui.banner.driver.title"
     case .accessMissing: return "ui.banner.access.title"
     case .liveUpdatesPolling: return "ui.banner.liveUpdates.title"
     case .virtualProfileStore: return "ui.virtualProfile.title"
     }
+  }
+
+  /// The banner row's title; the driver problem names its controllers.
+  var title: String {
+    guard case .driver(_, let controllers) = self else { return OJDLocalized.string(titleKey) }
+    return OJDLocalized.formatted(titleKey, ListFormatter.localizedString(byJoining: controllers))
   }
 
   /// The localization key of the detail, or nil when the detail is the service's own message.
@@ -47,7 +54,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     switch self {
     case .service, .virtualProfileStore: return nil
     case .liveUpdatesPolling(let failure): return failure.detailKey
-    case .driver(let state):
+    case .driver(let state, _):
       switch state {
       case .missingEmbedded: return "ui.setup.missingDetail"
       case .invalid: return "ui.setup.invalidDetail"
@@ -74,7 +81,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
       case .versionMismatch, .checking, .running: return nil
       case .stopped, .readFailed, .notInstalled, .needsApproval: return .retryService
       }
-    case .driver(let state):
+    case .driver(let state, _):
       switch state {
       case .needsApproval: return .openDriverApproval
       case .needsActivation, .replacementNeeded, .running, .cancelled, .timedOut, .failed:
@@ -92,14 +99,18 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   var actionTitleKey: String? {
     guard let action else { return nil }
     switch self {
-    case .driver(.running): return "ui.setup.repairRunning"
-    case .driver(.failed), .driver(.cancelled), .driver(.timedOut): return "action.tryAgain"
+    case .driver(.running, _): return "ui.setup.repairRunning"
+    case .driver(.failed, _), .driver(.cancelled, _), .driver(.timedOut, _):
+      return "action.tryAgain"
     default: return action.titleKey
     }
   }
 
   /// Whether the button of the row can be pressed; a request that runs disables it.
-  var isActionEnabled: Bool { self != .driver(.running) }
+  var isActionEnabled: Bool {
+    guard case .driver(.running, _) = self else { return true }
+    return false
+  }
 
   /// Whether the problem stops every controller.
   ///
@@ -107,7 +118,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   var isFailure: Bool {
     switch self {
     case .service(let readiness, _): return readiness.isFailure
-    case .driver(let state): return state == .missingEmbedded || state == .invalid
+    case .driver(let state, _): return state == .missingEmbedded || state == .invalid
     case .accessMissing, .liveUpdatesPolling, .virtualProfileStore: return false
     }
   }
@@ -115,12 +126,12 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// Returns the problems of the current state, most blocking first.
   ///
   /// Without the service nothing else can be read. The driver problem shows only while
-  /// `extensionRouteConnected` says a connected controller's route is the extension.
+  /// `extensionRouteControllers` names a connected controller whose route is the extension.
   static func current(
     permissions: RuntimePermissionLoadState,
     status: RuntimeStatusState,
     driver: SystemExtensionSetupState,
-    extensionRouteConnected: Bool,
+    extensionRouteControllers: [String],
     liveUpdatesFallbackReason: ControllerLiveUpdateFailure?,
     listenerFailure: ServiceListenerFailure?,
     registration: ApplicationServiceRegistrationStatus? = nil
@@ -144,7 +155,9 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     case .checking, .active: break
     case .missingEmbedded, .invalid, .unavailable, .needsActivation, .replacementNeeded, .running,
       .needsApproval, .cancelled, .timedOut, .failed:
-      if extensionRouteConnected { problems.append(.driver(driver)) }
+      if !extensionRouteControllers.isEmpty {
+        problems.append(.driver(driver, controllers: extensionRouteControllers))
+      }
     }
     if AccessReadiness.hasMissingPermission(permissionState: permissions, statusState: status) {
       problems.append(.accessMissing)
@@ -160,13 +173,13 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
 }
 
 extension RuntimeStatusState {
-  /// Whether a connected controller's route is the extension: Apple's driver holds it and a claim
-  /// activates the extension, or the extension already owns its USB interface.
-  var hasExtensionRouteController: Bool {
-    guard case .available(let presentation) = self else { return false }
-    return presentation.devices.contains {
+  /// The names of the connected controllers whose route is the extension: Apple's driver holds it
+  /// and a claim activates the extension, or the extension already owns its USB interface.
+  var extensionRouteControllerNames: [String] {
+    guard case .available(let presentation) = self else { return [] }
+    return presentation.devices.filter {
       $0.isHeldByAppleDriver || $0.physicalOwnership == .extensionOwnedUSB
-    }
+    }.map(\.name)
   }
 }
 
@@ -193,7 +206,7 @@ extension RuntimeViewModel {
       permissions: permissionState,
       status: statusState,
       driver: systemExtensionSetupState,
-      extensionRouteConnected: statusState.hasExtensionRouteController,
+      extensionRouteControllers: statusState.extensionRouteControllerNames,
       liveUpdatesFallbackReason: liveUpdatesFallbackReason,
       listenerFailure: listenerFailure,
       registration: ServiceReadiness.currentRegistration(for: statusState)

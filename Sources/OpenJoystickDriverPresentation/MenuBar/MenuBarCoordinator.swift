@@ -40,6 +40,8 @@
     var statusItem: NSStatusItem?
     /// Tells when the user takes the menu-bar item out of the menu bar.
     var statusItemVisibilityObservation: NSKeyValueObservation?
+    /// Tells when another app comes to the front, which can change a controller's profile in force.
+    var frontAppObserver: (any NSObjectProtocol)?
     /// The menu of the menu-bar item.
     var statusMenu: NSMenu?
     /// Tells when the status menu opens and closes.

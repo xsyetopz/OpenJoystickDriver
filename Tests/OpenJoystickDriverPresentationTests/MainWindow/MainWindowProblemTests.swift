@@ -37,7 +37,7 @@ struct MainWindowProblemTests {
         permissions: permissions(.granted),
         status: status(inputRead: .granted),
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).isEmpty
@@ -47,7 +47,7 @@ struct MainWindowProblemTests {
         permissions: .loading,
         status: .loading,
         driver: .checking,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).isEmpty
@@ -71,7 +71,7 @@ struct MainWindowProblemTests {
         permissions: reading,
         status: payload,
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
@@ -82,7 +82,7 @@ struct MainWindowProblemTests {
         permissions: permissions(.granted),
         status: status(inputRead: .denied),
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).contains(.accessMissing)
@@ -96,33 +96,39 @@ struct MainWindowProblemTests {
         permissions: .unavailable,
         status: .unavailable("down"),
         driver: .needsApproval,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.service(.stopped, "down"), .driver(.needsApproval)]
+        == [.service(.stopped, "down"), .driver(.needsApproval, controllers: ["Pad"])]
     )
     #expect(
       MainWindowProblem.current(
         permissions: permissions(.denied),
         status: status(inputRead: .denied),
         driver: .failed(Self.failure),
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.driver(.failed(Self.failure)), .accessMissing]
+        == [.driver(.failed(Self.failure), controllers: ["Pad"]), .accessMissing]
     )
   }
 
   @Test
   func eachProblemNamesItsAction() {
     #expect(MainWindowProblem.service(.stopped, "down").action == .retryService)
-    #expect(MainWindowProblem.driver(.needsApproval).action == .openDriverApproval)
-    #expect(MainWindowProblem.driver(.needsActivation).action == .repairDriver)
-    #expect(MainWindowProblem.driver(.invalid).action == nil)
-    #expect(MainWindowProblem.driver(.unavailable("probe failed")).action == nil)
-    #expect(MainWindowProblem.driver(.missingEmbedded).action == nil)
+    #expect(
+      MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).action == .openDriverApproval
+    )
+    #expect(
+      MainWindowProblem.driver(.needsActivation, controllers: ["Pad"]).action == .repairDriver
+    )
+    #expect(MainWindowProblem.driver(.invalid, controllers: ["Pad"]).action == nil)
+    #expect(
+      MainWindowProblem.driver(.unavailable("probe failed"), controllers: ["Pad"]).action == nil
+    )
+    #expect(MainWindowProblem.driver(.missingEmbedded, controllers: ["Pad"]).action == nil)
     #expect(MainWindowProblem.accessMissing.action == .showAccess)
   }
 
@@ -133,22 +139,29 @@ struct MainWindowProblemTests {
         permissions: permissions(.granted),
         status: status(inputRead: .granted),
         driver: .needsActivation,
-        extensionRouteConnected: connected,
+        extensionRouteControllers: connected ? ["Pad"] : [],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-      #expect(problems.contains(.driver(.needsActivation)) == connected)
+      #expect(problems.contains(.driver(.needsActivation, controllers: ["Pad"])) == connected)
     }
-    #expect(!RuntimeStatusState.loading.hasExtensionRouteController)
+    #expect(RuntimeStatusState.loading.extensionRouteControllerNames.isEmpty)
+  }
+
+  @Test
+  func driverBannerNamesControllersThatNeedExtension() {
+    let title = MainWindowProblem.driver(.needsActivation, controllers: ["Pad", "Stick"]).title
+    #expect(title.contains("Pad") && title.contains("Stick"))
+    #expect(MainWindowProblem.accessMissing.title == OJDLocalized.string("ui.banner.access.title"))
   }
 
   @Test
   func runningRequestShowsProgressWithDisabledButton() {
-    let problem = MainWindowProblem.driver(.running)
+    let problem = MainWindowProblem.driver(.running, controllers: ["Pad"])
     #expect(problem.detailKey == "ui.setup.runningDetail")
     #expect(problem.actionTitleKey == "ui.setup.repairRunning")
     #expect(!problem.isActionEnabled)
-    #expect(MainWindowProblem.driver(.needsActivation).isActionEnabled)
+    #expect(MainWindowProblem.driver(.needsActivation, controllers: ["Pad"]).isActionEnabled)
   }
 
   @Test
@@ -163,7 +176,7 @@ struct MainWindowProblemTests {
       (.invalid, "ui.setup.invalidDetail", nil),
     ]
     for (state, detailKey, action) in cases {
-      let problem = MainWindowProblem.driver(state)
+      let problem = MainWindowProblem.driver(state, controllers: ["Pad"])
       #expect(problem.detailKey == detailKey, "\(state)")
       #expect(problem.action == action, "\(state)")
       #expect((problem.actionTitleKey == nil) == (action == nil), "\(state)")
@@ -173,8 +186,8 @@ struct MainWindowProblemTests {
   @Test
   func onlyProblemsThatNeedServiceOrReinstallAreFailures() {
     #expect(MainWindowProblem.service(.stopped, "down").isFailure)
-    #expect(MainWindowProblem.driver(.missingEmbedded).isFailure)
-    #expect(!MainWindowProblem.driver(.needsApproval).isFailure)
+    #expect(MainWindowProblem.driver(.missingEmbedded, controllers: ["Pad"]).isFailure)
+    #expect(!MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).isFailure)
     #expect(!MainWindowProblem.accessMissing.isFailure)
   }
 
@@ -184,7 +197,7 @@ struct MainWindowProblemTests {
       permissions: permissions(.granted),
       status: status(inputRead: .granted),
       driver: .active,
-      extensionRouteConnected: true,
+      extensionRouteControllers: ["Pad"],
       liveUpdatesFallbackReason: .timeout,
       listenerFailure: nil
     )
@@ -211,7 +224,7 @@ struct MainWindowProblemTests {
       permissions: permissions(.granted),
       status: unreadable,
       driver: .active,
-      extensionRouteConnected: true,
+      extensionRouteControllers: ["Pad"],
       liveUpdatesFallbackReason: nil,
       listenerFailure: nil
     )
@@ -283,21 +296,29 @@ struct MainWindowProblemTests {
 
   @Test
   func bannerRowWithButtonOffersFixOfMatchingControllerCard() {
-    #expect(MainWindowProblem.driver(.needsApproval).offersFix(of: .setUpDriver))
-    #expect(MainWindowProblem.driver(.needsActivation).offersFix(of: .setUpDriver))
+    #expect(
+      MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).offersFix(of: .setUpDriver)
+    )
+    #expect(
+      MainWindowProblem.driver(.needsActivation, controllers: ["Pad"]).offersFix(of: .setUpDriver)
+    )
     #expect(MainWindowProblem.accessMissing.offersFix(of: .openAccess))
   }
 
   @Test
   func driverRowWithoutButtonLeavesCardsButton() {
-    #expect(!MainWindowProblem.driver(.missingEmbedded).offersFix(of: .setUpDriver))
-    #expect(!MainWindowProblem.driver(.invalid).offersFix(of: .setUpDriver))
+    #expect(
+      !MainWindowProblem.driver(.missingEmbedded, controllers: ["Pad"]).offersFix(of: .setUpDriver)
+    )
+    #expect(!MainWindowProblem.driver(.invalid, controllers: ["Pad"]).offersFix(of: .setUpDriver))
   }
 
   @Test
   func bannerRowOffersOnlyFixOfItsOwnProblem() {
     #expect(!MainWindowProblem.accessMissing.offersFix(of: .setUpDriver))
-    #expect(!MainWindowProblem.driver(.needsApproval).offersFix(of: .openAccess))
+    #expect(
+      !MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).offersFix(of: .openAccess)
+    )
     #expect(!MainWindowProblem.accessMissing.offersFix(of: .openInputTest))
     #expect(!MainWindowProblem.service(.stopped, "").offersFix(of: .openTroubleshooting))
   }

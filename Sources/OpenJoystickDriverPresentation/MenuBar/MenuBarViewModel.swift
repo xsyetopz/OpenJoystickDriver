@@ -56,10 +56,25 @@
             profiles: Self.profiles(applyingTo: $0, in: snapshot)
           )
           controller.battery = $0.connectionState?.power.battery.percentageText
+          controller.profileInForce = Self.profileInForceText(
+            $0.profileInForce,
+            appName: ProfileAppChoices.appName
+          )
           return controller
         },
         profileListRead: snapshot != nil
       )
+    }
+
+    /// The profile name for a controller row, followed by the app that selected the profile.
+    static func profileInForceText(
+      _ profile: ApplicationServiceProfileInForce?,
+      appName: (String) -> String
+    ) -> String? {
+      guard let profile else { return nil }
+      return profile.appID.map {
+        OJDLocalized.formatted("ui.menu.controller.profileForApp", profile.name, appName($0))
+      } ?? profile.name
     }
 
     /// The profiles of the snapshot that apply to the controller: its model, and its unit when the
