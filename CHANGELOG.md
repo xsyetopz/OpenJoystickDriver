@@ -49,6 +49,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it.
 - A controller whose record has no default mode and no mode matching the device falls back to its HID descriptor, as a record that fits no interface does; before, it was refused with `NoModeMatched`.
 - OJD seizes a HID device with no record only when the classifier binds it; before, it seized every such device and released the refused ones afterwards.
+- `ojd record draft` for a device whose interfaces report no class says so; before, it said the device is not connected as a HID device.
+- The numbered steps of the Support Ladder wiki page continue after each XML example instead of restarting at 1.
 - **Check Now** with only prerelease releases published reports no error: it states that only prereleases exist and names **Include prerelease updates**.
 - The stick dead zone stepper clears the value ("Not set") when it decrements below the lowest value; before, only **Reset** cleared it.
 - The developer tools show **USB endpoints** only for a controller connected over USB.

@@ -3071,6 +3071,8 @@
 "cli.record.draft.sdl.noLine" = "SDL_GameControllerDB에 %1$@(GUID %2$@)의 줄이 없습니다.";
 /* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
 "cli.record.draft.sdl.noPad" = "%@은(는) 이 명령이 읽을 수 있는 HID 기기로 연결되어 있지 않습니다.";
+/* Message of 'ojd record draft' when no USB interface of a controller that is not served reports a class, so no draft exists. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.noInterfaceClass" = "%@은(는) USB 인터페이스 클래스를 보고하지 않아 레코드 초안을 만들 근거가 없습니다.";
 /* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
 "cli.record.draft.sdl.rejected" = "%1$@의 SDL_GameControllerDB 줄이 거부되었습니다: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */

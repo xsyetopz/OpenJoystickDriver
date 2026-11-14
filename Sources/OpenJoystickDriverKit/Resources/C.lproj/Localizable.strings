@@ -3071,6 +3071,8 @@
 "cli.record.draft.sdl.noLine" = "SDL_GameControllerDB has no line for %1$@ (GUID %2$@).";
 /* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
 "cli.record.draft.sdl.noPad" = "%@ is not connected as a HID device that this command can read.";
+/* Message of 'ojd record draft' when no USB interface of a controller that is not served reports a class, so no draft exists. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.noInterfaceClass" = "%@ reports no USB interface class, so there is nothing to draft a record from.";
 /* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
 "cli.record.draft.sdl.rejected" = "SDL_GameControllerDB line rejected for %1$@: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
