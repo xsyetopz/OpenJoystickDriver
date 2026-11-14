@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "कोई पैकेट कैप्चर चुनें।";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "अपेक्षित कंट्रोलर स्थिति चुनें।";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "त्रुटि का ब्योरा दिखाएँ";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "त्रुटि ख़ारिज करें";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "संदेश ख़ारिज करें";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver ने यह अनुरोध अस्वीकार कर दिया।";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "अनुरोध विफल रहा: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "त्रुटि का ब्योरा दिखाएँ";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "त्रुटि ख़ारिज करें";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "ऐक्सेस सेटिंग्स फिर से पढ़ें";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "नई अनुमतियाँ लागू करने के लिए ऐप फिर से शुरू करें";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket पोर्ट; सहेजा गया पोर्ट रखने के लिए खाली छोड़ें। सिस्टम पोर्ट तभी चुनता है जब कोई पोर्ट सहेजा न गया हो या स्वचालित चुना गया हो";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "टोकन का नाम";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "वे वेब ऑरिजिन जो टोकन उपयोग कर सकते हैं, हर पंक्ति में एक";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "पुष्टि पर आगे बढ़ें";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "टोकन";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "टोकन को क्लिपबोर्ड पर कॉपी करें";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "टोकन बंद करें";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ स्कोप";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "रद्द करें और ऐक्सेस जैसा है वैसा रखें";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "%@ के बारे में";
@@ -5355,3 +5355,151 @@
 "ui.setup.uninstallRefused" = "ड्राइवर एक्सटेंशन अभी भी इंस्टॉल है।";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "ब्राउज़र नहीं खुल सका।";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "इस प्रोग्राम को स्थानीय एंडपॉइंट इस्तेमाल करने दें";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "पहुँच हटाएँ और खुले कनेक्शन बंद करें";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "सिस्टम से यह अनुमति देने को कहें";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "WebSocket के लिए सिस्टम को खाली पोर्ट चुनने दें";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "सॉकेट पाथ को क्लिपबोर्ड पर कॉपी करें";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "शीट में बताया गया बदलाव लागू करें";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "प्रोग्राम को कंट्रोलर इवेंट पाने दें";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "प्रोग्राम को वर्चुअल गेमपैड चलाने दें";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "सहेजे गए दस्तावेज़ों को मौजूदा संस्करण में बदलें";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "असफल रही कार्रवाई दोबारा चलाएँ";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "किसी कंट्रोलर के लिए प्रोफ़ाइल बनाएँ";
+/* Tooltip of the button that switches the interface to show every control. */
+"ui.help.showAllControls" = "उन्नत सहित सभी नियंत्रण दिखाएँ";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "सेटअप पूरा करें और ऐप पर जाएँ";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "इस शीट को बंद करें";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "सेवा की स्थिति दोबारा पढ़ें";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "सेवा का अनुरोध श्रोता फिर से शुरू करें";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "सिस्टम सेटिंग्स में ड्राइवर एक्सटेंशन को मंज़ूरी दें";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "ड्राइवर एक्सटेंशन की मरम्मत करें";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "पहुँच क्षेत्र में छूटी हुई अनुमतियाँ माँगें";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "फ़ाइल से प्रोफ़ाइल जोड़ें";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "प्रोफ़ाइल फ़ाइल को आयात किए बिना जाँचें";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "चुनी हुई प्रोफ़ाइल की प्रतिलिपि बनाएँ";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "चुनी हुई प्रोफ़ाइल को दूसरे कंट्रोलर मॉडल में बदलें";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "चुनी हुई प्रोफ़ाइल को फ़ाइल में सहेजें";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "चुनी हुई प्रोफ़ाइल हटाएँ";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "रिकॉर्ड फ़ाइल या मॉड फ़ोल्डर को इंस्टॉल किए बिना जाँचें";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "चुने हुए रिकॉर्ड को पैकेट कैप्चर पर चलाएँ";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "चुना हुआ रिकॉर्ड या मॉड हटाएँ";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "लाइब्रेरी में रिकॉर्ड और मॉड खोजें";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "चुनें कि गतिविधि का कौन-सा दृश्य दिखे";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "चुनें कि कौन-सी लॉग धारा और कितनी पंक्तियाँ दिखें";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "गतिविधि लॉग में टेक्स्ट खोजें";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "पूरा लॉग क्लिपबोर्ड पर कॉपी करें";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "गतिविधि लॉग को फ़ाइल में सहेजें";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "लॉग फ़ाइल को Finder में दिखाएँ";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "सेटअप की निदान जाँचें चलाएँ";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "कंट्रोलर की स्थिति और कार्रवाइयाँ दिखाएँ";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "जुड़े हुए कंट्रोलर दोबारा पढ़ें";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "जाँचने के लिए कंट्रोलर चुनें";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "सीमाएँ चुनें और टिकाऊपन परीक्षण चलाएँ";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "इन सीमाओं के साथ टिकाऊपन परीक्षण चलाएँ";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "टिकाऊपन परीक्षण फिर से चलाएँ";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "चल रहा टिकाऊपन परीक्षण रोकें";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "चुनें कि सूची कौन-से पैकेट दिखाए";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "चुने हुए कंट्रोलर के पैकेट रिकॉर्ड करें";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "पैकेट रिकॉर्ड करना रोकें";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "रिकॉर्ड किए गए पैकेट सूची से हटाएँ";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "रिकॉर्ड किए गए सभी पैकेट क्लिपबोर्ड पर कॉपी करें";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "रिकॉर्ड किए गए पैकेट फ़ाइल में सहेजें";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "कंट्रोलर को रोकने और फिर चलाने वाली कुंजियाँ दबाएँ";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "सहेजा हुआ रोकने का शॉर्टकट हटाएँ";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "कंट्रोलर जुड़ने या ध्यान माँगने पर सूचना दिखाएँ";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "कंट्रोलर कटने पर सूचना दिखाएँ";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "प्रोफ़ाइल सक्रिय होने या बदलने पर सूचना दिखाएँ";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "प्रोफ़ाइल निष्क्रिय होने पर सूचना दिखाएँ";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "हर सूचना के साथ ध्वनि बजाएँ";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "बदलें कि सिस्टम ऐप की सूचनाएँ कैसे दिखाए";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "अभी एक नमूना सूचना दिखाएँ";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "ड्राइवर एक्सटेंशन को सिस्टम से हटाएँ";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "चुनें कि ऐप कितने नियंत्रण दिखाए";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "चुनें कि कंट्रोलर कितनी देर निष्क्रिय रह सकता है";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "उपलब्ध रिलीज़ का पृष्ठ खोलें";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "अभी नया रिलीज़ खोजें";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "समय-समय पर नया रिलीज़ खोजें";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "अपडेट खोजते समय प्री-रिलीज़ संस्करण शामिल करें";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "लॉग इन करने पर ऐप खोलें";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "मेनू बार में ऐप की स्थिति वाला आइटम दिखाएँ";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "Dock में ऐप का आइकन दिखाएँ";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "कंट्रोलर इनपुट और USB पैकेट के औज़ार दिखाएँ";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "ojd कमांड को इस ऐप से जोड़ें";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "ojd कमांड का लिंक हटाएँ";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "न पढ़ी जा सकने वाली सेटिंग फ़ाइल को Finder में दिखाएँ";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "न पढ़ी जा सकने वाली सेटिंग को डिफ़ॉल्ट से बदलें";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "इस संदेश को छिपाएँ";

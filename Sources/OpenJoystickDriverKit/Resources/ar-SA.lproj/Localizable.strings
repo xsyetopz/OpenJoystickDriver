@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "اختر ملف التقاط الحزم.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "اختر حالة وحدة التحكم المتوقعة.";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "إظهار تفاصيل الخطأ";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "تجاهل الخطأ";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "تجاهل الرسالة";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "رفض OpenJoystickDriver هذا الطلب.";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "فشل الطلب: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "إظهار تفاصيل الخطأ";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "تجاهل الخطأ";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "قراءة إعدادات الوصول مرة أخرى";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "إعادة تشغيل التطبيق لتسري الأذونات الجديدة";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "منفذ WebSocket؛ اتركه فارغًا للاحتفاظ بالمنفذ المحفوظ. يختار النظام منفذًا فقط عندما لا يوجد منفذ محفوظ أو عند اختيار تلقائي";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "اسم الرمز المميز";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "أصول الويب التي يمكنها استخدام الرمز المميز، واحد في كل سطر";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "متابعة إلى التأكيد";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "الرمز المميز";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "نسخ الرمز المميز إلى الحافظة";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "إغلاق الرمز المميز";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "نطاق %@";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "إلغاء وإبقاء الوصول كما هو";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "حول %@";
@@ -5355,3 +5355,151 @@
 "ui.setup.uninstallRefused" = "امتداد برنامج التشغيل لا يزال مثبتًا.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "تعذّر فتح المتصفح.";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "السماح لهذا البرنامج باستخدام نقطة النهاية المحلية";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "إزالة الوصول وإغلاق الاتصالات المفتوحة";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "طلب من النظام منح هذا الإذن";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "ترك النظام يختار منفذًا حرًا لـ WebSocket";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "نسخ مسار المقبس إلى الحافظة";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "تطبيق التغيير الذي تصفه الورقة";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "السماح للبرنامج باستلام أحداث وحدة التحكم";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "السماح للبرنامج بتشغيل وحدة ألعاب افتراضية";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "تحويل المستندات المخزنة إلى الإصدار الحالي";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "تشغيل الإجراء الذي فشل مرة أخرى";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "إنشاء ملف تعريف لوحدة تحكم";
+/* Tooltip of the button that switches the interface to show every control. */
+"ui.help.showAllControls" = "إظهار كل عناصر التحكم بما فيها المتقدمة";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "إنهاء الإعداد والانتقال إلى التطبيق";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "إغلاق هذه الورقة";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "قراءة حالة الخدمة مرة أخرى";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "إعادة تشغيل مستمع الطلبات في الخدمة";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "الموافقة على امتداد برنامج التشغيل في إعدادات النظام";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "إصلاح امتداد برنامج التشغيل";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "طلب الأذونات الناقصة في منطقة الوصول";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "إضافة ملف تعريف من ملف";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "فحص ملف تعريف دون استيراده";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "إنشاء نسخة من ملف التعريف المحدد";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "تغيير ملف التعريف المحدد إلى طراز وحدة تحكم آخر";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "حفظ ملف التعريف المحدد في ملف";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "إزالة ملف التعريف المحدد";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "فحص ملف سجل أو مجلد تعديل دون تثبيته";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "تشغيل السجل المحدد على التقاط حزم";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "إزالة السجل أو التعديل المحدد";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "البحث عن السجلات والتعديلات في المكتبة";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "اختيار أي عرض للنشاط يظهر";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "اختيار أي مجرى سجل وكم سطرًا يظهر";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "البحث عن نص في سجل النشاط";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "نسخ السجل كاملًا إلى الحافظة";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "حفظ سجل النشاط في ملف";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "إظهار ملف السجل في Finder";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "تشغيل فحوص التشخيص للإعداد";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "إظهار حالة وحدات التحكم والإجراءات";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "قراءة وحدات التحكم المتصلة مرة أخرى";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "اختيار وحدة التحكم المراد فحصها";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "اختيار الحدود وتشغيل اختبار تحمل";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "تشغيل اختبار التحمل بهذه الحدود";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "تشغيل اختبار التحمل مرة أخرى";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "إيقاف اختبار التحمل الجاري";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "اختيار الحزم التي تعرضها القائمة";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "تسجيل حزم وحدة التحكم المحددة";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "إيقاف تسجيل الحزم";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "مسح الحزم المسجلة من القائمة";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "نسخ كل الحزم المسجلة إلى الحافظة";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "حفظ الحزم المسجلة في ملف";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "الضغط على المفاتيح التي توقف وحدات التحكم مؤقتًا وتستأنفها";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "إزالة اختصار الإيقاف المؤقت المحفوظ";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "إظهار إشعار عند اتصال وحدة تحكم أو حاجتها إلى انتباه";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "إظهار إشعار عند انقطاع اتصال وحدة تحكم";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "إظهار إشعار عند تفعيل ملف تعريف أو تبديله";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "إظهار إشعار عند إلغاء تفعيل ملف تعريف";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "تشغيل صوت مع كل إشعار";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "تغيير طريقة عرض النظام لإشعارات التطبيق";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "إظهار إشعار تجريبي الآن";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "إزالة امتداد برنامج التشغيل من النظام";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "اختيار عدد عناصر التحكم التي يعرضها التطبيق";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "اختيار المدة التي تبقى فيها وحدة التحكم خاملة";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "فتح صفحة الإصدار المتاح";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "البحث عن إصدار أحدث الآن";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "البحث عن إصدار أحدث من حين إلى آخر";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "تضمين الإصدارات التمهيدية عند البحث عن التحديثات";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "فتح التطبيق عند تسجيل الدخول";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "إظهار عنصر حالة التطبيق في شريط القوائم";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "إظهار أيقونة التطبيق في Dock";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "إظهار أدوات إدخال وحدة التحكم وحزم USB";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "ربط الأمر ojd بهذا التطبيق";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "إزالة ربط الأمر ojd";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "إظهار ملف الإعدادات غير المقروء في Finder";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "استبدال الإعدادات غير المقروءة بالإعدادات الافتراضية";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "إخفاء هذه الرسالة";

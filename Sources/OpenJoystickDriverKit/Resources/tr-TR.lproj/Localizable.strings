@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "Bir paket yakalama seçin.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "Beklenen kontrolcü durumunu seçin.";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "Hatanın ayrıntılarını göster";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "Hatayı kapat";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "Mesajı kapat";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver bu isteği reddetti.";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "İstek başarısız oldu: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "Hatanın ayrıntılarını göster";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "Hatayı kapat";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "Erişim ayarlarını yeniden oku";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "Yeni izinlerin geçerli olması için uygulamayı yeniden başlat";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "WebSocket bağlantı noktası; kayıtlı bağlantı noktasını korumak için boş bırakın. Sistem yalnızca kayıtlı bağlantı noktası yoksa veya Otomatik seçilirse bir bağlantı noktası seçer";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "Token adı";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "Token’ı kullanabilecek web kaynakları, her satıra bir tane";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "Onaya devam et";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "Token";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "Token’ı panoya kopyala";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "Token’ı kapat";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "%@ kapsamı";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "Vazgeç ve erişimi olduğu gibi bırak";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "%@ Hakkında";
@@ -5355,3 +5355,151 @@
 "ui.setup.uninstallRefused" = "Sürücü uzantısı hâlâ yüklü.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Tarayıcı açılamadı.";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "Bu programın yerel uç noktayı kullanmasına izin ver";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "Erişimi kaldır ve açık bağlantıları kapat";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "Sistemden bu izni vermesini iste";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "WebSocket için boş bir bağlantı noktasını sistemin seçmesine izin ver";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "Soket yolunu panoya kopyala";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "Sayfada anlatılan değişikliği uygula";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "Programın denetleyici olaylarını almasına izin ver";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "Programın sanal bir oyun kumandasını sürmesine izin ver";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "Kayıtlı belgeleri güncel sürüme dönüştür";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "Başarısız olan eylemi yeniden çalıştır";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "Bir denetleyici için profil oluştur";
+/* Tooltip of the button that switches the interface to show every control. */
+"ui.help.showAllControls" = "Gelişmiş olanlar dahil tüm denetimleri göster";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "Kurulumu bitir ve uygulamaya geç";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "Bu sayfayı kapat";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "Hizmet durumunu yeniden oku";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "Hizmetin istek dinleyicisini yeniden başlat";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "Sürücü uzantısını Sistem Ayarları'nda onayla";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "Sürücü uzantısını onar";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "Eksik izinleri Erişim alanında iste";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "Bir dosyadan profil ekle";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "Bir profil dosyasını içe aktarmadan denetle";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "Seçili profilin bir kopyasını oluştur";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "Seçili profili başka bir denetleyici modeline çevir";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "Seçili profili dosyaya kaydet";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "Seçili profili kaldır";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "Bir kayıt dosyasını veya mod klasörünü kurmadan denetle";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "Seçili kaydı bir paket yakalamasında çalıştır";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "Seçili kaydı veya modu kaldır";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "Kitaplıkta kayıtları ve modları ara";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "Etkinliğin hangi görünümde gösterileceğini seç";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "Hangi günlük akışının ve kaç satırın gösterileceğini seç";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "Etkinlik günlüğünde metin ara";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "Günlüğün tamamını panoya kopyala";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "Etkinlik günlüğünü dosyaya kaydet";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "Günlük dosyasını Finder'da göster";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "Kurulum için tanılama denetimlerini çalıştır";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "Denetleyici durumunu ve eylemleri göster";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "Bağlı denetleyicileri yeniden oku";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "İncelenecek denetleyiciyi seç";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "Sınırları seç ve dayanıklılık testi çalıştır";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "Dayanıklılık testini bu sınırlarla çalıştır";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "Dayanıklılık testini yeniden çalıştır";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "Çalışan dayanıklılık testini durdur";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "Listenin hangi paketleri göstereceğini seç";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "Seçili denetleyicinin paketlerini kaydet";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "Paket kaydını durdur";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "Kaydedilen paketleri listeden temizle";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "Kaydedilen tüm paketleri panoya kopyala";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "Kaydedilen paketleri dosyaya kaydet";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "Denetleyicileri duraklatan ve sürdüren tuşlara bas";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "Kayıtlı duraklatma kısayolunu kaldır";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "Bir denetleyici bağlandığında veya ilgi istediğinde bildirim göster";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "Bir denetleyicinin bağlantısı kesildiğinde bildirim göster";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "Bir profil etkinleştiğinde veya değiştiğinde bildirim göster";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "Bir profil devre dışı kaldığında bildirim göster";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "Her bildirimle birlikte ses çal";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "Sistemin uygulama bildirimlerini nasıl göstereceğini değiştir";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "Şimdi örnek bir bildirim göster";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "Sürücü uzantısını sistemden kaldır";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "Uygulamanın kaç denetim göstereceğini seç";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "Bir denetleyicinin ne kadar boşta kalabileceğini seç";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "Mevcut sürümün sayfasını aç";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "Şimdi daha yeni bir sürüm ara";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "Zaman zaman daha yeni bir sürüm ara";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "Güncellemeleri ararken ön sürümleri de kat";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "Oturum açıldığında uygulamayı aç";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "Uygulamanın durum öğesini menü çubuğunda göster";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "Uygulama simgesini Dock'ta göster";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "Denetleyici girdisi ve USB paketi araçlarını göster";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "ojd komutunu bu uygulamaya bağla";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "ojd komutunun bağlantısını kaldır";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "Okunamayan ayar dosyasını Finder'da göster";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "Okunamayan ayarları varsayılanlarla değiştir";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "Bu iletiyi gizle";

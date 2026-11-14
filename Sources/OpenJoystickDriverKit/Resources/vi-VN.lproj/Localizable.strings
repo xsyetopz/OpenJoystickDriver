@@ -3673,9 +3673,9 @@
 "ui.library.test.packets.pick" = "Chọn một bản bắt gói tin.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
 "ui.library.test.expect.pick" = "Chọn trạng thái bộ điều khiển mong đợi.";
-/* VoiceOver label of the button in the Library error banner that shows the details of the error. */
+/* Tooltip of the button in the Library error banner that shows the details of the error. */
 "a11y.library.details" = "Hiện chi tiết của lỗi";
-/* VoiceOver label of the button in the Library error banner that closes the error. */
+/* Tooltip of the button in the Library error banner that closes the error. */
 "a11y.library.dismissError" = "Đóng lỗi";
 /* VoiceOver label of the button that closes an informational message in the Library detail view. */
 "a11y.library.dismissNotice" = "Đóng thông báo";
@@ -3845,13 +3845,13 @@
 "ui.access.error.peerRejected" = "OpenJoystickDriver đã từ chối yêu cầu này.";
 /* Error of the Access area when a request fails. %@ is the reason. */
 "ui.access.error.requestFailed" = "Yêu cầu không thành công: %@";
-/* VoiceOver label of the button in the Access error banner that shows the details of the error. */
+/* Tooltip of the button in the Access error banner that shows the details of the error. */
 "a11y.access.details" = "Hiện chi tiết của lỗi";
-/* VoiceOver label of the Access error banner button when the banner offers to close the error. */
+/* Tooltip of the Access error banner button when the banner offers to close the error. */
 "a11y.access.dismissError" = "Đóng lỗi";
-/* VoiceOver label of the Access error banner button when the banner offers to read the access settings again. */
+/* Tooltip of the Access error banner button when the banner offers to read the access settings again. */
 "a11y.access.tryAgain" = "Đọc lại cài đặt quyền truy cập";
-/* VoiceOver label of the button in the Access area that restarts the app so that newly granted permissions take effect. */
+/* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "Khởi động lại ứng dụng để áp dụng quyền mới";
 /* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
 "a11y.access.webPort" = "Cổng WebSocket; để trống để giữ cổng đã lưu. Hệ thống chỉ chọn cổng khi chưa lưu cổng nào hoặc khi chọn Tự động";
@@ -3869,17 +3869,17 @@
 "a11y.access.tokenName" = "Tên token";
 /* VoiceOver label of the text field in the token sheet that lists the web origins allowed to use the token, one per line. */
 "a11y.access.tokenOrigins" = "Các nguồn gốc web được dùng token, mỗi dòng một nguồn";
-/* VoiceOver label of the button in the token sheet that moves on to the confirmation step. */
+/* Tooltip of the button in the token sheet that moves on to the confirmation step. */
 "a11y.access.tokenContinue" = "Tiếp tục đến bước xác nhận";
 /* VoiceOver label of the field that shows the secret value of the token of the sheet. */
 "a11y.access.tokenValue" = "Token";
-/* VoiceOver label of the button that copies the secret value of the token to the clipboard. */
+/* Tooltip of the button that copies the secret value of the token to the clipboard. */
 "a11y.access.copyToken" = "Sao chép token vào bảng nhớ tạm";
-/* VoiceOver label of the button that closes the token sheet after the token is shown. */
+/* Tooltip of the button that closes the token sheet after the token is shown. */
 "a11y.access.done" = "Đóng token";
 /* VoiceOver label of one access scope in the token sheet. %@ is the localized scope name, such as the permission the token carries. */
 "a11y.access.scope" = "Phạm vi %@";
-/* VoiceOver label of the cancel button in the access sheets. It leaves the access unchanged. */
+/* Tooltip of the cancel button in the access sheets. It leaves the access unchanged. */
 "a11y.access.cancel" = "Hủy và giữ nguyên quyền truy cập";
 /* Item of the application menu that opens the About window. %@ is the product name. */
 "ui.menu.app.about" = "Giới thiệu về %@";
@@ -5355,3 +5355,151 @@
 "ui.setup.uninstallRefused" = "Tiện ích mở rộng trình điều khiển vẫn đang được cài đặt.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Không thể mở trình duyệt.";
+/* Tooltip of the Grant button on a refused program in the Access area. */
+"ui.help.grantRefused" = "Cho phép chương trình này dùng điểm cuối cục bộ";
+/* Tooltip of the Revoke button or menu on a granted program or token in the Access area. */
+"ui.help.revoke" = "Thu hồi quyền truy cập và đóng các kết nối đang mở";
+/* Tooltip of the button on a permission row in the Access area that asks for the permission. */
+"ui.help.requestPermission" = "Yêu cầu hệ thống cấp quyền này";
+/* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
+"ui.help.chooseAutomaticPort" = "Để hệ thống chọn một cổng trống cho WebSocket";
+/* Tooltip of the button and context menu item in the Access area that copy the socket path. */
+"ui.help.copySocketPath" = "Sao chép đường dẫn socket vào bảng nhớ tạm";
+/* Tooltip of the confirm button of a confirmation sheet in the Access area. */
+"ui.help.confirmChange" = "Áp dụng thay đổi mà trang tính mô tả";
+/* Tooltip of the switch of the Read scope in the Access area. */
+"ui.help.scopeRead" = "Cho phép chương trình nhận sự kiện của bộ điều khiển";
+/* Tooltip of the switch of the Control scope in the Access area. */
+"ui.help.scopeControl" = "Cho phép chương trình điều khiển một tay cầm ảo";
+/* Tooltip of the Migrate button in the Access error banner. */
+"ui.help.migrate" = "Chuyển đổi tài liệu đã lưu sang phiên bản hiện tại";
+/* Tooltip of the Try Again button of an error state. */
+"ui.help.tryAgain" = "Chạy lại thao tác đã thất bại";
+/* Tooltip of the New Profile toolbar button and of the New Profile button of the empty Profiles area. */
+"ui.help.newProfile" = "Tạo hồ sơ cho một bộ điều khiển";
+/* Tooltip of the button that switches the interface to show every control. */
+"ui.help.showAllControls" = "Hiện mọi điều khiển, kể cả loại nâng cao";
+/* Tooltip of the Done button of the setup steps screen. */
+"ui.help.finishSetup" = "Hoàn tất thiết lập và chuyển sang ứng dụng";
+/* Tooltip of the button that closes a sheet: Done of the release notes, and Cancel and Done of the soak test. */
+"ui.help.closeSheet" = "Đóng trang tính này";
+/* Tooltip of the button of the banner that reads the status of the service again. */
+"ui.help.retryService" = "Đọc lại trạng thái của dịch vụ";
+/* Tooltip of the banner button that restarts the request listener of the service. */
+"ui.help.restartListener" = "Khởi động lại bộ lắng nghe yêu cầu của dịch vụ";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+"platform.macos.ui.help.openDriverApproval" = "Phê duyệt tiện ích mở rộng trình điều khiển trong Cài đặt Hệ thống";
+/* Tooltip of the banner button that repairs the driver extension. */
+"ui.help.repairDriver" = "Sửa tiện ích mở rộng trình điều khiển";
+/* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
+"ui.help.requestMissingPermissions" = "Yêu cầu các quyền còn thiếu trong khu vực Truy cập";
+/* Tooltip of the Import Profile toolbar button. */
+"ui.help.importProfile" = "Thêm hồ sơ từ một tệp";
+/* Tooltip of the Validate Profile File toolbar button. */
+"ui.help.validateProfileFile" = "Kiểm tra tệp hồ sơ mà không nhập";
+/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+"ui.help.duplicateProfile" = "Tạo bản sao của hồ sơ đã chọn";
+/* Tooltip of the Convert toolbar button of the Profiles area. */
+"ui.help.convertProfile" = "Đổi hồ sơ đã chọn sang mẫu bộ điều khiển khác";
+/* Tooltip of the Export Profile toolbar button. */
+"ui.help.exportProfile" = "Lưu hồ sơ đã chọn vào một tệp";
+/* Tooltip of the Delete toolbar button of the Profiles area. */
+"ui.help.deleteProfile" = "Gỡ hồ sơ đã chọn";
+/* Tooltip of the Validate toolbar button of the Library area. */
+"ui.help.validateLibraryItem" = "Kiểm tra tệp bản ghi hoặc thư mục mod mà không cài đặt";
+/* Tooltip of the toolbar button of the Library area that runs a record against a packet capture. */
+"ui.help.testLibraryRecord" = "Chạy bản ghi đã chọn trên một bản bắt gói tin";
+/* Tooltip of the Remove toolbar button of the Library area. */
+"ui.help.removeLibraryItem" = "Gỡ bản ghi hoặc mod đã chọn";
+/* Tooltip of the search field in the toolbar of the Library area. */
+"ui.help.searchLibrary" = "Tìm bản ghi và mod trong thư viện";
+/* Tooltip of the view switch in the toolbar of the Activity area. */
+"ui.help.activityMode" = "Chọn kiểu xem hoạt động sẽ hiện";
+/* Tooltip of the filter popup in the toolbar of the Activity area. */
+"ui.help.activityFilter" = "Chọn luồng nhật ký và số dòng sẽ hiện";
+/* Tooltip of the search field in the toolbar of the Activity area. */
+"ui.help.activitySearch" = "Tìm văn bản trong nhật ký hoạt động";
+/* Tooltip of the toolbar button of the Activity area that copies the log. */
+"ui.help.copyActivityLog" = "Sao chép toàn bộ nhật ký vào bảng nhớ tạm";
+/* Tooltip of the toolbar button of the Activity area that saves the log. */
+"ui.help.saveActivityLog" = "Lưu nhật ký hoạt động vào một tệp";
+/* Tooltip of the toolbar button of the Activity area that shows the log file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showActivityLog" = "Hiện tệp nhật ký trong Finder";
+/* Tooltip of the toolbar button of the Activity area that runs the diagnostic checks. */
+"ui.help.runDiagnostics" = "Chạy các bước kiểm tra chẩn đoán cho thiết lập";
+/* Tooltip of the menu bar item of the app. */
+"ui.help.statusItem" = "Hiện trạng thái bộ điều khiển và các thao tác";
+/* Tooltip of the Refresh buttons of the developer tools. */
+"ui.help.refreshControllers" = "Đọc lại các bộ điều khiển đang kết nối";
+/* Tooltip of the controller popup of the developer tools. */
+"ui.help.controllerPicker" = "Chọn bộ điều khiển cần kiểm tra";
+/* Tooltip of the button in the developer tools that opens the soak test sheet. */
+"ui.help.soakOpen" = "Chọn giới hạn và chạy bài kiểm tra độ bền";
+/* Tooltip of the Start button of the soak test sheet. */
+"ui.help.soakStart" = "Chạy bài kiểm tra độ bền với các giới hạn này";
+/* Tooltip of the button of the soak test sheet that runs the test again after a result. */
+"ui.help.soakAgain" = "Chạy lại bài kiểm tra độ bền";
+/* Tooltip of the Stop button of the soak test sheet. */
+"ui.help.soakStop" = "Dừng bài kiểm tra độ bền đang chạy";
+/* Tooltip of the filter switch of the raw packet capture. */
+"ui.help.packetFilter" = "Chọn gói tin mà danh sách hiện";
+/* Tooltip of the Start Capture button of the developer tools. */
+"ui.help.startCapture" = "Ghi các gói tin của bộ điều khiển đã chọn";
+/* Tooltip of the Stop button of the raw packet capture. */
+"ui.help.stopCapture" = "Dừng ghi gói tin";
+/* Tooltip of the Clear button of the raw packet capture. */
+"ui.help.clearCapture" = "Xóa các gói tin đã ghi khỏi danh sách";
+/* Tooltip of the Copy All button of the raw packet capture. */
+"ui.help.copyCapture" = "Sao chép mọi gói tin đã ghi vào bảng nhớ tạm";
+/* Tooltip of the Export button of the raw packet capture. */
+"ui.help.exportCapture" = "Lưu các gói tin đã ghi vào một tệp";
+/* Tooltip of the Record Shortcut button in the General settings. */
+"ui.help.recordPauseShortcut" = "Nhấn các phím để tạm dừng và tiếp tục bộ điều khiển";
+/* Tooltip of the Clear button of the pause shortcut in the General settings. */
+"ui.help.clearPauseShortcut" = "Xóa phím tắt tạm dừng đã lưu";
+/* Tooltip of the switch in the Notifications settings for a controller that connects or needs attention. */
+"ui.help.notifyControllerConnected" = "Hiện thông báo khi bộ điều khiển kết nối hoặc cần chú ý";
+/* Tooltip of the switch in the Notifications settings for a controller that disconnects. */
+"ui.help.notifyControllerDisconnected" = "Hiện thông báo khi bộ điều khiển ngắt kết nối";
+/* Tooltip of the switch in the Notifications settings for a profile that activates or switches. */
+"ui.help.notifyProfileActivated" = "Hiện thông báo khi hồ sơ được bật hoặc chuyển";
+/* Tooltip of the switch in the Notifications settings for a profile that deactivates. */
+"ui.help.notifyProfileDeactivated" = "Hiện thông báo khi hồ sơ bị tắt";
+/* Tooltip of the switch in the Notifications settings that plays a sound with a notification. */
+"ui.help.notificationSounds" = "Phát âm thanh với mỗi thông báo";
+/* Tooltip of the button in the settings window that opens the notification settings of the system. */
+"ui.help.openNotificationSettings" = "Đổi cách hệ thống hiện thông báo của ứng dụng";
+/* Tooltip of the Send Test Notification button in the Notifications settings. */
+"ui.help.testNotification" = "Hiện ngay một thông báo mẫu";
+/* Tooltip of the Uninstall button of the driver extension in the Advanced settings. */
+"ui.help.uninstallDriver" = "Gỡ tiện ích mở rộng trình điều khiển khỏi hệ thống";
+/* Tooltip of the Interface popup in the General settings. */
+"ui.help.interfaceLevel" = "Chọn số điều khiển mà ứng dụng hiện";
+/* Tooltip of the popup in the General settings that sets after how long an idle Bluetooth controller disconnects. */
+"ui.help.idleDisconnect" = "Chọn thời gian bộ điều khiển được nhàn rỗi";
+/* Tooltip of the View Update button in the General settings. */
+"ui.help.viewUpdate" = "Mở trang của bản phát hành hiện có";
+/* Tooltip of the Check Now button in the General settings. */
+"ui.help.checkUpdates" = "Tìm ngay bản phát hành mới hơn";
+/* Tooltip of the switch in the General settings that checks for updates by itself. */
+"ui.help.checkUpdatesAutomatically" = "Thỉnh thoảng tìm bản phát hành mới hơn";
+/* Tooltip of the switch in the General settings that includes prerelease updates. */
+"ui.help.prereleaseUpdates" = "Gồm cả bản tiền phát hành khi kiểm tra cập nhật";
+/* Tooltip of the Start at Login switch in the General settings. */
+"ui.help.startAtLogin" = "Mở ứng dụng khi bạn đăng nhập";
+/* Tooltip of the Show in Menu Bar switch in the General settings. */
+"ui.help.showInMenuBar" = "Hiện mục trạng thái của ứng dụng trên thanh menu";
+/* Tooltip of the switch in the General settings that shows the app icon in the Dock, the macOS bar of apps. */
+"platform.macos.ui.help.showInDock" = "Hiện biểu tượng ứng dụng trong Dock";
+/* Tooltip of the Enable Developer Tools switch in the Advanced settings. */
+"ui.help.developerTools" = "Hiện công cụ cho đầu vào bộ điều khiển và gói tin USB";
+/* Tooltip of the Install button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineInstall" = "Liên kết lệnh ojd với ứng dụng này";
+/* Tooltip of the Uninstall button of the command-line tool in the Advanced settings. */
+"ui.help.commandLineUninstall" = "Gỡ liên kết của lệnh ojd";
+/* Tooltip of the button in the settings error banner that shows the unreadable settings file in Finder, the macOS file manager. */
+"platform.macos.ui.help.showSettingsFile" = "Hiện tệp cài đặt không đọc được trong Finder";
+/* Tooltip of the Reset Settings button in the settings error banner. */
+"ui.help.resetSettings" = "Thay cài đặt không đọc được bằng giá trị mặc định";
+/* Tooltip of the Dismiss button in the settings error banner. */
+"ui.help.dismissMessage" = "Ẩn thông báo này";
