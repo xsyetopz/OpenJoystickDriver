@@ -6431,6 +6431,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Tornar este o perfil ativo";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Mostrar os comandos para alterar os ajustes e encerrar este app";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Mostrar os comandos para importar, exportar e salvar arquivos";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Mostrar os comandos para desfazer, refazer, copiar e colar";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Mostrar os comandos que mudam o que a janela principal exibe";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Mostrar os comandos do controle escolhido";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Mostrar os comandos para escolher um perfil ou deixar de usá-lo";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Mostrar os comandos para organizar as janelas deste app";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Mostrar a ajuda e os comandos para relatar um problema";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Mostrar os comandos deste controle";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Criar ou importar um perfil em Perfis, porque ainda não há nenhum na lista";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Escolher abaixo quantas entradas do registro mostrar";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Mostrar só as linhas deste fluxo do registro";
 

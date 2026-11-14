@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "ตั้งอันนี้เป็นโปรไฟล์ที่ใช้งานอยู่";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "แสดงคำสั่งเปลี่ยนการตั้งค่าและออกจากแอปนี้";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "แสดงคำสั่งนำเข้า ส่งออก และบันทึกไฟล์";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "แสดงคำสั่งเลิกทำ ทำซ้ำ คัดลอก และวาง";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "แสดงคำสั่งที่เปลี่ยนสิ่งที่หน้าต่างหลักแสดง";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "แสดงคำสั่งของคอนโทรลเลอร์ที่เลือก";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "แสดงคำสั่งเลือกโปรไฟล์หรือเลิกใช้โปรไฟล์";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "แสดงคำสั่งจัดเรียงหน้าต่างของแอปนี้";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "แสดงวิธีใช้และคำสั่งรายงานปัญหา";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "แสดงคำสั่งของคอนโทรลเลอร์นี้";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "สร้างหรือนำเข้าโปรไฟล์ในส่วนโปรไฟล์ เพราะยังไม่มีโปรไฟล์ในรายการ";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "เลือกด้านล่างว่าจะแสดงรายการบันทึกกี่รายการ";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "แสดงเฉพาะบรรทัดของสตรีมบันทึกนี้";
 

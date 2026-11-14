@@ -6431,6 +6431,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Make this the active profile";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Show commands to change settings and quit this app";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Show commands to import, export and save files";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Show commands to undo, redo, copy and paste";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Show commands to change what the main window displays";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Show commands for the chosen controller";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Show commands to choose or stop using a profile";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Show commands to arrange the windows of this app";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Show help and commands to report a problem";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Show the commands for this controller";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Create or import a profile in Profiles, because none is listed yet";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Choose below how many log entries to show";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Show only the lines of this log stream";
 

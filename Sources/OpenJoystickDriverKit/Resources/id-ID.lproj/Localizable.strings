@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Jadikan ini profil aktif";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Tampilkan perintah untuk mengubah pengaturan dan keluar dari aplikasi ini";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Tampilkan perintah untuk mengimpor, mengekspor, dan menyimpan file";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Tampilkan perintah untuk mengurungkan, mengulangi, menyalin, dan menempel";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Tampilkan perintah yang mengubah isi jendela utama";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Tampilkan perintah untuk pengontrol yang dipilih";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Tampilkan perintah untuk memilih atau berhenti memakai profil";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Tampilkan perintah untuk menata jendela aplikasi ini";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Tampilkan bantuan dan perintah untuk melaporkan masalah";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Tampilkan perintah untuk pengontrol ini";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Buat atau impor profil di Profil, karena belum ada yang terdaftar";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Pilih di bawah berapa banyak entri log yang ditampilkan";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Tampilkan hanya baris dari aliran log ini";
 

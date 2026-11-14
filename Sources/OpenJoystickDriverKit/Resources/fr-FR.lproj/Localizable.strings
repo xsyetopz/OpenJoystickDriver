@@ -6431,6 +6431,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Faire de celui-ci le profil actif";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Afficher les commandes pour modifier les réglages et quitter cette app";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Afficher les commandes pour importer, exporter et enregistrer des fichiers";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Afficher les commandes pour annuler, rétablir, copier et coller";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Afficher les commandes qui changent ce que la fenêtre principale présente";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Afficher les commandes de la manette choisie";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Afficher les commandes pour choisir un profil ou cesser de l’utiliser";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Afficher les commandes pour organiser les fenêtres de cette app";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Afficher l’aide et les commandes pour signaler un problème";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Afficher les commandes de cette manette";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Créer ou importer un profil dans Profils, car aucun n’est encore listé";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Choisir ci-dessous combien d’entrées du journal afficher";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Afficher seulement les lignes de ce flux du journal";
 

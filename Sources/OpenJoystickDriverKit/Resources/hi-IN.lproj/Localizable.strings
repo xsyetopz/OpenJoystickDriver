@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "इसे सक्रिय प्रोफ़ाइल बनाएँ";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "सेटिंग्स बदलने और इस ऐप को बंद करने के कमांड दिखाएँ";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "फ़ाइलें इंपोर्ट, एक्सपोर्ट और सहेजने के कमांड दिखाएँ";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "पूर्ववत करने, फिर से करने, कॉपी और पेस्ट करने के कमांड दिखाएँ";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "मुख्य विंडो में दिखने वाली सामग्री बदलने के कमांड दिखाएँ";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "चुने गए कंट्रोलर के कमांड दिखाएँ";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "प्रोफ़ाइल चुनने या उसका उपयोग रोकने के कमांड दिखाएँ";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "इस ऐप की विंडो व्यवस्थित करने के कमांड दिखाएँ";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "सहायता और समस्या की रिपोर्ट करने के कमांड दिखाएँ";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "इस कंट्रोलर के कमांड दिखाएँ";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "प्रोफ़ाइल में एक प्रोफ़ाइल बनाएँ या इंपोर्ट करें, क्योंकि सूची खाली है";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "नीचे चुनें कि कितनी लॉग प्रविष्टियाँ दिखें";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "केवल इस लॉग स्ट्रीम की पंक्तियाँ दिखाएँ";
 

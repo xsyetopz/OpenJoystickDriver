@@ -6431,6 +6431,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Dieses Profil zum aktiven Profil machen";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Befehle zum Ändern der Einstellungen und zum Beenden dieser App anzeigen";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Befehle zum Importieren, Exportieren und Sichern von Dateien anzeigen";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Befehle zum Widerrufen, Wiederholen, Kopieren und Einsetzen anzeigen";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Befehle anzeigen, die ändern, was das Hauptfenster zeigt";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Die Befehle für den gewählten Controller anzeigen";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Befehle zum Wählen oder Nichtmehrverwenden eines Profils anzeigen";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Befehle zum Anordnen der Fenster dieser App anzeigen";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Hilfe und Befehle zum Melden eines Problems anzeigen";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Die Befehle für diesen Controller anzeigen";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Profil in „Profile“ erstellen oder importieren, da die Liste leer ist";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Unten wählen, wie viele Protokolleinträge angezeigt werden";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Nur die Zeilen dieses Protokollstroms anzeigen";
 

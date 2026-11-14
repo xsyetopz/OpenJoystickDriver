@@ -52,6 +52,7 @@
         }
         let sectionItem = NSMenuItem(title: submenu.title, action: nil, keyEquivalent: "")
         identify(sectionItem, as: MainMenuModel.menuBarItemIdentifier(sectionID: section.id))
+        sectionItem.toolTip = OJDLocalized.string("ui.help.menu.section.\(section.id)")
         sectionItem.submenu = submenu
         menu.addItem(sectionItem)
         if section.id == "window" { windowMenu = submenu }

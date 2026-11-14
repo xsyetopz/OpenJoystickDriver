@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "将此项设为活动的配置文件";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "显示更改设置和退出此 App 的命令";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "显示导入、导出和存储文件的命令";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "显示撤销、重做、拷贝和粘贴的命令";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "显示更改主窗口所显示内容的命令";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "显示所选控制器的命令";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "显示选取或停用配置文件的命令";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "显示排列此 App 窗口的命令";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "显示帮助和报告问题的命令";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "显示此控制器的命令";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "请在配置文件中创建或导入配置文件，因为列表中还没有";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "在下方选取要显示多少条日志";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "仅显示此日志流的行";
 

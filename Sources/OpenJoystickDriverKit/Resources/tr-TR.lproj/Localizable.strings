@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Bunu etkin profil yap";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Ayarları değiştirme ve bu uygulamadan çıkma komutlarını göster";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Dosyaları içe aktarma, dışa aktarma ve kaydetme komutlarını göster";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Geri alma, yineleme, kopyalama ve yapıştırma komutlarını göster";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Ana pencerenin ne gösterdiğini değiştiren komutları göster";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Seçilen kontrolcünün komutlarını göster";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Profil seçme veya profili kullanmayı bırakma komutlarını göster";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Bu uygulamanın pencerelerini düzenleme komutlarını göster";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Yardımı ve sorun bildirme komutlarını göster";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Bu kontrolcünün komutlarını göster";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Profiller bölümünde bir profil oluştur veya içe aktar; liste boş";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Aşağıdan kaç günlük girdisinin gösterileceğini seç";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Yalnızca bu günlük akışının satırlarını göster";
 

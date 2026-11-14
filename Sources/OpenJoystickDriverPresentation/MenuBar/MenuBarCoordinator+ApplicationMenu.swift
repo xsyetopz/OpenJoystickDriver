@@ -202,6 +202,7 @@
           keyEquivalent: ""
         )
         placeholder.isEnabled = false
+        placeholder.toolTip = profileListRead ? OJDLocalized.string("ui.help.menu.noProfiles") : nil
         menu.addItem(placeholder)
         return
       }

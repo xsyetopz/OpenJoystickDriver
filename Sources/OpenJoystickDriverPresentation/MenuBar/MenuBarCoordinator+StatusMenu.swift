@@ -73,6 +73,7 @@
       }
       if let submenu = entry.submenu {
         item.submenu = makeStatusMenu(from: submenu, title: title)
+        item.toolTip = OJDLocalized.string("ui.help.menu.controllerSubmenu")
       } else if let action = entry.action {
         item.target = self
         item.toolTip = OJDLocalized.string(action.helpKey)

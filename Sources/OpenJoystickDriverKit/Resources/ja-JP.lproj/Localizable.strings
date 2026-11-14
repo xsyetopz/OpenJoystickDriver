@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "これを有効なプロファイルにします";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "設定の変更とこのアプリの終了のコマンドを表示します";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "ファイルの読み込み、書き出し、保存のコマンドを表示します";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "取り消し、やり直し、コピー、ペーストのコマンドを表示します";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "メインウインドウの表示内容を変えるコマンドを表示します";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "選んだコントローラーのコマンドを表示します";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "プロファイルの選択や使用の停止のコマンドを表示します";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "このアプリのウインドウを整えるコマンドを表示します";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "ヘルプと問題を報告するコマンドを表示します";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "このコントローラーのコマンドを表示します";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "一覧にまだ何もないため、プロファイル領域でプロファイルを作成または読み込みます";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "下で表示するログの項目数を選びます";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "このログストリームの行だけを表示します";
 

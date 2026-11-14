@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "이것을 활성 프로필로 지정합니다";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "설정을 변경하고 이 앱을 종료하는 명령을 보여 줍니다";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "파일을 가져오고 내보내고 저장하는 명령을 보여 줍니다";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "실행 취소, 실행 복귀, 복사, 붙여넣기 명령을 보여 줍니다";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "주 윈도우가 보여 주는 내용을 바꾸는 명령을 보여 줍니다";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "선택한 컨트롤러의 명령을 보여 줍니다";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "프로파일을 선택하거나 사용을 멈추는 명령을 보여 줍니다";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "이 앱의 윈도우를 정리하는 명령을 보여 줍니다";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "도움말과 문제를 보고하는 명령을 보여 줍니다";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "이 컨트롤러의 명령을 보여 줍니다";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "목록에 아직 없으므로 프로파일 영역에서 프로파일을 만들거나 가져옵니다";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "아래에서 표시할 로그 항목 수를 선택합니다";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "이 로그 스트림의 줄만 보여 줍니다";
 

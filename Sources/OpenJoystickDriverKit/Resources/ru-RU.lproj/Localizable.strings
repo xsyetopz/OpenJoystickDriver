@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Сделать этот профиль активным";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Показать команды для изменения настроек и завершения этого приложения";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Показать команды для импорта, экспорта и сохранения файлов";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Показать команды отмены, повтора, копирования и вставки";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Показать команды, которые меняют содержимое главного окна";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Показать команды для выбранного контроллера";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Показать команды для выбора профиля или отказа от него";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Показать команды для расположения окон этого приложения";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Показать справку и команды для сообщения о проблеме";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Показать команды для этого контроллера";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Создайте или импортируйте профиль в разделе «Профили»: список пуст";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Выбрать ниже, сколько записей журнала показывать";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Показывать только строки этого потока журнала";
 

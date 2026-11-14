@@ -97,6 +97,7 @@
         keyEquivalent: ""
       )
       heading.isEnabled = false
+      heading.toolTip = OJDLocalized.string("ui.help.activityLines")
       menu.addItem(heading)
       for count in ActivityLogLineCount.choices {
         let entry = NSMenuItem(

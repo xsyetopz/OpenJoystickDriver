@@ -6431,6 +6431,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Rendere questo il profilo attivo";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Mostrare i comandi per cambiare le impostazioni e uscire da questa app";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Mostrare i comandi per importare, esportare e salvare file";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Mostrare i comandi per annullare, ripetere, copiare e incollare";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Mostrare i comandi che cambiano ciò che mostra la finestra principale";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Mostrare i comandi del controller scelto";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Mostrare i comandi per scegliere un profilo o smettere di usarlo";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Mostrare i comandi per disporre le finestre di questa app";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Mostrare la guida e i comandi per segnalare un problema";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Mostrare i comandi di questo controller";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Creare o importare un profilo in Profili, perché ancora nessuno è in elenco";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Scegliere qui sotto quante voci del registro mostrare";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Mostrare solo le righe di questo flusso del registro";
 

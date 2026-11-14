@@ -6431,6 +6431,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Dit het actieve profiel maken";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "De opdrachten tonen om instellingen te wijzigen en deze app te stoppen";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "De opdrachten tonen om bestanden te importeren, exporteren en te bewaren";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Opdrachten tonen voor ongedaan maken, opnieuw, kopiëren en plakken";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "De opdrachten tonen die wijzigen wat het hoofdvenster laat zien";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "De opdrachten voor de gekozen controller tonen";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "De opdrachten tonen om een profiel te kiezen of niet meer te gebruiken";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "De opdrachten tonen om de vensters van deze app te schikken";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "De help en de opdrachten tonen om een probleem te melden";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "De opdrachten voor deze controller tonen";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Een profiel maken of importeren in Profielen, want er is nog geen";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Hieronder kiezen hoeveel logboekregels worden getoond";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Alleen de regels van deze logstroom tonen";
 

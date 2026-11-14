@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "將此項設為作用中的設定檔";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "顯示變更設定和結束此 App 的指令";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "顯示匯入、匯出和儲存檔案的指令";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "顯示還原、重做、拷貝和貼上的指令";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "顯示變更主視窗所顯示內容的指令";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "顯示所選控制器的指令";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "顯示選擇或停用設定檔的指令";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "顯示排列此 App 視窗的指令";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "顯示說明和回報問題的指令";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "顯示此控制器的指令";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "請在設定檔中建立或匯入設定檔，因為清單中還沒有";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "在下方選擇要顯示多少筆記錄";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "僅顯示此記錄串流的行";
 

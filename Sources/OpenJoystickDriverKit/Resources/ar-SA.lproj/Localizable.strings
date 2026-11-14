@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "جعل هذا ملف التعريف النشط";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "إظهار أوامر تغيير الإعدادات وإنهاء هذا التطبيق";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "إظهار أوامر استيراد الملفات وتصديرها وحفظها";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "إظهار أوامر التراجع والإعادة والنسخ واللصق";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "إظهار الأوامر التي تغير ما تعرضه النافذة الرئيسية";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "إظهار أوامر وحدة التحكم المختارة";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "إظهار أوامر اختيار ملف التعريف أو التوقف عن استخدامه";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "إظهار أوامر ترتيب نوافذ هذا التطبيق";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "إظهار المساعدة وأوامر الإبلاغ عن مشكلة";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "إظهار الأوامر الخاصة بوحدة التحكم هذه";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "أنشئ ملف تعريف أو استورده في ملفات التعريف، لأن القائمة فارغة";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "اختيار عدد إدخالات السجل المعروضة من الأسفل";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "إظهار أسطر مجرى السجل هذا فقط";
 

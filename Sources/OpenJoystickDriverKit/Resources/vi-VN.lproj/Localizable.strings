@@ -6430,6 +6430,39 @@
 /* Tooltip of the profile items of the Activate Profile submenu and of the status menu. */
 "ui.help.menu.profileItem" = "Đặt đây làm hồ sơ đang hoạt động";
 
+/* Tooltip of the app menu in the menu bar. */
+"ui.help.menu.section.app" = "Hiện các lệnh để đổi cài đặt và thoát ứng dụng này";
+
+/* Tooltip of the File menu in the menu bar. */
+"ui.help.menu.section.file" = "Hiện các lệnh để nhập, xuất và lưu tệp";
+
+/* Tooltip of the Edit menu in the menu bar. */
+"ui.help.menu.section.edit" = "Hiện các lệnh để hoàn tác, làm lại, sao chép và dán";
+
+/* Tooltip of the View menu in the menu bar. */
+"ui.help.menu.section.view" = "Hiện các lệnh đổi nội dung của cửa sổ chính";
+
+/* Tooltip of the Controller menu in the menu bar. */
+"ui.help.menu.section.controller" = "Hiện các lệnh cho bộ điều khiển đã chọn";
+
+/* Tooltip of the Profile menu in the menu bar. */
+"ui.help.menu.section.profile" = "Hiện các lệnh để chọn hoặc ngừng dùng một cấu hình";
+
+/* Tooltip of the Window menu in the menu bar. */
+"ui.help.menu.section.window" = "Hiện các lệnh để sắp xếp cửa sổ của ứng dụng này";
+
+/* Tooltip of the Help menu in the menu bar. */
+"ui.help.menu.section.help" = "Hiện trợ giúp và các lệnh để báo cáo sự cố";
+
+/* Tooltip of the controller rows of the status menu that open a submenu. */
+"ui.help.menu.controllerSubmenu" = "Hiện các lệnh cho bộ điều khiển này";
+
+/* Tooltip of the disabled placeholder of the Activate Profile submenu that says no profile is listed. */
+"ui.help.menu.noProfiles" = "Tạo hoặc nhập một cấu hình trong Cấu hình, vì danh sách đang trống";
+
+/* Tooltip of the disabled Lines heading of the Activity filter menu. */
+"ui.help.activityLines" = "Chọn bên dưới số mục nhật ký sẽ hiện";
+
 /* Tooltip of the log stream choices of the Activity filter menu. */
 "ui.help.activityFilterChoice" = "Chỉ hiện các dòng của luồng nhật ký này";
 
