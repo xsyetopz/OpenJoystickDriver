@@ -5355,3 +5355,103 @@
 "ui.setup.uninstallRefused" = "برنامج تشغيل Xbox USB لا يزال مثبتًا.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "تعذّر فتح المتصفح.";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "إرسال القيمة المختارة إلى ضوء وحدة التحكم";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "إغلاق هذه الورقة دون تطبيق أي شيء";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "انتظار المفتاح التالي الذي تضغط عليه";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "تسجيل الحزم التي ترسلها وحدة التحكم هذه";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "تفعيل برنامج تشغيل Xbox USB لتولّي وحدة التحكم هذه";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "إزالة المفتاح الملتقط من هذه الوجهة";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "إغلاق هذه الورقة";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "فتح تقرير التحقق على GitHub";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "إزالة قيمتك واستخدام المنطقة الميتة الافتراضية";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "إنهاء اتصال Bluetooth بوحدة التحكم هذه";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "إخفاء رسالة الخطأ هذه";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "بدء مسودة سجل لوحدة تحكم لهذا الجهاز";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "صياغة سجل من سطر SDL لوحدة التحكم هذه";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "البحث عن معنى رمز الخطأ المكتوب";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "حفظ تعيين وحدة التحكم الافتراضية في ملف";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "فتح نموذج التحقق المعبأ مسبقًا في المتصفح";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "نسخ نتيجة الفحص الموجَّه إلى الحافظة";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "فتح مشكلة GitHub معبأة مسبقًا في المتصفح";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "حفظ نتيجة الفحص الموجَّه في ملف";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "المتابعة دون انتظار عنصر التحكم هذا";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "المرور على كل عنصر تحكم والتحقق من استجابته";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "مراجعة تقرير التحقق قبل إرساله";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "اختيار لعبة وتشغيلها بوحدة التحكم الافتراضية";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "فتح إدخال وحدة التحكم هذه في المتصفح";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "إيقاف جمع العيّنات والاحتفاظ بما جُمع منها";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "تجاهل العيّنات المجموعة والبدء من جديد";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "جمع عيّنات الجيروسكوب لقياس الانحراف في وضع السكون";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "اختيار ضوء اللاعب الذي تعرضه وحدة التحكم";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "تنفيذ الخطوة التالية لتعمل وحدة التحكم هذه";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "قياس مدى العصي أثناء تدوير كل عصا دورة كاملة";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "قياس انزياح الجيروسكوب أثناء ثبات وحدة التحكم";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "إزالة قيم المعايرة المخزّنة لوحدة التحكم هذه";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "قياس مركز العصي وموضع سكون الزنادين مع ترك عناصر التحكم";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "قياس نهاية الزنادين أثناء الضغط على كل زناد حتى النهاية";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "مسح كل اختيارات نوع وحدة التحكم الافتراضية بعد التأكيد";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "بدء إعادة تعيين وحدة التحكم هذه مرة أخرى";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "تبديل محرك الاهتزاز هذا بين الإيقاف والقوة الكاملة";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "تشغيل الإصلاح لهذا الفحص الفاشل";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "اختيار ما إذا كان macOS أو OpenJoystickDriver يتولى وحدة التحكم هذه";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "إظهار المعرّفات ونقاط النهاية أو إخفاؤها";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "إظهار عناصر التحكم المخفية في مستوى الواجهة الحالي";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "إظهار قيم الضبط لوحدة التحكم هذه أو إخفاؤها";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "بدء التسجيل للمدة المختارة";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "ضبط مقدار حركة العصا قرب المركز الذي يُتجاهل";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "إيقاف محركات الاهتزاز فورًا";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "إيقاف إعادة تعيين وحدة التحكم هذه إلى أن تستأنفها";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "تشغيل محركات الاهتزاز للمدة المختارة";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "إعادة الطلب الذي فشل";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "اختيار نوع وحدة التحكم الافتراضية التي تراها الألعاب";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "اختيار ما إذا كان النوع ينطبق على وحدة تحكم واحدة أو على طرازها";

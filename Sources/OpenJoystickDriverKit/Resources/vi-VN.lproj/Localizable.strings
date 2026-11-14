@@ -5355,3 +5355,103 @@
 "ui.setup.uninstallRefused" = "Trình điều khiển Xbox USB vẫn đang được cài đặt.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Không thể mở trình duyệt.";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "Gửi giá trị đã chọn đến đèn của bộ điều khiển";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "Đóng bảng này mà không áp dụng gì";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "Chờ phím tiếp theo bạn nhấn";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "Ghi lại các gói mà bộ điều khiển này gửi";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "Kích hoạt trình điều khiển Xbox USB để tiếp quản bộ điều khiển này";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "Gỡ phím đã bắt khỏi đích này";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "Đóng bảng này";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "Mở báo cáo xác minh trên GitHub";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "Gỡ giá trị của bạn và dùng vùng chết mặc định";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "Kết thúc kết nối Bluetooth với bộ điều khiển này";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "Ẩn thông báo lỗi này";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "Bắt đầu bản nháp hồ sơ bộ điều khiển cho thiết bị này";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "Soạn hồ sơ từ dòng SDL của bộ điều khiển này";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "Tra cứu ý nghĩa của mã lỗi đã nhập";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "Lưu ánh xạ của tay cầm ảo vào tệp";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "Mở biểu mẫu xác minh đã điền sẵn trong trình duyệt";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "Sao chép kết quả kiểm tra có hướng dẫn vào bảng nhớ tạm";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "Mở vấn đề GitHub đã điền sẵn trong trình duyệt";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "Lưu kết quả kiểm tra có hướng dẫn vào tệp";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "Tiếp tục mà không chờ điều khiển này";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "Duyệt từng điều khiển và kiểm tra xem nó có phản hồi không";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "Xem lại báo cáo xác minh trước khi gửi";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "Chọn một trò chơi và khởi chạy bằng tay cầm ảo";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "Mở mục của bộ điều khiển này trong trình duyệt";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "Dừng thu thập mẫu và giữ lại các mẫu đã có";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "Bỏ các mẫu đã thu thập và bắt đầu lại";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "Thu thập mẫu con quay để đo độ lệch khi đứng yên";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "Chọn đèn người chơi mà bộ điều khiển hiển thị";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "Thực hiện bước tiếp theo để bộ điều khiển này hoạt động";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "Đo phạm vi của các cần trong khi bạn xoay mỗi cần một vòng tròn đầy đủ";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "Đo độ lệch con quay khi bộ điều khiển nằm yên";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "Gỡ các giá trị hiệu chỉnh đã lưu của bộ điều khiển này";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "Đo tâm của các cần và vị trí nghỉ của cò khi thả hết điều khiển";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "Đo điểm cuối của cò trong khi bạn bóp mỗi cò hết cỡ";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "Xóa mọi lựa chọn loại tay cầm ảo sau khi bạn xác nhận";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "Bắt đầu lại việc ánh xạ lại bộ điều khiển này";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "Chuyển động cơ rung này giữa tắt và hết công suất";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "Chạy bản sửa cho lần kiểm tra thất bại này";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "Chọn macOS hay OpenJoystickDriver xử lý bộ điều khiển này";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "Hiện hoặc ẩn các mã định danh và điểm cuối";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "Hiện các điều khiển bị ẩn ở mức giao diện hiện tại";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "Hiện hoặc ẩn các giá trị tinh chỉnh của bộ điều khiển này";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "Bắt đầu ghi trong khoảng thời gian đã chọn";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "Chỉnh mức hành trình của cần gần tâm bị bỏ qua";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "Dừng ngay các động cơ rung";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "Tạm dừng việc ánh xạ lại bộ điều khiển này cho đến khi bạn tiếp tục";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "Chạy các động cơ rung trong khoảng thời gian đã chọn";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "Lặp lại yêu cầu đã thất bại";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "Chọn loại tay cầm ảo mà các trò chơi nhìn thấy";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "Chọn xem loại áp dụng cho một bộ điều khiển hay cho kiểu máy của nó";

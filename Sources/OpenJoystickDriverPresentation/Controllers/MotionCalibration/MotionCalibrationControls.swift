@@ -75,17 +75,21 @@
             vertical: true
           )
           Button(OJDLocalized.string("action.tryAgain")) { attempt += 1 }
+            .help(OJDLocalized.string("ui.help.tryAgain"))
         }
         HStack {
           Button(OJDLocalized.string("ui.motion.calibration.start")) {
             Task { await model.perform(.start) }
           }.disabled(model.status?.hasMotionBaseline != true || model.status?.isCollecting == true)
+            .help(OJDLocalized.string("ui.help.motionStart"))
           Button(OJDLocalized.string("ui.motion.calibration.pause")) {
             Task { await model.perform(.pause) }
           }.disabled(model.status?.isCollecting != true)
+            .help(OJDLocalized.string("ui.help.motionPause"))
           Button(OJDLocalized.string("action.reset")) {
             Task { await model.perform(.reset) }
           }.disabled(model.status == nil)
+            .help(OJDLocalized.string("ui.help.motionReset"))
           if model.isBusy { ProgressView().controlSize(.small) }
         }
       }.disabled(model.selector == nil || model.isBusy)

@@ -42,9 +42,9 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.done")) { model.isPresented = false }
-            .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.closeSheet"))
           Button(OJDLocalized.string("ui.console.explain.action")) { model.explain() }
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.explain"))
             .disabled(model.typedCode.trimmingCharacters(in: .whitespaces).isEmpty)
         }
       }.ojdSheet(.compact)

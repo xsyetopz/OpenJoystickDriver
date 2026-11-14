@@ -33,9 +33,10 @@
             onIncrement: setting.increased.map { value in { change(to: value) } },
             onDecrement: setting.decrementClears
               ? { change(to: nil) } : setting.decreased.map { value in { change(to: value) } }
-          ).labelsHidden()
+          ).labelsHidden().help(OJDLocalized.string("ui.help.stickDeadzone"))
           if setting.canReset {
             Button(OJDLocalized.string("action.reset")) { change(to: nil) }
+              .help(OJDLocalized.string("ui.help.deadzoneReset"))
           }
         }.disabled(editor.isWriting)
       }

@@ -34,7 +34,7 @@
                     .fixedSize(horizontal: false, vertical: true)
                   Button(OJDLocalized.string("ui.menu.controller.suspend")) {
                     Task { @MainActor in await viewModel.suspendController(device) }
-                  }
+                  }.help(OJDLocalized.string("ui.help.suspend"))
                 }
               }
             }
@@ -42,7 +42,7 @@
               OJDLabeledRow(OJDLocalized.string("ui.controllers.suspended")) {
                 Button(OJDLocalized.string("ui.menu.controller.resume")) {
                   Task { @MainActor in await viewModel.resumeController(device) }
-                }
+                }.help(OJDLocalized.string("ui.help.resume"))
               }
             }
             if let failure = viewModel.controllerActionFailures[device.sessionToken.rawValue] {
@@ -78,7 +78,7 @@
                   "#\(validation.issue)"
                 ),
                 destination: validation.issueURL
-              )
+              ).help(OJDLocalized.string("ui.help.communityLink"))
             }
           }
           ControllerLookupButton(
@@ -198,6 +198,7 @@
       } label: {
         Button(OJDLocalized.string("cli.controller.show.labelTuning")) { showsTuning.toggle() }
           .buttonStyle(.plain).frame(maxWidth: .infinity, alignment: .leading)
+          .help(OJDLocalized.string("ui.help.showTuning"))
       }
     }
 
@@ -223,6 +224,7 @@
       } label: {
         Button(OJDLocalized.string("ui.virtualProfile.advanced")) { showsAdvanced.toggle() }
           .buttonStyle(.plain).frame(maxWidth: .infinity, alignment: .leading)
+          .help(OJDLocalized.string("ui.help.showAdvanced"))
       }
     }
 
@@ -322,6 +324,7 @@
           vertical: true
         )
         Button(OJDLocalized.string("action.tryAgain"), action: retry)
+          .help(OJDLocalized.string("ui.help.tryAgain"))
 
       }
     }

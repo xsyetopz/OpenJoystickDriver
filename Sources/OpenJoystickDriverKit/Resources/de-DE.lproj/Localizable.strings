@@ -5356,3 +5356,103 @@
 "ui.setup.uninstallRefused" = "Der Xbox-USB-Treiber ist weiterhin installiert.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Der Browser konnte nicht geöffnet werden.";
+/* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */
+"ui.help.applyLight" = "Den gewählten Wert an das Licht des Controllers senden";
+/* Tooltip of the Cancel buttons of the guided check validation sheet and of the capture sheet. Cancel closes the sheet and applies nothing. */
+"ui.help.cancelSheet" = "Dieses Fenster schließen, ohne etwas anzuwenden";
+/* Tooltip of the button of the keyboard capture view that starts listening for a key press. */
+"ui.help.captureKey" = "Auf die nächste gedrückte Taste warten";
+/* Tooltip of the Capture Packets button in the Controllers detail. It opens a sheet that records the packets of the controller. */
+"ui.help.capturePackets" = "Die Pakete aufzeichnen, die dieser Controller sendet";
+/* Tooltip of the Claim button in the Controllers list and detail for a controller that Apple's driver holds. Xbox USB driver is the glossary term. */
+"ui.help.claim" = "Den Xbox-USB-Treiber aktivieren, um diesen Controller zu übernehmen";
+/* Tooltip of the Clear button of the keyboard capture view that removes the captured key. */
+"ui.help.clearKey" = "Die erfasste Taste von diesem Ziel entfernen";
+/* Tooltip of the Done buttons of the guided check result sheet and of the error code explainer. */
+"ui.help.closeSheet" = "Dieses Fenster schließen";
+/* Tooltip of the link in the Controllers detail that opens the GitHub issue of a community validation. */
+"ui.help.communityLink" = "Den Bestätigungsbericht auf GitHub öffnen";
+/* Tooltip of the Reset button beside the stick deadzone stepper. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.deadzoneReset" = "Den eigenen Wert entfernen und die Standard-Totzone verwenden";
+/* Tooltip of the menu item that ends the Bluetooth connection of one controller. */
+"ui.help.disconnectWireless" = "Die Bluetooth-Verbindung zu diesem Controller beenden";
+/* Tooltip of the Dismiss button of the error banner of the Activity console. */
+"ui.help.dismiss" = "Diese Fehlermeldung ausblenden";
+/* Tooltip of the Draft Record buttons in the Controllers detail. A record describes one controller model. */
+"ui.help.draftRecord" = "Einen Entwurf eines Controller-Eintrags für dieses Gerät beginnen";
+/* Tooltip of the Draft Record from SDL button in the Controllers detail. SDL stays as written. */
+"ui.help.draftRecordFromSDL" = "Einen Eintrag aus der SDL-Datenbankzeile dieses Controllers entwerfen";
+/* Tooltip of the Explain button of the error code explainer sheet. */
+"ui.help.explain" = "Die Bedeutung des eingegebenen Fehlercodes nachschlagen";
+/* Tooltip of the Export button of the Controllers detail that saves the mapping of the virtual gamepad. */
+"ui.help.exportMapping" = "Die Zuordnung des virtuellen Gamepads in einer Datei sichern";
+/* Tooltip of the Confirm button of the guided check validation sheet. GitHub stays as written. */
+"ui.help.guidedConfirm" = "Das vorausgefüllte Bestätigungsformular im Browser öffnen";
+/* Tooltip of the Copy button of the guided check result sheet. */
+"ui.help.guidedCopy" = "Das Ergebnis der geführten Prüfung in die Zwischenablage kopieren";
+/* Tooltip of the button of the guided check result sheet that opens a GitHub issue. GitHub stays as written. */
+"ui.help.guidedOpenIssue" = "Ein vorausgefülltes GitHub-Issue im Browser öffnen";
+/* Tooltip of the Save button of the guided check result sheet. */
+"ui.help.guidedSave" = "Das Ergebnis der geführten Prüfung in einer Datei sichern";
+/* Tooltip of the Skip button of a guided check step. A control is one button, stick or trigger of the controller. */
+"ui.help.guidedSkip" = "Weitermachen, ohne auf dieses Bedienelement zu warten";
+/* Tooltip of the Guided Check button of the Input Test window. The check asks for each control in turn. */
+"ui.help.guidedStart" = "Jedes Bedienelement durchgehen und prüfen, ob es reagiert";
+/* Tooltip of the Validate button of the guided check result sheet. The report goes to the project as a validation. */
+"ui.help.guidedValidate" = "Den Bestätigungsbericht prüfen, bevor du ihn sendest";
+/* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
+"ui.help.launch" = "Ein Spiel auswählen und es mit dem virtuellen Gamepad starten";
+/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+"ui.help.lookup" = "Den Eintrag dieses Controllers im Browser öffnen";
+/* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionPause" = "Die Erfassung der Messwerte anhalten und die bisherigen behalten";
+/* Tooltip of the Reset button of the motion calibration. Samples are gyro measurements. */
+"ui.help.motionReset" = "Die gesammelten Messwerte verwerfen und neu beginnen";
+/* Tooltip of the Start Calibration button of the motion calibration. Bias is the offset the gyro reports at rest. */
+"ui.help.motionStart" = "Gyro-Messwerte sammeln, um die Abweichung im Ruhezustand zu bestimmen";
+/* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
+"ui.help.playerIndicator" = "Auswählen, welche Spielerleuchte der Controller anzeigt";
+/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
+"ui.help.readinessAction" = "Den nächsten Schritt ausführen, damit dieser Controller funktioniert";
+/* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
+"ui.help.recalibrate.circle" = "Stick-Bereiche messen, während du jeden Stick im Kreis bewegst";
+/* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
+"ui.help.recalibrate.gyro" = "Den Gyro-Versatz messen, während der Controller still liegt";
+/* Tooltip of the Reset button of the recalibration controls. It deletes the measured values. */
+"ui.help.recalibrate.reset" = "Die gespeicherten Kalibrierwerte dieses Controllers entfernen";
+/* Tooltip of the Measure Rest recalibration button. It reads the controller while sticks and triggers are released. */
+"ui.help.recalibrate.rest" = "Stick-Mitten und Trigger-Ruhelagen bei losgelassenen Bedienelementen messen";
+/* Tooltip of the Measure Triggers recalibration button. It reads the controller while each trigger is pressed in. */
+"ui.help.recalibrate.triggers" = "Trigger-Endpunkte messen, während du jeden Trigger ganz durchdrückst";
+/* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
+"ui.help.resetAll" = "Nach Bestätigung alle Auswahlen der Art des virtuellen Gamepads löschen";
+/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
+"ui.help.resume" = "Die Umbelegung dieses Controllers wieder starten";
+/* Tooltip of the toggle of a rumble motor that has only two states. */
+"ui.help.rumbleToggle" = "Diesen Rumble-Motor zwischen Aus und voller Stärke umschalten";
+/* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
+"ui.help.runFix" = "Die Korrektur für diese fehlgeschlagene Prüfung ausführen";
+/* Tooltip of the segmented picker that chooses Handled by macOS or Handled by OpenJoystickDriver. OpenJoystickDriver is the product name. */
+"ui.help.serverPicker" = "Wählen, ob macOS oder OpenJoystickDriver diesen Controller verwaltet";
+/* Tooltip of the Advanced disclosure of the Controllers detail. Endpoints are the sockets and addresses a controller uses. */
+"ui.help.showAdvanced" = "Die Kennungen und Endpunkte ein- oder ausblenden";
+/* Tooltip of the button of the hidden-change notice that switches the interface level to show all controls. */
+"ui.help.showHidden" = "Die auf der aktuellen Oberflächenstufe ausgeblendeten Bedienelemente zeigen";
+/* Tooltip of the Tuning disclosure of the Controllers detail. */
+"ui.help.showTuning" = "Die Werte der Feinabstimmung dieses Controllers ein- oder ausblenden";
+/* Tooltip of the Start Capture button of the packet capture sheet. */
+"ui.help.startCapture" = "Die Aufzeichnung für die gewählte Dauer beginnen";
+/* Tooltip of the stepper of the Controllers detail that sets the stick deadzone. Deadzone is the part of the travel near the center that is ignored. */
+"ui.help.stickDeadzone" = "Einstellen, wie viel Stick-Weg nahe der Mitte ignoriert wird";
+/* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
+"ui.help.stopRumble" = "Die Rumble-Motoren sofort anhalten";
+/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
+"ui.help.suspend" = "Die Umbelegung dieses Controllers anhalten, bis du sie fortsetzt";
+/* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
+"ui.help.testRumble" = "Die Rumble-Motoren für die gewählte Dauer laufen lassen";
+/* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
+"ui.help.tryAgain" = "Die fehlgeschlagene Anfrage wiederholen";
+/* Tooltip of the picker of the Controllers detail that chooses the virtual gamepad kind. Virtual gamepad kind is the glossary term. */
+"ui.help.virtualProfile" = "Die Art des virtuellen Gamepads wählen, die Spiele sehen";
+/* Tooltip of the Apply to picker that sets whether the virtual gamepad kind choice covers one controller or its model. */
+"ui.help.virtualScope" = "Wählen, ob die Art für einen Controller oder sein Modell gilt";

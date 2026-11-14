@@ -41,6 +41,7 @@
           )
           Text(OJDLocalized.string("ui.controllers.server.ojd")).tag(ControllerServer.ojd)
         }.pickerStyle(.segmented).disabled(isRunning || unavailableReason != nil)
+          .help(OJDLocalized.string("ui.help.serverPicker"))
         if isRunning {
           HStack(spacing: OJDSpacing.small) {
             ProgressView().controlSize(.small)

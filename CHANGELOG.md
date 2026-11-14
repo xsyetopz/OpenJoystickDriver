@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- Every button, toggle, picker, stepper and disclosure in the Controllers, Input Capture and Activity areas has a tooltip that says what it does, and the diagnostics status symbol is hidden from VoiceOver because the status text names it.
 - The `SystemAction` destination has `Launchpad`, `Screenshot`, `LockScreen` and `ShowDesktop`. `Launchpad` opens Launchpad (or Apps where macOS has no Launchpad). `Screenshot` takes a screenshot, `LockScreen` locks the screen and `ShowDesktop` shows the desktop, each by pressing its system shortcut (Shift-Command-3, Control-Command-Q, F11), so they need Accessibility access. `ojd binding set` takes `system:launchpad`, `system:screenshot`, `system:lock-screen` and `system:show-desktop`.
 - Layouts apply to every protocol family: a record of any family, `HIDDescriptor` included, may hold `input.layouts`. The family driver decodes every report and the layout that selects a report overrides the controls it names, so a device with its own report shape is a record. The Xbox wheel `044F:B671` reads its steering and brake through such a layout.
 - A patch reaches every record property (`capabilities`, `idle`, `modes`, `name`, `placeholderSerial`, `usb`, `bluetoothLE`, `server`, `route`, `heldByAppleDriver`, `input` and `tuning`), and the selector still names the identity. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the remove path `modes.<id>` drops one.

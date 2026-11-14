@@ -25,11 +25,15 @@
         Text(OJDLocalized.string("ui.controllers.recalibrate.gyroInstructions")).font(.body)
           .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
         HStack {
-          button("ui.controllers.recalibrate.rest", .rest)
-          button("ui.controllers.recalibrate.circle", .circle)
-          button("ui.controllers.recalibrate.triggers", .triggers)
-          button("ui.controllers.recalibrate.gyro", .gyro)
-          button("action.reset", .reset)
+          button("ui.controllers.recalibrate.rest", .rest, help: "ui.help.recalibrate.rest")
+          button("ui.controllers.recalibrate.circle", .circle, help: "ui.help.recalibrate.circle")
+          button(
+            "ui.controllers.recalibrate.triggers",
+            .triggers,
+            help: "ui.help.recalibrate.triggers"
+          )
+          button("ui.controllers.recalibrate.gyro", .gyro, help: "ui.help.recalibrate.gyro")
+          button("action.reset", .reset, help: "ui.help.recalibrate.reset")
           if model.isBusy {
             ProgressView().controlSize(.small)
             Text(OJDLocalized.string("ui.controllers.recalibrate.running"))
@@ -43,11 +47,15 @@
     }
 
     /// A button that runs `action` on the controller.
-    private func button(_ title: String, _ action: ControllerRecalibrationAction) -> some View {
+    private func button(
+      _ title: String,
+      _ action: ControllerRecalibrationAction,
+      help: String
+    ) -> some View {
       Button(OJDLocalized.string(title)) {
         guard let selector else { return }
         Task { await model.run(action, for: selector) }
-      }
+      }.help(OJDLocalized.string(help))
     }
   }
 #endif
