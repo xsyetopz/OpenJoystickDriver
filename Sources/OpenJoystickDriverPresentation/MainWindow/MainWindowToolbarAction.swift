@@ -125,7 +125,7 @@ enum MainWindowToolbarAction: String, CaseIterable {
     case .convertProfile: return "ui.help.convertProfile"
     case .exportProfile: return "ui.help.exportProfile"
     case .deleteProfile: return "ui.help.deleteProfile"
-    case .installLibraryItem: return "ui.menu.file.installRecordOrMod"
+    case .installLibraryItem: return "ui.help.menu.installRecordOrMod"
     case .grantProgram: return "a11y.access.grantProgram"
     case .createToken: return "a11y.access.grantToken"
     case .validateLibraryItem: return "ui.help.validateLibraryItem"
