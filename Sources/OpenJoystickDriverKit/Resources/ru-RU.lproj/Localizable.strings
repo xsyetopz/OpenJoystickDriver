@@ -5352,6 +5352,6 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "Не удалось перезагрузить сохранённый профиль. Ваши изменения сохранены.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "Расширение драйвера по-прежнему установлено.";
+"ui.setup.uninstallRefused" = "USB-драйвер Xbox по-прежнему установлен.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Не удалось открыть браузер.";

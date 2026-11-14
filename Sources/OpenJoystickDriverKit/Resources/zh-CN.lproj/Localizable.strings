@@ -5352,6 +5352,6 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "无法重新载入已存储的描述文件。您的编辑已保留。";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "驱动扩展仍处于安装状态。";
+"ui.setup.uninstallRefused" = "Xbox USB 驱动程序仍处于安装状态。";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "无法打开浏览器。";

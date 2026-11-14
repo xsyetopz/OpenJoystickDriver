@@ -5353,6 +5353,6 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "Das gespeicherte Profil konnte nicht neu geladen werden. Deine Änderungen bleiben erhalten.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "Die Treibererweiterung ist weiterhin installiert.";
+"ui.setup.uninstallRefused" = "Der Xbox-USB-Treiber ist weiterhin installiert.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Der Browser konnte nicht geöffnet werden.";

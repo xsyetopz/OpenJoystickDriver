@@ -5352,6 +5352,6 @@
 /* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
 "ui.profiles.reloadUnavailable" = "Kayıtlı profil yeniden yüklenemedi. Düzenlemeleriniz korundu.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
-"ui.setup.uninstallRefused" = "Sürücü uzantısı hâlâ yüklü.";
+"ui.setup.uninstallRefused" = "Xbox USB Sürücüsü hâlâ yüklü.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Tarayıcı açılamadı.";
