@@ -306,6 +306,7 @@ final class AccessViewModel: ObservableObject {
 
   /// Opens the token form with an empty draft.
   func requestTokenForm() {
+    failure = nil
     tokenDraft = AccessTokenDraft()
     sheet = .tokenForm
   }

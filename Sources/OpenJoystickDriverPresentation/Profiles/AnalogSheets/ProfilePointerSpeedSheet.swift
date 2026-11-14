@@ -7,7 +7,7 @@
     /// What the controller has, which decides the drivers that can be saved.
     let capabilities: ControllerProfileCapabilities
     /// Reads the latest input state of the profile's controller, or nil when there is none.
-    let liveState: () async -> ControllerState?
+    let liveState: () async throws -> ControllerState?
     /// Receives the pointer speed, or nil when it is off, when the person chooses Save.
     let onSave: (RemappingPointerSpeed?) throws -> Void
     /// Dismisses the sheet.
@@ -22,6 +22,9 @@
     /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
+    /// The message of the failed read of the input state, or nil.
+    @State
+    private var liveError: String?
 
     /// Creates the sheet on the current pointer speed.
     ///
@@ -33,7 +36,7 @@
     init(
       speed: RemappingPointerSpeed?,
       capabilities: ControllerProfileCapabilities,
-      liveState: @escaping () async -> ControllerState?,
+      liveState: @escaping () async throws -> ControllerState?,
       onSave: @escaping (RemappingPointerSpeed?) throws -> Void
     ) {
       self.capabilities = capabilities
@@ -64,6 +67,7 @@
           if let scale = liveScale {
             Text(OJDLocalized.formatted("ui.profiles.pointerSpeed.live", scale))
           }
+          if let liveError { Text(liveError).foregroundColor(.red) }
         }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
         HStack {
@@ -75,7 +79,13 @@
         }
       }.ojdSheet(.compact).task {
         while !Task.isCancelled {
-          state = await liveState()
+          do {
+            state = try await liveState()
+            liveError = nil
+          } catch {
+            state = nil
+            liveError = RuntimePresentation.userFacingError(error)
+          }
           try? await Task.sleep(nanoseconds: 200_000_000)
         }
       }

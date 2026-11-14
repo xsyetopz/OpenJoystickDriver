@@ -169,6 +169,10 @@
             Text(OJDLocalized.string(key)).font(.caption).foregroundStyle(.secondary)
               .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
           }
+          if row.kind == .notification, let message = notificationPermission.errorMessage {
+            Text(message).font(.caption).foregroundColor(Color(NSColor.systemRed))
+              .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
+          }
         }
       }
     }

@@ -5347,3 +5347,11 @@
 "ui.inputTest.guidedCheck.leftStick" = "Левый стик";
 /* Name of the right stick as a whole, in a guided check step. */
 "ui.inputTest.guidedCheck.rightStick" = "Правый стик";
+/* Error in the settings window when the pressed keys cannot be the pause shortcut because the key is not a letter, digit, F key or Space, or no Command, Control or Option key is held. */
+"ui.settings.general.pauseShortcutInvalid" = "Используйте букву, цифру, клавишу F или пробел вместе с Command, Control или Option.";
+/* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
+"ui.profiles.reloadUnavailable" = "Не удалось перезагрузить сохранённый профиль. Ваши изменения сохранены.";
+/* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
+"ui.setup.uninstallRefused" = "Расширение драйвера по-прежнему установлено.";
+/* Error in the guided check when the browser could not open the issue or validation form. */
+"ui.inputTest.guidedCheck.openFailed" = "Не удалось открыть браузер.";

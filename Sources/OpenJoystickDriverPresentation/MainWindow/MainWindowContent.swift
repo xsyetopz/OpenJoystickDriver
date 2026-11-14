@@ -151,7 +151,19 @@
           perform: perform
         )
         if navigation.setupSteps.isShown {
-          SetupStepsView(steps: openSetupSteps, perform: performSetupStep) {
+          SetupStepsView(
+            steps: openSetupSteps,
+            isRequesting: SetupSteps.isRequesting(
+              permissionState: runtime.permissionState,
+              postEventAccessState: runtime.postEventAccessState
+            ),
+            failure: SetupSteps.failure(
+              permissionState: runtime.permissionState,
+              postEventAccessState: runtime.postEventAccessState,
+              settingsOpenFailed: runtime.permissionSettingsOpenFailed
+            ),
+            perform: performSetupStep
+          ) {
             navigation.dismissSetupSteps()
           }
         } else {
@@ -246,6 +258,7 @@
 
     /// Runs the fix that a setup step offers.
     private func performSetupStep(_ step: SetupStep) {
+      runtime.permissionSettingsOpenFailed = false
       switch step.kind {
       case .permission(.inputRead):
         PermissionAccessActions.requestControllerAccess(viewModel: runtime, requirement: .inputRead)

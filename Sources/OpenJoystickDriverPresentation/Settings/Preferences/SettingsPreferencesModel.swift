@@ -354,6 +354,17 @@
       } catch { report(error, beside: .pauseShortcut) }
     }
 
+    /// Stores the shortcut of a key press, or shows beside the row why the press is no shortcut.
+    func recordPauseShortcut(code: UInt32, modifiers: Set<PauseShortcut.Modifier>) {
+      guard let key = PauseShortcut.keyName(code: code),
+        let shortcut = try? PauseShortcut(key: key, modifiers: modifiers)
+      else {
+        failControl(.pauseShortcut, OJDLocalized.string("ui.settings.general.pauseShortcutInvalid"))
+        return
+      }
+      setPauseShortcut(shortcut)
+    }
+
     /// Shows beside the pause shortcut row that the system refused the shortcut.
     func pauseShortcutRefused() {
       failControl(.pauseShortcut, OJDLocalized.string("ui.settings.general.pauseShortcutTaken"))

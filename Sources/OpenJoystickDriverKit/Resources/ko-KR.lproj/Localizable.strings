@@ -5347,3 +5347,11 @@
 "ui.inputTest.guidedCheck.leftStick" = "왼쪽 스틱";
 /* Name of the right stick as a whole, in a guided check step. */
 "ui.inputTest.guidedCheck.rightStick" = "오른쪽 스틱";
+/* Error in the settings window when the pressed keys cannot be the pause shortcut because the key is not a letter, digit, F key or Space, or no Command, Control or Option key is held. */
+"ui.settings.general.pauseShortcutInvalid" = "문자, 숫자, F 키 또는 Space 키를 Command, Control 또는 Option과 함께 사용하세요.";
+/* Error in the profile editor when Reload cannot find the stored profile, so the banner stays and the edits are kept. */
+"ui.profiles.reloadUnavailable" = "저장된 프로파일을 다시 불러올 수 없습니다. 편집 내용은 유지됩니다.";
+/* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
+"ui.setup.uninstallRefused" = "드라이버 확장 프로그램이 아직 설치되어 있습니다.";
+/* Error in the guided check when the browser could not open the issue or validation form. */
+"ui.inputTest.guidedCheck.openFailed" = "브라우저를 열 수 없습니다.";

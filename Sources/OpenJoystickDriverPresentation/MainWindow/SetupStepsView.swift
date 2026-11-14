@@ -10,6 +10,10 @@
   struct SetupStepsView: View {
     /// The steps still open.
     let steps: [SetupStep]
+    /// Whether a request to macOS is in flight.
+    let isRequesting: Bool
+    /// Why the latest request failed, or nil.
+    let failure: String?
     /// Runs the step whose button the user pressed.
     let perform: @MainActor (SetupStep) -> Void
     /// Leaves the steps for the selected area.
@@ -28,8 +32,13 @@
             )
             Spacer(minLength: OJDSpacing.medium)
             Button(OJDLocalized.string(step.buttonKey)) { perform(step) }
-              .ojdAccessibilityLabel(OJDLocalized.string(step.sentenceKey))
+              .disabled(isRequesting).ojdAccessibilityLabel(OJDLocalized.string(step.sentenceKey))
           }
+        }
+        if isRequesting { ProgressView().controlSize(.small) }
+        if let failure {
+          Text(failure).foregroundColor(Color(NSColor.systemRed))
+            .fixedSize(horizontal: false, vertical: true)
         }
         HStack {
           Spacer()
