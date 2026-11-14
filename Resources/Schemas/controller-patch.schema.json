@@ -180,6 +180,36 @@
             },
             "frameQueueCapacity": {
               "$ref": "controller.schema.json#/$defs/tuning/properties/frameQueueCapacity"
+            },
+            "leftStickCenterX": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/leftStickCenterX"
+            },
+            "leftStickCenterY": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/leftStickCenterY"
+            },
+            "rightStickCenterX": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/rightStickCenterX"
+            },
+            "rightStickCenterY": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/rightStickCenterY"
+            },
+            "leftStickRange": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/leftStickRange"
+            },
+            "rightStickRange": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/rightStickRange"
+            },
+            "leftTriggerRest": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/leftTriggerRest"
+            },
+            "leftTriggerFull": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/leftTriggerFull"
+            },
+            "rightTriggerRest": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/rightTriggerRest"
+            },
+            "rightTriggerFull": {
+              "$ref": "controller.schema.json#/$defs/tuning/properties/rightTriggerFull"
             }
           }
         },

@@ -6,7 +6,7 @@
 
   /// What the Input Test window needs from the service: input state, output commands and color
   /// preview.
-  protocol InputTestDeviceGateway: MotionCalibrationGateway {
+  protocol InputTestDeviceGateway: MotionCalibrationGateway, ControllerRecalibrationGateway {
     /// Returns the latest input of the controller, or nil when there is none yet.
     ///
     /// - Parameter selector: The controller.

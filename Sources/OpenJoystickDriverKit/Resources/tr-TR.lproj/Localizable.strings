@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Ham %1$@, ayardan sonra %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "sanal oyun kontrolcüsü yok";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Yeniden Kalibre Et";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Dinlenme konumunu ölç";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Daireyi ölç";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Tetikleri ölç";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Kumanda okunuyor…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Her adım kumandayı yaklaşık iki saniye okur. Dinlenme konumu için çubukları ve tetikleri bırakın. Daire için her çubuğu tam dairesi boyunca döndürün. Tetikler için her tetiği sonuna kadar basın.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Ölçülen değerler kaydedildi.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "%@ için hareket ölçülmedi, bu yüzden kayıtlı değerleri korunur.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Kayıtlı çubuk ve tetik kalibrasyonu kaldırıldı.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Kayıtlı çubuk ve tetik kalibrasyonu ile jiroskop ofseti kaldırıldı.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "İstek, aralık dışında bir üretici veya ürün kimliği belirtiyor. Hiçbir şey değişmedi.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -3268,23 +3288,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "Turbo, işaretçi hareketi veya kaydırma hedefleriyle çalışmaz.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "Bir kontrolcünün hareket kalibrasyonunu gösterir veya değiştirir.";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "Ne yapılacağı: start, pause veya reset. Kalibrasyonu yazdırmak için boş bırakın.";
+"cli.controller.calibrate.abstract" = "Bir denetleyicinin kalibrasyonunu gösterir veya değiştirir.";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "Yapılacak işlem: start, pause, reset veya sticks. Hareket kalibrasyonunu yazdırmak için boş bırakın.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "kalibre edildi";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "toplanıyor";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "Eylem verilmezse kalibrasyonu yazdırır. start, kontrolcü sabit dururken jiroskop kaymasını toplar, pause toplamayı durdurur, reset kalibrasyonu sıfırlar. Hareket eğimi ve direksiyon atamaları kalibrasyonu kullanır.";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "İşlem verilmezse hareket kalibrasyonunu yazdırır. start, denetleyici hareketsiz dururken jiroskop kaymasını toplar; pause toplamayı durdurur. sticks çubukların merkezlerini ve aralıklarını ile tetiklerin uç noktalarını ölçer ve denetleyicinin modeli için saklar. reset saklanan bu değerleri kaldırır ve hareket kalibrasyonunu unutur. Hareketle eğim ve direksiyon atamaları hareket kalibrasyonunu kullanır.";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ artık bağlı değil.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ hareket bildirmiyor.";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: saklanan çubuk ve tetik kalibrasyonu silindi.";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, jiroskop sapması x %3$@ y %4$@ z %5$@ derece/saniye";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "sticks komutunun çalıştırdığı tek adım: rest, circle veya triggers. Üçünü de çalıştırmak için boş bırakın.";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "Her çubuğu tam dairesi boyunca çevirin…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "Çubukları ve tetikleri bırakıp hareketsiz tutun…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "Her tetiği sonuna kadar basın…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: %2$@ adımı %3$@ değerini sakladı.";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ için etkin bir yeniden atama oturumu yok. “ojd profile activate” ile onun için bir profil etkinleştirin.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "kalibre edilmedi";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ hareket etmedi, bu yüzden saklanan değerler kalır.";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "Bir sol ve bir sağ Joy-Con’u tek kontrolcüde birleştirir.";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

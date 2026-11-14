@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Thô %1$@, sau khi tinh chỉnh %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "không có tay cầm ảo";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Hiệu chỉnh lại";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Đo vị trí nghỉ";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Đo vòng tròn";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Đo cò";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Đang đọc tay cầm…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Mỗi bước đọc tay cầm khoảng hai giây. Với vị trí nghỉ, hãy thả các cần analog và cò. Với vòng tròn, hãy xoay mỗi cần analog hết vòng tròn của nó. Với cò, hãy nhấn mỗi cò hết cỡ.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Đã lưu các giá trị đã đo.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Không đo được chuyển động của %@, nên giá trị đã lưu được giữ nguyên.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Đã xóa hiệu chỉnh cần analog và cò đã lưu.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Đã xóa hiệu chỉnh cần analog và cò đã lưu cùng độ lệch con quay.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Yêu cầu nêu một ID nhà cung cấp hoặc ID sản phẩm nằm ngoài phạm vi. Không có gì thay đổi.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -3268,23 +3288,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "Turbo không dùng được với đích di chuyển con trỏ hoặc cuộn.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "Hiển thị hoặc thay đổi hiệu chỉnh chuyển động của bộ điều khiển.";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "Việc cần làm: start, pause hoặc reset. Bỏ qua để in hiệu chỉnh.";
+"cli.controller.calibrate.abstract" = "Hiển thị hoặc thay đổi hiệu chuẩn của tay cầm.";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "Việc cần làm: start, pause, reset hoặc sticks. Bỏ trống để in hiệu chuẩn chuyển động.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "đã hiệu chỉnh";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "đang thu thập";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "Không có thao tác, in hiệu chỉnh. start thu thập độ trôi của con quay hồi chuyển khi bộ điều khiển nằm yên, pause dừng thu thập, và reset xóa hiệu chỉnh. Các liên kết nghiêng chuyển động và lái dùng hiệu chỉnh này.";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "Khi không có thao tác, lệnh in hiệu chuẩn chuyển động. start thu độ trôi con quay hồi chuyển trong khi tay cầm nằm yên, còn pause dừng thu. sticks đo tâm và phạm vi của cần analog cùng điểm cuối của cò, rồi lưu cho kiểu tay cầm. reset xóa các giá trị đã lưu đó và bỏ hiệu chuẩn chuyển động. Các ánh xạ độ nghiêng và lái theo chuyển động dùng hiệu chuẩn chuyển động.";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ không còn được kết nối.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ không báo cáo chuyển động.";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: đã xóa hiệu chuẩn cần analog và cò đã lưu.";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, độ lệch con quay hồi chuyển x %3$@ y %4$@ z %5$@ độ mỗi giây";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "Một bước duy nhất mà sticks chạy: rest, circle hoặc triggers. Bỏ trống để chạy cả ba.";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "Xoay từng cần analog hết một vòng tròn đầy đủ…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "Thả các cần analog và cò rồi giữ yên…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "Nhấn từng cò hết cỡ…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: bước %2$@ đã lưu %3$@.";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ không có phiên ánh xạ lại nào đang hoạt động. Hãy kích hoạt một cấu hình cho nó bằng “ojd profile activate”.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "chưa hiệu chỉnh";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ không di chuyển nên các giá trị đã lưu được giữ nguyên.";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "Kết hợp một Joy-Con trái và một Joy-Con phải thành một bộ điều khiển.";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

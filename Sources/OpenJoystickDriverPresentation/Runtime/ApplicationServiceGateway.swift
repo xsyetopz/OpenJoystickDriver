@@ -136,9 +136,18 @@ protocol VirtualOutputGateway: Sendable {
   ) async throws -> WirelessControllerDisconnectResult
 }
 
+/// The recalibration request of the service.
+protocol ControllerRecalibrationGateway: Sendable {
+  /// Runs a recalibration step on the controller, or resets its stored calibration.
+  func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult
+}
+
 /// Every request of the service that the app makes.
 protocol ApplicationServiceGateway: RuntimeStatusGateway, ControllerDiagnosticsGateway,
-  RemappingGateway, VirtualOutputGateway
+  RemappingGateway, VirtualOutputGateway, ControllerRecalibrationGateway
 {}
 
 /// Why a gateway request failed.
@@ -167,6 +176,23 @@ package actor ApplicationServiceClientGateway: ApplicationServiceGateway {
   /// Creates the gateway on a client.
   package init(client: ApplicationServiceClient = ApplicationServiceClient()) {
     self.client = client
+  }
+}
+
+extension ApplicationServiceClientGateway: ControllerRecalibrationGateway {
+  /// Runs a recalibration step on a controller, or resets its stored calibration.
+  ///
+  /// - Parameters:
+  ///   - controller: The controller.
+  ///   - action: The step to run, or the reset.
+  /// - Returns: What the service stored or cleared, or why it stored nothing.
+  /// - Throws: The error of the request.
+  func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult {
+    await ensureConnection()
+    return try await client.recalibrateController(controller, action: action)
   }
 }
 

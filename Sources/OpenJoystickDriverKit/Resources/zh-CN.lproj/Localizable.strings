@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "原始值 %1$@，调整后 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "无虚拟游戏手柄";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "重新校准";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "测量静止位置";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "测量圆周";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "测量扳机";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "正在读取控制器…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "每一步会读取控制器约两秒。测量静止位置时，请松开摇杆和扳机。测量圆周时，请将每个摇杆沿完整的圆转动一圈。测量扳机时，请将每个扳机完全按到底。";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "已保存测量的值。";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "未测到%@的移动，因此保留其已保存的值。";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "已移除保存的摇杆和扳机校准。";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "已移除保存的摇杆和扳机校准以及陀螺仪偏移。";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "请求中的供应商 ID 或产品 ID 超出范围。未做任何更改。";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -3268,23 +3288,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "连发不适用于指针移动或滚动目标。";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "显示或更改控制器的体感校准。";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "要执行的操作：start、pause 或 reset。省略则输出校准。";
+"cli.controller.calibrate.abstract" = "显示或更改手柄的校准。";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "要执行的操作：start、pause、reset 或 sticks。省略则打印体感校准。";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "已校准";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "正在采集";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "不带操作时，输出校准。start 会在控制器静止放置时采集陀螺仪漂移，pause 停止采集，reset 清除校准。体感倾斜和转向映射会使用该校准。";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "不带操作时打印体感校准。start 在手柄静止时收集陀螺仪漂移，pause 停止收集。sticks 测量摇杆中心、摇杆范围和扳机终点，并为该手柄型号保存。reset 删除这些已保存的值并清除体感校准。体感倾斜和转向绑定会使用体感校准。";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ 已断开连接。";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ 不报告体感。";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@：已清除保存的摇杆和扳机校准。";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@：%2$@，陀螺仪偏移 x %3$@ y %4$@ z %5$@ 度/秒";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "sticks 运行的单个步骤：rest、circle 或 triggers。省略则运行全部三步。";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "请将每个摇杆沿完整的圆转动一圈…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "请松开摇杆和扳机并保持不动…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "请将每个扳机完全按到底…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@：%2$@ 步骤已保存 %3$@。";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ 没有活动的重新映射会话。请用“ojd profile activate”为其激活配置文件。";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "未校准";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@：%2$@ 未移动，因此保留已保存的值。";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "将左右两个 Joy-Con 合并为一个控制器。";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

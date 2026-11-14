@@ -228,6 +228,8 @@ extension ApplicationServiceServer {
           server: value.server
         )
       )
+    case .recalibrateController:
+      return try send(await recalibrateController(decode(ControllerRecalibrationArguments.self)))
     case .setControllerTuning:
       let value = try decode(LocalServiceRPCControllerTuningArguments.self)
       return try send(

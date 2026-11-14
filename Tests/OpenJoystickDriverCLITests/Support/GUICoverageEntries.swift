@@ -185,6 +185,7 @@ enum GUICoverageEntries {
     leaf("controller resume", "resumeController"),
     leaf("controller disconnect", "disconnectWirelessController"),
     leaf("controller calibrate", "MotionCalibrationControls"),
+    option("controller calibrate", "--step", "ControllerRecalibrationControls"),
     leaf("controller pair", "pairRemappingJoyCons"),
     option("controller pair", "--profile", "ProfileJoyConPairSheet"),
     leaf("controller unpair", "unpairRemappingJoyCons"),

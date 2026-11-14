@@ -104,6 +104,26 @@ struct ControllerShowReport: Encodable, Equatable {
     let replyTimeoutMs: Int?
     /// How many virtual gamepad reports may wait behind the one being sent.
     let frameQueueCapacity: Int?
+    /// The stored centre of the left stick X axis.
+    let leftStickCenterX: Double?
+    /// The stored centre of the left stick Y axis.
+    let leftStickCenterY: Double?
+    /// The stored centre of the right stick X axis.
+    let rightStickCenterX: Double?
+    /// The stored centre of the right stick Y axis.
+    let rightStickCenterY: Double?
+    /// The stored left stick deflection that reads as full.
+    let leftStickRange: Double?
+    /// The stored right stick deflection that reads as full.
+    let rightStickRange: Double?
+    /// The stored rest value of the left trigger.
+    let leftTriggerRest: Double?
+    /// The stored fully pressed value of the left trigger.
+    let leftTriggerFull: Double?
+    /// The stored rest value of the right trigger.
+    let rightTriggerRest: Double?
+    /// The stored fully pressed value of the right trigger.
+    let rightTriggerFull: Double?
 
     /// Creates the tuning from `tuning`; nil when the record sets no tuning.
     init?(_ tuning: ControllerTuning) {
@@ -125,6 +145,16 @@ struct ControllerShowReport: Encodable, Equatable {
       speakerMaxSeconds = tuning.speakerMaxSeconds
       replyTimeoutMs = tuning.replyTimeoutMilliseconds
       frameQueueCapacity = tuning.frameQueueCapacity
+      leftStickCenterX = tuning.calibration.values[.leftStickCenterX]
+      leftStickCenterY = tuning.calibration.values[.leftStickCenterY]
+      rightStickCenterX = tuning.calibration.values[.rightStickCenterX]
+      rightStickCenterY = tuning.calibration.values[.rightStickCenterY]
+      leftStickRange = tuning.calibration.values[.leftStickRange]
+      rightStickRange = tuning.calibration.values[.rightStickRange]
+      leftTriggerRest = tuning.calibration.values[.leftTriggerRest]
+      leftTriggerFull = tuning.calibration.values[.leftTriggerFull]
+      rightTriggerRest = tuning.calibration.values[.rightTriggerRest]
+      rightTriggerFull = tuning.calibration.values[.rightTriggerFull]
     }
 
     /// The set values as `name=value`, in record-file order.
@@ -147,6 +177,16 @@ struct ControllerShowReport: Encodable, Equatable {
         speakerMaxSeconds.map { "speakerMaxSeconds=\($0)" },
         replyTimeoutMs.map { "replyTimeoutMs=\($0)" },
         frameQueueCapacity.map { "frameQueueCapacity=\($0)" },
+        leftStickCenterX.map { "leftStickCenterX=\($0)" },
+        leftStickCenterY.map { "leftStickCenterY=\($0)" },
+        rightStickCenterX.map { "rightStickCenterX=\($0)" },
+        rightStickCenterY.map { "rightStickCenterY=\($0)" },
+        leftStickRange.map { "leftStickRange=\($0)" },
+        rightStickRange.map { "rightStickRange=\($0)" },
+        leftTriggerRest.map { "leftTriggerRest=\($0)" },
+        leftTriggerFull.map { "leftTriggerFull=\($0)" },
+        rightTriggerRest.map { "rightTriggerRest=\($0)" },
+        rightTriggerFull.map { "rightTriggerFull=\($0)" },
       ].compactMap { $0 }
     }
   }

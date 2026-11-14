@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Mentah %1$@, setelah penyetelan %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "tidak ada gamepad virtual";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Kalibrasi Ulang";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Ukur posisi diam";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Ukur lingkaran";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Ukur pemicu";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Membaca kontroler…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Setiap langkah membaca kontroler sekitar dua detik. Untuk posisi diam, lepaskan stik dan pemicu. Untuk lingkaran, putar setiap stik mengelilingi lingkaran penuhnya. Untuk pemicu, tekan setiap pemicu sampai habis.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "Nilai yang diukur telah disimpan.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Tidak ada gerakan yang terukur untuk %@, jadi nilai yang tersimpan tetap dipakai.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "Kalibrasi stik dan pemicu yang tersimpan telah dihapus.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "Kalibrasi stik dan pemicu yang tersimpan serta offset giroskop telah dihapus.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Permintaan menyebut ID vendor atau produk yang di luar rentang. Tidak ada yang berubah.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -3268,23 +3288,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "Turbo tidak berfungsi dengan target gerakan penunjuk atau pengguliran.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "Tampilkan atau ubah kalibrasi gerak suatu pengontrol.";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "Yang dilakukan: start, pause, atau reset. Hilangkan untuk mencetak kalibrasi.";
+"cli.controller.calibrate.abstract" = "Tampilkan atau ubah kalibrasi kontroler.";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "Yang dilakukan: start, pause, reset, atau sticks. Hilangkan untuk mencetak kalibrasi gerakan.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "terkalibrasi";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "mengumpulkan";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "Tanpa tindakan, mencetak kalibrasi. start mengumpulkan drift giroskop saat pengontrol diam, pause menghentikan pengumpulan, dan reset melupakan kalibrasi. Penetapan kemiringan dan kemudi gerak menggunakan kalibrasi.";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "Tanpa tindakan, mencetak kalibrasi gerakan. start mengumpulkan drift giroskop saat kontroler diam, dan pause menghentikan pengumpulan. sticks mengukur titik tengah stik, rentang stik, dan ujung pemicu, lalu menyimpannya untuk model kontroler. reset menghapus nilai tersimpan itu dan melupakan kalibrasi gerakan. Pengikatan kemiringan gerak dan kemudi memakai kalibrasi gerakan.";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ tidak lagi terhubung.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ tidak melaporkan gerak.";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: kalibrasi stik dan pemicu yang tersimpan dihapus.";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, offset giroskop x %3$@ y %4$@ z %5$@ derajat per detik";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "Satu langkah yang dijalankan sticks: rest, circle, atau triggers. Hilangkan untuk menjalankan ketiganya.";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "Putar setiap stik mengelilingi lingkaran penuhnya…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "Lepaskan stik dan pemicu lalu tahan tetap diam…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "Tekan setiap pemicu sampai habis…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: langkah %2$@ menyimpan %3$@.";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ tidak memiliki sesi pemetaan ulang yang aktif. Aktifkan profil untuknya dengan “ojd profile activate”.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "belum dikalibrasi";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ tidak bergerak, jadi nilai tersimpan tetap.";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "Gabungkan Joy-Con kiri dan kanan menjadi satu pengontrol.";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

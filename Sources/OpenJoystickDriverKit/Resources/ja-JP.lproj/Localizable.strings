@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "生の値 %1$@、調整後 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "仮想ゲームパッドなし";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "再キャリブレーション";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "静止位置を測定";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "円を測定";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "トリガーを測定";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "コントローラーを読み取り中…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "各ステップはコントローラーを約2秒間読み取ります。静止位置では、スティックとトリガーから手を離します。円では、各スティックを一周させます。トリガーでは、各トリガーを奥まで押し込みます。";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "測定した値を保存しました。";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "%@の動きは測定できなかったため、保存済みの値はそのままです。";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "保存されていたスティックとトリガーのキャリブレーションを削除しました。";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "保存されていたスティックとトリガーのキャリブレーションとジャイロオフセットを削除しました。";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "リクエストのベンダIDまたはプロダクトIDが範囲外です。何も変更されていません。";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -3268,23 +3288,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "ターボはポインタ移動やスクロールのターゲットでは使えません。";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "コントローラのモーションキャリブレーションを表示または変更します。";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "実行する操作: start、pause、reset。省略するとキャリブレーションを表示します。";
+"cli.controller.calibrate.abstract" = "コントローラーのキャリブレーションを表示または変更します。";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "実行する操作: start、pause、reset、sticks。省略するとモーションキャリブレーションを表示します。";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "キャリブレーション済み";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "収集中";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "操作を省略すると、キャリブレーションを表示します。start はコントローラを静止させている間にジャイロのドリフトを収集し、pause は収集を止め、reset はキャリブレーションを破棄します。モーションのリーンとステアリングの割り当てはこのキャリブレーションを使います。";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "操作を省略すると、モーションキャリブレーションを表示します。start はコントローラーを静止させている間にジャイロのドリフトを収集し、pause は収集を止めます。sticks はスティックの中心と範囲、トリガーの端を測定し、コントローラーのモデル用に保存します。reset は保存したそれらの値を削除し、モーションキャリブレーションも破棄します。モーションの傾きとステアリングのバインドは、モーションキャリブレーションを使います。";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ はもう接続されていません。";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ はモーションを報告しません。";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: 保存したスティックとトリガーのキャリブレーションを消去しました。";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@、ジャイロのオフセット x %3$@ y %4$@ z %5$@ 度/秒";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "sticks が実行する1つのステップ: rest、circle、triggers。省略すると3つとも実行します。";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "各スティックをぐるりと一周させてください…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "スティックとトリガーから手を離して静止させてください…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "各トリガーを奥まで押し込んでください…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: ステップ %2$@ が %3$@ を保存しました。";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ にはアクティブなリマッピングセッションがありません。「ojd profile activate」でプロファイルを有効にしてください。";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "未キャリブレーション";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ が動かなかったため、保存済みの値はそのままです。";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "左右の Joy-Con を 1 つのコントローラにまとめます。";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

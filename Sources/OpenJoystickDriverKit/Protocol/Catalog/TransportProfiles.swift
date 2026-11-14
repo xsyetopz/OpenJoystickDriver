@@ -222,6 +222,8 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
   /// Frames that may wait behind a send to the virtual device; a full queue drops its oldest
   /// frame in favor of the newest.
   public let frameQueueCapacity: Int?
+  /// Stored stick centres and ranges and trigger ends, applied before profile mapping.
+  public let calibration: ControllerCalibration
 
   /// The tuning that sets no key.
   public static let none = Self()
@@ -258,7 +260,8 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
     irWriteIntervalMilliseconds: Int? = nil,
     speakerMaxSeconds: Int? = nil,
     replyTimeoutMilliseconds: Int? = nil,
-    frameQueueCapacity: Int? = nil
+    frameQueueCapacity: Int? = nil,
+    calibration: ControllerCalibration = .none
   ) {
     self.stickDeadzone = stickDeadzone
     self.inputLivenessTimeoutMilliseconds = inputLivenessTimeoutMilliseconds
@@ -277,6 +280,7 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
     self.speakerMaxSeconds = speakerMaxSeconds
     self.replyTimeoutMilliseconds = replyTimeoutMilliseconds
     self.frameQueueCapacity = frameQueueCapacity
+    self.calibration = calibration
   }
 }
 

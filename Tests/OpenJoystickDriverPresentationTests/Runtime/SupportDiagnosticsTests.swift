@@ -383,6 +383,13 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
 
   func resetAllVirtualHIDProfileOverrides() -> Bool { true }
 
+  func recalibrateController(
+    _: ControllerReference,
+    action _: ControllerRecalibrationAction
+  ) throws -> ControllerRecalibrationResult {
+    throw ApplicationServiceClientError.invalidResponse
+  }
+
   func setControllerTuning(
     model _: ControllerModelID,
     key _: ControllerTuning.Key,

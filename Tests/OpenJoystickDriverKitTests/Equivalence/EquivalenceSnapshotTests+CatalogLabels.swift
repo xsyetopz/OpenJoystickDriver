@@ -76,27 +76,7 @@ extension EquivalenceSnapshotCatalogTests {
     }
   }
 
-  static func label(_ key: ControllerTuning.Key) -> String {
-    switch key {
-    case .stickDeadzone: "stickDeadzone"
-    case .inputLivenessTimeoutMs: "inputLivenessTimeoutMs"
-    case .hidStartupRecoveryIntervalMs: "hidStartupRecoveryIntervalMs"
-    case .hidStartupRecoveryRounds: "hidStartupRecoveryRounds"
-    case .hidStartupIntervalMs: "hidStartupIntervalMs"
-    case .minimumHIDOutputIntervalMs: "minimumHIDOutputIntervalMs"
-    case .lizardResendTicks: "lizardResendTicks"
-    case .usbCommandTimeoutMs: "usbCommandTimeoutMs"
-    case .presenceResendReports: "presenceResendReports"
-    case .adapterDisconnectDelayMs: "adapterDisconnectDelayMs"
-    case .usbStartupIntervalMs: "usbStartupIntervalMs"
-    case .usbStartupRetryDelayMs: "usbStartupRetryDelayMs"
-    case .usbTransferTimeoutMs: "usbTransferTimeoutMs"
-    case .frameQueueCapacity: "frameQueueCapacity"
-    case .irWriteIntervalMs: "irWriteIntervalMs"
-    case .speakerMaxSeconds: "speakerMaxSeconds"
-    case .replyTimeoutMs: "replyTimeoutMs"
-    }
-  }
+  static func label(_ key: ControllerTuning.Key) -> String { key.rawValue }
 
   static func label(_ motor: PhysicalRumbleMotor) -> String {
     switch motor {

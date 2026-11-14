@@ -36,6 +36,11 @@ package struct DeviceCatalog: Sendable {
   /// The exact catalog record for this model; there is no default record.
   func record(for model: ControllerModelID) -> DeviceRuntimeProfile? { profiles[model] }
 
+  /// The stored calibration of this model; none when it has no record.
+  package func calibration(of model: ControllerModelID) -> ControllerCalibration {
+    profiles[model]?.tuning.calibration ?? .none
+  }
+
   /// The exact catalog record running the named mode; nil when the record does not have it.
   func record(for model: ControllerModelID, modeID: String?) -> DeviceRuntimeProfile? {
     profiles[model]?.applying(modeID: modeID)

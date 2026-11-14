@@ -290,6 +290,26 @@
 "ui.controllers.calibration.reading" = "Ruw %1$@, na afstelling %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "geen virtuele gamepad";
+/* Title of the recalibration controls in the Input Test window and of the row in the controller detail. They measure stick centres, stick ranges and trigger ends. */
+"ui.controllers.recalibrate.title" = "Opnieuw kalibreren";
+/* Button of the recalibration controls that measures the stick centres and trigger rests while the sticks and triggers are released. */
+"ui.controllers.recalibrate.rest" = "Rustpositie meten";
+/* Button of the recalibration controls that measures the stick ranges while each stick is rolled around its full circle. */
+"ui.controllers.recalibrate.circle" = "Cirkel meten";
+/* Button of the recalibration controls that measures the trigger ends while each trigger is pressed all the way in. */
+"ui.controllers.recalibrate.triggers" = "Triggers meten";
+/* Shown next to the recalibration buttons while a step reads the controller. Work in progress, so it ends with an ellipsis. */
+"ui.controllers.recalibrate.running" = "Controller wordt gelezen…";
+/* Instructions above the recalibration buttons. rest, circle and triggers name the three buttons next to them. */
+"ui.controllers.recalibrate.instructions" = "Elke stap leest de controller ongeveer twee seconden. Laat voor de rustpositie de sticks en triggers los. Beweeg voor de cirkel elke stick rond zijn volledige cirkel. Druk voor de triggers elke trigger helemaal in.";
+/* Result after a recalibration step stored its measured values. */
+"ui.controllers.recalibrate.stored" = "De gemeten waarden zijn opgeslagen.";
+/* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
+"ui.controllers.recalibrate.unmoved" = "Voor %@ is geen beweging gemeten, dus de opgeslagen waarden blijven.";
+/* Result after Reset removed the stored stick and trigger calibration of a controller. */
+"ui.controllers.recalibrate.resetDone" = "De opgeslagen stick- en triggerkalibratie is verwijderd.";
+/* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
+"ui.controllers.recalibrate.resetDoneGyro" = "De opgeslagen stick- en triggerkalibratie en de gyro-offset zijn verwijderd.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Het verzoek noemt een leveranciers- of product-ID buiten het bereik. Er is niets gewijzigd.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -3268,23 +3288,39 @@
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "Turbo werkt niet met doelen voor aanwijzerbeweging of scrollen.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
-"cli.controller.calibrate.abstract" = "Toon of wijzig de bewegingskalibratie van een controller.";
-/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. */
-"cli.controller.calibrate.action" = "Wat te doen: start, pause of reset. Laat weg om de kalibratie te tonen.";
+"cli.controller.calibrate.abstract" = "De kalibratie van een controller tonen of wijzigen.";
+/* Help text of the ACTION argument of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. */
+"cli.controller.calibrate.action" = "Wat te doen: start, pause, reset of sticks. Laat het weg om de bewegingskalibratie af te drukken.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.calibrated" = "gekalibreerd";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "verzamelen";
-/* Long description in the help of 'ojd controller calibrate'. start, pause and reset are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "Zonder actie wordt de kalibratie getoond. start verzamelt gyro-afwijking terwijl de controller stilligt, pause stopt het verzamelen en reset wist de kalibratie. Koppelingen voor kantelen en sturen met beweging gebruiken de kalibratie.";
+/* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
+"cli.controller.calibrate.discussion" = "Zonder actie wordt de bewegingskalibratie afgedrukt. start verzamelt gyrodrift terwijl de controller stilligt en pause stopt het verzamelen. sticks meet de middenpunten en bereiken van de sticks en de eindpunten van de triggers en slaat ze op voor het model van de controller. reset verwijdert die opgeslagen waarden en vergeet de bewegingskalibratie. Bindingen voor bewegingshelling en besturing gebruiken de bewegingskalibratie.";
+/* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
+"cli.controller.calibrate.gone" = "%@ is niet meer verbonden.";
 /* Error of 'ojd controller calibrate' for a controller without a motion sensor. %@ is the controller name. */
 "cli.controller.calibrate.noMotion" = "%@ meldt geen beweging.";
+/* Result line of 'ojd controller calibrate' with reset. %@ is the controller name. */
+"cli.controller.calibrate.resetDone" = "%@: opgeslagen kalibratie van sticks en triggers gewist.";
 /* Calibration line of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the state word, and %3$@, %4$@ and %5$@ are the X, Y and Z components of the gyro offset in degrees per second. */
 "cli.controller.calibrate.status" = "%1$@: %2$@, gyro-offset x %3$@ y %4$@ z %5$@ graden per seconde";
+/* Help text of the --step option of 'ojd controller calibrate'. sticks, rest, circle and triggers are values the user types and stay as written. */
+"cli.controller.calibrate.step" = "De ene stap die sticks uitvoert: rest, circle of triggers. Laat het weg om alle drie uit te voeren.";
+/* Instruction that 'ojd controller calibrate' prints before it reads the stick circle step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepCircle" = "Draai elke stick rond zijn volledige cirkel…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the rest step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepRest" = "Laat de sticks en triggers los en houd ze stil…";
+/* Instruction that 'ojd controller calibrate' prints before it reads the trigger step. Work in progress, so it ends with an ellipsis. */
+"cli.controller.calibrate.stepTriggers" = "Druk elke trigger helemaal in…";
+/* Result line of a sticks step of 'ojd controller calibrate'. %1$@ is the controller name, %2$@ is the step name that stays as written, and %3$@ is the list of stored tuning keys that stay as written. */
+"cli.controller.calibrate.stored" = "%1$@: de stap %2$@ heeft %3$@ opgeslagen.";
 /* Error of 'ojd controller calibrate' when no profile is active for the controller. %@ is the controller name. The command in quotes stays as written. */
 "cli.controller.calibrate.unavailable" = "%@ heeft geen actieve toewijzingssessie. Activeer er een profiel voor met ‘ojd profile activate’.";
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.uncalibrated" = "niet gekalibreerd";
+/* Result line of a sticks step of 'ojd controller calibrate' when a control did not move. %1$@ is the controller name and %2$@ is the list of control ids that stay as written. */
+"cli.controller.calibrate.unmoved" = "%1$@: %2$@ bewoog niet, dus de opgeslagen waarden blijven.";
 /* One-line summary of 'ojd controller pair' in the command list and at the top of its help. A Joy-Con is a Nintendo Switch controller half and stays as written. */
 "cli.controller.pair.abstract" = "Combineer een linker en een rechter Joy-Con tot één controller.";
 /* Long description in the help of 'ojd controller pair'. PROFILE and the command in quotes stay as written. */

@@ -404,6 +404,13 @@ actor GatewayStub: ApplicationServiceGateway {
     )
   }
 
+  func recalibrateController(
+    _: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) -> ControllerRecalibrationResult {
+    ControllerRecalibrationResult(action: action)
+  }
+
   func setControllerTuning(
     model: ControllerModelID,
     key: ControllerTuning.Key,

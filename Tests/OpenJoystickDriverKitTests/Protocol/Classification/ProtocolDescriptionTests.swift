@@ -111,35 +111,36 @@ struct ProtocolDescriptionTests {
   /// A raw-USB variant reads no HID timing.
   @Test
   func tuningScopeFollowsDescription() {
+    let calibration = ControllerCalibration.keys
     let gameSir = ControllerTuning.scope(protocolID: .vendorGameSir, variant: .usb)
     #expect(
-      gameSir == [.stickDeadzone, .frameQueueCapacity, .usbCommandTimeoutMs]
+      gameSir == calibration.union([.stickDeadzone, .frameQueueCapacity, .usbCommandTimeoutMs])
     )
     let enhanced = ControllerTuning.scope(protocolID: .vendorGameSir, variant: .enhancedHID)
     #expect(
-      enhanced == [
-        .stickDeadzone, .frameQueueCapacity, .hidStartupIntervalMs, .minimumHIDOutputIntervalMs,
-      ]
+      enhanced
+        == calibration.union([
+          .stickDeadzone, .frameQueueCapacity, .hidStartupIntervalMs, .minimumHIDOutputIntervalMs,
+        ])
     )
     #expect(
       ControllerTuning.scope(protocolID: .xboxGIP, variant: nil)
-        == [
+        == calibration.union([
           .stickDeadzone, .frameQueueCapacity, .presenceResendReports, .usbStartupIntervalMs,
           .usbStartupRetryDelayMs, .usbTransferTimeoutMs,
-        ]
+        ])
     )
     #expect(
       ControllerTuning.scope(protocolID: .xboxXUSB, variant: nil)
-        == [.stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs]
+        == calibration.union([.stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs])
     )
     #expect(
       ControllerTuning.scope(protocolID: .xboxXID, variant: nil)
-        == [.stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs]
+        == calibration.union([.stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs])
     )
     #expect(
-      ControllerTuning.scope(protocolID: nil, variant: nil) == [
-        .stickDeadzone, .frameQueueCapacity,
-      ]
+      ControllerTuning.scope(protocolID: nil, variant: nil)
+        == calibration.union([.stickDeadzone, .frameQueueCapacity])
     )
     #expect(
       ControllerTuning.scope(protocolID: .sonyDualShock4, variant: nil)
