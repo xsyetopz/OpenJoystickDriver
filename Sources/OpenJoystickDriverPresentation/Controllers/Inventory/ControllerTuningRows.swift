@@ -20,9 +20,11 @@ struct ControllerTuningRow: Equatable, Identifiable {
 /// The Tuning section of the Controllers detail, from the same layered record and active profile
 /// as `ojd config show --controller`.
 enum ControllerTuningRows {
-  /// Returns each tuning key that a layer of `record` sets, in record-file order except the stick
-  /// dead zone, which the dead zone row edits, then the inner deadzone of each stick mapping of
-  /// the active profile, keyed as `profile get` names it.
+  /// Returns each tuning key of `record`, then the inner deadzone of each active stick mapping.
+  ///
+  /// Keys follow record-file order except the stick dead zone, which the dead zone row edits; a
+  /// stick mapping is keyed as `profile get` names it. A key no layer sets reads
+  /// `Driver default`, or `Not set` when the driver picks no value, as in `ojd config show`.
   ///
   /// - Parameters:
   ///   - record: The effective record of the controller's model.
@@ -33,10 +35,13 @@ enum ControllerTuningRows {
     activeProfile: RemappingProfile?
   ) -> [ControllerTuningRow] {
     let keys = record.tuningValues.compactMap { entry -> ControllerTuningRow? in
-      guard entry.key != .stickDeadzone, let value = entry.value else { return nil }
+      guard entry.key != .stickDeadzone else { return nil }
       return ControllerTuningRow(
         name: entry.key.rawValue,
-        value: number(value),
+        value: entry.value.map(number)
+          ?? OJDLocalized.string(
+            entry.key.hasDriverValue ? "status.driverDefault" : "status.notSet"
+          ),
         layer: CommandLineName.kebab(entry.layer.rawValue)
       )
     }

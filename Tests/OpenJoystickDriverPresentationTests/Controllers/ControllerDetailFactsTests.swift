@@ -448,16 +448,21 @@ struct ControllerDetailFactsTests {
 
 extension ControllerDetailFactsTests {
   @Test
-  func tuningRowsListOnlyValuesLayerSets() throws {
+  func tuningRowsListEveryKeyAsConfigShowDoes() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let rows = ControllerTuningRows.rows(for: record, activeProfile: nil)
-    let set = record.tuningValues.filter { $0.key != .stickDeadzone && $0.value != nil }
-    #expect(rows.map(\.name) == set.map(\.key.rawValue))
-    for (row, entry) in zip(rows, set) {
+    let entries = record.tuningValues.filter { $0.key != .stickDeadzone }
+    #expect(rows.map(\.name) == entries.map(\.key.rawValue))
+    for (row, entry) in zip(rows, entries) {
       #expect(row.layer == CommandLineName.kebab(entry.layer.rawValue))
       #expect(row.text == "\(row.value) (\(row.layer))")
+      if entry.value == nil {
+        let status = entry.key.hasDriverValue ? "status.driverDefault" : "status.notSet"
+        #expect(row.value == OJDLocalized.string(status))
+      }
     }
+    #expect(entries.contains { $0.value == nil })
   }
 
   @Test
