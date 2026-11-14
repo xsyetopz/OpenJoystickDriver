@@ -142,6 +142,8 @@ The details include these fields when the controller reports them:
 An **Exclusive access** row with a **Suspend** button appears while OpenJoystickDriver holds the controller exclusively, so no other app can open it.
 Click **Suspend** to let another app open the controller.
 A **Suspended** row with a **Resume** button appears while the controller is suspended.
+A **Community verified** row names each mode that a community validation confirmed, with a link to its issue.
+**Lookup** opens the controller's entry in [Supported controllers](Supported-Controllers.md), or a GitHub issue search for its VID:PID when it has no record.
 **Open Input Test...** opens the test window.
 For more information, see [Testing a controller](Testing-a-Controller.md).
 
@@ -184,7 +186,8 @@ The detail also has (needs the **All Controls** interface) **Export mapping**, w
 
 The **Advanced** section (needs the **All Controls** interface) holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
 **Draft Record...**, **Draft Record from SDL...**, and **Capture Packets...** also need **Enable Developer Tools**.
-The **Stick deadzone** stepper, the calibration readouts of each stick and trigger, and the **Tuning** group also need the **All Controls** interface.
+The **Stick deadzone** stepper, the calibration readouts of each stick and trigger, **Recalibrate**, and the **Tuning** group also need the **All Controls** interface.
+**Recalibrate** has **Measure rest**, **Measure circle**, **Measure triggers**, and **Reset**, as in the Input Test window; see [Testing a controller](Testing-a-Controller.md#recalibrate).
 **USB VID/PID** is the vendor and product ID.
 For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
@@ -364,7 +367,7 @@ If the settings file cannot be read, the app shows **Settings can't be read** wi
 
 ## Testing a Controller
 
-The Input Test window shows live input, rumble, and lighting.
+The Input Test window shows live input, rumble, and lighting, runs the guided check, and recalibrates the sticks and triggers.
 For more information, see [Testing a controller](Testing-a-Controller.md).
 
 ## Further Reading

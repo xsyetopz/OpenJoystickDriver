@@ -50,6 +50,16 @@ Shows sticks, the D-pad, face buttons, bumpers, triggers, stick buttons, and ext
 
 For controllers with a gyroscope. Keep the controller still while OJD collects the gyro bias. The buttons are **Refresh**, **Start calibration**, **Pause**, and **Reset**. Collection continues after you close the window. Click **Pause** to stop it. Motion calibration needs an enabled [profile](Glossary.md#terms) for the controller. Not verified: whether the calibration survives a restart of OJD.
 
+### Recalibrate
+
+Measures where each stick rests, how far it reaches, and where each trigger rests and ends, for a controller whose sticks drift or never reach full. Each step reads the controller for about two seconds:
+
+- **Measure rest**: release the sticks and triggers.
+- **Measure circle**: roll each stick around its full circle.
+- **Measure triggers**: press each trigger all the way in.
+
+OJD stores the values in your record of the controller's model and applies them before profile mapping. A control that did not move keeps its stored value, and the group names it. **Reset** removes the stored values and the gyro offset. The model needs a record. `ojd controller calibrate CONTROLLER sticks` and `reset` do the same in a terminal; see [Command Reference](Command-Reference.md).
+
 ### Rumble
 
 Shows the motors that the controller has. A controller with no motor shows **Rumble is not supported by this controller.**

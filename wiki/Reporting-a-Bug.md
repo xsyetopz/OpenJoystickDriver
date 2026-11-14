@@ -28,6 +28,12 @@ The report leaves out serial numbers, file paths, packet payloads, and HID locat
 
 The support report, from `ojd diagnose --output` or the app, also lists `frameTimings`: the time each of a controller's newest 8 frames reached each pipeline stage, and a summary of its newest 15000 frames with the stall count. Run `ojd diagnose --output` right after the stutter, then attach the report to a stutter or latency report.
 
+## Run a Guided Check
+
+For a controller with a control that does not respond or responds as another, run **Guided Check** in the Input Test window, or `ojd controller check <controller> --json > check.json`. It asks for each control in turn and records what each did. **Open Issue** in its end sheet saves the result, shows the file, and opens the controller support form with the version, VID:PID, connection, and mode filled in; attach the saved file. The result leaves out the serial number. See [Testing a controller](Testing-a-Controller.md#guided-check).
+
+When every control responded, **Validate** offers the result as a community validation of the controller in that mode instead.
+
 ## Get the Logs
 
 Open the **Activity** area and choose **Log**, or choose **Help** > **Activity Log** (needs the **All Controls** interface). Or run the following command.
