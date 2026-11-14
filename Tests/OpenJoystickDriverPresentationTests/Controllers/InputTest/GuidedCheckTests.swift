@@ -19,7 +19,11 @@ private final class Effects {
 
   var environment: GuidedCheckEnvironment {
     GuidedCheckEnvironment(
-      record: { _ in nil },
+      record: {
+        ControllerRecordSet.bundled.records[
+          ControllerModelID(vendorID: $0.vendorID, productID: $0.productID)
+        ]
+      },
       saveDirectory: directory,
       reveal: { self.revealed.append($0) },
       open: { self.opened.append($0) },

@@ -6,13 +6,18 @@ import Testing
 
 @Suite("Controller check")
 struct ControllerCheckTests {
+  private static let record = ControllerRecordSet.bundled.records[
+    ControllerModelID(vendorID: 0x045E, productID: 0x028E)
+  ]
+
   private func check(
     steps: [ControllerCheck.Step],
-    serialNumber: String? = nil
+    serialNumber: String? = nil,
+    record: ControllerRecord? = Self.record
   ) -> ControllerCheck {
     ControllerCheck(
       device: .fixture(id: "check", serialNumber: serialNumber),
-      record: nil,
+      record: record,
       steps: steps,
       appVersion: "0.6.0-alpha.3",
       osVersion: "15.6.1"
@@ -140,6 +145,13 @@ struct ControllerCheckTests {
   }
 
   @Test
+  func aControllerWithNoRecordOffersNoValidation() {
+    let unrecorded = check(steps: [step("South"), step("East")], record: nil)
+    #expect(unrecorded.allResponded)
+    #expect(ControllerCheckIssue.validationText(for: unrecorded) == nil)
+  }
+
+  @Test
   func validationTextHoldsNoSerialNumberAddressUserNameOrPath() throws {
     let serial = "SN-7F3A-SECRET"
     let validated = check(steps: [step("South"), step("LeftStick")], serialNumber: serial)
@@ -215,7 +227,10 @@ struct ControllerCheckTests {
     #expect(object["kind"] as? String == "ControllerCheck")
     #expect(object["apiVersion"] as? String == OpenJoystickDriverAPI.version)
     #expect(
-      Set(object.keys) == ["apiVersion", "kind", "controller", "appVersion", "osVersion", "steps"]
+      Set(object.keys) == [
+        "apiVersion", "kind", "controller", "modeID", "recordSource", "appVersion", "osVersion",
+        "steps",
+      ]
     )
   }
 
@@ -226,7 +241,11 @@ struct ControllerCheckTests {
     )
     let object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
 
-    #expect(Set(object.keys) == ["controller", "appVersion", "osVersion", "steps"])
+    #expect(
+      Set(object.keys) == [
+        "controller", "modeID", "recordSource", "appVersion", "osVersion", "steps",
+      ]
+    )
     #expect(try !#require(String(bytes: encoded, encoding: .utf8)).contains("SN-7F3A-SECRET"))
   }
 }

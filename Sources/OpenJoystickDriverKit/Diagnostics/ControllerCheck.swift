@@ -332,15 +332,18 @@ public enum ControllerCheckIssue {
     )
   }
 
-  /// The text a validation holds, or nil unless every control responded.
+  /// The text a validation holds, or nil unless the controller has a record and every control
+  /// responded, because a validation names a mode of the record.
   ///
   /// It holds the VID:PID, mode `id`, connection, record source, versions and per-control results,
   /// and no serial number, unit ID, Bluetooth address, user name or path.
   public static func validationText(for check: ControllerCheck) -> String? {
-    guard check.allResponded else { return nil }
+    guard check.allResponded, let modeID = check.modeID, let source = check.recordSource else {
+      return nil
+    }
     var lines = [
-      "VID:PID: \(vidPid(check))", "Mode: \(check.modeID ?? "None")",
-      "Connection: \(connection(check))", "Record source: \(check.recordSource ?? "None")",
+      "VID:PID: \(vidPid(check))", "Mode: \(modeID)",
+      "Connection: \(connection(check))", "Record source: \(source)",
       "OpenJoystickDriver: \(check.appVersion)", "macOS: \(check.osVersion)",
       "Controls: \(check.steps.count) of \(check.steps.count) responded",
     ]

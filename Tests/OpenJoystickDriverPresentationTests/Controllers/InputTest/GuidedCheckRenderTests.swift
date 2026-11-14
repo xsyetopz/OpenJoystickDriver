@@ -22,7 +22,11 @@ struct GuidedCheckRenderTests {
 
   private func environment() -> GuidedCheckEnvironment {
     GuidedCheckEnvironment(
-      record: { _ in nil },
+      record: {
+        ControllerRecordSet.bundled.records[
+          ControllerModelID(vendorID: $0.vendorID, productID: $0.productID)
+        ]
+      },
       saveDirectory: FileManager.default.temporaryDirectory,
       reveal: { _ in },
       open: { _ in },
