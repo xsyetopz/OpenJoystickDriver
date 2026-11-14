@@ -79,7 +79,7 @@ struct MigrateCommandTests {
   @Test
   func everyScannedFileGetsVerdictAndForeignFileDoesNotFail() async throws {
     try write(Self.settings, "Settings.json")
-    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+    try write("not json", "Profiles/notes.json")
     try write(
       #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#,
       "AccessGrants.plist"

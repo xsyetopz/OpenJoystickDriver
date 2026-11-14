@@ -32,6 +32,9 @@ public struct DocumentMigrator: Sendable {
   /// The name of the folder that holds the kept originals, in the scanned folder.
   public static let backupFolderName = "Migrated"
 
+  /// The reason a store lists for a `.json` document that no reader loads.
+  public static let staleProblem = "E5001: saved by an earlier version; migrate it"
+
   /// The kind that names `ActiveProfiles`, a root array without a header.
   static let activeProfilesKind = "ActiveProfiles"
 
@@ -139,7 +142,7 @@ public struct DocumentMigrator: Sendable {
     guard let version = document["apiVersion"]?.string else {
       return Self.isZeroFive(document, name: url.lastPathComponent)
         ? entry(nil, .failed, "written by 0.5; re-create it")
-        : entry(nil, .foreign, "has no apiVersion")
+        : entry(nil, .failed, "has no apiVersion")
     }
     guard version.hasPrefix("openjoystickdriver/") else {
       return entry(nil, .foreign, "has another apiVersion")
