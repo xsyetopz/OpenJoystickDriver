@@ -35,6 +35,8 @@ This directory holds the development notes and hardware-evidence records for Ope
 
 ## Hardware Evidence
 
+- [Unconfigured Xbox USB Bootstrap](testing/xbox-usb-bootstrap.md): Device-level preparation before an interface-scoped extension can attach, with the safety contract and remaining hardware checks.
+
 - [8BitDo Ultimate 2C Wireless](testing/8bitdo-ultimate-2c.md): Testing each mode, which enumerates as a different identity.
 - [Browser Gamepad API Manual Evidence](testing/browser-gamepad-api.md): The manual protocol for browser Gamepad API evidence.
 - [Consumer-Binding Evidence](testing/consumer-binding.md): How to interpret compatibility claims, with observed consumer results.
