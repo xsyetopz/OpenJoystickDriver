@@ -18,6 +18,8 @@ struct USBDriverKitParentDevice: Sendable, Hashable {
   var manufacturer: String?
   /// The `bcdDevice` release number, when the registry has one.
   var deviceRelease: UInt16?
+  /// The live configuration selected on the parent USB device.
+  var configurationValue: UInt8?
 }
 
 /// Host adapter for services owned by OJD's restricted USBDriverKit extension.
@@ -81,8 +83,8 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     }
   }
 
-  /// Opens the extension service of `device` and applies the configuration and alternate setting of
-  /// `options`.
+  /// Opens the extension service of `device`, verifies its parent's configuration, and applies
+  /// the alternate setting of `options`.
   ///
   /// The listing is refreshed when the service is not known yet. An exclusive-access failure names
   /// the owner that the IOUSBHost interface shows.
@@ -106,6 +108,11 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
       service = rediscovered
     }
 
+    // An interface DEXT exists only after configuration. It must not try to
+    // reconfigure its parent through an interface-scoped DeviceRequest.
+    guard !options.setsConfiguration(current: parentsByID[device.serviceID]?.configurationValue)
+    else { throw USBTransportError.notSupported }
+
     do {
       let driverSession = try await client.open(service)
       let runtime = try await DriverRuntimeConnection.connect(
@@ -115,20 +122,10 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
       let context = await DriverContext(runtime: runtime)
       let session = USBDriverKitTransportSession(context: context) { await runtime.close() }
       do {
-        if let configuration = options.configurationValue {
-          try await session.controlTransfer(
-            USBControlTransferRequest(
-              kind: .standard,
-              recipient: .device,
-              request: USBRequest.setConfiguration,
-              value: UInt16(configuration)
-            ),
-            timeout: 5_000
-          )
-        }
         if options.alternateSetting != 0 {
           try await context.usbSelectAlternateSetting(options.alternateSetting)
         }
+        try await session.startEvents(runtime: runtime)
         return session
       } catch {
         await session.close()
@@ -246,7 +243,9 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
       productName: string(["USB Product Name", "Product Name"]),
       serialNumber: string(["USB Serial Number", "Serial Number"]),
       manufacturer: string(["USB Vendor Name", "Vendor Name"]),
-      deviceRelease: (value("bcdDevice") as? UInt64).flatMap(UInt16.init(exactly:))
+      deviceRelease: (value("bcdDevice") as? UInt64).flatMap(UInt16.init(exactly:)),
+      configurationValue: (value("kUSBCurrentConfiguration") as? UInt64)
+        .flatMap(UInt8.init(exactly:))
     )
   }
 
@@ -308,7 +307,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     case .invalidServiceClass, .bufferTooLarge: return .notSupported
     case .ioReturn(let code):
       switch code {
-      case kIOReturnTimeout: return .timeout
+      case kIOReturnTimeout, kIOReturnAborted: return .timeout
       case kIOReturnNoDevice, kIOReturnNotAttached, kIOReturnNotOpen: return .disconnected
       case kIOReturnExclusiveAccess: return .ownedByAnotherClient(owner: nil)
       case kIOReturnNotPermitted, kIOReturnNotPrivileged: return .accessDenied
@@ -326,17 +325,50 @@ actor USBDriverKitTransportSession: USBTransportSession {
   /// The driver context that carries the transfers.
   private let context: DriverContext
   /// Closes the connection to the driver runtime.
-  private let closeRuntime: @Sendable () async -> Void
+  private let transfers: USBDriverKitPendingTransfers
+  /// One event subscription serves both IN and OUT requests on this connection.
+  private var eventTask: Task<Void, Never>?
+  /// Descriptor-derived transfer types, retained for the lifetime of the interface session.
+  private var endpointTypes: [UInt8: SwifterKit.USBEndpointTransferType] = [:]
   /// Whether the session is closed.
   private var isClosed = false
 
   /// Exclusive while the session is open, and unknown after it closes.
-  var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
+  var inputOwnership: HIDInputOwnership {
+    get async { await transfers.isClosed ? .unknown : .exclusive }
+  }
 
   /// Creates the session over `context`, which `closeRuntime` shuts down.
   init(context: DriverContext, closeRuntime: @escaping @Sendable () async -> Void) {
     self.context = context
-    self.closeRuntime = closeRuntime
+    transfers = USBDriverKitPendingTransfers(closeRuntime: closeRuntime)
+  }
+
+  /// DriverKit forbids native completion timeouts on interrupt endpoints.
+  static func nativeTimeout(
+    type: SwifterKit.USBEndpointTransferType,
+    requested: UInt32
+  ) -> UInt32 {
+    type == .interrupt ? 0 : requested
+  }
+
+  /// Registers notifications before any asynchronous request can complete.
+  func startEvents(runtime: DriverRuntimeConnection) async throws {
+    let events = try await runtime.events()
+    let transfers = transfers
+    eventTask = Task {
+      do {
+        for try await event in events {
+          if case .pipeIO(let completion) = try event.usb() {
+            await transfers.receive(completion)
+          }
+        }
+      } catch {
+        await transfers.close(error: USBDriverKitTransportProvider.transportError(error))
+        return
+      }
+      await transfers.close(error: .disconnected)
+    }
   }
 
   /// Writes `data` to the endpoint `endpoint` and returns the number of bytes written.
@@ -346,10 +378,15 @@ actor USBDriverKitTransportSession: USBTransportSession {
   func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) async throws -> Int {
     guard !isClosed else { throw USBTransportError.disconnected }
     do {
-      return Int(
-        try await context.usbWrite(endpoint: endpoint, data: data, timeout: timeout)
-          .bytesTransferred
-      )
+      _ = try DriverCommand.usbEnqueueWrite(endpoint: endpoint, data: data, timeout: 0)
+      let completion = try await transfer(endpoint: endpoint, timeout: timeout) { nativeTimeout in
+        try await self.context.usbEnqueueWrite(
+          endpoint: endpoint,
+          data: data,
+          timeout: nativeTimeout
+        )
+      }
+      return Int(completion.bytesTransferred)
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
   }
 
@@ -360,8 +397,52 @@ actor USBDriverKitTransportSession: USBTransportSession {
   func read(endpoint: UInt8, length: Int, timeout: UInt32) async throws -> [UInt8] {
     guard !isClosed else { throw USBTransportError.disconnected }
     do {
-      return try await context.usbRead(endpoint: endpoint, length: length, timeout: timeout).data
+      _ = try DriverCommand.usbEnqueueRead(endpoint: endpoint, length: length, timeout: 0)
+      let completion = try await transfer(endpoint: endpoint, timeout: timeout) { nativeTimeout in
+        try await self.context.usbEnqueueRead(
+          endpoint: endpoint,
+          length: length,
+          timeout: nativeTimeout
+        )
+      }
+      guard completion.data.count <= length else { throw USBTransportError.notSupported }
+      return completion.data
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
+  }
+
+  /// Uses the endpoint descriptor to preserve bulk timeouts and suppress interrupt timeouts.
+  ///
+  /// A separate host deadline aborts a silent pipe without reconnecting a healthy controller.
+  private func transfer(
+    endpoint: UInt8,
+    timeout: UInt32,
+    enqueue: @Sendable (UInt32) async throws -> UInt32
+  ) async throws -> USBPipeIOCompletion {
+    try await transfers.checkOpen()
+    let type: SwifterKit.USBEndpointTransferType
+    if let cached = endpointTypes[endpoint] {
+      type = cached
+    } else {
+      type = try await context.usbPipeDescriptors(endpoint: endpoint).endpoint.transferType
+      endpointTypes[endpoint] = type
+    }
+    guard type == .bulk || type == .interrupt else { throw USBTransportError.notSupported }
+    return try await withTaskCancellationHandler {
+      try Task.checkCancellation()
+      try await transfers.beginSubmission()
+      let requestID: UInt32
+      do {
+        requestID = try await enqueue(Self.nativeTimeout(type: type, requested: timeout))
+      } catch {
+        await transfers.submissionFailed()
+        throw error
+      }
+      return try await transfers.wait(requestID: requestID, timeout: timeout) {
+        try await self.context.usbAbortPipe(endpoint: endpoint)
+      }
+    } onCancel: {
+      Task { await self.transfers.close(error: .disconnected) }
+    }
   }
 
   /// Sends the control transfer `request` and returns the bytes it received.
@@ -374,6 +455,7 @@ actor USBDriverKitTransportSession: USBTransportSession {
     timeout: UInt32
   ) async throws -> [UInt8] {
     guard !isClosed else { throw USBTransportError.disconnected }
+    try await transfers.checkOpen()
     do {
       return try await context.usbControlTransfer(
         USBDriverKitTransportProvider.controlRequest(for: request),
@@ -387,6 +469,8 @@ actor USBDriverKitTransportSession: USBTransportSession {
   func close() async {
     guard !isClosed else { return }
     isClosed = true
-    await closeRuntime()
+    eventTask?.cancel()
+    eventTask = nil
+    await transfers.close(error: .disconnected)
   }
 }

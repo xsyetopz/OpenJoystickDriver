@@ -53,6 +53,47 @@ reads `idVendor`, `idProduct`, `locationID`, and the strings from the parent
 Hypothesis 1 (`userclient-access`) can still block the open after the fix. Hypothesis 3 (GIP
 startup) is unlikely: cooltune's capture shows the classic startup works.
 
+## Configured Interfaces And Interrupt Transfers
+
+The extension transport also needs to distinguish interface ownership from a failed startup
+operation. For a record requesting configuration 1, the old transport replayed a standard
+device SET_CONFIGURATION through the extension after its interface had already been claimed.
+The adapter now reads the parent device's live `kUSBCurrentConfiguration` and verifies the
+requested value before opening the user client. It does not reconfigure an owned interface;
+an unknown or mismatched requested configuration is rejected.
+
+USBDriverKit's `IOUSBHostPipe::IO` and `AsyncIO` require a zero completion timeout for interrupt
+endpoints. The GIP protocol's 2000 ms transfer deadline is a host deadline, not permission to
+pass that value to an interrupt pipe. The adapter reads endpoint descriptors and enqueues
+asynchronous transfers with zero interrupt timeouts, retaining millisecond timeouts for bulk
+endpoints. One runtime event subscription matches IN and OUT completions by request identifier,
+including completions delivered before their enqueue responses.
+
+An idle host deadline aborts the affected pipe before returning a timeout, keeping the
+connection open for the next request. Cancellation, event-stream failure, explicit close, or
+an abort failure releases the connection and wakes pending callers. This avoids blocking the
+driver work queue on an interrupt read with no native timeout.
+
+### Separate Hardware Evidence
+
+On macOS 26.6.1 (25G76), Apple Silicon M1, a standalone IOUSBHost reader sent powerOn, ledOn
+and authDone to an Xbox One `045E:02D1` with endpoints `81`/`01`. A 30-second run received
+1284 input reports and the operator confirmed a solid LED. A later run fed input through
+the signed app's `ojd virtual feed --as game-controller-compatible`; GameController.framework
+reported a connected extended gamepad and live input. The operator subsequently reported
+days of gameplay using an original Elite `045E:02E3` through the same external bridge.
+
+The signed app used for the bridge was
+`0.6.0-alpha.2+build.1.21.99.sha.93d79f3973f0 (1.21.99)`. This verifies the external
+IOUSBHost/GIP-to-virtual-feed route, not a signed build of the extension adapter above.
+Native DriverKit input after this change, independent Elite paddle inputs, physical rumble
+and cold enumeration in configuration 0 are not checked on this branch.
+
+The unconfigured-device discovery bootstrap remains outside this change. The Elite endpoint
+override is tracked separately in [PR #56](https://github.com/xsyetopz/OpenJoystickDriver/pull/56)
+and [issue #55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55). Neither issue #18
+nor #55 is established as fully resolved by the transport changes alone.
+
 ## Commands For The Maintainer
 
 With the extension active and the controller attached:
