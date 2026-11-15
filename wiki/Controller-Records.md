@@ -711,6 +711,10 @@ The DualShock 3 record has the `bluetooth` mode above, which sends feature repor
 
 Pairing is not part of the record. A DualShock 3 has to be paired with the Mac before a Bluetooth link exists, and the pairing steps belong to macOS or to a pairing tool, not to this data. The record describes only what runs once the link is up. Pairing a real DualShock 3 is still an open hardware check, so these docs list no verified steps.
 
+### Read Another Input In One Mode
+
+A mode other than `default` may hold an `input` of its own, with `layouts` or `hidUsageMap` as in the record's `input`. While that mode runs, its `input` takes the place of the record's; every other mode reads the record's. A mode `input` has no `descriptorShapes`, and the `default` mode and an idle mode hold no `input`. Two pads that share a model ID can read differently this way: the `1949:0402` record reads touch contacts only in its `v3` mode, and the `054C:0268` patch maps the NITHO MLT-KRMA-K's face buttons by label only when the manufacturer is `Sony Computer Entertainment`. A patch mode entry sets `input` like any other mode key.
+
 ### Record an Identity That Handles Nothing
 
 A mode with `idle` names an identity OpenJoystickDriver recognizes and handles nothing while the mode matches, such as a receiver that shows a controller only after it connects and then enumerates under another ID. The value names the reason: `NoControllerLinked` for a receiver with no controller linked, or `Bootloader` for a controller in its bootloader. The controller is unsupported with that reason: OpenJoystickDriver sends it no data and creates no virtual gamepad, and the Controllers page says why. An idle mode has no `interface` and no `session`. A record whose modes are all idle has no `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `heldByAppleDriver`, `input` or `tuning`. A record gains controls by replacing `idle` with the `protocol` and `input` of a captured descriptor. A patch sets `idle` on a mode entry like any other mode key. A record whose default mode is `idle: Bootloader` belongs to the bundled catalog: a user or package file that adds or patches that identity is refused.

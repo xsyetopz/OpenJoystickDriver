@@ -19,17 +19,20 @@ extension ControllerRecordDocument {
     let session: ControllerSession
     /// Why the mode serves nothing while it matches; nil for a mode that serves the device.
     let idle: ControllerIdleReason?
+    /// The input this mode reads in place of the record's; nil reads the record's.
+    let input: Input?
 
     /// Whether this is the `default` mode.
     var isDefault: Bool { id == Self.defaultID }
 
-    /// Decodes `id`, `protocol` and the optional `match`, `interface`, `session` and `idle`; an
-    /// unknown key, a malformed ID, a `default` mode with a match, another mode without one, an
-    /// unknown `idle` reason, or an idle mode with an `interface` or a `session` is rejected.
+    /// Decodes `id`, `protocol` and the optional `match`, `interface`, `session`, `idle` and
+    /// `input`; an unknown key, a malformed ID, a `default` mode with a match or an input, another
+    /// mode without a match, an unknown `idle` reason, an idle mode with an `interface`, a
+    /// `session` or an input, or an input with `descriptorShapes` is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(
-        allowed: ["id", "protocol", "match", "interface", "session", "idle"]
+        allowed: ["id", "protocol", "match", "interface", "session", "idle", "input"]
       )
       let identifier = try container.decode(String.self, for: "id")
       guard Self.isValidID(identifier) else {
@@ -52,9 +55,13 @@ extension ControllerRecordDocument {
           throw Self.invalid("idle", "idle is NoControllerLinked or Bootloader", decoder)
         }
         guard !container.contains(DocumentKey("interface")),
-          !container.contains(DocumentKey("session"))
+          !container.contains(DocumentKey("session")), !container.contains(DocumentKey("input"))
         else {
-          throw Self.invalid("idle", "an idle mode has no interface and no session", decoder)
+          throw Self.invalid(
+            "idle",
+            "an idle mode has no interface, no session and no input",
+            decoder
+          )
         }
         idle = reason
       } else {
@@ -67,6 +74,13 @@ extension ControllerRecordDocument {
         .range
       session =
         try container.decodeOptional(SessionDocument.self, for: "session")?.session ?? .none
+      input = try container.decodeOptional(Input.self, for: "input")
+      if isDefaultMode, input != nil {
+        throw Self.invalid("input", "the default mode reads the record's input", decoder)
+      }
+      guard input?.shapes.isEmpty ?? true else {
+        throw Self.invalid("input", "descriptorShapes belong to a protocol description", decoder)
+      }
     }
 
     /// Creates the decoding error that names `key` in the current coding path with `message`.
@@ -106,7 +120,9 @@ extension ControllerRecordDocument {
         match: match ?? ControllerModeMatch(),
         interfaceRange: interfaceRange,
         session: session,
-        idle: idle
+        idle: idle,
+        inputLayouts: input?.layouts,
+        hidUsageMap: input?.usageMap
       )
     }
   }
@@ -408,13 +424,13 @@ extension ControllerRecordDocument {
             + " an interface's endpoint set"
         )
       }
-      if inputLayouts == nil, info.protocolID.requiresRecordInputLayout {
+      if (mode.input?.layouts ?? inputLayouts) == nil, info.protocolID.requiresRecordInputLayout {
         throw fail(
           "error.E5007.modes.inputLayoutNeeded",
           "a HIDReportLayout mode needs the record's input layout"
         )
       }
-      if hidUsageMap != nil,
+      if (mode.input?.usageMap ?? hidUsageMap) != nil,
         !info.protocolID.protocolDescription.recordSections.contains(.hidUsageMap)
       {
         throw fail(

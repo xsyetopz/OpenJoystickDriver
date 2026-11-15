@@ -187,7 +187,7 @@ struct ControllerPatchRemoveTests {
     #expect(
       try message(["modes": [["protocol": ["family": "XInput"]]]])
         == "a.patch.plist, patch.modes: Each entry must hold an id and only id, protocol, match, "
-        + "interface, session, or idle. Fix: Give each entry an id and delete any other key."
+        + "interface, session, idle, or input. Fix: Give each entry an id and delete any other key."
     )
   }
 }

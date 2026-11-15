@@ -10075,6 +10075,120 @@
         "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
         "tuning": { "leftTriggerRest": 0.8, "leftTriggerFull": 0.5 }
       }
+    },
+    {
+      "name": "rejects an input on the default mode",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an input on an idle mode",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          },
+          {
+            "id": "asleep",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Android GamePad"
+            },
+            "idle": "NoControllerLinked",
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects descriptorShapes in a mode input",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          },
+          {
+            "id": "android",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Android GamePad"
+            },
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              },
+              "descriptorShapes": [
+                {
+                  "usages": []
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   ]
 }

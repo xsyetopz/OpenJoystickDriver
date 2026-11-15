@@ -324,7 +324,7 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public var usbStartupWrites: [USBStartupWrite] { session.usbStartupWrites }
   /// The record's input-report layouts; set for a `HIDReportLayout` record and any record that
   /// holds `input.layouts`.
-  public let inputLayouts: ControllerInputLayouts?
+  public internal(set) var inputLayouts: ControllerInputLayouts?
   /// The record's HID usage map; set only for a `HIDDescriptor` record that declares one.
   var hidUsageMap: HIDUsageMap?
   /// The record's timing and deadzone values; nil fields keep the driver defaults.

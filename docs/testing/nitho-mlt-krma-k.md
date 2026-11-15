@@ -18,6 +18,7 @@ The mode switch on the back of the pad picks the identity. The slider has three 
 | 2.4G receiver | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
 | By cable | `054C:0268`, `054C:05C4`, `045E:028E` | PS3, `Wireless Controller`, `Xbox360 For Windows` | | Identity only |
 | By cable, left position | `2563:0526` | `Android GamePad` | `hid-descriptor` | Every control |
+| By cable, middle position | `054C:0268` | PS3, manufacturer `Sony Computer Entertainment` | `sony-sixaxis`, mode `nitho` | Face buttons |
 | V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | Every control it sends |
 | Right position, no receiver, Bluetooth LE | `1949:0402` | `BSP-G6S-HID` | `hid-descriptor` | Connects, sends no input report |
 | X, Bluetooth | | `Xbox Wireless Controller` | | Does not pair with macOS |
@@ -90,7 +91,11 @@ With the slider left and a USB cable plugged in, the pad is `2563:0526` `Android
 | 7 | View `0x04`, Menu `0x08`, Home `0x10`, L3 `0x20`, R3 `0x40` |
 | 8, 9 | RT (Accelerator) and LT (Brake), `0x00` to `0xFF` |
 
-The SDL_GameControllerDB line for this ID maps buttons 1, 4 and 5 to A, X and Y and has no Home, which put A on West, X on North and Y on South. The `2563:0526` record maps the buttons by label, and `ojd controller watch` reported every control, with analog triggers. M1 and M2 send nothing. The record applies to every pad with the shared `2563:0526` ID, so a pad with SDL's layout on that ID reads its face buttons rotated.
+The SDL_GameControllerDB line for this ID maps buttons 1, 4 and 5 to A, X and Y and has no Home, which put A on West, X on North and Y on South. The `2563:0526` record maps the buttons by label, and `ojd controller watch` reported every control, with analog triggers. M1 and M2 send nothing. The pad names its manufacturer `shanwan` and its release `0x0100`, ShanWan's stock values, so no mode match tells it from another pad on `2563:0526`. The record applies to every pad with that ID, and a pad with SDL's layout on it reads its face buttons rotated.
+
+## Middle Position by Cable
+
+With the slider in the middle and a USB cable plugged in, the pad is `054C:0268` with a blue light and sends the Sixaxis USB report 1 (49 bytes). Its manufacturer is `Sony Computer Entertainment`; a DUALSHOCK 3 names `Sony`. Byte 3 holds the face buttons with A on Circle `0x20`, B on Cross `0x40`, X on Triangle `0x10` and Y on Square `0x80`, so the Sixaxis family read A as East, B as South, X as North and Y as West. The `054C:0268` patch has a `nitho` mode that matches the manufacturer and maps the four bits by label.
 
 ## Right Position without the Receiver
 

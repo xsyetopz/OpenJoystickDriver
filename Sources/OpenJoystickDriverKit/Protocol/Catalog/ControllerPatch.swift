@@ -286,7 +286,7 @@ public struct ControllerPatch: Equatable, Sendable {
     guard let members = mode.members, let id = mode["id"]?.string else { return false }
     return isModeID(id)
       && Set(members.map(\.key)).isSubset(of: [
-        "id", "protocol", "match", "interface", "session", "idle",
+        "id", "protocol", "match", "interface", "session", "idle", "input",
       ])
   }
 

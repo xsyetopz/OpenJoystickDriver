@@ -171,6 +171,10 @@
         "idle": {
           "description": "The reason OJD serves nothing in this mode: no data is sent, no gamepad is published.",
           "enum": ["NoControllerLinked", "Bootloader"]
+        },
+        "input": {
+          "description": "The input this mode reads in place of the record's input.",
+          "$ref": "#/properties/input"
         }
       },
       "if": {
@@ -183,7 +187,8 @@
       },
       "then": {
         "properties": {
-          "match": false
+          "match": false,
+          "input": false
         }
       },
       "else": {
@@ -197,7 +202,8 @@
           "then": {
             "properties": {
               "interface": false,
-              "session": false
+              "session": false,
+              "input": false
             }
           }
         },

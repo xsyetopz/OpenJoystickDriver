@@ -391,7 +391,7 @@ struct ControllerModeTests {
   func dualShock3EFProbeIsDecodedFromBundledRecord() async throws {
     let ds3 = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
     let profile = try #require(ControllerRecordSet.bundled.records[ds3]?.profile)
-    #expect(profile.modes.map(\.id) == ["bluetooth", "feature-ef-answers"])
+    #expect(profile.modes.map(\.id) == ["nitho", "bluetooth", "feature-ef-answers"])
     let mode = try #require(profile.modes.last)
     #expect(mode.probes == [ControllerModeProbe(reportID: 0xEF, length: 49, expectation: .answers)])
     #expect(mode.physicalProtocolID == .sonySixaxis)

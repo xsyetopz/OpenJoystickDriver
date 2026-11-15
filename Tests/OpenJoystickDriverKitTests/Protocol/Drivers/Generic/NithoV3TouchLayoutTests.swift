@@ -25,7 +25,7 @@ struct NithoV3TouchLayoutTests {
   }
 
   /// The Manba One gamepad shares the model ID over USB, so only the Bluetooth LE link runs V3, and
-  /// USB runs the HID descriptor family.
+  /// USB runs the HID descriptor family with no touch layout.
   @Test
   func touchIdentitySelectsV3AndOtherIdentitiesRunDefault() async throws {
     let profile = try #require(ProtocolDriverRegistry().record(for: v3Model))
@@ -50,8 +50,7 @@ struct NithoV3TouchLayoutTests {
     #expect(await select(.bluetoothLE) == .matched("v3"))
     #expect(await select(.bluetoothLE, named: "BSP-G6S-HID") == .noModeMatched)
     #expect(await select(.usb) == .noModeMatched)
-    let usbDriver = try #require(try catalogParser(v3Model, host: .usb) as? LayeredInputDriver)
-    #expect(usbDriver.family is HIDDescriptorDriver)
+    #expect(try catalogParser(v3Model, host: .usb) is HIDDescriptorDriver)
   }
 
   @Test
