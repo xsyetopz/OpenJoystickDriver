@@ -89,9 +89,18 @@ struct NithoV3TouchLayoutTests {
   func dragFromRightStickCenterPushesStickRight() throws {
     let driver = try driver()
     _ = try driver.parseReport(oneContact("03 f6 66 c9"))
-    let held = try #require(try driver.parseReport(oneContact("03 f6 b6 f4"))?.state)
-    #expect(abs(held.rightStick.x.normalized - 693.0 / 800) < 0.001)
+    let held = try #require(try driver.parseReport(oneContact("03 f6 26 d2"))?.state)
+    #expect(abs(held.rightStick.x.normalized - 0.5) < 0.001)
     #expect(held.rightStick.y.normalized == 0)
+  }
+
+  /// A held right stick sends one swipe that stops about 280 from the center and then lifts.
+  @Test
+  func rightStickSwipeReadsFullDeflection() throws {
+    let driver = try driver()
+    _ = try driver.parseReport(oneContact("03 f6 66 c9"))
+    let held = try #require(try driver.parseReport(oneContact("03 0e 68 c9"))?.state)
+    #expect(held.rightStick.y.normalized == -1)
   }
 
   /// LB's spot (2401, 3184) lies in the right stick's travel; a drag that reaches it stays a drag.

@@ -234,7 +234,7 @@
 										<string>RightStickX</string>
 									</dict>
 									<key>travel</key>
-									<integer>800</integer>
+									<integer>280</integer>
 									<key>x</key>
 									<integer>1782</integer>
 									<key>y</key>

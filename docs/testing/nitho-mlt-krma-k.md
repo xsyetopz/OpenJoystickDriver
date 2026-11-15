@@ -61,7 +61,7 @@ In V3 the pad is a Bluetooth LE multi-touch digitizer (HID page `0x0D`, usage `0
 | 1, 2 | X, 12 bits little-endian, 0 to 3500 |
 | 2, 3 | Y, the upper 4 bits of byte 2 then byte 3, 0 to 4095 |
 
-The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and reads the contacts through a `touch` layout. A contact that starts within 150 of a stick center drags that stick until it lifts, with 800 as full deflection. Any other contact holds the nearest spot within 150. The table lists the spots, from a capture with one press every 2 seconds:
+The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and reads the contacts through a `touch` layout. A contact that starts within 150 of a stick center drags that stick until it lifts, with 800 from the left center and 280 from the right center as full deflection. Any other contact holds the nearest spot within 150. The table lists the spots, from a capture with one press every 2 seconds:
 
 | Control | X, Y |
 | --- | --- |
@@ -81,7 +81,7 @@ The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and re
 | Left stick center | 875, 665; up is +X, right is +Y |
 | Right stick center | 1782, 3222; up is +X, right is +Y |
 
-`ojd controller watch` reported each control of the table. RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release, so OJD reports North twice for one Y press; in one session LB did the same. The left stick drags its contact as far as the stick goes. The right stick sends a swipe: a held push moves the contact about 280 from the center, 21 at a time, and lifts it after about 0.6 s while the stick is still held, so OJD reads a short deflection of about a third. A capture with the stick moved in circles reached 800. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
+`ojd controller watch` reported each control of the table. RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release, so OJD reports North twice for one Y press; in one session LB did the same. The left stick drags its contact as far as the stick goes. The right stick sends a swipe: a held push moves the contact about 280 from the center, 21 at a time, and lifts it after about 0.6 s while the stick is still held. The record gives the right stick a travel of 280, so a swipe reads as full deflection until it lifts; a contact that goes further, as in a capture with the stick moved in circles, stays at full deflection. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
 
 ## M Mode by Cable
 

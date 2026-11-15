@@ -47,7 +47,7 @@ A controller record can also carry a `validations` list: one entry per mode that
 | NITHO MLT-KRMA-K | `045E:028E` | 2.4G receiver; USB cable in X or 2.4G mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home, rumble through macOS | X mode over Bluetooth does not pair as an Xbox pad |
 | NITHO MLT-KRMA-K | `2563:0526` | USB cable, V3 mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home | Rumble |
 | NITHO MLT-KRMA-K | `057E:2009` | USB cable and Bluetooth, S mode | Buttons, sticks, triggers as on or off, D-pad, stick clicks, View, Menu, Home. A reads as East, B as South, X as North, Y as West, by position as on a Pro Controller | Rumble and light |
-| NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, V3 mode (`BSP-G6S`) | Buttons, left stick, a short right-stick swipe, triggers as on or off, D-pad, stick clicks. Y reads as two short presses. RB, View, Menu, Home, M1 and M2 send no input in V3 | Not recorded |
+| NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, V3 mode (`BSP-G6S`) | Buttons, left stick, the right stick for about 0.6 s per push, triggers as on or off, D-pad, stick clicks. Y reads as two short presses. RB, View, Menu, Home, M1 and M2 send no input in V3 | Not recorded |
 | NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, 2.4G mode without the receiver, or V3 started with X held (`BSP-G6S-HID`) | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu. Home sends nothing | Not recorded |
 
 Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One tester (gornobatov) tested the ZD Ultimate Legend on macOS 26.7.1. For the 8BitDo details, see [the test record](../docs/testing/8bitdo-ultimate-2c.md).
