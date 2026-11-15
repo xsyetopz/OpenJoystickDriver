@@ -18,7 +18,7 @@
 					<key>page</key>
 					<integer>9</integer>
 					<key>usage</key>
-					<integer>4</integer>
+					<integer>1</integer>
 				</dict>
 				<dict>
 					<key>control</key>
@@ -38,7 +38,7 @@
 					<key>page</key>
 					<integer>9</integer>
 					<key>usage</key>
-					<integer>5</integer>
+					<integer>4</integer>
 				</dict>
 				<dict>
 					<key>control</key>
@@ -48,7 +48,7 @@
 					<key>page</key>
 					<integer>9</integer>
 					<key>usage</key>
-					<integer>1</integer>
+					<integer>5</integer>
 				</dict>
 				<dict>
 					<key>control</key>
@@ -89,16 +89,6 @@
 					<integer>9</integer>
 					<key>usage</key>
 					<integer>12</integer>
-				</dict>
-				<dict>
-					<key>control</key>
-					<string>Guide</string>
-					<key>kind</key>
-					<string>Button</string>
-					<key>page</key>
-					<integer>9</integer>
-					<key>usage</key>
-					<integer>13</integer>
 				</dict>
 				<dict>
 					<key>control</key>
@@ -198,6 +188,209 @@
 		<dict>
 			<key>id</key>
 			<string>default</string>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>HIDDescriptor</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>id</key>
+			<string>nitho</string>
+			<key>input</key>
+			<dict>
+				<key>hidUsageMap</key>
+				<dict>
+					<key>usages</key>
+					<array>
+						<dict>
+							<key>control</key>
+							<string>South</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>4</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>East</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>2</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>West</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>5</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>North</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>1</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>LeftShoulder</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>7</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>RightShoulder</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>8</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>Back</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>11</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>Start</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>12</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>Guide</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>13</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>LeftStickClick</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>14</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>RightStickClick</string>
+							<key>kind</key>
+							<string>Button</string>
+							<key>page</key>
+							<integer>9</integer>
+							<key>usage</key>
+							<integer>15</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>LeftStickX</string>
+							<key>kind</key>
+							<string>Axis</string>
+							<key>page</key>
+							<integer>1</integer>
+							<key>usage</key>
+							<integer>48</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>LeftStickY</string>
+							<key>kind</key>
+							<string>Axis</string>
+							<key>page</key>
+							<integer>1</integer>
+							<key>usage</key>
+							<integer>49</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>RightStickX</string>
+							<key>kind</key>
+							<string>Axis</string>
+							<key>page</key>
+							<integer>1</integer>
+							<key>usage</key>
+							<integer>50</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>RightStickY</string>
+							<key>kind</key>
+							<string>Axis</string>
+							<key>page</key>
+							<integer>1</integer>
+							<key>usage</key>
+							<integer>53</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>RightTrigger</string>
+							<key>kind</key>
+							<string>Axis</string>
+							<key>page</key>
+							<integer>2</integer>
+							<key>usage</key>
+							<integer>196</integer>
+						</dict>
+						<dict>
+							<key>control</key>
+							<string>LeftTrigger</string>
+							<key>kind</key>
+							<string>Axis</string>
+							<key>page</key>
+							<integer>2</integer>
+							<key>usage</key>
+							<integer>197</integer>
+						</dict>
+						<dict>
+							<key>kind</key>
+							<string>Hat</string>
+							<key>page</key>
+							<integer>1</integer>
+							<key>usage</key>
+							<integer>57</integer>
+						</dict>
+					</array>
+				</dict>
+			</dict>
+			<key>match</key>
+			<dict>
+				<key>manufacturer</key>
+				<string>shanwan</string>
+				<key>product</key>
+				<string>Android GamePad</string>
+			</dict>
 			<key>protocol</key>
 			<dict>
 				<key>family</key>
