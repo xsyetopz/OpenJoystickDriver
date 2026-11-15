@@ -16,9 +16,10 @@ The mode switch on the back of the pad picks the identity. The slider has three 
 | --- | --- | --- | --- | --- |
 | M, Bluetooth | `054C:05C4` | `DUALSHOCK 4 Wireless Controller` | `sony-dual-shock4:bluetooth-classic` | Every control |
 | 2.4G receiver | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
-| By cable | `054C:0268`, `054C:05C4`, `045E:028E` | PS3, `Wireless Controller`, `Xbox360 For Windows` | | Identity only |
+| M by cable, Bluetooth off | `054C:05C4` | `Wireless Controller` | `sony-dual-shock4:usb` | Every control |
+| By cable, middle position, cyan light | `045E:028E` | `Xbox360 For Windows`, vendor `shanwan` | `hid-descriptor` | Every control |
 | By cable, left position | `2563:0526` | `Android GamePad` | `hid-descriptor` | Every control |
-| By cable, middle position | `054C:0268` | PS3, manufacturer `Sony Computer Entertainment` | `sony-sixaxis`, mode `nitho` | Face buttons |
+| By cable, middle position | `054C:0268` | PS3, manufacturer `Sony Computer Entertainment` | Sixaxis, mode `nitho` | Face buttons, before the `nitho` mode |
 | V3, Bluetooth LE | `1949:0402` | `BSP-G6S` | `hid-report-layout`, mode `v3` | Every control it sends |
 | Right position, no receiver, Bluetooth LE | `1949:0402` | `BSP-G6S-HID` | `hid-descriptor` | Connects, sends no input report |
 | X, Bluetooth | | `Xbox Wireless Controller` | | Does not pair with macOS |
@@ -79,6 +80,10 @@ The `1949:0402` record has a `v3` mode that matches the Bluetooth LE link and re
 
 `ojd controller watch` reported each control of the table, with the sticks at full deflection. RB, View, Menu, Home, M1 and M2 send no contact in V3, and Y sends one 60 ms tap on press and another on release, so OJD reports North twice for one Y press. The triggers read as fully pulled or released. An Android app that moves the pad's tap places breaks this map. The `Manba One` gamepad shares `1949:0402` over USB and runs the record's default `HIDDescriptor` mode.
 
+## M Mode by Cable
+
+In M mode with Bluetooth off and a USB cable plugged in, the pad is `054C:05C4` `Wireless Controller` with a solid blue light. It sends DUALSHOCK 4 USB report `0x01` (64 bytes) about once a millisecond with the bytes of the [Bluetooth report](#m-mode-over-bluetooth) one place earlier, and the built-in DUALSHOCK 4 record reads it. The pad leaves the frame counter in byte 7 and the sensor timestamp in bytes 10 and 11 at zero, so OJD takes each report's arrival as its liveness. `ojd controller watch` reported every button by label, the D-pad, both analog triggers and each stick. M and M2 send no control of their own. A press of Home drops the pad off USB until it is plugged in again.
+
 ## Left Position by Cable
 
 With the slider left and a USB cable plugged in, the pad is `2563:0526` `Android GamePad`, with a solid green light. Report 7 (11 bytes) holds X, Y, Z and Rz, a hat, 15 buttons, and Accelerator and Brake:
@@ -95,7 +100,9 @@ The SDL_GameControllerDB line for this ID maps buttons 1, 4 and 5 to A, X and Y 
 
 ## Middle Position by Cable
 
-With the slider in the middle and a USB cable plugged in, the pad is `054C:0268` with a blue light and sends the Sixaxis USB report 1 (49 bytes). Its manufacturer is `Sony Computer Entertainment`; a DUALSHOCK 3 names `Sony`. Byte 3 holds the face buttons with A on Circle `0x20`, B on Cross `0x40`, X on Triangle `0x10` and Y on Square `0x80`, so the Sixaxis family read A as East, B as South, X as North and Y as West. The `054C:0268` patch has a `nitho` mode that matches the manufacturer and maps the four bits by label.
+With the slider in the middle and a USB cable plugged in, the pad is `054C:0268` with a blue light and sends the Sixaxis USB report 1 (49 bytes). Its manufacturer is `Sony Computer Entertainment`; a DUALSHOCK 3 names `Sony`. Byte 3 holds the face buttons with A on Circle `0x20`, B on Cross `0x40`, X on Triangle `0x10` and Y on Square `0x80`, so the Sixaxis family read A as East, B as South, X as North and Y as West. The `054C:0268` patch has a `nitho` mode that matches the manufacturer and maps the four bits by label. The pad took this identity once, when the slider moved to the middle with the cable in. In the retest of the `nitho` mode it did not come back: moving the slider from left to middle kept `2563:0526` with a green light, and a replug in the middle, or a move from right to middle, gave `045E:028E` `Xbox360 For Windows` with a cyan light. The `nitho` mode is not tested on the pad.
+
+In that cyan identity by cable the pad sends the same Xbox 360 report as through the [2.4G receiver](#24g-receiver), and `ojd controller watch` reported every button, the D-pad, both analog triggers and all four directions of each stick.
 
 ## Right Position without the Receiver
 

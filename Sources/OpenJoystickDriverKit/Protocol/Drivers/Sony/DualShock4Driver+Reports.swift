@@ -86,6 +86,8 @@ extension DualShock4Driver {
     let isFresh =
       timestamp.map { current in
         guard let previousSensorTimestamp else { return true }
+        // A third-party pad that leaves the timestamp at zero has only arrival as liveness.
+        if current == 0, previousSensorTimestamp == 0 { return true }
         let advance = current &- previousSensorTimestamp
         return advance > 0 && advance < 0x8000
       } ?? true
