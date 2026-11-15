@@ -50,6 +50,13 @@ struct IOUSBHostTransferTests {
 
 struct USBDriverKitTransferTests {
   @Test
+  func interruptNativeTimeoutIsZeroWhileBulkKeepsMilliseconds() {
+    #expect(USBDriverKitTransportSession.nativeTimeout(type: .interrupt, requested: 2_000) == 0)
+    #expect(USBDriverKitTransportSession.nativeTimeout(type: .bulk, requested: 2_000) == 2_000)
+    #expect(USBDriverKitTransportSession.nativeTimeout(type: .bulk, requested: 0) == 0)
+  }
+
+  @Test
   func controlRequestMapsOntoSwifterKitSetupPacket() throws {
     let input = try USBControlTransferRequest(
       kind: .vendor,
