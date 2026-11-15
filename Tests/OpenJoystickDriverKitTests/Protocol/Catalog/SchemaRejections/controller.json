@@ -10079,6 +10079,7 @@
     {
       "name": "rejects an input on the default mode",
       "code": "E5007",
+      "schema": true,
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
@@ -10109,6 +10110,7 @@
     {
       "name": "rejects an input on an idle mode",
       "code": "E5007",
+      "schema": true,
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
@@ -10149,6 +10151,7 @@
     {
       "name": "rejects descriptorShapes in a mode input",
       "code": "E5007",
+      "schema": true,
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
