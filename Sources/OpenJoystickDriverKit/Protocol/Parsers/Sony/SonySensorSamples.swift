@@ -2,7 +2,8 @@
 ///
 /// A decrease denotes one wrap; a transport reset re-anchors. Multiple wraps during a report gap
 /// cannot be recovered from the wire counter alone. Sample time is the first counted report's
-/// receipt time plus the unwrapped counter time.
+/// receipt time plus the unwrapped counter time, or the report's receipt time while the counter
+/// stays at zero.
 struct SonySensorClock {
   /// The bit mask of the counter's width.
   let mask: UInt32
@@ -35,7 +36,12 @@ struct SonySensorClock {
   /// The timestamp of a report that carries `counter`, received at `receivedAt` nanoseconds.
   mutating func timestamp(_ counter: UInt32, receivedAt: UInt64) -> ControllerSampleTimestamp {
     let raw = counter & mask
-    if let previous {
+    if let previous, let anchor, raw == 0, previous == 0 {
+      // A third-party pad that leaves the counter at zero has only receipt as its sample clock.
+      elapsed = receivedAt - anchor
+      remainder = 0
+      sequence += 1
+    } else if let previous {
       let ticks = UInt64((raw &- previous) & mask)
       let scaled = ticks * UInt64(tickNumerator) + remainder
       elapsed += scaled / 3

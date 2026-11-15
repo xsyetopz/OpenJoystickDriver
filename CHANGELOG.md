@@ -60,6 +60,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 - A pad that the macOS Xbox 360 driver handles, such as the NITHO MLT-KRMA-K on its 2.4G receiver (`045E:028E`), reads its D-pad from buttons 12 to 15, its triggers from Z and Rz, and its sticks with Y up as positive. It had no D-pad, and its buttons and right stick were mismapped.
 - A DUALSHOCK 4 USB report with a zero sensor timestamp after another zero one counts as fresh, so the NITHO MLT-KRMA-K by cable in M mode, which never sets the timestamp, reads its input; before, it stayed in `waiting-for-neutral`.
+- A DUALSHOCK 4 or DualSense report whose sensor counter stays at zero dates its motion and touch samples by receipt, so the NITHO MLT-KRMA-K by cable in M mode reports motion with advancing times; before, every sample had the first report's time.
 - The **Measure Rest**, **Measure Circle**, **Measure Triggers** and **Measure Gyro** buttons use title-style capitalization.
 - The **Tuning** group of the controller detail lists every tuning key, with `Driver default` or `Not set` for a key no layer sets, as `ojd config show --controller` does; before, it was empty for a controller whose record sets no tuning.
 - A layout of a record reads a report that is no frame of the record's family, such as a GIP device's own report shape, instead of the family's parse error ending it. When that report reads as the start of a longer GIP frame, its bytes are dropped instead of prefixing the next frame.
