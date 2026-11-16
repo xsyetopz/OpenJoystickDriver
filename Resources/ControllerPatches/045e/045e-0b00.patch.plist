@@ -8,6 +8,8 @@
 	<string>ControllerPatch</string>
 	<key>patch</key>
 	<dict>
+		<key>heldByAppleDriver</key>
+		<true/>
 		<key>route</key>
 		<string>ExtensionOwned</string>
 	</dict>

@@ -1,5 +1,5 @@
 import Darwin
-import Foundation
+public import Foundation
 
 /// Why the service's request listener stopped.
 ///
@@ -141,7 +141,7 @@ public struct ServiceListenerFailure: Equatable, Sendable {
     public static func lookup(_ identifier: Int32) -> Lookup {
       var information = proc_bsdinfo()
       let size = Int32(MemoryLayout<proc_bsdinfo>.size)
-      guard proc_pidinfo(identifier, PROC_PIDTBSDINFO, 0, &information, size) == size else {
+      guard unsafe proc_pidinfo(identifier, PROC_PIDTBSDINFO, 0, &information, size) == size else {
         return .failed(with: errno)
       }
       return .running(
@@ -172,14 +172,15 @@ public struct ServiceListenerFailure: Equatable, Sendable {
 
     /// The description of the error for the user.
     public var errorDescription: String? {
-      "unlink of \(path) failed: \(String(cString: strerror(errorNumber))) (errno \(errorNumber))"
+      let reason = unsafe String(cString: strerror(errorNumber))
+      return "unlink of \(path) failed: \(reason) (errno \(errorNumber))"
     }
   }
 
   /// Deletes the file beside `socketPath`; a missing file is already cleared.
   public static func clear(socketPath: String) throws {
     let path = path(forSocket: socketPath)
-    guard unlink(path) != 0, errno != ENOENT else { return }
+    guard unsafe unlink(path) != 0, errno != ENOENT else { return }
     throw ClearError(path: path, errorNumber: errno)
   }
 
@@ -208,15 +209,15 @@ public struct ServiceListenerFailure: Equatable, Sendable {
     lookup: (Int32) -> ProcessIdentity.Lookup
   ) -> Reading {
     let path = path(forSocket: socketPath)
-    let descriptor = open(path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
+    let descriptor = unsafe open(path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
     guard descriptor >= 0 else {
       if errno == ENOENT { return .absent }
-      return .unreadable(Problem(path: path, detail: String(cString: strerror(errno))))
+      return unsafe .unreadable(Problem(path: path, detail: String(cString: strerror(errno))))
     }
     let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
     var information = stat()
-    guard fstat(descriptor, &information) == 0 else {
-      return .unreadable(Problem(path: path, detail: String(cString: strerror(errno))))
+    guard unsafe fstat(descriptor, &information) == 0 else {
+      return unsafe .unreadable(Problem(path: path, detail: String(cString: strerror(errno))))
     }
     guard information.st_mode & S_IFMT == S_IFREG else {
       return .unreadable(
@@ -241,7 +242,7 @@ public struct ServiceListenerFailure: Equatable, Sendable {
         return identity == failure.process ? .stopped(failure) : .earlier(failure)
       case .noSuchProcess, .belongsToAnotherUser: return .earlier(failure)
       case .unknown(let code):
-        return .unreadable(
+        return unsafe .unreadable(
           Problem(
             path: path,
             detail: Localization().formatted(

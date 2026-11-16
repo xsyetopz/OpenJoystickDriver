@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Driver for the Wii Remote over Bluetooth HID: core buttons, the accelerometer, status and
 /// battery, with the memory exchanges that read the accelerometer calibration and run the
@@ -127,10 +127,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
 
   /// `irFormat` is the IR format the camera runs in; nil leaves IR off.
   init(tuning: ControllerTuning?, irFormat: ProtocolDescription.WiiRemote.BlockKind?) {
-    guard let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote else {
+    guard let description = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote else {
       preconditionFailure("nintendo-wii.plist describes no wiiRemote field")
     }
-    self.wii = wii
+    self.wii = description
     self.irFormat = irFormat
     replyTimeoutNanoseconds =
       UInt64(PhysicalProtocolID.nintendoWii.described(\.replyTimeoutMilliseconds, in: tuning))
@@ -264,7 +264,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
     var unknownID: String?
     switch extensionKind {
     case .known(let name)?: kind = WiiRemoteStatus.ExtensionKind(rawValue: name)
-    case .unknown(let bytes)?: unknownID = bytes.map { String(format: "%02X", $0) }.joined()
+    case .unknown(let bytes)?: unknownID = bytes.map { unsafe String(format: "%02X", $0) }.joined()
     case nil: break
     }
     return WiiRemoteStatus(
@@ -278,7 +278,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
 
   /// Decodes a status report into the power facts, and a data report that has a `Buttons` block
   /// into the buttons and the accelerometer; any other report, or a short one, gives nil.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     guard let id = bytes.first else { return nil }
     expireExchange(at: receivedAt)

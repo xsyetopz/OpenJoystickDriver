@@ -7,7 +7,7 @@ struct ProtocolBindingIDTests {
   @Test
   func writesFamilyAndOptionalVariant() {
     #expect(ProtocolBindingID(.xboxXUSB, variant: .receiver).rawValue == "XboxXUSB:Receiver")
-    #expect(ProtocolBindingID(.vendorFlydigi).rawValue == "VendorFlydigi")
+    #expect(ProtocolBindingID(.valveSteamDeck).rawValue == "ValveSteamDeck")
     #expect(
       ProtocolBindingID(rawValue: "SonyDualShock4:BluetoothClassic")
         == ProtocolBindingID(.sonyDualShock4, variant: .bluetoothClassic)
@@ -15,7 +15,7 @@ struct ProtocolBindingIDTests {
   }
 
   @Test
-  func spellsEachSideOfTheBindingInKebabCaseOnTheCommandLine() {
+  func spellsEachSideOfBindingInKebabCaseOnCommandLine() {
     #expect(
       ProtocolBindingID(.xboxXUSB, variant: .receiver).commandLineName == "xbox-xusb:receiver"
     )
@@ -27,16 +27,16 @@ struct ProtocolBindingIDTests {
       ProtocolBindingID(.valveSteamController, variant: .bluetoothLE).commandLineName
         == "valve-steam-controller:bluetooth-le"
     )
-    #expect(ProtocolBindingID(.vendorFlydigi).commandLineName == "vendor-flydigi")
+    #expect(ProtocolBindingID(.valveSteamDeck).commandLineName == "valve-steam-deck")
   }
 
   @Test(arguments: [
     "", "XboxXUSB:", "xboxOne", "GIP", "XboxGIP:USB:usb", "SonyDualSense:Receiver",
-    "VendorFlydigi:USB", "XboxXUSB:xbox360Wireless", "VendorGameSir:EnhancedHID-8k",
+    "XboxXID:USB", "XboxXUSB:xbox360Wireless", "VendorGameSir:EnhancedHID-8k",
     // A binding is resolved: families with variants always name one.
     "XboxGIP", "XboxXUSB", "VendorGameSir", "SonyDualSense",
   ])
-  func rejectsUnknownFamiliesAndVariantsOutsideTheFamily(_ text: String) throws {
+  func rejectsUnknownFamiliesAndVariantsOutsideFamily(_ text: String) throws {
     #expect(ProtocolBindingID(rawValue: text) == nil)
     let json = try JSONEncoder().encode([text])
     #expect(throws: DecodingError.self) {

@@ -5,6 +5,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Where the documented families come from: the user's `Protocols` folder and mod packages.
+///
+/// Serialized, because a user description of `VendorFlydigi` replaces the bundled family for the
+/// whole process while its test runs.
+@Suite(.serialized)
 struct DocumentedFamilyLoadingTests {
   private static func description(
     _ name: String,
@@ -31,7 +35,54 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aDescriptionInTheUserProtocolsFolderIsLoadedWithItsDisplayName() throws {
+  func bundledFlydigiRecordBindsDocumentedFamilyAndDecodesCapturedReport() throws {
+    let model = ControllerModelID(vendorID: 0xD7D7, productID: 0x0041)
+    let family = try #require(ControllerRecordSet.bundled.records[model]?.protocolID)
+    #expect(family.rawValue == "VendorFlydigi")
+    #expect(family.isDocumented)
+    #expect(family.displayName == "Flydigi")
+    let driver = ReportLayoutDriver(
+      describedBy: family,
+      variant: nil,
+      rumbleTemplate: nil,
+      outEndpoint: 0x02,
+      tuning: nil
+    )
+    var report = Data([0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    _ = try driver.parseReport(report)
+    report[9] = 0x10
+    #expect(try driver.parseReport(report).contains(.press(.south)))
+  }
+
+  @Test
+  func userDescriptionReplacesBundledFamilyOfSameNameWithNoRefusal() throws {
+    try ModPackageFixture.with { fixture in
+      defer { DocumentedProtocolFamilies.register([], owner: fixture.root) }
+      #expect(Self.family("VendorFlydigi")?.isBundled == true)
+      try fixture.write(
+        [try Self.description("VendorFlydigi")],
+        kind: "Protocols",
+        in: fixture.root
+      )
+      let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
+      #expect(set.problems.isEmpty)
+      let family = try #require(Self.family("VendorFlydigi"))
+      #expect(family.displayName == "Acme Pad")
+      #expect(!family.isBundled)
+      #expect(family.file.lastPathComponent == "VendorFlydigi.plist")
+      #expect(family.package == nil)
+      let model = ControllerModelID(vendorID: 0xD7D7, productID: 0x0041)
+      #expect(set.records[model]?.protocolID.displayName == "Acme Pad")
+    }
+  }
+
+  @Test
+  func flydigiIsNotBuiltInFamily() {
+    #expect(!PhysicalProtocolID.allCases.map(\.rawValue).contains("VendorFlydigi"))
+  }
+
+  @Test
+  func descriptionInUserProtocolsFolderLoadedWithItsDisplayName() throws {
     try ModPackageFixture.with { fixture in
       let file = try Self.description("VendorUserLoaded")
       try fixture.write([file], kind: "Protocols", in: fixture.root)
@@ -45,7 +96,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aUserFileThatIsRefusedIsListedAndNotLoaded() throws {
+  func userFileRefusedListedAndNotLoaded() throws {
     try ModPackageFixture.with { fixture in
       let builtIn = try Self.description("XboxGIP")
       let noLayouts = try Self.description("VendorUserNoLayouts") {
@@ -66,7 +117,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageDescriptionIsLoadedWithThePackageAsItsSource() throws {
+  func packageDescriptionLoadedWithPackageAsItsSource() throws {
     try ModPackageFixture.with { fixture in
       let package = try install([Self.description("VendorPackLoaded")], in: fixture)
       _ = ControllerRecordSet.load(userDirectory: fixture.controllers)
@@ -80,7 +131,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageRefusesADescriptionThatIsNotDocumented() throws {
+  func packageRefusesDescriptionNotDocumented() throws {
     try ModPackageFixture.with { fixture in
       let wrongStem = try Self.description("VendorPackWrongStem")
       let refused: [[(name: String, data: Data)]] = [
@@ -95,7 +146,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageRecordMayUseTheFamilyOfItsOwnPackage() throws {
+  func packageRecordMayUseFamilyOfItsOwnPackage() throws {
     try ModPackageFixture.with { fixture in
       let record = try ModPackageFixture.record(0x1234, 0xAC02)
       var data = try #require(try PropertyListFixture.tree(record.data) as? [String: Any])
@@ -112,7 +163,7 @@ struct DocumentedFamilyLoadingTests {
   }
 
   @Test
-  func aPackageDescriptionThatTheUserAlsoHoldsClashes() throws {
+  func packageDescriptionUserAlsoHoldsClashes() throws {
     try ModPackageFixture.with { fixture in
       let file = try Self.description("VendorClash")
       try fixture.write([file], kind: "Protocols", in: fixture.root)

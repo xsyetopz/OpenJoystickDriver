@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// How a replayed capture compares with the state a person expects.
 public struct ControllerRecordTestResult: Equatable, Sendable {

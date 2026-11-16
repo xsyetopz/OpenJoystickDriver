@@ -51,7 +51,7 @@ struct SpeechOutputTests {
   }
 
   @Test
-  func emptyAndLongTextAndEmptyVoiceAreRejectedWithTheFieldPath() throws {
+  func emptyAndLongTextAndEmptyVoiceAreRejectedWithFieldPath() throws {
     try profile(.speak(text: String(repeating: "a", count: 128), voice: nil)).validate()
     let rejected: [(RemappingDestination, String)] = [
       (.speak(text: "", voice: nil), "text"),
@@ -66,7 +66,7 @@ struct SpeechOutputTests {
   }
 
   @Test
-  func anUnknownVoiceNamesTheVoice() throws {
+  func unknownVoiceNamesVoice() throws {
     try profile(.speak(text: "Hi", voice: "com.apple.voice.test")).validateSpeechVoices(
       using: speech
     )
@@ -98,7 +98,7 @@ struct SpeechOutputTests {
   }
 
   @Test
-  func restartOnPressSpeaksAgainFromTheStart() async throws {
+  func restartOnPressSpeaksAgainFromStart() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink(), speechOutput: speech)
     let profile = profile(.speak(text: "Reloading", voice: nil))
     for time in [UInt64(1), 2] {

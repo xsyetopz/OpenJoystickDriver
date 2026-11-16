@@ -19,7 +19,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func aUnitProfileAppliesToItsUnitAndTheModelProfileToTheOthers() async throws {
+  func unitProfileAppliesToItsUnitAndModelProfileToOthers() async throws {
     try await withLibrary { library, _ in
       let model = makeProfile(name: "Model")
       let first = makeUnitProfile(name: "First", unit: Self.firstUnit)
@@ -43,7 +43,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func activatingAUnitProfileReplacesOnlyThatUnitsProfile() async throws {
+  func activatingUnitProfileReplacesOnlyThatUnitsProfile() async throws {
     try await withLibrary { library, _ in
       let first = makeUnitProfile(name: "First", unit: Self.firstUnit)
       let second = makeUnitProfile(name: "Second", unit: Self.secondUnit)

@@ -15,12 +15,36 @@
     let title: String
     /// The secondary text under the title, or nil for none.
     let message: String?
+    /// The title of the button that fills the empty state, or nil for no button.
+    let actionTitle: String?
+    /// The tooltip of the button, or nil for none.
+    let actionHelp: String?
+    /// What the button runs.
+    let action: (() -> Void)?
 
-    /// Creates the empty state with a symbol, a title and an optional message.
-    init(symbol: String, title: String, message: String? = nil) {
+    /// Creates the empty state with a symbol, a title, an optional message and an optional action.
+    init(
+      symbol: String,
+      title: String,
+      message: String? = nil,
+      actionTitle: String? = nil,
+      actionHelp: String? = nil,
+      action: (() -> Void)? = nil
+    ) {
       self.symbol = symbol
       self.title = title
       self.message = message
+      self.actionTitle = actionTitle
+      self.actionHelp = actionHelp
+      self.action = action
+    }
+
+    /// The button that fills the empty state, when an action title and an action are set.
+    @ViewBuilder
+    private var actionButton: some View {
+      if let actionTitle, let action {
+        Button(actionTitle, action: action).help(actionHelp ?? "")
+      }
     }
 
     /// The title, the symbol and the message in a placeholder.
@@ -31,6 +55,8 @@
           Label(title, systemImage: symbol)
         } description: {
           if let message { Text(message) }
+        } actions: {
+          actionButton
         }
       } else {
         VStack(spacing: OJDSpacing.xSmall) {
@@ -42,6 +68,7 @@
             Text(message).foregroundColor(Color(NSColor.secondaryLabelColor))
               .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
           }
+          actionButton
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
@@ -89,6 +116,7 @@
               vertical: true
             )
             Button(OJDLocalized.string("action.tryAgain"), action: retry)
+              .help(OJDLocalized.string("ui.help.tryAgain"))
           }
           Spacer(minLength: 0)
         }.padding(4)

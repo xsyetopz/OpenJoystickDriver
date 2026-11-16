@@ -22,10 +22,12 @@
               onChange(useDefault ? nil : ControllerColor(red: 0, green: 122, blue: 255))
             }
           )
-        )
+        ).help(OJDLocalized.string("ui.profiles.useDefaultColorHelp"))
         if color != nil {
           OJDLabeledRow(OJDLocalized.string("ui.inputTest.color")) {
             OJDPhysicalColorWell(color: colorBinding).frame(width: 44, height: 24)
+              .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.color"))
+              .help(OJDLocalized.string("ui.profiles.lightingColorHelp"))
           }
         }
       }

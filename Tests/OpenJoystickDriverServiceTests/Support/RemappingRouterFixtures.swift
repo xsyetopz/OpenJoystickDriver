@@ -62,8 +62,8 @@ final class RemappingRouterVirtualOutput: OutputDispatcher, ControllerLifecycleL
   func dispatchPublishing(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID,
-    onPublished: @escaping @Sendable () -> Void
-  ) async throws {
+    onPublished: @Sendable () -> Void
+  ) async {
     if await record(.virtualGamepad(event.state, identifier)) { onPublished() }
   }
 
@@ -109,7 +109,7 @@ final class RemappingRouterSink: RemappingSystemInputSink, @unchecked Sendable {
 
   init(recorder: RemappingRouterRecorder) { self.recorder = recorder }
 
-  func send(_ action: RemappingSystemInputAction) throws { recorder.append(.system(action)) }
+  func send(_ action: RemappingSystemInputAction) { recorder.append(.system(action)) }
 }
 
 final class RemappingRouterForeground: RemappingForegroundApplicationProviding, @unchecked Sendable
@@ -313,7 +313,9 @@ func libraryFiles(in directory: URL) throws -> [String: Data] {
   for path in try manager.subpathsOfDirectory(atPath: directory.path) {
     let url = directory.appendingPathComponent(path)
     var isDirectory: ObjCBool = false
-    if manager.fileExists(atPath: url.path, isDirectory: &isDirectory), !isDirectory.boolValue {
+    if unsafe manager.fileExists(atPath: url.path, isDirectory: &isDirectory),
+      !isDirectory.boolValue
+    {
       files[path] = try Data(contentsOf: url)
     }
   }
@@ -332,7 +334,7 @@ func remappingRouterDevice(
 func remappingRouterToken(_ device: LogicalControllerID) -> ControllerSessionToken {
   let identity = device.hardware
   return .fixture(
-    String(
+    unsafe String(
       format: "%04X%04X%08X",
       identity.model.vendorID,
       identity.model.productID,

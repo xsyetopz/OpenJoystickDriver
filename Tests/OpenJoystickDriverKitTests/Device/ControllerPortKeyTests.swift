@@ -26,14 +26,14 @@ struct ControllerPortKeyTests {
   }
 
   @Test
-  func theSameUnitOnTheSamePortHasTheSameWellFormedKey() throws {
+  func sameUnitOnSamePortHasSameWellFormedKey() throws {
     let key = try #require(portKey())
     #expect(key == portKey())
     #expect(ControllerPortKey(rawValue: key.rawValue) == key)
   }
 
   @Test
-  func thePortInterfaceAndInstallationKeySelectThePortKeyButTheSerialNumberDoesNot() {
+  func portInterfaceAndInstallationKeySelectPortKeyButSerialNumberDoesNot() {
     #expect(portKey(location: 0x0014_0000) != portKey())
     #expect(portKey(interface: 1) != portKey())
     #expect(portKey(interface: nil) != portKey())
@@ -50,7 +50,7 @@ struct ControllerPortKeyTests {
   }
 
   @Test
-  func aControllerWithoutALocationIDHasNoPortKey() {
+  func controllerWithoutLocationIDHasNoPortKey() {
     #expect(portKey(location: nil, interface: nil) == nil)
   }
 

@@ -1,0 +1,339 @@
+name: Controller Support
+description: OpenJoystickDriver does not detect a controller, or does not work correctly with it.
+title: "[Controller]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill each field with exact values.
+        Test the problem on the `main` branch first. See [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
+
+        **You fill Part 1.** Only you hold your Mac, your controller, and what you saw. An AI tool must not fill Part 1 for you.
+
+        **An AI tool can draft Part 2.** Read each draft. Correct it. Part 2 needs real output from your Mac.
+
+        **Part 3 records the AI tool.** Skip Part 3 if you used no AI tool.
+
+        **Evidence comes first.** Each claim needs pasted command output, a file, a log excerpt, or a screenshot. The form does not accept "not verified", "unsure", or "not checked". Run the command first. If you cannot run a command, use the field "Commands you could not run".
+
+        Rules: [AI Agents](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#ai-agents).
+  - type: markdown
+    attributes:
+      value: |
+        ## Part 1: Your Mac and your controller (you fill these)
+  - type: input
+    id: version
+    attributes:
+      label: OpenJoystickDriver version
+      description: |-
+        Click the menu-bar item. Choose **About OpenJoystickDriver**. Copy the text after **Version**. Or run `ojd --version`.
+        [Other ways to get it](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#finding-the-version).
+        Copy the whole line. A line without `+build.` is not the whole line.
+      placeholder: |
+        0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Where the build came from
+      options:
+        - GitHub release
+        - Tester build DMG (attach OpenJoystickDriver-TESTER-BUILD.txt below)
+        - Built from source
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and build
+      description: |-
+        Run `sw_vers` in Terminal. Copy `ProductVersion` and `BuildVersion`.
+      placeholder: |
+        15.6.1 (24G90)
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac model and chip
+      description: |-
+        Open the Apple menu. Choose **About This Mac**.
+      placeholder: |
+        MacBook Air, Apple M2, 2022
+    validations:
+      required: true
+  - type: input
+    id: controller
+    attributes:
+      label: Controller name and maker
+      description: |-
+        Write the name that is on the controller or on its box.
+      placeholder: |
+        8BitDo Ultimate 2C Wired Controller
+    validations:
+      required: true
+  - type: input
+    id: vid-pid
+    attributes:
+      label: VID:PID
+      description: |-
+        The VID:PID is two hexadecimal numbers that identify the controller model.
+        Get it from `ojd controller list`, from **System Information > USB**, or from `system_profiler SPUSBDataType`.
+      placeholder: |
+        045e:028e
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection
+      options:
+        - USB cable
+        - Bluetooth
+        - USB receiver (a wireless dongle; write its name in Controller name and maker)
+    validations:
+      required: true
+  - type: input
+    id: mode
+    attributes:
+      label: Controller switch or button combination
+      description: |-
+        Some controllers have a switch or a button combination that changes how they connect. For example, it makes the controller act as an Xbox controller.
+        Write the setting that you used and what the controller says it acts as. Write `None` if your controller has no such setting.
+      placeholder: |
+        Switch on X; acts as an Xbox 360 controller
+    validations:
+      required: true
+  - type: textarea
+    id: status-output
+    attributes:
+      label: Output of ojd status
+      description: |-
+        Run `ojd status`. Paste the whole output. It shows the service, the extension, the permissions, and the connected controllers.
+      render: text
+      placeholder: |
+        $ ojd status
+        <paste the whole output>
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Part 2: Evidence (an AI tool can draft these; you confirm them)
+
+        Run each command on your own Mac with this controller connected. Paste the output. Press each control while the command runs.
+  - type: textarea
+    id: system-profiler
+    attributes:
+      label: System Information entry
+      description: |-
+        Run `system_profiler SPUSBDataType` for a USB cable or a USB receiver. Run `system_profiler SPBluetoothDataType` for Bluetooth.
+        Paste only the block of this controller.
+      render: text
+      placeholder: |
+        $ system_profiler SPUSBDataType
+        <paste the block of this controller>
+    validations:
+      required: true
+  - type: textarea
+    id: controller-show
+    attributes:
+      label: Controller details from OpenJoystickDriver
+      description: |-
+        Run `ojd controller list`. Then run `ojd controller show <controller>`. Paste both outputs.
+        If OpenJoystickDriver does not list the controller, paste the output of `ojd controller list` and the output of `ojd diagnose`.
+      render: text
+      placeholder: |
+        $ ojd controller list
+        <paste the output>
+        $ ojd controller show 045e:028e
+        <paste the output>
+    validations:
+      required: true
+  - type: textarea
+    id: input-evidence
+    attributes:
+      label: Input
+      description: |-
+        Run `ojd controller watch <controller> --duration 10`. Press the buttons, the sticks, the triggers, and the D-pad, in order. Paste the output.
+        Write the controls that you pressed, in order.
+        If a control does nothing, name it and paste the lines where its value stays the same.
+      render: text
+      placeholder: |
+        $ ojd controller watch 045e:028e --duration 10
+        <paste the output>
+        I pressed: A, B, X, Y, left stick up, left stick down.
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Support report and packet capture
+      description: |-
+        Run `ojd diagnose --output support-report.json`. Attach `support-report.json`.
+        Run `ojd controller capture <controller> --duration 10 --json > capture.jsonl`. Attach `capture.jsonl`. A packet capture is a recording of the data that the controller sends.
+        Read each file before you attach it. Then run `wc -l capture.jsonl` and paste the output.
+      placeholder: |
+        support-report.json and capture.jsonl attached.
+        $ wc -l capture.jsonl
+        <paste the output>
+    validations:
+      required: true
+  - type: textarea
+    id: rumble-evidence
+    attributes:
+      label: Rumble
+      description: |-
+        Run `ojd controller rumble <controller> --left 255 --right 255 --duration 2`. Paste the output.
+        Write what you felt in the left motor and in the right motor.
+        If the controller has no rumble, the command prints a message. Paste the message.
+      render: text
+      placeholder: |
+        $ ojd controller rumble 045e:028e --left 255 --right 255 --duration 2
+        <paste the output>
+        Left motor: strong. Right motor: none.
+    validations:
+      required: true
+  - type: textarea
+    id: light-evidence
+    attributes:
+      label: Lights
+      description: |-
+        Run `ojd controller light <controller> --color FF8000`. Paste the output. Write the color that you saw.
+        If the controller has no light, the command prints a message. Paste the message.
+      render: text
+      placeholder: |
+        $ ojd controller light 045e:028e --color FF8000
+        <paste the output>
+        The light stayed off.
+    validations:
+      required: true
+  - type: textarea
+    id: virtual-evidence
+    attributes:
+      label: Virtual gamepad and games
+      description: |-
+        Run `ojd virtual show <controller>`. Paste the output.
+        Then run `just diagnose-browsers` in a clone of this repository, and paste the output. Or attach a screenshot of a game that you own.
+      render: text
+      placeholder: |
+        $ ojd virtual show 045e:028e
+        <paste the output>
+        $ just diagnose-browsers
+        <paste the output>
+    validations:
+      required: true
+  - type: textarea
+    id: unrun
+    attributes:
+      label: Commands you could not run
+      description: |-
+        Write `None` if you ran each command that this form asks for.
+        If you could not run a command, write three things for that command.
+        1. The exact step that failed, or the exact item that was missing.
+        2. The exact error text, or the exact reason. For example, write the version that you found and the version that the command needs.
+        3. What you tried instead, with its output.
+        An answer with fewer than three things is not accepted.
+      placeholder: |
+        None
+
+        Example of a good answer for a command that failed:
+        `just verify`
+        1. Step: the build stopped at the environment check.
+        2. Error: `swift --version` printed Swift 6.3.3. The file `.swift-version` names a newer version.
+        3. Tried: I ran `swift build`. Output: <paste it>.
+    validations:
+      required: true
+  - type: textarea
+    id: other
+    attributes:
+      label: Other details
+      description: |-
+        Name other operating systems or drivers where the controller works. Name the setting that you used there. Add the output that shows it.
+  - type: markdown
+    attributes:
+      value: |
+        ## Part 3: AI tool (optional; skip it if you used no AI tool)
+  - type: input
+    id: ai-tool
+    attributes:
+      label: AI tool and model
+      description: |-
+        Write the name and version of the tool. Write the exact model ID.
+      placeholder: |
+        Claude Code 2.1.300, claude-opus-5-5
+  - type: textarea
+    id: ai-output
+    attributes:
+      label: What the AI tool produced
+      description: |-
+        Name each field or file that the AI tool wrote or changed.
+  - type: textarea
+    id: ai-commands
+    attributes:
+      label: Commands the AI tool ran, with their output
+      description: |-
+        Paste each command with its real output. Do not shorten the output. Do not retype it.
+        An AI tool must not mark an item as done without the output that shows it.
+      render: text
+      placeholder: |
+        $ ojd controller watch 045e:028e --duration 10
+        <paste the output>
+  - type: textarea
+    id: ai-checked
+    attributes:
+      label: What you checked by hand
+      description: |-
+        List each claim of the AI tool that you checked yourself. For each claim, write the command or the action that you used, and its output.
+        Remove each claim that you did not check.
+  - type: dropdown
+    id: change-status
+    attributes:
+      label: Change that you or the AI tool wrote
+      options:
+        - No change
+        - Change written; I ran it on my hardware and pasted the output below
+        - Change written; I could not run it (fill in Commands you could not run)
+  - type: textarea
+    id: change-test
+    attributes:
+      label: How you tested the change
+      description: |-
+        Write each command that you ran, the controller and the connection that you used, and the output.
+        You must run this test yourself.
+  - type: textarea
+    id: maintainer-prompt
+    attributes:
+      label: Steps for the maintainer's AI tool
+      description: |-
+        Fill in this field when you tested a change. Write numbered steps that another AI tool can follow without guessing.
+        Name each file to change, the exact change, each check to run, and the result to expect.
+      render: text
+      placeholder: |
+        Fix: <one sentence: what is wrong or new, for which controller, VID:PID, and connection>.
+        Tested by @<your username> on OpenJoystickDriver <whole About line>, macOS <version and build>.
+
+        1. In <path>, in <function or type>, replace <exact old code> with <exact new code>.
+        2. Run <command>. Expect <result>.
+        3. Change nothing else.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched [existing issues](https://github.com/xsyetopz/OpenJoystickDriver/issues?q=is%3Aissue) and found no report of this.
+          required: true
+        - label: I read [Supported controllers](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers).
+          required: true
+        - label: This issue covers one controller.
+          required: true
+        - label: I ran each command on my own Mac with this controller connected. Each value about my Mac and my controller is true.
+          required: true
+        - label: Each claim in this issue has pasted output, a file, a log excerpt, or a screenshot that shows it.
+          required: true
+        - label: I read this whole issue. I stand behind it.
+          required: true
+        - label: If an AI tool helped, I described it in Part 3.
+          required: true

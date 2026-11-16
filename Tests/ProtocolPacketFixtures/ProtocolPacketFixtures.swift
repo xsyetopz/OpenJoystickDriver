@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Byte-exact input reports and packets of each protocol family, for tests that feed a driver or
 /// parser.
@@ -344,7 +344,7 @@ public enum ProtocolPacketFixtures {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ])
     /// A real `045E:02A9` state report (PR #54, bdidier): the same envelope and inner header
-    /// `00 13`, sticks off centre.
+    /// `00 13`, sticks off center.
     public static let capture02A9 = Data([
       0x00, 0x01, 0x00, 0xF0, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00,
       0x04, 0x01, 0x6E, 0x00, 0xE1, 0x09, 0x0A, 0x04,
@@ -352,7 +352,8 @@ public enum ProtocolPacketFixtures {
     ])
     /// A real non-input report an empty or idle slot sends (issue #9).
     ///
-    /// Header `00 00 00 F0 00 00`. The issue records only the six header bytes; the 29-byte length is the state report's.
+    /// Header `00 00 00 F0 00 00`. The issue records only the six header bytes; the 29-byte length
+    /// is the state report's.
     public static let idleReport = Data(
       [0x00, 0x00, 0x00, 0xF0, 0x00, 0x00] + [UInt8](repeating: 0, count: 23)
     )
@@ -421,7 +422,7 @@ public enum ProtocolPacketFixtures {
     /// A neutral input report: GIP command 0x20, options, sequence, length 14, then buttons,
     /// triggers and sticks.
     ///
-    /// The Y axes are the complement of zero, which SDL reads as centred.
+    /// The Y axes are the complement of zero, which SDL reads as centered.
     public static let neutralInputReport: [UInt8] = [
       0x20, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0xFF, 0xFF,
     ]

@@ -1,5 +1,3 @@
-"""Parse Linux xpad.c device rows and initialization rules into controller record candidates."""
-
 from __future__ import annotations
 
 import ast
@@ -31,7 +29,6 @@ INIT_PATTERN = re.compile(
     r"(0x[0-9a-fA-F]+)\s*,\s*([A-Za-z0-9_]+)\s*\)"
 )
 
-# Rule tables from `Resources/CatalogRules/linux-xpad.plist`.
 _XPAD_RULES = load_rules(
     "linux-xpad.plist",
     "LinuxXpadRules",
@@ -51,19 +48,13 @@ _XPAD_RULES = load_rules(
     ),
 )
 
-# xpad device flags whose behavior the family's driver already performs for every row, as
-# (flag, xtype).
 DRIVER_HANDLED_DEVICE_FLAGS = {
     (entry["flag"], entry["xtype"]) for entry in _XPAD_RULES["driverHandledDeviceFlags"]
 }
-# xpad mapping macros that select a driver-declared protocol parameter, and the one protocol
-# family declaring it; a row whose family does not declare it fails generation.
 MAPPING_ORDER = tuple(
     (entry["flag"], entry["parameters"], entry["family"])
     for entry in _XPAD_RULES["mappingParameters"]
 )
-# xpad mapping macros that remove analog controls, as capability absences in
-# Control declaration order. Buttons and stick clicks stay.
 CAPABILITY_ABSENCES = tuple(
     (entry["flag"], tuple(entry["controls"]))
     for entry in _XPAD_RULES["capabilityAbsences"]
@@ -73,7 +64,6 @@ PRESENCE_MAPPING_FLAGS = set(_XPAD_RULES["presenceFlags"])
 DANCEPAD_FLAGS = set(_XPAD_RULES["dancepadFlags"])
 INIT_PACKET_NAMES: dict[str, str] = dict(_XPAD_RULES["initPacketNames"])
 DEFAULT_INITIALIZATION: list[str] = list(_XPAD_RULES["defaultInitialization"])
-# xpad type -> protocol family and stored variant (None when transport decides it).
 SUPPORTED_TYPES: dict[str, tuple[str, str | None]] = {
     entry["xtype"]: (entry["family"], entry.get("variant"))
     for entry in _XPAD_RULES["types"]

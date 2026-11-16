@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The time limits of the GameController probe tool.
 public enum GameControllerProbeConfiguration {
@@ -18,7 +18,7 @@ public enum GameControllerProbeConfiguration {
 /// A user-reviewable, machine-readable snapshot for controller support requests.
 ///
 /// Raw serial values, filesystem paths, packet payloads, HID location IDs, and
-/// free-form DriverKit discovery text are intentionally not represented.
+/// free-form DriverKit discovery text are not represented.
 public struct SupportReport: Codable, Sendable {
   /// The CloudEvents `type` of a support report.
   public static let supportDiagnosticType = "com.openjoystickdriver.support.diagnostic"
@@ -94,7 +94,29 @@ public struct SupportReport: Codable, Sendable {
   }
 
   /// A connected controller that a protocol driver is bound to.
-  public struct Controller: Codable, Sendable {
+  public struct Controller: Codable, Equatable, Sendable {
+    /// Creates the facts of `device`; the serial number is reduced to whether one exists.
+    init(_ device: ApplicationServiceDeviceDescription) {
+      name = device.name
+      vendorID = device.vendorID
+      productID = device.productID
+      protocolBinding = device.protocolBinding.rawValue
+      connection = device.connection
+      serialNumberPresent = device.serialNumber?.isEmpty == false
+      parameters = device.parameters.sorted()
+      binding = device.bindingResult
+      inputEndpoint = device.inputEndpoint
+      outputEndpoint = device.outputEndpoint
+      needsSetConfiguration = device.needsSetConfiguration
+      postHandshakeSettleMilliseconds = device.postHandshakeSettleMs
+      preferredBackends = device.preferredBackends.sorted()
+      physicalOutputCapabilities = device.physicalOutputCapabilities
+      connectionState = device.connectionState
+      sessionState = device.sessionState
+      startupCommandStatus = device.startupCommandStatus
+      inputHealth = device.inputHealth
+    }
+
     /// The controller's name.
     public let name: String
     /// The USB vendor ID.
@@ -284,28 +306,7 @@ public struct SupportReport: Codable, Sendable {
     let configuration = Configuration(
       userSpaceVirtualDeviceEnabled: status?.userSpaceVirtualDeviceEnabled
     )
-    let controllers = (status?.connectedDevices ?? []).map {
-      Controller(
-        name: $0.name,
-        vendorID: $0.vendorID,
-        productID: $0.productID,
-        protocolBinding: $0.protocolBinding.rawValue,
-        connection: $0.connection,
-        serialNumberPresent: $0.serialNumber?.isEmpty == false,
-        parameters: $0.parameters.sorted(),
-        binding: $0.bindingResult,
-        inputEndpoint: $0.inputEndpoint,
-        outputEndpoint: $0.outputEndpoint,
-        needsSetConfiguration: $0.needsSetConfiguration,
-        postHandshakeSettleMilliseconds: $0.postHandshakeSettleMs,
-        preferredBackends: $0.preferredBackends.sorted(),
-        physicalOutputCapabilities: $0.physicalOutputCapabilities,
-        connectionState: $0.connectionState,
-        sessionState: $0.sessionState,
-        startupCommandStatus: $0.startupCommandStatus,
-        inputHealth: $0.inputHealth
-      )
-    }.sorted {
+    let controllers = (status?.connectedDevices ?? []).map(Controller.init).sorted {
       if $0.vendorID != $1.vendorID { return $0.vendorID < $1.vendorID }
       if $0.productID != $1.productID { return $0.productID < $1.productID }
       return $0.name < $1.name

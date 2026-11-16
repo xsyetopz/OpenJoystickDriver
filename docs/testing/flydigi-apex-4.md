@@ -13,7 +13,7 @@ USB identity `04B4:2412`, the DInput mode of the Flydigi Apex 4. The record is s
 
 The layout follows section 9 of the protocol notes of [flydigi-space-station-mac][1] at commit `649b9f36cbba80deb7e7ac11309615d44f382a8e` (MIT; see [Third-Party Notices](../../THIRD_PARTY_NOTICES.md) and [Compatibility Source Notes](../development/compatibility-sources.md)). The notes name a vendor HID interface of the pad on usage page `0xFFA0` with input report 4 and output report 5.
 
-## Report Layout
+## Report layout
 
 The record reads input report 4 as 32 bytes with the report ID in byte 0, the way the notes say IOHIDManager delivers it. A report with another ID or length is ignored, so the replies of the pad (`04 FF ...`, length 32) are not told apart by byte 1.
 

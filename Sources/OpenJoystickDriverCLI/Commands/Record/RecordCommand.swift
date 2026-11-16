@@ -171,6 +171,15 @@ struct RecordShowCommand: AsyncParsableCommand {
             + "\(CommandLineName.kebab(record.layer.rawValue))\(file)"
         )
         if let note = record.bluetoothLENote { CLIOutput.stdout(note) }
+        for validation in record.validations {
+          CLIOutput.stdout(
+            CLILocalized.format(
+              "cli.record.show.communityVerified",
+              validation.modeID,
+              validation.issueURL.absoluteString
+            )
+          )
+        }
         let width = fields.keys.map(\.count).max() ?? 0
         for (field, layer) in fields.sorted(by: { $0.key < $1.key }) {
           CLIOutput.stdout(

@@ -133,7 +133,7 @@ func printHIDSupport() -> Bool? {
     observedSupport.append(value)
     let supported = value ? "yes" : "no"
     print(
-      String(
+      unsafe String(
         format: "- %04X:%04X \"%@\" transport=%@ gamecontroller=%@",
         vid,
         pid,
@@ -229,7 +229,7 @@ print("")
 /// The notification center that delivers the connect and disconnect notifications.
 let center = NotificationCenter.default
 /// The observers to remove when the listening ends.
-var observerTokens: [NSObjectProtocol] = []
+var observerTokens: [any NSObjectProtocol] = []
 /// The controllers connected when the probe starts.
 let controllers = GCController.controllers()
 /// What the probe has observed.
@@ -252,6 +252,11 @@ func observeInput(on controller: GCController, disableSystemGestures: Bool) {
   gamepad.valueChangedHandler = { _, _ in evidence.markInput() }
   if #available(macOS 13.0, *) {
     controller.physicalInputProfile.valueDidChangeHandler = { _, element in
+      if let pad = element as? GCControllerDirectionPad {
+        let name = pad.aliases.min() ?? pad.localizedName ?? "Direction Pad"
+        print("direction: \(name) x=\(pad.xAxis.value) y=\(pad.yAxis.value)")
+        return
+      }
       guard let button = element as? GCControllerButtonInput else { return }
       let name = button.aliases.min() ?? button.localizedName ?? "Button"
       print("button: \(name) value=\(button.value) pressed=\(button.isPressed)")
@@ -301,8 +306,8 @@ print(
 )
 
 if shouldRumble {
-  let controllers = GCController.controllers()
-  guard let controller = controllers.first else {
+  let connected = GCController.controllers()
+  guard let controller = connected.first else {
     print("rumble: skipped no controller")
     exit(1)
   }

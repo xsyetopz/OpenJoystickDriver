@@ -244,12 +244,8 @@ extension RuntimeViewModel {
     pendingControllerServers[RuntimeControllerModel(device)] != nil
   }
 
-  /// Why the picker cannot offer a server choice for `device`, or nil when it can.
-  ///
-  /// The service refuses every choice for a model that no controller record describes
-  /// (`noRecord`); its other refusals never reach a controller that shows the picker.
-  ///
-  /// - Parameter hasRecord: Whether a record describes the controller's model.
+  // The service refuses every choice for a model that no controller record describes
+  // (`noRecord`); its other refusals never reach a controller that shows the picker.
   func controllerServerUnavailableReason(hasRecord: Bool) -> String? {
     hasRecord ? nil : OJDLocalized.string("ui.controllers.server.noRecord")
   }

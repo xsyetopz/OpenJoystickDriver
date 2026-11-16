@@ -1,6 +1,6 @@
 import IOKit
-import OpenJoystickDriverKit
-import SwifterKit
+public import OpenJoystickDriverKit
+public import SwifterKit
 
 /// The identity of the `IOUSBHostDevice` a DEXT service sits on, read from the IORegistry.
 struct USBDriverKitParentDevice: Sendable, Hashable {
@@ -75,7 +75,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   }
 
   /// Returns the observations of the services of the latest listing, in service ID order.
-  public func physicalDeviceObservations() throws -> [PhysicalDevice] {
+  public func physicalDeviceObservations() -> [PhysicalDevice] {
     servicesByID.values.sorted { $0.id < $1.id }.compactMap {
       Self.physicalDeviceObservation(from: $0, parent: parentsByID[$0.id])
     }
@@ -218,9 +218,9 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     )
     guard entry != 0 else { return nil }
     var depth = 0
-    while IOObjectConformsTo(entry, "IOUSBHostDevice") == 0 {
+    while unsafe IOObjectConformsTo(entry, "IOUSBHostDevice") == 0 {
       var parent: io_registry_entry_t = 0
-      let result = IORegistryEntryGetParentEntry(entry, kIOServicePlane, &parent)
+      let result = unsafe IORegistryEntryGetParentEntry(entry, kIOServicePlane, &parent)
       IOObjectRelease(entry)
       depth += 1
       guard result == KERN_SUCCESS else { return nil }
@@ -232,7 +232,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     }
     defer { IOObjectRelease(entry) }
     func value(_ key: String) -> Any? {
-      IORegistryEntryCreateCFProperty(entry, key as CFString, kCFAllocatorDefault, 0)?
+      unsafe IORegistryEntryCreateCFProperty(entry, key as CFString, kCFAllocatorDefault, 0)?
         .takeRetainedValue()
     }
     func string(_ keys: [String]) -> String? { keys.lazy.compactMap { value($0) as? String }.first }
@@ -289,7 +289,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   }
 
   /// Maps a driver, runtime or context `error` to a transport error.
-  static func transportError(_ error: Error) -> USBTransportError {
+  static func transportError(_ error: any Error) -> USBTransportError {
     if let transportError = error as? USBTransportError { return transportError }
     switch error as? USBRuntimeError {
     case .emptyTransfer, .directionMismatch, .invalidOutputLength, .transferTooLarge,

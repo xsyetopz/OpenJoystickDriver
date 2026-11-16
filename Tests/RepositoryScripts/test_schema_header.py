@@ -42,9 +42,14 @@ def instances() -> dict[str, dict[str, Any]]:
         "error-codes": load_plist(ROOT / "Resources/ErrorCodes.plist"),
         "crosswalk": load_plist(ROOT / "Resources/Vocabulary/crosswalk.plist"),
         "access-grants": load_plist(FIXTURES / "access_grants.plist"),
-        "protocol-description": load_plist(ROOT / "Resources/Protocols/xbox-xusb.plist"),
+        "protocol-description": load_plist(
+            ROOT / "Resources/Protocols/xbox-xusb.plist"
+        ),
         "settings": load_plist(FIXTURES / "settings.plist"),
-        "service-listener-failure": load_plist(FIXTURES / "service_listener_failure.plist"),
+        "service-listener-failure": load_plist(
+            FIXTURES / "service_listener_failure.plist"
+        ),
+        "controller-check": load(FIXTURES / "controller_check.json"),
     }
 
 
@@ -111,6 +116,37 @@ class SchemaHeaderTests(unittest.TestCase):
                 changed = {**document, "$schema": schema_header.schema_id(stem)}
                 with self.assertRaises(validate_schemas.ValidationError):
                     self.validator(stem).validate(changed)
+
+    def test_rejects_an_invalid_pause_shortcut(self) -> None:
+        document = instances()["settings"]
+        shortcuts = {
+            "no modifier": {"key": "P", "modifiers": []},
+            "shift only": {"key": "P", "modifiers": ["Shift"]},
+            "repeated modifier": {"key": "P", "modifiers": ["Command", "Command"]},
+            "lower case modifier": {"key": "P", "modifiers": ["command"]},
+            "unknown key": {"key": "Home", "modifiers": ["Command"]},
+            "unknown member": {"key": "P", "modifiers": ["Command"], "extra": True},
+            "no key": {"modifiers": ["Command"]},
+        }
+        for name, shortcut in shortcuts.items():
+            with (
+                self.subTest(name),
+                self.assertRaises(validate_schemas.ValidationError),
+            ):
+                self.validator("settings").validate(
+                    {**document, "pauseShortcut": shortcut}
+                )
+
+    def test_rejects_an_invalid_last_shown_changelog_version(self) -> None:
+        document = instances()["settings"]
+        for name, version in {"empty": "", "number": 3, "boolean": True}.items():
+            with (
+                self.subTest(name),
+                self.assertRaises(validate_schemas.ValidationError),
+            ):
+                self.validator("settings").validate(
+                    {**document, "lastShownChangelogVersion": version}
+                )
 
     def test_no_schema_directory_is_versioned(self) -> None:
         directories = [p for p in (ROOT / "Resources/Schemas").iterdir() if p.is_dir()]

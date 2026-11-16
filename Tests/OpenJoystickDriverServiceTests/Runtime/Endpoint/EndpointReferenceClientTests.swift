@@ -18,7 +18,7 @@ struct EndpointReferenceClientTests {
     .appendingPathComponent("Scripts/SDK/reference_client.py").path
 
   @Test
-  func theClientSubscribesAndReceivesAControllerFrame() async throws {
+  func clientSubscribesAndReceivesControllerFrame() async throws {
     try await withEndpointServer(identity: nil) { server, fixture in
       fixture.source.set(devices: ["pad-1"], state: ControllerState(pressed: [.south]))
       try server.setEnabled(true)
@@ -47,7 +47,7 @@ struct EndpointReferenceClientTests {
   }
 
   @Test
-  func theClientFeedsAFrameToTheVirtualGamepad() async throws {
+  func clientFeedsFrameToVirtualGamepad() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(identity: nil, feeds: factory.registry()) { server, _ in
       try server.setEnabled(true)
@@ -63,7 +63,7 @@ struct EndpointReferenceClientTests {
   }
 
   @Test
-  func theClientWithAWrongTokenExitsWithTheEndpointsError() async throws {
+  func clientWithWrongTokenExitsWithEndpointsError() async throws {
     try await withEndpointServer(identity: nil) { server, _ in
       try server.setEnabled(true)
       _ = try server.grantToken(name: "driver", origins: [], scopes: [.read])

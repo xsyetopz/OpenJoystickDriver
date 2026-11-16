@@ -6,7 +6,7 @@ import Testing
 
 struct ServiceConnectionFailureTests {
   @Test
-  func aDuplicateNameSaysWhereToSeeTheNamesInUse() {
+  func duplicateNameSaysWhereToSeeNamesInUse() {
     let error = ApplicationServiceRemappingRPCError(
       code: .duplicateName,
       message: "A remapping profile named Pad already exists."
@@ -18,7 +18,7 @@ struct ServiceConnectionFailureTests {
   }
 
   @Test
-  func aServiceMessageEndingInAPeriodIsNotDoubled() {
+  func serviceMessageEndingInPeriodIsNotDoubled() {
     let error = ApplicationServiceRemappingRPCError(
       code: .unwritableLibrary,
       message: "The remapping profile library could not be written."
@@ -31,7 +31,7 @@ struct ServiceConnectionFailureTests {
   }
 
   @Test(arguments: [(0.5, "0.5s"), (1, "1s"), (10, "10s")])
-  func aDurationUsesAUnitSymbolSoNoPluralIsNeeded(seconds: Double, text: String) {
+  func durationUsesUnitSymbolSoNoPluralIsNeeded(seconds: Double, text: String) {
     #expect(seconds.durationText(locale: Locale(identifier: "en_US")) == text)
   }
 }
@@ -40,7 +40,7 @@ struct ServiceConnectionDeadlineTests {
   private struct Refusal: Error {}
 
   @Test(.timeLimit(.minutes(1)))
-  func anOperationErrorIsReportedAsItsOwnFailureNotATimeout() async {
+  func operationErrorIsReportedAsItsOwnFailureNotTimeout() async {
     do {
       _ = try await ServiceConnection.withDeadline(seconds: 30) { () async throws -> Int in
         throw Refusal()
@@ -54,7 +54,7 @@ struct ServiceConnectionDeadlineTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aMissedDeadlineIsReportedAsATimeoutNamingTheOption() async {
+  func missedDeadlineIsReportedAsTimeoutNamingOption() async {
     do {
       _ = try await ServiceConnection.withDeadline(seconds: 0.05) {
         try await Task.sleep(nanoseconds: 60_000_000_000)

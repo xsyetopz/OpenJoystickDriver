@@ -8,7 +8,7 @@ struct WiiRemoteStatusTests {
   private let english = Localization(preferredLanguages: ["en-US"])
 
   @Test
-  func aFreshSessionShowsTheNonIRModeNoExtensionAndMotionPlusOff() throws {
+  func freshSessionShowsNonIRModeNoExtensionAndMotionPlusOff() throws {
     let status = try #require(driver.wiiRemoteStatus)
     #expect(status.reportModeText == "0x31")
     #expect(status.extensionText(english) == "None")
@@ -16,13 +16,13 @@ struct WiiRemoteStatusTests {
   }
 
   @Test
-  func aBoundPointerShowsTheBasicIRMode() throws {
+  func boundPointerShowsBasicIRMode() throws {
     driver.setPointerInputWanted(true)
     #expect(try #require(driver.wiiRemoteStatus).reportModeText == "0x37")
   }
 
   @Test
-  func aKnownExtensionShowsItsNameAndTheReportModeFollowsIt() throws {
+  func knownExtensionShowsItsNameAndReportModeFollowsIt() throws {
     driver.extensionKind = .known("MotionPlusNunchuk")
     let status = try #require(driver.wiiRemoteStatus)
     #expect(status.extensionKind == .motionPlusNunchuk)
@@ -31,7 +31,7 @@ struct WiiRemoteStatusTests {
   }
 
   @Test
-  func anUnknownExtensionShowsItsSixBytesInHex() throws {
+  func unknownExtensionShowsItsSixBytesInHex() throws {
     driver.extensionKind = .unknown([0x00, 0x00, 0xA4, 0x20, 0x01, 0xFF])
     let status = try #require(driver.wiiRemoteStatus)
     #expect(status.unknownExtensionID == "0000A42001FF")
@@ -39,7 +39,7 @@ struct WiiRemoteStatusTests {
   }
 
   @Test
-  func motionPlusShowsCalibratingUntilTheRestOffsetIsMeasured() {
+  func motionPlusShowsCalibratingUntilRestOffsetIsMeasured() {
     let calibrating = WiiRemoteStatus(
       reportMode: 0x35,
       extensionKind: nil,
@@ -59,7 +59,7 @@ struct WiiRemoteStatusTests {
   }
 
   @Test
-  func theJSONNamesAreLowerCamelCaseAndOmitWhatIsAbsent() throws {
+  func jsonNamesAreLowerCamelCaseAndOmitWhatIsAbsent() throws {
     let status = WiiRemoteStatus(
       reportMode: 0x32,
       extensionKind: .nunchuk,
@@ -77,7 +77,7 @@ struct WiiRemoteStatusTests {
   }
 
   @Test
-  func everyExtensionKindOfTheDescriptionHasAName() throws {
+  func everyExtensionKindOfDescriptionHasName() throws {
     let wii = try #require(PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote)
     for kind in Set(wii.extensions.map(\.kind)) {
       #expect(WiiRemoteStatus.ExtensionKind(rawValue: kind) != nil)

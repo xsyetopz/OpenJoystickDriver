@@ -53,7 +53,7 @@ struct MotionFrameTests {
   }
 
   @Test
-  func dualShock4CaptureAtRestReadsGravityUpThroughTheFace() throws {
+  func dualShock4CaptureAtRestReadsGravityUpThroughFace() throws {
     // Captured owner DS4 lying face up (`capturedDualShock4` pin): raw accel (-17, 7784, 1792).
     let sample = try #require(
       SonyMotionCalibration.nominal.sample(
@@ -118,7 +118,7 @@ struct MotionFrameTests {
   }
 
   @Test
-  func remappingEngineReadsTheSampleBackInItsDegreesAndGravitiesFrame() throws {
+  func remappingEngineReadsSampleBackInItsDegreesAndGravitiesFrame() throws {
     // Canonical +Z (up) is the engine's +Y; canonical +Y (away) is the engine's -Z.
     let sample = try #require(
       ControllerMotionSample(

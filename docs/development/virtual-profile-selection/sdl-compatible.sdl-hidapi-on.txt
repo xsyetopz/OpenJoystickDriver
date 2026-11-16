@@ -1,0 +1,78 @@
+# profile=sdl-compatible tag=sdl-hidapi-on
+# probe: SDL_JOYSTICK_HIDAPI=1 just diagnose-sdl3 --seconds 34 --wait-devices 5
+# started: 2026-11-12T23:16:28Z
+Scripts/Diagnostics/backend.sh sdl3 --seconds 34 --wait-devices 5
+Building SDL3 probe (native)...
+[0m[38;2;0;255;0;1m[100%]:[0m [38;2;0;255;0;1mbuild ok, spent 0.017s[0m
+
+Running SDLGamepadProbe --seconds 34 --wait-devices 5
+Tip: if it prints 'Found 0 joystick(s)', grant Input Monitoring to your terminal app:
+  System Settings -> Privacy & Security -> Input Monitoring
+
+SDL linked version: 3.4.20 (raw=3004020)
+SDL platform: macOS
+SDL_JOYSTICK_MFI=(unset)
+SDL_JOYSTICK_IOKIT=(unset)
+SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=(unset)
+SDL_JOYSTICK_HIDAPI_XBOX=(unset)
+SDL_JOYSTICK_HIDAPI_XBOX_ONE=(unset)
+
+Found 1 joystick(s)
+- id=1 vid=0x045e pid=0x0b0c ver=0x0000 guid=0300faeb5e0400000c0b000000006800
+  joystick_name=Xbox Adaptive Controller
+  is_gamepad=yes gamepad_name=Xbox Adaptive Controller
+  mapping=0300faeb5e0400000c0b000000006800,*,a:b0,b:b1,back:b4,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b5,leftshoulder:b9,leftstick:b7,lefttrigger:a4,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b8,righttrigger:a5,rightx:a2,righty:a3,start:b6,x:b2,y:b3,crc:ebfa,
+  gamepad_axes: a0=0 a1=0 a2=0 a3=0 a4=0 a5=0
+  gamepad_buttons: b0=0 b1=0 b2=0 b3=0 b4=0 b5=0 b6=0 b7=0 b8=0 b9=0 b10=0 b11=0 b12=0 b13=0 b14=0 b15=0 b16=0 b17=0 b18=0 b19=0 b20=0 b21=0 b22=0 b23=0 b24=0 b25=0
+
+Listening for 34s (press buttons now) ...
+GAMEPAD_ADDED which=1 ms=2072
+GAMEPAD_BUTTON down which=1 button=0
+GAMEPAD_BUTTON up which=1 button=0
+GAMEPAD_BUTTON down which=1 button=1
+GAMEPAD_BUTTON up which=1 button=1
+GAMEPAD_BUTTON down which=1 button=2
+GAMEPAD_BUTTON up which=1 button=2
+GAMEPAD_BUTTON down which=1 button=3
+GAMEPAD_BUTTON up which=1 button=3
+GAMEPAD_BUTTON down which=1 button=9
+GAMEPAD_BUTTON up which=1 button=9
+GAMEPAD_BUTTON down which=1 button=10
+GAMEPAD_BUTTON up which=1 button=10
+GAMEPAD_AXIS which=1 axis=4 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=4 rest value=0 peak=32767
+GAMEPAD_AXIS which=1 axis=5 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=5 rest value=0 peak=32767
+GAMEPAD_BUTTON down which=1 button=7
+GAMEPAD_BUTTON up which=1 button=7
+GAMEPAD_BUTTON down which=1 button=8
+GAMEPAD_BUTTON up which=1 button=8
+GAMEPAD_BUTTON down which=1 button=6
+GAMEPAD_BUTTON up which=1 button=6
+GAMEPAD_BUTTON down which=1 button=4
+GAMEPAD_BUTTON up which=1 button=4
+GAMEPAD_BUTTON down which=1 button=5
+GAMEPAD_BUTTON up which=1 button=5
+GAMEPAD_BUTTON down which=1 button=11
+GAMEPAD_BUTTON up which=1 button=11
+GAMEPAD_BUTTON down which=1 button=12
+GAMEPAD_BUTTON up which=1 button=12
+GAMEPAD_BUTTON down which=1 button=13
+GAMEPAD_BUTTON up which=1 button=13
+GAMEPAD_BUTTON down which=1 button=14
+GAMEPAD_BUTTON up which=1 button=14
+GAMEPAD_AXIS which=1 axis=0 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=0 rest value=0 peak=32767
+GAMEPAD_AXIS which=1 axis=1 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=1 rest value=0 peak=32767
+GAMEPAD_AXIS which=1 axis=2 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=2 rest value=0 peak=32767
+GAMEPAD_AXIS which=1 axis=3 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=3 rest value=0 peak=32767
+GAMEPAD_AXIS which=1 axis=4 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=4 rest value=0 peak=32767
+GAMEPAD_AXIS which=1 axis=5 left-rest value=32767
+GAMEPAD_AXIS which=1 axis=5 rest value=0 peak=32767
+GAMEPAD_REMOVED which=1 ms=27213
+# probe exit: 0
+# feed exit: 0

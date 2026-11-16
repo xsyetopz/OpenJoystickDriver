@@ -63,8 +63,8 @@ public enum PeerMessage {
       }
       var checked: [String: Double] = [:]
       for (name, number) in object {
-        guard let number = real(number) else { return nil }
-        checked[name] = number
+        guard let parsed = real(number) else { return nil }
+        checked[name] = parsed
       }
       frame["axes"] = checked
     }

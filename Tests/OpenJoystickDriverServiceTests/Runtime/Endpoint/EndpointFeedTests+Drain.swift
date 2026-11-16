@@ -7,7 +7,7 @@ import Testing
 
 extension EndpointFeedTests {
   @Test
-  func drainedComesOnlyAfterTheLastFramesHoldEvenWhenASendIsSlow() async throws {
+  func drainedComesOnlyAfterLastFramesHoldEvenWhenSendIsSlow() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 5, clock: time.clock)
@@ -60,7 +60,7 @@ extension EndpointFeedTests {
   }
 
   @Test
-  func aDrainBeforeFeedSessionGetsE1010() async throws {
+  func drainBeforeFeedSessionGetsE1010() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await welcomed(server)
@@ -75,7 +75,7 @@ extension EndpointFeedTests {
   }
 
   @Test
-  func aDrainOnASubscriptionGetsE1010() async throws {
+  func drainOnSubscriptionGetsE1010() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -88,7 +88,7 @@ extension EndpointFeedTests {
   }
 
   @Test
-  func aDrainWithAnotherMemberIsRefused() async throws {
+  func drainWithAnotherMemberIsRefused() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await feeding(server)
@@ -102,7 +102,7 @@ extension EndpointFeedTests {
   }
 
   @Test
-  func aPendingDrainKeepsTheFeedOpenPastTheIdleTimeoutUntilTheFramesHavePlayed() async throws {
+  func pendingDrainKeepsFeedOpenPastIdleTimeoutUntilFramesHavePlayed() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.5, clock: time.clock)
@@ -128,7 +128,7 @@ extension EndpointFeedTests {
   }
 
   @Test
-  func afterDrainedAClientThatSendsNothingIsClosedWithE1008() async throws {
+  func afterDrainedClientThatSendsNothingIsClosedWithE1008() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.5, clock: time.clock)
@@ -151,7 +151,7 @@ extension EndpointFeedTests {
   }
 
   @Test
-  func closingTheClientWhileADrainWaitsRemovesTheGamepad() async throws {
+  func closingClientWhileDrainWaitsRemovesGamepad() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.5, clock: time.clock)

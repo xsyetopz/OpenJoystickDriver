@@ -2,7 +2,7 @@
 
 OpenJoystickDriver generates manual test instructions from a connected controller's reported output capabilities, not proof of a hardware pass.
 
-## Generate a Plan
+## Generate a plan
 
 List connected controllers. Then show one controller, whose Output checks section is the plan. `ojd` is the installed command-line tool ([install](../../wiki/Command-Line.md)):
 
@@ -17,7 +17,7 @@ The session token lasts until the controller disconnects, and the port key lasts
 
 The `controller` output commands depend on the device capabilities. `rumble`, `player`, and `light` each send one output command to the app, which decides support: a controller without the capability fails with a "has no ..." message that points at `ojd controller show`. `rumble` applies the channels the controller has and warns about each requested trigger motor it lacks (for example `--left-trigger` on a DualShock 4), then exits successfully; when the controller has none of the requested channels, it fails with that message instead. The main motors are mirrored onto the Steam Controller trackpad haptics. The command returns as soon as the app accepts it, and the app stops the rumble when `--duration` ends; an all-zero request is a stop. `ojd controller show` prints the same generated validation steps in its Output checks section. A redacted support report lists each connected device's output capabilities but not the generated steps.
 
-## Output Command Request
+## Output command request
 
 The CLI and the GUI send each output through the app's `sendControllerOutput` application-service request. Its arguments select one connected controller by its session token, port key, or `VVVV:PPPP`, and carry one command:
 
@@ -48,7 +48,7 @@ The reply is a result, for example `{"outcome": "Delivered", "droppedRumbleChann
 
 `droppedRumbleChannels` lists the requested channels the controller lacks, which were not driven. The CLI and the GUI mirror the main motors onto the Steam Controller trackpad haptics, so their requests list `leftHaptic` and `rightHaptic` as dropped on other controllers and the main motors as dropped on a Steam Controller. A rumble command is `unsupportedCapability` only when the controller has no rumble channel at all.
 
-## Record Results
+## Record results
 
 Run one step at a time. Record pass or fail, the controller model, connection type, and relevant firmware version. If output behaves unexpectedly, stop and disconnect the controller. One passing step does not verify another actuator or lighting feature.
 

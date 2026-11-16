@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Installation workflows exposed only through ./Scripts/ojd commands.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -28,7 +27,6 @@ next_dext_bundle_version() {
     ${installed[@]+"${installed[@]}"}
 }
 
-# True when systemextensionsctl lists the DEXT at this version, in any state.
 sysext_listed() {
   local listing
   listing="$(systemextensionsctl list 2>&1 || true)"
@@ -44,7 +42,7 @@ install_fast() {
   local APP_DST="/Applications/OpenJoystickDriver.app"
   local APP_SRC="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
 
-  [[ -d "$APP_DST" ]] || die "$APP_DST not found. Run ./Scripts/ojd build install dev once first."
+  [[ -d "$APP_DST" ]] || die "$APP_DST not found. Run just install-dev once first."
 
   echo "=== Step 1: Build app (no dext) ==="
   build_app_bundle

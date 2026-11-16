@@ -29,7 +29,7 @@
     }
 
     @Test
-    func startAtLoginGivesAReasonWhileTheLoginItemIsUnavailable() {
+    func startAtLoginGivesReasonWhileLoginItemUnavailable() {
       let unavailable = LaunchAtLoginStub(isEnabled: false)
       unavailable.isAvailable = false
       #expect(
@@ -40,9 +40,10 @@
     }
 
     @Test
-    func aLockedSwitchShowsItsReasonAsRowText() {
+    func lockedSwitchShowsItsReasonAsRowText() {
       let row = SettingsSwitchRow(
         title: "Title",
+        help: "Help",
         description: "Description",
         isOn: .constant(true),
         isEnabled: false,
@@ -52,6 +53,7 @@
       #expect(
         SettingsSwitchRow(
           title: "Title",
+          help: "Help",
           description: "Description",
           isOn: .constant(true),
           disabledReason: "Reason"
@@ -97,10 +99,11 @@
         )
       )
       #expect(!ready.needsAttention)
+      #expect(ready.status == nil)
     }
 
     @Test
-    func turningTheAutomaticUpdateCheckOnChecksInTheSession() async {
+    func turningAutomaticUpdateCheckOnChecksInSession() async {
       let checker = UpdateCheckerStub(result: .upToDate(current: "1.2.3", latest: "v1.2.3"))
       let model = Self.model(checker: checker)
       model.setCheckUpdatesAutomatically(false)
@@ -115,7 +118,7 @@
     }
 
     @Test
-    func theControllerConnectedSwitchNamesTheNeedsAttentionNotification() {
+    func controllerConnectedSwitchNamesNeedsAttentionNotification() {
       let title = OJDLocalized.string("ui.settings.notifications.controllerConnectedOrAttention")
       let label = OJDLocalized.string("ui.settings.notifications.controllerNotifications")
       #expect(!title.hasPrefix("ui.settings."))

@@ -46,26 +46,29 @@ final class ControllerRecordWatcher {
       do {
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
       } catch {
-        fputs("[Records] Cannot create \(folder.path): \(error.localizedDescription)\n", stderr)
+        unsafe fputs(
+          "[Records] Cannot create \(folder.path): \(error.localizedDescription)\n",
+          unsafe stderr
+        )
       }
     }
     apply()
     // A package is installed, replaced, and removed as a folder of `Packages`, and each folder is
     // watched.
-    let watcher = FileChangeWatcher(
+    let started = FileChangeWatcher(
       directories: [directory, packages],
       watchesFile: {
-        $0.pathExtension == "plist"
+        ["plist", "json"].contains($0.pathExtension)
           || $0.deletingLastPathComponent().standardizedFileURL == packages.standardizedFileURL
       },
       onChange: { [weak self] in
         guard let self else { return }
-        let changed = self.apply()
-        if !changed.isEmpty { self.onChange(changed) }
+        let changed = apply()
+        if !changed.isEmpty { onChange(changed) }
       }
     )
-    self.watcher = watcher
-    watcher.start()
+    self.watcher = started
+    started.start()
   }
 
   /// Stops watching.
@@ -79,13 +82,15 @@ final class ControllerRecordWatcher {
   private func apply() -> Set<ControllerModelID> {
     let records = ControllerRecordSet.load(userDirectory: directory)
     for file in records.problems {
-      fputs("[Records] Skipped \(file.url.path): \(file.problem ?? "")\n", stderr)
+      unsafe fputs("[Records] Skipped \(file.url.path): \(file.problem ?? "")\n", unsafe stderr)
     }
     if let problem = records.defaults?.problem, let url = records.defaults?.url {
-      fputs("[Records] Ignored \(url.path): \(problem)\n", stderr)
+      unsafe fputs("[Records] Ignored \(url.path): \(problem)\n", unsafe stderr)
     }
     let failing = Set(records.problems.map(\.url))
-    if let current, current.userFiles.contains(where: { $0.problem == nil && failing.contains($0.url) }) {
+    if let current,
+      current.userFiles.contains(where: { $0.problem == nil && failing.contains($0.url) })
+    {
       return []
     }
     current = records

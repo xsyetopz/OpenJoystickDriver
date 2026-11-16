@@ -51,10 +51,10 @@ extension RemappingEngineState {
       actions += device.clearMotionSteering()
       device.motion.motionStickDeadline = nil
       for direction in device.motion.activeMotionLeans {
-        let source = RemappingSource.motionLean(direction)
-        actions += cancelActions(for: [source], device: &device)
-        device.activeSources.remove(source)
-        device.sourcePressTimes.removeValue(forKey: source)
+        let lean = RemappingSource.motionLean(direction)
+        actions += cancelActions(for: [lean], device: &device)
+        device.activeSources.remove(lean)
+        device.sourcePressTimes.removeValue(forKey: lean)
       }
       device.motion.activeMotionLeans.removeAll()
       device.motion.motion.resetCalibration()
@@ -71,7 +71,7 @@ extension RemappingEngineState {
     return actions
   }
 
-  /// Whether a source belongs to a chord that is selected now.
+  /// Whether a source belongs to a selected chord.
   func sourceCompletesChord(_ source: RemappingSource, in device: RemappingDeviceState) -> Bool {
     device.selectedChords().contains { $0.sources.contains(source) }
   }

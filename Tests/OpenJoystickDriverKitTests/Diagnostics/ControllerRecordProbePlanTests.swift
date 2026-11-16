@@ -23,7 +23,7 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
-  func probeBuildsItsDriverOnlyForAClaimThatSatisfiesTheContract() throws {
+  func probeBuildsItsDriverOnlyForClaimThatSatisfiesContract() throws {
     let plan = try ControllerRecordProbePlan(data: try recordData())
     let device = USBTransportDevice(
       route: .rawUSB,
@@ -155,7 +155,7 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
-  func validationAcceptsAHIDReportLayoutRecordThatNoProbeCanDrive() throws {
+  func validationAcceptsHIDReportLayoutRecordThatNoProbeCanDrive() throws {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
     let data = try Data(
@@ -170,7 +170,7 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
-  func validationRejectsAnInvalidRecord() throws {
+  func validationRejectsInvalidRecord() throws {
     let data = try mutatedRecord { $0["vendorID"] = "not a number" }
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan.validate(data: data)
@@ -178,7 +178,7 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test(arguments: [0x3208, 0x5750])
-  func rejectsABootloaderIdentityBeforeHardwareAccess(productID: Int) throws {
+  func rejectsBootloaderIdentityBeforeHardwareAccess(productID: Int) throws {
     let data = try mutatedRecord {
       $0["vendorID"] = 0x2DC8
       $0["productID"] = productID
@@ -196,14 +196,14 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
-  func rejectsAnUnknownRecordField() {
+  func rejectsUnknownRecordField() {
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan(data: try mutatedRecord { $0["notAField"] = "usb" })
     }
   }
 
   @Test
-  func appliesShareOffsetAndRumbleGatingLikeTheRuntime() throws {
+  func appliesShareOffsetAndRumbleGatingLikeRuntime() throws {
     let plain = try #require(
       try ControllerRecordProbePlan(data: try recordData()).makeUnobservedDriver() as? GIPDriver
     )
@@ -250,7 +250,7 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
-  func aBundledModelStillBuildsAPlan() throws {
+  func bundledModelStillBuildsPlan() throws {
     let plan = try ControllerRecordProbePlan(data: try recordData())
     let model = ControllerModelID(vendorID: plan.vendorID, productID: plan.productID)
     #expect(ControllerRecordSet.bundled.records[model] != nil)

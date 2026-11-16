@@ -25,11 +25,11 @@
           case .installed:
             Button(OJDLocalized.string("ui.settings.commandLine.toolUninstall")) {
               confirmingUninstall = true
-            }
+            }.help(OJDLocalized.string("ui.help.commandLineUninstall"))
           case .missing, .linkedElsewhere, .broken:
             Button(OJDLocalized.string("ui.settings.commandLine.toolInstall")) {
               commandLineTool.install()
-            }
+            }.help(OJDLocalized.string("ui.help.commandLineInstall"))
           case .blockedByFile: EmptyView()
           }
         }

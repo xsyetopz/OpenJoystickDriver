@@ -21,6 +21,7 @@
         combinationGroup(
           title: OJDLocalized.string("ui.profiles.chords"),
           addTitle: OJDLocalized.string("ui.profiles.addChord"),
+          addHelp: OJDLocalized.string("ui.profiles.addChordHelp"),
           isEmpty: profile.chords.isEmpty,
           emptyMessage: OJDLocalized.string("ui.profiles.noChords"),
           add: { openSheet(.chord) },
@@ -35,7 +36,9 @@
                 OJDSystemSymbol(name: "arrow.right", fallback: "->").accessibilityHidden(true)
                 KeyboardDestinationLabel(destination: chord.destination)
                 Spacer()
-                removeButton { removeChord(chord.id) }
+                removeButton(help: OJDLocalized.string("ui.profiles.removeChordHelp")) {
+                  removeChord(chord.id)
+                }
               }
             }
           }
@@ -43,6 +46,7 @@
         combinationGroup(
           title: OJDLocalized.string("ui.profiles.sequences"),
           addTitle: OJDLocalized.string("ui.profiles.addSequence"),
+          addHelp: OJDLocalized.string("ui.profiles.addSequenceHelp"),
           isEmpty: profile.sequences.isEmpty,
           emptyMessage: OJDLocalized.string(
             "ui.profiles.noSequences"
@@ -54,13 +58,15 @@
                 Text(
                   sequence.sources.map(RuntimePresentation.sourceLabel).joined(separator: " -> ")
                 )
-                Text(String(format: "(%.0f ms)", sequence.windowMs)).foregroundColor(
+                Text(unsafe String(format: "(%.0f ms)", sequence.windowMs)).foregroundColor(
                   Color(NSColor.secondaryLabelColor)
                 )
                 OJDSystemSymbol(name: "arrow.right", fallback: "->").accessibilityHidden(true)
                 KeyboardDestinationLabel(destination: sequence.destination)
                 Spacer()
-                removeButton { removeSequence(sequence.id) }
+                removeButton(help: OJDLocalized.string("ui.profiles.removeSequenceHelp")) {
+                  removeSequence(sequence.id)
+                }
               }
             }
           }
@@ -73,6 +79,7 @@
     /// - Parameters:
     ///   - title: The section title.
     ///   - addTitle: The label of the add button.
+    ///   - addHelp: The tooltip of the add button.
     ///   - isEmpty: Whether there is nothing to list.
     ///   - emptyMessage: The text shown when empty.
     ///   - add: Called when the person chooses the add button.
@@ -81,6 +88,7 @@
     private func combinationGroup<Content: View>(
       title: String,
       addTitle: String,
+      addHelp: String,
       isEmpty: Bool,
       emptyMessage: String,
       add: @escaping () -> Void,
@@ -90,7 +98,7 @@
         header: HStack {
           Text(title)
           Spacer()
-          OJDCompactSymbolButton(symbolName: "plus", label: addTitle, action: add)
+          OJDCompactSymbolButton(symbolName: "plus", label: addTitle, help: addHelp, action: add)
         }
       ) {
         if isEmpty {
@@ -119,11 +127,11 @@
     var body: some View {
       Section(
         header: HStack {
-          Text(OJDLocalized.string("ui.profiles.layers"))
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("ui.profiles.addLayer")
+            label: OJDLocalized.string("ui.profiles.addLayer"),
+            help: OJDLocalized.string("ui.profiles.addLayerHelp")
           ) { openSheet(.layer) }
         }
       ) {
@@ -149,15 +157,19 @@
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("action.addAssignment")
+            label: OJDLocalized.string("action.addAssignment"),
+            help: OJDLocalized.string("ui.profiles.addLayerAssignmentHelp")
           ) { openSheet(.layerBinding(layer)) }
           OJDCompactSymbolButton(
             symbolName: "pencil",
-            label: OJDLocalized.string("ui.profiles.motion.title")
+            label: OJDLocalized.string("ui.profiles.motion.title"),
+            help: OJDLocalized.string("ui.profiles.layerMotionHelp")
           ) { openSheet(.layerMotion(layer)) }.disabled(
             !capabilities.physicalInput.motion && layer.motionTuning == nil
-          )
-          removeButton { removeLayer(layer.id) }
+          ).ojdInterfaceRow(ProfilesRow.motion)
+          removeButton(help: OJDLocalized.string("ui.profiles.removeLayerHelp")) {
+            removeLayer(layer.id)
+          }
         }
       ) {
         if layer.bindings.isEmpty {
@@ -173,12 +185,21 @@
             if binding.axisTuning != nil {
               Button(OJDLocalized.string("action.adjust")) {
                 openSheet(.layerAdjustment(layer.id, binding))
-              }
+              }.ojdAccessibilityLabel(
+                OJDLocalized.formatted(
+                  "ui.capture.adjust",
+                  RuntimePresentation.sourceLabel(binding.source)
+                )
+              ).ojdInterfaceRow(ProfilesRow.axisAdjustment).help(
+                OJDLocalized.string("ui.profiles.adjustHelp")
+              )
             }
             Button(OJDLocalized.string("ui.profiles.behavior")) {
               openSheet(.layerBehavior(layer.id, binding))
+            }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
+            removeButton(help: OJDLocalized.string("ui.profiles.removeAssignmentHelp")) {
+              removeBinding(layer.id, binding.id)
             }
-            removeButton { removeBinding(layer.id, binding.id) }
           }
         }
       }
@@ -219,34 +240,33 @@
               productID: profile.device.productID
             )
           )
-          OJDLabeledValue(
-            OJDLocalized.string("ui.profiles.target"),
-            RuntimePresentation.profileScopeLabel(profile.applicationScope)
-          )
         }
         Section {
           ProfileOutputPolicyView(policy: profile.outputPolicy, onChange: updateOutputPolicy)
-        }
+        }.ojdInterfaceRow(ProfilesRow.outputPolicy)
         Section {
           configurationRow(
+            .motion,
             title: OJDLocalized.string("ui.profiles.motion.title"),
-            summary: OJDLocalized.string("ui.profiles.motion.space")
-              + " · " + OJDLocalized.string("ui.profiles.gyro.output"),
+            summary: motionSummary,
             supported: capabilities.physicalInput.motion
           ) { openSheet(.motion) }
           configurationRow(
+            .analogModes,
             title: OJDLocalized.string("ui.profiles.stick.title"),
             summary: assignmentCountLabel(profile.stickMappings.count),
             supported: capabilities.supportsStickAxes,
             enabled: capabilities.supportsStickAxes || !profile.stickMappings.isEmpty
           ) { openSheet(.sticks) }
           configurationRow(
+            .analogModes,
             title: OJDLocalized.string("ui.profiles.trigger.title"),
             summary: assignmentCountLabel(profile.triggerMappings.count),
             supported: capabilities.supportsAnalogTriggers,
             enabled: capabilities.supportsAnalogTriggers || !profile.triggerMappings.isEmpty
           ) { openSheet(.triggers) }
           configurationRow(
+            .analogModes,
             title: OJDLocalized.string("ui.profiles.touch.title"),
             summary: assignmentCountLabel(profile.touchMappings.count),
             supported: !capabilities.physicalInput.touchSurfaces.isEmpty,
@@ -254,12 +274,14 @@
               || !profile.touchMappings.isEmpty
           ) { openSheet(.touch) }
           configurationRow(
+            .regions,
             title: OJDLocalized.string("ui.profiles.region.title"),
-            summary: OJDLocalized.string("ui.profiles.region.summary"),
+            summary: assignmentCountLabel(regionAssignmentCount),
             supported: capabilities.supportsStickAxes || capabilities.supportsAnalogTriggers
               || !capabilities.physicalInput.touchSurfaces.isEmpty
           ) { openSheet(.regions) }
           configurationRow(
+            .pointerSpeed,
             title: OJDLocalized.string("ui.profiles.pointerSpeed.title"),
             summary: profile.pointerSpeed.map {
               OJDLocalized.string(
@@ -270,7 +292,11 @@
             } ?? OJDLocalized.string("ui.inputTest.off"),
             supported: true
           ) { openSheet(.pointerSpeed) }
-        }
+          if hasUnsupportedSetting {
+            Text(OJDLocalized.string("ui.profiles.notSupportedByController")).font(.body)
+              .foregroundColor(Color(NSColor.systemOrange))
+          }
+        }.ojdInterfaceRow(ProfilesRow.analogModes)
         ProfileLightingEditor(color: profile.physicalColor, onChange: updatePhysicalColor).disabled(
           !capabilities.physicalOutput.lightingFeatures.contains(.programmableColor)
             && profile.physicalColor == nil
@@ -278,10 +304,45 @@
       }
     }
 
-    /// A row with `title` and a `summary`, or a note that the controller does not support it, and
-    /// an Adjust button.
+    /// Whether the controller lacks any of the settings above; the section says so once.
+    private var hasUnsupportedSetting: Bool {
+      !capabilities.physicalInput.motion || !capabilities.supportsStickAxes
+        || !capabilities.supportsAnalogTriggers
+        || capabilities.physicalInput.touchSurfaces.isEmpty
+    }
+
+    /// The coordinate space and the gyro output of the profile.
+    private var motionSummary: String {
+      let space: String
+      switch profile.motionTuning.space {
+      case .local: space = OJDLocalized.string("ui.profiles.motion.local")
+      case .player: space = OJDLocalized.string("ui.profiles.motion.player")
+      case .world: space = OJDLocalized.string("ui.profiles.motion.world")
+      }
+      let output: String
+      switch profile.gyroOutput.mode {
+      case .disabled: output = OJDLocalized.string("ui.profiles.gyro.disabled")
+      case .mouse: output = OJDLocalized.string("ui.profiles.gyro.mouse")
+      case .leftStick: output = OJDLocalized.string("ui.profiles.gyro.leftStick")
+      case .rightStick: output = OJDLocalized.string("ui.profiles.gyro.rightStick")
+      }
+      return space + " · " + output
+    }
+
+    /// The number of assignments whose source is a stick ring, trigger band or touch area.
+    private var regionAssignmentCount: Int {
+      profile.bindings.filter {
+        switch $0.source {
+        case .stickRegion, .triggerBand, .touchArea: return true
+        default: return false
+        }
+      }.count
+    }
+
+    /// A row with `title` and, when the setting applies, a `summary`, and an Adjust button.
     ///
     /// - Parameters:
+    ///   - row: The row of the setting.
     ///   - title: The name of the setting.
     ///   - summary: The text shown when the controller supports the setting.
     ///   - supported: Whether the controller supports the setting.
@@ -289,6 +350,7 @@
     ///   - action: Opens the sheet of the setting.
     /// - Returns: The row.
     private func configurationRow(
+      _ row: ProfilesRow,
       title: String,
       summary: String,
       supported: Bool,
@@ -298,17 +360,18 @@
       HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
         VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(title)
-          Text(supported ? summary : OJDLocalized.string("ui.profiles.notSupportedByController"))
-            .font(.caption).foregroundColor(
-              supported ? Color(NSColor.secondaryLabelColor) : Color(NSColor.systemOrange)
-            ).fixedSize(horizontal: false, vertical: true)
+          if supported || enabled == true {
+            Text(summary).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+              .fixedSize(horizontal: false, vertical: true)
+          }
         }
         Spacer(minLength: 8)
         OJDCompactSymbolButton(
           symbolName: "pencil",
-          label: OJDLocalized.string("action.adjust")
+          label: OJDLocalized.formatted("ui.capture.adjust", title),
+          help: OJDLocalized.string("ui.profiles.configureHelp")
         ) { action() }.disabled(!(enabled ?? supported))
-      }
+      }.ojdInterfaceRow(row)
     }
 
     /// Returns the text for the number of assignments.
@@ -319,7 +382,7 @@
 
   /// A button that removes a row.
   @MainActor
-  private func removeButton(action: @escaping () -> Void) -> some View {
+  private func removeButton(help: String, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       OJDSystemSymbol(name: "minus.circle", fallback: OJDLocalized.string("action.remove")).frame(
         minWidth: 28,
@@ -328,6 +391,6 @@
       .contentShape(Rectangle())
     }.buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
       OJDLocalized.string("action.remove")
-    )
+    ).help(help)
   }
 #endif

@@ -1,0 +1,27 @@
+# profile=generic tag=sdl-hidapi-off
+# probe: SDL_JOYSTICK_HIDAPI=0 just diagnose-sdl3 --seconds 34 --wait-devices 5
+# started: 2026-11-12T23:22:10Z
+Scripts/Diagnostics/backend.sh sdl3 --seconds 34 --wait-devices 5
+Building SDL3 probe (native)...
+[0m[38;2;0;255;0;1m[100%]:[0m [38;2;0;255;0;1mbuild ok, spent 0.017s[0m
+
+Running SDLGamepadProbe --seconds 34 --wait-devices 5
+Tip: if it prints 'Found 0 joystick(s)', grant Input Monitoring to your terminal app:
+  System Settings -> Privacy & Security -> Input Monitoring
+
+SDL linked version: 3.4.20 (raw=3004020)
+SDL platform: macOS
+SDL_JOYSTICK_MFI=(unset)
+SDL_JOYSTICK_IOKIT=(unset)
+SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=(unset)
+SDL_JOYSTICK_HIDAPI_XBOX=(unset)
+SDL_JOYSTICK_HIDAPI_XBOX_ONE=(unset)
+
+Found 1 joystick(s)
+- id=1 vid=0x1209 pid=0x4a4f ver=0x0408 guid=0300be1c091200004f4a000008040000
+  joystick_name=OpenJoystickDriver Generic HID Gamepad
+  is_gamepad=no gamepad_name=(null)
+
+Listening for 34s (press buttons now) ...
+# probe exit: 0
+# feed exit: 0

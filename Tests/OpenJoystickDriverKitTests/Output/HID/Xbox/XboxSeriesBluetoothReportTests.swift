@@ -5,7 +5,7 @@ import Testing
 struct XboxSeriesBluetoothHIDReportFormatTests {
   private let format = XboxSeriesBluetoothHIDReportFormat()
 
-  /// Report 1 at rest: sticks at the unsigned centre `0x8000`, triggers, hat, buttons and Share
+  /// Report 1 at rest: sticks at the unsigned center `0x8000`, triggers, hat, buttons and Share
   /// clear.
   private static let neutral: [UInt8] = [
     1, 0, 128, 0, 128, 0, 128, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -40,7 +40,7 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func theDpadTravelsOnlyInTheHat() {
+  func dpadTravelsOnlyInHat() {
     for button in [GamepadHIDDescriptor.ButtonBit.dpadUp, .dpadDown, .dpadLeft, .dpadRight] {
       #expect(report(buttonBit: button) == Self.neutral)
     }
@@ -78,14 +78,14 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func theHatCarriesTheDpad() {
+  func hatCarriesDpad() {
     #expect(format.buildInputReport(from: VirtualGamepadState(hat: .north))[13] == 0x01)
     #expect(format.buildInputReport(from: VirtualGamepadState(hat: .east))[13] == 0x03)
     #expect(format.buildInputReport(from: VirtualGamepadState(hat: .neutral))[13] == 0x00)
   }
 
   @Test
-  func theDescriptorHasFifteenButtonsShareAndTheRumbleReport() throws {
+  func descriptorHasFifteenButtonsShareAndRumbleReport() throws {
     let parsed = try #require(
       HIDReportDescriptorParser.parse(descriptor: XboxSeriesBluetoothHIDDescriptor.descriptor)
     )
@@ -106,8 +106,8 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func thePersonaPublishesTheXboxSeriesBluetoothIdentity() throws {
-    let profile = try VirtualHIDProfileID.gameControllerCompatible.makeProfile()
+  func personaPublishesXboxSeriesBluetoothIdentity() {
+    let profile = VirtualHIDProfileID.gameControllerCompatible.makeProfile()
     #expect(profile.identity.vendorID == 0x045E)
     #expect(profile.identity.productID == 0x0B13)
     #expect(profile.identity.productName == "Xbox Wireless Controller")

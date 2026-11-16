@@ -34,10 +34,13 @@ extension ControllerDetailFacts {
       let key =
         mapping.source == .none
         ? "cli.controller.show.inputMappingUnbound" : "cli.controller.show.inputMappingSDL"
-      words = String(
-        format: OJDLocalized.string(key),
-        mapping.match.map(matchTierText) ?? "",
-        mapping.guid ?? ""
+      words = mapping.noting(
+        unfitRecord: unsafe String(
+          format: OJDLocalized.string(key),
+          mapping.match.map(matchTierText) ?? "",
+          mapping.guid ?? ""
+        ),
+        localize: OJDLocalized.string
       )
     case .record, .standardHIDUsageMap: words = mapping.rowText(localize: OJDLocalized.string)
     }
@@ -60,13 +63,16 @@ extension ControllerDetailFacts {
     }
   }
 
-  /// Returns a control as words, with the name the files and the service use beside it, such as
-  /// `D-pad Up (DpadUp)`.
+  /// Returns a control as words, with the name the files and the service use beside it.
+  ///
+  /// An example is `D-pad Up (DpadUp)`. A name that is already the raw name, such as `Start`,
+  /// shows once.
   ///
   /// - Parameter control: The control.
   /// - Returns: A control as words, with its raw name beside it.
   static func controlText(_ control: Control) -> String {
-    withIdentifier(controlName(control), control.rawValue)
+    let words = controlName(control)
+    return words == control.rawValue ? words : withIdentifier(words, control.rawValue)
   }
 
   /// Returns the words that name a control.

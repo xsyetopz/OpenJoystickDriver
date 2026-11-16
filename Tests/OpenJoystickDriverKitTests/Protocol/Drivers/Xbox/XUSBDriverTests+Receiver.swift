@@ -85,7 +85,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWiredPadStillRequiresTheWiredLengthByte() throws {
+  func testWiredPadStillRequiresWiredLengthByte() throws {
     let wired = XUSBDriver()
     var report = Array(Receiver.capture02A9.dropFirst(4).prefix(20))
     #expect(report[1] == 0x13)
@@ -107,23 +107,45 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverRejectsEveryTruncatedInputReport() throws {
+  func testWirelessReceiverRejectsTruncatedAndNonInputPacketsWithoutConnecting() throws {
     let report = Array(Receiver.capture02A9)
     for length in 0..<18 {
       let parser = XUSBDriver(isWirelessReceiver: true)
       #expect(try parser.parseReport(Data(report.prefix(length))) == nil)
       #expect(parser.consumeInputConnectionStateChange() == nil)
     }
+    for offset in [1, 4] {
+      let parser = XUSBDriver(isWirelessReceiver: true)
+      var invalid = report
+      invalid[offset] = 0x02
+      #expect(try parser.parseReport(Data(invalid)) == nil)
+      #expect(parser.consumeInputConnectionStateChange() == nil)
+    }
   }
 
   @Test
   func testWirelessReceiverAcceptsExactlyTheStateBytes() throws {
-    let report = Data(Receiver.capture02A9.prefix(18))
     let parser = XUSBDriver(isWirelessReceiver: true)
-    let state = try #require(parser.parseReport(report)?.state)
+    let state = try #require(parser.parseReport(Data(Receiver.capture02A9.prefix(18)))?.state)
     #expect(state.leftStick.x == BipolarValue(260))
     #expect(state.rightStick.y == BipolarValue(-1_034))
     #expect(parser.consumeInputConnectionStateChange() == .connected)
+  }
+
+  @Test
+  func testWirelessReceiverNeedsOnlyStateBytesButWiredValidationStaysStrict() throws {
+    var report = Array(Receiver.padData(buttons: 1 << 12).prefix(18))
+    report[5] = 0x13
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    #expect(try parser.parseReport(Data(report)).contains(.press(.south)))
+
+    let wired = XUSBDriver()
+    var wiredReport = Array(report.dropFirst(4))
+    #expect(try wired.parseReport(Data(wiredReport)) == nil)
+    wiredReport += [UInt8](repeating: 0, count: 6)
+    #expect(try wired.parseReport(Data(wiredReport)) == nil)
+    wiredReport[1] = 0x14
+    #expect(try wired.parseReport(Data(wiredReport)).contains(.press(.south)))
   }
 
   @Test
@@ -188,7 +210,7 @@ extension XUSBDriverTests {
   /// The manager assigns a receiver slot's ring LED from the pool wired pads share, so the
   /// driver lights nothing itself: two single-slot receivers must not both show player 1.
   @Test
-  func testWirelessReceiverSlotLeavesThePlayerSlotToTheManager() throws {
+  func testWirelessReceiverSlotLeavesPlayerSlotToManager() throws {
     for slot in 0..<4 {
       let parser = try #require(XUSBDriver(slotOrdinal: slot))
       #expect(parser.sessionPlan.assignsStartupPlayerIndicator)

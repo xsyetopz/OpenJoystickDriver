@@ -1,6 +1,6 @@
 # Bindings and Actions
 
-Bindings connect controller controls to destinations, and combinations and layers let one profile do more with the same controls.
+Bindings connect controller controls to destinations, and combinations and layers let one [profile](Glossary.md#terms) do more with the same controls.
 
 ## Contents
 
@@ -14,7 +14,7 @@ Bindings connect controller controls to destinations, and combinations and layer
 
 ## Assigning Buttons and Actions
 
-An assignment connects one controller control to one destination, such as a keyboard key, a mouse button, or a virtual gamepad button.
+An assignment connects one controller control to one destination, such as a keyboard key, a mouse button, or a [virtual gamepad](Glossary.md#terms) button.
 
 ### Before You Begin
 
@@ -31,14 +31,14 @@ An assignment connects one controller control to one destination, such as a keyb
 | Pointer movement | Horizontal or vertical | Continuous; the axis sets the speed of the cursor |
 | Pointer position | Horizontal or vertical | Continuous; the axis value from -1 to 1 places the cursor across the main display, and the other coordinate keeps its value; needs Accessibility access |
 | Scroll | Horizontal or vertical | Continuous |
-| Gamepad button, D-pad, or axis | A virtual controller control | Needs virtual gamepad output |
+| Gamepad button, D-pad, or axis | A virtual gamepad control | Needs virtual gamepad output |
 | Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Only on controllers that support it |
 | Macro | A macro of the profile | Discrete sources only; see [Macros](#macros) |
 | Profile switch | The next or previous profile, or a named profile of the same controller model | Discrete sources only; fires on press; see [Switch profiles, set layers, and pause](#switch-profiles-set-layers-and-pause) |
 | Layer set | Turn a layer of the profile on or off, or flip it | Discrete sources only; fires on press |
 | Pause | Pause or resume the controller, or flip it | Discrete sources only; fires on press |
 | System key | Play/pause, next or previous track, fast-forward, rewind, volume up or down, mute, display brightness, keyboard backlight | Discrete sources only; needs Accessibility access; see [System actions](#system-actions) |
-| System action | Mission Control | Discrete sources only; fires on press; see [System actions](#system-actions) |
+| System action | Mission Control, Launchpad, Screenshot, Lock Screen, Show Desktop | Discrete sources only; fires on press; see [System actions](#system-actions) |
 | Open application | An application by bundle identifier | Discrete sources only; fires on press; command line or profile file only |
 | Open URL | A web or other non-file URL | Discrete sources only; fires on press; command line or profile file only |
 | Run Shortcut | A shortcut of the Shortcuts app, by name | Discrete sources only; fires on press; command line or profile file only |
@@ -46,7 +46,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Speak | A phrase the Mac says aloud | Discrete sources only; see [Spoken Phrases](#spoken-phrases) |
 | MIDI note or control change | A note on a channel, or a controller number | Needs no access; see [MIDI output](#midi-output) |
 
-A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
+A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual gamepad output. For the controls each virtual gamepad carries, see [What the virtual gamepad carries](Automating-OpenJoystickDriver.md#what-the-virtual-gamepad-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
 Each controller control can appear in only one assignment in a profile.
 
@@ -56,11 +56,11 @@ Each controller control can appear in only one assignment in a profile.
 2. Click **Add assignment**.
 3. In the **Press a controller control** sheet, select a control in the **Controller control** list. Or click **Listen for control** and press the control on the controller.
 4. Select a **Destination**.
-5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press <kbd>Escape</kbd> to cancel the capture.
+5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press Esc to cancel the capture.
 6. Click **Add assignment**.
 7. Click **Save**.
 
-The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **Sticks**, **Triggers**, **Stick clicks**, **Touch**, **Motion**, and **System controls**. To remove an assignment, use its **Remove assignment** button.
+The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **Sticks**, **Triggers**, **Stick clicks**, **Touch**, **Motion**, and **System controls**. To remove an assignment, use its **Remove Assignment** button.
 
 ### Add an Assignment With the Command Line
 
@@ -110,7 +110,7 @@ The behavior decides how a press turns into output.
 | **Press only** | OJD sends only the press. |
 | **Release only** | OJD sends only the release. |
 
-The table describes each behavior by its name. Hardware results are not verified. The command line option is `--behavior hold|toggle|tap-on-press|tap-on-release|pulse|press|release`. Use `--pulse-ms 1...5000` with `pulse`.
+Hardware results are not verified. The command line option is `--behavior hold|toggle|tap-on-press|tap-on-release|pulse|press|release`. Use `--pulse-ms 1...5000` with `pulse`.
 
 ### Turbo, Long Hold, and Multi-Tap
 
@@ -127,6 +127,10 @@ With multi-tap entries, the base destination waits for the longest tap window to
 The command line options are `--turbo-rate`, `--turbo-duty`, `--turbo-delay MS`, `--turbo-max COUNT`, `--long-hold MS:TARGET`, and `--multi-tap COUNT:MS:TARGET`. `--turbo-delay` and `--turbo-max` need `--turbo-rate` and `--turbo-duty`. Repeat `--multi-tap` for more counts. For example, `--long-hold 500:key:key-b` and `--multi-tap 3:300:key:key-b`. The command line help lists these options for keyboard and mouse button destinations only. Whether the command line accepts them for gamepad destinations is not verified.
 
 You can also add more actions to one assignment. In the behavior sheet, use **Add action**, **Move up**, **Move down**, and **Remove**. The command line option is `--actions-json`.
+
+### Add a Note to an Assignment
+
+The **Assignment behavior** sheet has a note field, labelled **Note (optional)**, of 1 to 200 characters. The note appears under the assignment in the list and does not change what the assignment does. Clear the field to remove the note. A profile file stores it as the binding's `remark`; for more information, see [Profile file reference](Profile-File-Reference.md).
 
 ### Macros
 
@@ -170,7 +174,7 @@ ojd binding set Racing button:north speak:Reloading --voice com.apple.voice.comp
 
 ### Tune an Analog Control
 
-When you assign a stick axis or trigger axis, the row has an **Adjust...** button. It opens a sheet with these settings:
+When you assign a stick axis or trigger axis, the row has an **Adjust...** button (needs the **All Controls** interface). It opens a sheet with these settings:
 
 - Deadzone, 0 to 0.95. The default is 0.1.
 - **Gain**, 0.1 to 10. The default is 1.
@@ -194,8 +198,8 @@ SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
 
 ### Restore Or Clear Assignments
 
-- To remove every assignment, select **Clear all inputs**.
-- To return to pass-through, select **Restore Default Input** in the **Profile actions** menu.
+- To remove every assignment, click **Clear all inputs**.
+- To return to pass-through, choose **Restore Default Input** from the **Profile actions** menu.
 
 ## Switch Profiles, Set Layers, and Pause
 
@@ -203,7 +207,7 @@ Three destinations change what OJD does instead of sending input. Each fires whe
 
 - **Next profile** and **Previous profile** activate the neighbor of the active profile among the profiles for the same controller model and application scope. The order is the profile name without regard to case, then the profile identifier, and it wraps around. A profile switch to a named profile must name a profile for the same controller model. Otherwise OJD rejects the profile.
 - **Turn layer on**, **Turn layer off**, and **Toggle layer** set a layer of the same profile.
-- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything it holds, including running macros, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or a disconnect ends the pause. While the pause lasts, the Controllers detail lists Remapping as Paused, the menu bar menu shows a disabled Paused row under the controller, and `ojd status` reports `paused`.
+- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything it holds, including running macros, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or a disconnect ends the pause. While the pause lasts, the Controllers detail lists Remapping as Paused, and `ojd status` reports `paused`.
 
 Each switch writes a line to the service log with the old and new profile names, and a failed switch writes its error there. To read the log, run `ojd log`.
 
@@ -224,10 +228,29 @@ These destinations make the Mac do something instead of sending a key or a butto
 
 - **System key** sends a media, volume, display brightness, or keyboard backlight key. It sends the key down when you press the control and the key up when you release it, so holding the control repeats the key as holding the key does. The names are `play-pause`, `next-track`, `previous-track`, `fast-forward`, `rewind`, `volume-up`, `volume-down`, `mute`, `brightness-up`, `brightness-down`, `keyboard-illumination-up`, and `keyboard-illumination-down`. It does not take turbo.
 - **Mission Control** opens Mission Control.
+- **Launchpad** opens Launchpad. On a macOS version that has no Launchpad, it opens the Apps app that replaces it.
+- **Screenshot** takes a screenshot of the screen. It presses the system shortcut Shift-Command-3, so the file goes where your Screenshot settings put it.
+- **Lock Screen** locks the screen. It presses the system shortcut Control-Command-Q.
+- **Show Desktop** shows the desktop. It presses the system shortcut F11.
 - **Open application** opens an application by its bundle identifier, such as `com.apple.TextEdit`.
 - **Open URL** opens a URL in its default application. A `file:` URL is rejected.
 - **Run Shortcut** runs a shortcut of the Shortcuts app by name. A shortcut that asks for input waits for you. OJD does not wait for it to finish.
 - **Type text** types a fixed string as keyboard events. While macOS has secure input on, such as in a password field, macOS may not deliver the keys, and OJD reports that secure input is on.
+
+Mission Control, Launchpad, and Open application use one public macOS API and need no permission in the Privacy & Security pane. Screenshot, Lock Screen, Show Desktop, and Type text post keyboard events and need Accessibility access.
+
+| Action | Public API | Permission | Source |
+| --- | --- | --- | --- |
+| Mission Control | `NSWorkspace.openApplication(at:configuration:)` on the Mission Control app | None | [openApplication(at:configuration:completionHandler:)](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) |
+| Launchpad | `NSWorkspace.urlForApplication(withBundleIdentifier:)` for `com.apple.launchpad.launcher`, then `com.apple.apps.launcher`, and `openApplication(at:configuration:)` | None | [NSWorkspace](https://developer.apple.com/documentation/appkit/nsworkspace) |
+| Screenshot | `CGEvent(keyboardEventSource:virtualKey:keyDown:)` and `CGEvent.post(tap:)` for Shift-Command-3 | Accessibility (Post Event) | [CGEvent](https://developer.apple.com/documentation/coregraphics/cgevent) |
+| Lock Screen | The same calls for Control-Command-Q | Accessibility (Post Event) | [CGEvent](https://developer.apple.com/documentation/coregraphics/cgevent) |
+| Show Desktop | The same calls for F11 | Accessibility (Post Event) | [CGEvent](https://developer.apple.com/documentation/coregraphics/cgevent) |
+| Type text | `CGEvent(keyboardEventSource:virtualKey:keyDown:)`, `keyboardSetUnicodeString`, and `CGEvent.post(tap:)` | Accessibility (Post Event) | [CGEvent](https://developer.apple.com/documentation/coregraphics/cgevent) |
+
+Apple's pages for `openApplication` state no permission for launching an app. The Launchpad and bundle-identifier rows are read from the NSWorkspace API and the bundle identifiers on macOS 27.2, not stated by Apple's pages.
+
+macOS has no public API to lock the screen or show the desktop, so those two press the system shortcuts. They work while the shortcut is on in System Settings with its default keys: Control-Command-Q under Keyboard Shortcuts, F11 under Mission Control. If you changed or turned off a shortcut, the action does nothing; the same goes for Screenshot and Shift-Command-3.
 
 All of them except System key act once when you press the control and do nothing on release. They take the behaviors **Hold**, **Tap on press**, **Tap on release**, and **Press**. **Toggle**, **Release**, and **Pulse** fail validation. A failed action writes its error to the Activity log and the service log, and the profile keeps working. To read the log, run `ojd log`.
 
@@ -236,15 +259,19 @@ To assign them with the command line, use these targets with `ojd binding set`:
 ```sh
 ojd binding set Racing button:north system-key:volume-up
 ojd binding set Racing button:west system:mission-control
+ojd binding set Racing button:select system:launchpad
+ojd binding set Racing button:guide system:screenshot
+ojd binding set Racing button:left-shoulder system:lock-screen
+ojd binding set Racing button:right-shoulder system:show-desktop
 ojd binding set Racing button:east open-app:com.apple.TextEdit
 ojd binding set Racing button:south open-url:https://example.com
 ojd binding set Racing button:start shortcut:"Dim Lights"
 ojd binding set Racing button:back text:hello
 ```
 
-The app lists the system keys, Mission Control, and one entry each for Open application, Open URL, Run Shortcut, and Type text in the destination pickers. Choosing one of the four shows a text field for its application identifier, URL, Shortcut name, or text.
+The app lists the system keys, Mission Control, Launchpad, Screenshot, Lock Screen, Show Desktop, and one entry each for Open application, Open URL, Run Shortcut, and Type text in the destination pickers. Choosing one of the four shows a text field for its application identifier, URL, Shortcut name, or text.
 
-OJD does not offer Show Desktop, App Exposé, Launchpad, or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one of them, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
+OJD does not offer App Exposé or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
 
 ## MIDI Output
 

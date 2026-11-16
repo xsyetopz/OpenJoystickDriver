@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
@@ -41,6 +42,7 @@ struct SettingsWindowControllerTests {
   ) throws -> (SettingsWindowController, SettingsPreferencesModel) {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.developerTools, to: developerTools)
+    try settings.setInterfaceLevel(.advanced)
     let preferences = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
       settings: settings,
@@ -73,7 +75,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func closingTheWindowDuringTheReadLeavesTheDiagnosticsNotLoaded() async throws {
+  func closingWindowDuringReadLeavesDiagnosticsNotLoaded() async throws {
     let gateway = await gatedGateway()
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
@@ -87,7 +89,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func switchingPaneDuringTheReadLeavesTheDiagnosticsNotLoaded() async throws {
+  func switchingPaneDuringReadLeavesDiagnosticsNotLoaded() async throws {
     let gateway = await gatedGateway()
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
@@ -101,7 +103,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func turningDeveloperToolsOffDuringTheReadLeavesTheDiagnosticsNotLoaded() async throws {
+  func turningDeveloperToolsOffDuringReadLeavesDiagnosticsNotLoaded() async throws {
     let gateway = await gatedGateway()
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
@@ -119,7 +121,7 @@ struct SettingsWindowControllerTests {
   }
 
   @Test
-  func theCommandLineToolLinkIsReadWhenAdvancedIsShownNotWhenTheControllerIsMade() throws {
+  func commandLineToolLinkIsReadWhenAdvancedIsShownNotWhenControllerIsMade() throws {
     let sandbox = try CommandLineToolSandbox()
     defer { sandbox.remove() }
     let model = sandbox.model()

@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ProfileSelector: ExpressibleByArgument {
   /// Reads the profiles from the service and resolves this selector.
@@ -82,6 +82,8 @@ extension RemappingProfile {
 enum ProfileTemplate: String, CaseIterable, ExpressibleByArgument {
   /// Gyro motion drives a stick of the virtual gamepad.
   case gyroStick = "gyro-stick"
+  case keyboardNavigation = "keyboard-navigation"
+  case mouseClicks = "mouse-clicks"
 }
 
 extension RemappingGyroStickTemplate.Stick: ExpressibleByArgument {}

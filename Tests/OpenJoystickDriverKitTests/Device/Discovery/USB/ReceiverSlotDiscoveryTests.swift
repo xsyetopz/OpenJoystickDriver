@@ -63,7 +63,7 @@ struct ReceiverSlotDiscoveryTests {
   }
 
   @Test
-  func firstSlotReopenOnAConfiguredReceiverKeepsTheOtherSlots() async {
+  func firstSlotReopenOnConfiguredReceiverKeepsOtherSlots() async {
     // Synthetic interface layout (ReceiverSlotProvider); receiver slot numbers are uncaptured.
     // Slot 0 of a cold receiver requests configuration 1 on every open; its first session is
     // lost after the presence inquiry, and the reopen finds the device already configured.
@@ -95,7 +95,7 @@ struct ReceiverSlotDiscoveryTests {
     (UInt8?.some(1), UInt8?.none, true), (UInt8?.some(1), UInt8?.some(0), true),
     (UInt8?.some(1), UInt8?.some(1), false), (UInt8?.some(1), UInt8?.some(2), true),
   ])
-  func openSendsOnlyAConfigurationTheDeviceDoesNotRun(
+  func openSendsOnlyConfigurationDeviceDoesNotRun(
     requested: UInt8?,
     current: UInt8?,
     expected: Bool
@@ -164,7 +164,7 @@ struct ReceiverSlotDiscoveryTests {
   }
 
   @Test
-  func slotFailingAfterAnEarlierSlotStartedRetriesTheWholeService() async {
+  func slotFailingAfterEarlierSlotStartedRetriesWholeService() async {
     // Synthetic interface layout (ReceiverSlotProvider); receiver slot numbers are uncaptured.
     let provider = ReceiverSlotProvider(sessions: slotSessions { _ in [] })
     let manager = makeManager(provider)
@@ -227,7 +227,7 @@ struct ReceiverSlotDiscoveryTests {
   }
 
   @Test
-  func emptySlotsAreNotListedOrEligibleForPublication() async {
+  func emptySlotsNotListedOrEligibleForPublication() async {
     let sessions = slotSessions { _ in [] }
     let provider = ReceiverSlotProvider(sessions: sessions)
     let dispatcher = ReceiverSlotDispatcher()
@@ -250,11 +250,17 @@ struct ReceiverSlotDiscoveryTests {
     for identifier in slotIdentifiers {
       #expect(await manager.controllerSessionState(for: identifier) == nil)
     }
+    // Output, speaker and session control cannot reach an empty slot by model.
+    let reference = ControllerReference.model(ReceiverSlotProvider.identifier(interface: 0).model)
+    let notFound = ControllerOutputResult(.notFound)
+    #expect(await manager.sendControllerOutput(.stopRumble, for: reference) == notFound)
+    #expect(await manager.stopSpeaker(for: reference) == notFound)
+    #expect(await manager.suspendController(reference).failure == .notFound)
     await manager.stop()
   }
 
   @Test
-  func onlyTheSlotReceivingARealReportIsListedAndSelectableByModel() async throws {
+  func onlySlotReceivingRealReportListedAndSelectableByModel() async throws {
     let sessions = slotSessions { interface in
       interface == 0 ? [.success([UInt8](Receiver.capture02A9))] : []
     }
@@ -309,7 +315,7 @@ struct ReceiverSlotDiscoveryTests {
   }
 
   @Test
-  func repeatedStopEndsTheControllerOnce() async {
+  func repeatedStopEndsControllerOnce() async {
     // An admission rollback may stop a pipeline a racing detach already stopped.
     let dispatcher = ReceiverSlotDispatcher()
     let pipeline = DevicePipeline(

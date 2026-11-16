@@ -13,6 +13,9 @@
     /// - Returns: The form.
     func editorContent(width: CGFloat) -> some View {
       Form {
+        HiddenChangeNotice(
+          content: .changed(ProfilesRow.changedHiddenRows(in: draft.profile).count)
+        )
         sectionContent(assignmentLayout: ProfilePresentationPolicy.assignmentRowLayout(for: width))
       }.ojdGroupedForm().id(selectedSection)
     }
@@ -56,21 +59,18 @@
       }
     }
 
-    /// The Assignments section: the header with the add and clear buttons, and the assignments by
+    /// The Assignments section: the header with the add button, and the assignments by
     /// group.
     @ViewBuilder
     func assignmentsSection(rowLayout: ProfileAssignmentRowLayout) -> some View {
       Section(
         header: HStack(alignment: .firstTextBaseline) {
-          Text(OJDLocalized.string("term.assignments"))
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("action.addAssignment")
+            label: OJDLocalized.string("action.addAssignment"),
+            help: OJDLocalized.string("ui.profiles.addAssignmentHelp")
           ) { activeSheet = .capture }
-          Button(OJDLocalized.string("ui.profiles.clearInputs")) {
-            confirmation = .clearInputs
-          }.disabled(isEditingDisabled)
         }
       ) {
         if draft.profile.bindings.isEmpty {
@@ -122,7 +122,9 @@
             )
           }
           Button(OJDLocalized.string("action.save")) { save() }.disabled(!canSave)
-            .ojdAccessibilityValue(saveButtonAccessibilityValue)
+            .ojdAccessibilityValue(saveButtonAccessibilityValue).help(
+              OJDLocalized.string("ui.profiles.saveHelp")
+            )
         }
       }.padding(.horizontal, 28).padding(.vertical, 14)
     }

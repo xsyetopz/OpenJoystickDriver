@@ -106,12 +106,12 @@ final class EndpointFeedSource: InputSource, @unchecked Sendable {
 
   /// Closes the connection with `E1008` unless the source is already closed.
   private func feedClosed() {
-    let connection = lock.withLock { () -> EndpointConnection? in
+    let held = lock.withLock { () -> EndpointConnection? in
       guard !closed else { return nil }
       closed = true
       return self.connection
     }
-    connection?.close(EndpointError(code: .feedClosed, message: "The virtual gamepad closed."))
+    held?.close(EndpointError(code: .feedClosed, message: "The virtual gamepad closed."))
   }
 }
 
@@ -148,7 +148,7 @@ final class VirtualFeedIntakeSink: OutputSink {
   ///   ``StreamBoundaryError/unsupported(_:)`` for a frame that is not a feed frame.
   func consume(
     _ frame: StreamFrame,
-    onDelivered: @escaping @Sendable () -> Void
+    onDelivered: @Sendable () -> Void
   ) async throws {  // swiftlint:disable:this async_without_await
     guard case .feed(let feedFrame) = frame else {
       throw StreamBoundaryError.unsupported(destination)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import plistlib
 import unittest
 from typing import Any

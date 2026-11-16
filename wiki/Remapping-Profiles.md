@@ -1,6 +1,6 @@
-# Remapping Profiles
+# Profiles
 
-Profiles change what your controller buttons, sticks, triggers, touchpad, and motion sensors do.
+[Profiles](Glossary.md#terms) change what your controller buttons, sticks, triggers, touchpad, and motion sensors do.
 
 ## Contents
 
@@ -46,11 +46,11 @@ OJD picks the profile for a controller in this order:
 2. The most recently activated global profile.
 3. The most recently activated profile for the model, even if its scope is an app that is not in front.
 
-If no profile is active, OJD passes the controller through to the virtual controller. An app-scoped profile picked by rule 3 does not work until its app is in front.
+If no profile is active, OJD passes the controller through to the [virtual gamepad](Glossary.md#terms). An app-scoped profile picked by rule 3 does not work until its app is in front.
 
 A **Profile switch** assignment changes the active profile of a controller from a button. For more information, see [Switch profiles, set layers, and pause](Bindings-and-Actions.md#switch-profiles-set-layers-and-pause).
 
-The service reports the profile in force for each controller, and the app in front that selected it when rule 1 chose the profile. The Controllers detail shows the profile in the **Active Profile** row and the app in a **Selected by app** row, and the menu bar row of the controller shows the profile and **Selected by** the name of the app. A profile that rule 2 or 3 chose shows no app. An app that is not installed shows by its bundle identifier.
+The service reports the profile in force for each controller, and the app in front that selected it when rule 1 chose the profile. The Controllers detail shows the profile in the **Active Profile** row and the app in a **Selected by app** row. The menu bar row of the controller shows its name and battery; its submenu checks the active profile. A profile that rule 2 or 3 chose shows no app. An app that is not installed shows by its bundle identifier.
 
 OJD reads the front app when a controller connects, and when you activate, deactivate, or edit a profile. Whether OJD re-evaluates the choice at the instant you switch apps is not verified.
 
@@ -59,14 +59,14 @@ OJD reads the front app when a controller connects, and when you activate, deact
 
 ### Output Policy
 
-The output policy decides how a profile sends its results. It has two settings.
+The output policy decides how a profile sends its results. It has two settings. The pickers for them show only in the **All Controls** interface, in the **New profile** sheet and in the **Controller** section of the editor. In the **Simple** interface a profile keeps its output policy.
 
 | Setting | Values | Meaning |
 | --- | --- | --- |
-| Virtual gamepad | Disabled, Mapped controls only, Include unmapped controls | Whether OJD publishes a virtual controller for this profile |
+| Virtual gamepad | Disabled, Mapped controls only, Include unmapped controls | Whether OJD publishes a virtual gamepad for this profile |
 | Require exclusive physical input | Off, On | Whether OJD takes exclusive ownership of the physical input |
 
-- **Disabled**: OJD sends keyboard and pointer events only. There is no virtual controller output.
+- **Disabled**: OJD sends keyboard and pointer events only. There is no virtual gamepad output.
 - **Mapped controls only**: OJD sends only the destinations that you assigned.
 - **Include unmapped controls**: OJD also forwards controls that no assignment uses.
 
@@ -87,11 +87,13 @@ This section explains how to create, activate, rename, duplicate, and delete a p
 
 1. In the **Profiles** area, click the **New profile** button.
 2. In the **New profile** sheet, enter a name. The default name is `My controller`.
-3. Select the controller from the **Controller** list.
-4. Select the application scope. For more information, see [About profiles](#about-profiles).
+3. Choose the controller from the **Controller** list.
+4. Select the application scope. For more information, see [About profiles](#about-profiles). With **One application**, choose the app from the app chooser. It shows in both interfaces.
 5. Click **Create**.
 
 The new profile has no assignments. It appears in the list with the label **Not active**.
+
+The **Sort by** menu above the list orders the profiles by **Name**, **Controller** (by vendor and product ID, then name), or **Last used** (the newest activation first; a profile that was never activated comes last, by name). The service records the time each time a profile is activated, in `LastUsed.plist` in the application data directory. The order is not kept when you close the app.
 
 To import a profile instead, click **Import profile**. For more information, see [Importing and exporting profiles](#importing-and-exporting-profiles).
 
@@ -110,7 +112,7 @@ Add `--app BUNDLE-ID` to limit the profile to one app, and repeat it to name mor
 
 If the profile produces no output, so that the controller does nothing while it is active, the app shows the alert **Activate profile with no controller input?**. Click **Set active** only if you want that result. To restore default input, click **Restore Default Input** first.
 
-To deactivate the profile, click **Deactivate**. To deactivate every profile for the controller, open the **Profile actions** menu and select **Deactivate all**.
+To deactivate the profile, click **Deactivate**. To deactivate every profile for the controller, open the **Profile actions** menu and choose **Deactivate all**.
 
 The command line equivalents are:
 
@@ -141,7 +143,7 @@ To rename a profile on the command line, run `ojd profile rename PROFILE NEW-NAM
 
 1. Select the profile.
 2. Open the **Profile actions** menu.
-3. Select **Duplicate**.
+3. Choose **Duplicate**.
 
 The copy is named `NAME Copy`. Profile names must be unique. The command line equivalent is `ojd profile duplicate PROFILE NEW-NAME`.
 
@@ -156,10 +158,10 @@ The command line equivalent is `ojd profile delete PROFILE`.
 ### Clear All Assignments
 
 1. Open the **Profile actions** menu.
-2. Select **Clear all inputs**.
+2. Choose **Clear all inputs**.
 3. Confirm the alert **Clear all inputs?**.
 
-This clears all assignments and input processing from the profile. To return to pass-through, select **Restore Default Input**.
+This clears all assignments and input processing from the profile. To return to pass-through, choose **Restore Default Input**.
 
 The command line has no equivalent that also clears input processing. `ojd binding clear PROFILE --all` removes every assignment, combination, sequence, and layer, and keeps stick, trigger, touch, motion, and output settings. To return to pass-through, run `ojd profile set PROFILE outputPolicy.virtualGamepad Passthrough`.
 
@@ -173,7 +175,7 @@ Use export and import to keep a copy of a profile, to share it, or to move it to
 
 1. Open the **Profiles** area.
 2. Select the profile.
-3. Click **Profile actions**, then select **Export**.
+3. Click **Profile actions**, then choose **Export**.
 4. Select a folder and a file name. The default name is `PROFILE-NAME.plist`.
 5. Click **Save**.
 
@@ -205,7 +207,7 @@ OJD checks the file before it adds the profile. OJD rejects a file with unknown 
 - If a different profile already uses the same name, OJD rejects the import.
 - If the replaced profile was active and the imported profile has a different controller model, OJD deactivates it.
 
-A new imported profile is not active until you activate it. For more information, see [Creating a profile](#creating-a-profile).
+An imported profile is not active until you activate it. For more information, see [Creating a profile](#creating-a-profile).
 
 ### Recover Damaged Profile Files
 

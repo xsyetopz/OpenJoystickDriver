@@ -32,7 +32,7 @@ struct DevicePipelineStatusAnnouncementTests {
     func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
     /// Report 1 pushes the right stick, any other report centers it.
-    func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+    func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
       ControllerEvent(data.first == 1 ? [.rightStick(x: 1, y: 0)] : [], at: receivedAt.nanoseconds)
     }
   }
@@ -50,7 +50,7 @@ struct DevicePipelineStatusAnnouncementTests {
     )
   }
 
-  private func observe(_ pipeline: DevicePipeline) -> (Posts, NSObjectProtocol) {
+  private func observe(_ pipeline: DevicePipeline) -> (Posts, any NSObjectProtocol) {
     let posts = Posts()
     let observer = NotificationCenter.default.addObserver(
       forName: .ojdServiceStatusDidChange,
@@ -61,7 +61,7 @@ struct DevicePipelineStatusAnnouncementTests {
   }
 
   @Test
-  func aChangedPowerAnnouncesOnceAndTheSamePowerAnnouncesNothing() async {
+  func changedPowerAnnouncesOnceAndSamePowerAnnouncesNothing() async {
     let driver = PowerDriver()
     let pipeline = makePipeline(driver)
     let (posts, observer) = observe(pipeline)
@@ -79,7 +79,7 @@ struct DevicePipelineStatusAnnouncementTests {
   }
 
   @Test
-  func aChangedStartupStatusAnnouncesOnce() async {
+  func changedStartupStatusAnnouncesOnce() async {
     let pipeline = makePipeline(PowerDriver())
     let (posts, observer) = observe(pipeline)
     defer { NotificationCenter.default.removeObserver(observer) }
@@ -91,7 +91,7 @@ struct DevicePipelineStatusAnnouncementTests {
   }
 
   @Test
-  func aChangedInputConnectionAnnouncesOnce() async {
+  func changedInputConnectionAnnouncesOnce() async {
     let pipeline = makePipeline(PowerDriver())
     let (posts, observer) = observe(pipeline)
     defer { NotificationCenter.default.removeObserver(observer) }

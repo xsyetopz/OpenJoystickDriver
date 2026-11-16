@@ -22,17 +22,21 @@ struct ProfileSetTests {
   }
 
   @Test
-  func aValueIsSetAtItsKey() throws {
+  func valueSetAtItsKey() throws {
     let racing = Self.profile("Racing")
 
-    let edited = try ProfileSetting.change(racing, key: Self.profileKey("name"), to: .string("Rally"))
+    let edited = try ProfileSetting.change(
+      racing,
+      key: Self.profileKey("name"),
+      to: .string("Rally")
+    )
 
     #expect(edited.name == "Rally")
     #expect(edited.id == racing.id)
   }
 
   @Test
-  func aKeyWithNoParentIsRefusedWithTheUsageCode() throws {
+  func keyWithNoParentRefusedWithUsageCode() throws {
     let failure = #expect(throws: CodedFailure.self) {
       try ProfileSetting.change(
         Self.profile("Racing"),
@@ -44,15 +48,19 @@ struct ProfileSetTests {
   }
 
   @Test
-  func aValueThatMakesTheProfileInvalidIsRefusedWithTheProfileCode() throws {
+  func valueMakesProfileInvalidRefusedWithProfileCode() throws {
     let failure = #expect(throws: CodedFailure.self) {
-      try ProfileSetting.change(Self.profile("Racing"), key: Self.profileKey("name"), to: .integer(7))
+      try ProfileSetting.change(
+        Self.profile("Racing"),
+        key: Self.profileKey("name"),
+        to: .integer(7)
+      )
     }
     #expect(failure?.id == .invalidProfile)
   }
 
   @Test
-  func theIDCannotChange() throws {
+  func idCannotChange() throws {
     let failure = #expect(throws: CodedFailure.self) {
       try ProfileSetting.change(
         Self.profile("Racing"),
@@ -64,7 +72,7 @@ struct ProfileSetTests {
   }
 
   @Test
-  func aSelectorNamesAProfileByIDOrByNameWithoutRegardToCase() throws {
+  func selectorNamesProfileByIDOrByNameWithoutRegardToCase() throws {
     let racing = Self.profile("Racing")
     let menus = Self.profile("Menus")
     let profiles = [racing, menus]
@@ -76,7 +84,7 @@ struct ProfileSetTests {
   }
 
   @Test
-  func aSelectorThatMatchesNoProfileOrSeveralIsRefusedWithTheNotFoundCode() throws {
+  func selectorMatchesNoProfileOrSeveralRefusedWithNotFoundCode() throws {
     let profiles = [Self.profile("Racing"), Self.profile("racing")]
 
     for text in ["Racing", "Rally"] {

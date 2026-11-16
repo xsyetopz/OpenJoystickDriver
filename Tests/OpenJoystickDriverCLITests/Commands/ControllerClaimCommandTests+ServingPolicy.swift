@@ -6,7 +6,7 @@ import Testing
 
 extension ControllerClaimCommandTests {
   @Test(arguments: ServingFixture.all)
-  func theCLIAcceptsAServerChangeExactlyWhenThePolicyOffersTheChoice(_ fixture: ServingFixture) {
+  func cliAcceptsServerChangeExactlyWhenPolicyOffersChoice(_ fixture: ServingFixture) {
     let accepted =
       (try? ControllerServerChange.checkSupported(
         fixture.device,

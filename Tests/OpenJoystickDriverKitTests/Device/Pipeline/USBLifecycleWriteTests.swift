@@ -6,7 +6,7 @@ import Testing
 
 struct USBLifecycleWriteTests {
   @Test
-  func keepAliveKeepsItsIntervalWhileReadsBlockAndStopsWithTheRun() async {
+  func keepAliveKeepsItsIntervalWhileReadsBlockAndStopsWithRun() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(
         keepAliveChannels: [.usb],
@@ -31,7 +31,7 @@ struct USBLifecycleWriteTests {
   }
 
   @Test
-  func keepAliveStopsWhileTheSessionIsSuspendedAndReturnsOnResume() async {
+  func keepAliveStopsWhileSessionIsSuspendedAndReturnsOnResume() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(
         keepAliveChannels: [.usb],
@@ -58,7 +58,24 @@ struct USBLifecycleWriteTests {
   }
 
   @Test
-  func handleChangeStopsConnectionWritesButKeepsTheConsumedStateChange() async {
+  func suspendClosesUSBSessionAndResumeOpensItAgain() async {
+    let session = LifecycleUSBSession()
+    let provider = LifecycleUSBProvider(session: session)
+    let pipeline = Self.pipeline(driver: LifecycleWriteDriver(), provider: provider)
+
+    await pipeline.start()
+    await waitUntil("session.readCount >= 1") { await session.readCount >= 1 }
+    #expect(await pipeline.suspendControllerSession())
+    #expect(await session.isClosed)
+
+    #expect(await pipeline.resumeControllerSession())
+    await waitUntil("provider.openCount == 2") { await provider.openCount == 2 }
+    #expect(await !session.isClosed)
+    await pipeline.stop()
+  }
+
+  @Test
+  func handleChangeStopsConnectionWritesButKeepsConsumedStateChange() async {
     let driver = LifecycleWriteDriver(
       sessionPlan: DriverSessionPlan(requiresInputConnectionBeforeOutput: true),
       connection: [Self.write(endpoint: 0x02, bytes: [1]), Self.write(endpoint: 0x02, bytes: [2])]
@@ -121,7 +138,7 @@ struct USBLifecycleWriteTests {
   ///
   /// The pipeline resets it once and keeps retrying.
   @Test
-  func startupFailingAsDisconnectedResetsTheDeviceOnce() async {
+  func startupFailingAsDisconnectedResetsDeviceOnce() async {
     let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])
     let session = LifecycleUSBSession(rejections: [[0x10]: .disconnected])
     let provider = LifecycleUSBProvider(session: session)
@@ -145,7 +162,7 @@ struct USBLifecycleWriteTests {
 
   /// A startup that the device rejects for another reason does not reset the device.
   @Test
-  func startupFailingForAnotherReasonDoesNotResetTheDevice() async {
+  func startupFailingForAnotherReasonDoesNotResetDevice() async {
     let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])
     let session = LifecycleUSBSession(rejections: [[0x10]: .inputOutput])
     let provider = LifecycleUSBProvider(session: session)
@@ -219,7 +236,7 @@ private final class LifecycleWriteDriver: PhysicalProtocolDriver, @unchecked Sen
 
   func announce(_ state: ControllerInputConnectionState) { lock.withLock { pendingState = state } }
 
-  func parse(report _: Data, receivedAt _: MonotonicTimestamp) throws -> ControllerEvent? { nil }
+  func parse(report _: Data, receivedAt _: MonotonicTimestamp) -> ControllerEvent? { nil }
 
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
     lock.withLock {
@@ -254,10 +271,12 @@ private actor LifecycleUSBSession: USBTransportSession {
   private(set) var readCount = 0
   private let rejections: [[UInt8]: USBTransportError]
   private var onWrite: (@Sendable () async -> Void)?
-  private var isClosed = false
+  private(set) var isClosed = false
   private var blockedRead: CheckedContinuation<Void, Never>?
 
   init(rejections: [[UInt8]: USBTransportError] = [:]) { self.rejections = rejections }
+
+  func reopen() { isClosed = false }
 
   func setOnWrite(_ hook: @escaping @Sendable () async -> Void) { onWrite = hook }
 
@@ -298,8 +317,12 @@ private actor LifecycleUSBProvider: USBTransportProvider {
 
   func devices() -> [USBTransportDevice] { [] }
 
-  func open(_: USBTransportDevice, options _: USBTransportOpenOptions) -> any USBTransportSession {
+  func open(
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
+  ) async -> any USBTransportSession {
     openCount += 1
+    await session.reopen()
     return session
   }
 

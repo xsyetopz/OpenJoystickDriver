@@ -22,12 +22,12 @@ struct VirtualDeviceUnreadFolderTests {
   private static let document = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "VirtualDevice",
-       "match": {"vendorID": 4617, "productID": 1}, "persona": "SDLCompatible"}
+        "match": {"vendorID": 4617, "productID": 1}, "persona": "SDLCompatible"}
       """
   )
 
   @Test
-  func aPersonasFolderIsListedAndItsFilesAreNotRead() throws {
+  func personasFolderIsListedAndItsFilesAreNotRead() throws {
     try withSupportFolder { support in
       let unread = support.appendingPathComponent(
         VirtualHIDProfileOverrideStore.unreadFolderName,
@@ -54,7 +54,7 @@ struct VirtualDeviceUnreadFolderTests {
   }
 
   @Test
-  func aPersonasFolderWithNoVisibleFilesListsNothing() throws {
+  func personasFolderWithNoVisibleFilesListsNothing() throws {
     try withSupportFolder { support in
       let unread = support.appendingPathComponent(
         VirtualHIDProfileOverrideStore.unreadFolderName,

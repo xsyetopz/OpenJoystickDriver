@@ -285,7 +285,7 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 4,
-          "description": "The player number from 1 to 4, or 0 for none."
+          "description": "The player number, or 0 for none."
         },
         "color": {
           "type": "string",
@@ -654,7 +654,7 @@
           "additionalProperties": {
             "type": "number"
           },
-          "description": "The axis values: sticks from -1 to 1 and triggers from 0 to 1."
+          "description": "The axis values of the sticks and triggers."
         },
         "holdMilliseconds": {
           "type": "integer",

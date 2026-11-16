@@ -32,7 +32,7 @@ struct ApplicationServiceLogFollowerTests {
   }
 
   @Test
-  func invalidUTF8ShowsAsReplacementCharactersNotAnEmptyLine() async throws {
+  func invalidUTF8ShowsAsReplacementCharactersNotEmptyLine() async throws {
     let url = try Self.temporaryLog()
     try Data().write(to: url)
     let stream = ApplicationServiceLogFollower.lines(of: .standardOutput, at: url, from: 0)
@@ -47,7 +47,7 @@ struct ApplicationServiceLogFollowerTests {
   }
 
   @Test
-  func aReplacedFileIsReadFromItsStartEvenWhenItIsLargerThanTheOffset() async throws {
+  func replacedFileIsReadFromItsStartEvenWhenItIsLargerThanOffset() async throws {
     let url = try Self.temporaryLog()
     try Data("old\n".utf8).write(to: url)
     let stream = ApplicationServiceLogFollower.lines(of: .standardOutput, at: url, from: 4)
@@ -61,7 +61,7 @@ struct ApplicationServiceLogFollowerTests {
   }
 
   @Test
-  func appendedLinesAfterTheOffsetAreFollowed() async throws {
+  func appendedLinesAfterOffsetAreFollowed() async throws {
     let url = try Self.temporaryLog()
     try Data("before\n".utf8).write(to: url)
     let stream = ApplicationServiceLogFollower.lines(of: .standardError, at: url, from: 7)

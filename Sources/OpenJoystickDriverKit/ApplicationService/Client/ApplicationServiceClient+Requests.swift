@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension ApplicationServiceClient {
 
@@ -41,6 +41,11 @@ extension ApplicationServiceClient {
     _ requirement: PermissionManager.Requirement
   ) async throws -> PermissionManager.Snapshot {
     try await call(.requestAccess, LocalServiceRPCPermissionArguments(requirement: requirement))
+  }
+
+  /// Asks macOS for Bluetooth access and returns the state of the access afterward.
+  public func requestBluetoothAccess() async throws -> BluetoothAccessState {
+    try await call(.requestBluetoothAccess, LocalServiceRPCEmptyArguments())
   }
 
   /// Reads the input state of `controller`; nil when the controller has no input state.
@@ -293,6 +298,18 @@ extension ApplicationServiceClient {
         key: key,
         value: value
       )
+    )
+  }
+
+  /// Runs `action` on `controller`: a step reads raw input for about two seconds and stores what it
+  /// measured; `reset` removes the stored calibration and clears the gyro offset.
+  public func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult {
+    try await call(
+      .recalibrateController,
+      ControllerRecalibrationArguments(controller: controller, action: action)
     )
   }
 

@@ -42,7 +42,7 @@ struct VirtualHIDProfileOverrideStoreTests {
     + #""manufacturer":"Acme"}"#
 
   @Test
-  func aPersonaSelectionWithoutMatchIsAnInvalidControllerRecord() {
+  func personaSelectionWithoutMatchIsInvalidControllerRecord() {
     let document =
       #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(Store.kind)","#
       + #""persona":"Generic"}"#
@@ -55,7 +55,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func anAbsentDirectoryHasNoPersonas() throws {
+  func absentDirectoryHasNoPersonas() throws {
     try withDirectory { directory in
       let store = Store(directory: directory)
       #expect(store.override(vendorID: 0x045E, productID: 0x02EA) == nil)
@@ -65,7 +65,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func anOverrideRoundTripsThroughAPersonaFile() throws {
+  func overrideRoundTripsThroughPersonaFile() throws {
     try withDirectory { directory in
       try Store(directory: directory).set(.generic, vendorID: 0x045E, productID: 0x02EA)
 
@@ -99,7 +99,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func aUnitPersonaBeatsItsModelAndResettingItFallsBack() throws {
+  func unitPersonaBeatsItsModelAndResettingItFallsBack() throws {
     try withDirectory { directory in
       let store = Store(directory: directory)
       try store.set(.generic, vendorID: 1, productID: 2)
@@ -118,7 +118,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func aFileThatIsNotAPersonaIsSkippedAndTheRestApply() throws {
+  func fileThatIsNotPersonaIsSkippedAndRestApply() throws {
     try withDirectory { directory in
       try write(persona(vendorID: 1, productID: 2), named: "a.plist", in: directory)
       try write(#"{"match":{}}"#, named: "b.plist", in: directory)
@@ -138,7 +138,19 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func aFileWithAnUnsupportedAPIVersionIsSkipped() throws {
+  func staleJSONPersonaIsListedAsStale() throws {
+    try withDirectory { directory in
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      try Data("{}".utf8).write(to: directory.appendingPathComponent("045e-02ea.json"))
+      let store = Store(directory: directory)
+
+      #expect(store.problems.map(\.url.lastPathComponent) == ["045e-02ea.json"])
+      #expect(store.problems.first?.problem == DocumentMigrator.staleProblem)
+    }
+  }
+
+  @Test
+  func fileWithUnsupportedAPIVersionIsSkipped() throws {
     try withDirectory { directory in
       let unsupported = persona(vendorID: 1, productID: 2).replacingOccurrences(
         of: OpenJoystickDriverAPI.version,
@@ -159,7 +171,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func aFileWithoutAnAPIVersionIsSkippedWithE5001() throws {
+  func fileWithoutAPIVersionIsSkippedWithE5001() throws {
     try withDirectory { directory in
       let missing = persona(vendorID: 1, productID: 2).replacingOccurrences(
         of: #""apiVersion":"\#(OpenJoystickDriverAPI.version)","#,
@@ -175,7 +187,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func theSecondFileWithTheSameMatchIsSkipped() throws {
+  func secondFileWithSameMatchIsSkipped() throws {
     try withDirectory { directory in
       try write(persona(vendorID: 1, productID: 2), named: "a.plist", in: directory)
       try write(
@@ -192,7 +204,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func aPersonaDefinesAnIdentityOverABuiltInDescriptor() throws {
+  func personaDefinesIdentityOverBuiltInDescriptor() throws {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
@@ -211,7 +223,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func anIncompleteIdentityMakesTheFileInvalid() throws {
+  func incompleteIdentityMakesFileInvalid() throws {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: #"{"vendorID":4660,"productID":1}"#),
@@ -226,7 +238,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func resetAllKeepsPersonasWithAnIdentityAndFilesItSkipped() throws {
+  func resetAllKeepsPersonasWithIdentityAndFilesItSkipped() throws {
     try withDirectory { directory in
       let store = Store(directory: directory)
       try store.set(.generic, vendorID: 5, productID: 6)
@@ -249,7 +261,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func resettingAPersonaWithAnIdentityFailsAndKeepsTheFile() throws {
+  func resettingPersonaWithIdentityFailsAndKeepsFile() throws {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
@@ -267,7 +279,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func settingAnOverrideKeepsTheIdentityOfTheMatchingPersona() throws {
+  func settingOverrideKeepsIdentityOfMatchingPersona() throws {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
@@ -286,7 +298,7 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
-  func anUnreadableDirectoryIsAnErrorAndWritesFail() throws {
+  func unreadableDirectoryIsErrorAndWritesFail() throws {
     try withDirectory { directory in
       try Data().write(to: directory)
       let store = Store(directory: directory)

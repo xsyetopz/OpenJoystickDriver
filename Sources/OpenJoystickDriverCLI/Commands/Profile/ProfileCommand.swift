@@ -19,6 +19,7 @@ struct ProfileCommand: AsyncParsableCommand {
       ProfileActivateCommand.self, ProfileDeactivateCommand.self, ProfileImportCommand.self,
       ProfileValidateCommand.self, ProfileExportCommand.self, ProfileGetCommand.self,
       ProfileSetCommand.self, ProfileEditCommand.self, ProfileRecoverCommand.self,
+      ProfileConvertCommand.self,
     ]
   )
 
@@ -33,6 +34,9 @@ struct ProfileResult: Encodable, Equatable {
   let profile: ProfileSummary
   /// Whether the command changed the profile.
   let changed: Bool
+  var skippedControls: [Control]?
+  /// The parts that `profile convert` left out; `nil` for a command that converts nothing.
+  var leftOut: [ProfileLeftOut]?
 }
 
 /// Prints `result`, with `message` as the human success line.
@@ -288,7 +292,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      guard template != nil || (stick == nil && activation == nil) else {
+      guard template == .gyroStick || (stick == nil && activation == nil) else {
         throw CLIFailure.usage(CLILocalized.text("cli.profile.create.templateRequired"))
       }
       let activationSource = try activation.map(parseSource)
@@ -298,8 +302,8 @@ struct ProfileCreateCommand: AsyncParsableCommand {
         virtualGamepad: virtualGamepad,
         physicalInput: physicalInput
       )
-      let name = name
-      let (created, snapshot) = try await ServiceConnection.request { client in
+      let profileName = name
+      let (created, skippedControls, snapshot) = try await ServiceConnection.request { client in
         let device: RemappingDeviceScope
         switch selector.reference {
         case .model(let model):
@@ -309,17 +313,32 @@ struct ProfileCreateCommand: AsyncParsableCommand {
           device = RemappingDeviceScope(vendorID: found.vendorID, productID: found.productID)
         }
         let profile: RemappingProfile
+        var skipped: [Control]?
+        let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+        let capabilities = ProtocolDriverRegistry().profileCapabilities(for: model) ?? .unknown
+        func fromBindings(_ bindings: RemappingBindingTemplate) throws -> RemappingProfile {
+          let made = bindings.profile(
+            name: profileName,
+            device: device,
+            applicationScope: scope,
+            outputPolicy: policy,
+            capabilities: capabilities
+          )
+          skipped = made.skipped
+          return try made.profile.validatedForCLI()
+        }
         switch template {
+        case .keyboardNavigation: profile = try fromBindings(.keyboardNavigation)
+        case .mouseClicks: profile = try fromBindings(.mouseClicks)
         case .gyroStick:
-          let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
           do {
             profile = try RemappingGyroStickTemplate.profile(
-              name: name,
+              name: profileName,
               device: device,
               applicationScope: scope,
               stick: stick ?? .right,
               activation: activationSource,
-              capabilities: ProtocolDriverRegistry().profileCapabilities(for: model) ?? .unknown
+              capabilities: capabilities
             ).validatedForCLI()
           } catch RemappingGyroStickTemplate.Failure.noMotionSensor(let model) {
             throw CLIFailure(
@@ -329,22 +348,35 @@ struct ProfileCreateCommand: AsyncParsableCommand {
           }
         case nil:
           profile = try RemappingProfile(
-            name: name,
+            name: profileName,
             device: device,
             applicationScope: scope,
             outputPolicy: policy,
             bindings: []
           ).validatedForCLI()
         }
-        return (profile, try await client.createRemappingProfile(profile))
+        return (profile, skipped, try await client.createRemappingProfile(profile))
+      }
+      var message = CLILocalized.format(
+        "cli.profile.create.done",
+        created.name,
+        created.id.uuidString
+      )
+      if let skippedControls, !skippedControls.isEmpty {
+        message +=
+          "\n"
+          + CLILocalized.format(
+            "cli.profile.create.skipped",
+            skippedControls.map(\.rawValue).joined(separator: ", ")
+          )
       }
       try printProfile(
-        ProfileResult(profile: try savedSummary(created.id, in: snapshot), changed: true),
-        message: CLILocalized.format(
-          "cli.profile.create.done",
-          created.name,
-          created.id.uuidString
-        )
+        ProfileResult(
+          profile: try savedSummary(created.id, in: snapshot),
+          changed: true,
+          skippedControls: skippedControls
+        ),
+        message: message
       )
     }
   }
@@ -382,10 +414,10 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, name) = (profile, name)
+      let (selector, newName) = (profile, name)
       let (copy, snapshot) = try await ServiceConnection.request { client in
         let (original, _) = try await selector.resolve(with: client)
-        let copy = try original.copy(id: UUID(), name: name).validatedForCLI()
+        let copy = try original.copy(id: UUID(), name: newName).validatedForCLI()
         return (copy, try await client.createRemappingProfile(copy))
       }
       try printProfile(
@@ -428,10 +460,10 @@ struct ProfileRenameCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, name) = (profile, name)
+      let (selector, newName) = (profile, name)
       let (renamed, snapshot) = try await ServiceConnection.request { client in
         let (current, _) = try await selector.resolve(with: client)
-        let renamed = try current.replacing(name: name).validatedForCLI()
+        let renamed = try current.replacing(name: newName).validatedForCLI()
         return (renamed, try await client.updateRemappingProfile(renamed, expectedCurrent: current))
       }
       try printProfile(

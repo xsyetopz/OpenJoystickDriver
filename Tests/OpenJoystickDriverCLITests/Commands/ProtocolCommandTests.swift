@@ -28,7 +28,9 @@ struct ProtocolCommandTests {
     ) throws -> String {
       let source = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        .deletingLastPathComponent().appendingPathComponent("Resources/Protocols/vendor-flydigi.plist")
+        .deletingLastPathComponent().appendingPathComponent(
+          "Resources/Protocols/VendorFlydigi.plist"
+        )
       var tree = try #require(
         try PropertyListFixture.tree(Data(contentsOf: source)) as? [String: Any]
       )
@@ -49,7 +51,10 @@ struct ProtocolCommandTests {
       let protocols = folder.appendingPathComponent("Protocols", isDirectory: true)
       try FileManager.default.createDirectory(at: protocols, withIntermediateDirectories: true)
       let name = URL(fileURLWithPath: file).lastPathComponent
-      try FileManager.default.copyItem(atPath: file, toPath: protocols.appendingPathComponent(name).path)
+      try FileManager.default.copyItem(
+        atPath: file,
+        toPath: protocols.appendingPathComponent(name).path
+      )
       let manifest: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind,
         "name": "family-pack", "version": "1.0.0", "author": "Tester",
@@ -75,7 +80,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func validateReportsTheFamilyAndWritesNothing() async throws {
+  func validateReportsFamilyAndWritesNothing() async throws {
     let support = Support()
     let file = try support.description("VendorCliValid")
 
@@ -91,7 +96,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func validateRefusesABuiltInNameAMissingLayoutAndAWrongStem() async throws {
+  func validateRefusesBuiltInNameMissingLayoutAndWrongStem() async throws {
     let support = Support()
     let builtIn = try support.description("XboxGIP")
     let noLayouts = try support.description("VendorCliBare") { $0["defaults"] = nil }
@@ -109,7 +114,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func installCopiesTheFileToTheProtocolsFolderAndReplacesAnInstalledOne() async throws {
+  func installCopiesFileToProtocolsFolderAndReplacesInstalledOne() async throws {
     let support = Support()
     let file = try support.description("VendorCliInstall")
 
@@ -127,7 +132,7 @@ struct ProtocolCommandTests {
   }
 
   @Test
-  func installWritesNothingForADryRunOrARefusedFile() async throws {
+  func installWritesNothingForDryRunOrRefusedFile() async throws {
     let support = Support()
     let file = try support.description("VendorCliDry")
     let refused = try support.description("XboxGIP")
@@ -157,6 +162,8 @@ struct ProtocolCommandTests {
     let items = try #require(try json.json()["items"] as? [[String: Any]])
     func entry(_ name: String) -> [String: Any]? { items.first { $0["name"] as? String == name } }
     #expect(entry("XboxGIP")?["source"] as? String == "BuiltIn")
+    #expect(entry("VendorFlydigi")?["source"] as? String == "Bundled")
+    #expect(entry("VendorFlydigi")?["displayName"] as? String == "Flydigi")
     #expect(entry("VendorCliUser")?["source"] as? String == "User")
     #expect(entry("VendorCliPack")?["source"] as? String == "Package")
     #expect(entry("VendorCliPack")?["package"] as? String == "family-pack")

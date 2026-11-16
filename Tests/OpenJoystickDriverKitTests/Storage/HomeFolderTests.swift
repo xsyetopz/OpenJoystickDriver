@@ -5,7 +5,7 @@ import Testing
 
 struct HomeFolderTests {
   @Test
-  func textShowsTheHomeFolderAsATilde() {
+  func textShowsHomeFolderAsTilde() {
     let text = """
       == standardOutput: /Users/me/Library/Logs/ojd.log ==
       opened /Users/me
@@ -22,14 +22,14 @@ struct HomeFolderTests {
   }
 
   @Test
-  func theCurrentUsersHomeFolderIsTheDefault() {
+  func currentUsersHomeFolderIsDefault() {
     let home = MacOSDataDirectory().url(for: .home).path
     #expect(HomeFolder.redacting("\(home)/Library/x") == "~/Library/x")
     #expect(HomeFolder.redacting("/elsewhere/x") == "/elsewhere/x")
   }
 
   @Test
-  func exportedLogsShowTheHomeFolderAsATilde() {
+  func exportedLogsShowHomeFolderAsTilde() {
     let snapshot = ApplicationServiceLogSnapshot(
       stream: .standardOutput,
       path: "/Users/me/Library/Logs/ojd.log",

@@ -26,7 +26,7 @@ struct ControllerStateTests {
   }
 
   @Test
-  func pushingTheStickUpReadsANegativeY() {
+  func pushingStickUpReadsNegativeY() {
     let up = StickPosition(x: 0, y: -1)
     #expect(up.y == .min)
     #expect(up.y.rawValue < 0)
@@ -51,7 +51,7 @@ struct ControllerStateTests {
   }
 
   @Test
-  func recordTouchKeepsTheLatestFrameOfEachSurface() {
+  func recordTouchKeepsLatestFrameOfEachSurface() {
     var state = ControllerState.neutral
     state.recordTouch([touch(.left, 1), touch(.right, 2), touch(.left, 3)])
     #expect(state.touch.map(\.surface) == [.right, .left])

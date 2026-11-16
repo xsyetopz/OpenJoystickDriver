@@ -1,0 +1,44 @@
+# >>> bedrock
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+*.md diff=markdown
+*.sh diff=bash
+.githooks/* text eol=lf diff=bash
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.wasm binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+# <<< bedrock
+
+# >>> swift-bedrock
+*.pbxproj text linguist-generated
+Package.resolved text linguist-generated
+*.xcscheme text
+*.m diff=objc
+*.mm diff=objc
+# <<< swift-bedrock
+
+# >>> swift-bedrock-cxx
+*.c diff=cpp
+*.cc diff=cpp
+*.cpp diff=cpp
+*.cxx diff=cpp
+*.h diff=cpp
+*.hh diff=cpp
+*.hpp diff=cpp
+*.hxx diff=cpp
+# <<< swift-bedrock-cxx

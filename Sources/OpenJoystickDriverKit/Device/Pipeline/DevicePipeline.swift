@@ -124,6 +124,15 @@ actor DevicePipeline {
   let interface: PhysicalInterfaceSignature?
   /// The controller's latest observed state, including input hidden from output.
   var currentInputState = ControllerState.neutral
+  /// The latest observed state as the driver reported it, before the stored calibration.
+  var currentRawInputState = ControllerState.neutral
+  /// The latest angular velocity as the driver reported it, before the stored gyro offset; nil
+  /// while the controller has reported no motion.
+  var currentRawAngularVelocity: ControllerMotionVector?
+  /// The stored calibration of the controller's model, read for each report.
+  let calibration: @Sendable () -> ControllerCalibration
+  /// When the input state last changed, for the idle disconnect.
+  var idleInput: IdleInputTracker
   /// The state last sent to the dispatcher, without connection; neutral once the dispatcher was
   /// told the controller stopped.
   var lastDispatchedState = ControllerState.neutral
@@ -169,8 +178,8 @@ actor DevicePipeline {
   /// The latest USB open or handshake failed and no session has started since.
   ///
   /// The pipeline keeps retrying until the handshake has failed
-  /// ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row; the device manager reads
-  /// this to give a yielded HID route back.
+  /// ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row; the device manager
+  /// reads this to give a yielded HID route back.
   var usbSessionStartFailed = false
   /// The transport error of the latest failed USB startup write, cleared when a handshake starts.
   var lastUSBStartupError: USBTransportError?
@@ -273,7 +282,8 @@ actor DevicePipeline {
     sessionState: ControllerSessionState = .active,
     idleTimeoutNanoseconds _: UInt64 = 30_000_000_000,
     idleMonitorIntervalNanoseconds: UInt64 = defaultIdleMonitorIntervalNanoseconds,
-    uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds }
+    uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+    calibration: (@Sendable () -> ControllerCalibration)? = nil
   ) {
     self.identifier = identifier
     self.transport = transport
@@ -291,15 +301,20 @@ actor DevicePipeline {
     self.usbRecoveryPolicy = usbRecoveryPolicy
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.frameTimings = frameTimings
+    self.calibration =
+      calibration ?? {
+        DeviceCatalog.current.withLock { $0.calibration(of: identifier.model) }
+      }
     self.uptimeNanoseconds = uptimeNanoseconds
+    self.idleInput = IdleInputTracker(now: uptimeNanoseconds())
     self.externalOutputAllowed = externalOutputAllowed
     self.sessionState = sessionState
-    let plan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
-    self.plan = plan
+    let tunedPlan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
+    self.plan = tunedPlan
     self.startupPlayerIndicatorPending =
       macOSOwnedOutput?.setsStartupPlayerIndicator == true
-      || (startupPlayerIndicator != nil && plan.hidPlayerIndicatorFollowsFirstInput)
-    self.inputConnectionActive = !plan.requiresInputConnectionBeforeOutput
+      || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)
+    self.inputConnectionActive = !tunedPlan.requiresInputConnectionBeforeOutput
     self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
   }
 }

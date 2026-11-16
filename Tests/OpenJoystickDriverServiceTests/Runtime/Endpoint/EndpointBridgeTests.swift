@@ -16,7 +16,7 @@ private final class FakePeerChannel: PeerChannel, @unchecked Sendable {
     set { lock.withLock { handler = newValue } }
   }
 
-  func send(_ data: Data) -> Bool { true }
+  func send(_: Data) -> Bool { true }
 
   func peerSends(_ text: String) { onMessage?(Data(text.utf8)) }
 }
@@ -28,7 +28,7 @@ struct EndpointBridgeTests {
   private static let header = #""apiVersion":"\#(OpenJoystickDriverAPI.version)""#
 
   @Test
-  func aGrantedFeedReachesTheVirtualDeviceAndStaysOpenOnKeepAlive() async throws {
+  func grantedFeedReachesVirtualDeviceAndStaysOpenOnKeepAlive() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry(idleTimeout: 1)
     try await withEndpointServer(identity: nil, feeds: feeds) { server, _ in
@@ -59,7 +59,7 @@ struct EndpointBridgeTests {
   }
 
   @Test(arguments: [EndpointToken.readOnly, .unknown])
-  func anUngrantedTokenGetsE1002AndNoVirtualGamepad(token: EndpointToken) async throws {
+  func ungrantedTokenGetsE1002AndNoVirtualGamepad(token: EndpointToken) async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
     try await withEndpointServer(identity: nil, feeds: feeds) { server, _ in

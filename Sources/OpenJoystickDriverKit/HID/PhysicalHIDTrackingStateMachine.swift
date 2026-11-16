@@ -38,7 +38,7 @@ public enum UserSpaceVirtualDeviceConstants {
 
   /// Fail-closed admission check used by the IOKit physical HID input backend.
   ///
-  /// Virtual HID profiles intentionally spoof third-party product names, transports, and
+  /// Virtual HID profiles spoof third-party product names, transports, and
   /// VID/PID tuples. Apple does not guarantee that every property is surfaced on every callback,
   /// so no single marker is sufficient. Any OJD-owned marker, Apple's synthetic marker
   /// (`GCSyntheticDevice`), or a
@@ -63,7 +63,7 @@ public enum UserSpaceVirtualDeviceConstants {
     guard let value else { return false }
     let cfValue = value as CFTypeRef
     guard CFGetTypeID(cfValue) == CFBooleanGetTypeID() else { return false }
-    return CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
+    return unsafe CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
   }
 
   /// Whether the backend may process `event`; false for the events of Apple's synthetic device.
@@ -142,7 +142,7 @@ public enum UserSpaceVirtualDeviceConstants {
   }
 
   /// `v` as 16 lower-case hex digits.
-  private static func hex64(_ v: UInt64) -> String { String(format: "%016llx", v) }
+  private static func hex64(_ v: UInt64) -> String { unsafe String(format: "%016llx", v) }
 }
 
 /// The serial number and LocationID that one virtual device publishes.

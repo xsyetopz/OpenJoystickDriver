@@ -5,7 +5,7 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The removal of the menu bar item by the user, `specs/menu-bar-item/spec.md`.
+/// The user removes the menu bar item.
 @Suite
 struct StatusItemRemovalTests {
   @MainActor
@@ -20,12 +20,12 @@ struct StatusItemRemovalTests {
 
   @Test
   @MainActor
-  func removingTheItemStoresMenuBarOffAndTurnsTheDockOn() throws {
+  func removingItemStoresMenuBarOffAndTurnsDockOn() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let model = makeModel(settings)
     #expect(model.showInMenuBar && !model.showInDock)
 
-    #expect(model.menuBarItemWasRemoved())
+    #expect(model.menuBarItemRemoved())
 
     #expect(!model.showInMenuBar && model.showInDock)
     #expect(try !settings.value(of: .showInMenuBar))
@@ -35,12 +35,12 @@ struct StatusItemRemovalTests {
 
   @Test
   @MainActor
-  func removingTheItemKeepsTheDockOnWhenItWasOn() throws {
+  func removingItemKeepsDockOnWhenItOn() throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.showInDock, to: true)
     let model = makeModel(settings)
 
-    #expect(model.menuBarItemWasRemoved())
+    #expect(model.menuBarItemRemoved())
 
     #expect(!model.showInMenuBar && model.showInDock)
     #expect(try settings.value(of: .showInDock))
@@ -48,7 +48,7 @@ struct StatusItemRemovalTests {
 
   @Test
   @MainActor
-  func aRemovalThatCannotBeStoredLeavesTheSettingsAsTheyAre() throws {
+  func removalCannotStoredLeavesSettingsAsThey() throws {
     let root = RootedDataDirectory.temporary()
     let settings = SettingsStore(directory: root)
     let model = makeModel(settings)
@@ -58,14 +58,14 @@ struct StatusItemRemovalTests {
     )
     try Data("not a property list".utf8).write(to: settings.userFileURL)
 
-    #expect(!model.menuBarItemWasRemoved())
+    #expect(!model.menuBarItemRemoved())
 
     #expect(model.showInMenuBar && !model.showInDock)
     #expect(model.errorMessage != nil)
   }
 
   @Test
-  func aFileThatTurnsBothOffOpensTheMainWindowAtLaunch() {
+  func fileTurnsBothOffOpensMainWindowAtLaunch() {
     let both = SettingsStoreError.storedNoVisibleEntryPoint(file: "/tmp/Settings.plist")
     #expect(SettingsFileStartup.opensMainWindowAtLaunch(settingsError: both))
     #expect(!SettingsFileStartup.opensMainWindowAtLaunch(settingsError: nil))

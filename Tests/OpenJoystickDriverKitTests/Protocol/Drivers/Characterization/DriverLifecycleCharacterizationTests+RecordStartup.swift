@@ -7,7 +7,7 @@ extension DriverLifecycleCharacterizationTests {
   /// A `HIDReportLayout` record's startup writes go out through the manager, and a refused write
   /// shows as a failed startup.
   @Test(arguments: [true, false])
-  func aReportLayoutRecordSendsItsStartupWrites(acceptsOutputReports: Bool) async throws {
+  func reportLayoutRecordSendsItsStartupWrites(acceptsOutputReports: Bool) async throws {
     let subject = Subject(
       model: Self.model(0x37D7, 0x2401),
       host: .usb,

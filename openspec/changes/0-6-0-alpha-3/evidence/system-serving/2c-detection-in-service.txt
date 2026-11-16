@@ -1,0 +1,45 @@
+Task 9.12: D16 detection in the service, 8BitDo Ultimate 2C Wireless (2DC8:301B) over Bluetooth LE.
+Build: `just install-fast-dev` of the 9.12 working tree. CLI: /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver.
+
+1. Detection alone: a user patch `remove: [server]` drops the bundled `server`, so no layer states one.
+   `ojd controller show 2DC8:301B`:
+     Ownership             route hid, physical exclusive-hid, HID input exclusive
+     Handled by            OJD (from default)
+     Serving route         virtual-hid
+   The service log of this run was rotated away. `ojd record remove 2DC8:301B --force` removed the
+   patch afterwards, and `show` named `OJD (from bundled)` with the same ownership and route.
+
+2. Release and claim, with the bundled record (`server` OJD), service log
+   ~/Library/Logs/OpenJoystickDriver/OpenJoystickDriver.out.log:
+     10 [Records] Applied 0 user controller record(s)
+     18 [DeviceManager] HID device connected: 8BitDo Ultimate 2C Wireless (LogicalControllerID(VID:0x2DC8 PID:0x301B loc=1152007200))
+     21 [UserSpaceOutputDispatcher] Created virtual device for LogicalControllerID(VID:0x2DC8 PID:0x301B loc=1152007200)
+     22 [HIDDeviceStream] 2DC8:301B: GameController does not list "8BitDo Ultimate 2C Wireless"; it lists "Xbox Wireless Controller"
+   Line 22 is the settle check 1 s after arrival, in the service process. The one listed controller is
+   OJD's virtual gamepad; GameController lists no controller named after the seized 2C.
+
+   `ojd controller release 2DC8:301B`:
+     Set 2DC8:301B to system in ~/Library/Application Support/OpenJoystickDriver/Controllers/2dc8-301b.patch.plist. The running service applies it now.
+   Log:
+     23 [Records] Applied 1 user controller record(s)
+     24 [DeviceManager] Controller records changed - re-admitting affected controllers
+     25 [DevicePipeline] Stopped: LogicalControllerID(VID:0x2DC8 PID:0x301B loc=1152007200)
+     27 [DeviceManager] HID device connected: 8BitDo Ultimate 2C Wireless (...)
+   `ojd controller show 2DC8:301B`:
+     Ownership             route hid, physical system-gamepad, HID input unknown
+     Handled by            System (from user)
+     Serving route         native-pass-through
+     Output owner          Handled by macOS. Rumble and Lighting list only what macOS leaves undone.
+
+   `ojd controller claim 2DC8:301B`:
+     Set 2DC8:301B to ojd in ~/Library/Application Support/OpenJoystickDriver/Controllers/2dc8-301b.patch.plist. The running service applies it now.
+   The Controllers folder is empty afterwards: the patch held only `server`, equal to the bundled value.
+   Log:
+     30 [Records] Applied 0 user controller record(s)
+     32 [DevicePipeline] Stopped: LogicalControllerID(VID:0x2DC8 PID:0x301B loc=1152007200)
+     34 [DeviceManager] HID device connected: 8BitDo Ultimate 2C Wireless (...)
+     37 [UserSpaceOutputDispatcher] Created virtual device for LogicalControllerID(VID:0x2DC8 PID:0x301B loc=1152007200)
+   `ojd controller show 2DC8:301B`:
+     Ownership             route hid, physical exclusive-hid, HID input exclusive
+     Handled by            OJD (from bundled)
+     Serving route         virtual-hid

@@ -41,7 +41,27 @@
             clickActive: pressed.contains(.rightStickClick)
           )
         }
-        let additionalButtons = InputTestButtonPresentation.additionalControls(in: snapshot)
+        if layout.hasPointer {
+          Divider()
+          InputTestPointerView(
+            x: snapshot.pointer.x.normalized,
+            y: snapshot.pointer.y.normalized,
+            tracking: pressed.contains(.pointerTracking)
+          )
+        }
+        let surfaces = layout.touchSurfaces(for: snapshot)
+        if !surfaces.isEmpty {
+          Divider()
+          HStack(alignment: .top, spacing: OJDSpacing.xLarge) {
+            ForEach(surfaces, id: \.self) { surface in
+              InputTestTouchSurfaceView(
+                title: OJDLocalized.string(Self.touchSurfaceTitleKey(surface)),
+                frame: snapshot.touch.first { $0.surface == surface }
+              )
+            }
+          }
+        }
+        let additionalButtons = layout.extraButtons(for: snapshot)
         if !additionalButtons.isEmpty {
           Divider()
           VStack(alignment: .leading, spacing: OJDSpacing.small) {
@@ -51,13 +71,25 @@
               ForEach(additionalButtons, id: \.self) { control in
                 InputTestIndicator(
                   title: InputTestButtonPresentation.localizedTitle(for: control),
-                  active: true
+                  active: pressed.contains(control)
                 )
               }
             }
           }.frame(maxWidth: .infinity, alignment: .leading)
         }
       }.padding(6)
+    }
+
+    /// Returns the localization key of a touch surface's name.
+    ///
+    /// - Parameter surface: The surface.
+    /// - Returns: The localization key of the surface's name.
+    private static func touchSurfaceTitleKey(_ surface: ControllerTouchSurface) -> String {
+      switch surface {
+      case .primary: "ui.inputTest.touchSurfacePrimary"
+      case .left: "ui.inputTest.touchSurfaceLeft"
+      case .right: "ui.inputTest.touchSurfaceRight"
+      }
     }
 
     /// The shoulder buttons and the triggers with their values.

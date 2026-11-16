@@ -4,6 +4,8 @@
 <dict>
 	<key>apiVersion</key>
 	<string>openjoystickdriver/v1alpha3</string>
+	<key>heldByAppleDriver</key>
+	<true/>
 	<key>kind</key>
 	<string>Controller</string>
 	<key>modes</key>

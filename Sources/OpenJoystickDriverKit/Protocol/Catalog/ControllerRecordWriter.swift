@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Sets or removes one value in the user's controller-record directory: the `server` of a model,
 /// or a `tuning` key of a model or of every controller.
@@ -87,7 +87,7 @@ public enum ControllerRecordWriter {
         tuningKey: nil,
         records: records,
         directory: directory
-      ) { (fields: inout [String: Any]) throws(Never) in fields["server"] = server.rawValue }
+      ) { (fields: inout [String: Any]) in fields["server"] = server.rawValue }
     } catch {
       switch error {
       case .record(let failure): throw failure
@@ -174,7 +174,15 @@ public enum ControllerRecordWriter {
     let file = existingController == nil ? patchFile : controllerFile ?? patchFile
     let document: [String: Any]?
     if let existing {
-      document = try updated(existing, file: file, packages: packages, edit: edit)
+      let upstream: ControllerRecord? =
+        if case .model(let model) = target { packages[model] } else { nil }
+      document = try updated(
+        existing,
+        file: file,
+        packages: packages,
+        upstreamServer: upstream?.statedServer,
+        edit: edit
+      )
     } else {
       if case .model(let model) = target, packages[model] == nil { throw .record(.noRecord(model)) }
       var body: [String: Any] = [:]
@@ -184,9 +192,9 @@ public enum ControllerRecordWriter {
     let data: Data?
     do {
       data = try document.map { document in
-        let data = try DocumentCoder.write(document)
-        _ = try ControllerRecordSet.validate(data, file: file, packages: packages)
-        return data
+        let encoded = try DocumentCoder.write(document)
+        _ = try ControllerRecordSet.validate(encoded, file: file, packages: packages)
+        return encoded
       }
     } catch {
       throw .record(
@@ -214,10 +222,15 @@ public enum ControllerRecordWriter {
 
   /// The existing user file with `edit` applied in the Controller file or in the `patch` of the
   /// ControllerPatch file; nil when a removal leaves a patch with no key and no `remove`.
+  ///
+  /// A patch `server` equal to `upstreamServer`, the server the bundled or package record states,
+  /// is dropped from the patch together with a `remove` of `server`, because a patch that restates
+  /// the upstream value changes nothing and is refused.
   private static func updated<EditFailure: Error>(
     _ data: Data,
     file: URL,
     packages: [ControllerModelID: ControllerRecord],
+    upstreamServer: ControllerServer?,
     edit: (inout [String: Any]) throws(EditFailure) -> Void
   ) throws(Refusal<EditFailure>) -> [String: Any]? {
     let operation: ControllerRecordOperation
@@ -228,8 +241,9 @@ public enum ControllerRecordWriter {
         .invalidFile(ControllerRecordSet.problemDescription(error, document: "record"))
       )
     }
-    guard var document = (try? DocumentCoder.read(data, file: file.lastPathComponent))
-      as? [String: Any]
+    guard
+      var document = (try? DocumentCoder.read(data, file: file.lastPathComponent))
+        as? [String: Any]
     else {
       throw .record(.invalidFile("the file is not a dictionary"))
     }
@@ -239,6 +253,11 @@ public enum ControllerRecordWriter {
     }
     var fields = document["patch"] as? [String: Any] ?? [:]
     do { try edit(&fields) } catch { throw .edit(error) }
+    if let upstreamServer, fields["server"] as? String == upstreamServer.rawValue {
+      fields["server"] = nil
+      let remove = (document["remove"] as? [String] ?? []).filter { $0 != "server" }
+      document["remove"] = remove.isEmpty ? nil : remove
+    }
     if fields.isEmpty {
       guard document["remove"] != nil else { return nil }
       document["patch"] = nil

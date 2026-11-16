@@ -18,7 +18,11 @@ extension RemappingProfileLibrary {
         let header = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         if (header?["apiVersion"] as? String)?.hasPrefix("openjoystickdriver/") == true {
           issues.append(
-            .damagedProfile(fileName: url.lastPathComponent, data: data, code: .unsupportedAPIVersion)
+            .damagedProfile(
+              fileName: url.lastPathComponent,
+              data: data,
+              code: .unsupportedAPIVersion
+            )
           )
         }
         continue
@@ -79,10 +83,10 @@ extension RemappingProfileLibrary {
   /// The error code of a profile file that cannot be used: the code a request gives the same
   /// failure for a library error, otherwise the code of the refused document.
   static func damageCode(_ error: any Error) -> ErrorCode {
-    guard let error = error as? RemappingProfileLibraryError else {
+    guard let libraryError = error as? RemappingProfileLibraryError else {
       return RemappingProfileFileStore.problemCode(error)
     }
-    return RemappingRequestCoordinator.rpcError(error).code.errorCode
+    return RemappingRequestCoordinator.rpcError(libraryError).code.errorCode
   }
 
   /// Writes the profile files that changed, the selections when they changed, and deletes the

@@ -40,7 +40,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func aRumbleRequestRunsTheMotorsAndTheConnectionStaysOpen() async throws {
+  func rumbleRequestRunsMotorsAndConnectionStaysOpen() async throws {
     let automation = automation()
     try await withEndpointServer(automation: automation) { server, _ in
       let client = try await welcomed(server)
@@ -67,7 +67,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func aRumbleRequestThatNamesNoMotorRunsBothMainMotorsAtTheDefault() async throws {
+  func rumbleRequestNamesNoMotorRunsBothMainMotorsAtDefault() async throws {
     let automation = automation()
     try await withEndpointServer(automation: automation) { server, _ in
       let client = try await welcomed(server)
@@ -84,7 +84,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func aRumbleRequestOfZeroIntensityStopsTheRumble() async throws {
+  func rumbleRequestOfZeroIntensityStopsRumble() async throws {
     let automation = automation()
     try await withEndpointServer(automation: automation) { server, _ in
       let client = try await welcomed(server)
@@ -95,7 +95,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func aLightRequestSendsTheColorThenTheBrightness() async throws {
+  func lightRequestSendsColorThenBrightness() async throws {
     let automation = automation()
     try await withEndpointServer(automation: automation) { server, _ in
       let client = try await welcomed(server)
@@ -113,7 +113,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func anOutputTheControllerLacksIsRefusedWithTheCodeOjdPrintsAndTheConnectionStaysOpen()
+  func outputControllerLacksRefusedWithCodeOjdPrintsAndConnectionStaysOpen()
     async throws
   {
     let automation = automation()
@@ -133,7 +133,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func eachOutcomeThatDoesNotDeliverIsRefusedWithTheControllerRequestFailedCode() async throws {
+  func eachOutcomeDoesNotDeliverRefusedWithControllerRequestFailedCode() async throws {
     for outcome in [
       ControllerOutputResult.Outcome.notReady, .notFound, .invalidValue, .writeFailed, .cancelled,
     ] {
@@ -152,7 +152,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func aRumbleThatNoMotorOfTheControllerRanIsRefused() async throws {
+  func rumbleNoMotorOfControllerRanRefused() async throws {
     let automation = automation()
     automation.outputOutcome = .delivered
     automation.droppedChannels = [.lowFrequency, .highFrequency, .leftHaptic, .rightHaptic]
@@ -167,7 +167,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func anUnknownOrAmbiguousControllerIsRefusedWithNotFound() async throws {
+  func unknownOrAmbiguousControllerRefusedWithNotFound() async throws {
     let automation = automation()
     automation.devices.append(.fixture(id: "B", name: "Pad B", unit: "Q"))
     try await withEndpointServer(automation: automation) { server, _ in
@@ -184,7 +184,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func anOutputRequestNeedsTheControlScope() async throws {
+  func outputRequestNeedsControlScope() async throws {
     let automation = automation()
     try await withEndpointServer(automation: automation) { server, _ in
       let client = try await welcomed(server, scopes: [.read])
@@ -196,7 +196,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func aMalformedOutputRequestEndsTheConnectionWithInvalidMessage() async throws {
+  func malformedOutputRequestEndsConnectionWithInvalidMessage() async throws {
     let members = [
       #""action":"Speaker""#,
       #""action":"rumble""#,
@@ -228,7 +228,7 @@ struct EndpointOutputTests {
   }
 
   @Test
-  func anOutputRequestWithoutAControllerEndsTheConnection() async throws {
+  func outputRequestWithoutControllerEndsConnection() async throws {
     try await withEndpointServer(automation: automation()) { server, _ in
       let client = try await welcomed(server)
       await client.send(clientLine("OutputRequest", #","action":"Player","player":1"#))

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The D-pad bits of the second button byte.
 private let gipDpadMask: UInt8 = 0x0F
@@ -18,8 +18,6 @@ private let gipRumbleSubCommandLength: UInt8 = 0x09
 private let gipRumbleDefaultDuration: UInt8 = 0xFF
 /// Motor levels are percentages ([MS-GIPUSB] Table 56).
 private let gipRumbleLevelMax: Double = 100
-/// The Xbox button's key code in a virtual key frame: `VK_LWIN` ([MS-GIPUSB] Table 2).
-private let gipXboxButtonKeyCode: UInt8 = 0x5B
 
 /// One GIP frame taken from the transfer buffer.
 private struct GIPFrame {
@@ -211,6 +209,9 @@ public final class GIPDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
+  /// Empties the buffer of a frame that a later transfer would complete.
+  public func discardPartialInput() { pendingInput.removeAll() }
+
   /// Takes the next complete frame out of the buffer; nil while the buffer holds less than one.
   /// - Throws: ``GIPError/malformedPacket(_:)`` when a header length field exceeds the largest
   ///   size.
@@ -284,8 +285,11 @@ public final class GIPDriver: PhysicalProtocolDriver {
       return decodeMainInput(payload: frame.payload, into: &next)
     case GIPCommand.virtualKey:
       hasReceivedInput = true
-      guard frame.payload.count >= 2, frame.payload[1] == gipXboxButtonKeyCode else { return false }
-      next.set(.guide, pressed: frame.payload[0] & gipGuideButtonMask != 0)
+      // [MS-GIPUSB] Table 2 names the key `VK_LWIN` (0x5B), but Linux xpad, which serves
+      // third-party pads such as PowerA's, reads only the first byte, so a pad that sends another
+      // key or none still presses Xbox (#53).
+      guard let down = frame.payload.first else { return false }
+      next.set(.guide, pressed: down & gipGuideButtonMask != 0)
       return true
     case GIPCommand.announce:
       resendStartupAfterAnnounce()
@@ -305,14 +309,14 @@ public final class GIPDriver: PhysicalProtocolDriver {
   /// A fragment that runs past its message's total length, or counts that do not fit the 16-bit
   /// fields, get no acknowledgement, as in SDL, which fails the transfer.
   private func sendAcknowledgement(for frame: GIPFrame, received: Int, remaining: Int) {
-    guard let received = UInt16(exactly: received), let remaining = UInt16(exactly: remaining)
+    guard let ackReceived = UInt16(exactly: received), let ackRemaining = UInt16(exactly: remaining)
     else { return }
     let packet = Self.acknowledgementPacket(
       command: frame.command,
       options: frame.options,
       sequence: frame.sequence,
-      received: received,
-      remaining: remaining
+      received: ackReceived,
+      remaining: ackRemaining
     )
     pendingWrites.append(usbWrite(packet))
   }

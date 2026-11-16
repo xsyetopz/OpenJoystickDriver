@@ -14,7 +14,7 @@ Keep Steam fully quit for the first pass. If you later repeat with Steam open, s
 
 OJD production discovery matches both normal GamePad top-level collections and exact HID VID/PID identities loaded from bundled records. This specifically covers Steam Controller collections that remain exposed as keyboard or mouse lizard-mode devices.
 
-## What To Send Back
+## What to send back
 
 Start with the easiest evidence: native macOS listings and raw packets help even if OJD cannot see the controller.
 
@@ -28,7 +28,7 @@ Include:
 - full output for commands that found no device or no packets
 - any terminal text caused by the controller, such as escape sequences
 
-## 1. macOS Native Checks
+## 1. macOS native checks
 
 Plug in the wired controller or receiver, then run these before any OJD command:
 
@@ -42,7 +42,7 @@ Paste the entries that mention Valve, Steam, gamepad, keyboard, mouse, or `28de`
 
 For wired testing, click in a plain Terminal window and press a few Steam Controller buttons or the d-pad. Paste any escape sequences the terminal prints, such as `^[[A`. This shows that the controller is alive and still in lizard keyboard mode, even if OJD cannot open it yet.
 
-## 2. OJD Device Listing
+## 2. OJD device listing
 
 From the repository root:
 
@@ -52,7 +52,7 @@ swift run OpenJoystickDriverHIDTool --list
 
 Paste every `VID:0x28de` line. If none appear, say so and paste nearby keyboard, mouse, or game controller lines present only while connected.
 
-## 3. Wired Controller Capture
+## 3. Wired controller capture
 
 Run the HID monitor for the expected wired PID:
 
@@ -85,7 +85,7 @@ If you get `REPORT` or `USB_REPORT` lines, collect one neutral packet and one pa
 
 One action per capture is enough. Return to neutral between captures.
 
-## 4. Wireless Receiver Capture
+## 4. Wireless receiver capture
 
 Plug in only the receiver. Keep the controller off at first.
 
@@ -111,7 +111,7 @@ Paste all `REPORT ... bytes=...` lines around connect and disconnect. Check thes
 
 Also say whether Controller Settings lists the controller only after connect, clears it after disconnect, and resumes after reconnect.
 
-## 5. Per-Interface Roles
+## 5. Per-interface roles
 
 OJD runs one controller per Steam interface whose HID report descriptor has a Feature item, as Linux `hid-steam.c` does; other interfaces are not controllers. Per `hid-steam.c`, the wired controller exposes mouse 0, keyboard 1 and gamepad 2, and the dongle exposes keyboard 0 and slots 1–4. None of this has been verified on macOS hardware yet.
 
@@ -141,7 +141,7 @@ Over Bluetooth LE the controller sends its state as 20-byte report `0x03` segmen
 5. Start OJD and check that Controller Settings Live shows the controller as Bluetooth LE and that buttons, sticks, triggers and trackpads move.
 6. Hold one button and move one stick. Check that the held button stays pressed while only the stick changes.
 
-## 7. Lizard Mode
+## 7. Lizard mode
 
 Linux turns off the Steam Controller's mouse/keyboard lizard mappings while the driver owns the controller, then restores them on close. OJD sends the same feature-report sequence; confirm its effect on macOS hardware.
 
@@ -152,7 +152,7 @@ Check these states:
 - After OJD quits or the controller disconnects: check that lizard behavior returns.
 - If repeating with Steam open: record conflicts with OJD or duplicate input.
 
-## Paste-Back Report Form
+## Paste-back report form
 
 ```text
 OJD version/commit:

@@ -137,6 +137,18 @@ final class BluetoothLECompositeHIDBackend: HIDAccessBackend {
     return .reacquired
   }
 
+  /// Closes the device handles at the primary backend; a hub link holds no IOHID handle.
+  func closeDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult {
+    guard hub.owns(address) else { return await primary.closeDeviceHandles(address: address) }
+    return .unavailable
+  }
+
+  /// Opens the device handles again at the primary backend; a hub link holds no IOHID handle.
+  func reopenDeviceHandles(address: ControllerConnectionAddress) async -> PhysicalHIDClaimResult {
+    guard hub.owns(address) else { return await primary.reopenDeviceHandles(address: address) }
+    return .unavailable
+  }
+
   /// Retries the input claim at the primary backend; a hub link needs none.
   func retryInputClaim(address: ControllerConnectionAddress) async {
     guard !hub.owns(address) else { return }
@@ -249,6 +261,18 @@ final class BluetoothLECompositeUSBTransportProvider: USBTransportProvider {
     return try await base.exclusiveOwner(of: device)
   }
 
+  /// The exclusive owner of interface `interfaceNumber` of `device` according to the base provider.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` without a base provider, or the error of the base
+  ///   provider.
+  func interfaceExclusiveOwner(
+    of device: USBTransportDevice,
+    interfaceNumber: UInt8
+  ) async throws -> String? {
+    guard let base else { throw USBTransportError.notSupported }
+    return try await base.interfaceExclusiveOwner(of: device, interfaceNumber: interfaceNumber)
+  }
+
   /// Waits until the base provider reports the interface released.
   ///
   /// - Throws: ``USBTransportError/notSupported`` without a base provider, or the error of the base
@@ -280,7 +304,7 @@ final class Switch2BluetoothLECommandSession: USBTransportSession {
   ///
   /// - Throws: ``USBTransportError/notSupported`` unless `endpoint` is an OUT endpoint, or the
   ///   error of the write.
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
+  func write(endpoint: UInt8, data: [UInt8], timeout _: UInt32) throws -> Int {
     guard USBEndpointDirection(endpointAddress: endpoint) == .out else {
       throw USBTransportError.notSupported
     }
@@ -306,7 +330,7 @@ final class Switch2BluetoothLECommandSession: USBTransportSession {
   /// Control transfers do not exist over GATT.
   ///
   /// - Throws: ``USBTransportError/notSupported``.
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 }

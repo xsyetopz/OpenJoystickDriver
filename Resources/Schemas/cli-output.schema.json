@@ -447,50 +447,117 @@
         }
       }
     },
+    "controllerCheck": {
+      "$ref": "controller-check.schema.json"
+    },
     "controllerCalibrate": {
-      "type": "object",
-      "required": [
-        "apiVersion",
-        "kind",
-        "calibrated",
-        "collecting",
-        "controller",
-        "offsetDegreesPerSecond"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "apiVersion": {
-          "$ref": "#/$defs/sharedAPIVersion"
-        },
-        "kind": {
-          "const": "Calibration"
-        },
-        "calibrated": {
-          "type": "boolean"
-        },
-        "collecting": {
-          "type": "boolean"
-        },
-        "controller": {
-          "type": "string"
-        },
-        "offsetDegreesPerSecond": {
+      "description": "The motion calibration of a controller, or with kind Recalibration what a sticks step stored or a reset cleared.",
+      "oneOf": [
+        {
           "type": "object",
-          "required": ["x", "y", "z"],
+          "required": [
+            "apiVersion",
+            "kind",
+            "calibrated",
+            "collecting",
+            "controller",
+            "offsetDegreesPerSecond"
+          ],
           "additionalProperties": false,
           "properties": {
-            "x": {
-              "type": "number"
+            "apiVersion": {
+              "$ref": "#/$defs/sharedAPIVersion"
             },
-            "y": {
-              "type": "number"
+            "kind": {
+              "const": "Calibration"
             },
-            "z": {
-              "type": "number"
+            "calibrated": {
+              "type": "boolean"
+            },
+            "collecting": {
+              "type": "boolean"
+            },
+            "controller": {
+              "type": "string"
+            },
+            "offsetDegreesPerSecond": {
+              "type": "object",
+              "required": ["x", "y", "z"],
+              "additionalProperties": false,
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "apiVersion",
+            "kind",
+            "action",
+            "cleared",
+            "controller",
+            "gyroOffsetCleared",
+            "stored",
+            "unmoved"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "apiVersion": {
+              "$ref": "#/$defs/sharedAPIVersion"
+            },
+            "kind": {
+              "const": "Recalibration"
+            },
+            "action": {
+              "description": "The step that ran: Rest, Circle, Triggers, or Gyro; Reset for a reset.",
+              "enum": ["Rest", "Circle", "Triggers", "Gyro", "Reset"]
+            },
+            "cleared": {
+              "description": "The tuning keys a reset removed from the user record.",
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/sharedTuningKey"
+              }
+            },
+            "controller": {
+              "type": "string"
+            },
+            "gyroOffsetCleared": {
+              "description": "Whether a reset cleared the gyro offset; false for a controller with no active gyro profile.",
+              "type": "boolean"
+            },
+            "stored": {
+              "description": "The values a step stored, by tuning key.",
+              "type": "object",
+              "propertyNames": {
+                "$ref": "#/$defs/sharedTuningKey"
+              },
+              "additionalProperties": {
+                "type": "number"
+              }
+            },
+            "unmoved": {
+              "description": "The controls that did not move enough to measure; their stored values stay.",
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "vocabulary.schema.json#/$defs/control"
+              }
             }
           }
         }
-      }
+      ]
     },
     "controllerCapture": {
       "type": "object",
@@ -606,6 +673,8 @@
               "alsoListedBySystem",
               "connection",
               "hasSerialNumber",
+              "holders",
+              "holdsExclusively",
               "id",
               "name",
               "ownedByAnotherClient",
@@ -625,6 +694,17 @@
                 "type": "string"
               },
               "hasSerialNumber": {
+                "type": "boolean"
+              },
+              "holders": {
+                "description": "Every process that holds the controller's HID device or USB interfaces open, in process ID order.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/sharedExclusiveOwner"
+                }
+              },
+              "holdsExclusively": {
+                "description": "Whether OJD holds the controller exclusively, so another app can open it only after it is suspended.",
                 "type": "boolean"
               },
               "id": {
@@ -671,6 +751,31 @@
               }
             }
           }
+        }
+      }
+    },
+    "controllerLookup": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "identity", "hasRecord", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ControllerLookup"
+        },
+        "identity": {
+          "description": "The controller model as VVVV:PPPP.",
+          "type": "string"
+        },
+        "hasRecord": {
+          "description": "Whether a controller record exists for the model.",
+          "type": "boolean"
+        },
+        "url": {
+          "description": "The supported-controllers page for a model with a record, else a GitHub search for its VID:PID.",
+          "type": "string"
         }
       }
     },
@@ -926,6 +1031,8 @@
             "discoverySource",
             "duplicateExposureRisk",
             "hidInput",
+            "holders",
+            "holdsExclusively",
             "physical"
           ],
           "additionalProperties": false,
@@ -958,6 +1065,12 @@
                 "OwnedByAnotherClient",
                 "AcquisitionFailed"
               ]
+            },
+            "holders": {
+              "$ref": "#/$defs/controllerList/properties/items/items/properties/holders"
+            },
+            "holdsExclusively": {
+              "$ref": "#/$defs/controllerList/properties/items/items/properties/holdsExclusively"
             },
             "owner": {
               "$ref": "#/$defs/sharedExclusiveOwner"
@@ -1979,6 +2092,15 @@
         }
       }
     },
+    "profileConvert": {
+      "required": ["apiVersion", "kind", "leftOut"],
+      "properties": {
+        "kind": {
+          "const": "Profile"
+        }
+      },
+      "$ref": "#/$defs/sharedProfileResult"
+    },
     "profileDuplicate": {
       "required": ["apiVersion", "kind"],
       "properties": {
@@ -2257,7 +2379,7 @@
                 "type": "string"
               },
               "source": {
-                "enum": ["BuiltIn", "User", "Package"]
+                "enum": ["BuiltIn", "Bundled", "User", "Package"]
               }
             }
           }
@@ -3262,7 +3384,7 @@
       }
     },
     "sharedExclusiveOwner": {
-      "description": "The client that holds the controller's USB interface exclusively.",
+      "description": "A client that holds the controller open: the exclusive holder of its USB interface, or a process with a user client.",
       "type": "object",
       "required": ["name"],
       "additionalProperties": false,
@@ -3419,7 +3541,20 @@
         "irWriteIntervalMs",
         "speakerMaxSeconds",
         "replyTimeoutMs",
-        "frameQueueCapacity"
+        "frameQueueCapacity",
+        "leftStickCenterX",
+        "leftStickCenterY",
+        "rightStickCenterX",
+        "rightStickCenterY",
+        "leftStickRange",
+        "rightStickRange",
+        "leftTriggerRest",
+        "leftTriggerFull",
+        "rightTriggerRest",
+        "rightTriggerFull",
+        "gyroOffsetX",
+        "gyroOffsetY",
+        "gyroOffsetZ"
       ]
     },
     "sharedServer": {
@@ -3434,6 +3569,8 @@
         "apiVersion",
         "connection",
         "hasSerialNumber",
+        "holders",
+        "holdsExclusively",
         "id",
         "kind",
         "name",
@@ -3460,6 +3597,12 @@
         },
         "owner": {
           "$ref": "#/$defs/sharedExclusiveOwner"
+        },
+        "holders": {
+          "$ref": "#/$defs/controllerList/properties/items/items/properties/holders"
+        },
+        "holdsExclusively": {
+          "$ref": "#/$defs/controllerList/properties/items/items/properties/holdsExclusively"
         },
         "connection": {
           "$ref": "#/$defs/controllerList/properties/items/items/properties/connection"
@@ -3721,6 +3864,44 @@
         },
         "profile": {
           "$ref": "#/$defs/sharedProfileSummary"
+        },
+        "leftOut": {
+          "description": "The parts of the profile that the target controller cannot take, each with the sources it lacks.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["section", "sources"],
+            "additionalProperties": false,
+            "properties": {
+              "section": {
+                "enum": [
+                  "Binding",
+                  "Chord",
+                  "Sequence",
+                  "Layer",
+                  "StickMapping",
+                  "TriggerMapping",
+                  "TouchMapping",
+                  "GyroOutput",
+                  "PointerSpeed",
+                  "JoyConPair"
+                ]
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "skippedControls": {
+          "description": "The controls of the template that the controller lacks, so the template left them unbound.",
+          "type": "array",
+          "items": {
+            "$ref": "vocabulary.schema.json#/$defs/control"
+          }
         }
       }
     },
@@ -3819,10 +4000,17 @@
           "type": "string"
         },
         "key": {
-          "$ref": "#/$defs/sharedSettingKey"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sharedSettingKey"
+            },
+            {
+              "enum": ["pauseShortcut", "interfaceLevel", "idleDisconnectMinutes"]
+            }
+          ]
         },
         "value": {
-          "type": "boolean"
+          "type": ["boolean", "string"]
         }
       }
     },

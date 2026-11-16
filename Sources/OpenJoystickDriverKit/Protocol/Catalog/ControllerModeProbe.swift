@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A read-only behavioral probe: one read of a feature report whose answer, stall, or byte pattern
 /// tells a mode apart.

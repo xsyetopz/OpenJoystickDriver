@@ -57,7 +57,7 @@ struct PS3ThirdPartyDriverTests {
   }
 
   @Test
-  func probeAcceptsTheMarkerAtSDLByteTwo() {
+  func probeAcceptsMarkerAtSDLByteTwo() {
     let withID = probedDriver()
     #expect(
       withID.consumeFeatureReply(Data([0x03, 0, 0x26, 0, 0, 0, 0, 0]), request: probeWithReportID)
@@ -93,7 +93,7 @@ struct PS3ThirdPartyDriverTests {
   }
 
   @Test
-  func descriptorMappingRunsUntilTheProbeAccepts() throws {
+  func descriptorMappingRunsUntilProbeAccepts() throws {
     let driver = probedDriver()
     let leftX = HIDElementValue(
       usagePage: 0x01,
@@ -119,7 +119,7 @@ struct PS3ThirdPartyDriverTests {
   }
 
   @Test
-  func probeResultSurvivesAProtocolReset() {
+  func probeResultSurvivesProtocolReset() {
     let driver = acceptedDriver()
     driver.resetProtocolState()
     #expect(driver.decodesRawReports)
@@ -180,7 +180,7 @@ struct PS3ThirdPartyDriverTests {
   }
 
   @Test
-  func mapsTheHatNibble() throws {
+  func mapsHatNibble() throws {
     let directions: [HatDirection] = [
       .north, .northEast, .east, .southEast, .south, .southWest, .west, .northWest,
     ]
@@ -209,7 +209,7 @@ struct PS3ThirdPartyDriverTests {
   }
 
   @Test
-  func hatNibbleOfZeroIsIgnoredUntilTheHatMoves() throws {
+  func hatNibbleOfZeroIsIgnoredUntilHatMoves() throws {
     let driver = acceptedDriver()
     // SDL only decodes the hat when it changes from zero, so a constant 0 never reads as north.
     #expect(try driver.parseReport(ThirdPartyReport.standard([2: 0x00]))?.state == .neutral)
@@ -248,7 +248,7 @@ struct PS3ThirdPartyDriverTests {
   }
 
   @Test
-  func axisBytesSpanTheFullRange() {
+  func axisBytesSpanFullRange() {
     #expect(PS3ThirdPartyDriver.axis(0x00) == -1)
     #expect(PS3ThirdPartyDriver.axis(0x80) == 0)
     #expect(PS3ThirdPartyDriver.axis(0xFF) == 1)
@@ -289,7 +289,7 @@ struct PS3ThirdPartyDriverTests {
 
   /// The Cyborg V.3 record sets `dpad-pressure`, so its hat comes only from pressure bytes 7–10.
   @Test
-  func cyborgV3ReadsTheHatFromAnyDpadPressure() throws {
+  func cyborgV3ReadsHatFromAnyDpadPressure() throws {
     let driver = PS3ThirdPartyDriver(
       model: ControllerModelID(vendorID: 0x06A3, productID: 0xF622),
       hatFromPressureOnly: true

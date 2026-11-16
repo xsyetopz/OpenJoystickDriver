@@ -19,6 +19,73 @@
 		</dict>
 		<dict>
 			<key>id</key>
+			<string>nitho</string>
+			<key>input</key>
+			<dict>
+				<key>layouts</key>
+				<array>
+					<dict>
+						<key>buttons</key>
+						<array>
+							<dict>
+								<key>bitOffset</key>
+								<integer>29</integer>
+								<key>bitSize</key>
+								<integer>1</integer>
+								<key>control</key>
+								<string>South</string>
+							</dict>
+							<dict>
+								<key>bitOffset</key>
+								<integer>30</integer>
+								<key>bitSize</key>
+								<integer>1</integer>
+								<key>control</key>
+								<string>East</string>
+							</dict>
+							<dict>
+								<key>bitOffset</key>
+								<integer>28</integer>
+								<key>bitSize</key>
+								<integer>1</integer>
+								<key>control</key>
+								<string>West</string>
+							</dict>
+							<dict>
+								<key>bitOffset</key>
+								<integer>31</integer>
+								<key>bitSize</key>
+								<integer>1</integer>
+								<key>control</key>
+								<string>North</string>
+							</dict>
+						</array>
+						<key>report</key>
+						<dict>
+							<key>id</key>
+							<integer>1</integer>
+							<key>length</key>
+							<dict>
+								<key>atLeast</key>
+								<integer>49</integer>
+							</dict>
+						</dict>
+					</dict>
+				</array>
+			</dict>
+			<key>match</key>
+			<dict>
+				<key>manufacturer</key>
+				<string>Sony Computer Entertainment</string>
+			</dict>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>SonySixaxis</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>id</key>
 			<string>bluetooth</string>
 			<key>match</key>
 			<dict>

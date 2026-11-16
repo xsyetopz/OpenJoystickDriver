@@ -45,7 +45,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func transportReadConfigurationDescriptorSuppliesTheEndpoints() throws {
+  func transportReadConfigurationDescriptorSuppliesEndpoints() throws {
     let descriptor: [UInt8] = [
       9, 2, 32, 0, 1, 1, 0, 0x80, 0x32, 9, 4, 0, 0, 2, 0xFF, 0x47, 0xD0, 0, 7, 5, 0x81, 3, 64, 0, 4,
       7, 5, 0x01, 3, 64, 0, 4,
@@ -65,7 +65,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func threeInterfaceGIPLayoutResolvesTheInterruptPairOnInterfaceZero() throws {
+  func threeInterfaceGIPLayoutResolvesInterruptPairOnInterfaceZero() throws {
     // Reconstructed from the Wolverine V2 libusb layout in GitHub issue #19 (interface 0
     // interrupt 0x01/0x81, interface 1 isochronous alt 1, interface 2 bulk alt 1); no raw bytes
     // of a real GIP configuration descriptor are archived.
@@ -91,7 +91,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test(arguments: [UInt8(1), UInt8(0)])
-  func razer0A3FLayoutResolvesItsInterfaceZeroPairEvenWithAMalformedAlternate(
+  func razer0A3FLayoutResolvesItsInterfaceZeroPairEvenWithMalformedAlternate(
     isochronousInterval: UInt8
   ) throws {
     // openrazer#2364 lsusb of 1532:0A3F: interface 0 FF/47/D0 with interrupt OUT 0x05 and IN 0x84
@@ -119,7 +119,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func structuralWalkReportsNoEndpointsForAMalformedClaimedInterface() {
+  func structuralWalkReportsNoEndpointsForMalformedClaimedInterface() {
     // A reserved address bit on interface 0 keeps its triple but drops its endpoints.
     let descriptor: [UInt8] = [
       9, 2, 32, 0, 1, 1, 0, 0xA0, 0xFA, 9, 4, 0, 0, 2, 0xFF, 0x47, 0xD0, 0, 7, 5, 0x71, 3, 64, 0, 4,

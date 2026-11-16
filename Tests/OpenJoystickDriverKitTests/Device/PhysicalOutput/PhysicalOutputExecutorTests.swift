@@ -210,7 +210,7 @@ struct PhysicalOutputExecutorTests {
   }
 
   /// System sleep tears down every controller; everything queued, here a pending command and a
-  /// probe operation, is cancelled before the teardown neutralization.
+  /// probe operation, is canceled before the teardown neutralization.
   @Test
   func sleepCancelsPendingUserOutput() async throws {
     let started = try await startSixaxis(locationID: 523)

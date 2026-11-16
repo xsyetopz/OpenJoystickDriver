@@ -1,0 +1,20 @@
+# 2026-11-13, maintainer's pad, firmware as shipped. Each step: what the maintainer did, then the `ojd controller list` row printed after it.
+# Mode combos from the 8BitDo manual (Ultimate-2C-Wireless-Controller-EN.pdf): X + Home at power-on is XInput, B + Home is DInput.
+# Home does not turn the pad off while the cable is plugged in (maintainer), so each cable step unplugs, holds the combo, then plugs the cable in.
+
+1. Receiver, B + Home (DInput):
+U-dw87w0PU3KyqIYOI  2DC8:301C  USB  8BitDo Ultimate 2C Wireless Controller
+
+2. Cable, X + Home (XInput); capture in 310a-rear-unassigned-45s.txt:
+U-q3fmdh70BEcEOAPm  2DC8:310A  USB  8BitDo Ultimate 2C Wireless Controller
+
+3. Cable, unplug, B + Home (DInput), plug in:
+U-q3fmdh70BEcEOAPm  2DC8:310A  USB  8BitDo Ultimate 2C Wireless Controller
+
+4. Receiver, DInput confirmed as step 1, then the pad moved from the receiver to the cable:
+U-q3fmdh70BEcEOAPm  2DC8:310A  USB  8BitDo Ultimate 2C Wireless Controller
+
+5. Cable out, mode switch to BT, Home:
+U-BEAkr199Ua8jvgZG  2DC8:301B  Bluetooth Low Energy  8BitDo Ultimate 2C Wireless
+
+No step enumerated 2DC8:301D or 2DC8:3109. The maintainer owns no 8BitDo adapter other than the pad's own 2.4 GHz receiver.

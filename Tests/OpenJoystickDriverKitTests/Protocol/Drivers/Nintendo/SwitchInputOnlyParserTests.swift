@@ -55,7 +55,7 @@ struct SwitchInputOnlyParserTests {
   }
 
   @Test
-  func decodesTheHatClockwiseFromUpAndTreatsOtherValuesAsNeutral() throws {
+  func decodesHatClockwiseFromUpAndTreatsOtherValuesAsNeutral() throws {
     let directions: [HatDirection] = [
       .north, .northEast, .east, .southEast, .south, .southWest, .west, .northWest,
     ]

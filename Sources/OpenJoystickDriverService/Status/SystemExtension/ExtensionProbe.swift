@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 import OpenJoystickDriverUSB
 
 /// Reads the state of the transport extension from the app bundle and from `systemextensionsctl`.

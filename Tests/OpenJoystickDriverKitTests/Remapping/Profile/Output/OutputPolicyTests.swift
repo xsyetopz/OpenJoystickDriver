@@ -258,7 +258,7 @@ struct RemappingOutputPolicyTests {
   }
 
   @Test
-  func restoringAndClearingInputPreserveOnlyTheRequiredProfileState() {
+  func restoringAndClearingInputPreserveOnlyRequiredProfileState() {
     let profile = RemappingProfile(
       id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
       name: "Configured",

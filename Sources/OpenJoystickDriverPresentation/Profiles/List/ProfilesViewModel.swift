@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import Foundation
   import OpenJoystickDriverKit
@@ -34,6 +35,26 @@
     }
   }
 
+  /// The control that started a profile request that failed.
+  enum ProfileActionOrigin: Equatable {
+    /// A toolbar or menu command, which has no room for text.
+    case command
+    /// The Delete or Reset Library button of a damaged entry.
+    case recovery
+    /// The Migrate button of a damaged entry.
+    case migration
+    /// The Pair or Unpair Joy-Cons buttons of a profile.
+    case joyCon
+  }
+
+  /// A failed profile request and the control that started it.
+  struct ProfileActionFailure: Equatable {
+    /// Why the request failed.
+    let message: String
+    /// The control that started it.
+    let origin: ProfileActionOrigin
+  }
+
   /// The state of the Profiles screen: the selection, the sheets and alerts, and the editor.
   @MainActor
   final class ProfilesViewModel: ObservableObject {
@@ -56,15 +77,52 @@
     /// The alert that is open, or nil.
     @Published
     var activeAlert: ProfilesAlert?
-    /// The message of the latest failed profile action, or nil.
+    /// The latest failed profile action with the control that started it, or nil.
     @Published
-    var profileActionError: String?
+    var profileActionFailure: ProfileActionFailure?
+    /// The message of the latest failed profile action, or nil.
+    ///
+    /// A message set here comes from a toolbar or menu command; ``failProfileAction(_:beside:)``
+    /// names a control in the detail column instead.
+    var profileActionError: String? {
+      get { profileActionFailure?.message }
+      set {
+        profileActionFailure = newValue.map { ProfileActionFailure(message: $0, origin: .command) }
+      }
+    }
+    /// Records the failure of a request that a control of the detail column started, or clears the
+    /// failure when `message` is nil.
+    ///
+    /// - Parameters:
+    ///   - message: Why the request failed, or nil when it succeeded.
+    ///   - origin: The control that started the request.
+    func failProfileAction(_ message: String?, beside origin: ProfileActionOrigin) {
+      profileActionFailure = message.map { ProfileActionFailure(message: $0, origin: origin) }
+    }
+
+    /// The failure that belongs beside the control `origin`, or nil.
+    ///
+    /// - Parameter origin: The control to ask about.
+    /// - Returns: The message of the failure that `origin` started, or nil.
+    func profileActionError(beside origin: ProfileActionOrigin) -> String? {
+      profileActionFailure?.origin == origin ? profileActionFailure?.message : nil
+    }
+
+    /// The failure of a toolbar or menu command, which the strip above the detail shows.
+    var commandActionError: String? { profileActionError(beside: .command) }
+
     /// The profile whose Joy-Con pair sheet is open, or nil.
     @Published
     var pairingProfile: RemappingProfile?
     /// The profile whose copy the Duplicate sheet is naming.
     @Published
     var duplicatingProfile: RemappingProfile?
+    /// The profile whose conversion the Convert sheet is setting up.
+    @Published
+    var convertingProfile: RemappingProfile?
+    /// What the last conversion left out, shown until dismissed.
+    @Published
+    var conversionReport: ProfileConversionReport?
     /// The result of the last Validate Profile File check, shown until dismissed.
     @Published
     var fileValidation: ProfileFileValidation?
@@ -72,6 +130,9 @@
     /// through the editor's discard and mutation checks.
     @Published
     var chosenImportProfile: RemappingProfile?
+    /// The order of the profile list.
+    @Published
+    var listSort = ProfileListSort.name
     /// The section of the profile editor that is shown.
     @Published
     var selectedEditorSection = ProfilePresentationPolicy.defaultSection
@@ -157,6 +218,10 @@
     /// profiles.
     @Published
     private(set) var catalogModels: [ControllerModelID: PhysicalProtocolID] = [:]
+    /// The USB product string of each catalog model whose record names one, read with
+    /// ``catalogModels``.
+    @Published
+    private(set) var catalogNames: [ControllerModelID: String] = [:]
     /// Whether the catalog read of the profile creation sheet is still running.
     @Published
     private(set) var isLoadingCatalog = false
@@ -166,16 +231,32 @@
 
     /// Opens the profile creation sheet and reads the catalog off the main actor.
     func beginCreatingProfile() {
+      isCreatingProfile = true
+      loadCatalog()
+    }
+
+    /// Opens the Convert sheet for `profile` and reads the catalog off the main actor.
+    func beginConverting(_ profile: RemappingProfile) {
+      convertingProfile = profile
+      loadCatalog()
+    }
+
+    /// Reads the catalog models that the creation and Convert sheets offer.
+    private func loadCatalog() {
       catalogModels = [:]
+      catalogNames = [:]
       unreadableRecordFiles = 0
       isLoadingCatalog = true
-      isCreatingProfile = true
       Task { @MainActor in
-        let (families, unreadable) = await Task.detached {
+        let (families, names, unreadable) = await Task.detached {
           let set = ControllerRecordSet.load(userDirectory: ControllerRecordSet.userDirectory)
-          return (set.records.mapValues(\.protocolID), set.problems.count)
+          return (
+            set.records.mapValues(\.protocolID), set.records.compactMapValues(\.name),
+            set.problems.count
+          )
         }.value
         catalogModels = families
+        catalogNames = names
         unreadableRecordFiles = unreadable
         isLoadingCatalog = false
       }

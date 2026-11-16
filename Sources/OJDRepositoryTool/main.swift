@@ -60,7 +60,7 @@ private let usage = """
 /// - Throws: ``UsageError`` when `path` is not a directory.
 private func directory(_ path: String) throws -> URL {
   var isDirectory: ObjCBool = false
-  guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
+  guard unsafe FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
     isDirectory.boolValue
   else { throw UsageError(message: "\(path) is not a directory") }
   return URL(fileURLWithPath: path, isDirectory: true)
@@ -74,7 +74,7 @@ private func files(_ paths: [String]) throws -> [URL] {
   guard !paths.isEmpty else { throw UsageError(message: "no path given") }
   return try paths.flatMap { path -> [URL] in
     var isDirectory: ObjCBool = false
-    guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) else {
+    guard unsafe FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) else {
       throw UsageError(message: "\(path) does not exist")
     }
     guard isDirectory.boolValue else { return [URL(fileURLWithPath: path)] }

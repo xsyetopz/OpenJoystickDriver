@@ -55,7 +55,6 @@ extension RuntimeProfileDraftTests {
 
   @Test
 
-
   func profileDraftPreservesCompatibleDestinationWhenChangingSource() throws {
     let binding = RemappingBinding(
       source: .button(.south),
@@ -221,7 +220,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func identifierInputAcceptsTheSameDecimalAndHexFormsAsTheCLI() {
+  func identifierInputAcceptsSameDecimalAndHexFormsAsCLI() {
     #expect(ProfileIdentifierInput.parse("4660") == 0x1234)
     #expect(ProfileIdentifierInput.parse(" 0x1234 ") == 0x1234)
     #expect(ProfileIdentifierInput.parse("0XFFFF") == UInt16.max)
@@ -257,7 +256,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func removingAllBindingsKeepsTheOtherInputSettings() throws {
+  func removingAllBindingsKeepsOtherInputSettings() throws {
     var draft = RuntimeProfileDraft(profile: makeProfile())
     draft = try draft.addingChord(
       sources: [.button(.east), .button(.west)],
@@ -359,7 +358,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func inFlightSameProfileImportBlocksEditingAndPreservesAConcurrentDraft() {
+  func inFlightSameProfileImportBlocksEditingAndPreservesConcurrentDraft() {
     let profile = makeProfile()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
     var state = ProfileEditorTransitionState()
@@ -375,7 +374,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func activeImportBlocksSelectionWithoutQueueingAReplacementAction() {
+  func activeImportBlocksSelectionWithoutQueueingReplacementAction() {
     let profile = makeProfile()
     let otherProfileID = UUID()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
@@ -388,7 +387,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func failedImportReleasesTheEditingBlock() {
+  func failedImportReleasesEditingBlock() {
     let profile = makeProfile()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
     var state = ProfileEditorTransitionState()

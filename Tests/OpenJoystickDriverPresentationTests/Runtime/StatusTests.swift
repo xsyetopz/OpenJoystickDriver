@@ -9,7 +9,7 @@ import Testing
 @Suite(.serialized)
 struct StatusTests {
   @Test
-  func translatesStatus() async throws {
+  func translatesStatus() async {
     let device = testPad(sessionToken: "device-7")
     let gateway = GatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
@@ -72,7 +72,7 @@ struct StatusTests {
   }
 
   @Test
-  func liveStatusRefreshPublishesControllerDisconnectionWithoutLoadingTheUI() async {
+  func liveStatusRefreshPublishesControllerDisconnectionWithoutLoadingUI() async {
     let device = testPad(sessionToken: "device-live")
     let connected = ApplicationServiceStatusPayload(
       inputRead: .granted,
@@ -152,7 +152,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func controllerInventoryRefreshQueuesASequentialTrailingRequest() async {
+  func controllerInventoryRefreshQueuesSequentialTrailingRequest() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -173,7 +173,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func inventoryRefreshQueuedDuringLiveRefreshRunsAtTheTrailingEdge() async {
+  func inventoryRefreshQueuedDuringLiveRefreshRunsAtTrailingEdge() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -222,7 +222,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func controllersAndMenuBarUseTheSameScopedRefreshCoordinator() async {
+  func controllersAndMenuBarUseSameScopedRefreshCoordinator() async {
     let gateway = GatewayStub()
     await gateway.setStatusReadsAreGated(true)
     let runtime = RuntimeViewModel(gateway: gateway)
@@ -259,7 +259,7 @@ struct StatusTests {
 
   @Test
   @MainActor
-  func livePollingDoesNotCancelTheFullProfilesRefresh() async {
+  func livePollingDoesNotCancelFullProfilesRefresh() async {
     let gateway = GatewayStub(statusReadDelayNanoseconds: 100_000_000)
     let viewModel = RuntimeViewModel(gateway: gateway)
     let fullRefresh = Task { await viewModel.refresh() }
@@ -343,7 +343,7 @@ struct StatusTests {
   }
 
   @Test
-  func controllersPageListsAnUnservedDeviceWithTheSentenceOfItsReason() {
+  func controllersPageListsUnservedDeviceWithSentenceOfItsReason() {
     func unbound(_ reason: ProtocolBindingReason) -> ApplicationServiceUnboundDevice {
       ApplicationServiceUnboundDevice(
         vendorID: 0x3537,
@@ -394,7 +394,38 @@ struct StatusTests {
   }
 
   @Test
-  func controllersPageTitlesAnUnservedDeviceWithItsNameNotItsIDs() {
+  func deviceCountLabelCountsUnservedDevices() {
+    let unserved = ApplicationServiceUnboundDevice(
+      vendorID: 0x2DC8,
+      productID: 0x310A,
+      connection: "USB",
+      accessBackend: .rawUSB,
+      reason: .deviceInUse,
+      rejectedCandidates: [],
+      interfaces: []
+    )
+    func presentation(served: [ApplicationServiceDeviceDescription]) -> RuntimeStatusPresentation {
+      RuntimeStatusPresentation(
+        payload: ApplicationServiceStatusPayload(
+          inputRead: .granted,
+          inputInject: .granted,
+          connectedDevices: served,
+          unboundDevices: [unserved],
+          userSpaceVirtualDeviceEnabled: true,
+          userSpaceVirtualDeviceStatus: .backend("ready")
+        )
+      )
+    }
+
+    #expect(presentation(served: []).deviceCountLabel == RuntimePresentation.deviceCountLabel(1))
+    #expect(
+      presentation(served: [testPad(sessionToken: "device-served")]).deviceCountLabel
+        == RuntimePresentation.deviceCountLabel(2)
+    )
+  }
+
+  @Test
+  func controllersPageTitlesUnservedDeviceWithItsNameNotItsIDs() {
     func title(_ name: String?, _ reason: ProtocolBindingReason) -> String {
       RuntimeUnservedDevice(
         ApplicationServiceUnboundDevice(
@@ -417,7 +448,9 @@ struct StatusTests {
     #expect(
       title("IDLE", .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver")
     )
-    #expect(title(nil, .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver"))
+    #expect(
+      title(nil, .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver")
+    )
     #expect(title(nil, .deviceInUse) == "2dc8:310a")
   }
 

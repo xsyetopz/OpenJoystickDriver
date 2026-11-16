@@ -15,7 +15,8 @@ struct ProfileSchemaTests {
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
       "device": {"vendorID": 1356, "productID": 3302, "unit": "U-AbCd_123-xyzW09q"},
-      "applicationScope": {"type": "Application", "appIDs": ["com.example.game", "com.example.other"]},
+      "applicationScope": {"type": "Application",
+        "appIDs": ["com.example.game", "com.example.other"]},
       "outputPolicy": {"virtualGamepad": "Mapped", "physicalInput": "Exclusive"},
       "physicalColor": {"red": 255, "green": 32, "blue": 0},
       "motionTuning": {
@@ -48,6 +49,7 @@ struct ProfileSchemaTests {
       "bindings": [
         {
           "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D61",
+          "remark": "Jump when pressed",
           "source": {"type": "Button", "button": "South"},
           "destination": {"type": "Keyboard", "key": "Space", "modifiers": ["Shift", "Meta"]},
           "longHold": {
@@ -214,7 +216,7 @@ struct ProfileSchemaTests {
     """#
 
   @Test
-  func aRichProfileIsAcceptedByTheDecoderAndTheSchema() throws {
+  func richProfileIsAcceptedByDecoderAndSchema() throws {
     let profile = try RemappingProfileFileStore.load(
       from: PropertyListFixture.data(json: Self.richDocument)
     )
@@ -266,7 +268,10 @@ struct ProfileSchemaTests {
       "profile name over 80 characters", #""name": "Everything""#,
       "\"name\": \"" + String(repeating: "a", count: 81) + "\""
     ),
-    ("profile name with a control character", #""name": "Everything""#, #""name": "Every\u007fthing""#),
+    (
+      "profile name with a control character", #""name": "Everything""#,
+      #""name": "Every\u007fthing""#
+    ),
     ("profile name with a space at the end", #""name": "Everything""#, #""name": "Everything ""#),
     (
       "layer name over 40 characters", #""name": "Menus""#,
@@ -283,13 +288,38 @@ struct ProfileSchemaTests {
       #""kind": "Off", "startPosition": 0, "strength": 0.7"#
     ),
   ])
-  func aBrokenProfileIsRejectedByTheDecoderAndTheSchema(
+  func brokenProfileIsRejectedByDecoderAndSchema(
     problem: String,
     original: String,
     replacement: String
   ) throws {
-    #expect(Self.richDocument.contains(original), "\(problem)")
-    let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
+    try Self.expectRejection(problem, original, replacement)
+  }
+
+  @Test(arguments: [
+    ("empty binding remark", #""remark": """#),
+    (
+      "binding remark over 200 characters",
+      "\"remark\": \"" + String(repeating: "a", count: 201) + "\""
+    ),
+    ("binding remark with a control character", #""remark": "Jump\u007f""#),
+    ("binding remark with a space at the end", #""remark": "Jump ""#),
+    ("binding remark that is not text", #""remark": 5"#),
+  ])
+  func brokenBindingRemarkRejectedByDecoderAndSchema(
+    problem: String,
+    replacement: String
+  ) throws {
+    try Self.expectRejection(problem, #""remark": "Jump when pressed""#, replacement)
+  }
+
+  private static func expectRejection(
+    _ problem: String,
+    _ original: String,
+    _ replacement: String
+  ) throws {
+    #expect(richDocument.contains(original), "\(problem)")
+    let broken = richDocument.replacingOccurrences(of: original, with: replacement)
     do {
       _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
       Issue.record("\(problem): the profile loads")
@@ -314,9 +344,12 @@ struct ProfileSchemaTests {
     ),
     ("soft threshold above full", #""softThreshold": 0.2"#, #""softThreshold": 0.95"#),
     ("grid column outside the grid", #""column": 1, "row": 0"#, #""column": 2, "row": 0"#),
-    ("pulse duration without the Pulse behavior", #""multiTap": [{"#, #""pulseDurationMs": 200, "multiTap": [{"#),
+    (
+      "pulse duration without the Pulse behavior", #""multiTap": [{"#,
+      #""pulseDurationMs": 200, "multiTap": [{"#
+    ),
   ])
-  func aRuleAcrossFieldsIsRefusedByTheDecoderOnly(
+  func ruleAcrossFieldsRefusedByDecoderOnly(
     problem: String,
     original: String,
     replacement: String
@@ -333,7 +366,7 @@ struct ProfileSchemaTests {
   }
 
   @Test
-  func schemaEnumsMatchTheSwiftCases() throws {
+  func schemaEnumsMatchSwiftCases() throws {
     let pairs: [(String, [String])] = [
       ("button", Self.raw(Control.self)),
       ("axis", Self.raw(RemappingAxis.self)),
@@ -384,7 +417,7 @@ struct ProfileSchemaTests {
   }
 
   @Test
-  func vocabularyAndKeyboardEnumsMatchTheSwiftCases() throws {
+  func vocabularyAndKeyboardEnumsMatchSwiftCases() throws {
     let vocabulary = try #require(
       try JSONSchemaFiles.document(named: "vocabulary.schema.json")["$defs"] as? [String: Any]
     )

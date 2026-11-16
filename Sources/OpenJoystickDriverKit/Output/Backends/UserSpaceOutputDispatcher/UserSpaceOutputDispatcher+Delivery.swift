@@ -15,7 +15,7 @@ extension UserSpaceOutputDispatcher {
     input: ControllerState?,
     from identifier: LogicalControllerID,
     remappedState: RemappingGamepadState?,
-    onPublished: @escaping @Sendable () -> Void = {}
+    onPublished: @Sendable () -> Void = {}
   ) async throws {
     let neutralizing = remappedState == .neutral
     let remapped = remappedState != nil
@@ -36,7 +36,7 @@ extension UserSpaceOutputDispatcher {
       throw error
     }
     guard lifecycle.isOpen else { throw CancellationError() }
-    if outputSuppressed && !neutralizing { return }
+    if outputSuppressed, !neutralizing { return }
     let stickTransfer =
       remappedState == nil
       ? VirtualGamepadReportMapping.stickTransfer(for: identifier)
@@ -94,7 +94,7 @@ extension UserSpaceOutputDispatcher {
   ///   `CreationError.createFailed` when the retry policy still waits, or the error of creating the
   ///   device.
   internal func entry(for identifier: LogicalControllerID) async throws -> Entry {
-    let result: (task: Task<Entry, Error>, generation: UInt64) = try registryLock.withLock {
+    let result: (task: Task<Entry, any Error>, generation: UInt64) = try registryLock.withLock {
       guard lifecycle.isOpen else { throw CancellationError() }
       let generation = lifecycleGenerations[identifier, default: 0]
       if let entry = entries[identifier] { return (Task { entry }, generation) }

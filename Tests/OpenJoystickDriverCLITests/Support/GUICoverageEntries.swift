@@ -18,7 +18,7 @@ struct GUICoverageEntry: Equatable {
   }
 }
 
-/// A leaf or option that a window cannot naturally perform (D10).
+/// A leaf or option that a window cannot naturally perform.
 struct CLIOnlyItem: Equatable {
   /// The command path.
   ///
@@ -30,20 +30,23 @@ struct CLIOnlyItem: Equatable {
 
 /// The per-leaf and per-option coverage of the real command tree.
 ///
-/// D10 says what a window cannot naturally do; everything else names the GUI symbol that does it.
+/// Each item a window cannot naturally do is in `cliOnly`; every other one names the GUI symbol
+/// that does it.
 enum GUICoverageEntries {
   static let entries: [GUICoverageEntry] =
     status + controller + profile + binding + virtual + record + mod + access + system
 
   /// Leaves and options only a terminal or script performs.
   ///
-  /// The D10 text names each of them, and `GUICoverageTests` checks that.
+  /// `GUICoverageTests` checks that each of them names a real leaf or option.
   static let cliOnly: [CLIOnlyItem] =
     [
       CLIOnlyItem(
         command: ["profile", "import"],
         option: "--app",
-        reason: "a script replaces the scope of the file it imports; the window edits the scope after import"
+        reason:
+          "a script replaces the scope of the file it imports; "
+          + "the window edits the scope after import"
       ),
       CLIOnlyItem(
         command: ["virtual", "feed"],
@@ -113,6 +116,13 @@ enum GUICoverageEntries {
         reason: "scripting option of a stream a window shows continuously"
       )
     }
+    + [
+      CLIOnlyItem(
+        command: ["controller", "check"],
+        option: "--duration",
+        reason: "a window ends a step with its Skip button"
+      )
+    ]
     + ["--json", "--plain", "--quiet", "--no-color", "--no-input"].map {
       CLIOnlyItem(command: nil, option: $0, reason: "output-only option")
     }
@@ -157,6 +167,8 @@ enum GUICoverageEntries {
     leaf("controller list", "ControllersView"),
     leaf("controller show", "ControllerDetailFacts"),
     leaf("controller watch", "InputTestLiveInputView"),
+    leaf("controller check", "GuidedCheckRow"),
+    option("controller check", "--validate", "GuidedCheckValidationSheet"),
     leaf("controller capture", "ControllerPacketCapture"),
     option("controller capture", "--duration", "ControllerTimedActionSheet"),
     leaf("controller rumble", "rumbleCommand"),
@@ -173,11 +185,13 @@ enum GUICoverageEntries {
     leaf("controller resume", "resumeController"),
     leaf("controller disconnect", "disconnectWirelessController"),
     leaf("controller calibrate", "MotionCalibrationControls"),
+    option("controller calibrate", "--step", "ControllerRecalibrationControls"),
     leaf("controller pair", "pairRemappingJoyCons"),
     option("controller pair", "--profile", "ProfileJoyConPairSheet"),
     leaf("controller unpair", "unpairRemappingJoyCons"),
     leaf("controller claim", "setControllerServer"),
     leaf("controller release", "setControllerServer"),
+    leaf("controller lookup", "ControllerLookupButton"),
     leaf("config show", "ControllerTuningRows"),
     option("config show", "--controller", "ControllerTuningRows"),
     leaf("config set", "setControllerTuning"),
@@ -199,6 +213,9 @@ enum GUICoverageEntries {
     // The sheet leaves the gyro always on; the gyro section of the editor sets the control.
     option("profile create", "--activation", "ProfileGyroDraft"),
     leaf("profile duplicate", "ProfileDuplicateSheet"),
+    leaf("profile convert", "ProfileConversionSheet"),
+    option("profile convert", "--controller", "ProfileConversionModel"),
+    option("profile convert", "--name", "ProfileConversionModel"),
     leaf("profile rename", "updateMetadata"),
     leaf("profile delete", "deleteProfile"),
     leaf("profile activate", "activateProfile"),
@@ -376,10 +393,10 @@ enum GUISources {
     for directory in directories {
       let url = root.appendingPathComponent(directory)
       var isDirectory: ObjCBool = false
-      guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+      guard unsafe FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
         isDirectory.boolValue
       else { throw ReadError(description: "missing directory \(url.path)") }
-      var failure: Error?
+      var failure: any Error?
       guard
         let files = FileManager.default.enumerator(
           at: url,

@@ -18,6 +18,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>placeholderSerial</key>
+	<string>000000000001</string>
 	<key>productID</key>
 	<integer>8201</integer>
 	<key>vendorID</key>

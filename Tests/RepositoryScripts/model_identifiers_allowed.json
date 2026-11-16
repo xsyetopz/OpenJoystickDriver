@@ -1,9 +1,5 @@
 [
   {
-    "path": "Sources/OpenJoystickDriverKit/Diagnostics/DiagnosticsService.swift",
-    "reason": "The placeholder-serial check names the Switch Pro Controller 057E:2009, the one model that reports the placeholder serial, for a diagnosis of a running service rather than for protocol selection."
-  },
-  {
     "path": "Sources/OpenJoystickDriverUSB/Configuration.swift",
     "reason": "The Microsoft product IDs are the list in Apple's transport.usb grant for the DriverKit extension; the extension may match no others, so the list is the entitlement and not a catalog fact."
   },

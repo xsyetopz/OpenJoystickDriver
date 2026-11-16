@@ -1,0 +1,16 @@
+# candidate=G2-0b12-over-gip persona=SDLCompatible identity=045E:0B12 version=0 productName="Xbox Wireless Controller" tag=gc
+# started: 2026-11-12T22:53:57Z
+# ojd virtual show:
+#   E-IhMcvcVF0peGonau  8BitDo Ultimate 2C Wireless  sdl-compatible (override)
+#   Profiles: sdl-compatible, generic, game-controller-compatible
+Scripts/Diagnostics/backend.sh gamecontroller --seconds 6
+GameController probe
+Listening for 6s
+
+HID GamePad support:
+- 045E:0B12 "Xbox Wireless Controller" transport=Virtual gamecontroller=yes
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+evidence supports_hid=true connect=false extended_profile=false live_input=false disconnect=false reconnect=false haptics=unclaimed
+# probe exit: 0

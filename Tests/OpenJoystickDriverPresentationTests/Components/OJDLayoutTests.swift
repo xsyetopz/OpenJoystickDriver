@@ -1,3 +1,4 @@
+import CoreFoundation
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -10,14 +11,14 @@ struct OJDLayoutTests {
   }
 
   @Test
-  func theSpacingScaleGrows() {
+  func spacingScaleGrows() {
     let scale = OJDSpacing.scale
     #expect(scale == scale.sorted())
     #expect(Set(scale).count == scale.count)
   }
 
   @Test
-  func theSheetPaddingIsOnTheScale() {
+  func sheetPaddingOnScale() {
     #expect(OJDSpacing.scale.contains(OJDSpacing.sheetPadding))
   }
 }

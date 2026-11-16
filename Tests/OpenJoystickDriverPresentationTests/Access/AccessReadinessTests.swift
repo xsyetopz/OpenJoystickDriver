@@ -30,7 +30,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func aDeniedInputPermissionIsActionableAndOffersARestart() {
+  func deniedInputPermissionIsActionableAndOffersRestart() {
     let value = readiness(
       permissions: .available(RuntimePermissionSummary(inputRead: .denied, inputInject: .granted))
     )
@@ -51,7 +51,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func postEventAccessIsCheckingUntilTheStatusArrives() {
+  func postEventAccessIsCheckingUntilStatusArrives() {
     let value = readiness(permissions: .unavailable)
 
     #expect(value.postEvent.value == OJDLocalized.string("status.checking"))
@@ -109,7 +109,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func aMissingPermissionOffersSystemSettingsAndANotRequestedOneAsksFirst() {
+  func missingPermissionOffersSystemSettingsAndNotRequestedOneAsksFirst() {
     let denied = readiness(
       permissions: .available(RuntimePermissionSummary(inputRead: .denied, inputInject: .granted))
     )
@@ -146,14 +146,14 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func aCheckingPermissionHasNoButton() {
+  func checkingPermissionHasNoButton() {
     let value = readiness(permissions: .loading)
 
     #expect(value.rows.first { $0.kind == .inputRead }?.actionTitleKey == nil)
   }
 
   @Test
-  func aPostEventPermissionThatIsNotNeededHasNoRow() {
+  func postEventPermissionThatIsNotNeededHasNoRow() {
     let notNeeded = AccessReadiness(
       permissionState: .loading,
       statusState: .available(
@@ -213,7 +213,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func theAppsOwnPermissionReadingDecidesOverTheStatusPayload() {
+  func appsOwnPermissionReadingDecidesOverStatusPayload() {
     let granted = RuntimePermissionLoadState.available(
       RuntimePermissionSummary(inputRead: .granted, inputInject: .granted)
     )
@@ -226,7 +226,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func aDeniedUnknownOrUnauthorizedPermissionIsMissing() {
+  func deniedUnknownOrUnauthorizedPermissionIsMissing() {
     func summary(
       _ read: RuntimePermissionState,
       _ inject: RuntimePermissionState
@@ -269,7 +269,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func aFailedPermissionReadIsMissingBecauseTheAccessAreaSaysNeedsAttention() {
+  func failedPermissionReadIsMissingBecauseAccessAreaSaysNeedsAttention() {
     let placeholder = status(postEvent: nil, requiresPostEvent: false, inputRead: .unknown)
     #expect(
       AccessReadiness.hasMissingPermission(
@@ -282,7 +282,7 @@ struct AccessReadinessTests {
   }
 
   @Test
-  func theStatusReadingDecidesWhileTheAppHasNotReadPermissions() {
+  func statusReadingDecidesWhileAppHasNotReadPermissions() {
     #expect(
       AccessReadiness.hasMissingPermission(
         permissionState: .unavailable,

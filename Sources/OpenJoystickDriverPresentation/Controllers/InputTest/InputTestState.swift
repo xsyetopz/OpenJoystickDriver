@@ -6,7 +6,7 @@
 
   /// What the Input Test window needs from the service: input state, output commands and color
   /// preview.
-  protocol InputTestDeviceGateway: MotionCalibrationGateway {
+  protocol InputTestDeviceGateway: MotionCalibrationGateway, ControllerRecalibrationGateway {
     /// Returns the latest input of the controller, or nil when there is none yet.
     ///
     /// - Parameter selector: The controller.
@@ -101,6 +101,8 @@
     let liveState = InputTestLiveState()
     /// The values of the output controls.
     let outputSettings = InputTestOutputSettings()
+    /// The model of the Guided Check, which reads each sample.
+    let guidedCheck = GuidedCheckModel()
     /// The model of the Motion section.
     let motionCalibration: MotionCalibrationViewModel
 

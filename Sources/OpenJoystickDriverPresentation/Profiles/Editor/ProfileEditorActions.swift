@@ -48,22 +48,6 @@
       reportEditingState()
     }
 
-    /// The text that says whether the profile is active; a Joy-Con pair profile reads as the state
-    /// of its session.
-    var activationLabel: String {
-      if profile.joyConPair != nil {
-        return OJDLocalized.string("ui.profiles.joyConSessionState")
-      }
-      return OJDLocalized.string(
-        isActive ? "ui.profiles.active" : "ui.profiles.notActive"
-      )
-    }
-
-    /// Returns the text for the number of assignments.
-    func assignmentCountLabel(_ count: Int) -> String {
-      OJDLocalized.plural("ui.profiles.assignments", count: count)
-    }
-
     /// The actions of the editor's menu: Restore Default Input while the draft suppresses all
     /// controller input, Remove All Assignments while it has any assignment, Clear Inputs, and
     /// Deactivate All while the profile is active and is not a Joy-Con pair.
@@ -264,8 +248,8 @@
     /// Saves the draft through the profile library.
     ///
     /// The result is reconciled when the request returns and when the library reports the change.
-    /// Does nothing while the draft equals the stored profile, where the Save button is unavailable;
-    /// while a save runs or editing is disabled, it shows the reason.
+    /// Does nothing while the draft equals the stored profile, where the Save button is
+    /// unavailable; while a save runs or editing is disabled, it shows the reason.
     func save() {
       guard canSave, !refuseEdit() else { return }
       let operation = RuntimeMutationOperation.update(profileID: profile.id)

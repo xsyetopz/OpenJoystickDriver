@@ -7,7 +7,7 @@
     /// What the controller has, which decides the drivers that can be saved.
     let capabilities: ControllerProfileCapabilities
     /// Reads the latest input state of the profile's controller, or nil when there is none.
-    let liveState: () async -> ControllerState?
+    let liveState: () async throws -> ControllerState?
     /// Receives the pointer speed, or nil when it is off, when the person chooses Save.
     let onSave: (RemappingPointerSpeed?) throws -> Void
     /// Dismisses the sheet.
@@ -22,6 +22,9 @@
     /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
+    /// The message of the failed read of the input state, or nil.
+    @State
+    private var liveError: String?
 
     /// Creates the sheet on the current pointer speed.
     ///
@@ -33,7 +36,7 @@
     init(
       speed: RemappingPointerSpeed?,
       capabilities: ControllerProfileCapabilities,
-      liveState: @escaping () async -> ControllerState?,
+      liveState: @escaping () async throws -> ControllerState?,
       onSave: @escaping (RemappingPointerSpeed?) throws -> Void
     ) {
       self.capabilities = capabilities
@@ -46,36 +49,45 @@
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(label("title")).font(.headline)
-        Toggle(label("enabled"), isOn: $draft.enabled)
+        Toggle(label("enabled"), isOn: $draft.enabled).help(tooltip("enabled"))
         if draft.enabled {
           Picker(label("driver"), selection: $draft.driverType) {
             Text(label("driverTrigger")).tag(RemappingPointerSpeedDriver.Kind.trigger)
             Text(label("driverStickDepth")).tag(RemappingPointerSpeedDriver.Kind.stickDepth)
-          }
+          }.help(tooltip("driver"))
           Picker(label("side"), selection: $draft.side) {
             Text(label("sideLeft")).tag(RemappingStickSource.left)
             Text(label("sideRight")).tag(RemappingStickSource.right)
-          }
+          }.help(tooltip("side"))
           field("minScale", $draft.minScale)
           field("maxScale", $draft.maxScale)
           Picker(OJDLocalized.string("ui.capture.responseCurve"), selection: $draft.curve) {
             ForEach(RemappingResponseCurve.allCases, id: \.self) { Text($0.label).tag($0) }
-          }
+          }.help(OJDLocalized.string("ui.capture.responseCurveHelp"))
           if let scale = liveScale {
             Text(OJDLocalized.formatted("ui.profiles.pointerSpeed.live", scale))
           }
+          if let liveError { Text(liveError).foregroundColor(.red) }
         }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
-          Button(OJDLocalized.string("action.save")) { save() }
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
+          Button(OJDLocalized.string("action.save")) { save() }.help(
+            OJDLocalized.string("ui.help.save")
+          )
         }
       }.ojdSheet(.compact).task {
         while !Task.isCancelled {
-          state = await liveState()
+          do {
+            state = try await liveState()
+            liveError = nil
+          } catch {
+            state = nil
+            liveError = RuntimePresentation.userFacingError(error)
+          }
           try? await Task.sleep(nanoseconds: 200_000_000)
         }
       }
@@ -85,7 +97,7 @@
     private var liveScale: String? {
       guard let state, let speed = try? draft.validatedSpeed(decimalSeparator: separator)
       else { return nil }
-      return String(format: "%.2f", speed.scale(for: state))
+      return unsafe String(format: "%.2f", speed.scale(for: state))
     }
 
     /// The decimal separator the person types.
@@ -110,12 +122,18 @@
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
+          .ojdAccessibilityLabel(label(key)).help(tooltip(key))
       }
     }
 
     /// Returns the text of the pointer speed key called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.pointerSpeed." + key)
+    }
+
+    /// Returns the tooltip of the pointerSpeed field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.pointerSpeed." + key + "Help")
     }
   }
 #endif

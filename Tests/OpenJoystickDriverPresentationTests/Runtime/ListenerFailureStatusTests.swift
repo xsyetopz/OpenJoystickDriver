@@ -28,7 +28,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func theStatusLineAndBannerShowTheFailureInProcessAtOnce() async {
+  func statusLineAndBannerShowFailureInProcessAtOnce() async {
     let state = ServiceListenerState()
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)
     let viewModel = await makeViewModel(state, gateway: gateway)
@@ -49,17 +49,17 @@ struct ListenerFailureStatusTests {
         permissions: viewModel.permissionState,
         status: viewModel.statusState,
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: viewModel.listenerFailure
       )
     }
-    #expect(problems.first == .listenerStopped(failure.localizedSummary))
+    #expect(problems.first == .service(.listenerStopped, failure.localizedSummary))
     #expect(problems.first?.action == .restartListener)
   }
 
   @Test
-  func aRealServerThatStopsAcceptingShowsE2034InTheModelAndTheBanner() async throws {
+  func realServerThatStopsAcceptingShowsE2034InModelAndBanner() async throws {
     let socketPath = temporarySocketPath()
     let statusResult = try JSONEncoder().encode(
       try JSONEncoder().encode(
@@ -122,8 +122,12 @@ struct ListenerFailureStatusTests {
     let client = socket(AF_UNIX, SOCK_STREAM, 0)
     var address = try LocalServiceRPCTransport.socketAddress(path: socketPath)
     _ = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Darwin.connect(client, $0, LocalServiceRPCTransport.socketAddressLength(path: socketPath))
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe Darwin.connect(
+          client,
+          $0,
+          LocalServiceRPCTransport.socketAddressLength(path: socketPath)
+        )
       }
     }
     defer { Darwin.close(client) }
@@ -148,16 +152,16 @@ struct ListenerFailureStatusTests {
         permissions: viewModel.permissionState,
         status: viewModel.statusState,
         driver: .active,
-        extensionRouteConnected: true,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: viewModel.listenerFailure
       )
     }
-    #expect(problems.first == .listenerStopped(message))
+    #expect(problems.first == .service(.listenerStopped, message))
   }
 
   @Test
-  func withoutAFailureTheStatusLineKeepsTheClientMessage() async {
+  func withoutFailureStatusLineKeepsClientMessage() async {
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)
     let viewModel = await makeViewModel(ServiceListenerState(), gateway: gateway)
 
@@ -170,7 +174,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func restartingTheListenerClearsTheFailure() async {
+  func restartingListenerClearsFailure() async {
     let state = ServiceListenerState()
     state.setRestart { state.set(nil) }
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)
@@ -189,7 +193,7 @@ struct ListenerFailureStatusTests {
   }
 
   @Test
-  func aRestartThatFailsKeepsTheFailureAndSaysWhy() async {
+  func restartThatFailsKeepsFailureAndSaysWhy() async {
     let state = ServiceListenerState()
     state.setRestart { throw LocalServiceRPCError.connectionFailed(EADDRINUSE) }
     let gateway = GatewayStub(statusShouldFail: true, statusError: .notConnected)

@@ -54,7 +54,7 @@ public struct WiiRemoteStatus: Codable, Equatable, Sendable {
 
 extension WiiRemoteStatus {
   /// The report mode as the hex byte, such as `0x31`.
-  public var reportModeText: String { String(format: "0x%02X", reportMode) }
+  public var reportModeText: String { unsafe String(format: "0x%02X", reportMode) }
 
   /// The extension in the user's language: its name, the unknown ID, or none.
   public func extensionText(_ localization: Localization = Localization()) -> String {

@@ -1,30 +1,31 @@
-import Foundation
-import OpenJoystickDriverKit
-import Security
+package import Foundation
+package import OpenJoystickDriverKit
+package import Security
 
 extension CodeSigningIdentity {
   /// The compiled `requirementText`; nil for ad-hoc code or a requirement that does not compile.
   package var requirement: SecRequirement? {
     guard let requirementText else { return nil }
-    var requirement: SecRequirement?
+    var compiled: SecRequirement?
     guard
-      SecRequirementCreateWithString(requirementText as CFString, SecCSFlags(), &requirement)
+      unsafe SecRequirementCreateWithString(requirementText as CFString, SecCSFlags(), &compiled)
         == errSecSuccess
     else { return nil }
-    return requirement
+    return compiled
   }
 
   /// The identity of this process; it does not change while the process runs.
   package static let current: Self? = {
     var code: SecCode?
-    guard SecCodeCopySelf(SecCSFlags(), &code) == errSecSuccess, let code else { return nil }
+    guard unsafe SecCodeCopySelf(SecCSFlags(), &code) == errSecSuccess, let code else { return nil }
     return of(code)
   }()
 
   /// The identity of running code.
   package static func of(_ code: SecCode) -> Self? {
     var staticCode: SecStaticCode?
-    guard SecCodeCopyStaticCode(code, SecCSFlags(), &staticCode) == errSecSuccess, let staticCode
+    guard unsafe SecCodeCopyStaticCode(code, SecCSFlags(), &staticCode) == errSecSuccess,
+      let staticCode
     else { return nil }
     return of(staticCode)
   }
@@ -33,7 +34,7 @@ extension CodeSigningIdentity {
   package static func of(_ staticCode: SecStaticCode) -> Self? {
     var information: CFDictionary?
     let flags = SecCSFlags(rawValue: kSecCSSigningInformation)
-    guard SecCodeCopySigningInformation(staticCode, flags, &information) == errSecSuccess,
+    guard unsafe SecCodeCopySigningInformation(staticCode, flags, &information) == errSecSuccess,
       let values = information as? [String: Any],
       let identifier = values[kSecCodeInfoIdentifier as String] as? String
     else { return nil }
@@ -44,8 +45,8 @@ extension CodeSigningIdentity {
         identifier: identifier,
         publisherID: publisherID
       )
-      if let requirement = candidate.requirement,
-        SecStaticCodeCheckValidity(staticCode, SecCSFlags(), requirement) == errSecSuccess
+      if let valid = candidate.requirement,
+        SecStaticCodeCheckValidity(staticCode, SecCSFlags(), valid) == errSecSuccess
       {
         return candidate
       }
@@ -56,7 +57,8 @@ extension CodeSigningIdentity {
   /// The identity of the code at `url`; nil when the path holds no signed code.
   package static func of(path url: URL) -> Self? {
     var staticCode: SecStaticCode?
-    guard SecStaticCodeCreateWithPath(url as CFURL, SecCSFlags(), &staticCode) == errSecSuccess,
+    guard
+      unsafe SecStaticCodeCreateWithPath(url as CFURL, SecCSFlags(), &staticCode) == errSecSuccess,
       let staticCode
     else { return nil }
     return of(staticCode)
@@ -66,10 +68,11 @@ extension CodeSigningIdentity {
 extension LocalSocketPeer {
   /// The running code of the peer, resolved by its audit token.
   package func code() -> SecCode? {
-    let tokenData = withUnsafeBytes(of: auditToken) { Data($0) }
+    let tokenData = withUnsafeBytes(of: auditToken) { unsafe Data($0) }
     let attributes = [kSecGuestAttributeAudit as String: tokenData] as CFDictionary
     var code: SecCode?
-    guard SecCodeCopyGuestWithAttributes(nil, attributes, SecCSFlags(), &code) == errSecSuccess
+    guard
+      unsafe SecCodeCopyGuestWithAttributes(nil, attributes, SecCSFlags(), &code) == errSecSuccess
     else { return nil }
     return code
   }

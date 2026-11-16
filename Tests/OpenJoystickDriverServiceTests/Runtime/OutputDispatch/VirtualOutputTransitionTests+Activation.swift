@@ -80,7 +80,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func consumerFeedbackMapsOntoThePhysicalCommand() {
+  func consumerFeedbackMapsOntoPhysicalCommand() {
     let rumble = RumbleIntensities(
       lowFrequency: UnipolarValue(byte: 1),
       highFrequency: UnipolarValue(byte: 2),
@@ -135,7 +135,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func zeroControllersPublishAnIdleBackendForFutureHotPlug() async throws {
+  func zeroControllersPublishIdleBackendForFutureHotPlug() async throws {
     let factory = VirtualOutputTransitionFactory()
     let fixture = try VirtualOutputTransitionFixture(factory: factory, identifiers: [])
     let server = fixture.server
@@ -167,7 +167,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func buildFailureLeavesOutputUnavailableWithTheError() async throws {
+  func buildFailureLeavesOutputUnavailableWithError() async throws {
     let factory = VirtualOutputTransitionFactory()
     factory.buildFails = true
     let fixture = try VirtualOutputTransitionFixture(
@@ -185,7 +185,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func activationFailureClosesTheCandidate() async throws {
+  func activationFailureClosesCandidate() async throws {
     let factory = VirtualOutputTransitionFactory()
     factory.activationFails = true
     let fixture = try VirtualOutputTransitionFixture(
@@ -204,7 +204,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func hangingActivationTimesOutAndClosesTheCandidate() async throws {
+  func hangingActivationTimesOutAndClosesCandidate() async throws {
     let gate = VirtualOutputTransitionGate()
     let factory = VirtualOutputTransitionFactory()
     factory.firstActivationGate = gate
@@ -271,7 +271,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func stopClosesTheLiveBackendAndDisablesOutput() async throws {
+  func stopClosesLiveBackendAndDisablesOutput() async throws {
     let factory = VirtualOutputTransitionFactory()
     let fixture = try VirtualOutputTransitionFixture(
       factory: factory,
@@ -312,7 +312,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func aNewServerPublishesOutputOnlyThroughActivation() async throws {
+  func newServerPublishesOutputOnlyThroughActivation() async throws {
     let identifier = LogicalControllerID(vendorID: 1, productID: 2)
     let factory = VirtualOutputTransitionFactory()
     let fixture = try VirtualOutputTransitionFixture(factory: factory, identifiers: [identifier])
@@ -328,7 +328,7 @@ extension VirtualOutputTransitionTests {
   }
 
   @Test
-  func theTotalBudgetBoundsActivationAcrossControllers() async throws {
+  func totalBudgetBoundsActivationAcrossControllers() async throws {
     let identifiers = (1...3).map { LogicalControllerID(vendorID: UInt16($0), productID: 2) }
     let factory = VirtualOutputTransitionFactory()
     // Each reading advances the clock 40 ns, so every activation takes 40 ns against a 60 ns

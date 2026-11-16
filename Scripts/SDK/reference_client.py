@@ -1,14 +1,3 @@
-"""Reference client for the OpenJoystickDriver endpoint.
-
-`watch` subscribes to the Controllers stream and prints the first watch lines. `feed` drives a
-virtual gamepad: it presses the South button for 100 ms, prints the rumble commands that the
-endpoint sends, and asks the endpoint to report when both frames have played before it closes. The
-client uses only the Python standard library. Set OJD_TOKEN to the token that `ojd access grant --token NAME` printed.
-
-The client speaks `openjoystickdriver/v1alpha3` and does not guess a version. A line with another `apiVersion`, and an E1009, E1010 or
-E1011 error, end the run with the versions that the endpoint supports.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -46,7 +35,6 @@ def hello(nonce: str, token: str, token_name: str, scope: str) -> dict[str, Any]
 
 
 def failure(message: dict[str, Any]) -> str:
-    """The exit text for a `Status` failure; header errors list the supported versions."""
     text = f"{message.get('code')}: {message.get('message')}"
     supported = (message.get("details") or {}).get("supportedAPIVersions")
     if message.get("code") in HEADER_ERRORS and supported:
@@ -55,14 +43,12 @@ def failure(message: dict[str, Any]) -> str:
 
 
 def parse_line(line: str) -> dict[str, Any]:
-    """The line as an object, or an exit when it is not one or speaks another `apiVersion`."""
     try:
         message = json.loads(line)
     except ValueError as error:
         sys.exit(f"The endpoint sent a line that is not JSON: {error}")
     if not isinstance(message, dict):
         sys.exit("The endpoint sent a line that is not a JSON object.")
-    # A watch line has no header of its own; the header is on its `object`.
     header = message.get("object") if "kind" not in message else message
     if not isinstance(header, dict):
         sys.exit("The endpoint sent a watch line without an object.")
@@ -88,7 +74,6 @@ def socket_path(arguments: argparse.Namespace) -> str:
 def connect(
     endpoint: socket.socket, reader: TextIO, arguments: argparse.Namespace, scope: str
 ) -> Callable[[], dict[str, Any]]:
-    """Answers the challenge and reads the `Welcome`; returns a reader of the next line."""
 
     def receive() -> dict[str, Any]:
         line = reader.readline()
@@ -162,8 +147,6 @@ def feed(arguments: argparse.Namespace) -> None:
             send(endpoint, {"apiVersion": API_VERSION, "kind": "Drain"})
         except OSError:
             pass  # The reader reports why the endpoint closed the connection.
-        # The endpoint answers Drained once every frame has played; closing earlier drops the
-        # frames that wait. An error line or the end of the connection before that fails.
         finished.wait()
         if reasons:
             sys.exit(reasons[0])
@@ -171,7 +154,7 @@ def feed(arguments: argparse.Namespace) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "--socket", help="the endpoint socket; default: from `ojd access status`"
     )

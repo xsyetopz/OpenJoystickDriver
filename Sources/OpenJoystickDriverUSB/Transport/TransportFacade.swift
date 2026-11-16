@@ -1,4 +1,4 @@
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// Generic raw USB facade that selects an Apple transport from ownership evidence.
 ///
@@ -30,12 +30,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
 
   /// The models Apple's own driver holds, which only the DEXT route may serve.
   static let driverKitRequiredModels = Set(
-    USBDriverKitExtensionConfiguration.appleHeldProductIDs.map {
-      ControllerModelID(
-        vendorID: USBDriverKitExtensionConfiguration.microsoftVendorID,
-        productID: $0
-      )
-    }
+    USBDriverKitExtensionConfiguration.appleHeldModels(in: ControllerRecordSet.bundled)
   )
 
   /// Creates the facade over the IOUSBHost and USBDriverKit providers and the protocol driver
@@ -98,11 +93,11 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   ///
   /// - Throws: The error of the IOUSBHost provider when both providers fail.
   public func devices() async throws -> [USBTransportDevice] {
-    let direct: Result<[USBTransportDevice], Error>
+    let direct: Result<[USBTransportDevice], any Error>
     do { direct = .success(try await ioUSBHostProvider.devices()) } catch {
       direct = .failure(error)
     }
-    let driverKit: Result<[USBTransportDevice], Error>
+    let driverKit: Result<[USBTransportDevice], any Error>
     do { driverKit = .success(try await usbDriverKitProvider.devices()) } catch {
       driverKit = .failure(error)
     }
@@ -147,12 +142,11 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     let enumerated = Set(direct.map(\.serviceID))
     signatureAdmissions = signatureAdmissions.filter { enumerated.contains($0.key) }
     var admitted: Set<UInt64> = []
-    let supportedRawUSBModels = supportedRawUSBModels
     for device in direct {
       let model = ControllerModelID(device)
-      guard !supportedRawUSBModels.contains(model), !requiredDriverKitModels.contains(model) else {
-        continue
-      }
+      guard
+        !self.supportedRawUSBModels.contains(model), !requiredDriverKitModels.contains(model)
+      else { continue }
       if let cached = signatureAdmissions[device.serviceID] {
         if cached { admitted.insert(device.serviceID) }
         continue
@@ -209,6 +203,18 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   public func exclusiveOwner(of device: USBTransportDevice) async throws -> String? {
     guard device.route == .rawUSB else { throw USBTransportError.notSupported }
     return try await ioUSBHostProvider.exclusiveOwner(of: device)
+  }
+
+  /// Only IOUSBHost interfaces report an exclusive owner; the DEXT route has none.
+  public func interfaceExclusiveOwner(
+    of device: USBTransportDevice,
+    interfaceNumber: UInt8
+  ) throws -> String? {
+    guard device.route == .rawUSB else { throw USBTransportError.notSupported }
+    return IOUSBHostTransportProvider.interfaceExclusiveOwner(
+      of: device,
+      interfaceNumber: interfaceNumber
+    )
   }
 
   /// Resets `device` through the provider of its route.

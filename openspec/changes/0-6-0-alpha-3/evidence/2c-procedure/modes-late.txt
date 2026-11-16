@@ -1,0 +1,99 @@
+=== 01:01:51 2DC8:310A/USB
+$ ojd controller show 2DC8:310A
+Name                  8BitDo Ultimate 2C Wireless Controller
+ID                    E-ZFjsxcbMO-Oke3PO
+Unit ID               U-q3fmdh70BEcEOAPm
+Vendor:Product        2DC8:310A
+Connection            USB
+Protocol              xbox-xusb:wired
+Session               active
+Battery               none
+Input                 healthy
+Ownership             route raw-usb, physical exclusive-raw-usb, HID input unknown
+Handled by            OJD (from route)
+Serving route         virtual-hid
+Virtual gamepad       sdl-compatible
+Record                bundled
+Controls              south, east, west, north, left-shoulder, right-shoulder, left-trigger, right-trigger, back, start, left-stick-click, right-stick-click, dpad-up, dpad-down, dpad-left, dpad-right, guide, left-stick-x, left-stick-y, right-stick-x, right-stick-y
+Rumble                low-frequency, high-frequency
+Lighting              player-indicator
+Virtual gamepad kind  sdl-compatible (automatic)
+Publication           published
+
+Output checks
+  ojd controller rumble 2DC8:310A --left 160 --duration 0.3
+    Only the left main actuator runs.
+  ojd controller rumble 2DC8:310A --right 160 --duration 0.3
+    Only the right main actuator runs.
+  ojd controller player 2DC8:310A 1
+    The controller displays the player-one indicator pattern.
+  ojd controller player 2DC8:310A off
+    The numbered player indicators turn off.
+exit 0
+$ ojd controller watch 2DC8:310A --duration 3
+Watching 8BitDo Ultimate 2C Wireless Controller (2DC8:310A)... Press controller buttons.
+buttons=[none] hat=neutral LS=(0,0) RS=(0,0) LT=0 RT=0
+exit 0
+$ ojd controller rumble 2DC8:310A --duration 1
+Rumbled low-frequency, high-frequency on 8BitDo Ultimate 2C Wireless Controller.
+exit 0
+=== 01:03:13 2DC8:301C/USB
+$ ojd controller show 2DC8:301C
+Name                  8BitDo Ultimate 2C Wireless Controller
+ID                    E-meENfIELhyjK99jS
+Unit ID               U-QqVbeD32XbeOg18F
+Vendor:Product        2DC8:301C
+Connection            USB
+Protocol              hid-descriptor
+Session               active
+Battery               none
+Input                 awaiting-input
+Ownership             route hid, physical system-hid-visible, HID input acquisition-failed
+Handled by            OJD (from default)
+Serving route         virtual-hid
+Virtual gamepad       sdl-compatible
+Record                bundled
+Input mapping         record
+Controls              south, east, west, north, left-shoulder, right-shoulder, left-trigger, right-trigger, back, start, left-stick-click, right-stick-click, dpad-up, dpad-down, dpad-left, dpad-right, guide, left-paddle1, right-paddle1, left-stick-x, left-stick-y, right-stick-x, right-stick-y
+Rumble                none
+Lighting              none
+Virtual gamepad kind  sdl-compatible (automatic)
+Publication           published
+exit 0
+$ ojd controller watch 2DC8:301C --duration 3
+Watching 8BitDo Ultimate 2C Wireless Controller (2DC8:301C)... Press controller buttons.
+buttons=[none] hat=neutral LS=(0,0) RS=(0,0) LT=0 RT=0
+exit 0
+$ ojd controller rumble 2DC8:301C --duration 1
+error[E2013]: 8BitDo Ultimate 2C Wireless Controller has no rumble motor. Run 'ojd controller show E-meENfIELhyjK99jS' to see what it supports.
+exit 1
+=== 01:03:38 2DC8:301B/Bluetooth
+$ ojd controller show 2DC8:301B
+Name                  8BitDo Ultimate 2C Wireless
+ID                    E-dv2uWOMfEwc6Lc8x
+Unit ID               U-BEAkr199Ua8jvgZG
+Vendor:Product        2DC8:301B
+Connection            Bluetooth Low Energy
+Protocol              hid-descriptor
+Session               active
+Battery               none
+Input                 healthy
+Ownership             route hid, physical exclusive-hid, HID input exclusive
+Handled by            OJD (from bundled)
+Serving route         virtual-hid
+Virtual gamepad       sdl-compatible
+Record                bundled
+Input mapping         record
+Controls              south, east, west, north, left-shoulder, right-shoulder, left-trigger, right-trigger, back, start, left-stick-click, right-stick-click, dpad-up, dpad-down, dpad-left, dpad-right, guide, left-paddle1, right-paddle1, left-stick-x, left-stick-y, right-stick-x, right-stick-y
+Rumble                none
+Lighting              none
+Virtual gamepad kind  sdl-compatible (automatic)
+Publication           published
+exit 0
+$ ojd controller watch 2DC8:301B --duration 3
+Watching 8BitDo Ultimate 2C Wireless (2DC8:301B)... Press controller buttons.
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+exit 0
+$ ojd controller rumble 2DC8:301B --duration 1
+error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor. Run 'ojd controller show E-dv2uWOMfEwc6Lc8x' to see what it supports.
+exit 1

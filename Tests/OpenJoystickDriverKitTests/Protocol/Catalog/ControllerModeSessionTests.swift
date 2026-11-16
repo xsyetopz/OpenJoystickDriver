@@ -35,7 +35,7 @@ struct ControllerModeSessionTests {
   }
 
   @Test
-  func gatedVendorReadsRunOnlyForAMatchingManufacturer() throws {
+  func gatedVendorReadsRunOnlyForMatchingManufacturer() throws {
     let gate: [String: Any] = ["manufacturer": "SHANWAN"]
     let reads = (1...3).map { Self.read($0, gate: gate) }
     let session = try #require(
@@ -50,7 +50,7 @@ struct ControllerModeSessionTests {
   }
 
   @Test
-  func aControlTransferCarriesItsFiveSetupFields() throws {
+  func controlTransferCarriesItsFiveSetupFields() throws {
     let session = try #require(
       try Self.validated(
         Self.record(
@@ -81,7 +81,7 @@ struct ControllerModeSessionTests {
   }
 
   @Test
-  func settleAndShutdownAreStepsOfTheSession() throws {
+  func settleAndShutdownAreStepsOfSession() throws {
     let session = try #require(
       try Self.validated(
         Self.record(
@@ -95,7 +95,7 @@ struct ControllerModeSessionTests {
   }
 
   @Test
-  func aSessionStepOfAnotherTransportIsRejected() {
+  func sessionStepOfAnotherTransportIsRejected() {
     let reads = [Self.read(1, gate: ["manufacturer": "SHANWAN"])]
     for session: [String: Any] in [
       ["control": reads], ["settleMilliseconds": 200], ["shutdown": [["bytes": "01 02"]]],
@@ -105,7 +105,7 @@ struct ControllerModeSessionTests {
   }
 
   @Test
-  func anUnknownSessionKeyIsRejected() {
+  func unknownSessionKeyIsRejected() {
     #expect(
       Self.problem(Self.record(family: "XboxXUSB", session: ["unknownKey": 5])) != nil
     )

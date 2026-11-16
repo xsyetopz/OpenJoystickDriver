@@ -14,6 +14,9 @@
     /// Whether the Uninstall confirmation alert is open.
     @State
     private var confirmsUninstall = false
+    /// Whether the extension was still active after the latest Uninstall.
+    @State
+    private var uninstallLeftActive = false
 
     /// The driver extension status and its uninstall button, with the confirmation.
     var body: some View {
@@ -24,8 +27,13 @@
           if runtime.systemExtensionSetupState == .active {
             Button(OJDLocalized.string("cli.login.group.uninstallAction")) {
               confirmsUninstall = true
-            }
+            }.help(OJDLocalized.string("ui.help.uninstallDriver"))
           }
+        }
+        if uninstallLeftActive, runtime.systemExtensionSetupState == .active {
+          Text(OJDLocalized.string("ui.setup.uninstallRefused")).foregroundColor(
+            Color(NSColor.systemRed)
+          ).fixedSize(horizontal: false, vertical: true)
         }
       }.alert(isPresented: $confirmsUninstall) {
         Alert(
@@ -33,18 +41,21 @@
           message: Text(OJDLocalized.string("ui.setup.uninstallDetail")),
           primaryButton: .destructive(Text(OJDLocalized.string("cli.login.group.uninstallAction")))
           {
-            Task { @MainActor in await runtime.uninstallSystemExtension() }
+            Task { @MainActor in
+              await runtime.uninstallSystemExtension()
+              uninstallLeftActive = runtime.systemExtensionSetupState == .active
+            }
           },
           secondaryButton: .cancel()
         )
       }
     }
 
-    /// The localization key of the sentence that describes the driver extension state.
+    /// The localization key of the text that describes the driver extension state.
     private var detailKey: String {
       switch runtime.systemExtensionSetupState {
-      case .checking: return "ui.setup.checkingDetail"
-      case .active: return "ui.setup.activeDetail"
+      case .checking: return "status.checking"
+      case .active: return "ui.library.installed"
       case .missingEmbedded: return "ui.setup.missingDetail"
       case .invalid: return "ui.setup.invalidDetail"
       case .unavailable: return "ui.setup.unavailableDetail"

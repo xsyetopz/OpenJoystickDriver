@@ -205,8 +205,8 @@ extension DeviceManager {
     hidInitializationTasks.removeValue(forKey: key)?.task.cancel()
     let task = Task { [weak self] in
       guard let self else { return }
-      await self.handleHIDDeviceConnected(connection: connection, ownership: ownership)
-      await self.finishHIDDeviceInitialization(connection: connection)
+      await handleHIDDeviceConnected(connection: connection, ownership: ownership)
+      await finishHIDDeviceInitialization(connection: connection)
     }
     hidInitializationTasks[key] = HIDDeviceInitialization(connection: connection, task: task)
   }

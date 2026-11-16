@@ -1,0 +1,39 @@
+App Intents of 6.11 to 6.13, tried against /Applications/OpenJoystickDriver.app (build 8456f9de8665).
+
+Routes checked for running an intent without the Shortcuts app window:
+
+  $ shortcuts list            -> exit 0, prints nothing (the user has no shortcut)
+  $ shortcuts --help          -> subcommands: run, list, view, sign
+  `shortcuts run NAME`        needs an existing shortcut; none exists, and a shortcut can be made only
+                              in the Shortcuts app (or imported from a file through its window).
+  `shortcuts view`, shortcuts:// links
+                              open the Shortcuts window; another agent drives the windows, so none was opened.
+  `shortcuts sign`            signs a shortcut file that already exists; it does not run an intent.
+  No command-line route runs an App Intent by name.
+
+Result per intent (the intent runs no code that a command could reach, so the status is "not run"):
+
+  Set Profile Value (6.11)         not run: no shortcut, no route. Open.
+  List Mod Packages (6.12)         not run: no shortcut, no route. Open.
+  Install Mod Package (6.12)      not run: no shortcut, no route. Open.
+  Remove Mod Package (6.12)        not run: no shortcut, no route. Open.
+  Rumble Controller (6.13)         not run: no shortcut, no route. Open.
+  Set Player Indicator (6.13)      not run: no shortcut, no route. Open.
+  Set Controller Light (6.13)      not run: no shortcut, no route. Open.
+
+Actions the installed app publishes to Shortcuts (CFBundleVersion 1.28.6):
+
+  $ plutil -convert json -o - /Applications/OpenJoystickDriver.app/Contents/Resources/Metadata.appintents/extract.actionsdata
+  ActivateProfileIntent, AppVersionIntent, DeactivateProfileIntent, GetBatteryLevelIntent,
+  GetControllersIntent, SetProfileValueIntent
+
+  The mod and controller output actions are missing, because the Xcode app target did not compile
+  ModIntents.swift and ControllerOutputIntents.swift. A shortcut that calls one of them fails with
+  "The operation couldn't be completed. (WFActionErrorDomain error 1.)".
+
+Same check on `just build-dev` after commit 26125c581 adds both files to the target:
+
+  $ plutil -convert json -o - .build/out/Products/Debug/OpenJoystickDriver.app/Contents/Resources/Metadata.appintents/extract.actionsdata
+  ActivateProfileIntent, AppVersionIntent, DeactivateProfileIntent, GetBatteryLevelIntent,
+  GetControllersIntent, InstallModIntent, ListModsIntent, RemoveModIntent, RumbleControllerIntent,
+  SetControllerLightIntent, SetPlayerIndicatorIntent, SetProfileValueIntent

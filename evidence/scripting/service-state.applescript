@@ -1,0 +1,5 @@
+set ojd to system attribute "OJD"
+if ojd is "" then set ojd to "/usr/local/bin/ojd"
+set state to do shell script quoted form of ojd & " --no-input --json status | /usr/bin/plutil -extract service.state raw -o - -"
+set controllers to do shell script quoted form of ojd & " --no-input --json controller list | /usr/bin/plutil -extract items raw -o - -"
+return "Service: " & state & ". Connected controllers: " & controllers & "."

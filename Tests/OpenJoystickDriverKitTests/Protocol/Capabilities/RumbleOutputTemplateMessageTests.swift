@@ -17,7 +17,7 @@ struct RumbleOutputTemplateMessageTests {
   }
 
   @Test
-  func anInputReportNamesFileKeyPathRuleAndFix() {
+  func inputReportNamesFileKeyPathRuleAndFix() {
     let report = ControllerTemplateReport(kind: .input, reportID: 1, length: 8)
     do {
       _ = try RumbleOutputTemplate(target: .hid(report), motors: [.lowFrequency: .init(byte: 1)])
@@ -32,7 +32,7 @@ struct RumbleOutputTemplateMessageTests {
   }
 
   @Test
-  func aTemplateWithoutAMotorNamesTheMotorKeys() {
+  func templateWithoutMotorNamesMotorKeys() {
     do {
       _ = try RumbleOutputTemplate(target: .usb(length: 8), motors: [:])
       Issue.record("a template without a motor was accepted")
@@ -46,13 +46,16 @@ struct RumbleOutputTemplateMessageTests {
   }
 
   @Test
-  func aDecodedResendIntervalProblemReadsInTheChosenLanguage() {
+  func decodedResendIntervalProblemReadsInChosenLanguage() {
     let json = """
       {"report": {"kind": "USB", "length": 8}, "lowFrequency": {"byte": 1},
-       "resendIntervalMilliseconds": 0}
+        "resendIntervalMilliseconds": 0}
       """
     do {
-      _ = try JSONDecoder().decode(ControllerRecordDocument.RumbleTemplate.self, from: Data(json.utf8))
+      _ = try JSONDecoder().decode(
+        ControllerRecordDocument.RumbleTemplate.self,
+        from: Data(json.utf8)
+      )
       Issue.record("a zero resend interval was accepted")
     } catch {
       #expect(

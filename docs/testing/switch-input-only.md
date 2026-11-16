@@ -25,7 +25,7 @@ Many licensed wired Switch pads send one fixed HID input report and do not accep
 
 The names come from SDL's comments. None of these pads is checked on hardware with OJD.
 
-## Report Layout
+## Report layout
 
 The report has no report ID. The driver reads the first 7 bytes, the layout of SDL's `SwitchInputOnlyControllerStatePacket_t`.
 
@@ -39,7 +39,7 @@ The report has no report ID. The driver reads the first 7 bytes, the layout of S
 
 Face buttons map by position: B is south, A east, Y west, X north. ZL and ZR are digital.
 
-## Not Supported
+## Not supported
 
 - Rumble, player lights and motion. The pads take no Switch output reports, and SDL sends them none.
 - The Taiko drum and the MasCon lever have no dedicated controls. They report through the same bits as a pad, as SDL decodes them.

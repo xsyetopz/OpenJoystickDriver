@@ -25,7 +25,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func theLastChangeMadeWhileOneIsInFlightIsWrittenAfterIt() async {
+  func lastChangeMadeWhileOneInFlightWrittenAfterIt() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
@@ -44,15 +44,16 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func aResetMadeWhileOneIsInFlightIsWrittenAfterIt() async {
+  func resetMadeWhileOneInFlightWrittenAfterIt() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
     let device = Self.device()
 
-    async let first: Void = editor.change(to: 0.02, for: device, viewModel: viewModel) {}
-    async let second: Void = editor.change(to: nil, for: device, viewModel: viewModel) {}
-    _ = await (first, second)
+    let changes = [0.02, nil].map { value in
+      Task { await editor.change(to: value, for: device, viewModel: viewModel) {} }
+    }
+    for change in changes { await change.value }
 
     let requests = await gateway.tuningRequests
     #expect(requests.map(\.value) == [0.02, nil])
@@ -60,7 +61,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func theEditorStaysBusyUntilTheRecordIsRead() async {
+  func editorStaysBusyUntilRecordIsRead() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
@@ -75,7 +76,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func aRefusedChangeDoesNotReadTheRecordAndFreesTheEditor() async {
+  func refusedChangeDoesNotReadRecordAndFreesEditor() async {
     let gateway = GatewayStub()
     await gateway.setTuningFailure(.invalidRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)

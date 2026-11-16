@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Resolves packaged `Localizable` strings and plurals for the app and CLI.
 ///
@@ -28,16 +28,16 @@ public struct Localization: Sendable {
   ///
   /// `preferredLanguages` picks the localization; a key it lacks falls back to the source catalog.
   public init(bundle: Bundle? = nil, preferredLanguages: [String] = Locale.preferredLanguages) {
-    let bundle = bundle ?? Self.moduleBundle
-    let localizationNames = Self.availableLocalizations(in: bundle)
-    let localizedLanguage = Self.localizedLanguage(
-      among: localizationNames,
+    let resolvedBundle = bundle ?? Self.moduleBundle
+    let names = Self.availableLocalizations(in: resolvedBundle)
+    let language = Self.localizedLanguage(
+      among: names,
       preferredLanguages: preferredLanguages
     )
-    self.localizationNames = localizationNames
-    self.localizedLanguage = localizedLanguage
-    let preferredBundle = Self.localizedBundle(for: localizedLanguage, in: bundle)
-    let sourceBundle = Self.sourceEnglishBundle(in: bundle)
+    self.localizationNames = names
+    self.localizedLanguage = language
+    let preferredBundle = Self.localizedBundle(for: language, in: resolvedBundle)
+    let sourceBundle = Self.sourceEnglishBundle(in: resolvedBundle)
     self.lookupBundles = [preferredBundle, sourceBundle].compactMap { $0 }.reduce(into: []) {
       bundles,
       candidate in
@@ -45,9 +45,9 @@ public struct Localization: Sendable {
         bundles.append(candidate)
       }
     }
-    if let localizedLanguage {
+    if let language {
       self.formattingLocale = Locale(
-        identifier: localizedLanguage.replacingOccurrences(of: "-", with: "_")
+        identifier: language.replacingOccurrences(of: "-", with: "_")
       )
     } else {
       self.formattingLocale = .current
@@ -79,20 +79,24 @@ public struct Localization: Sendable {
   ///
   /// Foundation picks the CLDR category with the locale of the selected localization, so a Russian
   /// entry gets the Russian categories whatever the process locale is. Pass the count as an `Int`.
-  public func plural(_ key: String, arguments: [CVarArg]) -> String {
-    String(format: string(key), locale: formattingLocale, arguments: arguments)
+  public func plural(_ key: String, arguments: [any CVarArg]) -> String {
+    unsafe String(format: string(key), locale: formattingLocale, arguments: arguments)
   }
 
   /// Formats with the user's locale.
   ///
   /// Placeholder types stay those in the source catalog.
-  public func string(_ key: String, _ arguments: CVarArg...) -> String {
+  public func string(_ key: String, _ arguments: any CVarArg...) -> String {
     formatted(key, arguments: arguments)
   }
 
   /// Formats the string for `key` with `arguments` in `locale`.
-  public func formatted(_ key: String, locale: Locale = .current, arguments: [CVarArg]) -> String {
-    String(format: string(key), locale: locale, arguments: arguments)
+  public func formatted(
+    _ key: String,
+    locale: Locale = .current,
+    arguments: [any CVarArg]
+  ) -> String {
+    unsafe String(format: string(key), locale: locale, arguments: arguments)
   }
 
   /// The localization selected for the injected preference order, if any.
@@ -103,8 +107,8 @@ public struct Localization: Sendable {
 
   /// Returns locale directories present in a bundle, excluding Base resources.
   public static func availableLocalizations(in bundle: Bundle? = nil) -> [String] {
-    let bundle = bundle ?? moduleBundle
-    if let resourceURL = bundle.resourceURL,
+    let resolved = bundle ?? moduleBundle
+    if let resourceURL = resolved.resourceURL,
       let entries = try? FileManager.default.contentsOfDirectory(
         at: resourceURL,
         includingPropertiesForKeys: [.isDirectoryKey],
@@ -117,7 +121,7 @@ public struct Localization: Sendable {
       }
       if !directories.isEmpty { return directories.sorted() }
     }
-    return bundle.localizations.filter { $0.caseInsensitiveCompare("Base") != .orderedSame }
+    return resolved.localizations.filter { $0.caseInsensitiveCompare("Base") != .orderedSame }
       .sorted()
   }
 

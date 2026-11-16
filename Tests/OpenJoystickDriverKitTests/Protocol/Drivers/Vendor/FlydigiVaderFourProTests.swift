@@ -3,9 +3,9 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Reports of a Flydigi Vader 4 Pro, firmware 6.9.5.5, macOS 26.5.2, captured through a per-device
-/// input-report callback (issue #35, pull request #36), and the rumble frame the reporter drove
-/// on the dongle. The hardware is the reporter's; none of ours has been tested.
+// Captured through a per-device input-report callback (issue #35, pull request #36), plus the
+// rumble frame the reporter drove on the dongle. The hardware is the reporter's; none of ours has
+// been tested.
 private enum Capture {
   /// Dongle DInput `04B4:2412`: the neutral vendor report, 32 bytes, as PR #36 captured it.
   static let dongleNeutral: [UInt8] = [
@@ -40,7 +40,7 @@ struct FlydigiVaderFourProDongleTests {
   }
 
   @Test
-  func theCapturedNeutralReportRestsCentred() throws {
+  func capturedNeutralReportRestsCentred() throws {
     let state = try #require(try Self.driver().parseReport(Capture.dongle([:]))).state
     #expect(abs(state.leftStick.x.rawValue) < 300 && abs(state.rightStick.y.rawValue) < 300)
     #expect(state.leftTrigger.rawValue == 0 && state.rightTrigger.rawValue == 0)
@@ -69,7 +69,7 @@ struct FlydigiVaderFourProDongleTests {
   /// The reporter drove the motors on a dongle: `05 0F <left> <right>` on report 5, resent at about
   /// 10 Hz, and stopped by the same frame with zero magnitudes.
   @Test
-  func rumbleSendsTheVerifiedVendorFrameAndStopsWithTheSameCommand() throws {
+  func rumbleSendsVerifiedVendorFrameAndStopsWithSameCommand() throws {
     let driver = try Self.driver()
     let on = RumbleIntensities(
       lowFrequency: UnipolarValue(byte: 0x40),
@@ -85,7 +85,7 @@ struct FlydigiVaderFourProDongleTests {
   }
 
   @Test
-  func rumbleIsResentEveryHundredMilliseconds() throws {
+  func rumbleResentEveryHundredMilliseconds() throws {
     let plan = try Self.driver().sessionPlan
     #expect(plan.keepAliveChannels == [.hid])
     #expect(plan.keepAliveIntervalNanoseconds == 100_000_000)
@@ -100,7 +100,7 @@ struct FlydigiVaderFourProBluetoothXInputTests {
     try #require(try catalogParser(model, host: .bluetoothClassic) as? ReportLayoutDriver)
   }
 
-  /// Unsigned 16-bit axes centred at 0x7FFF: the neutral report is centred, 0xFFFF is full right
+  /// Unsigned 16-bit axes centered at 0x7FFF: the neutral report is centered, 0xFFFF is full right
   /// and 0x0000 full left, where a signed read wraps everything above 0x8000 negative.
   @Test
   func unsignedAxesCentreAtSevenFFFAndReachBothEnds() throws {
@@ -117,7 +117,7 @@ struct FlydigiVaderFourProBluetoothXInputTests {
   }
 
   @Test
-  func triggersAreTenBitUnsigned() throws {
+  func triggersTenBitUnsigned() throws {
     let driver = try Self.driver()
     let full = try #require(
       try driver.parseReport(Capture.bluetooth([9: 0xFF, 10: 0x03, 11: 0xFF, 12: 0x03]))
@@ -149,7 +149,7 @@ struct FlydigiVaderFourProBluetoothXInputTests {
 
   /// Home arrives on report ID 2, byte 1 bit 0; the main report does not release it.
   @Test
-  func homeArrivesOnReportTwoAndTheMainReportLeavesItAlone() throws {
+  func homeArrivesOnReportTwoAndMainReportLeavesItAlone() throws {
     let driver = try Self.driver()
     _ = try driver.parseReport(Capture.bluetooth([:]))
     #expect(try driver.parseReport(Data([0x02, 0x01])).contains(.press(.guide)))

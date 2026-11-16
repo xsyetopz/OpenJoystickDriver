@@ -1,0 +1,36 @@
+2026-11-13, installed app, pad linked to the receiver in DInput (B + Home), no control pressed.
+
+$ ojd controller show 2DC8:301C
+Name                  8BitDo Ultimate 2C Wireless Controller
+ID                    E-mC5CQJqhUDnQYTot
+Unit ID               U-QqVbeD32XbeOg18F
+Vendor:Product        2DC8:301C
+Connection            USB
+Protocol              hid-descriptor
+Session               active
+Battery               none
+Input                 awaiting-input
+Ownership             route hid, physical exclusive-hid, HID input exclusive
+Handled by            OJD (from default)
+Serving route         virtual-hid
+Virtual gamepad       sdl-compatible
+Record                bundled
+Input mapping         record
+Controls              south, east, west, north, left-shoulder, right-shoulder, left-trigger, right-trigger, back, start, left-stick-click, right-stick-click, dpad-up, dpad-down, dpad-left, dpad-right, guide, left-stick-x, left-stick-y, right-stick-x, right-stick-y
+Rumble                none
+Lighting              none
+Virtual gamepad kind  sdl-compatible (automatic)
+Publication           published
+
+$ .build/debug/OpenJoystickDriverGameControllerProbe --seconds 15
+GameController probe
+Listening for 15s
+
+HID GamePad support:
+- 045E:0B0C "Xbox Adaptive Controller" transport=Virtual gamecontroller=yes
+- 2DC8:301C "8BitDo Ultimate 2C Wireless Controller" transport=USB gamecontroller=yes
+
+Initial controllers: 0
+evidence supports_hid=true connect=false extended_profile=false live_input=false disconnect=false reconnect=false haptics=unclaimed
+
+Earlier run, same session, receiver with no pad linked (product string IDLE): `ojd controller show` printed "Not served  No controller is linked to this receiver. OJD sends it no data.", and the probe listed "HID GamePad support: - none", "Initial controllers: 0".

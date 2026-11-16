@@ -5,24 +5,24 @@ import Testing
 
 struct HIDDescriptorContractTests {
   @Test(arguments: [GamepadHIDDescriptor.descriptor, XboxOneGIPHIDDescriptor.descriptor])
-  func repositoryControllerDescriptorsSatisfyTheContract(descriptor: [UInt8]) {
+  func repositoryControllerDescriptorsSatisfyContract(descriptor: [UInt8]) {
     #expect(violation(Data(descriptor)) == nil)
   }
 
   @Test
-  func minimalGamepadSatisfiesTheContract() {
+  func minimalGamepadSatisfiesContract() {
     #expect(violation(application(stickXY + buttons)) == nil)
   }
 
   @Test
-  func joystickAndMultiAxisCollectionsSatisfyTheContract() {
+  func joystickAndMultiAxisCollectionsSatisfyContract() {
     for usage: UInt8 in [0x04, 0x08] {
       #expect(violation(application(stickXY + buttons, usage: usage)) == nil)
     }
   }
 
   @Test
-  func hatSwitchIsADirectionalInput() {
+  func hatSwitchIsDirectionalInput() {
     let hat: [UInt8] = [
       0x05, 0x01, 0x09, 0x39, 0x15, 0x00, 0x25, 0x07, 0x75, 0x04, 0x95, 0x01, 0x81, 0x42, 0x75,
       0x04, 0x95, 0x01, 0x81, 0x01,
@@ -60,7 +60,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func legalItemsTheParserIgnoresDoNotFail() {
+  func legalItemsParserIgnoresDoNotFail() {
     // Physical Minimum/Maximum, Unit Exponent, Unit, and String Index.
     let ignored: [UInt8] = [0x35, 0x00, 0x45, 0x01, 0x55, 0x00, 0x65, 0x00, 0x79, 0x01]
     #expect(violation(application(ignored + stickXY + buttons)) == nil)
@@ -83,7 +83,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func controlsBeyondTheUsageListAreUnusedPadding() {
+  func controlsBeyondUsageListAreUnusedPadding() {
     // HID 1.11 section 6.2.2.8 repeats the last usage for the remaining controls:
     // buttons 13-16 repeat Button 12 and the last two bytes repeat Y.
     let paddedButtons: [UInt8] = [
@@ -101,7 +101,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func arrayInputIsASelectorOverItsUsageRange() throws {
+  func arrayInputIsSelectorOverItsUsageRange() throws {
     // Six selectors over Buttons 1-4.
     let buttonArray: [UInt8] = [
       0x05, 0x09, 0x19, 0x01, 0x29, 0x04, 0x15, 0x01, 0x25, 0x04, 0x75, 0x08, 0x95, 0x06, 0x81,
@@ -147,7 +147,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func theSameUsageInDifferentReportsPasses() {
+  func sameUsageInDifferentReportsPasses() {
     let first: [UInt8] = [0x85, 0x01] + stickXY + buttons
     let second: [UInt8] = [0x85, 0x02] + stickXY + buttons
     #expect(violation(application(first + second)) == nil)
@@ -166,7 +166,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func singleStickAxisIsNotADirectionalInput() {
+  func singleStickAxisIsNotDirectionalInput() {
     let xOnly: [UInt8] = [0x05, 0x01, 0x09, 0x30, 0x75, 0x08, 0x95, 0x01, 0x81, 0x02]
     #expect(violation(application(xOnly + buttons)) == .missingDirectionalInput)
   }
@@ -175,7 +175,7 @@ struct HIDDescriptorContractTests {
   func missingButtonInputFails() { #expect(violation(application(stickXY)) == .missingButtonInput) }
 
   @Test
-  func directionalAndButtonsMustShareAControllerCollection() {
+  func directionalAndButtonsMustShareControllerCollection() {
     // A mouse with relative X/Y and buttons beside a joystick with only vendor input.
     let relativeXY: [UInt8] = [
       0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x75, 0x08, 0x95, 0x02, 0x81, 0x06,
@@ -193,7 +193,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func relativeAxesAreNotADirectionalInput() {
+  func relativeAxesAreNotDirectionalInput() {
     let relativeXY: [UInt8] = [
       0x05, 0x01, 0x09, 0x30, 0x09, 0x31, 0x75, 0x08, 0x95, 0x02, 0x81, 0x06,
     ]
@@ -201,7 +201,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func buttonUsageZeroIsNotAButton() {
+  func buttonUsageZeroIsNotButton() {
     let noUsage: [UInt8] = [0x05, 0x09, 0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x08, 0x81, 0x02]
     let usageZero: [UInt8] = [0x05, 0x09, 0x09, 0x00, 0x75, 0x08, 0x95, 0x01, 0x81, 0x02]
     #expect(violation(application(stickXY + noUsage)) == .missingButtonInput)
@@ -209,7 +209,7 @@ struct HIDDescriptorContractTests {
   }
 
   @Test
-  func inputReportLengthMatchesTheHostCount() {
+  func inputReportLengthMatchesHostCount() {
     // The Xbox One GIP report 0x20 carries 3 header bytes and 14 payload bytes (four 16-bit
     // sticks, two 16-bit triggers, two button bytes) plus its report ID.
     let xbox = Data(XboxOneGIPHIDDescriptor.descriptor)

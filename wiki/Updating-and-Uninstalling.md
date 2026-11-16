@@ -1,31 +1,29 @@
 # Updating and Uninstalling
 
-Check for a new OpenJoystickDriver version, and remove the app and its data when you no longer need them.
+Check for a new OpenJoystickDriver (OJD) version, and remove the app and its data when you no longer need them.
 
 ## Contents
 
 - [Update](#update)
   - [How Update Checks Work](#how-update-checks-work)
   - [Release Builds and Tester Builds](#release-builds-and-tester-builds)
-  - [Check For Updates](#check-for-updates)
+  - [Check for Updates](#check-for-updates)
   - [Install a New Version](#install-a-new-version)
   - [Update from an Earlier Alpha](#update-from-an-earlier-alpha)
   - [Get a Fix](#get-a-fix)
 - [Uninstall](#uninstall)
   - [Remove the App](#remove-the-app)
-  - [Files That Stay On Your Mac](#files-that-stay-on-your-mac)
+  - [Files That Stay on Your Mac](#files-that-stay-on-your-mac)
   - [Remove the Data](#remove-the-data)
 - [Further Reading](#further-reading)
 
 ## Update
 
-This section explains how to check for a new OpenJoystickDriver (OJD) version and how to get a fix.
-
 ### How Update Checks Work
 
 OJD checks for updates only when you ask. It has no timer and does not check in the background. An update check never downloads or installs anything.
 
-A check reads the version tags of the OJD repository on GitHub and reports the highest version. By default it ignores prerelease versions. A prerelease build is newer than every stable release, so a default check run from it finds nothing. To include prereleases, turn on **Include prerelease updates** in **Settings**. In the command line, add `--prerelease` to `update check`.
+A check reads the version tags of the OJD repository on GitHub and reports the highest version. By default it ignores prerelease versions. A prerelease build is newer than every stable release, so a default check run from it finds nothing. To include prereleases, turn on **Include prerelease updates** in **Settings**. In the command line, add `--prerelease` to `update check`. When only prerelease versions are published and the setting is off, **Settings** says that no stable release is published yet and names **Include prerelease updates**; this is not an error.
 
 When a newer version exists, **View Update** opens the tag page in your browser. You download and install the new version yourself.
 
@@ -59,7 +57,7 @@ ojd update check
 3. Drag **OpenJoystickDriver** to **Applications**. Replace the old app when macOS asks.
 4. Open OJD.
 
-Your profiles stay in place because they are stored outside the app.
+Your [profiles](Glossary.md#terms) stay in place because they are stored outside the app.
 
 ### Update from an Earlier Alpha
 
@@ -91,9 +89,7 @@ The `CHANGELOG.md` file in the repository lists what each build contains.
 
 ## Uninstall
 
-This section explains how to remove OpenJoystickDriver (OJD) and the files it leaves on your Mac.
-
-Removing the app alone leaves a login item, privacy entries, a system extension, and data files. Follow the steps in order.
+Removing the app alone leaves a login item, privacy entries, the [Xbox USB driver](Glossary.md#terms), and data files. Follow the steps in order.
 
 ### Remove the App
 
@@ -103,7 +99,7 @@ Removing the app alone leaves a login item, privacy entries, a system extension,
    ojd setting set launchAtLogin false
    ```
 
-2. If you approved the OJD driver extension, remove it. In **Settings** > **Advanced**, under **Xbox USB Driver**, click **Uninstall**. Or run the following command.
+2. If you approved the Xbox USB driver, remove it. In **Settings** > **Advanced**, under **Xbox USB Driver**, click **Uninstall**. Or run the following command.
 
    ```shell
    ojd transport-extension deactivate

@@ -18,12 +18,13 @@ struct ControllerCommand: AsyncParsableCommand {
       ),
     subcommands: [
       ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
-      ControllerCaptureCommand.self, ControllerRumbleCommand.self, ControllerLightCommand.self,
+      ControllerCheckCommand.self, ControllerCaptureCommand.self, ControllerRumbleCommand.self,
+      ControllerLightCommand.self,
       ControllerPlayerCommand.self, ControllerSpeakerCommand.self, ControllerSuspendCommand.self,
       ControllerResumeCommand.self,
       ControllerDisconnectCommand.self, ControllerCalibrateCommand.self, ControllerPairCommand.self,
       ControllerUnpairCommand.self, ControllerClaimCommand.self,
-      ControllerReleaseCommand.self,
+      ControllerReleaseCommand.self, ControllerLookupCommand.self,
     ]
   )
 
@@ -154,7 +155,8 @@ struct ControllerShowCommand: AsyncParsableCommand {
       let selector = controller
       let status = try await ServiceConnection.request { try await $0.getStatus() }
       let devices = status.connectedDevices
-      if case .model(let model) = selector.reference, selector.reference.matches(in: devices).isEmpty,
+      if case .model(let model) = selector.reference,
+        selector.reference.matches(in: devices).isEmpty,
         let unserved = status.unboundDevices.first(where: {
           $0.vendorID == model.vendorID && $0.productID == model.productID
         })
@@ -207,6 +209,12 @@ struct ControllerShowCommand: AsyncParsableCommand {
     rows += [
       ["input-health", CommandLineName.kebab(detail.inputHealth.state)],
       ["ownership", CommandLineName.kebab(detail.ownership.physical)],
+    ]
+    rows += detail.ownership.holders.map {
+      ["holder", $0.processID.map { "\($0)" } ?? "", $0.name]
+    }
+    rows += [
+      ["holds-exclusively", "\(detail.ownership.holdsExclusively)"],
       [
         "server", CommandLineName.kebab(detail.ownership.server.rawValue),
         CommandLineName.kebab(detail.ownership.serverSource),
@@ -391,6 +399,24 @@ struct ControllerShowCommand: AsyncParsableCommand {
           USBExclusiveOwner.heldMessage(for: detail.ownership.owner, localize: CLILocalized.text)
         )
       )
+    }
+    rows.append(
+      (
+        CLILocalized.text("ui.controllers.holders"),
+        list(detail.ownership.holders.map { $0.label(localize: CLILocalized.text) })
+      )
+    )
+    let nextStep = CLILocalized.text("cli.controller.show.labelNextStep")
+    if detail.ownership.holdsExclusively {
+      rows += [
+        (
+          CLILocalized.text("ui.controllers.exclusiveOwner"),
+          CLILocalized.text("status.controllerExclusive")
+        ),
+        (nextStep, CLILocalized.format("cli.controller.show.suspendHint", detail.id)),
+      ]
+    } else if detail.session == ControllerSessionState.suspended.rawValue {
+      rows.append((nextStep, CLILocalized.format("cli.controller.show.resumeHint", detail.id)))
     }
     // The output lists above hold only what macOS leaves undone, so say why.
     if detail.capabilities.outputOwner == ControllerServer.system.rawValue {

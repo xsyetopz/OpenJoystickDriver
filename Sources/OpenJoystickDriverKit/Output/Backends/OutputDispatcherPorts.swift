@@ -46,7 +46,7 @@ extension VirtualOutputDispatching {
   /// Sets ``OutputDispatcher/suppressOutput``.
   public func setOutputSuppressed(_ suppressed: Bool) { suppressOutput = suppressed }
   /// Activates output for `identifier`; this default reports no failure.
-  public func activateOutputReportingFailure(for identifier: LogicalControllerID) async throws {
+  public func activateOutputReportingFailure(for identifier: LogicalControllerID) async {
     await activateOutput(for: identifier)
   }
 }
@@ -120,8 +120,8 @@ extension OutputDispatcher {
   public func dispatchPublishing(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID,
-    onPublished _: @escaping @Sendable () -> Void
-  ) async throws {
+    onPublished _: @Sendable () -> Void
+  ) async {
     await dispatch(event, from: identifier)
   }
 }
@@ -142,7 +142,7 @@ public final class LoggingOutputDispatcher: OutputDispatcher, Sendable {
     set { storedSuppression.withLock { $0 = newValue } }
   }
 
-  /// Creates a new LoggingOutputDispatcher.
+  /// Creates a dispatcher that logs each state.
   public init() {}
 
   /// Prints each state to standard output.

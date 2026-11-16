@@ -1,7 +1,7 @@
 import Foundation
 import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 import Security
 
 /// Publishes virtual gamepads as `IOHIDUserDevice`s.
@@ -131,6 +131,6 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
       let value = SecTaskCopyValueForEntitlement(task, entitlement as CFString, nil),
       CFGetTypeID(value) == CFBooleanGetTypeID()
     else { return false }
-    return CFBooleanGetValue(unsafeDowncast(value, to: CFBoolean.self))
+    return unsafe CFBooleanGetValue(unsafeDowncast(value, to: CFBoolean.self))
   }
 }

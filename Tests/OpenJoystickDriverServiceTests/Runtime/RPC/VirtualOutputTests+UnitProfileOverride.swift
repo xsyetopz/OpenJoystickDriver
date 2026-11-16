@@ -1,15 +1,16 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
 
 extension VirtualOutputTests {
   @Test
-  func aUnitOverrideRetargetsOnlyThatUnitAndResettingItFallsBackToTheModel() async throws {
+  func unitOverrideRetargetsOnlyThatUnitAndResettingItFallsBackToModel() async throws {
     let first = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
     let second = LogicalControllerID(vendorID: 1, productID: 2, locationID: 2)
-    let fixture = try await profileOverrideServer([first, second])
+    let fixture = await profileOverrideServer([first, second])
     let automatic = fixture.server.automaticUserSpaceDispatcher()
     func live(_ identifier: LogicalControllerID) -> VirtualHIDProfileID? {
       automatic?.profileState(for: identifier).selection?.profileID
@@ -43,8 +44,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aUnitOverrideForAControllerWithoutAUnitIDIsNotFound() async throws {
-    let fixture = try await profileOverrideServer()
+  func unitOverrideForControllerWithoutUnitIDNotFound() async {
+    let fixture = await profileOverrideServer()
 
     let result = await fixture.change(.set("Generic"), unit: true)
 

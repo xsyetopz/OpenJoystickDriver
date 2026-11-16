@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One folder of the package store: its manifest, and why the package cannot be used.
 public struct ModPackage: Equatable, Sendable {
@@ -19,9 +19,9 @@ public struct ModPackage: Equatable, Sendable {
 /// The installed mod packages: `<AppSupport>/OpenJoystickDriver/Packages/<name>/`.
 ///
 /// A package is a folder with a `mod.plist` manifest and `Controllers/`, `Profiles/`,
-/// `VirtualDevices/`, and `Protocols/` folders. The store checks a package against the running version, its own
-/// files, and the user's files and the other installed packages before it installs the package.
-/// Each refusal is a ``ModPackageError`` with an E4xxx code.
+/// `VirtualDevices/`, and `Protocols/` folders. The store checks a package against the running
+/// version, its own files, and the user's files and the other installed packages before it
+/// installs the package. Each refusal is a ``ModPackageError`` with an E4xxx code.
 public struct ModPackageStore: Sendable {
   /// `~/Library/Application Support/OpenJoystickDriver/Packages`.
   public static var rootDirectory: URL { directory(besides: ControllerRecordSet.userDirectory) }
@@ -82,9 +82,9 @@ public struct ModPackageStore: Sendable {
   /// Installs the package in `folder`, and returns it as installed.
   ///
   /// The package is copied into a hidden staging folder of the store, without hidden files and
-  /// scripts, and without following links, and the copy is validated and then swapped in at once. So the
-  /// installed files are the validated ones even when `folder` changes during the install, and a
-  /// failed install leaves the installed package intact and no staging folder behind.
+  /// scripts, and without following links, and the copy is validated and then swapped in at once.
+  /// So the installed files are the validated ones even when `folder` changes during the install,
+  /// and a failed install leaves the installed package intact and no staging folder behind.
   ///
   /// The service reloads when the store folder changes, which an install, a replace, and a
   /// remove do. A file that is edited in place inside an installed package does not change the
@@ -122,11 +122,11 @@ public struct ModPackageStore: Sendable {
       let manifest = try validate(staged)
       let installed = directory.appendingPathComponent(manifest.name, isDirectory: true)
       let present = Self.entryExists(installed)
-      if present && !replace {
+      if present, !replace {
         throw ModPackageError(.packageAlreadyInstalled, "\(manifest.name) is already installed")
       }
       try Self.write("\(manifest.name) cannot be put in the package store") {
-        if present && Self.isDirectory(installed) {
+        if present, Self.isDirectory(installed) {
           _ = try manager.replaceItemAt(installed, withItemAt: staged)
         } else {
           // A link or file in the place of the folder, such as a dangling link, is removed
@@ -212,7 +212,8 @@ public struct ModPackageStore: Sendable {
 
   /// The manifest of the package in `folder`.
   ///
-  /// - Throws: ``ModPackageError`` with ``ErrorCode/invalidManifest`` when `mod.plist` is missing or
+  /// - Throws: ``ModPackageError`` with ``ErrorCode/invalidManifest`` when `mod.plist` is missing
+  /// or
   ///   invalid.
   static func manifest(in folder: URL) throws -> ModPackageManifest {
     let file = folder.appendingPathComponent(ModPackageManifest.fileName)

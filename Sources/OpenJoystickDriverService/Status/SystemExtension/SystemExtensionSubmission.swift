@@ -1,6 +1,6 @@
-import Foundation
-import OpenJoystickDriverKit
-import SystemExtensions
+package import Foundation
+package import OpenJoystickDriverKit
+package import SystemExtensions
 
 /// The localized texts of the submission results.
 private let localization = Localization()
@@ -51,9 +51,9 @@ final class SystemExtensionRequestState: @unchecked Sendable {
   func cancel() {
     lock.lock()
     cancelled = true
-    let submission = self.submission
+    let started = self.submission
     lock.unlock()
-    submission?.cancel()
+    started?.cancel()
   }
 }
 
@@ -123,7 +123,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
   /// A request that is still pending after `seconds` times out.
   package func wait(timeout seconds: TimeInterval) -> Result {
     let deadline = Date().addingTimeInterval(seconds)
-    while currentResult == nil && Date() < deadline {
+    while currentResult == nil, Date() < deadline {
       RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.1))
     }
     if currentResult == nil { timeout() }
@@ -139,7 +139,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
 
   /// Records that the request finished, with the result code.
   package func request(
-    _ request: OSSystemExtensionRequest,
+    _: OSSystemExtensionRequest,
     didFinishWithResult result: OSSystemExtensionRequest.Result
   ) {
     guard completionGate.accept() else { return }
@@ -155,7 +155,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
   }
 
   /// Records the failure of the request.
-  package func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
+  package func request(_: OSSystemExtensionRequest, didFailWithError error: any Error) {
     guard completionGate.accept() else { return }
     let nsError = error as NSError
     setResult(
@@ -170,7 +170,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
   }
 
   /// Records that the request needs the user's approval.
-  package func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
+  package func requestNeedsUserApproval(_: OSSystemExtensionRequest) {
     guard completionGate.accept() else { return }
     setResult(.requiresApproval)
     finish(.awaitingApproval)
@@ -180,7 +180,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
   ///
   /// The replacement is reported on the standard error stream.
   package func request(
-    _ request: OSSystemExtensionRequest,
+    _: OSSystemExtensionRequest,
     actionForReplacingExtension existing: OSSystemExtensionProperties,
     withExtension ext: OSSystemExtensionProperties
   ) -> OSSystemExtensionRequest.ReplacementAction {

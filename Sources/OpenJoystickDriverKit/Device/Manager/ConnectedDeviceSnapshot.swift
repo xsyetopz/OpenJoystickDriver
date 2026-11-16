@@ -22,6 +22,8 @@ public struct ConnectedDeviceSnapshot: Sendable {
   public let discoverySource: DeviceDiscoverySource
   /// The observed physical ownership, which the virtual gamepad exposure policy reads.
   public let physicalOwnership: ControllerOwnershipObservation
+  /// Whether macOS can serve the controller as a native gamepad when OJD leaves it alone.
+  public let gameControllerSupported: Bool
   /// Current HID acquisition result; unknown for non-HID discovery routes, except that a raw-USB
   /// controller whose interface another client holds exclusively reports `ownedByAnotherClient`.
   public let hidInputOwnership: HIDInputOwnership
@@ -51,7 +53,8 @@ public struct ConnectedDeviceSnapshot: Sendable {
   /// Who drives the controller's output: `macOS` when it serves the controller natively, so
   /// ``physicalOutputCapabilities`` holds only what macOS leaves undone.
   public let physicalOutputOwner: ControllerServer
-  /// Who the record the controller bound with says serves the model; `macOS` when it sets none.
+  /// Who the record the controller bound with says serves the model; when it sets none, the
+  /// server detection chose (``PhysicalDevice/detectedServer``).
   public let recordServer: ControllerServer
   /// How the controller record reaches the controller; `system` when it names no other route.
   public let recordAccessRoute: ControllerAccessRoute

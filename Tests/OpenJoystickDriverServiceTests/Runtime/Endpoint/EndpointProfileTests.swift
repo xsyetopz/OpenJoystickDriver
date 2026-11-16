@@ -29,7 +29,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aProfileRequestActivatesAndDeactivatesAProfileByName() async throws {
+  func profileRequestActivatesAndDeactivatesProfileByName() async throws {
     let racing = FakeAutomation.profile("Racing")
     try await withEndpointServer(automation: FakeAutomation(profiles: [racing])) { server, _ in
       let client = try await welcomed(server)
@@ -52,18 +52,21 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aProfileRequestSetsOneValueAndTheConnectionStaysOpen() async throws {
+  func profileRequestSetsOneValueAndConnectionStaysOpen() async throws {
     let racing = FakeAutomation.profile("Racing")
     let automation = FakeAutomation(profiles: [racing])
     try await withEndpointServer(automation: automation) { server, _ in
       let client = try await welcomed(server)
 
       await client.send(
-        clientLine("ProfileRequest", #","action":"Set","profile":"Racing","key":"name","value":"Rally""#)
+        clientLine(
+          "ProfileRequest",
+          #","action":"Set","profile":"Racing","key":"name","value":"Rally""#
+        )
       )
       let renamed = try await schemaLine(client)
       #expect((renamed["profile"] as? [String: Any])?["name"] as? String == "Rally")
-      #expect(try await automation.getRemappingSnapshot().profiles.map(\.name) == ["Rally"])
+      #expect(automation.getRemappingSnapshot().profiles.map(\.name) == ["Rally"])
 
       await client.send(
         clientLine("ProfileRequest", #","action":"Activate","profile":"Rally""#)
@@ -73,7 +76,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aRefusedRequestAnswersWithTheCodeOfOjdAndKeepsTheConnectionOpen() async throws {
+  func refusedRequestAnswersWithCodeOfOjdAndKeepsConnectionOpen() async throws {
     let racing = FakeAutomation.profile("Racing")
     try await withEndpointServer(automation: FakeAutomation(profiles: [racing])) { server, _ in
       let client = try await welcomed(server)
@@ -84,7 +87,10 @@ struct EndpointProfileTests {
       #expect(missing["code"] as? String == ErrorCode.notFound.rawValue)
 
       await client.send(
-        clientLine("ProfileRequest", #","action":"Set","profile":"Racing","key":"name","value":null"#)
+        clientLine(
+          "ProfileRequest",
+          #","action":"Set","profile":"Racing","key":"name","value":null"#
+        )
       )
       let removed = try await schemaLine(client)
       #expect(removed["kind"] as? String == "Status")
@@ -96,7 +102,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aSetWithoutAKeyOrAValueEndsTheConnection() async throws {
+  func setWithoutKeyOrValueEndsConnection() async throws {
     try await withEndpointServer(
       automation: FakeAutomation(profiles: [FakeAutomation.profile("Racing")])
     ) { server, _ in
@@ -116,7 +122,7 @@ struct EndpointProfileTests {
   }
 
   @Test
-  func aProfileRequestNeedsTheControlScope() async throws {
+  func profileRequestNeedsControlScope() async throws {
     try await withEndpointServer(
       automation: FakeAutomation(profiles: [FakeAutomation.profile("Racing")])
     ) { server, _ in

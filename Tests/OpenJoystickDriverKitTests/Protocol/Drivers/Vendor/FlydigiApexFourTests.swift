@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Reports built from the layout of the pinned protocol notes for the Apex 4 in DInput mode, not
-/// captured from a pad: report ID 4 in byte 0, 32 bytes, sticks centred at `0x7F`.
+/// captured from a pad: report ID 4 in byte 0, 32 bytes, sticks centered at `0x7F`.
 private enum SourceReport {
   static let model = ControllerModelID(vendorID: 0x04B4, productID: 0x2412)
 
@@ -47,12 +47,12 @@ struct FlydigiApexFourTests {
   @Test(arguments: [
     (UInt8(0x01), HatDirection.north), (0x02, .east), (0x04, .south), (0x08, .west),
   ])
-  func directionBitsMoveTheHat(mask: UInt8, direction: HatDirection) throws {
+  func directionBitsMoveHat(mask: UInt8, direction: HatDirection) throws {
     let driver = try Self.driver()
     #expect(try driver.parseReport(SourceReport.with([9: mask])).contains(.hat(direction)))
   }
 
-  /// Sticks centre at `0x7F`, and a low raw Y is up, as in the notes.
+  /// Sticks center at `0x7F`, and a low raw Y is up, as in the notes.
   @Test
   func sticksAndTriggersReadTheirBytes() throws {
     let driver = try Self.driver()
@@ -69,7 +69,7 @@ struct FlydigiApexFourTests {
 
   /// A digital trigger bit reads as a fully pulled trigger.
   @Test(arguments: [(UInt8(0x10), true), (0x20, false)])
-  func digitalTriggerBitsPullTheTrigger(mask: UInt8, left: Bool) throws {
+  func digitalTriggerBitsPullTrigger(mask: UInt8, left: Bool) throws {
     let driver = try Self.driver()
     let state = try #require(try driver.parseReport(SourceReport.with([10: mask]))).state
     #expect((left ? state.leftTrigger : state.rightTrigger).rawValue == UInt16.max)

@@ -25,8 +25,12 @@
     @ViewBuilder
     var body: some View {
       switch column {
-      case .list: LibraryListView(model: model)
-      case .detail: LibraryDetailView(runtime: runtime, model: model)
+      case .list: LibraryListView(model: model).ojdInterfaceRow(LibraryRow.list)
+      case .detail:
+        VStack(spacing: OJDSpacing.none) {
+          HiddenChangeNotice(content: .needsAdvanced).padding(.horizontal, OJDSpacing.medium)
+          LibraryDetailView(runtime: runtime, model: model).ojdInterfaceRow(LibraryRow.detail)
+        }
       }
     }
   }
@@ -46,16 +50,17 @@
             Text(OJDLocalized.string(scope.titleKey)).tag(scope)
           }
         }.pickerStyle(SegmentedPickerStyle()).labelsHidden().padding(.horizontal, 16)
-          .padding(.vertical, 12)
+          .padding(.vertical, 12).ojdInterfaceRow(LibraryRow.scopeSwitch)
+          .help(OJDLocalized.string("ui.library.scopeHelp"))
         List(selection: selection) {
           Section(header: recordsHeader) {
-            if model.visibleRecords.isEmpty && (isSearching || model.records.skipped.isEmpty) {
+            if model.visibleRecords.isEmpty, isSearching || model.records.skipped.isEmpty {
               emptyLine(
                 isSearching ? "ui.library.search.noMatches" : "ui.library.records.empty.title"
               )
             }
             ForEach(model.visibleRecords) { item in recordRow(item) }
-            if model.scope == .installed && !isSearching {
+            if model.scope == .installed, !isSearching {
               ForEach(model.records.skipped) { skipped in skippedRow(skipped) }
             }
           }
@@ -70,7 +75,7 @@
             }
           }
         }.listStyle(InsetListStyle())
-      }.onAppear { model.reload() }
+      }.onAppear { model.reloadAfterRender() }
     }
 
     /// Whether the search field holds text other than spaces.
@@ -80,21 +85,16 @@
 
     /// The selected row, which reads and sets the selection of ``model``.
     private var selection: Binding<LibrarySelection?> {
-      Binding(get: { model.selection }, set: { model.select($0) })
+      Binding(get: { model.selection }, set: { model.selectAfterRender($0) })
     }
 
-    /// The header of the records section; the Built-in scope shows the number of records beside
-    /// the title.
+    /// The header of the records section; the Built-in scope shows only the number of records.
     @ViewBuilder
     private var recordsHeader: some View {
       switch model.scope {
       case .installed: Text(OJDLocalized.string("ui.library.records"))
       case .builtIn:
-        HStack {
-          Text(OJDLocalized.string("ui.library.builtIn"))
-          Spacer()
-          Text(model.records.builtIn.count.formatted())
-        }.ojdAccessibilityValue(model.records.builtIn.count.formatted())
+        Text(model.records.builtIn.count.formatted())
       }
     }
 
@@ -103,13 +103,9 @@
       Text(OJDLocalized.string(key)).foregroundColor(.secondary)
     }
 
-    /// The row of a record: its identity, then its family and layer, and the file that patches it.
+    /// The row of a record: its identity, then its caption, and the file that patches it.
     private func recordRow(_ item: LibraryRecordItem) -> some View {
-      let summary = OJDLocalized.formatted(
-        "ui.library.record.detail",
-        item.family.displayName,
-        item.layer.libraryTitle
-      )
+      let summary = item.subtitle
       return VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Text(item.identity)
         Text(summary).font(.caption).foregroundColor(.secondary)
@@ -127,6 +123,10 @@
         Text(skipped.displayPath)
         Text(OJDLocalized.formatted("ui.library.record.skipped", skipped.problem)).font(.caption)
           .foregroundColor(.secondary)
+        if skipped.offersMigration {
+          Button(OJDLocalized.string("ui.migrate.action")) { model.migrate() }
+            .help(OJDLocalized.string("ui.migrate.actionHelp"))
+        }
       }.ojdAccessibilityLabel(skipped.path).ojdAccessibilityValue(skipped.problem)
     }
 
@@ -174,8 +174,10 @@
           Button(OJDLocalized.string("action.cancel"), action: cancel).keyboardShortcut(
             .cancelAction
           ).ojdAccessibilityLabel(OJDLocalized.string("a11y.library.cancel"))
+            .help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(confirmation.confirmTitle, action: confirm).keyboardShortcut(.defaultAction)
             .ojdAccessibilityLabel(confirmation.confirmTitle)
+            .help(OJDLocalized.string("ui.library.confirmHelp"))
         }
       }.ojdSheet(.compact)
     }

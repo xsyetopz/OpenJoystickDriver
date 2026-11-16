@@ -15,3 +15,13 @@ Payload without the report ID byte (HIDCAP_NO_ID=1):
 0.001 tx len=5 05 00 00 00 00 result=e00002f0
 
 Every write failed, so none tests the motors. The maintainer reports that the pad rumbled once when it connected.
+
+2026-11-12, 23:44. From OJD's session while OJD serves the pad (Handled by OJD, physical exclusive-hid), build f8a498dfb.
+User patch /tmp/ojdcli/2dc8-301b-rumble.patch.plist: mode default, session.rumble = Output report 5, length 5, lowFrequency byte 1, highFrequency byte 2.
+$ ojd controller show 2DC8:301B | grep Rumble
+Rumble                low-frequency, high-frequency
+$ ojd controller rumble 2DC8:301B --left 255 --right 255 --duration 2
+error[E2013]: 8BitDo Ultimate 2C Wireless did not accept the rumble command (write-failed). Check it with 'ojd log show'.
+$ ojd log show
+[HIDDeviceStream] Output report failed for loc=1152007200 report=0x05 kr=-536870160
+kr -536870160 is 0xE00002F0, kIOReturnNotFound: the same result as the writes outside OJD. The patch was removed after the run.

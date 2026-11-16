@@ -2,9 +2,9 @@
 
 This request covers [OpenJoystickDriver issue #9][1]. Linux `xpad.c` identifies three Microsoft receiver IDs that OJD imports as unverified records:
 
-- `045e:0291` — Xbox 360 Wireless Receiver (XBOX)
-- `045e:02a9` — unofficial receiver identity
-- `045e:0719` — Xbox 360 Wireless Receiver
+- `045e:0291`: Xbox 360 Wireless Receiver (XBOX)
+- `045e:02a9`: unofficial receiver identity
+- `045e:0719`: Xbox 360 Wireless Receiver
 
 The parser handles Linux's four-byte receiver envelope, controller presence transitions, state reports, two-motor rumble, and ring-light commands. A receiver state report needs 18 bytes including the envelope, and its inner type byte is zero. Its inner length byte is `13` in the captures of [issue #9][1] (`045e:0719`) and [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) (`045e:02a9`), so only a wired pad is held to `14`. The decoder tests replay those captured 29-byte packets. Decoding is verified against the captures; virtual output, rumble, and LEDs through OJD are not hardware-verified.
 
@@ -14,29 +14,40 @@ Record validation is signing-free. These receiver pairs are not in the current p
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/9
 
-## Direct USB Input Evidence
+## Direct USB input evidence reported in pull request #54
 
-On an Intel Mac with receiver `045e:02a9`, a source probe built from PR #54's merge commit `9bade60d2` in an isolated Swift 6.3 compatibility copy received 3,371 packets and decoded 3,363 snapshots with zero parse errors in 60 seconds. Face buttons, shoulders, both stick clicks, all D-pad directions, and the full ranges of both sticks and triggers were observed. A subsequent capture observed Start, Back, Guide and disconnect/reconnect; it required manual termination and has no final summary.
+On 2026-10-25, the pull request's author ran an Intel iMac20,1 on macOS 26.7.1 against `045e:02a9` on interface 0, endpoints `81`/`01`, with a patched `OpenJoystickDriverHIDTool --record-probe` and the bundled receiver record. This repository holds none of that capture; the figures are the author's report.
 
-The user also reported that the paired controller appeared and controls responded in the isolated patched app's Input Test. The ad-hoc-signed build lacked the virtual HID entitlement; virtual output, games, rumble, LEDs and empty-slot virtual publication were not verified. The installed app was not replaced.
+- A 25-second capture received 903 packets and decoded 890 controller snapshots with zero parse errors.
+- Both axes of both sticks reached the canonical full range, `-32767...32767`; both triggers reached `0...65535`.
+- Every D-pad direction, A, X, Guide and both shoulders registered. A second 15-second capture decoded 13 snapshots from 14 packets with zero parse errors and registered B, Y, Start and Back.
+- The receiver sent disconnect and reconnect notifications during a deliberate reconnection, and decoding resumed.
 
-## Find and Validate the Receiver Record
+Those captures did not observe stick clicks. Virtual-HID output was unavailable in that build, so empty-slot publication, games, rumble and LEDs still need a provisioned app test.
+
+## Later direct USB input evidence
+
+A later source probe built from PR #54's merge commit `9bade60d2` in an isolated Swift 6.3 compatibility copy received 3,371 packets and decoded 3,363 snapshots with zero parse errors in 60 seconds. It observed face buttons, shoulders, both stick clicks, all D-pad directions, and the full ranges of both sticks and triggers. A subsequent capture observed Start, Back, Guide and disconnect/reconnect; it required manual termination and has no final summary.
+
+The author also reported that the paired controller appeared and controls responded in the isolated patched app's Input Test. The ad-hoc-signed build lacked the virtual HID entitlement; virtual output, games, rumble, LEDs and empty-slot virtual publication were not verified. The installed app was not replaced.
+
+## Find and validate the receiver record
 
 Use System Information or the OJD HID tool to identify the receiver PID, then select the matching JSON file under `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
 
 For the common `045e:0719` receiver:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --validate-only
 ```
 
-## Capture Connection and Input
+## Capture connection and input
 
 Quit Steam, games, and other controller tools. Connect the receiver, pair one controller, then run:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --seconds 45
 ```
 
@@ -53,9 +64,9 @@ If the USB interface is unavailable, preserve the selected route and registry ow
 
 Attach the complete command output to issue #9 with macOS version, Mac model, receiver VID/PID and branding, controller model, exact OJD commit, selected route, reconnect results, and any missing or incorrect inputs. Raw packet output is included; inspect it before publishing.
 
-## Capture Receiver Slots
+## Capture receiver slots
 
-OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Each slot sends the presence inquiry at startup and connects when it reports a controller present or sends a valid state report. The manager assigns a player indicator from its pool. The observed `045e:02a9` interfaces are 0, 2, 4 and 6, with input endpoints `81`, `83`, `85` and `87`; only interface 0 delivered controller input. The observed `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; the interface numbers of its other slots are not captured.
+OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Each slot sends the presence inquiry at startup and connects when it reports a controller present or sends a valid state report. The manager assigns a player indicator from its pool. Slot 0 on the observed `045e:02a9` and `045e:0719` receivers is interface 0 with endpoints `81`/`01`. [Pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports that `045e:02a9` exposes interfaces 0, 2, 4 and 6 with input endpoints `81`, `83`, `85` and `87`; only interface 0 delivered controller input. The interface numbers of the other `045e:0719` slots are not captured.
 
 1. Record the configuration descriptor and interface numbers with the receiver plugged in:
 

@@ -9,7 +9,7 @@ actor USBRuntimeRecordingProvider: USBTransportProvider {
   func devices() -> [USBTransportDevice] { [] }
 
   func open(
-    _ device: USBTransportDevice,
+    _: USBTransportDevice,
     options: USBTransportOpenOptions
   ) -> any USBTransportSession {
     self.options = options
@@ -23,19 +23,19 @@ struct USBWriteRecord: Equatable, Sendable {
 }
 
 actor USBRuntimeRecordingSession: USBTransportSession {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
   private(set) var writeEndpoints: [UInt8] = []
   private(set) var readEndpoints: [UInt8] = []
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) -> Int {
+  func write(endpoint: UInt8, data: [UInt8], timeout _: UInt32) -> Int {
     writeEndpoints.append(endpoint)
     return data.count
   }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) -> [UInt8] {
+  func read(endpoint: UInt8, length _: Int, timeout _: UInt32) -> [UInt8] {
     readEndpoints.append(endpoint)
     return [0]
   }

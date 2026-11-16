@@ -1,7 +1,8 @@
 import Foundation
 
 extension ControllerRecordDraft {
-  /// The interface a mode matches: its USB class triple and, for a HID interface, its primary usage.
+  /// The interface a mode matches: its USB class triple and, for a HID interface, its primary
+  /// usage.
   private struct Signature: Hashable {
     let interfaceClass: UInt8
     let interfaceSubclass: UInt8
@@ -11,13 +12,13 @@ extension ControllerRecordDraft {
 
     /// The signature of `interface`; nil when the backend did not report its class triple.
     init?(_ interface: PhysicalInterfaceSignature) {
-      guard let interfaceClass = interface.interfaceClass,
-        let interfaceSubclass = interface.interfaceSubclass,
-        let interfaceProtocol = interface.interfaceProtocol
+      guard let classCode = interface.interfaceClass,
+        let subclassCode = interface.interfaceSubclass,
+        let protocolCode = interface.interfaceProtocol
       else { return nil }
-      self.interfaceClass = interfaceClass
-      self.interfaceSubclass = interfaceSubclass
-      self.interfaceProtocol = interfaceProtocol
+      self.interfaceClass = classCode
+      self.interfaceSubclass = subclassCode
+      self.interfaceProtocol = protocolCode
       let primary = interface.hidLayout?.primaryUsage
       usagePage = primary?.usagePage
       usage = primary?.usage
@@ -25,7 +26,9 @@ extension ControllerRecordDraft {
 
     /// A mode ID that names the signature.
     var id: String {
-      var parts = ["interface", "\(interfaceClass)", "\(interfaceSubclass)", "\(interfaceProtocol)"]
+      var parts = [
+        "interface", "\(interfaceClass)", "\(interfaceSubclass)", "\(interfaceProtocol)",
+      ]
       if let usagePage, let usage { parts += [String(usagePage, radix: 16), String(usage)] }
       return parts.joined(separator: "-")
     }
@@ -42,7 +45,8 @@ extension ControllerRecordDraft {
     }
   }
 
-  /// Drafts a record from the interfaces of `device`, which macOS lists whether or not OJD serves it.
+  /// Drafts a record from the interfaces of `device`, which macOS lists whether or not OJD serves
+  /// it.
   ///
   /// A device with an interface that meets the `HIDDescriptor` contract gets a `HIDDescriptor`
   /// mode: the `default` mode of a new `Controller`, or a patch that adds a mode matched on that
@@ -109,6 +113,6 @@ extension ControllerRecordDraft {
     reportLength = nil
     capturedReports = 0
     changedBytes = []
-    text = String(decoding: data, as: UTF8.self)
+    text = String(bytes: data, encoding: .utf8) ?? ""
   }
 }

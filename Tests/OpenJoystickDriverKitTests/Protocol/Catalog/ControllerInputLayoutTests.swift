@@ -114,7 +114,7 @@ struct ControllerInputLayoutTests {
       try inputLayout(
         """
         {"report": {"length": {"exactly": 2}},
-         "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
+          "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
         """
       )
     )
@@ -148,7 +148,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aTableHatNamesDirectionsForMaskedValues() throws {
+  func tableHatNamesDirectionsForMaskedValues() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 1}},
@@ -164,7 +164,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aSymmetricAxisDividesBothSidesByTheMaximum() throws {
+  func symmetricAxisDividesBothSidesByMaximum() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
@@ -180,7 +180,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aSymmetricAxisWithoutRangeUsesTheFullRange() throws {
+  func symmetricAxisWithoutRangeUsesFullRange() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
@@ -205,7 +205,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aDecodedLayoutProblemReadsInTheChosenLanguage() {
+  func decodedLayoutProblemReadsInChosenLanguage() {
     let english = Localization(preferredLanguages: ["en-US"])
     do {
       _ = try inputLayout(
@@ -229,7 +229,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func messagesNameFileKeyPathRuleAndFix() throws {
+  func messagesNameFileKeyPathRuleAndFix() {
     let english = Localization(preferredLanguages: ["en-US"])
     func message(reportID: UInt8?, minimumLength: Int) -> String? {
       do {
@@ -241,7 +241,8 @@ struct ControllerInputLayoutTests {
           axes: [],
           hat: [],
           leftTrigger: nil,
-          rightTrigger: nil
+          rightTrigger: nil,
+          touch: nil
         )
         return nil
       } catch {

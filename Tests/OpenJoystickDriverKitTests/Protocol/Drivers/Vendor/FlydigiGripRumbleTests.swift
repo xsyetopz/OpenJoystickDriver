@@ -11,18 +11,18 @@ import Testing
 struct FlydigiGripRumbleTests {
   private static let record: Data = {
     let report = ([0x03, 0x5A, 0xA5, 0x12, 0x06] + [UInt8](repeating: 0, count: 27))
-      .map { String(format: "%02X", $0) }.joined(separator: " ")
+      .map { unsafe String(format: "%02X", $0) }.joined(separator: " ")
     return PropertyListFixture.bytes(
       json: """
         {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Controller",
-         "vendorID": 14295, "productID": 9217,
-         "modes": [{"id": "default", "protocol": {"family": "HIDReportLayout"},
-           "session": {"rumble": {"report": {"kind": "Output", "id": 3, "length": 32},
-             "bytes": "\(report)",
-             "lowFrequency": {"byte": 5}, "highFrequency": {"byte": 6},
-             "leftTrigger": {"byte": 7}, "rightTrigger": {"byte": 8}}}}],
-         "input": {"layouts": [{"report": {"id": 1, "length": {"exactly": 15}},
-           "buttons": [{"control": "South", "bitOffset": 76, "bitSize": 1}]}]}}
+          "vendorID": 14295, "productID": 9217,
+        "modes": [{"id": "default", "protocol": {"family": "HIDReportLayout"},
+          "session": {"rumble": {"report": {"kind": "Output", "id": 3, "length": 32},
+            "bytes": "\(report)",
+            "lowFrequency": {"byte": 5}, "highFrequency": {"byte": 6},
+            "leftTrigger": {"byte": 7}, "rightTrigger": {"byte": 8}}}}],
+        "input": {"layouts": [{"report": {"id": 1, "length": {"exactly": 15}},
+          "buttons": [{"control": "South", "bitOffset": 76, "bitSize": 1}]}]}}
         """
     )
   }()
@@ -51,7 +51,7 @@ struct FlydigiGripRumbleTests {
   private enum ReportError: Error { case notHID }
 
   @Test
-  func gripAndTriggerLevelsFillTheFourMotorBytesOfOneFrame() throws {
+  func gripAndTriggerLevelsFillFourMotorBytesOfOneFrame() throws {
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(0x8080),
       highFrequency: UnipolarValue(0x4040),
@@ -68,7 +68,7 @@ struct FlydigiGripRumbleTests {
   }
 
   @Test
-  func theCommandLineLevelsLeft128AndRight64SendOneFrame() throws {
+  func commandLineLevelsLeft128AndRight64SendOneFrame() throws {
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(byte: 128),
       highFrequency: UnipolarValue(byte: 64)
@@ -80,7 +80,7 @@ struct FlydigiGripRumbleTests {
   }
 
   @Test
-  func stopRumbleZeroesTheMotorBytesAndKeepsTheEnvelope() throws {
+  func stopRumbleZeroesMotorBytesAndKeepsEnvelope() throws {
     let report = try Self.report(of: try Self.driver().encode(.stopRumble).writes)
     #expect(Array(report.bytes[0..<9]) == [0x03, 0x5A, 0xA5, 0x12, 0x06, 0, 0, 0, 0])
   }

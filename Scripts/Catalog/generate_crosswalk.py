@@ -1,9 +1,3 @@
-"""Check or rebuild the control crosswalk table of the wiki.
-
-`Resources/Vocabulary/crosswalk.plist` is the only authored crosswalk.
-This script rewrites the generated block of `wiki/Controller-Records.md` from it.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -44,7 +38,6 @@ def load(root: Path) -> dict[str, Any]:
 
 
 def code(value: object) -> str:
-    """A cell: the name in code font, or a dash for an absent key (no equivalent)."""
     return "-" if value is None else f"`{value}`"
 
 
@@ -110,13 +103,11 @@ def render_wiki(page: str, block: str) -> str:
 
 
 def outputs(root: Path) -> dict[Path, str]:
-    """The derived files as they should be, keyed by path relative to `root`."""
     page = (root / WIKI_PAGE).read_text(encoding="utf-8")
     return {WIKI_PAGE: render_wiki(page, wiki_block(load(root)))}
 
 
 def regenerate(root: Path, write: bool) -> list[Path]:
-    """Writes the derived files, or returns the ones that differ from their source."""
     stale = []
     for path, text in outputs(root).items():
         if (root / path).read_text(encoding="utf-8") != text:
@@ -134,13 +125,18 @@ def main() -> int:
     args = parser.parse_args()
     try:
         stale = regenerate(ROOT, write=args.write)
-    except (CrosswalkError, OSError, plistlib.InvalidFileException, ValueError) as error:
+    except (
+        CrosswalkError,
+        OSError,
+        plistlib.InvalidFileException,
+        ValueError,
+    ) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     if args.check and stale:
         names = ", ".join(path.as_posix() for path in stale)
         print(
-            f"ERROR: out of date: {names}. Run ./Scripts/ojd vocabulary regenerate --write.",
+            f"ERROR: out of date: {names}. Run just vocabulary-regenerate --write.",
             file=sys.stderr,
         )
         return 1

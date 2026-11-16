@@ -16,6 +16,7 @@ extension RemappingProfileLibrary {
     let loaded = try loadIfNeeded()
     return RemappingProfileLibrarySnapshot(
       profiles: allProfiles(loaded).sorted(by: Self.profileOrder),
+      lastUsed: lastUsed(among: allProfiles(loaded)),
       activeProfiles: loaded.activeProfiles.map {
         RemappingActiveProfileSelection(
           model: $0.model,
@@ -210,7 +211,7 @@ extension RemappingProfileLibrary {
     let model = RemappingProfileModel(profile.device)
     let units = Dictionary(uniqueKeysWithValues: known.map { ($0.id, $0.device.unit) })
     // Replace any active entry for this profile or for the same model, unit, and application
-    // scope. Multiple profiles per device are allowed — one per unit and application scope.
+    // scope, so a device can have one profile per unit and application scope.
     proposed.activeProfiles.removeAll {
       $0.profileID == profileID
         || ($0.model == model && ($0.applicationScope ?? .global) == profile.applicationScope
@@ -224,6 +225,7 @@ extension RemappingProfileLibrary {
       )
     )
     try replace(with: proposed)
+    recordUse(of: profile.id, among: known)
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [model])
   }
 

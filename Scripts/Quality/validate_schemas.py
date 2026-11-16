@@ -47,10 +47,12 @@ SETTINGS_FIXTURES = (
     ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "settings.plist",
 )
 SERVICE_LISTENER_FAILURE_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "service_listener_failure.plist",
+    ROOT
+    / "Tests"
+    / "RepositoryScripts"
+    / "fixtures"
+    / "service_listener_failure.plist",
 )
-# The schema of each kind of file in the sample mod package, by its folder. A `Controllers`
-# file is a `ControllerPatch` or a `Controller`, which its `kind` tells apart.
 SAMPLE_FOLDER_SCHEMAS = {
     "Controllers": "controller",
     "VirtualDevices": "virtual-device",
@@ -93,12 +95,10 @@ def schema_registry(documents: dict[str, dict[str, object]]) -> Registry:
 
 
 def api_version_group() -> str:
-    """The group of the `apiVersion`, the part before the slash."""
     return repository_tool.api_version().partition("/")[0]
 
 
 def api_version_consts(value: object, where: str = "") -> list[tuple[str, object]]:
-    """Every `const` in `value` that names an OJD `apiVersion`, with where it is."""
     found: list[tuple[str, object]] = []
     if isinstance(value, dict):
         const = value.get("const")
@@ -113,7 +113,6 @@ def api_version_consts(value: object, where: str = "") -> list[tuple[str, object
 
 
 def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
-    """Check each `$id`, `apiVersion` const, and `kind` const against the one source."""
     api_version = repository_tool.api_version()
     for name, document in documents.items():
         stem = name[: -len(SCHEMA_SUFFIX)]
@@ -134,7 +133,6 @@ def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
         properties = document.get("properties")
         if not isinstance(properties, dict):
             properties = {}
-            # A schema that declares the header in each oneOf branch.
             for branch in document.get("oneOf", []):  # type: ignore[attr-defined]
                 properties = {**properties, **branch.get("properties", {})}
         header = {
@@ -149,7 +147,6 @@ def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
 
 
 def sample_documents() -> list[tuple[str, Path]]:
-    """The files of the sample mod package with the schema each is read as."""
     found: list[tuple[str, Path]] = [("mod-package", SAMPLE_PACKAGE / "mod.plist")]
     for folder, stem in SAMPLE_FOLDER_SCHEMAS.items():
         for path in sorted((SAMPLE_PACKAGE / folder).glob("*.plist")):
@@ -177,7 +174,6 @@ def validate_documents(
     registry: Registry,
     paths: list[Path],
 ) -> None:
-    """Validates documents against a schema; the rules a schema cannot state are Swift's."""
     validator = Draft202012Validator(schema, registry=registry)
     for path in paths:
         document = load_plist(path) if path.suffix == ".plist" else load_json(path)
@@ -192,8 +188,6 @@ def validate_documents(
 
 
 def validate_swift_rules(samples: list[tuple[str, Path]]) -> None:
-    """Every rule a schema cannot state is Swift's: `OJDRepositoryTool` checks the authored
-    controller records, the protocol descriptions and the sample profiles and virtual devices."""
     repository_tool.check(["validate", "controllers", str(AUTHORED_CONTROLLERS)])
     repository_tool.check(["validate", "descriptions", str(PROTOCOL_DESCRIPTIONS)])
     for stem, check in (
@@ -208,8 +202,6 @@ def validate_swift_rules(samples: list[tuple[str, Path]]) -> None:
 def validate_live_support_report(schema: dict[str, object], registry: Registry) -> None:
     with tempfile.TemporaryDirectory(prefix="ojd-schema-") as directory:
         report_path = Path(directory) / "support-report.json"
-        # argv[0] "ojd" selects the command line in the app executable. `diagnose` exits 1 when
-        # a check fails, such as a missing extension on CI, and still writes the report.
         command = ["ojd", "diagnose", "--output", str(report_path)]
         result = subprocess.run(
             command,

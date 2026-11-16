@@ -23,7 +23,7 @@ struct ReceiverPresencePipelineTests {
   ]
 
   @Test
-  func presenceDisconnectNeutralizesOutputAndStopsTheController() async {
+  func presenceDisconnectNeutralizesOutputAndStopsController() async {
     let session = RecoveryUSBSession(
       readResults: [
         .success([UInt8](Receiver.presenceConnected)),
@@ -45,7 +45,7 @@ struct ReceiverPresencePipelineTests {
   }
 
   @Test
-  func sessionLossDropsPresenceUntilTheNextSessionReportsIt() async {
+  func sessionLossDropsPresenceUntilNextSessionReportsIt() async {
     let first = RecoveryUSBSession(
       readResults: [
         .success([UInt8](Receiver.presenceConnected)),
@@ -77,7 +77,7 @@ struct ReceiverPresencePipelineTests {
   }
 
   @Test
-  func connectionStateReportsAnEmptySlotUntilTheControllerConnects() async {
+  func connectionStateReportsEmptySlotUntilControllerConnects() async {
     let session = RecoveryUSBSession(
       readResults: [.success([UInt8](Receiver.presenceConnected))],
       readError: .timeout

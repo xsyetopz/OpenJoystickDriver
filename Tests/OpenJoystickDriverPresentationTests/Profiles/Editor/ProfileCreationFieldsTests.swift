@@ -59,7 +59,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func theFirstControllerIsChosenAndNamesTheProfile() {
+  func firstControllerIsChosenAndNamesProfile() {
     let context = Self.context(devices: [Self.padA, Self.padB])
     let fields = ProfileCreationFields()
     #expect(fields.controller(in: context)?.id == Self.padA.sessionToken.rawValue)
@@ -77,7 +77,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func anUntouchedNameFollowsTheChosenController() {
+  func untouchedNameFollowsChosenController() {
     let context = Self.context(devices: [Self.padA, Self.padB])
     var fields = ProfileCreationFields()
     fields.picked = context.choices[1]
@@ -89,7 +89,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func anEditedNameStaysWhenAnotherControllerIsChosen() {
+  func editedNameStaysWhenAnotherControllerIsChosen() {
     let context = Self.context(devices: [Self.padA, Self.padB])
     var fields = ProfileCreationFields()
     fields.editedName = "Racing"
@@ -98,7 +98,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aPickedControllerThatDisconnectsStaysOnItsModelWithItsName() {
+  func pickedControllerThatDisconnectsStaysOnItsModelWithItsName() {
     let both = Self.context(devices: [Self.padA, Self.padB])
     var fields = ProfileCreationFields()
     fields.picked = both.choices[1]
@@ -117,7 +117,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aPickedControllerWhoseModelIsNoLongerOfferedLeavesNoControllerAndNoProfile() {
+  func pickedControllerWhoseModelIsNoLongerOfferedLeavesNoControllerAndNoProfile() {
     let both = Self.context(devices: [Self.padA, Self.padB])
     var fields = ProfileCreationFields()
     fields.picked = both.choices[1]
@@ -139,7 +139,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aControllerThatArrivesAfterTheSheetOpenedIsChosenWithItsName() {
+  func controllerThatArrivesAfterSheetOpenedIsChosenWithItsName() {
     let fields = ProfileCreationFields()
     #expect(fields.proposedProfile(in: Self.context(devices: [])) == nil)
     let arrived = Self.context(devices: [Self.padB])
@@ -148,7 +148,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aBlankNameProposesNoProfile() {
+  func blankNameProposesNoProfile() {
     var fields = ProfileCreationFields()
     fields.editedName = "  "
     #expect(fields.proposedProfile(in: Self.context(devices: [Self.padA])) == nil)
@@ -188,7 +188,33 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func twoFamiliesThatShareATitleStayInSectionsOfTheirOwn() {
+  func catalogModelWithRecordNameShowsNameElseIdentifiers() {
+    let named = ControllerModelID(vendorID: 0x413D, productID: 0x2104)
+    let profiled = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
+    let choices = ProfileControllerChoice.choices(
+      devices: [Self.padA],
+      profiles: [Self.profile(named: "Old", vendorID: 0x11C1, productID: 0x5600)],
+      catalog: [
+        named: .xboxXUSB, profiled: .hidDescriptor,
+        ControllerModelID(vendorID: 0x045E, productID: 0x028E): .xboxXUSB,
+        ControllerModelID(vendorID: 0x0001, productID: 0x0002): .xboxXUSB,
+      ],
+      names: [
+        named: "XBOX 360 For Windows", profiled: "Controller",
+        ControllerModelID(vendorID: 0x0001, productID: 0x0002): "Record Pad",
+      ]
+    )
+    #expect(choices.map(\.label) == ["Pad A", "Controller", "045E:028E", "XBOX 360 For Windows"])
+    var fields = ProfileCreationFields()
+    fields.picked = choices[3]
+    #expect(
+      fields.name(in: ProfileCreationContext(choices: choices, profiles: []))
+        == "XBOX 360 For Windows"
+    )
+  }
+
+  @Test
+  func twoFamiliesThatShareTitleStayInSectionsOfTheirOwn() {
     let choices = ProfileControllerChoice.choices(
       devices: [],
       profiles: [],
@@ -211,7 +237,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aProfileCanTargetAModelThatIsNotConnected() {
+  func profileCanTargetModelThatIsNotConnected() {
     let context = Self.context(
       devices: [],
       catalog: [ControllerModelID(vendorID: 0x054C, productID: 0x0CE6): .sonyDualSense]
@@ -224,7 +250,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func theDefaultNameGetsANumberWhenTaken() {
+  func defaultNameGetsNumberWhenTaken() {
     let context = Self.context(
       devices: [Self.padA],
       profiles: [Self.profile(named: "pad a"), Self.profile(named: "Pad A 2")]
@@ -235,7 +261,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func aTypedNameThatIsTakenProposesNoProfile() {
+  func typedNameThatIsTakenProposesNoProfile() {
     let context = Self.context(devices: [Self.padA], profiles: [Self.profile(named: "Racing")])
     var fields = ProfileCreationFields()
     fields.editedName = " RACING "
@@ -244,7 +270,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func theOutputPolicyStartsAsTheCLIStartsAndIsKept() {
+  func outputPolicyStartsAsCLIStartsAndIsKept() {
     let context = Self.context(devices: [Self.padA])
     var fields = ProfileCreationFields()
     #expect(
@@ -259,7 +285,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func anApplicationTargetNeedsAnAppID() {
+  func applicationTargetNeedsAppID() {
     let context = Self.context(devices: [Self.padA])
     var fields = ProfileCreationFields()
     fields.scopeKind = .application
@@ -273,7 +299,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func validationIsHiddenUntilAFieldIsEdited() {
+  func validationIsHiddenUntilFieldIsEdited() {
     let untouched = ProfileCreationFields()
     #expect(!untouched.showsValidation(isValid: false))
 
@@ -284,7 +310,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func theChosenOutputPolicyIsTheProposedProfilesPolicy() {
+  func chosenOutputPolicyIsProposedProfilesPolicy() {
     let context = Self.context(devices: [Self.padA])
     var fields = ProfileCreationFields()
     #expect(
@@ -299,7 +325,7 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func theGyroStickTemplateProposesAStickProfileForAModelWithMotion() {
+  func gyroStickTemplateProposesStickProfileForModelWithMotion() {
     let dualSense = Self.device("DualSense", token: "d", vendorID: 0x054C, productID: 0x0CE6)
     let context = Self.context(devices: [dualSense])
     var fields = ProfileCreationFields()
@@ -311,12 +337,42 @@ struct ProfileCreationFieldsTests {
   }
 
   @Test
-  func theGyroStickTemplateProposesNothingForAModelWithoutMotion() {
+  func gyroStickTemplateProposesNothingForModelWithoutMotion() {
     let context = Self.context(devices: [Self.padA])
     var fields = ProfileCreationFields()
     fields.template = .gyroStick
 
     #expect(fields.lacksMotion(in: context))
     #expect(fields.proposedProfile(in: context) == nil)
+  }
+
+  @Test
+  func bindingTemplateProposesItsBindingsAndListsControlsModelLacks() {
+    let dualSense = Self.device("DualSense", token: "d", vendorID: 0x054C, productID: 0x0CE6)
+    let context = Self.context(devices: [dualSense])
+    var fields = ProfileCreationFields()
+    fields.template = .bindings(.keyboardNavigation)
+
+    let capabilities = ProtocolDriverRegistry().profileCapabilities(
+      for: ControllerModelID(vendorID: 0x054C, productID: 0x0CE6)
+    )
+    let lacked = RemappingBindingTemplate.keyboardNavigation.controls.filter {
+      capabilities?.physicalInput.controls.contains($0) != true
+    }
+    #expect(fields.skippedControls(in: context) == lacked)
+    #expect(
+      fields.proposedProfile(in: context)?.bindings.count
+        == RemappingBindingTemplate.keyboardNavigation.controls.count - lacked.count
+    )
+  }
+
+  @Test
+  func bindingTemplateForUnknownModelSkipsNothing() {
+    let context = Self.context(devices: [Self.padA])
+    var fields = ProfileCreationFields()
+    fields.template = .bindings(.mouseClicks)
+
+    #expect(fields.skippedControls(in: context).isEmpty)
+    #expect(fields.proposedProfile(in: context)?.bindings.count == 3)
   }
 }

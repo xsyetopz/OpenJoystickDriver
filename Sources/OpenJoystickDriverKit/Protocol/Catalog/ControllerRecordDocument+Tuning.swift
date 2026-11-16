@@ -10,21 +10,7 @@ extension ControllerRecordDocument {
     /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(allowed: [
-        "stickDeadzone", "inputLivenessTimeoutMs", "hidStartupIntervalMs",
-        "minimumHIDOutputIntervalMs", "hidStartupRecoveryIntervalMs", "hidStartupRecoveryRounds",
-        "lizardResendTicks",
-        "usbCommandTimeoutMs",
-        "presenceResendReports",
-        "adapterDisconnectDelayMs",
-        "usbStartupIntervalMs",
-        "usbStartupRetryDelayMs",
-        "usbTransferTimeoutMs",
-        "irWriteIntervalMs",
-        "speakerMaxSeconds",
-        "replyTimeoutMs",
-        "frameQueueCapacity",
-      ])
+      try container.rejectUnknown(allowed: Set(ControllerTuning.Key.allCases.map(\.rawValue)))
       guard !container.allKeys.isEmpty else {
         throw DecodingError.dataCorrupted(
           .init(codingPath: decoder.codingPath, debugDescription: "tuning must not be empty")
@@ -41,6 +27,43 @@ extension ControllerRecordDocument {
           )
         }
         return value
+      }
+      func fraction(_ key: ControllerTuning.Key, _ range: ClosedRange<Double>) throws -> Double? {
+        let value = try container.decodeOptional(Double.self, for: key.rawValue)
+        guard value.map(range.contains) ?? true else {
+          throw DecodingError.dataCorrupted(
+            .init(
+              codingPath: decoder.codingPath + [DocumentKey(key.rawValue)],
+              debugDescription:
+                "\(key.rawValue) must be in \(range.lowerBound)...\(range.upperBound)"
+            )
+          )
+        }
+        return value
+      }
+      var calibration: [ControllerTuning.Key: Double] = [:]
+      for key in ControllerCalibration.keys {
+        let range: ClosedRange<Double> =
+          switch key {
+          case .leftStickRange, .rightStickRange: 0.05...2
+          case .leftTriggerRest, .rightTriggerRest: 0...0.95
+          case .leftTriggerFull, .rightTriggerFull: 0.05...1
+          default: -1...1
+          }
+        calibration[key] = try fraction(key, range)
+      }
+      for (rest, full) in [
+        (ControllerTuning.Key.leftTriggerRest, ControllerTuning.Key.leftTriggerFull),
+        (.rightTriggerRest, .rightTriggerFull),
+      ] {
+        if let low = calibration[rest], let high = calibration[full], low >= high {
+          throw DecodingError.dataCorrupted(
+            .init(
+              codingPath: decoder.codingPath + [DocumentKey(rest.rawValue)],
+              debugDescription: "\(rest.rawValue) must be below \(full.rawValue)"
+            )
+          )
+        }
       }
       let deadzone = try container.decodeOptional(Double.self, for: "stickDeadzone")
       guard deadzone.map({ $0 > 0 && $0 < 1 }) ?? true else {
@@ -80,7 +103,8 @@ extension ControllerRecordDocument {
         frameQueueCapacity: try integer(
           "frameQueueCapacity",
           ControllerTuning.frameQueueCapacityRange
-        )
+        ),
+        calibration: ControllerCalibration(values: calibration)
       )
     }
   }

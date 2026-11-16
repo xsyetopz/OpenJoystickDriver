@@ -113,6 +113,6 @@ struct DiagnoseReport: Encodable, Equatable {
 
   /// `nanoseconds` in milliseconds with three decimals and a point, whatever the locale.
   private static func milliseconds(_ nanoseconds: UInt64) -> String {
-    String(format: "%.3f", Double(nanoseconds) / 1_000_000)
+    unsafe String(format: "%.3f", Double(nanoseconds) / 1_000_000)
   }
 }

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The report ID of the state report.
 private let switch2StateReportID: UInt8 = 0x05
@@ -375,7 +375,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
   }
 
   /// Decodes a `0x05` state report of at least 64 bytes; any other report is ignored.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     guard bytes.count >= switch2StateReportLength, bytes[0] == switch2StateReportID else {
       return nil

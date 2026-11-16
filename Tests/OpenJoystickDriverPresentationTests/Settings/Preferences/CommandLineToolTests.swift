@@ -43,7 +43,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func installLinksTheExecutableAndUninstallRemovesIt() throws {
+  func installLinksExecutableAndUninstallRemovesIt() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     let tool = sandbox.tool()
@@ -62,7 +62,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func installReplacesALinkToAnotherCopy() throws {
+  func installReplacesLinkToAnotherCopy() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     try FileManager.default.createDirectory(
@@ -88,7 +88,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func installReplacesABrokenLink() throws {
+  func installReplacesBrokenLink() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     try FileManager.default.createDirectory(
@@ -107,7 +107,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func aRelativeLinkToTheExecutableIsInstalled() throws {
+  func relativeLinkToExecutableIsInstalled() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     try FileManager.default.createDirectory(
@@ -123,7 +123,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func aRegularFileIsNeverReplacedOrRemoved() throws {
+  func regularFileIsNeverReplacedOrRemoved() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     try FileManager.default.createDirectory(
@@ -143,7 +143,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func aProtectedFolderFallsBackToTheAdministratorPrompt() throws {
+  func protectedFolderFallsBackToAdministratorPrompt() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     let folder = sandbox.link.deletingLastPathComponent()
@@ -162,7 +162,7 @@ struct CommandLineToolTests {
 
   @Test
   @MainActor
-  func cancellingThePasswordPromptShowsNoError() throws {
+  func cancellingPasswordPromptShowsNoError() throws {
     let sandbox = try Sandbox()
     defer { sandbox.remove() }
     let folder = sandbox.link.deletingLastPathComponent()
@@ -180,7 +180,7 @@ struct CommandLineToolTests {
   }
 
   @Test
-  func quotingKeepsAPathOneShellWord() {
+  func quotingKeepsPathOneShellWord() {
     #expect(CommandLineToolLink.quoted("/Users/o'neil/ojd") == "'/Users/o'\\''neil/ojd'")
   }
 }

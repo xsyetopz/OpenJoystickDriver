@@ -1,0 +1,177 @@
+Watching 8BitDo Ultimate 2C Wireless (2DC8:301B)... Press controller buttons.
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[Start] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x100 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[South] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x1 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x1 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[East] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x2 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[West] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x4 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[North] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x8 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x8 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[LeftShoulder] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x10 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[RightShoulder] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x20 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=5911 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=2955 RT=0
+buttons=[LeftTrigger] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=65535 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=32767 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=27499 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=32767 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=2570
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=1284
+buttons=[RightTrigger] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=65535
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=32767
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=17733
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=8866
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[LeftStickClick] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x40 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[RightStickClick] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x80 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[Back] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x200 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[Start] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x100 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[Guide] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x400 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=north LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x800 hat=north LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=south LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x1000 hat=south LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=west LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x2000 hat=west LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=east LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=east LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x4000 hat=east LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x4000 hat=east LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(642,128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(642,128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(1413,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(642,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(1413,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(1413,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(1413,128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(1413,128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(899,128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(899,128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(899,128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(5011,385) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(2441,385) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(20431,1927) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(11436,642) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(29169,3983) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(29169,3983) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(32767,5268) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(32767,5268) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(32767,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(32767,1927) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(32767,-9894) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(32767,-9894) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(32767,-12207) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(32767,-12721) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(32767,-10151) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(32767,-10151) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(32510,2441) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(32767,-2955) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(29169,3469) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(29169,3469) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(5011,1670) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(9894,1670) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(2698,15548) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,385) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(6296,32767) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(6296,32767) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(5525,32767) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(5525,32767) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(4497,32767) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(4497,32767) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(1927,32767) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(2955,32767) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(642,7067) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(642,7067) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(899,128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(6039,899) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(4754,899) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(10151,1413) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(7324,899) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(20688,1670) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(15291,1670) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(32767,1927) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(28912,1927) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(32767,2698) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(32767,2698) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(32767,4240) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(32767,3726) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(32767,4240) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(32767,4240) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-385,5011) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-385,5011) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,18632) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,18632) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(1927,31996) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(1670,27370) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(1156,32767) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(1156,32767) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(1156,31739) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(1156,32767) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-1156,-4754) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(1156,31739) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0

@@ -51,6 +51,14 @@ extension ApplicationServiceClientGateway {
     return try await client.requestAccess(requirement)
   }
 
+  /// Asks macOS for Bluetooth access.
+  ///
+  /// - Returns: The state of the access after the request.
+  func requestBluetoothAccess() async throws -> BluetoothAccessState {
+    await ensureConnection()
+    return try await client.requestBluetoothAccess()
+  }
+
   /// Reads the latest input state of a controller.
   ///
   /// - Parameter selector: The controller.
@@ -59,6 +67,18 @@ extension ApplicationServiceClientGateway {
   func controllerState(for selector: ControllerReference) async throws -> ControllerState? {
     await ensureConnection()
     return try await client.controllerState(for: selector)
+  }
+
+  /// Reads the values the virtual gamepad of a controller last reported.
+  ///
+  /// - Parameter selector: The controller.
+  /// - Returns: The values, or nil when no virtual gamepad publishes the controller.
+  /// - Throws: The error of the request.
+  func virtualOutputState(
+    for selector: ControllerReference
+  ) async throws -> ApplicationServiceVirtualOutputState? {
+    await ensureConnection()
+    return try await client.virtualOutputState(for: selector)
   }
 
   /// Reads the packet log of a controller.

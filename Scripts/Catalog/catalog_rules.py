@@ -1,5 +1,3 @@
-"""Load the authored catalog rule tables from `Resources/CatalogRules/`."""
-
 from __future__ import annotations
 
 import pathlib
@@ -22,7 +20,6 @@ def load_rules(
     keys: frozenset[str],
     directory: pathlib.Path = RULES_DIR,
 ) -> dict[str, Any]:
-    """Returns the document `name` after checking its `apiVersion`, `kind` and key set."""
     path = directory / name
     try:
         document = plistlib.loads(path.read_bytes())
@@ -47,7 +44,6 @@ def load_rules(
 
 
 def parse_id(text: str) -> int:
-    """Parses a four-digit hexadecimal vendor or product ID such as `045E`."""
     if len(text) != 4:
         raise RulesError(f"invalid ID {text!r}: expected four hexadecimal digits")
     try:
@@ -57,7 +53,6 @@ def parse_id(text: str) -> int:
 
 
 def parse_identity(text: str) -> tuple[int, int]:
-    """Parses `VVVV:PPPP` into (vendor ID, product ID)."""
     vendor, separator, product = text.partition(":")
     if not separator:
         raise RulesError(f"invalid identity {text!r}: expected VVVV:PPPP")

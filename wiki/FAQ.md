@@ -6,9 +6,9 @@ This page gives short answers to common OpenJoystickDriver (OJD) questions.
 
 No. Never disable System Integrity Protection (SIP) or AMFI for OJD. OJD needs neither, and this applies to every build type.
 
-## Do I Need the System Extension?
+## Do I Need the Xbox USB Driver?
 
-OJD has one driver extension, and you approve it once. Its Xbox USB part is only for Xbox One and Xbox Series controllers on USB with these product IDs: `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, and `0B12`. Other controllers do not need that part. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+You approve the [Xbox USB driver](Glossary.md#terms) once. It is only for Xbox One and Xbox Series controllers on USB with these product IDs: `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, and `0B12`. Other controllers do not need it. For more information, see [Xbox USB driver](Connecting-Controllers.md).
 
 ## Can I Edit Controller Data or Add My Own Controller?
 
@@ -16,15 +16,15 @@ Not inside the app: the controller catalog is part of the app bundle, and a chan
 
 ## Where Is My Data Stored?
 
-Profiles are files in `~/Library/Application Support/OpenJoystickDriver/Profiles/`, and the active profiles are listed in `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.plist`. Logs are in `~/Library/Logs/OpenJoystickDriver/`. Settings are in the `com.openjoystickdriver` preferences domain. For more information, see [Uninstalling OpenJoystickDriver](Updating-and-Uninstalling.md).
+[Profiles](Glossary.md#terms) are files in `~/Library/Application Support/OpenJoystickDriver/Profiles/`, and the active profiles are listed in `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.plist`. Logs are in `~/Library/Logs/OpenJoystickDriver/`. Settings are in the `com.openjoystickdriver` preferences domain. For more information, see [Uninstalling OpenJoystickDriver](Updating-and-Uninstalling.md).
 
 ## Why Does My Controller Work in One App but Not Another?
 
-Each app reads controllers with its own API. Some apps that use SDL cannot read the virtual controller. For more information, see [Game does not see the controller](Troubleshooting.md#game-does-not-see-the-controller).
+Each app reads controllers with its own API. Some apps that use SDL cannot read the [virtual gamepad](Glossary.md#terms). For more information, see [Game does not see the controller](Troubleshooting.md#game-does-not-see-the-controller).
 
 ## Does OJD Work with Steam?
 
-Yes, with the Xbox virtual profile (`SDLCompatible`): the maintainer saw Steam read every control and move the rumble motors on macOS 27. One tester saw a phantom controller with no input when Steam read that profile. With the generic profile, Steam was erratic and slow to respond. For more information, see [Game and app compatibility](Playing-Games.md).
+Yes, with the Xbox [virtual gamepad kind](Glossary.md#terms) (`SDLCompatible`): the maintainer saw Steam read every control and move the rumble motors on macOS 27. One tester saw a phantom controller with no input when Steam read that kind. With the generic kind, Steam was erratic and slow to respond. For more information, see [Game and app compatibility](Playing-Games.md).
 
 ## Why Is My Clone Controller Different?
 

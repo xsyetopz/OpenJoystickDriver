@@ -6,7 +6,7 @@ import Testing
 struct Switch1SubcommandBytesTests {
   private func hex(_ write: PhysicalOutputWrite) -> String {
     guard case .hidOutput(let report) = write else { return "other" }
-    return "\(report.reportID):" + report.bytes.map { String(format: "%02x", $0) }.joined()
+    return "\(report.reportID):" + report.bytes.map { unsafe String(format: "%02x", $0) }.joined()
   }
 
   private func sequence(_ driver: Switch1Driver) throws -> [String] {
@@ -26,7 +26,7 @@ struct Switch1SubcommandBytesTests {
     return lines
   }
 
-  /// The bytes of each report as `reportID:hex`, captured before the subcommands moved into the
+  /// The bytes of each report as `reportID:hex`, captured before the subcommands came from the
   /// description: startup, a recovery round, a rumble, the player indicators, and ten stop-rumble
   /// reports that carry the counter past its wrap.
   private static let proUSB = [

@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// Reads and writes the equivalence snapshots in `Tests/EquivalenceSnapshots`.
 ///
@@ -9,7 +9,7 @@ import Foundation
 /// - default: compare the rendered text with the file and report a mismatch;
 /// - `OJD_SNAPSHOT_WRITE=1`: rewrite the file from the current tree;
 /// - `OJD_SNAPSHOT_ACTUAL_DIR=<dir>`: write the rendered text to `<dir>` and never fail, so
-///   `./Scripts/ojd snapshots check` can print the per-record diff.
+///   `just snapshots-check` can print the per-record diff.
 package enum EquivalenceSnapshotStore {
   package static let directory = URL(fileURLWithPath: #filePath)
     .deletingLastPathComponent()  // OpenJoystickDriverTestSupport
@@ -67,9 +67,9 @@ package enum EquivalenceSnapshotStore {
       return nil
     }
     guard let expected = try? String(contentsOf: file, encoding: .utf8) else {
-      return "\(name) is missing; run ./Scripts/ojd snapshots write"
+      return "\(name) is missing; run just snapshots-write"
     }
     return expected == rendered
-      ? nil : "\(name) differs from the tree; run ./Scripts/ojd snapshots check for the diff"
+      ? nil : "\(name) differs from the tree; run just snapshots-check for the diff"
   }
 }

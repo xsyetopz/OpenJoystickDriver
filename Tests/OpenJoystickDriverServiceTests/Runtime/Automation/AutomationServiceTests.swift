@@ -15,13 +15,13 @@ struct AutomationServiceTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { devices }
 
     func sendControllerOutput(
-      _ command: ControllerOutputCommand,
-      for controller: ControllerReference
+      _: ControllerOutputCommand,
+      for _: ControllerReference
     ) -> ControllerOutputResult {
       ControllerOutputResult(.delivered)
     }
 
-    func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
+    func getRemappingSnapshot() -> ApplicationServiceRemappingSnapshotPayload {
       snapshot(active: active)
     }
 
@@ -36,7 +36,7 @@ struct AutomationServiceTests {
       return snapshot(active: active.union([id]))
     }
 
-    func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    func deactivateRemappingProfile(id: UUID) -> ApplicationServiceRemappingSnapshotPayload {
       snapshot(active: active.subtracting([id]))
     }
 
@@ -80,8 +80,8 @@ struct AutomationServiceTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
 
     func sendControllerOutput(
-      _ command: ControllerOutputCommand,
-      for controller: ControllerReference
+      _: ControllerOutputCommand,
+      for _: ControllerReference
     ) -> ControllerOutputResult {
       ControllerOutputResult(.notFound)
     }
@@ -91,19 +91,20 @@ struct AutomationServiceTests {
     }
 
     func activateRemappingProfile(
-      id: UUID,
-      allowEmpty: Bool
+      id _: UUID,
+      allowEmpty _: Bool
     ) throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }
 
-    func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    func deactivateRemappingProfile(id _: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
+    {
       throw SnapshotUnavailable()
     }
 
     func updateRemappingProfile(
-      _ profile: RemappingProfile,
-      expectedCurrent: RemappingProfile
+      _: RemappingProfile,
+      expectedCurrent _: RemappingProfile
     ) throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }
@@ -162,7 +163,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func controllersUseTheUnitIDAndFallBackToTheRuntimeID() async {
+  func controllersUseUnitIDAndFallBackToRuntimeID() async {
     let service = FakeService(devices: [
       Self.device("Pad A", runtimeID: "pad-1", unitID: "unit-1"),
       Self.device("Pad B", runtimeID: "pad-2", unitID: nil),
@@ -177,7 +178,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func controllersReportTheBatteryChargeAsTheDeviceReportsIt() async throws {
+  func controllersReportBatteryChargeAsDeviceReportsIt() async throws {
     let service = FakeService(devices: [
       Self.device(
         "Pad A",
@@ -206,7 +207,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func aModelIDResolvesToTheOneConnectedControllerOfThatModel() async throws {
+  func modelIDResolvesToOneConnectedControllerOfThatModel() async throws {
     let service = FakeService(devices: [
       Self.device("Pad A", runtimeID: "pad-1", unitID: "unit-1"),
       Self.device("Pad B", runtimeID: "pad-2", unitID: nil, productID: 0x0B12),
@@ -221,7 +222,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func aModelIDThatMatchesSeveralControllersThrows() async {
+  func modelIDThatMatchesSeveralControllersThrows() async {
     let service = FakeService(devices: [
       Self.device("Pad A", runtimeID: "pad-1", unitID: "unit-1"),
       Self.device("Pad B", runtimeID: "pad-2", unitID: nil),
@@ -275,7 +276,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func profileQueriesPassOnASnapshotError() async {
+  func profileQueriesPassOnSnapshotError() async {
     await #expect(throws: SnapshotUnavailable.self) { try await FailingService().profiles() }
     await #expect(throws: SnapshotUnavailable.self) {
       try await FailingService().profiles(ids: [UUID()])
@@ -283,7 +284,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func settingAProfileValueReturnsTheProfileAsSaved() async throws {
+  func settingProfileValueReturnsProfileAsSaved() async throws {
     let racing = Self.profile("Racing")
     let service = FakeService(profiles: [racing, Self.profile("Menus")], active: [racing.id])
 
@@ -299,7 +300,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func settingAProfileValuePassesOnTheRefusalsOfTheSharedCode() async throws {
+  func settingProfileValuePassesOnRefusalsOfSharedCode() async throws {
     let service = FakeService(profiles: [Self.profile("Racing")])
 
     let unknown = await #expect(throws: CodedFailure.self) {
@@ -321,7 +322,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func activatingAndDeactivatingReturnTheProfileInItsNewState() async throws {
+  func activatingAndDeactivatingReturnProfileInItsNewState() async throws {
     let racing = Self.profile("Racing")
     let service = FakeService(profiles: [racing])
 
@@ -335,7 +336,7 @@ struct AutomationServiceTests {
   }
 
   @Test
-  func activatingAProfileMissingFromTheResultThrowsNotFound() async {
+  func activatingProfileMissingFromResultThrowsNotFound() async {
     let missing = UUID()
 
     await #expect(throws: RemappingProfileLibraryError.profileNotFound(missing)) {

@@ -48,10 +48,12 @@ extension HIDDeviceStream {
         syntheticProperty: syntheticProperty
       )
     else { return nil }
+    let supportsHIDDevice = GCController.supportsHIDDevice(device)
+    let listing = gameControllerListings[deviceID] ?? .settling
     let nativePassThrough = Self.nativePassThrough(
-      device,
-      vendorID: model.vendorID,
-      productID: model.productID
+      supportsHIDDevice: supportsHIDDevice,
+      listing: listing,
+      statedServer: DeviceCatalog.current.withLock { $0.statedServer(of: model) }
     )
     guard
       eventAdapter.add(
@@ -64,9 +66,18 @@ extension HIDDeviceStream {
         enumerationKey: "\(serial ?? "")|\(productName ?? "")"
       )
     else { return nil }
+    let physicalDevice = physicalDeviceObservation(
+      for: device,
+      vendorID: model.vendorID,
+      productID: model.productID,
+      transportProperty: transport.isEmpty ? nil : transport,
+      nativePassThrough: nativePassThrough,
+      systemListsGameController: listing == .listed,
+      gameControllerSupported: supportsHIDDevice
+    )
     // macOS keeps every interface of a native controller, so a sibling is never seized either.
     let wantsSeize = Self.seizesInput(
-      model: model,
+      device: physicalDevice,
       nativePassThrough: nativePassThrough,
       siblingIsNative: eventAdapter.hasNativeDevice(locationID: locationID)
     )
@@ -77,14 +88,6 @@ extension HIDDeviceStream {
       return failure
     }
     if wantsSeize { record(claim, device: device, deviceID: deviceID, locationID: locationID) }
-    let physicalDevice = physicalDeviceObservation(
-      for: device,
-      vendorID: model.vendorID,
-      productID: model.productID,
-      transportProperty: transport.isEmpty ? nil : transport,
-      nativePassThrough: nativePassThrough,
-      systemListsGameController: GCController.supportsHIDDevice(device)
-    )
     let connection = HIDDeviceConnection(
       physicalDevice: physicalDevice,
       routingAddress: .ioKit(locationID: locationID, interfaceNumber: nil)
@@ -96,34 +99,78 @@ extension HIDDeviceStream {
     continuation?.yield(.connected(connection: connection, ownership: ownership))
     // Attach input only after `.connected` is queued so no report precedes its connection.
     if openKr == kIOReturnSuccess { attachInput(device, deviceID: deviceID) }
+    if supportsHIDDevice, gameControllerListings.updateValue(listing, forKey: deviceID) == nil {
+      DispatchQueue.main.asyncAfter(deadline: .now() + GameControllerListing.settleTime) {
+        [weak self] in
+        self?.settleGameControllerListing(
+          deviceID: deviceID,
+          model: model,
+          productName: productName
+        )
+      }
+    }
     return nil
+  }
+
+  /// Records whether GameController lists the device once the settle time has passed, and admits
+  /// it again when that changes who serves it or the second-controller warning.
+  @MainActor
+  func settleGameControllerListing(
+    deviceID: UInt64,
+    model: ControllerModelID,
+    productName: String?
+  ) {
+    guard gameControllerListings[deviceID] == .settling else { return }
+    let listing = GameControllerListing.current(productName: productName)
+    gameControllerListings[deviceID] = listing
+    print(
+      "[HIDDeviceStream] \(model): GameController \(listing == .listed ? "lists" : "does not list")"
+        + " \"\(productName ?? "")\"; it lists "
+        + GCController.controllers().map { "\"\($0.vendorName ?? "")\"" }.joined(separator: ", ")
+    )
+    _ = reevaluateOwnership(of: [model])
   }
 
   /// Whether OJD seizes a device: only after the serving decision says OJD serves it over HID.
   ///
-  /// A native gamepad, a sibling of one, and a model the catalog reaches through raw USB or the
-  /// extension are not seized.
+  /// A native gamepad, a sibling of one, a model the catalog reaches through raw USB or the
+  /// extension, and a device with no record that the classifier refuses are not seized.
   static func seizesInput(
-    model: ControllerModelID,
+    device: PhysicalDevice,
     nativePassThrough: Bool,
     siblingIsNative: Bool,
     catalog: DeviceCatalog = DeviceCatalog.current.withLock { $0 }
   ) -> Bool {
-    catalog.servesOverHID(model) && !nativePassThrough && !siblingIsNative
+    catalog.servesOverHID(device) && !nativePassThrough && !siblingIsNative
   }
 
-  /// macOS already serves a native gamepad, so OJD only observes its input and never seizes it,
-  /// unless the controller's record takes ownership for OJD.
-  static func nativePassThrough(_ device: IOHIDDevice, vendorID: UInt16, productID: UInt16) -> Bool
-  {
-    GCController.supportsHIDDevice(device)
-      && !DeviceCatalog.current.withLock {
-        $0.takesOwnership(of: ControllerModelID(vendorID: vendorID, productID: productID))
-      }
+  /// Whether macOS serves a pad, so OJD only observes its input and never seizes it.
+  ///
+  /// macOS serves a pad only while GameController lists a controller for it. A pad still
+  /// settling is left to macOS. A record's stated `server` decides instead of the listing.
+  static func nativePassThrough(
+    supportsHIDDevice: Bool,
+    listing: GameControllerListing,
+    statedServer: ControllerServer?
+  ) -> Bool {
+    switch statedServer {
+    case .ojd: false
+    case .system: supportsHIDDevice
+    case nil: supportsHIDDevice && listing != .unlisted
+    }
   }
 
-  /// Admits again each tracked device of a model in `models` whose native pass-through differs
-  /// from the current records, so a changed `ownership` seizes or releases it without a replug.
+  /// The facts of an admission that ``ownershipReevaluation(tracked:models:admission:)`` compares.
+  struct Admission {
+    /// Whether macOS serves the device.
+    let nativePassThrough: Bool
+    /// Whether GameController lists a controller for the device.
+    let systemListsGameController: Bool
+  }
+
+  /// Admits again each tracked device of a model in `models` whose admission differs from the
+  /// current records and GameController's list, so a changed `server` or listing seizes or releases
+  /// it without a replug.
   ///
   /// Every tracked interface at an affected location is removed before any is added, so no sibling
   /// keeps the native flag it had. Returns the connections it admitted.
@@ -134,17 +181,31 @@ extension HIDDeviceStream {
     }
     let devicesByID = Dictionary(devices.map { (trackingID(for: $0), $0) }) { first, _ in first }
     let tracked = seizeLock.withLock { connectionsByDeviceID }
+    let catalog = DeviceCatalog.current.withLock { $0 }
     let cycled = Self.ownershipReevaluation(
       tracked: tracked.filter { devicesByID[$0.key] != nil },
       models: models
     ) { deviceID, connection in
-      guard let device = devicesByID[deviceID], let vendorID = connection.physicalDevice.vendorID,
-        let productID = connection.physicalDevice.productID
-      else { return connection.physicalDevice.nativePassThrough }
-      return Self.nativePassThrough(device, vendorID: vendorID, productID: productID)
+      let listing = gameControllerListings[deviceID] ?? .settling
+      guard let device = devicesByID[deviceID], let model = connection.physicalDevice.model else {
+        return Admission(
+          nativePassThrough: connection.physicalDevice.nativePassThrough,
+          systemListsGameController: connection.physicalDevice.systemListsGameController
+        )
+      }
+      return Admission(
+        nativePassThrough: Self.nativePassThrough(
+          supportsHIDDevice: GCController.supportsHIDDevice(device),
+          listing: listing,
+          statedServer: catalog.statedServer(of: model)
+        ),
+        systemListsGameController: listing == .listed
+      )
     }
     let cycledDevices = cycled.sorted().compactMap { devicesByID[$0] }
+    let listings = gameControllerListings
     for device in cycledDevices { handleDeviceRemoved(device) }
+    for deviceID in cycled { gameControllerListings[deviceID] = listings[deviceID] }
     for device in cycledDevices { handleDeviceAdded(device) }
     return seizeLock.withLock {
       Set(cycled.compactMap { connectionsByDeviceID[$0]?.connectionID })
@@ -152,16 +213,24 @@ extension HIDDeviceStream {
   }
 
   /// The tracked device IDs to admit again: every device at a location where a device of a model
-  /// in `models` has a recomputed native pass-through that differs from its connection's.
+  /// in `models` has a recomputed native pass-through that differs from its connection's, or is
+  /// served by OJD and has a recomputed listing that differs.
   static func ownershipReevaluation(
     tracked: [UInt64: HIDDeviceConnection],
     models: Set<ControllerModelID>,
-    nativePassThrough: (UInt64, HIDDeviceConnection) -> Bool
+    admission: (UInt64, HIDDeviceConnection) -> Admission
   ) -> Set<UInt64> {
     let changedLocations = Set(
       tracked.compactMap { deviceID, connection -> UInt32? in
-        guard let model = connection.physicalDevice.model, models.contains(model),
-          nativePassThrough(deviceID, connection) != connection.physicalDevice.nativePassThrough
+        guard let model = connection.physicalDevice.model, models.contains(model) else {
+          return nil
+        }
+        let current = admission(deviceID, connection)
+        let device = connection.physicalDevice
+        guard
+          current.nativePassThrough != device.nativePassThrough
+            || !current.nativePassThrough
+              && current.systemListsGameController != device.systemListsGameController
         else { return nil }
         return connection.ioKitLocationID
       }
@@ -200,10 +269,10 @@ extension HIDDeviceStream {
     let size = max(Int(unsignedProperty(device, kIOHIDMaxInputReportSizeKey) ?? 0), 1)
     sizeReportQueue(device)
     let reportBuffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: size)
-    reportBuffer.initialize(repeating: 0)
-    let context = Unmanaged.passUnretained(self).toOpaque()
+    unsafe reportBuffer.initialize(repeating: 0)
+    let context = unsafe Unmanaged.passUnretained(self).toOpaque()
     if let baseAddress = reportBuffer.baseAddress {
-      IOHIDDeviceRegisterInputReportCallback(
+      unsafe IOHIDDeviceRegisterInputReportCallback(
         device,
         baseAddress,
         size,
@@ -212,7 +281,10 @@ extension HIDDeviceStream {
       )
     }
     seizeLock.withLock {
-      sharedOpenByDeviceID[deviceID] = SharedOpenDevice(device: device, reportBuffer: reportBuffer)
+      unsafe sharedOpenByDeviceID[deviceID] = unsafe SharedOpenDevice(
+        device: device,
+        reportBuffer: reportBuffer
+      )
     }
   }
 
@@ -234,11 +306,11 @@ extension HIDDeviceStream {
     let device = seizeLock.withLock { () -> IOHIDDevice? in
       guard let deviceID = connectionsByDeviceID.first(where: { $0.value == connection })?.key
       else { return nil }
-      return sharedOpenByDeviceID[deviceID]?.device
+      return unsafe sharedOpenByDeviceID[deviceID]?.device
     }
     guard let device else { return }
-    let context = Unmanaged.passUnretained(self).toOpaque()
-    IOHIDDeviceRegisterInputValueCallback(device, Self.inputValueCallback, context)
+    let context = unsafe Unmanaged.passUnretained(self).toOpaque()
+    unsafe IOHIDDeviceRegisterInputValueCallback(device, Self.inputValueCallback, context)
   }
 
   /// Never-freed report buffer a closed device is pointed at before its own buffer is freed.
@@ -257,10 +329,10 @@ extension HIDDeviceStream {
   ///
   /// Runs on main, where input callbacks are delivered, so no callback is using the buffer.
   func closeSharedOpen(_ sharedOpen: SharedOpenDevice) {
-    let device = sharedOpen.device
-    let reportBuffer = sharedOpen.reportBuffer
+    let device = unsafe sharedOpen.device
+    let reportBuffer = unsafe sharedOpen.reportBuffer
     // A later delivery on the same device object must not write into the freed buffer.
-    IOHIDDeviceRegisterInputReportCallback(
+    unsafe IOHIDDeviceRegisterInputReportCallback(
       device,
       Self.detachedReportBuffer,
       1,
@@ -269,14 +341,15 @@ extension HIDDeviceStream {
     )
     IOHIDDeviceRegisterInputValueCallback(device, nil, nil)
     IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeNone))
-    reportBuffer.deallocate()
+    unsafe reportBuffer.deallocate()
   }
 
   /// Returns the IORegistry entry ID of `device`, or nil when it has no service.
   private func registryEntryID(for device: IOHIDDevice) -> UInt64? {
     let service = IOHIDDeviceGetService(device)
     var entryID: UInt64 = 0
-    guard service != 0, IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS else {
+    guard service != 0, unsafe IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS
+    else {
       return nil
     }
     return entryID
@@ -285,9 +358,16 @@ extension HIDDeviceStream {
   /// Yields a `.disconnected` event when IOKit reports a device removal.
   func handleDeviceRemoved(_ device: IOHIDDevice) {
     let deviceID = trackingID(for: device)
-    let (connection, sharedOpen) = seizeLock.withLock {
+    gameControllerListings.removeValue(forKey: deviceID)
+    let (connection, sharedOpen) = unsafe seizeLock.withLock {
       let connection = connectionsByDeviceID.removeValue(forKey: deviceID)
-      let sharedOpen = sharedOpenByDeviceID.removeValue(forKey: deviceID)
+      let sharedOpen = unsafe sharedOpenByDeviceID.removeValue(forKey: deviceID)
+      for locationID in Array(closedByLocation.keys) {
+        closedByLocation[locationID]?.removeAll { CFEqual($0.device, device) }
+        if closedByLocation[locationID]?.isEmpty == true {
+          closedByLocation.removeValue(forKey: locationID)
+        }
+      }
       for locationID in Array(releasedByLocation.keys) {
         releasedByLocation[locationID]?.removeAll { CFEqual($0, device) }
         if releasedByLocation[locationID]?.isEmpty == true {
@@ -307,9 +387,9 @@ extension HIDDeviceStream {
           seizedByLocation[locationID] = devices
         }
       }
-      return (connection, sharedOpen)
+      return unsafe (connection, sharedOpen)
     }
-    if let sharedOpen { closeSharedOpen(sharedOpen) }
+    if let opened = unsafe sharedOpen { unsafe closeSharedOpen(opened) }
     let removal = eventAdapter.remove(deviceID: deviceID)
     guard removal.wasTracked else { return }
     guard let connection else {
@@ -317,7 +397,7 @@ extension HIDDeviceStream {
       return
     }
     if removal.shouldEmitDisconnect { continuation?.yield(.disconnected(connection: connection)) }
-    // The location's remaining devices, if any, now combine to a different ownership.
+    // The location's remaining devices, if any, combine to a different ownership.
     if !removal.locationRemoved {
       continuation?.yield(
         .ownershipChanged(
@@ -338,7 +418,7 @@ extension HIDDeviceStream {
     guard eventAdapter.acceptsInput(deviceID: deviceID),
       let connection = seizeLock.withLock({ connectionsByDeviceID[deviceID] })
     else { return }
-    let bytes = Self.framedInputReport(
+    let bytes = unsafe Self.framedInputReport(
       reportID: reportID,
       bytes: [UInt8](UnsafeBufferPointer(start: report, count: reportLength))
     )
@@ -385,7 +465,7 @@ extension HIDDeviceStream {
 
   /// Returns the ID that identifies `device` while the stream tracks it.
   func trackingID(for device: IOHIDDevice) -> UInt64 {
-    UInt64(UInt(bitPattern: Unmanaged.passUnretained(device).toOpaque()))
+    unsafe UInt64(UInt(bitPattern: Unmanaged.passUnretained(device).toOpaque()))
   }
 }
 

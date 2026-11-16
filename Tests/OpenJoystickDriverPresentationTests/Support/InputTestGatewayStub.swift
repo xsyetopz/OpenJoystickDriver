@@ -18,9 +18,16 @@ struct RecordedRumble: Equatable, Sendable {
 enum InputTestGatewayError: Error { case outputFailed }
 
 actor InputTestGatewayStub: InputTestDeviceGateway {
+  func recalibrateController(
+    _: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) -> ControllerRecalibrationResult {
+    ControllerRecalibrationResult(action: action)
+  }
+
   func motionCalibration(
-    for selector: ControllerReference,
-    command: RemappingMotionCalibrationCommand?
+    for _: ControllerReference,
+    command _: RemappingMotionCalibrationCommand?
   ) throws -> RemappingMotionCalibrationStatus {
     throw RemappingMotionCalibrationError.motionUnavailable
   }
@@ -39,6 +46,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
   var brightnessCalls: [(ControllerReference, UInt8)] = []
   var outputResult = true
   var outputThrows = false
+  var releaseThrows = false
   var activeOutputCalls = 0
   var maximumConcurrentOutputCalls = 0
 
@@ -126,6 +134,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
 
   func releaseColorPreview(for selector: ControllerReference, token: UUID) async throws -> Bool {
     await Task.yield()
+    if releaseThrows { throw InputTestGatewayError.outputFailed }
     colorReleaseCalls.append((selector, token))
     return outputResult
   }
@@ -142,6 +151,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
 
   func setOutputResult(_ result: Bool) { outputResult = result }
   func setOutputThrows(_ value: Bool) { outputThrows = value }
+  func setReleaseThrows(_ value: Bool) { releaseThrows = value }
   func setOutputDelay(_ nanoseconds: UInt64) { outputDelayNanoseconds = nanoseconds }
 
   func waitForActiveOutputCall() async {

@@ -1,12 +1,3 @@
-"""Check or rebuild everything that derives from the error code catalog.
-
-`Resources/ErrorCodes.plist` is the only authored list of E#### codes.
-This script validates it,
-and rewrites the two files that copy it:
-the `code` enum of `Resources/Schemas/endpoint.schema.json`
-and the generated block of `wiki/Error-Codes.md`.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -101,7 +92,6 @@ def check_invariants(entries: list[Entry]) -> None:
     ]
     if codes != sorted(codes):
         problems.append("entries are not sorted by code")
-    # The codes of an area run from 001 without a gap.
     for prefix in prefixes.values():
         area = sorted(code for code in codes if code.startswith(prefix))
         problems += [
@@ -163,7 +153,6 @@ def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
         expected["$defs"]["error"]["properties"]["code"]["enum"] = codes
     except (KeyError, TypeError) as error:
         raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum") from error
-    # Another object can also hold an "error" key; take the match that changes only this enum.
     for match in ENDPOINT_ENUM.finditer(text):
         key_line = match[1].rsplit("\n", 1)[-1]
         indent = key_line[: len(key_line) - len(key_line.lstrip())]
@@ -181,7 +170,6 @@ def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
 
 
 def outputs(root: Path) -> dict[Path, str]:
-    """The derived files as they should be, keyed by path relative to `root`."""
     entries = load_catalog(root)
     check_invariants(entries)
     strings = english_strings(root)
@@ -194,7 +182,6 @@ def outputs(root: Path) -> dict[Path, str]:
 
 
 def regenerate(root: Path, write: bool) -> list[Path]:
-    """Writes the derived files, or returns the ones that differ from their source."""
     stale = []
     for path, text in outputs(root).items():
         if (root / path).read_text(encoding="utf-8") != text:
@@ -212,13 +199,18 @@ def main() -> int:
     args = parser.parse_args()
     try:
         stale = regenerate(ROOT, write=args.write)
-    except (ErrorCodeError, OSError, plistlib.InvalidFileException, ValueError) as error:
+    except (
+        ErrorCodeError,
+        OSError,
+        plistlib.InvalidFileException,
+        ValueError,
+    ) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     if args.check and stale:
         names = ", ".join(path.as_posix() for path in stale)
         print(
-            f"ERROR: out of date: {names}. Run ./Scripts/ojd errors regenerate --write.",
+            f"ERROR: out of date: {names}. Run just errors-regenerate --write.",
             file=sys.stderr,
         )
         return 1

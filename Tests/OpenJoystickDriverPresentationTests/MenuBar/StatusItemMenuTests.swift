@@ -1,9 +1,10 @@
 import Foundation
+import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The menu of `specs/menu-bar-item/spec.md`: one top-level row per controller, at most two levels.
+/// The status item menu has one top-level row per controller and at most two levels.
 @Suite
 struct StatusItemMenuTests {
   private static func controller(
@@ -11,18 +12,18 @@ struct StatusItemMenuTests {
     name: String = "Pad",
     isSuspended: Bool = false,
     isWireless: Bool = false,
-    isPaused: Bool = false,
     battery: String? = nil,
+    profileInForce: String? = nil,
     profiles: [StatusItemState.Profile] = []
   ) -> StatusItemState.Controller {
     var controller = StatusItemState.Controller(
       id: id,
       name: name,
       isSuspended: isSuspended,
-      isWireless: isWireless,
-      isPaused: isPaused
+      isWireless: isWireless
     )
     controller.battery = battery
+    controller.profileInForce = profileInForce
     controller.profiles = profiles
     return controller
   }
@@ -55,7 +56,7 @@ struct StatusItemMenuTests {
     #expect(menu.map(\.id) == ["controller.a", "openWindow", "settings", "quit"])
     #expect(menu[1].title == .key("ui.extra.openWindow"))
     #expect(
-      String(
+      unsafe String(
         format: OJDLocalized.string("ui.extra.openWindow"),
         OJDLocalized.string("term.app.name")
       ) == "Open OpenJoystickDriver"
@@ -65,7 +66,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func eachConnectedControllerIsATopLevelRowWithOneSubmenu() {
+  func eachConnectedControllerTopLevelRowWithOneSubmenu() {
     let menu = Self.rows(
       Self.entries([Self.controller("a", name: "One"), Self.controller("b", name: "Two")])
     )
@@ -78,44 +79,37 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func controllerRowShowsBatteryProfileAndPausedState() {
-    let racing = Self.profile("Racing", active: true)
+  func controllerRowShowsBatteryProfileInForceAndPausedState() {
     let menu = Self.rows(
       Self.entries([
-        Self.controller("a", name: "Pad", battery: "80%", profiles: [racing, Self.profile("Menu")]),
-        Self.controller("b", name: "Stick", isPaused: true),
+        Self.controller("a", name: "Pad", battery: "80%", profileInForce: "Racing"),
+        Self.controller("b", name: "Stick", isSuspended: true),
+        Self.controller("c", name: "Wheel"),
       ])
     )
     #expect(menu[0].title == .verbatim("Pad"))
     #expect(menu[0].details == [.verbatim("80%"), .verbatim("Racing")])
     #expect(menu[1].details == [.key("ui.controllers.paused.value")])
+    #expect(menu[2].details.isEmpty)
   }
 
   @Test
-  func controllerRowNamesTheProfileInForceAndTheAppThatSelectedIt() {
-    var selected = Self.controller("a", battery: "80%", profiles: [Self.profile("Menu", active: true)])
-    selected.profileInForce = "Racing"
-    selected.profileSelectedBy = "Racer"
-    var everywhere = Self.controller("b")
-    everywhere.profileInForce = "Everywhere"
-    let menu = Self.rows(Self.entries([selected, everywhere]))
+  @MainActor
+  func profileInForceNamesAppThatSelectedIt() {
+    let general = ApplicationServiceProfileInForce(name: "General", appID: nil)
+    let forApp = ApplicationServiceProfileInForce(name: "Racing", appID: "com.example.game")
+    let identity: (String) -> String = { $0 }
+    let game: (String) -> String = { _ in "Game" }
+    #expect(MenuBarViewModel.profileInForceText(general, appName: identity) == "General")
     #expect(
-      menu[0].details == [
-        .verbatim("80%"), .verbatim("Racing"),
-        .formatted("ui.extra.profileSelectedByApp", .verbatim("Racer")),
-      ]
+      MenuBarViewModel.profileInForceText(forApp, appName: game)
+        == OJDLocalized.formatted("ui.menu.controller.profileForApp", "Racing", "Game")
     )
-    #expect(menu[1].details == [.verbatim("Everywhere")])
+    #expect(MenuBarViewModel.profileInForceText(nil, appName: identity) == nil)
   }
 
   @Test
-  func suspendedControllerRowSaysPaused() {
-    let menu = Self.rows(Self.entries([Self.controller("a", isSuspended: true)]))
-    #expect(menu[0].details == [.key("ui.controllers.paused.value")])
-  }
-
-  @Test
-  func noControllerShowsOneUnavailableRowThatSaysSo() {
+  func noControllerShowsOneUnavailableRowSaysSo() {
     let menu = Self.rows(Self.entries([]))
     #expect(menu.map(\.id) == ["controller.none", "openWindow", "settings", "quit"])
     #expect(menu[0].title == .key("ui.menu.controller.noneConnected"))
@@ -153,7 +147,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func noItemOfAControllerSubmenuOpensASubmenu() throws {
+  func noItemOfControllerSubmenuOpensSubmenu() throws {
     let profiles = (0..<12).map { Self.profile("P\($0)") }
     let menu = Self.entries([
       Self.controller("a", isWireless: true, profiles: profiles), Self.controller("b"),
@@ -165,7 +159,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func oneCheckmarkedListChoosesTheProfile() throws {
+  func oneCheckmarkedListChoosesProfile() throws {
     let active = Self.profile("A", active: true)
     let other = Self.profile("B")
     let menu = Self.entries([Self.controller("a", profiles: [active, other])])
@@ -185,7 +179,7 @@ struct StatusItemMenuTests {
   }
 
   @Test
-  func noProfileIsCheckedWhileNoProfileIsInForce() throws {
+  func noProfileCheckedWhileNoProfileInForce() throws {
     let menu = Self.entries([Self.controller("a", profiles: [Self.profile("A")])])
     let submenu = try #require(menu.first { $0.id == "controller.a" }?.submenu)
     let none = try #require(submenu.first { $0.id == "controller.a.profile.none" })
@@ -213,12 +207,18 @@ struct StatusItemMenuTests {
     func all(_ entries: [StatusItemEntry]) -> [StatusItemEntry] {
       entries.flatMap { [$0] + all($0.submenu ?? []) }
     }
-    let menu = all(Self.entries([Self.controller("a", isWireless: true)], problems: [.missingPermission(.inputRead), .serviceNotRunning]))
+    let menu = all(
+      Self.entries(
+        [Self.controller("a", isWireless: true)],
+        problems: [.missingPermission(.inputRead), .service(.stopped)]
+      )
+    )
     let allowed: Set<String> = [
-      "ui.extra.problemServiceNotRunning", "ui.extra.openWindow", "ui.menu.app.settings", "ui.menu.app.quit",
+      "ui.banner.service.title", "ui.extra.openWindow", "ui.menu.app.settings",
+      "ui.menu.app.quit",
       "ui.extra.resume", "ui.extra.pause", "ui.extra.disconnectWireless", "ui.extra.testInput",
       "ui.extra.showInWindow", "ui.extra.noProfile", "ui.extra.moreProfiles",
-      "ui.controllers.paused.value", MainMenuModel.noControllerTitleKey,
+      MainMenuModel.noControllerTitleKey,
     ]
     for entry in menu {
       if case .key(let key) = entry.title { #expect(allowed.contains(key), "\(entry.id)") }

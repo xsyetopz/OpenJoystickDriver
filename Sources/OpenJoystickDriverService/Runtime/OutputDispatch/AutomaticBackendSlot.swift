@@ -32,7 +32,7 @@ final class AutomaticBackendSlot: Sendable {
   /// Returns a lease on the backend, or nil once the slot is retired or closed.
   func acquire() -> AutomaticBackendLease? {
     state.withLock { state in
-      guard !state.retired && !state.closed else { return nil }
+      guard !state.retired, !state.closed else { return nil }
       state.leases += 1
       return AutomaticBackendLease(self)
     }
@@ -86,12 +86,12 @@ final class AutomaticBackendSlot: Sendable {
   /// Starts the close of the backend, or returns the close that is under way.
   @discardableResult
   private func beginClose() -> Task<Void, Never> {
-    let backend = self.backend
+    let closing = self.backend
     return state.withLock { state in
       if let nativeCloseTask = state.nativeCloseTask { return nativeCloseTask }
       state.closed = true
       let task = Task { [weak self] in
-        await backend.close()
+        await closing.close()
         let waiters =
           self?.state.withLock { state -> [CheckedContinuation<Void, Never>] in
             state.closeCompleted = true

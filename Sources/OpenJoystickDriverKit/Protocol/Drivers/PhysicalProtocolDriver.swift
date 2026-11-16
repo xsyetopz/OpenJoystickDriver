@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A vendor-class USB interface that carries the controller's commands beside its HID interface.
 ///
@@ -338,6 +338,10 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// Resets protocol state whenever a physical transport session starts or ends.
   func resetProtocolState()
 
+  /// Drops the bytes of a frame that a later report would complete, after a report the record's
+  /// input layouts decode turned out to be no frame of the family.
+  func discardPartialInput()
+
   /// Writes that start a session, sent in order at ``DriverSessionPlan`` startup spacing; called
   /// again for every startup attempt.
   func startupWrites() -> [PhysicalOutputWrite]
@@ -416,6 +420,8 @@ extension PhysicalProtocolDriver {
   public var wiiRemoteStatus: WiiRemoteStatus? { nil }
   /// Default: the driver keeps no protocol state to reset.
   public func resetProtocolState() {}
+  /// Default: the driver buffers no partial frame.
+  public func discardPartialInput() {}
   /// Default: no startup writes.
   public func startupWrites() -> [PhysicalOutputWrite] { [] }
   /// Default: no activation writes.

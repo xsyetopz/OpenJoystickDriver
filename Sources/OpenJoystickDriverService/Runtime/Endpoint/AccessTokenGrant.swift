@@ -69,7 +69,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
   /// 32 random bytes in unpadded base64url.
   static func randomBase64URL() -> String {
     var bytes = [UInt8](repeating: 0, count: 32)
-    precondition(SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess)
+    unsafe precondition(SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess)
     return Data(bytes).base64EncodedString()
       .replacingOccurrences(of: "+", with: "-")
       .replacingOccurrences(of: "/", with: "_")
@@ -78,7 +78,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
 
   /// Returns the lowercase hex SHA-256 of `token`.
   static func hash(_ token: String) -> String {
-    SHA256.hash(data: Data(token.utf8)).map { String(format: "%02x", $0) }.joined()
+    SHA256.hash(data: Data(token.utf8)).map { unsafe String(format: "%02x", $0) }.joined()
   }
 
   /// 1 to 64 ASCII letters, digits, `.`, `_`, or `-`.

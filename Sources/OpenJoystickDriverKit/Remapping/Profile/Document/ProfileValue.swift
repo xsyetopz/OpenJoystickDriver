@@ -128,11 +128,11 @@ public struct ProfileKey: Equatable, Sendable {
 
   /// Parses `argument`; fails when a component is empty.
   public init?(argument: String) {
-    let components = argument.split(separator: ".", omittingEmptySubsequences: false)
+    let parts = argument.split(separator: ".", omittingEmptySubsequences: false)
       .map(String.init)
-    guard !components.contains(where: \.isEmpty) else { return nil }
+    guard !parts.contains(where: \.isEmpty) else { return nil }
     text = argument
-    self.components = components
+    self.components = parts
   }
 }
 

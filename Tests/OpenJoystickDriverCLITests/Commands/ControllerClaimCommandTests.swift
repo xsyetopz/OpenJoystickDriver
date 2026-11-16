@@ -58,7 +58,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func claimWritesTheUserRecord() async throws {
+  func claimWritesUserRecord() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1"), "--json"],
@@ -78,7 +78,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func releaseGivesAClaimedModelBack() async throws {
+  func releaseGivesClaimedModelBack() async throws {
     let directory = Directory()
     let device = try Self.device(native: false)
     _ = try await Self.run(
@@ -86,7 +86,7 @@ struct ControllerClaimCommandTests {
       device: Self.device(native: true),
       in: directory
     )
-    // OJD seized the controller, so it no longer reports as a native gamepad.
+    // OJD seized the controller, so it does not report as a native gamepad.
     let result = try await Self.run(
       ["controller", "release", token("pad-1"), "--plain"],
       device: device,
@@ -95,6 +95,63 @@ struct ControllerClaimCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     #expect(result.standardOutput == "2C22:2000\tsystem\t\(directory.file.path)\n")
     #expect(Self.server(in: directory) == .system)
+  }
+
+  /// Releases `2DC8:301B`, whose bundled record states `OJD`, so its patch sets `System`.
+  private static func releasedBundledOJDModel(
+    in directory: Directory
+  ) async throws -> (device: ApplicationServiceDeviceDescription, patch: URL) {
+    let device = try Self.device(vendorID: 0x2DC8, productID: 0x301B, native: true)
+    let released = try await Self.run(
+      ["controller", "release", token("pad-1"), "--json"],
+      device: device,
+      in: directory
+    )
+    let patch = URL(fileURLWithPath: try #require(try released.json()["file"] as? String))
+    #expect(FileManager.default.fileExists(atPath: patch.path))
+    return (device, patch)
+  }
+
+  @Test
+  func claimDeletingPatchFileReportsDeletion() async throws {
+    let directory = Directory()
+    let (device, patch) = try await Self.releasedBundledOJDModel(in: directory)
+
+    let result = try await Self.run(
+      ["controller", "claim", token("pad-1")],
+      device: device,
+      in: directory
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(!FileManager.default.fileExists(atPath: patch.path))
+    #expect(!result.standardError.contains("Set "))
+    #expect(
+      result.standardError.contains(
+        CLILocalized.format("cli.controller.group.serverRemoved", "2DC8:301B", patch.path)
+      )
+    )
+  }
+
+  @Test
+  func dryRunClaimDeletingPatchFileReportsDeletion() async throws {
+    let directory = Directory()
+    let (device, patch) = try await Self.releasedBundledOJDModel(in: directory)
+
+    let result = try await Self.run(
+      ["controller", "claim", token("pad-1"), "--dry-run"],
+      device: device,
+      in: directory
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(FileManager.default.fileExists(atPath: patch.path))
+    #expect(!result.standardOutput.contains("Would set"))
+    #expect(
+      result.standardOutput.contains(
+        CLILocalized.format("cli.controller.group.serverRemovedDryRun", "2DC8:301B", patch.path)
+      )
+    )
   }
 
   @Test
@@ -137,7 +194,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() async throws {
+  func modelWithoutRecordIsRefused() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1")],
@@ -150,7 +207,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func claimRefusesARawUSBControllerWithoutWriting() async throws {
+  func claimRefusesRawUSBControllerWithoutWriting() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1"), "--json"],
@@ -163,7 +220,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func theOldOwnershipWordIsAnUnknownCommand() async throws {
+  func oldOwnershipWordIsUnknownCommand() async throws {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "ownership", token("pad-1"), "virtual"],
@@ -175,7 +232,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func showReportsTheChoiceAndItsSource() async throws {
+  func showReportsChoiceAndItsSource() async throws {
     let directory = Directory()
     let device = try Self.device(native: true)
     let before = try await Self.run(
@@ -213,7 +270,7 @@ struct ControllerClaimCommandTests {
     (ControllerOwnershipObservation.exclusiveRawUSB, ControllerAccessRoute.rawAccess),
     (.exclusiveHID, .system),
   ])
-  func showNamesOJDForAControllerTheSystemDoesNotServe(
+  func showNamesOJDForControllerSystemDoesNotServe(
     observation: ControllerOwnershipObservation,
     accessRoute: ControllerAccessRoute
   ) async throws {
@@ -267,7 +324,7 @@ struct ControllerClaimCommandTests {
     in directory: Directory
   ) async throws -> CLIRun {
     let submission:
-      @Sendable (TransportExtensionSubmission.Action) async throws ->
+      @Sendable (TransportExtensionSubmission.Action) async ->
         SystemExtensionSetupRequestResult = { action in
           actions.withLock { $0.append(action) }
           return outcome
@@ -278,7 +335,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func claimOfAModelAppleHoldsSendsTheActivationRequestAndWritesNoRecord() async throws {
+  func claimOfModelAppleHoldsSendsActivationRequestAndWritesNoRecord() async throws {
     let directory = Directory()
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
@@ -296,7 +353,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func releaseOfAModelAppleHoldsSendsNoRequest() async throws {
+  func releaseOfModelAppleHoldsSendsNoRequest() async throws {
     let directory = Directory()
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
@@ -312,7 +369,7 @@ struct ControllerClaimCommandTests {
   }
 
   @Test
-  func showNamesAModelAppleHoldsAsServedByMacOS() async throws {
+  func showNamesModelAppleHoldsAsServedByMacOS() async throws {
     let directory = Directory()
     let device = try Self.appleHeldDevice()
     let plain = try await Self.run(
@@ -328,7 +385,7 @@ struct ControllerClaimCommandTests {
 
     #expect(plain.standardOutput.contains("served-by\tmacos\n"))
     #expect(plain.standardOutput.contains("serving-route\tnative-pass-through"))
-    #expect(human.standardOutput.contains("Served by"))
-    #expect(human.standardOutput.contains("macOS. Run `ojd controller claim "))
+    #expect(human.standardOutput.contains("Handled by"))
+    #expect(human.standardOutput.contains("Handled by macOS. Run `ojd controller claim "))
   }
 }

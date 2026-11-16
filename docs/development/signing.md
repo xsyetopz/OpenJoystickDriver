@@ -50,21 +50,21 @@ Use Apple Development signing and separate profiles for the app and DEXT. Defaul
 
 `signing configure` writes the paths of these profiles to `GUI_PROVISIONING_PROFILE` and `DEXT_PROVISIONING_PROFILE` in `.env.dev`, and the SHA-1 of the one Apple Development identity that both embed to `CODESIGN_IDENTITY`; that identity signs the app and the DEXT. The build passes the `Name` inside the DEXT profile to Xcode as the profile specifier. When several identities qualify, `signing configure --development-identity <sha1>` (or `--release-identity <sha1>` for Developer ID) picks one; otherwise it takes the lowest SHA-1.
 
-The host development profile's device list must include this Mac. Otherwise AMFI ignores `com.apple.developer.hid.virtual.device` and virtual `IOHIDUserDevice` creation fails. Regenerate the profile after adding the Mac, then `./Scripts/ojd signing install-profiles`.
+The host development profile's device list must include this Mac. Otherwise AMFI ignores `com.apple.developer.hid.virtual.device` and virtual `IOHIDUserDevice` creation fails. Regenerate the profile after adding the Mac, then `just signing-install-profiles`.
 
 Regenerate profiles after changing capabilities. Xcode may otherwise reuse a stale profile. The development DEXT profile's `transport.usb` must contain exactly the seven approved Microsoft pairs; a wildcard or a GameSir dictionary is a mismatch and the signing gate rejects it. The connected GameSir G7 SE (`3537:1010`) uses the app's direct IOUSBHost route and does not require a DriverKit grant.
 
 Normally, invoke the desired signed operation and follow its prompts:
 
 ```bash
-./Scripts/ojd build install dev
+just install-dev
 ```
 
 The command searches supported local profile locations, installs discovered profiles, configures matching Keychain identities, and resumes. Use these commands only when automatic repair reports an asset mismatch:
 
 ```bash
-./Scripts/ojd signing audit
-./Scripts/ojd signing configure
+just signing-audit
+just signing-configure
 ```
 
 A profile embeds every certificate it was generated for. `configure` chooses a Keychain identity (with its private key) whose SHA1 is embedded in both the host and the DriverKit profile of the same kind. When several qualify, `configure` prints the choice: the lowest SHA1. When none qualifies, it fails and lists each profile's embedded SHA1s next to the Keychain SHA1s; it never writes an identity that the Keychain cannot sign with. `signing profile-info` lists every embedded certificate, and `signing import-embedded` imports all of them.
@@ -97,8 +97,8 @@ Do not change the provisioning profile to silence an entitlement mismatch. Kevin
 ## Verification
 
 ```bash
-./Scripts/ojd check driverkit
-./Scripts/ojd signing audit
+just driverkit-check
+just signing-audit
 codesign -d --entitlements - --xml /path/to/OpenJoystickDriver.app
 extensions=/path/to/OpenJoystickDriver.app/Contents/Library/SystemExtensions
 codesign -d --entitlements - --xml "$extensions/com.openjoystickdriver.XboxUSBDevice.dext"

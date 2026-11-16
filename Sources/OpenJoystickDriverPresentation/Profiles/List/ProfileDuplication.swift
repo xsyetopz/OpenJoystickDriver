@@ -11,12 +11,6 @@ enum ProfileNameValidation {
 
 /// Returns the name that the Duplicate sheet starts with: the source's name followed by the copy
 /// marker, made free of the names `profiles` already have.
-///
-/// - Parameters:
-///   - source: The profile being duplicated.
-///   - profiles: The existing profiles, whose names the copy must not take.
-/// - Returns: The name that the Duplicate sheet starts with: the source's name followed by the copy
-///   marker, made free of the names `profiles` already have.
 func defaultDuplicateName(of source: RemappingProfile, in profiles: [RemappingProfile]) -> String {
   ProfileNaming.availableName(
     OJDLocalized.formatted("ui.profiles.copyName", source.name),
@@ -26,13 +20,6 @@ func defaultDuplicateName(of source: RemappingProfile, in profiles: [RemappingPr
 
 /// Returns a copy of `source` under `name`, or nil when the name is taken among `profiles` or
 /// the copy is not a valid profile.
-///
-/// - Parameters:
-///   - source: The profile being duplicated.
-///   - name: The name of the copy.
-///   - profiles: The existing profiles, whose names the copy must not take.
-/// - Returns: A copy of `source` under `name`, or nil when the name is taken among `profiles` or
-///   the copy is not a valid profile.
 func duplicatedProfile(
   _ source: RemappingProfile,
   named name: String,

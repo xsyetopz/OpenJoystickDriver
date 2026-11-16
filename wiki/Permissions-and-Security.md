@@ -19,15 +19,15 @@ OpenJoystickDriver works with System Integrity Protection (SIP) and Apple Mobile
 
 Apple notarized the release app, and the maintainer signed it. Tester builds use a Developer ID signature and are also notarized.
 
-### System Extension
+### Xbox USB driver
 
-The OJD driver extension, `com.openjoystickdriver.XboxUSBDevice`, is a DriverKit system extension. It runs in user space, not in the kernel. macOS asks for your approval before it starts. OJD uses it only for Xbox One and Xbox Series controllers on USB. The virtual controller comes from the app, not from the extension. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+The [Xbox USB driver](Glossary.md#terms), `com.openjoystickdriver.XboxUSBDevice`, is a driver. It runs in user space, not in the kernel. macOS asks for your approval before it starts. OJD uses it only for Xbox One and Xbox Series controllers on USB. The [virtual gamepad](Glossary.md#terms) comes from the app, not from the driver. For more information, see [Xbox USB driver](Connecting-Controllers.md).
 
 ### Data On Your Mac
 
 OJD stores this data locally:
 
-- Profiles in `~/Library/Application Support/OpenJoystickDriver/`. Only your user can read the folder.
+- [Profiles](Glossary.md#terms) in `~/Library/Application Support/OpenJoystickDriver/`. Only your user can read the folder.
 - Logs in `~/Library/Logs/OpenJoystickDriver/`. Each start of OJD clears them.
 - Settings in the `com.openjoystickdriver` preferences domain.
 
@@ -39,7 +39,7 @@ The endpoint is a local socket that other programs can read controller input fro
 
 ### Support Report
 
-**Copy Support Report** copies a JSON report to the clipboard. OJD does not save it to disk. The report contains service status, virtual device details, Input Monitoring state, build identity, and Apple game controller data. It contains product names of your devices. By its own privacy flags, it leaves out serial numbers, file paths, packet data, and HID location IDs. Read the report before you share it.
+**Copy Support Report** copies a JSON report to the clipboard. OJD does not save it to disk. The report contains service status, virtual gamepad details, Input Monitoring state, build identity, and Apple game controller data. It contains product names of your devices. By its own privacy flags, it leaves out serial numbers, file paths, packet data, and HID location IDs. Read the report before you share it.
 
 ## Permissions
 
@@ -60,7 +60,7 @@ OJD reads the permission state every second. A request result is not treated as 
 | Permission | Purpose | Needed |
 | --- | --- | --- |
 | Input Monitoring | Read reports from a physical controller | Always |
-| Accessibility | Publish the virtual controller | Always |
+| Accessibility | Publish the virtual gamepad | Always |
 | Keyboard & pointer | Send keyboard, mouse, or scroll events from a profile, including system keys and typed text | Only when a profile does so |
 | Notifications | Show notifications | Optional |
 
@@ -69,6 +69,7 @@ Open application, open URL, Mission Control, and Run Shortcut need no permission
 ### Which Process Holds Each Permission
 
 macOS ties a permission to the process that calls the API. The OpenJoystickDriver service runs inside the app, so the app holds every permission in this table. The `ojd` command sends requests to the service and posts no events of its own.
+
 | Action | Permission it needs | Process that calls the API |
 | --- | --- | --- |
 | Keyboard, mouse, and scroll events | Post Event access | The app, through `CGEvent.post` |
@@ -83,16 +84,16 @@ Before the app posts an event, it checks Post Event access. If the permission is
 
 Not verified on hardware: the **Keyboard & pointer** row and the **Accessibility** row may use the same switch in **System Settings**.
 
-OJD does not use camera, microphone, or Full Disk Access permissions. It reads Bluetooth controllers as HID devices, so they need **Input Monitoring**. OJD uses Bluetooth only to disconnect a wireless controller. Whether macOS asks for Bluetooth permission for this is not verified.
+OJD does not use camera, microphone, or Full Disk Access permissions. It reads Bluetooth controllers as HID devices, so they need **Input Monitoring**. OJD uses Bluetooth only to disconnect a wireless controller, and to connect a Switch 2 controller over Bluetooth LE. OJD does not start the Bluetooth LE connection at launch unless macOS already granted Bluetooth access, so the app start shows no Bluetooth prompt. Whether macOS asks for Bluetooth permission for the disconnect is not verified.
 
 ### Grant Input Monitoring and Accessibility
 
 1. Click **Grant Access** in the **Permission needed** banner. A **Permission Missing** row in the menu-bar menu opens the **Access** area at that permission.
-2. Allow **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
+2. Turn on **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
 3. Repeat for **System Settings** > **Privacy & Security** > **Accessibility**.
 4. Click **Restart OpenJoystickDriver** in the **Access** area if it appears.
 
-Without **Input Monitoring**, Input Test shows **Input Monitoring permission required**. Without **Accessibility**, the virtual controller does not work.
+Without **Input Monitoring**, Input Test shows **Input Monitoring permission required**. Without **Accessibility**, the virtual gamepad does not work.
 
 ### OpenJoystickDriver Is Not in the List
 
@@ -109,13 +110,13 @@ You can also click **+** under the list and choose `/Applications/OpenJoystickDr
 ### Grant Notifications
 
 1. Open **Settings** and turn on a notification toggle, or click **Send Test Notification**.
-2. Allow the macOS prompt.
+2. Click **Allow** in the macOS prompt.
 
 If you denied notifications before, click **Open Notification Settings**. The **Notifications** row in the **Access** area shows **Banners off** or **Sound off** when macOS turns those parts off.
 
 ### Xbox USB Driver Approval
 
-The OJD driver extension needs approval, but it is not a privacy permission. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+The Xbox USB driver needs approval, but it is not a privacy permission. For more information, see [Xbox USB driver](Connecting-Controllers.md).
 
 ## Further Reading
 

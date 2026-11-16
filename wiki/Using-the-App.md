@@ -19,13 +19,13 @@ Learn the menu-bar item, the main menu, the five areas of the app window, and th
 
 ![The menu-bar item menu with one controller row, Open OpenJoystickDriver, Settings, and Quit](../docs/screenshots/menu-bar-item.png)
 
-The menu-bar item does five things: it shows the state of each connected controller, chooses a controller's profile, pauses or resumes a controller, opens the app window or **Settings**, and quits OJD.
+The menu-bar item does five things: it shows the state of each connected controller, chooses a controller's [profile](Glossary.md#terms), pauses or resumes a controller, opens the app window or **Settings**, and quits OJD.
 It holds nothing else.
 The logs, the error explanations, the support report and the project links are in the **Help** menu of the main menu.
 
 **Show in menu bar** and **Show in Dock** in **Settings** > **General** choose where the app shows its icon.
 At least one of them stays on.
-To remove the item, hold Command and drag it out of the menu bar.
+To remove the item, Command-drag it out of the menu bar.
 OJD then stores **Show in menu bar** as off, turns **Show in Dock** on, and opens the app window.
 Turn **Show in menu bar** on again in **Settings** > **General**.
 
@@ -59,7 +59,7 @@ Each controller row has its own submenu:
   While the controller is paused, the item reads **Resume**.
 - **Test Input** opens the Input Test window.
 - **Show in Window** opens the controller in the **Controllers** area.
-- **Disconnect Wireless Link** is on only for a controller that connects by Bluetooth.
+- **Disconnect Bluetooth Connection** is on only for a controller that connects by Bluetooth.
   OJD shows a **Disconnect Wireless Controller?** alert to confirm.
   The controller stays disconnected until you connect it again by hand.
   OJD cannot disconnect a Bluetooth Low Energy controller: turn it off or disconnect it in **System Settings** > **Bluetooth**.
@@ -75,12 +75,12 @@ Closing the window with the red button only hides it.
 ## Main Window
 
 The app window has a sidebar with five areas.
-Press <kbd>Command</kbd>+<kbd>1</kbd> to <kbd>Command</kbd>+<kbd>5</kbd> to select them in this order:
+Press Command-1 to Command-5 to select them in this order:
 
 | Area | Use it to |
 | --- | --- |
-| **Controllers** | See each connected controller, choose who serves it, and test it. |
-| **Profiles** | Edit remapping profiles. |
+| **Controllers** | See each connected controller, choose who handles it, and test it. |
+| **Profiles** | Edit profiles. |
 | **Library** | Install, test, and remove controller records and mods. |
 | **Access** | Check permissions, and manage the local endpoint for other programs. |
 | **Activity** | Read the log, run checks, and explain an error code. |
@@ -91,7 +91,7 @@ The window opens on **Controllers** until you choose another area.
 A banner below the toolbar shows a problem that stops OJD from working:
 
 - **OpenJoystickDriver cannot reach its service**.
-- **Xbox USB Driver**, when the driver extension needs approval, repair, or reinstalling.
+- **Xbox USB Driver**, when the [Xbox USB driver](Glossary.md#terms) needs approval, repair, or reinstalling.
 - **Permission needed**, with a button that opens **Access**.
 - **Live updates unavailable**, when the app cannot receive changes from the service.
   The app then reads the controller list from the service instead, and tries to receive changes again.
@@ -102,15 +102,19 @@ A banner below the toolbar shows a problem that stops OJD from working:
 The main menu follows the macOS layout:
 
 - **File** has **Import Profile...**, **Install Record or Mod...**, **Validate...**, **Test Record...**, **Remove**, **Grant a Program...**, **Create a Token...**, **Close**, **Export Profile...**, **Save Support Report...**, **Save Activity Log...**, and **Show in Finder**.
-- **Edit** has **Undo**, **Redo**, **Cut**, **Copy**, **Copy All**, **Paste**, **Delete**, **Select All**, and **Find**.
-  **Find** (Command-F) moves the keyboard focus to the search field of the list in view: the Library list, or the Activity log.
+  In the Simple interface the menu holds only **Import Profile...**, **Close**, **Export Profile...**, and **Save Support Report...**.
+  **Install Record or Mod...**, **Validate...**, **Test Record...**, **Remove**, **Save Activity Log...**, and **Show in Finder** need the **All Controls** interface; **Grant a Program...** and **Create a Token...** need the **All Controls** interface and **Enable Developer Tools**.
+- **Edit** has **Undo**, **Redo**, **Cut**, **Copy**, **Copy All** (needs the **All Controls** interface), **Paste**, **Delete**, **Select All**, and **Find**.
+  **Find** (Command-F) moves keyboard focus to the search field of the list in view: the Library list, or the Activity log.
   It is unavailable in the other areas, in Activity's diagnostics view, and while the toolbar is hidden.
 - **View** selects the five areas, switches the Activity view (**Activity**), sets the log filter and line count (**Filter**), runs the diagnostic checks (**Run Checks**), and shows or hides the sidebar and the toolbar.
-- **Controller** has **Suspend**, **Resume**, **Test Input**, **Disconnect Wireless Link**, and **Show in Window** for the selected controller.
+  **Activity**, **Filter**, and **Run Checks** need the **All Controls** interface.
+- **Controller** has **Suspend**, **Resume**, **Test Input**, **Disconnect Bluetooth Connection**, and **Show in Window** for the selected controller.
 - **Profile** has **Activate Profile**, **Deactivate Profile**, **New profile**, **Duplicate**, **Delete**, and **Validate profile file**.
   While no profile exists, the **Activate Profile** submenu shows **No Profiles**; while the profile list is loading or cannot be read, it shows **Profiles Unavailable**.
 - The commands from **Validate...** to **Create a Token...**, **Show in Finder**, **Copy All**, **Activity**, **Filter**, **Run Checks**, **New profile**, **Duplicate**, **Delete**, and **Validate profile file** do what the toolbar button of the same name does, and are available while that button is shown and enabled.
-- **Help** has **Activity Log**, **Explain Error Code...**, **Copy Support Report**, **Report Problem...**, and **Project Website**.
+  The main menu changes with the interface: choose **View** > **Simple** or **All Controls**, and the menus drop or add these commands at once.
+- **Help** has **Activity Log** (needs the **All Controls** interface), **Explain Error Code...** (needs the **All Controls** interface), **Copy Support Report**, **Report Problem...**, and **Project Website**.
   For more information, see [Reporting a bug](Reporting-a-Bug.md).
 
 ## Controllers Area
@@ -127,72 +131,89 @@ For more information, see [Controller not detected](Troubleshooting.md).
 The details include these fields when the controller reports them:
 
 - **Active profile**.
-- **Publication**: whether OJD publishes a virtual gamepad for the controller.
-  A controller that macOS serves itself shows **Native macOS gamepad, not published**.
-- **Serving route**: how the input reaches games, for example **OpenJoystickDriver, virtual gamepad** or **macOS, passed through**.
-- **Protocol**.
-- **Serial number**, blurred until you click its eye button.
+- **Opened by**: every process that holds the controller open, with its process number, or **None**.
+- **Publication** (needs the **All Controls** interface): whether OJD publishes a [virtual gamepad](Glossary.md#terms) for the controller.
+  A controller that is [handled by macOS](Glossary.md#terms) shows **Native macOS gamepad, not published**.
+- **Serving route** (needs the **All Controls** interface): how the input reaches games, for example **OpenJoystickDriver, virtual gamepad** or **macOS, passed through**.
+- **Protocol** (needs the **All Controls** interface).
+- **Serial number** (needs the **All Controls** interface), blurred until you click its eye button.
 - **Battery**, **Charging state**, and **Cable state**.
 
+An **Exclusive access** row with a **Suspend** button appears while OpenJoystickDriver holds the controller exclusively, so no other app can open it.
+Click **Suspend** to let another app open the controller.
 A **Suspended** row with a **Resume** button appears while the controller is suspended.
+A **Community verified** row names each mode that a community validation confirmed, with a link to its issue.
+**Lookup** opens the controller's entry in [Supported controllers](Supported-Controllers.md), or a GitHub issue search for its VID:PID when it has no record.
 **Open Input Test...** opens the test window.
 For more information, see [Testing a controller](Testing-a-Controller.md).
 
-### Who Serves the Controller
+### Who Handles the Controller
 
-The **Served by** picker appears for a controller that macOS serves natively, or whose record gives it to OpenJoystickDriver.
-It never appears for a controller that uses raw USB or the driver extension.
-The choices are **macOS (native)** and **OpenJoystickDriver (virtual)**.
+The **Handled by** picker (needs the **All Controls** interface) appears for a controller that macOS can handle, or whose record gives it to OpenJoystickDriver.
+It never appears for a controller that uses raw USB or the Xbox USB driver.
+The choices are **macOS** and **OpenJoystickDriver**.
 **Set by** names the record layer that holds the choice.
 The change takes effect at once and stays after a restart.
 The command line does the same with `ojd controller claim` and `ojd controller release`.
 For more information, see [Choose who drives the controller](Controller-Records.md#choose-who-drives-the-controller).
 
-### Virtual HID Profile
+A controller that Apple's driver holds also has a section with **Handled by macOS** and a **Claim** button (needs the **All Controls** interface).
 
-The **Virtual HID profile** menu appears for controllers that macOS does not serve itself:
+### Virtual Gamepad Kind
 
-- **Automatic (<profile name>)** lets OJD choose the virtual controller profile and names the profile it chose.
-- **Xbox Adaptive Controller (SDLCompatible)** forces the Xbox profile for SDL games and Steam.
-- **OpenJoystickDriver Generic HID Gamepad (Generic)** forces the generic profile.
-- **Xbox Wireless Controller (GameControllerCompatible)** forces the Xbox profile for Apple's Game Controller framework.
+The **Virtual gamepad kind** menu (needs the **All Controls** interface) appears for controllers that macOS does not handle:
 
-**Apply to** chooses whether the override applies to every connected controller of the same model or to this controller only.
+- **Automatic (`<product name>`)** lets OJD choose the [virtual gamepad kind](Glossary.md#terms) and shows the product name games see for it.
+- **For Steam and SDL games** forces the Xbox kind for SDL games and Steam.
+- **Generic HID gamepad** forces the generic kind.
+- **For Apple Game Controller games** forces the Xbox kind for Apple's Game Controller framework.
+
+In **All Controls**, each choice also shows its identifier, as in **For Steam and SDL games (SDLCompatible)**. The command line takes that identifier.
+
+**Apply to** (needs the **All Controls** interface) chooses whether the override applies to every connected controller of the same model or to this controller only.
 **Reset all overrides** clears every override.
 
 The change takes effect at once.
-**Updating virtual HID profile...** shows while it applies.
-If activation fails, OJD restores the previous profile and shows a message.
+**Updating virtual gamepad kind...** shows while it applies.
+If activation fails, OJD restores the previous kind and shows a message.
 For more information, see [How games see your controller](Playing-Games.md).
 
 ### Virtual Gamepad Actions
 
-The detail also has **Export mapping**, which saves the SDL mapping or the W3C Gamepad description of the virtual gamepad, and **Launch game with virtual gamepad**, which starts a program with the mapping set.
+The detail also has (needs the **All Controls** interface) **Export mapping**, which saves the SDL mapping or the W3C Gamepad description of the virtual gamepad, and **Launch game with virtual gamepad**, which starts a program with the mapping set.
 
 ### Advanced Section
 
-The **Advanced** section holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
+The **Advanced** section (needs the **All Controls** interface) holds the identifiers, the input and output endpoints, **Draft Record...**, and **Capture Packets...**.
+**Draft Record...**, **Draft Record from SDL...**, and **Capture Packets...** also need **Enable Developer Tools**.
+The **Stick deadzone** stepper, the calibration readouts of each stick and trigger, **Recalibrate**, and the **Tuning** group also need the **All Controls** interface.
+**Recalibrate** has **Measure Rest**, **Measure Circle**, **Measure Triggers**, and **Reset**, as in the Input Test window; see [Testing a controller](Testing-a-Controller.md#recalibrate).
 **USB VID/PID** is the vendor and product ID.
 For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
 ## Profiles Area
 
-The **Profiles** area lists the remapping profiles and opens the editor for the selected profile.
-For more information, see [Remapping profiles](Remapping-Profiles.md).
+The **Profiles** area lists the profiles and opens the editor for the selected profile.
+For more information, see [Profiles](Remapping-Profiles.md).
 
 ## Library Area
 
 ![The Library area with one installed controller record](../docs/screenshots/main-library.png)
 
-The **Library** area lists the **Controller records** and the **Mods** that are installed.
+The **Library** area lists the **Controller records** and the **Mods** that are installed (needs the **All Controls** interface).
 Select an item to see its fields and files.
+The **Record** section shows the record as its XML property list, colored by part, with the hexadecimal form of the vendor and product IDs beside their lines.
+**Copy All** copies the property list without those readings.
+
+Each record row has the VID:PID as its title and a gray line with the protocol family and where the record comes from.
+The gray line ends with **Apple-signed** for a controller that the Apple-signed Xbox USB driver claims.
 
 - **Install** adds a controller record file or a mod folder.
   **Validate...** checks it first.
   **Replace** overwrites an installed item with the same name.
   **Remove** deletes it after you confirm.
 - **Test Record...** replays a packet capture through a record and compares the result with the state you expect.
-- **Search** filters the list.
+- **Search** filters the list by VID:PID, protocol family, and **Apple-signed**.
 
 For more information, see [Writing controller mods](Writing-Controller-Mods.md) and [Controller records](Controller-Records.md).
 
@@ -222,6 +243,8 @@ For more information, see [Permissions](Permissions-and-Security.md#permissions)
 The local endpoint lets other programs read controller state.
 It shows the socket path with **Copy Socket Path**, and the **WebSocket** with its **Port** and pages folder.
 Turning on **Local endpoint** or **WebSocket** asks you to confirm with **Turn On**.
+The two switches, **Port**, the lists below, **Grant a Program...**, and **Create a Token...** need the **All Controls** interface and **Enable Developer Tools**.
+The permission rows above show in both interfaces.
 
 - **Programs with access** lists each granted program with its scopes, **Read** and **Control**, and **Revoke**.
   **Grant a Program...** adds one.
@@ -238,20 +261,20 @@ For more information, see [Automating OpenJoystickDriver](Automating-OpenJoystic
 
 ![The Activity area showing the log with the newest line at the top](../docs/screenshots/main-activity.png)
 
-The **Activity** area has two modes.
+The **Activity** area has two modes (needs the **All Controls** interface).
 
 - **Log** shows the OpenJoystickDriver log.
   **Stream** selects **All**, **Output**, or **Errors**.
   **Lines** sets how many lines show, **Search** and **Filter** narrow them, and **Show in Finder** opens the log folder.
   If there are no lines, the area shows **No log entries.**
-- **Diagnostics** shows the result of **Run Checks**: one row per check with **Passed**, **Warning**, or **Skipped**, and its details.
+- **Diagnostics** shows the result of **Run Checks** (needs the **All Controls** interface): one row per check with **Passed**, **Warning**, or **Skipped**, and its details.
 
-**Explain Error Code...** in the **Help** menu shows what an error code means.
+**Explain Error Code...** in the **Help** menu shows what an error code means (needs the **All Controls** interface).
 For more information, see [Reporting a bug](Reporting-a-Bug.md).
 
 ## Settings Window
 
-Open **Settings** from the app menu or press <kbd>Command</kbd>+<kbd>,</kbd>.
+Open **Settings** from the app menu or press Command-Comma (,).
 The window has three panes.
 
 ### General
@@ -270,6 +293,35 @@ For more information, see [Command reference](Command-Reference.md).
 **Show in menu bar** and **Show in Dock** choose where the icon shows.
 When **Show in Dock** is off, the Dock icon shows only while a window is open.
 
+**Pause shortcut** is a keyboard shortcut that pauses every controller, or resumes them when all are paused, from any app (needs the **All Controls** interface).
+It is unset until you click **Record Shortcut** and press a key with Control, Option, or Command; Escape cancels, and **Clear** removes it.
+Another app that uses the same combination makes the shortcut fail with an error here; record a different one.
+`ojd setting set pauseShortcut` sets it too.
+
+**Disconnect idle Bluetooth controllers** disconnects a classic Bluetooth controller whose input has not changed for the time you choose: 5, 10, 15, 30, or 60 minutes (needs the **All Controls** interface).
+It is **Off** until you change it.
+It disconnects the way **Disconnect** in the menu does.
+A controller that stays on the same input, such as a stick held still, counts as idle.
+A Bluetooth Low Energy controller and a controller on a cable or a receiver are never disconnected, because macOS keeps a Bluetooth Low Energy controller's link up when an app asks to close it.
+`ojd setting set idleDisconnectMinutes` sets it too, to any whole number of minutes from 1 to 480.
+
+**Interface** chooses how much of the app shows: **Simple** or **All Controls**.
+It is **Simple** until you change it.
+The **View** menu has the same two items, **Simple** and **All Controls**, with a checkmark on the current one.
+`ojd setting set interfaceLevel Simple` or `ojd setting set interfaceLevel Advanced` sets it from a terminal.
+For more information, see [Command reference](Command-Reference.md).
+
+At **All Controls**, the developer tools show in **Settings** > **Advanced** while **Enable Developer Tools** is on.
+At **Simple**, they stay hidden even with **Enable Developer Tools** on.
+Wiki pages mark a control that needs **All Controls** with "(needs the **All Controls** interface)".
+
+At **Simple**, a row tells you when a hidden setting holds a value other than its default.
+In a controller detail it counts the virtual gamepad kind you set and a stick dead zone from your own record.
+In the profile editor it counts the output policy, axis adjustments, stick, trigger and touch mappings, pointer speed, motion settings and regions that differ from a new profile.
+The row reads, for example, "1 hidden setting is changed", and its **Show All Controls** button switches **Interface** to **All Controls**.
+With every hidden setting at its default, no row shows.
+The Library and Activity areas hold only controls that need the **All Controls** interface, so at **Simple** they show a row that says the area needs the **All Controls** interface, with the same button.
+
 Under **Updates**, **Check for updates automatically** looks for a newer version when the app starts.
 Click **Check Now** to look at once.
 OJD contacts GitHub only for these checks.
@@ -277,6 +329,9 @@ The result is **Up to date**, **Update available**, or **Newer than the latest r
 Click **View Update** to open the release page.
 OJD does not download or install anything.
 Select **Include prerelease updates** to include beta versions.
+
+The first time you open the app window after an update, a **What's New** sheet shows the changes of the installed version from the changelog, once.
+Click **Done** to close it.
 
 ### Notifications
 
@@ -297,20 +352,22 @@ Click **Open Notification Settings** to fix this.
 
 ![The Advanced pane of the Settings window](../docs/screenshots/settings-advanced.png)
 
+- At **Simple**, this pane holds only **Xbox USB Driver**, and a settings error when one shows; the **Command-Line Tool** section and the developer switch need the **All Controls** interface.
 - **Command-Line Tool** links `ojd` to this app so that you can run it in Terminal.
-  **Install Command-Line Tool** asks for an administrator password.
-- **Xbox USB Driver** shows the state of the OJD driver extension.
+  **Install Command-Line Tool** (needs the **All Controls** interface) asks for an administrator password.
+- **Xbox USB Driver** shows the state of the Xbox USB driver.
   Only some Xbox One and Xbox Series controllers on USB need it.
   **Uninstall** appears while the driver is active; it asks you to approve and then deactivates the driver.
-  For more information, see [Xbox USB driver extension](Connecting-Controllers.md#xbox-usb-driver-extension).
-- **Enable Developer Tools** shows controller input and USB packet tools in this pane.
+  For more information, see [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver).
+- **Enable Developer Tools** (needs the **All Controls** interface) shows controller input and USB packet tools in this pane, together with a soak test section.
+  At **Simple**, the switch and the tools are both hidden; at **All Controls**, the tools show while the switch is on.
   For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
 If the settings file cannot be read, the app shows **Settings can't be read** with **Reset Settings**. `ojd setting reset` does the same from a terminal.
 
 ## Testing a Controller
 
-The Input Test window shows live input, rumble, and lighting.
+The Input Test window shows live input, rumble, and lighting, runs the guided check, and recalibrates the sticks and triggers.
 For more information, see [Testing a controller](Testing-a-Controller.md).
 
 ## Further Reading

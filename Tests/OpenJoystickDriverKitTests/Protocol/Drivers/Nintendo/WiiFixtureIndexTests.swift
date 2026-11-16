@@ -7,7 +7,7 @@ struct WiiFixtureIndexTests {
   private static let description = PhysicalProtocolID.nintendoWii.protocolDescription
 
   @Test
-  func everyReportModeOfTheDescriptionHasAFixture() throws {
+  func everyReportModeOfDescriptionHasFixture() throws {
     let modes = try #require(Self.description.wiiRemote).reportModes
     for mode in modes {
       #expect(try !WiiFixtures.names(id: mode.id).isEmpty, "mode \(String(mode.id, radix: 16))")
@@ -15,7 +15,7 @@ struct WiiFixtureIndexTests {
   }
 
   @Test
-  func everyStatusReadReplyAndAcknowledgementCaseHasAFixture() throws {
+  func everyStatusReadReplyAndAcknowledgementCaseHasFixture() throws {
     let names = try WiiFixtures.names()
     for name in [
       "20-status-no-extension", "20-status-extension", "20-status-battery-full",
@@ -35,7 +35,7 @@ struct WiiFixtureIndexTests {
   }
 
   @Test
-  func everyModeFixtureHasTheLengthOfItsLayout() throws {
+  func everyModeFixtureHasLengthOfItsLayout() throws {
     let modes = try #require(Self.description.wiiRemote).reportModes
     for mode in modes {
       let last = try #require(mode.blocks.last)

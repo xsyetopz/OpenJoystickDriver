@@ -12,12 +12,12 @@ struct PublicationFailureTextTests {
   }
 
   @Test
-  func aDescribedErrorKeepsItsDescription() {
+  func describedErrorKeepsItsDescription() {
     #expect(PublicationFailureText.text(for: NamedError()) == "send failed")
   }
 
   @Test(arguments: ["", " ", "\n\t"])
-  func anErrorWithoutDescriptionIsNamedByTypeDomainAndCode(description: String) {
+  func errorWithoutDescriptionIsNamedByTypeDomainAndCode(description: String) {
     let text = PublicationFailureText.text(for: SilentError(description: description))
 
     #expect(!text.isEmpty)

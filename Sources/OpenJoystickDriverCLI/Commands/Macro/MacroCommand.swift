@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// The `ojd macro` command group: list, show, set and remove the macros of a profile.
 struct MacroCommand: AsyncParsableCommand {
@@ -162,8 +162,8 @@ struct MacroListCommand: AsyncParsableCommand {
       let macros = document.macros.map(MacroSummary.init)
       switch CLIContext.current.format {
       case .json:
-        let profile = ProfileSummary(document, snapshot: snapshot)
-        try CLIOutput.json(CLIList(items: macros.map { Item(profile: profile, macro: $0) }))
+        let summary = ProfileSummary(document, snapshot: snapshot)
+        try CLIOutput.json(CLIList(items: macros.map { Item(profile: summary, macro: $0) }))
       case .plain: CLIOutput.plain(macros.map { [$0.name, $0.repeatMode, "\($0.steps.count)"] })
       case .human:
         if macros.isEmpty {
@@ -226,14 +226,14 @@ struct MacroShowCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, name) = (profile, name)
+      let (selector, macroName) = (profile, name)
       let (document, snapshot) = try await ServiceConnection.request {
         try await selector.resolve(with: $0)
       }
       try printMacro(
         MacroResult(
           profile: ProfileSummary(document, snapshot: snapshot),
-          macro: MacroSummary(try document.macro(named: name)),
+          macro: MacroSummary(try document.macro(named: macroName)),
           replaced: nil
         )
       )
@@ -299,17 +299,17 @@ struct MacroSetCommand: AsyncParsableCommand {
         }
         return .count(count)
       }
-      let (selector, name, whileRunning, interrupt) =
+      let (selector, macroName, repeatWhileRunning, interrupt) =
         (profile, name, whileRunning, interruptOnRelease)
       let (macro, replaced, updated, after) = try await ServiceConnection.request { client in
         let (current, _) = try await selector.resolve(with: client)
-        let existing = try? current.macro(named: name)
+        let existing = try? current.macro(named: macroName)
         let macro = RemappingMacro(
           id: existing?.id ?? UUID(),
-          name: name,
+          name: macroName,
           steps: parsedSteps,
           repeatMode: parsedRepeat ?? existing?.repeatMode ?? .count(1),
-          whileRunning: whileRunning ?? existing?.whileRunning ?? .ignore,
+          whileRunning: repeatWhileRunning ?? existing?.whileRunning ?? .ignore,
           interruptOnRelease: interrupt ?? existing?.interruptOnRelease ?? false
         )
         let updated = try current.replacing(
@@ -371,17 +371,17 @@ struct MacroRemoveCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, name, force) = (profile, name, force)
+      let (selector, macroName, forced) = (profile, name, force)
       let client = try await ServiceConnection.open()
       defer { client.disconnect() }
       let timeout = CLIContext.current.requestTimeout
       let (current, _) = try await ServiceConnection.withDeadline(seconds: timeout) {
         try await selector.resolve(with: client)
       }
-      let macro = try current.macro(named: name)
+      let macro = try current.macro(named: macroName)
       try CLITerminal.confirm(
         CLILocalized.format("cli.macro.remove.confirm", macro.name, current.name),
-        force: force
+        force: forced
       )
       let updated = try current.replacing(macros: current.macros.filter { $0.id != macro.id })
         .validatedForCLI()

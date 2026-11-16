@@ -38,7 +38,7 @@ private final class FakeAccessService: AccessService, @unchecked Sendable {
     _ identity: CodeSigningIdentity,
     path: String,
     scopes: [EndpointScope]
-  ) throws -> AccessGrantSummary {
+  ) -> AccessGrantSummary {
     calls.append("grant:\(identity.identifier)")
     grantedScopes = scopes
     return AccessGrantSummary(
@@ -50,7 +50,7 @@ private final class FakeAccessService: AccessService, @unchecked Sendable {
     name: String,
     origins: [String],
     scopes: [EndpointScope]
-  ) throws -> AccessTokenGrantResult {
+  ) -> AccessTokenGrantResult {
     calls.append("token:\(name)")
     return AccessTokenGrantResult(
       token: "secret",
@@ -63,7 +63,7 @@ private final class FakeAccessService: AccessService, @unchecked Sendable {
     )
   }
 
-  func revoke(id: String, scopes: [EndpointScope]?) throws -> AccessRevokeResult {
+  func revoke(id: String, scopes: [EndpointScope]?) -> AccessRevokeResult {
     calls.append(
       "revoke:\(id):\(scopes.map { $0.map(\.rawValue).joined(separator: ",") } ?? "all")"
     )
@@ -80,7 +80,7 @@ struct AccessViewModelTests {
   )
 
   @Test
-  func refreshLoadsTheStatus() async {
+  func refreshLoadsStatus() async {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
 
@@ -90,7 +90,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aServiceErrorThatStartsWithACodeKeepsThatCode() {
+  func serviceErrorStartsWithCodeKeepsCode() {
     let stale = AccessFailure(LocalServiceRPCError.remote("E5001: AccessGrants.plist is v1alpha2."))
     let unlabeled = AccessFailure(LocalServiceRPCError.remote("something broke"))
 
@@ -100,7 +100,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aServiceThatIsNotRunningIsAnE2004Failure() async {
+  func serviceThatIsNotRunningIsE2004Failure() async {
     let service = FakeAccessService()
     service.error = ApplicationServiceClientError.notConnected
     let model = AccessViewModel(service: service)
@@ -112,7 +112,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func turningTheEndpointOnAsksFirst() async {
+  func turningEndpointOnAsksFirst() async {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
 
@@ -126,7 +126,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func turningTheEndpointOffNeedsNoConfirmation() async {
+  func turningEndpointOffNeedsNoConfirmation() async {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
 
@@ -136,7 +136,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aPortOutsideTheAllowedRangeIsRefused() {
+  func portOutsideAllowedRangeIsRefused() {
     let model = AccessViewModel(service: FakeAccessService())
     model.portText = "80"
 
@@ -147,7 +147,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func thePortFieldShowsTheSavedPort() async throws {
+  func portFieldShowsSavedPort() async throws {
     let service = FakeAccessService()
     service.payload = AccessStatusPayload(
       enabled: false,
@@ -168,7 +168,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func anEmptyPortKeepsTheSavedPort() async throws {
+  func emptyPortKeepsSavedPort() async throws {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
 
@@ -193,7 +193,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func theEmptyPortFieldNamesTheSavedPort() async {
+  func emptyPortFieldNamesSavedPort() async {
     let service = FakeAccessService()
     service.payload = Self.status(webPort: 43_210)
     let model = AccessViewModel(service: service)
@@ -206,7 +206,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func choosingAutomaticAsksForAFreePortAndKeepsTheFieldEmpty() async throws {
+  func choosingAutomaticAsksForFreePortAndKeepsFieldEmpty() async throws {
     let service = FakeAccessService()
     service.payload = Self.status(webPort: 43_210)
     let model = AccessViewModel(service: service)
@@ -230,7 +230,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func typingAPortAfterChoosingAutomaticUsesThePort() throws {
+  func typingPortAfterChoosingAutomaticUsesPort() throws {
     let model = AccessViewModel(service: FakeAccessService())
     model.chooseAutomaticPort()
 
@@ -240,7 +240,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func noAutomaticChoiceIsOfferedWithoutASavedPort() async {
+  func noAutomaticChoiceIsOfferedWithoutSavedPort() async {
     let model = AccessViewModel(service: FakeAccessService())
     await model.refresh()
 
@@ -248,7 +248,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func theFieldFollowsTheSavedPortUntilTheUserEditsIt() async {
+  func fieldFollowsSavedPortUntilUserEditsIt() async {
     let service = FakeAccessService()
     service.payload = Self.status(webPort: 43_210)
     let model = AccessViewModel(service: service)
@@ -265,7 +265,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func anEditedEmptyFieldStaysEmptyOnRefresh() async {
+  func editedEmptyFieldStaysEmptyOnRefresh() async {
     let service = FakeAccessService()
     service.payload = Self.status(webPort: 43_210)
     let model = AccessViewModel(service: service)
@@ -278,7 +278,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func enablingWithAPortFollowsTheSavedPortAgain() async {
+  func enablingWithPortFollowsSavedPortAgain() async {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
     await model.refresh()
@@ -293,7 +293,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func grantingUsesTheChosenScopes() async {
+  func grantingUsesChosenScopes() async {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
     let candidate = AccessClientCandidate(identity: signed, path: "/Applications/App.app")
@@ -308,7 +308,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aPlatformClientGetsAWarningLine() {
+  func platformClientGetsWarningLine() {
     let model = AccessViewModel(service: FakeAccessService())
     let candidate = AccessClientCandidate(
       identity: CodeSigningIdentity(
@@ -323,7 +323,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func anAdHocClientCannotBeGranted() {
+  func adHocClientCannotBeGranted() {
     let model = AccessViewModel(service: FakeAccessService())
     let candidate = AccessClientCandidate(
       identity: CodeSigningIdentity(kind: .adHoc, identifier: "tool", publisherID: nil),
@@ -337,7 +337,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aProgramWithoutASignatureCannotBeGranted() {
+  func programWithoutSignatureCannotBeGranted() {
     let model = AccessViewModel(service: FakeAccessService()) { _ in nil }
 
     model.requestGrant(programAt: URL(fileURLWithPath: "/tmp/tool"))
@@ -347,7 +347,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aTokenForWebPagesCannotHaveTheControlScope() {
+  func tokenForWebPagesCannotHaveControlScope() {
     let model = AccessViewModel(service: FakeAccessService())
     model.tokenDraft = AccessTokenDraft(
       name: "page",
@@ -362,7 +362,20 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aTokenNeedsAName() {
+  func tokenFormClearsStaleFailure() {
+    let model = AccessViewModel(service: FakeAccessService())
+    model.tokenDraft = AccessTokenDraft(name: "  ", originsText: "", scopes: [.read])
+    model.requestGrantToken()
+    #expect(model.failure != nil)
+
+    model.requestTokenForm()
+
+    #expect(model.sheet == .tokenForm)
+    #expect(model.failure == nil)
+  }
+
+  @Test
+  func tokenNeedsName() {
     let model = AccessViewModel(service: FakeAccessService())
     model.tokenDraft = AccessTokenDraft(name: "  ", originsText: "", scopes: [.read])
 
@@ -372,7 +385,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func theIssuedTokenIsShownOnceAfterTheGrant() async {
+  func issuedTokenIsShownOnceAfterGrant() async {
     let service = FakeAccessService()
     let model = AccessViewModel(service: service)
     model.tokenDraft = AccessTokenDraft(name: "tool", originsText: "", scopes: [.read])
@@ -440,20 +453,20 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func onlyAGrantWithSeveralScopesOffersToRevokeOne() {
+  func onlyGrantWithSeveralScopesOffersToRevokeOne() {
     #expect(AccessViewModel.scopeChoices(of: [.read]).isEmpty)
     #expect(AccessViewModel.scopeChoices(of: [.read, .control]) == [.read, .control])
   }
 
   @Test
-  func theWholeAndThePartialRevokeOfOneGrantAreDistinctSheets() {
+  func wholeAndPartialRevokeOfOneGrantAreDistinctSheets() {
     let whole = AccessPending.revokeGrant(id: "g", name: "g", scope: nil)
     let partial = AccessPending.revokeGrant(id: "g", name: "g", scope: .read)
     #expect(whole.id != partial.id)
   }
 
   @Test
-  func aRefusedClientWithoutAPathIsNotGranted() {
+  func refusedClientWithoutPathIsNotGranted() {
     let model = AccessViewModel(service: FakeAccessService())
     let client = AccessRefusedClient(
       identity: signed,
@@ -470,7 +483,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func aRefusedClientWithAPathOpensTheGrantConfirmation() {
+  func refusedClientWithPathOpensGrantConfirmation() {
     let model = AccessViewModel(service: FakeAccessService())
     let client = AccessRefusedClient(
       identity: signed,
@@ -489,7 +502,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func enablingTheWebEndpointWithoutAPortSaysItKeepsTheSavedPort() {
+  func enablingWebEndpointWithoutPortSaysItKeepsSavedPort() {
     let model = AccessViewModel(service: FakeAccessService())
 
     let lines = model.confirmation(for: .enableWeb(port: nil)).lines
@@ -499,7 +512,7 @@ struct AccessViewModelTests {
   }
 
   @Test
-  func enablingTheWebEndpointWithAnAutomaticPortSaysTheSystemPicksOne() {
+  func enablingWebEndpointWithAutomaticPortSaysSystemPicksOne() {
     let model = AccessViewModel(service: FakeAccessService())
 
     let lines = model.confirmation(for: .enableWeb(port: 0)).lines

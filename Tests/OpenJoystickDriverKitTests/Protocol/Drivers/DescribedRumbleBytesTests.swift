@@ -39,7 +39,7 @@ struct DescribedRumbleBytesTests {
   }
 
   @Test
-  func xusbTuningSetsTheRumblePacketTimeout() {
+  func xusbTuningSetsRumblePacketTimeout() {
     let driver = XUSBDriver(tuning: .init(usbTransferTimeoutMilliseconds: 750))
     #expect(
       driver.rumblePlan(left: 1, right: 2, lt: 0, rt: 0).onlyPacket.timeoutMilliseconds == 750
@@ -47,7 +47,7 @@ struct DescribedRumbleBytesTests {
   }
 
   @Test
-  func xusbStopRumbleZeroesTheMotors() {
+  func xusbStopRumbleZeroesMotors() {
     let packet = XUSBDriver().encoded(.stopRumble).onlyPacket
     #expect(packet.bytes == [0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
   }
@@ -87,7 +87,7 @@ struct DescribedRumbleBytesTests {
   }
 
   @Test
-  func xidRumbleWritesTheFull16BitIntensity() {
+  func xidRumbleWritesFull16BitIntensity() {
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(0x1234),
       highFrequency: UnipolarValue(0xFEDC)
@@ -98,7 +98,7 @@ struct DescribedRumbleBytesTests {
 
   /// A record's template replaces the description's for its controller.
   @Test
-  func aRecordTemplateOverridesTheDescriptionsTemplate() throws {
+  func recordTemplateOverridesDescriptionsTemplate() throws {
     let template = try RumbleOutputTemplate(
       target: .usb(length: 4),
       bytes: [0x00, 0x04, 0x00, 0x00],
@@ -114,7 +114,7 @@ struct DescribedRumbleBytesTests {
 
   /// The description holds a template for each variant a driver encodes rumble for.
   @Test
-  func theDescriptionsNameTheirRumbleTemplates() throws {
+  func descriptionsNameTheirRumbleTemplates() throws {
     let xid = try #require(
       PhysicalProtocolID.xboxXID.protocolDescription.rumbleTemplate(variant: .gamepad)
     )

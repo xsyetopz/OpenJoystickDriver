@@ -63,7 +63,7 @@ final class FakeFeedDevice: VirtualFeedDevice, @unchecked Sendable {
     lock.withLock { activatedValue = identifier }
   }
 
-  func send(_ state: RemappingGamepadState, for identifier: LogicalControllerID) async throws {
+  func send(_ state: RemappingGamepadState, for _: LogicalControllerID) async throws {
     if hangsSending { await waitForRelease() }
     if failsSending { throw UserSpaceOutputDispatcher.CreationError.createFailed }
     duringSend?(sent.count)

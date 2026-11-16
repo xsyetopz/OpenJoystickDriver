@@ -6,10 +6,13 @@ Tasks 2.1, 2.2, 2.3, 2.7, 2.11. Each capture goes in the folder named in its ste
 
 1. Link the pad to the receiver as `2DC8:301C` (DInput). In the 8BitDo app, cancel the L4 assignment. R4 is already cancelled.
 2. Press only L4 for 20 seconds:
+
    ```
    ojd controller capture 2DC8:301C --duration 20 > evidence/2c-receiver-301c/rear-l4-cancelled-20s.txt
    ```
+
 3. Link the pad as `2DC8:310A` (XInput). Assign neither rear button. Press only L4, then only R4, 20 seconds each:
+
    ```
    ojd controller capture 2DC8:310A --duration 20 > evidence/2c-receiver-310a/rear-l4-unassigned-20s.txt
    ojd controller capture 2DC8:310A --duration 20 > evidence/2c-receiver-310a/rear-r4-unassigned-20s.txt
@@ -60,13 +63,17 @@ Use the build that carries the `server` change for `2DC8:301B`.
 
 1. Connect the pad over Bluetooth LE with an empty `Controllers/` folder.
 2. Save the state:
+
    ```
    ojd controller show 2DC8:301B > evidence/2c-bluetooth-301b/controller-show-empty-folder.txt
    ```
+
 3. Serve it as the virtual gamepad:
+
    ```
    ojd virtual set game-controller-compatible 2DC8:301B
    ```
+
 4. Run `just diagnose-gamecontroller`, press each control, and save its output beside the evidence. The probe should list one controller and each button should change it.
 5. Press Guide with `OpenJoystickDriverGameControllerViewer` in front. Record whether it shows Home.
 6. Link the pad to the receiver as `2DC8:301C` and run the same probe. Record whether GameController lists the pad.

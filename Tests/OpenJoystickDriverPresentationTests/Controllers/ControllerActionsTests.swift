@@ -38,7 +38,7 @@ struct ControllerActionsTests {
   // MARK: Scope
 
   @Test
-  func unitScopeIsOfferedOnlyWithAUnitID() {
+  func unitScopeIsOfferedOnlyWithUnitID() {
     #expect(VirtualHIDProfileScopeChoice.offered(for: Self.device()) == [.model])
     #expect(
       VirtualHIDProfileScopeChoice.offered(for: Self.device(portKey: .fixture("port-1")))
@@ -47,7 +47,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func initialScopeFollowsTheStoredOverride() {
+  func initialScopeFollowsStoredOverride() {
     let port = ControllerPortKey.fixture("port-1")
     #expect(VirtualHIDProfileScopeChoice.initial(for: Self.device(portKey: port)) == .model)
     #expect(
@@ -70,7 +70,7 @@ struct ControllerActionsTests {
 
   @Test
   @MainActor
-  func overrideRequestCarriesTheChosenScope() async {
+  func overrideRequestCarriesChosenScope() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(portKey: .fixture("port-1"))
@@ -85,7 +85,7 @@ struct ControllerActionsTests {
 
   @Test
   @MainActor
-  func resetAllReportsTheServiceRefusal() async {
+  func resetAllReportsServiceRefusal() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     #expect(await viewModel.resetAllVirtualHIDProfileOverrides() == nil)
@@ -100,7 +100,7 @@ struct ControllerActionsTests {
   // MARK: Export
 
   @Test
-  func exportNamesTheFileByProfileAndFormat() {
+  func exportNamesFileByProfileAndFormat() {
     #expect(
       VirtualGamepadExport.fileName(format: .sdl, profile: .sdlCompatible)
         == "sdl-compatible-sdl.txt"
@@ -112,7 +112,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func exportDocumentIsTheMappingTheCommandPrints() throws {
+  func exportDocumentIsMappingCommandPrints() throws {
     let mapping = try VirtualHIDProfileID.generic.gamepadMapping()
     let sdl = try VirtualGamepadExport.document(format: .sdl, profile: .generic)
     #expect(sdl.hasSuffix(mapping.sdlMapping + "\n"))
@@ -123,7 +123,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func exportNeedsASelectedProfile() {
+  func exportNeedsSelectedProfile() {
     #expect(VirtualGamepadExport.profile(for: Self.device(override: .generic)) == .generic)
     var system = Self.device()
     system = ApplicationServiceDeviceDescription(
@@ -158,7 +158,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func automaticInAScopeWithoutAnOverrideNamesTheScopeThatHoldsIt() {
+  func automaticInScopeWithoutOverrideNamesScopeThatHoldsIt() {
     let port = ControllerPortKey.fixture("port-1")
     let model = Self.device(portKey: port, override: .generic, scope: .model)
     let unit = Self.device(portKey: port, override: .generic, scope: .unit)
@@ -175,7 +175,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func gameEnvironmentDropsTheVariablesOnlyLaunchdSets() {
+  func gameEnvironmentDropsVariablesOnlyLaunchdSets() {
     let environment = VirtualGamepadLaunch.gameEnvironment(from: [
       "__CFBundleIdentifier": "app", "XPC_SERVICE_NAME": "x", "XPC_FLAGS": "0x0",
       "LaunchInstanceID": "1", "OS_ACTIVITY_DT_MODE": "YES", "PATH": "/usr/bin", "HOME": "/h",
@@ -184,7 +184,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func profilesNeedingTheBackendAreThoseSDLDoesNotRecognize() throws {
+  func profilesNeedingBackendAreThoseSDLDoesNotRecognize() throws {
     let devices = VirtualHIDProfileID.allCases.map { Self.device(override: $0) }
     let expected = try VirtualHIDProfileID.allCases.filter {
       try !$0.gamepadMapping().worksWithDefaultSDLHints
@@ -195,7 +195,7 @@ struct ControllerActionsTests {
   // MARK: Launch
 
   @Test
-  func launchWithoutAVirtualGamepadIsRefused() {
+  func launchWithoutVirtualGamepadIsRefused() {
     let system = ApplicationServiceDeviceDescription(
       name: "Native",
       vendorID: 1,
@@ -220,7 +220,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func launchSetsTheMappingAndTheBackendHints() throws {
+  func launchSetsMappingAndBackendHints() throws {
     let prepared = try VirtualGamepadLaunch.prepare(
       program: URL(fileURLWithPath: "/bin/echo"),
       devices: [Self.device(override: .generic)],
@@ -238,7 +238,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func launchOfANonExecutableFileSaysWhy() {
+  func launchOfNonExecutableFileSaysWhy() {
     #expect(
       throws: VirtualGamepadLaunch.Failure.cannotStart(
         program: "missing",
@@ -256,7 +256,7 @@ struct ControllerActionsTests {
 
   @Test
   @MainActor
-  func launchStartsTheProgramAndReportsItsExit() async throws {
+  func launchStartsProgramAndReportsItsExit() async throws {
     let actions = ControllerDetailActions()
     actions.launch(
       program: URL(fileURLWithPath: "/usr/bin/true"),
@@ -274,7 +274,7 @@ struct ControllerActionsTests {
   // MARK: Duration and capture
 
   @Test
-  func durationNeedsAFinitePositiveNumber() {
+  func durationNeedsFinitePositiveNumber() {
     let locale = Locale(identifier: "en_US")
     #expect(CaptureDuration.parse("10", locale: locale) == 10)
     #expect(CaptureDuration.parse(" 2.5 ", locale: locale) == 2.5)
@@ -333,7 +333,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func capturePropagatesAReadFailure() async {
+  func capturePropagatesReadFailure() async {
     struct Failure: Error {}
     await #expect(throws: Failure.self) {
       try await ControllerPacketCapture.collect(seconds: 1) { throw Failure() }
@@ -341,7 +341,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func captureExportIsTheJSONTheDeveloperToolsExport() throws {
+  func captureExportIsJSONDeveloperToolsExport() throws {
     let data = try ControllerPacketCapture.exportData([Self.packet(2, .received, "02 03")])
     let decoded = try JSONDecoder().decode([PacketLogEntry].self, from: data)
     #expect(decoded.map(\.hex) == ["02 03"])
@@ -352,7 +352,7 @@ struct ControllerActionsTests {
   }
 
   @Test
-  func recordDraftNeedsAReadableLayout() {
+  func recordDraftNeedsReadableLayout() {
     #expect(ControllerRecordDrafting.fileName(for: Self.device()) == "1234-5678.plist")
     let packets = [Self.packet(1, .received, "00 10 20"), Self.packet(2, .received, "00 11 20")]
     let draft = try? ControllerRecordDrafting.draft(
@@ -386,7 +386,7 @@ struct ControllerActionsTests {
 
   @Test
   @MainActor
-  func savingWritesThePendingFile() throws {
+  func savingWritesPendingFile() throws {
     let actions = ControllerDetailActions()
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-mapping-\(UUID().uuidString).txt"

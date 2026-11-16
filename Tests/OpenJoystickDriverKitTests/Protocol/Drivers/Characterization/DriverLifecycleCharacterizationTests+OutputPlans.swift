@@ -118,7 +118,7 @@ extension DriverLifecycleCharacterizationTests {
     )
   }
 
-  /// GameSir USB colour and brightness per readiness stage.
+  /// GameSir USB color and brightness per readiness stage.
   @Test
   func gameSirUSBLightingReadiness() throws {
     #expect(
@@ -136,7 +136,7 @@ extension DriverLifecycleCharacterizationTests {
     )
   }
 
-  /// GameSir lighting-slot colour and brightness per readiness stage.
+  /// GameSir lighting-slot color and brightness per readiness stage.
   @Test
   func gameSirEnhancedLightingReadiness() throws {
     #expect(
@@ -159,7 +159,7 @@ extension DriverLifecycleCharacterizationTests {
     )
   }
 
-  /// GameSir 8K colour and brightness per readiness stage.
+  /// GameSir 8K color and brightness per readiness stage.
   @Test
   func gameSirEnhanced8KLightingReadiness() throws {
     #expect(

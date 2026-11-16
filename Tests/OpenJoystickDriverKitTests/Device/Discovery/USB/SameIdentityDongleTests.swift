@@ -226,11 +226,11 @@ private actor DongleProvider: USBTransportProvider {
 
   func devices() -> [USBTransportDevice] { [device] }
 
-  func physicalDeviceObservation(for device: USBTransportDevice) -> PhysicalDevice? { descriptor }
+  func physicalDeviceObservation(for _: USBTransportDevice) -> PhysicalDevice? { descriptor }
 
   /// Resolves like the IOUSBHost facade: unpinned endpoints come from the observed descriptor.
   func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured profile: DeviceTransportProfile
   ) -> USBTransportResolution {
     USBTransportResolution(
@@ -240,12 +240,12 @@ private actor DongleProvider: USBTransportProvider {
   }
 
   func configurationObservation(
-    for device: USBTransportDevice,
-    configurationValue: UInt8
+    for _: USBTransportDevice,
+    configurationValue _: UInt8
   ) -> PhysicalDevice? { descriptor }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) -> any USBTransportSession { session }
 }

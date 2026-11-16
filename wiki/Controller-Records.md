@@ -1,6 +1,6 @@
 # Adding Or Changing a Controller Record
 
-This page explains how to add a controller that OpenJoystickDriver does not know, or change how it drives a known one, with your own controller record.
+Add a controller that OpenJoystickDriver does not know, or change how it drives a known one, with your own controller record.
 
 ## Contents
 
@@ -29,6 +29,8 @@ This page explains how to add a controller that OpenJoystickDriver does not know
 
 A controller record tells OpenJoystickDriver which protocol family drives one controller model, identified by its VID:PID. The app contains a bundled record for each supported model. Your records are XML property list files in `~/Library/Application Support/OpenJoystickDriver/Controllers`. Each file is named after its model in lowercase hexadecimal, for example `045e-028e.plist`.
 
+A record may hold a `name`: the model's USB product string (the iProduct string descriptor, which macOS reports as `kIOHIDProductKey`), copied verbatim from the device. Do not take it from a database of controller names. The **Controller** pop-up in **New Profile** lists a model that is not connected by its `name`, and by its VID:PID when the record has none.
+
 A file in that folder is one of two kinds:
 
 - `Controller`: a complete record for a model that has no bundled record. Name it `VVVV-PPPP.plist`.
@@ -36,170 +38,171 @@ A file in that folder is one of two kinds:
 
 Every command that reads one of these files gives the same verdict: the app, `ojd record validate` and `install`, `ojd config`, `ojd diagnose record` and a mod package. Each refuses with `E5007` a file that is not plain UTF-8 (a byte order mark and UTF-16 text included), that is not one property list dictionary, that names a key twice in one dictionary, or that nests arrays and dictionaries deeper than 64 levels, and with `E5010` a file that is not an XML property list (a binary property list and JSON text included) or that holds a `date` or `data` value. The app, `ojd record install` and a package also refuse a `Controller` file for a model that already has a bundled record: write a patch instead. `ojd diagnose record` probes a bundled model.
 
-A patch has two parts. `remove` is a list of dotted key paths, such as `input.hidUsageMap` or `tuning.stickDeadzone`, and OJD removes them first. `patch` merges into the record afterward: an object merges key by key, a value you give overrides the record's value, and an array overrides the whole array. A property list has no `null`, so `remove` is the only way to delete a key. A `remove` path names a property (`modes`, `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `input`, `tuning`), a key below one, or `modes.<id>` for one mode; a path outside the record schema, such as `bogus.key` or `tuning.bogus`, makes OJD refuse the file with E5007. A path the record does not hold changes nothing. Removing the last key of a section leaves an empty section, which a record does not accept, so remove the whole section (`tuning`) instead. A patch sets every property of the record except its identity (`vendorID` and `productID`, which the `selector` names), `capabilities` included. An array overrides the whole array, except `modes`: its entries merge with the record's modes by `id`. An entry whose `id` the record holds merges key by key into that mode, so a patch that changes one endpoint of one mode names only that mode; an entry with another `id` adds a mode, as in [Offer Alternative Modes](#offer-alternative-modes-chosen-by-link-keys-and-probes); and the `remove` path `modes.<id>` removes one mode. A patch that removes a mode and lists it again replaces it. A patch file holds `patch`, `remove`, or both.
+A patch has two parts. `remove` is a list of dotted key paths, such as `input.hidUsageMap` or `tuning.stickDeadzone`, and OJD removes them first. `patch` merges into the record afterward: an object merges key by key, a value you give overrides the record's value, and an array overrides the whole array. A property list has no `null`, so `remove` is the only way to delete a key. A `remove` path names a property (`modes`, `name`, `placeholderSerial`, `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `heldByAppleDriver`, `input`, `tuning`), a key below one, or `modes.<id>` for one mode; a path outside the record schema, such as `bogus.key` or `tuning.bogus`, makes OJD refuse the file with E5007. A path the record does not hold changes nothing. Removing the last key of a section leaves an empty section, which a record does not accept, so remove the whole section (`tuning`) instead. A patch sets every property of the record except its identity (`vendorID` and `productID`, which the `selector` names), `capabilities` included. An array overrides the whole array, except `modes`: its entries merge with the record's modes by `id`. An entry whose `id` the record holds merges key by key into that mode, so a patch that changes one endpoint of one mode names only that mode; an entry with another `id` adds a mode, as in [Offer Alternative Modes](#offer-alternative-modes-chosen-by-link-keys-and-probes); and the `remove` path `modes.<id>` removes one mode. A patch that removes a mode and lists it again replaces it. A patch file holds `patch`, `remove`, or both.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>ControllerPatch</string>
-	<key>patch</key>
-	<dict>
-		<key>tuning</key>
-		<dict>
-			<key>stickDeadzone</key>
-			<real>0.08</real>
-		</dict>
-	</dict>
-	<key>selector</key>
-	<dict>
-		<key>productID</key>
-		<integer>746</integer>
-		<key>vendorID</key>
-		<integer>1118</integer>
-	</dict>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>ControllerPatch</string>
+ <key>patch</key>
+ <dict>
+  <key>tuning</key>
+  <dict>
+   <key>stickDeadzone</key>
+   <real>0.08</real>
+  </dict>
+ </dict>
+ <key>selector</key>
+ <dict>
+  <key>productID</key>
+  <integer>746</integer>
+  <key>vendorID</key>
+  <integer>1118</integer>
+ </dict>
 </dict>
 </plist>
 ```
 
 Several patches can apply to one model. The layers apply from the weakest to the strongest: the bundled record, a bundled patch, a patch from an installed [mod package](Writing-Controller-Mods.md), then your patch. Inside one layer, a patch whose `selector` is `all` set to `true` applies first, a patch whose `selector` has `vendorID` and `productID` next, and a patch whose `selector` has `model` (a string such as `045E-028E`) last. A `Controller` file of yours replaces a package's `Controller` file for the same model. A `ControllerPatch` of yours applies over the package record instead of replacing it. If you remove the package later, OJD lists your patch as a problem and skips it.
 
-A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [OJD driver extension](Connecting-Controllers.md#xbox-usb-driver-extension) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
+A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [Xbox USB driver](Glossary.md#terms) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
 
 ## Choose Who Drives the Controller
 
-macOS serves some controllers natively through the Game Controller framework. OpenJoystickDriver leaves those to macOS by default and only reads their input. The record's `server` field changes this:
+macOS handles some controllers through the Game Controller framework. A controller is [Handled by macOS](Glossary.md#terms) when the Game Controller framework lists it within one second after it connects, and OpenJoystickDriver then only reads its input. When macOS accepts the controller but lists none for it, OpenJoystickDriver handles it. The record's `server` field decides instead:
 
-- `System`: macOS drives the controller when it can. This is the default.
+- No `server`: OpenJoystickDriver checks the list as above. This is the default.
+- `System`: macOS drives the controller when it can, whether or not it lists one.
 - `OJD`: OpenJoystickDriver opens the controller exclusively even when macOS supports it, and drives it like a controller macOS does not know.
 
-A raw-USB family, such as `XboxGIP`, has no `server` field, because macOS cannot serve those controllers. A new `server` value applies to a connected controller as soon as the running service reloads the records. You do not need to unplug the controller.
+A raw-USB family, such as `XboxGIP`, has no `server` field, because macOS cannot handle those controllers. A changed `server` value applies to a connected controller as soon as the running service reloads the records. You do not need to unplug the controller.
 
-To change `server` without editing the file, run `ojd controller claim CONTROLLER` or `ojd controller release CONTROLLER`. `claim` sets `OJD`, and `release` sets `System`. The command writes the value to your record for the model, and creates a `ControllerPatch` file when you have none and the bundled catalog or an installed package has a record of the model. It refuses a raw-USB family, a controller that macOS does not serve natively, and a model that has no record at all, with the code E2023. For a model with no record, run `ojd record draft` to start one. `ojd controller show` names the choice and the layer it comes from, and the serving route and persona. In the app, the controller detail has the same choice as the **Served by** picker, shown for a controller that macOS serves natively or that a record gives to OpenJoystickDriver, and never for a raw-USB family.
+To change `server` without editing the file, run `ojd controller claim CONTROLLER` or `ojd controller release CONTROLLER`. `claim` sets `OJD`, and `release` sets `System`. The command writes the value to your record for the model, and creates a `ControllerPatch` file when you have none and the bundled catalog or an installed package has a record of the model. When the value equals the `server` of the bundled or package record, the command removes `server` from your `ControllerPatch` instead, and deletes the file when nothing else is left in it. It refuses a raw-USB family, a controller that macOS cannot handle, and a model that has no record at all, with the code E2023. For a model with no record, run `ojd record draft` to start one. `ojd controller show` names the choice and the layer it comes from, `default` when no layer sets `server` and the list check chose, and the route and [virtual gamepad kind](Glossary.md#terms). In the app, the controller detail has the same choice as the **Handled by** picker, shown for a controller that macOS can handle or that a record gives to OpenJoystickDriver, and never for a raw-USB family.
 
 ## Describe a Controller's Input Reports
 
-Some controllers send fixed input reports that their HID descriptor describes wrongly. A record with the protocol family `HIDReportLayout` names where each control sits in the report, in its `input` field. The family requires `input`. Every other family except `HIDDescriptor` may take `input.layouts` too: the family driver keeps the session and decodes every report, and a layout that selects a report overrides the controls it names, so a record can correct one button of an `XboxXUSB` or `XboxGIP` pad. A report no layout selects is the family driver's alone. `HIDDescriptor` reads a usage map and refuses layouts. The bundled `XboxXID`, `NintendoSwitchInputOnly` and `VendorFlydigi` protocol descriptions declare their own `input` layout as data (`defaults.input` in `Resources/Protocols`), and a record layout overrides it the same way.
+Some controllers send fixed input reports that their HID descriptor describes wrongly. A record with the protocol family `HIDReportLayout` names where each control sits in the report, in its `input` field. The family requires `input`. Every other family may take `input.layouts` too: the family driver keeps the session and decodes every report, and a layout that selects a report overrides the controls it names, so a record can correct one button of an `XboxXUSB` or `XboxGIP` pad. A report of the device's own shape that is no frame of its family reaches the layout that selects it. A report no layout selects is the family driver's alone. On a `HIDDescriptor` record a layout selects raw reports and the usage map decodes the rest. The bundled `XboxXID`, `NintendoSwitchInputOnly` and `VendorFlydigi` protocol descriptions (`VendorFlydigi` is a documented family) declare their own `input` layout as data (`defaults.input` in `Resources/Protocols`), and a record layout overrides it the same way.
 
 ```xml
 <key>input</key>
 <dict>
-	<key>layouts</key>
-	<array>
-		<dict>
-			<key>axes</key>
-			<array>
-				<dict>
-					<key>bitOffset</key>
-					<integer>24</integer>
-					<key>bitSize</key>
-					<integer>8</integer>
-					<key>control</key>
-					<string>LeftStickX</string>
-				</dict>
-				<dict>
-					<key>bitOffset</key>
-					<integer>32</integer>
-					<key>bitSize</key>
-					<integer>8</integer>
-					<key>control</key>
-					<string>LeftStickY</string>
-				</dict>
-			</array>
-			<key>buttons</key>
-			<array>
-				<dict>
-					<key>bitOffset</key>
-					<integer>111</integer>
-					<key>bitSize</key>
-					<integer>1</integer>
-					<key>control</key>
-					<string>South</string>
-				</dict>
-				<dict>
-					<key>bitOffset</key>
-					<integer>8</integer>
-					<key>bitSize</key>
-					<integer>1</integer>
-					<key>control</key>
-					<string>Back</string>
-				</dict>
-			</array>
-			<key>hat</key>
-			<array>
-				<dict>
-					<key>down</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>87</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-					<key>encoding</key>
-					<string>Directions</string>
-					<key>left</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>71</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-					<key>right</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>63</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-					<key>up</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>79</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-				</dict>
-			</array>
-			<key>leftTrigger</key>
-			<dict>
-				<key>bitOffset</key>
-				<integer>136</integer>
-				<key>bitSize</key>
-				<integer>8</integer>
-			</dict>
-			<key>report</key>
-			<dict>
-				<key>length</key>
-				<dict>
-					<key>atLeast</key>
-					<integer>19</integer>
-				</dict>
-			</dict>
-			<key>rightTrigger</key>
-			<dict>
-				<key>bitOffset</key>
-				<integer>144</integer>
-				<key>bitSize</key>
-				<integer>8</integer>
-			</dict>
-		</dict>
-	</array>
+ <key>layouts</key>
+ <array>
+  <dict>
+   <key>axes</key>
+   <array>
+    <dict>
+     <key>bitOffset</key>
+     <integer>24</integer>
+     <key>bitSize</key>
+     <integer>8</integer>
+     <key>control</key>
+     <string>LeftStickX</string>
+    </dict>
+    <dict>
+     <key>bitOffset</key>
+     <integer>32</integer>
+     <key>bitSize</key>
+     <integer>8</integer>
+     <key>control</key>
+     <string>LeftStickY</string>
+    </dict>
+   </array>
+   <key>buttons</key>
+   <array>
+    <dict>
+     <key>bitOffset</key>
+     <integer>111</integer>
+     <key>bitSize</key>
+     <integer>1</integer>
+     <key>control</key>
+     <string>South</string>
+    </dict>
+    <dict>
+     <key>bitOffset</key>
+     <integer>8</integer>
+     <key>bitSize</key>
+     <integer>1</integer>
+     <key>control</key>
+     <string>Back</string>
+    </dict>
+   </array>
+   <key>hat</key>
+   <array>
+    <dict>
+     <key>down</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>87</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+     <key>encoding</key>
+     <string>Directions</string>
+     <key>left</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>71</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+     <key>right</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>63</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+     <key>up</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>79</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+    </dict>
+   </array>
+   <key>leftTrigger</key>
+   <dict>
+    <key>bitOffset</key>
+    <integer>136</integer>
+    <key>bitSize</key>
+    <integer>8</integer>
+   </dict>
+   <key>report</key>
+   <dict>
+    <key>length</key>
+    <dict>
+     <key>atLeast</key>
+     <integer>19</integer>
+    </dict>
+   </dict>
+   <key>rightTrigger</key>
+   <dict>
+    <key>bitOffset</key>
+    <integer>144</integer>
+    <key>bitSize</key>
+    <integer>8</integer>
+   </dict>
+  </dict>
+ </array>
 </dict>
 <key>modes</key>
 <array>
-	<dict>
-		<key>id</key>
-		<string>default</string>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>HIDReportLayout</string>
-		</dict>
-	</dict>
+ <dict>
+  <key>id</key>
+  <string>default</string>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>HIDReportLayout</string>
+  </dict>
+ </dict>
 </array>
 ```
 
@@ -211,38 +214,39 @@ Offsets count from the first byte of the report as macOS delivers it. A `bitOffs
 - `axes`: each entry names a stick axis, a `bitOffset` and a `bitSize`. The value is unsigned unless `signed` reads it as two's complement. `byteOrder` is `LittleEndian`, the default, or `BigEndian`; `BigEndian` needs a `bitOffset` divisible by 8 and a `bitSize` of 16, 24 or 32. `min` and `max` set the raw range, which defaults to the full range of the `bitSize` and `signed`, and a given range lies inside it with `max` - `min` at least 2. `inverted` flips the direction. `symmetric` reads a signed value as the raw value divided by `max`, so the lowest raw value reads as full negative; it requires `signed`; `min` and `max` default to the full range, and if given must be negative and positive. X grows right and Y grows down, as in HID.
 - `hat`: a list of sources; the first that reads a direction wins. An `EightWay` source reads `bitSize` bits (3 to 8) as 0 for north, clockwise to 7 for north-west, and any other value as centered. With `neutralUntilNonzero`, 0 also reads centered until the bits have been nonzero once, for a controller that sends 0 before its hat is live. A `Directions` source names one field for each direction (`up`, `right`, `down`, `left`, each a `bitOffset` and `bitSize`); opposing directions cancel. A `Table` source takes a `bitOffset`, a `bitSize`, and `values`, which maps each number the bits can hold, written in decimal without leading zeros, to a direction name from `North`, `NorthEast`, `East`, `SouthEast`, `South`, `SouthWest`, `West`, and `NorthWest`; any other number reads as centered.
 - `leftTrigger` and `rightTrigger`: an analog value (`bitOffset` and `bitSize`, with `byteOrder`, `signed`, `min` and `max` as for an axis) read from `min` to `max` as 0 to 1, a `button` field that reads as fully pulled, or both.
+- `touch`: the contacts of a multi-touch report that stand for controls, for a pad that taps a phone screen for an app's key map. `contacts` places the slots: slot 0 starts at `bitOffset`, each next slot `stride` bits later, for `slots` slots, and `count` (a `bitOffset` and `bitSize`) holds how many leading slots hold a contact. `tip`, `id`, `x` and `y` are fields counted from the start of a slot; a slot whose `tip` is 0 holds no touch. The place a contact first touches fixes what it drives until it lifts. A contact within `radius` of a stick's `x` and `y` drags that stick: its offset from the center along the touch X drives the stick axis `alongX` names, and its offset along the touch Y drives the stick axis `alongY` names, with `travel` as full deflection and `inverted` to flip a direction. Any other contact holds the nearest of `spots` within `radius`: a button, a D-pad direction, or a trigger pulled fully, and a control may have several spots. A contact that starts elsewhere drives nothing. Name `spots`, `sticks`, or both. `touch` decides the controls it names after the rest of the layout.
 
 Name at least one control in each layout. `ojd record validate` checks that every field lies inside the report.
 
 ## Add Rumble To a Controller
 
-A `HIDReportLayout` or `VendorPS3ThirdParty` controller is input-only unless its mode names its rumble report in `session.rumble`:
+A `HIDReportLayout`, `HIDDescriptor` or `VendorPS3ThirdParty` controller is input-only unless its mode names its rumble report in `session.rumble`:
 
 ```xml
 <key>session</key>
 <dict>
-	<key>rumble</key>
-	<dict>
-		<key>highFrequency</key>
-		<dict>
-			<key>byte</key>
-			<integer>2</integer>
-		</dict>
-		<key>lowFrequency</key>
-		<dict>
-			<key>byte</key>
-			<integer>3</integer>
-		</dict>
-		<key>report</key>
-		<dict>
-			<key>id</key>
-			<integer>2</integer>
-			<key>kind</key>
-			<string>Output</string>
-			<key>length</key>
-			<integer>8</integer>
-		</dict>
-	</dict>
+ <key>rumble</key>
+ <dict>
+  <key>highFrequency</key>
+  <dict>
+   <key>byte</key>
+   <integer>2</integer>
+  </dict>
+  <key>lowFrequency</key>
+  <dict>
+   <key>byte</key>
+   <integer>3</integer>
+  </dict>
+  <key>report</key>
+  <dict>
+   <key>id</key>
+   <integer>2</integer>
+   <key>kind</key>
+   <string>Output</string>
+   <key>length</key>
+   <integer>8</integer>
+  </dict>
+ </dict>
 </dict>
 ```
 
@@ -250,7 +254,7 @@ A `HIDReportLayout` or `VendorPS3ThirdParty` controller is input-only unless its
 - `lowFrequency`, `highFrequency`, `leftTrigger`, and `rightTrigger` each give the byte offset of that motor's intensity, from 0 to 255. Name at least one.
 - `resendIntervalMilliseconds` (optional, 1 to 60000): while any motor runs, the driver's keep-alive sends the last report again at this interval, and a report with every motor at zero stops the resends. A record that also sets a mode's `session.keepAlive`, or whose family's description declares a keep-alive (`VendorGameSir`), is rejected. Without it the report goes out once.
 
-OpenJoystickDriver sets the report ID in byte 0 when the ID is not 0, writes each motor's intensity, and sends 0 in every other byte. It sends this report even when macOS drives the controller, because macOS does not drive these motors. Only a family that encodes rumble from a template takes `session.rumble`.
+OpenJoystickDriver sets the report ID in byte 0 when the ID is not 0, writes each motor's intensity, and sends 0 in every other byte. It sends this report even when macOS drives the controller, because macOS does not drive these motors. Only a family that encodes rumble from a template takes `session.rumble`. A `HIDDescriptor` mode takes a HID report template only (`report.kind` `Output` or `Feature`, never `USB`) and sends it through the HID write path; OJD declares no such template in a bundled record until a write is felt on the hardware.
 
 ## Describe a Mode's Session
 
@@ -272,26 +276,26 @@ Raw bytes are uppercase hex pairs separated by single spaces, such as `42 03 00 
 ```xml
 <key>session</key>
 <dict>
-	<key>control</key>
-	<array>
-		<dict>
-			<key>bRequest</key>
-			<integer>1</integer>
-			<key>bmRequestType</key>
-			<integer>192</integer>
-			<key>match</key>
-			<dict>
-				<key>manufacturer</key>
-				<string>SHANWAN</string>
-			</dict>
-			<key>wIndex</key>
-			<integer>0</integer>
-			<key>wLength</key>
-			<integer>8</integer>
-			<key>wValue</key>
-			<integer>0</integer>
-		</dict>
-	</array>
+ <key>control</key>
+ <array>
+  <dict>
+   <key>bRequest</key>
+   <integer>1</integer>
+   <key>bmRequestType</key>
+   <integer>192</integer>
+   <key>match</key>
+   <dict>
+    <key>manufacturer</key>
+    <string>SHANWAN</string>
+   </dict>
+   <key>wIndex</key>
+   <integer>0</integer>
+   <key>wLength</key>
+   <integer>8</integer>
+   <key>wValue</key>
+   <integer>0</integer>
+  </dict>
+ </array>
 </dict>
 ```
 
@@ -308,24 +312,24 @@ A HID controller that needs a fixed report before it sends input names it in the
 ```xml
 <key>session</key>
 <dict>
-	<key>startup</key>
-	<array>
-		<dict>
-			<key>bytes</key>
-			<string>42 03 00 00</string>
-			<key>report</key>
-			<dict>
-				<key>id</key>
-				<integer>244</integer>
-				<key>kind</key>
-				<string>Feature</string>
-				<key>length</key>
-				<integer>5</integer>
-			</dict>
-			<key>transport</key>
-			<string>BluetoothClassic</string>
-		</dict>
-	</array>
+ <key>startup</key>
+ <array>
+  <dict>
+   <key>bytes</key>
+   <string>42 03 00 00</string>
+   <key>report</key>
+   <dict>
+    <key>id</key>
+    <integer>244</integer>
+    <key>kind</key>
+    <string>Feature</string>
+    <key>length</key>
+    <integer>5</integer>
+   </dict>
+   <key>transport</key>
+   <string>BluetoothClassic</string>
+  </dict>
+ </array>
 </dict>
 ```
 
@@ -349,16 +353,16 @@ A record's `tuning` field changes a value that the protocol driver otherwise set
 ```xml
 <key>tuning</key>
 <dict>
-	<key>hidStartupRecoveryRounds</key>
-	<integer>3</integer>
-	<key>stickDeadzone</key>
-	<real>0.02</real>
+ <key>hidStartupRecoveryRounds</key>
+ <integer>3</integer>
+ <key>stickDeadzone</key>
+ <real>0.02</real>
 </dict>
 ```
 
 | Field | Range | Applies to | What it sets |
 | --- | --- | --- | --- |
-| `stickDeadzone` | more than 0, less than 1 | every family | The radial deadzone of both sticks on the virtual gamepad, as a fraction of full deflection. Movement past the deadzone is rescaled to the full range. Without it, the sticks have no deadzone: games and browsers get the values the controller reports. |
+| `stickDeadzone` | more than 0, less than 1 | every family | The radial deadzone of both sticks on the [virtual gamepad](Glossary.md#terms), as a fraction of full deflection. Movement past the deadzone is rescaled to the full range. Without it, the sticks have no deadzone: games and browsers get the values the controller reports. |
 | `inputLivenessTimeoutMs` | 1 to 60000 | `SonyDualShock4`, `SonySixaxis` over USB | How long the controller can send no input before OpenJoystickDriver releases its held controls. The default is 1000. |
 | `hidStartupIntervalMs` | 0 to 60000 | HID families | The gap between the startup writes. |
 | `minimumHIDOutputIntervalMs` | 0 to 60000 | HID families | The shortest gap between rumble and lighting reports. 0 sends them without a limit. |
@@ -387,7 +391,7 @@ ojd config set stickDeadzone 0.15 --controller 1532:0A15
 ojd config show --controller 1532:0A15
 ```
 
-`ojd config unset stickDeadzone --controller 1532:0A15` removes it. The **Stick deadzone** stepper above the **Tuning** group of the controller detail in the app writes the same key. `stickDeadzone` is radial and applies to both sticks, so size it for the stick that rests furthest off center.
+`ojd config unset stickDeadzone --controller 1532:0A15` removes it. The **Stick deadzone** stepper (needs the **All Controls** interface) above the **Tuning** group of the controller detail in the app writes the same key. `stickDeadzone` is radial and applies to both sticks, so size it for the stick that rests furthest off center.
 
 The default for `frameQueueCapacity` is 64, the `default` of `tuning.frameQueueCapacity` in `controller.schema.json`. It also applies to a controller that has no record. A protocol description's `defaults.tuning` (`Resources/Protocols/<file stem>.plist`) may set another value for its family, and a record, a patch, or `all.patch.plist` overrides both, per model or for every controller. Reports queue only while the system takes a long time to accept the previous one; button changes that arrive in the same moment still reach the virtual gamepad in order until the queue is full.
 
@@ -407,7 +411,7 @@ A family's default timings and control set are data in `Resources/Protocols/<fil
 - `parameters` and `parameterRules`: the parameters a record of the family may set, and the rules it obeys beyond each parameter's type. A rule has a `rule` (`None`, `AtMostOne`, `ExactlyOne` or `Requires`), the `parameters` it lists and the `variants` it is limited to. The validators check a record's parameters against them.
 - `writeTransports`: the transports an `activation` or `deactivation` write may name; a family without it names none.
 - `tuningKeys`: the `tuning` keys a record may set for the family. `rawUSBTuningKeys` lists the keys of its raw-USB variants, and a description that is always raw USB takes only `rawUSBTuningKeys`.
-- `macOSOwnedOutput`: the output that OJD still sends to a controller macOS serves, because macOS leaves it undone. A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do, so its description sets `readsStartupFeatures`. macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2, so the Sixaxis description lists that report and sets `drivesRumble`, `readsStartupFeatures`, `setsStartupPlayerIndicator` and the `PlayerIndicator` lighting feature.
+- `macOSOwnedOutput`: the output that OJD still sends to a controller that macOS handles, because macOS leaves it undone. A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do, so its description sets `readsStartupFeatures`. macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2, so the Sixaxis description lists that report and sets `drivesRumble`, `readsStartupFeatures`, `setsStartupPlayerIndicator` and the `PlayerIndicator` lighting feature.
 - `inputStart`: what the user does before a controller of the family sends input, limited to its `variants` (every variant when absent). `PressGuide` is a press of the home button: a DualShock 3 over USB sends no input report until its PS button is pressed, so until its first input the app and `ojd controller list` tell you to press it. An unknown action is rejected (E5002), and a variant that the family does not list is rejected (E5004).
 - `controls`: the controls the driver reports. `recordCapabilities` names the control deltas (`present`, `rumbleAbsent`) that a record of the family may declare; the driver adds the record-derived parts.
 - `defaults.tuning`: the default value of each tuning key, such as `lizardResendTicks`. The keep-alive interval is not a tuning key: `defaults.session.keepAlive.intervalMilliseconds` is its only source, and a description or record that names `keepAliveIntervalMs` anywhere is rejected. `defaults.variants.<variant>.tuning` gives another value for a transport, for example the Switch 1 `hidStartupIntervalMs` of 60 over Bluetooth and 20 over USB.
@@ -417,7 +421,7 @@ A family's default timings and control set are data in `Resources/Protocols/<fil
 - `defaults.session.handshakeAttempts` (1 to 10) and `defaults.session.announceResendLimit` (1 to 100) (read by the `XboxGIP` driver): the number of startup handshake attempts, and the most resends of the request that makes a controller announce itself. They are protocol limits, so a record's `tuning` cannot change them, and a description that lacks a session field its driver reads, or sets one its driver does not read, is rejected when it loads (E5002).
 - `defaults.session.namedPackets` (a family that has them accepts `protocol.initialization`): the GIP packets a record can select by name in `protocol.initialization` (1 to 16). Each has an `id` (the family name, a slash and a lowercase hyphenated name, such as `XboxGIP/power-on`, each at most once), `bytes` (3 to 64) and `sessionByte`, which is 2: the driver stamps byte 2 with the next sequence number of the packet's command. A record that names an id the description lacks is rejected. The description's own default startup (`defaults.session.startup`) lists its packets as bytes.
 
-Change a default by editing the description: every record of the family follows it, and a record's or patch's own `tuning` still wins. Then run `./Scripts/ojd catalog regenerate --write`, which copies the descriptions into the Kit bundle.
+Change a default by editing the description: every record of the family follows it, and a record's or patch's own `tuning` still wins. Then run `just catalog-regenerate --write`, which copies the descriptions into the Kit bundle.
 
 ### Define a Family With a Description
 
@@ -438,30 +442,30 @@ A documented description sets no `sessionKeys`, no parameters and no session fie
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>ControllerPatch</string>
-	<key>patch</key>
-	<dict>
-		<key>tuning</key>
-		<dict>
-			<key>stickDeadzone</key>
-			<real>0.05</real>
-		</dict>
-	</dict>
-	<key>selector</key>
-	<dict>
-		<key>all</key>
-		<true/>
-	</dict>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>ControllerPatch</string>
+ <key>patch</key>
+ <dict>
+  <key>tuning</key>
+  <dict>
+   <key>stickDeadzone</key>
+   <real>0.05</real>
+  </dict>
+ </dict>
+ <key>selector</key>
+ <dict>
+  <key>all</key>
+  <true/>
+ </dict>
 </dict>
 </plist>
 ```
 
 Each value takes the first layer that sets it, from the strongest down: a patch of yours for the model, your `all.patch.plist`, the package, the bundled record, then the driver's own default. A value in `all.patch.plist` applies only to the families that read it, as in the table above. The file is optional. An invalid file is ignored whole, and `ojd config show`, `ojd status`, and the `config-files` check of `ojd diagnose` report why. `ojd config show` prints each value and the layer that set it.
 
-The record's `stickDeadzone` shapes the virtual gamepad's stick report. A profile's `innerDeadzone` calibrates a stick that the profile maps to aim, flick, pointer, scroll, or steering output. The two do not inherit from each other: a deadzone in a record or in `all.patch.plist` does not change what a profile mapping does. `ojd config show --controller` lists the active profile's `innerDeadzone` values in the `profile` layer next to the record's keys, when the service runs.
+The record's `stickDeadzone` shapes the virtual gamepad's stick report. A [profile](Glossary.md#terms)'s `innerDeadzone` calibrates a stick that the profile maps to aim, flick, pointer, scroll, or steering output. The two do not inherit from each other: a deadzone in a record or in `all.patch.plist` does not change what a profile mapping does. `ojd config show --controller` lists the active profile's `innerDeadzone` values in the `profile` layer next to the record's keys, when the service runs.
 
 ### Change the Virtual Gamepad Identity
 
@@ -472,24 +476,24 @@ A `VirtualDevice` file in `~/Library/Application Support/OpenJoystickDriver/Virt
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>VirtualDevice</string>
-	<key>match</key>
-	<dict>
-		<key>productID</key>
-		<integer>3302</integer>
-		<key>vendorID</key>
-		<integer>1356</integer>
-	</dict>
-	<key>persona</key>
-	<string>SDLCompatible</string>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>VirtualDevice</string>
+ <key>match</key>
+ <dict>
+  <key>productID</key>
+  <integer>3302</integer>
+  <key>vendorID</key>
+  <integer>1356</integer>
+ </dict>
+ <key>persona</key>
+ <string>SDLCompatible</string>
 </dict>
 </plist>
 ```
 
-`match` names the model by VID:PID in decimal. Add `unit` with a `U-` ID from `ojd controller show` to match one controller. A unit file wins over a model file. `persona` is `Generic`, `SDLCompatible` or `GameControllerCompatible`. Automatic selection publishes `SDLCompatible` when the controller's main controls fit it and `Generic` otherwise. `SDLCompatible` publishes the Xbox Adaptive Controller identity (`045E:0B0C`) over Xbox One GIP reports, which SDL's Xbox One driver reads with the default hints and Apple's GameController framework does not bind. `Generic` is the `1209:4A4F` identity (pid.codes) and gets no gamepad mapping in those apps without OJD's SDL mapping. An optional `identity` gives a vendor ID, product ID, product name, manufacturer, and `version`, and an optional `labels` gives the glyph family (`xbox` or `generic`). OpenJoystickDriver publishes the virtual gamepad with that identity over the persona's report layout. The transport, the report layout, and the virtual LocationID stay those of the persona, and `version` defaults to the persona's. While the service runs, it watches the `VirtualDevices` folder. When a file is added, edited, or removed and a connected controller's `identity` or `persona` changes, OpenJoystickDriver creates that controller's virtual gamepad again with the new identity, so you do not reconnect the controller. Games and other apps see the old virtual gamepad disappear and a new one appear. A change that leaves a controller's identity and persona the same, or that concerns another controller, does not touch its virtual gamepad. A file with a wrong `apiVersion` or `kind` fails with `E5001`. Any other file that fails validation is skipped, and `ojd status` and the `config-files` check of `ojd diagnose` name it and the reason.
+`match` names the model by VID:PID in decimal. Add `unit` with a `U-` ID from `ojd controller show` to match one controller. A unit file wins over a model file. `persona` is `Generic`, `SDLCompatible` or `GameControllerCompatible`. Automatic selection publishes `SDLCompatible` when the controller's main controls fit it and `Generic` otherwise. `SDLCompatible` publishes the Xbox Adaptive Controller identity (`045E:0B0C`) over Xbox One GIP reports, which SDL's Xbox One driver reads with the default hints and Apple's GameController framework does not bind. `Generic` is the `1209:4A4F` identity (pid.codes) and gets no gamepad mapping in those apps without OJD's SDL mapping. An optional `identity` gives a vendor ID, product ID, product name, manufacturer, and `version`, and an optional `labels` gives the glyph family (`xbox` or `generic`). OpenJoystickDriver publishes the virtual gamepad with that identity over the virtual gamepad kind's report layout. The transport, the report layout, and the virtual LocationID stay those of the virtual gamepad kind, and `version` defaults to the virtual gamepad kind's. While the service runs, it watches the `VirtualDevices` folder. When a file is added, edited, or removed and a connected controller's `identity` or `persona` changes, OpenJoystickDriver creates that controller's virtual gamepad again with the new identity, so you do not reconnect the controller. Games and other apps see the old virtual gamepad disappear and a new one appear. A change that leaves a controller's identity and virtual gamepad kind the same, or that concerns another controller, does not touch its virtual gamepad. A file with a wrong `apiVersion` or `kind` fails with `E5001`. Any other file that fails validation is skipped, and `ojd status` and the `config-files` check of `ojd diagnose` name it and the reason.
 
 ## Select a Model With Protocol Parameters
 
@@ -522,11 +526,11 @@ A `HIDDescriptor` record maps the usages of its report descriptor to controls in
 - `AxisButton`: with `half`, a button `control` and a `threshold` above 0 and below 1, the button is pressed while that half's travel is at or past `threshold`.
 - `ButtonTrigger`: with a `control` of `LeftTrigger` or `RightTrigger`, the trigger reads 1 while the value is nonzero and 0 otherwise.
 
-`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `./Scripts/ojd check profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.plist` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`) and DragonRise (`0079:0006`, by patch) show complete maps.
+`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `just check-profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.plist` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT, and the shape for the descriptor that the macOS Xbox 360 driver publishes (buttons 12 to 15, Z, Rx, Ry and Rz, no hat switch) reads buttons 12 to 15 as the D-pad, Z and Rz as LT and RT, and Y up as positive. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`) and DragonRise (`0079:0006`, by patch) show complete maps.
 
 ## Control Names and Other Vocabularies
 
-Every document, profile, endpoint message and record names a control with one UpperCamelCase id. `Resources/Schemas/vocabulary.schema.json` defines the ids, and `Resources/Vocabulary/crosswalk.plist` holds the names the same control has elsewhere. The crosswalk is documentation: it is not a schema alias, and a document that uses another spelling is refused. A `-` means the other vocabulary has no name for the control, and the crosswalk guesses none. Each control has one row, and two controls may share an SDL, evdev, or Apple name. The `sources` member of the crosswalk records, for each column, the document its cells are checked against. The W3C column is the `buttons` or `axes` index of the standard gamepad mapping. In the HID column a usage is hexadecimal, and `device` means the report descriptor assigns the usage number. `Capture` and `Microphone` share the SDL3 name `MISC1`. A stick's Y axis is positive down in the W3C, SDL3 and evdev columns; Apple's `y` axis is positive up. The table below is generated from `crosswalk.plist`, so edit that file and run `./Scripts/ojd vocabulary regenerate --write`.
+Every document, profile, endpoint message and record names a control with one UpperCamelCase id. `Resources/Schemas/vocabulary.schema.json` defines the ids, and `Resources/Vocabulary/crosswalk.plist` holds the names the same control has elsewhere. The crosswalk is documentation: it is not a schema alias, and a document that uses another spelling is refused. A `-` means the other vocabulary has no name for the control, and the crosswalk guesses none. Each control has one row, and two controls may share an SDL, evdev, or Apple name. The `sources` member of the crosswalk records, for each column, the document its cells are checked against. The W3C column is the `buttons` or `axes` index of the standard gamepad mapping. In the HID column a usage is hexadecimal, and `device` means the report descriptor assigns the usage number. `Capture` and `Microphone` share the SDL3 name `MISC1`. A stick's Y axis is positive down in the W3C, SDL3 and evdev columns; Apple's `y` axis is positive up. The table below is generated from `crosswalk.plist`, so edit that file and run `just vocabulary-regenerate --write`.
 
 <!-- BEGIN GENERATED: control-crosswalk -->
 
@@ -613,71 +617,71 @@ Every record has a `modes` list, and the protocol a controller runs is the `prot
 ```xml
 <key>modes</key>
 <array>
-	<dict>
-		<key>id</key>
-		<string>default</string>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>SonySixaxis</string>
-		</dict>
-	</dict>
-	<dict>
-		<key>id</key>
-		<string>bluetooth</string>
-		<key>match</key>
-		<dict>
-			<key>link</key>
-			<string>BluetoothClassic</string>
-		</dict>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>SonySixaxis</string>
-		</dict>
-		<key>session</key>
-		<dict>
-			<key>startup</key>
-			<array>
-				<dict>
-					<key>bytes</key>
-					<string>42 03 00 00</string>
-					<key>report</key>
-					<dict>
-						<key>id</key>
-						<integer>244</integer>
-						<key>kind</key>
-						<string>Feature</string>
-						<key>length</key>
-						<integer>5</integer>
-					</dict>
-				</dict>
-			</array>
-		</dict>
-	</dict>
-	<dict>
-		<key>id</key>
-		<string>feature-ef-answers</string>
-		<key>match</key>
-		<dict>
-			<key>probes</key>
-			<array>
-				<dict>
-					<key>expect</key>
-					<string>Answers</string>
-					<key>length</key>
-					<integer>49</integer>
-					<key>report</key>
-					<integer>239</integer>
-				</dict>
-			</array>
-		</dict>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>SonySixaxis</string>
-		</dict>
-	</dict>
+ <dict>
+  <key>id</key>
+  <string>default</string>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>SonySixaxis</string>
+  </dict>
+ </dict>
+ <dict>
+  <key>id</key>
+  <string>bluetooth</string>
+  <key>match</key>
+  <dict>
+   <key>link</key>
+   <string>BluetoothClassic</string>
+  </dict>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>SonySixaxis</string>
+  </dict>
+  <key>session</key>
+  <dict>
+   <key>startup</key>
+   <array>
+    <dict>
+     <key>bytes</key>
+     <string>42 03 00 00</string>
+     <key>report</key>
+     <dict>
+      <key>id</key>
+      <integer>244</integer>
+      <key>kind</key>
+      <string>Feature</string>
+      <key>length</key>
+      <integer>5</integer>
+     </dict>
+    </dict>
+   </array>
+  </dict>
+ </dict>
+ <dict>
+  <key>id</key>
+  <string>feature-ef-answers</string>
+  <key>match</key>
+  <dict>
+   <key>probes</key>
+   <array>
+    <dict>
+     <key>expect</key>
+     <string>Answers</string>
+     <key>length</key>
+     <integer>49</integer>
+     <key>report</key>
+     <integer>239</integer>
+    </dict>
+   </array>
+  </dict>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>SonySixaxis</string>
+  </dict>
+ </dict>
 </array>
 ```
 
@@ -699,7 +703,7 @@ OpenJoystickDriver never switches a controller's mode. It tries the modes in rec
 
 A probe only reads. It cannot write to the controller. Each read gives up after 2 seconds. When a probe gets no usable reply, the selection stops, the controller stays enabled in its default mode (a record without one leaves it unsupported), and OpenJoystickDriver logs a line that names the report. No usable reply means a timeout, an unavailable route, or any failure other than the controller's own refusal, such as a device that is not open, gone, or held exclusively. Only a stalled pipe (`0xE000404F` or `0xE0005000`) or an unsupported request (`kIOReturnUnsupported`) is a refusal. It satisfies `stalls` and fails the other expectations, so a stall where a mode expects `answers` leaves the default mode running.
 
-A raw-USB record may list alternative modes too. They are selected at USB detection from the passive keys (`link`, `interfaceSignature`, `endpoints`, and the strings); a probe never holds on a raw-USB route, because it has no feature-report read, so a mode with probes there leaves the default running. Every mode follows the record-level rules of its own protocol for `input.layout`, `session.rumble`, `usb`, `server`, `route`, `tuning`, and `capabilities`, in a record with one mode as in a record with several, except that a `capabilities` delta needs the description of only one mode's family to declare it: a record may hold modes of two drivers, and a mode whose driver does not declare a delta does not act on it. Exactly one mode has the id `default`, and the schema and the Swift decoder reject zero or two. A patch merges its `modes` entries by `id`, so it names only the modes it changes or adds.
+A raw-USB record may list alternative modes too. They are selected at USB detection from the passive keys (`link`, `interfaceSignature`, `endpoints`, and the strings); a probe never holds on a raw-USB route, because it has no feature-report read, so a mode with probes there leaves the default running. Every mode follows the record-level rules of its own protocol for `input.layout`, `session.rumble`, `usb`, `server`, `route`, `heldByAppleDriver`, `tuning`, and `capabilities`, in a record with one mode as in a record with several, except that a `capabilities` delta needs the description of only one mode's family to declare it: a record may hold modes of two drivers, and a mode whose driver does not declare a delta does not act on it. Exactly one mode has the id `default`, and the schema and the Swift decoder reject zero or two. A patch merges its `modes` entries by `id`, so it names only the modes it changes or adds.
 
 macOS reports a radio dongle as a USB device, so the `ProprietaryRadioReceiver` link comes from the model's own record: a model whose default mode runs a `Receiver` or `Dongle` variant reports it, and a mode keyed on that link refines the receiver. No bundled record attaches one product ID both through a dongle and over USB: the six receiver and dongle records (`045e:0291`, `045e:02a9`, `045e:0719`, `28de:1142`, `28de:1304`, `28de:1305`) each hold one default mode. A model that did would need an observed radio link, which nothing reports yet. Endpoint sets come from the raw USB scanner only. The IOKit registry publishes just the interface's `bNumEndpoints`, with no pipe or endpoint descriptor entries, so HID discovery reports no endpoints. A HID mode that names `endpoints` could never be selected, so the schema, the decoder and the Python validator refuse the record; only a raw-USB mode may name them.
 
@@ -707,9 +711,13 @@ The DualShock 3 record has the `bluetooth` mode above, which sends feature repor
 
 Pairing is not part of the record. A DualShock 3 has to be paired with the Mac before a Bluetooth link exists, and the pairing steps belong to macOS or to a pairing tool, not to this data. The record describes only what runs once the link is up. Pairing a real DualShock 3 is still an open hardware check, so these docs list no verified steps.
 
-### Record an Identity That Serves Nothing
+### Read Another Input In One Mode
 
-A mode with `idle` names an identity OpenJoystickDriver recognizes and serves nothing while the mode matches, such as a receiver that shows a controller only after it connects and then enumerates under another ID. The value names the reason: `NoControllerLinked` for a receiver with no controller linked, or `Bootloader` for a controller in its bootloader. The controller is unsupported with that reason: OpenJoystickDriver sends it no data and creates no virtual gamepad, and the Controllers page says why. An idle mode has no `interface` and no `session`. A record whose modes are all idle has no `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `input` or `tuning`. A record gains controls by replacing `idle` with the `protocol` and `input` of a captured descriptor. A patch sets `idle` on a mode entry like any other mode key. A record whose default mode is `idle: Bootloader` belongs to the bundled catalog: a user or package file that adds or patches that identity is refused.
+A mode other than `default` may hold an `input` of its own, with `layouts` or `hidUsageMap` as in the record's `input`. While that mode runs, its `input` takes the place of the record's; every other mode reads the record's. A mode `input` has no `descriptorShapes`, and the `default` mode and an idle mode hold no `input`. Two pads that share a model ID can read differently this way: the `1949:0402` record reads touch contacts only in its `v3` mode, and the `054C:0268` patch maps the NITHO MLT-KRMA-K's face buttons by label only when the manufacturer is `Sony Computer Entertainment`. A patch mode entry sets `input` like any other mode key.
+
+### Record an Identity That Handles Nothing
+
+A mode with `idle` names an identity OpenJoystickDriver recognizes and handles nothing while the mode matches, such as a receiver that shows a controller only after it connects and then enumerates under another ID. The value names the reason: `NoControllerLinked` for a receiver with no controller linked, or `Bootloader` for a controller in its bootloader. The controller is unsupported with that reason: OpenJoystickDriver sends it no data and creates no virtual gamepad, and the Controllers page says why. An idle mode has no `interface` and no `session`. A record whose modes are all idle has no `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `heldByAppleDriver`, `input` or `tuning`. A record gains controls by replacing `idle` with the `protocol` and `input` of a captured descriptor. A patch sets `idle` on a mode entry like any other mode key. A record whose default mode is `idle: Bootloader` belongs to the bundled catalog: a user or package file that adds or patches that identity is refused.
 
 ## Connect a Switch 2 Controller Over Bluetooth LE
 
@@ -718,8 +726,8 @@ OpenJoystickDriver connects a Nintendo Switch 2 controller over Bluetooth LE onl
 ```xml
 <key>bluetoothLE</key>
 <dict>
-	<key>vibrationCharacteristic</key>
-	<string>FA19B0FB-CD1F-46A7-84A1-BBB09E00C149</string>
+ <key>vibrationCharacteristic</key>
+ <string>FA19B0FB-CD1F-46A7-84A1-BBB09E00C149</string>
 </dict>
 ```
 
@@ -737,7 +745,7 @@ A Switch 2 record without `bluetoothLE` connects over USB only, and `ojd record 
 
 The record maps what the HID report descriptor states plainly: buttons 1 to 11 in the order the `HIDDescriptor` family reads them, X, Y, Rx, and Ry sticks, Z and Rz triggers, and the hat, with the `HIDReportLayout` family. When nothing maps, it names `HIDDescriptor` instead. Check every control against the changed bytes and correct the record before you install it. The draft is a `ControllerPatch` for a model with a bundled record and a `Controller` otherwise.
 
-A connected controller that OpenJoystickDriver does not serve, for example a dongle that macOS lists but no record claims, is drafted from its USB interfaces with `ojd record draft VVVV:PPPP`. Nothing is captured. A device with a HID gamepad interface gets a `HIDDescriptor` mode: a `ControllerPatch` that adds a mode matched on that interface when a bundled record holds the model, and a `Controller` otherwise. A device with only vendor-class interfaces gets the identity and one `HIDReportLayout` mode for each distinct interface signature, and the command names the `input` section as missing: the draft fails `ojd record validate` until you add the input layout. `E2012` is for a controller that is not connected.
+A connected controller that OpenJoystickDriver does not handle, for example a dongle that macOS lists but no record claims, is drafted from its USB interfaces with `ojd record draft VVVV:PPPP`. Nothing is captured. A device with a HID gamepad interface gets a `HIDDescriptor` mode: a `ControllerPatch` that adds a mode matched on that interface when a bundled record holds the model, and a `Controller` otherwise. A device with only vendor-class interfaces gets the identity and one `HIDReportLayout` mode for each distinct interface signature, and the command names the `input` section as missing: the draft fails `ojd record validate` until you add the input layout. `E2012` is for a controller that is not connected.
 
 A controller without a record can already be driven by a line of SDL_GameControllerDB; `ojd controller show` names that in its Input mapping row. A record you install replaces it, because a controller with a record never reads the database. `ojd record draft CONTROLLER --from-sdl > record.plist` writes that mapping as a `Controller` record, with the `HIDDescriptor` family and the converted `hidUsageMap`; it captures nothing, reads the elements of the connected controller, and needs the service only to find the controller. Check it with `ojd record validate record.plist`, correct it, and install it, see [Map HID usages](#map-hid-usages). It exits with code 1 and `E2012` when the database has no line for the controller, with `E5008` and the reason when the line does not convert, and with `E2013` when the model already has a bundled record, when the controller cannot be read, or when its descriptor fails the `HIDDescriptor` contract.
 

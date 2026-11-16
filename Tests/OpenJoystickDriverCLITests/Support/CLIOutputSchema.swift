@@ -75,6 +75,7 @@ enum CLIOutputSchema {
   /// The issues in `json`, a profile that a test states as a JSON literal, against
   /// `profile.schema.json`, after it is written as a property list.
   static func profileIssues(inJSON json: String) throws -> [String] {
-    try profileIssues(in: String(decoding: PropertyListFixture.data(json: json), as: UTF8.self))
+    let text = try String(bytes: PropertyListFixture.data(json: json), encoding: .utf8) ?? ""
+    return try profileIssues(in: text)
   }
 }

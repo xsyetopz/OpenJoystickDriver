@@ -147,7 +147,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
     guard let draft = ControllerRecordDraft(model: model, device: pad) else {
       throw CLIFailure(
         .controllerRequestFailed,
-        CLILocalized.format("cli.record.draft.sdl.noPad", identity)
+        CLILocalized.format("cli.record.draft.noInterfaceClass", identity)
       )
     }
     let name = pad.productName ?? identity

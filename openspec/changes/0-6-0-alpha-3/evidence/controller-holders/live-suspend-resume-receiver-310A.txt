@@ -1,0 +1,17 @@
+$ ojd controller suspend E-c99IPf9cixmafSwi
+Suspended 8BitDo Ultimate 2C Wireless Controller.
+exit 0
+$ ojd controller show E-c99IPf9cixmafSwi   (Opened by, Exclusive access, Next step)
+Session               suspended
+Opened by             WindowServer (process 421), Google Chrome (process 4040), Discord PTB (process 19131), Discord PTB Helper (Renderer) (process 19243)
+Next step             Run 'ojd controller resume E-c99IPf9cixmafSwi' to serve it again.
+exit 0
+$ ojd controller resume E-c99IPf9cixmafSwi
+Resumed 8BitDo Ultimate 2C Wireless Controller.
+exit 0
+$ ojd controller show E-c99IPf9cixmafSwi   (Opened by, Exclusive access, Next step)
+Session               active
+Opened by             WindowServer (process 421), Google Chrome (process 4040), OpenJoystickDriver (process 18587), Discord PTB (process 19131), Discord PTB Helper (Renderer) (process 19243)
+Exclusive access      OpenJoystickDriver holds this controller exclusively. Another app can open it after you suspend it.
+Next step             Run 'ojd controller suspend E-c99IPf9cixmafSwi' to let another app open it.
+exit 0

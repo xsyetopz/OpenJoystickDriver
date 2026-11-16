@@ -5,7 +5,7 @@ import Testing
 
 struct VirtualHIDProfileOverrideArgumentsTests {
   @Test
-  func aSetRequestWithoutUnitFailsToDecode() throws {
+  func setRequestWithoutUnitFailsToDecode() throws {
     let encoded = try JSONEncoder().encode(
       LocalServiceRPCVirtualHIDProfileOverrideArguments(
         controller: .model(ControllerModelID(vendorID: 1, productID: 2)),
@@ -27,7 +27,7 @@ struct VirtualHIDProfileOverrideArgumentsTests {
   }
 
   @Test
-  func aResetRequestWithoutUnitFailsToDecode() throws {
+  func resetRequestWithoutUnitFailsToDecode() throws {
     let encoded = try JSONEncoder().encode(
       LocalServiceRPCVirtualHIDProfileOverrideResetArguments(
         controller: .model(ControllerModelID(vendorID: 1, productID: 2)),

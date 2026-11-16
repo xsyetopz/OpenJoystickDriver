@@ -17,7 +17,7 @@ OJD_APP_CLI="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDri
 # Stop with an error when the installed app executable is missing.
 require_ojd_app_cli() {
   [[ -x "$OJD_APP_CLI" ]] ||
-    die "OpenJoystickDriver is not installed at $OJD_APP_CLI; run ./Scripts/ojd build install dev"
+    die "OpenJoystickDriver is not installed at $OJD_APP_CLI; run just install-dev"
 }
 
 # Run the app executable as the `ojd` command line, which it selects by argv[0].
@@ -196,8 +196,8 @@ verify_profile_cert() (
     echo ""
     echo "Repair:"
     echo "  1) Regenerate the provisioning profile selecting the certificate you have locally."
-    echo "  2) Reinstall profiles: ./Scripts/ojd signing install-profiles"
-    echo "  3) Re-generate env:     ./Scripts/ojd signing configure"
+    echo "  2) Reinstall profiles: just signing-install-profiles"
+    echo "  3) Re-generate env:     just signing-configure"
     echo ""
     return 1
   fi

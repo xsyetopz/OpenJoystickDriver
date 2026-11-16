@@ -13,7 +13,7 @@ func runPassiveUSBProbe(vendorID: UInt16, productID: UInt16) -> Int32 {
     print(String(bytes: try encoder.encode(facts), encoding: .utf8) ?? "")
     return 0
   } catch {
-    fputs("ERROR: passive USB probe failed: \(error)\n", stderr)
+    unsafe fputs("ERROR: passive USB probe failed: \(error)\n", unsafe stderr)
     return 1
   }
 }

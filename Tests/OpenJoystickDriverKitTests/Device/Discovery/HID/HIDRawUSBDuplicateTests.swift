@@ -8,7 +8,7 @@ import Testing
 /// interfaces.
 struct HIDRawUSBDuplicateTests {
   @Test
-  func cataloguedRawUSBRowObservedOverHIDStaysUnboundWhileItsPipelineRuns() async throws {
+  func cataloguedRawUSBRowObservedOverHIDStaysUnboundWhileItsPipelineRuns() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 1,
@@ -33,18 +33,12 @@ struct HIDRawUSBDuplicateTests {
     await manager.handleHIDEvent(.connected(connection: hid, ownership: .exclusive))
 
     #expect(await manager.connectedDeviceDescriptions().map(\.discoverySource) == [.rawUSB])
+    let unbound = await manager.unboundDeviceDescriptions()
+    #expect(unbound.map(\.reason) == [.ambiguousProtocolMatch])
+    // The descriptor fallback is rejected; the raw-USB family is bound on its own pipeline.
     #expect(
-      await manager.unboundDeviceDescriptions().map(\.reason) == [.unsupportedTransportVariant]
-    )
-    // The catalog row that matched names the rejected family.
-    let rejected = await manager.unboundDeviceDescriptions().first?.bindingResult.rejectedCandidates
-    #expect(
-      rejected == [
-        .init(
-          protocolID: .xboxGIP,
-          reason: .unsupportedTransportVariant,
-          catalogRecordID: "045e-02d1"
-        )
+      unbound.first?.bindingResult.rejectedCandidates == [
+        .init(protocolID: .hidDescriptor, reason: .ambiguousProtocolMatch)
       ]
     )
     #expect(await backend.releasedLocations().isEmpty)
@@ -52,7 +46,7 @@ struct HIDRawUSBDuplicateTests {
   }
 
   @Test
-  func signatureBoundDeviceKeepsItsHIDInterfaceUnbound() async throws {
+  func signatureBoundDeviceKeepsItsHIDInterfaceUnbound() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 90,

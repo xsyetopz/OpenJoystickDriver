@@ -16,7 +16,7 @@ struct OwnershipReapplyTests {
   ///
   /// Other models keep their sessions.
   @Test
-  func recordReloadReadmitsTheChangedModelOnceWithItsNewNativeFlag() async throws {
+  func recordReloadReadmitsChangedModelOnceWithItsNewNativeFlag() async throws {
     let scripted = ScriptedHIDAccessBackend()
     await scripted.enableOutputReports()
     await scripted.enableFeatureReports()
@@ -61,13 +61,13 @@ struct OwnershipReapplyTests {
   /// A model that GameController supports, set to `ownership: ojd`, is seized, so its pipeline has
   /// no observed-input gate and dispatches each changed report even with no remapping route.
   @Test
-  func anOJDOwnedNativeModelDispatchesEachChangedReportWithoutARoute() async throws {
-    let records = try Self.recordsOwningTheChangedModel()
+  func ojdOwnedNativeModelDispatchesEachChangedReportWithoutRoute() async throws {
+    let records = try Self.recordsOwningChangedModel()
     let catalog = DeviceCatalog(records: records)
-    #expect(catalog.takesOwnership(of: Self.changedModel))
+    #expect(catalog.statedServer(of: Self.changedModel) == .ojd)
     // `HIDDeviceStream.nativePassThrough` for a model that GameController supports.
     let nativePassThrough =
-      !catalog.takesOwnership(of: Self.changedModel)
+      catalog.statedServer(of: Self.changedModel) != .ojd
     let owned = try await Self.dispatchedReports(nativePassThrough: nativePassThrough)
     #expect(owned.observedGate == false)
     #expect(owned.dispatched == 2)
@@ -122,7 +122,7 @@ struct OwnershipReapplyTests {
   }
 
   /// The bundled records with a user `patch` that sets `ownership: ojd` for the changed model.
-  private static func recordsOwningTheChangedModel() throws -> ControllerRecordSet {
+  private static func recordsOwningChangedModel() throws -> ControllerRecordSet {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-ownership-\(UUID().uuidString)",
       isDirectory: true
@@ -157,7 +157,7 @@ struct OwnershipReapplyTests {
   /// A changed HID ownership announces a status change from the manager once, and an unchanged
   /// one announces nothing.
   @Test
-  func aChangedHIDOwnershipAnnouncesOnceAndTheSameOwnershipAnnouncesNothing() async throws {
+  func changedHIDOwnershipAnnouncesOnceAndSameOwnershipAnnouncesNothing() async {
     let backend = ScriptedHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: HIDRoleEventRecorder(),

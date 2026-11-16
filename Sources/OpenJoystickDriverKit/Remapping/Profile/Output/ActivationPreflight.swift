@@ -1,7 +1,7 @@
 import Foundation
 
 extension RemappingPermission {
-  /// The name of the permission in the language of the user.
+  /// Localized name of the permission.
   public var localizedName: String {
     switch self {
     case .postEvent: Localization().string("platform.macos.term.postEventAccess")

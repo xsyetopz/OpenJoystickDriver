@@ -11,14 +11,14 @@ struct ProfileWatcherPackageTests {
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
       "name": "arcade-pack", "version": "1.0.0",
-       "author": "Tester", "requires": {"minimum": "0.6.0"}, "profiles": ["arcade.plist"]}
+        "author": "Tester", "requires": {"minimum": "0.6.0"}, "profiles": ["arcade.plist"]}
       """
   )
 
   /// The service's profile watcher reloads when a package is installed into, and removed from,
   /// the library's `Packages/` folder.
   @Test
-  func changesWhenAPackageIsInstalledAndRemoved() async throws {
+  func changesWhenPackageIsInstalledAndRemoved() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-profile-watch-\(UUID().uuidString)",
       isDirectory: true

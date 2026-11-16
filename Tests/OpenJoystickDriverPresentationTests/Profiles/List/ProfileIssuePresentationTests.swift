@@ -13,7 +13,7 @@ struct ProfileIssuePresentationTests {
   }
 
   @Test
-  func aDamagedProfileShowsItsIssueCodeAndText() {
+  func damagedProfileShowsItsIssueCodeAndText() {
     let codes: [ErrorCode] = [
       .invalidProfile, .unsupportedAPIVersion, .duplicateName, .corruptLibrary,
     ]
@@ -28,7 +28,7 @@ struct ProfileIssuePresentationTests {
   }
 
   @Test
-  func aStaleJSONProfileOffersMigrationAndNamesItsFile() {
+  func staleJSONProfileOffersMigrationAndNamesItsFile() {
     let stale = ApplicationServiceRemappingProfileIssue(
       id: UUID(),
       code: .unsupportedAPIVersion,
@@ -41,11 +41,13 @@ struct ProfileIssuePresentationTests {
     #expect(presentation.message.contains("OLD.json"))
     #expect(presentation.message != OJDLocalized.string("ui.profiles.damagedProfileMessage"))
     #expect(!ProfileIssuePresentation(Self.issue(.damagedProfile, .invalidProfile)).offersMigration)
-    #expect(ProfileIssuePresentation(Self.issue(.damagedProfile, .unsupportedAPIVersion)).offersMigration)
+    #expect(
+      ProfileIssuePresentation(Self.issue(.damagedProfile, .unsupportedAPIVersion)).offersMigration
+    )
   }
 
   @Test
-  func anUnusableLibraryShowsItsIssueCodeAndText() {
+  func unusableLibraryShowsItsIssueCodeAndText() {
     let presentation = ProfileIssuePresentation(Self.issue(.unusableLibrary, .corruptLibrary))
     #expect(presentation.code == ErrorCode.corruptLibrary.rawValue)
     #expect(presentation.title == OJDLocalized.string("ui.profiles.damagedLibrary"))

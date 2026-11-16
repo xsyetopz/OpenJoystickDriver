@@ -3,7 +3,7 @@ import CoreGraphics
 import Foundation
 import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// Reads and requests the macOS HID permissions through the IOHID access calls.
 package struct MacOSAccessControlSystem: AccessControlSystem {
@@ -29,9 +29,9 @@ package struct MacOSAccessControlSystem: AccessControlSystem {
   @MainActor
   package func requestInputReadAccess() { _ = IOHIDRequestAccess(kIOHIDRequestTypeListenEvent) }
 
-  /// Asks macOS for the permission to post events.
   // `IOHIDRequestAccess(kIOHIDRequestTypePostEvent)` neither prompts nor adds the app to the
   // Accessibility list in System Settings; the Accessibility prompt does both.
+  /// Asks macOS for the permission to post events.
   @MainActor
   package func requestInputInjectAccess() {
     // The value of `kAXTrustedCheckOptionPrompt`, a mutable global that Swift 6 rejects.

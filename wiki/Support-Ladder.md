@@ -18,10 +18,10 @@ Steps 1 to 3 need no build and no pull request. Every document is an XML propert
 OJD binds a controller without a record by its interface signature (Xbox USB and GIP) or by its HID report descriptor.
 
 1. Run `ojd controller list` and find the VID:PID of the controller.
-2. Run `ojd controller show VVVV:PPPP`. It shows the identity, who serves the controller, its capabilities, and its virtual gamepad. For a connected device that OJD does not serve it shows the reason and the next step instead.
-3. Open **Open Input Test...** in the **Controllers** area, and press every control.
+2. Run `ojd controller show VVVV:PPPP`. It shows the identity, who handles the controller, its capabilities, and its [virtual gamepad](Glossary.md#terms). For a connected device that OJD does not handle it shows the reason and the next step instead.
+3. In the **Controllers** area, click **Open Input Test...** and press every control.
 
-Stop here when every control reads correctly. When macOS serves the controller itself and you want OJD to serve it, run `ojd controller claim VVVV:PPPP`.
+Stop here when every control reads correctly. When the controller is [handled by macOS](Glossary.md#terms) and you want OJD to handle it, run `ojd controller claim VVVV:PPPP`.
 
 ## Step 2: A Patch
 
@@ -30,33 +30,33 @@ A `ControllerPatch` changes the fields of a bundled record that differ: an endpo
 1. Run `ojd record draft VVVV:PPPP > 045e-02ea.patch.plist` and press every control for 10 seconds. For a model with a bundled record, the draft is a patch. Or write the file yourself.
 2. Correct the file. This complete patch sets the stick deadzone of `045E:02EA`:
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>ControllerPatch</string>
-	<key>patch</key>
-	<dict>
-		<key>tuning</key>
-		<dict>
-			<key>stickDeadzone</key>
-			<real>0.08</real>
-		</dict>
-	</dict>
-	<key>selector</key>
-	<dict>
-		<key>productID</key>
-		<integer>746</integer>
-		<key>vendorID</key>
-		<integer>1118</integer>
-	</dict>
-</dict>
-</plist>
-```
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+   <plist version="1.0">
+   <dict>
+    <key>apiVersion</key>
+    <string>openjoystickdriver/v1alpha3</string>
+    <key>kind</key>
+    <string>ControllerPatch</string>
+    <key>patch</key>
+    <dict>
+     <key>tuning</key>
+     <dict>
+      <key>stickDeadzone</key>
+      <real>0.08</real>
+     </dict>
+    </dict>
+    <key>selector</key>
+    <dict>
+     <key>productID</key>
+     <integer>746</integer>
+     <key>vendorID</key>
+     <integer>1118</integer>
+    </dict>
+   </dict>
+   </plist>
+   ```
 
 3. Run `ojd record validate 045e-02ea.patch.plist`. It exits with code 1 when the patch is invalid, and refuses a patch that changes nothing in the record.
 4. Run `ojd record install 045e-02ea.patch.plist`. The running service applies it without a replug.
@@ -71,177 +71,177 @@ A `Controller` states the whole model: modes, input, rumble, and tuning. OJD ref
 1. Run `ojd record draft VVVV:PPPP > 1209-0001.plist` for a connected controller, or `ojd record draft VVVV:PPPP --from-sdl > 1209-0001.plist` to start from its SDL_GameControllerDB line.
 2. Correct the file. This complete record is the sample controller of [`docs/sdk/sample`](../docs/sdk/sample) (`1209:0001`, a pid.codes test ID):
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>input</key>
-	<dict>
-		<key>layouts</key>
-		<array>
-			<dict>
-				<key>axes</key>
-				<array>
-					<dict>
-						<key>bitOffset</key>
-						<integer>16</integer>
-						<key>bitSize</key>
-						<integer>8</integer>
-						<key>control</key>
-						<string>LeftStickX</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>24</integer>
-						<key>bitSize</key>
-						<integer>8</integer>
-						<key>control</key>
-						<string>LeftStickY</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>32</integer>
-						<key>bitSize</key>
-						<integer>8</integer>
-						<key>control</key>
-						<string>RightStickX</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>40</integer>
-						<key>bitSize</key>
-						<integer>8</integer>
-						<key>control</key>
-						<string>RightStickY</string>
-					</dict>
-				</array>
-				<key>buttons</key>
-				<array>
-					<dict>
-						<key>bitOffset</key>
-						<integer>0</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>South</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>1</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>East</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>2</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>West</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>3</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>North</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>4</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>LeftShoulder</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>5</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>RightShoulder</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>6</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>Back</string>
-					</dict>
-					<dict>
-						<key>bitOffset</key>
-						<integer>7</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-						<key>control</key>
-						<string>Start</string>
-					</dict>
-				</array>
-				<key>hat</key>
-				<array>
-					<dict>
-						<key>bitOffset</key>
-						<integer>8</integer>
-						<key>bitSize</key>
-						<integer>4</integer>
-						<key>encoding</key>
-						<string>EightWay</string>
-					</dict>
-				</array>
-				<key>leftTrigger</key>
-				<dict>
-					<key>bitOffset</key>
-					<integer>48</integer>
-					<key>bitSize</key>
-					<integer>8</integer>
-				</dict>
-				<key>report</key>
-				<dict>
-					<key>length</key>
-					<dict>
-						<key>atLeast</key>
-						<integer>8</integer>
-					</dict>
-				</dict>
-				<key>rightTrigger</key>
-				<dict>
-					<key>bitOffset</key>
-					<integer>56</integer>
-					<key>bitSize</key>
-					<integer>8</integer>
-				</dict>
-			</dict>
-		</array>
-	</dict>
-	<key>kind</key>
-	<string>Controller</string>
-	<key>modes</key>
-	<array>
-		<dict>
-			<key>id</key>
-			<string>default</string>
-			<key>protocol</key>
-			<dict>
-				<key>family</key>
-				<string>HIDReportLayout</string>
-			</dict>
-		</dict>
-	</array>
-	<key>productID</key>
-	<integer>1</integer>
-	<key>vendorID</key>
-	<integer>4617</integer>
-</dict>
-</plist>
-```
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+   <plist version="1.0">
+   <dict>
+    <key>apiVersion</key>
+    <string>openjoystickdriver/v1alpha3</string>
+    <key>input</key>
+    <dict>
+     <key>layouts</key>
+     <array>
+      <dict>
+       <key>axes</key>
+       <array>
+        <dict>
+         <key>bitOffset</key>
+         <integer>16</integer>
+         <key>bitSize</key>
+         <integer>8</integer>
+         <key>control</key>
+         <string>LeftStickX</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>24</integer>
+         <key>bitSize</key>
+         <integer>8</integer>
+         <key>control</key>
+         <string>LeftStickY</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>32</integer>
+         <key>bitSize</key>
+         <integer>8</integer>
+         <key>control</key>
+         <string>RightStickX</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>40</integer>
+         <key>bitSize</key>
+         <integer>8</integer>
+         <key>control</key>
+         <string>RightStickY</string>
+        </dict>
+       </array>
+       <key>buttons</key>
+       <array>
+        <dict>
+         <key>bitOffset</key>
+         <integer>0</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>South</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>1</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>East</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>2</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>West</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>3</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>North</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>4</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>LeftShoulder</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>5</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>RightShoulder</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>6</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>Back</string>
+        </dict>
+        <dict>
+         <key>bitOffset</key>
+         <integer>7</integer>
+         <key>bitSize</key>
+         <integer>1</integer>
+         <key>control</key>
+         <string>Start</string>
+        </dict>
+       </array>
+       <key>hat</key>
+       <array>
+        <dict>
+         <key>bitOffset</key>
+         <integer>8</integer>
+         <key>bitSize</key>
+         <integer>4</integer>
+         <key>encoding</key>
+         <string>EightWay</string>
+        </dict>
+       </array>
+       <key>leftTrigger</key>
+       <dict>
+        <key>bitOffset</key>
+        <integer>48</integer>
+        <key>bitSize</key>
+        <integer>8</integer>
+       </dict>
+       <key>report</key>
+       <dict>
+        <key>length</key>
+        <dict>
+         <key>atLeast</key>
+         <integer>8</integer>
+        </dict>
+       </dict>
+       <key>rightTrigger</key>
+       <dict>
+        <key>bitOffset</key>
+        <integer>56</integer>
+        <key>bitSize</key>
+        <integer>8</integer>
+       </dict>
+      </dict>
+     </array>
+    </dict>
+    <key>kind</key>
+    <string>Controller</string>
+    <key>modes</key>
+    <array>
+     <dict>
+      <key>id</key>
+      <string>default</string>
+      <key>protocol</key>
+      <dict>
+       <key>family</key>
+       <string>HIDReportLayout</string>
+      </dict>
+     </dict>
+    </array>
+    <key>productID</key>
+    <integer>1</integer>
+    <key>vendorID</key>
+    <integer>4617</integer>
+   </dict>
+   </plist>
+   ```
 
 3. Run `ojd record validate 1209-0001.plist`.
 4. Run `ojd record install 1209-0001.plist`. Add `--dry-run` to see the target path and write nothing.
@@ -260,7 +260,7 @@ One JavaScript file whose `generate` function returns the records of a product f
 
 ## Step 5: Source
 
-A protocol family OJD lacks needs source: a handshake, an encryption, or a transport that no document can state. Before you write Swift, check that steps 2 and 3 cannot state the fact: a fact about one model is a record field and never a model branch in Swift. [CONTRIBUTING.md](../CONTRIBUTING.md) lists the setup and the checks, and [Reporting a bug](Reporting-a-Bug.md) lists what to include with a capture.
+A protocol family OJD lacks needs source: a handshake, an encryption, or a connection that no document can state. Before you write Swift, check that steps 2 and 3 cannot state the fact: a fact about one model is a record field and never a model branch in Swift. [CONTRIBUTING.md](../CONTRIBUTING.md) lists the setup and the checks, and [Reporting a bug](Reporting-a-Bug.md) lists what to include with a capture.
 
 ## Further Reading
 

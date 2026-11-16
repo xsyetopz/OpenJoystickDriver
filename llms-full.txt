@@ -6,22 +6,22 @@ The signed app owns the runtime, virtual HID, and authenticated local CLI. Physi
 
 `OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
-Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Every stored document (record, patch, profile, virtual device, mod manifest) is an XML property list with `apiVersion` `openjoystickdriver/v1alpha3`; numbers are decimal. `plutil -convert json -o - FILE.plist` reads one as JSON and `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON. Messages (`--json` output, the endpoint, report files) stay JSON. Support status lives in `wiki/Supported-Controllers.md`; do not duplicate it here.
+Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `just catalog-regenerate --write`. DriverKit: `just driverkit-generate`. Every stored document (record, patch, profile, virtual device, mod manifest) is an XML property list with `apiVersion` `openjoystickdriver/v1alpha3`; numbers are decimal. `plutil -convert json -o - FILE.plist` reads one as JSON and `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON. Messages (`--json` output, the endpoint, report files) stay JSON. Support status lives in `wiki/Supported-Controllers.md`; do not duplicate it here.
 
 Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist must be exactly `com.openjoystickdriver.XboxUSBDevice`, the only DriverKit extension. `com.apple.developer.hid.virtual.device` belongs only to the app.
 
 Generator inputs are `ControllerSources.lock.json` and `Resources/Controllers/` and `Resources/ControllerPatches/`. Schemas are in `Resources/Schemas/`. `CLAUDE.md`, `GEMINI.md`, and `.github/copilot-instructions.md` are symlinks to `AGENTS.md`.
 
 ```bash
-./Scripts/ojd catalog regenerate --check
-./Scripts/ojd check profiles
-./Scripts/ojd check schemas
+just catalog-regenerate --check
+just check-profiles
+just check-schemas
 just lint
-./Scripts/ojd check driverkit
+just driverkit-check
 swift test
 ```
 
-Parser/protocol: `./Scripts/ojd test parsers-macos14`. Hardware, signing, notarization, and permission behavior need the focused local diagnostics in `docs/testing/`. Unsigned generation does not prove those facts.
+Parser/protocol: `just test-parsers-macos14`. Hardware, signing, notarization, and permission behavior need the focused local diagnostics in `docs/testing/`. Unsigned generation does not prove those facts.
 
 ## Support ladder
 
@@ -65,7 +65,7 @@ Support a controller with the first step that works. A fact about one model is a
 - [Experimental controllers](docs/development/experimental-controllers.md): source-backed unfinished support
 - [Implementation status](docs/development/implementation-status.md): remaining product gaps
 - [Schema instructions](Resources/Schemas/AGENTS.md): JSON contract ownership
-- [Scripts](Scripts/ojd): `./Scripts/ojd --help` lists build, install, DriverKit, and release routes
+- [Scripts](just): `just --help` lists build, install, DriverKit, and release routes
 - [Package graph](Package.swift): SwiftPM targets and deployment floor
 
 ## Testing

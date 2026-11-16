@@ -46,7 +46,7 @@ struct HIDInputClaimTests {
   ///
   /// The seize is the only open of the device object.
   @Test
-  func aSeizeIsTheFirstAndOnlyOpen() {
+  func seizeIsFirstAndOnlyOpen() {
     let recorder = RecordingPort()
     let claim = HIDInputClaim.admit(port: recorder.port, seize: true)
 
@@ -57,7 +57,7 @@ struct HIDInputClaimTests {
   }
 
   @Test
-  func aDeviceThatIsNotSeizedOpensSharedWithoutAnOwnership() {
+  func deviceThatIsNotSeizedOpensSharedWithoutOwnership() {
     let recorder = RecordingPort()
     let claim = HIDInputClaim.admit(port: recorder.port, seize: false)
 
@@ -74,7 +74,7 @@ struct HIDInputClaimTests {
       (kIOReturnError, .acquisitionFailed),
     ]
   )
-  func aRefusedSeizeNamesItsOwnershipAndNeverReportsExclusive(
+  func refusedSeizeNamesItsOwnershipAndNeverReportsExclusive(
     result: IOReturn,
     expected: HIDInputOwnership
   ) {
@@ -89,7 +89,7 @@ struct HIDInputClaimTests {
   }
 
   @Test
-  func aRefusedSeizeKeepsTheSharedOpenResultAsTheInputResult() {
+  func refusedSeizeKeepsSharedOpenResultAsInputResult() {
     let recorder = RecordingPort(seize: kIOReturnNotPrivileged, shared: kIOReturnNotPermitted)
     let claim = HIDInputClaim.admit(port: recorder.port, seize: true)
 
@@ -97,7 +97,7 @@ struct HIDInputClaimTests {
   }
 
   @Test
-  func reclaimingClosesTheSharedOpenBeforeTheSeize() {
+  func reclaimingClosesSharedOpenBeforeSeize() {
     let recorder = RecordingPort()
     let claim = HIDInputClaim.reclaim(port: recorder.port)
 
@@ -106,7 +106,7 @@ struct HIDInputClaimTests {
   }
 
   @Test
-  func aRefusedReclaimRestoresTheSharedOpen() {
+  func refusedReclaimRestoresSharedOpen() {
     let recorder = RecordingPort(seize: kIOReturnExclusiveAccess)
     let claim = HIDInputClaim.reclaim(port: recorder.port)
 
@@ -116,7 +116,7 @@ struct HIDInputClaimTests {
   }
 
   @Test
-  func releasingClosesTheSeizeThenOpensShared() {
+  func releasingClosesSeizeThenOpensShared() {
     let recorder = RecordingPort()
 
     #expect(HIDInputClaim.release(port: recorder.port) == kIOReturnSuccess)
@@ -124,7 +124,7 @@ struct HIDInputClaimTests {
   }
 
   @Test
-  func aFailedReleaseCloseStopsBeforeTheSharedOpen() {
+  func failedReleaseCloseStopsBeforeSharedOpen() {
     let recorder = RecordingPort()
     recorder.closeResult = kIOReturnNotOpen
 

@@ -1,6 +1,9 @@
-# Test code is not a public surface.
+# Managed by swift-bedrock. Tests are not a public surface; the rest of the root
+# configuration applies.
 disabled_rules:
   - missing_docs
+  # Swift Testing tests are terse and often shadow a name from the code they test.
+  - variable_shadowing
 
 file_length:
   warning: 1000

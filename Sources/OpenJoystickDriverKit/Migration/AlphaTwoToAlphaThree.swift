@@ -6,6 +6,8 @@ import Foundation
 /// leaves its key out. A patch that sets `modes` also removes `modes`, so it keeps replacing the
 /// record's modes. `notes` and `rationale` are not keys of `v1alpha3`. The `appID` of a
 /// profile's application scope becomes `appIDs`, a list of one.
+/// A settings document gains `"interfaceLevel": "Advanced"`, so a user of an earlier version keeps
+/// the full interface.
 /// A record's `idle`, and a patch's, becomes `"idle": "NoControllerLinked"` on the `default` mode.
 enum AlphaTwoToAlphaThree {
   /// The version the step reads.
@@ -77,8 +79,13 @@ enum AlphaTwoToAlphaThree {
         converted.append(.init(key: member.key, value: body))
       default:
         guard !droppedKeys.contains(member.key), member.value != .null else { continue }
-        converted.append(.init(key: member.key, value: try stripped(member.value, path: member.key)))
+        converted.append(
+          .init(key: member.key, value: try stripped(member.value, path: member.key))
+        )
       }
+    }
+    if kind == .settings {
+      converted.append(.init(key: "interfaceLevel", value: .string("Advanced")))
     }
     if !removed.isEmpty {
       converted.append(.init(key: "remove", value: .array(removed.map { .string($0) })))
@@ -131,7 +138,8 @@ enum AlphaTwoToAlphaThree {
     for member in members {
       let next = path + [member.key]
       if member.value == .null {
-        guard next.allSatisfy({ $0.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) } }) else {
+        guard next.allSatisfy({ $0.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) } })
+        else {
           throw DocumentMigrationProblem("\(next.joined(separator: ".")) has no remove path")
         }
         removed.append(next.joined(separator: "."))
@@ -147,10 +155,10 @@ enum AlphaTwoToAlphaThree {
     case .object(let members):
       var kept: [OrderedJSON.Member] = []
       for member in members where !droppedKeys.contains(member.key) && member.value != .null {
-        let value = try stripped(member.value, path: "\(path).\(member.key)")
+        let cleaned = try stripped(member.value, path: "\(path).\(member.key)")
         // A section whose members were all `null` has nothing left to say.
-        if value == .object([]), member.value != .object([]) { continue }
-        kept.append(.init(key: member.key, value: value))
+        if cleaned == .object([]), member.value != .object([]) { continue }
+        kept.append(.init(key: member.key, value: cleaned))
       }
       return .object(kept)
     case .array(let items):

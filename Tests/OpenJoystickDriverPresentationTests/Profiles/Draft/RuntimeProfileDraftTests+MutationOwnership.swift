@@ -6,7 +6,7 @@ import Testing
 
 extension RuntimeProfileDraftTests {
   @Test
-  func confirmedImportSuccessKeepsTheEditorCleanAndRefreshable() {
+  func confirmedImportSuccessKeepsEditorCleanAndRefreshable() {
     let imported = makeProfile(name: "Imported")
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: imported.id))
     var state = ProfileEditorTransitionState()
@@ -64,7 +64,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func completedCreateSelectsTheCreatedProfileAfterTheOperationReleases() {
+  func completedCreateSelectsCreatedProfileAfterOperationReleases() {
     let createdProfileID = UUID()
     let request = RuntimeMutationRequest(operation: .create(profileID: createdProfileID))
     var state = ProfileEditorTransitionState()
@@ -81,7 +81,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func completedDuplicateSelectsTheDuplicateAfterTheOperationReleases() {
+  func completedDuplicateSelectsDuplicateAfterOperationReleases() {
     let duplicateProfileID = UUID()
     let request = RuntimeMutationRequest(operation: .create(profileID: duplicateProfileID))
     var state = ProfileEditorTransitionState()
@@ -98,7 +98,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func completedDifferentIDImportSelectsTheImportedProfileAfterTheOperationReleases() {
+  func completedDifferentIDImportSelectsImportedProfileAfterOperationReleases() {
     let importedProfileID = UUID()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: importedProfileID))
     var state = ProfileEditorTransitionState()
@@ -128,7 +128,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func mismatchedRuntimeCompletionCannotReleaseTheActiveMutation() {
+  func mismatchedRuntimeCompletionCannotReleaseActiveMutation() {
     let operation = RuntimeMutationOperation.delete(profileID: UUID())
     let ownerID = UUID()
     let unrelatedID = UUID()
@@ -146,7 +146,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func matchingPreflightFailureReleasesTheExactOwnerAndKeepsDraftDirty() {
+  func matchingPreflightFailureReleasesExactOwnerAndKeepsDraftDirty() {
     let request = RuntimeMutationRequest(operation: .update(profileID: UUID()))
     var state = ProfileEditorTransitionState()
     state.setDirty(true)
@@ -174,7 +174,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func activeOwnerIsReconciledBeforeProcessingAnOverlappingError() {
+  func activeOwnerIsReconciledBeforeProcessingOverlappingError() {
     let operation = RuntimeMutationOperation.update(profileID: UUID())
     let ownerID = UUID()
     let rejectedID = UUID()
@@ -190,7 +190,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func duplicateSaveStartDoesNotAcquireASecondOwner() {
+  func duplicateSaveStartDoesNotAcquireSecondOwner() {
     let operation = RuntimeMutationOperation.update(profileID: UUID())
     let first = RuntimeMutationRequest(operation: operation)
     let second = RuntimeMutationRequest(operation: operation)

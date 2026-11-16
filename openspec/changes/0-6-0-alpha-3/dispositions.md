@@ -1,6 +1,6 @@
 # Dispositions of open issues and pull requests (task 8.15)
 
-State as listed by `gh issue list --state open` (21 issues) and `gh pr list --state open` (7 pull requests) on 2026-11-11. Task numbers come from `tasks.md`. Every row starts with `| #`; the done-check is `grep -c '^| #' dispositions.md`, which must print 28.
+State as listed by `gh issue list --state open` (21 issues) and `gh pr list --state open` (7 pull requests) on 2026-11-11; #64 was added after. Task numbers come from `tasks.md`. Every row starts with `| #`; the done-check is `grep -c '^| #' dispositions.md`, which must print 29.
 
 "Waiting on reporter" means the maintainer asked the reporter to try 0.6.0-alpha.2 and report back (comment of 2026-11-07), and no answer has come.
 
@@ -16,13 +16,13 @@ State as listed by `gh issue list --state open` (21 issues) and `gh pr list --st
 | #19 | Razer Wolverine V2 1532:0A29 (reporter zunium) | 8.14, 17.1 | Covered by 17.1. Bundled record `1532-0a29.json` exists. A commenter sees "Input active" with all controls at zero and "USB device unavailable; retrying". | Do 17.1; post the 8.14 request. |
 | #21 | Nacon Revolution X Pro 3285:0634 (reporter TanelLaas) | 8.14 | Bundled record `3285-0634.json` exists. USB drops after the handshake; the reporter suspects the 4 s keep-alive. | Post the 8.14 request. |
 | #22 | ZD Ultimate Legend 413D:2104 | 8.13 | The report of a 15% default dead zone does not hold: the default is 0 (`VirtualGamepadReportMapping.swift:16-21`, verified). The only 0.15 is `SleepGate.swift:4`, an idle-sleep gate, not a stick transfer. A later claim of a dead zone on the output path is not reconciled. | Do 8.13; answer the reporter with the line reference and ask for the capture that shows the dead zone. |
-| #31 | WR-007 receiver 11C1:5600 (reporter arthurknowles34-a11y) | 8.14 | Bundled record `11c1-5600.json` exists. Needs hardware results. | Post the 8.14 request. |
+| #31 | WR-007 receiver 11C1:5600 (reporter arthurknowles34-a11y) | 8.14 | Bundled record `11c1-5600.plist` already holds the issue body's usages (buttons 1, 2, 4, 5, 7, 8, 11, 12, 14, 15; Z/Rz right stick; Accelerator/Brake triggers; hat) and a 0.02 `stickDeadzone`, so no new record or patch. The posted diff targets the old JSON and Swift parser layout. Byte offsets of the 9-byte report are not posted (only the neutral report), no capture exists, Guide sends no report, rumble is unverified, and the Apple GameController path has no hardware result. | Post the 8.14 request. |
 | #34 | 8BitDo 2C wireless (reporter fmilioni) | 2.10 | Last comment 2026-11-09. | Do 2.10. |
 | #35 | Flydigi Vader 4 Pro (reporter scraton) | 8.11 | Waiting on reporter. PR #36 is linked. | Do 8.11. |
 | #37 | Flydigi Vader 4 Pro (reporter scraton) | 8.11 | Waiting on reporter. | Do 8.11. |
-| #38 | PS3/PC pad 2563:0575 (reporter kartinul) | 8.14 | Bundled record `2563-0575.json` exists. Sticks and buttons are mismapped; the reporter attached a mapping file and a Python script. | Post the 8.14 request. |
+| #38 | PS3/PC pad 2563:0575 (reporter kartinul) | 8.14 | Bundled record `2563-0575.plist` already matches the reporter's `pad_config.json` (issuecomment-5748821075) for every control: face and shoulder pressure bytes 11 to 16, triggers 17 and 18, D-pad pressure bytes 7 to 10, byte 1 bits 0 to 3, sticks bytes 3 to 6. `ReportLayoutDriverTests` now covers each of them; no new record. Not in the data: Guide (record bit 12 is unverified), stick Y direction (the file's `inverted` is relative to Xbox up-positive), the report on the 0.6.0 build. | Post the 8.14 request. |
 | #41 | 8BitDo Ultimate 2C Bluetooth LE 2DC8:301B (reporter ductrsan-sys) | 2.9, 2.10 | Last comment 2026-11-10. | Do 2.9 and 2.10. |
-| #48 | Logitech F710 046D:C21F (reporter S3c012) | 8.6 | Waiting on reporter. | Do 8.6. |
+| #48 | Logitech F710 046D:C21F (reporter S3c012) | 8.6 | AliAnam71 on alpha.2: every input and rumble work; Guide does not open the macOS Game Overlay. OJD sends Guide as System Main Menu in report 2 (`XboxSeriesBluetoothReport.swift:15-16`) and lists it in the GameControllerCompatible controls (`VirtualHIDProfile.swift:52`). Apple: the Home button's response while an app is frontmost follows `GCControllerHomeButtonSettingInAppAction` (macOS 27), and `preferredSystemGestureState` is not guaranteed. | Ask on alpha.3: does Home light in Input Test, and does Guide open the overlay with Finder frontmost? Do 8.6 for the replug failure. |
 | #53 | PowerA 20D6:2028 (reporter Simopich) | 8.5 | Waiting on reporter. | Do 8.5. |
 | #55 | Xbox Elite Series 1 045E:02E3 (reporter konnsim) | 8.1, 8.2, 8.3 | Reporter commented 2026-11-09. PR #56 is the fix. | Do 8.1 to 8.3. |
 | #58 | Ferrari 458 Spider 044F:B671 (reporter deniskabana) | 5.1, 8.4 | Waiting on reporter. | Do 5.1 and 8.4. |
@@ -36,11 +36,12 @@ State as listed by `gh issue list --state open` (21 issues) and `gh pr list --st
 | --- | --- | --- | --- | --- |
 | #36 | scraton, Flydigi Vader 4 Pro | 5.6, 8.11 | Conflicting with `main`; checks failing. | Do 8.11; decide on 5.6 (what to take from the branch). |
 | #39 | multision, Wolverine V3 TE | 5.6, 8.10 | Conflicting with `main`. | Do 8.10; decide on 5.6. |
-| #47 | mattallty | 8.12 | Conflicting with `main`; no checks. | Do 8.12. |
+| #47 | mattallty, GameSir K1 through Generic HID | 8.12 | Conflicting with `main`; no checks. `3537:1082` is shared with the G7 SE (`docs/testing/gamesir-family.md:16`), so no record is added. The body describes the K1 layout in prose (input report 5, 10 bytes) and holds no descriptor bytes or raw reports, so no descriptor-decoding test is added. | Do 8.12; ask for the K1's `ojd controller capture` output and descriptor if a decoding test is wanted. |
 | #50 | Anonim0Venezian0, PowerA Spectra | 5.6, 8.9 | Conflicting with `main`. | Do 8.9; decide on 5.6. |
 | #54 | bdidier | 8.7 | Conflicting with `main`. | Do 8.7. |
 | #56 | konnsim, Elite Series 1 | 8.3 (with 8.1) | Mergeable; checks mixed (failure and success). Covered by 8.1 and 8.3. | Do 8.1 and 8.3 and merge or replace. |
 | #57 | phil-bbs | 8.8 | Conflicting with `main`; check neutral. | Do 8.8. |
+| #64 | bdidier, XUSB receiver boundaries and reconnection | 8.7 | Targets a non-default branch; review skipped. Ported onto the branch: the 02A9 state-bytes decode test, the XboxXUSB presence-resend tuning rejection (in-range value, Receiver variant), and the receiver doc text. The truncated-report and reconnect cases already exist on the branch. Not ported: the PR's 02A9 evidence section (the branch already holds the PR #54 section). | Do 8.7. |
 
 ## Closed issue noted, not a row
 

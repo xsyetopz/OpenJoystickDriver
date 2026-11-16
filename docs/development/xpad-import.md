@@ -7,14 +7,14 @@ The runtime catalog is generated from the exact Linux and SDL revisions and sour
 Verify committed output:
 
 ```bash
-./Scripts/ojd catalog regenerate --check
+just catalog-regenerate --check
 ```
 
 Rewrite it after an intentional lock or override change:
 
 ```bash
-./Scripts/ojd catalog regenerate --write
-./Scripts/ojd check profiles
+just catalog-regenerate --write
+just check-profiles
 ```
 
 The generator downloads every locked Linux and SDL source and verifies each SHA-256. It parses the complete xpad device/initialization tables and supported HID registration tables, normalizes supported rows, applies explicit local overrides, and writes deterministic VID/PID paths.
@@ -93,7 +93,7 @@ Admitted third-party DualShock 4 rows keep the nominal motion scale: like SDL, O
 
 ## Generator Rule Tables
 
-The generators read their family lists, flag sets, name maps and exclusions from `Resources/CatalogRules/` (`linux-xpad.plist`, `linux-hid.plist`, `sdl.plist`). Each file carries `apiVersion` and `kind`, and the loader rejects missing or unexpected keys. Change these files, not generator code, to adjust a table; then run `./Scripts/ojd catalog regenerate --write`.
+The generators read their family lists, flag sets, name maps and exclusions from `Resources/CatalogRules/` (`linux-xpad.plist`, `linux-hid.plist`, `sdl.plist`). Each file carries `apiVersion` and `kind`, and the loader rejects missing or unexpected keys. Change these files, not generator code, to adjust a table; then run `just catalog-regenerate --write`.
 
 Facts behind single entries:
 

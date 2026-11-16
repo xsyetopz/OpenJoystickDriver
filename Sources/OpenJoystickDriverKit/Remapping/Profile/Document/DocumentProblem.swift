@@ -14,8 +14,8 @@ public enum DocumentProblem {
   /// gives its localized description.
   public static func describe(_ error: any Error) -> String {
     if let problem = error as? DocumentHeaderProblem { return problem.message }
-    guard let error = error as? DecodingError else { return error.localizedDescription }
-    switch error {
+    guard let decoding = error as? DecodingError else { return error.localizedDescription }
+    switch decoding {
     case .keyNotFound(let key, let context):
       return missing(context.codingPath + [key])
     case .valueNotFound(_, let context):
@@ -36,7 +36,7 @@ public enum DocumentProblem {
         arguments: [path(context.codingPath), context.debugDescription]
       )
     @unknown default:
-      return error.localizedDescription
+      return decoding.localizedDescription
     }
   }
 

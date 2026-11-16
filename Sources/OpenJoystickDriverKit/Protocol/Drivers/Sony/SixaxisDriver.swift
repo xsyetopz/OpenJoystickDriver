@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The report ID of the input report.
 private let ds3InputReportID: UInt8 = 0x01
@@ -173,7 +173,7 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
 
   /// Decodes an input report; a short report, another report ID or a report with byte 1 equal to
   /// `0xFF` is ignored.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     guard bytes.count >= ds3InputReportLength, bytes[ReportOffset.reportID] == ds3InputReportID,
       bytes[1] != 0xFF

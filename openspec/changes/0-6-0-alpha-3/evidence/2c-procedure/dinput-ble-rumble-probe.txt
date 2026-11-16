@@ -1,0 +1,14 @@
+DInput + Bluetooth LE, 2DC8:301B, release build 1.28.99. OJD suspended for the pad during the run.
+Probe: /tmp/ojd-193/rumble-probe/main.swift, run as `probe 2DC8 301B ble`.
+
+open 0
+output element page=0xf usage=0x70 report=5 size=32 count=4
+2026-11-13T23:05:10Z attempt: report 5, 4 bytes
+2026-11-13T23:05:10Z setReport id=5 64 64 64 64 result=e00002f0
+2026-11-13T23:05:12Z setReport id=5 00 00 00 00 result=e00002f0
+2026-11-13T23:05:14Z attempt: report 5, id first
+2026-11-13T23:05:14Z setReport id=5 05 64 64 64 64 result=e00002f0
+2026-11-13T23:05:16Z setReport id=5 05 00 00 00 00 result=e00002f0
+2026-11-13T23:05:18Z attempt: element values
+2026-11-13T23:05:18Z setValue usage=0x70 value=100 result=e00002f0
+2026-11-13T23:05:20Z setValue usage=0x70 value=0 result=e00002f0

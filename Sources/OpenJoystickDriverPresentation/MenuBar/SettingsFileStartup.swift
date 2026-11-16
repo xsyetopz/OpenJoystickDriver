@@ -89,14 +89,18 @@
       alert.alertStyle = .warning
       alert.messageText = OJDLocalized.string("ui.settings.advanced.unreadableTitle")
       alert.informativeText = reason
-      if offersMigration { alert.addButton(withTitle: OJDLocalized.string("ui.migrate.action")) }
+      if offersMigration {
+        alert.addButton(withTitle: OJDLocalized.string("ui.migrate.action")).toolTip =
+          OJDLocalized.string("ui.help.migrate")
+      }
       alert.addButton(
         withTitle: OJDLocalized.string("platform.macos.ui.settings.advanced.unreadableShowInFinder")
-      )
+      ).toolTip = OJDLocalized.string("platform.macos.ui.help.showSettingsFile")
       let reset = alert.addButton(
         withTitle: OJDLocalized.string("ui.settings.advanced.unreadableResetSettings")
       )
       reset.hasDestructiveAction = true
+      reset.toolTip = OJDLocalized.string("ui.help.resetSettings")
       let quit = alert.addButton(
         withTitle: MainMenuRenderer.title(
           "ui.menu.app.quit",
@@ -104,6 +108,7 @@
         )
       )
       quit.keyEquivalent = "\u{1b}"
+      quit.toolTip = OJDLocalized.string("ui.help.menu.quit")
       return alert
     }
   }

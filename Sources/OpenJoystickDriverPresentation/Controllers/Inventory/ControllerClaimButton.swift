@@ -16,6 +16,7 @@
       Button(OJDLocalized.string("ui.controllers.claim")) {
         Task { @MainActor in await viewModel.repairSystemExtension() }
       }.disabled(viewModel.systemExtensionSetupState == .running)
+        .help(OJDLocalized.string("ui.help.claim"))
     }
   }
 

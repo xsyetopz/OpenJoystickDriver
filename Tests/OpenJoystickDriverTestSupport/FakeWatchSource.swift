@@ -1,6 +1,6 @@
 import Foundation
 
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 /// A ``ControllerWatchSource`` whose controllers a test sets; every controller reports one state.
 package final class FakeWatchSource: ControllerWatchSource, @unchecked Sendable {
@@ -28,13 +28,13 @@ package final class FakeWatchSource: ControllerWatchSource, @unchecked Sendable 
     }
   }
 
-  package func devices() throws -> [ApplicationServiceDeviceDescription] {
+  package func devices() -> [ApplicationServiceDeviceDescription] {
     lock.withLock { connected }
   }
 
   package func state(
-    of device: ApplicationServiceDeviceDescription
-  ) throws -> ControllerState? {
+    of _: ApplicationServiceDeviceDescription
+  ) -> ControllerState? {
     lock.withLock {
       order.append("state")
       return state
@@ -42,8 +42,8 @@ package final class FakeWatchSource: ControllerWatchSource, @unchecked Sendable 
   }
 
   package func output(
-    of device: ApplicationServiceDeviceDescription
-  ) throws
+    of _: ApplicationServiceDeviceDescription
+  )
     -> ApplicationServiceVirtualOutputState?
   {
     lock.withLock {

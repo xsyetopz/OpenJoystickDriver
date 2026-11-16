@@ -32,7 +32,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test
-  func aValueIsWrittenAndRemoved() throws {
+  func valueIsWrittenAndRemoved() throws {
     try Self.withDirectory { directory in
       let written = Self.set(0.08, in: directory)
       #expect(written.failure == nil)
@@ -52,7 +52,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test(arguments: [0.0, 1.0, -0.1, 1.5])
-  func aValueOutOfRangeIsRefusedAndNothingIsWritten(_ value: Double) throws {
+  func valueOutOfRangeIsRefusedAndNothingIsWritten(_ value: Double) throws {
     try Self.withDirectory { directory in
       let result = Self.set(value, in: directory)
       #expect(result.failure == .invalidRecord)
@@ -63,7 +63,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test
-  func removingAKeyThatIsNotSetIsRefused() throws {
+  func removingKeyThatIsNotSetIsRefused() throws {
     try Self.withDirectory { directory in
       #expect(Self.set(nil, in: directory).failure == .notSet)
       #expect(!FileManager.default.fileExists(atPath: directory.path))
@@ -71,7 +71,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() throws {
+  func modelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory in
       let result = Self.set(0.1, model: (0x1234, 0xABCD), in: directory)
       #expect(result.failure == .noRecord)
@@ -80,7 +80,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test(arguments: [(-1, 0x2000), (0x2C22, 0x10000), (0x10000, 0x2000)])
-  func aVendorOrProductIDOutOfRangeIsAnInvalidRequest(_ model: (Int, Int)) throws {
+  func vendorOrProductIDOutOfRangeIsInvalidRequest(_ model: (Int, Int)) throws {
     try Self.withDirectory { directory in
       let result = Self.set(0.1, model: model, in: directory)
       #expect(result.failure == .invalidRequest)

@@ -26,7 +26,7 @@ struct SettingsRPCTests {
   }
 
   @Test
-  func setSettingStoresAFileBackedValueAndReturnsEverySetting() async throws {
+  func setSettingStoresFileBackedValueAndReturnsEverySetting() async throws {
     try await withServer { server, settings in
       let arguments = try encode(
         ApplicationServiceSettingArguments(key: .developerTools, value: true)
@@ -39,7 +39,7 @@ struct SettingsRPCTests {
   }
 
   @Test
-  func setSettingAppliesLaunchAtLoginThroughTheLoginControl() async throws {
+  func setSettingAppliesLaunchAtLoginThroughLoginControl() async throws {
     try await withServer { server, _ in
       let arguments = try encode(
         ApplicationServiceSettingArguments(key: .launchAtLogin, value: true)
@@ -51,7 +51,7 @@ struct SettingsRPCTests {
   }
 
   @Test
-  func setSettingReportsALoginItemThatMacOSKeptOff() async throws {
+  func setSettingReportsLoginItemThatMacOSKeptOff() async throws {
     try await withServer(loginAccepts: false) { server, _ in
       let arguments = try encode(
         ApplicationServiceSettingArguments(key: .launchAtLogin, value: true)
@@ -63,7 +63,7 @@ struct SettingsRPCTests {
   }
 
   @Test
-  func setSettingFailsWhenTheLoginControlThrows() async throws {
+  func setSettingFailsWhenLoginControlThrows() async throws {
     try await withServer(loginFails: true) { server, _ in
       let arguments = try encode(
         ApplicationServiceSettingArguments(key: .launchAtLogin, value: true)
@@ -76,7 +76,7 @@ struct SettingsRPCTests {
   }
 
   @Test
-  func setSettingRejectsAnUnknownKey() async throws {
+  func setSettingRejectsUnknownKey() async throws {
     try await withServer { server, _ in
       let response = await handle(
         server,

@@ -7,7 +7,6 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from Scripts.Command import dispatcher
 from Scripts.Documentation.wiki import publish
 
 IDENTITY = {
@@ -16,10 +15,6 @@ IDENTITY = {
     "GIT_COMMITTER_NAME": "Test",
     "GIT_COMMITTER_EMAIL": "test@example.com",
 }
-
-
-class TargetInvoked(Exception):
-    pass
 
 
 def git(*arguments: str, cwd: Path) -> str:
@@ -112,18 +107,6 @@ class WikiPublishTests(unittest.TestCase):
         self.assertEqual(publish.source_label(self.root), commit)
         (self.root / "wiki" / "Home.md").write_text("# Changed\n", encoding="utf-8")
         self.assertEqual(publish.source_label(self.root), f"{commit}-dirty")
-
-    def test_dispatcher_routes_publish_wiki(self) -> None:
-        with (
-            patch.object(
-                dispatcher, "exec_target", side_effect=TargetInvoked
-            ) as execute,
-            self.assertRaises(TargetInvoked),
-        ):
-            dispatcher.dispatch(["docs", "publish-wiki", "--dry-run"])
-        execute.assert_called_once_with(
-            "Documentation/wiki/publish.py", ["--dry-run"], python=True
-        )
 
 
 if __name__ == "__main__":

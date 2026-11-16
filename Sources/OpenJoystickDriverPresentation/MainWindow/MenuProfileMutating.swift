@@ -16,6 +16,8 @@
   protocol MenuProfileMutating: MainWindowPresenting {
     /// The toolbar actions that the selected area shows and that are enabled.
     var enabledToolbarActions: Set<MainWindowToolbarAction> { get }
+    /// The toolbar actions that the selected area shows and that are disabled.
+    var disabledToolbarActions: Set<MainWindowToolbarAction> { get }
     /// The search field of the list in view, or nil when there is none.
     var searchFieldInView: NSSearchField? { get }
     /// Runs `action` when its toolbar item is enabled.

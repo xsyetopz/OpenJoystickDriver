@@ -3,7 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-// All-zero rumble and rumble channel subsets, encoded by today's drivers.
+// All-zero rumble and rumble channel subsets, as the drivers encode them.
 extension DriverLifecycleCharacterizationTests {
   /// All-zero rumble at 0 ms for the first ten subjects.
   @Test

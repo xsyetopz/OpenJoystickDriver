@@ -10,8 +10,8 @@ struct RecordCommandTests {
   private static let patch = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-       "selector": {"vendorID": 13932, "productID": 5},
-       "patch": {"tuning": {"stickDeadzone": 0.08}}}
+        "selector": {"vendorID": 13932, "productID": 5},
+      "patch": {"tuning": {"stickDeadzone": 0.08}}}
       """
   )
 
@@ -48,7 +48,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func validateReportsTheRecordAndItsTransport() async throws {
+  func validateReportsRecordAndItsTransport() async throws {
     let directory = Directory()
 
     let json = await run(["validate", "-", "--json"], in: directory, stdin: Self.patch)
@@ -67,7 +67,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func anInvalidRecordExitsOneAndNamesTheProblem() async throws {
+  func invalidRecordExitsOneAndNamesProblem() async throws {
     let directory = Directory()
     let invalid = PropertyListFixture.bytes(json: #"{"operation": "patch"}"#)
 
@@ -86,12 +86,12 @@ struct RecordCommandTests {
   }
 
   @Test
-  func aRecordThatBreaksARuleReportsE5007() async throws {
+  func recordBreaksRuleReportsE5007() async {
     let directory = Directory()
     let invalid = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-         "selector": {"all": false}, "patch": {"tuning": {"stickDeadzone": 0.08}}}
+          "selector": {"all": false}, "patch": {"tuning": {"stickDeadzone": 0.08}}}
         """
     )
 
@@ -102,7 +102,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func installWritesTheFileThatListAndShowReport() async throws {
+  func installWritesFileThatListAndShowReport() async throws {
     let directory = Directory()
 
     let install = await run(["install", "-", "--json"], in: directory, stdin: Self.patch)
@@ -141,7 +141,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func listNamesSkippedFilesAndBundledListsTheCatalogAlone() async throws {
+  func listNamesSkippedFilesAndBundledListsCatalogAlone() async throws {
     let directory = Directory()
     try directory.write(Self.patch, as: "wrong.plist")
 
@@ -160,7 +160,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func showAnUnknownModelExitsOne() async {
+  func showUnknownModelExitsOne() async {
     let result = await run(["show", "1234:ABCD"], in: Directory())
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2012]: "))
@@ -168,13 +168,13 @@ struct RecordCommandTests {
   }
 
   @Test
-  func validateAndShowNoteThatASwitch2RecordWithoutBluetoothLEIsUSBOnly() async throws {
+  func validateAndShowNoteThatSwitch2RecordWithoutBluetoothLEIsUSBOnly() async throws {
     let directory = Directory()
     let switch2 = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-         "vendorID": 1406, "productID": 8447,
-         "modes": [{"id": "default", "protocol": {"family": "NintendoSwitch2"}}]}
+          "vendorID": 1406, "productID": 8447,
+        "modes": [{"id": "default", "protocol": {"family": "NintendoSwitch2"}}]}
         """
     )
     try directory.write(switch2, as: "057e-20ff.plist")
@@ -193,7 +193,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func installNeedsForceToReplaceWithoutATerminalAndHonorsDryRun() async throws {
+  func installNeedsForceToReplaceWithoutTerminalAndHonorsDryRun() async throws {
     let directory = Directory()
     let installed = PropertyListFixture.bytes(json: "{}")
     let dryRun = await run(
@@ -220,7 +220,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func removeNeedsForceWithoutATerminalAndHonorsDryRun() async throws {
+  func removeNeedsForceWithoutTerminalAndHonorsDryRun() async throws {
     let directory = Directory()
     try directory.write(Self.patch, as: "366c-0005.patch.plist")
 
@@ -242,12 +242,12 @@ struct RecordCommandTests {
   private static let noDescriptor: @Sendable (Int, Int) -> [UInt8]? = { _, _ in nil }
 
   @Test
-  func draftPrintsARecordFromTheCapturedReports() async throws {
+  func draftPrintsRecordFromCapturedReports() async throws {
     let reads = Counter()
     let packets = """
       [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
-       {"direction":"Tx","hex":"00 00 00","length":3,"timestamp":2},
-       {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
+        {"direction":"Tx","hex":"00 00 00","length":3,"timestamp":2},
+      {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
       """
     let service = try FakeService(
       devices: [
@@ -277,11 +277,11 @@ struct RecordCommandTests {
 
   /// The text of `record draft` is what `record install -` reads.
   @Test
-  func theDraftTextPipesIntoInstall() async throws {
+  func draftTextPipesIntoInstall() async throws {
     let reads = Counter()
     let packets = """
       [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
-       {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
+        {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
       """
     let service = try FakeService(
       devices: [
@@ -311,7 +311,7 @@ struct RecordCommandTests {
 
   /// A bundled model whose descriptor maps nothing keeps its bundled family.
   @Test
-  func draftOfABundledModelWithoutALayoutExitsOne() async throws {
+  func draftOfBundledModelWithoutLayoutExitsOne() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ]) { method, _ in
@@ -326,7 +326,11 @@ struct RecordCommandTests {
 
   /// Runs `record draft` for the model `identity` while the service serves no controller and the
   /// system lists `pad`.
-  private func draftUnserved(_ identity: String, pad: PhysicalDevice?, _ flags: [String] = [])
+  private func draftUnserved(
+    _ identity: String,
+    pad: PhysicalDevice?,
+    _ flags: [String] = []
+  )
     async throws -> CLIRun
   {
     let service = try FakeService(devices: [])
@@ -339,7 +343,7 @@ struct RecordCommandTests {
   /// A device that the service does not serve: a HID gamepad interface gets a patch that adds a
   /// `HIDDescriptor` mode to the bundled record of the model (#63).
   @Test
-  func draftOfAnUnservedHIDGamepadPatchesTheBundledRecord() async throws {
+  func draftOfUnservedHIDGamepadPatchesBundledRecord() async throws {
     let gamepad = PhysicalInterfaceSignature(
       interfaceClass: 3,
       interfaceSubclass: 0,
@@ -358,13 +362,13 @@ struct RecordCommandTests {
     #expect(json["operation"] as? String == "Patch")
     #expect(json["family"] as? String == "HIDDescriptor")
     #expect(json["identity"] as? String == "3537:1022")
-    #expect(json["missingSections"] as? [String] == [])
+    #expect((json["missingSections"] as? [String])?.isEmpty == true)
   }
 
   /// A device with only vendor-class interfaces gets one mode for each signature, and the command
   /// names the input section as missing.
   @Test
-  func draftOfAnUnservedVendorClassDeviceNamesTheMissingInput() async throws {
+  func draftOfUnservedVendorClassDeviceNamesMissingInput() async throws {
     let pad = PhysicalDevice(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -385,9 +389,23 @@ struct RecordCommandTests {
     #expect(human.standardError.contains("input section"))
   }
 
+  /// A device whose interfaces report no class triple has nothing to draft from; the message says
+  /// so and does not blame the HID connection that `--from-sdl` needs.
+  @Test
+  func draftOfUnservedDeviceWithNoInterfaceClassSaysSo() async throws {
+    let pad = PhysicalDevice(
+      vendorID: 0x1234,
+      productID: 0x5678,
+      interfaces: [PhysicalInterfaceSignature(hostTransport: .usb)]
+    )
+    let result = try await draftUnserved("1234:5678", pad: pad)
+    #expect(result.code == 1)
+    #expect(result.standardError.contains("no USB interface class"), "\(result.standardError)")
+  }
+
   /// `E2012` is for a device that is not connected.
   @Test
-  func draftOfADeviceThatIsNotConnectedExitsOneWithE2012() async throws {
+  func draftOfDeviceNotConnectedExitsOneWithE2012() async throws {
     let result = try await draftUnserved("1234:5678", pad: nil)
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2012]: "))
@@ -442,7 +460,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func fromSDLOfAPadWithNoDatabaseLineExitsOneWithE2012() async throws {
+  func fromSDLOfPadWithNoDatabaseLineExitsOneWithE2012() async throws {
     let result = try await draftFromSDL(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -453,7 +471,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func fromSDLOfALineThatDoesNotConvertExitsOneWithE5008() async throws {
+  func fromSDLOfLineThatDoesNotConvertExitsOneWithE5008() async throws {
     let result = try await draftFromSDL(
       vendorID: 0x358A,
       productID: 0x0201,
@@ -464,7 +482,7 @@ struct RecordCommandTests {
   }
 
   @Test
-  func fromSDLOfABundledModelExitsOneWithE2013() async throws {
+  func fromSDLOfBundledModelExitsOneWithE2013() async throws {
     let result = try await draftFromSDL(
       vendorID: 0x045E,
       productID: 0x028E,
@@ -476,13 +494,13 @@ struct RecordCommandTests {
 
   /// `record show --json` ends in one newline and keeps the members of the envelope sorted by name.
   @Test
-  func showJSONSortsTheEnvelopeAndEndsInOneNewline() async throws {
+  func showJSONSortsEnvelopeAndEndsInOneNewline() async throws {
     let directory = Directory()
     let record = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-         "vendorID": 4617, "productID": 2,
-         "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+          "vendorID": 4617, "productID": 2,
+        "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
         """
     )
     try directory.write(record, as: "1209-0002.plist")
@@ -501,13 +519,13 @@ struct RecordCommandTests {
   /// No record field takes an integer of 25 digits, so the command refuses it and does not
   /// round it to a `Double` and accept it.
   @Test
-  func anIntegerBeyond64BitsInATuningValueIsRefused() async throws {
+  func integerBeyond64BitsInTuningValueRefused() async {
     let directory = Directory()
     let patch = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-         "selector": {"vendorID": 13932, "productID": 5},
-         "patch": {"tuning": {"usbTransferTimeoutMs": 1234567890123456789012345}}}
+          "selector": {"vendorID": 13932, "productID": 5},
+        "patch": {"tuning": {"usbTransferTimeoutMs": 1234567890123456789012345}}}
         """
     )
 

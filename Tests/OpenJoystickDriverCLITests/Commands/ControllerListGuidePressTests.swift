@@ -9,7 +9,7 @@ import Testing
 @Suite(.serialized)
 struct ControllerListGuidePressTests {
   @Test
-  func everyFormatNamesTheControllerThatWaitsForItsGuidePress() async throws {
+  func everyFormatNamesControllerThatWaitsForItsGuidePress() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(
         id: "pad-1",

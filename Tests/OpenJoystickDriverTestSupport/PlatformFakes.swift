@@ -1,7 +1,7 @@
-import CryptoKit
-import Foundation
+package import CryptoKit
+package import Foundation
 
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 /// An ``AccessControlSystem`` that reports the states it was given and ignores access requests.
 package struct FixedAccessControlSystem: AccessControlSystem {
@@ -36,9 +36,9 @@ package struct FakeMainAppRegistration: ApplicationServiceRegistration {
 
   package var status: ApplicationServiceRegistrationStatus { .notRegistered }
 
-  package func register() throws {}
+  package func register() {}
 
-  package func unregister() throws {}
+  package func unregister() {}
 }
 
 /// The transport an IOHID `Transport` property value stands for, or nil for an unknown value.
@@ -72,50 +72,50 @@ package struct NoDevicesHIDAccessBackend: HIDAccessBackend {
   package func currentConnectionSnapshots() async -> [HIDDeviceConnectionSnapshot]? { [] }
 
   package func setOutputReport(
-    address: ControllerConnectionAddress,
-    report: PhysicalHIDOutputReport
+    address _: ControllerConnectionAddress,
+    report _: PhysicalHIDOutputReport
   ) async -> PhysicalHIDReportResult<Void> { .unavailable }
 
   package func setOutputReport(
-    connection: HIDDeviceConnection,
-    report: PhysicalHIDOutputReport
+    connection _: HIDDeviceConnection,
+    report _: PhysicalHIDOutputReport
   ) async -> PhysicalHIDReportResult<Void> { .unavailable }
 
   package func setFeatureReport(
-    address: ControllerConnectionAddress,
-    report: PhysicalHIDOutputReport
+    address _: ControllerConnectionAddress,
+    report _: PhysicalHIDOutputReport
   ) async -> PhysicalHIDReportResult<Void> { .unavailable }
 
   package func setFeatureReport(
-    connection: HIDDeviceConnection,
-    report: PhysicalHIDOutputReport
+    connection _: HIDDeviceConnection,
+    report _: PhysicalHIDOutputReport
   ) async -> PhysicalHIDReportResult<Void> { .unavailable }
 
   package func getFeatureReport(
-    address: ControllerConnectionAddress,
-    request: PhysicalHIDFeatureReadRequest
+    address _: ControllerConnectionAddress,
+    request _: PhysicalHIDFeatureReadRequest
   ) async -> PhysicalHIDReportResult<Data> { .unavailable }
 
   package func getFeatureReport(
-    connection: HIDDeviceConnection,
-    request: PhysicalHIDFeatureReadRequest
+    connection _: HIDDeviceConnection,
+    request _: PhysicalHIDFeatureReadRequest
   ) async -> PhysicalHIDReportResult<Data> { .unavailable }
 
   package func releaseInputClaim(
-    address: ControllerConnectionAddress
+    address _: ControllerConnectionAddress
   ) async
     -> PhysicalHIDClaimResult
   { .unavailable }
 
   package func reacquireInputClaim(
-    address: ControllerConnectionAddress
+    address _: ControllerConnectionAddress
   ) async
     -> PhysicalHIDClaimResult
   { .unavailable }
 
-  package func retryInputClaim(address: ControllerConnectionAddress) async {}
+  package func retryInputClaim(address _: ControllerConnectionAddress) async {}
 
-  package func routeElementValues(connection: HIDDeviceConnection) async {}
+  package func routeElementValues(connection _: HIDDeviceConnection) async {}
 }
 
 // swiftlint:enable async_without_await

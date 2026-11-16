@@ -1,4 +1,4 @@
-import CryptoKit
+public import CryptoKit
 import Foundation
 
 /// The stable, user-facing slot of one controller: its model, the USB port it is plugged into,
@@ -29,8 +29,9 @@ public struct ControllerPortKey: Hashable, Sendable {
   ) -> Self? {
     guard let locationID = controller.address?.locationID else { return nil }
     let identity = controller.hardware
-    let interface = controller.address?.interfaceNumber.map { String(format: "%02X", $0) } ?? "-"
-    let preimage = String(
+    let interface =
+      controller.address?.interfaceNumber.map { unsafe String(format: "%02X", $0) } ?? "-"
+    let preimage = unsafe String(
       format: "%04X:%04X:%08X:%@",
       identity.model.vendorID,
       identity.model.productID,

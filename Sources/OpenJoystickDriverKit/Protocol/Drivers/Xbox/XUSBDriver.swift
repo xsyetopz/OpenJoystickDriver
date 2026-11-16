@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Report type byte for Xbox 360 input reports.
 private let xbox360InputReportType: UInt8 = 0x00
@@ -267,9 +267,9 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   }
 
   /// Parses either a wired report or an Xbox 360 wireless receiver envelope.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
-    guard let state = decode(data) else { return nil }
-    return ControllerEvent(timestamp: receivedAt, state: state)
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
+    guard let decoded = decode(data) else { return nil }
+    return ControllerEvent(timestamp: receivedAt, state: decoded)
   }
 
   /// The state after one report, or nil when the report carries no pad input.

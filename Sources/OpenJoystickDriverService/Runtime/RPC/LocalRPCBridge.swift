@@ -114,6 +114,9 @@ extension ApplicationServiceServer {
     case .requestAccess:
       let value = try decode(LocalServiceRPCPermissionArguments.self)
       return try send(await requestAccess(value.requirement))
+    case .requestBluetoothAccess:
+      _ = try decode(LocalServiceRPCEmptyArguments.self)
+      return try send(requestBluetoothAccess())
     case .getControllerState:
       let value = try decode(LocalServiceRPCDeviceArguments.self)
       return try send(
@@ -225,6 +228,8 @@ extension ApplicationServiceServer {
           server: value.server
         )
       )
+    case .recalibrateController:
+      return try send(await recalibrateController(decode(ControllerRecalibrationArguments.self)))
     case .setControllerTuning:
       let value = try decode(LocalServiceRPCControllerTuningArguments.self)
       return try send(

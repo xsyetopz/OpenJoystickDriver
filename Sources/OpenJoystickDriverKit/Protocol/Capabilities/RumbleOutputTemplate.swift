@@ -190,7 +190,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
         "rumble template bytes must cover the whole report"
       )
     }
-    if let report = target.hidReport, report.reportID != 0, base[0] != report.reportID {
+    if let hid = target.hidReport, hid.reportID != 0, base[0] != hid.reportID {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         key: "error.E5007.rumble.bytesReportId",
@@ -237,9 +237,9 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
 
   /// The bytes of a template that names none: zeros after the report ID of a numbered report.
   static func zeroedBytes(for target: Target) -> [UInt8] {
-    var bytes = [UInt8](repeating: 0, count: target.length)
-    if let report = target.hidReport, report.reportID != 0 { bytes[0] = report.reportID }
-    return bytes
+    var zeroed = [UInt8](repeating: 0, count: target.length)
+    if let hid = target.hidReport, hid.reportID != 0 { zeroed[0] = hid.reportID }
+    return zeroed
   }
 
   /// The rumble motors the template drives.

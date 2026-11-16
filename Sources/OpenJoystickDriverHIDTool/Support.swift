@@ -178,8 +178,8 @@ func dataProp(_ dev: IOHIDDevice, _ key: String) -> Data? {
 
 /// Returns `count` bytes at `bytes` as lowercase hex pairs separated by spaces.
 func hexString(_ bytes: UnsafePointer<UInt8>?, count: Int) -> String {
-  guard let bytes, count > 0 else { return "" }
-  return (0..<count).map { String(format: "%02x", bytes[$0]) }.joined(separator: " ")
+  guard let base = unsafe bytes, count > 0 else { return "" }
+  return (0..<count).map { unsafe String(format: "%02x", base[$0]) }.joined(separator: " ")
 }
 
 /// Returns the HID devices that match `matching`, or every device when it is nil.
@@ -217,11 +217,11 @@ func managerDevices(_ mgr: IOHIDManager) -> [IOHIDDevice] {
   let count = CFSetGetCount(rawDevices)
   guard count > 0 else { return [] }
   let values = UnsafeMutablePointer<UnsafeRawPointer?>.allocate(capacity: count)
-  defer { values.deallocate() }
-  CFSetGetValues(rawDevices, values)
+  defer { unsafe values.deallocate() }
+  unsafe CFSetGetValues(rawDevices, values)
   return (0..<count).compactMap { idx in
-    guard let value = values[idx] else { return nil }
-    return unsafeBitCast(value, to: IOHIDDevice.self)
+    guard let value = unsafe values[idx] else { return nil }
+    return unsafe unsafeBitCast(value, to: IOHIDDevice.self)
   }.sorted {
     let a =
       intProp($0, kIOHIDVendorIDKey as String) * 0x1_0000
@@ -272,11 +272,11 @@ func printMonitorNoDeviceHint(vid: Int, pid: Int) {
 
 /// Prints the usage on standard error and exits with `code`.
 func printUsageAndExit(_ code: Int32) -> Never {
-  fputs(
+  unsafe fputs(
     """
     OpenJoystickDriverHIDTool. Internal hardware diagnostic utility.
 
-    Use `./Scripts/ojd diagnose` for supported workflows. Run this utility directly
+    Use `just diagnose-*` for supported workflows. Run this utility directly
     only for focused hardware debugging.
 
     Usage:
@@ -295,17 +295,17 @@ func printUsageAndExit(_ code: Int32) -> Never {
       --list           List HID devices (vid/pid/product/transport + report sizes).
       --dump           Dump the report descriptor for one device (as hex and Swift [UInt8]).
       --dump-elements  Print the input elements (usage page, usage, cookie, logical range, arrival
-                       order) of one device as JSON, the input of an SDL_GameControllerDB mapping.
+        order) of one device as JSON, the input of an SDL_GameControllerDB mapping.
       --open           Directly call IOHIDDeviceOpen on matching devices.
       --service-open   With --open, recreate the device from IOHIDDeviceGetService first.
       --set-report     With --open, send one Xbox 360-style rumble output report.
       --monitor        Open matching HID devices and print input value/report callbacks.
-                       Without ids it watches the Generic persona (from its VirtualDevice record).
+        Without ids it watches the Generic persona (from its VirtualDevice record).
       --usb-monitor    Open one raw USB service and print interrupt IN packets.
       --record-probe  Validate and exercise one controller record through the USB facade.
       --validate-only  Validate --record-probe input without opening physical hardware.
       --usb-passive    Print one authorized device's USB descriptor facts as JSON without
-                       opening it.
+        opening it.
       --vid <int>      Vendor ID (decimal or 0x... hex).
       --pid <int>      Product ID (decimal or 0x... hex).
       --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.

@@ -1,5 +1,7 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -7,7 +9,7 @@ import Testing
 @Suite
 struct ActivityLogFollowingTests {
   @Test
-  func theLogIsFollowedOnlyWhileTheVisibleWindowShowsIt() {
+  func logIsFollowedOnlyWhileVisibleWindowShowsIt() {
     for area in MainWindowArea.allCases {
       for mode in ActivityMode.allCases {
         let expected = area == .activity && mode == .log
@@ -50,7 +52,7 @@ struct ActivityLogRowsTests {
   }
 
   @Test
-  func anAppendedLineJoinsTheRowsOnlyWhenTheFilterAndSearchShowIt() {
+  func appendedLineJoinsRowsOnlyWhenFilterAndSearchShowIt() {
     let model = ActivityLogModel(source: Self.quietSource())
     model.filter = .errors
     model.searchText = "disk"
@@ -65,7 +67,7 @@ struct ActivityLogRowsTests {
   }
 
   @Test
-  func changingTheFilterRebuildsTheRowsFromAllEntries() {
+  func changingFilterRebuildsRowsFromAllEntries() {
     let model = ActivityLogModel(source: Self.quietSource())
     model.append(Self.line("a"))
     model.append(Self.line("b", .standardError))
@@ -78,7 +80,7 @@ struct ActivityLogRowsTests {
   }
 
   @Test
-  func trimmingDropsTheOldestEntriesInBatchesAndKeepsTheNewest() {
+  func trimmingDropsOldestEntriesInBatchesAndKeepsNewest() {
     let model = ActivityLogModel(source: Self.quietSource(), retainedEntries: 20)
 
     for number in 0..<23 { model.append(Self.line("line \(number)")) }
@@ -107,19 +109,9 @@ struct ActivityLogRowsTests {
 extension ActivityLogFollowingTests {
   @Test
   @MainActor
-  func theWindowFollowsTheLogOnlyWhileActivityIsSelected() throws {
-    let suiteName = "ActivityLogFollowingTests.\(UUID().uuidString)"
-    let defaults = try #require(UserDefaults(suiteName: suiteName))
-    defer { defaults.removePersistentDomain(forName: suiteName) }
-    let runtime = RuntimeViewModel(gateway: GatewayStub())
-    let controller = MainWindowController(
-      runtime: runtime,
-      supportReport: SupportReportModel(gateway: GatewayStub()),
-      restartApplication: {},
-      openInputTest: { _ in },
-      visibilityChanged: { _ in },
-      persistence: UserDefaultsMainWindowAreaPersistence(defaults: defaults)
-    )
+  func windowFollowsLogOnlyWhileActivityIsSelected() throws {
+    let (controller, cleanup) = try MainWindowController.offScreen()
+    defer { cleanup() }
     let window = try #require(controller.window)
     window.orderFront(nil)
     defer { window.orderOut(nil) }

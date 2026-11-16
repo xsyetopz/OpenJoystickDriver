@@ -13,7 +13,7 @@ Xbox and PlayStation names in the UI are trademarks of Microsoft and Sony. This 
 
 ## Supported Controllers
 
-This section sorts controllers into three tiers. The tiers are a documentation classification. The app shows no tier and no warning. A tier records how much hardware testing confirms a controller. Official and Community-verified mean that people tested the controller on real hardware and it worked. Unverified means that nobody confirmed the controller yet. Somebody verified a controller only in the connection mode that they tested. The other modes have no verification and may work. A controller that works over USB may not work over Bluetooth or a dongle. For more information, see [Connection types](Connecting-Controllers.md#connection-types).
+This section sorts controllers into three tiers. The tiers are a documentation classification. The app shows no tier and no warning. A tier records how much hardware testing confirms a controller. Official and Community-verified mean that people tested the controller on real hardware and it worked. Unverified means that nobody has confirmed the controller. Somebody verified a controller only in the connection mode that they tested. The other modes have no verification and may work. A controller that works over USB may not work over Bluetooth or a dongle. For more information, see [Connection types](Connecting-Controllers.md#connection-types).
 
 ### Official
 
@@ -35,19 +35,30 @@ The DUALSHOCK 3 does not connect over Bluetooth on macOS 27.0. The test stored t
 
 A tester used the controller on real hardware, and it worked. The table names the mode that the tester used.
 
+A controller record can also carry a `validations` list: one entry per mode that a maintainer accepted from a `controller-validation.yml` issue, with the issue number, the mode `id`, the OJD version and the date. The app shows such a mode as Community verified in the controller detail, with a link to the issue, and `ojd record show` prints the same line. The Lookup button of the controller detail and `ojd controller lookup` open this page for a controller that has a record, at this section when the record has a validation. For a controller with no record they give a GitHub issue search for its `VVVV:PPPP`.
+
 | Controller | VID:PID | Mode tested | What works | Not tested |
 | --- | --- | --- | --- | --- |
 | 8BitDo Ultimate 2C Wireless | `2DC8:310A` | 2.4 GHz dongle, XInput mode | Buttons, sticks, triggers at rest, D-pad, stick clicks, rumble | Not recorded |
 | ZD Ultimate Legend | `413D:2204` | 2.4 GHz dongle, XInput mode | Input, OJD rumble, back-button keyboard bindings, mode switching | Not recorded |
-| Xbox Nano Controller | `045E:0B4F` | Bluetooth LE, `game-controller-compatible` profile | Buttons, sticks, triggers, D-pad, stick clicks. The Xbox button and Share do not work | Rumble, Steam |
+| Xbox Nano Controller | `045E:0B4F` | Bluetooth LE, `game-controller-compatible` [profile](Glossary.md#terms) | Buttons, sticks, triggers, D-pad, stick clicks. The Xbox button and Share do not work | Rumble, Steam |
+| NITHO MLT-KRMA-K | `054C:05C4` | Bluetooth, M mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home. M1 and M2 send nothing until a macro is recorded on them | Rumble and light, which macOS drives |
+| NITHO MLT-KRMA-K | `054C:05C4` | USB cable, M mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, T as the touchpad click. Home drops the pad off USB | Rumble and light |
+| NITHO MLT-KRMA-K | `045E:028E` | 2.4G receiver; USB cable in X or 2.4G mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home, rumble through macOS | X mode over Bluetooth does not pair as an Xbox pad |
+| NITHO MLT-KRMA-K | `2563:0526` | USB cable, V3 mode | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu, Home | Rumble |
+| NITHO MLT-KRMA-K | `057E:2009` | USB cable and Bluetooth, S mode | Buttons, sticks, triggers as on or off, D-pad, stick clicks, View, Menu, Home. A reads as East, B as South, X as North, Y as West, by position as on a Pro Controller | Rumble and light |
+| NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, V3 mode (`BSP-G6S`) | Buttons, left stick, the right stick for about 0.6 s per push, triggers as on or off, D-pad, stick clicks. Y reads as two short presses. RB, View, Menu, Home, M1 and M2 send no input in V3 | Not recorded |
+| NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, 2.4G mode without the receiver, or V3 started with X held (`BSP-G6S-HID`) | Buttons, sticks, analog triggers, D-pad, stick clicks, View, Menu. Home sends nothing | Not recorded |
 
 Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One tester (gornobatov) tested the ZD Ultimate Legend on macOS 26.7.1. For the 8BitDo details, see [the test record](../docs/testing/8bitdo-ultimate-2c.md).
 
 One tester tested the Xbox Nano Controller on macOS 26.5.2. For the details, see [the test record](../docs/testing/xbox-nano.md).
 
-The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the wired DInput mode `2DC8:301D` have no verification. They may work; the rear buttons repeat L3 and R3 and map no paddle. The HID receiver `2DC8:301C` is idle while its product string is `IDLE`, with no pad linked: OJD sends it no data and creates no gamepad. With a pad linked it serves the HID descriptor, which maps no named control yet. The USB adapter `2DC8:3109` stays an `XboxXUSB` wired record, also unverified.
+The maintainer tested the NITHO MLT-KRMA-K on macOS 27.2. Its mode switch picks the identity. On its 2.4G receiver, macOS binds its Xbox 360 driver, and OJD reads the descriptor that the driver publishes. For the details, see [the test record](../docs/testing/nitho-mlt-krma-k.md).
 
-The 8BitDo Ultimate 2 in DInput mode (`2DC8:6012`, cable and 2.4 GHz dongle) has an unverified record that uses the Ultimate 2C layout and maps no rear button. Its receiver `2DC8:6013` and dongle `2DC8:3107` are idle identities: OJD sends them no data and creates no gamepad. For the details, see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
+The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode: `2DC8:301B` over Bluetooth, `2DC8:301C` on its 2.4 GHz receiver in DInput mode, and `2DC8:310A` on the receiver in XInput mode and by cable in either mode. In `301B` and `301C`, L4 and R4 with no assignment on the pad are `LeftPaddle1` and `RightPaddle1`; as `310A` they send nothing of their own. The record for `2DC8:301B` makes the pad [Handled by OpenJoystickDriver](Glossary.md#terms), which gives it a [virtual gamepad](Glossary.md#terms), because macOS handles the pad and GameController lists no controller for it. The HID receiver `2DC8:301C` is idle while its product string is `IDLE`, with no pad linked: OJD sends it no data and creates no gamepad. No mode tried on the maintainer's pad produced `2DC8:301D` or `2DC8:3109`; their records stay unverified.
+
+The 8BitDo Ultimate 2 in DInput mode (`2DC8:6012`, cable and 2.4 GHz dongle) has an unverified record that uses the Ultimate 2C usage table without the rear buttons. Its receiver `2DC8:6013` and dongle `2DC8:3107` are idle identities: OJD sends them no data and creates no gamepad. For the details, see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
 
 The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are never served. Their bundled records idle with the reason `Bootloader`, and no user or package file adds or patches them. OJD sends them no data, because a write to a pad in bootloader state risks a bad firmware image. The Controllers page lists such a pad as unserved with the reason `BootloaderIdentity`. For the rule, see [the test record](../docs/testing/8bitdo-ultimate-2c.md#bootloader-identities).
 
@@ -57,6 +68,8 @@ Every 8BitDo `2DC8` identity that has a record. Only `2DC8:310A` is Community-Ve
 | --- | --- | --- |
 | `2DC8:2000`, `2DC8:2002` | No source names the model | `XboxGIP` |
 | `2DC8:200F` | No source names the model | `XboxGIP`, with the Share button read from the end of the report |
+| `2DC8:2019` | Ultimate Mini Wired Controller for Xbox | `XboxGIP` |
+| `2DC8:2027` | Ultimate C Wired Controller for Xbox | `XboxGIP` |
 | `2DC8:3106`, `2DC8:6001` | No source names the model | `XboxXUSB`, wired |
 | `2DC8:3107` | Ultimate 2 dongle | Idle |
 | `2DC8:3109` | Ultimate 2C USB adapter | `XboxXUSB`, wired |
@@ -75,7 +88,7 @@ The Ultimate 3-mode record (`2DC8:901B`) has no capture; see [the Ultimate 2 tes
 
 The Wii Remote (`057E:0306` and `057E:0330`) has bundled records and no hardware test. For what OJD reads from it, see [Wii Remote](Wii-Remote.md).
 
-OJD includes a built-in catalog of 710 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
+OJD includes a built-in catalog of 714 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
 
 An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken or fake.
 
@@ -92,7 +105,7 @@ These Flydigi records are source-derived and unverified. The files a tester send
 
 ### SteelSeries Nimbus Record
 
-The SteelSeries Nimbus (`1038:1420`, USB) has a source-derived, unverified record. The record maps its eight pressure-sensitive buttons, its pressure D-pad and its Menu button, and it reads the left and right sticks and the L2 and R2 triggers. The record sets no `server`, so macOS serves the Nimbus as its own game controller and OJD only reads its input. The Nimbus has four player LEDs on an output report that records cannot yet describe, so OJD does not drive them. Bluetooth identity `0111:1420` appears only in SDL's database and has no record. The Menu button, the trigger threshold and the axis directions wait for a capture from the pad.
+The SteelSeries Nimbus (`1038:1420`, USB) has a source-derived, unverified record. The record maps its eight pressure-sensitive buttons, its pressure D-pad and its Menu button, and it reads the left and right sticks and the L2 and R2 triggers. The record sets no `server`, so the Nimbus is [Handled by macOS](Glossary.md#terms) as its own game controller and OJD only reads its input. The Nimbus has four player LEDs on an output report that records cannot yet describe, so OJD does not drive them. Bluetooth identity `0111:1420` appears only in SDL's database and has no record. The Menu button, the trigger threshold and the axis directions wait for a capture from the pad.
 
 To find out whether your controller is in the catalog:
 
@@ -108,7 +121,7 @@ ojd controller list
 
 If the controller appears, OJD has a record for it or reads it as a generic HID controller. If it does not appear, see [Controller not detected](Troubleshooting.md). A controller without a record may still work as a generic HID controller. For more information, see [Generic HID controllers](#generic-hid-controllers).
 
-OJD leaves some gamepads to macOS. OJD does not publish a virtual controller for them.
+macOS handles some gamepads. OJD does not publish a virtual gamepad for them.
 
 ### Report a Result
 
@@ -131,7 +144,7 @@ The Ant Esports GP100 starts in XInput mode. In that mode macOS sees no input. T
 
 ## Generic HID Controllers
 
-OJD can read some HID gamepads that are not in its catalog. It reads the report descriptor that the controller sends. Generic HID support is not a fallback for a known controller. A controller with a record always uses its own driver, and OJD does not retry a failing known controller as generic HID.
+OJD can read some HID gamepads that are not in its catalog. It reads the report descriptor that the controller sends. A controller with a record uses its own driver. When no mode of the record fits the interfaces the device exposes, and a HID interface of the device passes the descriptor checks, OJD serves it as a controller with no record and `ojd controller show` says in the Input mapping row that the record did not fit and that rule `HIDDescriptor` serves it. A record that states `server` `System` keeps the pad with macOS, and a mode that matches and is idle (`Idle`) stays idle. OJD does not retry a failing known controller as generic HID.
 
 ### What Works
 

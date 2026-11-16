@@ -1,0 +1,34 @@
+$ ojd controller show E-c99IPf9cixmafSwi   # 2.4 GHz receiver, XInput, cable out
+Name                  8BitDo Ultimate 2C Wireless Controller
+ID                    E-c99IPf9cixmafSwi
+Unit ID               U-kZ7dCdQP-6vkJyz4
+Vendor:Product        2DC8:310A
+Connection            USB
+Protocol              xbox-xusb:wired
+Session               active
+Battery               none
+Input                 awaiting-input
+Ownership             route raw-usb, physical exclusive-raw-usb, HID input unknown
+Handled by            OJD (from route)
+Serving route         output-disabled (user-disabled)
+Virtual gamepad       none
+Record                bundled
+Controls              south, east, west, north, left-shoulder, right-shoulder, left-trigger, right-trigger, back, start, left-stick-click, right-stick-click, dpad-up, dpad-down, dpad-left, dpad-right, guide, left-stick-x, left-stick-y, right-stick-x, right-stick-y
+Rumble                low-frequency, high-frequency
+Lighting              player-indicator
+Opened by             WindowServer (process 421), Google Chrome (process 4040), OpenJoystickDriver (process 18587), Discord PTB (process 19131), Discord PTB Helper (Renderer) (process 19243)
+Exclusive access      OpenJoystickDriver holds this controller exclusively. Another app can open it after you suspend it.
+Next step             Run 'ojd controller suspend E-c99IPf9cixmafSwi' to let another app open it.
+Virtual gamepad kind  none
+Publication           not-published (output-disabled)
+
+Output checks
+  ojd controller rumble 2DC8:310A --left 160 --duration 0.3
+    Only the left main actuator runs.
+  ojd controller rumble 2DC8:310A --right 160 --duration 0.3
+    Only the right main actuator runs.
+  ojd controller player 2DC8:310A 1
+    The controller displays the player-one indicator pattern.
+  ojd controller player 2DC8:310A off
+    The numbered player indicators turn off.
+exit 0

@@ -126,7 +126,7 @@ public struct FrameTimingSummary: Codable, Equatable, Sendable {
       .dispatchToDeliveryEndpoint: Self.elapsed(in: window, from: .dispatch, to: .deliveryEndpoint),
       .readToRead: intervals,
     ]
-    let stalls = Self.percentile(50, of: intervals.sorted()).map { median in
+    let frameStalls = Self.percentile(50, of: intervals.sorted()).map { median in
       let threshold = median * Self.stallIntervalMultiplier
       return FrameStalls(
         thresholdNanoseconds: threshold,
@@ -154,7 +154,7 @@ public struct FrameTimingSummary: Codable, Equatable, Sendable {
           maxNanoseconds: maximum
         )
       },
-      stalls: stalls
+      stalls: frameStalls
     )
   }
 

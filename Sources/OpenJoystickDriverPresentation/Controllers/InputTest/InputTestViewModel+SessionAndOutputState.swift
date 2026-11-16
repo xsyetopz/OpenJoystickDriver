@@ -101,6 +101,13 @@
       device?.physicalOutputCapabilities ?? .none
     }
 
+    /// What the live view draws for the selected controller.
+    var controlLayout: InputTestControlLayout {
+      InputTestControlLayout(
+        capabilities: device?.capabilities ?? ControllerCapabilities(controls: [])
+      )
+    }
+
     /// The sections shown for the selected controller: Motion calibration needs a gyroscope and
     /// Lighting needs a lighting feature; Rumble states when the controller has no motor.
     var visibleSections: [InputTestSection] {
@@ -159,6 +166,7 @@
         return
       }
       let oldSelector = device.map { ControllerReference.session($0.sessionToken) }
+      guidedCheck.cancel()
       cancelSampling(nextState: .idle)
       cancelOutput(stopSelector: oldSelector)
       device = selectedDevice
@@ -187,6 +195,7 @@
         })
       else {
         isDeviceConnected = false
+        guidedCheck.cancel()
         motionCalibration.select(nil)
         cancelSampling(nextState: .disconnected)
         cancelOutput(stopSelector: ControllerReference.session(current.sessionToken))
@@ -238,9 +247,23 @@
     /// Marks the window as closed and ends sampling and output.
     func close() {
       isWindowActive = false
+      guidedCheck.cancel()
       cancelSampling(nextState: device == nil ? .disconnected : .idle)
       cancelOutput(stopSelector: device.map { ControllerReference.session($0.sessionToken) })
       motionCalibration.select(nil)
+    }
+
+    /// Whether the Guided Check can start: the controller is connected, sampled, declares a control
+    /// to ask for and no check runs.
+    var canStartGuidedCheck: Bool {
+      guard let device, isSampling, guidedCheck.run == nil else { return false }
+      return isDeviceConnected && !ControllerCheckControl.steps(for: device.capabilities).isEmpty
+    }
+
+    /// Starts the Guided Check of the selected controller.
+    func startGuidedCheck() {
+      guard let device else { return }
+      guidedCheck.start(device)
     }
 
     /// Rumbles the controller for the chosen length.
@@ -248,8 +271,14 @@
     /// The service stops the rumble when the length ends. Without a connected controller that has
     /// rumble, nothing is sent and ``outputError`` says why.
     func testRumble() {
-      guard let device, canSendOutput else { return refuseOutput(.rumble, .notConnected) }
-      guard capabilities.supportsRumble else { return refuseOutput(.rumble, .unsupported) }
+      guard let device, canSendOutput else {
+        refuseOutput(.rumble, .notConnected)
+        return
+      }
+      guard capabilities.supportsRumble else {
+        refuseOutput(.rumble, .unsupported)
+        return
+      }
       let command = rumbleCommand()
       let selector = ControllerReference.session(device.sessionToken)
       let duration = Self.clampedRumbleDuration(rumbleDurationMilliseconds)
@@ -292,9 +321,13 @@
     ///
     /// Without a connected controller that has one, nothing is sent and ``outputError`` says why.
     func applyPlayerIndicator() {
-      guard let device, canSendOutput else { return refuseOutput(.playerIndicator, .notConnected) }
+      guard let device, canSendOutput else {
+        refuseOutput(.playerIndicator, .notConnected)
+        return
+      }
       guard capabilities.supportsPlayerIndicator else {
-        return refuseOutput(.playerIndicator, .unsupported)
+        refuseOutput(.playerIndicator, .unsupported)
+        return
       }
       let selector = ControllerReference.session(device.sessionToken)
       let indicator = playerIndicator
@@ -309,9 +342,13 @@
     /// Without a connected controller that has a programmable color, nothing is sent and
     /// ``outputError`` says why.
     func applyColor() {
-      guard let device, canSendOutput else { return refuseOutput(.color, .notConnected) }
+      guard let device, canSendOutput else {
+        refuseOutput(.color, .notConnected)
+        return
+      }
       guard capabilities.lightingFeatures.contains(.programmableColor) else {
-        return refuseOutput(.color, .unsupported)
+        refuseOutput(.color, .unsupported)
+        return
       }
       let selector = ControllerReference.session(device.sessionToken)
       let components = (Self.byte(red), Self.byte(green), Self.byte(blue))
@@ -333,9 +370,13 @@
     /// Without a connected controller that has programmable brightness, nothing is sent and
     /// ``outputError`` says why.
     func applyBrightness() {
-      guard let device, canSendOutput else { return refuseOutput(.brightness, .notConnected) }
+      guard let device, canSendOutput else {
+        refuseOutput(.brightness, .notConnected)
+        return
+      }
       guard capabilities.supportsProgrammableBrightness else {
-        return refuseOutput(.brightness, .unsupported)
+        refuseOutput(.brightness, .unsupported)
+        return
       }
       let selector = ControllerReference.session(device.sessionToken)
       let value = Self.byte(brightness)
@@ -349,9 +390,9 @@
 
     /// Reads the controller's input every sample interval until sampling is canceled or replaced.
     ///
-    /// A read without input counts as a failure, and three failures in a row end sampling. The state
-    /// is `live` from the first sample in which a control is off its rest value, and stays `live`
-    /// while samples arrive.
+    /// A read without input counts as a failure, and three failures in a row end sampling. The
+    /// state is `live` from the first sample in which a control is off its rest value, and stays
+    /// `live` while samples arrive.
     ///
     /// - Parameters:
     ///   - selector: The controller.
@@ -366,6 +407,7 @@
           guard generation == samplingGeneration else { return }
           if let snapshot {
             liveState.update(snapshot)
+            guidedCheck.observe(snapshot)
             let next: SessionState =
               sessionState == .live || snapshot.hasControlOffRest ? .live : .receiving
             if sessionState != next { sessionState = next }
@@ -427,29 +469,29 @@
         do {
           await previousTask?.value
           if shouldStopPreviousRumble, let previousSelector {
-            _ = try? await gateway.sendControllerOutput(.stopRumble, for: previousSelector)
+            _ = try await gateway.sendControllerOutput(.stopRumble, for: previousSelector)
           }
           try Task.checkCancellation()
           let succeeded = try await body()
           try Task.checkCancellation()
-          guard let self, generation == self.outputGeneration else { return }
-          self.clearOutputOperation()
-          self.outputState = succeeded ? .succeeded(operation) : .failed(operation)
+          guard let self, generation == outputGeneration else { return }
+          clearOutputOperation()
+          outputState = succeeded ? .succeeded(operation) : .failed(operation)
           if !succeeded {
-            self.outputError = OJDLocalized.string(
+            outputError = OJDLocalized.string(
               "ui.inputTest.outputRejected"
             )
           }
         } catch is CancellationError {
-          guard let self, generation == self.outputGeneration else { return }
-          self.clearOutputOperation()
-          self.outputState = .idle
-          self.outputError = nil
+          guard let self, generation == outputGeneration else { return }
+          clearOutputOperation()
+          outputState = .idle
+          outputError = nil
         } catch {
-          guard let self, generation == self.outputGeneration else { return }
-          self.clearOutputOperation()
-          self.outputState = .failed(operation)
-          self.outputError = RuntimePresentation.userFacingError(error)
+          guard let self, generation == outputGeneration else { return }
+          clearOutputOperation()
+          outputState = .failed(operation)
+          outputError = RuntimePresentation.userFacingError(error)
         }
       }
     }
@@ -470,7 +512,8 @@
       }
     }
 
-    /// Shows that `operation` was not sent, with the reason, in the state of the latest output test.
+    /// Shows that `operation` was not sent, with the reason, in the state of the latest output
+    /// test.
     ///
     /// - Parameters:
     ///   - operation: The output test.
@@ -504,13 +547,25 @@
       outputMayRequireRumbleStop = false
       outputState = .idle
       outputError = nil
-      outputTask = Task { [gateway] in
+      let generation = outputGeneration
+      outputTask = Task { [weak self, gateway] in
         await previousTask?.value
-        if shouldStopRumble, let activeSelector {
-          _ = try? await gateway.sendControllerOutput(.stopRumble, for: activeSelector)
-        }
-        if let previewSelector {
-          _ = try? await gateway.releaseColorPreview(for: previewSelector, token: colorPreviewToken)
+        var operation = OutputOperation.rumble
+        do {
+          if shouldStopRumble, let activeSelector {
+            _ = try await gateway.sendControllerOutput(.stopRumble, for: activeSelector)
+          }
+          if let previewSelector {
+            operation = .color
+            _ = try await gateway.releaseColorPreview(
+              for: previewSelector,
+              token: colorPreviewToken
+            )
+          }
+        } catch {
+          guard let self, generation == outputGeneration else { return }
+          outputState = .failed(operation)
+          outputError = RuntimePresentation.userFacingError(error)
         }
       }
     }

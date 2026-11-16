@@ -1,37 +1,10 @@
 #!/usr/bin/env bash
-# Notarize helper for OpenJoystickDriver. Requires OJD_ENV=release.
-#
-# Human-facing entrypoint:
-#   ./Scripts/ojd release notarize <submit|status|history|log>
-#
-# Prerequisites:
-#   1. Developer ID signing (.env.release)
-#   2. NOTARIZE_APPLE_ID and NOTARIZE_PASSWORD set in .env.release
-#
-# Waiting: the script polls every 30 seconds, stops after 3 hours (a first-ever submission can
-# take hours, later ones about 5 minutes) and aborts after 5 consecutive transient poll failures.
-#
-# USAGE:
-#   ./Scripts/ojd release notarize submit
-#
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../Platform/environment.sh"
 
 subcmd="${1:-submit}"
 shift || true
-
-if [[ "$subcmd" == "-h" || "$subcmd" == "--help" || "$subcmd" == "help" ]]; then
-  cat <<'TXT'
-Usage:
-  OJD_ENV=release ./Scripts/ojd release notarize submit
-  OJD_ENV=release ./Scripts/ojd release notarize status [submission-id]
-  OJD_ENV=release ./Scripts/ojd release notarize log <submission-id>
-  OJD_ENV=release ./Scripts/ojd release notarize history
-  OJD_ENV=release ./Scripts/ojd release notarize store-credentials [profile-name]
-TXT
-  exit 0
-fi
 
 if [[ "$OJD_ENV" != "release" ]]; then
   echo "ERROR: Notarization requires OJD_ENV=release"
@@ -66,8 +39,6 @@ if [[ -z "${NOTARIZE_KEYCHAIN_PROFILE:-}" && ( -z "${NOTARIZE_APPLE_ID:-}" || -z
   exit 1
 fi
 
-# `submit` notarizes the installed app; the package routes pass the app they built and the
-# archive to upload: `notarize.sh submit <app> <zip>`.
 APP="/Applications/OpenJoystickDriver.app"
 ZIP_PATH="$PROJECT_DIR/.build/OpenJoystickDriver-notarize.zip"
 if [[ "$subcmd" == "submit" && $# -gt 0 ]]; then
@@ -82,7 +53,7 @@ readonly MAX_RETRIES=5
 
 if [[ ! -d "$APP" ]]; then
   echo "ERROR: App not found at $APP"
-  echo "Run: OJD_ENV=release ./Scripts/ojd build install release"
+  echo "Run: just install-release"
   exit 1
 fi
 
@@ -107,7 +78,7 @@ if [[ "$subcmd" == "status" ]]; then
     echo "Checking submission: $1"
     xcrun notarytool info "$1" "${AUTH_ARGS[@]}"
     echo ""
-    echo "To fetch the log: OJD_ENV=release ./Scripts/ojd release notarize log $1"
+    echo "To fetch the log: just release-notarize-log $1"
   else
     echo "Recent notarization history:"
     xcrun notarytool history "${AUTH_ARGS[@]}"
@@ -116,7 +87,7 @@ if [[ "$subcmd" == "status" ]]; then
 fi
 
 if [[ "$subcmd" == "log" ]]; then
-  [[ -n "${1:-}" ]] || die "Missing submission id (Usage: ./Scripts/ojd release notarize log <id>)"
+  [[ -n "${1:-}" ]] || die "Missing submission id (Usage: just release-notarize-log <id>)"
   echo "Fetching log for: $1"
   xcrun notarytool log "$1" "${AUTH_ARGS[@]}"
   exit 0
@@ -126,23 +97,16 @@ if [[ "$subcmd" != "submit" ]]; then
   die "Unknown notarize subcommand: $subcmd"
 fi
 
-# ---------------------------------------------------------------------------
-# Step 1: Create zip for upload
-# ---------------------------------------------------------------------------
 echo "Creating zip for notarization..."
 ditto -c -k --keepParent "$APP" "$ZIP_PATH"
 echo "  Zip: $ZIP_PATH ($(du -h "$ZIP_PATH" | cut -f1))"
 
-# ---------------------------------------------------------------------------
-# Step 2a: Submit to Apple (no --wait)
-# ---------------------------------------------------------------------------
 echo "Submitting to Apple for notarization..."
 SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
   "${AUTH_ARGS[@]}" 2>&1)
 
 echo "$SUBMIT_OUTPUT"
 
-# Parse submission ID (UUID) from output
 SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -1)
 
 if [[ -z "$SUBMISSION_ID" ]]; then
@@ -152,12 +116,8 @@ fi
 
 echo "  Submission ID: $SUBMISSION_ID"
 
-# Remove the zip after upload.
 rm -f "$ZIP_PATH"
 
-# ---------------------------------------------------------------------------
-# Step 2b: Poll for completion with timeout and retry
-# ---------------------------------------------------------------------------
 DEADLINE=$(( $(date +%s) + TIMEOUT_MINUTES * 60 ))
 CONSECUTIVE_FAILURES=0
 
@@ -173,8 +133,8 @@ while true; do
     echo "  Submission ID: $SUBMISSION_ID"
     echo ""
     echo "  Apple still has the submission queued. It may complete later."
-    echo "  Check status:  OJD_ENV=release ./Scripts/ojd release notarize status $SUBMISSION_ID"
-    echo "  View history:  OJD_ENV=release ./Scripts/ojd release notarize history"
+    echo "  Check status:  just release-notarize-status $SUBMISSION_ID"
+    echo "  View history:  just release-notarize-history"
     echo ""
     echo "  If it completes, staple manually:"
     echo "    xcrun stapler staple $APP"
@@ -183,7 +143,6 @@ while true; do
 
   REMAINING=$(( (DEADLINE - NOW) / 60 ))
 
-  # Query status, handling transient failures
   if INFO_OUTPUT=$(xcrun notarytool info "$SUBMISSION_ID" \
     "${AUTH_ARGS[@]}" 2>&1); then
     CONSECUTIVE_FAILURES=0
@@ -224,9 +183,6 @@ while true; do
   esac
 done
 
-# ---------------------------------------------------------------------------
-# Step 3: Staple the ticket to the app
-# ---------------------------------------------------------------------------
 echo "Stapling notarization ticket..."
 xcrun stapler staple "$APP"
 

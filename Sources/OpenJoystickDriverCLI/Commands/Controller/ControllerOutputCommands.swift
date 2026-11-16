@@ -139,10 +139,10 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let intensities = intensities
+      let levels = intensities
       try await sendRumble(
-        ControllerOutput.rumble(intensities, seconds: duration),
-        requested: intensities.activeMotors,
+        ControllerOutput.rumble(levels, seconds: duration),
+        requested: levels.activeMotors,
         to: controller
       )
     }
@@ -221,9 +221,8 @@ struct PlayerIndicatorArgument: ExpressibleByArgument, Equatable, Sendable {
   init?(argument: String) {
     if argument.lowercased() == "off" {
       indicator = .off
-    } else if let number = Int(argument), let indicator = PhysicalPlayerIndicator(rawValue: number)
-    {
-      self.indicator = indicator
+    } else if let number = Int(argument), let parsed = PhysicalPlayerIndicator(rawValue: number) {
+      indicator = parsed
     } else {
       return nil
     }
@@ -278,8 +277,8 @@ struct ColorArgument: ExpressibleByArgument, Equatable, Sendable {
 
   /// Parses `argument`; fails when it is not a hex color.
   init?(argument: String) {
-    guard let color = ControllerColor(hex: argument) else { return nil }
-    self.color = color
+    guard let parsed = ControllerColor(hex: argument) else { return nil }
+    color = parsed
   }
 
   /// Compares two arguments by their parsed color.

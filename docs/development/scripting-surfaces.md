@@ -9,7 +9,7 @@ Method: read the source and `wiki/Automating-OpenJoystickDriver.md` on branch `f
 Twelve actions, all for macOS 13 or later (`Intents/ProfileEntity.swift:7`). The actions reach the service through the `AutomationService` dependency (`Intents/ProfileEntity.swift:48-49`, `Intents/ControllerEntity.swift:51-52`). The wiki says the actions run in the app and do not use `ojd` (`wiki/Automating-OpenJoystickDriver.md:309`).
 
 | Action | `file:line` | Takes | Returns |
-|--------|-------------|-------|---------|
+| -------- | ------------- | ------- | --------- |
 | Get Controllers | `Intents/ControllerIntents.swift:9`, `:26` | nothing | `[ControllerEntity]` |
 | Get Battery Level | `Intents/ControllerIntents.swift:35`, `:48`, `:63` | a controller | `Int` |
 | Activate Profile | `Intents/ProfileIntents.swift:8`, `:21`, `:31` | a profile | `ProfileEntity` |
@@ -26,18 +26,18 @@ Twelve actions, all for macOS 13 or later (`Intents/ProfileEntity.swift:7`). The
 Entities the actions pass:
 
 | Entity | `file:line` | Fields |
-|--------|-------------|--------|
+| -------- | ------------- | -------- |
 | `ControllerEntity` | `Intents/ControllerEntity.swift:9` | `id`, `name`, `model`, `isModelMatch` (`:19-27`) |
 | `ProfileEntity` | `Intents/ProfileEntity.swift:8` | `id`, `name`, `model`, `isActive` (`:17-28`) |
 
-The wiki states that no action is verified live in the Shortcuts app (`wiki/Automating-OpenJoystickDriver.md:323`).
+The wiki lists which actions ran live through `shortcuts run` ("Use Shortcuts" in `wiki/Automating-OpenJoystickDriver.md`).
 
 ## The `ojd` command line
 
 `ojd` is an ArgumentParser root command (`CLI/Root/OJDCommand.swift:8`). It has 19 top-level subcommands (`CLI/Root/OJDCommand.swift:16-24`). The table lists each group, its subcommands, and the `commandName:` lines.
 
 | Group | Subcommands | `file:line` |
-|-------|-------------|-------------|
+| ------- | ------------- | ------------- |
 | `status` | none | `CLI/Commands/Status/StatusCommand.swift:12` |
 | `controller` | `list`, `show`, `speaker` (`play`, `stop`), `calibrate`, `pair`, `unpair`, `claim`, `release`, `rumble`, `player`, `light`, `watch`, `capture`, `suspend`, `resume`, `disconnect` | `CLI/Commands/Controller/ControllerCommand.swift:9`, `:47`, `:134`; `ControllerSpeakerCommands.swift:9`, `:69`, `:164`; `ControllerRemappingCommands.swift:10`, `:177`, `:264`; `ControllerClaimCommand.swift:9`, `:45`; `ControllerOutputCommands.swift:133`, `:339`, `:399`; `ControllerWatchCommand.swift:81`, `:336`; `ControllerSessionCommands.swift:54`, `:101`, `:148` |
 | `profile` | `list`, `show`, `create`, `duplicate`, `rename`, `delete`, `get`, `set`, `activate`, `deactivate`, `import`, `validate`, `export`, `edit`, `recover` | `CLI/Commands/Profile/ProfileCommand.swift:9`, `:68`, `:148`, `:193`, `:359`, `:407`, `:449`; `ProfileValueCommands.swift:155`, `:214`; `ProfileActivationCommands.swift:10`, `:89`; `ProfileFileCommands.swift:32`, `:104`, `:211`, `:313`; `ProfileRecoverCommand.swift:12` |
@@ -62,7 +62,7 @@ The `mod` group handles a package folder with a `mod.plist` manifest and `Contro
 
 The wiki names the output and prompt options as `--json` and `--no-input`, and scripts read JSON with them (`wiki/Automating-OpenJoystickDriver.md:25-35`).
 
-No command named `generate` exists under `CLI/`: `grep -rn '"generate"' Sources/OpenJoystickDriverCLI` finds nothing. The design text plans `ojd generate` (`openspec/changes/0-6-0-alpha-3/design.md`, decision D2).
+No command named `generate` exists under `CLI/`: `grep -rn '"generate"' Sources/OpenJoystickDriverCLI` finds nothing.
 
 ## The local endpoint
 
@@ -71,7 +71,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 ### Lines a client sends
 
 | Line | `file:line` | Use |
-|------|-------------|-----|
+| ------ | ------------- | ----- |
 | `Hello` | `Sources/OpenJoystickDriverService/Runtime/Endpoint/EndpointMessages.swift:25` | names `scopes`, and for a token a `tokenName` and `proof` (`:37-42`) |
 | `Subscription` | `EndpointMessages.swift:27`, `:44` | asks for the `Controllers`, `Profiles`, or `Mods` stream; `output` adds the virtual gamepad values to `Controllers` only (`:46`; `EndpointServer+Lists.swift:5`) |
 | `FeedRequest` | `EndpointMessages.swift:29`, `:48` | asks for a virtual gamepad with persona `as` |
@@ -85,7 +85,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 ### Lines the endpoint sends
 
 | Line | `file:line` | Content |
-|------|-------------|---------|
+| ------ | ------------- | --------- |
 | `Challenge` | `EndpointMessages.swift:11`, `:13` | 32-byte nonce |
 | `Welcome` | `EndpointMessages.swift:56-60` | service version, granted scopes |
 | `ADDED`, `MODIFIED`, `DELETED` | `wiki/Automating-OpenJoystickDriver.md:75` | the watch lines of `ojd controller watch --all --json` |
@@ -101,11 +101,11 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 ### Scopes, streams, and limits
 
 | Item | `file:line` | Value |
-|------|-------------|-------|
+| ------ | ------------- | ------- |
 | Scope `Read` | `Sources/OpenJoystickDriverKit/ApplicationService/Payloads/AccessPayloads.swift:7` | receive controller events |
 | Scope `Control` | `AccessPayloads.swift:9`; checked at `EndpointServer+Handshake.swift:62` | drive a virtual gamepad |
 | Stream | `EndpointServer+Handshake.swift:82`; `EndpointServer+Lists.swift:5`, `:19` | `Controllers`, `Profiles`, and `Mods`; the last two send the list on change |
-| Personas | `wiki/Automating-OpenJoystickDriver.md:214` | `Generic` and `SDLCompatible` |
+| Personas | `docs/sdk/endpoint.md`, `FeedRequest` | `Generic`, `SDLCompatible`, and `GameControllerCompatible` for a client with `Control`; any other id is refused with `E1003` |
 | Token with origins | `AccessTokenGrant.swift:202` (`Sources/OpenJoystickDriverService/Runtime/Endpoint/`) | cannot hold `Control` |
 | Connections | `wiki/Automating-OpenJoystickDriver.md:193` | 8 on the socket, 8 on the WebSocket |
 | Handshake time | `wiki/Automating-OpenJoystickDriver.md:74` | `Hello` within 5 seconds |
@@ -123,7 +123,20 @@ Each item rests on the tables above. A surface that is not listed for an item do
 7. Receive an event inside the service. The endpoint streams `Controllers` to an outside program, and no surface takes a handler that the service runs.
 8. Subscribe to anything but `Controllers`, `Profiles`, and `Mods` (`EndpointServer+Handshake.swift:82`). No stream carries logs, bindings, or macros.
 9. Use the endpoint without a grant by the user. The program needs `ojd access grant` first, and a token with origins cannot hold `Control` (`AccessTokenGrant.swift:202`).
-10. Choose a virtual gamepad persona beyond `Generic` and `SDLCompatible` through the endpoint (`wiki/Automating-OpenJoystickDriver.md:214`).
+10. Choose a virtual gamepad persona that the service does not publish. A client with `Control` may choose each persona the service publishes (see "Tried against the installed build").
 11. Call an intent from a program without Shortcuts. The wiki points to `shortcuts run` and `shortcuts://` links (`wiki/Automating-OpenJoystickDriver.md:320-321`).
 
 Gaps for a mod author: 11, with item 6 narrowed to the speaker.
+
+## Tried against the installed build
+
+The endpoint surfaces below ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token that held `Read` and `Control`. Before and after the run, the endpoint was off, with no grant or token. The scripts used a scratch profile and a scratch mod package, both removed afterwards. No controller was connected during the run (`ojd controller list` printed `No controllers are connected.`).
+
+| Surface | Result |
+| --- | --- |
+| `ProfileRequest` | `Activate`, `Set` (`name`), and `Deactivate` each answered a `ProfileResult`. An unknown profile got `E2012` and the connection stayed open. A `Set` without `value` got `E1003`. A `Read`-only client got `E1002`. |
+| `ModList` | `Mods` was empty, listed `scratch-trial` after `ojd mod install` on the same connection, and was empty after `ojd mod remove`. A `Control`-only client got `E1002`. |
+| `OutputRequest` | The refusal works; delivery is not shown. With the 8BitDo Ultimate 2C served over Bluetooth LE by `HIDDescriptor`, `Rumble`, `Player` and `Light` each got `E2013` ("has no rumble motor", "no player indicator lights", "no programmable light color"), the code and text `ojd controller rumble`, `player` and `light` print. An unknown controller got `E2012`, and an out-of-range `duration` got `E1003`. With the 2C on its receiver as `2DC8:310A`, `Rumble` and `Player` were delivered and `Light` got `E2013` (`evidence/scripting/output_request-310A.txt`). |
+| `Profiles` and `Mods` subscriptions | Each sent the list at once and again after each change made through `ojd`. `output` on `Profiles` and an unknown stream got `E1003`. |
+| Personas | `Generic`, `SDLCompatible` and `GameControllerCompatible` each answered a `FeedSession`, and a frame and a `Drain` answered `Drained`. `DualShock` got `E1003` with the accepted personas, and a `Read`-only client got `E1002`. |
+| App Intents | Through shortcuts built in the Shortcuts app and run with `shortcuts run` (`evidence/scripting/shortcuts.sh`, `shortcuts.txt`): List, Install, and Remove Mod Package each exit 0 and agree with `ojd mod list`; Install takes its folder as a `file://` URL, and a plain path fails with "Invalid URL". Set Controller Light refuses the 2C with the text `ojd controller light` prints. Rumble Controller and Set Player Indicator, fed the first item of Get Controllers, each exit 0 on the 2C; the run has no capture of the motors or the indicator. Set Profile Value renames the chosen profile to its input, and `ojd profile list` shows the new name. |

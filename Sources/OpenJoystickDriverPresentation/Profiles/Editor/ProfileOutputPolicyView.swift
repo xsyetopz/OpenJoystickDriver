@@ -39,6 +39,7 @@
             )
           ).tag(RemappingVirtualGamepadPolicy.passthrough)
         }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.virtualOutput"))
+          .help(OJDLocalized.string("ui.profiles.virtualOutputHelp"))
         Toggle(
           OJDLocalized.string(
             "ui.profiles.exclusiveInput"
@@ -55,11 +56,13 @@
             }
           )
         ).disabled(policy.virtualGamepad != .disabled)
+          .help(OJDLocalized.string("ui.profiles.exclusiveInputHelp"))
         if policy.virtualGamepad != .disabled {
           Text(
             OJDLocalized.string(
               didResetExclusiveInput
-                ? "ui.profiles.virtualOutputResetsExclusive" : "ui.profiles.exclusiveInputUnavailable"
+                ? "ui.profiles.virtualOutputResetsExclusive"
+                : "ui.profiles.exclusiveInputUnavailable"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)

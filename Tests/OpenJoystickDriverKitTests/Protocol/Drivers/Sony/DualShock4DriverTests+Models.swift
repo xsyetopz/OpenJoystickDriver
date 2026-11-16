@@ -66,7 +66,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func adapterWaitsForAPadBeforeOutput() {
+  func adapterWaitsForPadBeforeOutput() {
     #expect(
       DualShock4Driver(model: .wirelessAdapter).sessionPlan.requiresInputConnectionBeforeOutput
     )
@@ -87,7 +87,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func adapterDisconnectsAfterHalfASecondOfNoPadReports() throws {
+  func adapterDisconnectsAfterHalfSecondOfNoPadReports() throws {
     let driver = DualShock4Driver(model: .wirelessAdapter)
     _ = try driver.parse(report: makeDS4Report(), receivedAt: Self.at(0))
     #expect(driver.consumeInputConnectionStateChange() == .connected)
@@ -105,7 +105,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func standardPadIgnoresTheAdapterStatusBit() throws {
+  func standardPadIgnoresAdapterStatusBit() throws {
     let driver = DualShock4Driver()
     let report = Self.noPadReport(buttons0: 0x28)
     #expect(try driver.parse(report: report, receivedAt: Self.at(0)) != nil)
@@ -113,7 +113,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func adapterReadsUSBCalibrationInTheBluetoothGyroOrder() {
+  func adapterReadsUSBCalibrationInBluetoothGyroOrder() {
     let reply = Self.groupedGyroCalibration()
     let adapter = DualShock4Driver(model: .wirelessAdapter)
     #expect(adapter.consumeFeatureReply(reply, request: Self.calibrationRequest))

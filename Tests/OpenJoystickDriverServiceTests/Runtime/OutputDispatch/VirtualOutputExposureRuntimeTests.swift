@@ -50,7 +50,7 @@ struct VirtualOutputExposureRuntimeTests {
   }
 
   @Test
-  func automaticSelectedProfileUsesTheSameEligibilityGate() async {
+  func automaticSelectedProfileUsesSameEligibilityGate() async {
     let state = ExposureState()
     state.descriptions = [identifier: gipDescription()]
     let backend = ExposureBackendProbe()

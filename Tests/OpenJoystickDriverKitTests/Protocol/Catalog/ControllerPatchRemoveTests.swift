@@ -3,8 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The `remove` list of a `ControllerPatch`: dotted key paths applied before `patch`. The tests
-/// use fixture records and documents and never load the bundled catalog.
+// The tests use fixture records and documents and never load the bundled catalog.
 struct ControllerPatchRemoveTests {
   private static let identity = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
 
@@ -41,27 +40,27 @@ struct ControllerPatchRemoveTests {
 
   private static let record = #"""
     {"vendorID": 4660, "productID": 43981,
-     "usb": {"interface": 0, "configuration": "SetConfiguration1BeforeClaim"},
-     "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
-     "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
+      "usb": {"interface": 0, "configuration": "SetConfiguration1BeforeClaim"},
+    "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
+    "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
     """#
 
   @Test
-  func aRemovedKeyIsGone() throws {
+  func removedKeyGone() throws {
     let patch = try Self.parse(remove: ["usb.configuration"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
     let expected = try Self.json(
       #"""
       {"vendorID": 4660, "productID": 43981, "usb": {"interface": 0},
-       "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
-       "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
+        "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
+      "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
       """#
     )
     #expect(result == expected)
   }
 
   @Test
-  func aRemovedSectionIsGone() throws {
+  func removedSectionGone() throws {
     let patch = try Self.parse(remove: ["input"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
     #expect(result["input"] == nil)
@@ -69,14 +68,14 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aNestedDottedPathRemovesOnlyItsKey() throws {
+  func nestedDottedPathRemovesOnlyItsKey() throws {
     let patch = try Self.parse(remove: ["input.hidUsageMap.usages"])
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
     #expect(result["input"] == (try Self.json(#"{"hidUsageMap": {"reportID": 1}}"#)))
   }
 
   @Test
-  func aPathTheRecordLacksChangesNothing() throws {
+  func pathRecordLacksChangesNothing() throws {
     let record = try Self.json(Self.record)
     let patch = try Self.parse(remove: ["bluetoothLE.name", "usb.interface.deeper", "server"])
     #expect(ControllerPatchMerge.apply(patch, to: record) == record)
@@ -91,14 +90,14 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aPatchThatOnlyRemovesIsAValidFile() throws {
+  func patchOnlyRemovesValidFile() throws {
     let patch = try Self.parse(remove: ["tuning.stickDeadzone"])
     #expect(patch.remove == [["tuning", "stickDeadzone"]])
     #expect(patch.body.members?.isEmpty == true)
   }
 
   @Test
-  func aPathOutsideTheRecordSchemaIsRefusedByName() throws {
+  func pathOutsideRecordSchemaRefusedByName() throws {
     let paths = [
       "bogus", "bogus.key", "tuning.bogus", "usb..interface", ".usb", "usb.", "",
       "apiVersion", "vendorID",
@@ -111,7 +110,7 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func aMalformedRemoveListIsRefused() throws {
+  func malformedRemoveListRefused() throws {
     let duplicate = try #require(Self.refusal(Self.document(remove: ["usb", "usb"])))
     #expect(duplicate.description == "remove path usb is listed twice")
     #expect(Self.refusal(Self.document(remove: [])) != nil)
@@ -124,7 +123,7 @@ struct ControllerPatchRemoveTests {
   }
 
   @Test
-  func anAllPatchRefusesARemoveOutsideTuningKeys() throws {
+  func allPatchRefusesRemoveOutsideTuningKeys() throws {
     for path in ["usb", "tuning", "usb.interface"] {
       let problem = try #require(
         Self.refusal(Self.document(remove: [path], selector: .all)),
@@ -151,7 +150,8 @@ struct ControllerPatchRemoveTests {
     }
     #expect(
       try message(["usb", "usb"])
-        == "a.patch.plist, remove: The path usb is listed twice. Fix: Delete one of the two entries."
+        == "a.patch.plist, remove: The path usb is listed twice. "
+        + "Fix: Delete one of the two entries."
     )
     #expect(
       try message(["bogus"])
@@ -180,13 +180,14 @@ struct ControllerPatchRemoveTests {
     }
     #expect(
       try message(["vendorID": 1])
-        == "a.patch.plist, patch: Patch must hold modes, usb, bluetoothLE, capabilities, server, "
-        + "route, input, or tuning. Fix: Keep only those sections and give at least one of them."
+        == "a.patch.plist, patch: Patch must hold modes, name, placeholderSerial, usb, "
+        + "bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning. "
+        + "Fix: Keep only those sections and give at least one of them."
     )
     #expect(
       try message(["modes": [["protocol": ["family": "XInput"]]]])
         == "a.patch.plist, patch.modes: Each entry must hold an id and only id, protocol, match, "
-        + "interface, session, or idle. Fix: Give each entry an id and delete any other key."
+        + "interface, session, idle, or input. Fix: Give each entry an id and delete any other key."
     )
   }
 }

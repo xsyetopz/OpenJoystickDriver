@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -8,7 +9,7 @@ import Testing
 struct MainWindowNavigationTests {
   @Test
   @MainActor
-  func theDockIconShowsWhileShowInDockIsOnOrAWindowIsOpen() {
+  func dockIconShowsWhileShowInDockIsOnOrWindowIsOpen() {
     var requestedPolicies: [NSApplication.ActivationPolicy] = []
     let dock = DockIconController(
       setActivationPolicy: { policy in
@@ -41,7 +42,7 @@ struct MainWindowNavigationTests {
 
   @Test(arguments: [DockIconController.Window.workbench, .settings, .inputTest])
   @MainActor
-  func anActiveAppThatTurnsRegularHandsActivationToTheDockAndTakesItBack(
+  func activeAppThatTurnsRegularHandsActivationToDockAndTakesItBack(
     _ window: DockIconController.Window
   ) {
     let fake = FakeActivation()
@@ -66,7 +67,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func showInDockTurningOnWhileTheAppIsActiveHandsActivationToTheDock() {
+  func showInDockTurningOnWhileAppIsActiveHandsActivationToDock() {
     let fake = FakeActivation()
     fake.isActive = true
     let dock = DockIconController(setActivationPolicy: { _ in true }, activation: fake.activation)
@@ -77,7 +78,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func anInactiveAppThatTurnsRegularHandsNothingOff() {
+  func inactiveAppThatTurnsRegularHandsNothingOff() {
     let fake = FakeActivation()
     let dock = DockIconController(setActivationPolicy: { _ in true }, activation: fake.activation)
 
@@ -88,7 +89,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func turningAccessoryBeforeTheResignEndsTheHandOff() {
+  func turningAccessoryBeforeResignEndsHandOff() {
     let fake = FakeActivation()
     fake.isActive = true
     let dock = DockIconController(setActivationPolicy: { _ in true }, activation: fake.activation)
@@ -107,7 +108,7 @@ struct MainWindowNavigationTests {
 
   @Test(arguments: [DockIconController.DockActivation.notRunning, .refused])
   @MainActor
-  func aDockThatDoesNotActivateEndsTheHandOff(_ outcome: DockIconController.DockActivation) {
+  func dockThatDoesNotActivateEndsHandOff(_ outcome: DockIconController.DockActivation) {
     let fake = FakeActivation()
     fake.isActive = true
     fake.dockActivation = outcome
@@ -121,7 +122,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func aRefusedPolicyChangeIsRetriedOnTheNextChange() {
+  func refusedPolicyChangeIsRetriedOnNextChange() {
     var shouldSucceed = false
     var requestedPolicies: [NSApplication.ActivationPolicy] = []
     let fake = FakeActivation()
@@ -146,7 +147,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func menuProfileMutationIsRefusedWhileTheEditorHoldsOneAndRunsOnceReleased() async {
+  func menuProfileMutationIsRefusedWhileEditorHoldsOneAndRunsOnceReleased() async {
     let navigation = MainWindowNavigationModel(
       persistence: UserDefaultsMainWindowAreaPersistence(
         defaults: UserDefaults(suiteName: "MainWindowNavigationTests.\(UUID().uuidString)")!
@@ -187,7 +188,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func actionWaitsForTheDiscardAnswerAndRunsAfterDiscard() {
+  func actionWaitsForDiscardAnswerAndRunsAfterDiscard() {
     let navigation = Self.dirtyNavigation()
     var runs = 0
     #expect(!navigation.perform(in: .library) { runs += 1 })
@@ -200,7 +201,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func actionIsDroppedWhenTheDiscardIsCancelled() {
+  func actionIsDroppedWhenDiscardIsCancelled() {
     let navigation = Self.dirtyNavigation()
     var runs = 0
     navigation.perform(in: .library) { runs += 1 }
@@ -213,7 +214,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func actionRunsAtOnceInTheSelectedAreaAndIsRefusedDuringAMutation() {
+  func actionRunsAtOnceInSelectedAreaAndIsRefusedDuringMutation() {
     let navigation = Self.dirtyNavigation()
     var runs = 0
     #expect(navigation.perform(in: .profiles) { runs += 1 })
@@ -226,13 +227,23 @@ struct MainWindowNavigationTests {
   }
 
   @Test
+  @MainActor
+  func areaChoiceDuringMutationShowsRefusal() {
+    let navigation = Self.dirtyNavigation()
+    let request = RuntimeMutationRequest(operation: .create(profileID: UUID()))
+    #expect(navigation.beginProfilesEditorMutation(request))
+    #expect(!navigation.requestArea(.library))
+    #expect(navigation.isMutationRefusalPresented)
+  }
+
+  @Test
   func mainWindowUsesStableContentSizingAcrossAreas() {
     #expect(MainWindowSizingPolicy.defaultContentSize == NSSize(width: 1_040, height: 700))
     #expect(MainWindowSizingPolicy.minimumContentHeight == 560)
   }
 
   @Test
-  func restoredAndLiveResizeFramesCannotCrossTheContentMinimum() {
+  func restoredAndLiveResizeFramesCannotCrossContentMinimum() {
     let minimum = NSSize(width: 816, height: 604)
     let restored = WindowFramePolicy.fittingFrame(
       NSRect(x: 200, y: 300, width: 640, height: 420),
@@ -250,7 +261,7 @@ struct MainWindowNavigationTests {
   }
 
   @Test
-  func restoredWindowFramesAreClampedToTheUsableScreen() {
+  func restoredWindowFramesAreClampedToUsableScreen() {
     let screen = NSRect(x: 0, y: 0, width: 1_440, height: 900)
     #expect(
       WindowFramePolicy.clampedFrame(NSRect(x: 1_300, y: -100, width: 900, height: 620), to: screen)
@@ -267,7 +278,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func restoresTheLastAcceptedArea() {
+  func restoresLastAcceptedArea() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -317,7 +328,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func canceledDirtySelectionLeavesThePersistedAreaUnchanged() {
+  func canceledDirtySelectionLeavesPersistedAreaUnchanged() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -340,7 +351,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func activeProfileMutationKeepsTheProfilesAreaMountedUntilResolution() {
+  func activeProfileMutationKeepsProfilesAreaMountedUntilResolution() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -377,7 +388,7 @@ struct MainWindowNavigationTests {
 
   @Test
   @MainActor
-  func overlappingProfileMutationCannotReleaseTheFirstNavigationOwner() {
+  func overlappingProfileMutationCannotReleaseFirstNavigationOwner() {
     let suiteName = "MainWindowNavigationTests.\(UUID().uuidString)"
     guard let defaults = UserDefaults(suiteName: suiteName) else {
       #expect(Bool(false), "Could not create isolated UserDefaults suite")
@@ -476,6 +487,31 @@ struct MainWindowNavigationTests {
     #expect(navigation.pendingArea == .library)
     #expect(navigation.isDiscardConfirmationPresented)
     #expect(transition.isDirty)
+  }
+
+  /// The setup steps replace the area, and with it the area's alerts and sheets, so an action
+  /// there must bring the area back or the action shows nothing.
+  @Test
+  @MainActor
+  func areaActionAndAreaChoiceHideSetupSteps() {
+    let navigation = MainWindowNavigationModel(
+      persistence: UserDefaultsMainWindowAreaPersistence(
+        defaults: UserDefaults(suiteName: "MainWindowNavigationTests.\(UUID().uuidString)")!
+      )
+    )
+    navigation.updateSetupSteps(loaded: true, openSteps: 2)
+    #expect(navigation.setupSteps.isShown)
+    navigation.perform(in: navigation.selectedArea) {}
+    #expect(!navigation.setupSteps.isShown)
+
+    let chooser = MainWindowNavigationModel(
+      persistence: UserDefaultsMainWindowAreaPersistence(
+        defaults: UserDefaults(suiteName: "MainWindowNavigationTests.\(UUID().uuidString)")!
+      )
+    )
+    chooser.updateSetupSteps(loaded: true, openSteps: 1)
+    chooser.requestArea(chooser.selectedArea)
+    #expect(!chooser.setupSteps.isShown)
   }
 }
 

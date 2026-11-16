@@ -5,7 +5,7 @@ import Testing
 
 struct ApplicationServiceLogServiceTests {
   @Test
-  func missingLogReturnsAnEmptyTypedSnapshot() throws {
+  func missingLogReturnsEmptyTypedSnapshot() throws {
     let url = temporaryURL()
     let snapshot = try ApplicationServiceLogService.tail(
       url: url,
@@ -22,7 +22,7 @@ struct ApplicationServiceLogServiceTests {
   }
 
   @Test
-  func tailReturnsOnlyTheRequestedFinalLines() throws {
+  func tailReturnsOnlyRequestedFinalLines() throws {
     let url = temporaryURL()
     defer { try? FileManager.default.removeItem(at: url) }
     try Data("one\ntwo\nthree\nfour\n".utf8).write(to: url)
@@ -40,7 +40,7 @@ struct ApplicationServiceLogServiceTests {
   }
 
   @Test
-  func byteLimitDropsTheLeadingPartialLine() throws {
+  func byteLimitDropsLeadingPartialLine() throws {
     let url = temporaryURL()
     defer { try? FileManager.default.removeItem(at: url) }
     try Data("discard-this-line\nkeep-one\nkeep-two\n".utf8).write(to: url)
@@ -66,7 +66,7 @@ struct ApplicationServiceLogServiceTests {
 
 extension ApplicationServiceLogServiceTests {
   @Test
-  func aSecondProcessCannotClaimTheSessionLogsWhileTheFirstHoldsThem() throws {
+  func secondProcessCannotClaimSessionLogsWhileFirstHoldsThem() throws {
     let directory = temporaryURL()
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }

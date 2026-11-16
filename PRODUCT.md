@@ -28,7 +28,7 @@ connected controller works in the user's game, and when it does not, the app say
 
 ## Positioning
 
-Open-source (MIT) driver that covers controllers macOS lacks, with a catalog of controller records
+Open-source (MPL-2.0) driver that covers controllers macOS lacks, with a catalog of controller records
 (about 700 bundled), user-installable records and mods, remapping profiles, and a CLI with the same
 actions as the GUI.
 
@@ -42,7 +42,7 @@ Settings live in a separate Settings window. The status item gives quick actions
 
 ## Capabilities and Constraints
 
-- Every GUI action has a CLI counterpart and the reverse (coverage matrix in the openspec design).
+- Every GUI action has a CLI counterpart and the reverse.
 - 22 locales; every user-facing string is a localization key. Right-to-left (Arabic) is supported.
 - Unknown, missing or not-applicable values show a single hyphen; capabilities a controller cannot
   have (lighting, motion) are hidden rather than shown as unavailable.

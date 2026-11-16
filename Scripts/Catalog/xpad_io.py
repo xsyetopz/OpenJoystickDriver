@@ -1,5 +1,3 @@
-"""The JSON text the catalog generator writes."""
-
 from __future__ import annotations
 
 import json

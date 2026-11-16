@@ -18,14 +18,14 @@ struct PersonaControlMappingTests {
   ]
 
   @Test
-  func theClassicSteamControllerRightPadIsItsRightStick() {
+  func classicSteamControllerRightPadIsItsRightStick() {
     #expect(Dispatcher.rightPadIsRightStick(Self.steamControllerWired))
     let pad = Dispatcher.virtualControl(.rightTrackpadClick, rightPadIsRightStick: true)
     #expect(Dispatcher.buttonBit(for: pad) == 7)
   }
 
   @Test
-  func aDeckAndATritonKeepTheirRealRightStickClick() {
+  func deckAndTritonKeepTheirRealRightStickClick() {
     for identifier in [Self.steamDeck, Self.steamTriton] {
       #expect(!Dispatcher.rightPadIsRightStick(identifier))
       let pad = Dispatcher.virtualControl(.rightTrackpadClick, rightPadIsRightStick: false)
@@ -36,7 +36,7 @@ struct PersonaControlMappingTests {
   }
 
   @Test
-  func reportMappingAppliesTheRightPadRule() {
+  func reportMappingAppliesRightPadRule() {
     let input = ControllerState(pressed: [.rightTrackpadClick])
     func buttons(rightPadIsRightStick: Bool) -> UInt32 {
       var state = VirtualGamepadState()
@@ -53,8 +53,8 @@ struct PersonaControlMappingTests {
   }
 
   @Test(arguments: [VirtualHIDProfileID.generic, .sdlCompatible])
-  func noPersonaCarriesAnUncarriedControl(_ id: VirtualHIDProfileID) throws {
-    let profile = try id.makeProfile()
+  func noPersonaCarriesUncarriedControl(_ id: VirtualHIDProfileID) {
+    let profile = id.makeProfile()
     let neutral = profile.inputReport(for: .neutral)
     for control in Self.uncarried {
       #expect(Dispatcher.buttonBit(for: control) == nil)
@@ -63,17 +63,17 @@ struct PersonaControlMappingTests {
   }
 
   @Test
-  func captureIsCarriedByTheGenericPersonaOnly() throws {
+  func captureCarriedByGenericPersonaOnly() {
     let capture = ControllerState(pressed: [.capture])
-    let generic = try VirtualHIDProfileID.generic.makeProfile()
+    let generic = VirtualHIDProfileID.generic.makeProfile()
     #expect(generic.inputReport(for: capture) != generic.inputReport(for: .neutral))
-    let sdl = try VirtualHIDProfileID.sdlCompatible.makeProfile()
+    let sdl = VirtualHIDProfileID.sdlCompatible.makeProfile()
     #expect(sdl.inputReport(for: capture) == sdl.inputReport(for: .neutral))
   }
 
   /// The rule reads the resolved record: a record or patch that changes the capability changes it.
   @Test
-  func theRuleFollowsTheRecordsCapabilities() throws {
+  func ruleFollowsRecordsCapabilities() throws {
     func record(_ identifier: LogicalControllerID) throws -> DeviceRuntimeProfile {
       try #require(DeviceCatalog.current.withLock { $0 }.record(for: identifier.model))
     }
@@ -106,7 +106,7 @@ struct PersonaControlMappingTests {
   /// The passthrough reads the catalog record once per update, however many buttons are held, and
   /// maps the held pad click by that one answer.
   @Test(arguments: [true, false])
-  func passthroughLooksTheRecordUpOncePerUpdate(padIsRightStick: Bool) throws {
+  func passthroughLooksRecordUpOncePerUpdate(padIsRightStick: Bool) {
     final class Lookups: @unchecked Sendable { var count = 0 }
     let lookups = Lookups()
     let profile = RemappingProfile(

@@ -5,8 +5,8 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The detail of a connected device that OJD does not serve: the reason, the next step, and the
-/// Draft Record action for a HID pad.
+/// The detail of a connected device that OJD does not serve: its state and the Draft Record
+/// action for a HID pad.
 struct UnservedDeviceDetailTests {
   private static let gamepad = PhysicalInterfaceSignature(
     interfaceClass: 3,
@@ -55,7 +55,7 @@ struct UnservedDeviceDetailTests {
   }
 
   @Test
-  func theDetailOffersDraftRecordOnlyForAHIDPad() {
+  func detailOffersDraftRecordOnlyForHIDPad() {
     let pad = RuntimeUnservedDevice(
       Self.unbound(.descriptorContractMismatch, backend: .hid, interfaces: [Self.gamepad])
     )
@@ -66,7 +66,7 @@ struct UnservedDeviceDetailTests {
   }
 
   @Test
-  func theDraftIsTheOneRecordDraftBuilds() throws {
+  func draftOneRecordDraftBuilds() throws {
     let model = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
     let pad = PhysicalDevice(vendorID: 0x1234, productID: 0x5678, interfaces: [Self.gamepad])
     let draft = try #require(ControllerRecordDrafting.unservedDraft(model: model) { _, _ in pad })
@@ -76,7 +76,7 @@ struct UnservedDeviceDetailTests {
 
   @Test
   @MainActor
-  func draftRecordAsksWhereToSaveTheDraft() {
+  func draftRecordAsksWhereToSaveDraft() {
     let model = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
     let pad = PhysicalDevice(vendorID: 0x1234, productID: 0x5678, interfaces: [Self.gamepad])
     let actions = ControllerDetailActions()
@@ -87,7 +87,7 @@ struct UnservedDeviceDetailTests {
 
   @Test
   @MainActor
-  func draftRecordFailureBecomesTheNotice() {
+  func draftRecordFailureBecomesNotice() {
     let model = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
     let actions = ControllerDetailActions()
     actions.draftUnserved(model: model) { _, _ in nil }
@@ -101,7 +101,7 @@ struct UnservedDeviceDetailTests {
 
   @Test
   @MainActor
-  func selectingAnUnservedDeviceReplacesTheSelectedController() async {
+  func selectingUnservedDeviceReplacesSelectedController() async {
     let device = testPad(sessionToken: "unserved-select")
     let unserved = Self.unbound(.noProtocolMatch, backend: .rawUSB)
     let gateway = GatewayStub(

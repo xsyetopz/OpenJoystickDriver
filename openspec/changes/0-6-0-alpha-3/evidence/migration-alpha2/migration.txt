@@ -1,0 +1,27 @@
+Task 19.2: the alpha.3 build started over alpha.2 data on the maintainer's Mac, 2026-11-13.
+
+Data: a fresh Application Support/OpenJoystickDriver folder holding the alpha.2 files
+Settings.json (v1alpha2, interface level Advanced), AccessGrants.json, PortKeyInstallation.key, and
+VirtualDevices/{054c-0268,1532-0a15,3537-1010}.json. The maintainer's own folder was set aside and
+restored after the run.
+
+First start, build 754228301 (app started hidden, OJD_HIDDEN=1):
+
+Files after the start:
+  AccessGrants.plist                     apiVersion openjoystickdriver/v1alpha3
+  Settings.plist                         apiVersion openjoystickdriver/v1alpha3, interfaceLevel Advanced
+  VirtualDevices/054c-0268.plist         apiVersion openjoystickdriver/v1alpha3
+  VirtualDevices/1532-0a15.plist         apiVersion openjoystickdriver/v1alpha3
+  VirtualDevices/3537-1010.plist         apiVersion openjoystickdriver/v1alpha3
+  PortKeyInstallation.key                unchanged
+  Migrated/AccessGrants.json             byte-identical to the alpha.2 file (cmp)
+  Migrated/Settings.json                 byte-identical to the alpha.2 file (cmp)
+  Migrated/VirtualDevices/*.json         byte-identical to the alpha.2 files (cmp)
+
+The Activity log listed one "[Migrate] Migrated ..." line per file. An Accessibility read of every
+area's text found 0 "E5001" and 0 "unsupportedAPIVersion".
+
+Captures, taken off screen with screencapture -l:
+  controllers.png  build a8b9256d8. A capture from 754228301 showed the Profiles detail under
+                   Controllers; a8b9256d8 fixes that.
+  profiles.png, library.png, access.png, activity.png  build 754228301

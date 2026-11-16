@@ -38,7 +38,7 @@ struct UpdateCheckerTests {
   }
 
   @Test("a tester build is offered to the prerelease channel and ordered after its release")
-  func testerBuildIsOfferedAfterTheReleaseBeforeIt() async throws {
+  func testerBuildOfferedAfterReleaseBeforeIt() async throws {
     let checker = try Self.checker(path: "/tester-tags")
 
     let offered = await checker.check(currentVersion: "0.6.0-alpha.2", includePrereleases: true)
@@ -65,7 +65,7 @@ struct UpdateCheckerTests {
   }
 
   @Test("a tester build is offered the release it leads to, a stable one included")
-  func testerBuildIsOfferedTheReleaseItLeadsTo() async throws {
+  func testerBuildOfferedReleaseItLeadsTo() async throws {
     let checker = try Self.checker(path: "/tester-then-release")
 
     let prerelease = await checker.check(
@@ -182,6 +182,21 @@ struct UpdateCheckerTests {
     #expect(failure.reason == .noValidTags)
   }
 
+  @Test("only prereleases published is a state of the stable channel, not a failure")
+  func onlyPrereleasesPublishedNotFailure() async throws {
+    let checker = try Self.checker(path: "/prerelease-only-tags")
+
+    let stable = await checker.check(currentVersion: "0.5.0-alpha.1")
+    #expect(stable == .onlyPrereleases)
+
+    let included = await checker.check(currentVersion: "0.5.0-alpha.1", includePrereleases: true)
+    guard case .available(let info) = included else {
+      Issue.record("Expected available update, got \(included)")
+      return
+    }
+    #expect(info.tagName == "v0.6.0-beta.1")
+  }
+
   @Test("cancelling a check cancels the in-flight request", .timeLimit(.minutes(1)))
   func cancellingCheckCancelsInFlightRequest() async throws {
     var started = UpdateURLProtocolStub.stalledRequests.stream.makeAsyncIterator()
@@ -230,7 +245,7 @@ private func failureDescription<Success>(of result: Result<Success, any Error>) 
 }
 
 private final class UpdateURLProtocolStub: URLProtocol, @unchecked Sendable {
-  override static func canInit(with request: URLRequest) -> Bool { true }
+  override static func canInit(with _: URLRequest) -> Bool { true }
   override static func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
   /// Yields once each time a `/stalled` request starts loading; that request never finishes.
@@ -294,6 +309,8 @@ private final class UpdateURLProtocolStub: URLProtocol, @unchecked Sendable {
         200, [:],
         tags("0.5.0", "0.5.1", "0.6.0-alpha.2", "0.6.0-alpha.2.tester.2", "0.6.0-alpha.3")
       )
+    case ("/prerelease-only-tags", _):
+      return (200, [:], tags("v0.5.0-alpha.4", "latest", "v0.6.0-beta.1"))
     case ("/invalid-tags", _): return (200, [:], tags("latest", "v01.2.3"))
     case ("/paged-tags", nil):
       return (

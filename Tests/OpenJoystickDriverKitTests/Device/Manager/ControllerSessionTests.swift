@@ -58,7 +58,7 @@ private final class AbsoluteStickParser: PhysicalProtocolDriver {
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
   /// Each report carries the full right stick; report 1 pushes it right, any other centers it.
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     ControllerEvent(data.first == 1 ? [.rightStick(x: 1, y: 0)] : [], at: receivedAt.nanoseconds)
   }
 }
@@ -66,7 +66,7 @@ private final class AbsoluteStickParser: PhysicalProtocolDriver {
 @Suite(.timeLimit(.minutes(2)))
 struct ControllerSessionTests {
   @Test
-  func absoluteSnapshotsCenterTheStickWithoutAReleaseDelta() async {
+  func absoluteSnapshotsCenterStickWithoutReleaseDelta() async {
     let output = ControllerSessionOutputProbe()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 1, productID: 2),
@@ -277,6 +277,41 @@ struct ControllerSessionTests {
 
     #expect(await manager.connectedDeviceDescriptions().count == 1)
     #expect(await manager.activeLogicalControllerIDs().isEmpty)
+    await manager.stop()
+  }
+
+  @Test
+  func suspendClosesControllerHIDHandlesAndResumeReopensThem() async throws {
+    let backend = ClaimRecordingHIDAccessBackend()
+    let manager = DeviceManager(
+      dispatcher: ControllerSessionOutputProbe(),
+      installationKey: testPortKeyInstallationKey,
+      hidManager: HIDManager(backend: backend)
+    )
+    await manager.handleHIDEvent(
+      .connected(
+        connection: HIDDeviceConnection(
+          physicalDevice: PhysicalDevice(
+            vendorID: 0x054C,
+            productID: 0x09CC,
+            productName: "Controller",
+            transportProperty: "USB",
+            physicalLocationIdentifier: 76,
+            interfaces: [hostHIDInterface(.usb)]
+          ),
+          routingAddress: .ioKit(locationID: 76, interfaceNumber: nil),
+        ),
+        ownership: .exclusive
+      )
+    )
+    await backend.openHandle(at: 76)
+    let device = try #require(await manager.connectedDeviceDescriptions().first)
+
+    #expect(await manager.suspendController(.session(device.sessionToken)).failure == nil)
+    #expect(!(await backend.hasOpenHandle(at: 76)))
+
+    #expect(await manager.resumeController(.session(device.sessionToken)).failure == nil)
+    #expect(await backend.hasOpenHandle(at: 76))
     await manager.stop()
   }
 

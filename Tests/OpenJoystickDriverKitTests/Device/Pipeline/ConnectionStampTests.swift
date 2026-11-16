@@ -18,7 +18,7 @@ struct ConnectionStampTests {
   )
 
   @Test
-  func aStatusFrameWithoutInputStillChangesTheReadAndDispatchedPower() async throws {
+  func statusFrameWithoutInputStillChangesReadAndDispatchedPower() async throws {
     let dispatcher = StampRecorder()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 0x045E, productID: 0x02EA),
@@ -49,7 +49,7 @@ struct ConnectionStampTests {
   }
 
   @Test
-  func aRouteInstalledWhileAControlIsHeldReceivesItOnTheNextReport() async {
+  func routeInstalledWhileControlIsHeldReceivesItOnNextReport() async {
     let dispatcher = NativeEventRecorder()
     dispatcher.demandsInput = false
     let pipeline = DevicePipeline(
@@ -97,7 +97,7 @@ private final class StatusFrameDriver: PhysicalProtocolDriver {
 
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  func parse(report: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     switch report.first {
     case Self.status:
       power = Self.charging

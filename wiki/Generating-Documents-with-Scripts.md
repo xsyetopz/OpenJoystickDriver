@@ -1,6 +1,6 @@
 # Generating documents with scripts
 
-Write a JavaScript file that returns controller records, patches, profiles, or virtual devices, and let `ojd generate` check and write them as property list files.
+Write a JavaScript file that returns controller records, patches, [profiles](Glossary.md#terms), or [virtual gamepads](Glossary.md#terms), and let `ojd generate` check and write them as property list files.
 
 Use a script when you must write many similar documents, for example one record for each product of a controller family. `ojd generate` is the only part of OpenJoystickDriver (OJD) that runs a script. The app, the service, and mod packages read documents only, so a script in a [mod package](Writing-Controller-Mods.md) is never run.
 

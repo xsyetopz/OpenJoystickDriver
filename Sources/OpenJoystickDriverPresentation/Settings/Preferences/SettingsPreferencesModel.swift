@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
@@ -12,6 +13,24 @@
   }
 
   extension UpdateChecker: ApplicationUpdateChecking {}
+
+  /// The control of General or Notifications whose failure shows beside it.
+  enum SettingsControlOrigin: Equatable {
+    /// The Start at login switch.
+    case loginItem
+    /// The pause shortcut row.
+    case pauseShortcut
+    /// The Send Test Notification button.
+    case testNotification
+  }
+
+  /// The failure of a request that a control started, with that control.
+  struct SettingsControlFailure: Equatable {
+    /// Why the request failed.
+    let message: String
+    /// The control that started the request.
+    let origin: SettingsControlOrigin
+  }
 
   /// The app's side of the test notification: the request to the service and the report back.
   protocol TestNotificationRequesting: Sendable {
@@ -70,12 +89,28 @@
     /// Whether Settings > Advanced shows the developer tools.
     @Published
     private(set) var developerToolsEnabled: Bool
+    /// How much of the interface shows: Simple or Advanced.
+    @Published
+    private(set) var interfaceLevel: InterfaceLevel = .default
+    /// Minutes without changed input after which a Bluetooth controller disconnects, or nil while
+    /// off.
+    @Published
+    private(set) var idleDisconnectMinutes: Int?
+    /// Whether the developer tools show: the level is Advanced and the developer tools are on.
+    var developerToolsVisible: Bool { interfaceLevel == .advanced && developerToolsEnabled }
+    /// The system-wide shortcut that pauses and resumes every controller, or nil while unset.
+    @Published
+    private(set) var pauseShortcut: PauseShortcut?
     /// The result of the last update check, or idle before a check runs.
     @Published
     private(set) var updateState: UpdateCheckState = .idle
     /// The text of the error that the panes show, or nil for none.
     @Published
     private(set) var errorMessage: String?
+    /// The failure of the last request of a control in General or Notifications, which shows beside
+    /// that control.
+    @Published
+    private(set) var controlFailure: SettingsControlFailure?
     /// Why the settings file cannot be used, or `nil` while it can.
     ///
     /// While it is set, the switches show the built-in defaults and features that read settings do
@@ -122,15 +157,15 @@
       updateChecker: any ApplicationUpdateChecking = UpdateChecker(),
       notificationDelivery: any RuntimeNotificationDelivering = SystemRuntimeNotificationDelivery()
     ) {
-      let launchAtLogin = launchAtLogin ?? SystemLaunchAtLoginController(settings: settings)
+      let controller = launchAtLogin ?? SystemLaunchAtLoginController(settings: settings)
       self.testNotifications = testNotifications
       self.settings = settings
-      self.launchAtLogin = launchAtLogin
+      self.launchAtLogin = controller
       self.notificationAuthorizationController = notificationAuthorization
       self.updateChecker = updateChecker
       self.notificationDelivery = notificationDelivery
-      self.launchAtLoginIsAvailable = launchAtLogin.isAvailable
-      self.startAtLogin = launchAtLogin.isEnabled
+      self.launchAtLoginIsAvailable = controller.isAvailable
+      self.startAtLogin = controller.isEnabled
       self.notificationAuthorization = .checking
       self.notificationSystemSettings = .authorizationOnly(.checking)
       self.controllerNotifications = ApplicationSettingKey.notifyControllerConnected.defaultValue
@@ -178,27 +213,31 @@
       checkUpdatesAutomatically = value(.updatesCheckAutomatically)
       includePrereleaseUpdates = value(.updatesIncludePrereleases)
       developerToolsEnabled = value(.developerTools)
+      interfaceLevel = stored.interfaceLevel ?? .default
+      idleDisconnectMinutes = stored.idleDisconnectMinutes
+      pauseShortcut = stored.pauseShortcut
       if recovered { settingsRecovered?() }
     }
 
     /// Turns the login item on or off.
     ///
-    /// A login item that macOS leaves waiting for approval shows a message in ``errorMessage``, and
-    /// so does a failure.
+    /// A login item that macOS leaves waiting for approval shows a message beside the
+    /// switch, and so does a failure.
     func setStartAtLogin(_ enabled: Bool) {
       do {
         try launchAtLogin.setEnabled(enabled)
         startAtLogin = launchAtLogin.isEnabled
-        if enabled && !startAtLogin {
-          errorMessage = OJDLocalized.string(
-            "platform.macos.ui.settings.general.startAtLoginApprovalRequired"
+        if enabled, !startAtLogin {
+          failControl(
+            .loginItem,
+            OJDLocalized.string("platform.macos.ui.settings.general.startAtLoginApprovalRequired")
           )
         } else {
-          errorMessage = nil
+          failControl(.loginItem, nil)
         }
       } catch {
         startAtLogin = launchAtLogin.isEnabled
-        report(error)
+        report(error, beside: .loginItem)
       }
     }
 
@@ -232,16 +271,16 @@
       notificationSounds = enabled
     }
 
-    /// Asks the service to announce a test notification to the app and shows how it ended in
-    /// `errorMessage`: nothing for `shown`, the named text for every other outcome.
+    /// Asks the service to announce a test notification to the app and shows how it ended
+    /// beside the button: nothing for `shown`, the named text for every other outcome.
     ///
     /// The announcement reaches this app's own wait, which calls `answerTestNotification`.
     func sendTestNotification() {
       Task { @MainActor [weak self, testNotifications] in
         do {
           let outcome = try await testNotifications.requestTestNotification()
-          self?.errorMessage = Self.message(for: outcome)
-        } catch { self?.report(error) }
+          self?.failControl(.testNotification, Self.message(for: outcome))
+        } catch { self?.report(error, beside: .testNotification) }
       }
     }
 
@@ -257,22 +296,25 @@
 
     /// Shows the test notification the service announced and reports how it ended.
     ///
-    /// A report that fails shows its error in ``errorMessage``; a report that the service does not
+    /// A report that fails shows its error beside the button; a report that the service does not
     /// wait for, because the `ojd` request ended first, shows
     /// `ui.settings.notifications.testReportLost`.
     func answerTestNotification(_ announcement: UUID) {
       Task { @MainActor [weak self, testNotifications] in
         guard let self else { return }
-        let outcome = await self.showTestNotification()
+        let outcome = await showTestNotification()
         do {
           let accepted = try await testNotifications.reportTestNotification(
             announcement,
             outcome: outcome
           )
           if !accepted {
-            self.errorMessage = OJDLocalized.string("ui.settings.notifications.testReportLost")
+            failControl(
+              .testNotification,
+              OJDLocalized.string("ui.settings.notifications.testReportLost")
+            )
           }
-        } catch { self.report(error) }
+        } catch { report(error, beside: .testNotification) }
       }
     }
 
@@ -303,6 +345,31 @@
       return .shown
     }
 
+    /// Stores the pause shortcut, or clears it for nil; a failure shows beside the row.
+    func setPauseShortcut(_ shortcut: PauseShortcut?) {
+      do {
+        try settings.setPauseShortcut(shortcut)
+        pauseShortcut = shortcut
+        failControl(.pauseShortcut, nil)
+      } catch { report(error, beside: .pauseShortcut) }
+    }
+
+    /// Stores the shortcut of a key press, or shows beside the row why the press is no shortcut.
+    func recordPauseShortcut(code: UInt32, modifiers: Set<PauseShortcut.Modifier>) {
+      guard let key = PauseShortcut.keyName(code: code),
+        let shortcut = try? PauseShortcut(key: key, modifiers: modifiers)
+      else {
+        failControl(.pauseShortcut, OJDLocalized.string("ui.settings.general.pauseShortcutInvalid"))
+        return
+      }
+      setPauseShortcut(shortcut)
+    }
+
+    /// Shows beside the pause shortcut row that the system refused the shortcut.
+    func pauseShortcutRefused() {
+      failControl(.pauseShortcut, OJDLocalized.string("ui.settings.general.pauseShortcutTaken"))
+    }
+
     /// Shows or hides the menu bar item.
     func setShowInMenuBar(_ enabled: Bool) {
       guard persist(.showInMenuBar, enabled) else { return }
@@ -314,7 +381,7 @@
     ///
     /// Returns whether the write succeeded; a failure shows in ``errorMessage`` and leaves both
     /// switches as they were.
-    func menuBarItemWasRemoved() -> Bool {
+    func menuBarItemRemoved() -> Bool {
       guard persist([.showInMenuBar: false, .showInDock: true]) else { return false }
       showInMenuBar = false
       showInDock = true
@@ -363,6 +430,23 @@
       developerToolsEnabled = enabled
     }
 
+    /// Stores the interface level; a failure shows in ``errorMessage``.
+    func setInterfaceLevel(_ level: InterfaceLevel) {
+      do {
+        try settings.setInterfaceLevel(level)
+        interfaceLevel = level
+      } catch { report(error) }
+    }
+
+    /// Stores the idle disconnect minutes, or turns it off with nil; a failure shows in
+    /// ``errorMessage``.
+    func setIdleDisconnectMinutes(_ minutes: Int?) {
+      do {
+        try settings.setIdleDisconnectMinutes(minutes)
+        idleDisconnectMinutes = minutes
+      } catch { report(error) }
+    }
+
     /// Checks for a newer version and shows the result in `updateState`.
     ///
     /// With `announcingAvailableUpdate`, a newer version also posts a notification; an up-to-date
@@ -377,12 +461,12 @@
           includePrereleases: includePrereleases
         )
         guard let self else { return }
-        self.updateState = state
+        updateState = state
         if announcingAvailableUpdate, case .available(let info) = state {
-          self.notificationDelivery.deliver(
+          notificationDelivery.deliver(
             title: OJDLocalized.string("ui.settings.general.updateAvailable"),
             body: OJDLocalized.formatted("ui.settings.general.updateAvailableBody", info.tagName),
-            sound: self.notificationSounds
+            sound: notificationSounds
           )
         }
       }
@@ -414,22 +498,22 @@
       notificationAuthorizationReads += 1
       let read = notificationAuthorizationReads
       Task { [weak self, notificationAuthorizationController] in
-        let settings = await notificationAuthorizationController.settings()
-        guard let self, read == self.notificationAuthorizationReads else { return }
-        let state = settings.authorization
-        self.notificationAuthorization = state
-        self.notificationSystemSettings = settings
+        let systemSettings = await notificationAuthorizationController.settings()
+        guard let self, read == notificationAuthorizationReads else { return }
+        let state = systemSettings.authorization
+        notificationAuthorization = state
+        notificationSystemSettings = systemSettings
         if state == .denied {
           let notifications: [ApplicationSettingKey] = [
             .notifyControllerConnected, .notifyControllerDisconnected, .notifyProfileActivated,
             .notifyProfileDeactivated,
           ]
-          guard self.persist(Dictionary(uniqueKeysWithValues: notifications.map { ($0, false) }))
+          guard persist(Dictionary(uniqueKeysWithValues: notifications.map { ($0, false) }))
           else { return }
-          self.controllerNotifications = false
-          self.controllerDisconnectedNotifications = false
-          self.profileNotifications = false
-          self.profileDeactivatedNotifications = false
+          controllerNotifications = false
+          controllerDisconnectedNotifications = false
+          profileNotifications = false
+          profileDeactivatedNotifications = false
         }
       }
     }
@@ -452,12 +536,27 @@
       }
     }
 
-    /// Shows `error`; a settings file error that makes the file unusable is also kept typed.
-    private func report(_ error: any Error) {
-      errorMessage = error.localizedDescription
-      if let error = error as? SettingsStoreError, error.fileIsUnusable {
-        settingsFileError = error
+    /// The failure that belongs beside the control `origin`, or nil.
+    func failure(beside origin: SettingsControlOrigin) -> String? {
+      controlFailure?.origin == origin ? controlFailure?.message : nil
+    }
+
+    /// Records the failure of the control `origin`, or clears the failure when `message` is nil.
+    private func failControl(_ origin: SettingsControlOrigin, _ message: String?) {
+      controlFailure = message.map { SettingsControlFailure(message: $0, origin: origin) }
+    }
+
+    /// Shows `error` in the settings error section, or beside the control `origin` that started the
+    /// request; a settings file error that makes the file unusable always goes to the section and
+    /// is also kept typed, because the buttons that fix it are part of the section.
+    private func report(_ error: any Error, beside origin: SettingsControlOrigin? = nil) {
+      if let storeError = error as? SettingsStoreError, storeError.fileIsUnusable {
+        settingsFileError = storeError
+      } else if let origin {
+        failControl(origin, error.localizedDescription)
+        return
       }
+      errorMessage = error.localizedDescription
     }
 
     /// Moves the settings file to the Trash and reads the defaults; a failure shows in
@@ -493,13 +592,13 @@
       Task { [weak self, notificationAuthorizationController] in
         let state = await notificationAuthorizationController.state()
         guard let self else { return }
-        self.notificationAuthorization = state
+        notificationAuthorization = state
         switch state {
         case .allowed:
-          self.acceptNotificationPreference(preference)
-          self.refreshNotificationAuthorization()
-        case .notDetermined, .checking: self.requestNotificationAuthorization(preference)
-        case .denied: self.rejectNotificationPreference(preference, errorDescription: nil)
+          acceptNotificationPreference(preference)
+          refreshNotificationAuthorization()
+        case .notDetermined, .checking: requestNotificationAuthorization(preference)
+        case .denied: rejectNotificationPreference(preference, errorDescription: nil)
         }
       }
     }
@@ -510,11 +609,11 @@
       Task { [weak self, notificationAuthorizationController] in
         let (state, errorDescription) = await notificationAuthorizationController.request()
         guard let self else { return }
-        self.notificationAuthorization = state
-        if state == .allowed && errorDescription == nil {
-          self.acceptNotificationPreference(preference)
+        notificationAuthorization = state
+        if state == .allowed, errorDescription == nil {
+          acceptNotificationPreference(preference)
         } else {
-          self.rejectNotificationPreference(preference, errorDescription: errorDescription)
+          rejectNotificationPreference(preference, errorDescription: errorDescription)
         }
       }
     }

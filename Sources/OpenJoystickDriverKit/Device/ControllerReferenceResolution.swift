@@ -1,4 +1,4 @@
-import CryptoKit
+package import CryptoKit
 
 /// A connected controller that a ``ControllerReference`` can name.
 public protocol ControllerReferenceable {

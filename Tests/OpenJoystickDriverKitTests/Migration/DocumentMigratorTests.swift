@@ -31,7 +31,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func anAccessGrantsFileBecomesAVersionThreePropertyList() throws {
+  func accessGrantsFileBecomesVersionThreePropertyList() throws {
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated])
@@ -43,7 +43,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aProfileBecomesAVersionThreePropertyList() throws {
+  func profileBecomesVersionThreePropertyList() throws {
     try write(MigrationFixtures.profile, "Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
@@ -54,7 +54,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aUserRecordBecomesAVersionThreePropertyList() throws {
+  func userRecordBecomesVersionThreePropertyList() throws {
     try write(MigrationFixtures.userRecord, "Controllers/1234-abcd.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated])
@@ -64,12 +64,14 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aPatchGetsBitAddressedLayouts() throws {
+  func patchGetsBitAddressedLayouts() throws {
     try write(MigrationFixtures.patch, "Controllers/054c-0ce6.patch.json")
     #expect(
       DocumentMigrator(directory: directory).run(dryRun: false).map(\.verdict) == [.migrated]
     )
-    let layout = try #require(document("Controllers/054c-0ce6.patch.plist")["patch"]?["input"]?["layouts"])
+    let layout = try #require(
+      document("Controllers/054c-0ce6.patch.plist")["patch"]?["input"]?["layouts"]
+    )
     #expect(layout.formatted().contains(#""bitOffset": 10"#))
     #expect(layout.formatted().contains(#""bitSize": 16"#))
   }
@@ -79,7 +81,7 @@ struct DocumentMigratorTests {
     + #""selector": {"vendorID": 1, "productID": 2}, "patch": {"input": {"buttons": []}}}"#
 
   @Test
-  func aDryRunListsTheDocumentsAndWritesNothing() throws {
+  func dryRunListsDocumentsAndWritesNothing() throws {
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: true)
     #expect(entries.map(\.verdict) == [.migrated])
@@ -89,7 +91,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func theOriginalIsKeptUnderMigratedWithItsRelativePath() throws {
+  func originalKeptUnderMigratedWithItsRelativePath() throws {
     try write(MigrationFixtures.profile, "Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
     _ = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(
@@ -99,7 +101,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func anExistingBackupIsNeverOverwrittenAndTheDocumentFails() throws {
+  func existingBackupNeverOverwrittenAndDocumentFails() throws {
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     try write("kept", "Migrated/AccessGrants.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
@@ -110,7 +112,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func oneFailureDoesNotStopTheOthers() throws {
+  func oneFailureDoesNotStopOthers() throws {
     try write(Self.badPatch, "Controllers/bad.patch.json")
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
@@ -124,7 +126,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aSecondRunFindsTheMigratedDocumentCurrent() throws {
+  func secondRunFindsMigratedDocumentCurrent() throws {
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     _ = DocumentMigrator(directory: directory).run(dryRun: false)
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
@@ -133,7 +135,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aJSONFileBesideItsPropertyListFailsAndKeepsBoth() throws {
+  func jsonFileBesideItsPropertyListFailsAndKeepsBoth() throws {
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     try write("existing", "AccessGrants.plist")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
@@ -143,8 +145,8 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aFileOfAnotherProgramIsForeignAndUntouched() throws {
-    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+  func fileOfAnotherProgramForeignAndUntouched() throws {
+    try write("not json", "Profiles/notes.json")
     try write("not json", "Controllers/readme.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.foreign, .foreign])
@@ -152,7 +154,29 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aZeroFiveDocumentFailsWithAReason() throws {
+  func storeFileWithoutAPIVersionFailsWithReasonAndStaysUntouched() throws {
+    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.failed])
+    #expect(entries.first?.detail == "has no apiVersion")
+    #expect(try read("Profiles/notes.json") == Data(#"{"name": "mine"}"#.utf8))
+  }
+
+  @Test
+  func stalePersonaAndPackageDocumentsAreConverted() throws {
+    try write(MigrationFixtures.userRecord, "Personas/1234-abcd.json")
+    try write(MigrationFixtures.userRecord, "Packages/mine/records/1234-abcd.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(
+      entries.map(\.file) == ["Packages/mine/records/1234-abcd.json", "Personas/1234-abcd.json"]
+    )
+    #expect(entries.map(\.verdict) == [.migrated, .migrated], "\(entries)")
+    #expect(exists("Personas/1234-abcd.plist"))
+    #expect(exists("Packages/mine/records/1234-abcd.plist"))
+  }
+
+  @Test
+  func zeroFiveDocumentFailsWithReason() throws {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.failed])
@@ -162,7 +186,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func theActiveProfilesArrayBecomesAPropertyList() throws {
+  func activeProfilesArrayBecomesPropertyList() throws {
     try write(
       #"[{"profileID": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "vendorID": 1, "productID": 2}]"#,
       "ActiveProfiles.json"
@@ -177,7 +201,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func anActiveProfilesScopeKeepsItsAppsAsAList() throws {
+  func activeProfilesScopeKeepsItsAppsAsList() throws {
     try write(
       #"""
       [{"profileID": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "vendorID": 1, "productID": 2,
@@ -197,7 +221,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func aFolderArgumentIsScannedRecursivelyWithItsOwnBackups() throws {
+  func folderArgumentScannedRecursivelyWithItsOwnBackups() throws {
     try write(MigrationFixtures.accessGrants, "Elsewhere/Sub/AccessGrants.json")
     let folder = support.appendingPathComponent("Elsewhere")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false, folder: folder)
@@ -207,7 +231,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func packagesAreScannedBelowTheirFolder() throws {
+  func packagesScannedBelowTheirFolder() throws {
     try write(
       MigrationFixtures.document(MigrationFixtures.alphaOne, "ModPackage", #""name": "x""#),
       "Packages/x/mod.json"

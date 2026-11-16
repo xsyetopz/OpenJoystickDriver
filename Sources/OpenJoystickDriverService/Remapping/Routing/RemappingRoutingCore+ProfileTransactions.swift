@@ -263,9 +263,9 @@ extension RemappingRoutingCore {
   /// Converts `error` to a routing error; any error of another type becomes an unreconciled
   /// transaction.
   private static func routingError(_ error: any Error) -> RemappingOutputRoutingError {
-    if let error = error as? RemappingOutputRoutingError { return error }
-    if let error = error as? RemappingEventEngineError { return .engine(error) }
-    if let error = error as? RemappingProfileLibraryError { return .library(error) }
+    if let routing = error as? RemappingOutputRoutingError { return routing }
+    if let engine = error as? RemappingEventEngineError { return .engine(engine) }
+    if let library = error as? RemappingProfileLibraryError { return .library(library) }
     return .profileTransactionUnreconciled(error.localizedDescription)
   }
 

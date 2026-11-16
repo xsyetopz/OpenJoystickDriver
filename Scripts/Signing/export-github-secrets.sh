@@ -1,35 +1,10 @@
 #!/usr/bin/env bash
-# Prepare GitHub Actions release secrets from local signing assets.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 die() { echo "ERROR: $*" >&2; exit 2; }
-
-usage() {
-  cat <<'TXT'
-Usage:
-  ./Scripts/ojd signing export-github-secrets [options]
-
-Options:
-  --apply                              Run gh secret set after writing files
-  --repo owner/name                     Repository for gh secret set
-  --out <dir>                          Output directory
-  --developer-id-identity <path>        Developer ID Application identity export (required;
-                                        include both profile-selected identities)
-
-Environment overrides:
-  CERTIFICATE_SECRET
-  KEYCHAIN_SECRET
-  NOTARIZE_APPLE_ID
-  NOTARIZE_PASSWORD
-
-The script writes one private file per secret and an
-apply-github-secrets.sh helper that imports them with GitHub CLI without
-printing secret values.
-TXT
-}
 
 repo_arg=()
 apply=0
@@ -38,10 +13,6 @@ developer_id_identity=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -h|--help|help)
-      usage
-      exit 0
-      ;;
     --apply)
       apply=1
       shift
@@ -136,7 +107,6 @@ cat > "$out_dir/apply-github-secrets.sh" <<'SH'
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 repo_args=()
 if [[ "${1:-}" == "--repo" ]]; then
   [[ -n "${2:-}" ]] || { echo "ERROR: Missing value for --repo" >&2; exit 2; }
@@ -144,7 +114,7 @@ if [[ "${1:-}" == "--repo" ]]; then
   shift 2
 fi
 
-"$PROJECT_DIR/Scripts/ojd" github ensure-auth
+gh auth status >/dev/null
 
 for file in "$SCRIPT_DIR"/values/*.txt; do
   name="$(basename "$file" .txt)"
@@ -157,21 +127,6 @@ chmod 700 "$out_dir/apply-github-secrets.sh"
 display_out_dir="$(display_path "$out_dir")"
 display_apply_path="$(display_path "$out_dir/apply-github-secrets.sh")"
 
-cat > "$out_dir/README.txt" <<TXT
-OpenJoystickDriver GitHub Actions secrets
-
-Files:
-  values/*.txt                 One secret value per file
-  apply-github-secrets.sh      Imports values with gh secret set
-
-Apply:
-  ./$display_apply_path${repo_arg[*]:+ --repo ${repo_arg[1]}}
-
-Keep this directory private. Delete it after importing secrets if you do not
-need a local backup.
-TXT
-chmod 600 "$out_dir/README.txt"
-
 echo "Wrote GitHub Actions secret files:"
 echo "  $display_out_dir"
 echo ""
@@ -181,9 +136,6 @@ if [[ "${#repo_arg[@]}" -gt 0 ]]; then
 else
   echo "  ./$display_apply_path"
 fi
-echo ""
-echo "Full command also written to:"
-echo "  $display_out_dir/README.txt"
 
 if [[ "$apply" -eq 1 ]]; then
   "$out_dir/apply-github-secrets.sh" ${repo_arg[@]+"${repo_arg[@]}"}

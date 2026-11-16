@@ -66,7 +66,7 @@ public enum ApplicationServiceLogFollower {
   /// The inode of the file at `url`, which changes when a new file replaces it.
   private static func fileIdentity(_ url: URL) -> UInt64? {
     var info = stat()
-    guard stat(url.path, &info) == 0 else { return nil }
+    guard unsafe stat(url.path, &info) == 0 else { return nil }
     return UInt64(info.st_ino)
   }
 
@@ -82,7 +82,7 @@ public enum ApplicationServiceLogFollower {
     guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
     defer { handle.closeFile() }
     var info = stat()
-    guard fstat(handle.fileDescriptor, &info) == 0 else { return nil }
+    guard unsafe fstat(handle.fileDescriptor, &info) == 0 else { return nil }
     let current = UInt64(info.st_ino)
     if let known = identity, known != current { position = 0 }
     identity = current

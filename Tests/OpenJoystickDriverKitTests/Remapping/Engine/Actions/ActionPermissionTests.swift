@@ -8,7 +8,7 @@ struct ActionPermissionTests {
   private let virtual = RemappingDestination.gamepadButton(.south)
 
   @Test
-  func missingPostEventAccessThrowsANamedErrorAndSendsNothing() async {
+  func missingPostEventAccessThrowsNamedErrorAndSendsNothing() async {
     let performer = StubSystemActionPerformer(missing: [.postEvent])
     let expected = RemappingSystemActionError.permissionMissing(.postEvent, action: "VolumeUp")
     await #expect(throws: expected) { try await performer.postSystemKey(.volumeUp, pressed: true) }
@@ -19,7 +19,7 @@ struct ActionPermissionTests {
   }
 
   @Test
-  func missingAutomationAccessThrowsANamedErrorAndSendsNothing() async {
+  func missingAutomationAccessThrowsNamedErrorAndSendsNothing() async {
     let performer = StubSystemActionPerformer(missing: [.automation])
     let expected = RemappingSystemActionError.permissionMissing(.automation, action: "RunShortcut")
     await #expect(throws: expected) { try await performer.runShortcut(name: "Morning") }
@@ -27,7 +27,7 @@ struct ActionPermissionTests {
   }
 
   @Test
-  func theErrorCodeNamesThePermissionAndTheMessageNamesTheAction() {
+  func errorCodeNamesPermissionAndMessageNamesAction() {
     let postEvent = RemappingSystemActionError.permissionMissing(.postEvent, action: "VolumeUp")
     let automation = RemappingSystemActionError.permissionMissing(
       .automation,
@@ -40,7 +40,7 @@ struct ActionPermissionTests {
   }
 
   @Test
-  func grantedPermissionSendsTheAction() async throws {
+  func grantedPermissionSendsAction() async throws {
     let performer = StubSystemActionPerformer(missing: [])
     try await performer.postSystemKey(.mute, pressed: false)
     #expect(performer.sent == ["Mute"])
@@ -118,15 +118,19 @@ private final class StubSystemActionPerformer: RemappingSystemActionPerforming,
     sent.append(action)
   }
 
-  func postSystemKey(_ key: RemappingSystemKey, pressed: Bool) async throws {
+  func postSystemKey(_ key: RemappingSystemKey, pressed _: Bool) async throws {
     try send(key.rawValue, needs: .postEvent)
   }
 
-  func typeText(_ text: String) async throws { try send("TypeText", needs: .postEvent) }
-  func runShortcut(name: String) async throws { try send("RunShortcut", needs: .automation) }
+  func typeText(_: String) async throws { try send("TypeText", needs: .postEvent) }
+  func runShortcut(name _: String) async throws { try send("RunShortcut", needs: .automation) }
   func openMissionControl() async throws { try send("MissionControl") }
-  func openApplication(bundleIdentifier: String) async throws { try send("OpenApplication") }
-  func openURL(_ url: URL) async throws { try send("OpenURL") }
+  func openLaunchpad() async throws { try send("Launchpad") }
+  func takeScreenshot() async throws { try send("Screenshot", needs: .postEvent) }
+  func lockScreen() async throws { try send("LockScreen", needs: .postEvent) }
+  func showDesktop() async throws { try send("ShowDesktop", needs: .postEvent) }
+  func openApplication(bundleIdentifier _: String) async throws { try send("OpenApplication") }
+  func openURL(_: URL) async throws { try send("OpenURL") }
 }
 
 // swiftlint:enable async_without_await

@@ -32,11 +32,11 @@ public final class ServiceListenerState: @unchecked Sendable {
 
   /// Sets the failure, or clears it with nil, and tells the observer.
   package func set(_ failure: ServiceListenerFailure?) {
-    let observer = lock.withLock {
+    let notify = lock.withLock {
       current = failure
       return self.observer
     }
-    observer?()
+    notify?()
   }
 
   /// Sets what ``restart()`` runs.

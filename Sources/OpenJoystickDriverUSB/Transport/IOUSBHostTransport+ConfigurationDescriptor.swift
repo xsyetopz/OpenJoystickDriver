@@ -20,19 +20,21 @@ extension IOUSBHostTransportProvider {
     let service = try deviceService(for: device)
     defer { IOObjectRelease(service) }
     do {
-      let hostDevice = try IOUSBHostDevice(
+      let hostDevice = try unsafe IOUSBHostDevice(
         __ioService: service,
         options: [],
         queue: nil,
         interestHandler: nil
       )
       defer { hostDevice.destroy() }
-      let descriptor = try hostDevice.configurationDescriptor(
+      let descriptor = try unsafe hostDevice.configurationDescriptor(
         withConfigurationValue: Int(configurationValue)
       )
-      let length = Int(UInt16(littleEndian: descriptor.pointee.wTotalLength))
+      let length = unsafe Int(UInt16(littleEndian: descriptor.pointee.wTotalLength))
       guard length >= 9 else { return nil }
-      return Array(UnsafeRawBufferPointer(start: UnsafeRawPointer(descriptor), count: length))
+      return unsafe Array(
+        UnsafeRawBufferPointer(start: UnsafeRawPointer(descriptor), count: length)
+      )
     } catch { throw transportError(error) }
   }
 }

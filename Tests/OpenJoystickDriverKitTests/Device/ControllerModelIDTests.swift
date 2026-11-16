@@ -39,7 +39,7 @@ struct ControllerModelIDTests {
   }
 
   @Test
-  func describesTheModelAsHexVendorAndProduct() {
+  func describesModelAsHexVendorAndProduct() {
     #expect(ControllerModelID(vendorID: 0x045E, productID: 0x02EA).description == "045E:02EA")
   }
 

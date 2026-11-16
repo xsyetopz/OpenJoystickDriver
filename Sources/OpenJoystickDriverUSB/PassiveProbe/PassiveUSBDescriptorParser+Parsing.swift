@@ -148,8 +148,7 @@ extension PassiveUSBConfigurationDescriptorParser {
         guard companionEligible else {
           throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor
         }
-        if let negotiatedSpeed, negotiatedSpeed != .superSpeed && negotiatedSpeed != .superSpeedPlus
-        {
+        if let negotiatedSpeed, negotiatedSpeed != .superSpeed, negotiatedSpeed != .superSpeedPlus {
           throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
         }
         guard let transferName = value.endpoints.last?.transferType else {
@@ -177,8 +176,7 @@ extension PassiveUSBConfigurationDescriptorParser {
         companionEligible = false
         sspCompanionRequired = transferName == "isochronous" && (chunk[3] & 0x80) != 0
       } else if type == 0x31 {
-        if let negotiatedSpeed, negotiatedSpeed != .superSpeed && negotiatedSpeed != .superSpeedPlus
-        {
+        if let negotiatedSpeed, negotiatedSpeed != .superSpeed, negotiatedSpeed != .superSpeedPlus {
           throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
         }
         guard sspCompanionRequired, length == 8, var value = current, !value.endpoints.isEmpty
@@ -193,11 +191,11 @@ extension PassiveUSBConfigurationDescriptorParser {
           value.endpoints.last?.superSpeedPlusCompanion == nil, chunk[2] == 0, chunk[3] == 0
         else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
         let endpoint = value.endpoints.removeLast()
-        let bytes =
+        let perInterval =
           UInt32(chunk[4]) | (UInt32(chunk[5]) << 8) | (UInt32(chunk[6]) << 16)
           | (UInt32(chunk[7]) << 24)
-        guard let maximum = superSpeedPlusContext.maximumBytesPerInterval, bytes > 49_152,
-          bytes < maximum
+        guard let maximum = superSpeedPlusContext.maximumBytesPerInterval, perInterval > 49_152,
+          perInterval < maximum
         else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
         value.endpoints.append(
           PassiveUSBDescriptorEndpoint(
@@ -208,7 +206,9 @@ extension PassiveUSBConfigurationDescriptorParser {
             nominalIntervalMicroseconds: endpoint.nominalIntervalMicroseconds,
             intervalResult: endpoint.intervalResult,
             superSpeedCompanion: endpoint.superSpeedCompanion,
-            superSpeedPlusCompanion: PassiveUSBSuperSpeedPlusCompanion(bytesPerInterval: bytes)
+            superSpeedPlusCompanion: PassiveUSBSuperSpeedPlusCompanion(
+              bytesPerInterval: perInterval
+            )
           )
         )
         current = value

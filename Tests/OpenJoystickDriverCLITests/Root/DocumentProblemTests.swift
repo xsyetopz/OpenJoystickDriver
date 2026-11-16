@@ -22,7 +22,7 @@ struct DocumentProblemTests {
   }
 
   @Test
-  func theUnchangedDocumentDecodes() {
+  func unchangedDocumentDecodes() {
     #expect(problem(Self.profile) == nil)
   }
 
@@ -35,7 +35,7 @@ struct DocumentProblemTests {
   ]
 
   @Test
-  func aProblemNamesTheFileAndTheField() {
+  func problemNamesFileAndField() {
     for item in Self.problems {
       let message = problem(Self.profile.replacingOccurrences(of: item.replacing, with: item.with))
       #expect(message?.contains("pad.plist") == true, "\(item.replacing)")

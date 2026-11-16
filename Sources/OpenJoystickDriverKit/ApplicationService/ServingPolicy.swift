@@ -45,6 +45,8 @@ public struct ServingInput: Equatable, Sendable {
   public var server: ControllerServer
   /// How the controller's record reaches it.
   public var accessRoute: ControllerAccessRoute
+  /// Whether macOS can serve the controller as a native gamepad when OJD leaves it alone.
+  public var gameControllerSupported: Bool
   /// Whether virtual output is on.
   public var outputEnabled: Bool
   /// The normalized controls the controller declares.
@@ -59,6 +61,7 @@ public struct ServingInput: Equatable, Sendable {
     observation: ControllerOwnershipObservation,
     server: ControllerServer = .system,
     accessRoute: ControllerAccessRoute = .system,
+    gameControllerSupported: Bool = false,
     outputEnabled: Bool = true,
     controls: Set<Control> = [],
     override: VirtualHIDProfileID? = nil,
@@ -67,6 +70,7 @@ public struct ServingInput: Equatable, Sendable {
     self.observation = observation
     self.server = server
     self.accessRoute = accessRoute
+    self.gameControllerSupported = gameControllerSupported
     self.outputEnabled = outputEnabled
     self.controls = controls
     self.override = override
@@ -85,6 +89,7 @@ public struct ServingInput: Equatable, Sendable {
       observation: device.physicalOwnership,
       server: device.recordServer,
       accessRoute: device.recordAccessRoute,
+      gameControllerSupported: device.gameControllerSupported,
       outputEnabled: outputEnabled ?? (device.publication?.reason != .outputDisabled),
       controls: device.capabilities.controls,
       override: override,
@@ -141,11 +146,11 @@ public enum ServingPolicy {
     if input.observation == .upstreamVirtualDevice {
       return ServingDecision(route: .outputDisabled(.upstreamVirtualDevice))
     }
-    if isHeldByAppleDriver(input) { return ServingDecision(route: .nativePassThrough(input.allowance)) }
+    if isHeldByAppleDriver(input) {
+      return ServingDecision(route: .nativePassThrough(input.allowance))
+    }
     // A record that gives a natively served model to OJD turns passthrough into a virtual gamepad.
-    if input.observation.isServedBySystem && input.server == .system
-      && input.accessRoute == .system
-    {
+    if input.observation.isServedBySystem, input.server == .system, input.accessRoute == .system {
       return ServingDecision(route: .nativePassThrough(input.allowance))
     }
     guard
@@ -178,17 +183,21 @@ public enum ServingPolicy {
     decision(ServingInput(serving: device, override: override)).selection
   }
 
-  /// Whether Apple's driver holds the controller: the system serves it natively although OJD's
-  /// record reaches it through the extension. Claiming it means activating the extension.
+  /// Whether Apple's driver holds the controller.
+  ///
+  /// The system serves it natively although OJD's record reaches it through the extension.
+  /// Claiming it means activating the extension.
   public static func isHeldByAppleDriver(_ input: ServingInput) -> Bool {
     input.accessRoute == .extensionOwned && input.observation == .systemGamepad
   }
 
   /// Whether the user can choose between the system and OJD serving a controller: the system
-  /// serves it natively, or its record already gives it to OJD, and its record does not reach it
-  /// through raw USB or the extension, which always belong to OJD.
+  /// serves it natively or can, or its record already gives it to OJD, and its record does not
+  /// reach it through raw USB or the extension, which always belong to OJD.
   public static func offersServerChoice(_ input: ServingInput) -> Bool {
-    input.accessRoute == .system && (input.observation == .systemGamepad || input.server == .ojd)
+    input.accessRoute == .system
+      && (input.observation == .systemGamepad || input.gameControllerSupported
+        || input.server == .ojd)
   }
 }
 

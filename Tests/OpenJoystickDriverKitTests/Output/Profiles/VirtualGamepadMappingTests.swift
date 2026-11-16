@@ -6,7 +6,7 @@ import Testing
 
 struct VirtualGamepadMappingTests {
   @Test
-  func theGenericPersonaUsesTheCRCLessGUIDAndThePublishedButtonUsages() throws {
+  func genericPersonaUsesCRCLessGUIDAndPublishedButtonUsages() throws {
     let mapping = try VirtualHIDProfileID.generic.gamepadMapping()
     #expect(mapping.guid == "03000000091200004f4a000008040000")
     #expect(
@@ -20,7 +20,7 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test
-  func theSDLCompatiblePersonaReadsTheDpadAsButtonsAndBindsBothYAxesInverted() throws {
+  func sdlCompatiblePersonaReadsDpadAsButtonsAndBindsBothYAxesInverted() throws {
     let mapping = try VirtualHIDProfileID.sdlCompatible.gamepadMapping()
     #expect(mapping.guid == "030000005e0400000c0b000000000000")
     #expect(mapping.sdlMapping.contains("dpup:b"))
@@ -31,7 +31,7 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func theW3CDescriptionFollowsTheCrosswalk(id: VirtualHIDProfileID) throws {
+  func w3cDescriptionFollowsCrosswalk(id: VirtualHIDProfileID) throws {
     let mapping = try id.gamepadMapping()
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
@@ -58,7 +58,7 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test
-  func everyNameInTheTableMatchesTheCrosswalk() throws {
+  func everyNameInTableMatchesCrosswalk() throws {
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
@@ -88,7 +88,7 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test
-  func thePersonaDefinitionStatesWhetherSDLWorksWithItsDefaultHints() throws {
+  func personaDefinitionStatesWhetherSDLWorksWithItsDefaultHints() throws {
     #expect(VirtualHIDProfileID.generic.worksWithDefaultSDLHints)
     #expect(VirtualHIDProfileID.sdlCompatible.worksWithDefaultSDLHints)
     for id in VirtualHIDProfileID.allCases {

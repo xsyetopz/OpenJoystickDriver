@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One installed package in `ojd mod list --json`, the endpoint `Mods` line, and the Shortcuts
 /// action. `problem` is why the package is not used.
@@ -65,7 +65,7 @@ extension ModPackageStore {
       let manifest = try validate(folder)
       let destination = directory.appendingPathComponent(manifest.name, isDirectory: true)
       let replaced = (try? FileManager.default.attributesOfItem(atPath: destination.path)) != nil
-      if replaced && !replace {
+      if replaced, !replace {
         throw CodedFailure(
           .packageAlreadyInstalled,
           Localization().formatted("cli.mod.group.alreadyInstalled", arguments: [manifest.name])
@@ -83,7 +83,9 @@ extension ModPackageStore {
   }
 
   /// Removes the installed package `name`, as `ojd mod remove --force` does, and returns its
-  /// folder. With `dryRun` nothing is removed.
+  /// folder.
+  ///
+  /// With `dryRun` nothing is removed.
   ///
   /// - Throws: ``CodedFailure`` with ``ErrorCode/packageNotInstalled`` when the store has no
   ///   package of that name, or the E4xxx code of a failed removal.

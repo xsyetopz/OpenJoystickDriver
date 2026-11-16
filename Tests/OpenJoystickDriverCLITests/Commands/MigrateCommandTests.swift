@@ -31,7 +31,7 @@ struct MigrateCommandTests {
     #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "showInDock": true}"#
 
   @Test
-  func aDryRunListsTheDocumentAndChangesNothing() async throws {
+  func dryRunListsDocumentAndChangesNothing() async throws {
     try write(Self.settings, "Settings.json")
 
     let human = await run(["--dry-run"])
@@ -42,12 +42,16 @@ struct MigrateCommandTests {
     #expect(json.code == 0, "\(json.standardError)")
     #expect(json.standardOutput.contains(#""verdict": "Migrated""#))
     #expect(json.standardOutput.contains(#""dryRun": true"#))
-    #expect(!FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.plist").path))
-    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path))
+    #expect(
+      !FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.plist").path)
+    )
+    #expect(
+      FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path)
+    )
   }
 
   @Test
-  func theCommandConvertsTheDocumentSoThatItLoads() async throws {
+  func commandConvertsDocumentSoThatItLoads() async throws {
     try write(Self.settings, "Settings.json")
 
     let result = await run([])
@@ -58,7 +62,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func anUnconvertibleDocumentFailsWithE5009() async throws {
+  func unconvertibleDocumentFailsWithE5009() async throws {
     try write(
       #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "ControllerPatch", "#
         + #""selector": {"vendorID": 1, "productID": 2}, "patch": {"input": {"buttons": []}}}"#,
@@ -73,10 +77,13 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func everyScannedFileGetsAVerdictAndAForeignFileDoesNotFail() async throws {
+  func everyScannedFileGetsVerdictAndForeignFileDoesNotFail() async throws {
     try write(Self.settings, "Settings.json")
-    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
-    try write(#"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#, "AccessGrants.plist")
+    try write("not json", "Profiles/notes.json")
+    try write(
+      #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#,
+      "AccessGrants.plist"
+    )
 
     let result = await run(["--plain"])
 
@@ -86,7 +93,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func aFolderArgumentIsScannedInsteadOfTheSupportFolder() async throws {
+  func folderArgumentScannedInsteadOfSupportFolder() async throws {
     try write(Self.settings, "Settings.json")
     try write(Self.settings, "Other/Settings.json")
     let folder = support.appendingPathComponent("Other").path
@@ -94,12 +101,18 @@ struct MigrateCommandTests {
     let result = await run([folder])
 
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Other/Settings.plist").path))
-    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path))
+    #expect(
+      FileManager.default.fileExists(
+        atPath: support.appendingPathComponent("Other/Settings.plist").path
+      )
+    )
+    #expect(
+      FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path)
+    )
   }
 
   @Test
-  func aZeroFiveFileFailsWithE5009() async throws {
+  func zeroFiveFileFailsWithE5009() async throws {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
 
     let result = await run([])

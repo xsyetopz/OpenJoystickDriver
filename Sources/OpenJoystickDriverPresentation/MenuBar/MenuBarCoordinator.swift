@@ -1,9 +1,9 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
-  import AppKit
+  package import AppKit
   import Combine
   import Darwin
-  import OpenJoystickDriverKit
+  package import OpenJoystickDriverKit
   import SwiftUI
   import UserNotifications
 
@@ -40,6 +40,8 @@
     var statusItem: NSStatusItem?
     /// Tells when the user takes the menu-bar item out of the menu bar.
     var statusItemVisibilityObservation: NSKeyValueObservation?
+    /// Tells when another app comes to the front, which can change a controller's profile in force.
+    var frontAppObserver: (any NSObjectProtocol)?
     /// The menu of the menu-bar item.
     var statusMenu: NSMenu?
     /// Tells when the status menu opens and closes.
@@ -55,8 +57,14 @@
     let commandLineTool = CommandLineToolModel()
     /// Applies Show in menu bar when its setting changes.
     var showInMenuBarObservation: AnyCancellable?
+    /// Rebuilds the main menu when the interface level or the developer switch changes.
+    var mainMenuVisibilityObservation: AnyCancellable?
     /// Applies Show in Dock when its setting changes.
     var showInDockObservation: AnyCancellable?
+    /// Pauses and resumes every controller from the pause shortcut.
+    var pauseHotKey: PauseHotKey?
+    /// Registers the pause shortcut when its setting changes.
+    var pauseShortcutObservation: AnyCancellable?
     /// The Input Test window, created when the first one opens.
     var inputTestWindowController: InputTestWindowController?
     /// Keeps the app in step with the service's changes while it runs.

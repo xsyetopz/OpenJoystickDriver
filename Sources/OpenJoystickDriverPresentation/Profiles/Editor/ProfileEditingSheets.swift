@@ -68,15 +68,18 @@
         )
         TextField(OJDLocalized.string("term.profileName"), text: $name)
           .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+          .help(OJDLocalized.string("ui.profiles.nameHelp"))
         HStack(spacing: OJDSpacing.medium) {
           TextField(
             OJDLocalized.string("ui.profiles.vendorID"),
             text: $vendorID
-          )
+          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.vendorID"))
+            .help(OJDLocalized.string("ui.profiles.vendorIDHelp"))
           TextField(
             OJDLocalized.string("ui.profiles.productID"),
             text: $productID
-          )
+          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.productID"))
+            .help(OJDLocalized.string("ui.profiles.productIDHelp"))
         }
         Text(
           OJDLocalized.string(
@@ -90,14 +93,14 @@
           Text(OJDLocalized.string("ui.profiles.targetApplication")).tag(
             ProfileScopeKind.application
           )
-        }
+        }.help(OJDLocalized.string("ui.profiles.targetHelp"))
         if scopeKind == .application {
           ProfileAppChooser(appIDs: $appIDs)
         }
         Toggle(
           OJDLocalized.string("ui.profiles.joyConPair"),
           isOn: $joyConPairEnabled
-        )
+        ).help(OJDLocalized.string("ui.profiles.joyConPairHelp"))
         if joyConPairEnabled {
           Picker(
             OJDLocalized.string("ui.profiles.joyConGyro"),
@@ -112,7 +115,7 @@
             Text(OJDLocalized.string("ui.profiles.joyConRight")).tag(
               RemappingJoyConGyroSelection.right
             )
-          }
+          }.help(OJDLocalized.string("ui.profiles.joyConGyroHelp"))
         }
         if let errorMessage {
           Text(errorMessage).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
@@ -122,8 +125,12 @@
         }
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
-          Button(OJDLocalized.string("action.apply")) { save() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancelSheet")
+          )
+          Button(OJDLocalized.string("action.apply")) { save() }.help(
+            OJDLocalized.string("ui.profiles.applyDetailsHelp")
+          )
         }
       }.ojdSheet(.compact)
     }
@@ -132,8 +139,8 @@
     ///
     /// A failure shows in ``errorMessage`` and keeps the sheet open.
     private func save() {
-      guard let vendorID = ProfileIdentifierInput.parse(vendorID),
-        let productID = ProfileIdentifierInput.parse(productID)
+      guard let parsedVendor = ProfileIdentifierInput.parse(vendorID),
+        let parsedProduct = ProfileIdentifierInput.parse(productID)
       else {
         errorMessage = OJDLocalized.string(
           "ui.profiles.invalidIdentifiers"
@@ -148,7 +155,7 @@
       let candidate = RemappingProfile(
         id: profile.id,
         name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-        device: RemappingDeviceScope(vendorID: vendorID, productID: productID),
+        device: RemappingDeviceScope(vendorID: parsedVendor, productID: parsedProduct),
         applicationScope: scope,
         outputPolicy: profile.outputPolicy,
         motionTuning: profile.motionTuning,
@@ -176,7 +183,7 @@
   }
 
   /// The sheet that edits how an assignment acts: its behavior, turbo, long hold, tap counts and
-  /// additional actions.
+  /// additional actions, and for a top-level assignment its remark.
   struct BindingBehaviorSheet: View {
     /// The assignment being edited.
     let binding: RemappingBinding
@@ -192,6 +199,9 @@
     /// The additional actions.
     @State
     var additionalActions: [RemappingAction]
+    /// The remark text as typed.
+    @State
+    var remarkText: String
     /// The behavior.
     @State
     var behavior: RemappingBindingBehavior
@@ -250,6 +260,7 @@
       self.showsAdditionalActions = showsAdditionalActions
       self.capabilities = capabilities
       _additionalActions = State(initialValue: binding.additionalActions)
+      _remarkText = State(initialValue: binding.remark ?? "")
       _behavior = State(initialValue: binding.behavior)
       _pulseDurationMs = State(initialValue: binding.pulseDurationMs)
       _turboEnabled = State(initialValue: binding.turbo != nil)

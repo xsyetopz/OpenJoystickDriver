@@ -36,6 +36,9 @@ public struct SettingsDocument: Equatable, Sendable {
     public init() {}
   }
 
+  /// The minutes an idle disconnect may be set to.
+  public static let idleDisconnectRange = 1...480
+
   /// Internal state, not a setting: true after the user turned launch at login off through the app
   /// or `ojd setting`, so the app does not register itself on its next start.
   ///
@@ -52,6 +55,14 @@ public struct SettingsDocument: Equatable, Sendable {
   public var updates = Updates()
   /// Whether the Settings window shows the developer tools.
   public var developerTools: Bool?
+  /// How much of the interface shows; nil takes ``InterfaceLevel/default``.
+  public var interfaceLevel: InterfaceLevel?
+  /// The shortcut that pauses and resumes every controller; nil leaves it unset.
+  public var pauseShortcut: PauseShortcut?
+  /// Minutes without changed input after which a Bluetooth controller disconnects; nil is off.
+  public var idleDisconnectMinutes: Int?
+  /// The version whose changelog section the app showed last.
+  public var lastShownChangelogVersion: String?
 
   /// Creates a layer that leaves every setting out.
   public init() {}
@@ -106,6 +117,12 @@ public struct SettingsDocument: Equatable, Sendable {
     var merged = self
     for key in ApplicationSettingKey.allCases {
       if let value = upper[key] { merged[key] = value }
+    }
+    if let level = upper.interfaceLevel { merged.interfaceLevel = level }
+    if let shortcut = upper.pauseShortcut { merged.pauseShortcut = shortcut }
+    if let minutes = upper.idleDisconnectMinutes { merged.idleDisconnectMinutes = minutes }
+    if let version = upper.lastShownChangelogVersion {
+      merged.lastShownChangelogVersion = version
     }
     return merged
   }
@@ -177,7 +194,8 @@ extension SettingsDocument: Codable {
   private enum CodingKeys: String, CodingKey, CaseIterable {
     /// The header, the settings and their groups.
     case apiVersion, kind, launchAtLoginOptOut, showInMenuBar, showInDock, notify, updates,
-      developerTools
+      developerTools, interfaceLevel, pauseShortcut, idleDisconnectMinutes,
+      lastShownChangelogVersion
   }
 
   /// Decodes a settings layer; a key that the schema does not name is refused.
@@ -199,6 +217,27 @@ extension SettingsDocument: Codable {
     notify = try container.decodeIfPresent(Notify.self, forKey: .notify) ?? Notify()
     updates = try container.decodeIfPresent(Updates.self, forKey: .updates) ?? Updates()
     developerTools = try container.decodeIfPresent(Bool.self, forKey: .developerTools)
+    interfaceLevel = try container.decodeIfPresent(InterfaceLevel.self, forKey: .interfaceLevel)
+    pauseShortcut = try container.decodeIfPresent(PauseShortcut.self, forKey: .pauseShortcut)
+    idleDisconnectMinutes = try container.decodeIfPresent(Int.self, forKey: .idleDisconnectMinutes)
+    if let minutes = idleDisconnectMinutes, !Self.idleDisconnectRange.contains(minutes) {
+      throw DecodingError.dataCorruptedError(
+        forKey: .idleDisconnectMinutes,
+        in: container,
+        debugDescription: "minutes outside \(Self.idleDisconnectRange)"
+      )
+    }
+    lastShownChangelogVersion = try container.decodeIfPresent(
+      String.self,
+      forKey: .lastShownChangelogVersion
+    )
+    if lastShownChangelogVersion?.isEmpty == true {
+      throw DecodingError.dataCorruptedError(
+        forKey: .lastShownChangelogVersion,
+        in: container,
+        debugDescription: "empty version"
+      )
+    }
   }
 
   /// Encodes the header and the settings that are set.
@@ -212,5 +251,9 @@ extension SettingsDocument: Codable {
     if notify != Notify() { try container.encode(notify, forKey: .notify) }
     if updates != Updates() { try container.encode(updates, forKey: .updates) }
     try container.encodeIfPresent(developerTools, forKey: .developerTools)
+    try container.encodeIfPresent(interfaceLevel, forKey: .interfaceLevel)
+    try container.encodeIfPresent(pauseShortcut, forKey: .pauseShortcut)
+    try container.encodeIfPresent(idleDisconnectMinutes, forKey: .idleDisconnectMinutes)
+    try container.encodeIfPresent(lastShownChangelogVersion, forKey: .lastShownChangelogVersion)
   }
 }

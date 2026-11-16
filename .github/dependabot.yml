@@ -1,7 +1,22 @@
 version: 2
 updates:
+
+# >>> bedrock
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ["*"]
+# <<< bedrock
+
+# >>> swift-bedrock
+  - package-ecosystem: swift
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      swift:
+        patterns: ["*"]
+# <<< swift-bedrock

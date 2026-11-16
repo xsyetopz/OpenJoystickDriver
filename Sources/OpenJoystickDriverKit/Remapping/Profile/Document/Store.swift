@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Reads and writes profile files, validating every profile on the way.
 public enum RemappingProfileFileStore {
@@ -31,13 +31,13 @@ public enum RemappingProfileFileStore {
   /// ``ErrorCode/invalidProfile`` for a profile that is too large, does not decode, or does not
   /// validate.
   public static func problemCode(_ error: any Error) -> ErrorCode {
-    (error as? DocumentHeaderProblem)?.code ?? (error as? DocumentCoderError)?.code ?? .invalidProfile
+    (error as? DocumentHeaderProblem)?.code ?? (error as? DocumentCoderError)?.code
+      ?? .invalidProfile
   }
 
   /// Encodes a validated profile as an XML property list.
   /// - Throws: the error of ``RemappingProfile/validate()``, or ``RemappingValidationError`` when
-  ///   the
-  ///   encoding fails or is too large.
+  ///   the encoding fails or is too large.
   public static func encodedPlist(_ profile: RemappingProfile) throws -> String {
     let data = try encodedData(profile)
     guard let text = String(data: data, encoding: .utf8) else {

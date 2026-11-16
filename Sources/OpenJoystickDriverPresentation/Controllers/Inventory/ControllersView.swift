@@ -17,9 +17,18 @@
     let column: MainWindowColumn
     /// Opens the Input Test window for a controller.
     let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
+    /// Opens an area of the main window.
+    let openArea: @MainActor (MainWindowArea) -> Void
     /// The Bluetooth link closure that waits for confirmation, or nil.
     @State
     private var wirelessDisconnectRequest: WirelessDisconnectRequest?
+    /// Why the latest list-row command failed, or nil.
+    @State
+    private var rowCommandFailure: String?
+    /// Whether opening System Settings for the driver extension approval failed, which shows an
+    /// alert.
+    @State
+    private var driverApprovalFailed = false
 
     /// Creates the view.
     ///
@@ -27,14 +36,17 @@
     ///   - screen: The state of the Controllers list.
     ///   - column: The column of the main window that the view fills.
     ///   - openInputTest: Opens the Input Test window for a controller.
+    ///   - openArea: Opens an area of the main window.
     init(
       screen: ControllersViewModel,
       column: MainWindowColumn,
-      openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void
+      openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
+      openArea: @escaping @MainActor (MainWindowArea) -> Void
     ) {
       self.screen = screen
       self.column = column
       self.openInputTest = openInputTest
+      self.openArea = openArea
     }
 
     /// The model of the app's view of the service.
@@ -49,6 +61,11 @@
           screen.refresh()
         }.onReceive(viewModel.$controllerInventoryGeneration) { _ in
           screen.synchronizeSelection()
+        }.alert(isPresented: $driverApprovalFailed) {
+          Alert(
+            title: Text(OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")),
+            dismissButton: .default(Text(OJDLocalized.string("action.ok")))
+          )
         }
       }
     }
@@ -95,7 +112,7 @@
               retry: refresh
             ).padding(.horizontal, 14)
           }
-          if devices.isEmpty && screen.unservedDevices.isEmpty {
+          if devices.isEmpty, screen.unservedDevices.isEmpty {
             EmptyView()
           } else {
             controllerListRows
@@ -125,13 +142,17 @@
                   ? OJDLocalized.string("platform.macos.ui.controllers.servedByMacOS")
                   : device.protocolBinding.displayName
               ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).lineLimit(1)
+              ControllerReadinessMark(readiness: readiness(for: device))
             }
             Spacer(minLength: 0)
             if device.isHeldByAppleDriver { ControllerClaimButton(viewModel: viewModel) }
           }.padding(.vertical, 4).tag(device.sessionToken.rawValue).ojdAccessibilityLabel(
             device.name
           )
-          .ojdAccessibilityValue(device.protocolBinding.displayName)
+          .ojdAccessibilityValue(
+            "\(device.protocolBinding.displayName), "
+              + OJDLocalized.string(readiness(for: device).titleKey)
+          )
           .contextMenu { sessionCommands(for: device) }
         }
         ForEach(screen.unservedDevices) { unserved in
@@ -146,14 +167,25 @@
             Text(unserved.nextStep).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
             )
+            ControllerReadinessMark(readiness: unserved.readiness)
           }.padding(.vertical, 4).tag(Self.unservedTag(unserved)).ojdAccessibilityLabel(
             unserved.title
           )
-            .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
+          .ojdAccessibilityValue(
+            "\(OJDLocalized.string(unserved.readiness.titleKey)). "
+              + "\(unserved.explanation) \(unserved.nextStep)"
+          )
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
         wirelessDisconnectAlert(for: request)
-      }
+      }.background(
+        Color.clear.alert(isPresented: rowCommandFailurePresented) {
+          Alert(
+            title: Text(rowCommandFailure ?? ""),
+            dismissButton: .default(Text(OJDLocalized.string("action.ok")))
+          )
+        }
+      )
     }
 
     /// The Controller menu's session commands for one controller.
@@ -164,18 +196,38 @@
     private func sessionCommands(for device: ApplicationServiceDeviceDescription) -> some View {
       if device.sessionState == .suspended {
         Button(OJDLocalized.string("ui.menu.controller.resume")) {
-          Task { @MainActor in await viewModel.resumeController(device) }
-        }
+          runRowCommand(device) { await viewModel.resumeController(device) }
+        }.help(OJDLocalized.string("ui.help.resume"))
       } else {
         Button(OJDLocalized.string("ui.menu.controller.suspend")) {
-          Task { @MainActor in await viewModel.suspendController(device) }
-        }
+          runRowCommand(device) { await viewModel.suspendController(device) }
+        }.help(OJDLocalized.string("ui.help.suspend"))
       }
       if device.supportsWirelessDisconnect {
         Button(OJDLocalized.string("ui.menu.controller.disconnectWirelessLink")) {
           wirelessDisconnectRequest = WirelessDisconnectRequest(device: device)
-        }
+        }.help(OJDLocalized.string("ui.help.disconnectWireless"))
       }
+    }
+
+    /// Runs a session command of a list row, then shows its failure, which the detail column shows
+    /// only for the selected controller.
+    private func runRowCommand(
+      _ device: ApplicationServiceDeviceDescription,
+      _ command: @escaping @MainActor () async -> Void
+    ) {
+      Task { @MainActor in
+        await command()
+        rowCommandFailure = viewModel.controllerActionFailures[device.sessionToken.rawValue]
+      }
+    }
+
+    /// Whether the alert of a failed list-row command shows.
+    private var rowCommandFailurePresented: Binding<Bool> {
+      Binding(
+        get: { rowCommandFailure != nil },
+        set: { if !$0 { rowCommandFailure = nil } }
+      )
     }
 
     /// Returns the alert that confirms closing a controller's Bluetooth link.
@@ -189,7 +241,7 @@
         title: Text(confirmation.title),
         message: Text(confirmation.message),
         primaryButton: .destructive(Text(confirmation.confirmTitle)) {
-          Task { @MainActor in await viewModel.disconnectWirelessController(device) }
+          runRowCommand(device) { await viewModel.disconnectWirelessController(device) }
         },
         secondaryButton: .cancel()
       )
@@ -226,14 +278,15 @@
     @ViewBuilder
     private var controllerDetail: some View {
       if let unserved = screen.selectedUnserved {
-        UnservedDeviceDetailView(device: unserved).id(unserved.id)
+        UnservedDeviceDetailView(device: unserved, perform: perform).id(unserved.id)
       } else if let selectedDevice {
         ControllerDetailView(
           device: selectedDevice,
           activeProfile: activeProfileState(for: selectedDevice),
           retry: refresh,
           viewModel: viewModel,
-          openInputTest: openInputTest
+          readiness: readiness(for: selectedDevice),
+          perform: performSelected(on: selectedDevice)
         ).id(selectedDevice.sessionToken.rawValue)
       } else {
         switch viewModel.statusState {
@@ -264,12 +317,57 @@
             symbol: "gamecontroller",
             title: OJDLocalized.string(
               "ui.controllers.emptyTitle"
-            ),
-            message: OJDLocalized.string(
-              "ui.controllers.emptyMessage"
             )
           )
         }
+      }
+    }
+
+    /// Returns the state of a connected controller.
+    ///
+    /// - Parameter device: The controller.
+    /// - Returns: The state to show.
+    private func readiness(for device: ApplicationServiceDeviceDescription) -> ControllerReadiness {
+      .resolve(
+        ControllerReadinessInput(
+          device: device,
+          isPermissionMissing: AccessReadiness.hasMissingPermission(
+            permissionState: viewModel.permissionState,
+            statusState: viewModel.statusState
+          ),
+          driver: viewModel.systemExtensionSetupState
+        )
+      )
+    }
+
+    /// Returns what the button of the state of a controller does.
+    ///
+    /// - Parameter device: The controller.
+    /// - Returns: The function that runs the button's action.
+    private func performSelected(
+      on device: ApplicationServiceDeviceDescription
+    ) -> @MainActor (ControllerReadinessAction) -> Void {
+      { action in
+        if action == .openInputTest { openInputTest(device) } else { perform(action) }
+      }
+    }
+
+    /// Runs the button of the state of a device that OJD does not serve, which is never Open Input
+    /// Test.
+    ///
+    /// - Parameter action: What the button does.
+    private func perform(_ action: ControllerReadinessAction) {
+      switch action {
+      case .openInputTest: break
+      case .openAccess: openArea(.access)
+      case .setUpDriver:
+        if viewModel.systemExtensionSetupState == .needsApproval {
+          driverApprovalFailed = !SystemExtensionApproval.openSystemSettings()
+        } else {
+          Task { @MainActor in await viewModel.repairSystemExtension() }
+        }
+      case .openSupportedControllers, .openTroubleshooting:
+        if let url = action.wikiURL { NSWorkspace.shared.open(url) }
       }
     }
 
@@ -283,6 +381,11 @@
     private func activeProfileState(
       for device: ApplicationServiceDeviceDescription
     ) -> RuntimeActiveProfileState { screen.activeProfileState(for: device) }
+  }
+
+  extension RuntimeUnservedDevice {
+    /// The state of the device: OJD binds no protocol to it.
+    var readiness: ControllerReadiness { .resolve(.init(subject: .unserved(reason))) }
   }
 
   extension VirtualIdentityGlyphFamily {

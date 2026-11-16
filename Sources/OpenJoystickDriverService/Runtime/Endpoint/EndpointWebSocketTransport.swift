@@ -147,7 +147,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
   private func fill(_ count: Int) -> Bool {
     var chunk = [UInt8](repeating: 0, count: 16_384)
     while buffer.count < count {
-      let received = Darwin.recv(descriptor, &chunk, chunk.count, 0)
+      let received = unsafe Darwin.recv(descriptor, &chunk, chunk.count, 0)
       if received < 0, errno == EINTR { continue }
       guard received > 0 else { return false }
       buffer.append(contentsOf: chunk[0..<received])
@@ -162,10 +162,14 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
     case 0..<126: frame.append(UInt8(payload.count))
     case 126..<65_536:
       frame.append(126)
-      frame.append(contentsOf: withUnsafeBytes(of: UInt16(payload.count).bigEndian, Array.init))
+      unsafe frame.append(
+        contentsOf: withUnsafeBytes(of: UInt16(payload.count).bigEndian, Array.init)
+      )
     default:
       frame.append(127)
-      frame.append(contentsOf: withUnsafeBytes(of: UInt64(payload.count).bigEndian, Array.init))
+      unsafe frame.append(
+        contentsOf: withUnsafeBytes(of: UInt64(payload.count).bigEndian, Array.init)
+      )
     }
     return frame + payload
   }

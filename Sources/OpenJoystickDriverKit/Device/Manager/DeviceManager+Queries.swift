@@ -12,9 +12,23 @@ extension DeviceManager {
     return await pipelines[key]?.inputState()
   }
 
+  /// Returns the latest state of `identifier` as the controller reports it, before the stored
+  /// calibration; nil when it is not connected.
+  package func rawControllerState(for identifier: LogicalControllerID) async -> ControllerState? {
+    await pipelines[identifier]?.rawInputState()
+  }
+
+  /// Returns the latest angular velocity of `identifier` as the controller reports it, before the
+  /// stored gyro offset; nil when it is not connected or has reported no motion.
+  package func rawAngularVelocity(
+    for identifier: LogicalControllerID
+  ) async -> ControllerMotionVector? {
+    await pipelines[identifier]?.rawAngularVelocity()
+  }
+
   /// Returns the ownership evidence for the exact connected device identifier.
   ///
-  /// Missing identifiers intentionally fail closed to unknown ownership.
+  /// Missing identifiers fail closed to unknown ownership.
   public func ownershipObservation(
     for identifier: LogicalControllerID
   ) -> ControllerOwnershipObservation { deviceInfos[identifier]?.ownershipObservation ?? .unknown }
@@ -112,6 +126,7 @@ extension DeviceManager {
       interfaceNumber: observedInterface,
       discoverySource: info.discoverySource.kind,
       physicalOwnership: ownership,
+      gameControllerSupported: info.physicalDevice?.gameControllerSupported ?? false,
       hidInputOwnership: usbHeld ? .ownedByAnotherClient : info.hidInputOwnership,
       inputOwner: usbHeld ? await pipeline.usbExclusiveOwner : nil,
       duplicateExposureRisk: info.duplicateExposureRisk,
@@ -131,7 +146,8 @@ extension DeviceManager {
       preferredBackends: record?.preferredBackends.map(\.rawValue) ?? [],
       physicalOutputCapabilities: await pipeline.physicalOutputCapabilities(),
       physicalOutputOwner: pipeline.macOSOwnedOutput == nil ? .ojd : .system,
-      recordServer: record?.server ?? .system,
+      recordServer: record.flatMap { $0.statesServer ? $0.server : nil }
+        ?? info.physicalDevice?.detectedServer ?? .system,
       recordAccessRoute: record?.accessRoute ?? .system,
       tuning: record?.tuning ?? .none,
       capabilities: protocolDriverRegistry.capabilities(

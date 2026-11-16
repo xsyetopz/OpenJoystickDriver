@@ -1,10 +1,11 @@
-import Darwin
+package import Darwin
 import Foundation
 
 /// The server of the service's local RPC socket.
 ///
 /// It accepts connections on a Unix socket that only the current user can open, asks the
 /// authentication closure whether the peer may call, and passes each request to the handler.
+@safe
 public final class LocalServiceRPCServer: @unchecked Sendable {
   /// Decides whether a peer may call; the server turns away a peer for which it returns false.
   public typealias Authentication = @Sendable (LocalSocketPeer) -> Bool
@@ -46,11 +47,13 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   package var acceptConnection: @Sendable (Int32) -> Int32 = { Darwin.accept($0, nil, nil) }
   /// Makes the pipe that wakes a held request's `poll`, as `pipe` does; tests replace it to fail
   /// the call.
-  package var wakePipe: @Sendable (UnsafeMutablePointer<Int32>) -> Int32 = { Darwin.pipe($0) }
+  package var wakePipe: @Sendable (UnsafeMutablePointer<Int32>) -> Int32 = {
+    unsafe Darwin.pipe($0)
+  }
   /// Waits for an event on a held request's connection or its wake pipe, as `poll` does; tests
   /// replace it to fail the call.
   package var pollConnection: @Sendable (UnsafeMutablePointer<pollfd>, nfds_t, Int32) -> Int32 = {
-    Darwin.poll($0, $1, $2)
+    unsafe Darwin.poll($0, $1, $2)
   }
   /// Milliseconds the accept loop waits after running out of descriptors or memory.
   package var resourceWaitMilliseconds = AcceptFailure.resourceWaitMilliseconds
@@ -132,19 +135,23 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     do {
       var address = try LocalServiceRPCTransport.socketAddress(path: path)
       let bindStatus = withUnsafePointer(to: &address) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          Darwin.bind(descriptor, $0, LocalServiceRPCTransport.socketAddressLength(path: path))
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe Darwin.bind(
+            descriptor,
+            $0,
+            LocalServiceRPCTransport.socketAddressLength(path: path)
+          )
         }
       }
       guard bindStatus == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
-      guard chmod(path, S_IRUSR | S_IWUSR) == 0 else {
+      guard unsafe chmod(path, S_IRUSR | S_IWUSR) == 0 else {
         throw LocalServiceRPCError.connectionFailed(errno)
       }
       guard Darwin.listen(descriptor, 16) == 0 else {
         throw LocalServiceRPCError.connectionFailed(errno)
       }
       var wake: [Int32] = [-1, -1]
-      guard pipe(&wake) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
+      guard unsafe pipe(&wake) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
       let started = Listener(socket: descriptor, wakeRead: wake[0], wakeWrite: wake[1])
       beforeListenerPublished?()
       stateLock.withLock {
@@ -157,7 +164,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       }
     } catch {
       Darwin.close(descriptor)
-      unlink(path)
+      unsafe unlink(path)
       throw error
     }
   }
@@ -177,7 +184,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       // Closing the write end hangs up the read end, which wakes the accept loop to close the
       // rest. The socket file goes under the lock, so a later `start()` cannot lose its new file.
       Darwin.close(stopped.wakeWrite)
-      unlink(socketPath)
+      unsafe unlink(socketPath)
     }
   }
 
@@ -192,7 +199,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       guard listener?.id == ended.id else { return false }
       listener = nil
       Darwin.close(ended.wakeWrite)
-      unlink(socketPath)
+      unsafe unlink(socketPath)
       if let failure { recordListenerFailure(errno: failure) }
       return true
     }
@@ -218,7 +225,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
         pollfd(fd: listener.socket, events: Int16(POLLIN), revents: 0),
         pollfd(fd: listener.wakeRead, events: Int16(POLLIN), revents: 0),
       ]
-      let ready = poll(&events, 2, -1)
+      let ready = unsafe poll(&events, 2, -1)
       if ready < 0 {
         let code = errno
         if code == EINTR { continue }
@@ -232,7 +239,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       }
       let connection = acceptConnection(listener.socket)
       guard connection >= 0 else {
-        let next = AcceptFailure.continuation(
+        let next = unsafe AcceptFailure.continuation(
           errno: errno,
           server: Self.name,
           wake: listener.wakeRead,
@@ -251,7 +258,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
           Darwin.close(connection)
           return
         }
-        self.handleConnection(connection)
+        handleConnection(connection)
       }
     }
   }
@@ -360,13 +367,13 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     }
     let finished = DispatchSemaphore(value: 0)
     let wakeWrite = wake.write
-    let handler = handler
+    let serve = handler
     let task = Task {
-      let response = await handler(request)
+      let response = await serve(request)
       if let encoded = try? JSONEncoder().encode(response) {
         try? LocalServiceRPCTransport.sendFrame(encoded, to: descriptor)
       }
-      if watches { _ = Darwin.write(wakeWrite, "x", 1) }
+      if watches { _ = unsafe Darwin.write(wakeWrite, "x", 1) }
       finished.signal()
     }
     if watches {
@@ -377,7 +384,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       var ready: Int32
       var code: Int32
       repeat {
-        ready = pollConnection(&events, 2, -1)
+        ready = unsafe pollConnection(&events, 2, -1)
         code = errno
       } while ready < 0 && code == EINTR
       if ready < 0 {
@@ -401,7 +408,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   /// Makes the pipe that wakes a held request's `poll`, with both ends closed on `exec`.
   private func openWakePipe() throws -> (read: Int32, write: Int32) {
     var ends: [Int32] = [-1, -1]
-    guard wakePipe(&ends) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
+    guard unsafe wakePipe(&ends) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
     for end in ends where fcntl(end, F_SETFD, FD_CLOEXEC) != 0 {
       let code = errno
       Darwin.close(ends[0])
@@ -422,10 +429,10 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       throw LocalServiceRPCError.alreadyRunning
     }
     var information = stat()
-    guard lstat(path, &information) == 0 else { return }
+    guard unsafe lstat(path, &information) == 0 else { return }
     guard information.st_uid == geteuid(), information.st_mode & S_IFMT == S_IFSOCK else {
       throw LocalServiceRPCError.peerRejected
     }
-    guard unlink(path) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
+    guard unsafe unlink(path) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
   }
 }

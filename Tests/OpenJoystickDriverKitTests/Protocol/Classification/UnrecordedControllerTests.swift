@@ -70,7 +70,7 @@ struct UnrecordedControllerTests {
   // MARK: - Interface signatures
 
   @Test
-  func anXUSBInterfaceSignatureBindsTheFamilyAndItsDriverReadsAReport() throws {
+  func xusbInterfaceSignatureBindsFamilyAndItsDriverReadsReport() throws {
     let triple: (UInt8, UInt8, UInt8) = (0xFF, 0x5D, 0x01)
     #expect(registry.record(for: unrecorded) == nil)
     let binding = try bound(usbDevice(triple))
@@ -92,7 +92,7 @@ struct UnrecordedControllerTests {
   }
 
   @Test
-  func aGIPInterfaceSignatureBindsTheFamilyAndItsDriverReadsAReport() throws {
+  func gipInterfaceSignatureBindsFamilyAndItsDriverReadsReport() throws {
     let triple: (UInt8, UInt8, UInt8) = (0xFF, 0x47, 0xD0)
     #expect(registry.record(for: unrecorded) == nil)
     let binding = try bound(usbDevice(triple))
@@ -155,7 +155,7 @@ struct UnrecordedControllerTests {
   }
 
   @Test
-  func aDatabaseLineMapsAPadWithNoRecord() throws {
+  func databaseLineMapsPadWithNoRecord() throws {
     let fixture = try #require(SDLMappingFixture.all()["8bitdo-m30"])
     let model = ControllerModelID(vendorID: 0x2DC8, productID: 0x5106)
     #expect(registry.record(for: model) == nil)
@@ -169,7 +169,7 @@ struct UnrecordedControllerTests {
   }
 
   @Test
-  func theStandardUsageMapReadsAPadWithNoRecordAndNoLine() throws {
+  func standardUsageMapReadsPadWithNoRecordAndNoLine() throws {
     let model = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
     #expect(registry.record(for: model) == nil)
     let (binding, driver) = try hidDriver(for: hidDevice(0x1234, 0x5678), model: model)

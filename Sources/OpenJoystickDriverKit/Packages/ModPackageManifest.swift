@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Why a mod package is refused, with the `mod` error code that names the kind of refusal.
 public struct ModPackageError: Error, Equatable, Sendable, CustomStringConvertible {

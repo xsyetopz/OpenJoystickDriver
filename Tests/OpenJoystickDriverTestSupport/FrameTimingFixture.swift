@@ -1,4 +1,4 @@
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ControllerFrameTimings {
   /// One controller whose newest frame reached every stage and whose 10-second window of 120

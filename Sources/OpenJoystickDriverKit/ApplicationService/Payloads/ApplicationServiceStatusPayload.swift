@@ -54,7 +54,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
 
 extension ApplicationServiceUnboundDevice {
   /// `VVVV:PPPP`, the identity `ojd` prints and accepts.
-  public var identity: String { String(format: "%04X:%04X", vendorID, productID) }
+  public var identity: String { unsafe String(format: "%04X:%04X", vendorID, productID) }
 
   /// Whether the device is a HID pad: read over HID, with an interface that has a Game Pad or
   /// Joystick usage.
@@ -146,8 +146,10 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   ///
   /// While set, every controller selects automatically.
   public let virtualHIDProfileOverrideError: String?
+  /// The Bluetooth access of the service; nil when the service does not report it.
+  public let bluetoothAccess: BluetoothAccessState?
 
-  /// Creates a new ApplicationServiceStatusPayload.
+  /// Creates a status payload.
   public init(
     buildIdentity: BuildIdentity = .current(),
     inputRead: PermissionManager.AccessState,
@@ -157,7 +159,8 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     passThroughDevices: [ApplicationServicePassThroughDevice] = [],
     userSpaceVirtualDeviceEnabled: Bool? = nil,
     userSpaceVirtualDeviceStatus: VirtualOutputBackendStatus? = nil,
-    virtualHIDProfileOverrideError: String? = nil
+    virtualHIDProfileOverrideError: String? = nil,
+    bluetoothAccess: BluetoothAccessState? = nil
   ) {
     self.buildIdentity = buildIdentity
     self.inputRead = inputRead
@@ -168,6 +171,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
     self.virtualHIDProfileOverrideError = virtualHIDProfileOverrideError
+    self.bluetoothAccess = bluetoothAccess
   }
 
   /// The keys of the JSON encoding.
@@ -190,5 +194,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     case userSpaceVirtualDeviceStatus
     /// The `virtualHIDProfileOverrideError` key.
     case virtualHIDProfileOverrideError
+    /// The `bluetoothAccess` key.
+    case bluetoothAccess
   }
 }

@@ -133,7 +133,7 @@ final class EndpointSubscribers: OutputSink, @unchecked Sendable {
   ///   event.
   func consume(
     _ frame: StreamFrame,
-    onDelivered: @escaping @Sendable () -> Void
+    onDelivered: @Sendable () -> Void
   ) async throws {  // swiftlint:disable:this async_without_await
     guard case .observed(let event) = frame else {
       throw StreamBoundaryError.unsupported(destination)

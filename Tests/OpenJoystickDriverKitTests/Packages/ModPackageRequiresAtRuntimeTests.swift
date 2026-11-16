@@ -32,7 +32,7 @@ struct ModPackageRequiresAtRuntimeTests {
   }
 
   @Test
-  func listGivesTheRequiresProblemAndKeepsTheManifest() throws {
+  func listGivesRequiresProblemAndKeepsManifest() throws {
     try Fixture.with { fixture in
       try installOldPackage(in: fixture, controllers: [try Fixture.record(0x1234, 0xABCD)])
 
@@ -45,7 +45,7 @@ struct ModPackageRequiresAtRuntimeTests {
   }
 
   @Test
-  func listAdmitsEveryPackageOnADevelopmentBuild() throws {
+  func listAdmitsEveryPackageOnDevelopmentBuild() throws {
     try Fixture.with { fixture in
       try installOldPackage(in: fixture, controllers: [try Fixture.record(0x1234, 0xABCD)])
 
@@ -56,7 +56,7 @@ struct ModPackageRequiresAtRuntimeTests {
   }
 
   @Test
-  func theRecordLayerSkipsAndListsAnOutOfRangePackage() throws {
+  func recordLayerSkipsAndListsOutOfRangePackage() throws {
     try Fixture.with { fixture in
       try installOldPackage(in: fixture, controllers: [try Fixture.record(0x1234, 0xABCD)])
 
@@ -71,7 +71,7 @@ struct ModPackageRequiresAtRuntimeTests {
   }
 
   @Test
-  func thePersonaLayerSkipsAndListsAnOutOfRangePackage() throws {
+  func personaLayerSkipsAndListsOutOfRangePackage() throws {
     try Fixture.with { fixture in
       try installOldPackage(in: fixture, virtualDevices: [Fixture.persona(0x1234, 0xABCD)])
 
@@ -86,7 +86,7 @@ struct ModPackageRequiresAtRuntimeTests {
   }
 
   @Test
-  func anOutOfRangePackageDoesNotBlockAnotherWithTheSameIdentity() throws {
+  func outOfRangePackageDoesNotBlockAnotherWithSameIdentity() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try installOldPackage(in: fixture, controllers: [record])

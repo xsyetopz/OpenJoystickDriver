@@ -32,7 +32,7 @@ private final class NativePublicationProbe: VirtualOutputDispatching,
 @Suite(.serialized)
 struct NativeGamepadRoutingTests {
   @Test
-  func automaticIdentityNeverPublishesForANativePad() async throws {
+  func automaticIdentityNeverPublishesForNativePad() async throws {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey
@@ -58,7 +58,7 @@ struct NativeGamepadRoutingTests {
   }
 
   @Test
-  func remappingProfileRunsOnANativePadsInput() async throws {
+  func remappingProfileRunsOnNativePadsInput() async throws {
     let profile = Self.profile(policy: .systemInput)
     let harness = try await RemappingRouterHarness.make(profile: profile)
     defer { harness.removeFiles() }
@@ -76,7 +76,7 @@ struct NativeGamepadRoutingTests {
   }
 
   @Test
-  func noProfileMeansNoDispatchUntilAProfileIsSelected() async throws {
+  func noProfileMeansNoDispatchUntilProfileIsSelected() async throws {
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
     let manager = DeviceManager(
@@ -99,7 +99,7 @@ struct NativeGamepadRoutingTests {
   }
 
   @Test
-  func theRouterWantsPointerInputOnlyWhileTheActiveProfileBindsThePointer() async throws {
+  func routerWantsPointerInputOnlyWhileActiveProfileBindsPointer() async throws {
     let plain = Self.profile(policy: .systemInput)
     let harness = try await RemappingRouterHarness.make(profile: plain)
     defer { harness.removeFiles() }
@@ -136,7 +136,7 @@ struct NativeGamepadRoutingTests {
   }
 
   @Test
-  func virtualGamepadRemappingIsRejectedForANativePad() async throws {
+  func virtualGamepadRemappingIsRejectedForNativePad() async throws {
     let profile = Self.profile(policy: RemappingOutputPolicy(virtualGamepad: .mapped))
     let harness = try await RemappingRouterHarness.make(profile: profile)
     defer { harness.removeFiles() }

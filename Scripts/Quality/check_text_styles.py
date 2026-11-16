@@ -1,12 +1,3 @@
-"""Fail when a view under `Sources/OpenJoystickDriverPresentation` breaks the text rules.
-
-- a font set by point size (`.system(size:`, `.custom(..., size:`, `systemFont(ofSize:`) fails;
-  every text uses a system text style;
-- `.caption` is for secondary text: a use passes only when the same statement (the line and the
-  two lines after it) also sets a secondary color (`secondaryLabelColor`, `.secondary`,
-  `tertiaryLabelColor`). A label, a value, or an error uses the body style or a larger one.
-"""
-
 from __future__ import annotations
 
 import re
@@ -15,7 +6,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 VIEWS = Path("Sources/OpenJoystickDriverPresentation")
-POINT_SIZE = re.compile(r"\.system\(\s*size\s*:|\.custom\([^)]*\bsize\s*:|systemFont\(\s*ofSize\s*:")
+POINT_SIZE = re.compile(
+    r"\.system\(\s*size\s*:|\.custom\([^)]*\bsize\s*:|systemFont\(\s*ofSize\s*:"
+)
 CAPTION = re.compile(r"\.caption[12]?\b")
 SECONDARY = re.compile(r"secondaryLabelColor|tertiaryLabelColor|\.secondary\b")
 WINDOW = 3
@@ -27,7 +20,9 @@ def findings(source: str) -> list[tuple[int, str]]:
     for index, line in enumerate(lines):
         if POINT_SIZE.search(line):
             found.append((index + 1, "font set by point size"))
-        if CAPTION.search(line) and not SECONDARY.search(" ".join(lines[index : index + WINDOW])):
+        if CAPTION.search(line) and not SECONDARY.search(
+            " ".join(lines[index : index + WINDOW])
+        ):
             found.append((index + 1, "caption on text that is not secondary"))
     return found
 
@@ -51,7 +46,9 @@ def main(arguments: list[str] | None = None) -> int:
     if report:
         print(f"error: {len(report)} text style violation(s)", file=sys.stderr)
         return 1
-    print("Every text under Sources/OpenJoystickDriverPresentation uses a system text style.")
+    print(
+        "Every text under Sources/OpenJoystickDriverPresentation uses a system text style."
+    )
     return 0
 
 

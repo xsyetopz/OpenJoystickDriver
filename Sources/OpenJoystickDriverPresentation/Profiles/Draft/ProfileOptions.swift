@@ -12,7 +12,7 @@ enum ProfileIdentifierInput {
   }
 
   /// Returns `value` as `0x` and four hexadecimal digits.
-  static func formatted(_ value: UInt16) -> String { String(format: "0x%04X", value) }
+  static func formatted(_ value: UInt16) -> String { unsafe String(format: "0x%04X", value) }
 }
 
 /// Whether a profile applies to every app or to one app.

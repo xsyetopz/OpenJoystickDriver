@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension Notification.Name {
   /// Posted in-process after anything `getStatus` or the remapping snapshot reports changes.

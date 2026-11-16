@@ -35,7 +35,7 @@ struct CommandLineNameTests {
   }
 
   @Test
-  func kebabSplitsAcronymRunsAsTheSamplesSay() throws {
+  func kebabSplitsAcronymRunsAsSamplesSay() throws {
     let samples = try Self.samples()
     #expect(!samples.spellings.isEmpty)
     for (value, expected) in samples.spellings {
@@ -44,13 +44,13 @@ struct CommandLineNameTests {
   }
 
   @Test
-  func kebabSpellingsOfTheSampleValuesAreDistinct() throws {
+  func kebabSpellingsOfSampleValuesAreDistinct() throws {
     let values = try Self.samples().values
     #expect(Set(values.map(CommandLineName.kebab)).count == values.count)
   }
 
   @Test
-  func anArgumentSelectsTheCaseWhoseSpellingItIs() {
+  func argumentSelectsCaseWhoseSpellingItIs() {
     #expect(CommandLineName.collisions(in: Sample.self).isEmpty)
     for sample in Sample.allCases {
       #expect(CommandLineName.value(of: CommandLineName.kebab(sample.rawValue)) == sample)
@@ -58,14 +58,14 @@ struct CommandLineNameTests {
   }
 
   @Test
-  func anArgumentThatIsNotAKebabSpellingSelectsNothing() {
+  func argumentThatIsNotKebabSpellingSelectsNothing() {
     #expect(CommandLineName.value(of: "HIDDescriptor", in: Sample.self) == nil)
     #expect(CommandLineName.value(of: "hid_descriptor", in: Sample.self) == nil)
     #expect(CommandLineName.value(of: "", in: Sample.self) == nil)
   }
 
   @Test
-  func valuesThatShareASpellingAreReported() {
+  func valuesThatShareSpellingAreReported() {
     #expect(CommandLineName.collisions(in: Colliding.self) == [["AB", "Ab"]])
   }
 }

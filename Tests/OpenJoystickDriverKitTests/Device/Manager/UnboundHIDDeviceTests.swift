@@ -40,7 +40,30 @@ struct UnboundHIDDeviceTests {
   }
 
   @Test
-  func rejectedHIDDeviceAtABoundPipelineLocationKeepsTheClaim() async throws {
+  func recordWithIdleModeReleasesClaimSeizedBeforeModeWasKnown() async {
+    let backend = ClaimRecordingHIDAccessBackend()
+    let manager = DeviceManager(
+      dispatcher: LoggingOutputDispatcher(),
+      installationKey: testPortKeyInstallationKey,
+      hidManager: HIDManager(backend: backend)
+    )
+    let connection = Self.connection(
+      vendorID: 0x2DC8,
+      productID: 0x6013,
+      locationID: 92,
+      interface: gamepadHIDInterface(host: .usb)
+    )
+
+    await manager.handleHIDEvent(.connected(connection: connection, ownership: .exclusive))
+
+    #expect(await manager.connectedDeviceDescriptions().isEmpty)
+    #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.noControllerLinked])
+    #expect(await backend.releasedLocations() == [92])
+    await manager.stop()
+  }
+
+  @Test
+  func rejectedHIDDeviceAtBoundPipelineLocationKeepsClaim() async throws {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -60,9 +83,8 @@ struct UnboundHIDDeviceTests {
     await manager.handleHIDEvent(.connected(connection: rejected, ownership: .exclusive))
 
     #expect(await manager.connectedDeviceDescriptions().count == 1)
-    #expect(
-      await manager.unboundDeviceDescriptions().map(\.reason) == [.unsupportedTransportVariant]
-    )
+    let unbound = await manager.unboundDeviceDescriptions()
+    #expect(unbound.map(\.reason) == [.interfaceContractMismatch])
     #expect(await backend.releasedLocations().isEmpty)
     await manager.stop()
   }
@@ -136,7 +158,7 @@ struct UnboundHIDDeviceTests {
   }
 
   @Test
-  func unboundDevicesRoundTripThroughTheStatusPayload() throws {
+  func unboundDevicesRoundTripThroughStatusPayload() throws {
     let device = ApplicationServiceUnboundDevice(
       vendorID: 0x045E,
       productID: 0x02EA,

@@ -3,7 +3,7 @@
 This page records [issue #18](https://github.com/xsyetopz/OpenJoystickDriver/issues/18): with
 the XboxUSBDevice extension active, `045E:02D1` is not in `ojd controller list`.
 
-## Facts From The Thread
+## Facts from the thread
 
 Evidence class: reporter (not reproduced here).
 
@@ -14,7 +14,7 @@ Evidence class: reporter (not reproduced here).
   handshake, read all inputs, and drove rumble. Endpoints are `0x81`/`0x01` after
   `SetConfiguration(1)`.
 
-## Source Findings
+## Source findings
 
 Evidence class: source (read at `1178ab9d` and SwifterKit `0.3.0`, `0e0b4b8`).
 
@@ -54,7 +54,7 @@ reads `idVendor`, `idProduct`, `locationID`, and the strings from the parent
 Hypothesis 1 (`userclient-access`) can still block the open after the fix. Hypothesis 3 (GIP
 startup) is unlikely: cooltune's capture shows the classic startup works.
 
-## Commands For The Maintainer
+## Commands for the maintainer
 
 With the extension active and the controller attached:
 
@@ -62,7 +62,7 @@ With the extension active and the controller attached:
 ioreg -l -w0 -r -k IOUserClass | grep -A40 'XboxUSBDevice'
 ioreg -l -w0 -r -c IOUSBHostDevice | grep -E 'idVendor|idProduct|locationID'
 codesign -d --entitlements - /Applications/OpenJoystickDriver.app
-./Scripts/ojd record show 045e:02d1
+ojd record show 045e:02d1
 ```
 
 The first command confirms finding 3 when the DEXT service shows `idProductArray` and no

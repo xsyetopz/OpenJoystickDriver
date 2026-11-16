@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension DeviceManager {
   /// Plays `audio`, bytes in the speaker's format, on the speaker of the controller `controller`

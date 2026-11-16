@@ -102,12 +102,16 @@
 
     /// Changes the value and returns the profile.
     func perform() async throws -> some IntentResult & ReturnsValue<ProfileEntity> {
-      guard let key = ProfileKey(argument: key) else {
+      guard let profileKey = ProfileKey(argument: key) else {
         throw CodedFailure.usage(Localization().string("ui.shortcuts.error.profileKey"))
       }
+      // A UUID text is never empty, so the selector always parses.
+      guard let selector = ProfileSelector(argument: profile.id.uuidString) else {
+        throw CodedFailure(.notFound, profile.id.uuidString)
+      }
       let changed = try await service.setProfileValue(
-        profile: ProfileSelector(argument: profile.id.uuidString)!,
-        key: key,
+        profile: selector,
+        key: profileKey,
         value: ProfileValue(argument: value)
       )
       return .result(value: ProfileEntity(changed))

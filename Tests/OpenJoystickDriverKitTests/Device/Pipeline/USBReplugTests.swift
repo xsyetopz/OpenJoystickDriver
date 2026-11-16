@@ -29,7 +29,7 @@ struct USBReplugTests {
     [0x00, 0x14, 0x00, 0x10] + [UInt8](repeating: 0, count: 16)
 
   @Test
-  func replugStartsTheSameSessionAndDeliversInput() async throws {
+  func replugStartsSameSessionAndDeliversInput() async throws {
     let first = RecoveryUSBSession(
       readResults: [.success(Self.reportWithA)],
       readError: .timeout
@@ -57,7 +57,12 @@ struct USBReplugTests {
     let deliveredBeforeReplug = dispatcher.dispatchedStates.count
 
     await provider.setDevices([])
-    await waitUntil("the removed controller is dropped") { await manager.pipelines.isEmpty }
+    // The manager drops the pipeline before its stop closes the session.
+    await waitUntil("the removed controller is dropped and its session closed") {
+      let dropped = await manager.pipelines.isEmpty
+      let closed = await first.closeCount > 0
+      return dropped && closed
+    }
     #expect(await first.closeCount == 1)
 
     await provider.setDevices([service(2)])

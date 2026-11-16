@@ -6,7 +6,7 @@ import Testing
 
 struct VirtualHIDProfileTests {
   @Test
-  func exactlyTheThreeApprovedProfileIDsExist() {
+  func exactlyThreeApprovedProfileIDsExist() {
     #expect(
       VirtualHIDProfileID.allCases.map(\.rawValue) == [
         "SDLCompatible", "Generic", "GameControllerCompatible",
@@ -37,13 +37,13 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func everyIDResolvesToItsProfile() throws {
-    for id in VirtualHIDProfileID.allCases { #expect(try id.makeProfile().id == id) }
+  func everyIDResolvesToItsProfile() {
+    for id in VirtualHIDProfileID.allCases { #expect(id.makeProfile().id == id) }
   }
 
   @Test
-  func sdlCompatibleProfileAdaptsTheXboxOneGIPLayout() throws {
-    let profile = try VirtualHIDProfileID.sdlCompatible.makeProfile()
+  func sdlCompatibleProfileAdaptsXboxOneGIPLayout() {
+    let profile = VirtualHIDProfileID.sdlCompatible.makeProfile()
     #expect(profile.identity == .sdlCompatible)
     #expect(profile.identity.vendorID == 0x045E && profile.identity.productID == 0x0B0C)
     #expect(profile.descriptor == XboxOneGIPHIDDescriptor.descriptor)
@@ -53,8 +53,8 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileAdaptsTheCurrentOJDGenericGamepad() throws {
-    let profile = try VirtualHIDProfileID.generic.makeProfile()
+  func genericProfileAdaptsCurrentOJDGenericGamepad() {
+    let profile = VirtualHIDProfileID.generic.makeProfile()
     #expect(profile.identity == .generic)
     #expect(profile.descriptor == GamepadHIDDescriptor.descriptor)
     let neutral = profile.inputReport(for: .neutral)
@@ -75,7 +75,7 @@ struct VirtualHIDProfileTests {
 
   @Test
   func xboxProfileDecodesOnlyItsOwnRumbleReport() throws {
-    let profile = try VirtualHIDProfileID.sdlCompatible.makeProfile()
+    let profile = VirtualHIDProfileID.sdlCompatible.makeProfile()
     let report = gipRumbleReport(
       activation: 0x0F,
       leftTrigger: 10,
@@ -124,8 +124,8 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileIsInputOnlyAndDecodesNoOutputReport() throws {
-    let profile = try VirtualHIDProfileID.generic.makeProfile()
+  func genericProfileInputOnlyAndDecodesNoOutputReport() {
+    let profile = VirtualHIDProfileID.generic.makeProfile()
     #expect(profile.identity.vendorID == 0x1209)
     #expect(profile.identity.productID == 0x4A4F)
     #expect(profile.reportFormat.outputReportPayloadSize == nil)
@@ -142,7 +142,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func xboxProfileRepresentsTheSpecXboxLayout() {
+  func xboxProfileRepresentsSpecXboxLayout() {
     let profile = VirtualHIDProfileID.sdlCompatible
     let layout: Set<Control> = Control.dpad.union([
       .south, .east, .west, .north, .leftShoulder, .rightShoulder,
@@ -153,7 +153,7 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileRepresentsTheSpecGenericLayout() {
+  func genericProfileRepresentsSpecGenericLayout() {
     let profile = VirtualHIDProfileID.generic
     let buttons: [Control] = [
       .south, .east, .west, .north, .leftShoulder, .rightShoulder,
@@ -166,7 +166,7 @@ struct VirtualHIDProfileTests {
     let hatAndAxes = Control.dpad.union([
       .leftStickX, .leftStickY, .rightStickX, .rightStickY, .leftTrigger, .rightTrigger,
     ])
-    // The frozen 32 button slots held Share and Capture apart; one id, Capture, now fills both.
+    // The frozen 32 button slots held Share and Capture apart; one id, Capture, fills both.
     #expect(buttons.count == 31)
     #expect(profile.representableControls == Set(buttons).union(hatAndAxes))
     #expect(

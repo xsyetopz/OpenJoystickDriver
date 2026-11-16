@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
   /// Sets `key` to `value` in the model's user record, or removes it when `value` is nil.

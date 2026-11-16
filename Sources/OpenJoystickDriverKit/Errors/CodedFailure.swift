@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// An expected failure with a stable error code and a localized message.
 ///

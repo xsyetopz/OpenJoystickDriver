@@ -17,7 +17,9 @@ class FindingTests(unittest.TestCase):
         self.assertEqual([line for line, _ in guard.findings(source)], [1, 2])
 
     def test_text_style_with_design_passes(self) -> None:
-        self.assertEqual(guard.findings("Text(a).font(.system(.body, design: .monospaced))\n"), [])
+        self.assertEqual(
+            guard.findings("Text(a).font(.system(.body, design: .monospaced))\n"), []
+        )
 
     def test_caption_on_secondary_text_passes(self) -> None:
         self.assertEqual(
@@ -37,10 +39,14 @@ class FindingTests(unittest.TestCase):
         )
 
     def test_caption_weight_variant_fails(self) -> None:
-        self.assertEqual(len(guard.findings("Text(a).font(.caption.weight(.semibold))\n")), 1)
+        self.assertEqual(
+            len(guard.findings("Text(a).font(.caption.weight(.semibold))\n")), 1
+        )
 
     def test_comment_is_not_code(self) -> None:
-        self.assertEqual(guard.findings("// .font(.system(size: 9)) and .caption\n"), [])
+        self.assertEqual(
+            guard.findings("// .font(.system(size: 9)) and .caption\n"), []
+        )
 
 
 class ScanTests(unittest.TestCase):
@@ -55,7 +61,9 @@ class ScanTests(unittest.TestCase):
             other.write_text("Text(a).font(.caption)\n")
             self.assertEqual(
                 guard.scan(root),
-                ["Sources/OpenJoystickDriverPresentation/A.swift:2: caption on text that is not secondary"],
+                [
+                    "Sources/OpenJoystickDriverPresentation/A.swift:2: caption on text that is not secondary"
+                ],
             )
 
     def test_repository_is_clean(self) -> None:

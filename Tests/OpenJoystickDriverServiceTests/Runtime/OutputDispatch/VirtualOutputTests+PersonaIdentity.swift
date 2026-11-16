@@ -103,7 +103,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func personaIdentityChangeRebuildsTheLiveDeviceAndAnUnchangedOneDoesNot() async throws {
+  func personaIdentityChangeRebuildsLiveDeviceAndUnchangedOneDoesNot() async throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("persona-identity-\(UUID().uuidString)", isDirectory: true)
     defer { try? FileManager.default.removeItem(at: directory) }

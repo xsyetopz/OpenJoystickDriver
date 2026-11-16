@@ -1,0 +1,5 @@
+// A release body opens under the title that GitHub shows above it.
+{
+	"extends": "../.markdownlint.jsonc",
+	"first-line-heading": false,
+}

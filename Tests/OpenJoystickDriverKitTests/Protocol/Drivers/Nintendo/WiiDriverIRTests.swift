@@ -43,7 +43,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theSetupWritesAllSevenStepsAtLeastFiftyMillisecondsApartAndMatchesTheFixture() throws {
+  func setupWritesAllSevenStepsAtLeastFiftyMillisecondsApartAndMatchesFixture() throws {
     let session = WiiSession(irFormat: .irExtended)
     try session.startUp()
     // Every step is acknowledged the moment it is written, so only the spacing delays the next.
@@ -60,7 +60,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func aSpacingOfTwentyMillisecondsIsRefused() throws {
+  func spacingOfTwentyMillisecondsIsRefused() throws {
     func decode(_ milliseconds: Int) throws {
       let json = Data("{\"irWriteIntervalMs\": \(milliseconds)}".utf8)
       _ = try JSONDecoder().decode(ControllerRecordDocument.Tuning.self, from: json)
@@ -70,7 +70,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func noPointAppearsBeforeTheSetupEnds() throws {
+  func noPointAppearsBeforeSetupEnds() throws {
     let session = WiiSession(irFormat: .irExtended)
     try session.startUp()
     let event = try session.feed(
@@ -80,7 +80,7 @@ struct WiiDriverIRTests {
   }
 
   @Test(arguments: [0, 1, 2, 4])
-  func theExtendedFixtureYieldsItsVisiblePoints(count: Int) throws {
+  func extendedFixtureYieldsItsVisiblePoints(count: Int) throws {
     let session = try readySession()
     let event = try session.feed(report33(try fixture("extended-\(count)-points")))
     let frame = try #require(event?.touchFrames.first)
@@ -90,7 +90,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theExtendedTwoPointFixtureDecodesPositionAndSize() throws {
+  func extendedTwoPointFixtureDecodesPositionAndSize() throws {
     let session = try readySession()
     try session.feed(report33(try fixture("extended-2-points")))
     #expect(session.driver.irPoints[0] == .init(x: 400, y: 380, size: 5))
@@ -99,7 +99,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theBasicFixtureYieldsFourPoints() throws {
+  func basicFixtureYieldsFourPoints() throws {
     let session = try readySession(.irBasic)
     // Mode 0x37: buttons, acceleration, ten IR bytes, six extension bytes.
     try session.feed(
@@ -111,7 +111,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theFullPairsFillSlotsOneToTwoAndThreeToFour() throws {
+  func fullPairsFillSlotsOneToTwoAndThreeToFour() throws {
     let session = try readySession(.irFull)
     try session.feed([0x3E, 0, 0, 0x80] + (try fixture("full-pair-a")))
     #expect(session.driver.irPoints.map { $0 != nil } == [true, true, false, false])
@@ -120,7 +120,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func aCenteredPointerIsZero() throws {
+  func centeredPointerIsZero() throws {
     let session = try readySession()
     // The midpoint of the two points is (511.5, 383.5), the center of the 1024 by 768 grid.
     try session.feed(report33(extended(400, 300) + extended(623, 467) + Self.empty + Self.empty))
@@ -130,7 +130,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theRollOfARecordedAccelerometerSampleTurnsThePointer() throws {
+  func rollOfRecordedAccelerometerSampleTurnsPointer() throws {
     // The midpoint lies 100.5 grid units right of center.
     let ir = extended(600, 383) + extended(624, 384) + Self.empty + Self.empty
     let level = try readySession()
@@ -145,7 +145,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func losingAPointHoldsThePointerAndClearsTracking() throws {
+  func losingPointHoldsPointerAndClearsTracking() throws {
     let session = try readySession()
     try session.feed(report33(extended(600, 383) + extended(624, 384) + Self.empty + Self.empty))
     let held = session.driver.pointer
@@ -156,7 +156,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func aDefaultDriverRunsTheSevenStepScriptAtStartupInTheBasicFormat() throws {
+  func defaultDriverRunsSevenStepScriptAtStartupInBasicFormat() throws {
     let session = WiiSession()
     try session.startUp()
     try session.answer(from: 2, count: 7)
@@ -169,7 +169,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func aDecodedFrameSetsThePointerAxesAndTracking() throws {
+  func decodedFrameSetsPointerAxesAndTracking() throws {
     let session = try readySession()
     let event = try session.feed(
       report33(extended(600, 383) + extended(624, 384) + Self.empty + Self.empty)
@@ -182,7 +182,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func fewerThanTwoPointsHoldTheAxesAndClearTracking() throws {
+  func fewerThanTwoPointsHoldAxesAndClearTracking() throws {
     let session = try readySession()
     let held = try #require(
       try session.feed(report33(extended(600, 383) + extended(624, 384) + Self.empty + Self.empty))
@@ -193,7 +193,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theHIDPathHandsTheDeferredWritesToTheTransport() async throws {
+  func hidPathHandsDeferredWritesToTransport() async throws {
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 0x057E, productID: 0x0306),
       transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
@@ -212,7 +212,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func aDisconnectEndsTheSessionAndTheSetupRunsAgainBeforeAnyPoint() throws {
+  func disconnectEndsSessionAndSetupRunsAgainBeforeAnyPoint() throws {
     let session = try readySession()
     let ir = report33(extended(600, 383) + extended(624, 384) + Self.empty + Self.empty)
     try session.feed(ir)
@@ -244,7 +244,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func withNoPointerBindingTheSessionUsesTheNonIRModeAndWritesNoIRStep() throws {
+  func withNoPointerBindingSessionUsesNonIRModeAndWritesNoIRStep() throws {
     let session = try unboundSession()
     let reports = session.log.map(\.report)
     #expect(reports.contains([0x12, 0x04, 0x31]))
@@ -253,7 +253,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func bindingThePointerLaterRunsTheSetupAndSwitchesTheReportMode() throws {
+  func bindingPointerLaterRunsSetupAndSwitchesReportMode() throws {
     let session = try unboundSession()
     session.driver.setPointerInputWanted(true)
     let before = session.log.count
@@ -267,7 +267,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func unbindingThePointerDisablesTheCameraClearsThePointerAndRestoresTheNonIRMode() throws {
+  func unbindingPointerDisablesCameraClearsPointerAndRestoresNonIRMode() throws {
     let session = try readySession(.irBasic)
     let before = session.log.count
     session.driver.setPointerInputWanted(false)
@@ -284,7 +284,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func theCameraTurnsOnAgainAfterAReconnectWhileTheProfileStillBindsThePointer() throws {
+  func cameraTurnsOnAgainAfterReconnectWhileProfileStillBindsPointer() throws {
     let session = try readySession(.irBasic)
     session.driver.resetProtocolState()
     let before = session.log.count
@@ -313,7 +313,7 @@ struct WiiDriverIRTests {
   }
 
   @Test
-  func thePipelineAsksForIROnlyThroughADispatcherThatWantsThePointer() async throws {
+  func pipelineAsksForIROnlyThroughDispatcherThatWantsPointer() async throws {
     #expect(try await firstReportMode(dispatcher: PointerDemandingDispatcher()) == 0x37)
     #expect(try await firstReportMode(dispatcher: CapturingOutputDispatcher()) == 0x31)
   }

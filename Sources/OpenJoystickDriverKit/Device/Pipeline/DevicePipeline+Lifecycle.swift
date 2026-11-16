@@ -23,7 +23,9 @@ extension DevicePipeline {
     startIdleMonitor()
 
     switch transport {
-    case .usb(let device): startUSBRun(device: device)
+    case .usb(let device):
+      // A pipeline admitted suspended holds no session; its resume opens one.
+      if sessionState == .active { startUSBRun(device: device) }
     case .hid:
       // HID pipeline: data fed via feedHIDData(); no separate startup loop needed
       print("[DevicePipeline] HID pipeline ready" + " for \(identifier)")
@@ -238,6 +240,11 @@ extension DevicePipeline {
     state.connection = currentConnectionState()
     return state
   }
+  /// The latest observed state as the driver reported it, before the stored calibration.
+  func rawInputState() -> ControllerState { currentRawInputState }
+  /// The latest angular velocity as the driver reported it, before the stored gyro offset; nil
+  /// while the controller has reported no motion.
+  func rawAngularVelocity() -> ControllerMotionVector? { currentRawAngularVelocity }
   /// The state of the controller session.
   func controllerSessionState() -> ControllerSessionState { sessionState }
   /// The link and power state of the controller.
@@ -294,10 +301,10 @@ extension DevicePipeline {
     }
     staleWatchTask = Task { [weak self] in
       while !Task.isCancelled, let self {
-        guard let due = await self.staleDeadline(timeout: timeout) else { break }
-        let now = self.uptimeNanoseconds()
+        guard let due = await staleDeadline(timeout: timeout) else { break }
+        let now = uptimeNanoseconds()
         if now >= due {
-          await self.announceStale()
+          await announceStale()
           break
         }
         try? await Task.sleep(nanoseconds: due &- now)

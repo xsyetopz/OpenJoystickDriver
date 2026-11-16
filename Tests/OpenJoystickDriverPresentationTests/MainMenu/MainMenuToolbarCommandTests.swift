@@ -9,7 +9,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func everyToolbarActionHasAMenuCommand() throws {
+  func everyToolbarActionHasMenuCommand() throws {
     for action in MainWindowToolbarAction.allCases {
       let item = try #require(
         MainMenuModel.item(forToolbar: action),
@@ -20,7 +20,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func newCommandsKeepTheToolbarTitleAndTheOthersReuseExistingItems() throws {
+  func newCommandsKeepToolbarTitleAndOthersReuseExistingItems() throws {
     var added = 0
     for action in MainWindowToolbarAction.allCases {
       let item = try #require(MainMenuModel.item(forToolbar: action))
@@ -30,7 +30,7 @@ struct MainMenuToolbarCommandTests {
       #expect(item.titleKey == action.labelKey, "\(action) changes the toolbar item's title")
       #expect(item.keyEquivalent.isEmpty)
     }
-    #expect(added == 14)
+    #expect(added == 15)
     #expect(MainWindowToolbarAction.importProfile.menuAction == .importProfile)
     #expect(MainWindowToolbarAction.exportProfile.menuAction == .exportProfile)
     #expect(MainWindowToolbarAction.installLibraryItem.menuAction == .installRecordOrMod)
@@ -39,8 +39,48 @@ struct MainMenuToolbarCommandTests {
     #expect(MainWindowToolbarAction.activitySearch.menuAction == .find)
   }
 
+  /// A title without its trailing ellipsis and letter case: the menu rule adds the ellipsis to a
+  /// command that asks for more input, and menus capitalize each word.
+  private func bareTitle(_ key: String) -> String {
+    var text = OJDLocalized.string(key)
+    while text.hasSuffix(".") || text.hasSuffix("\u{2026}") { text.removeLast() }
+    return text.lowercased()
+  }
+
   @Test
-  func commandsAreEnabledWhenTheToolbarItemIs() throws {
+  func everyCommandHasToolbarItemsTitle() throws {
+    for action in MainWindowToolbarAction.allCases where action.menuAction != .find {
+      let item = try #require(MainMenuModel.item(forToolbar: action))
+      // A File command may name what it acts on ("Install Record or Mod") where the toolbar
+      // item says "Install"; it always starts with the toolbar item's words.
+      #expect(
+        bareTitle(item.titleKey).hasPrefix(bareTitle(action.labelKey)),
+        "\(action): the menu says \(item.titleKey), the toolbar \(action.labelKey)"
+      )
+    }
+  }
+
+  @Test
+  func everyCommandAvailableWhenAndOnlyWhenToolbarItem() throws {
+    for action in MainWindowToolbarAction.allCases where action.menuAction != .find {
+      let item = try #require(MainMenuModel.item(forToolbar: action))
+      var state = MainMenuState(hasSelectedProfile: true, hasMainWindow: true)
+      state.enabledToolbarActions = [action]
+      #expect(MainMenuModel.isEnabled(item, state: state), "\(action) is off while its item is on")
+      state.enabledToolbarActions = []
+      state.disabledToolbarActions = [action]
+      #expect(!MainMenuModel.isEnabled(item, state: state), "\(action) is on while its item is off")
+    }
+  }
+
+  @Test
+  func commandsOfAnotherAreaStayAvailableForTheirFileMenuItems() throws {
+    let item = try #require(MainMenuModel.item(for: .importProfile))
+    #expect(MainMenuModel.isEnabled(item, state: MainMenuState(hasMainWindow: true)))
+  }
+
+  @Test
+  func commandsEnabledWhenToolbarItem() throws {
     let item = try #require(MainMenuModel.item(forToolbar: .duplicateProfile))
     var state = MainMenuState(hasMainWindow: true)
     #expect(!MainMenuModel.isEnabled(item, state: state))
@@ -51,11 +91,11 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func profileCommandsSitInTheProfileMenuAndActivityOnesInView() throws {
+  func profileCommandsSitInProfileMenuAndActivityOnesInView() throws {
     #expect(
       try section("profile").items.map(\.action) == [
         .activateProfile, .deactivateProfile, .toolbar(.newProfile), .toolbar(.duplicateProfile),
-        .toolbar(.deleteProfile), .toolbar(.validateProfileFile),
+        .toolbar(.convertProfile), .toolbar(.deleteProfile), .toolbar(.validateProfileFile),
       ]
     )
     let view = try section("view").items.map(\.action)
@@ -65,7 +105,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func findIsInTheEditMenuWithCommandF() throws {
+  func findInEditMenuWithCommandF() throws {
     let find = try #require(try section("edit").items.first { $0.action == .find })
     #expect(find.keyEquivalent == "f")
     #expect(find.modifiers == [.command])
@@ -80,7 +120,7 @@ struct MainMenuToolbarCommandTests {
   }
 
   @Test
-  func findTargetsTheSearchFieldOfTheListInView() {
+  func findTargetsSearchFieldOfListInView() {
     #expect(MainWindowArea.library.searchAction(activityMode: .log) == .searchLibrary)
     #expect(MainWindowArea.activity.searchAction(activityMode: .log) == .activitySearch)
     #expect(MainWindowArea.activity.searchAction(activityMode: .diagnostics) == nil)

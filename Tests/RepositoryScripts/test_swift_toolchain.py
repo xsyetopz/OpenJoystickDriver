@@ -6,7 +6,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from Scripts.Command.execution import PROJECT_DIR, swift_command
+PROJECT_DIR = Path(__file__).resolve().parents[2]
+WITH_ENV = str(PROJECT_DIR / "Scripts/with-env.sh")
 
 PINNED = (PROJECT_DIR / ".swift-version").read_text(encoding="utf-8").strip()
 
@@ -40,7 +41,7 @@ class SwiftToolchainTests(unittest.TestCase):
             }
             env.pop("SDKROOT", None)
             result = subprocess.run(
-                swift_command(["build", "--show-bin-path"]),
+                [WITH_ENV, "swift", "build", "--show-bin-path"],
                 env=env,
                 capture_output=True,
                 text=True,

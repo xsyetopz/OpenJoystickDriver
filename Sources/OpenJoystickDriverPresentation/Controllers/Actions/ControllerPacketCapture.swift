@@ -103,7 +103,7 @@ enum ControllerPacketCapture {
   /// - Parameter device: The captured controller.
   /// - Returns: The suggested file name of a capture of `device`.
   static func fileName(for device: ApplicationServiceDeviceDescription) -> String {
-    String(
+    unsafe String(
       format: "OpenJoystickDriver-packets-%04X-%04X.json",
       device.vendorID,
       device.productID
@@ -211,7 +211,9 @@ enum ControllerRecordDrafting {
   ///   interface reports its class triple.
   static func unservedDraft(
     model: ControllerModelID,
-    _ read: (Int, Int) -> PhysicalDevice? = { PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1) }
+    _ read: (Int, Int) -> PhysicalDevice? = {
+      PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1)
+    }
   ) -> ControllerRecordDraft? {
     read(Int(model.vendorID), Int(model.productID)).flatMap {
       ControllerRecordDraft(model: model, device: $0)
@@ -231,6 +233,6 @@ enum ControllerRecordDrafting {
   /// - Parameter model: The controller model.
   /// - Returns: The suggested file name of the record, `vvvv-pppp.plist`.
   static func fileName(for model: ControllerModelID) -> String {
-    String(format: "%04x-%04x.plist", model.vendorID, model.productID)
+    unsafe String(format: "%04x-%04x.plist", model.vendorID, model.productID)
   }
 }

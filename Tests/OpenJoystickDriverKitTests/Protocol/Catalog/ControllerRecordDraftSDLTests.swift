@@ -35,7 +35,7 @@ struct ControllerRecordDraftSDLTests {
   }
 
   @Test
-  func draftsAControllerRecordWhoseMapIsTheConvertedLine() throws {
+  func draftsControllerRecordWhoseMapIsConvertedLine() throws {
     let fixture = try fixture()
     let draft = try draft(fixture)
     #expect(draft.operation == .add && draft.family == .hidDescriptor)
@@ -47,7 +47,7 @@ struct ControllerRecordDraftSDLTests {
   }
 
   @Test
-  func theRecordWritesEveryBindingKindTheFixturesGive() throws {
+  func recordWritesEveryBindingKindFixturesGive() throws {
     for (name, fixture) in try SDLMappingFixture.all() {
       let draft = try draft(fixture, model: ControllerModelID(vendorID: 0x1234, productID: 0x5678))
       let validated = try ControllerRecordSet.validate(draft.document)
@@ -57,14 +57,14 @@ struct ControllerRecordDraftSDLTests {
   }
 
   @Test
-  func aModelWithABundledRecordIsRefused() throws {
+  func modelWithBundledRecordIsRefused() throws {
     let fixture = try fixture()
     let bundled = ControllerModelID(vendorID: 0x2DC8, productID: 0x301C)
     #expect(failure { _ = try draft(fixture, model: bundled) } == .hasRecord)
   }
 
   @Test
-  func aPadWithoutADescriptorIsRefusedWithTheRule() throws {
+  func padWithoutDescriptorIsRefusedWithRule() throws {
     let fixture = try fixture()
     let device = PhysicalDevice(
       vendorID: fixture.device.vendorID,
@@ -83,7 +83,7 @@ struct ControllerRecordDraftSDLTests {
   }
 
   @Test
-  func aPadWithNoLineNamesTheGUIDItWasSearchedWith() throws {
+  func padWithNoLineNamesGUIDItWasSearchedWith() throws {
     let fixture = try fixture()
     let other = "03000000c82d00005106000000010000,Other,a:b0,platform:Mac OS X,"
     #expect(
@@ -93,7 +93,7 @@ struct ControllerRecordDraftSDLTests {
   }
 
   @Test
-  func aLineThatDoesNotConvertIsRejectedWithItsReason() throws {
+  func lineThatDoesNotConvertIsRejectedWithItsReason() throws {
     let fixture = try fixture()
     let line = fixture.line.replacingOccurrences(of: "a:b0,", with: "a:b99,")
     guard case .rejected(let reason)? = failure({ _ = try draft(fixture, line: line) }) else {

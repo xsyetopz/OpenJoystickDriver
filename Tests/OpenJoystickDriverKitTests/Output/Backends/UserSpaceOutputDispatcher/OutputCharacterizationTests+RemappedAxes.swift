@@ -8,7 +8,7 @@ extension OutputCharacterizationTests {
   /// `11C1:5600` rescaled transfer: a passthrough 0.2 and a default-tuned 0.2 binding both stay
   /// non-zero.
   @Test
-  func remappedSmallSticksSkipTheVirtualOutputTransfer() async throws {
+  func remappedSmallSticksSkipVirtualOutputTransfer() async throws {
     var lines: [String] = []
     for (name, device) in [("std", Self.standard), ("11c1", Self.rescaled)] {
       let passthrough = EngineSession(Self.profile(.passthrough), device: device)
@@ -60,7 +60,7 @@ extension OutputCharacterizationTests {
       ("-l2", [.release(.leftTrigger)]), ("+r2", [.press(.rightTrigger)]),
       ("rt0,-r2", [.rightTrigger(0), .release(.rightTrigger)]), ("ne", [.hat(.northEast)]),
       ("sw", [.hat(.southWest)]), ("hat0", [.hat(.neutral)]),
-      // D-pad buttons fold into the one hat, as the pipeline folded them.
+      // D-pad buttons fold into the one hat.
       ("+dup,east", [.hat(.east)]), ("hat0", [.hat(.neutral)]), ("east,+dup", [.hat(.northEast)]),
       ("-dup", [.hat(.east)]), ("hat0", [.hat(.neutral)]), ("ls", [.leftStick(x: 0.5, y: -0.25)]),
       ("ls0", [.leftStick(x: 0, y: 0)]), ("rs", [.rightStick(x: -1, y: 1.5)]),
@@ -113,7 +113,7 @@ extension OutputCharacterizationTests {
   /// An axis remapped onto a trigger axis also sets that trigger's digital flag, which reports
   /// read as a full press while the analog value is zero, at the normalization threshold.
   @Test
-  func remappedTriggerAxisSetsTheDigitalTriggerFlag() async throws {
+  func remappedTriggerAxisSetsDigitalTriggerFlag() async throws {
     let session = EngineSession(
       Self.profile(
         .mapped,

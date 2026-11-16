@@ -133,7 +133,7 @@ Reported by the maintainer: "what is the point of menbar app and its options are
 
 Reported by the maintainer: the "header-style buttons" of the main window are intended, "as many apple apps, like Apple Notes and such, use the very same idea".
 
-**Menu bar item**
+#### Menu Bar Item
 
 - The menu is built by `StatusItemModel.entries(for:)` (`MenuBar/StatusItemModel.swift:161-236`). In order: an unavailable status line of the form `"%1$@ · %2$@ · %3$@"` (readiness, controller count, profile name); a "Controllers" submenu with one submenu per controller; a "Profiles" submenu with the submenus "Activate" and "Deactivate"; "Grant Access" while a permission is missing; "Open Window"; "Settings..."; a "Help" submenu ("Activity Log", "Explain Error Code...", "Report Problem...", "Project Website"); "Quit OpenJoystickDriver".
 - A controller's submenu (`:265-325`) holds "Suspend" or "Resume", "Test Input", an "Active Profile" submenu, "Disconnect Wireless Link", and "Show in Window". "Controllers > controller > Active Profile" is three levels deep. The controller's row shows its name only: no battery, no profile, no state.
@@ -143,7 +143,7 @@ Reported by the maintainer: the "header-style buttons" of the main window are in
 - Every action of the menu also exists in the main window or the main menu, except the status line and "Open Window". The main menu shows only while a window of the app is active, because the app starts as an accessory (`MenuBar/MenuBarCoordinator+Lifecycle.swift:16`).
 - "Show in menu bar" and "Show in Dock" lock each other so one stays on (`SettingsPreferencesModel.swift:318-326`). Not traced: what the app does when a hand-edited settings file turns both off, beyond `applicationShouldHandleReopen` (`MenuBarCoordinator+Lifecycle.swift:128-135`).
 
-**Controls that can appear to do nothing**
+#### Controls That Can Appear to Do Nothing
 
 - Player indicator in Input Test (`Controllers/InputTest/InputTestView+Body.swift:218-226`): the segmented control changes nothing until the user clicks a separate Apply button, and nothing says so. The rumble switch (`:29`) takes effect only on "Test rumble".
 - "Served by" (`Controllers/Inventory/ControllerServerPicker.swift:33-52`): both segments stay enabled while the request runs (up to 10 polls of 200 ms), so a second click starts a second request. On failure the segment snaps back and the text appears in another section of the form (`ControllerDetailView+Facts.swift:24-26`). The service refuses a choice the control offers (`OpenJoystickDriverService/Runtime/RPC/ControllerServerRequests.swift:9-91`, `E2023`).
@@ -154,7 +154,7 @@ Reported by the maintainer: the "header-style buttons" of the main window are in
 - Failures have seven places: the shared banner (`MainWindow/MainWindowProblems.swift`), `controllerActionFailures`, the override view's `problems`, `SettingsErrorSection`, `ProfileLibraryModel.lastError`, Input Test's `outputError`, `ActivityActionFailure`, and several alerts.
 - Not read: the profile sheets, the Access view model, the Library area, `MainWindowToolbar`'s actions, and the update checker. Not verified: whether the Apply buttons of Input Test are ever unavailable.
 
-**Sizes**
+#### Sizes
 
 - Main window: content 1040 × 700 by default, 960 × 560 at minimum (`MainWindow/MainWindowController.swift:17,19`). The column minimums are 170, 200, and 420 (`:11-15`), which is 790, so the window stops shrinking 170 pt before its columns need it to.
 - Settings window: 600 wide for every pane, height fitted, not resizable (`SettingsWindowPaneModel.swift:35-54`).
@@ -185,14 +185,14 @@ Reported by the maintainer: the "header-style buttons" of the main window are in
 
 Common to the five utilities: the item per device or profile sits at the top level, the list of profiles carries a checkmark, the menu ends with Settings and Quit, and none holds a Help submenu. Two of them let the user drag the item out of the menu bar.
 
-**Human Interface Guidelines** (cited). The apple-docs MCP server did not connect in the sessions that wrote this change (`CONNECTION_CLOSED`), so each page was read from `developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`. Task 10.4 reads them again through the server.
+**Human Interface Guidelines** (cited). Each quote below was checked word for word against `/design/human-interface-guidelines/<page>`, read through the apple-docs MCP server.
 
 - `the-menu-bar`: "Display a menu — not a popover — when people click your menu bar extra." "Let people — not your app — decide whether to put your menu bar extra in the menu bar." "Avoid relying on the presence of menu bar extras."
 - `menus`: "Use submenus sparingly." "Limit the depth and length of submenus." "Show people when a menu item is unavailable." "Consider using a checkmark to show that an attribute is currently in effect." "Append an ellipsis to a menu item's label when the action requires more information before it can complete."
 - `toolbars`: "Make every toolbar item available as a command in the menu bar."
 - `pop-up-buttons`: "Use a pop-up button to present a flat list of mutually exclusive options or states." "Provide a useful default selection."
 - `disclosure-controls`: "Use a disclosure control to hide details until they're relevant."
-- `layout`: "Use progressive disclosure to make layouts cleaner and easier to interact with." "Use consistent spacing." "In general, support resizing."
+- `layout`: "Use progressive disclosure to make layouts cleaner and easier to interact with." "Use consistent spacing." (from the tvOS grid guidance) "In general, support resizing." (from the visionOS guidance, which names macOS as having the same behavior)
 - `typography`: "Use font sizes that most people can read easily." "Consider using the built-in text styles." The macOS default size is 13 pt and the minimum 10 pt.
 - `accessibility`: a control on macOS is 28 × 28 pt by default and 20 × 20 pt at minimum. "Convey information with more than color alone."
 - `inclusion`: "Avoid using specialized or technical terms without defining them." "Replace colloquial expressions with plain language." "Present a clear, straightforward interface." "Build in ways to learn how to use your app or game."
@@ -213,7 +213,7 @@ Common to the five utilities: the item per device or profile sits at the top lev
 
 ## Goals / Non-Goals
 
-**Goals**
+### Goals
 
 - A controller that speaks a family OJD has works when it is plugged in, with no record. A controller that differs is fixed by a patch or a record. Source changes only for a protocol family OJD lacks.
 - Every controller fix in this release lands as data. Where a record cannot state the fact, the change adds the general record ability, never a branch for one model.
@@ -234,7 +234,7 @@ Common to the five utilities: the item per device or profile sits at the top lev
 - One term names one concept in the app, the command line's prose, and the wiki.
 - Each change to the interface rests on a measurement of OJD and a named reference: a guideline page, an Apple app, or an open-source app at a commit.
 
-**Non-Goals**
+### Non-Goals
 
 - Running scripts inside the service or the app.
 - A TypeScript compiler inside OJD.
@@ -258,12 +258,12 @@ A stored document is a file that carries `apiVersion` and `kind`: records, patch
 
 Reasons: the data fits (818 of 819 files without loss, and the one exception has a fix below); `PropertyListDecoder` is as strict as the JSON decoder; Xcode and `plutil` edit and check the files; Apple's own controller catalog has this shape. Speed is not a reason: every form parses 706 records in under 4 ms.
 
-- **One form.** Files are XML, UTF-8. A binary property list is refused with a named error, so every stored file stays readable and comparable (`single_format`).
+- **One form.** Files are XML, UTF-8. A binary property list is refused with a named error, so every stored file stays readable and comparable (`useSingleFormat`).
 - **Schema.** JSON Schema Draft 2020-12 stays the contract, and the schema files stay JSON. A validator reads the property list into objects and checks the objects. `date` and `data` values match no schema type and are refused. Apple's device-management repository uses the same split: a schema file beside the property lists it describes.
 - **No `null`.** The crosswalk states "no equivalent" by leaving the key out. A patch deletes keys through `remove` (D12).
 - **Messages.** `ojd --json` output, the local endpoint, and report files stay JSON: their readers are scripts, browsers, and `Scripts/SDK/reference_client.py`.
 - **Bundled files** are written exactly as `PropertyListSerialization` writes them (sorted keys, no comment), and a test enforces it. A user file may hold XML comments; OJD drops them when it rewrites the file.
-- Property names stay lowerCamelCase (`single_format`).
+- Property names stay lowerCamelCase (`useSingleFormat`).
 
 Alternative considered: keep JSON. It needs no migration and has editor support for JSON Schema. Rejected by this design, not by an instruction: the maintainer allowed the move ("if the jsons could become .plist, that's fine, too") and asked for "a more Apple-native solution that satisfies both the users and the app runtime itself"; the data fits, and a property list is the format macOS tools and Foundation treat as native. The cost is the migration in D4 and the larger files in the table above, so the maintainer can still choose JSON by dropping D1 and D12; D2 to D11 and D13 to D15 do not depend on the file format.
 
@@ -316,7 +316,7 @@ A 0.5 document (no `apiVersion`) gets `failed` with reason "written by 0.5; re-c
 
 A step would therefore serve only two single-mode records, which tasks 8.9 and 8.10 re-create by hand with their authors credited.
 
-Alternative considered: readers that accept old versions or JSON. Rejected by `single_format`.
+Alternative considered: readers that accept old versions or JSON. Rejected by `useSingleFormat`.
 
 ### D5. The driver extension is requested only by the user, and unowned models use the direct route
 
@@ -364,7 +364,7 @@ Apple's `IOUSBHostPipe::IO` documentation requires 0 for interrupt endpoints, an
 
 ### D11. A pull request in an old format is redone on the release branch with the author credited
 
-#50, #36, #39, and #47 target code and formats that do not exist on the branch. The maintainer re-creates the data as `v1alpha3` records and patches, credits the author in the commit, and then decides on the pull request. #56, #57, and #54 convert with `ojd migrate <folder>` after a rebase.
+Pull requests #50, #36, #39, and #47 target code and formats that do not exist on the branch. The maintainer re-creates the data as `v1alpha3` records and patches, credits the author in the commit, and then decides on the pull request. #56, #57, and #54 convert with `ojd migrate <folder>` after a rebase.
 
 ### D12. A patch removes keys through `remove`
 
@@ -409,19 +409,29 @@ The parts this release leaves unsettled are named, each with its task: whether t
 - A record's `server` overrides the detection in both directions, as it does today for `OJD`.
 - Task 9.11 measures, before any code, whether the service process sees GameController's list, how it ties a listed controller to a HID device, and the settle time. If the service cannot do it, the detection moves to a later change, and the record field stays the fix for each pad found (D9 for the 2C).
 
+Measured by task 9.11 (`evidence/system-serving/`), from a command-line process that is not frontmost, with `GCController.shouldMonitorBackgroundEvents` on:
+
+- The process sees GameController's list. `GCControllerDidConnect` posts for OJD's `045E:0B13` gamepad 16 to 18 ms after its HID device arrives, over two republications. It posts nothing for `045E:0B0C` or for the virtual `045E:028E` "GamePad-1", though both pass `supportsHIDDevice`.
+- With macOS serving the 2C (`ojd controller release`), the pad left and arrived again over Bluetooth LE, and no controller was listed in the 140 s after it arrived.
+- No public property ties a listed controller to a HID device: `GCController` exposes `vendorName` and `productCategory` (`GCDevice`), and no vendor ID, product ID, or registry ID. For `0B13`, `vendorName` equals the HID `Product` string. The tie is therefore a controller whose `vendorName` equals the device's `Product` and that connects within the settle time after the device arrives.
+- Settle time: 1 s, about 50 times the measured 18 ms. No physical pad that macOS lists was measured, so 9.12 records the settle time as a constant beside this measurement.
+- Not measured: the service process itself. The probe ran as a separate process; 9.12's test of the detection runs in the service.
+
+Measured by task 9.12 in the service, with the 2C over Bluetooth LE and its bundled `server` removed by a user patch (`evidence/system-serving/2c-detection-in-service.txt`): `ojd controller show` named `OJD (from default)` with the pad seized (`exclusive-hid`) and served over `virtual-hid`. The settle check runs in the service process and reads GameController's list there: 1 s after arrival it logged that GameController lists no "8BitDo Ultimate 2C Wireless", only OJD's own "Xbox Wireless Controller". Release and claim then need the fact that macOS can serve the pad (`supportsHIDDevice`), not that it serves it now, because detection gives such a pad to OJD: the description carries `gameControllerSupported`, and the server choice of `ojd controller show`, `claim`, `release`, and the app's picker reads it. A claim that restates the server the bundled record states drops `server` from the user patch, since a patch that changes nothing is refused.
+
 Alternative considered: fix only the `301B` record. Rejected as the whole answer: every other pad with this macOS behavior would need a patch from its user.
 
 Alternative considered: OJD serves every HID pad it has a record for. Rejected: for a pad macOS serves, macOS keeps a second controller that gives no input beside OJD's (`PhysicalInterfaceSignature.swift:295-297`).
 
 ### D17. A patch reaches every section of a record, and a draft starts from any device
 
-#63 shows a controller that no user document can fix (Context, What users ask for). Three rules close that gap, so step 2 of the ladder (D13) holds for every bundled record:
+Issue #63 shows a controller that no user document can fix (Context, What users ask for). Three rules close that gap, so step 2 of the ladder (D13) holds for every bundled record:
 
 - A patch sets every property of a record except its identity (`vendorID`, `productID`), `capabilities` included. `ControllerPatch.sections` (`ControllerPatch.swift:62-65`) lists seven sections today; the list becomes the record schema's properties minus the identity.
 - Entries of `patch.modes` merge with the record's modes by `id`: an entry whose `id` the record holds merges key by key into that mode, an entry with another `id` adds a mode, and the `remove` path `modes.<id>` removes one. Every other array replaces the whole array (D12). So a patch that adds a `HIDDescriptor` mode to a record does not restate the record's other modes.
 - `ojd record draft` accepts every connected controller, served or not. For a device with a HID gamepad interface it drafts a `HIDDescriptor` mode; when a bundled record holds the identity, the draft is a patch that adds that mode. For a device with only vendor-class interfaces it drafts the identity and one mode per interface signature and names the input section as missing.
 
-The record rule "capabilities must be deltas the driver of every mode declares" (`ControllerRecordDocument+Modes.swift:392-393`) calls `capabilitiesAreDeclared(by:)` (`ControllerRecordDocument.swift:146-148`) once per mode. That function asks the family's `recordCapabilities` whether it permits the record's one `capabilities` delta: `present` must be empty or equal the family's list, and `rumble: Absent` needs a family that declares `rumbleAbsent` (`ProtocolDescription.swift:260-263`). A record holds one delta and no mode holds its own, so a record whose modes use two drivers passes only when both declare the delta. `XboxGIP` declares `rumbleAbsent`, `HIDDescriptor` declares nothing, and so the `3537:1022` record with a `HIDDescriptor` mode is refused. Task 9.15 takes the second form: the rule is checked per capability against the modes that can hold it. Each part of the delta must be declared by the family of at least one mode (`capabilitiesAreDeclared(byAnyOf:)`), and a mode whose driver does not declare it does not act on it. A record with one mode checks as before. Reason for not stating capabilities per mode: it adds a `capabilities` key to every mode, changes the schema of every record, and no record needs two different deltas.
+The record rule "capabilities must be deltas the driver of every mode declares" (`ControllerRecordDocument+Modes.swift:392-393`) calls `capabilitiesDeclared(by:)` (`ControllerRecordDocument.swift:146-148`) once per mode. That function asks the family's `recordCapabilities` whether it permits the record's one `capabilities` delta: `present` must be empty or equal the family's list, and `rumble: Absent` needs a family that declares `rumbleAbsent` (`ProtocolDescription.swift:260-263`). A record holds one delta and no mode holds its own, so a record whose modes use two drivers passes only when both declare the delta. `XboxGIP` declares `rumbleAbsent`, `HIDDescriptor` declares nothing, and so the `3537:1022` record with a `HIDDescriptor` mode is refused. Task 9.15 takes the second form: the rule is checked per capability against the modes that can hold it. Each part of the delta must be declared by the family of at least one mode (`capabilitiesDeclared(byAnyOf:)`), and a mode whose driver does not declare it does not act on it. A record with one mode checks as before. Reason for not stating capabilities per mode: it adds a `capabilities` key to every mode, changes the schema of every record, and no record needs two different deltas.
 
 Alternative considered: let a user record replace a bundled record of the same identity. Rejected: the user's copy then misses every later fix to the bundled record, and D8 forbids it for bootloader identities.
 
@@ -431,7 +441,11 @@ When a controller has a record, no mode of the record fits the interfaces the de
 
 Reason: a record that describes one connection of a controller should not block a connection it does not describe. The GameSir G7 Pro dongle is the measured case; its bundled record gains the mode as data (task 8.16), so the fallback covers the next such device before anyone reports it.
 
-This reverses the rule `wiki/Supported-Controllers.md:134` states, so the maintainer confirms it (Open Questions). Task 9.18 reads why that rule exists before it changes the classifier.
+Why the rule stops at a mismatch (read, 2026-11-12). `ProtocolClassifier.swift:419` says "A validation failure never falls through to a lower level" (the precedence comment above `enum ProtocolClassifier`); only the Xbox USB families have an exception (`otherXboxFamilyBinding`, `ProtocolClassifier.swift:637`). The mismatch itself arises in three places: `classifySignature` returns `.unsupported(.interfaceContractMismatch)` when a matched signature has no interface with the interrupt pair (`ProtocolClassifier.swift:742-749`); `makeDriver` returns it when a raw-USB claim is missing or violates the contract (`ProtocolDriverRegistry.swift:156-166`, `:271`), through `claimedInterfaceViolation` (`ProtocolDriverRegistry+InterfaceContract.swift:122,135`); and `DeviceManager+HIDAdmission.swift:55` returns it for a HID interface that is no role of its family. The rule is a guard against a wrong driver on a known pad: `HIDDescriptor` reads any descriptor that passes `HIDDescriptorContract` (`descriptorInterface`, `ProtocolClassifier.swift:668-672`) and would drive a pad the record says needs a family's session, startup or output, and `wiki/Supported-Controllers.md:134` states it as "Generic HID support is not a fallback for a known controller". `git log -S interfaceContractMismatch` shows the reason arrived with the binding reasons (`2a6b53c7d`, virtual HID profiles) and gained text only in `7e098302e` and `838891567`; no commit message states a reason for refusing the fallback, so it is a precaution and not a measured constraint. The fallback keeps the guard where it matters: it needs a HID interface that passes the same contract a pad with no record needs, it never applies to an idle mode (`record.idleReason` returns first) and it never applies to a record that states `server` `System`.
+
+Implementation (task 9.18): `ProtocolClassifier.classify` falls back when the backend is `HID`, the device exposes interfaces, and either the record is a raw-USB record (it claims a USB interface of its own) or its mode names an `interface` range with no observed interface. Without a HID interface that passes the contract, a raw-USB record reports `InterfaceContractMismatch` in place of `UnsupportedTransportVariant`. The fallback binding carries `unfitRecordID`, which `inputMapping` reports (the Input mapping row of `ojd controller show` and the controller detail, and `inputMapping.unfitRecordID` in the JSON). A raw-USB record cannot state `server` (`ControllerRecordDocument+Transport.swift:23`), so `System` applies to HID records.
+
+This reverses the rule `wiki/Supported-Controllers.md:134` states; the maintainer accepted it on 2026-11-12 (Open Questions). Task 9.18 reads why that rule exists before it changes the classifier.
 
 Alternative considered: no fallback, only the record fix. Rejected as the whole answer: each further device waits for a release or for its user to write a patch, and the reason it gives today has no text.
 
@@ -476,7 +490,7 @@ Alternative considered: a redesign of the main window on `NavigationSplitView`. 
 OBS Studio offers "Output Mode" with "Simple" and "Advanced" as a pop-up; MonitorControl offers a checkbox "Show advanced settings". OJD takes the OBS form the maintainer named: a pop-up button "Interface" in Settings > General, and the same two choices in the View menu.
 
 - A fresh installation starts in Simple. An installation that migrates from 0.6.0-alpha.2 starts in Advanced, so no control its user had disappears.
-- Simple shows the controller list, each controller's state and next step, the profile choice, Test Input, and the permission steps. Advanced adds the virtual gamepad kind, the choice of who serves a controller, tuning, identifiers, records and patches, and the activity log. Task 10.6 assigns every control to a level, and the maintainer confirms the list.
+- Simple shows the controller list, each controller's state and next step, choosing, creating and editing a profile, Test Input, and the permission steps. Advanced adds the virtual gamepad kind, the choice of who serves a controller, tuning, identifiers, records and patches, and the activity log. The developer switch adds the programs, tokens, local endpoint and port of the Access area. The maintainer confirmed the level of each control in `docs/development/interface-audit.md` (task 10.6).
 - The level hides controls and changes no behavior: the service never reads it, and `ojd` prints the same in both.
 - A view in Simple that hides a value the user changed shows one row with the count and a button that switches to Advanced. Without it, Simple would hide the cause of what the user sees.
 - The developer switch (`developerTools`) shows its tools only in Advanced.
@@ -531,7 +545,7 @@ InputConfig is under the MIT license and OJD under MPL-2.0. MIT allows reuse wit
 | Conversion to another model | Same `source` names; a binding with no target control is listed and left out |
 | Sort and notes | Profile data only |
 | Pause shortcut | Calls the pause the menu already has |
-| Idle disconnect | Bluetooth only; uses the disconnect the menu already has |
+| Idle disconnect | Classic Bluetooth only (macOS keeps a Bluetooth LE HID link up after `closeConnection()`); uses the disconnect the menu already has |
 | System action bindings | Additions to the binding vocabulary |
 | What changed | Reads `CHANGELOG.md` |
 
@@ -541,13 +555,13 @@ InputConfig's 456 library presets are data under MIT. Task 16.10 measures whethe
 
 ### D25. A profile applies to a list of apps
 
-`applicationScope` of type `Application` holds `appIDs`, a list of one or more bundle identifiers; `appID` leaves the schema, the reader refuses it (`single_format`), and migration converts it. `--app` repeats on the commands that take it. The profile sheet and the editor offer running and installed apps with icon and name, plus "Other..." for an open panel. The menu bar item and the controller detail show the profile in force and name the app that selected it.
+`applicationScope` of type `Application` holds `appIDs`, a list of one or more bundle identifiers; `appID` leaves the schema, the reader refuses it (`useSingleFormat`), and migration converts it. `--app` repeats on the commands that take it. The profile sheet and the editor offer running and installed apps with icon and name, plus "Other..." for an open panel. The menu bar item and the controller detail show the profile in force and name the app that selected it.
 
 Reason: the service already selects a profile by the app in front; the gaps are the typed identifier, one app per profile, and no sign of which profile is in force.
 
 A virtual gamepad kind per app stays research (task 9.14): replacing the published gamepad disconnects it from a running game, and that cost is not measured.
 
-Alternative considered: keep `appID` and add `appIDs` beside it. Rejected by `single_format`.
+Alternative considered: keep `appID` and add `appIDs` beside it. Rejected by `useSingleFormat`.
 
 ### D26. A tester build is a public pre-release
 
@@ -557,7 +571,7 @@ Publishing is the maintainer's action each time.
 
 ### D27. One identity on two access paths splits by a `backend` match key
 
-#37: the Flydigi Vader 4 Pro dongle in XInput mode reports `045E:028E` ("Flydigi VADER3"), which macOS surfaces through HID, while a genuine Xbox 360 pad on the same identity is claimed over raw USB. Neither `link`, `interfaceSignature`, `manufacturer`, `product`, `bcdDevice`, nor `probes` in `modeMatch` (`controller.schema.json`) names the access path, so a mode cannot be chosen by it, and the dongle falls to the descriptor fallback.
+Issue #37: the Flydigi Vader 4 Pro dongle in XInput mode reports `045E:028E` ("Flydigi VADER3"), which macOS surfaces through HID, while a genuine Xbox 360 pad on the same identity is claimed over raw USB. Neither `link`, `interfaceSignature`, `manufacturer`, `product`, `bcdDevice`, nor `probes` in `modeMatch` (`controller.schema.json`) names the access path, so a mode cannot be chosen by it, and the dongle falls to the descriptor fallback.
 
 Options:
 
@@ -570,9 +584,42 @@ Not implemented in 8.11. The key touches `modeMatch` in the schema, `ControllerR
 
 What 8.11 did for #35: records `045e-02e0` (Bluetooth XInput, two layouts by report ID, unsigned 16-bit axes through the default centre, 10-bit triggers) and the `05 0F L R` rumble of `04b4-2412` (the reporter drove the motors on the dongle and states the frame, the latch, and the 10 Hz resend; records carry no comment field, so the source is named here and in the changelog). The `04b4-2412` record selects its report by report ID 4 and length 32, not by interface index; whether the bundled record reaches the `0xFFA0` vendor interface when the composite enumerates in another order (#35) is not tested, and no hardware of ours has confirmed either record.
 
+### D28. Each controller lists its holders from the I/O Registry, the same in the CLI and the app
+
+During the 2C procedure a rumble probe on `2DC8:301C` got `kIOReturnExclusiveAccess` while OJD served the pad, and `ioreg` showed user clients from Google Chrome, WindowServer, and OJD on the device (`evidence/2c-procedure/dinput-24ghz-rumble-probe.txt`). Nothing in OJD showed that: the owner is reported only when OJD's own open fails (`IOUSBHostTransport.swift:108`, printed by `ControllerCommand.swift:70,392`), and suspend lives in the Controller menu and the status item, away from any explanation.
+
+Choice: the service reads each `IOUserClient` child of the controller's HID device and USB interfaces, parses `IOUserClientCreator` (`pid <n>, <name>`) with the parser `HIDInputReportQueue.swift:74-97` already has, and adds the list and OJD's exclusive flag to the device description the RPC sends. The CLI and the app render that one payload, so they cannot disagree. The list is read when a client asks, not watched. Reading the registry needs no permission and sends nothing to the device. The controller detail puts Suspend or Resume beside the holders; the menu commands stay.
+
+### D29. A guided check asks for each control in turn and builds the report
+
+Users on the community chat ask for a button that walks them through every button and builds the report for them, instead of a free-text bug form. The live view of 16.1 already draws every control a record or HID descriptor declares, and `SupportReport` (`SupportReport.swift:22`) already builds the system, permission, and controller facts with a `Privacy` section.
+
+Choice: Input Test gets a Guided Check button, and `ojd controller check <controller>` runs the same steps in the terminal. Each step names one control from the live view's model and waits for that control to leave its rest value; the result per control is `responded`, `otherControl` (a different control moved, named), or `skipped`. A stick or trigger step also stores the range it saw. The run ends in one `ControllerCheck` document: the `SupportReport` controller facts plus the per-control results. The user then saves it, copies it, or opens a GitHub issue. The issue opens through the `controller-support.yml` form with its short fields filled from URL query parameters keyed by field `id`, which GitHub supports, and which fail with `414 URI Too Long` when the URL is too long (GitHub Docs, "Creating an issue from a URL query"). So the full document never rides in the URL: OJD saves it as a file and reveals it, and the form asks the user to attach it. OJD sends nothing over the network.
+
+### D30. A controller is community-verified by a public validation, as CPU-Z and GPU-Z validate hardware
+
+CPU-Z's Validate button submits a hardware dump and returns a permanent public validation ID and page; the record cannot change, and a hardware change needs a new validation. GPU-Z's Validation submits with optional name and e-mail and returns a validation ID, and its Lookup button opens the closest database entry. OJD keeps both parts and changes the transport to fit App Review:
+
+- Guideline 5.1.1(ii) needs consent even for anonymous data and a way to withdraw it; 5.1.1(iii) asks for the least data the purpose needs; 5.1.2(i) needs explicit permission before data leaves, with where it goes. OJD has no server. So Validate builds the `ControllerCheck` of D29, shows its full text and the destination (`github.com/xsyetopz/OpenJoystickDriver`) before anything leaves the Mac, and opens a prefilled `controller-validation.yml` issue in the user's browser. The user submits it under their own GitHub account and can delete it later, which is the withdrawal. The issue number is the validation ID, and its URL is the validation page.
+- Least data: VID:PID, mode `id`, connection, record source (bundled, patch, user), app version, macOS version, and the per-control results. No serial number, unit ID, Bluetooth address, user name, or path.
+- Only a check in which every declared control `responded` offers Validate; any other result offers Report a Problem with the same document.
+- A maintainer accepts a validation by adding it to the record's `validations` list: issue number, mode `id`, app version, and date. A record mode with at least one validation shows "Community verified" in the supported-controllers list, the controller detail, and `ojd record show`; a mode with none shows the existing capture-backed status. Validations are never edited; a new firmware or mode gets a new validation.
+- Lookup opens the controller's entry in `wiki/Supported-Controllers.md`, or, for a model with no record, a GitHub search for its VID:PID.
+- A privacy manifest `PrivacyInfo.xcprivacy` ships in the app with `NSPrivacyTracking` false and one `NSPrivacyCollectedDataTypes` entry: `NSPrivacyCollectedDataTypeOtherDiagnosticData`, linked `true` (the issue sits under the user's GitHub account), tracking `false`, purpose `NSPrivacyCollectedDataTypePurposeAppFunctionality`. The keys come from TN3184; the values come from Xcode's `DVTCorePlistStructDefs` list, since the documentation pages do not list them.
+
+### D31. Recalibration resets a controller's stored centres, ranges, and gyro offset, then captures them again
+
+A Samsung Galaxy S23 acting as a gyro gamepad shows wrong values in Input Test. `ojd controller calibrate` and Input Test's motion section cover only the gyro offset (`ControllerRemappingCommands.swift`, `InputTestView+Body.swift:102`), and the calibration view of 16.2 sets a dead zone by hand. A device whose sticks rest off centre or whose axes do not reach their ends has no way back to correct values.
+
+Choice: Recalibrate, in Input Test and as `ojd controller calibrate <controller> sticks`, runs three timed steps: leave every control at rest (stick centres, trigger rest, gyro offset), move each stick around its full circle, and press each trigger fully. It stores the centres and ranges as tuning for that controller beside the dead zone and applies them before profile mapping. Reset clears them. A step that sees no change keeps the stored value and says which control did not move.
+
 ### Release order
 
 Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13, 15, and 16 add features, and each can leave this release without changing another group. Within group 16 each task stands alone. The maintainer decides which stay (Open Questions).
+
+### D20. A profile cannot leave out `device`, so a profile moves to another model by conversion
+
+`profile.schema.json` lists `device` among the required keys (`:7-15`, `:12`) and defines it with required `productID` and `vendorID` (`:79-83`). The reader agrees: `RemappingProfile.init(from:)` calls `decode`, not `decodeIfPresent`, for `.device` (`Profile.swift:592`), so a document without it fails, and the encoder always writes it (`Profile+Coding.swift:58`). Profile switching also assumes a model: `Next` and `Previous` walk the profiles "of the same model and scope" (`ProfileControl.swift:28,30`). Omitting it would need a schema change, a new rule for which controllers a profile reaches, and a migration; none of the three is in this change. Conversion (task 16.4) copies the profile for the target model instead: `RemappingProfileConversion` keeps each binding whose source control the target reports, lists each one it leaves out, and leaves the original unchanged.
 
 ## Risks / Trade-offs
 
@@ -588,9 +635,9 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - A crosswalk key left out does not show whether the author checked that standard → `test_crosswalk_table.py` keeps its coverage rule for the standards that need a value.
 - Automatic migration rewrites user files → each original is kept in `Migrated/`, the run is logged, and `--dry-run` prints the plan.
 - The direct route for `02D1`, `02DD`, `02E3`, `0B0A` has hardware proof for `02D1` only → the other three stay marked unverified until a reporter confirms.
-- A user who relied on automatic activation for an Apple-held model gets macOS's own driver → the controller row says "Served by macOS" and offers Claim.
+- A user who relied on automatic activation for an Apple-held model gets macOS's own driver → the controller row says "Handled by macOS" and offers Claim.
 - The receiver hypothesis (D8) may be wrong → task 2.1 runs first and D8 names the other outcome.
-- Removing descriptions loses knowledge → each removed fact that still holds moves to the wiki in the same commit (`stale_doc`).
+- Removing descriptions loses knowledge → each removed fact that still holds moves to the wiki in the same commit (`noStaleDocs`).
 - `2DC8:2027` may fail below OJD (libusb fails too) → the release notes list it as unsupported unless the reporter confirms a tester build.
 - Generators are the least-tested part → group 6 depends on group 1 only, and can leave the release without changing any other group.
 - The change holds 19 task groups for one alpha release → groups 13, 15, and 16 are separable (Release order), and the maintainer cuts them without touching a fix.
@@ -621,11 +668,11 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - Can OJD serve `045E:02EA`, `0B00`, and `0B12` through Apple's HID device, which would allow removing the extension? (task 4.9)
 - Which terms does the maintainer choose from the table in D22? In particular "Handled by" against the "Served by" the command line prints, and the three names of the virtual gamepad kinds. (task 14.1)
 - Which of the feature groups 13 (Simple and Advanced), 15 (per-app profiles), and 16 (mapper features) stay in 0.6.0-alpha.3?
-- Does the maintainer accept the HID fallback of D18, which reverses `wiki/Supported-Controllers.md:134`? (task 9.18)
+- "Does the maintainer accept the HID fallback of D18?" (task 9.18) resolved: yes, on 2026-11-12, as D18 describes.
 - Does the menu keep one "Help" item for a user with no open window? (D19)
 - The deployment target is macOS 12 (`Package.swift:33`). `NavigationSplitView` and `MenuBarExtra` need macOS 13. Does the target stay?
 - Should the toolbar be customizable, as Notes offers through "Customize Toolbar…"? No spec asks for it.
 - "Businesses" (resolved): MPL-2.0 permits commercial use, so a company may deploy OJD without a separate license. Open: is a managed installation (a configuration profile that approves the driver extension and the permissions) in scope for a later change? The wiki start page "set up OJD on several Macs" states what the license and macOS allow.
-- Can a profile leave out `device` and apply to every controller that has its source controls, which would make conversion unnecessary? (task 16.4)
+- "Can a profile leave out `device`?" (task 16.4) resolved: no, see D20.
 - Is an importer for InputConfig's preset library wanted, with its MIT notice? (task 16.10)
 - Which users reported that dropdowns do nothing, and on which view? No issue names it; a pointer from the maintainer lets task 10.5 start at that view.

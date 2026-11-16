@@ -28,7 +28,7 @@ struct ProfileTriggerDraftTests {
   }
 
   @Test
-  func profileEditValidatesTheCompleteResult() throws {
+  func profileEditValidatesCompleteResult() throws {
     let profile = RemappingProfile(
       name: "Trigger",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),

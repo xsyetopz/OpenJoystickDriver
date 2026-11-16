@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One canonical frame on the streaming boundary.
 ///
@@ -41,9 +41,9 @@ public struct MappingOutputRelease: Equatable, Sendable {
   public init() {}
 }
 
-/// The profile's colour for one physical controller, or nil to remove it.
+/// The profile's color for one physical controller, or nil to remove it.
 public struct ProfileColorClaim: Equatable, Sendable {
-  /// The colour; nil removes the colour.
+  /// The color; nil removes the color.
   public let color: ControllerColor?
 
   /// Creates a claim for `color`.
@@ -139,7 +139,7 @@ public protocol OutputSink: AnyObject, Sendable {
   /// Releases every remapping claim on a physical controller's output.
   func consume(_ release: MappingOutputRelease, for controller: LogicalControllerID) async throws
 
-  /// Sets or removes the profile's colour on a physical controller.
+  /// Sets or removes the profile's color on a physical controller.
   func consume(_ color: ProfileColorClaim, for controller: LogicalControllerID) async throws
 }
 
@@ -150,8 +150,8 @@ extension OutputSink {
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   @preconcurrency
   public func consume(
-    _ frame: StreamFrame,
-    onDelivered: @escaping @Sendable () -> Void
+    _: StreamFrame,
+    onDelivered _: @Sendable () -> Void
   ) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }
@@ -160,8 +160,8 @@ extension OutputSink {
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   public func consume(
-    _ command: ControllerOutputCommand,
-    for controller: LogicalControllerID
+    _: ControllerOutputCommand,
+    for _: LogicalControllerID
   )
     async throws
   {
@@ -171,8 +171,7 @@ extension OutputSink {
   /// Refuses the claim, because the sink consumes no mapping claim.
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
-  public func consume(_ claim: MappingOutputClaim, for controller: LogicalControllerID) async throws
-  {
+  public func consume(_: MappingOutputClaim, for _: LogicalControllerID) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }
 
@@ -180,18 +179,18 @@ extension OutputSink {
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   public func consume(
-    _ release: MappingOutputRelease,
-    for controller: LogicalControllerID
+    _: MappingOutputRelease,
+    for _: LogicalControllerID
   ) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }
 
-  /// Refuses the colour, because the sink consumes no profile colour.
+  /// Refuses the color, because the sink consumes no profile color.
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   public func consume(
-    _ color: ProfileColorClaim,
-    for controller: LogicalControllerID
+    _: ProfileColorClaim,
+    for _: LogicalControllerID
   ) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }

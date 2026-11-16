@@ -11,7 +11,7 @@ struct MacroCommandTests {
   ]
 
   @Test
-  func setCreatesAMacroAndReplacingItKeepsItsIDAndOptions() async throws {
+  func setCreatesMacroAndReplacingItKeepsItsIDAndOptions() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -38,7 +38,7 @@ struct MacroCommandTests {
   }
 
   @Test
-  func showAndListPrintStepsInTheStepForm() async throws {
+  func showAndListPrintStepsInStepForm() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
     _ = await service.run(["macro", "set", "Pad", "Combo", "--repeat", "while-held"] + Self.combo)
@@ -62,7 +62,7 @@ struct MacroCommandTests {
   }
 
   @Test
-  func removeDeletesAMacroAndFailsForAMissingOrBoundOne() async throws {
+  func removeDeletesMacroAndFailsForMissingOrBoundOne() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
     _ = await service.run(["macro", "set", "Pad", "Combo"] + Self.combo)
@@ -84,7 +84,7 @@ struct MacroCommandTests {
     ["--step", "jump:key:key-a"], ["--step", "wait:soon"], ["--step", "tap"],
     ["--step", "tap:key:key-a", "--repeat", "often"],
   ])
-  func setRejectsABadStepOrRepeatBeforeSaving(arguments: [String]) async throws {
+  func setRejectsBadStepOrRepeatBeforeSaving(arguments: [String]) async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -95,7 +95,7 @@ struct MacroCommandTests {
   }
 
   @Test
-  func bindingSetTargetsAMacroByNameAndKeepsMacrosAcrossBindingChanges() async throws {
+  func bindingSetTargetsMacroByNameAndKeepsMacrosAcrossBindingChanges() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
     _ = await service.run(["macro", "set", "Pad", "Combo"] + Self.combo)

@@ -12,6 +12,7 @@ This page explains how to run `ojd`, which options apply to every command, how t
 - [Environment Variables](#environment-variables)
 - [The Service](#the-service)
 - [Configuration](#configuration)
+- [Check and Calibrate a Controller](#check-and-calibrate-a-controller)
 - [Mod Packages](#mod-packages)
 - [Output](#output)
 - [Exit Codes](#exit-codes)
@@ -21,7 +22,7 @@ This page explains how to run `ojd`, which options apply to every command, how t
 
 The command-line tool is named `ojd`. It is the app's own executable: when it runs under the name `ojd`, it acts as the command line, and under any other name it opens the app.
 
-To install `ojd`, open the app's Settings and click Install Command-Line Tool. The app links `/usr/local/bin/ojd` to its executable, and macOS asks for an administrator password when that folder needs it. Uninstall in the same place removes the link. The app never replaces a file at that path that is not a link.
+To install `ojd`, open the app's Settings and click Install Command-Line Tool (needs the **All Controls** interface). The app links `/usr/local/bin/ojd` to its executable, and macOS asks for an administrator password when that folder needs it. Uninstall in the same place removes the link. The app never replaces a file at that path that is not a link.
 
 To link it yourself instead, create the link in a folder on your `PATH`:
 
@@ -39,7 +40,9 @@ ojd status
 
 The [command reference](Command-Reference.md) lists every command. `ojd --help` lists them too, and `ojd COMMAND --help` shows the options of one command.
 
-To start, run `ojd status` to check the service, extension, and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
+To start, run `ojd status` to check the service, [Xbox USB driver](Glossary.md#terms), and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
+
+To see which apps hold a controller open, run `ojd controller show CONTROLLER`: its Opened by line names each process with its process ID. While OpenJoystickDriver holds the controller exclusively, no other app can open it. Run `ojd controller suspend CONTROLLER` to let another app open it, and `ojd controller resume CONTROLLER` to serve it again.
 
 ## Shell Completion
 
@@ -86,7 +89,11 @@ A command that needs the service exits with code 69 when the service is not runn
 
 ## Configuration
 
-`ojd config show` prints each effective tuning value and the layer that set it: the driver default, the bundled record, a package, your `all.patch.plist`, or your record. A key that no layer sets shows `Driver default`, except `stickDeadzone`, which shows `Not set` because the driver applies no deadzone of its own. It reads the files directly, so it works without the service. With `--controller` and the service running, it also lists the active profile's stick deadzones in the `profile` layer. `ojd config set KEY VALUE` and `ojd config unset KEY` change a key in your record of one controller with `--controller VVVV:PPPP`, or in `all.patch.plist` without it. See [Controller records](Controller-Records.md#set-a-default-for-every-controller) and [Set the Deadzone of a Stick That Rests Off Center](Controller-Records.md#set-the-deadzone-of-a-stick-that-rests-off-center).
+`ojd config show` prints each effective tuning value and the layer that set it: the driver default, the bundled record, a package, your `all.patch.plist`, or your record. A key that no layer sets shows `Driver default`, except `stickDeadzone`, which shows `Not set` because the driver applies no deadzone of its own. It reads the files directly, so it works without the service. With `--controller` and the service running, it also lists the active [profile](Glossary.md#terms)'s stick deadzones in the `profile` layer. `ojd config set KEY VALUE` and `ojd config unset KEY` change a key in your record of one controller with `--controller VVVV:PPPP`, or in `all.patch.plist` without it. See [Controller records](Controller-Records.md#set-a-default-for-every-controller) and [Set the Deadzone of a Stick That Rests Off Center](Controller-Records.md#set-the-deadzone-of-a-stick-that-rests-off-center).
+
+## Check and Calibrate a Controller
+
+`ojd controller check` asks for each control in turn and prints what each did; `--validate` offers the result as a community validation. `ojd controller lookup` prints the controller's entry in [Supported controllers](Supported-Controllers.md), or a GitHub issue search for a model with no record. `ojd controller calibrate CONTROLLER sticks` stores the stick centres, stick ranges, and trigger ends in your record of the model, and `reset` removes them. See [controller](Command-Reference.md#controller).
 
 ## Mod Packages
 

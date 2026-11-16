@@ -14,7 +14,8 @@ private func document(id: String = firstID, productID: Int = 3302, bindings: [St
   """
   {
     "apiVersion": "openjoystickdriver/v1alpha3", "kind": "Profile", "id": "\(id)",
-    "name": "Fixture", "applicationScope": {"type": "Global"}, "device": {"vendorID": 1356, "productID": \(productID)},
+    "name": "Fixture", "applicationScope": {"type": "Global"},
+    "device": {"vendorID": 1356, "productID": \(productID)},
     "bindings": [\(bindings.joined(separator: ","))]
   }
   """
@@ -23,22 +24,27 @@ private func document(id: String = firstID, productID: Int = 3302, bindings: [St
 private func binding(_ number: Int, source: String, destination: String) -> String {
   """
   {"id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4E0\(number)", "source": \(source),
-   "destination": \(destination)}
+    "destination": \(destination)}
   """
 }
 
 private func key(_ number: Int, source: String) -> String {
   binding(
-    number, source: source, destination: #"{"type": "Keyboard", "key": "Space", "modifiers": []}"#
+    number,
+    source: source,
+    destination: #"{"type": "Keyboard", "key": "Space", "modifiers": []}"#
   )
 }
 
 private func region(
-  _ inner: Double, _ outer: Double, stick: String = "Left", sector: String = ""
+  _ inner: Double,
+  _ outer: Double,
+  stick: String = "Left",
+  sector: String = ""
 ) -> String {
   """
   {"type": "StickRegion", "stick": "\(stick)", "innerRadius": \(inner), "outerRadius": \(outer),
-   "hysteresis": 0.05\(sector)}
+    "hysteresis": 0.05\(sector)}
   """
 }
 
@@ -49,7 +55,7 @@ private func band(_ from: Double, _ to: Double) -> String {
 private func area(x: Double, y: Double, width: Double, height: Double) -> String {
   """
   {"type": "TouchArea", "surface": "Primary", "x": \(x), "y": \(y), "width": \(width),
-   "height": \(height)}
+    "height": \(height)}
   """
 }
 
@@ -60,14 +66,14 @@ private func load(_ json: String) throws -> RemappingProfile {
 private final class VoiceList: RemappingSpeechOutput, @unchecked Sendable {
   let voices: Set<String>
   init(voices: Set<String>) { self.voices = voices }
-  func speak(_ text: String, voice: String?, for identifier: LogicalControllerID) async {}
-  func stopSpeech(for identifier: LogicalControllerID) async {}
+  func speak(_: String, voice _: String?, for _: LogicalControllerID) {}
+  func stopSpeech(for _: LogicalControllerID) {}
   func hasVoice(_ identifier: String) -> Bool { voices.contains(identifier) }
 }
 
-/// Profile rules that `ProfileSchemaTests` cannot reach through the shared rich document, each with
-/// a fixture of its own. Swift rejects every case and the schema accepts every case (`schema:
-/// false`), because each rule compares fields or sources, or needs state outside the document.
+// Rules that `ProfileSchemaTests` cannot reach through the shared rich document, each with a
+// fixture of its own. Swift rejects every case and the schema accepts every case (`schema:
+// false`), because each rule compares fields or sources, or needs state outside the document.
 struct ProfileRuleRejectionTests {
   /// Rules of one source: the decoder refuses the document, the schema accepts it.
   @Test(arguments: [
@@ -78,7 +84,7 @@ struct ProfileRuleRejectionTests {
       region(0, 1, sector: #", "fromDegrees": 90, "toDegrees": 90"#)
     ),
   ])
-  func aRegionRuleIsRefusedByTheDecoderOnly(problem: String, source: String) throws {
+  func regionRuleRefusedByDecoderOnly(problem: String, source: String) throws {
     let json = document(bindings: [key(1, source: source)])
     do {
       _ = try load(json)
@@ -104,7 +110,7 @@ struct ProfileRuleRejectionTests {
     ),
     ("trigger bands overlap", band(0.1, 0.5), band(0.4, 0.9)),
   ])
-  func overlappingRegionsAreRefusedByTheDecoderOnly(
+  func overlappingRegionsRefusedByDecoderOnly(
     problem: String,
     first: String,
     second: String
@@ -120,7 +126,7 @@ struct ProfileRuleRejectionTests {
   }
 
   @Test
-  func regionsThatTouchOrBelongToOtherSticksAreAccepted() throws {
+  func regionsTouchOrBelongToOtherSticksAccepted() throws {
     let json = document(bindings: [
       key(1, source: region(0.2, 0.5)), key(2, source: region(0.5, 1)),
       key(3, source: region(0.2, 1, stick: "Right")),
@@ -132,13 +138,16 @@ struct ProfileRuleRejectionTests {
 
   /// The document of a profile switch is valid; the check needs the other profiles.
   @Test
-  func aProfileSwitchToAnotherModelIsRefusedByTheLibraryCheckOnly() throws {
+  func profileSwitchToAnotherModelRefusedByLibraryCheckOnly() throws {
     let foreign = try load(
       document(id: secondID, productID: 9999, bindings: [key(1, source: south)])
     )
     let json = document(bindings: [
       binding(
-        1, source: south, destination: #"{"type": "ProfileSwitch", "profile": "\#(secondID)"}"#)
+        1,
+        source: south,
+        destination: #"{"type": "ProfileSwitch", "profile": "\#(secondID)"}"#
+      )
     ])
     let switching = try load(json)
     #expect(try CLIOutputSchema.profileIssues(inJSON: json).isEmpty)
@@ -151,11 +160,13 @@ struct ProfileRuleRejectionTests {
 
   /// The document of a `Speak` destination is valid; the check needs the voices of this Mac.
   @Test
-  func aSpeakVoiceThatTheMacLacksIsRefusedByTheLibraryCheckOnly() throws {
+  func speakVoiceMacLacksRefusedByLibraryCheckOnly() throws {
     let json = document(bindings: [
       binding(
-        1, source: south,
-        destination: #"{"type": "Speak", "text": "Hi", "voice": "no.such.voice"}"#)
+        1,
+        source: south,
+        destination: #"{"type": "Speak", "text": "Hi", "voice": "no.such.voice"}"#
+      )
     ])
     let profile = try load(json)
     #expect(try CLIOutputSchema.profileIssues(inJSON: json).isEmpty)

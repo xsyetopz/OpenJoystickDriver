@@ -152,7 +152,7 @@ struct ProtocolParametersTests {
   }
 
   @Test
-  func rejectsAParameterItsFamilyDoesNotDeclare() throws {
+  func rejectsParameterItsFamilyDoesNotDeclare() throws {
     let wrongFamily = try decode(#"{"layout":"JoyConLeft"}"#)
     for family in PhysicalProtocolID.allCases
     where family != .nintendoSwitch1 && family != .nintendoSwitch2 {

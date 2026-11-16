@@ -1,5 +1,5 @@
-import CryptoKit
-import Foundation
+public import CryptoKit
+public import Foundation
 
 /// The installation key of the port keys cannot be used.
 ///
@@ -65,7 +65,7 @@ public struct PortKeyInstallationStore: Sendable {
   ///   created.
   private func create(at url: URL) throws -> SymmetricKey {
     let key = SymmetricKey(size: .bits256)
-    let bytes = key.withUnsafeBytes { Data($0) }
+    let bytes = unsafe key.withUnsafeBytes { unsafe Data($0) }
     do {
       try FileManager.default.createDirectory(
         at: url.deletingLastPathComponent(),

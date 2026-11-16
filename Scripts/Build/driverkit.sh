@@ -1,5 +1,4 @@
 # shellcheck shell=bash
-# Generated DriverKit project, build, signing, embedding, and reproducibility owner.
 set -euo pipefail
 
 if [[ -z "${PROJECT_DIR:-}" ]]; then
@@ -342,7 +341,6 @@ _driverkit_xcodebuild() {
     "$@" clean build
 }
 
-# The profile's own Name, which Xcode takes as PROVISIONING_PROFILE_SPECIFIER.
 _driverkit_profile_name() {
   local name
   name="$(security cms -D -i "$1" 2>/dev/null | plutil -extract Name raw -o - - 2>/dev/null)" \
@@ -351,7 +349,6 @@ _driverkit_profile_name() {
   printf '%s\n' "$name"
 }
 
-# Builds, signs, and embeds the dext into the app.
 _build_dext() {
   local configuration="$1" app="$2"
   [[ -f "$DRIVERKIT_PROFILE" ]] \
@@ -398,13 +395,13 @@ _build_dext() {
 
 build_dext_bundle() {
   [[ "${CODESIGN_IDENTITY:--}" != "-" ]] \
-    || die "DriverKit extensions cannot use ad-hoc signing; run ./Scripts/ojd signing configure"
+    || die "DriverKit extensions cannot use ad-hoc signing; run just signing-configure"
   [[ -n "${DEVELOPMENT_TEAM:-}" ]] \
-    || die "DEVELOPMENT_TEAM not set; run ./Scripts/ojd signing configure"
+    || die "DEVELOPMENT_TEAM not set; run just signing-configure"
   local configuration="Debug"
   [[ "$OJD_ENV" == "release" ]] && configuration="Release"
   local app="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
-  [[ -d "$app" ]] || die "app bundle not found; run ./Scripts/ojd build dev first"
+  [[ -d "$app" ]] || die "app bundle not found; run just build-dev first"
 
   _require_host_access_profile "$GUI_PROFILE"
   if [[ "$OJD_HOST_USERCLIENT" == "1" ]]; then

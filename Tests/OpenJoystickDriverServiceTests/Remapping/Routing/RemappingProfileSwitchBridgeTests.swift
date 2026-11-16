@@ -20,8 +20,8 @@ struct RemappingProfileSwitchBridgeTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
 
     func sendControllerOutput(
-      _ command: ControllerOutputCommand,
-      for controller: ControllerReference
+      _: ControllerOutputCommand,
+      for _: ControllerReference
     ) -> ControllerOutputResult {
       ControllerOutputResult(.notFound)
     }
@@ -32,7 +32,7 @@ struct RemappingProfileSwitchBridgeTests {
 
     func activateRemappingProfile(
       id: UUID,
-      allowEmpty: Bool
+      allowEmpty _: Bool
     ) throws -> ApplicationServiceRemappingSnapshotPayload {
       if let failure { throw failure }
       state.withLock { $0.append(id) }
@@ -45,12 +45,12 @@ struct RemappingProfileSwitchBridgeTests {
     }
 
     func deactivateRemappingProfile(
-      id: UUID
+      id _: UUID
     ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
 
     func updateRemappingProfile(
-      _ profile: RemappingProfile,
-      expectedCurrent: RemappingProfile
+      _: RemappingProfile,
+      expectedCurrent _: RemappingProfile
     ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
   }
 
@@ -66,7 +66,7 @@ struct RemappingProfileSwitchBridgeTests {
   }
 
   @Test
-  func nextActivatesThroughTheServiceAndLogsBothNames() async throws {
+  func nextActivatesThroughServiceAndLogsBothNames() async throws {
     try await withFixture { fixture in
       await fixture.bridge.switchProfile(
         .next,
@@ -79,7 +79,7 @@ struct RemappingProfileSwitchBridgeTests {
   }
 
   @Test
-  func anActivationFailureIsLogged() async throws {
+  func activationFailureIsLogged() async throws {
     try await withFixture(failure: Failure()) { fixture in
       await fixture.bridge.switchProfile(
         .next,
@@ -94,7 +94,7 @@ struct RemappingProfileSwitchBridgeTests {
   }
 
   @Test
-  func aTargetOfAnotherModelIsLoggedNotActivated() async throws {
+  func targetOfAnotherModelIsLoggedNotActivated() async throws {
     try await withFixture { fixture in
       await fixture.bridge.switchProfile(
         .profile(fixture.foreign.id),

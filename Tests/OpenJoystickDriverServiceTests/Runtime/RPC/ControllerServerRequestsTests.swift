@@ -29,7 +29,7 @@ struct ControllerServerRequestsTests {
       vendorID: model.vendorID,
       productID: model.productID,
       server: server,
-      systemGamepadConnected: native,
+      servableBySystem: native,
       directory: directory
     )
   }
@@ -59,6 +59,40 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
+  func modelBundledRecordGivesToOJDReleasedAndClaimedBack() throws {
+    try Self.withDirectory { directory in
+      let ultimate2C = (vendorID: 0x2DC8, productID: 0x301B)
+      let released = Self.set(ultimate2C, to: .system, native: true, in: directory)
+      #expect(released.failure == nil, "\(released.detail ?? "")")
+      #expect(released.previous == .ojd)
+      let claimed = Self.set(ultimate2C, to: .ojd, native: true, in: directory)
+      #expect(claimed.failure == nil, "\(claimed.detail ?? "")")
+      #expect(claimed.previous == .system)
+      #expect(
+        ControllerRecordSet.load(userDirectory: directory)
+          .records[ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)]?.server == .ojd
+      )
+    }
+  }
+
+  @Test
+  func claimingUpstreamServerBackDropsPatchRemovesIt() throws {
+    try Self.withDirectory { directory in
+      try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+      let file = directory.appendingPathComponent("2dc8-301b.patch.plist")
+      let patch: [String: Any] = [
+        "apiVersion": "openjoystickdriver/v1alpha3", "kind": "ControllerPatch",
+        "selector": ["vendorID": 0x2DC8, "productID": 0x301B], "remove": ["server"],
+      ]
+      try PropertyListSerialization.data(fromPropertyList: patch, format: .xml, options: 0)
+        .write(to: file)
+      let claimed = Self.set((0x2DC8, 0x301B), to: .ojd, native: true, in: directory)
+      #expect(claimed.failure == nil, "\(claimed.detail ?? "")")
+      #expect(!FileManager.default.fileExists(atPath: file.path))
+    }
+  }
+
+  @Test
   func rawUSBModelIsRefusedAndNothingIsWritten() throws {
     try Self.withDirectory { directory in
       let result = Self.set(Self.bundledGIP, to: .system, native: true, in: directory)
@@ -69,7 +103,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
-  func modelApplesDriverHoldsIsRefusedAndNothingIsWritten() throws {
+  func modelApplesDriverHoldsRefusedAndNothingWritten() throws {
     try Self.withDirectory { directory in
       let result = Self.set((0x045E, 0x02EA), to: .ojd, native: true, in: directory)
       #expect(result.failure == .rawUSB)
@@ -88,7 +122,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() throws {
+  func modelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory in
       let result = Self.set((0x1234, 0xABCD), to: .ojd, native: true, in: directory)
       #expect(result.failure == .noRecord)
@@ -97,7 +131,7 @@ struct ControllerServerRequestsTests {
   }
 
   @Test(arguments: [(-1, 0x2000), (0x2C22, 0x10000), (0x10000, 0x2000)])
-  func aVendorOrProductIDOutOfRangeIsAnInvalidRequest(_ model: (Int, Int)) throws {
+  func vendorOrProductIDOutOfRangeIsInvalidRequest(_ model: (Int, Int)) throws {
     try Self.withDirectory { directory in
       let result = Self.set(model, to: .ojd, native: true, in: directory)
       #expect(result.failure == .invalidRequest)

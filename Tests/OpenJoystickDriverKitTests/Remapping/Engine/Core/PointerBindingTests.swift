@@ -25,7 +25,7 @@ struct RemappingPointerBindingTests {
   }
 
   @Test
-  func theBindingValidatesAndDrivesMouseMovementThroughTheEngine() async throws {
+  func bindingValidatesAndDrivesMouseMovementThroughEngine() async throws {
     let current = profile(.pointerX, to: .mouseMovement(.x))
     try current.validate()
     let sink = RemappingTestSink()
@@ -44,7 +44,7 @@ struct RemappingPointerBindingTests {
   }
 
   @Test
-  func thePositionBindingValidatesAndPlacesTheCursorOnEachAxisChange() async throws {
+  func positionBindingValidatesAndPlacesCursorOnEachAxisChange() async throws {
     let current = profile(.pointerX, to: .pointerPosition(.x))
     try current.validate()
     let sink = RemappingTestSink()
@@ -58,7 +58,7 @@ struct RemappingPointerBindingTests {
   }
 
   @Test
-  func thePositionDestinationNeedsAnAxisSourceAndRoundTrips() throws {
+  func positionDestinationNeedsAxisSourceAndRoundTrips() throws {
     let button = RemappingProfile(
       name: "Pointer",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
@@ -72,7 +72,7 @@ struct RemappingPointerBindingTests {
   }
 
   @Test
-  func aPointerStateChangeReachesTheEngineAsAPointerInput() {
+  func pointerStateChangeReachesEngineAsPointerInput() {
     var moved = ControllerState()
     moved.pointer = StickPosition(x: 0.5, y: -0.25)
     let changes = RemappingEngineState.changes(from: ControllerState(), to: moved)
@@ -80,7 +80,7 @@ struct RemappingPointerBindingTests {
   }
 
   @Test(arguments: [RemappingAxis.pointerX, .pointerY])
-  func theVirtualControllerHasNoPointerOutput(axis: RemappingAxis) {
+  func virtualControllerHasNoPointerOutput(axis: RemappingAxis) {
     #expect(throws: RemappingValidationError.unsupportedGamepadAxis(axis)) {
       try profile(.leftStickX, to: .gamepadAxis(axis)).validate()
     }
@@ -105,14 +105,14 @@ struct RemappingPointerBindingTests {
   }
 
   @Test
-  func aProfileBindsThePointerOnlyThroughAPointerSource() {
+  func profileBindsPointerOnlyThroughPointerSource() {
     #expect(profile(.pointerY, to: .mouseMovement(.y)).bindsPointer)
     #expect(!profile(.leftStickX, to: .mouseMovement(.x)).bindsPointer)
     #expect(!profile().bindsPointer)
   }
 
   @Test
-  func everyPlaceASourceCanAppearCountsAsABinding() {
+  func everyPlaceSourceCanAppearCountsAsBinding() {
     let right = RemappingSource.axisDirection(.pointerX, .positive)
     let other = RemappingSource.button(.south)
     let destination = RemappingDestination.mouseButton(.left)

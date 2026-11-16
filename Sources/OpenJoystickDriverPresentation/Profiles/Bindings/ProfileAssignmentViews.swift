@@ -173,6 +173,9 @@
           destinationField
         }
 
+        if let remark = binding.remark {
+          Text(remark).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
         HStack(spacing: OJDSpacing.small) {
           if binding.axisTuning != nil {
             Button(OJDLocalized.string("action.adjust")) {
@@ -182,11 +185,13 @@
                 "ui.capture.adjust",
                 RuntimePresentation.sourceLabel(binding.source)
               )
+            ).ojdInterfaceRow(ProfilesRow.axisAdjustment).help(
+              OJDLocalized.string("ui.profiles.adjustHelp")
             )
           }
           Button(OJDLocalized.string("ui.profiles.behavior")) {
             onBehavior(binding)
-          }
+          }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
           Spacer(minLength: 0)
           Button(
             action: { onRemove(binding.id) },
@@ -196,7 +201,7 @@
             }
           ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
             OJDLocalized.string("action.removeAssignment")
-          ).help(OJDLocalized.string("action.removeAssignment"))
+          ).help(OJDLocalized.string("ui.profiles.removeAssignmentHelp"))
         }
       }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
         .vertical,
@@ -219,7 +224,9 @@
           ) { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("ui.capture.controllerControl")
-        ).ojdAccessibilityValue(RuntimePresentation.sourceLabel(binding.source))
+        ).help(OJDLocalized.string("ui.capture.controlHelp")).ojdAccessibilityValue(
+          RuntimePresentation.sourceLabel(binding.source)
+        )
       }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -246,7 +253,7 @@
           }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("term.destination")
-        ).ojdAccessibilityValue(
+        ).help(OJDLocalized.string("ui.capture.destinationHelp")).ojdAccessibilityValue(
           RuntimePresentation.destinationLabel(
             binding.destination,
             macros: draft.profile.macros,

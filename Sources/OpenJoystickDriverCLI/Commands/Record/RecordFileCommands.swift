@@ -54,17 +54,17 @@ struct RecordValidation: Encodable, Equatable {
   /// - Throws: ``CLIFailure`` when the record is not valid.
   static func check(_ path: String, data: Data) throws -> ValidatedControllerRecord {
     do { return try ControllerRecordSet.validate(data) } catch {
-      let problem = ControllerRecordSet.problemDescription(
+      let description = ControllerRecordSet.problemDescription(
         error,
         includingCode: false,
         document: "record",
         localization: Localization(),
         file: path == "-" ? nil : path
       )
-      if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: problem)) }
+      if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: description)) }
       throw CLIFailure(
         ControllerRecordSet.problemCode(error) ?? .invalidInputFile,
-        CLILocalized.format("cli.record.group.invalid", path, problem)
+        CLILocalized.format("cli.record.group.invalid", path, description)
       )
     }
   }

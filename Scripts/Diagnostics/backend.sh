@@ -1,32 +1,10 @@
 #!/usr/bin/env bash
-# Diagnostics helper for OpenJoystickDriver.
-#
-# Human-facing entrypoint:
-#   ./Scripts/ojd diagnose <subcommand>
-#
-# Subcommands:
-#   dext (default), sdl3, sdl3-gamecontroller, sdl3-hidapi-x360, backends
-#
-# The backends command runs every step, prints each step's exit status, and exits 1 when a step
-# failed.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../Platform/environment.sh"
 
 cmd="${1:-}"
 shift || true
-
-if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
-  cat <<'TXT'
-Usage:
-  ./Scripts/ojd diagnose sdl3 [--seconds N] [--rumble] [other args]
-  ./Scripts/ojd diagnose sdl3-gamecontroller [--seconds N] [--rumble]
-  ./Scripts/ojd diagnose sdl3-hidapi-x360 [--seconds N] [--rumble]
-  ./Scripts/ojd diagnose gamecontroller [--seconds N] [--rumble]
-  ./Scripts/ojd diagnose backends [--seconds N]
-TXT
-  exit 0
-fi
 
 SDL3_PROBE_DIR="$PROJECT_DIR/Tools/SDLGamepadProbe"
 

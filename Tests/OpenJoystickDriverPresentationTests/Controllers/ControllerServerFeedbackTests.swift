@@ -44,7 +44,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func anAcceptedToggleRefreshesUntilTheStatusCarriesTheNewOwnership() async {
+  func acceptedToggleRefreshesUntilStatusCarriesNewOwnership() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -58,7 +58,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func thePickerShowsTheChosenServerUntilTheServiceConfirmsIt() async {
+  func pickerShowsChosenServerUntilServiceConfirmsIt() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -73,7 +73,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func thePickerReturnsToTheRecordWhenTheChangeIsNotConfirmed() async {
+  func pickerReturnsToRecordWhenChangeIsNotConfirmed() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -83,7 +83,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func thePickerReturnsToTheRecordWhenTheServiceRefuses() async {
+  func pickerReturnsToRecordWhenServiceRefuses() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setServerFailure(.noRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -94,7 +94,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func anAcceptedToggleStopsRefreshingAfterTwoSeconds() async {
+  func acceptedToggleStopsRefreshingAfterTwoSeconds() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
 
@@ -105,7 +105,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func aRefusedToggleRefreshesOnce() async {
+  func refusedToggleRefreshesOnce() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setServerFailure(.noRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -148,7 +148,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func theControlIsRunningUntilTheServiceConfirmsAndAnotherChoiceIsIgnored() async {
+  func controlRunningUntilServiceConfirmsAndAnotherChoiceIgnored() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device()
@@ -166,7 +166,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func aRefusalStaysBelowThePickerUntilTheNextChoiceStarts() async {
+  func refusalStaysBelowPickerUntilNextChoiceStarts() async {
     let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
     await gateway.setServerFailure(.noRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -174,7 +174,10 @@ struct ControllerServerFeedbackTests {
     let model = RuntimeControllerModel(device)
 
     await viewModel.setControllerServer(.ojd, for: device)
-    #expect(viewModel.controllerServerFailures[model] == OJDLocalized.string("ui.controllers.server.noRecord"))
+    #expect(
+      viewModel.controllerServerFailures[model]
+        == OJDLocalized.string("ui.controllers.server.noRecord")
+    )
     #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
 
     await gateway.setServerFailure(nil)
@@ -183,7 +186,7 @@ struct ControllerServerFeedbackTests {
   }
 
   @Test
-  func aModelWithoutARecordOffersNoChoiceAndSaysWhy() {
+  func modelWithoutRecordOffersNoChoiceAndSaysWhy() {
     let viewModel = RuntimeViewModel(gateway: GatewayStub())
     #expect(
       viewModel.controllerServerUnavailableReason(hasRecord: false)

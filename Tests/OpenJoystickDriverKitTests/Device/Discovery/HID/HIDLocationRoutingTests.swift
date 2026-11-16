@@ -11,7 +11,7 @@ import Testing
 /// exists.
 struct HIDLocationRoutingTests {
   @Test
-  func twoGameSirConnectionsAtOneLocationKeepOneLocationController() async throws {
+  func twoGameSirConnectionsAtOneLocationKeepOneLocationController() async {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()

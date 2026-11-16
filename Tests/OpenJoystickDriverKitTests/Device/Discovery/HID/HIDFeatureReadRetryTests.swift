@@ -36,7 +36,7 @@ struct HIDFeatureReadRetryTests {
     let task = Task {
       await HIDFeatureReadRetry.run(delayNanoseconds: 0) {
         let result = await attempts.next()
-        withUnsafeCurrentTask { $0?.cancel() }
+        unsafe withUnsafeCurrentTask { unsafe $0?.cancel() }
         return result
       }
     }

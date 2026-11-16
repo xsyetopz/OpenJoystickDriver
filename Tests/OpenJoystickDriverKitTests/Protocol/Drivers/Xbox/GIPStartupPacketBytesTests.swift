@@ -14,7 +14,7 @@ struct GIPStartupPacketBytesTests {
   /// The Vader 5S (`37D7:2801`) needs the Hori acknowledgement and the LED packet before
   /// authentication, and it runs no post-handshake settle (#40).
   @Test
-  func theVaderFiveSRecordRunsTheHoriStartupSequenceWithoutASettle() throws {
+  func vaderFiveSRecordRunsHoriStartupSequenceWithoutSettle() throws {
     let model = ControllerModelID(vendorID: 0x37D7, productID: 0x2801)
     let profile = try #require(ProtocolDriverRegistry().record(for: model))
     #expect(profile.physicalProtocolID == .xboxGIP)
@@ -33,7 +33,7 @@ struct GIPStartupPacketBytesTests {
 
   private func hex(_ write: PhysicalOutputWrite) -> String {
     guard case .usb(let packet, _) = write else { return "other" }
-    return "\(packet.endpoint):" + packet.bytes.map { String(format: "%02x", $0) }.joined()
+    return "\(packet.endpoint):" + packet.bytes.map { unsafe String(format: "%02x", $0) }.joined()
   }
 
   private func startup(_ identifiers: [String]) -> [String] {
@@ -65,7 +65,7 @@ struct GIPStartupPacketBytesTests {
   ]
 
   @Test
-  func testEachNamedPacketAloneCarriesTheSameBytes() {
+  func testEachNamedPacketAloneCarriesSameBytes() {
     for identifier in Self.identifiers {
       #expect(startup([identifier]) == [Self.alone[identifier]], "\(identifier)")
     }
@@ -78,13 +78,13 @@ struct GIPStartupPacketBytesTests {
   }
 
   @Test
-  func testARepeatedPacketTakesTheNextSequenceNumber() {
+  func testRepeatedPacketTakesNextSequenceNumber() {
     let twice = startup(["XboxGIP/power-on", "XboxGIP/power-on", "XboxGIP/s-init"])
     #expect(twice == ["2:0520010100", "2:0520020100", "2:0520030f06"])
   }
 
   @Test
-  func testSequenceNumbersContinueAcrossStartupsAndIntoTheKeepAlive() {
+  func testSequenceNumbersContinueAcrossStartupsAndIntoKeepAlive() {
     let gip = driver(Self.identifiers)
     #expect(gip.startupWrites().map(hex) == Self.all)
     #expect(
@@ -98,7 +98,7 @@ struct GIPStartupPacketBytesTests {
   }
 
   @Test
-  func testTheDefaultStartupIsPowerOnLedOnAuthDone() {
+  func testDefaultStartupIsPowerOnLedOnAuthDone() {
     #expect(
       GIPDriver().startupWrites().map(hex)
         == ["2:0520010100", "2:0a200203000114", "2:062001020100"]

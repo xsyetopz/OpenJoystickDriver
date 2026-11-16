@@ -29,7 +29,7 @@ struct WiiDriverMotionPlusTests {
   }
 
   @Test
-  func theFastFlagScalesTheAxisByTheFastOverSlowRatio() throws {
+  func fastFlagScalesAxisByFastOverSlowRatio() throws {
     driver.accelerometerCalibration = WiiDriver.AccelerometerCalibration([
       0x80, 0x80, 0x80, 0, 0xC0, 0xC0, 0xC0, 0, 0, 0,
     ])
@@ -46,7 +46,7 @@ struct WiiDriverMotionPlusTests {
   }
 
   @Test
-  func theRestOffsetIsTheMeanOfAStillWindowAndIsSubtracted() throws {
+  func restOffsetIsMeanOfStillWindowAndIsSubtracted() throws {
     driver.accelerometerCalibration = WiiDriver.AccelerometerCalibration([
       0x80, 0x80, 0x80, 0, 0xC0, 0xC0, 0xC0, 0, 0, 0,
     ])
@@ -61,7 +61,7 @@ struct WiiDriverMotionPlusTests {
   }
 
   @Test
-  func aFastFrameRestartsTheRestWindow() throws {
+  func fastFrameRestartsRestWindow() throws {
     driver.extensionKind = .known("MotionPlus")
     for _ in 0..<WiiDriver.gyroRestWindow { _ = try report(gyroFrame(yaw: 8192)) }
     _ = try report(gyroFrame(yaw: 8192, slow: (false, true, true)))
@@ -89,7 +89,7 @@ struct WiiDriverMotionPlusTests {
   }
 
   @Test
-  func classicPassthroughKeepsTheDPadAndTheButtonsOfItsFrame() throws {
+  func classicPassthroughKeepsDPadAndButtonsOfItsFrame() throws {
     driver.extensionKind = .known("MotionPlusClassic")
     _ = try report([0x21, 0x21, 0x10, 0x10, 0xFF, 0xFC])
     // The a button (byte 5 bit 4) and d-pad up (byte 0 bit 0) down.
@@ -108,7 +108,7 @@ struct WiiDriverMotionPlusTests {
   }
 
   @Test
-  func anInactiveMotionPlusIsActivatedByTheModeOfThePluggedExtensionThenIdentified() throws {
+  func inactiveMotionPlusIsActivatedByModeOfPluggedExtensionThenIdentified() throws {
     driver.passthroughBase = "Nunchuk"
     _ = try feed([0x20, 0, 0, 0x02, 0, 0, 0xC8])
     let ack: [UInt8] = [0x22, 0, 0, 0x16, 0]

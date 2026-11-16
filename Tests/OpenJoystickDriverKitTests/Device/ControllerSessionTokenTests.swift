@@ -12,7 +12,7 @@ struct ControllerSessionTokenTests {
   }
 
   @Test
-  func tokensWithTheSameTextAreEqual() throws {
+  func tokensWithSameTextAreEqual() throws {
     let token = try #require(ControllerSessionToken(rawValue: "E-AbCd_123-xyzW09q"))
     #expect(ControllerSessionToken(rawValue: token.rawValue) == token)
     #expect(

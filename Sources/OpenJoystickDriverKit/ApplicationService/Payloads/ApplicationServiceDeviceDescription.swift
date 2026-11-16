@@ -17,7 +17,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let vendorID: UInt16
   /// USB product ID.
   public let productID: UInt16
-  /// Bound protocol family and resolved variant (e.g. `XboxGIP:USB`, `VendorFlydigi`).
+  /// Bound protocol family and resolved variant (e.g. `XboxGIP:USB`, `ValveSteamDeck`).
   public let protocolBinding: ProtocolBindingID
   /// Connection type (e.g. "USB", "HID").
   public let connection: String
@@ -30,12 +30,20 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   public let discoverySource: DeviceDiscoverySource
   /// Observed physical ownership route used by virtual exposure policy.
   public let physicalOwnership: ControllerOwnershipObservation
+  /// Whether macOS can serve the controller as a native gamepad when OJD leaves it alone, even
+  /// while OJD serves it.
+  public let gameControllerSupported: Bool
   /// Current HID acquisition result; unknown for non-HID discovery routes, except that a raw-USB
   /// controller whose interface another client holds exclusively reports `ownedByAnotherClient`.
   public let hidInputOwnership: HIDInputOwnership
   /// The client that holds the controller's USB interface exclusively; nil when none does or the
   /// interface names none.
   public let inputOwner: USBExclusiveOwner?
+  /// Whether OJD's own open of the controller is exclusive.
+  ///
+  /// It is true for an active session on a seized HID device or a claimed USB interface; a
+  /// suspended session holds no open.
+  public let holdsExclusively: Bool
   /// Duplicate-device risk implied by the current physical ownership observation.
   public let duplicateExposureRisk: DuplicateExposureRisk
   /// USB serial number, or nil if not reported.
@@ -60,7 +68,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// ``physicalOutputCapabilities`` holds only what macOS leaves undone.
   public let physicalOutputOwner: ControllerServer
   /// Who the controller record says serves the model after the bundled, package, and user layers:
-  /// `ojd` when a layer sets it, `macOS` otherwise.
+  /// the value a layer sets, else `ojd` for a pad macOS can serve but GameController leaves
+  /// unlisted, else `macOS`.
   ///
   /// Unlike ``physicalOutputOwner``, it stays `ojd` while OJD serves a model that macOS also
   /// supports.
@@ -87,11 +96,15 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Whether a `Pause` has the controller pass through unmapped; set by the service when it
   /// reports status.
   public var paused = false
-  /// The profile in force for the controller and the app that selected it; nil when no profile
-  /// is active for it. Set by the service when it reports status.
+  /// The profile in force for the controller and the app that selected it.
+  ///
+  /// It is nil when no profile is active for it. The service sets it when it reports status.
   public var profileInForce: ApplicationServiceProfileInForce?
+  /// Every process with a user client on the controller's HID device or USB interfaces, OJD
+  /// included, in process ID order; set by the service when it reports status.
+  public var holders: [USBExclusiveOwner] = []
 
-  /// Creates a new ApplicationServiceDeviceDescription.
+  /// Creates a device description.
   public init(
     name: String,
     vendorID: UInt16,
@@ -101,6 +114,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     interfaceNumber: UInt8? = nil,
     discoverySource: DeviceDiscoverySource,
     physicalOwnership: ControllerOwnershipObservation = .unknown,
+    gameControllerSupported: Bool = false,
     hidInputOwnership: HIDInputOwnership = .unknown,
     inputOwner: USBExclusiveOwner? = nil,
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
@@ -135,6 +149,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.interfaceNumber = interfaceNumber
     self.discoverySource = discoverySource
     self.physicalOwnership = physicalOwnership
+    self.gameControllerSupported = gameControllerSupported
     self.hidInputOwnership = hidInputOwnership
     self.inputOwner = inputOwner
     self.duplicateExposureRisk = duplicateExposureRisk
@@ -156,10 +171,12 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.sessionState = sessionState
     self.startupCommandStatus = startupCommandStatus
     self.inputHealth = inputHealth
+    self.holdsExclusively =
+      sessionState == .active && [.exclusiveHID, .exclusiveRawUSB].contains(physicalOwnership)
   }
 
   /// Decodes the value from `decoder`.
-  public init(from decoder: Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.sessionToken = try container.decode(ControllerSessionToken.self, forKey: .sessionToken)
     self.portKey = try container.decodeIfPresent(ControllerPortKey.self, forKey: .portKey)
@@ -177,11 +194,16 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       ControllerOwnershipObservation.self,
       forKey: .physicalOwnership
     )
+    self.gameControllerSupported = try container.decode(
+      Bool.self,
+      forKey: .gameControllerSupported
+    )
     self.hidInputOwnership = try container.decode(
       HIDInputOwnership.self,
       forKey: .hidInputOwnership
     )
     self.inputOwner = try container.decodeIfPresent(USBExclusiveOwner.self, forKey: .inputOwner)
+    self.holdsExclusively = try container.decode(Bool.self, forKey: .holdsExclusively)
     self.duplicateExposureRisk = try container.decode(
       DuplicateExposureRisk.self,
       forKey: .duplicateExposureRisk
@@ -232,6 +254,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       ApplicationServiceProfileInForce.self,
       forKey: .profileInForce
     )
+    self.holders = try container.decode([USBExclusiveOwner].self, forKey: .holders)
   }
 
   /// The keys of the JSON encoding.
@@ -256,10 +279,14 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case discoverySource
     /// The `physicalOwnership` key.
     case physicalOwnership
+    /// The `gameControllerSupported` key.
+    case gameControllerSupported
     /// The `hidInputOwnership` key.
     case hidInputOwnership
     /// The `inputOwner` key.
     case inputOwner
+    /// The `holdsExclusively` key.
+    case holdsExclusively
     /// The `duplicateExposureRisk` key.
     case duplicateExposureRisk
     /// The `serialNumber` key.
@@ -306,6 +333,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case paused
     /// The `profileInForce` key.
     case profileInForce
+    /// The `holders` key.
+    case holders
   }
 }
 
@@ -321,6 +350,7 @@ extension ApplicationServiceDeviceDescription {
       interfaceNumber: snapshot.interfaceNumber,
       discoverySource: snapshot.discoverySource,
       physicalOwnership: snapshot.physicalOwnership,
+      gameControllerSupported: snapshot.gameControllerSupported,
       hidInputOwnership: snapshot.hidInputOwnership,
       inputOwner: snapshot.inputOwner,
       duplicateExposureRisk: snapshot.duplicateExposureRisk,

@@ -84,7 +84,7 @@ extension OutputCharacterizationTests {
     )
   }
 
-  /// A simultaneous chord (south+east → c) and a sequence (south, north → d) with their timing.
+  /// A simultaneous chord (south+east to c) and a sequence (south, north to d) with their timing.
   @Test
   func chordAndSequence() async throws {
     let session = EngineSession(

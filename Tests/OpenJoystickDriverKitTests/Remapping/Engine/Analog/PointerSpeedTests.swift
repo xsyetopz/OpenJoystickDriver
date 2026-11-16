@@ -114,7 +114,7 @@ struct RemappingPointerSpeedTests {
   }
 
   @Test
-  func driverMustBeReportedByTheController() throws {
+  func driverMustReportedByController() {
     let stickAndTrigger = ControllerProfileCapabilities(
       physicalInput: ControllerCapabilities(controls: [.leftTrigger, .rightStickX]),
       physicalOutput: .none

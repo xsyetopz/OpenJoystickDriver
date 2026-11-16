@@ -47,7 +47,7 @@ struct StatusVirtualDeviceTests {
   }
 
   @Test
-  func humanStatusNamesThePublishedControllersAndNoEndedSession() async throws {
+  func humanStatusNamesPublishedControllersAndNoEndedSession() async throws {
     let devices = [
       Self.device("pad-1", name: "Razer Wolverine", publication: .published(target: .generic)),
       Self.device("pad-2", name: "DualShock 3", publication: .notPublished(.noInputYet)),
@@ -83,7 +83,7 @@ struct StatusVirtualDeviceTests {
   }
 
   @Test
-  func statusReportsWhichControllerAPauseHolds() async throws {
+  func statusReportsWhichControllerPauseHolds() async throws {
     var paused = ApplicationServiceDeviceDescription.fixture(id: "pad-1", name: "Held")
     paused.paused = true
     let devices = [paused, ApplicationServiceDeviceDescription.fixture(id: "pad-2", name: "Free")]
@@ -98,7 +98,7 @@ struct StatusVirtualDeviceTests {
   }
 
   @Test
-  func humanStatusNamesTheBackendError() async throws {
+  func humanStatusNamesBackendError() async throws {
     let human = try await Self.runStatus(
       [],
       devices: [],

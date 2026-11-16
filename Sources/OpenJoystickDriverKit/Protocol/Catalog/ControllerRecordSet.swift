@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Where one part of an effective controller record comes from.
 ///
@@ -50,8 +50,21 @@ public struct ControllerRecord: Sendable {
   ///
   /// A user file over it wins, and ``layer`` names the user.
   public let packageFile: URL?
+  /// The model's USB product string, as the device reports it; nil when the record names none.
+  public let name: String?
+  /// The serial number that this model's firmware reports when it has none of its own; nil when
+  /// the record names none.
+  public let placeholderSerial: String?
+  /// The accepted community validations, oldest first as the record lists them; empty when the
+  /// record has none.
+  public let validations: [ControllerValidation]
   /// The protocol family.
   public let protocolID: PhysicalProtocolID
+  /// The latest validation of mode `modeID`; nil when the mode has none, so it is not community
+  /// verified.
+  public func validation(ofMode modeID: String) -> ControllerValidation? {
+    validations.last { $0.modeID == modeID }
+  }
   /// The protocol family's name, such as `XboxGIP`.
   public var family: String { protocolID.rawValue }
   /// The tuning keys this record's family reads.
@@ -71,8 +84,15 @@ public struct ControllerRecord: Sendable {
   /// Who serves the controller: `system` unless a layer sets `ojd`.
   public var server: ControllerServer { profile.server }
 
+  /// The server a layer states; nil when none does and detection decides.
+  public var statedServer: ControllerServer? { profile.statesServer ? profile.server : nil }
+
   /// The route the record asks for; nil leaves it to the family.
   public var route: ControllerRecordRoute? { profile.route }
+
+  /// Whether Apple's own driver extension holds the controller's USB interface, so only OJD's USB
+  /// extension can open it.
+  public var heldByAppleDriver: Bool { profile.heldByAppleDriver }
 
   /// Whether the record is a Switch 2 controller without `bluetoothLE`, which OJD reaches only
   /// over USB, because the Bluetooth LE central needs the vibration characteristic.
@@ -236,7 +256,7 @@ public struct ControllerRecordSet: Sendable {
 
   /// `vvvv-pppp.plist`, the file name of a record for `model`.
   public static func fileName(for model: ControllerModelID) -> String {
-    String(format: "%04x-%04x.plist", model.vendorID, model.productID)
+    unsafe String(format: "%04x-%04x.plist", model.vendorID, model.productID)
   }
 
   /// The bundled records, decoded once per process.
@@ -272,9 +292,9 @@ public struct ControllerRecordSet: Sendable {
   static func loadCatalog(
     _ urls: [URL]
   ) -> (records: [ControllerModelID: ControllerRecord], problems: [RepositoryProblem]) {
-    var records: [ControllerModelID: ControllerRecord] = [:]
+    var loaded: [ControllerModelID: ControllerRecord] = [:]
     var files: [ControllerModelID: String] = [:]
-    var problems: [RepositoryProblem] = []
+    var rejected: [RepositoryProblem] = []
     let sortedURLs = urls.sorted {
       ($0.lastPathComponent, $0.path) < ($1.lastPathComponent, $1.path)
     }
@@ -303,12 +323,12 @@ public struct ControllerRecordSet: Sendable {
           )
         }
         files[record.model] = url.path
-        records[record.model] = record
+        loaded[record.model] = record
       } catch {
-        problems.append(RepositoryProblem(file: url.path, error: error, document: "record"))
+        rejected.append(RepositoryProblem(file: url.path, error: error, document: "record"))
       }
     }
-    return (records, problems)
+    return (loaded, rejected)
   }
 
   /// Whether `name` is `vvvv-pppp.plist` with hex digits.
@@ -368,7 +388,7 @@ public struct ControllerRecordSet: Sendable {
     let set = decoded.document.tuning.setKeys
     return ControllerRecord(
       model: decoded.model,
-      text: String(decoding: try record.plistData(), as: UTF8.self),
+      text: String(bytes: try record.plistData(), encoding: .utf8) ?? "",
       fieldLayers: layers,
       tuningLayers: tuningLayers
         ?? Dictionary(
@@ -376,6 +396,9 @@ public struct ControllerRecordSet: Sendable {
         ),
       userFile: userFile,
       packageFile: packageFile,
+      name: decoded.document.name,
+      placeholderSerial: decoded.document.placeholderSerial,
+      validations: decoded.document.validations,
       protocolID: decoded.document.protocolInfo.protocolID,
       tuningScope: Set(
         ControllerTuning.Key.allCases.filter { decoded.document.tuningScopeViolation($0) == nil }

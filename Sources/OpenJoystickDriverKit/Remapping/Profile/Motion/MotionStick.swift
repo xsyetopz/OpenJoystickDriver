@@ -33,9 +33,7 @@ public struct RemappingMotionLean: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a lean setting.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `thresholdDegrees`.
     case thresholdDegrees
-    /// The JSON key of `hysteresisDegrees`.
     case hysteresisDegrees
   }
 
@@ -105,15 +103,10 @@ public struct RemappingMotionSteering: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a steering setting.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `output`.
     case output
-    /// The JSON key of `deadzoneDegrees`.
     case deadzoneDegrees
-    /// The JSON key of `fullScaleDegrees`.
     case fullScaleDegrees
-    /// The JSON key of `responseExponent`.
     case responseExponent
-    /// The JSON key of `inverted`.
     case inverted
   }
 

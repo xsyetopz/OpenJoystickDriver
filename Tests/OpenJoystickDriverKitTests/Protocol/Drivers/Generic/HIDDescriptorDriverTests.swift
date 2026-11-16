@@ -143,7 +143,7 @@ struct HIDDescriptorDriverTests {
   }
 
   @Test
-  func theHalvesOfOneUsageDriveSeparateControlsAndASessionResetReleasesThem() throws {
+  func halvesOfOneUsageDriveSeparateControlsAndSessionResetReleasesThem() throws {
     let z = HIDUsage(usagePage: 1, usage: 50)
     let map = try HIDUsageMap(entries: [
       .init(

@@ -29,14 +29,14 @@
         Toggle(
           title,
           isOn: Binding(get: { value.wrappedValue > 0 }, set: { value.wrappedValue = $0 ? 255 : 0 })
-        )
+        ).help(OJDLocalized.string("ui.help.rumbleToggle"))
       } else {
         InputTestSliderRow(
           title: title,
           valueText: "\(Int(value.wrappedValue.rounded()))",
           accessibilityLabel: title
         ) {
-          Slider(value: value, in: 0...255)
+          Slider(value: value, in: 0...255).help(OJDLocalized.string("ui.help.rumbleIntensity"))
         }
       }
     }
@@ -94,10 +94,17 @@
     /// The form: the controller header and the sections the controller supports.
     var body: some View {
       Form {
-        Section { controllerHeader }
+        Section {
+          controllerHeader
+          GuidedCheckRow(
+            check: model.guidedCheck,
+            canStart: model.canStartGuidedCheck,
+            start: model.startGuidedCheck
+          )
+        }.ojdInterfaceRow(InputTestRow.status)
         ForEach(model.visibleSections, id: \.self) { section in
           switch section {
-          case .liveInput: Section { liveInput }
+          case .liveInput: Section { liveInput }.ojdInterfaceRow(InputTestRow.controlDiagram)
           case .motion:
             Section(header: Text(OJDLocalized.string("ui.motion.calibration.title"))) {
               MotionCalibrationControls(model: model.motionCalibration)
@@ -108,7 +115,7 @@
                 rumbleContent
                 if outputErrorBelongs(to: [.rumble]) { outputErrorView }
               }
-            }
+            }.ojdInterfaceRow(InputTestRow.rumble)
           case .lighting:
             Section(header: Text(OJDLocalized.string("ui.inputTest.lighting"))) {
               InputTestOutputControlsView(settings: model.outputSettings) {
@@ -117,8 +124,15 @@
                   outputErrorView
                 }
               }
-            }
+            }.ojdInterfaceRow(InputTestRow.lighting)
           }
+        }
+        Section(header: Text(OJDLocalized.string("ui.controllers.recalibrate.title"))) {
+          ControllerRecalibrationControls(
+            gateway: model.gateway,
+            selector: model.isDeviceConnected
+              ? model.device.map { .session($0.sessionToken) } : nil
+          )
         }
       }.ojdGroupedForm().onReceive(runtimeViewModel.$statusState) { state in
         guard case .available(let status) = state else { return }
@@ -165,8 +179,11 @@
 
     /// The live input of the controller.
     var liveInput: some View {
-      InputTestLiveInputView(liveState: model.liveState, presentation: presentation)
-        .frame(maxWidth: .infinity, alignment: .topLeading)
+      InputTestLiveInputView(
+        liveState: model.liveState,
+        presentation: presentation,
+        layout: model.controlLayout
+      ).frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
     /// The rumble controls, or the note that the controller has no rumble.
@@ -193,15 +210,16 @@
                 InputTestViewModel.rumbleDurationRange.upperBound
               ),
               step: 50
-            )
+            ).help(OJDLocalized.string("ui.help.rumbleDuration"))
           }
         }.disabled(!model.canSendOutput || model.isOutputBusy)
         HStack(spacing: OJDSpacing.small) {
           Button(OJDLocalized.string("ui.inputTest.testRumble")) {
             model.testRumble()
           }.disabled(!model.canSendOutput || model.isOutputBusy)
+            .help(OJDLocalized.string("ui.help.testRumble"))
           Button(OJDLocalized.string("action.stop")) { model.stopRumble() }
-            .disabled(!model.canStopRumble)
+            .disabled(!model.canStopRumble).help(OJDLocalized.string("ui.help.stopRumble"))
           Spacer()
           outputStatus(for: .rumble)
         }
@@ -226,6 +244,7 @@
                 Text("4").tag(PhysicalPlayerIndicator.player4)
               }.pickerStyle(.segmented).labelsHidden()
                 .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.playerIndicator"))
+                .help(OJDLocalized.string("ui.help.playerIndicator"))
               outputStatus(for: .playerIndicator)
             }
           }
@@ -235,6 +254,7 @@
             HStack {
               OJDPhysicalColorWell(color: colorBinding).frame(width: 44, height: 24)
               Button(OJDLocalized.string("action.apply")) { model.applyColor() }
+                .help(OJDLocalized.string("ui.help.applyLight"))
             }
           }
         }
@@ -252,6 +272,7 @@
                 .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.brightness"))
                 .ojdAccessibilityValue("\(Int(model.brightness.rounded()))")
               Button(OJDLocalized.string("action.apply")) { model.applyBrightness() }
+                .help(OJDLocalized.string("ui.help.applyLight"))
             }
           }
         }

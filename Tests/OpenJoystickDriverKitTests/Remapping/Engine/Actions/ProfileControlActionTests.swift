@@ -68,7 +68,7 @@ struct ProfileControlActionTests {
   }
 
   @Test
-  func switchToAProfileOfAnotherModelNamesTheDestination() throws {
+  func switchToProfileOfAnotherModelNamesDestination() throws {
     let same = profile(.pause(.on))
     let foreign = profile(.pause(.on), product: 9)
     let switching = profile(.profileSwitch(.profile(foreign.id)))
@@ -109,7 +109,7 @@ struct ProfileControlActionTests {
   // MARK: Engine
 
   @Test
-  func profileSwitchEmitsTheRequestOnPressOnly() {
+  func profileSwitchEmitsRequestOnPressOnly() {
     var state = RemappingEngineState()
     let profile = profile(.profileSwitch(.next))
     #expect(
@@ -157,7 +157,7 @@ struct ProfileControlActionTests {
   }
 
   @Test
-  func pausePassesThroughAndKeepsThePauseBinding() {
+  func pausePassesThroughAndKeepsPauseBinding() {
     var state = RemappingEngineState()
     let profile = profile(
       .pause(.toggle),

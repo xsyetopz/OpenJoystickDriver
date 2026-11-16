@@ -16,7 +16,7 @@ The record reuses the usage map of the Ultimate 2C over Bluetooth ([the 2C recor
 
 One usage map serves the cable and the dongle. If the two descriptors disagree, the capture of the cable decides, and this page states the conflict.
 
-### Rear Buttons
+### Rear buttons
 
 The record maps no rear button. When a capture shows them, the order follows the physical position: the left pair is `LeftPaddle1` and `LeftPaddle2`, the right pair is `RightPaddle1` and `RightPaddle2`, upper button first. A paddle control is mapped only when a descriptor or capture shows its usage as a bit that is separate from every other control, and the usage numbers of the Ultimate 2 rear buttons are not known. The tester card T5 asks which button each rear usage is.
 
@@ -36,7 +36,7 @@ The record maps the Xbox Bluetooth button order: usages 1 to 4 on `South`, `East
 
 The record keeps one `XboxXUSB` wired mode. The record format has no product name field, and no source in the tree confirms which models present `310B`, so the record names none. Tester check T7 returns the strings and `bcdDevice` that decide whether two modes are needed.
 
-## Keep-Alive
+## Keep-alive
 
 The question: does a pad leave the USB bus while OJD serves it and no input arrives? The research notes report a drop after about one second without host transfers; no source in the tree confirms it. The three outcomes:
 

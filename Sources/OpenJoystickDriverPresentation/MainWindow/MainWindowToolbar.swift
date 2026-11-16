@@ -18,6 +18,19 @@
     }
   }
 
+  extension MainWindowArea {
+    /// The toolbar actions of the area that show at `level`.
+    func toolbarActions(
+      activityMode: ActivityMode,
+      level: InterfaceLevel,
+      developerToolsEnabled: Bool
+    ) -> [MainWindowToolbarAction] {
+      toolbarActions(activityMode: activityMode).filter {
+        $0.interfaceRowLevel.isShown(at: level, developerToolsEnabled: developerToolsEnabled)
+      }
+    }
+  }
+
   extension NSSearchToolbarItem {
     /// Keeps the search field at the toolbar's search width instead of growing into the free
     /// toolbar space.
@@ -38,7 +51,7 @@
     /// The width of a toolbar search field, as in Mail and Finder.
     static let searchFieldWidth: CGFloat = 220
 
-    /// The identifier of the main window's toolbar.
+    /// The prefix of each main window toolbar's identifier.
     static let toolbar = NSToolbar.Identifier("OpenJoystickDriver.MainWindowToolbar")
 
     /// The items that every area shows, before its actions.
@@ -68,17 +81,17 @@
         action == .searchLibrary
         ? NSSearchToolbarItem(itemIdentifier: action.identifier)
         : NSToolbarItem(itemIdentifier: action.identifier)
-      let description = OJDLocalized.string(action.descriptionKey)
       item.label = OJDLocalized.string(action.labelKey)
       item.paletteLabel = item.label
-      item.toolTip = description
+      item.toolTip = OJDLocalized.string(action.descriptionKey)
       item.image = NSImage(
         systemSymbolName: action.symbolName,
-        accessibilityDescription: description
+        accessibilityDescription: item.label
       )
       item.isBordered = true
       if let search = item as? NSSearchToolbarItem {
         search.fixSearchFieldWidth()
+        search.searchField.placeholderString = item.label
       }
       return item
     }

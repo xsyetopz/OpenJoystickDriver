@@ -6,7 +6,7 @@ import Testing
 
 extension ControllerServerPickerTests {
   @Test(arguments: ServingFixture.all)
-  func theGUIShowsThePickerExactlyWhenThePolicyOffersTheChoice(_ fixture: ServingFixture) {
+  func guiShowsPickerExactlyWhenPolicyOffersChoice(_ fixture: ServingFixture) {
     #expect(
       ControllerServerPicker.isShown(for: fixture.device) == fixture.offersServerChoice,
       "\(fixture.name)"

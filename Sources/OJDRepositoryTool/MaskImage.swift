@@ -28,17 +28,17 @@ struct ScreenRectangle {
     let values = text.split(separator: ",", omittingEmptySubsequences: false).map {
       Double(String($0))
     }
-    guard values.count == 4, let x = values[0], let y = values[1], let width = values[2],
-      let height = values[3], [x, y, width, height].allSatisfy(\.isFinite)
+    guard values.count == 4, let x = values[0], let y = values[1], let w = values[2],
+      let h = values[3], [x, y, w, h].allSatisfy(\.isFinite)
     else { throw UsageError(message: "\(text) is not x,y,width,height") }
-    guard width > 0, height > 0 else {
+    guard w > 0, h > 0 else {
       throw UsageError(message: "\(text) has no area")
     }
     self.text = text
     minX = x
     minY = y
-    self.width = width
-    self.height = height
+    width = w
+    height = h
   }
 
   /// Whether `other` lies entirely inside this rectangle, edges included.
@@ -80,7 +80,7 @@ enum MaskImage {
     let width = image.width
     let height = image.height
     guard
-      let context = CGContext(
+      let context = unsafe CGContext(
         data: nil,
         width: width,
         height: height,

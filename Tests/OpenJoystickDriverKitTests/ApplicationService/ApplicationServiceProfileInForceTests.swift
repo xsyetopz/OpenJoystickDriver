@@ -30,7 +30,9 @@ struct ApplicationServiceProfileInForceTests {
     ApplicationServiceProfileInForce(name: "Everywhere", appID: nil),
     nil,
   ])
-  func aDeviceRoundTripsItsProfileInForce(profileInForce: ApplicationServiceProfileInForce?)
+  func deviceRoundTripsItsProfileInForce(
+    profileInForce: ApplicationServiceProfileInForce?
+  )
     throws
   {
     let device = Self.description(profileInForce)

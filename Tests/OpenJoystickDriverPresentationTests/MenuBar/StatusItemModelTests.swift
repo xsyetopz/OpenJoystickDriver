@@ -8,7 +8,7 @@ import Testing
 @Suite
 struct StatusItemModelTests {
   @Test
-  func entryIDsAreUniqueBecauseTheyAreTheAccessibilityIdentifiers() {
+  func entryIDsUniqueBecauseTheyAccessibilityIdentifiers() {
     func controller(_ id: String) -> StatusItemState.Controller {
       var controller = StatusItemState.Controller(
         id: id,
@@ -21,7 +21,7 @@ struct StatusItemModelTests {
     }
     let entries = StatusItemModel.entries(
       for: StatusItemState(
-        problems: [.missingPermission(.inputRead), .serviceNotRunning],
+        problems: [.missingPermission(.inputRead), .service(.stopped)],
         controllers: [controller("pad-a"), controller("pad-b")],
         profileListRead: true
       )

@@ -10,8 +10,10 @@
   struct SettingsSwitchRow: View {
     /// The title of the switch.
     let title: String
+    /// The tooltip of the switch while it can be changed.
+    let help: String
     /// The line below the switch.
-    let description: String
+    var description: String?
     /// Whether the switch is on.
     let isOn: Binding<Bool>
     /// Whether the switch can be changed.
@@ -25,8 +27,8 @@
     /// The toggle with its description and, while it is locked, the reason.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
-        Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? "")
-        footnote(description)
+        Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? help)
+        if let description { footnote(description) }
         if let lockReason { footnote(lockReason) }
       }
     }
@@ -37,6 +39,36 @@
         horizontal: false,
         vertical: true
       )
+    }
+  }
+
+  /// The failure of the request that one control started, in red under that control; empty while
+  /// the control has no failure.
+  struct SettingsBesideError: View {
+    /// The preferences model that holds the failure.
+    @ObservedObject
+    var preferences: SettingsPreferencesModel
+    /// The control that started the request.
+    let origin: SettingsControlOrigin
+
+    /// The message, or nothing.
+    var body: some View {
+      if let message = preferences.failure(beside: origin) {
+        Text(message).foregroundColor(Color(NSColor.systemRed))
+          .fixedSize(horizontal: false, vertical: true)
+      }
+    }
+  }
+
+  extension View {
+    /// Gives the pane the interface level and the developer switch of `preferences`; the Settings
+    /// window is a separate window and gets neither from the main window.
+    ///
+    /// - Parameter preferences: The preferences model that holds both.
+    /// - Returns: The view with both in its environment.
+    func ojdSettingsInterfaceLevel(_ preferences: SettingsPreferencesModel) -> some View {
+      environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+        .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
     }
   }
 
@@ -63,20 +95,21 @@
             if preferences.notificationAuthorization == .denied {
               Button(OJDLocalized.string("ui.settings.general.openSystemSettings")) {
                 preferences.openNotificationSettings()
-              }
+              }.help(OJDLocalized.string("ui.help.openNotificationSettings"))
             }
             if preferences.settingsFileError != nil {
               Button(
                 OJDLocalized.string("platform.macos.ui.settings.advanced.unreadableShowInFinder")
               ) {
                 preferences.showSettingsFileInFinder()
-              }
+              }.help(OJDLocalized.string("platform.macos.ui.help.showSettingsFile"))
               Button(OJDLocalized.string("ui.settings.advanced.unreadableResetSettings")) {
                 preferences.resetSettings()
-              }
+              }.help(OJDLocalized.string("ui.help.resetSettings"))
             }
             if preferences.settingsFileError == nil {
               Button(OJDLocalized.string("action.dismiss")) { preferences.dismissError() }
+                .help(OJDLocalized.string("ui.help.dismissMessage"))
             }
           }
         }

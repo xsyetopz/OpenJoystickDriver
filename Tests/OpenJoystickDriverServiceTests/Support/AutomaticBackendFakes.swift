@@ -27,7 +27,7 @@ final class AutomaticBackendProbe: VirtualOutputDispatching, ControllerLifecycle
   }
   func activateOutput(for _: LogicalControllerID) {}
 
-  func controllerDidStop(_ identifier: LogicalControllerID) {}
+  func controllerDidStop(_: LogicalControllerID) {}
 
   func close() { closed = true }
 }
@@ -54,7 +54,7 @@ final class ConcurrentBackendProbe: VirtualOutputDispatching, @unchecked Sendabl
   var status: VirtualOutputBackendStatus { .backend("probe") }
   var lastRumbleStatus: String? { nil }
 
-  func activate(for identifiers: [LogicalControllerID]) throws {}
+  func activate(for _: [LogicalControllerID]) {}
 
   func dispatch(_: ControllerEvent, from _: LogicalControllerID) {
     lock.withLock { dispatchCount += 1 }
@@ -62,7 +62,7 @@ final class ConcurrentBackendProbe: VirtualOutputDispatching, @unchecked Sendabl
 
   func activateOutput(for _: LogicalControllerID) { lock.withLock { dispatchCount += 1 } }
 
-  func controllerDidStop(_ identifier: LogicalControllerID) {}
+  func controllerDidStop(_: LogicalControllerID) {}
 
   func close() { lock.withLock { closeCount += 1 } }
 

@@ -79,7 +79,7 @@ public struct DeviceTransportProfile: Equatable, Sendable {
 
 /// A resolved protocol binding: a family and, exactly when the family has variants, the variant
 /// in use, written `family[:variant]` (for example `XboxXUSB:Receiver`, `XboxGIP:USB` or
-/// `VendorFlydigi`).
+/// `ValveSteamDeck`).
 public struct ProtocolBindingID: Hashable, Sendable, RawRepresentable, Codable,
   CustomStringConvertible
 {
@@ -111,12 +111,12 @@ public struct ProtocolBindingID: Hashable, Sendable, RawRepresentable, Codable,
   /// Nil unless the text names a family and, optionally, one of its implemented variants.
   public init?(rawValue: String) {
     let parts = rawValue.split(separator: ":", omittingEmptySubsequences: false)
-    guard parts.count <= 2, let protocolID = PhysicalProtocolID(rawValue: String(parts[0])) else {
+    guard parts.count <= 2, let family = PhysicalProtocolID(rawValue: String(parts[0])) else {
       return nil
     }
-    let variant = parts.count == 2 ? PhysicalProtocolVariantID(rawValue: String(parts[1])) : nil
-    guard parts.count == 1 || variant != nil, Self.isValid(protocolID, variant) else { return nil }
-    self.init(protocolID, variant: variant)
+    let named = parts.count == 2 ? PhysicalProtocolVariantID(rawValue: String(parts[1])) : nil
+    guard parts.count == 1 || named != nil, Self.isValid(family, named) else { return nil }
+    self.init(family, variant: named)
   }
 
   /// The binding as `family` or `family:variant`.
@@ -170,8 +170,9 @@ public enum GIPKeepAlivePolicy: String, Codable, Sendable {
 
 /// Who serves a HID controller that macOS also supports as a native gamepad.
 public enum ControllerServer: String, Codable, Sendable {
-  /// macOS serves it; OJD publishes no virtual controller and sends only the output macOS
-  /// leaves undone. A controller macOS does not support is OJD's either way.
+  /// macOS serves it, even when GameController lists no controller for it; OJD publishes no
+  /// virtual controller and sends only the output macOS leaves undone. A controller macOS does not
+  /// support is OJD's either way.
   case system = "System"
   /// OJD seizes it and publishes its own virtual controller.
   case ojd = "OJD"
@@ -221,6 +222,8 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
   /// Frames that may wait behind a send to the virtual device; a full queue drops its oldest
   /// frame in favor of the newest.
   public let frameQueueCapacity: Int?
+  /// Stored stick centres and ranges and trigger ends, applied before profile mapping.
+  public let calibration: ControllerCalibration
 
   /// The tuning that sets no key.
   public static let none = Self()
@@ -257,7 +260,8 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
     irWriteIntervalMilliseconds: Int? = nil,
     speakerMaxSeconds: Int? = nil,
     replyTimeoutMilliseconds: Int? = nil,
-    frameQueueCapacity: Int? = nil
+    frameQueueCapacity: Int? = nil,
+    calibration: ControllerCalibration = .none
   ) {
     self.stickDeadzone = stickDeadzone
     self.inputLivenessTimeoutMilliseconds = inputLivenessTimeoutMilliseconds
@@ -276,6 +280,7 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
     self.speakerMaxSeconds = speakerMaxSeconds
     self.replyTimeoutMilliseconds = replyTimeoutMilliseconds
     self.frameQueueCapacity = frameQueueCapacity
+    self.calibration = calibration
   }
 }
 
@@ -304,6 +309,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public internal(set) var assemblyPolicy: ControllerAssemblyPolicy?
   /// Who serves the controller when macOS also supports it.
   public let server: ControllerServer
+  /// Whether the record or a patch states `server`, rather than leaving the default.
+  public internal(set) var statesServer = false
   /// The selected mode's session: startup, keep-alive, settle, shutdown, control transfers and
   /// rumble template.
   ///
@@ -315,14 +322,17 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public var startupWrites: [RecordStartupWrite] { session.startupWrites }
   /// Raw-USB startup packets; empty runs the family description's.
   public var usbStartupWrites: [USBStartupWrite] { session.usbStartupWrites }
-  /// The record's input-report layouts; set exactly for the `HIDReportLayout` family.
-  public let inputLayouts: ControllerInputLayouts?
+  /// The record's input-report layouts; set for a `HIDReportLayout` record and any record that
+  /// holds `input.layouts`.
+  public internal(set) var inputLayouts: ControllerInputLayouts?
   /// The record's HID usage map; set only for a `HIDDescriptor` record that declares one.
   var hidUsageMap: HIDUsageMap?
   /// The record's timing and deadzone values; nil fields keep the driver defaults.
   public internal(set) var tuning: ControllerTuning
   /// The record's route; nil leaves it to the family.
   public var route: ControllerRecordRoute?
+  /// Whether Apple's own driver extension holds the controller's USB interface.
+  public var heldByAppleDriver = false
   /// The record's Bluetooth LE vibration characteristic UUID; set only for Switch 2 controllers.
   public var bluetoothLEVibrationCharacteristic: String?
 
@@ -340,8 +350,9 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   /// Without one, a device that matches no mode is unsupported, and the protocol fields above are
   /// those of the first mode.
   public internal(set) var hasDefaultMode = true
-  /// Why the running mode serves nothing: OJD sends it no traffic and creates no virtual gamepad.
-  /// Nil while the mode serves the device.
+  /// Why the running mode serves nothing.
+  ///
+  /// OJD sends it no traffic and creates no virtual gamepad. Nil while the mode serves the device.
   public internal(set) var idleReason: ControllerIdleReason?
   /// Whether the running mode serves nothing.
   public var isIdle: Bool { idleReason != nil }

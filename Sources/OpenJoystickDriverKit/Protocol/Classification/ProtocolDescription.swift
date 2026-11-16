@@ -433,7 +433,7 @@ struct ProtocolDescription: Sendable {
         "\(fileName): \(document.family) is not an UpperCamelCase family name"
       )
     }
-    let family =
+    let famID =
       PhysicalProtocolID.allCases.first { $0.rawValue == document.family }
       ?? PhysicalProtocolID(documented: document.family)
     var seenSignatures: Set<String> = []
@@ -449,29 +449,29 @@ struct ProtocolDescription: Sendable {
         )
       }
     }
-    let unreadParameters = Set(document.parameters.keys).subtracting(family.readParameters)
+    let unreadParameters = Set(document.parameters.keys).subtracting(famID.readParameters)
     guard unreadParameters.isEmpty else {
       throw ProtocolDescriptionProblem(
         .invalidProtocolDescription,
-        "\(fileName): \(family.rawValue) reads no parameter(s) "
+        "\(fileName): \(famID.rawValue) reads no parameter(s) "
           + unreadParameters.sorted().joined(separator: ", ")
       )
     }
     // The file name is checked after the document's own rules.
     let stem = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
-    if !family.isDocumented, stem == family.rawValue {
+    if !famID.isDocumented, stem == famID.rawValue {
       throw ProtocolDescriptionProblem(
         .invalidProtocolDescription,
-        "\(fileName): \(family.rawValue) is a built-in family; a documented family needs a name of its own"
+        "\(fileName): \(famID.rawValue) is a built-in family; a documented one needs its own name"
       )
     }
-    guard stem == family.descriptionFileStem else {
+    guard stem == famID.descriptionFileStem else {
       throw ProtocolDescriptionProblem(
         .protocolDescriptionFamilyMismatch,
-        "\(fileName): file name must be \(family.descriptionFileStem).plist"
+        "\(fileName): file name must be \(famID.descriptionFileStem).plist"
       )
     }
-    if family.isDocumented {
+    if famID.isDocumented {
       guard document.displayName != nil else {
         throw ProtocolDescriptionProblem(
           .invalidProtocolDescription,
@@ -490,7 +490,7 @@ struct ProtocolDescription: Sendable {
         "\(fileName): displayName applies only to a documented family"
       )
     }
-    let protocolID = family
+    let protocolID = famID
     var signatures: [ProtocolInterfaceSignature] = []
     for signature in document.interfaceSignatures {
       guard let variant = PhysicalProtocolVariantID(rawValue: signature.variant),
@@ -512,12 +512,12 @@ struct ProtocolDescription: Sendable {
         )
       )
     }
-    var rawUSB = RawUSB.never
+    var rawUSBChoice = RawUSB.never
     switch document.rawUSB {
     case .none: break
-    case .always: rawUSB = .always
+    case .always: rawUSBChoice = .always
     case .variants(let names):
-      var variants: Set<PhysicalProtocolVariantID> = []
+      var chosen: Set<PhysicalProtocolVariantID> = []
       for name in names {
         guard let variant = PhysicalProtocolVariantID(rawValue: name),
           document.variants.contains(variant)
@@ -527,37 +527,37 @@ struct ProtocolDescription: Sendable {
             "\(fileName): \(protocolID.rawValue) has no variant \(name)"
           )
         }
-        variants.insert(variant)
+        chosen.insert(variant)
       }
-      rawUSB = .variants(variants)
+      rawUSBChoice = .variants(chosen)
     }
     func variant(named name: String) throws(ProtocolDescriptionProblem) -> PhysicalProtocolVariantID
     {
-      guard let variant = PhysicalProtocolVariantID(rawValue: name),
-        document.variants.contains(variant)
+      guard let resolved = PhysicalProtocolVariantID(rawValue: name),
+        document.variants.contains(resolved)
       else {
         throw ProtocolDescriptionProblem(
           .unknownProtocolVariant,
           "\(fileName): \(protocolID.rawValue) has no variant \(name)"
         )
       }
-      return variant
+      return resolved
     }
-    var variantTuning: [PhysicalProtocolVariantID: ControllerTuning] = [:]
-    for (name, tuning) in document.defaults?.variantTuning ?? [:] {
-      variantTuning[try variant(named: name)] = tuning
+    var tuningByVariant: [PhysicalProtocolVariantID: ControllerTuning] = [:]
+    for (name, perVariant) in document.defaults?.variantTuning ?? [:] {
+      tuningByVariant[try variant(named: name)] = perVariant
     }
-    var variantRumble: [PhysicalProtocolVariantID: RumbleOutputTemplate] = [:]
+    var rumbleByVariant: [PhysicalProtocolVariantID: RumbleOutputTemplate] = [:]
     for (name, template) in document.defaults?.variantRumble ?? [:] {
-      variantRumble[try variant(named: name)] = template
+      rumbleByVariant[try variant(named: name)] = template
     }
-    var inputStart: InputStart?
-    if let document = document.inputStart {
-      var variants: Set<PhysicalProtocolVariantID> = []
-      for name in document.variants { variants.insert(try variant(named: name)) }
-      inputStart = InputStart(action: document.action, variants: variants)
+    var start: InputStart?
+    if let startDocument = document.inputStart {
+      var startVariants: Set<PhysicalProtocolVariantID> = []
+      for name in startDocument.variants { startVariants.insert(try variant(named: name)) }
+      start = InputStart(action: startDocument.action, variants: startVariants)
     }
-    let usbStartupWrites = try resolvedUSBStartup(
+    let resolvedStartup = try resolvedUSBStartup(
       document.defaults?.session?.startup,
       namedPackets: document.defaults?.session?.namedPackets,
       fileName: fileName
@@ -568,13 +568,13 @@ struct ProtocolDescription: Sendable {
       variants: document.variants,
       storesVariant: document.storesVariant,
       endpoints: document.endpoints,
-      rawUSB: rawUSB,
+      rawUSB: rawUSBChoice,
       recordSections: document.recordSections,
       sessionKeys: document.sessionKeys,
       tuningKeys: document.tuningKeys,
       rawUSBTuningKeys: document.rawUSBTuningKeys,
       macOSOwnedOutput: document.macOSOwnedOutput,
-      inputStart: inputStart,
+      inputStart: start,
       interfaceSignatures: signatures,
       parameters: document.parameters,
       parameterRules: document.parameterRules,
@@ -583,7 +583,7 @@ struct ProtocolDescription: Sendable {
       recordCapabilities: document.recordCapabilities,
       rumbleTemplate: document.defaults?.session?.rumble,
       startupWrites: document.defaults?.session?.startup?.hid ?? [],
-      usbStartupWrites: usbStartupWrites,
+      usbStartupWrites: resolvedStartup,
       receiverPowerOff: document.defaults?.receiverPowerOff,
       keepAlive: document.defaults?.session?.keepAlive,
       activation: document.defaults?.session?.activation ?? [],
@@ -600,8 +600,8 @@ struct ProtocolDescription: Sendable {
       hidUsageMap: document.defaults?.input?.usageMap,
       hidUsageShapes: document.defaults?.input?.shapes ?? [],
       tuning: document.defaults?.tuning,
-      variantTuning: variantTuning,
-      variantRumble: variantRumble
+      variantTuning: tuningByVariant,
+      variantRumble: rumbleByVariant
     )
     for condition in description.startupWrites.map(\.condition)
       + description.usbStartupWrites.map(\.condition)
@@ -614,7 +614,10 @@ struct ProtocolDescription: Sendable {
     }
     if let problem = description.ruleProblem(fileName: fileName) { throw problem }
     if let violation = description.scopeViolation {
-      throw ProtocolDescriptionProblem(.invalidProtocolDescription, "\(fileName): \(violation.description)")
+      throw ProtocolDescriptionProblem(
+        .invalidProtocolDescription,
+        "\(fileName): \(violation.description)"
+      )
     }
     return description
   }

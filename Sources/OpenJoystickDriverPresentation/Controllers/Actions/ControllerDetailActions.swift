@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OpenJoystickDriverKit
 
@@ -115,17 +116,17 @@ final class ControllerDetailActions: ObservableObject {
         try Task.checkCancellation()
         // The system call that reads the descriptor runs off the main actor.
         let report = await Task.detached { descriptor() }.value
-        guard let self, self.timedGeneration == generation else { return }
-        self.finishCapture(kind, device: device, packets: packets, descriptor: report)
+        guard let self, timedGeneration == generation else { return }
+        finishCapture(kind, device: device, packets: packets, descriptor: report)
       } catch is CancellationError {
-        guard let self, self.timedGeneration == generation else { return }
-        self.timedState = .idle
+        guard let self, timedGeneration == generation else { return }
+        timedState = .idle
       } catch let error as ControllerRecordDrafting.NoLayout {
-        guard let self, self.timedGeneration == generation else { return }
-        self.timedState = .failed(error.message)
+        guard let self, timedGeneration == generation else { return }
+        timedState = .failed(error.message)
       } catch {
-        guard let self, self.timedGeneration == generation else { return }
-        self.timedState = .failed(RuntimePresentation.userFacingError(error))
+        guard let self, timedGeneration == generation else { return }
+        timedState = .failed(RuntimePresentation.userFacingError(error))
       }
     }
   }
@@ -212,7 +213,9 @@ final class ControllerDetailActions: ObservableObject {
   ///   - read: Reads the device from the system by vendor and product ID.
   func draftUnserved(
     model: ControllerModelID,
-    _ read: (Int, Int) -> PhysicalDevice? = { PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1) }
+    _ read: (Int, Int) -> PhysicalDevice? = {
+      PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1)
+    }
   ) {
     guard let draft = ControllerRecordDrafting.unservedDraft(model: model, read) else {
       notice = Notice(

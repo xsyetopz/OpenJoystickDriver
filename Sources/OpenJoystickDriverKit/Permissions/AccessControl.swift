@@ -115,10 +115,10 @@ public actor PermissionManager {
 
   /// Requests every HID permission that is not already granted.
   ///
-  /// Input Monitoring is deliberately requested before Accessibility. macOS
+  /// Input Monitoring is requested before Accessibility. macOS
   /// registers the caller in the Input Monitoring list asynchronously; a
   /// short delay lets that registration complete before the second request.
-  /// The system's request results are deliberately ignored. The
+  /// The system's request results are ignored. The
   /// authoritative post-request state is the system's access state.
   @discardableResult
   public func requestRequiredAccess() async -> Snapshot {
@@ -157,14 +157,14 @@ public actor PermissionManager {
   ///  Besides matching AppKit's user-initiated permission flow, this gives macOS a live run loop
   /// for registering the bundle before the settings deep link is opened.
   private func requestInputReadOnMainActor() async {
-    let system = system
-    await MainActor.run { system.requestInputReadAccess() }
+    let access = system
+    await MainActor.run { access.requestInputReadAccess() }
   }
 
   /// Requests Accessibility on the main actor.
   private func requestInputInjectOnMainActor() async {
-    let system = system
-    await MainActor.run { system.requestInputInjectAccess() }
+    let access = system
+    await MainActor.run { access.requestInputInjectAccess() }
   }
 
   /// Starts to read the permissions every second; a running poll is replaced.
@@ -174,7 +174,7 @@ public actor PermissionManager {
       while !Task.isCancelled {
         try? await Task.sleep(nanoseconds: permissionPollNanoseconds)
         guard let self else { break }
-        await self.refreshAccessState()
+        await refreshAccessState()
       }
     }
   }

@@ -11,7 +11,7 @@ struct ProfileCapabilityTests {
     (0x045E, 0x028E, [.start, .back], [.capture, .touchpadClick]),
     (0x057E, 0x2009, [.start, .back, .capture], [.touchpadClick]),
   ])
-  func startBackAndCaptureSourcesFollowTheCapabilities(
+  func startBackAndCaptureSourcesFollowCapabilities(
     vendorID: Int,
     productID: Int,
     supported: [Control],

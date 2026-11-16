@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One file of a layer, and the package that holds it, or nil for the user's file.
 struct ControllerLayerEntry {
@@ -16,8 +16,8 @@ extension ControllerRecordSet {
   /// folder and the installed packages; a description that is refused is listed in ``userFiles``.
   ///
   /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
-  /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it is
-  /// the first patch of the user layer and is reported in ``defaults`` rather than in
+  /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it
+  /// is the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
   public static func load(
     userDirectory directory: URL = userDirectory,
@@ -30,14 +30,25 @@ extension ControllerRecordSet {
     )
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
     let urls: [URL]
+    let stale: [ControllerRecordFile]
     do {
-      urls = try FileManager.default.contentsOfDirectory(
+      let listed = try FileManager.default.contentsOfDirectory(
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).sorted { $0.lastPathComponent < $1.lastPathComponent }
+      urls = listed.filter { $0.pathExtension == "plist" }
+      stale = listed.filter { $0.pathExtension == "json" }.map {
+        ControllerRecordFile(
+          url: $0,
+          model: nil,
+          operation: nil,
+          problem: DocumentMigrator.staleProblem
+        )
+      }
     } catch CocoaError.fileReadNoSuchFile {
       urls = []
+      stale = []
     } catch {
       let file = ControllerRecordFile(
         url: directory,
@@ -71,7 +82,8 @@ extension ControllerRecordSet {
     }
     return Self(
       records: records,
-      userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + packaged.files,
+      userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + stale
+        + packaged.files,
       defaults: defaults
     )
   }

@@ -27,7 +27,7 @@ struct ActivityCheckKindTests {
   }
 
   @Test
-  func everyCheckHasANameAndAGUIActionOrAnExplicitNone() {
+  func everyCheckHasNameAndGUIActionOrExplicitNone() {
     let listed = Set(ActivityCheckKind.all.map(\.id))
 
     #expect(listed == Self.producedIDs())
@@ -38,7 +38,7 @@ struct ActivityCheckKindTests {
   }
 
   @Test
-  func aFixButtonShowsOnlyForAWarningOrFailureWithAGUIAction() {
+  func fixButtonShowsOnlyForWarningOrFailureWithGUIAction() {
     let denied = ActivityCheckRow(DiagnoseCheck("input-read", .fail, "denied"))
     let granted = ActivityCheckRow(DiagnoseCheck("input-read", .pass, "granted"))
     let skipped = ActivityCheckRow(DiagnoseCheck("input-read", .skip, "service not running"))
@@ -51,7 +51,7 @@ struct ActivityCheckKindTests {
   }
 
   @Test
-  func eachFixHasATitle() {
+  func eachFixHasTitle() {
     let fixes: [ActivityCheckFix] = [
       .requestInputRead, .requestInputInject, .approveDriver, .showLibrary,
     ]
@@ -63,7 +63,7 @@ struct ActivityCheckKindTests {
 @MainActor
 struct ActivityLogOrderTests {
   @Test
-  func rowsListTheNewestLineFirstAndCopyKeepsTheWrittenOrder() {
+  func rowsListNewestLineFirstAndCopyKeepsWrittenOrder() {
     let model = ActivityLogModel(
       source: ActivityLogSource(
         tail: { stream, _ in

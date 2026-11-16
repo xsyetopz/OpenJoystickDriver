@@ -48,7 +48,7 @@ struct MacroValidationTests {
   }
 
   @Test
-  func macroInsideMacroNamesTheStep() {
+  func macroInsideMacroNamesStep() {
     let inner = RemappingMacro(name: "Inner", steps: [.tap(keyA)])
     let outer = RemappingMacro(name: "Outer", steps: [.tap(keyA), .press(.macro(inner.id))])
     #expect(throws: RemappingValidationError.macroNestingNotAllowed(index: 1, step: 1)) {
@@ -121,7 +121,7 @@ struct MacroValidationTests {
   }
 
   @Test
-  func runTimeBoundsNameTheLimit() throws {
+  func runTimeBoundsNameLimit() throws {
     let waits = Array(repeating: RemappingMacroStep.wait(durationMs: 5000), count: 8)
     #expect(throws: RemappingValidationError.macroRunTimeExceeded(index: 0, limit: "one-pass")) {
       try profile(macros: [RemappingMacro(name: "Long", steps: waits)]).validate()

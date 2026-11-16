@@ -87,7 +87,7 @@ struct CatalogRecordBehaviorTests {
   }
 
   @Test
-  func gipRumbleFollowsTheRow() throws {
+  func gipRumbleFollowsRow() throws {
     let inputOnly = try #require(
       try catalogParser(ControllerModelID(vendorID: 0x3537, productID: 0x1022)) as? GIPDriver
     )
@@ -103,7 +103,7 @@ struct CatalogRecordBehaviorTests {
   }
 
   @Test
-  func dualSenseEdgeButtonsFollowTheRow() throws {
+  func dualSenseEdgeButtonsFollowRow() throws {
     let edge = try #require(
       try catalogParser(ControllerModelID(vendorID: 0x054C, productID: 0x0DF2)) as? DualSenseDriver
     )
@@ -129,7 +129,7 @@ struct CatalogRecordBehaviorTests {
   }
 
   @Test
-  func switchInputOnlyRowsBindTheFixedReportDriver() throws {
+  func switchInputOnlyRowsBindFixedReportDriver() throws {
     // HORIPAD for Nintendo Switch and PowerA Wired Controller Plus (SDL SwitchInputOnlyController).
     for (vendorID, productID) in [(UInt16(0x0F0D), UInt16(0x00C1)), (0x20D6, 0xA711)] {
       let model = ControllerModelID(vendorID: vendorID, productID: productID)
@@ -138,7 +138,7 @@ struct CatalogRecordBehaviorTests {
   }
 
   @Test
-  func seriesXReadsShareFromTheEndRelativeOffset() throws {
+  func seriesXReadsShareFromEndRelativeOffset() throws {
     // The 44-byte Series X firmware 5.5 payload carries Share at byte 18 (SDL, xpad).
     var payload = Data(repeating: 0, count: 44)
     payload[18] = 1

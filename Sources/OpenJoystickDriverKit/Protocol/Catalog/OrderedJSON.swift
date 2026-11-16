@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A JSON value that keeps the order of an object's members, and the text format of the
 /// controller record files: two-space indent, `"key": value`, every object expanded, and an
@@ -59,7 +59,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
       /// The text breaks the JSON grammar, in words.
       case syntax(String)
       /// A Foundation value JSON cannot hold, in words.
-      case notAJSONValue(String)
+      case notJSONValue(String)
     }
 
     /// Why the text or value was refused.
@@ -80,7 +80,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
         case .equivalentMembers(let first, let second):
           "the members \(OrderedJSON.quoted(first)) and \(OrderedJSON.quoted(second)) have "
             + "different scalars but count as one name in Swift; write the name one way"
-        case .syntax(let words), .notAJSONValue(let words): words
+        case .syntax(let words), .notJSONValue(let words): words
         }
       return offset.map { "JSON text, byte \($0): \(message)" } ?? message
     }
@@ -101,7 +101,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
   /// keeps the text of the number at the same place in `order` when that text reads as the same
   /// value, so `1e3` and `100.50` stay as written.
   ///
-  /// The controller schema's property order is not a guide: Kit does not bundle the schemas. So a
+  /// Kit does not bundle the schemas, so the controller schema's property order is no guide. A
   /// ``ControllerRecordDraft``, guided by ``recordKeys`` at the top level only, sorts every nested
   /// object. A patch merge works on ``OrderedJSON`` values and needs no guide.
   public init(foundation value: Any, order: Self? = nil) throws {
@@ -149,7 +149,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
         self = .number(try Self.text(of: number))
       }
     default:
-      throw Problem(reason: .notAJSONValue("\(type(of: value)) is not a JSON value"), offset: nil)
+      throw Problem(reason: .notJSONValue("\(type(of: value)) is not a JSON value"), offset: nil)
     }
   }
 
@@ -177,7 +177,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     }
     guard number.doubleValue.isFinite else {
       throw Problem(
-        reason: .notAJSONValue("JSON cannot hold a number that is not finite"),
+        reason: .notJSONValue("JSON cannot hold a number that is not finite"),
         offset: nil
       )
     }
@@ -413,7 +413,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
       case "\t": output += "\\t"
       case "\u{08}": output += "\\b"
       case "\u{0C}": output += "\\f"
-      case _ where scalar.value < 0x20: output += String(format: "\\u%04x", scalar.value)
+      case _ where scalar.value < 0x20: output += unsafe String(format: "\\u%04x", scalar.value)
       default: output.unicodeScalars.append(scalar)
       }
     }

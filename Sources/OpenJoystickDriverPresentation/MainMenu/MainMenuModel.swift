@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// The main menu as data: titles, key equivalents, actions, enabled rules and GUI counterparts.
 ///
@@ -31,6 +32,12 @@ enum MainMenuModel {
     case .responderChain: return true
     case .requires(let requirements): return requirements.allSatisfy(state.satisfies)
     }
+  }
+
+  /// Returns whether the item shows a checkmark: the interface level item of the current level.
+  static func isChecked(_ item: MainMenuItem, state: MainMenuState) -> Bool {
+    guard case .setInterfaceLevel(let level) = item.action else { return false }
+    return level == state.interfaceLevel
   }
 
   /// The text of the controller target row: the selected controller's name; the key that says no
@@ -87,6 +94,15 @@ enum MainMenuModel {
       return state.controller?.isSuspended == true ? alternate : item.titleKey
     default: return item.titleKey
     }
+  }
+
+  /// Returns the localization key of the tooltip of `item` in `state`: the item that resumes a
+  /// suspended controller says so.
+  static func helpKey(of item: MainMenuItem, state: MainMenuState) -> String {
+    if item.action == .suspendOrResumeController, state.controller?.isSuspended == true {
+      return "ui.help.resume"
+    }
+    return item.action.helpKey
   }
 
   /// Returns the entry of an item.
@@ -196,14 +212,14 @@ enum MainMenuModel {
         "ui.menu.file.importProfile",
         key: "o",
         action: .importProfile,
-        enabled: needsMainWindow,
+        enabled: .requires([.mainWindow, .toolbarActionNotDisabled(.importProfile)]),
         gui: .area(.profiles)
       ),
       entry(
         "installRecordOrMod",
         "ui.menu.file.installRecordOrMod",
         action: .installRecordOrMod,
-        enabled: needsMainWindow,
+        enabled: .requires([.mainWindow, .toolbarActionNotDisabled(.installLibraryItem)]),
         gui: .area(.library)
       ),
       .separator,
@@ -227,7 +243,9 @@ enum MainMenuModel {
         "exportProfile",
         "ui.menu.file.exportProfile",
         action: .exportProfile,
-        enabled: .requires([.mainWindow, .profileSelected]),
+        enabled: .requires([
+          .mainWindow, .profileSelected, .toolbarActionNotDisabled(.exportProfile),
+        ]),
         gui: .area(.profiles)
       ),
       entry(
@@ -240,6 +258,7 @@ enum MainMenuModel {
         "saveActivityLog",
         "ui.menu.file.saveActivityLog",
         action: .saveActivityLog,
+        enabled: .requires([.toolbarActionNotDisabled(.saveActivityLog)]),
         gui: .area(.activity)
       ),
       toolbarEntry(.showActivityLogInFinder),
@@ -336,6 +355,19 @@ enum MainMenuModel {
         gui: .area(area)
       )
     } + [
+      .separator,
+      entry(
+        "interfaceLevel.simple",
+        "ui.menu.view.interfaceSimple",
+        action: .setInterfaceLevel(.simple),
+        gui: .settingsPane(.general)
+      ),
+      entry(
+        "interfaceLevel.advanced",
+        "ui.menu.view.interfaceAdvanced",
+        action: .setInterfaceLevel(.advanced),
+        gui: .settingsPane(.general)
+      ),
       .separator,
       toolbarEntry(.activityMode),
       toolbarEntry(.activityFilter),
@@ -445,6 +477,7 @@ enum MainMenuModel {
       .separator,
       toolbarEntry(.newProfile),
       toolbarEntry(.duplicateProfile),
+      toolbarEntry(.convertProfile),
       toolbarEntry(.deleteProfile),
       toolbarEntry(.validateProfileFile),
     ]
@@ -481,8 +514,8 @@ enum MainMenuModel {
     ]
   )
 
-  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Report Problem and
-  /// the project page.
+  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Help for This Area,
+  /// Report Problem and the project page.
   private static let helpSection = MainMenuSection(
     id: "help",
     titleKey: "ui.menu.help.title",
@@ -508,6 +541,19 @@ enum MainMenuModel {
         gui: .area(.activity)
       ),
       .separator,
+      entry(
+        "openAreaHelp",
+        "ui.menu.help.helpForThisArea",
+        action: .openAreaHelp,
+        gui: .externalLink
+      ),
+      entry(
+        "showMainWindowTour",
+        "ui.menu.help.mainWindowTour",
+        action: .showMainWindowTour,
+        enabled: needsMainWindow,
+        gui: .area(.controllers)
+      ),
       entry(
         "reportProblem",
         "ui.menu.help.reportProblem",

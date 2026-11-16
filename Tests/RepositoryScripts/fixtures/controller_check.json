@@ -1,0 +1,67 @@
+{
+  "apiVersion": "openjoystickdriver/v1alpha3",
+  "kind": "ControllerCheck",
+  "controller": {
+    "name": "Test Pad",
+    "vendorID": 1118,
+    "productID": 654,
+    "protocolBinding": "XboxXUSB",
+    "connection": "USB",
+    "serialNumberPresent": true,
+    "parameters": [],
+    "binding": {
+      "outcome": "Bound",
+      "accessBackend": "RawUSB",
+      "interfaces": [],
+      "rule": "CatalogRecord",
+      "matchedPredicates": [],
+      "rejectedCandidates": []
+    },
+    "inputEndpoint": 129,
+    "outputEndpoint": 2,
+    "needsSetConfiguration": false,
+    "postHandshakeSettleMilliseconds": 0,
+    "preferredBackends": [],
+    "physicalOutputCapabilities": {
+      "rumbleMotors": [],
+      "lightingFeatures": [],
+      "binaryRumbleMotors": [],
+      "adaptiveTriggers": []
+    },
+    "sessionState": "Active",
+    "inputHealth": {
+      "state": "Healthy",
+      "recoveryCount": 0
+    }
+  },
+  "modeID": "default",
+  "recordSource": "Bundled",
+  "appVersion": "0.6.0-alpha.3",
+  "osVersion": "15.6.1",
+  "steps": [
+    {
+      "control": "South",
+      "outcome": "Responded",
+      "ranges": []
+    },
+    {
+      "control": "LeftStick",
+      "outcome": "Responded",
+      "ranges": [
+        { "axis": "LeftStickX", "min": -32767, "max": 32767 },
+        { "axis": "LeftStickY", "min": -32767, "max": 32767 }
+      ]
+    },
+    {
+      "control": "East",
+      "outcome": "OtherControl",
+      "otherControl": "West",
+      "ranges": []
+    },
+    {
+      "control": "North",
+      "outcome": "Skipped",
+      "ranges": []
+    }
+  ]
+}

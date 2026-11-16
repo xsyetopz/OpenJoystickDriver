@@ -33,6 +33,27 @@ enum StatusItemAction: Equatable {
   case quit
 }
 
+extension StatusItemAction {
+  /// The localization key of the tooltip of the entry that performs the action.
+  var helpKey: String {
+    switch self {
+    case .suspendController: "ui.help.suspend"
+    case .resumeController: "ui.help.resume"
+    case .testInput: "ui.help.menu.testInput"
+    case .disconnectWireless: "ui.help.disconnectWireless"
+    case .showController: "ui.help.menu.showControllerInWindow"
+    case .activateProfile: "ui.help.menu.profileItem"
+    case .deactivateProfile: "ui.help.menu.deactivateProfile"
+    case .showArea: "ui.help.menu.showArea"
+    case .showPermission: "ui.help.menu.showPermission"
+    case .startService: "ui.help.restartListener"
+    case .openWindow: "ui.help.menu.openWindow"
+    case .showSettings: "ui.help.menu.settings"
+    case .quit: "ui.help.menu.quit"
+    }
+  }
+}
+
 /// An entry title: a localization key, or text that comes from data such as a profile name.
 indirect enum StatusItemTitle: Equatable {
   /// A localization key.
@@ -40,20 +61,20 @@ indirect enum StatusItemTitle: Equatable {
   /// Text that is shown as is.
   case verbatim(String)
   /// A localization key whose one `%@` takes the text of the title.
-  case formatted(String, StatusItemTitle)
+  case formatted(String, Self)
 }
 
 /// Something that needs the user's action; the menu shows one row for each.
 enum StatusItemProblem: Equatable {
-  /// The app cannot reach the service.
-  case serviceNotRunning
+  /// The service is in a state that needs attention.
+  case service(ServiceReadiness)
   /// A permission the service needs is missing.
   case missingPermission(AccessPermissionRow.Kind)
 
   /// The row's title: it names the problem.
   var title: StatusItemTitle {
     switch self {
-    case .serviceNotRunning: return .key("ui.extra.problemServiceNotRunning")
+    case .service(let readiness): return .key(readiness.messageKey)
     case .missingPermission(let kind):
       return .formatted(
         "ui.extra.problemPermission",
@@ -81,8 +102,10 @@ struct StatusItemEntry: Equatable {
   let submenu: [Self]?
   /// Whether the entry is a separator line.
   let isSeparator: Bool
-  /// What the entry adds to its title: battery level, profile name, state.
+  /// What the entry adds to its title: battery level, profile in force and paused state.
   let details: [StatusItemTitle]
+  /// The SF Symbol the item shows before its title, or nil for none.
+  let symbolName: String?
 
   /// Creates an entry that is enabled and unchecked unless given otherwise.
   init(
@@ -92,7 +115,8 @@ struct StatusItemEntry: Equatable {
     isChecked: Bool = false,
     action: StatusItemAction? = nil,
     submenu: [Self]? = nil,
-    details: [StatusItemTitle] = []
+    details: [StatusItemTitle] = [],
+    symbolName: String? = nil
   ) {
     self.id = id
     self.title = title
@@ -102,6 +126,7 @@ struct StatusItemEntry: Equatable {
     self.submenu = submenu
     self.isSeparator = false
     self.details = details
+    self.symbolName = symbolName
   }
 
   /// Creates a separator with the identifier.
@@ -114,6 +139,7 @@ struct StatusItemEntry: Equatable {
     self.submenu = nil
     self.isSeparator = true
     self.details = []
+    self.symbolName = nil
   }
 
   /// Returns a separator with the identifier.
@@ -132,14 +158,10 @@ struct StatusItemState: Equatable {
     let isSuspended: Bool
     /// Whether the controller is linked over Bluetooth, from the typed transport.
     let isWireless: Bool
-    /// Whether a `Pause` assignment has the controller pass through unmapped.
-    var isPaused = false
     /// The battery level as the service reports it, or nil when the controller reports none.
     var battery: String?
-    /// The name of the profile in force as the service reports it; nil when it reports none.
+    /// The name of the profile in force, with the app that selected it, or nil when none is.
     var profileInForce: String?
-    /// The name of the app in front that selected the profile in force; nil when none did.
-    var profileSelectedBy: String?
     /// The profiles that apply to this controller (same model, and its unit when a profile names
     /// one). ``Profile/isActive`` tells whether the profile is the one active for it.
     var profiles: [Profile] = []
@@ -168,7 +190,7 @@ struct StatusItemState: Equatable {
 /// The fixed status-item layout as data.
 enum StatusItemModel {
   /// The address of the page that starts a problem report.
-  static let problemReport = "https://github.com/xsyetopz/OpenJoystickDriver/issues/new"
+  static let problemReport = ControllerCheckIssue.newIssue
   /// The most profiles one controller's list shows before "More Profiles".
   static let profileListLimit = 10
 
@@ -176,8 +198,13 @@ enum StatusItemModel {
   static func entries(for state: StatusItemState) -> [StatusItemEntry] {
     let problemRows = state.problems.map { problem -> StatusItemEntry in
       switch problem {
-      case .serviceNotRunning:
-        return StatusItemEntry(id: "problem.service", title: problem.title, action: .startService)
+      case .service(let readiness):
+        return StatusItemEntry(
+          id: "problem.service",
+          title: problem.title,
+          action: .startService,
+          symbolName: readiness.symbolName
+        )
       case .missingPermission(let kind):
         return StatusItemEntry(
           id: "problem.\(kind.rawValue)",
@@ -203,13 +230,13 @@ enum StatusItemModel {
     ]
   }
 
-  /// The menu bar symbol: the controller while nothing needs the user, a warning triangle while a
-  /// problem row exists. A state with no controller connected is not a problem.
+  // A state with no controller connected is not a problem, so it keeps the controller symbol.
   static func symbolName(for state: StatusItemState) -> String {
     state.problems.isEmpty ? "gamecontroller" : "exclamationmark.triangle"
   }
 
-  /// The accessibility label of the item: the first problem, else whether a controller is connected.
+  /// The accessibility label of the item: the first problem, else whether a controller is
+  /// connected.
   static func accessibilityTitle(for state: StatusItemState) -> StatusItemTitle {
     if let problem = state.problems.first {
       return .formatted("a11y.menuBar.problem", problem.title)
@@ -229,23 +256,21 @@ enum StatusItemModel {
       ]
     }
     return state.controllers.map { controller in
-      let details =
-        (controller.battery.map { [StatusItemTitle.verbatim($0)] } ?? [])
-        + ((controller.profileInForce ?? controller.profiles.first(where: \.isActive)?.name).map {
-          [.verbatim($0)]
-        } ?? [])
-        + (controller.profileSelectedBy.map {
-          [.formatted("ui.extra.profileSelectedByApp", .verbatim($0))]
-        } ?? [])
-        + (controller.isPaused || controller.isSuspended
-          ? [.key("ui.controllers.paused.value")] : [])
       return StatusItemEntry(
         id: "controller.\(controller.id)",
         title: .verbatim(controller.name),
         submenu: controllerActions(controller, profileListRead: state.profileListRead),
-        details: details
+        details: controllerDetails(controller)
       )
     }
+  }
+
+  /// What a controller row adds to its name: battery level, profile in force, paused state.
+  private static func controllerDetails(
+    _ controller: StatusItemState.Controller
+  ) -> [StatusItemTitle] {
+    [controller.battery, controller.profileInForce].compactMap { $0.map(StatusItemTitle.verbatim) }
+      + (controller.isSuspended ? [.key("ui.controllers.paused.value")] : [])
   }
 
   /// Returns the items of one controller's submenu: the profile list, pause or resume, test

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A build identity that the bundle's Info.plist cannot describe.
 public enum BuildIdentityError: Error, Equatable {

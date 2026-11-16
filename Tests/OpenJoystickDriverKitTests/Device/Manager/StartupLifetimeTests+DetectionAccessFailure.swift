@@ -94,13 +94,13 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func staleAccessFailureTeardownCannotRemoveConnectionFromNewDetectionSession() async throws {
-    try await verifyNewConnectionSurvivesOldTeardown(trigger: .accessFailure)
+  func staleAccessFailureTeardownCannotRemoveConnectionFromNewDetectionSession() async {
+    await verifyNewConnectionSurvivesOldTeardown(trigger: .accessFailure)
   }
 
   @Test
-  func staleDeniedTeardownCannotRemoveConnectionStartedBeforeItResumes() async throws {
-    try await verifyNewConnectionSurvivesOldTeardown(trigger: .denied)
+  func staleDeniedTeardownCannotRemoveConnectionStartedBeforeItResumes() async {
+    await verifyNewConnectionSurvivesOldTeardown(trigger: .denied)
   }
 
   @Test

@@ -5,7 +5,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 @testable import OpenJoystickDriverUSB
 
-/// Snapshots the behavior the bundled catalog drives today: each record's resolved runtime
+/// Snapshots the behavior the bundled catalog drives: each record's resolved runtime
 /// behavior and the route that reaches its controller.
 struct EquivalenceSnapshotCatalogTests {
   static let records = ControllerRecordSet.bundled.records.values.sorted {
@@ -30,11 +30,11 @@ struct EquivalenceSnapshotCatalogTests {
 
     """
 
-  /// How the controller is reached today, decided by the real transport selection: a device the
-  /// raw-USB provider would list on the IOUSBHost route is `raw-access`, one it would leave to
-  /// the signed USB extension is `extension`, and anything else stays with the system HID stack. A
-  /// record that names the extension reads `transport-extension` while the extension serves the
-  /// device; with no extension, the unowned models of the record set use the direct route.
+  // Decided by the real transport selection: a device the raw-USB provider would list on the
+  // IOUSBHost route is `raw-access`, one it would leave to the signed USB extension is
+  // `extension`, and anything else stays with the system HID stack. A record that names the
+  // extension reads `transport-extension` while the extension serves the device; with no
+  // extension, the unowned models of the record set use the direct route.
   private static func transportRoute(_ record: ControllerRecord) -> String {
     let models = Set(ProtocolDriverRegistry().rawUSBModels)
     let model = record.model

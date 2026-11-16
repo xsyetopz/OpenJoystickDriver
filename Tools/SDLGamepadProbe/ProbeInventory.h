@@ -8,9 +8,9 @@ extern "C" {
 #endif
 
 void OJDProbePrewarmGameController(void);
-SDL_JoystickID *OJDProbeWaitForJoysticks(int wait_seconds, int *joy_count);
+SDL_JoystickID* OJDProbeWaitForJoysticks(int wait_seconds, int* joy_count);
 void OJDProbePrintJoystick(SDL_JoystickID id);
-int OJDProbeCheckSingleNeutralOJD(SDL_JoystickID *joy_ids, int joy_count);
+int OJDProbeCheckSingleNeutralOJD(SDL_JoystickID* joy_ids, int joy_count);
 
 #ifdef __cplusplus
 }

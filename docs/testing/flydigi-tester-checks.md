@@ -2,7 +2,7 @@
 
 Each card below checks one Flydigi identity on a tester build. The files you send decide what the bundled records map, so a record stays unverified until its card comes back. The maintainer has no Flydigi pad.
 
-## Before Any Card
+## Before any card
 
 1. Install the tester build the maintainer sends, as in [Test a tester build](tester-builds.md), and keep `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG.
 2. Install the command-line tool: open the app's Settings and click Install Command-Line Tool ([Command line](../../wiki/Command-Line.md)).
@@ -21,11 +21,11 @@ ojd controller capture VVVV:PPPP --duration 20 --json > capture.jsonl
 
 `capture.jsonl` records 20 seconds. Start pressing when the command starts, press one control at a time, and return it to rest before the next one.
 
-### What to Send Back
+### What to send back
 
 For every card send `OpenJoystickDriver-TESTER-BUILD.txt`, every file the card's commands wrote, and one line that lists the controls you pressed in order. Write down anything that differs from the order on the card.
 
-## F1 Vader 4 Pro Over Bluetooth (`D7D7:0041`)
+## F1 Vader 4 Pro over Bluetooth (`D7D7:0041`)
 
 Mode: pair the pad with the Mac over Bluetooth. A Vader 3 or Vader 3 Pro that shows the same `D7D7:0041` is also welcome; say which model you have.
 
@@ -40,7 +40,7 @@ Control order during the capture:
 
 Send: `capture.jsonl`, `hid.txt`, `show.txt`, the product name from the box, and the firmware version from the Flydigi app or the pad's menu.
 
-## F2 Vader 5S Over USB (`37D7:2801`)
+## F2 Vader 5S over USB (`37D7:2801`)
 
 Mode: connect the pad with a USB cable. The commands only read.
 
@@ -50,7 +50,7 @@ Control order during the capture: A, B, X, Y, LB, RB, L3, R3, View, Menu, Home, 
 
 Send: `usb.txt`, `show.txt`, `list.txt`, `capture.jsonl`, and `hid.txt`.
 
-## F3 Vader 5 Pro 2.4 GHz Dongle (`37D7:2401`)
+## F3 Vader 5 Pro 2.4 GHz dongle (`37D7:2401`)
 
 Mode: plug the dongle in and switch the pad on. The commands only read. The bundled record writes its own startup packets when the pad connects; do not send any packet by hand.
 
@@ -83,7 +83,7 @@ Control order during the capture:
 
 Send: `usb.txt`, `hid.txt`, `list.txt`, `show.txt`, `capture.jsonl`.
 
-## F5 Output on a Flydigi Record
+## F5 output on a Flydigi record
 
 Mode: any record that sends vendor frames (`37D7:2401` after F3). Run each command for 2 seconds and write down which motor moved, or that nothing moved.
 
@@ -97,7 +97,7 @@ When the tester build has a trigger force setting (the release notes of the buil
 
 Send: a line per command: which motor moved (left grip, right grip, left trigger, right trigger, none), and one line per trigger force mode: resistance changed, yes or no.
 
-## F6 Any Flydigi Pad Whose Model Is Not Listed
+## F6 any Flydigi pad whose model is not listed
 
 Mode: any connection of a Flydigi pad whose model is not in the [Supported Controllers](../../wiki/Supported-Controllers.md) table.
 

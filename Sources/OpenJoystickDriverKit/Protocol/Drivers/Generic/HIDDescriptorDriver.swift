@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Descriptor-driven driver for the `HIDDescriptor` protocol: HID controllers whose
 /// report descriptor satisfies ``HIDDescriptorContract``.
@@ -52,8 +52,10 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   /// `usageMap` is the record's map, if it declares one. Without one, the description's first
   /// shape that the descriptor's usages match selects the map, so a descriptor with Z and Rz, a
   /// Brake or Accelerator, and no Rx or Ry gets the Z/Rz layout (xpadneo
-  /// `docs/descriptors/xb1s_linux.md`, `xbxs.md`, and `incompat/gamesir_g7_se.md`). Otherwise the
-  /// description's standard map applies. `rumbleTemplate` is the record's rumble report.
+  /// `docs/descriptors/xb1s_linux.md`, `xbxs.md`, and `incompat/gamesir_g7_se.md`), and the
+  /// descriptor that the macOS Xbox 360 driver publishes, with buttons 12-15 and no hat switch,
+  /// gets its D-pad buttons and Y-up sticks. Otherwise the description's standard map applies.
+  /// `rumbleTemplate` is the record's rumble report.
   init(
     model: ControllerModelID,
     reportDescriptor: Data? = nil,
@@ -138,7 +140,7 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   }
 
   /// Raw reports are handled through IOKit's descriptor-decoded element callback.
-  public func parse(report _: Data, receivedAt _: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report _: Data, receivedAt _: MonotonicTimestamp) -> ControllerEvent? {
     nil
   }
 

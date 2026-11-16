@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct AccessPresentationTests {
   @Test
-  func signedClientWithoutPublisherIDNamesTheMissingPublisher() {
+  func signedClientWithoutPublisherIDNamesMissingPublisher() {
     #expect(
       AccessPresentation.signer(.signed, nil)
         == OJDLocalized.string("ui.access.signer.signedUnknownPublisher")
@@ -25,7 +25,7 @@ struct AccessPresentationTests {
   }
 
   @Test
-  func webEndpointStatesNameThePort() {
+  func webEndpointStatesNamePort() {
     let closed = AccessWebStatus(enabled: true, listening: false, port: 4_321, pagesPath: "/p")
     #expect(
       AccessPresentation.web(closed) == OJDLocalized.formatted("ui.access.web.closed", "4321")

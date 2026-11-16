@@ -1,0 +1,17 @@
+Watching 8BitDo Ultimate 2C Wireless (2DC8:301B)... Press controller buttons.
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(0,0) RS=(0,0) LT=0 RT=0
+buttons=[Back] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(0,0) RS=(0,0) LT=0 RT=0
+buttons=[Back] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x200 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x200 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[Start] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x100 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x100 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+buttons=[none] hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0
+out buttons=0x0 hat=neutral LS=(-128,-128) RS=(-128,-128) LT=0 RT=0

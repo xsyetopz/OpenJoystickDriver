@@ -28,14 +28,14 @@ OJD SHALL select the driver extension route for a controller only when OJD's ext
 - **WHEN** OJD's extension is not active
 - **THEN** OJD selects the extension route for no controller
 
-### Requirement: A Model Apple's Driver Holds Is Shown as Served by macOS
+### Requirement: A Model Apple's Driver Holds Is Shown as Handled by macOS
 
 OJD SHALL list a connected controller whose interface Apple's driver owns as served by macOS, and MUST offer the claim action for it.
 
 #### Scenario: Xbox Series controller without OJD's extension
 
 - **WHEN** an Xbox Series controller `045E:0B12` connects and Apple's driver owns it
-- **THEN** the controller row reads "Served by macOS" and offers Claim
+- **THEN** the controller row reads "Handled by macOS" and offers Claim
 - **AND** OJD opens no session for it
 
 ### Requirement: Claim and Release Move a Model Between Owners

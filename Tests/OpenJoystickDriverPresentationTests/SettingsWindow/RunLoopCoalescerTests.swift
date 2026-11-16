@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct RunLoopCoalescerTests {
   @Test
-  func manySchedulesBeforeTheDeferredTurnRunTheActionOnce() {
+  func manySchedulesBeforeDeferredTurnRunActionOnce() {
     var turns: [@MainActor () -> Void] = []
     var runs = 0
     let coalescer = RunLoopCoalescer(deferring: { turns.append($0) }, action: { runs += 1 })
@@ -22,7 +22,7 @@ struct RunLoopCoalescerTests {
   }
 
   @Test
-  func aScheduleAfterTheTurnRunsAgain() {
+  func scheduleAfterTurnRunsAgain() {
     var turns: [@MainActor () -> Void] = []
     var runs = 0
     let coalescer = RunLoopCoalescer(deferring: { turns.append($0) }, action: { runs += 1 })

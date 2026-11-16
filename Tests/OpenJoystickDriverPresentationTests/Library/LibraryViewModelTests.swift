@@ -31,21 +31,26 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
 
   func records() -> LibraryRecordListing { listing }
 
-  func recordDetail(_ model: ControllerModelID) -> LibraryRecordDetail? { details[model] }
+  var detailReads = 0
+
+  func recordDetail(_ model: ControllerModelID) -> LibraryRecordDetail? {
+    detailReads += 1
+    return details[model]
+  }
 
   func testRecord(
     _ model: ControllerModelID,
-    capture: Data,
-    captureName: String,
-    expectation: Data,
-    expectationName: String
+    capture _: Data,
+    captureName _: String,
+    expectation _: Data,
+    expectationName _: String
   ) throws -> ControllerRecordTestResult {
     if let refusal { throw refusal }
     testedRecords.append(model)
     return testOutcome
   }
 
-  func checkRecord(_ data: Data) throws -> LibraryRecordCheck {
+  func checkRecord(_: Data) throws -> LibraryRecordCheck {
     if let refusal { throw refusal }
     return recordCheck
   }
@@ -63,7 +68,7 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
 
   func installedMods() -> [LibraryModItem] { mods }
 
-  func checkMod(folder: URL) throws -> LibraryModCheck {
+  func checkMod(folder _: URL) throws -> LibraryModCheck {
     if let refusal { throw refusal }
     return modCheck
   }
@@ -104,7 +109,7 @@ struct LibraryViewModelTests {
   ) -> LibraryViewModel { LibraryViewModel(store: store, readFile: read) }
 
   @Test
-  func installingARecordWaitsForConfirmation() {
+  func installingRecordWaitsForConfirmation() {
     let store = FakeLibraryStore()
     let model = makeModel(store)
 
@@ -120,7 +125,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func replacingARecordAsksForAReplaceSheet() {
+  func replacingRecordAsksForReplaceSheet() {
     let store = FakeLibraryStore()
     store.recordCheck = LibraryRecordCheck(
       identity: "045E:028E",
@@ -136,7 +141,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func confirmingInstallsWritesTheReadBytesAndReloads() {
+  func confirmingInstallsWritesReadBytesAndReloads() {
     let store = FakeLibraryStore()
     let bytes = Data("record".utf8)
     let model = makeModel(store) { _ in bytes }
@@ -167,7 +172,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func aReplacedModIsInstalledWithReplace() {
+  func replacedModIsInstalledWithReplace() {
     let store = FakeLibraryStore()
     store.modCheck = LibraryModCheck(
       name: "arcade",
@@ -185,7 +190,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func aRefusalShowsTheCodeAndOpensNoSheet() {
+  func refusalShowsCodeAndOpensNoSheet() {
     let store = FakeLibraryStore()
     store.refusal = LibraryFailure(message: "refused", code: .invalidInputFile)
     let model = makeModel(store)
@@ -197,7 +202,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func anUnreadableFileIsAFileAccessFailure() {
+  func unreadableFileIsFileAccessFailure() {
     struct Unreadable: Error {}
     let model = makeModel(FakeLibraryStore()) { _ in throw Unreadable() }
 
@@ -226,7 +231,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func removingARecordNeedsConfirmationThenRemovesItsModel() {
+  func removingRecordNeedsConfirmationThenRemovesItsModel() {
     let store = FakeLibraryStore()
     let item = LibraryRecordItem(
       model: ControllerModelID(vendorID: 0x045E, productID: 0x028E),
@@ -241,11 +246,13 @@ struct LibraryViewModelTests {
       notes: [],
       claimedByUSBExtension: nil,
       fields: [],
-      record: LibraryRecordDocument(document: "{}\n")
+      record: LibraryRecordDocument(document: "<dict/>\n")
     )
     let model = makeModel(store)
     model.reload()
     model.select(.record(item.model))
+    model.select(.record(item.model))
+    #expect(store.detailReads == 1)
 
     model.requestRemoveSelection()
     #expect(store.removedRecords.isEmpty)
@@ -266,7 +273,7 @@ struct LibraryViewModelTests {
   }
 
   @Test
-  func removingAModRemovesItByName() {
+  func removingModRemovesItByName() {
     let store = FakeLibraryStore()
     store.mods = [
       LibraryModItem(name: "arcade", version: nil, author: nil, files: [], problem: nil)
@@ -283,6 +290,8 @@ struct LibraryViewModelTests {
 }
 
 struct DirectoryLibraryStoreTests {
+  init() { PlatformHosts.install(FakePlatformHost()) }
+
   private func directory() throws -> URL {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,
@@ -293,7 +302,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func anInvalidRecordIsRefusedWithAnInputFileCode() throws {
+  func invalidRecordIsRefusedWithInputFileCode() throws {
     let store = DirectoryLibraryStore(recordsDirectory: try directory())
 
     do {
@@ -305,7 +314,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func removingAMissingRecordIsNotFound() throws {
+  func removingMissingRecordIsNotFound() throws {
     let store = DirectoryLibraryStore(recordsDirectory: try directory())
 
     do {
@@ -317,7 +326,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func anEmptyStoreListsNothing() throws {
+  func emptyStoreListsNothing() throws {
     let store = DirectoryLibraryStore(recordsDirectory: try directory())
 
     #expect(store.records().installed.isEmpty)
@@ -325,7 +334,7 @@ struct DirectoryLibraryStoreTests {
   }
 
   @Test
-  func aSkippedFileCarriesItsReason() throws {
+  func skippedFileCarriesItsReason() throws {
     let directory = try directory()
     try PropertyListFixture.data(json: "{}").write(
       to: directory.appendingPathComponent("bad.plist")
@@ -336,5 +345,34 @@ struct DirectoryLibraryStoreTests {
 
     #expect(skipped.count == 1)
     #expect(skipped.allSatisfy { !$0.problem.isEmpty })
+    #expect(skipped.allSatisfy { !$0.offersMigration })
+  }
+
+  @Test
+  func staleJSONFileOffersMigration() throws {
+    let directory = try directory()
+    try Data("{}".utf8).write(to: directory.appendingPathComponent("1234-abcd.json"))
+    let store = DirectoryLibraryStore(recordsDirectory: directory)
+
+    let skipped = store.records().skipped
+
+    #expect(skipped.map(\.offersMigration) == [true])
+    #expect(skipped.first?.problem == DocumentMigrator.staleProblem)
+  }
+
+  @Test
+  @MainActor
+  func migrateReloadsAndReportsAFileThatFailed() throws {
+    let support = RootedDataDirectory.temporary()
+    let model = LibraryViewModel(store: FakeLibraryStore())
+
+    model.migrate(DocumentMigrator(directory: support))
+    #expect(model.failure == nil)
+
+    let profiles = support.url(for: .applicationData).appendingPathComponent("Profiles")
+    try FileManager.default.createDirectory(at: profiles, withIntermediateDirectories: true)
+    try Data("{}".utf8).write(to: profiles.appendingPathComponent("notes.json"))
+    model.migrate(DocumentMigrator(directory: support))
+    #expect(model.failure?.code == .unsupportedAPIVersion)
   }
 }

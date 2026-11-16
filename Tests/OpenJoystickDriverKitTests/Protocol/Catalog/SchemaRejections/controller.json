@@ -18,6 +18,68 @@
       }
     },
     {
+      "name": "rejects an empty placeholderSerial",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1406,
+        "productID": 8201,
+        "placeholderSerial": "",
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "NintendoSwitch1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an empty name",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 16701,
+        "productID": 8452,
+        "name": "",
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "XboxXUSB",
+              "variant": "Wired"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a name that is not a string",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 16701,
+        "productID": 8452,
+        "name": 16701,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "XboxXUSB",
+              "variant": "Wired"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "rejects invalid modes: empty modes",
       "code": "E5007",
       "schema": true,
@@ -1227,57 +1289,6 @@
       }
     },
     {
-      "name": "validator rejects modes that break record level rules: input layout beside a HIDDescriptor mode",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDReportLayout"
-            }
-          },
-          {
-            "id": "x",
-            "protocol": {
-              "family": "HIDDescriptor"
-            },
-            "match": {
-              "probes": [
-                {
-                  "report": 239,
-                  "length": 64,
-                  "expect": "Answers"
-                }
-              ]
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 8
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "validator rejects modes that break record level rules: HIDReportLayout mode without the input layout",
       "code": "E5007",
       "document": {
@@ -1377,6 +1388,90 @@
                 },
                 "lowFrequency": {
                   "byte": 2
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: no motor field",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 5,
+                  "length": 8
+                },
+                "bytes": "05 00 00 00 00 00 00 00"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: no report",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "lowFrequency": {
+                  "byte": 2
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: a motor byte outside the report",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 5,
+                  "length": 4
+                },
+                "lowFrequency": {
+                  "byte": 4
                 }
               }
             }
@@ -3989,6 +4084,549 @@
                   "control": "DpadUp",
                   "bitOffset": 8,
                   "bitSize": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: neither spots nor sticks",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: radius of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 0,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: spot on a stick axis",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "LeftStickX",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stride of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 0,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stick drives one axis twice",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickY"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: slot past the report length",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 5,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stick axis a layout axis also names",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              },
+              "axes": [
+                {
+                  "control": "LeftStickX",
+                  "bitOffset": 8,
+                  "bitSize": 8
                 }
               ]
             }
@@ -7476,42 +8114,6 @@
       }
     },
     {
-      "name": "a byte layout belongs to report layout only",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 65534,
-        "productID": 1,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDDescriptor"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 1
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "a byte layout belongs to report layout only (2)",
       "code": "E5007",
       "document": {
@@ -9274,6 +9876,321 @@
           }
         ],
         "server": "OJD"
+      }
+    },
+    {
+      "name": "rejects a validation of a mode the record does not have",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "xinput",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with an issue number below 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 0,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with a date that is not yyyy-MM-dd",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "14.11.2026"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with an unknown key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14",
+            "verified": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "calibration: rejects a stick range of zero",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftStickRange": 0 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick range above 2",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightStickRange": 2.5 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick centre above 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftStickCenterX": 1.5 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick centre below -1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightStickCenterY": -1.1 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger rest of 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftTriggerRest": 1 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger full press of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightTriggerFull": 0 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger whose rest is not below its full press",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftTriggerRest": 0.8, "leftTriggerFull": 0.5 }
+      }
+    },
+    {
+      "name": "rejects an input on the default mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an input on an idle mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          },
+          {
+            "id": "asleep",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Android GamePad"
+            },
+            "idle": "NoControllerLinked",
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects descriptorShapes in a mode input",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          },
+          {
+            "id": "android",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Android GamePad"
+            },
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              },
+              "descriptorShapes": [
+                {
+                  "usages": []
+                }
+              ]
+            }
+          }
+        ]
       }
     }
   ]

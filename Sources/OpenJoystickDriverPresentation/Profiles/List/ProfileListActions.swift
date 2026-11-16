@@ -25,7 +25,7 @@
     }
 
     /// Deletes a damaged profile file or resets an unusable library through the service, closes the
-    /// alert and shows a failure in the error banner.
+    /// alert and shows a failure beside the button.
     ///
     /// - Parameters:
     ///   - issueID: The identifier of the profile issue.
@@ -33,11 +33,12 @@
     func recoverProfileIssue(_ issueID: UUID, resetLibrary: Bool) {
       activeAlert = nil
       Task { @MainActor in
-        profileActionError =
+        let failure =
           resetLibrary
           ? await library.resetRemappingProfileLibrary(issueID: issueID)
           : await library.deleteDamagedRemappingProfile(issueID: issueID)
-        if profileActionError == nil {
+        screen.failProfileAction(failure, beside: .recovery)
+        if failure == nil {
           selectedRecoveryIssueID = nil
           selectFirstProfileIfNeeded()
         }
@@ -45,13 +46,15 @@
     }
 
     /// Converts the stored documents of an earlier alpha, then refreshes the profiles; a document
-    /// that cannot be converted shows in the error banner.
+    /// that cannot be converted shows beside the Migrate button.
     func migrateStoredDocuments() {
       Task { @MainActor in
         let failed = DocumentMigrator().run(dryRun: false).contains { $0.verdict == .failed }
         await viewModel.refresh()
-        profileActionError =
-          failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil
+        screen.failProfileAction(
+          failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil,
+          beside: .migration
+        )
       }
     }
 
@@ -105,7 +108,7 @@
       }
     }
 
-    /// Selects the profile that a create or import just added; selecting the selected profile does
+    /// Selects the profile that a create or import added; selecting the selected profile does
     /// nothing.
     ///
     /// - Parameter profileID: The profile to select.
@@ -123,9 +126,6 @@
     }
 
     /// Returns whether the profile is active in the snapshot that the screen shows.
-    ///
-    /// - Parameter profile: The profile to check.
-    /// - Returns: Whether the profile is active in the snapshot that the screen shows.
     func isActive(_ profile: RemappingProfile) -> Bool {
       let snapshot: ApplicationServiceRemappingSnapshotPayload?
       switch viewModel.remappingState {
@@ -147,6 +147,23 @@
       Task { @MainActor in
         let result = await library.createRemappingProfile(profile, request: request)
         handleProfileMutationResult(result)
+      }
+    }
+
+    /// Adds the converted profile to the library and, once it is saved, shows what the conversion
+    /// left out.
+    ///
+    /// - Parameter conversion: The conversion that the Convert sheet made.
+    func convertProfile(_ conversion: RemappingProfileConversion) {
+      guard !refuseProfileAction() else { return }
+      let request = RuntimeMutationRequest(operation: .create(profileID: conversion.profile.id))
+      guard beginProfileMutationOrExplain(request) else { return }
+      Task { @MainActor in
+        let result = await library.createRemappingProfile(conversion.profile, request: request)
+        handleProfileMutationResult(result)
+        if case .succeeded = result {
+          screen.conversionReport = ProfileConversionReport(conversion)
+        }
       }
     }
 
@@ -332,9 +349,6 @@
     }
 
     /// Returns whether the operation is a profile action: not an update from the editor.
-    ///
-    /// - Parameter operation: The operation of a request.
-    /// - Returns: Whether the operation is a profile action: not an update from the editor.
     func isProfileAction(_ operation: RuntimeMutationOperation) -> Bool {
       switch operation {
       case .create, .delete, .activate, .deactivate, .importProfile: return true

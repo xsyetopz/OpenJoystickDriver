@@ -31,7 +31,7 @@ extension RemappingProfileLibrary {
     for package in store.list() {
       guard let manifest = package.manifest, package.problem == nil else {
         let reason = package.problem ?? "the manifest cannot be used"
-        fputs("[Profiles] Skipped the package \(package.name): \(reason)\n", stderr)
+        unsafe fputs("[Profiles] Skipped the package \(package.name): \(reason)\n", unsafe stderr)
         continue
       }
       for fileName in manifest.profiles {
@@ -42,10 +42,10 @@ extension RemappingProfileLibrary {
           // `load(from:)` decodes the file and runs `RemappingProfile.validate()`.
           profile = try RemappingProfileFileStore.load(from: Data(contentsOf: url))
         } catch {
-          fputs(
+          unsafe fputs(
             "[Profiles] Skipped Profiles/\(fileName) of the package \(package.name): "
               + "\(error)\n",
-            stderr
+            unsafe stderr
           )
           continue
         }

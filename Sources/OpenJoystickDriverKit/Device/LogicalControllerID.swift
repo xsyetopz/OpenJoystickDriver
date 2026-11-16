@@ -63,8 +63,8 @@ extension LogicalControllerID: CustomStringConvertible {
   ///
   /// It never includes the serial number, only whether one is present.
   public var description: String {
-    let vid = String(format: "0x%04X", model.vendorID)
-    let pid = String(format: "0x%04X", model.productID)
+    let vid = unsafe String(format: "0x%04X", model.vendorID)
+    let pid = unsafe String(format: "0x%04X", model.productID)
     let serial = hardware.serialNumber == nil ? "" : " serial=present"
     let loc = (address?.locationID).map { " loc=\($0)" } ?? ""
     let interface = address?.interfaceNumber.map { " if=\($0)" } ?? ""

@@ -2,7 +2,7 @@ import Foundation
 
 /// Standard HID GamePad report descriptor used by OpenJoystickDriver virtual devices.
 ///
-/// This descriptor is intentionally generic (HID Usage Page: Generic Desktop, Usage: GamePad).
+/// This descriptor is generic (HID Usage Page: Generic Desktop, Usage: GamePad).
 /// Do not assume consumers will apply device-specific parsing based on VID/PID.
 ///
 /// Report layout (14 bytes total):
@@ -35,7 +35,7 @@ import Foundation
 public enum GamepadHIDDescriptor {
   // MARK: - Report descriptor bytes
 
-  // Indentation reflects HID descriptor hierarchy — intentionally not vertically aligned.
+  // Indentation follows the HID descriptor hierarchy, so the bytes are not vertically aligned.
   /// Raw HID report descriptor that describes the virtual gamepad layout.
   public static let descriptor: [UInt8] = [
     // ----- Usage Page: Generic Desktop -----

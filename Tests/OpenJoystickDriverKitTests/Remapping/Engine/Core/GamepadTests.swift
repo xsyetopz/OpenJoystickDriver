@@ -5,7 +5,7 @@ import Testing
 
 struct RemappingGamepadTests {
   @Test
-  func remappedStateReplacesEveryInputFieldOfTheVirtualState() {
+  func remappedStateReplacesEveryInputFieldOfVirtualState() {
     var virtual = VirtualGamepadState()
     VirtualGamepadReportMapping.apply(
       RemappingGamepadState(

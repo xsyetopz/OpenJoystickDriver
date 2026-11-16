@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// Profile edits shared by the command-line editor and the profile editor draft.
 ///

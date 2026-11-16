@@ -96,11 +96,11 @@ struct BindingListCommand: AsyncParsableCommand {
       }
       switch CLIContext.current.format {
       case .json:
-        let profile = ProfileSummary(document, snapshot: snapshot)
+        let summary = ProfileSummary(document, snapshot: snapshot)
         try CLIOutput.json(
           CLIList(
             items: document.bindings.map {
-              Item($0, profile: profile, macros: document.macros, layers: document.layers)
+              Item($0, profile: summary, macros: document.macros, layers: document.layers)
             }
           )
         )
@@ -205,19 +205,19 @@ struct BindingSetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let source = try parseSource(source)
+      let parsedSource = try parseSource(source)
       let macroName =
         target.hasPrefix(Self.macroPrefix) ? target.dropFirst(Self.macroPrefix.count) : nil
       let layerTarget = RemappingCommandValueParser.layerTarget(target)
       let parsed: RemappingDestination =
         try macroName == nil && layerTarget == nil ? options.destination(target) : .macro(UUID())
       // Reports option errors before the service is contacted.
-      _ = try options.binding(source: source, target: parsed, existing: nil)
-      let (selector, options) = (profile, options)
+      _ = try options.binding(source: parsedSource, target: parsed, existing: nil)
+      let (selector, bindingOptions) = (profile, options)
       let (binding, replaced, updated, after) = try await ServiceConnection.request { client in
         let (current, _) = try await selector.resolve(with: client)
-        let existing = current.bindings.first { $0.source == source }
-        let target =
+        let existing = current.bindings.first { $0.source == parsedSource }
+        let destination =
           try macroName.map {
             RemappingDestination.macro(try current.macro(named: String($0)).id)
           }
@@ -227,8 +227,12 @@ struct BindingSetCommand: AsyncParsableCommand {
               mode: $0.mode
             )
           } ?? parsed
-        let binding = try options.binding(source: source, target: target, existing: existing)
-        let bindings = current.bindings.map { $0.source == source ? binding : $0 }
+        let binding = try bindingOptions.binding(
+          source: parsedSource,
+          target: destination,
+          existing: existing
+        )
+        let bindings = current.bindings.map { $0.source == parsedSource ? binding : $0 }
         let updated = try current.replacing(
           bindings: existing == nil ? current.bindings + [binding] : bindings
         ).validatedForCLI()
@@ -342,15 +346,15 @@ struct BindingClearCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let parsed = try sources.map(parseSource)
-      let (selector, all) = (profile, all)
+      let (selector, removeAll) = (profile, all)
       let client = try await ServiceConnection.open()
       defer { client.disconnect() }
       let timeout = CLIContext.current.requestTimeout
       var (current, snapshot) = try await ServiceConnection.withDeadline(seconds: timeout) {
         try await selector.resolve(with: client)
       }
-      let removing = all ? current.bindings.map(\.source) : parsed
-      if !all,
+      let removing = removeAll ? current.bindings.map(\.source) : parsed
+      if !removeAll,
         let missing = parsed.first(where: { source in
           !current.bindings.contains { $0.source == source }
         })
@@ -365,7 +369,7 @@ struct BindingClearCommand: AsyncParsableCommand {
         )
       }
       if !dryRun {
-        if all {
+        if removeAll {
           try CLITerminal.confirm(
             CLILocalized.format(
               "cli.binding.clear.confirm",
@@ -374,7 +378,7 @@ struct BindingClearCommand: AsyncParsableCommand {
             force: force
           )
         }
-        let updated = try Self.clearing(current, sources: parsed, all: all).validatedForCLI()
+        let updated = try Self.clearing(current, sources: parsed, all: removeAll).validatedForCLI()
         let expected = current
         snapshot = try await ServiceConnection.withDeadline(seconds: timeout) {
           try await client.updateRemappingProfile(updated, expectedCurrent: expected)
@@ -384,7 +388,7 @@ struct BindingClearCommand: AsyncParsableCommand {
       let result = Result(
         profile: try savedSummary(current.id, in: snapshot),
         removed: removing.map(ProfileText.source),
-        all: all,
+        all: removeAll,
         dryRun: dryRun
       )
       switch CLIContext.current.format {

@@ -18,7 +18,8 @@ struct ProfileAppChoicesTests {
     try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
     var plist: [String: Any] = ["CFBundleName": name]
     if let identifier { plist["CFBundleIdentifier"] = identifier }
-    try (plist as NSDictionary).write(to: contents.appendingPathComponent("Info.plist"))
+    try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+      .write(to: contents.appendingPathComponent("Info.plist"))
   }
 
   private static func temporaryFolder() throws -> URL {
@@ -42,7 +43,7 @@ struct ProfileAppChoicesTests {
   }
 
   @Test
-  func anAppAlreadyInTheProfileIsNotOfferedAgain() {
+  func appAlreadyInProfileNotOfferedAgain() {
     let choices = ProfileAppChoices.merged(
       running: [Self.app("a.One", "One", running: true)],
       installed: [Self.app("a.Two", "Two")],
@@ -52,24 +53,23 @@ struct ProfileAppChoicesTests {
   }
 
   @Test
-  func anIdentifierOfAnInstalledAppShowsItsName() {
+  func identifierOfInstalledAppShowsItsName() {
     let entry = ProfileAppChoices.entry(
-      for: "a.Two",
-      lookup: { $0 == "a.Two" ? Self.app("a.Two", "Two") : nil }
-    )
+      for: "a.Two"
+    ) { $0 == "a.Two" ? Self.app("a.Two", "Two") : nil }
     #expect(entry.title == "Two")
     #expect(entry.isInstalled)
   }
 
   @Test
-  func anIdentifierOfAnAppThatIsNotInstalledShowsTheIdentifier() {
-    let entry = ProfileAppChoices.entry(for: "gone.App", lookup: { _ in nil })
+  func identifierOfAppNotInstalledShowsIdentifier() {
+    let entry = ProfileAppChoices.entry(for: "gone.App") { _ in nil }
     #expect(entry.title == "gone.App")
     #expect(!entry.isInstalled)
   }
 
   @Test
-  func installedAppsAreReadFromTheApplicationFolders() throws {
+  func installedAppsReadFromApplicationFolders() throws {
     let root = try Self.temporaryFolder()
     let utilities = root.appendingPathComponent("Utilities", isDirectory: true)
     try FileManager.default.createDirectory(at: utilities, withIntermediateDirectories: true)
@@ -85,7 +85,7 @@ struct ProfileAppChoicesTests {
   }
 
   @Test
-  func anAppFileGivesItsBundleIdentifier() throws {
+  func appFileGivesItsBundleIdentifier() throws {
     let root = try Self.temporaryFolder()
     defer { try? FileManager.default.removeItem(at: root) }
     try Self.bundle(in: root, name: "Racer", identifier: "ex.Racer")
@@ -98,7 +98,7 @@ struct ProfileAppChoicesTests {
   }
 
   @Test
-  func theCreationFieldsHoldAListOfApps() {
+  func creationFieldsHoldListOfApps() {
     var fields = ProfileCreationFields()
     fields.appIDs = ["a.One", "a.Two"]
     #expect(fields.appIDs == ["a.One", "a.Two"])

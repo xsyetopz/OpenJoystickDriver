@@ -1,7 +1,7 @@
 import Foundation
 
 extension ControllerRecordDocument {
-  /// The record's `input` section: the fixed report layouts for the `HIDReportLayout` family.
+  /// The record's `input` section: the fixed report layouts of any protocol family.
   struct InputLayouts: Decodable {
     /// The decoded layouts.
     let layouts: ControllerInputLayouts
@@ -26,13 +26,13 @@ extension ControllerRecordDocument {
     /// The decoded layout.
     let layout: ControllerInputLayout
 
-    /// Decodes `report` and the optional `buttons`, `axes`, `hat`, `leftTrigger` and
-    /// `rightTrigger`; an unknown key, an empty list, or a layout that `ControllerInputLayout`
+    /// Decodes `report` and the optional `buttons`, `axes`, `hat`, `leftTrigger`, `rightTrigger`
+    /// and `touch`; an unknown key, an empty list, or a layout that `ControllerInputLayout`
     /// rejects is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
-        "report", "buttons", "axes", "hat", "leftTrigger", "rightTrigger",
+        "report", "buttons", "axes", "hat", "leftTrigger", "rightTrigger", "touch",
       ])
       let report = try container.decode(InputReport.self, for: "report")
       let buttons = try container.decodeOptional([InputButton].self, for: "buttons")
@@ -53,7 +53,8 @@ extension ControllerRecordDocument {
           hat: hat?.map(\.source) ?? [],
           leftTrigger: try container.decodeOptional(InputTrigger.self, for: "leftTrigger")?.trigger,
           rightTrigger: try container.decodeOptional(InputTrigger.self, for: "rightTrigger")?
-            .trigger
+            .trigger,
+          touch: try container.decodeOptional(InputTouch.self, for: "touch")?.touch
         )
       } catch let problem as ControllerRecordProblem {
         throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
@@ -113,12 +114,12 @@ extension ControllerRecordDocument {
         reportID = nil
         return
       }
-      guard let reportID = UInt8(exactly: id), reportID != 0 else {
+      guard let validID = UInt8(exactly: id), validID != 0 else {
         throw DecodingError.dataCorrupted(
           .init(codingPath: decoder.codingPath, debugDescription: "id must be 1...255")
         )
       }
-      self.reportID = reportID
+      self.reportID = validID
     }
   }
 
@@ -321,6 +322,130 @@ extension ControllerRecordDocument {
         analog: hasAnalog
           ? try InputField.valueField(in: container, codingPath: decoder.codingPath) : nil,
         button: try container.decodeOptional(InputField.self, for: "button")?.field
+      )
+    }
+  }
+}
+
+extension ControllerRecordDocument {
+  /// A layout's `touch` entry.
+  struct InputTouch: Decodable {
+    /// The decoded touch contacts.
+    let touch: ControllerInputLayout.Touch
+
+    /// Decodes `contacts`, `radius` and at least one of `spots` and `sticks`; an unknown key, an
+    /// empty list, or a radius, travel, slot count or stride below 1 is rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["contacts", "radius", "spots", "sticks"])
+      let contacts = try container.decode(InputContacts.self, for: "contacts").contacts
+      let radius = try container.decode(Int.self, for: "radius")
+      let spots = try container.decodeOptional([InputSpot].self, for: "spots")
+      let sticks = try container.decodeOptional([InputTouchStick].self, for: "sticks")
+      guard spots?.isEmpty != true, sticks?.isEmpty != true, spots != nil || sticks != nil,
+        radius >= 1, sticks?.allSatisfy({ $0.stick.travel >= 1 }) != false
+      else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath,
+            debugDescription:
+              "touch names nonempty spots or sticks, and a radius and travel of 1 or more"
+          )
+        )
+      }
+      touch = ControllerInputLayout.Touch(
+        contacts: contacts,
+        radius: radius,
+        spots: spots?.map(\.spot) ?? [],
+        sticks: sticks?.map(\.stick) ?? []
+      )
+    }
+  }
+
+  /// The `contacts` of a `touch` entry.
+  struct InputContacts: Decodable {
+    /// The decoded contact slots.
+    let contacts: ControllerInputLayout.Touch.Contacts
+
+    /// Decodes `bitOffset`, `stride`, `slots`, `count`, `tip`, `id`, `x` and `y`; any other key, a
+    /// negative `bitOffset`, or a `stride` or `slots` below 1 is rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: [
+        "bitOffset", "stride", "slots", "count", "tip", "id", "x", "y",
+      ])
+      let bitOffset = try container.decode(Int.self, for: "bitOffset")
+      let stride = try container.decode(Int.self, for: "stride")
+      let slots = try container.decode(Int.self, for: "slots")
+      guard bitOffset >= 0, stride >= 1, slots >= 1 else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath,
+            debugDescription: "bitOffset is 0 or more, and stride and slots are 1 or more"
+          )
+        )
+      }
+      contacts = ControllerInputLayout.Touch.Contacts(
+        bitOffset: bitOffset,
+        stride: stride,
+        slots: slots,
+        count: try container.decode(InputField.self, for: "count").field,
+        tip: try container.decode(InputField.self, for: "tip").field,
+        id: try container.decode(InputField.self, for: "id").field,
+        x: try container.decode(InputField.self, for: "x").field,
+        y: try container.decode(InputField.self, for: "y").field
+      )
+    }
+  }
+
+  /// A spot of a `touch` entry.
+  struct InputSpot: Decodable {
+    /// The decoded spot.
+    let spot: ControllerInputLayout.Touch.Spot
+
+    /// Decodes `control`, `x` and `y`; any other key is rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["control", "x", "y"])
+      spot = ControllerInputLayout.Touch.Spot(
+        control: try container.decode(Control.self, for: "control"),
+        x: try container.decode(Int.self, for: "x"),
+        y: try container.decode(Int.self, for: "y")
+      )
+    }
+  }
+
+  /// A stick of a `touch` entry.
+  struct InputTouchStick: Decodable {
+    /// The decoded stick.
+    let stick: ControllerInputLayout.Touch.Stick
+
+    /// Decodes `x`, `y`, `travel`, `alongX` and `alongY`; any other key is rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["x", "y", "travel", "alongX", "alongY"])
+      stick = ControllerInputLayout.Touch.Stick(
+        x: try container.decode(Int.self, for: "x"),
+        y: try container.decode(Int.self, for: "y"),
+        travel: try container.decode(Int.self, for: "travel"),
+        alongX: try container.decode(InputStickAxis.self, for: "alongX").axis,
+        alongY: try container.decode(InputStickAxis.self, for: "alongY").axis
+      )
+    }
+  }
+
+  /// The stick axis a touch axis drives.
+  struct InputStickAxis: Decodable {
+    /// The decoded stick axis.
+    let axis: ControllerInputLayout.Touch.StickAxis
+
+    /// Decodes `control` and an optional `inverted`; any other key is rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["control", "inverted"])
+      axis = ControllerInputLayout.Touch.StickAxis(
+        control: try container.decode(Control.self, for: "control"),
+        isInverted: try container.decodeOptional(Bool.self, for: "inverted") ?? false
       )
     }
   }

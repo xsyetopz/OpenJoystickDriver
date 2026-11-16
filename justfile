@@ -1,255 +1,118 @@
-# OpenJoystickDriver repository tasks.
-# Run `just` (or `just --list`) to see all available recipes.
-# Just orchestrates standard tools; ./Scripts/ojd owns repository-specific behavior.
+# Every bedrock repo shares this file. Each language adds `.just/<language>.just`,
+# so `just <task>` runs the task for every language the repo has. Put project
+# recipes in `project.just`; a recipe there named `project-<task>`, such as
+# `project-verify`, runs after the languages' <task>.
 
-# Show available recipes
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+mod? typescript ".just/typescript.just"
+mod? rust ".just/rust.just"
+mod? swift ".just/swift.just"
+mod? cpp ".just/cpp.just"
+mod? jvm ".just/jvm.just"
+mod? go ".just/go.just"
+
+import? "project.just"
+
+languages := "typescript rust swift cpp jvm go"
+
+# List the recipes.
 default:
-    @just --list
+    @just --list --list-submodules
 
-# Install the repository command runner and Git hooks
-setup:
-    ./Scripts/ojd setup
+# Install the pinned tools and point git at .githooks.
+setup: (each "setup")
+    @if [[ -z "${CI:-}" ]]; then git config core.hooksPath .githooks; fi
 
-# Install repository Git hooks
-hooks-install:
-    ./Scripts/ojd hooks install
+# Format every file in place.
+format: (each "format")
 
-# Validate repository Git hook configuration
-hooks-validate:
-    ./Scripts/ojd hooks validate
+# Fail if a file is not formatted.
+format-check: (each "format-check")
 
-# =========================================================================
-# Build
-# =========================================================================
+# Type-check or build without running anything.
+typecheck: (each "typecheck")
 
-# Build + sign app bundle into .build/ (no dext)
-build-dev:
-    ./Scripts/ojd build dev
+# Run every linter.
+lint: lint-markdown lint-hooks (each "lint")
 
-# Build + sign app bundle for release (no dext)
-build-release:
-    ./Scripts/ojd build release
+# Apply the fixes the linters can make.
+lint-fix: lint-markdown-fix (each "lint-fix")
 
-# Build DriverKit .dext and embed into .build/ app
-build-dext:
-    ./Scripts/ojd build dext
+# Run the tests.
+test: (each "test")
 
-# Full rebuild and install (app + dext) into /Applications
-install-dev:
-    ./Scripts/ojd build install dev
+# Report what the linters cannot see: suppressions, foreign tools, and drift.
+guard: guard-base (each "guard")
 
-# Full rebuild and install release build
-install-release:
-    ./Scripts/ojd build install release
+# Run every check CI runs.
+verify: guard-base lint-markdown lint-hooks (each "verify")
 
-# App-only rebuild and install (preserves installed sysext)
-install-fast-dev:
-    ./Scripts/ojd build install-fast dev
+# The checks the pre-commit hook runs.
+pre-commit: guard-base (each "pre-commit")
 
-# =========================================================================
-# DriverKit
-# =========================================================================
+[private]
+each recipe:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for language in {{ languages }}; do
+        if [[ -f ".just/$language.just" ]]; then
+            {{ just_executable() }} "$language::{{ recipe }}"
+        fi
+    done
+    # project.just extends a task with a recipe named project-<task>.
+    case " $({{ just_executable() }} --summary) " in
+        *" project-{{ recipe }} "*) {{ just_executable() }} "project-{{ recipe }}" ;;
+    esac
 
-# Generate the DriverKit project into a missing folder
-driverkit-generate *args:
-    ./Scripts/ojd driverkit generate {{ args }}
+[private]
+lint-markdown *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ -x node_modules/.bin/markdownlint-cli2 ]]; then
+        exec bun run markdownlint-cli2 {{ args }}
+    elif command -v markdownlint-cli2 >/dev/null; then
+        exec markdownlint-cli2 {{ args }}
+    elif [[ -n "${CI:-}" ]]; then
+        echo "markdownlint-cli2 is not installed" >&2
+        exit 1
+    fi
+    echo "Skipped Markdown: markdownlint-cli2 is not installed. CI runs it."
 
-# Verify generated DriverKit reproducibility and unsigned build
-driverkit-check:
-    ./Scripts/ojd check driverkit
+[private]
+lint-markdown-fix: (lint-markdown "--fix")
 
-# =========================================================================
-# Lint & Format
-# =========================================================================
+[private]
+lint-hooks:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if command -v shellcheck >/dev/null; then
+        exec shellcheck .githooks/*
+    elif [[ -n "${CI:-}" ]]; then
+        echo "shellcheck is not installed" >&2
+        exit 1
+    fi
+    echo "Skipped hooks: shellcheck is not installed. CI runs it."
 
-# Run standard formatters and linters without a repository wrapper
-lint:
-    ruff format --check Scripts Tests/RepositoryScripts
-    ruff check Scripts Tests/RepositoryScripts
-    find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-    swift-format lint --recursive --strict Package.swift Sources Tests Tools
-    xcode="${DEVELOPER_DIR:-$(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -exec test -x '{}/Contents/Developer/usr/bin/xcodebuild' ';' -print | sort -r | head -n1)/Contents/Developer}"; DEVELOPER_DIR="$xcode" swiftlint lint --no-cache --strict
-
-# Format Python and Swift sources in place
-format:
-    ruff format Scripts Tests/RepositoryScripts
-    swift-format format --recursive --in-place Package.swift Sources Tests Tools
-
-# =========================================================================
-# Catalog
-# =========================================================================
-
-# Verify (--check) or rebuild (--write) the runtime catalog from pinned sources
-catalog-regenerate *args:
-    ./Scripts/ojd catalog regenerate {{ args }}
-
-# =========================================================================
-# Checks
-# =========================================================================
-
-# Run snapshot-safe validation
-check-fast: check-schemas lint
-    ./Scripts/ojd catalog regenerate --check
-    ./Scripts/ojd errors regenerate --check
-    ./Scripts/ojd vocabulary regenerate --check
-    ./Scripts/ojd check profiles
-    python3 Scripts/Quality/check_localization_keys.py
-    python3 Scripts/Quality/check_text_styles.py
-    .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
-    git diff --check
-
-# Run the complete local validation suite
-check: check-fast
-    ./Scripts/ojd check tools
-    ./Scripts/ojd check driverkit
-    ./Scripts/ojd test parsers-macos14
-    ./Scripts/ojd snapshots check
-    ./Scripts/ojd check swift
-
-# Check canonical controller records
-check-profiles:
-    ./Scripts/ojd check profiles
-
-# Validate schemas and create the schema Python environment that the script tests use
-check-schemas:
-    ./Scripts/ojd check schemas
-
-# Build supported native tools without opening hardware and test the WebRTC bridge package
-check-tools:
-    ./Scripts/ojd check tools
-
-# Verify generated DriverKit reproducibility and unsigned build
-check-driverkit:
-    ./Scripts/ojd check driverkit
-
-# Run focused parser regressions for macOS 14 (no Swift Testing runtime)
-test-parsers-macos14:
-    ./Scripts/ojd test parsers-macos14
-
-# =========================================================================
-# Docs
-# =========================================================================
-
-# Publish wiki/ to the GitHub wiki (pass --dry-run to preview without pushing)
-wiki *args:
-    ./Scripts/ojd docs publish-wiki {{ args }}
-
-# =========================================================================
-# Signing
-# =========================================================================
-
-# Copy profiles from ~/Documents/Profiles into MobileDevice
-signing-install-profiles *args:
-    ./Scripts/ojd signing install-profiles {{ args }}
-
-# Generate .env.dev + .env.release from Keychain + profiles
-signing-configure:
-    ./Scripts/ojd signing configure
-
-# Audit profiles without leaking identifiers
-signing-audit *paths:
-    ./Scripts/ojd signing audit {{ paths }}
-
-# Show safe-ish .cer info (Team ID = Subject OU)
-signing-cert-info *args:
-    ./Scripts/ojd signing cert-info {{ args }}
-
-# Show safe-ish profile embedded cert info
-signing-profile-info *args:
-    ./Scripts/ojd signing profile-info {{ args }}
-
-# Import every embedded cert from a profile into Keychain
-signing-import-embedded profile:
-    ./Scripts/ojd signing import-embedded {{ profile }}
-
-# Import GitHub Actions release secrets (CI only)
-signing-ci-release-setup:
-    ./Scripts/ojd signing ci-release-setup
-
-# Write/import GitHub Actions release secrets
-signing-export-github-secrets *args:
-    ./Scripts/ojd signing export-github-secrets {{ args }}
-
-# =========================================================================
-# Diagnostics
-# =========================================================================
-
-# Run dext diagnostics (activation, codesign, IORegistry, app service)
-diagnose-dext:
-    ./Scripts/ojd diagnose dext
-
-# Validate/probe a raw-USB record without app signing
-diagnose-record *args:
-    ./Scripts/ojd diagnose record {{ args }}
-
-# Run SDL3 probe against the virtual device
-diagnose-sdl3 *args:
-    ./Scripts/ojd diagnose sdl3 {{ args }}
-
-# Run SDL3 through GameController/MFI and test rumble
-diagnose-sdl3-gamecontroller *args:
-    ./Scripts/ojd diagnose sdl3-gamecontroller {{ args }}
-
-# Run SDL3 through Xbox 360 HIDAPI and test rumble
-diagnose-sdl3-hidapi-x360 *args:
-    ./Scripts/ojd diagnose sdl3-hidapi-x360 {{ args }}
-
-# Run GameController.framework probe
-diagnose-gamecontroller *args:
-    ./Scripts/ojd diagnose gamecontroller {{ args }}
-
-# Run current backend acceptance loop
-diagnose-backends *args:
-    ./Scripts/ojd diagnose backends {{ args }}
-
-# Interactively identify each physical rumble actuator, stopping between steps
-diagnose-rumble-motors vid pid intensity="160" duration_ms="500":
-    ./Scripts/ojd diagnose rumble-motors {{ vid }} {{ pid }} {{ intensity }} {{ duration_ms }}
-
-# =========================================================================
-# Repair
-# =========================================================================
-
-# Kill stale DriverKit process copies after upgrade
-repair-stale-dext:
-    ./Scripts/ojd repair stale-dext
-
-# =========================================================================
-# Release
-# =========================================================================
-
-# Build a private notarized Developer ID tester DMG without installing or publishing it
-package-tester:
-    ./Scripts/ojd package tester
-
-# Set the app release version in Info.plist (SemVer, no build metadata)
-release-bump-version version:
-    ./Scripts/ojd release bump-version {{ version }}
-
-# Build, notarize, staple, and package a release DMG
-release-package *args:
-    ./Scripts/ojd release package {{ args }}
-
-# Package and install the release app locally
-release-local-install *args:
-    ./Scripts/ojd release install-local {{ args }}
-
-# Submit the current release build for notarization
-release-notarize-submit:
-    ./Scripts/ojd release notarize submit
-
-# Check notarization status (optionally pass a submission ID)
-release-notarize-status *args:
-    ./Scripts/ojd release notarize status {{ args }}
-
-# Show notarization history
-release-notarize-history:
-    ./Scripts/ojd release notarize history
-
-# Show notarization log for a submission
-release-notarize-log id:
-    ./Scripts/ojd release notarize log {{ id }}
-
-# Store notarization credentials in Keychain
-release-notarize-store-credentials *args:
-    ./Scripts/ojd release notarize store-credentials {{ args }}
+[private]
+guard-base:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    status=0
+    for agent in CLAUDE.md GEMINI.md; do
+        if [[ "$(readlink "$agent" || true)" != AGENTS.md ]]; then
+            echo "$agent: make it a symlink to AGENTS.md" >&2
+            status=1
+        fi
+    done
+    for path in .husky .lefthook.yml .pre-commit-config.yaml .simple-git-hooks.json lefthook.yaml lefthook.yml Makefile; do
+        if [[ -e "$path" ]]; then
+            echo "$path: replaced by justfile and .githooks; move what it still does into project.just" >&2
+            status=1
+        fi
+    done
+    if [[ -z "${CI:-}" && "$(git config core.hooksPath || true)" != .githooks ]]; then
+        echo "git hooks are off: run just setup" >&2
+        status=1
+    fi
+    exit "$status"

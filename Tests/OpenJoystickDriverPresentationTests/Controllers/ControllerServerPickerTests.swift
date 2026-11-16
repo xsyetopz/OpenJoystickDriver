@@ -42,7 +42,7 @@ struct ControllerServerPickerTests {
       (.exclusiveRawUSB, .ojd, .rawAccess, false),
     ]
   )
-  func thePickerShowsOnlyForANativeOrOJDOwnedHIDController(
+  func pickerShowsOnlyForNativeOrOJDOwnedHIDController(
     physicalOwnership: ControllerOwnershipObservation,
     recordServer: ControllerServer,
     accessRoute: ControllerAccessRoute,
@@ -58,7 +58,7 @@ struct ControllerServerPickerTests {
   }
 
   @Test(arguments: [ControllerServer.ojd, .system])
-  func aChangeCallsTheGatewayWithTheModelIdentityAndTheValue(_ server: ControllerServer) async {
+  func changeCallsGatewayWithModelIdentityAndValue(_ server: ControllerServer) async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(physicalOwnership: .systemGamepad)
@@ -73,7 +73,7 @@ struct ControllerServerPickerTests {
   }
 
   @Test
-  func aRefusalShowsE2023WithTheServiceDetail() async {
+  func refusalShowsE2023WithServiceDetail() async {
     let gateway = GatewayStub()
     await gateway.setServerFailure(.invalidRecord, detail: "bad record")
     let viewModel = RuntimeViewModel(gateway: gateway)

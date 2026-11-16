@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 /// The two views of the Activity area; the toolbar's segmented control switches them.
@@ -63,6 +64,9 @@ struct ActivityActionFailure: Equatable {
     /// The failure row shows in both views.
     @Published
     var failure: ActivityActionFailure?
+    /// Why the fix of a check row failed, by check id; the row shows it under its details.
+    @Published
+    var fixFailures: [String: String] = [:]
     /// Does the action of a fix button and returns why it could not.
     private let performFix: @MainActor (ActivityCheckFix) -> String?
 
@@ -77,9 +81,9 @@ struct ActivityActionFailure: Equatable {
       self.performFix = performFix
     }
 
-    /// Does the action of a fix button and shows a failure row when it fails.
-    func perform(_ fix: ActivityCheckFix) {
-      if let title = performFix(fix) { failure = ActivityActionFailure(title: title, message: nil) }
+    /// Does the fix of the check `checkID` and keeps why it failed, if it did, for that check row.
+    func perform(_ fix: ActivityCheckFix, forCheck checkID: String) {
+      fixFailures[checkID] = performFix(fix)
     }
   }
 
@@ -100,9 +104,11 @@ struct ActivityActionFailure: Equatable {
             )
             Spacer(minLength: 12)
             Button(OJDLocalized.string("action.dismiss")) { model.failure = nil }
+              .help(OJDLocalized.string("ui.help.dismiss"))
           }.padding(.horizontal, 12).padding(.vertical, 8)
           Divider()
         }
+        HiddenChangeNotice(content: .needsAdvanced).padding(.horizontal, OJDSpacing.medium)
         content
       }
     }
@@ -111,8 +117,13 @@ struct ActivityActionFailure: Equatable {
     @ViewBuilder
     private var content: some View {
       switch model.mode {
-      case .log: ActivityLogView(model: model.log)
-      case .diagnostics: ActivityDiagnosticsView(model: model.diagnostics, perform: model.perform)
+      case .log: ActivityLogView(model: model.log).ojdInterfaceRow(ActivityRow.log)
+      case .diagnostics:
+        ActivityDiagnosticsView(
+          model: model.diagnostics,
+          failures: model.fixFailures,
+          perform: model.perform
+        ).ojdInterfaceRow(ActivityRow.diagnostics)
       }
     }
   }

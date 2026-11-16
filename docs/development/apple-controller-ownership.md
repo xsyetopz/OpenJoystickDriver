@@ -4,7 +4,7 @@ Controller records and protocol implementations define OJD support, not Apple's 
 
 ## Route Policy
 
-`OpenJoystickDriverUSBTransportProvider.selectDevices` picks the route of each discovered USB device. `USBDriverKitExtensionConfiguration.appleHeldProductIDs` lists the models that Apple's `XboxGamepad.dext` holds.
+`OpenJoystickDriverUSBTransportProvider.selectDevices` picks the route of each discovered USB device. The bundled controller records mark the models that Apple's `XboxGamepad.dext` holds with `heldByAppleDriver`, and `USBDriverKitExtensionConfiguration.appleHeldModels(in:)` reads them.
 
 | Model | Held by Apple's driver | Route |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Controller records and protocol implementations define OJD support, not Apple's 
 
 - A model with no owner takes the direct route. `docs/testing/xbox-one-02d1.md` records the direct route on hardware for `045E:02D1`.
 - The extension route needs an active, matched extension. An inactive extension never makes OJD claim a device by another path.
-- The list is static. It is not read from the live registry, so a new Apple personality for another model needs an entry in `appleHeldProductIDs`.
+- The marking is static. It is not read from the live registry, so a new Apple personality for another model needs `heldByAppleDriver` set in that model's record.
 - `OpenJoystickDriverUSB` records the selected route with each discovered service. It does not infer transport from a brand name and does not retry an open failure through a different backend.
 
 ## Purpose of the Extension
@@ -50,14 +50,14 @@ The generated personality additionally restricts matching to configuration 1, in
 
 ## Installed-System Observations
 
-Local macOS 26.6.1 observations, not a public compatibility contract:
+Local macOS 27.2 (Darwin 27.2.0) observations, not a public compatibility contract:
 
-- `/System/Library/DriverExtensions/XboxGamepad.dext/Contents/Info.plist` has bundle identifier `com.apple.gamecontroller.driver.XboxGamepad` and specific Microsoft matches including `045E:028E`, `045E:02EA`, `045E:0B00`, and `045E:0B12` through IOUSBHost device/interface personalities.
-- the installed `AppleGameControllerPersonality.kext` contains selected Sony, Nintendo, Amazon, and generic HID recognition personalities.
+- `/System/Library/DriverExtensions/XboxGamepad.dext/Info.plist` has bundle identifier `com.apple.gamecontroller.driver.XboxGamepad` and specific Microsoft matches including `045E:028E`, `045E:02EA`, `045E:0B00`, and `045E:0B12` through IOUSBHost device/interface personalities.
+- `/System/Library/Extensions/AppleGameControllerPersonality.kext/Contents/Info.plist` contains selected Sony, Nintendo, Amazon, and generic HID recognition personalities.
 
 Those plists explain why macOS can report an exclusive owner for some controllers. Apple can change this implementation snapshot; absence does not prove a controller is unsupported. The signed entitlement scope, the catalog, and hardware evidence decide what OJD serves.
 
-Hardware-gated: no capture shows OJD serving `02EA`, `0B00`, or `0B12` through the extension. Task 4.9 of `openspec/changes/0-6-0-alpha-3` runs that check.
+Hardware-gated: no capture shows OJD serving `02EA`, `0B00`, or `0B12` through the extension. That check is still to run.
 
 ## Security Boundary
 

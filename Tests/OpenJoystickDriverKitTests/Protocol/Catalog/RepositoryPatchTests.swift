@@ -24,12 +24,16 @@ struct RepositoryPatchTests {
     try OrderedJSON.parse(Data(text.utf8)).plistData().write(to: url)
   }
 
-  private static func read(_ url: URL) throws -> NSDictionary {
-    try #require(DocumentCoder.read(Data(contentsOf: url), file: url.lastPathComponent) as? NSDictionary)
+  /// The canonical bytes of the record at `url`, which compare by content whatever the key order.
+  private static func read(_ url: URL) throws -> Data {
+    try DocumentCoder.write(
+      DocumentCoder.read(Data(contentsOf: url), file: url.lastPathComponent)
+    )
   }
 
-  private static func dictionary(_ text: String) throws -> NSDictionary {
-    try #require(JSONSerialization.jsonObject(with: Data(text.utf8)) as? NSDictionary)
+  /// The canonical bytes of the JSON `text`.
+  private static func dictionary(_ text: String) throws -> Data {
+    try DocumentCoder.write(JSONSerialization.jsonObject(with: Data(text.utf8)))
   }
 
   // MARK: patches write members in the order of the record, then of the patches
@@ -86,7 +90,7 @@ struct RepositoryPatchTests {
     """
 
   @Test
-  func patchesAddMembersInPatchOrderAfterTheRecordsMembers() throws {
+  func patchesAddMembersInPatchOrderAfterRecordsMembers() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
@@ -136,7 +140,7 @@ struct RepositoryPatchTests {
   }
 
   @Test
-  func aPatchFileInADeeperDirectoryIsRefused() throws {
+  func patchFileInDeeperDirectoryIsRefused() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
@@ -157,7 +161,7 @@ struct RepositoryPatchTests {
   }
 
   @Test
-  func aPatchThatWritesTheSameNumberAnotherWayChangesNothing() throws {
+  func patchThatWritesSameNumberAnotherWayChangesNothing() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,

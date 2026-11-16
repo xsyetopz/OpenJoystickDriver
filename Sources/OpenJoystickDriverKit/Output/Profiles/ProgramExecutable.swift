@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Finds the file that runs for a program name and builds the process that runs it.
 ///
@@ -33,7 +33,8 @@ public enum ProgramExecutable {
       let path = directory + "/" + name
       var isDirectory: ObjCBool = false
       if fileManager.isExecutableFile(atPath: path),
-        fileManager.fileExists(atPath: path, isDirectory: &isDirectory), !isDirectory.boolValue
+        unsafe fileManager.fileExists(atPath: path, isDirectory: &isDirectory),
+        !isDirectory.boolValue
       {
         return URL(fileURLWithPath: path)
       }

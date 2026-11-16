@@ -90,10 +90,10 @@ extension UserSpaceOutputDispatcher {
   public func activate(for identifiers: [LogicalControllerID]) async throws {
     guard lifecycle.isOpen else { throw CancellationError() }
     var seen = Set<LogicalControllerID>()
-    let identifiers = identifiers.filter { seen.insert($0).inserted }
+    let unique = identifiers.filter { seen.insert($0).inserted }
     do {
 
-      for identifier in identifiers {
+      for identifier in unique {
         let entry = try await entry(for: identifier)
         guard lifecycle.isOpen else { throw CancellationError() }
         try await entry.sender.submit { [entry] in [entry.inputReportState.currentReport()] }

@@ -123,7 +123,7 @@ Kit `Diagnostics/` holds reports and health types that both the CLI and app read
 
 ## Tests
 
-Each test target mirrors its source target and directory names: `Tests/OpenJoystickDriverKitTests/`, `Tests/OpenJoystickDriverMacOSPlatformTests/`, `Tests/OpenJoystickDriverUSBTests/`, `Tests/OpenJoystickDriverServiceTests/`, `Tests/OpenJoystickDriverCLITests/`, and `Tests/OpenJoystickDriverPresentationTests/`. A test for `Sources/<Target>/A/B/File.swift` lives in `Tests/<Target>Tests/A/B/`. Shared fixtures live in `Tests/OpenJoystickDriverTestSupport/` (depends on Kit; holds the fake `PlatformHost` and the access, registration, and HID backend fakes) and `Tests/ProtocolPacketFixtures/`; `Tests/ParserCompatibilityHarness/` backs `./Scripts/ojd test parsers-macos14`. Add behavior tests, not source-text substring tests.
+Each test target mirrors its source target and directory names: `Tests/OpenJoystickDriverKitTests/`, `Tests/OpenJoystickDriverMacOSPlatformTests/`, `Tests/OpenJoystickDriverUSBTests/`, `Tests/OpenJoystickDriverServiceTests/`, `Tests/OpenJoystickDriverCLITests/`, and `Tests/OpenJoystickDriverPresentationTests/`. A test for `Sources/<Target>/A/B/File.swift` lives in `Tests/<Target>Tests/A/B/`. Shared fixtures live in `Tests/OpenJoystickDriverTestSupport/` (depends on Kit; holds the fake `PlatformHost` and the access, registration, and HID backend fakes) and `Tests/ProtocolPacketFixtures/`; `Tests/ParserCompatibilityHarness/` backs `just test-parsers-macos14`. Add behavior tests, not source-text substring tests.
 
 ## Naming and Limits
 
@@ -137,7 +137,7 @@ SwiftLint `file_length` fails a Swift file with more than 500 lines under `Sourc
 - Keep Kit independent of SwifterKit and of app, runtime, and platform composition.
 - Put IOUSBHost/DriverKit adaptation in USB; keep parsing in Kit.
 - Use IOKit HID (`IOHIDManager`, `IOHIDDevice`, `IOHIDUserDevice`) in `OpenJoystickDriverMacOSPlatform` on every supported macOS; HID has no OS-version branch and the package does not link CoreHID.
-- Never edit or commit `.build/driverkit/generated/`; validate generation with `./Scripts/ojd check driverkit`. `./Scripts/ojd driverkit generate [path]` writes into a missing folder only (default `.build/driverkit/generated/`) and refuses an existing one, so a generated project never mixes with an earlier one; delete the folder first to regenerate it.
+- Never edit or commit `.build/driverkit/generated/`; validate generation with `just driverkit-check`. `just driverkit-generate [path]` writes into a missing folder only (default `.build/driverkit/generated/`) and refuses an existing one, so a generated project never mixes with an earlier one; delete the folder first to regenerate it.
 
 ## Rejected Alternatives
 

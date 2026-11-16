@@ -10,13 +10,13 @@ struct ControllerRecordWatcherTests {
   private static let addRecord = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-       "vendorID": 4660, "productID": 43981,
-       "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+        "vendorID": 4660, "productID": 43981,
+      "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
       """
   )
 
   @Test
-  func appliesAtStartAndAgainWhenAFileArrives() async throws {
+  func appliesAtStartAndAgainWhenFileArrives() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true
@@ -48,7 +48,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func appliesAgainWhenAFileIsRewrittenInPlace() async throws {
+  func appliesAgainWhenFileIsRewrittenInPlace() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true
@@ -82,7 +82,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func appliesAgainWhenTheDirectoryIsDeletedAndRecreated() async throws {
+  func appliesAgainWhenDirectoryIsDeletedAndRecreated() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true
@@ -115,7 +115,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func appliesOnceADirectoryThatCouldNotBeCreatedExists() async throws {
+  func appliesOnceDirectoryThatCouldNotBeCreatedExists() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)",
       isDirectory: true
@@ -152,7 +152,7 @@ struct ControllerRecordWatcherTests {
   }
 
   @Test
-  func anInvalidRewriteLeavesTheEarlierRecordInForce() async throws {
+  func invalidRewriteLeavesEarlierRecordInForce() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-\(UUID().uuidString)/Controllers",
       isDirectory: true

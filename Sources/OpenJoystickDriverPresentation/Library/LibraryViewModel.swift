@@ -203,15 +203,37 @@ final class LibraryViewModel: ObservableObject {
   func reload() {
     records = store.records()
     mods = store.installedMods()
+    recordDetail = nil
     select(selection)
   }
 
+  /// Runs ``reload()`` after the current view update.
+  ///
+  /// The list calls this while it appears, inside NSTableView's delegate, where publishing a
+  /// change to the list's own rows is a reentrant operation.
+  func reloadAfterRender() {
+    Task { @MainActor in reload() }
+  }
+
+  /// Runs ``select(_:)`` after the list's selection callback returns, for the same reason as
+  /// ``reloadAfterRender()``.
+  func selectAfterRender(_ selection: LibrarySelection?) {
+    Task { @MainActor in select(selection) }
+  }
+
   /// Shows `selection`; a record or mod that the list does not show selects nothing.
+  ///
+  /// The record is read from the store once: selecting the record that is already shown, as the
+  /// list's binding and a change of the search text do, keeps the detail read before.
   func select(_ selection: LibrarySelection?) {
     switch selection {
     case .record(let model)?:
-      recordDetail =
-        visibleRecords.contains { $0.model == model } ? store.recordDetail(model) : nil
+      if recordDetail?.item.model != model {
+        recordDetail =
+          visibleRecords.contains { $0.model == model } ? store.recordDetail(model) : nil
+      } else if !visibleRecords.contains(where: { $0.model == model }) {
+        recordDetail = nil
+      }
       self.selection = recordDetail == nil ? nil : selection
     case .mod(let name)?:
       recordDetail = nil
@@ -221,6 +243,18 @@ final class LibraryViewModel: ObservableObject {
       self.selection = nil
     }
     if testRun?.model != recordDetail?.item.model { testRun = nil }
+  }
+
+  /// Converts the stale documents of the support folder, then reloads; a document that cannot be
+  /// converted shows as the failure.
+  func migrate(_ migrator: DocumentMigrator = DocumentMigrator()) {
+    failure =
+      migrator.run(dryRun: false).contains { $0.verdict == .failed }
+      ? LibraryFailure(
+        message: OJDLocalized.string("platform.macos.ui.migrate.failed"),
+        code: .unsupportedAPIVersion
+      ) : nil
+    reload()
   }
 
   /// Clears the failure.

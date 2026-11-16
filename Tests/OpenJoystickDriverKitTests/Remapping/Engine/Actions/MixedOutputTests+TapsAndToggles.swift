@@ -6,7 +6,6 @@ import Testing
 extension RemappingMixedOutputTests {
   @Test(arguments: [RemappingBindingBehavior.tapOnPress, .tapOnRelease])
 
-
   func edgeTapFiresOnceAndDoesNotLeaveHeldOutput(behavior: RemappingBindingBehavior) async throws {
     let sink = MixedOutputRecorder()
     let engine = RemappingEventEngine(sink: sink, gamepadSink: sink)
@@ -37,8 +36,7 @@ extension RemappingMixedOutputTests {
 
   @Test
 
-
-  func lifecycleCancellationDoesNotFireAnArmedReleaseTap() async throws {
+  func lifecycleCancellationDoesNotFireArmedReleaseTap() async throws {
     let sink = MixedOutputRecorder()
     let engine = RemappingEventEngine(sink: sink, gamepadSink: sink)
     let profile = makeProfile(bindings: [
@@ -112,8 +110,7 @@ extension RemappingMixedOutputTests {
 
   @Test
 
-
-  func toggleInputCanCompleteASequenceWithoutLosingItsHeldOutput() async throws {
+  func toggleInputCanCompleteSequenceWithoutLosingItsHeldOutput() async throws {
     let sink = MixedOutputRecorder()
     let engine = RemappingEventEngine(sink: sink, gamepadSink: sink)
     let profile = makeProfile(

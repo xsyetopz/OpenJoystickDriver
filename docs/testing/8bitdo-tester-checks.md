@@ -2,7 +2,7 @@
 
 Each card below checks one 8BitDo identity on a tester build. The files you send decide what the bundled record maps, so a record stays unverified until its card comes back.
 
-## Before Any Card
+## Before any card
 
 1. Install the tester build the maintainer sends, as in [Test a tester build](tester-builds.md), and keep `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG.
 2. Install the command-line tool: open the app's Settings and click Install Command-Line Tool ([Command line](../../wiki/Command-Line.md)).
@@ -11,7 +11,7 @@ Each card below checks one 8BitDo identity on a tester build. The files you send
 
 `capture.jsonl` records 20 seconds. Start pressing when the command starts, press one control at a time, and return it to rest before the next one.
 
-### Control Order
+### Control order
 
 Press the controls in this order during a capture, and skip a control the pad lacks:
 
@@ -24,11 +24,11 @@ Press the controls in this order during a capture, and skip a control the pad la
 7. D-pad up, right, down, left.
 8. LT, then RT, each pressed fully and released slowly.
 
-### What to Send Back
+### What to send back
 
 For every card send `OpenJoystickDriver-TESTER-BUILD.txt`, every file the card's commands wrote, and one line that lists the controls you pressed in order. Write down anything that differs from the order above.
 
-## T1 Ultimate 2C Over Bluetooth LE (`2DC8:301B`)
+## T1 Ultimate 2C over Bluetooth LE (`2DC8:301B`)
 
 Mode: pair the Ultimate 2C with the Mac over Bluetooth.
 
@@ -44,7 +44,7 @@ Control order: the right stick up, right, down, left first, then LT and RT, then
 
 Send: the common files, and which right-stick directions moved a value in `ojd` and which moved a trigger.
 
-## T2 Ultimate 2C Receiver (`2DC8:301C`)
+## T2 Ultimate 2C receiver (`2DC8:301C`)
 
 Mode: plug the receiver in with the pad switched off. Run the first line at once; it reads the bus at 0, 3, 8 and 15 seconds.
 
@@ -65,7 +65,7 @@ Control order: the full [control order](#control-order).
 
 Send: all files, and whether the PID changed from `301C` to `310A`.
 
-## T3 Ultimate 2C Adapter (`2DC8:3109`)
+## T3 Ultimate 2C adapter (`2DC8:3109`)
 
 Mode: the adapter in standby (pad off), then with the pad on. These commands only read; do not change settings in 8BitDo software during the check.
 
@@ -92,7 +92,7 @@ Control order: the full [control order](#control-order) during `on-capture.jsonl
 
 Send: both sets of files.
 
-## T4 Ultimate 2C Wired in DInput (`2DC8:301D`)
+## T4 Ultimate 2C wired in DInput (`2DC8:301D`)
 
 Mode: hold B while you switch the pad on, then connect the cable.
 
@@ -108,7 +108,7 @@ Control order: the full [control order](#control-order), with each rear button.
 
 Send: the common files, and the position of each rear button you pressed.
 
-## T5 Ultimate 2 Over Cable and Dongle (`2DC8:6012`)
+## T5 Ultimate 2 over cable and dongle (`2DC8:6012`)
 
 Mode: connect the Ultimate 2 by cable and run the first block; then unplug the cable, connect the dongle and run the second block.
 
@@ -139,7 +139,7 @@ ojd controller capture 2DC8:6012 --duration 20 --json > switch-motion.jsonl
 
 Send: all files, and the button each rear button acts as on the pad (for example "upper left rear acts as L3").
 
-## T6 Ultimate 2 Receiver and Dongle (`2DC8:6013`, `2DC8:3107`)
+## T6 Ultimate 2 receiver and dongle (`2DC8:6013`, `2DC8:3107`)
 
 Mode: plug in the receiver with the pad off, run the block, switch the pad on and run it again with `on` in place of `off` in the file names. Repeat both runs with the dongle and `3107` in place of `6013`.
 
@@ -170,7 +170,7 @@ Control order: none; the product strings and `bcdDevice` in these files decide t
 
 Send: all files, and the mode switch position of each pad.
 
-## T8 Ultimate 3-mode Over Bluetooth in Xbox Mode (`2DC8:901B`)
+## T8 Ultimate 3-mode over Bluetooth in Xbox mode (`2DC8:901B`)
 
 Mode: set the pad to Xbox mode and pair it with the Mac over Bluetooth.
 
@@ -186,7 +186,7 @@ Control order: the full [control order](#control-order).
 
 Send: the common files.
 
-## T9 Watchdog with `2DC8:310A` and `2DC8:6012` Served
+## T9 watchdog with `2DC8:310A` and `2DC8:6012` served
 
 Mode: connect the Ultimate 2C dongle (`310A`) and confirm with `ojd controller show 2DC8:310A` that OJD serves it. Touch no control during the check. Each line saves the time and the bus.
 

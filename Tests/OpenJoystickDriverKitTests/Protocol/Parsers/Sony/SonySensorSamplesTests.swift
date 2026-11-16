@@ -22,6 +22,17 @@ struct SonySensorSamplesTests {
     #expect(dualSense.timestamp(2, receivedAt: 99).monotonic.nanoseconds == 9 + 1000)
   }
 
+  /// The NITHO MLT-KRMA-K by cable in M mode leaves the DUALSHOCK 4 sensor timestamp at zero.
+  @Test
+  func counterStuckAtZeroTakesReceiptTime() {
+    var clock = SonySensorClock(mask: 0xFFFF, tickNumerator: 16_000)
+    #expect(clock.timestamp(0, receivedAt: 7).monotonic.nanoseconds == 7)
+    #expect(clock.timestamp(0, receivedAt: 1_000_007).monotonic.nanoseconds == 1_000_007)
+    let later = clock.timestamp(0, receivedAt: 2_000_007)
+    #expect(later.monotonic.nanoseconds == 2_000_007)
+    #expect(later.sequenceIndex == 2)
+  }
+
   @Test
   func dualSenseUSBDecodesSignedVectorsAndBothContacts() throws {
     var report = [UInt8](repeating: 0, count: 64)
@@ -103,7 +114,7 @@ struct SonySensorSamplesTests {
   }
 
   @Test
-  func touchpadEdgesMapToTheFullRangeWithTopAtZero() throws {
+  func touchpadEdgesMapToFullRangeWithTopAtZero() {
     // DS4 1920x942 and DualSense 1920x1080: the first raw position is 0, the last is 65535, the
     // raw 12-bit overflow clamps, and raw Y grows downward, so the top edge is Y 0.
     #expect(

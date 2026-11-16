@@ -173,5 +173,91 @@ fastlane/test_output/
 # Node.js
 node_modules/
 
-# Local GUI review captures (./Scripts/ojd shots capture)
+# Local GUI review captures (just shots-capture)
 .ojd-shots/
+
+# >>> bedrock
+# Adapted from github/gitignore@41862c8 (CC0-1.0): Global/macOS, Global/VisualStudioCode,
+# Global/JetBrains.
+.env
+.env.*
+!.env.example
+*.bak
+*.log
+*.tmp
+*.swp
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.apdisk
+
+# Editors: shared settings stay tracked, personal state does not.
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+*.vsix
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/aws.xml
+.idea/**/dataSources/
+.idea/**/dataSources.local.xml
+.idea/httpRequests
+*.iws
+.zed/
+# <<< bedrock
+
+# >>> swift-bedrock
+# Adapted from github/gitignore@41862c8 (CC0-1.0): Swift, Global/Xcode.
+.build/
+xcuserdata/
+DerivedData/
+*.xcscmblueprint
+*.xccheckout
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+Carthage/Build/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+iOSInjectionProject/
+# <<< swift-bedrock
+
+# >>> swift-bedrock-cxx
+# Adapted from github/gitignore@41862c8 (CC0-1.0): C++.
+*.o
+*.obj
+*.gch
+*.pch
+*.a
+*.lib
+*.dylib
+*.so
+*.dll
+*.exe
+*.out
+compile_commands.json
+.cache/clangd/
+# xmake keeps its configuration in .xmake/.
+.xmake/
+# <<< swift-bedrock-cxx

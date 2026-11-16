@@ -1,0 +1,106 @@
+name: Controller Validation
+description: Every control of a controller responded in a Guided Check. Tell the maintainers it works.
+title: "[Validated]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form only after `ojd controller check <controller>` or **Guided Check** in Input Test ended with every control responded. For any other result, use [Controller Support](https://github.com/xsyetopz/OpenJoystickDriver/issues/new?template=controller-support.yml).
+
+        OpenJoystickDriver fills the fields below from the check and shows you the whole text before it opens this form. The text holds no serial number, unit ID, Bluetooth address, user name, or path. Read each field before you submit.
+  - type: input
+    id: version
+    attributes:
+      label: OpenJoystickDriver version
+      description: |-
+        Copy the whole line from **About OpenJoystickDriver**, or run `ojd --version`.
+      placeholder: |
+        0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)
+    validations:
+      required: true
+  - type: input
+    id: vid-pid
+    attributes:
+      label: VID:PID
+      placeholder: |
+        045e:028e
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection
+      options:
+        - USB cable
+        - Bluetooth
+        - USB receiver (a wireless dongle; write its name in Controller name and maker)
+    validations:
+      required: true
+  - type: input
+    id: mode
+    attributes:
+      label: Mode
+      description: |-
+        The mode `id` of the controller record. Write `None` if the controller has no mode.
+      placeholder: |
+        xinput
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Record source
+      description: |-
+        Where the controller record came from. Write `None` if OpenJoystickDriver has no record for it.
+      placeholder: |
+        Bundled
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: |
+        15.6.1
+    validations:
+      required: true
+  - type: input
+    id: controls
+    attributes:
+      label: Controls that responded
+      placeholder: |
+        14 of 14
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation text
+      description: |-
+        Paste the text that Guided Check or `ojd controller check --validate` showed you.
+      render: text
+      placeholder: |
+        VID:PID: 045e:028e
+        <paste the whole text>
+    validations:
+      required: true
+  - type: input
+    id: controller
+    attributes:
+      label: Controller name and maker
+      description: |-
+        Write the name that is on the controller or on its box.
+      placeholder: |
+        8BitDo Ultimate 2C Wired Controller
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I ran the check on my own Mac with this controller connected.
+          required: true
+        - label: I read the validation text and it holds nothing I want to keep private.
+          required: true

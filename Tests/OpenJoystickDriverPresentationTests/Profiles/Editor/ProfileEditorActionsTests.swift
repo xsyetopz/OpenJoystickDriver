@@ -34,7 +34,7 @@
     }
 
     @Test
-    func aConfirmedActivationReachesTheGatewayWithTheAllowance() async {
+    func confirmedActivationReachesGatewayWithAllowance() async {
       let profile = makeProfile()
       let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [profile]))
       let view = Self.view(profile: profile, gateway: gateway)
@@ -48,7 +48,7 @@
     }
 
     @Test
-    func anActivationWithoutConfirmationAsksForNoAllowance() async {
+    func activationWithoutConfirmationAsksForNoAllowance() async {
       let profile = makeProfile()
       let gateway = GatewayStub(snapshotPayload: snapshot(profiles: [profile]))
       let view = Self.view(profile: profile, gateway: gateway)
@@ -62,7 +62,7 @@
     }
 
     @Test
-    func theJoyConSessionOfTheProfileDecidesWhetherDeactivationIsOffered() {
+    func joyConSessionOfProfileDecidesWhetherDeactivationIsOffered() {
       let pair = RemappingProfile(
         name: "Pair",
         device: RemappingDeviceScope(vendorID: 0x057E, productID: 0x2006),
@@ -104,7 +104,7 @@
     }
 
     @Test
-    func disablingTheVirtualOutputKeepsThePhysicalInputChoice() {
+    func disablingVirtualOutputKeepsPhysicalInputChoice() {
       let exclusive = RemappingOutputPolicy(virtualGamepad: .disabled, physicalInput: .exclusive)
 
       #expect(

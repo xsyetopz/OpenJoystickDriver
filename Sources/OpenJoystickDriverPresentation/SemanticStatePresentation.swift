@@ -32,7 +32,7 @@
 
   /// The state of an item in OJD's lists and banners, which sets its symbol and ``SemanticTone``.
   enum SemanticState: String, CaseIterable, Sendable {
-    /// In use now, such as the active profile.
+    /// In use, such as the active profile.
     case active
     /// Working and ready.
     case healthy
@@ -60,8 +60,8 @@
       switch self {
       case .active: return .init(tone: .positive, symbolName: "checkmark.circle.fill")
       case .healthy: return .init(tone: .positive, symbolName: "checkmark.circle")
-      case .attention: return .init(tone: .attention, symbolName: "exclamationmark.circle")
-      case .failure: return .init(tone: .failure, symbolName: "exclamationmark.triangle")
+      case .attention: return .init(tone: .attention, symbolName: "exclamationmark.triangle")
+      case .failure: return .init(tone: .failure, symbolName: "xmark.octagon")
       case .inactive: return .init(tone: .neutral, symbolName: "circle")
       case .loading: return .init(tone: .neutral, symbolName: "clock")
       case .disconnected: return .init(tone: .neutral, symbolName: "cable.connector.slash")

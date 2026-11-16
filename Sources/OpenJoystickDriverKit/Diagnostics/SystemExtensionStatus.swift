@@ -102,7 +102,7 @@ package struct SystemExtensionRequestFailure: Sendable, Equatable {
   }
 
   /// Creates the failure from `error`.
-  package init(_ error: Error) {
+  package init(_ error: any Error) {
     let nsError = error as NSError
     self.init(domain: nsError.domain, code: nsError.code, text: nsError.localizedDescription)
   }

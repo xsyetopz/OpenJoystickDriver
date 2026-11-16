@@ -205,7 +205,7 @@ public enum SystemGamepadSupportAuditor {
       return SystemGamepadRecordAudit(
         vendorID: model.vendorID,
         productID: model.productID,
-        name: String(format: "Controller %04x:%04x", model.vendorID, model.productID),
+        name: unsafe String(format: "Controller %04x:%04x", model.vendorID, model.productID),
         catalogListed: entry != nil,
         systemIdentifiers: entry?.identifiers ?? [],
         transportConstraints: entry?.transports ?? [],
@@ -244,9 +244,9 @@ public enum SystemGamepadSupportAuditor {
 
     for data in bundleInfoData {
       guard
-        let plist = try? PropertyListSerialization.propertyList(
+        let plist = try? unsafe PropertyListSerialization.propertyList(
           from: data,
-          options: [],
+          options: 0,
           format: nil
         ), let dictionary = plist as? [String: Any]
       else {
@@ -355,8 +355,8 @@ public enum SystemGamepadSupportAuditor {
 
   /// `value` as an integer, from an integer or an integer text; nil otherwise.
   private static func integer(_ value: Any?) -> Int? {
-    if let value = value as? Int { return value }
-    if let value = value as? String { return Int(value) }
+    if let number = value as? Int { return number }
+    if let text = value as? String { return Int(text) }
     return nil
   }
 

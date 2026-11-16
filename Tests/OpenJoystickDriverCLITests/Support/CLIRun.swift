@@ -114,6 +114,7 @@ enum CLICommandTree {
     case ["config", "set"]: ["stickDeadzone", "0.1", "--controller", "045E:028E"]
     case ["config", "unset"]: ["stickDeadzone", "--controller", "045E:028E"]
     case ["controller", "show"], ["controller", "watch"], ["controller", "capture"],
+      ["controller", "check"], ["controller", "lookup"],
       ["controller", "rumble"], ["controller", "suspend"], ["controller", "resume"],
       ["controller", "disconnect"], ["controller", "claim"], ["controller", "release"],
       ["virtual", "reset"]:
@@ -137,7 +138,7 @@ enum CLICommandTree {
     case ["controller", "calibrate"]: ["045E:028E", "start"]
     case ["controller", "pair"]: ["057E:2006", "057E:2007", "--profile", "Pair"]
     case ["controller", "unpair"]: ["057E:2006"]
-    case ["profile", "create"]: ["Pad", "--controller", "045E:028E"]
+    case ["profile", "create"], ["profile", "convert"]: ["Pad", "--controller", "045E:028E"]
     case ["profile", "duplicate"], ["profile", "rename"]: ["Pad", "Copy"]
     case ["profile", "show"], ["profile", "delete"], ["profile", "activate"],
       ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"],

@@ -18,30 +18,34 @@
           eventToggle(
             "ui.settings.notifications.controllerConnectedOrAttention",
             "ui.settings.notifications.controllerNotifications",
+            "ui.help.notifyControllerConnected",
             \.controllerNotifications,
             preferences.setControllerNotifications
           )
           eventToggle(
             "ui.settings.notifications.controllerDisconnectedShort",
             "ui.settings.notifications.controllerDisconnectedNotifications",
+            "ui.help.notifyControllerDisconnected",
             \.controllerDisconnectedNotifications,
             preferences.setControllerDisconnectedNotifications
           )
-        }
+        }.ojdInterfaceRow(SettingsRow.controllerNotifications)
         Section(OJDLocalized.string("ui.settings.general.profiles")) {
           eventToggle(
             "ui.settings.notifications.profileActivatedShort",
             "ui.settings.notifications.profileNotifications",
+            "ui.help.notifyProfileActivated",
             \.profileNotifications,
             preferences.setProfileNotifications
           )
           eventToggle(
             "ui.settings.notifications.profileDeactivatedShort",
             "ui.settings.notifications.profileDeactivatedNotifications",
+            "ui.help.notifyProfileDeactivated",
             \.profileDeactivatedNotifications,
             preferences.setProfileDeactivatedNotifications
           )
-        }
+        }.ojdInterfaceRow(SettingsRow.profileNotifications)
         Section {
           Toggle(
             OJDLocalized.string("ui.settings.notifications.notificationSounds"),
@@ -49,15 +53,24 @@
               get: { preferences.notificationSounds },
               set: { preferences.setNotificationSounds($0) }
             )
-          )
+          ).help(OJDLocalized.string("ui.help.notificationSounds"))
+            .ojdInterfaceRow(SettingsRow.notificationSound)
+          deliveryRow.ojdInterfaceRow(SettingsRow.notificationPermission)
         }
-        Section { deliveryRow }
-      }.ojdGroupedForm()
+      }.ojdGroupedForm().ojdSettingsInterfaceLevel(preferences)
     }
 
     /// The notification delivery status, with Open Notification Settings while macOS hides banners
-    /// or sounds and the Send Test Notification button.
+    /// or sounds and the Send Test Notification button, and the failure of the test below.
     private var deliveryRow: some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+        deliveryControls
+        SettingsBesideError(preferences: preferences, origin: .testNotification)
+      }
+    }
+
+    /// The delivery status and its buttons.
+    private var deliveryControls: some View {
       let system = preferences.notificationSystemSettings
       let delivery = NotificationDeliveryPresentation(
         settings: RuntimeNotificationSettings(
@@ -67,26 +80,30 @@
         )
       )
       return HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
-        Text(delivery.status).foregroundColor(
-          delivery.needsAttention
-            ? Color(NSColor.systemOrange) : Color(NSColor.secondaryLabelColor)
-        ).fixedSize(horizontal: false, vertical: true)
+        if let status = delivery.status {
+          Text(status).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
+        }
         Spacer(minLength: 12)
         if delivery.needsAttention {
           Button(OJDLocalized.string("ui.settings.general.openNotificationSettings")) {
             preferences.openNotificationSettings()
-          }
+          }.help(OJDLocalized.string("ui.help.openNotificationSettings"))
         }
         Button(OJDLocalized.string("ui.settings.notifications.testNotification")) {
           preferences.sendTestNotification()
-        }
+        }.help(OJDLocalized.string("ui.help.testNotification"))
       }
     }
 
-    /// Returns the switch of one notification event, with the VoiceOver label `accessibilityKey`.
+    /// Returns the switch of one notification event, with the VoiceOver label `accessibilityKey`
+    /// and the tooltip `helpKey`.
     private func eventToggle(
       _ titleKey: String,
       _ accessibilityKey: String,
+      _ helpKey: String,
       _ value: KeyPath<SettingsPreferencesModel, Bool>,
       _ set: @escaping @MainActor @Sendable (Bool) -> Void
     ) -> some View {
@@ -94,6 +111,7 @@
         OJDLocalized.string(titleKey),
         isOn: Binding(get: { preferences[keyPath: value] }, set: set)
       ).ojdAccessibilityLabel(OJDLocalized.string(accessibilityKey))
+        .help(OJDLocalized.string(helpKey))
     }
   }
 

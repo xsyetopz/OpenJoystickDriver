@@ -4,7 +4,7 @@ import Testing
 
 struct SemanticStatePresentationTests {
   @Test
-  func everyStateHasTheRequiredToneAndNonColorSignal() {
+  func everyStateHasRequiredToneAndNonColorSignal() {
     let expected: [SemanticState: SemanticTone] = [
       .active: .positive, .healthy: .positive, .attention: .attention, .failure: .failure,
       .inactive: .neutral, .loading: .neutral, .disconnected: .neutral, .unknown: .neutral,
@@ -16,6 +16,14 @@ struct SemanticStatePresentationTests {
       #expect(state.presentation.tone == expected[state])
       #expect(!state.presentation.symbolName.isEmpty)
     }
+  }
+
+  @Test
+  func attentionOrangeTriangleFailureRedOctagon() {
+    #expect(SemanticState.attention.presentation.tone == .attention)
+    #expect(SemanticState.attention.presentation.symbolName == "exclamationmark.triangle")
+    #expect(SemanticState.failure.presentation.tone == .failure)
+    #expect(SemanticState.failure.presentation.symbolName == "xmark.octagon")
   }
 
   @Test
@@ -47,7 +55,7 @@ struct SemanticStatePresentationTests {
   }
 
   @Test
-  func saveStatesUseTheSharedSemanticContract() {
+  func saveStatesUseSharedSemanticContract() {
     #expect(ProfileSaveStatus.unsaved.semanticState == .dirty)
     #expect(ProfileSaveStatus.saving.semanticState == .loading)
     #expect(ProfileSaveStatus.saved.semanticState == .saved)

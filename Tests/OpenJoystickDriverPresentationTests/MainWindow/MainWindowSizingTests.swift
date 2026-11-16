@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct MainWindowSizingTests {
   @Test
-  func minimumWidthOfThreeColumnsIsTheSumOfTheirMinimums() {
+  func minimumWidthOfThreeColumnsSumOfTheirMinimums() {
     let width = MainWindowSizingPolicy.minimumContentWidth(showsSidebar: true, showsList: true)
     #expect(
       width
@@ -25,12 +25,12 @@ struct MainWindowSizingTests {
   }
 
   @Test
-  func areaWithoutListLeavesOutTheListMinimum() {
+  func areaWithoutListLeavesOutListMinimum() {
     #expect(MainWindowSizingPolicy.minimumContentWidth(showsSidebar: true, showsList: false) == 590)
   }
 
   @Test
-  func minimumContentSizeKeepsTheHeightAndFitsTheDefault() {
+  func minimumContentSizeKeepsHeightAndFitsDefault() {
     let size = MainWindowSizingPolicy.minimumContentSize(showsSidebar: true, showsList: true)
     #expect(size == NSSize(width: 790, height: 560))
     #expect(MainWindowSizingPolicy.defaultContentSize.width >= size.width)
@@ -38,7 +38,7 @@ struct MainWindowSizingTests {
 
   @Test
   @MainActor
-  func frameMinimumConvertsBackToTheContentMinimumOfTheShownColumns() {
+  func frameMinimumConvertsBackToContentMinimumOfShownColumns() {
     let window = NSWindow(
       contentRect: NSRect(origin: .zero, size: MainWindowSizingPolicy.defaultContentSize),
       styleMask: [.titled, .closable, .resizable],

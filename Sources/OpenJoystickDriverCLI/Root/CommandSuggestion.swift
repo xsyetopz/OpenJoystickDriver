@@ -68,9 +68,9 @@ enum CommandSuggestion {
 
   /// Optimal string alignment distance: insertions, deletions, substitutions, and swaps of
   /// adjacent characters each cost one.
-  static func editDistance(_ lhs: String, _ rhs: String) -> Int {
-    let lhs = Array(lhs)
-    let rhs = Array(rhs)
+  static func editDistance(_ first: String, _ second: String) -> Int {
+    let lhs = Array(first)
+    let rhs = Array(second)
     if lhs.isEmpty { return rhs.count }
     if rhs.isEmpty { return lhs.count }
     var table = Array(repeating: Array(repeating: 0, count: rhs.count + 1), count: lhs.count + 1)

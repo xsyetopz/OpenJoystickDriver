@@ -197,7 +197,7 @@ extension RemappingRoutingCore {
         await engine.endSource(identifier)
       }
       do {
-        if eligibility == .eligible && applyOutputState {
+        if eligibility == .eligible, applyOutputState {
           let permit = try requireOperationalPermit(proposedPermit)
           try await recoverEngineIfNeeded(for: route, requiring: permit)
           try await engine.setProfile(profile, for: identifier, requiring: permit)

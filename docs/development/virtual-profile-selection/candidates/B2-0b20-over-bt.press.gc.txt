@@ -1,0 +1,114 @@
+# candidate=B2-0b20-over-bt.press persona=GameControllerCompatible identity=045E:0B20 version=0 productName="Xbox Wireless Controller" tag=gc
+# started: 2026-11-12T23:06:33Z
+# ojd virtual show:
+#   E-IhMcvcVF0peGonau  8BitDo Ultimate 2C Wireless  game-controller-compatible (override)
+#   E-IhMcvcVF0peGonau  Note: game-controller-compatible does not work with SDL's default hints.
+#   Profiles: sdl-compatible, generic, game-controller-compatible
+Scripts/Diagnostics/backend.sh gamecontroller --seconds 50
+GameController probe
+Listening for 50s
+
+HID GamePad support:
+- 045E:028E "GamePad-2" transport=Virtual gamecontroller=yes
+- 045E:0B20 "Xbox Wireless Controller" transport=Virtual gamecontroller=yes
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+connect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
+inputs: buttons=[Button A,Button B,Button Home,Button Menu,Button Options,Button X,Button Y,Direction Pad Down,Direction Pad Left,Direction Pad Right,Direction Pad Up,Left Shoulder,Left Thumbstick Button,Left Thumbstick Down,Left Thumbstick Left,Left Thumbstick Right,Left Thumbstick Up,Left Trigger,Right Shoulder,Right Thumbstick Button,Right Thumbstick Down,Right Thumbstick Left,Right Thumbstick Right,Right Thumbstick Up,Right Trigger] xbox=true share=false paddles=0
+button: Right Shoulder value=1.0 pressed=true
+button: Right Shoulder value=0.0 pressed=false
+button: Left Trigger value=0.0068426197 pressed=true
+button: Left Trigger value=0.058651026 pressed=true
+button: Left Trigger value=0.14076246 pressed=true
+button: Left Trigger value=0.29716522 pressed=true
+button: Left Trigger value=0.599218 pressed=true
+button: Left Trigger value=1.0 pressed=true
+button: Left Trigger value=0.6783969 pressed=true
+button: Left Trigger value=0.10557185 pressed=true
+button: Left Trigger value=0.10557185 pressed=true
+button: Left Trigger value=0.0 pressed=false
+button: Right Trigger value=0.011730205 pressed=true
+button: Right Trigger value=0.16422288 pressed=true
+button: Right Trigger value=1.0 pressed=true
+button: Right Trigger value=1.0 pressed=true
+button: Right Trigger value=0.26588467 pressed=true
+button: Right Trigger value=0.26588467 pressed=true
+button: Right Trigger value=0.035190616 pressed=true
+button: Right Trigger value=0.0 pressed=false
+button: Left Thumbstick Button value=1.0 pressed=true
+button: Left Thumbstick Button value=0.0 pressed=false
+direction: Left Thumbstick x=-0.019578345 y=0.014406326
+direction: Left Thumbstick x=-0.14289854 y=0.06714155
+direction: Left Thumbstick x=-0.18038969 y=0.09525825
+direction: Left Thumbstick x=-0.18038969 y=0.09525825
+direction: Left Thumbstick x=-0.09841565 y=0.04330003
+direction: Left Thumbstick x=-0.09841565 y=0.04330003
+direction: Left Thumbstick x=-0.0750758 y=0.011007794
+direction: Left Thumbstick x=-0.0 y=0.0
+button: Right Thumbstick Button value=1.0 pressed=true
+button: Right Thumbstick Button value=0.0 pressed=false
+button: Button Menu value=1.0 pressed=true
+button: Button Options value=1.0 pressed=true
+button: Button Menu value=0.0 pressed=false
+button: Button Options value=0.0 pressed=false
+direction: Direction Pad x=0.0 y=1.0
+direction: Direction Pad x=0.0 y=0.0
+direction: Direction Pad x=0.0 y=-1.0
+direction: Direction Pad x=0.0 y=0.0
+direction: Direction Pad x=-1.0 y=0.0
+direction: Direction Pad x=-0.0 y=0.0
+direction: Direction Pad x=1.0 y=0.0
+direction: Direction Pad x=-0.0 y=0.0
+direction: Left Thumbstick x=0.8041666 y=0.025926903
+direction: Left Thumbstick x=0.8041666 y=0.025926903
+direction: Left Thumbstick x=0.9999623 y=0.0039062218
+direction: Left Thumbstick x=0.9999623 y=0.0039062218
+direction: Left Thumbstick x=1.0 y=0.019593282
+direction: Left Thumbstick x=1.0 y=0.082423106
+direction: Left Thumbstick x=1.0 y=0.082423106
+direction: Left Thumbstick x=1.0 y=0.12973033
+direction: Left Thumbstick x=1.0 y=0.12973033
+direction: Left Thumbstick x=1.0 y=0.15347573
+direction: Left Thumbstick x=0.9945132 y=0.17687713
+direction: Left Thumbstick x=0.9945132 y=0.17687713
+direction: Left Thumbstick x=0.994099 y=0.16894485
+direction: Left Thumbstick x=0.7998057 y=0.15994956
+direction: Left Thumbstick x=0.79926455 y=0.15240619
+direction: Left Thumbstick x=0.50481725 y=0.131822
+direction: Left Thumbstick x=0.50214344 y=0.111933134
+direction: Left Thumbstick x=0.119366296 y=0.05288053
+direction: Left Thumbstick x=0.0923956 y=0.0011650712
+direction: Left Thumbstick x=-0.0 y=0.0
+direction: Left Thumbstick x=-0.056891877 y=-0.34411362
+direction: Left Thumbstick x=-0.056891877 y=-0.34411362
+direction: Left Thumbstick x=-0.07737113 y=-0.78489536
+direction: Left Thumbstick x=-0.10703639 y=-0.7862549
+direction: Left Thumbstick x=-0.11393675 y=-1.0
+direction: Left Thumbstick x=-0.12183013 y=-1.0
+direction: Left Thumbstick x=-0.098168805 y=-1.0
+direction: Left Thumbstick x=-0.043133542 y=-1.0
+direction: Left Thumbstick x=-0.074557535 y=-1.0
+direction: Left Thumbstick x=-0.06917225 y=-0.75375354
+direction: Left Thumbstick x=-0.061867986 y=-0.753492
+direction: Left Thumbstick x=-0.0 y=0.0
+direction: Right Thumbstick x=0.08270514 y=-0.004978594
+direction: Right Thumbstick x=0.605315 y=-0.023397464
+direction: Right Thumbstick x=1.0 y=-0.027438723
+direction: Right Thumbstick x=0.99996126 y=0.0039062176
+direction: Right Thumbstick x=1.0 y=0.03528585
+direction: Right Thumbstick x=1.0 y=0.05098763
+direction: Right Thumbstick x=1.0 y=0.07456687
+direction: Right Thumbstick x=0.55388546 y=0.06153163
+direction: Right Thumbstick x=0.5516852 y=-0.003213749
+direction: Right Thumbstick x=-0.028720077 y=-0.00039191576
+direction: Right Thumbstick x=-0.0 y=0.0
+direction: Right Thumbstick x=0.0069060596 y=-0.27428713
+direction: Right Thumbstick x=0.010145517 y=-0.62643963
+direction: Right Thumbstick x=0.0117494315 y=-0.99998343
+direction: Right Thumbstick x=0.0115764 y=-0.9466188
+direction: Right Thumbstick x=0.0029705456 y=0.08228796
+direction: Right Thumbstick x=-0.009121668 y=0.08415448
+direction: Right Thumbstick x=-0.0 y=0.0
+evidence supports_hid=true connect=true extended_profile=true live_input=true disconnect=false reconnect=false haptics=unclaimed
+# probe exit: 0

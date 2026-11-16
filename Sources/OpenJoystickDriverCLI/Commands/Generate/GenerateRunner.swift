@@ -26,7 +26,8 @@ enum GenerateRunner {
     process.executableURL = executable
     process.arguments = [script.path]
     process.environment = ProcessInfo.processInfo.environment.merging([environmentKey: "1"]) {
-      _, new in new
+      _,
+      new in new
     }
     let pipe = Pipe()
     process.standardOutput = pipe

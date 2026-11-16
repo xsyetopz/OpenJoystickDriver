@@ -57,7 +57,10 @@ public enum ControllerOutput {
   /// The request that runs `intensities` for `seconds`, or stops the rumble when no motor is named.
   ///
   /// Main-motor requests are mirrored onto trackpad haptics.
-  public static func rumble(_ intensities: RumbleIntensities, seconds: Double)
+  public static func rumble(
+    _ intensities: RumbleIntensities,
+    seconds: Double
+  )
     -> ControllerOutputRequest
   {
     ControllerOutputRequest(
@@ -205,7 +208,7 @@ extension ControllerReference {
     }
     let lines = listed.map { device in
       let ids = [device.sessionToken.rawValue] + [device.portKey?.rawValue].compactMap { $0 }
-      let identity = String(format: "%04X:%04X", device.vendorID, device.productID)
+      let identity = unsafe String(format: "%04X:%04X", device.vendorID, device.productID)
       return "  \(ids.joined(separator: "  "))  \(identity)  \(device.name)"
     }
     throw CodedFailure(.notFound, ([message] + lines).joined(separator: "\n"))

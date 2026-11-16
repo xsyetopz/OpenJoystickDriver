@@ -342,7 +342,7 @@ enum RuntimePresentation {
     case .color(let color):
       return OJDLocalized.formatted(
         "ui.mapping.physicalColor",
-        String(format: "#%02X%02X%02X", color.red, color.green, color.blue)
+        unsafe String(format: "#%02X%02X%02X", color.red, color.green, color.blue)
       )
     case .brightness(let intensity):
       return OJDLocalized.formatted(

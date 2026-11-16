@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import Foundation
   import OpenJoystickDriverKit
@@ -83,8 +84,8 @@
     /// screen.
     private var detailColumn: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.none) {
-        if let profileActionError {
-          ProfileActionErrorBanner(message: profileActionError) { self.profileActionError = nil }
+        if let commandError = screen.commandActionError {
+          ProfileActionErrorBanner(message: commandError) { self.profileActionError = nil }
         }
         if let profileActionBlock {
           Text(profileActionBlock.message).font(.caption)
@@ -103,7 +104,8 @@
               choices: ProfileControllerChoice.choices(
                 devices: connectedDevices,
                 profiles: profiles,
-                catalog: screen.catalogModels
+                catalog: screen.catalogModels,
+                names: screen.catalogNames
               ),
               profiles: profiles,
               isLoadingCatalog: screen.isLoadingCatalog,
@@ -116,13 +118,34 @@
           ProfileDuplicateSheet(source: source, profiles: profiles) { createProfile($0) }
         }
       ).background(
+        EmptyView().sheet(item: $screen.convertingProfile) { source in
+          ProfileConversionSheet(
+            source: source,
+            choices: ProfileControllerChoice.choices(
+              devices: connectedDevices,
+              profiles: profiles,
+              catalog: screen.catalogModels,
+              names: screen.catalogNames
+            ),
+            profiles: profiles,
+            isLoadingCatalog: screen.isLoadingCatalog
+          ) { convertProfile($0) }
+        }
+      ).background(
+        EmptyView().sheet(item: $screen.conversionReport) { report in
+          ProfileConversionReportSheet(report: report)
+        }
+      ).background(
         EmptyView().sheet(item: $screen.pairingProfile) { profile in
           ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
             Task { @MainActor in
-              profileActionError = await viewModel.pairRemappingJoyCons(
-                left: .session(left),
-                right: .session(right),
-                profileID: profile.id
+              screen.failProfileAction(
+                await viewModel.pairRemappingJoyCons(
+                  left: .session(left),
+                  right: .session(right),
+                  profileID: profile.id
+                ),
+                beside: .joyCon
               )
             }
           }
@@ -254,6 +277,14 @@
       }
     }
 
+    /// The profiles in the order that the list shows.
+    var sortedProfiles: [RemappingProfile] {
+      screen.listSort.sorted(
+        profiles,
+        lastUsed: ProfileListSort.lastUsed(in: currentSnapshot ?? lastKnownSnapshot)
+      )
+    }
+
     /// The selected profile; the first profile when the selection is not in the library, unless the
     /// editor preserves the selected profile after its deletion.
     var selectedProfile: RemappingProfile? {
@@ -290,10 +321,17 @@
             Button(
               OJDLocalized.string("action.tryAgain"),
               action: refreshProfiles
-            )
+            ).help(OJDLocalized.string("ui.profiles.tryAgainHelp"))
           }.padding(.horizontal, 14)
         case .available:
           if !profiles.isEmpty || !(currentSnapshot?.profileIssues.isEmpty ?? true) {
+            if profiles.count > 1 {
+              Picker(OJDLocalized.string("ui.profiles.sort"), selection: $screen.listSort) {
+                ForEach(ProfileListSort.allCases) { sort in
+                  Text(OJDLocalized.string(sort.titleKey)).tag(sort)
+                }
+              }.help(OJDLocalized.string("ui.profiles.sortHelp")).padding(.horizontal, 14)
+            }
             profileListRows
           }
         }
@@ -304,7 +342,7 @@
     /// The rows of the profiles, then those of the damaged entries.
     var profileListRows: some View {
       List(selection: profileListSelection) {
-        ForEach(profiles) { profile in
+        ForEach(sortedProfiles) { profile in
           HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               let semanticState: SemanticState = isActive(profile) ? .active : .inactive

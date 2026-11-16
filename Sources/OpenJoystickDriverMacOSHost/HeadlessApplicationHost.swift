@@ -50,7 +50,7 @@ final class HeadlessApplicationHost {
       if #available(macOS 13, *) {
         // The Shortcuts entity queries read the running service through this dependency.
         let automationService = runtime.automationService
-        AppDependencyManager.shared.add(dependency: automationService)
+        unsafe AppDependencyManager.shared.add(dependency: automationService)
       }
     #endif
     #if canImport(AppKit) && canImport(SwiftUI)
@@ -71,9 +71,9 @@ final class HeadlessApplicationHost {
   ///
   /// The service never runs without its port key or its runtime.
   private func failStartup(_ error: any Error) -> Never {
-    fputs(
+    unsafe fputs(
       "[OpenJoystickDriver] Main-app service startup failed: \(error.localizedDescription)\n",
-      stderr
+      unsafe stderr
     )
     exit(EXIT_FAILURE)
   }
@@ -87,15 +87,15 @@ final class HeadlessApplicationHost {
       as SettingsStoreError
     {
       // The opt-out is unknown while the settings file can't be read, so no login item is added.
-      fputs(
+      unsafe fputs(
         "[OpenJoystickDriver] Login registration skipped, the settings file cannot be read: "
           + "\(error.localizedDescription)\n",
-        stderr
+        unsafe stderr
       )
     } catch {
-      fputs(
+      unsafe fputs(
         "[OpenJoystickDriver] Login registration unavailable: \(error.localizedDescription)\n",
-        stderr
+        unsafe stderr
       )
     }
   }

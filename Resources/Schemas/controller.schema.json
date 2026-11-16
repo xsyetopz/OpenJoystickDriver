@@ -24,6 +24,16 @@
     "modes": {
       "$ref": "#/$defs/modes"
     },
+    "name": {
+      "description": "The model's USB product string (iProduct), copied verbatim from the device; the app lists the model by it.",
+      "type": "string",
+      "minLength": 1
+    },
+    "placeholderSerial": {
+      "description": "The serial number this model's firmware reports when it has none of its own; diagnosis flags a controller reporting it.",
+      "type": "string",
+      "minLength": 1
+    },
     "usb": {
       "$ref": "#/$defs/usbOverride"
     },
@@ -39,6 +49,10 @@
     "route": {
       "$ref": "#/$defs/route"
     },
+    "heldByAppleDriver": {
+      "description": "Whether Apple's driver holds the USB interface, so only OJD's USB extension can open it.",
+      "type": "boolean"
+    },
     "input": {
       "anyOf": [
         {
@@ -51,6 +65,9 @@
     },
     "tuning": {
       "$ref": "#/$defs/tuning"
+    },
+    "validations": {
+      "$ref": "#/$defs/validations"
     }
   },
   "if": {
@@ -70,11 +87,48 @@
       "capabilities": false,
       "server": false,
       "route": false,
+      "heldByAppleDriver": false,
       "input": false,
-      "tuning": false
+      "tuning": false,
+      "validations": false
     }
   },
   "$defs": {
+    "validations": {
+      "description": "The community reports a maintainer accepted, one per mode and firmware, each kept unchanged.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/validation"
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["issue", "mode", "appVersion", "date"],
+      "additionalProperties": false,
+      "properties": {
+        "issue": {
+          "description": "The number of the GitHub issue that holds the community report.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "mode": {
+          "description": "The id of the mode of this record that the report covers.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*(?!\\n)$"
+        },
+        "appVersion": {
+          "description": "The OJD version that ran the check.",
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "description": "The day the maintainer accepted the report, as yyyy-MM-dd.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}(?!\\n)$"
+        }
+      }
+    },
     "modes": {
       "description": "The modes of one model.",
       "type": "array",
@@ -117,6 +171,10 @@
         "idle": {
           "description": "The reason OJD serves nothing in this mode: no data is sent, no gamepad is published.",
           "enum": ["NoControllerLinked", "Bootloader"]
+        },
+        "input": {
+          "description": "The input this mode reads in place of the record's input.",
+          "$ref": "#/properties/input"
         }
       },
       "if": {
@@ -129,7 +187,8 @@
       },
       "then": {
         "properties": {
-          "match": false
+          "match": false,
+          "input": false
         }
       },
       "else": {
@@ -143,7 +202,8 @@
           "then": {
             "properties": {
               "interface": false,
-              "session": false
+              "session": false,
+              "input": false
             }
           }
         },
@@ -515,6 +575,84 @@
           "minimum": 1,
           "maximum": 1024,
           "default": 64
+        },
+        "leftStickCenterX": {
+          "description": "Where the left stick X axis rests; the stored centre reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "leftStickCenterY": {
+          "description": "Where the left stick Y axis rests; the stored centre reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "rightStickCenterX": {
+          "description": "Where the right stick X axis rests; the stored centre reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "rightStickCenterY": {
+          "description": "Where the right stick Y axis rests; the stored centre reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "leftStickRange": {
+          "description": "The left stick deflection from its centre that reads as full.",
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 2
+        },
+        "rightStickRange": {
+          "description": "The right stick deflection from its centre that reads as full.",
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 2
+        },
+        "leftTriggerRest": {
+          "description": "Where the left trigger rests, below leftTriggerFull.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.95
+        },
+        "leftTriggerFull": {
+          "description": "Where the left trigger reads fully pressed, above leftTriggerRest.",
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 1
+        },
+        "rightTriggerRest": {
+          "description": "Where the right trigger rests, below rightTriggerFull.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.95
+        },
+        "rightTriggerFull": {
+          "description": "Where the right trigger reads fully pressed, above rightTriggerRest.",
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 1
+        },
+        "gyroOffsetX": {
+          "description": "The gyro offset about the X axis in radians per second; the stored offset reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "gyroOffsetY": {
+          "description": "The gyro offset about the Y axis in radians per second; the stored offset reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "gyroOffsetZ": {
+          "description": "The gyro offset about the Z axis in radians per second; the stored offset reads as 0.",
+          "type": "number",
+          "minimum": -1,
+          "maximum": 1
         }
       }
     },
@@ -764,6 +902,9 @@
         },
         "rightTrigger": {
           "$ref": "#/$defs/inputTrigger"
+        },
+        "touch": {
+          "$ref": "#/$defs/inputTouch"
         }
       }
     },
@@ -1281,6 +1422,142 @@
         "signed": ["bitOffset"],
         "min": ["bitOffset"],
         "max": ["bitOffset"]
+      }
+    },
+    "inputTouch": {
+      "description": "Touch contacts that drive the stick or the nearest spot within radius of where each first touches, until it lifts.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contacts", "radius"],
+      "anyOf": [{ "required": ["spots"] }, { "required": ["sticks"] }],
+      "properties": {
+        "contacts": {
+          "$ref": "#/$defs/inputTouchContacts"
+        },
+        "radius": {
+          "description": "The distance from a spot or stick center within which a contact starts on it.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "spots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/inputTouchSpot"
+          }
+        },
+        "sticks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/inputTouchStick"
+          }
+        }
+      }
+    },
+    "inputTouchContacts": {
+      "description": "The contact slots of the report, whose tip, id, x and y count from the start of each slot.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bitOffset", "stride", "slots", "count", "tip", "id", "x", "y"],
+      "properties": {
+        "bitOffset": {
+          "description": "The first bit of slot 0.",
+          "$ref": "#/$defs/reportBitOffset"
+        },
+        "stride": {
+          "description": "The bits from one slot to the next.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "slots": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "count": {
+          "description": "The number of leading slots that hold a contact.",
+          "$ref": "#/$defs/inputField"
+        },
+        "tip": {
+          "description": "The tip switch, set while the contact touches.",
+          "$ref": "#/$defs/inputField"
+        },
+        "id": {
+          "$ref": "#/$defs/inputField"
+        },
+        "x": {
+          "$ref": "#/$defs/inputField"
+        },
+        "y": {
+          "$ref": "#/$defs/inputField"
+        }
+      }
+    },
+    "inputTouchSpot": {
+      "description": "A place that holds a button, a D-pad direction, or a trigger pulled fully.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["control", "x", "y"],
+      "properties": {
+        "control": {
+          "allOf": [
+            {
+              "$ref": "vocabulary.schema.json#/$defs/control"
+            },
+            {
+              "not": {
+                "$ref": "vocabulary.schema.json#/$defs/stickAxis"
+              }
+            }
+          ]
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        }
+      }
+    },
+    "inputTouchStick": {
+      "description": "A stick a contact drags from its center.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "travel", "alongX", "alongY"],
+      "properties": {
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        },
+        "travel": {
+          "description": "The distance from the center that reads as full deflection.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "alongX": {
+          "$ref": "#/$defs/inputTouchStickAxis"
+        },
+        "alongY": {
+          "$ref": "#/$defs/inputTouchStickAxis"
+        }
+      }
+    },
+    "inputTouchStickAxis": {
+      "description": "The stick axis one touch axis drives.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["control"],
+      "properties": {
+        "control": {
+          "$ref": "vocabulary.schema.json#/$defs/stickAxis"
+        },
+        "inverted": {
+          "description": "Whether a larger touch position reads as a smaller axis value.",
+          "type": "boolean"
+        }
       }
     },
     "startupReport": {

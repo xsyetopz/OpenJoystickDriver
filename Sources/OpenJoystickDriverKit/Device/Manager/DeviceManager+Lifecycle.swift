@@ -46,9 +46,9 @@ extension DeviceManager {
     permissionWatchTask = Task { [weak self] in
       guard let self else { return }
       while !Task.isCancelled {
-        let currentState = await self.permissionManager.checkAccess().inputRead
-        await self.ensureHIDDetectionState(for: currentState)
-        await self.retryHIDInputClaims()
+        let currentState = await permissionManager.checkAccess().inputRead
+        await ensureHIDDetectionState(for: currentState)
+        await retryHIDInputClaims()
         try? await Task.sleep(nanoseconds: devicePermissionWatchNanoseconds)
       }
     }

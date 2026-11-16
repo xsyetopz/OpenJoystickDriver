@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
@@ -36,14 +37,15 @@
         Text(OJDLocalized.string("ui.console.explain.title")).font(.headline)
         TextField(OJDLocalized.string("ui.console.explain.prompt"), text: $model.typedCode) {
           model.explain()
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.console.explain.prompt"))
+          .help(OJDLocalized.string("ui.help.errorCodeField"))
         answer.frame(maxWidth: .infinity, minHeight: 64, alignment: .topLeading)
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.done")) { model.isPresented = false }
-            .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.closeSheet"))
           Button(OJDLocalized.string("ui.console.explain.action")) { model.explain() }
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.explain"))
             .disabled(model.typedCode.trimmingCharacters(in: .whitespaces).isEmpty)
         }
       }.ojdSheet(.compact)

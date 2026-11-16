@@ -19,7 +19,7 @@ struct ProfileListModelTests {
   }
 
   @Test
-  func aDuplicateCarriesTheContentUnderTheTypedName() {
+  func duplicateCarriesContentUnderTypedName() {
     let source = Self.profile(named: "Racing", scope: .application(appIDs: ["com.example.Game"]))
     let copy = duplicatedProfile(source, named: " Racing 2 ", in: [source])
     #expect(copy?.name == "Racing 2")
@@ -29,14 +29,14 @@ struct ProfileListModelTests {
   }
 
   @Test
-  func aDuplicateNameThatIsTakenOrBlankMakesNoCopy() {
+  func duplicateNameThatIsTakenOrBlankMakesNoCopy() {
     let source = Self.profile(named: "Racing")
     #expect(duplicatedProfile(source, named: "racing", in: [source]) == nil)
     #expect(duplicatedProfile(source, named: "  ", in: [source]) == nil)
   }
 
   @Test
-  func theDefaultDuplicateNameIsFreeOfExistingNames() {
+  func defaultDuplicateNameIsFreeOfExistingNames() {
     let source = Self.profile(named: "Racing")
     let first = defaultDuplicateName(of: source, in: [source])
     #expect(first == OJDLocalized.formatted("ui.profiles.copyName", "Racing"))
@@ -45,7 +45,7 @@ struct ProfileListModelTests {
   }
 
   @Test
-  func theScopeCaptionNamesTheApplicationOrShowsItsIdentifier() {
+  func scopeCaptionNamesApplicationOrShowsItsIdentifier() {
     let count = "12 assignments"
     #expect(ProfileScopeCaption.text(for: .global, assignments: count) { _ in "x" } == count)
     let safari = ProfileScopeCaption.text(
@@ -63,7 +63,7 @@ struct ProfileListModelTests {
 
   @MainActor
   @Test
-  func anApplicationNameIsLookedUpOncePerIdentifier() {
+  func applicationNameIsLookedUpOncePerIdentifier() {
     let names = ProfileApplicationNames()
     let first = names.name(for: "com.example.NotInstalled.t209")
     #expect(first == nil)
@@ -80,7 +80,7 @@ struct ProfileListModelTests {
     """
 
   @Test
-  func aValidProfileFileShowsWhatItTargets() {
+  func validProfileFileShowsWhatItTargets() {
     let result = ProfileFileValidation.check(
       PropertyListFixture.bytes(json: Self.validDocument),
       fileName: "pad.plist"
@@ -97,7 +97,7 @@ struct ProfileListModelTests {
   }
 
   @Test
-  func anInvalidProfileFileShowsItsErrorCodeAndProblem() {
+  func invalidProfileFileShowsItsErrorCodeAndProblem() {
     let result = ProfileFileValidation.check(
       PropertyListFixture.bytes(
         json: #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#

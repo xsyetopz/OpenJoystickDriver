@@ -9,7 +9,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aPatchNullBecomesARemoveEntry() throws {
+  func patchNullBecomesRemoveEntry() throws {
     let converted = try convert(MigrationFixtures.nullPatch, .controllerPatch)
     #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
     #expect(converted["remove"] == .array([.string("usb"), .string("tuning.replyTimeoutMs")]))
@@ -19,7 +19,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aPatchOfNullsOnlyHasNoPatch() throws {
+  func patchOfNullsOnlyHasNoPatch() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
@@ -31,11 +31,12 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aPatchWithModesRemovesTheRecordModesFirst() throws {
+  func patchWithModesRemovesRecordModesFirst() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
-      #""selector": {"all": true}, "patch": {"modes": [{"id": "default"}], "tuning": {"replyTimeoutMs": null}}"#
+      #""selector": {"all": true}, "patch": {"modes": [{"id": "default"}], "#
+        + #""tuning": {"replyTimeoutMs": null}}"#
     )
     let converted = try convert(text, .controllerPatch)
     #expect(converted["remove"] == .array([.string("tuning.replyTimeoutMs"), .string("modes")]))
@@ -43,11 +44,12 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func notesAndRationaleAreDropped() throws {
+  func notesAndRationaleDropped() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Controller",
-      #""vendorID": 1, "productID": 2, "notes": "x", "modes": [{"id": "default", "rationale": "y"}]"#
+      #""vendorID": 1, "productID": 2, "notes": "x", "#
+        + #""modes": [{"id": "default", "rationale": "y"}]"#
     )
     let converted = try convert(text, .controller)
     #expect(converted["notes"] == nil)
@@ -55,7 +57,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aNullOutsideAPatchIsDropped() throws {
+  func nullOutsidePatchDropped() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Settings",
@@ -67,7 +69,25 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aNullInAListHasNoMapping() {
+  func settingsDocumentGainsAdvancedInterfaceLevel() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Settings",
+      #""showInDock": true"#
+    )
+    let converted = try convert(text, .settings)
+    #expect(converted["interfaceLevel"] == .string("Advanced"))
+    #expect(converted["showInDock"] == .bool(true))
+  }
+
+  @Test
+  func otherKindsGainNoInterfaceLevel() throws {
+    let converted = try convert(MigrationFixtures.nullPatch, .controllerPatch)
+    #expect(converted["interfaceLevel"] == nil)
+  }
+
+  @Test
+  func nullInListHasNoMapping() {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Settings",
@@ -77,7 +97,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aProfileAppIDBecomesAListOfOne() throws {
+  func profileAppIDBecomesListOfOne() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Profile",
@@ -91,18 +111,20 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aGlobalProfileScopeIsUnchanged() throws {
+  func globalProfileScopeUnchanged() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Profile",
       #""applicationScope": {"type": "Global"}"#
     )
     let converted = try convert(text, .profile)
-    #expect(converted["applicationScope"] == .object([.init(key: "type", value: .string("Global"))]))
+    #expect(
+      converted["applicationScope"] == .object([.init(key: "type", value: .string("Global"))])
+    )
   }
 
   @Test
-  func anAppIDThatIsNotAStringHasNoMapping() {
+  func appIDNotStringHasNoMapping() {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Profile",
@@ -112,11 +134,12 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aRecordIdleMovesToTheDefaultMode() throws {
+  func recordIdleMovesToDefaultMode() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Controller",
-      #""vendorID": 1, "productID": 2, "idle": true, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
+      #""vendorID": 1, "productID": 2, "idle": true, "#
+        + #""modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
     )
     let converted = try convert(text, .controller)
     #expect(converted["idle"] == nil)
@@ -124,17 +147,18 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aRecordWithoutIdleKeepsItsModes() throws {
+  func recordWithoutIdleKeepsItsModes() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Controller",
-      #""vendorID": 1, "productID": 2, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
+      #""vendorID": 1, "productID": 2, "#
+        + #""modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
     )
     #expect(try convert(text, .controller)["modes"]?.array?.first?["idle"] == nil)
   }
 
   @Test
-  func aPatchIdleBecomesAMergedDefaultMode() throws {
+  func patchIdleBecomesMergedDefaultMode() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
@@ -149,11 +173,12 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aPatchIdleJoinsTheDefaultModeThePatchSets() throws {
+  func patchIdleJoinsDefaultModePatchSets() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
-      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": true, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]}"#
+      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": true, "#
+        + #""modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]}"#
     )
     let patch = try #require(try convert(text, .controllerPatch)["patch"])
     let modes = try #require(patch["modes"]?.array)
@@ -163,7 +188,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func aPatchThatRemovesIdleHasNoMapping() {
+  func patchRemovesIdleHasNoMapping() {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
@@ -173,7 +198,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func theChainStartsAtVersionOneAndEndsAtVersionThree() throws {
+  func chainStartsAtVersionOneAndEndsAtVersionThree() {
     let steps = DocumentMigrationStep.all.filter { $0.kind == DocumentKind.profile.rawValue }
     #expect(steps.map(\.from) == [MigrationFixtures.alphaOne, MigrationFixtures.alphaTwo])
     #expect(steps.last?.to == OpenJoystickDriverAPI.version)

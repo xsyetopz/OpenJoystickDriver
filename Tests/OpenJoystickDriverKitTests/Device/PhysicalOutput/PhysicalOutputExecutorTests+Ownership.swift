@@ -12,7 +12,7 @@ private actor EventRecorder {
 extension PhysicalOutputExecutorTests {
   /// Stop-rumble releases the manual claim, cancels the pending scheduled stop, and writes once.
   @Test
-  func stopRumbleCancelsTheScheduledStopAndWritesOnce() async throws {
+  func stopRumbleCancelsScheduledStopAndWritesOnce() async throws {
     let started = try await startSixaxis(locationID: 524)
     let manager = started.manager
     let rumble = RumbleIntensities(lowFrequency: UnipolarValue(byte: 0x80))
@@ -35,7 +35,7 @@ extension PhysicalOutputExecutorTests {
   /// Two effective rumble changes queued behind a running operation: each write reads ownership
   /// when it runs, so neither carries the claim the later change released.
   @Test
-  func effectiveRumbleIsReadWhenTheWriteRuns() async throws {
+  func effectiveRumbleIsReadWhenWriteRuns() async throws {
     let started = try await startSixaxis(locationID: 525)
     let manager = started.manager
     let identifier = started.identifier
@@ -121,7 +121,7 @@ extension PhysicalOutputExecutorTests {
 
   /// A removed queue's running operation still runs before the interface's next queue starts.
   @Test
-  func nextQueueWaitsForTheRetiredQueueToDrain() async throws {
+  func nextQueueWaitsForRetiredQueueToDrain() async throws {
     let started = try await startSixaxis(locationID: 527)
     let manager = started.manager
     let (queue, release, blocker) = await blockOutputQueue(started)

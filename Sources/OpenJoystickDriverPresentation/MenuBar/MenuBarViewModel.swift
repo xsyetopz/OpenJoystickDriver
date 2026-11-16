@@ -20,19 +20,23 @@
       return status.devices
     }
 
-    /// The problems that need the user's action: the service not reachable, then each permission
-    /// the Access area shows as missing.
+    /// The problems that need the user's action: the service when its state is a problem, then each
+    /// permission the Access area shows as missing.
     var problems: [StatusItemProblem] {
-      var problems: [StatusItemProblem] = []
-      switch runtime.statusState {
-      case .unavailable, .error: problems.append(.serviceNotRunning)
-      case .loading, .available: break
-      }
-      problems += AccessReadiness.missingPermissions(
+      var found: [StatusItemProblem] = []
+      let readiness = ServiceReadiness.resolve(
+        ServiceReadinessInput(
+          status: runtime.statusState,
+          listenerStopped: runtime.listenerFailure != nil,
+          registration: ServiceReadiness.currentRegistration(for: runtime.statusState)
+        )
+      )
+      if readiness.isProblem { found.append(.service(readiness)) }
+      found += AccessReadiness.missingPermissions(
         permissionState: runtime.permissionState,
         statusState: runtime.statusState
       ).map(StatusItemProblem.missingPermission)
-      return problems
+      return found
     }
 
     /// The data that the status menu is built from.
@@ -49,16 +53,28 @@
             name: $0.name,
             isSuspended: $0.sessionState == .suspended,
             isWireless: $0.supportsWirelessDisconnect,
-            isPaused: $0.paused,
             profiles: Self.profiles(applyingTo: $0, in: snapshot)
           )
           controller.battery = $0.connectionState?.power.battery.percentageText
-          controller.profileInForce = $0.profileInForce?.name
-          controller.profileSelectedBy = $0.profileInForce?.appID.map(ProfileAppChoices.appName)
+          controller.profileInForce = Self.profileInForceText(
+            $0.profileInForce,
+            appName: ProfileAppChoices.appName
+          )
           return controller
         },
         profileListRead: snapshot != nil
       )
+    }
+
+    /// The profile name for a controller row, followed by the app that selected the profile.
+    static func profileInForceText(
+      _ profile: ApplicationServiceProfileInForce?,
+      appName: (String) -> String
+    ) -> String? {
+      guard let profile else { return nil }
+      return profile.appID.map {
+        OJDLocalized.formatted("ui.menu.controller.profileForApp", profile.name, appName($0))
+      } ?? profile.name
     }
 
     /// The profiles of the snapshot that apply to the controller: its model, and its unit when the
@@ -82,7 +98,7 @@
 
     /// Reads the driver extension setup and the service status again.
     func refresh() async {
-      await runtime.refreshSystemExtensionSetup()
+      runtime.refreshSystemExtensionSetup()
       await runtime.refresh()
     }
 

@@ -4,7 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Snapshots the canonical frames every recorded sample report parses to today.
+/// Snapshots the canonical frames every recorded sample report parses to.
 ///
 /// Only the records with sample reports in this repository appear; the controller records carry
 /// none, so the rest of the catalog has no parsed output to snapshot.

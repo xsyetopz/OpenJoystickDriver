@@ -1,5 +1,3 @@
-"""Build a private, notarized Developer ID tester DMG."""
-
 from __future__ import annotations
 
 import datetime as dt
@@ -38,17 +36,6 @@ def command_output(command: list[str]) -> str:
     return result.stdout.strip()
 
 
-def usage() -> None:
-    print("""Usage:
-  ./Scripts/ojd package tester
-
-Builds and packages the locally configured Developer ID app and its embedded
-DriverKit extension into a notarized, shareable DMG without installing or
-publishing it. The bundles carry the release SemVer and the commit's build
-number; the DMG name and build-info file carry the SemVer with build metadata
-(`+build.<number>.sha.<commit>`).""")
-
-
 def tester_metadata(
     artifact_name: str,
     version: str,
@@ -65,15 +52,8 @@ def tester_metadata(
 
 
 def main(argv: list[str]) -> int:
-    if (
-        not argv
-        or argv[0] in {"-h", "--help", "help"}
-        or any(argument in {"-h", "--help", "help"} for argument in argv[1:])
-    ):
-        usage()
-        return 0
-    if argv[0] != "tester":
-        die(f"Unknown package command: {argv[0]} (expected: tester)")
+    if not argv or argv[0] != "tester":
+        die("expected: tester")
     if len(argv) != 1:
         die("package tester does not accept arguments")
     if os.environ.get("OJD_ENV") != "release":

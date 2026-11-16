@@ -1,10 +1,3 @@
-"""Drive one virtual gamepad through every control and record what each browser reads.
-
-The harness serves `browser_gamepad.html`, opens it in each browser, and feeds a fixed control
-sequence into the installed app with `ojd virtual feed`. The page posts every Gamepad API event
-back, and the harness reports the standard-mapping slot each browser gave each control.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -27,24 +20,17 @@ OUTPUT_ROOT = PROJECT_DIR / ".build" / "browser-gamepad"
 BROWSERS = {"firefox": "Firefox", "chrome": "Google Chrome", "safari": "Safari"}
 PRESS_MS = 600
 REST_MS = 1400
-# The virtual pad takes a few seconds to publish; the first frame rests while it does.
 SETTLE_MS = 2000
-# The page sees no gamepad until a button press. The wake press also starts the rumble check,
-# and the steps are timed from the moment the page sees it.
 WAKE_MS = 3000
 READY_TIMEOUT_SECONDS = 15.0
-# The page posts each event as it happens; the last posts can arrive after the feed ends.
 DRAIN_SECONDS = 1.5
 ANALOG_THRESHOLD = 0.5
 
-# One JSON event the page posts, or one row of the report.
 Event = dict[str, Any]
 
 
 @dataclass(frozen=True)
 class Control:
-    """One step of the sequence: a feed frame and the W3C standard slot it should reach."""
-
     name: str
     frame: Event
     expected: str
@@ -60,7 +46,6 @@ def _axis(name: str, feed: str, value: int, index: int) -> Control:
     )
 
 
-# W3C standard gamepad layout. Share has no standard slot; some engines report it as B17.
 CONTROLS: tuple[Control, ...] = (
     _button("A", "South", 0),
     _button("B", "East", 1),
@@ -92,7 +77,6 @@ CONTROLS: tuple[Control, ...] = (
 
 
 def feed_frames() -> list[Event]:
-    """A rest, the wake press, then each control held for `PRESS_MS` and released for `REST_MS`."""
     frames: list[Event] = [
         {"holdMilliseconds": SETTLE_MS},
         {"buttons": ["South"], "holdMilliseconds": PRESS_MS},
@@ -105,7 +89,6 @@ def feed_frames() -> list[Event]:
 
 
 def readings(event: Event) -> set[str]:
-    """The slots a state event shows as pressed: `b<index>` and `a<index><sign>`."""
     found: set[str] = set()
     for index, value in event.get("buttons", []):
         if value >= ANALOG_THRESHOLD:
@@ -120,8 +103,6 @@ def _steps(states: list[Event], first_step_ms: int) -> list[Event]:
     step_ms = PRESS_MS + REST_MS
     seen: list[set[str]] = [set() for _ in CONTROLS]
     for event in states:
-        # Each window starts half a rest before its press, so a press that a browser timestamps a
-        # little early still counts for its own step.
         step = (int(event["t"]) - first_step_ms + REST_MS // 2) // step_ms
         if 0 <= step < len(CONTROLS):
             seen[step] |= readings(event)
@@ -141,12 +122,6 @@ def _steps(states: list[Event], first_step_ms: int) -> list[Event]:
 
 
 def classify(events: list[Event], feed_start_ms: int, feed_end_ms: int) -> Event:
-    """Assigns each state event of the fed pad to the step whose window holds its timestamp.
-
-    The fed pad is the first one that shows A: a browser that exposes gamepads only after a press
-    connects every physical controller at the same moment. Some browsers miss the wake press, so
-    the steps are timed from the A press, wake or first step, that matches the most controls.
-    """
     during = [e for e in events if feed_start_ms <= e["t"] < feed_end_ms]
     woken = [e for e in during if e.get("ev") == "state" and "b0" in readings(e)]
     if not woken:
@@ -292,9 +267,7 @@ def _print_result(result: Event) -> None:
 
 
 def main(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(
-        prog="./Scripts/ojd diagnose browsers", description=__doc__
-    )
+    parser = argparse.ArgumentParser(prog="just diagnose-browsers")
     parser.add_argument(
         "--as", dest="persona", help="persona for `ojd virtual feed --as`"
     )

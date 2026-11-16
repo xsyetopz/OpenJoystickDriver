@@ -1,4 +1,4 @@
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 extension ControllerSessionToken {
   /// The token `E-` and `label` padded with `0` to 16 characters, so tests can name one.
@@ -34,10 +34,13 @@ extension ApplicationServiceDeviceDescription {
     vendorID: UInt16 = 0x045E,
     productID: UInt16 = 0x028E,
     serialNumber: String? = nil,
+    capabilities: ControllerCapabilities = ControllerCapabilities(controls: []),
     outputs: PhysicalControllerOutputCapabilities = .none,
     unit: String? = nil,
     power: ControllerConnectionState.Power? = nil,
     inputHealth: ControllerInputHealth = ControllerInputHealth(state: .healthy),
+    physicalOwnership: ControllerOwnershipObservation = .unknown,
+    sessionState: ControllerSessionState = .active,
     hidInputOwnership: HIDInputOwnership = .unknown,
     inputOwner: USBExclusiveOwner? = nil,
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
@@ -53,6 +56,7 @@ extension ApplicationServiceDeviceDescription {
       protocolBinding: protocolBinding,
       connection: "USB",
       discoverySource: .rawUSB,
+      physicalOwnership: physicalOwnership,
       hidInputOwnership: hidInputOwnership,
       inputOwner: inputOwner,
       duplicateExposureRisk: duplicateExposureRisk,
@@ -63,9 +67,11 @@ extension ApplicationServiceDeviceDescription {
       recordServer: .system,
       recordAccessRoute: .system,
       tuning: tuning,
+      capabilities: capabilities,
       connectionState: power.map {
         ControllerConnectionState(transport: .usb, backend: .hid, isConnected: true, power: $0)
       },
+      sessionState: sessionState,
       inputHealth: inputHealth,
       sessionToken: .fixture(id),
       portKey: unit.map(ControllerPortKey.fixture)

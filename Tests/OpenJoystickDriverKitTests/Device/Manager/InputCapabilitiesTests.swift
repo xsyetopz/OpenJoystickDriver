@@ -6,7 +6,7 @@ import Testing
 
 struct InputCapabilitiesTests {
   @Test(arguments: [UInt16(0x05C4), UInt16(0x09CC), UInt16(0x0CE6), UInt16(0x0DF2)])
-  func sonyParserCapabilitiesReachTheExactDevicePayload(_ productID: UInt16) async throws {
+  func sonyParserCapabilitiesReachExactDevicePayload(_ productID: UInt16) async throws {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey
@@ -121,7 +121,7 @@ struct InputCapabilitiesTests {
   }
 
   @Test
-  func batteryLevelKeepsTheDevicePrecision() throws {
+  func batteryLevelKeepsDevicePrecision() throws {
     let exact = BatteryLevel(percentage: 73...73)
     #expect(exact.percentageText == "73%")
     #expect(try JSONEncoder().encode(exact) == Data(#"{"percentage":[73,73]}"#.utf8))

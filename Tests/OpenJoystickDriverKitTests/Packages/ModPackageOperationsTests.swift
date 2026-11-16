@@ -7,7 +7,7 @@ struct ModPackageOperationsTests {
   private typealias Fixture = ModPackageFixture
 
   @Test
-  func installListAndRemoveRunTheCodeOfOjdMod() throws {
+  func installListAndRemoveRunCodeOfOjdMod() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)])
@@ -33,7 +33,7 @@ struct ModPackageOperationsTests {
   }
 
   @Test
-  func anInstalledNameNeedsReplaceAndTheRefusalCarriesTheCodeOfOjd() throws {
+  func installedNameNeedsReplaceAndRefusalCarriesCodeOfOjd() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)])
@@ -47,7 +47,7 @@ struct ModPackageOperationsTests {
   }
 
   @Test
-  func aRefusedPackageAndAMissingNameReportTheirCodes() throws {
+  func refusedPackageAndMissingNameReportTheirCodes() throws {
     try Fixture.with { fixture in
       let store = fixture.store(running: "0.5.0")
       let folder = try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)])

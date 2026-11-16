@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A stored document that is not an XML property list, or that holds a value no schema type
 /// accepts.
@@ -50,7 +50,11 @@ public enum DocumentCoder {
     var format = PropertyListSerialization.PropertyListFormat.xml
     let tree: Any
     do {
-      tree = try PropertyListSerialization.propertyList(from: data, options: [], format: &format)
+      tree = try unsafe PropertyListSerialization.propertyList(
+        from: data,
+        options: 0,
+        format: &format
+      )
     } catch {
       let json = (try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)) != nil
       throw DocumentCoderError(file: file, reason: json ? .json : .notXML)
@@ -102,9 +106,15 @@ public enum DocumentCoder {
         try check(child, keyPath: "\(keyPath)[\(index)]", file: file)
       }
     case is Date:
-      throw DocumentCoderError(file: file, reason: .unsupportedValue(keyPath: keyPath, kind: "date"))
+      throw DocumentCoderError(
+        file: file,
+        reason: .unsupportedValue(keyPath: keyPath, kind: "date")
+      )
     case is Data:
-      throw DocumentCoderError(file: file, reason: .unsupportedValue(keyPath: keyPath, kind: "data"))
+      throw DocumentCoderError(
+        file: file,
+        reason: .unsupportedValue(keyPath: keyPath, kind: "data")
+      )
     default:
       break
     }

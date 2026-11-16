@@ -1,3 +1,4 @@
+import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
 import Testing
@@ -63,13 +64,13 @@ struct ControllerDetailFactsTests {
   func unknownBatteryChargingAndCableAreHidden() {
     let kinds = ControllerDetailFacts.general(for: device(power: .unknown)).map(\.kind)
     #expect(
-      kinds == [.publication, .serving, .controllerProtocol, .serialNumber, .inputHealth]
+      kinds == [.publication, .serving, .serialNumber, .inputHealth, .holders]
     )
     #expect(ControllerDetailFacts.general(for: device()).map(\.kind) == kinds)
   }
 
   @Test
-  func theAppThatSelectedTheProfileIsAFactShownByItsName() {
+  func appSelectedProfileFactShownByItsName() {
     var selected = device()
     selected.profileInForce = ApplicationServiceProfileInForce(
       name: "Racing",
@@ -78,7 +79,7 @@ struct ControllerDetailFactsTests {
     var everywhere = device()
     everywhere.profileInForce = ApplicationServiceProfileInForce(name: "Everywhere", appID: nil)
 
-    let facts = ControllerDetailFacts.general(for: selected, appName: { _ in "Racer" })
+    let facts = ControllerDetailFacts.general(for: selected) { _ in "Racer" }
 
     #expect(Self.value(.profileSelectedBy, in: facts) == .text("Racer"))
     #expect(facts.first?.kind == .profileSelectedBy)
@@ -89,7 +90,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func aWiiRemoteListsItsModeExtensionAndMotionPlus() {
+  func wiiRemoteListsItsModeExtensionAndMotionPlus() {
     let status = WiiRemoteStatus(
       reportMode: 0x35,
       extensionKind: .motionPlusClassic,
@@ -116,12 +117,33 @@ struct ControllerDetailFactsTests {
       wiredPower: true
     )
     let facts = ControllerDetailFacts.general(for: device(power: power))
-    #expect(facts.map(\.kind).suffix(3) == [.battery, .chargingState, .cableState])
+    #expect(facts.map(\.kind).suffix(2) == [.battery, .chargingState])
     #expect(Self.value(.battery, in: facts) == .text("80%"))
   }
 
   @Test
-  func capabilitiesTheControllerLacksAreHidden() {
+  func cableShowsOnlyWhileChargingStateUnknown() {
+    let cabled = ControllerConnectionState.Power(
+      charging: .unknown,
+      battery: BatteryLevel(percentage: 80...80),
+      wiredPower: true
+    )
+    let kinds = ControllerDetailFacts.general(for: device(power: cabled)).map(\.kind)
+    #expect(kinds.contains(.cableState))
+    #expect(!kinds.contains(.chargingState))
+  }
+
+  @Test
+  func publicationOmitsWaitForInputInputRowSays() {
+    let waiting = ApplicationServicePublicationStatus.notPublished(.noInputYet)
+    #expect(
+      ControllerDetailFacts.publicationText(waiting, omittingNoInputYet: true)
+        == OJDLocalized.string("ui.controllers.publication.notPublished")
+    )
+  }
+
+  @Test
+  func capabilitiesControllerLacksAreHidden() {
     let none = ControllerDetailFacts.general(for: device()).map(\.kind)
     #expect(!none.contains(.rumble) && !none.contains(.lighting) && !none.contains(.motion))
     #expect(!none.contains(.adaptiveTriggers) && !none.contains(.touchContacts))
@@ -143,21 +165,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theProtocolFactNamesTheFamilyAndTheStoredVariant() {
-    let binding = ProtocolBindingID(.xboxXUSB, variant: .receiver)
-    let facts = ControllerDetailFacts.general(for: device(binding: binding))
-    #expect(
-      Self.value(.controllerProtocol, in: facts)
-        == .text(binding.displayName)
-    )
-    #expect(
-      Self.value(.controllerProtocol, in: facts)
-        != .text(PhysicalProtocolID.xboxXUSB.displayName)
-    )
-  }
-
-  @Test
-  func theParserFactSpellsTheBindingAsOJDDoes() {
+  func parserFactSpellsBindingAsOJDDoes() {
     let binding = ProtocolBindingID(.xboxXUSB, variant: .receiver)
     let facts = ControllerDetailFacts.advanced(for: device(binding: binding), record: nil)
     #expect(
@@ -167,7 +175,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func advancedRowsSayWordsAndKeepTheRawIdentifierBesideThem() throws {
+  func advancedRowsSayWordsAndKeepRawIdentifierBesideThem() throws {
     #expect(ControllerDetailFacts.controlText(.dpadUp) == "D-pad up (DpadUp)")
     #expect(ControllerDetailFacts.controlText(.leftStickX) == "Left stick horizontal (LeftStickX)")
     #expect(
@@ -188,13 +196,73 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
+  func everyControlHasWordsAndItsRawNameOnlyBesideThem() {
+    for control in Control.allCases {
+      let words = ControllerDetailFacts.controlName(control)
+      #expect(!words.isEmpty && !words.contains("ui."), "\(control.rawValue)")
+      // A word that is the raw name itself (`Start`) shows once; otherwise the raw name follows.
+      #expect(
+        ControllerDetailFacts.controlText(control)
+          == (words == control.rawValue ? words : "\(words) (\(control.rawValue))"),
+        "\(control.rawValue)"
+      )
+    }
+  }
+
+  @Test
+  func everyParserHasWordsAndItsOJDSpellingOnlyBesideThem() {
+    for family in PhysicalProtocolID.allCases {
+      let bindings =
+        family.variants.isEmpty
+        ? [ProtocolBindingID(family)]
+        : family.variants.map { ProtocolBindingID(family, variant: $0) }
+      for binding in bindings {
+        let facts = ControllerDetailFacts.advanced(for: device(binding: binding), record: nil)
+        let name = binding.commandLineName
+        #expect(!binding.displayName.isEmpty && binding.displayName != name, "\(name)")
+        #expect(
+          Self.value(.parser, in: facts)
+            == .text(ControllerDetailFacts.withIdentifier(binding.displayName, name)),
+          "\(name)"
+        )
+      }
+    }
+  }
+
+  @Test
+  func everyInputMappingSourceHasWordsAndItsRawNameOnlyBesideThem() throws {
+    let sources: [InputMapping.Source] = [
+      .record, .sdlGameControllerDB, .standardHIDUsageMap, .none,
+    ]
+    for source in sources {
+      let json = """
+        {"source":"\(source.rawValue)","unmapped":[]\
+        \(source == .sdlGameControllerDB ? ",\"match\":\"ExactGUID\"" : "")}
+        """
+      let mapping = try JSONDecoder().decode(InputMapping.self, from: Data(json.utf8))
+      let text = ControllerDetailFacts.inputMappingText(mapping)
+      #expect(text.hasSuffix(" (\(source.rawValue))"), "\(source.rawValue)")
+      #expect(text != " (\(source.rawValue))", "\(source.rawValue)")
+    }
+    for tier in SDLMatchTier.allCases {
+      let words = ControllerDetailFacts.matchTierText(tier)
+      #expect(!words.isEmpty && words != tier.rawValue && !words.contains("ui."))
+    }
+  }
+
+  @Test
+  func recordSourceWordsNotIdentifier() {
+    #expect(ControllerDetailFacts.recordText(nil) == "none (no record matches)")
+  }
+
+  @Test
   func missingSerialNumberShowsNone() {
     let facts = ControllerDetailFacts.general(for: device())
     #expect(Self.value(.serialNumber, in: facts) == OJDValue.none)
   }
 
   @Test
-  func theSelectedProfileShowsWhetherOrNotItIsPublished() {
+  func selectedProfileShowsWhetherOrNotItIsPublished() {
     let published = ApplicationServicePublicationStatus.published(target: .sdlCompatible)
     let notPublished = ApplicationServicePublicationStatus.notPublished(
       .noInputYet,
@@ -224,13 +292,13 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theProfileIsPublishedOnlyInThePicker() {
+  func profileIsPublishedOnlyInPicker() {
     let facts = ControllerDetailFacts.general(for: device(override: .sdlCompatible))
     #expect(!facts.map(\.label).contains(OJDLocalized.string("cli.controller.show.labelPersona")))
   }
 
   @Test
-  func theAutomaticChoiceNamesTheProfileTheServiceSelected() {
+  func automaticChoiceNamesProfileServiceSelected() {
     var pad = device()
     pad.virtualHIDProfile = ApplicationServiceVirtualHIDProfileStatus(
       profile: .generic,
@@ -245,7 +313,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theAutomaticChoiceIsPlainWithAnOverrideOrWithoutASelection() {
+  func automaticChoiceIsPlainWithOverrideOrWithoutSelection() {
     #expect(ControllerDetailFacts.automaticProfileLabel(device(override: .generic)) == "Automatic")
     #expect(
       ControllerDetailFacts.automaticProfileLabel(device(ownership: .systemGamepad)) == "Automatic"
@@ -289,14 +357,13 @@ struct ControllerDetailFactsTests {
   @Test
   func advancedFactsThatDoNotApplyAreHidden() {
     let kinds = ControllerDetailFacts.advanced(for: device(), record: nil).map(\.kind)
-    #expect(!kinds.contains(.outputOwner))
     #expect(!kinds.contains(.startupStatus))
     #expect(!kinds.contains(.inputRecoveries))
     #expect(!kinds.contains(.publicationAttempted))
   }
 
   @Test
-  func inputHealthNamesTheStateAndItsFailure() {
+  func inputHealthNamesStateAndItsFailure() {
     let facts = ControllerDetailFacts.general(for: device())
     #expect(
       Self.value(.inputHealth, in: facts)
@@ -305,7 +372,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func aControllerWaitingForItsGuidePressSaysToPressIt() {
+  func controllerWaitingForItsGuidePressSaysToPressIt() {
     let waiting = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
       inputHealth: ControllerInputHealth(state: .stale, failureReason: .guideNotPressed)
@@ -315,7 +382,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func everyStateTheDetailNamesHasEnglishText() {
+  func everyStateDetailNamesHasEnglishText() {
     var keys: [String] = []
     keys += ControllerOwnershipObservation.allCases.map(ControllerDetailLabels.physicalOwnershipKey)
     keys += [
@@ -324,11 +391,10 @@ struct ControllerDetailFactsTests {
     ]
     .map(ControllerDetailLabels.hidInputOwnershipKey)
     keys += [DeviceDiscoverySource.hid, .rawUSB].map(ControllerDetailLabels.discoveryKey)
-    keys += OutputDisabledReason.allCases.map(ControllerDetailLabels.servingReasonKey)
     keys += ControllerInputHealthFailureReason.allCases
       .map(ControllerDetailLabels.inputHealthReasonKey)
     keys += [
-      "ui.controllers.publication.withReason", "ui.controllers.serving.withReason",
+      "ui.controllers.publication.withReason",
       "ui.controllers.inputHealth.withReason",
     ]
     for key in keys { #expect(OJDLocalized.string(key) != key, "\(key)") }
@@ -339,7 +405,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func closingAWirelessLinkAsksForConfirmationNamingTheController() {
+  func closingWirelessLinkAsksForConfirmationNamingController() {
     let confirmation = WirelessDisconnectConfirmation(controllerName: "Pad A")
     #expect(confirmation.title != "ui.controllers.disconnectWirelessConfirmTitle")
     #expect(confirmation.message.contains("Pad A"))
@@ -348,7 +414,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func aWirelessDisconnectRequestKeepsTheControllerItWasMadeFor() {
+  func wirelessDisconnectRequestKeepsControllerItWasMadeFor() {
     let target = device()
     let request = WirelessDisconnectRequest(device: target)
     #expect(request.device.sessionToken == target.sessionToken)
@@ -369,7 +435,7 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
-  func theDuplicateExposureRiskIsNamedForEveryCase() {
+  func duplicateExposureRiskIsNamedForEveryCase() {
     #expect(
       ControllerDetailFacts.duplicateExposureText(.none) == OJDLocalized.string("status.none")
     )
@@ -382,24 +448,25 @@ struct ControllerDetailFactsTests {
 
 extension ControllerDetailFactsTests {
   @Test
-  func tuningRowsListOnlyValuesALayerSets() throws {
+  func tuningRowsListEveryKeyAsConfigShowDoes() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let rows = ControllerTuningRows.rows(for: record, activeProfile: nil)
-    #expect(rows.map(\.name) == ControllerTuning.Key.allCases.map(\.rawValue))
-    for (row, entry) in zip(rows, record.tuningValues) {
+    let entries = record.tuningValues.filter { $0.key != .stickDeadzone }
+    #expect(rows.map(\.name) == entries.map(\.key.rawValue))
+    for (row, entry) in zip(rows, entries) {
+      #expect(row.layer == CommandLineName.kebab(entry.layer.rawValue))
+      #expect(row.text == "\(row.value) (\(row.layer))")
       if entry.value == nil {
-        let unset = entry.key == .stickDeadzone ? "status.notSet" : "status.driverDefault"
-        #expect(row.text == OJDLocalized.string(unset))
-      } else {
-        #expect(row.layer == CommandLineName.kebab(entry.layer.rawValue))
-        #expect(row.text == "\(row.value) (\(row.layer ?? ""))")
+        let status = entry.key.hasDriverValue ? "status.driverDefault" : "status.notSet"
+        #expect(row.value == OJDLocalized.string(status))
       }
     }
+    #expect(entries.contains { $0.value == nil })
   }
 
   @Test
-  func theServerSourceNamesTheLayerAsTheLibraryDoes() throws {
+  func serverSourceNamesLayerAsLibraryDoes() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
     let record = try #require(ControllerRecordSet.bundled.records[model])
     let layer = record.fieldLayers["server"] ?? .driver

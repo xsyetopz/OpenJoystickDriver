@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Why the persona directory cannot be read.
 public enum VirtualHIDProfileOverrideError: Error, Equatable, Sendable {
@@ -88,7 +88,8 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     /// The name of the persona file: `vvvv-pppp.plist`, with `-<unit>` before the extension for a
     /// unit.
     var fileName: String {
-      String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".plist"
+      unsafe String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "")
+        + ".plist"
     }
   }
 
@@ -337,16 +338,17 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
 
   /// Loads the persona files of the directory in file-name order; a missing directory holds none.
   private func loadUserFiles() -> Result<Loaded, VirtualHIDProfileOverrideError> {
-    let urls: [URL]
+    let listed: [URL]
     do {
-      urls = try FileManager.default.contentsOfDirectory(
+      listed = try FileManager.default.contentsOfDirectory(
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch CocoaError.fileReadNoSuchFile {
       return .success(Loaded())
     } catch { return .failure(.unreadableDirectory(error.localizedDescription)) }
+    let urls = listed.filter { $0.pathExtension == "plist" }
     var loaded = Loaded()
     for url in urls {
       do {
@@ -369,6 +371,9 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
           )
         )
       }
+    }
+    for url in listed where url.pathExtension == "json" {
+      loaded.files.append(VirtualPersonaFile(url: url, problem: DocumentMigrator.staleProblem))
     }
     return .success(loaded)
   }

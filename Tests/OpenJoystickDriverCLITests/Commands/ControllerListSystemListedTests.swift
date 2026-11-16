@@ -9,7 +9,7 @@ import Testing
 @Suite(.serialized)
 struct ControllerListSystemListedTests {
   @Test
-  func everyFormatNamesTheControllerThatMacOSAlsoLists() async throws {
+  func everyFormatNamesControllerThatMacOSAlsoLists() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(
         id: "pad-1",

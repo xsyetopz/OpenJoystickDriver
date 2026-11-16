@@ -5,45 +5,6 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The size limits of the main window and its three columns.
-  enum MainWindowSizingPolicy {
-    /// The minimum and maximum width of the sidebar.
-    static let sidebarWidth = (minimum: CGFloat(170), maximum: CGFloat(260))
-    /// The minimum and maximum width of the content list column.
-    static let listWidth = (minimum: CGFloat(200), maximum: CGFloat(320))
-    /// The minimum width of the detail column.
-    static let minimumDetailWidth: CGFloat = 420
-    /// The content size of a new main window.
-    static let defaultContentSize = NSSize(width: 1_040, height: 700)
-    /// The smallest content height that the window allows.
-    static let minimumContentHeight: CGFloat = 560
-
-    /// Returns the smallest content width that fits the columns that show: the sum of their
-    /// minimum widths.
-    static func minimumContentWidth(showsSidebar: Bool, showsList: Bool) -> CGFloat {
-      (showsSidebar ? sidebarWidth.minimum : 0) + (showsList ? listWidth.minimum : 0)
-        + minimumDetailWidth
-    }
-
-    /// Returns the smallest content size that fits the columns that show.
-    static func minimumContentSize(showsSidebar: Bool, showsList: Bool) -> NSSize {
-      NSSize(
-        width: minimumContentWidth(showsSidebar: showsSidebar, showsList: showsList),
-        height: minimumContentHeight
-      )
-    }
-
-    /// Returns the smallest frame size of `window` whose content area is
-    /// ``minimumContentSize(showsSidebar:showsList:)``.
-    @MainActor
-    static func minimumFrameSize(for window: NSWindow, showsSidebar: Bool, showsList: Bool)
-      -> NSSize
-    {
-      let content = minimumContentSize(showsSidebar: showsSidebar, showsList: showsList)
-      return window.frameRect(forContentRect: NSRect(origin: .zero, size: content)).size
-    }
-  }
-
   /// The main window: a sidebar, a content list column and a detail column, with a toolbar.
   ///
   /// Closing the window hides it, which keeps the selected area, the screens' state and the window
@@ -59,13 +20,15 @@
     /// Reports to the app whether the window is visible.
     private let visibilityChanged: @MainActor (Bool) -> Void
     /// The split view that holds the sidebar, the list column and the detail column.
-    private let splitViewController = NSSplitViewController()
+    let splitViewController = NSSplitViewController()
     /// The content list column, collapsed for an area without a list.
     private let listItem: NSSplitViewItem
     /// The sidebar column, collapsed by the sidebar toggle.
     private let sidebarItem: NSSplitViewItem
     /// Re-applies the window minimum when the sidebar collapses or returns.
     private var sidebarObservation: AnyCancellable?
+    /// Fits the list column to the title after each column resize.
+    private var splitResizeObservation: AnyCancellable?
     /// Keeps the window title and the toolbar in step with the selected area.
     private var areaObservation: AnyCancellable?
     /// Re-validates the toolbar items when any state that enables them changes.
@@ -74,6 +37,10 @@
     private var activityModeObservation: AnyCancellable?
     /// Keeps the window subtitle in step with the service status.
     private var summaryObservation: AnyCancellable?
+    /// Shows the toolbar items that the interface level and the developer switch allow.
+    private var interfaceLevelObservation: AnyCancellable?
+    /// The Settings preferences, which hold the interface level and the developer switch.
+    private let preferences: SettingsPreferencesModel
     /// Whether a resize is being corrected, so that the correction does not repeat.
     private var isEnforcingMinimumSize = false
 
@@ -83,6 +50,7 @@
     /// - Parameters:
     ///   - runtime: The runtime state that every area reads.
     ///   - supportReport: The support report and log export model.
+    ///   - preferences: The Settings preferences, which hold the interface level.
     ///   - restartApplication: Restarts the app, for the Access area.
     ///   - openInputTest: Opens the Input Test window for a controller.
     ///   - visibilityChanged: Called with true when the window is shown and false when it is
@@ -91,14 +59,16 @@
     init(
       runtime: RuntimeViewModel,
       supportReport: SupportReportModel,
+      preferences: SettingsPreferencesModel,
       restartApplication: @escaping @MainActor () -> Void,
       openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
       visibilityChanged: @escaping @MainActor (Bool) -> Void,
       persistence: any MainWindowAreaPersistence = UserDefaultsMainWindowAreaPersistence()
     ) {
       self.visibilityChanged = visibilityChanged
-      let navigation = MainWindowNavigationModel(persistence: persistence)
-      self.navigation = navigation
+      self.preferences = preferences
+      let navigationModel = MainWindowNavigationModel(persistence: persistence)
+      self.navigation = navigationModel
       screens = MainWindowScreens(
         runtime: runtime,
         supportReport: supportReport,
@@ -126,53 +96,56 @@
             if !SystemExtensionApproval.openSystemSettings() {
               return OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")
             }
-          case .showLibrary: _ = navigation.requestArea(.library)
+          case .showLibrary: _ = navigationModel.requestArea(.library)
           }
           return nil
         },
         errorCodeExplainer: ErrorCodeExplainerModel(),
+        whatsNew: WhatsNewModel(),
         libraryArea: LibraryViewModel(),
         access: AccessViewModel(),
         restartApplication: restartApplication,
         openInputTest: openInputTest
       )
 
-      let sidebarItem = NSSplitViewItem(
+      let sidebar = NSSplitViewItem(
         sidebarWithViewController: NSHostingController(
-          rootView: MainWindowSidebar(navigation: navigation)
+          rootView: MainWindowSidebar(navigation: navigationModel)
         )
       )
-      self.sidebarItem = sidebarItem
-      sidebarItem.canCollapse = true
-      sidebarItem.minimumThickness = MainWindowSizingPolicy.sidebarWidth.minimum
-      sidebarItem.maximumThickness = MainWindowSizingPolicy.sidebarWidth.maximum
-      let listItem = NSSplitViewItem(
+      self.sidebarItem = sidebar
+      sidebar.canCollapse = true
+      sidebar.minimumThickness = MainWindowSizingPolicy.sidebarWidth.minimum
+      sidebar.maximumThickness = MainWindowSizingPolicy.sidebarWidth.maximum
+      let list = NSSplitViewItem(
         contentListWithViewController: NSHostingController(
           rootView: MainWindowListRoot(
-            navigation: navigation,
+            navigation: navigationModel,
             runtime: runtime,
             profiles: screens.profiles,
-            screens: screens
+            screens: screens,
+            preferences: preferences
           )
         )
       )
-      listItem.minimumThickness = MainWindowSizingPolicy.listWidth.minimum
-      listItem.maximumThickness = MainWindowSizingPolicy.listWidth.maximum
-      listItem.isCollapsed = !navigation.selectedArea.hasListColumn
-      self.listItem = listItem
+      list.minimumThickness = MainWindowSizingPolicy.listWidth.minimum
+      list.maximumThickness = MainWindowSizingPolicy.listWidth.maximum
+      list.isCollapsed = !navigationModel.selectedArea.hasListColumn
+      self.listItem = list
       let detailItem = NSSplitViewItem(
         viewController: NSHostingController(
           rootView: MainWindowRoot(
-            navigation: navigation,
+            navigation: navigationModel,
             runtime: runtime,
             profiles: screens.profiles,
-            screens: screens
+            screens: screens,
+            preferences: preferences
           )
         )
       )
       detailItem.minimumThickness = MainWindowSizingPolicy.minimumDetailWidth
-      splitViewController.addSplitViewItem(sidebarItem)
-      splitViewController.addSplitViewItem(listItem)
+      splitViewController.addSplitViewItem(sidebar)
+      splitViewController.addSplitViewItem(list)
       splitViewController.addSplitViewItem(detailItem)
 
       let window = NSWindow(
@@ -189,12 +162,16 @@
       configureToolbar(for: window)
       installSizingPolicy(on: window)
 
-      sidebarObservation = sidebarItem.publisher(for: \.isCollapsed).dropFirst().sink {
+      sidebarObservation = sidebar.publisher(for: \.isCollapsed).dropFirst().sink {
         [weak self, weak window] _ in
         guard let self, let window else { return }
         applyMinimumSize(to: window)
       }
-      areaObservation = navigation.$selectedArea.sink { [weak self] area in
+      splitResizeObservation = NotificationCenter.default.publisher(
+        for: NSSplitView.didResizeSubviewsNotification,
+        object: splitViewController.splitView
+      ).receive(on: RunLoop.main).sink { [weak self] _ in self?.fitListToTitle() }
+      areaObservation = navigationModel.$selectedArea.sink { [weak self] area in
         self?.reflect(area: area)
       }
       toolbarEnablementObservation = Publishers.MergeMany(
@@ -206,26 +183,30 @@
         screens.access.objectWillChange.map { _ in () }.eraseToAnyPublisher(),
         screens.activity.log.objectWillChange.map { _ in () }.eraseToAnyPublisher(),
         screens.activity.diagnostics.objectWillChange.map { _ in () }.eraseToAnyPublisher(),
-        navigation.objectWillChange.map { _ in () }.eraseToAnyPublisher()
+        navigationModel.objectWillChange.map { _ in () }.eraseToAnyPublisher()
       ).receive(on: DispatchQueue.main).sink { [weak self] in
         self?.window?.toolbar?.validateVisibleItems()
       }
       activityModeObservation = screens.activity.$mode.receive(on: DispatchQueue.main).sink {
         [weak self] _ in
         guard let self else { return }
-        showToolbarActions(of: navigation.selectedArea)
-        updateLogFollowing(area: navigation.selectedArea)
+        showToolbarActions(of: navigationModel.selectedArea)
+        updateLogFollowing(area: navigationModel.selectedArea)
       }
-      summaryObservation = runtime.$statusState.sink { [weak window] status in
-        window?.subtitle = MainWindowSummary.text(for: navigation.selectedArea, status: status)
+      interfaceLevelObservation = preferences.objectWillChange.receive(on: DispatchQueue.main)
+        .sink { [weak self] in
+          guard let self else { return }
+          showToolbarActions(of: navigationModel.selectedArea)
+        }
+      summaryObservation = runtime.$statusState.sink { [weak self, weak window] status in
+        window?.subtitle = MainWindowSummary.text(for: navigationModel.selectedArea, status: status)
+        self?.fitListToTitle()
       }
     }
 
     /// Unavailable, because the window controller is created in code only.
-    ///
-    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     // MARK: MainWindowPresenting
 
@@ -233,6 +214,7 @@
     func showMainWindow(area: MainWindowArea?) {
       if let area { navigation.requestArea(area) }
       present()
+      screens.whatsNew.presentIfNeeded()
     }
 
     /// Shows Access and has its permission rows scroll to the permission.
@@ -253,6 +235,12 @@
 
     /// Shows the main window with the Explain Error Code sheet open.
     func showErrorCodeExplainer() {
+      guard
+        ActivityRow.explainErrorCode.rowLevel.isShown(
+          at: preferences.interfaceLevel,
+          developerToolsEnabled: preferences.developerToolsEnabled
+        )
+      else { return }
       present()
       screens.errorCodeExplainer.isPresented = true
     }
@@ -262,19 +250,26 @@
       screens.controllers.selectedDevice?.sessionToken.rawValue
     }
 
+    /// The area the window shows.
+    var selectedArea: MainWindowArea { navigation.selectedArea }
+
     /// Shows the Input Test window for the controller, after selecting it in Controllers.
-    func showInputTest(controllerID: String) {
+    ///
+    /// Returns false when the controller is not in Controllers. A refused area switch shows its own
+    /// alert, so it counts as shown.
+    func showInputTest(controllerID: String) -> Bool {
       guard navigation.requestArea(.controllers) else {
         present()
-        return
+        return true
       }
       showController(id: controllerID)
       guard
         let device = screens.controllers.devices.first(where: {
           $0.sessionToken.rawValue == controllerID
         })
-      else { return }
+      else { return false }
       screens.openInputTest(device)
+      return true
     }
 
     // MARK: Profile mutations from menus
@@ -347,7 +342,6 @@
 
     /// Hides the window instead of closing it and returns false.
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-      // Hiding keeps the selected area, the screens' state and the window geometry.
       sender.orderOut(nil)
       updateLogFollowing(area: navigation.selectedArea)
       visibilityChanged(false)
@@ -364,7 +358,8 @@
       MainWindowSizingPolicy.minimumFrameSize(
         for: window,
         showsSidebar: !sidebarItem.isCollapsed,
-        showsList: !listItem.isCollapsed
+        showsList: !listItem.isCollapsed,
+        listMinimum: listItem.minimumThickness
       )
     }
 
@@ -373,7 +368,8 @@
     private func applyMinimumSize(to window: NSWindow) {
       window.contentMinSize = MainWindowSizingPolicy.minimumContentSize(
         showsSidebar: !sidebarItem.isCollapsed,
-        showsList: !listItem.isCollapsed
+        showsList: !listItem.isCollapsed,
+        listMinimum: listItem.minimumThickness
       )
       window.minSize = minimumFrameSize(for: window)
       let fittedFrame = WindowFramePolicy.fittingFrame(window.frame, minimumSize: window.minSize)
@@ -384,12 +380,12 @@
     }
 
     /// Stops following the logs while the window is miniaturized.
-    func windowDidMiniaturize(_ notification: Notification) {
+    func windowDidMiniaturize(_: Notification) {
       updateLogFollowing(area: navigation.selectedArea)
     }
 
     /// Resumes following the logs when the window returns from the Dock.
-    func windowDidDeminiaturize(_ notification: Notification) {
+    func windowDidDeminiaturize(_: Notification) {
       updateLogFollowing(area: navigation.selectedArea)
     }
 
@@ -400,7 +396,7 @@
     }
 
     /// Moves the window inside the visible frame of its new screen.
-    func windowDidChangeScreen(_ notification: Notification) {
+    func windowDidChangeScreen(_: Notification) {
       guard let window else { return }
       WindowFramePolicy.clamp(window, minimumSize: minimumFrameSize(for: window))
     }
@@ -418,7 +414,11 @@
 
     /// Gives the window its unified toolbar, with no user customization.
     private func configureToolbar(for window: NSWindow) {
-      let toolbar = NSToolbar(identifier: MainWindowToolbarLayout.toolbar)
+      // AppKit keeps toolbars that share an identifier showing the same items, and each window
+      // shows its own area's actions, so each toolbar gets its own identifier.
+      let toolbar = NSToolbar(
+        identifier: "\(MainWindowToolbarLayout.toolbar).\(UUID().uuidString)"
+      )
       toolbar.delegate = self
       toolbar.allowsUserCustomization = false
       toolbar.autosavesConfiguration = false
@@ -436,6 +436,23 @@
       updateLogFollowing(area: area)
       window?.title = area.title
       window?.subtitle = MainWindowSummary.text(for: area, status: screens.runtime.statusState)
+      fitListToTitle()
+    }
+
+    /// Widens the list column's minimum so the title and subtitle end inside it.
+    ///
+    /// The fit lays out the window, so it waits for the next turn of the run loop: a `@Published`
+    /// sink runs before the value changes, and a layout there draws the hosted views with the old
+    /// value.
+    private func fitListToTitle() {
+      RunLoop.main.perform { [weak self] in
+        MainActor.assumeIsolated {
+          guard let self, let window = self.window,
+            MainWindowTitleFit.fit(self.listItem, in: window)
+          else { return }
+          self.applyMinimumSize(to: window)
+        }
+      }
     }
   }
 
@@ -445,10 +462,19 @@
       guard let toolbar = window?.toolbar else { return }
       let fixedCount = MainWindowToolbarLayout.fixedItems.count
       while toolbar.items.count > fixedCount { toolbar.removeItem(at: toolbar.items.count - 1) }
-      let actions = area.toolbarActions(activityMode: screens.activity.mode)
+      let actions = shownToolbarActions(of: area)
       for (offset, action) in actions.enumerated() {
         toolbar.insertItem(withItemIdentifier: action.identifier, at: fixedCount + offset)
       }
+    }
+
+    /// The toolbar actions of `area` that the interface level and the developer switch show.
+    func shownToolbarActions(of area: MainWindowArea) -> [MainWindowToolbarAction] {
+      area.toolbarActions(
+        activityMode: screens.activity.mode,
+        level: preferences.interfaceLevel,
+        developerToolsEnabled: preferences.developerToolsEnabled
+      )
     }
 
     /// Runs the action of the clicked toolbar item when it is enabled.
@@ -462,7 +488,15 @@
     /// its commands for them.
     var enabledToolbarActions: Set<MainWindowToolbarAction> {
       Set(
-        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter(isEnabled)
+        shownToolbarActions(of: navigation.selectedArea).filter(isEnabled)
+      )
+    }
+
+    /// The toolbar actions that the selected area shows and that are disabled; the commands that
+    /// work from any area wait for them.
+    var disabledToolbarActions: Set<MainWindowToolbarAction> {
+      Set(
+        shownToolbarActions(of: navigation.selectedArea).filter { !isEnabled($0) }
       )
     }
 
@@ -487,11 +521,15 @@
     /// Runs `action` when its toolbar item is enabled.
     func perform(_ action: MainWindowToolbarAction) {
       guard isEnabled(action) else { return }
+      // The area's alerts and sheets hang off the area view, which the setup steps replace.
+      navigation.dismissSetupSteps()
       switch action {
       case .newProfile: screens.profiles.beginCreatingProfile()
       case .importProfile: screens.profiles.chooseProfileToImport()
       case .validateProfileFile: screens.profiles.validateProfileFile()
       case .duplicateProfile: screens.profiles.duplicatingProfile = selectedProfile
+      case .convertProfile:
+        if let selectedProfile { screens.profiles.beginConverting(selectedProfile) }
       case .exportProfile:
         if let selectedProfile { screens.profiles.exportProfile(selectedProfile) }
       case .deleteProfile:
@@ -513,12 +551,11 @@
           screens.libraryArea.testSelectedRecord(capture: capture, expectation: expectation)
         }
       case .removeLibraryItem: screens.libraryArea.requestRemoveSelection()
-      case .searchLibrary: break
       case .copyActivityLog: screens.activity.log.copyVisible()
       case .saveActivityLog: saveActivityLog()
       case .showActivityLogInFinder: showActivityLogInFinder()
       case .runDiagnostics: Task { await screens.activity.diagnostics.run() }
-      case .activityMode, .activityFilter, .activitySearch:
+      case .activityMode, .activityFilter, .activitySearch, .searchLibrary:
         preconditionFailure("\(action) has its own control action")
       }
     }
@@ -532,8 +569,8 @@
     /// Whether the toolbar item for `action` is enabled in the current state.
     func isEnabled(_ action: MainWindowToolbarAction) -> Bool {
       switch action {
-      case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .exportProfile,
-        .deleteProfile:
+      case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
+        .exportProfile, .deleteProfile:
         return action.isEnabled(profile: profileToolbarState)
       case .installLibraryItem, .validateLibraryItem, .searchLibrary, .saveActivityLog,
         .showActivityLogInFinder, .activityMode, .activityFilter, .activitySearch:
@@ -573,53 +610,6 @@
           : OJDLocalized.string(action.descriptionKey)
       }
       return isEnabled(action)
-    }
-  }
-
-  extension MainWindowController: NSToolbarDelegate {
-    /// Returns the fixed items and every area action.
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-      MainWindowToolbarLayout.allowedItems
-    }
-
-    /// Returns the fixed items and the actions of the selected area.
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-      MainWindowToolbarLayout.items(
-        for: navigation.selectedArea,
-        activityMode: screens.activity.mode
-      )
-    }
-
-    /// Returns no identifiers, because no toolbar item stays selected.
-    func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-      []
-    }
-
-    /// Returns the toolbar item for `itemIdentifier`: the sidebar separator or an area action.
-    func toolbar(
-      _ toolbar: NSToolbar,
-      itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
-      willBeInsertedIntoToolbar flag: Bool
-    ) -> NSToolbarItem? {
-      if itemIdentifier == .sidebarTrackingSeparator {
-        return NSTrackingSeparatorToolbarItem(
-          identifier: itemIdentifier,
-          splitView: splitViewController.splitView,
-          dividerIndex: 0
-        )
-      }
-      guard let action = MainWindowToolbarAction(identifier: itemIdentifier) else { return nil }
-      if let item = makeActivityControlItem(for: action) { return item }
-      let item = MainWindowToolbarLayout.makeItem(for: action)
-      if let search = item as? NSSearchToolbarItem {
-        search.searchField.stringValue = screens.libraryArea.searchText
-        search.searchField.target = self
-        search.searchField.action = #selector(librarySearchChanged(_:))
-        return search
-      }
-      item.target = self
-      item.action = #selector(performToolbarAction(_:))
-      return item
     }
   }
 

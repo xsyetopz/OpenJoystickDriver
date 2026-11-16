@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Converts the stored documents of an older `apiVersion` to the current one.
 ///
@@ -31,6 +31,9 @@ public struct DocumentMigrator: Sendable {
 
   /// The name of the folder that holds the kept originals, in the scanned folder.
   public static let backupFolderName = "Migrated"
+
+  /// The reason a store lists for a `.json` document that no reader loads.
+  public static let staleProblem = "E5001: saved by an earlier version; migrate it"
 
   /// The kind that names `ActiveProfiles`, a root array without a header.
   static let activeProfilesKind = "ActiveProfiles"
@@ -93,7 +96,11 @@ public struct DocumentMigrator: Sendable {
     let manager = FileManager.default
     let urls: [URL]
     if deep {
-      let walk = manager.enumerator(at: folder, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+      let walk = manager.enumerator(
+        at: folder,
+        includingPropertiesForKeys: nil,
+        options: [.skipsHiddenFiles]
+      )
       urls = walk?.compactMap { $0 as? URL } ?? []
     } else {
       urls =
@@ -111,7 +118,9 @@ public struct DocumentMigrator: Sendable {
     func entry(_ kind: String?, _ verdict: Verdict, _ detail: String? = nil) -> Entry {
       Entry(file: file, kind: kind, verdict: verdict, detail: detail)
     }
-    guard let data = try? Data(contentsOf: url) else { return entry(nil, .failed, "cannot be read") }
+    guard let data = try? Data(contentsOf: url) else {
+      return entry(nil, .failed, "cannot be read")
+    }
     let isActiveProfiles = url.deletingPathExtension().lastPathComponent == "ActiveProfiles"
     let isPlist = url.pathExtension == "plist"
     guard
@@ -120,14 +129,20 @@ public struct DocumentMigrator: Sendable {
     else { return entry(nil, .foreign, "is not a readable document") }
     if isActiveProfiles, case .array = document {
       guard !isPlist else { return entry(Self.activeProfilesKind, .current) }
-      return migrate(url, file: file, kind: Self.activeProfilesKind, backups: backups, dryRun: dryRun) {
+      return migrate(
+        url,
+        file: file,
+        kind: Self.activeProfilesKind,
+        backups: backups,
+        dryRun: dryRun
+      ) {
         try AlphaTwoToAlphaThree.activeProfiles(document).plistData()
       }
     }
     guard let version = document["apiVersion"]?.string else {
       return Self.isZeroFive(document, name: url.lastPathComponent)
         ? entry(nil, .failed, "written by 0.5; re-create it")
-        : entry(nil, .foreign, "has no apiVersion")
+        : entry(nil, .failed, "has no apiVersion")
     }
     guard version.hasPrefix("openjoystickdriver/") else {
       return entry(nil, .foreign, "has another apiVersion")
@@ -166,7 +181,9 @@ public struct DocumentMigrator: Sendable {
         throw DocumentMigrationProblem("\(target.lastPathComponent) exists already")
       }
       let data = try make()
-      if !dryRun { try write(data, from: url, to: target, backup: backups.appendingPathComponent(file)) }
+      if !dryRun {
+        try write(data, from: url, to: target, backup: backups.appendingPathComponent(file))
+      }
       return Entry(file: file, kind: kind, verdict: .migrated, detail: nil)
     } catch {
       return Entry(file: file, kind: kind, verdict: .failed, detail: "\(error)")
@@ -223,7 +240,9 @@ public struct DocumentMigrator: Sendable {
   /// A backup that exists already is not overwritten, so a second run cannot lose an original.
   private func write(_ data: Data, from url: URL, to target: URL, backup: URL) throws {
     guard !FileManager.default.fileExists(atPath: backup.path) else {
-      throw DocumentMigrationProblem("\(Self.backupFolderName)/\(backup.lastPathComponent) exists already")
+      throw DocumentMigrationProblem(
+        "\(Self.backupFolderName)/\(backup.lastPathComponent) exists already"
+      )
     }
     let permissions = try FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions]
     try FileManager.default.createDirectory(

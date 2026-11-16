@@ -1,5 +1,6 @@
-import Foundation
-import OpenJoystickDriverKit
+public import Foundation
+public import OpenJoystickDriverKit
+import OpenJoystickDriverMacOSPlatform
 
 extension ApplicationServiceServer {
   /// Returns the current application service status including input monitoring state and
@@ -8,7 +9,13 @@ extension ApplicationServiceServer {
     let permissions = await permissionManager.refreshAccessState()
     let devices = await describingVirtualHIDProfiles(
       await deviceManager.connectedDeviceDescriptions().map {
-        ($0.logicalControllerID, ApplicationServiceDeviceDescription(snapshot: $0))
+        var device = ApplicationServiceDeviceDescription(snapshot: $0)
+        device.holders = ControllerHolders.holders(
+          vendorID: $0.vendorID,
+          productID: $0.productID,
+          locationID: $0.logicalControllerID.address?.locationID
+        )
+        return ($0.logicalControllerID, device)
       }
     )
     let unboundDevices = await deviceManager.unboundDeviceDescriptions().map(
@@ -26,7 +33,8 @@ extension ApplicationServiceServer {
       passThroughDevices: passThroughDevices,
       userSpaceVirtualDeviceEnabled: userSnapshot.enabled,
       userSpaceVirtualDeviceStatus: userSnapshot.status,
-      virtualHIDProfileOverrideError: virtualHIDProfileOverrides.loadError?.statusDescription
+      virtualHIDProfileOverrideError: virtualHIDProfileOverrides.loadError?.statusDescription,
+      bluetoothAccess: (bluetoothAccess?.state() ?? .unavailable)
     )
     do { return try JSONEncoder().encode(payload) } catch {
       print("[ApplicationServiceServer] getStatus encode error: \(error)")
@@ -43,6 +51,11 @@ extension ApplicationServiceServer {
   public func requestAccess(
     _ requirement: PermissionManager.Requirement
   ) async -> PermissionManager.Snapshot { await permissionManager.requestAccess(requirement) }
+
+  /// Asks macOS for Bluetooth access and returns the state of the access afterward.
+  public func requestBluetoothAccess() -> BluetoothAccessState {
+    bluetoothAccess?.request() ?? .unavailable
+  }
 
   /// Returns the current input state of the controller `controller` names as encoded JSON data.
   public func getControllerState(for controller: ControllerReference) async -> Data? {
@@ -142,7 +155,7 @@ extension ApplicationServiceServer {
   public func resetSettings() async -> Bool {
     await virtualOutputTransitionCoordinator.enqueue { [weak self] in
       guard let self else { return false }
-      return await self.performResetSettingsAsync()
+      return await performResetSettingsAsync()
     }
   }
 
