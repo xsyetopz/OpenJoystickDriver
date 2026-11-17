@@ -176,6 +176,25 @@ struct DocumentMigratorTests {
   }
 
   @Test
+  func lastUsedTimesAreCurrentAndStayUntouched() throws {
+    // Arrange
+    let times = try PropertyListSerialization.data(
+      fromPropertyList: ["6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E": 1_700_000_000.0],
+      format: .xml,
+      options: 0
+    )
+    try write(try #require(String(bytes: times, encoding: .utf8)), "LastUsed.plist")
+
+    // Act
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+
+    // Assert
+    #expect(entries.map(\.verdict) == [.current], "\(entries)")
+    #expect(entries.first?.kind == "LastUsed")
+    #expect(try read("LastUsed.plist") == times)
+  }
+
+  @Test
   func zeroFiveDocumentFailsWithReason() throws {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)

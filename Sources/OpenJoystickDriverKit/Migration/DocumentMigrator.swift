@@ -38,6 +38,15 @@ public struct DocumentMigrator: Sendable {
   /// The kind that names `ActiveProfiles`, a root array without a header.
   static let activeProfilesKind = "ActiveProfiles"
 
+  /// The kind that names `LastUsed.plist`, the headerless profile activation times.
+  ///
+  /// The service keeps them as a root dictionary that has had one form since it was added, so the
+  /// file is never converted.
+  static let lastUsedKind = "LastUsed"
+
+  /// The path of the activation times below the support folder.
+  static let lastUsedFile = "LastUsed.plist"
+
   /// The data directory that locates the support folder.
   private let directory: any DataDirectory
 
@@ -138,6 +147,9 @@ public struct DocumentMigrator: Sendable {
       ) {
         try AlphaTwoToAlphaThree.activeProfiles(document).plistData()
       }
+    }
+    if file == Self.lastUsedFile, isPlist, case .object = document {
+      return entry(Self.lastUsedKind, .current)
     }
     guard let version = document["apiVersion"]?.string else {
       return Self.isZeroFive(document, name: url.lastPathComponent)
