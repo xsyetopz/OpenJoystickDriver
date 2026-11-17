@@ -125,6 +125,10 @@ signing-export-github-secrets *args:
 diagnose-dext:
     Scripts/Diagnostics/dext/diagnose.sh
 
+# Launch the installed app in Xcode's UI test runner and fail if it offers a driver repair while the driver is active.
+diagnose-driver-ui:
+    TEST_RUNNER_OJD_SYSEXT_LIST="$(systemextensionsctl list)" xcodebuild test -quiet -project OpenJoystickDriver.xcodeproj -scheme OpenJoystickDriverApp -only-testing:OpenJoystickDriverUITests/InstalledDriverUITests -destination 'platform=macOS'
+
 # Validate or probe a canonical controller record through the USB dext.
 diagnose-record record *args:
     {{ env }} swift run OpenJoystickDriverHIDTool --record-probe "$(realpath {{ record }})" {{ args }}
