@@ -54,10 +54,16 @@ ojd update check
 
 1. Quit OJD.
 2. Open the new DMG.
-3. Drag **OpenJoystickDriver** to **Applications**. Replace the old app when macOS asks.
+3. Drag **OpenJoystickDriver** to **Applications**. Replace the old app when macOS asks. Do not open OJD from the DMG or from another folder: macOS activates the [Xbox USB driver](Glossary.md#terms) only from an app in **Applications**.
 4. Open OJD.
+5. If OJD shows **Repair Xbox USB Driver**, click it.
+6. Disconnect each USB controller that the Xbox USB driver handles, and connect it again. Until you do this or restart the Mac, macOS can keep the old driver for a connected controller.
 
 Your [profiles](Glossary.md#terms) stay in place because they are stored outside the app.
+
+After an update, **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions** can list the old driver until the next restart. You do not need to remove it.
+
+If **Input Monitoring** or **Accessibility** shows OJD as allowed but OJD reads no controller after an update, remove OJD from the list and add it again. In **System Settings** > **Privacy & Security**, select the entry, click the minus button, then click the plus button and choose **OpenJoystickDriver** in **Applications**.
 
 ### Update from an Earlier Alpha
 

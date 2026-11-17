@@ -59,6 +59,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- After an update of the Xbox USB driver with a controller connected, OJD reads the installed version from the line `systemextensionsctl list` marks `[activated enabled]`. Before, it read the first line, which macOS fills with the replaced version until the controller reconnects or the Mac restarts, so **Repair Xbox USB Driver** came back after every repair (#18).
+- The migration at service start and `ojd migrate` report `LastUsed.plist` as current. Before, they reported it as failed with "has no apiVersion", logged that at each start, and `ojd migrate` exited with `E5009`.
 - A pad that the macOS Xbox 360 driver handles, such as the NITHO MLT-KRMA-K on its 2.4G receiver (`045E:028E`), reads its D-pad from buttons 12 to 15, its triggers from Z and Rz, and its sticks with Y up as positive. It had no D-pad, and its buttons and right stick were mismapped.
 - A DUALSHOCK 4 USB report with a zero sensor timestamp after another zero one counts as fresh, so the NITHO MLT-KRMA-K by cable in M mode, which never sets the timestamp, reads its input; before, it stayed in `waiting-for-neutral`.
 - A DUALSHOCK 4 or DualSense report whose sensor counter stays at zero dates its motion and touch samples by receipt, so the NITHO MLT-KRMA-K by cable in M mode reports motion with advancing times; before, every sample had the first report's time.

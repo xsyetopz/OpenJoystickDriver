@@ -1,6 +1,6 @@
 # Dispositions of open issues and pull requests (task 8.15)
 
-State as listed by `gh issue list --state open` (21 issues) and `gh pr list --state open` (7 pull requests) on 2026-11-11; #64 was added after. Task numbers come from `tasks.md`. Every row starts with `| #`; the done-check is `grep -c '^| #' dispositions.md`, which must print 29.
+State as listed by `gh issue list --state open` (21 issues) and `gh pr list --state open` (7 pull requests) on 2026-11-11; #64, #65, #67, #68 and #69 were added on 2026-11-18. Task numbers come from `tasks.md`. Every row starts with `| #`; the done-check is `grep -c '^| #' dispositions.md`, which must print 33.
 
 "Waiting on reporter" means the maintainer asked the reporter to try 0.6.0-alpha.2 and report back (comment of 2026-11-07), and no answer has come.
 
@@ -12,7 +12,7 @@ State as listed by `gh issue list --state open` (21 issues) and `gh pr list --st
 | #9 | Xbox 360 wireless (reporter jonasw8) | 8.7 | Waiting on reporter. | Do 8.7; ask for a retest on the current build. |
 | #11 | Logitech F310 in XInput mode, wrong button mapping (reporter qwertychouskie) | 8.14 | No VID:PID in the report. Bundled `046d-c21d.json` is the F310 XInput ID. | Post the 8.14 request; ask the reporter to confirm the ID from `ojd controller list`. |
 | #14 | Razer Wolverine V3 TE 1532:0A43 (reporter cbandras) | 8.10 | Waiting on reporter. | Do 8.10 (PR #39 is linked there). |
-| #18 | Xbox One pad 045E:02D1 (reporter cooltune) | 4.8, 9.17 | Covered by 9.17. | Do 9.17; close with the fix. |
+| #18 | Xbox One pad 045E:02D1 (reporter cooltune; eduardopuente on Discord) | 4.6a, 4.8, 9.17 | eduardopuente reads input wired on the alpha.3 tester build (1.30.13) after removing the old driver. The repair loop he hit is fixed by 4.6a (installed version read from the `[activated enabled]` line). The record has endpoints 0x81 and 0x01 and `SetConfiguration1BeforeClaim`. Bluetooth and the wireless adapter are not tested: the pad has no Bluetooth and he has no adapter. | Ask him to confirm on the next tester build that the banner leaves after one repair with the pad connected; close with that. |
 | #19 | Razer Wolverine V2 1532:0A29 (reporter zunium) | 8.14, 17.1 | Covered by 17.1. Bundled record `1532-0a29.json` exists. A commenter sees "Input active" with all controls at zero and "USB device unavailable; retrying". | Do 17.1; post the 8.14 request. |
 | #21 | Nacon Revolution X Pro 3285:0634 (reporter TanelLaas) | 8.14 | Bundled record `3285-0634.json` exists. USB drops after the handshake; the reporter suspects the 4 s keep-alive. | Post the 8.14 request. |
 | #22 | ZD Ultimate Legend 413D:2104 | 8.13 | The report of a 15% default dead zone does not hold: the default is 0 (`VirtualGamepadReportMapping.swift:16-21`, verified). The only 0.15 is `SleepGate.swift:4`, an idle-sleep gate, not a stick transfer. A later claim of a dead zone on the output path is not reconciled. | Do 8.13; answer the reporter with the line reference and ask for the capture that shows the dead zone. |
@@ -29,6 +29,8 @@ State as listed by `gh issue list --state open` (21 issues) and `gh pr list --st
 | #59 | 8BitDo Ultimate C Wired 2DC8:2027 (reporter nightmare2122) | 3.1, 3.4, 5.1 (3.2 and 3.3 relate) | Linux usbmon capture fetched and compared in `evidence/gip-2dc8-2027/usbmon-compare.md` (3.1 evidence). No bundled record. The reporter's alpha.2 test failed; no frames reach OJD. | Do 3.2 to 3.4 and 5.1; the compare file lists the differences to test. |
 | #62 | PowerA Spectra 20D6:4002 (reporter ElAscendido) | 8.9 | Last comment 2026-11-09. PR #50 is linked. | Do 8.9. |
 | #63 | GameSir G7 Pro WUCHANG dongle 3537:1022 (reporter dnfanjos) | 8.16, 9.15, 9.16, 9.18 (17.2, 17.3 relate) | Opened 2026-11-10, no comments. Covered by 8.16, 9.15, 9.16 and 9.18. | Do those tasks; 8.16 drafts the capture request for 3537:1022 and 3537:10A8. |
+| #65 | PowerA Advantage Plus Wired 20D6:206B (reporter, alpha.2) | 8.5 (same family as #53) | Opened 2026-11-14. The capture shows OJD's GIP writes and no input packet back; the light is on. No bundled `20d6-206b` record. | Ask for a retest on the alpha.3 tester build with `ojd controller capture`; add a record only from a capture with input. |
+| #67 | 8BitDo Ultimate Mini Wired 2DC8:2019 (agent-filed for @554512097, alpha.2, macOS 27.0.1) | 3.4 (with #59) | Opened 2026-11-15. Session active, no input, light off, `needsSetConfiguration`, endpoints 0x81 and 0x02. A bundled `2dc8-2019.plist` record exists on the branch; the report predates it. | Ask for a retest on the alpha.3 tester build; 3.4 holds the capture request. |
 
 ## Pull requests
 
@@ -42,6 +44,8 @@ State as listed by `gh issue list --state open` (21 issues) and `gh pr list --st
 | #56 | konnsim, Elite Series 1 | 8.3 (with 8.1) | Mergeable; checks mixed (failure and success). Covered by 8.1 and 8.3. | Do 8.1 and 8.3 and merge or replace. |
 | #57 | phil-bbs | 8.8 | Conflicting with `main`; check neutral. | Do 8.8. |
 | #64 | bdidier, XUSB receiver boundaries and reconnection | 8.7 | Targets a non-default branch; review skipped. Ported onto the branch: the 02A9 state-bytes decode test, the XboxXUSB presence-resend tuning rejection (in-range value, Receiver variant), and the receiver doc text. The truncated-report and reconnect cases already exist on the branch. Not ported: the PR's 02A9 evidence section (the branch already holds the PR #54 section). | Do 8.7. |
+| #68 | Draft, asynchronous DriverKit interrupt transfers (refs #18, #55) | 4.6a, 8.1 | Draft by request of its author until a signed build is tested. The zero interrupt timeout is on the branch (`2637e929d`). The #18 reporter's 02D1 reads input wired on the alpha.3 tester build without this PR. | Keep as draft; review the asynchronous transfer part against an #55 (02E3) result on the alpha.3 tester build. |
+| #69 | Draft, SET_CONFIGURATION bootstrap before extension discovery (refs #18, #55) | 4.6a, 8.1 | Draft. The 02D1 record sets `SetConfiguration1BeforeClaim` with endpoints 0x81 and 0x01, and the #18 reporter's 02D1 works wired on the alpha.3 tester build without the bootstrap. | Keep as draft; merge only if an unconfigured 02E3 or 02D1 on alpha.3 never shows interfaces. |
 
 ## Closed issue noted, not a row
 

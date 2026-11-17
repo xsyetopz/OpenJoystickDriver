@@ -48,7 +48,7 @@ The `com.openjoystickdriver.XboxUSBDevice` driver can only match the seven Micro
 
 ## Another App Reads a USB Controller Directly
 
-Steam or another app can open the USB interface of a controller exclusively. OJD never requests or seizes that interface. The controller detail and `ojd controller list` show **Used by** with the app name and process ID, as the USB host reports them. The state is informational, not an error. OJD opens the controller when the app releases it. Whether the host announces every release has not been confirmed on hardware.
+Steam, GOG Galaxy, a Chromium-based browser such as Google Chrome, or another app can open the USB interface of a controller exclusively. Users report each of these apps. Quit the app to give the controller to OJD. OJD never requests or seizes that interface. The controller detail and `ojd controller list` show **Used by** with the app name and process ID, as the USB host reports them. The state is informational, not an error. OJD opens the controller when the app releases it. Whether the host announces every release has not been confirmed on hardware.
 
 ## Some Apps Do Not Read the Virtual Gamepad
 

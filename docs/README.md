@@ -12,6 +12,7 @@ This directory holds the development notes and hardware-evidence records for Ope
 - [Environment Files](development/environment.md): The optional local environment file that repository scripts load.
 - [Experimental Controller Status](development/experimental-controllers.md): Entries with implementation work but incomplete hardware evidence.
 - [Implementation Status](development/implementation-status.md): The persistent application runtime and what it owns.
+- [Installer Format: DMG or Package](development/installer-format.md): Why OJD ships a DMG, and what a package could and could not do for a driver update.
 - [Public Endpoint Design](development/public-endpoint-design.md): The socket, handshake, and grants that let approved programs read controllers and drive a virtual gamepad.
 - [Menu-Bar and Settings UI Architecture](development/menu-bar-settings-architecture.md): The architecture decision for the menu-bar and settings UI.
 - [Reconcile A GitHub Release](development/releases.md): The procedure after the release commit and changelog are complete.
