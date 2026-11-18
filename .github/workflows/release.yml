@@ -31,7 +31,7 @@ jobs:
           echo "tag=$RELEASE_TAG_INPUT" >> "$GITHUB_OUTPUT"
 
       - name: Checkout release commit
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || format('refs/tags/{0}', steps.release.outputs.tag) }}
           fetch-depth: 0
@@ -73,7 +73,7 @@ jobs:
 
       # Each source is stored under its locked sha256 and checked on read, so a run downloads only changed sources.
       - name: Cache controller catalog sources
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache@v6.1.0
         with:
           path: .build/catalog-sources
           key: catalog-sources-${{ hashFiles('ControllerSources.lock.json') }}
@@ -126,7 +126,7 @@ jobs:
         run: just release-package "$RELEASE_TAG"
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: OpenJoystickDriver-${{ steps.release.outputs.tag }}
           path: .build/release-artifacts/*
@@ -134,7 +134,7 @@ jobs:
           retention-days: 14
 
       - name: Publish GitHub Release
-        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        uses: softprops/action-gh-release@v3.0.4
         with:
           tag_name: ${{ steps.release.outputs.tag }}
           name: OpenJoystickDriver ${{ steps.release.outputs.tag }}
