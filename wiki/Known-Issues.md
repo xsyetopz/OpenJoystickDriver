@@ -24,7 +24,7 @@ The Wii Remote pointer reaches a profile, not a game. The default and Generic [v
 
 ## Unplugging a USB Controller Can Crash the App
 
-Unplugging a USB controller or dongle while OJD runs may crash it. Reports come from macOS 27.0. The crash is intermittent and the cause unconfirmed. Open the app again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Crash When You Unplug a Controller](Troubleshooting.md#crash-when-you-unplug-a-controller).
+Unplugging a USB controller or dongle while OJD runs may crash it. Reports come from macOS 27.0, when every controller behind one USB hub disconnected at once. OJD keeps loaded the macOS plug-in that each controller uses, which removes the suspected cause. Whether that stops the crash is unconfirmed. If it crashes, open the app again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Crash When You Unplug a Controller](Troubleshooting.md#crash-when-you-unplug-a-controller).
 
 ## A Controller With No Location Takes Only a Model Override
 

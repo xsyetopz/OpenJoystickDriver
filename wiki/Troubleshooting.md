@@ -123,7 +123,7 @@ Copy the logs before you open OJD again.
 
 ### Crash When You Unplug a Controller
 
-Unplugging a USB controller or dongle may crash OJD, but not every time. Open OJD again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Known Issues](Known-Issues.md#unplugging-a-usb-controller-can-crash-the-app).
+Unplugging a USB controller or dongle may crash OJD, but not every time. OJD keeps each controller's macOS plug-in loaded to prevent it; whether that works is unconfirmed. Open OJD again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Known Issues](Known-Issues.md#unplugging-a-usb-controller-can-crash-the-app).
 
 ### Damaged Profile Files
 

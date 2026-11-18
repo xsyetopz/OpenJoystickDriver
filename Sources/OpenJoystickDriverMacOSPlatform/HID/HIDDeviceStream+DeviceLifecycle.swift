@@ -19,6 +19,8 @@ extension HIDDeviceStream {
     failingOnAccessDenial: Bool = false
   ) -> HIDDeviceEvent? {
     dispatchPrecondition(condition: .onQueue(.main))
+    // Every device object the manager made loaded a plug-in, admitted or not.
+    HIDPlugInBundles.holdPlugIns(of: IOHIDDeviceGetService(device))
     guard !AppleGameControllerSyntheticHID.isSynthetic(device: device) else { return nil }
     let deviceID = trackingID(for: device)
     guard
