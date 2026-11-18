@@ -49,7 +49,8 @@ extension DeviceManager {
     backend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [PhysicalInterfaceSignature]
+    interfaces: [PhysicalInterfaceSignature],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     let name = productName?.trimmingCharacters(in: .whitespacesAndNewlines)
     unboundDevices[key] = UnboundDeviceSnapshot(
@@ -60,7 +61,8 @@ extension DeviceManager {
       accessBackend: backend,
       reason: reason,
       rejectedCandidates: rejectedCandidates,
-      interfaces: interfaces.map(ProtocolBindingResult.InterfaceSummary.init)
+      interfaces: interfaces.map(ProtocolBindingResult.InterfaceSummary.init),
+      exclusiveOwner: exclusiveOwner
     )
     notifyServiceStatusChanged()
     print(

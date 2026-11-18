@@ -197,6 +197,9 @@ struct StatusReport: Encodable, Equatable {
     let connection: String
     /// Why the device has no binding; absent for a device that passes through.
     let reason: String?
+    /// The client that holds the device exclusively; absent unless the reason is `DeviceInUse`
+    /// and the host named the holder.
+    let owner: USBExclusiveOwner?
     /// The SDL_GameControllerDB line found for a HID pad that fails the descriptor contract; absent
     /// when none was.
     let inputMapping: InputMapping?
@@ -288,6 +291,7 @@ struct StatusReport: Encodable, Equatable {
         name: $0.name,
         connection: $0.connection,
         reason: $0.reason.rawValue,
+        owner: $0.exclusiveOwner,
         inputMapping: $0.rejectedCandidates.lazy.compactMap(\.inputMapping).first
       )
     }
@@ -298,6 +302,7 @@ struct StatusReport: Encodable, Equatable {
         name: nil,
         connection: $0.connection,
         reason: nil,
+        owner: nil,
         inputMapping: nil
       )
     }

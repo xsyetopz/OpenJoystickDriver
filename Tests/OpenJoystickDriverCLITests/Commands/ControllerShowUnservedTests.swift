@@ -99,6 +99,47 @@ struct ControllerShowUnservedTests {
     }
   }
 
+  private static let steam = USBExclusiveOwner(processID: 70602, name: "steam_osx")
+
+  private static func held(owner: USBExclusiveOwner?) -> ApplicationServiceUnboundDevice {
+    ApplicationServiceUnboundDevice(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      connection: "USB",
+      accessBackend: .rawUSB,
+      reason: .deviceInUse,
+      rejectedCandidates: [],
+      interfaces: [],
+      exclusiveOwner: owner
+    )
+  }
+
+  @Test
+  func deviceInUseNamesItsHolder() async throws {
+    let named = USBExclusiveOwner.heldMessage(for: Self.steam, localize: CLILocalized.text)
+    let result = try await Self.show([Self.held(owner: Self.steam)])
+    #expect(result.standardOutput.contains(named))
+    #expect(result.standardOutput.contains("Used by steam_osx (process 70602)"))
+    #expect(!result.standardOutput.contains(CLILocalized.text("ui.controllers.deviceInUse")))
+
+    let json = try await Self.show([Self.held(owner: Self.steam)], ["--json"]).json()
+    let owner = try #require(json["owner"] as? [String: Any])
+    #expect(owner["name"] as? String == "steam_osx")
+    #expect(owner["processID"] as? Int == 70602)
+
+    let plain = try await Self.show([Self.held(owner: Self.steam)], ["--plain"])
+    #expect(plain.standardOutput.contains("owner\t70602\tsteam_osx\n"))
+  }
+
+  @Test
+  func deviceInUseWithoutHolderKeepsAnonymousSentence() async throws {
+    let result = try await Self.show([Self.held(owner: nil)])
+    #expect(result.standardOutput.contains(CLILocalized.text("ui.controllers.deviceInUse")))
+    #expect(!result.standardOutput.contains("Used by"))
+    let json = try await Self.show([Self.held(owner: nil)], ["--json"]).json()
+    #expect(json["owner"] == nil)
+  }
+
   @Test
   func deviceNeitherConnectedNorUnservedStillFails() async throws {
     let result = try await Self.show([Self.unbound(.noProtocolMatch)], identity: "3537:9999")

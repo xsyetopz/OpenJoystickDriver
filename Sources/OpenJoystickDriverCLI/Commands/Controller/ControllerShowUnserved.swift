@@ -18,6 +18,9 @@ struct UnservedControllerReport: Encodable, Equatable {
   let draftCommand: String?
   /// The command that captures the packets; absent unless the reason is `NoProtocolMatch`.
   let captureCommand: String?
+  /// The client that holds the device exclusively; absent unless the reason is `DeviceInUse` and
+  /// the host named the holder.
+  let owner: USBExclusiveOwner?
 
   /// The sentence that says why, in the language of the terminal; not part of the output.
   let explanation: String
@@ -26,7 +29,7 @@ struct UnservedControllerReport: Encodable, Equatable {
 
   /// The keys of the output.
   private enum CodingKeys: String, CodingKey {
-    case vendorID, productID, connection, accessBackend, reason, draftCommand, captureCommand
+    case vendorID, productID, connection, accessBackend, reason, draftCommand, captureCommand, owner
   }
 
   /// Describes `device`.
@@ -38,7 +41,8 @@ struct UnservedControllerReport: Encodable, Equatable {
     reason = device.reason.rawValue
     draftCommand = device.draftCommand
     captureCommand = device.captureCommand
-    explanation = CLILocalized.text(device.reason.explanationKey)
+    owner = device.exclusiveOwner
+    explanation = device.explanation(localize: CLILocalized.text)
     nextStep = CLILocalized.text(device.reason.nextStepKey)
   }
 
@@ -54,6 +58,7 @@ struct UnservedControllerReport: Encodable, Equatable {
           ["reason", CommandLineName.kebab(reason)],
           draftCommand.map { ["draft-command", $0] },
           captureCommand.map { ["capture-command", $0] },
+          owner.map { ["owner", $0.processID.map { "\($0)" } ?? "", $0.name] },
         ].compactMap { $0 }
       )
     case .human:

@@ -102,6 +102,31 @@ struct KebabStateOutputTests {
   }
 
   @Test
+  func deviceInUseNamesItsHolderInStatusOutput() async throws {
+    let held = ApplicationServiceUnboundDevice(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      connection: "USB",
+      accessBackend: .rawUSB,
+      reason: .deviceInUse,
+      rejectedCandidates: [],
+      interfaces: [],
+      exclusiveOwner: USBExclusiveOwner(processID: 70602, name: "steam_osx")
+    )
+    let service = try FakeService(devices: [], unboundDevices: [held])
+    let human = await runStatus(service, [])
+    let plain = await runStatus(service, ["--plain"])
+    let json = try await runStatus(service, ["--json"]).json()
+    let devices = try #require(json["unboundDevices"] as? [[String: Any]])
+    let owner = try #require(devices.first?["owner"] as? [String: Any])
+
+    #expect(human.standardOutput.contains("Used by steam_osx (process 70602)"))
+    #expect(!human.standardOutput.contains(CLILocalized.text("ui.controllers.deviceInUse")))
+    #expect(plain.standardOutput.contains("owner\t3537:1010\t70602\tsteam_osx\n"))
+    #expect(owner["name"] as? String == "steam_osx")
+  }
+
+  @Test
   func interfaceContractMismatchExplainedWithNextStepInHumanOutputOnly() async throws {
     let unbound = ApplicationServiceUnboundDevice(
       vendorID: 0x3537,

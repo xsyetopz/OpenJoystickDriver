@@ -80,7 +80,12 @@ extension DeviceManager {
       "[DeviceManager] USB device \(device.serviceID) refused the configuration read: "
         + "\(ownerNote); left unclaimed until it re-enumerates or the host reports no owner"
     )
-    recordUnreadableConfiguration(device, reason: .deviceInUse, interfaces: interfaces)
+    recordUnreadableConfiguration(
+      device,
+      reason: .deviceInUse,
+      interfaces: interfaces,
+      exclusiveOwner: USBExclusiveOwner(registryValue: owner)
+    )
     return .ignored
   }
 
@@ -142,7 +147,8 @@ extension DeviceManager {
   private func recordUnreadableConfiguration(
     _ device: USBTransportDevice,
     reason: ProtocolBindingReason,
-    interfaces: [PhysicalInterfaceSignature]
+    interfaces: [PhysicalInterfaceSignature],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     recordUnboundDevice(
       .usb(device.serviceAddress),
@@ -153,7 +159,8 @@ extension DeviceManager {
       backend: DeviceAccessBackend(route: device.route),
       reason: reason,
       rejectedCandidates: [],
-      interfaces: interfaces
+      interfaces: interfaces,
+      exclusiveOwner: exclusiveOwner
     )
   }
 }

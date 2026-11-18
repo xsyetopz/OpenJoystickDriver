@@ -88,6 +88,30 @@ struct USBHeldDeviceTests {
     await manager.stop()
   }
 
+  /// The snapshot names the parsed holder, whether the device or interface 0 reports it, and
+  /// names none when the host reports no owner.
+  @Test
+  func refusedReadRecordsParsedOwner() async {
+    let steam = USBExclusiveOwner(processID: 70602, name: "steam_osx")
+    for provider in [
+      makeProvider(owner: "pid 70602, steam_osx"),
+      makeProvider(owner: nil, interfaceOwner: "pid 70602, steam_osx"),
+    ] {
+      let manager = makeManager(provider)
+      var enumeration = USBEnumerationTracker()
+      _ = await poll(1, manager, provider, &enumeration)
+      #expect(await manager.unboundDeviceDescriptions().map(\.exclusiveOwner) == [steam])
+      await manager.stop()
+    }
+
+    let provider = makeProvider(owner: nil)
+    let manager = makeManager(provider)
+    var enumeration = USBEnumerationTracker()
+    _ = await poll(1, manager, provider, &enumeration)
+    #expect(await manager.unboundDeviceDescriptions().map(\.exclusiveOwner) == [nil])
+    await manager.stop()
+  }
+
   /// The unbound device carries the product string the transport observed, and none when the
   /// string is missing or blank.
   @Test(

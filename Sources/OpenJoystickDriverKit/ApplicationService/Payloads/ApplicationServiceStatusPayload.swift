@@ -19,6 +19,9 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   public let rejectedCandidates: [ProtocolBindingResult.RejectedCandidate]
   /// Class facts of the interfaces observed when the device was rejected.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
+  /// The client that holds the device exclusively; nil unless ``reason`` is
+  /// ``ProtocolBindingReason/deviceInUse`` and the host named the holder.
+  public let exclusiveOwner: USBExclusiveOwner?
 
   /// Creates the description from its values.
   public init(
@@ -29,11 +32,13 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
     accessBackend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [ProtocolBindingResult.InterfaceSummary]
+    interfaces: [ProtocolBindingResult.InterfaceSummary],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     self.vendorID = vendorID
     self.productID = productID
     self.name = name
+    self.exclusiveOwner = exclusiveOwner
     self.connection = connection
     self.accessBackend = accessBackend
     self.reason = reason
@@ -77,6 +82,21 @@ extension ApplicationServiceUnboundDevice {
       ? "ojd controller capture \(identity) --duration 10 --json > capture.jsonl" : nil
   }
 
+  /// The sentence that says why OJD does not serve the device.
+  ///
+  /// A device in use whose holder is known names the holder with
+  /// ``USBExclusiveOwner/heldMessage(for:localize:)``; every other case uses the reason's own
+  /// sentence.
+  ///
+  /// - Parameter localize: Returns the catalog text of a key.
+  /// - Returns: The localized sentence.
+  public func explanation(localize: (String) -> String) -> String {
+    guard reason == .deviceInUse, let exclusiveOwner else {
+      return localize(reason.explanationKey)
+    }
+    return USBExclusiveOwner.heldMessage(for: exclusiveOwner, localize: localize)
+  }
+
   /// Creates the description from the service's unbound-device snapshot.
   package init(snapshot: UnboundDeviceSnapshot) {
     self.init(
@@ -87,7 +107,8 @@ extension ApplicationServiceUnboundDevice {
       accessBackend: snapshot.accessBackend,
       reason: snapshot.reason,
       rejectedCandidates: snapshot.rejectedCandidates,
-      interfaces: snapshot.interfaces
+      interfaces: snapshot.interfaces,
+      exclusiveOwner: snapshot.exclusiveOwner
     )
   }
 }

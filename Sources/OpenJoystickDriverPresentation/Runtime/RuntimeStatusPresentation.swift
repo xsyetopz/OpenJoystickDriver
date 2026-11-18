@@ -220,7 +220,7 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
       device.reason == .noControllerLinked
       ? OJDLocalized.string("ui.controllers.wirelessReceiver") : device.name ?? identity
     connection = device.connection
-    explanation = OJDLocalized.string(device.reason.explanationKey)
+    explanation = device.explanation(localize: OJDLocalized.string)
     nextStep = OJDLocalized.string(device.reason.nextStepKey)
     reason = device.reason
     modelID = ControllerModelID(vendorID: device.vendorID, productID: device.productID)

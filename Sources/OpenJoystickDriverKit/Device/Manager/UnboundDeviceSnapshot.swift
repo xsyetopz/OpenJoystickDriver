@@ -16,6 +16,9 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   public let rejectedCandidates: [ProtocolBindingResult.RejectedCandidate]
   /// The interfaces observed for the device.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
+  /// The client that holds the device exclusively; nil unless the reason is
+  /// ``ProtocolBindingReason/deviceInUse`` and the host named the holder.
+  public let exclusiveOwner: USBExclusiveOwner?
 
   /// Creates a snapshot from the observed device and its binding decision.
   public init(
@@ -26,7 +29,8 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
     accessBackend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [ProtocolBindingResult.InterfaceSummary]
+    interfaces: [ProtocolBindingResult.InterfaceSummary],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     self.vendorID = vendorID
     self.productID = productID
@@ -36,6 +40,7 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
     self.reason = reason
     self.rejectedCandidates = rejectedCandidates
     self.interfaces = interfaces
+    self.exclusiveOwner = exclusiveOwner
   }
 
   /// The binding decision as a ``ProtocolBindingResult``.

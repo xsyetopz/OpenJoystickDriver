@@ -32,7 +32,7 @@ The [Xbox USB driver](Glossary.md#terms) matches only the seven USB IDs in Apple
 
 ## Another App Reads a USB Controller Directly
 
-Steam, GOG Galaxy, Chrome, or another app can open a controller's USB interface exclusively. Quit the app to give the controller to OJD. The controller's details and `ojd controller list` show **Used by** with the app name. That is not an error. OJD takes the controller back when the app lets go.
+Steam, GOG Galaxy, Chrome, or another app can open a controller's USB interface exclusively. Quit the app to give the controller to OJD. While the app holds it, OJD does not serve the controller, so `ojd controller list` leaves it out. `ojd status` lists it under unserved devices with **Used by** and the app name, as do the Controllers page and the device's details in the app, and `ojd controller show VVVV:PPPP` prints the same sentence. When the host names no app, they say another program is using the controller. That is not an error. OJD takes the controller back when the app lets go.
 
 ## Some Apps Don't Read the Virtual Gamepad
 

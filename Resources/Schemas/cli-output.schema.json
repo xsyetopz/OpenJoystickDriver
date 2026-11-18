@@ -894,6 +894,10 @@
           "description": "Why OJD does not serve the device.",
           "$ref": "report.schema.json#/$defs/bindingReason"
         },
+        "owner": {
+          "description": "The client that holds the device exclusively; present only for a device in use whose holder the host named.",
+          "$ref": "#/$defs/sharedExclusiveOwner"
+        },
         "accessBackend": {
           "description": "How OJD reaches the device.",
           "enum": ["HID", "RawUSB", "USBExtension", "GATT"]
@@ -4558,6 +4562,10 @@
               },
               "name": {
                 "type": "string"
+              },
+              "owner": {
+                "description": "The client that holds the device exclusively; present only for a device in use whose holder the host named.",
+                "$ref": "#/$defs/sharedExclusiveOwner"
               },
               "reason": {
                 "$ref": "report.schema.json#/$defs/bindingReason"

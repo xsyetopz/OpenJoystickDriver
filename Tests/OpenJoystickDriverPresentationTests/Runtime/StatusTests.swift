@@ -343,6 +343,32 @@ struct StatusTests {
   }
 
   @Test
+  func unservedDeviceInUseNamesItsHolder() {
+    let held = ApplicationServiceUnboundDevice(
+      vendorID: 0x2DC8,
+      productID: 0x310A,
+      connection: "USB",
+      accessBackend: .rawUSB,
+      reason: .deviceInUse,
+      rejectedCandidates: [],
+      interfaces: [],
+      exclusiveOwner: USBExclusiveOwner(processID: 70602, name: "steam_osx")
+    )
+    let presentation = RuntimeStatusPresentation(
+      payload: ApplicationServiceStatusPayload(
+        inputRead: .granted,
+        inputInject: .granted,
+        connectedDevices: [],
+        unboundDevices: [held],
+        userSpaceVirtualDeviceEnabled: true,
+        userSpaceVirtualDeviceStatus: .backend("ready")
+      )
+    )
+    let explanation = presentation.unservedDevices.first?.explanation
+    #expect(explanation?.hasPrefix("Used by steam_osx (process 70602).") == true)
+  }
+
+  @Test
   func controllersPageListsUnservedDeviceWithSentenceOfItsReason() {
     func unbound(_ reason: ProtocolBindingReason) -> ApplicationServiceUnboundDevice {
       ApplicationServiceUnboundDevice(

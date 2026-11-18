@@ -47,7 +47,7 @@ Each [connection](Glossary.md#terms) has its own ID. A controller over USB and o
 - With a dongle, the problem may be the dongle. Try another controller mode.
 - If the app shows **OpenJoystickDriver cannot reach its service**, run `ojd service start`, then `ojd status`.
 - If SDL games see no controllers, allow **Input Monitoring** and **Accessibility**, then reopen OJD. This fix is untested.
-- If the controller shows "Used by" and an app name, that app has it. OJD takes it back when the app lets go.
+- If `ojd status` or the Controllers page lists the controller as unserved with "Used by" and an app name, that app has it, and `ojd controller list` leaves it out. OJD takes it back when the app lets go.
 - If a control seems stuck, or the status shows **Needs attention**, let go of all controls, then run `ojd status --json`.
 
 ### Check from the Terminal
