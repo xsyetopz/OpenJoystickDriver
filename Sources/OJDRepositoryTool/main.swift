@@ -22,7 +22,6 @@ private let usage = """
       --out <directory>
     OJDRepositoryTool facts
     OJDRepositoryTool kebab <value>...
-    OJDRepositoryTool mask-image <png> <frame> <keep>...
     OJDRepositoryTool format-json <file>...
     OJDRepositoryTool to-plist <file.json>...
     OJDRepositoryTool format-plist <file.plist>...
@@ -36,11 +35,6 @@ private let usage = """
   domainCodePrefixes (the start of the codes of each error domain) and domainAreas (the en-US name
   of the area of each error domain). kebab prints one JSON object that maps
   each value to its CommandLineName.kebab spelling. Neither prints problems and both exit 0.
-  mask-image rewrites a `screencapture -R <frame>` PNG so that every pixel outside all <keep>
-  rectangles is transparent and every pixel inside one is unchanged. Each rectangle is
-  x,y,width,height in global points, and each <keep> lies inside <frame>. The pixels per point
-  are the image size over the frame size. It prints nothing and exits 0, or 64 for an image it
-  cannot read or write.
   format-json rewrites each file in the record file text of OrderedJSON.formatted(), keeping the
   order of keys and the text of numbers. It prints nothing and exits 0, or 64 for a file that is
   not JSON or cannot be read or written.
@@ -230,10 +224,6 @@ private func document(_ arguments: [String]) throws -> [String: Any]? {
 
 do {
   let arguments = Array(CommandLine.arguments.dropFirst())
-  if arguments.first == "mask-image" {
-    try MaskImage.run(Array(arguments.dropFirst()))
-    exit(0)
-  }
   if arguments.first == "format-json" {
     try formatJSON(Array(arguments.dropFirst()))
     exit(0)

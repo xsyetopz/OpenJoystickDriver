@@ -12,8 +12,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from Scripts.Quality import repository_tool
-
 PROJECT_DIR = Path(__file__).resolve().parents[2]
 GUI_DIR = Path(__file__).resolve().parent
 APP = Path("/Applications/OpenJoystickDriver.app")
@@ -60,8 +58,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="just shots-capture",
         description=(
-            "Capture the screen rectangle of each app window with screencapture -R "
-            "into .ojd-shots/<timestamp>/."
+            "Capture each app window alone with screencapture -l, without the desktop "
+            "or other apps behind it, into .ojd-shots/<timestamp>/."
         ),
     )
     choice = parser.add_mutually_exclusive_group(required=True)
@@ -74,7 +72,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help=(
             "every main menu, the Activate Profile submenu and the status item menu, "
-            "each with its open submenu in one image"
+            "each menu window in its own image"
         ),
     )
     choice.add_argument(
@@ -265,11 +263,6 @@ def without_other_menus(
     return [window for window in windows if window["id"] not in others]
 
 
-def screen_rectangle(window: dict) -> str:
-    values = [window[key] for key in ("x", "y", "width", "height")]
-    return ",".join(f"{value:g}" for value in values)
-
-
 def require_english_ui() -> None:
     for domain in (BUNDLE_ID, "-g"):
         result = subprocess.run(
@@ -335,8 +328,10 @@ def bring_forward(
         sleep(min(FRONT_POLL_SECONDS, max(0.0, deadline - clock())))
 
 
-def capture_rectangle(window: dict, destination: Path) -> None:
-    run(["screencapture", "-x", "-R", screen_rectangle(window), str(destination)])
+def capture_window(window: dict, destination: Path) -> None:
+    # -l draws the window alone over transparency, so nothing behind it, such as the
+    # desktop or another app's private content, reaches the image.
+    run(["screencapture", "-x", "-o", f"-l{window['id']}", str(destination)])
     if not destination.is_file() or destination.stat().st_size == 0:
         raise CaptureError(
             f"screencapture wrote no image to {destination}: grant Screen Recording"
@@ -351,7 +346,7 @@ def shoot(
     clock: Callable[[], float] = time.monotonic,
     sleep: Callable[[float], None] = time.sleep,
 ) -> None:
-    capture_rectangle(bring_forward(pid, kind, timeout, clock, sleep), destination)
+    capture_window(bring_forward(pid, kind, timeout, clock, sleep), destination)
     print(destination)
 
 
@@ -399,35 +394,6 @@ def menu_windows(pid: int, windows: list[dict]) -> list[dict]:
         for window in windows
         if window["pid"] == pid and window["layer"] == MENU_LAYER
     ]
-
-
-def union_rectangle(windows: list[dict]) -> dict:
-    if not windows:
-        raise CaptureError("no window to take a rectangle from")
-    left = min(window["x"] for window in windows)
-    top = min(window["y"] for window in windows)
-    right = max(window["x"] + window["width"] for window in windows)
-    bottom = max(window["y"] + window["height"] for window in windows)
-    return {"x": left, "y": top, "width": right - left, "height": bottom - top}
-
-
-def mask_tool() -> Path:
-    try:
-        return repository_tool.binary()
-    except repository_tool.ToolError as error:
-        raise CaptureError(str(error)) from error
-
-
-def keep_menu_windows(menus: list[dict], frame: dict, destination: Path) -> None:
-    run(
-        [
-            str(mask_tool()),
-            "mask-image",
-            str(destination),
-            screen_rectangle(frame),
-            *(screen_rectangle(menu) for menu in menus),
-        ]
-    )
 
 
 def menu_signature(windows: list[dict]) -> list[tuple]:
@@ -513,9 +479,9 @@ def shoot_menu(
             raise CaptureError(
                 covered_message(f"the {target.name} menu", covering, "once it opened")
             )
-        frame = union_rectangle(menus)
-        capture_rectangle(frame, destination)
-        keep_menu_windows(menus, frame, destination)
+        # The window list runs front to back, so the first menu is the one opened last:
+        # the submenu the target names, or the only menu.
+        capture_window(menus[0], destination)
         print(destination)
     except CaptureError:
         try:
@@ -566,8 +532,6 @@ def capture(args: argparse.Namespace) -> int:
     menus = args.all or args.menus
     if areas or panes:
         require_english_ui()
-    if menus:
-        mask_tool()
     main_was_open, settings_tab = read_state()
     folder = make_folder()
     sidebar = None

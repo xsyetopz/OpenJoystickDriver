@@ -35,6 +35,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- `./Scripts/ojd shots capture` captures each window alone with `screencapture -l`, over transparency, so the desktop and other apps never reach an image. `--menus` captures the front menu window alone, the submenu the target names or the only menu.
 - Each controller row of the menu bar item shows the controller's name, its battery level, the profile in force (with the app that selected it) and `Paused` for a paused controller, and the menu refreshes when another app comes to the front. The driver extension banner names the controllers that need the extension.
 - The `E5001` message for an unsupported `apiVersion` ends with "run `ojd migrate` to convert", after the file, the version found and the supported version.
 - `ojd migrate` reports a store JSON file with no `apiVersion` as `failed` with the reason "has no apiVersion", where it reported it `foreign`; the run exits with a failure status after it has processed every file.
@@ -54,6 +55,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Removed
 
+- `OJDRepositoryTool mask-image`, which window-only capture replaces.
 - **BREAKING:** the `idle` property of a record, which the `idle` property of a mode replaces, and the binding reason `IdleIdentity`, which `NoControllerLinked` replaces.
 - **BREAKING:** the `appID` property of a profile's `applicationScope`, which `appIDs` replaces.
 - The properties that held prose and no data: `rationale` of a protocol description, the `notes` of the catalog rules and of the crosswalk, `$comment` in the schemas, and the system audit caveat of the support report. The facts they stated are in `wiki/Controller-Records.md` and `docs/development/xpad-import.md`.
