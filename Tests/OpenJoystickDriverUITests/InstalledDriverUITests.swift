@@ -22,7 +22,13 @@ final class InstalledDriverUITests: XCTestCase {
     guard
       listing.contains(where: { $0.contains(activeLine) && $0.contains("activated enabled") })
     else {
-      throw XCTSkip("macOS does not list \(activeLine) as activated enabled:\n\(listing)")
+      throw XCTSkip(
+        """
+        macOS does not list \(activeLine) as activated enabled. Run just diagnose-driver-ui, which \
+        passes the listing the test runner cannot read:
+        \(listing)
+        """
+      )
     }
     let app = XCUIApplication(url: appURL)
     app.launchArguments += ["-AppleLanguages", "(en-US)", "-AppleLocale", "en_US"]
