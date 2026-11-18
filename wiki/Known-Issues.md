@@ -2,10 +2,6 @@
 
 Current OpenJoystickDriver (OJD) bugs and limits, with a workaround for each.
 
-## Rumble Does Not Reach Two Identical Controllers
-
-Two controllers with the same ID get no rumble from games or **System Settings**. Rumble from **Input Test** works. The cause is unknown.
-
 ## Two Controllers With One USB Serial Number
 
 Two pads may share an ID and serial, such as `057E:2009` with `000000000001`. OJD gives each its own [virtual gamepad](Glossary.md#terms). The first pad to connect keeps the plain identity. The second pad's identity includes its USB port, so another port may look like a different controller. Pads may swap identities after a replug.

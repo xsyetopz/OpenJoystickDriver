@@ -103,7 +103,7 @@ Input Test has its own **Rumble** and **Lighting** groups. They talk to the cont
 
 ### Identical Controllers
 
-Known issue: two controllers with the same ID get no rumble from games or System Settings. Input Test rumble still works. See [Known Issues](Known-Issues.md#rumble-does-not-reach-two-identical-controllers).
+Two controllers with the same ID each get their own virtual gamepad, with its own serial number and LocationID, so a game's rumble reaches only the controller it was sent to.
 
 ## Further Reading
 
