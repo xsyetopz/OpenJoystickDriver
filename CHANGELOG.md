@@ -105,6 +105,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Removed
 
+- The swift-bedrock build tool and its `BuildTools` package. The repository owns its `justfile`, `.just/` recipes and configs: `Scripts/Quality/swift_guard.py` runs `just guard` (strict manifest settings, XCTest outside UI tests, file-wide suppressions, foreign tools, the Xcode base configuration), `Scripts/Quality/compile_commands.py` writes `compile_commands.json` for clang-tidy, and the Xcode base configuration is `Config/Base.xcconfig`.
 - The Contributor License Agreement and its pull request check. Contributions come in under MPL-2.0.
 - `OJDRepositoryTool mask-image`, which window-only capture replaces.
 - **BREAKING:** the `idle` property of a record, which the `idle` property of a mode replaces, and the binding reason `IdleIdentity`, which `NoControllerLinked` replaces.

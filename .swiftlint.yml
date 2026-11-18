@@ -1,4 +1,4 @@
-# Managed by swift-bedrock, for SwiftLint 0.65.1. swift-format owns layout, so
+# For SwiftLint 0.65.1. swift-format owns layout, so
 # SwiftLint checks meaning only. These rules fight swift-format output and stay off:
 # trailing_comma, contrasted_opening_brace, conditional_returns_on_newline, opening_brace,
 # vertical_parameter_alignment, closure_end_indentation, multiline_parameters.

@@ -1,20 +1,15 @@
-# Every bedrock repo shares this file. Each language adds `.just/<language>.just`,
-# so `just <task>` runs the task for every language the repo has. Put project
-# recipes in `project.just`; a recipe there named `project-<task>`, such as
-# `project-verify`, runs after the languages' <task>.
+# Each language has `.just/<language>.just`, so `just <task>` runs the task for every language the
+# repository has. Project recipes live in `project.just`; a recipe there named `project-<task>`,
+# such as `project-verify`, runs after the languages' <task>.
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-mod? typescript ".just/typescript.just"
-mod? rust ".just/rust.just"
-mod? swift ".just/swift.just"
-mod? cpp ".just/cpp.just"
-mod? jvm ".just/jvm.just"
-mod? go ".just/go.just"
+mod swift ".just/swift.just"
+mod cpp ".just/cpp.just"
 
 import? "project.just"
 
-languages := "typescript rust swift cpp jvm go"
+languages := "swift cpp"
 
 # List the recipes.
 default:
@@ -42,7 +37,7 @@ lint-fix: lint-markdown-fix (each "lint-fix")
 # Run the tests.
 test: (each "test")
 
-# Report what the linters cannot see: suppressions, foreign tools, and drift.
+# Report what the linters cannot see: suppressions, foreign tools, and lost strictness.
 guard: guard-base (each "guard")
 
 # Run every check CI runs.
@@ -56,9 +51,7 @@ each recipe:
     #!/usr/bin/env bash
     set -euo pipefail
     for language in {{ languages }}; do
-        if [[ -f ".just/$language.just" ]]; then
-            {{ just_executable() }} "$language::{{ recipe }}"
-        fi
+        {{ just_executable() }} "$language::{{ recipe }}"
     done
     # project.just extends a task with a recipe named project-<task>.
     case " $({{ just_executable() }} --summary) " in

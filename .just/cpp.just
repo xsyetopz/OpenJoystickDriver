@@ -1,11 +1,11 @@
-# Managed by swift-bedrock. SwiftPM and Xcode build and test the C++ targets, so
-# this file formats and lints them. Put project recipes in project.just.
+# The C, C++, and Objective-C checks. SwiftPM and Xcode build and test the C++ targets, so these
+# recipes format and lint them. Project recipes go in project.just.
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 set working-directory := ".."
 
 llvm := `if command -v brew >/dev/null && [[ -d "$(brew --prefix llvm 2>/dev/null)" ]]; then echo "$(brew --prefix llvm)/bin/"; fi`
-bedrock := "swift run --quiet --package-path BuildTools swift-bedrock"
+env := "Scripts/with-env.sh"
 
 # Install LLVM, for clang-format and clang-tidy, and xmake when a project uses it.
 setup:
@@ -25,19 +25,19 @@ typecheck:
 
 # Run clang-tidy over each translation unit SwiftPM or xmake builds, with its flags.
 lint:
-    {{ bedrock }} compile-commands
+    {{ env }} python3 Scripts/Quality/compile_commands.py
     {{ llvm }}run-clang-tidy -quiet -p . -clang-tidy-binary {{ llvm }}clang-tidy -clang-apply-replacements-binary {{ llvm }}clang-apply-replacements
 
 # Apply the clang-tidy fixes it can, then format; `just lint` reports the rest.
 lint-fix:
-    {{ bedrock }} compile-commands
+    {{ env }} python3 Scripts/Quality/compile_commands.py
     -{{ llvm }}run-clang-tidy -quiet -p . -clang-tidy-binary {{ llvm }}clang-tidy -clang-apply-replacements-binary {{ llvm }}clang-apply-replacements -fix
     just cpp::format
 
 # SwiftPM runs the tests that cover the C++ targets.
 test:
 
-# swift-bedrock guard covers the C++ targets.
+# The Swift guard covers the C++ targets.
 guard:
 
 # Run every C++ check CI runs.

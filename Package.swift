@@ -230,16 +230,10 @@ let package = Package(
   ]
 )
 
-// Warnings are errors in every target of this package. The setting is per target, unlike a global
-// `-Xswiftc -warnings-as-errors`, which would also reach dependencies: swift-argument-parser 1.8.2
-// uses its own deprecated `_errorLabel`.
-for target in package.targets {
-  target.swiftSettings = (target.swiftSettings ?? []) + [.treatAllWarnings(as: .error)]
-}
-
-// >>> swift-bedrock
-// Managed by swift-bedrock: Swift 6, the upcoming features, strict memory safety,
-// and warnings as errors, for every target.
+// Swift 6, the upcoming features, strict memory safety, and warnings as errors, for every target.
+// Warnings are errors per target, unlike a global `-Xswiftc -warnings-as-errors`, which would also
+// reach dependencies: swift-argument-parser 1.8.2 uses its own deprecated `_errorLabel`. The
+// `just guard` check (Scripts/Quality/swift_guard.py) keeps these settings on every target.
 package.swiftLanguageModes = [.v6]
 for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
   target.swiftSettings =
@@ -254,13 +248,10 @@ for target in package.targets where ![.system, .binary, .plugin].contains(target
       .treatAllWarnings(as: .error),
     ]
 }
-// <<< swift-bedrock
 
-// >>> swift-bedrock-cxx
-// Managed by swift-bedrock: C++20, and C++ interop for every Swift target, since a
-// target that imports a C++ module, even through another target, needs it.
+// C++20, and C++ interop for every Swift target, since a target that imports a C++ module, even
+// through another target, needs it.
 package.cxxLanguageStandard = .cxx20
 for target in package.targets where [.regular, .executable, .test].contains(target.type) {
   target.swiftSettings = (target.swiftSettings ?? []) + [.interoperabilityMode(.Cxx)]
 }
-// <<< swift-bedrock-cxx

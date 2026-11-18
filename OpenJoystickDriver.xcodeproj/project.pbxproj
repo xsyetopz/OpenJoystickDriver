@@ -55,7 +55,7 @@
 		0A0000000000000000000210 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Sources/OpenJoystickDriver/App/PrivacyInfo.xcprivacy; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000207 /* Host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Host.entitlements; path = Sources/OpenJoystickDriver/App/Host.entitlements; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000209 /* OpenJoystickDriver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenJoystickDriver.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3D20C0000000000000000A1 /* Bedrock.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Bedrock.xcconfig; path = Config/Bedrock.xcconfig; sourceTree = "<group>"; };
+		B3D20C0000000000000000A1 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = Config/Base.xcconfig; sourceTree = "<group>"; };
 		0A0000000000000000000221 /* OpenJoystickDriverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OpenJoystickDriverUITests.swift; path = Tests/OpenJoystickDriverUITests/OpenJoystickDriverUITests.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000223 /* InstalledDriverUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InstalledDriverUITests.swift; path = Tests/OpenJoystickDriverUITests/InstalledDriverUITests.swift; sourceTree = SOURCE_ROOT; };
 		0A0000000000000000000222 /* OpenJoystickDriverUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenJoystickDriverUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,7 +87,7 @@
 		0A0000000000000000000301 = {
 			isa = PBXGroup;
 			children = (
-				B3D20C0000000000000000A1 /* Bedrock.xcconfig */,
+				B3D20C0000000000000000A1 /* Base.xcconfig */,
 				0A0000000000000000000208 /* OpenJoystickDriver */,
 				0A0000000000000000000302 /* App */,
 				0A0000000000000000000306 /* UITests */,
@@ -268,7 +268,7 @@
 /* Begin XCBuildConfiguration section */
 		0A0000000000000000000711 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3D20C0000000000000000A1 /* Bedrock.xcconfig */;
+			baseConfigurationReference = B3D20C0000000000000000A1 /* Base.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -285,7 +285,7 @@
 		};
 		0A0000000000000000000712 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3D20C0000000000000000A1 /* Bedrock.xcconfig */;
+			baseConfigurationReference = B3D20C0000000000000000A1 /* Base.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

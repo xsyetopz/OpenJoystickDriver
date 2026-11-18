@@ -1,4 +1,3 @@
-# >>> bedrock
 * text=auto eol=lf
 *.bat text eol=crlf
 *.cmd text eol=crlf
@@ -22,17 +21,13 @@
 *.otf binary
 *.woff binary
 *.woff2 binary
-# <<< bedrock
 
-# >>> swift-bedrock
 *.pbxproj text linguist-generated
 Package.resolved text linguist-generated
 *.xcscheme text
 *.m diff=objc
 *.mm diff=objc
-# <<< swift-bedrock
 
-# >>> swift-bedrock-cxx
 *.c diff=cpp
 *.cc diff=cpp
 *.cpp diff=cpp
@@ -41,4 +36,3 @@ Package.resolved text linguist-generated
 *.hh diff=cpp
 *.hpp diff=cpp
 *.hxx diff=cpp
-# <<< swift-bedrock-cxx

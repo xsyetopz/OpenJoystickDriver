@@ -1,7 +1,6 @@
 version: 2
 updates:
 
-# >>> bedrock
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -9,9 +8,7 @@ updates:
     groups:
       github-actions:
         patterns: ["*"]
-# <<< bedrock
 
-# >>> swift-bedrock
   - package-ecosystem: swift
     directory: /
     schedule:
@@ -19,4 +16,3 @@ updates:
     groups:
       swift:
         patterns: ["*"]
-# <<< swift-bedrock

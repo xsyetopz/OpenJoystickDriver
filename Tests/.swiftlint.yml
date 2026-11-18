@@ -1,4 +1,4 @@
-# Managed by swift-bedrock. Tests are not a public surface; the rest of the root
+# Tests are not a public surface; the rest of the root
 # configuration applies.
 disabled_rules:
   - missing_docs

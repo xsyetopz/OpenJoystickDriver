@@ -1,5 +1,5 @@
 ---
-# Managed by swift-bedrock, for clang-tidy 23.1 and C++20. Each alias is off, so
+# For clang-tidy 23.1 and C++20. Each alias is off, so
 # a finding reports once, under its primary check. clang-tidy lists every
 # clang-analyzer-* check as an alias too, so the Static Analyzer is off.
 Checks:
