@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "“%1$@” makrosu “%2$@” profilinden kaldırıldı.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Mod paketlerini doğrula, yükle, listele veya kaldır.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Mod paketi, bir mod.plist manifest dosyası ile Controllers, Profiles ve VirtualDevices klasörlerini içeren bir klasördür. Yüklü paketler ~/Library/Application Support/OpenJoystickDriver/Packages içinde bulunur. Çalışan servis, bu klasör değiştiğinde değişikliği uygular. Bu komutlar servisi gerektirmez.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "Mod paketi, bir mod.plist manifest dosyası ile Controllers, Profiles, VirtualDevices ve Protocols klasörlerini içeren bir klasördür. Yüklü paketler ~/Library/Application Support/OpenJoystickDriver/Packages içinde bulunur. Çalışan servis, bu klasör değiştiğinde değişikliği uygular. Bu komutlar servisi gerektirmez.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "mod.plist içeren bir paket klasörü.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "Mevcut sürümün sayfasını aç";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "Şimdi daha yeni bir sürüm ara";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "Zaman zaman daha yeni bir sürüm ara";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "Uygulama her başladığında daha yeni bir sürüm ara";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "Güncellemeleri ararken ön sürümleri de kat";
 /* Tooltip of the Start at Login switch in the General settings. */

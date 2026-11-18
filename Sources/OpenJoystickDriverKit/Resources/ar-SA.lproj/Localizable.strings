@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "تمت إزالة الماكرو «%1$@» من «%2$@».";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "تحقق من حزم المودات أو ثبّتها أو اعرضها أو أزلها.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "حزمة المود مجلد يحتوي على ملف البيان mod.plist ومجلدات Controllers وProfiles وVirtualDevices. تقع الحزم المثبّتة في ~/Library/Application Support/OpenJoystickDriver/Packages. تطبّق الخدمة قيد التشغيل التغيير عندما يتغيّر هذا المجلد. لا تحتاج هذه الأوامر إلى الخدمة.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "حزمة المود مجلد يحتوي على ملف البيان mod.plist ومجلدات Controllers وProfiles وVirtualDevices وProtocols. تقع الحزم المثبّتة في ~/Library/Application Support/OpenJoystickDriver/Packages. تطبّق الخدمة قيد التشغيل التغيير عندما يتغيّر هذا المجلد. لا تحتاج هذه الأوامر إلى الخدمة.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "مجلد حزمة يحتوي على mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "فتح صفحة الإصدار المتاح";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "البحث عن إصدار أحدث الآن";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "البحث عن إصدار أحدث من حين إلى آخر";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "التحقق من وجود إصدار أحدث عند كل بدء تشغيل للتطبيق";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "تضمين الإصدارات التمهيدية عند البحث عن التحديثات";
 /* Tooltip of the Start at Login switch in the General settings. */

@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "Macro “%1$@” eliminada de “%2$@”.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validar, instalar, listar o quitar paquetes de mods.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Un paquete de mods es una carpeta con un manifiesto mod.plist y las carpetas Controllers, Profiles y VirtualDevices. Los paquetes instalados están en ~/Library/Application Support/OpenJoystickDriver/Packages. El servicio en ejecución aplica un cambio cuando esa carpeta cambia. Estos comandos no necesitan el servicio.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "Un paquete de mods es una carpeta con un manifiesto mod.plist y las carpetas Controllers, Profiles, VirtualDevices y Protocols. Los paquetes instalados están en ~/Library/Application Support/OpenJoystickDriver/Packages. El servicio en ejecución aplica un cambio cuando esa carpeta cambia. Estos comandos no necesitan el servicio.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "Una carpeta de paquete que contiene mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5578,8 +5578,8 @@
 "ui.help.viewUpdate" = "Abrir la página de la versión disponible";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "Buscar ahora una versión más reciente";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "Buscar de vez en cuando una versión más reciente";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "Buscar una versión más reciente cada vez que se inicia la app";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "Incluir versiones preliminares al buscar actualizaciones";
 /* Tooltip of the Start at Login switch in the General settings. */

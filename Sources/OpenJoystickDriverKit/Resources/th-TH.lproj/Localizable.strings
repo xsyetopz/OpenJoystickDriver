@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "ลบแมโคร “%1$@” ออกจาก “%2$@” แล้ว";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "ตรวจสอบ ติดตั้ง แสดงรายการ หรือลบแพ็กเกจม็อด";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "แพ็กเกจม็อดคือโฟลเดอร์ที่มีไฟล์ระบุรายการ mod.plist และโฟลเดอร์ Controllers, Profiles และ VirtualDevices แพ็กเกจที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Packages บริการที่กำลังทำงานจะใช้การเปลี่ยนแปลงเมื่อโฟลเดอร์นั้นเปลี่ยน คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "แพ็กเกจม็อดคือโฟลเดอร์ที่มีไฟล์ระบุรายการ mod.plist และโฟลเดอร์ Controllers, Profiles, VirtualDevices และ Protocols แพ็กเกจที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Packages บริการที่กำลังทำงานจะใช้การเปลี่ยนแปลงเมื่อโฟลเดอร์นั้นเปลี่ยน คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "โฟลเดอร์แพ็กเกจที่มี mod.plist";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "เปิดหน้าของรุ่นที่พร้อมใช้งาน";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "ค้นหารุ่นที่ใหม่กว่าตอนนี้";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "ค้นหารุ่นที่ใหม่กว่าเป็นครั้งคราว";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "ค้นหารุ่นที่ใหม่กว่าทุกครั้งที่เปิดแอป";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "รวมรุ่นก่อนเผยแพร่เมื่อตรวจหาการอัปเดต";
 /* Tooltip of the Start at Login switch in the General settings. */

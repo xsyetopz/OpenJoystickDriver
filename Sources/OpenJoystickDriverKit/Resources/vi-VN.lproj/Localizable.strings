@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "Đã xóa macro “%1$@” khỏi “%2$@”.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Xác thực, cài đặt, liệt kê hoặc gỡ các gói mod.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Gói mod là một thư mục có tệp kê khai mod.plist cùng các thư mục Controllers, Profiles và VirtualDevices. Các gói đã cài nằm trong ~/Library/Application Support/OpenJoystickDriver/Packages. Dịch vụ đang chạy áp dụng thay đổi khi thư mục đó thay đổi. Các lệnh này không cần dịch vụ.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "Gói mod là một thư mục có tệp kê khai mod.plist cùng các thư mục Controllers, Profiles, VirtualDevices và Protocols. Các gói đã cài nằm trong ~/Library/Application Support/OpenJoystickDriver/Packages. Dịch vụ đang chạy áp dụng thay đổi khi thư mục đó thay đổi. Các lệnh này không cần dịch vụ.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "Thư mục gói chứa mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "Mở trang của bản phát hành hiện có";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "Tìm ngay bản phát hành mới hơn";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "Thỉnh thoảng tìm bản phát hành mới hơn";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "Tìm bản phát hành mới hơn mỗi khi ứng dụng khởi động";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "Gồm cả bản tiền phát hành khi kiểm tra cập nhật";
 /* Tooltip of the Start at Login switch in the General settings. */

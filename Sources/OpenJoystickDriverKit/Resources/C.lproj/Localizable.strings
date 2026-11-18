@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "Removed the macro '%1$@' from '%2$@'.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validate, install, list, or remove mod packages.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "A mod package is a folder with a mod.plist manifest and Controllers, Profiles, and VirtualDevices folders. Installed packages live in ~/Library/Application Support/OpenJoystickDriver/Packages. The running service applies a change when that folder changes. These commands do not need the service.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "A mod package is a folder with a mod.plist manifest and Controllers, Profiles, VirtualDevices, and Protocols folders. Installed packages live in ~/Library/Application Support/OpenJoystickDriver/Packages. The running service applies a change when that folder changes. These commands do not need the service.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "A package folder that holds mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5578,8 +5578,8 @@
 "ui.help.viewUpdate" = "Open the page of the available release";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "Look for a newer release now";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "Look for a newer release from time to time";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "Check for a newer release each time the app starts";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "Include prerelease versions when checking for updates";
 /* Tooltip of the Start at Login switch in the General settings. */

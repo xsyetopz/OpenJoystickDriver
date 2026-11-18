@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "Makro ‘%1$@’ dihapus dari ‘%2$@’.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validasi, instal, daftar, atau hapus paket mod.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Paket mod adalah folder dengan manifes mod.plist serta folder Controllers, Profiles, dan VirtualDevices. Paket terinstal berada di ~/Library/Application Support/OpenJoystickDriver/Packages. Layanan yang berjalan menerapkan perubahan saat folder itu berubah. Perintah ini tidak memerlukan layanan.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "Paket mod adalah folder dengan manifes mod.plist serta folder Controllers, Profiles, VirtualDevices, dan Protocols. Paket terinstal berada di ~/Library/Application Support/OpenJoystickDriver/Packages. Layanan yang berjalan menerapkan perubahan saat folder itu berubah. Perintah ini tidak memerlukan layanan.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "Folder paket yang berisi mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "Buka halaman rilis yang tersedia";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "Cari rilis yang lebih baru sekarang";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "Cari rilis yang lebih baru sesekali";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "Cari rilis yang lebih baru setiap kali app dimulai";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "Sertakan versi prarilis saat memeriksa pembaruan";
 /* Tooltip of the Start at Login switch in the General settings. */

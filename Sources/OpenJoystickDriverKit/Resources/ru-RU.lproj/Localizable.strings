@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "Макрос «%1$@» удалён из профиля «%2$@».";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Проверка, установка, просмотр и удаление пакетов модов.";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Пакет мода — это папка с манифестом mod.plist и папками Controllers, Profiles и VirtualDevices. Установленные пакеты находятся в ~/Library/Application Support/OpenJoystickDriver/Packages. Работающая служба применяет изменение, когда эта папка меняется. Этим командам служба не нужна.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "Пакет мода — это папка с манифестом mod.plist и папками Controllers, Profiles, VirtualDevices и Protocols. Установленные пакеты находятся в ~/Library/Application Support/OpenJoystickDriver/Packages. Работающая служба применяет изменение, когда эта папка меняется. Этим командам служба не нужна.";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "Папка пакета, содержащая mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "Открыть страницу доступного релиза";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "Проверить наличие нового релиза сейчас";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "Время от времени проверять наличие нового релиза";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "Проверять наличие нового релиза при каждом запуске приложения";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "Включать предварительные версии при проверке обновлений";
 /* Tooltip of the Start at Login switch in the General settings. */

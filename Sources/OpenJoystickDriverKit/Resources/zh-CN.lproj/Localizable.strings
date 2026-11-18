@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "已从“%2$@”中移除宏“%1$@”。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "验证、安装、列出或移除模组包。";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "模组包是一个文件夹，包含 mod.plist 清单以及 Controllers、Profiles 和 VirtualDevices 文件夹。已安装的包位于 ~/Library/Application Support/OpenJoystickDriver/Packages。该文件夹变化时，运行中的服务会应用更改。这些命令不需要服务。";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "模组包是一个文件夹，包含 mod.plist 清单以及 Controllers、Profiles、VirtualDevices 和 Protocols 文件夹。已安装的包位于 ~/Library/Application Support/OpenJoystickDriver/Packages。该文件夹变化时，运行中的服务会应用更改。这些命令不需要服务。";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "包含 mod.plist 的包文件夹。";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "打开可用版本的页面";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "立即查找更新的版本";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "不时查找更新的版本";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "每次启动应用时查找更新的版本";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "检查更新时包含预发布版本";
 /* Tooltip of the Start at Login switch in the General settings. */

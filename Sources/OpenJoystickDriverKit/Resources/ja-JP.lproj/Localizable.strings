@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "マクロ「%1$@」を「%2$@」から削除しました。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "MOD パッケージを検証、インストール、一覧表示、削除します。";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "MOD パッケージは、mod.plist マニフェストと、Controllers、Profiles、VirtualDevices フォルダを含むフォルダです。インストール済みのパッケージは ~/Library/Application Support/OpenJoystickDriver/Packages にあります。実行中のサービスは、そのフォルダが変わると変更を反映します。これらのコマンドにサービスは不要です。";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "MOD パッケージは、mod.plist マニフェストと、Controllers、Profiles、VirtualDevices、Protocols フォルダを含むフォルダです。インストール済みのパッケージは ~/Library/Application Support/OpenJoystickDriver/Packages にあります。実行中のサービスは、そのフォルダが変わると変更を反映します。これらのコマンドにサービスは不要です。";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "mod.plist を含むパッケージフォルダ。";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "利用可能なリリースのページを開く";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "新しいリリースを今すぐ確認する";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "新しいリリースを時々確認する";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "アプリの起動時に毎回、新しいリリースを確認する";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "アップデートの確認にプレリリース版を含める";
 /* Tooltip of the Start at Login switch in the General settings. */

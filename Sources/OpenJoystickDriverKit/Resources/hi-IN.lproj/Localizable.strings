@@ -2857,8 +2857,8 @@
 "cli.macro.remove.done" = "मैक्रो “%1$@” को “%2$@” से हटाया गया।";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "मॉड पैकेज को सत्यापित, इंस्टॉल, सूचीबद्ध या हटाएँ।";
-/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "मॉड पैकेज एक फ़ोल्डर है जिसमें mod.plist मैनिफ़ेस्ट और Controllers, Profiles व VirtualDevices फ़ोल्डर होते हैं। इंस्टॉल किए गए पैकेज ~/Library/Application Support/OpenJoystickDriver/Packages में रहते हैं। वह फ़ोल्डर बदलने पर चालू सेवा बदलाव लागू करती है। इन आदेशों को सेवा की ज़रूरत नहीं है।";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles, VirtualDevices and Protocols, and the path stay as written. */
+"cli.mod.group.discussion" = "मॉड पैकेज एक फ़ोल्डर है जिसमें mod.plist मैनिफ़ेस्ट और Controllers, Profiles, VirtualDevices व Protocols फ़ोल्डर होते हैं। इंस्टॉल किए गए पैकेज ~/Library/Application Support/OpenJoystickDriver/Packages में रहते हैं। वह फ़ोल्डर बदलने पर चालू सेवा बदलाव लागू करती है। इन आदेशों को सेवा की ज़रूरत नहीं है।";
 /* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
 "cli.mod.group.folder" = "mod.plist वाला पैकेज फ़ोल्डर।";
 /* Help text of the NAME argument of 'ojd mod remove'. */
@@ -5577,8 +5577,8 @@
 "ui.help.viewUpdate" = "उपलब्ध रिलीज़ का पृष्ठ खोलें";
 /* Tooltip of the Check Now button in the General settings. */
 "ui.help.checkUpdates" = "अभी नया रिलीज़ खोजें";
-/* Tooltip of the switch in the General settings that checks for updates by itself. */
-"ui.help.checkUpdatesAutomatically" = "समय-समय पर नया रिलीज़ खोजें";
+/* Tooltip of the switch in the General settings that checks for updates each time the app starts. */
+"ui.help.checkUpdatesAutomatically" = "ऐप शुरू होने पर हर बार नया रिलीज़ खोजें";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "अपडेट खोजते समय प्री-रिलीज़ संस्करण शामिल करें";
 /* Tooltip of the Start at Login switch in the General settings. */
