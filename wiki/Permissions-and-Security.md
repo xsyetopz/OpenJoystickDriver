@@ -1,6 +1,6 @@
 # Permissions and Security
 
-Learn which macOS permissions OpenJoystickDriver needs and how it protects your Mac.
+See which macOS permissions OpenJoystickDriver asks for, why, and how the app protects your Mac.
 
 ## Contents
 
@@ -13,62 +13,119 @@ Learn which macOS permissions OpenJoystickDriver needs and how it protects your 
 OpenJoystickDriver works with System Integrity Protection (SIP) and Apple Mobile File Integrity (AMFI) turned on.
 
 > [!WARNING]
-> Never turn off SIP or AMFI for OJD. No OJD feature needs it. If a guide says to do so, do not follow it.
+> Never turn off SIP or AMFI for OpenJoystickDriver. No feature needs it.
 
 ### Signing
 
 Apple notarized the release app, and the maintainer signed it. Tester builds use a Developer ID signature and are also notarized.
 
-### Xbox USB driver
+### Xbox USB Driver
 
-The [Xbox USB driver](Glossary.md#terms), `com.openjoystickdriver.XboxUSBDevice`, is a driver. It runs in user space, not in the kernel. macOS asks for your approval before it starts. OJD uses it only for Xbox One and Xbox Series controllers on USB. The [virtual gamepad](Glossary.md#terms) comes from the app, not from the driver. For more information, see [Xbox USB driver](Connecting-Controllers.md).
+The [Xbox USB driver](Glossary.md#terms) reads Xbox One and Xbox Series controllers that you connect with a USB cable. It runs outside the macOS kernel, and macOS asks for your approval first. No other controller uses it. The app shows the [virtual gamepad](Glossary.md#terms) to games. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
 
-### Data On Your Mac
+### Data on Your Mac
 
-OJD stores this data locally:
+- [Profiles](Glossary.md#terms) are in `~/Library/Application Support/OpenJoystickDriver/`. Only your user can read the folder.
+- Logs are in `~/Library/Logs/OpenJoystickDriver/`.
+- Settings are in the `com.openjoystickdriver` preferences domain.
 
-- [Profiles](Glossary.md#terms) in `~/Library/Application Support/OpenJoystickDriver/`. Only your user can read the folder.
-- Logs in `~/Library/Logs/OpenJoystickDriver/`. Each start of OJD clears them.
-- Settings in the `com.openjoystickdriver` preferences domain.
-
-The only network request in the OJD source is the update check. It runs when you click **Check Now** and contacts GitHub. OJD does not send controller data. OJD has no automatic update.
+The only network request is the update check. It contacts GitHub when you click **Check Now**, and at launch if **Check for updates automatically** is on (off by default). The app sends no controller data and doesn't update itself.
 
 ### Endpoint Access
 
-The endpoint is a local socket that other programs can read controller input from. It is off until you run `ojd access enable`. Only programs that you grant with `ojd access grant` can use it, and a program needs a grant for each scope that it uses. The service reads the signature of each program that connects from the kernel, not from the program. A grant names that signature, by team ID or as Apple, so OJD refuses ad-hoc signed and unsigned programs. The grants are in `~/Library/Application Support/OpenJoystickDriver/AccessGrants.json`. Until the service stops, the endpoint remembers the programs that it refused in the last 24 hours, so that you can see them with `ojd access list`. For the commands, see [access](Command-Reference.md#access).
+The endpoint lets other programs on your Mac read controller input through a local socket. It's off until you click **Turn On** in the **Access** area or run `ojd access enable`. A program needs a grant for each kind of access it uses (`read` or `control`).
+
+A grant names the program's signature, by team ID or as Apple. Programs with an ad-hoc or no signature are refused. `ojd access list` shows programs refused in the last 24 hours.
+
+`ojd access web enable` adds a WebSocket on `127.0.0.1` for overlay pages. Pages use a token from `ojd access grant --token` and can't use `control`. See [access](Command-Reference.md#access).
 
 ### Support Report
 
-**Copy Support Report** copies a JSON report to the clipboard. OJD does not save it to disk. The report contains service status, virtual gamepad details, Input Monitoring state, build identity, and Apple game controller data. It contains product names of your devices. By its own privacy flags, it leaves out serial numbers, file paths, packet data, and HID location IDs. Read the report before you share it.
+**Help** > **Copy Support Report** copies a JSON report to the clipboard. The app doesn't save it. It holds service status, virtual gamepad details, permission state, the build version, and your devices' product names. It leaves out serial numbers, file paths, packet data, and location IDs. Read it before you share it.
 
 ## Permissions
 
-OpenJoystickDriver asks for macOS permissions only when you request them, and each permission has one purpose.
+OpenJoystickDriver asks for a permission only when you ask it to. It requests nothing at launch. A request begins when you do one of these:
 
-### When OJD Asks
+- Click **Request...** or **Open System Settings** in the **Access** area.
+- Click **Grant Access** in the **Permission needed** banner.
+- Run `ojd permission request`.
 
-OJD requests nothing at start. A request starts only when you do one of these actions:
+### Permissions the App Uses
 
-- Click **Request...** or **Open System Settings** on a permission row in the **Access** area.
-- Click **Grant Access** in the **Permission needed** banner of the main window.
-- Run the `permissions request` command.
-
-OJD reads the permission state every second. A request result is not treated as a grant. OJD reads the real state again.
-
-### Permission List
-
-| Permission | Purpose | Needed |
+| Permission | What it's for | When you need it |
 | --- | --- | --- |
-| Input Monitoring | Read reports from a physical controller | Always |
-| Accessibility | Publish the virtual gamepad | Always |
-| Keyboard & pointer | Send keyboard, mouse, or scroll events from a profile, including system keys and typed text | Only when a profile does so |
-| Notifications | Show notifications | Optional |
+| Input Monitoring | Reads input from a controller | Always |
+| Accessibility (Device Control and Data Access on macOS 27) | Shows your controllers to games | Always |
+| Keyboard & pointer | Sends keyboard, mouse, and scroll events, including system keys and typed text | When a profile does this |
+| Notifications | Shows alerts | Optional |
 
-Open application, open URL, Mission Control, and Run Shortcut need no permission of their own. The Shortcuts app may ask its own questions. OJD does not use private macOS interfaces for system actions: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote are out of scope. Not checked on hardware: which prompts these actions raise.
+Open application, open URL, Mission Control, and Run Shortcut need no permission of their own. Which prompts they raise is untested.
 
-### Which Process Holds Each Permission
+The app doesn't use the camera, the microphone, or Full Disk Access. The app uses Bluetooth only to disconnect a wireless controller and to connect a Switch 2 controller. You see no Bluetooth prompt at launch.
 
-macOS ties a permission to the process that calls the API. The OpenJoystickDriver service runs inside the app, so the app holds every permission in this table. The `ojd` command sends requests to the service and posts no events of its own.
+### Grant Input Monitoring and Accessibility
+
+- **What:** two switches in macOS System Settings.
+- **Why:** with **Input Monitoring**, OJD can read your controller. With **Accessibility**, OJD can hand the controller to games. Without both, games see nothing.
+- **When:** once, after you install OJD. Again if a new build asks.
+- **Who:** you. macOS lets only you turn these on. OJD can't do it for you.
+
+**Check first.** Open OJD and click **Access** in the sidebar. **Allowed** beside both means you're done.
+
+![The Access area in OJD. A red arrow points to Access in the sidebar. A second arrow points to Allowed, and the box explains Input Monitoring and Accessibility](../docs/screenshots/steps/access-permissions.png)
+
+**Turn them on:**
+
+1. In OJD, click **Grant Access** in the **Permission needed** banner. Or choose Apple menu > **System Settings**, then click **Privacy & Security**.
+2. Find the two rows. On macOS 27, **Accessibility** is called **Device Control and Data Access**.
+
+   ![Privacy & Security in System Settings. Red arrows point to Device Control and Data Access and to Input Monitoring](../docs/screenshots/steps/macos-privacy-list.png)
+
+3. Click **Input Monitoring**. Turn on **OpenJoystickDriver**. A blue switch means it's on.
+
+   ![The Input Monitoring page. A red arrow points to the OpenJoystickDriver switch](../docs/screenshots/steps/macos-input-monitoring.png)
+
+4. Click the back arrow. Click **Device Control and Data Access** (**Accessibility** on older macOS). Turn on **OpenJoystickDriver**.
+
+   ![The Device Control and Data Access page. A red arrow points to the OpenJoystickDriver switch](../docs/screenshots/steps/macos-device-control.png)
+
+5. Go back to OJD. If **Restart OpenJoystickDriver** appears in **Access**, click it.
+
+**Check:** **Access** shows **Allowed** twice.
+
+### If OpenJoystickDriver Isn't in the List
+
+macOS remembers its answer for each OJD build. An answer stored for an earlier build can make macOS refuse with no prompt and no list entry.
+
+**Add it by hand:** click **+** under the list, choose **OpenJoystickDriver** in **Applications**, and click **Open**. Then turn on its switch.
+
+**Or clear the stored answers,** then click **Grant Access** again. In Terminal, run:
+
+```sh
+tccutil reset ListenEvent com.openjoystickdriver
+tccutil reset PostEvent com.openjoystickdriver
+tccutil reset Accessibility com.openjoystickdriver
+```
+
+### Turn On Notifications
+
+Notifications are optional. They tell you when a controller connects or a profile switches.
+
+1. Choose OpenJoystickDriver > **Settings...**, then turn on a notification switch. Or click **Send Test Notification**.
+2. Click **Allow** in the macOS prompt.
+
+If you denied them before, click **Open Notification Settings**. Then turn on **Allow notifications**.
+
+![OpenJoystickDriver in Notifications settings. A red arrow points to the Allow notifications switch](../docs/screenshots/steps/macos-notifications.png)
+
+### Approve the Xbox USB Driver
+
+Only genuine Xbox One and Xbox Series controllers on a USB cable need it. The approval is in **General**, not in **Privacy & Security**. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
+
+### Details for Advanced Users
+
+The app holds every permission below. The `ojd` command posts no events.
 
 | Action | Permission it needs | Process that calls the API |
 | --- | --- | --- |
@@ -80,47 +137,13 @@ macOS ties a permission to the process that calls the API. The OpenJoystickDrive
 | MIDI output | None of its own | The app creates one virtual CoreMIDI source |
 | Speak | None of its own | The app, through `AVSpeechSynthesizer` |
 
-Before the app posts an event, it checks Post Event access. If the permission is missing, the action fails with a named error and posts nothing. No action sends an Apple Event, so no action in this table needs Automation access. `ojd permission` reads the permission from the service when the service runs, and from the `ojd` process when it does not. Not checked on hardware: which prompts these actions raise, and whether macOS attributes the permission of a `shortcuts` child process to the app.
+Post Event access is the macOS name for **Keyboard & pointer**. Without it, the action fails and posts nothing. `ojd permission list` reads the service's permissions when it runs, and its own when it doesn't.
 
-Not verified on hardware: the **Keyboard & pointer** row and the **Accessibility** row may use the same switch in **System Settings**.
-
-OJD does not use camera, microphone, or Full Disk Access permissions. It reads Bluetooth controllers as HID devices, so they need **Input Monitoring**. OJD uses Bluetooth only to disconnect a wireless controller, and to connect a Switch 2 controller over Bluetooth LE. OJD does not start the Bluetooth LE connection at launch unless macOS already granted Bluetooth access, so the app start shows no Bluetooth prompt. Whether macOS asks for Bluetooth permission for the disconnect is not verified.
-
-### Grant Input Monitoring and Accessibility
-
-1. Click **Grant Access** in the **Permission needed** banner. A **Permission Missing** row in the menu-bar menu opens the **Access** area at that permission.
-2. Turn on **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
-3. Repeat for **System Settings** > **Privacy & Security** > **Accessibility**.
-4. Click **Restart OpenJoystickDriver** in the **Access** area if it appears.
-
-Without **Input Monitoring**, Input Test shows **Input Monitoring permission required**. Without **Accessibility**, the virtual gamepad does not work.
-
-### OpenJoystickDriver Is Not in the List
-
-macOS adds OpenJoystickDriver to the **Input Monitoring** and **Accessibility** lists only when it has no answer stored for the app. An answer stored for an earlier build of the app can make macOS refuse the request without a prompt and without a list entry. Remove the stored answers, then click **Grant Access** again:
-
-```sh
-tccutil reset ListenEvent com.openjoystickdriver
-tccutil reset PostEvent com.openjoystickdriver
-tccutil reset Accessibility com.openjoystickdriver
-```
-
-You can also click **+** under the list and choose `/Applications/OpenJoystickDriver.app`.
-
-### Grant Notifications
-
-1. Open **Settings** and turn on a notification toggle, or click **Send Test Notification**.
-2. Click **Allow** in the macOS prompt.
-
-If you denied notifications before, click **Open Notification Settings**. The **Notifications** row in the **Access** area shows **Banners off** or **Sound off** when macOS turns those parts off.
-
-### Xbox USB Driver Approval
-
-The Xbox USB driver needs approval, but it is not a privacy permission. For more information, see [Xbox USB driver](Connecting-Controllers.md).
+Untested on hardware: whether macOS attributes a `shortcuts` process's permission to the app, and whether **Keyboard & pointer** and **Accessibility** share one switch.
 
 ## Further Reading
 
-- [Access area](Using-the-App.md#access-area)
-- [Controller not detected](Troubleshooting.md)
-- [Reporting a bug](Reporting-a-Bug.md)
-- [Uninstalling OpenJoystickDriver](Updating-and-Uninstalling.md)
+- [Access Area](Using-the-App.md#access-area)
+- [Game Does Not See the controller](Troubleshooting.md#game-does-not-see-the-controller)
+- [Reporting a Bug](Reporting-a-Bug.md)
+- [Updating and Uninstalling](Updating-and-Uninstalling.md)

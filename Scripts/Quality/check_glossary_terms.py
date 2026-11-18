@@ -37,12 +37,8 @@ KEPT: dict[str, str] = {
     "error.E5007.virtualDevice.transport": "transport names the key of the file",
 }
 WIKI_KEPT: dict[tuple[str, str], str] = {
-    ("Building-from-Source.md", "virtual device"): "names the entitlement of that name",
-    ("Building-from-Source.md", "DriverKit"): "quotes the message of the build tool",
     ("Controller-Records.md", "transport"): "names the transport key of a record",
     ("Error-Codes.md", "transport"): "names the socket and WebSocket of the endpoint",
-    ("Known-Issues.md", "transport"): "names the Transport property macOS reports",
-    ("Playing-Games.md", "transport"): "names the Transport property macOS reports",
     (
         "Start-Set-Up-Several-Macs.md",
         "system extension",

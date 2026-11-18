@@ -1,30 +1,28 @@
-# Start: add support for a controller
+# Start: Add Support for a Controller
 
-Teach OJD a controller that it does not know, and install the result.
+Teach OJD a controller it does not know.
 
-## Before you begin
+## Before You Begin
 
-Install OJD, grant access, and connect the controller. See [Start: play a game with a controller](Start-Play-a-Game.md). Check [Supported controllers](Supported-Controllers.md) first: your controller may already work.
+Install OJD and connect the controller. See [Start: Play a Game with a Controller](Start-Play-a-Game.md). Check [Supported Controllers](Supported-Controllers.md) first. This page uses Terminal. A record is a small file that describes what a controller sends.
 
-## Steps
+## Add a Record
 
-1. Start the service: run `ojd service start`.
-2. Find the controller: run `ojd controller list`. The controller shows with its VID:PID. See [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id).
-3. Capture a draft. Run `ojd record draft CONTROLLER > record.plist`, and for 10 seconds press every button and move each stick, trigger, and the D-pad. If the controller is in the SDL database, run `ojd record draft CONTROLLER --from-sdl > record.plist` instead.
-4. Open `record.plist`. Check each control against the bytes that the command printed, and correct the file. See [Draft a record from a connected controller](Controller-Records.md#draft-a-record-from-a-connected-controller).
-5. Check the file: run `ojd record validate record.plist`.
-6. Install it: run `ojd record install record.plist`. The running service applies it. You do not need to unplug the controller.
-7. In the **Controllers** area, select the controller and click **Open Input Test...** to see each control.
-8. Check which records apply: run `ojd record list`.
+1. Run `ojd service start`.
+2. Run `ojd controller list` to find the controller's ID. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
+3. Run `ojd record draft CONTROLLER > record.plist`, then press every button and move every stick, trigger, and the D-pad for 10 seconds. If the controller is in the SDL database, add `--from-sdl`.
+4. Correct `record.plist`. See [Draft a Record from a Connected Controller](Controller-Records.md#draft-a-record-from-a-connected-controller).
+5. Run `ojd record validate record.plist`, then `ojd record install record.plist`.
+6. Click **Controllers**, select the controller, and click **Open Input Test**.
 
-To remove your record, run `ojd record remove VVVV:PPPP`. In the app, **Install Record or Mod...** in the **File** menu installs a file too (needs the **All Controls** interface).
+Run `ojd record list` to see which records apply. Run `ojd record remove VVVV:PPPP` to remove yours.
 
-## Share the result
+## Share the Result
 
-[Reporting a bug](Reporting-a-Bug.md) lists what to include. To pack records into one folder, see [Writing controller mods](Writing-Controller-Mods.md).
+See [Reporting a Bug](Reporting-a-Bug.md) and [Writing Controller Mods](Writing-Controller-Mods.md).
 
-## Further reading
+## Further Reading
 
-- [Controller records](Controller-Records.md)
-- [Testing a controller](Testing-a-Controller.md)
-- [Supported controllers](Supported-Controllers.md)
+- [Controller Records](Controller-Records.md)
+- [Testing a Controller](Testing-a-Controller.md)
+- [Supported Controllers](Supported-Controllers.md)

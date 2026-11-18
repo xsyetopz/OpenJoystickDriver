@@ -1,44 +1,47 @@
-# WebRTC bridge
+# WebRTC Bridge
 
-Use `ojd-webrtc-bridge` to play a game on one Mac with a controller that is connected to another Mac.
+Play a game on one Mac with a controller plugged into another Mac.
 
-The bridge is a separate program. It sends the input of one controller over a WebRTC data channel to a [virtual gamepad](Glossary.md#terms) on the other Mac, and sends rumble back. The app, the service, and `ojd` do not include WebRTC code. The bridge gets only the access that you give it with `ojd access`.
+The bridge copies controller input from the first Mac to the second. The game sees a [virtual gamepad](Glossary.md#terms). Rumble from the game goes back to the first Mac, where the bridge prints it. It does not make the controller rumble.
 
-For the message formats, the sockets, and the limits, see the [WebRTC bridge reference](../docs/sdk/webrtc-bridge.md).
+The bridge is a separate program, `ojd-webrtc-bridge`, that you build and run in Terminal on both Macs. The app, the service, and `ojd` have no WebRTC code. The bridge can do only what you allow with `ojd access`.
+
+You need two Macs that can reach each other on one network, with OpenJoystickDriver on both.
+
+> [!WARNING]
+> Each Mac runs the bridge with a token, which works like a password. Keep it private. Anyone with a token has its access.
 
 ## Choose the Roles
 
-Each Mac runs one bridge, with one role.
+Each Mac runs one bridge with one role.
 
 | Role | Run it on | Token scope | What it does |
 | --- | --- | --- | --- |
-| `player` | The Mac with the controller | `Read` | Sends the input of one controller to the other Mac. It prints each rumble command that comes back. It does not make the controller rumble. |
-| `host` | The Mac that runs the game | `Control` | Shows the input as a virtual gamepad, and sends the rumble of the game back. |
+| `player` | The Mac with the controller | `Read` | Sends one controller's input to the other Mac. Prints each rumble command it gets back. |
+| `host` | The Mac that runs the game | `Control` | Shows the input as a virtual gamepad. Sends the game's rumble back. |
 
 ## Build the Bridge
 
-The bridge is not part of the app. Build it from the source tree:
-
-1. Open Terminal and go to the `Tools/WebRTCBridge` folder of the source tree.
+1. In Terminal, go to the `Tools/WebRTCBridge` folder of the source tree.
 2. Run `swift build -c release`. The first build downloads about 70 MB.
-3. The program is `.build/release/ojd-webrtc-bridge` in that folder.
+3. The program is `.build/release/ojd-webrtc-bridge`.
 
 ## Connect Two Macs
 
-You carry two lines of text between the Macs yourself, by any channel that you trust. Anyone who has both lines can try to join the data channel.
+The bridges find each other through two lines of text, an offer and an answer. Copy each line to the other Mac yourself, by a channel you trust. Anyone with both lines can try to join.
 
 1. On each Mac, turn on the endpoint: `ojd access enable`.
-2. On the player Mac, create a token: `ojd access grant --token bridge --scope read`. Keep the token that the command prints. It prints the token once.
-3. On the host Mac, create a token: `ojd access grant --token bridge --scope control`. Keep the token.
-4. On the player Mac, start the bridge: `OJD_TOKEN=TOKEN ojd-webrtc-bridge --role player`. Replace `TOKEN` with the token of the player Mac. The bridge prints its offer as one line.
-5. Copy the offer to the host Mac. Start the bridge there: `OJD_TOKEN=TOKEN ojd-webrtc-bridge --role host`. Replace `TOKEN` with the token of the host Mac. Paste the offer and press Return. The bridge prints its answer as one line.
+2. On the player Mac, create a token that lets the bridge read your controller: `ojd access grant --token bridge --scope read`. The command prints the token once. Keep it.
+3. On the host Mac, create a token that lets the bridge drive a virtual gamepad: `ojd access grant --token bridge --scope control`. Keep it.
+4. On the player Mac, start the bridge: `OJD_TOKEN=TOKEN ojd-webrtc-bridge --role player`. Replace `TOKEN` with the player token. The bridge prints its offer as one line.
+5. Copy the offer to the host Mac. Start the bridge there: `OJD_TOKEN=TOKEN ojd-webrtc-bridge --role host`. Replace `TOKEN` with the host token. Paste the offer and press Return. The bridge prints its answer as one line.
 6. Copy the answer to the player Mac, paste it, and press Return.
 
-When the data channel opens, each bridge connects to the endpoint of its Mac. The virtual gamepad appears on the host Mac. Stop each bridge with Control-C.
+When the link opens, each bridge connects to the local endpoint socket of its Mac. The virtual gamepad appears on the host Mac. Stop each bridge with Control-C.
 
 ## Use the Command Options
 
-This is the output of `ojd-webrtc-bridge --help`:
+Output of `ojd-webrtc-bridge --help`:
 
 ```text
 usage: ojd-webrtc-bridge --role host|player [--signal offer|answer] [--socket PATH]
@@ -49,21 +52,21 @@ The offer and the answer are one line each: the bridge prints its own on stdout 
 peer's from stdin. The player offers by default and the host answers.
 ```
 
-- `--role host|player`: Choose the role. This option is required.
-- `--signal offer|answer`: Choose which bridge makes the offer. The player offers and the host answers by default.
-- `--socket PATH`: Give the path of the endpoint socket. Without it, the bridge runs `ojd --json access status` to find the path.
-- `--token-name NAME`: Give the name of the token. The default is `bridge`.
-- `--controller ID`: Give the controller for the `player` role, as the ID from `ojd controller list`. Without it, the player uses the first controller that the endpoint reports.
-- `--persona Generic|SDLCompatible`: Choose how the virtual gamepad of the `host` role appears. The default is `Generic`.
-- `--ice-server URL`: Add a STUN or TURN server. You can repeat this option. Without it, the bridge uses only local addresses, which is enough for two Macs on one network.
+- `--role host|player`: Required.
+- `--signal offer|answer`: Choose which bridge offers. The player offers and the host answers by default.
+- `--socket PATH`: Path of the endpoint socket. Without it, the bridge runs `ojd --json access status`.
+- `--token-name NAME`: Token name. The default is `bridge`.
+- `--controller ID`: Controller ID from `ojd controller list`, for `player`. Without it, the player uses the first controller the endpoint reports.
+- `--persona Generic|SDLCompatible`: [Virtual gamepad kind](Glossary.md#terms) for `host`. `Generic` is the Generic HID gamepad. `SDLCompatible` is for Steam and SDL games. The default is `Generic`.
+- `--ice-server URL`: Add a STUN or TURN server. Repeat it for more. Without it, the bridge uses local addresses, enough for one network.
 
-The environment variable `OJD_TOKEN` must hold the token. The bridge refuses to start without it.
+`OJD_TOKEN` must hold the token, or the bridge refuses to start.
 
-## Fix a Problem
+## If the Bridge Does Not Work
 
-- **The bridge prints an `E1002` error.** The token does not have the scope of the role, or it is wrong. Create the token again with the right `--scope`, as in [Connect Two Macs](#connect-two-macs). See [Error codes](Error-Codes.md).
-- **The bridge cannot find the socket.** Run `ojd access status` and pass the path of the socket with `--socket`.
-- **The two Macs do not connect.** Both Macs must be on the same network, or you must give each bridge a STUN server with `--ice-server`.
+- `E1002`: the token is wrong or lacks the scope of the role. Create it again with the right `--scope`, as in [Connect Two Macs](#connect-two-macs). See [Error codes](Error-Codes.md).
+- Socket not found: run `ojd access status` and pass the path with `--socket`.
+- Macs do not connect: check that both are on one network, or give each bridge a STUN server with `--ice-server`.
 
 ## Further Reading
 

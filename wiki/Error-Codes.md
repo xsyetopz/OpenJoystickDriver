@@ -1,26 +1,20 @@
-# Error codes
+# Error Codes
 
-This page lists the stable error codes of OpenJoystickDriver (OJD), with the meaning of each code.
+These are the error codes of OpenJoystickDriver (OJD).
 
-## How codes work
+## How Codes Work
 
-Each code has the form `E` and four digits. The first digit gives the area:
+A code is `E` and four digits. The first digit gives the area:
 
-- `E1xxx` is the endpoint, through which a client can feed [virtual gamepads](Glossary.md#terms). A client of the endpoint gets the code in the `code` field of a `Status` line, whose `status` is `Failure`.
-- `E2xxx` is the command line.
-- `E3xxx` is remapping.
-- `E4xxx` is mod packages.
-- `E5xxx` is documents: the files and lines that OJD reads, such as a profile, a controller record, or a mod manifest.
+- `E1xxx`: the endpoint, through which a client can feed [virtual gamepads](Glossary.md#terms). Clients get it in the `code` field of a `Failure` status.
+- `E2xxx`: the command line.
+- `E3xxx`: remapping.
+- `E4xxx`: mod packages.
+- `E5xxx`: documents, such as a profile, a controller record, or a mod manifest.
 
-A code never changes its meaning.
-
-To look up a code offline, run `ojd explain E####`.
-
-Branch on the code in your program. The English message that comes with a code can change.
+A code keeps its meaning. The English message can change, so check the code. To look one up offline, run `ojd explain E####`.
 
 ## Codes
-
-The table is generated from the code catalog and the English text of OJD. The table lists every code.
 
 <!-- BEGIN GENERATED: error-codes -->
 | Code | Area | Meaning |
@@ -129,7 +123,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E5010 | Documents | A stored document is not an XML property list, or it holds a date or data value. The message names the file and the form or the key path. Save the file as an XML property list with plutil -convert xml1. |
 <!-- END GENERATED: error-codes -->
 
-## Further reading
+## Further Reading
 
 - [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md#read-the-endpoint)
 - [Troubleshooting](Troubleshooting.md)

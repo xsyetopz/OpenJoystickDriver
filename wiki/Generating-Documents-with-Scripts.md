@@ -1,29 +1,29 @@
-# Generating documents with scripts
+# Generating Documents with Scripts
 
-Write a JavaScript file that returns controller records, patches, [profiles](Glossary.md#terms), or [virtual gamepads](Glossary.md#terms), and let `ojd generate` check and write them as property list files.
+Use a script to make many similar documents, such as one record for each product of a controller family. Write a JavaScript file that returns controller records, patches, [profiles](Glossary.md#terms), or [virtual gamepads](Glossary.md#terms). `ojd generate` checks the result and writes property list files. For one controller, a [record or a patch](Support-Ladder.md) is simpler.
 
-Use a script when you must write many similar documents, for example one record for each product of a controller family. `ojd generate` is the only part of OpenJoystickDriver (OJD) that runs a script. The app, the service, and mod packages read documents only, so a script in a [mod package](Writing-Controller-Mods.md) is never run.
+`ojd generate` is the only part of OpenJoystickDriver (OJD) that runs a script. OJD never runs a script in a [mod package](Writing-Controller-Mods.md).
 
-## The generate function
+## The Generate Function
 
-The file must define a function named `generate` that takes no argument. It returns one document, or a list of documents. A document is an object with the same keys as the property list of its kind, and its `kind` key names the kind: `Controller`, `ControllerPatch`, `Profile`, or `VirtualDevice`.
+Define a function `generate` with no argument. It returns one document or a list. A document is an object with the keys of its property list. Its `kind` is one of `Controller`, `ControllerPatch`, `Profile`, or `VirtualDevice`.
 
-`ojd generate` refuses these results:
+`ojd generate` refuses:
 
 - `null`, no value, or a value that is not an object
-- an empty list, or a list with an item that is not an object
-- a document that holds `null` anywhere. A property list has no null value, so leave the key out.
-- a document that its reader refuses. The error names the document, the key path, and the rule.
+- an empty list, or a list with a non-object item
+- a document that holds `null` anywhere (leave the key out)
+- a document its reader refuses. The error names the document, key path, and rule.
 
-If one document fails, the command writes none of them.
+If one document fails, the command writes none.
 
-The script runs in a bare JavaScript context. It has no file, network, process, or timer API, so a call to `fetch` fails with a reference error. The context runs plain JavaScript, so a type annotation is a syntax error. The command reports a syntax error or a thrown exception with its message and its line number.
+The script runs in a bare JavaScript context with no file, network, process, or timer API. A call to `fetch` fails with a reference error. A type annotation is a syntax error. The command reports a syntax error or exception with its message and line number.
 
-A whole number that the script returns becomes an `<integer>` in the file, and a fractional number becomes a `<real>`. A hexadecimal literal such as `0x1209` is a whole number.
+A whole number becomes an `<integer>`. A fractional number becomes a `<real>`. A hexadecimal literal such as `0x1209` is a whole number.
 
-## The example script
+## The Example Script
 
-This script returns three controllers that share one input layout. Save it as `pads.js`.
+This script returns three controllers with one input layout. Save it as `pads.js`.
 
 ```javascript
 function generate() {
@@ -55,9 +55,9 @@ function generate() {
 }
 ```
 
-`1209` is a pid.codes test vendor ID. Use it only for testing, and use the real VID and PID of your controller in a file you share.
+`1209` is a pid.codes test vendor ID. Use it only for testing. In a file you share, use the real vendor and product numbers (VID and PID).
 
-## Run the script
+## Run the Script
 
 1. Print the documents without a file:
 
@@ -71,17 +71,17 @@ function generate() {
    ojd generate pads.js --output Controllers
    ```
 
-The command writes one file for each document, named as OJD names the same kind of file: `1209-0001.plist` for a controller. It creates the folder when it is missing.
+The command writes one file for each document, named as OJD names that kind of file, such as `1209-0001.plist`. It creates a missing folder.
 
-If a file with that name already exists, the command compares it with the new document. An equal file is reported as unchanged. A file with other content stops the command: it names the file and writes nothing. Pass `--replace` to overwrite such a file.
+An existing file with equal content is reported as unchanged. A file with other content stops the command, which names the file and writes nothing. Pass `--replace` to overwrite it.
 
-Two documents of one run that need the same file name are an error, and the command writes none of them.
+Two documents that need the same file name are an error, and the command writes none.
 
-## Set the time limit
+## Set the Time Limit
 
-The command runs the script in a helper process and ends the process when the script runs too long. The limit is 5 seconds. Use `--timeout SECONDS` to change it. A script that runs past the limit gives error `E2010` and writes no file.
+The script runs in a helper process with a 5 second limit. Use `--timeout SECONDS` to change it. A script past the limit gives error `E2010` and writes no file.
 
-## Further reading
+## Further Reading
 
 - [Command reference](Command-Reference.md#generate)
 - [Controller records](Controller-Records.md)

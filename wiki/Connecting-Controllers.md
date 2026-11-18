@@ -1,6 +1,6 @@
 # Connecting Controllers
 
-This page explains how USB, Bluetooth, and 2.4 GHz dongle connections differ for OpenJoystickDriver (OJD), how to read the VID:PID of your controller, and how the [Xbox USB driver](Glossary.md#terms) works.
+Connect a controller, find its ID, and set up the [Xbox USB driver](Glossary.md#terms) for Xbox controllers.
 
 ## Contents
 
@@ -11,92 +11,95 @@ This page explains how USB, Bluetooth, and 2.4 GHz dongle connections differ for
 
 ## Connection Types
 
-A controller can connect in more than one way. Each mode has its own VID:PID, and OJD treats each mode as a separate device. A controller that works in one mode may not work in another mode. For more information, see [Supported controllers](Supported-Controllers.md).
+A controller can reach your Mac by USB, Bluetooth, or a 2.4 GHz dongle. OJD treats each [connection](Glossary.md#terms) as a separate controller, because each has its own ID. A controller that works over one connection may not work over another. See [Supported Controllers](Supported-Controllers.md).
 
-### Modes
-
-| Mode | What OJD sees |
+| Connection | What OJD sees |
 | --- | --- |
-| USB | The controller, with the VID:PID of the wired mode. |
-| Bluetooth | The controller, with the VID:PID of the Bluetooth mode. |
-| 2.4 GHz dongle | The dongle, with its own VID:PID. |
+| USB | The controller, with the wired ID. |
+| Bluetooth | The controller, with the Bluetooth ID. |
+| 2.4 GHz dongle | The dongle, with its own ID. |
 
-Some controllers change their VID:PID when you change mode. For example, the 8BitDo Ultimate 2C Wireless uses `2DC8:310A` with its 2.4 GHz dongle in XInput mode. It uses `2DC8:301B` over Bluetooth, `2DC8:301D` wired in DInput mode and `2DC8:301C` with its HID receiver, which OJD treats as idle.
+Some controllers change ID when you change mode. A dongle is a separate device, so when you report a problem, give the dongle's ID. See [Reporting a Bug](Reporting-a-Bug.md).
 
-### Dongles
+### Connect Over Bluetooth
 
-A dongle is a separate device from the controller. A dongle problem is not the same as a controller problem. When you report a problem, give the VID:PID of the dongle. For more information, see [Reporting a bug](Reporting-a-Bug.md).
+1. Put the controller in pairing mode. Its manual says how.
+2. Choose Apple menu > **System Settings** > **Bluetooth**.
+3. Point at the controller under **Nearby Devices**, then click **Connect**.
 
-### Bluetooth
+   ![Bluetooth in System Settings. Red arrows point to Bluetooth in the sidebar and to a controller under Nearby Devices](../docs/screenshots/steps/macos-bluetooth.png)
 
-OJD never reconnects a Bluetooth controller by itself. To disconnect a controller, click **Disconnect Wireless Controller...** in the controller detail. Then reconnect the controller by hand. For the Wii Remote, see [Wii Remote](Wii-Remote.md).
+OJD never reconnects a Bluetooth controller by itself. To disconnect one, select it in **Controllers** and click **Disconnect Bluetooth Connection**. Then reconnect it by hand. For the Wii Remote, see [Wii Remote](Wii-Remote.md).
 
 ## Finding Your Controller ID
 
-The VID:PID is the vendor ID and product ID that identify one controller model. A report without a VID:PID is hard to use. Each connection mode has its own VID:PID. For more information, see [Connection types](#connection-types).
+A controller's ID is its vendor and product number, such as `045E:02D1`. Bug reports need it. Each connection has its own ID.
 
-### Read the ID For a USB Controller
+### Read the ID of a USB Controller
 
 1. Connect the controller by USB.
 2. Open **System Information**.
-3. Select **USB** in the sidebar.
-4. Select your controller.
-5. Read **Vendor ID** and **Product ID**.
+3. Select **USB** in the sidebar, then your controller.
+4. Read **Vendor ID** and **Product ID**.
 
-The values appear with a `0x` prefix. For example, `0x045e` and `0x02d1` mean `045E:02D1`.
-
-You can also run this command in Terminal:
+A value like `0x045e` and `0x02d1` means `045E:02D1`. Or run this in Terminal:
 
 ```shell
 system_profiler SPUSBDataType
 ```
 
-### Read the ID For Any Connection
+### Read the ID of Any Controller
 
-Use this method for a Bluetooth controller. Bluetooth controllers do not appear in the USB list.
+1. Connect the controller.
+2. Click **Controllers** in the sidebar.
+3. Select your controller.
+4. Expand **Advanced** in its details.
+5. Read **USB VID/PID**.
 
-1. Open **Settings**.
-2. Open the **Advanced** pane.
-3. Turn on **Enable Developer Tools** (needs the **All Controls** interface).
-4. Select your controller in the developer tools below it.
+The label says USB. Bluetooth controllers are untested. Or run this in Terminal, with an ID from the list for `CONTROLLER`:
 
-The developer tools need the **All Controls** interface: set **Interface** to **All Controls** in **Settings** > **General**, or choose **View** > **All Controls**.
-At **Simple**, they stay hidden.
-The developer tools show the controller details, including its USB ID, connection type, and endpoints.
+```shell
+ojd controller list
+ojd controller show CONTROLLER
+```
 
 ## Xbox USB Driver
 
-The Xbox USB driver, `com.openjoystickdriver.XboxUSBDevice`, is a driver that OJD installs. It is embedded in the app and owns the USB interfaces of genuine Xbox One and Xbox Series controllers. It only reads Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
+The [Xbox USB driver](Glossary.md#terms) is a driver that OJD installs in macOS. It reads genuine Xbox One and Xbox Series controllers connected by USB. Other controllers don't need it. The app, not the driver, publishes the [virtual gamepad](Glossary.md#terms).
 
-- `045E:02D1`
-- `045E:02DD`
-- `045E:02E3`
-- `045E:02EA`
-- `045E:0B00`
-- `045E:0B0A`
-- `045E:0B12`
-
-Every other controller does not need the driver. OJD reads those controllers directly from the app. The driver does not publish a [virtual gamepad](Glossary.md#terms). The app publishes it.
-
-A build whose app profile has no `userclient-access` grant for the driver has no Xbox USB driver, so **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build options and limits](Building-from-Source.md).
+A build without Apple's `userclient-access` permission has no driver, and **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build Options and Limits](Building-from-Source.md).
 
 ### Approve the Driver
 
-Do these steps only if you use one of the controllers above.
+- **What:** a switch for OJD's Xbox USB driver. macOS lists it as **XboxUSBDevice**.
+- **Why:** macOS runs no driver until you allow it. Without it, a genuine Xbox controller on a cable isn't read.
+- **Who:** only genuine Xbox One and Xbox Series controllers on USB. Skip this for every other controller.
+- **When:** once, after you install OJD.
 
-1. Open the app window. Until you approve the driver, the banner below the toolbar shows **Xbox USB Driver** and **Open System Settings**.
-2. Click **Open System Settings**. OJD opens the **Login Items & Extensions** settings.
-3. Approve OpenJoystickDriver in **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**.
+1. Open the app window. Until you approve the driver, a banner shows **Xbox USB Driver** and **Open System Settings**. Click **Open System Settings**. Or choose Apple menu > **System Settings** yourself.
+2. Click **General**, then **Login Items & Extensions**.
 
-When the driver is active, the banner disappears, and **Xbox USB Driver** in **Settings** > **Advanced** says **Installed**. If the driver needs repair, the banner shows **Repair Xbox USB Driver**. Click it.
+   ![General in System Settings. Red arrows point to General in the sidebar and to Login Items & Extensions](../docs/screenshots/steps/macos-general-login-items.png)
 
-![Settings, Advanced pane: the Xbox USB Driver section says that the driver is installed and ready](../docs/screenshots/settings-advanced.png)
+3. Scroll down to **Extensions** and click **By Category**.
+4. Click the **(i)** button beside **Driver Extensions**.
+
+   ![The Extensions section. Red arrows point to By Category and to the (i) button beside Driver Extensions, which lists XboxUSBDevice](../docs/screenshots/steps/macos-driver-extensions.png)
+
+5. Turn on **OpenJoystickDriver**. A blue switch means it's on.
+6. Click **Done**.
+
+   ![The Driver Extensions sheet. Red arrows point to the OpenJoystickDriver switch and to Done](../docs/screenshots/steps/macos-driver-switch.png)
+
+**Check:** the banner in OJD disappears, and **Xbox USB Driver** in **Settings** > **Advanced** says **Installed**. If the driver needs repair, click **Repair Xbox USB Driver** in the banner.
+
+![Settings, Advanced pane: the Xbox USB Driver section shows Installed](../docs/screenshots/settings-advanced.png)
 
 ## Further Reading
 
 - [Supported controllers](Supported-Controllers.md)
 - [Adding or changing a controller record](Controller-Records.md)
-- [Controller not detected](Troubleshooting.md)
+- [If a controller isn't detected](Troubleshooting.md#if-a-controller-isnt-detected)
 - [Reporting a bug](Reporting-a-Bug.md)
 - [Build options and limits](Building-from-Source.md)
 - [Using the app](Using-the-App.md)

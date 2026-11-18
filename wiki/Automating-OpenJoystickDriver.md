@@ -1,21 +1,38 @@
 # Automating OpenJoystickDriver
 
-Use `ojd` in scripts and other programs to read controller state, change [profiles](Glossary.md#terms), and drive a [virtual gamepad](Glossary.md#terms).
+Write scripts, Shortcuts, and AppleScript that read your controllers, change [profiles](Glossary.md#terms), and drive a [virtual gamepad](Glossary.md#terms).
+
+For one action with no code, see [Use Shortcuts](#use-shortcuts). The other sections cover the `ojd` command and the endpoint, a local socket where programs read controller events.
+
+## Contents
+
+- [Choose the Interface](#choose-the-interface)
+- [Write a Script](#write-a-script)
+- [Read JSON Output](#read-json-output)
+- [Name a Controller](#name-a-controller)
+- [Watch Controllers](#watch-controllers)
+- [Read the Endpoint](#read-the-endpoint)
+- [Change Profiles](#change-profiles)
+- [Drive a Virtual Gamepad](#drive-a-virtual-gamepad)
+- [Use AppleScript or JavaScript for Automation](#use-applescript-or-javascript-for-automation)
+- [Use Shortcuts](#use-shortcuts)
+- [Further Reading](#further-reading)
 
 ## Choose the Interface
 
-`ojd` is the interface for scripts and other programs. Run it as a subprocess, read its `--json` output, and check its exit code. For the global options, output rules, and exit codes, see [Command line](Command-Line.md).
+To control OpenJoystickDriver from a script, run `ojd` as a subprocess, read its `--json` output, and check its exit code. For global options, output rules, and exit codes, see [Command line](Command-Line.md).
 
-The Swift package `OpenJoystickDriverKit` has an `ApplicationServiceClient`, but the service accepts a connection only from a process with the same code signature as the app. A program you build yourself cannot use it with a released app. Use `ojd` instead.
+The `ApplicationServiceClient` in the Swift package `OpenJoystickDriverKit` works only for a process with the app's code signature, so a program you build can't use it with a released app. Use `ojd`.
 
 ## Write a Script
 
-1. Start the service and wait until it accepts requests: `ojd service start`.
-2. Add `--no-input` to each command, so that a command fails instead of asking a question.
-3. Add `--json` to each command whose output you read.
-4. Check the exit code of each command. Code 69 means that the service is not running.
+A good script starts the service, asks for no input, and checks every exit code.
 
-Commands that delete or reset data ask first on a terminal. In a script, they need `--force`. Run them first with `--dry-run` to see what they change.
+1. Start the service and wait until it accepts requests: `ojd service start`.
+2. Add `--no-input` to each command, so it fails instead of asking, and `--json` where you read output.
+3. Check each exit code. Code 69 means the service is not running.
+
+Commands that delete or reset data need `--force` in a script. To preview a change, use `--dry-run`.
 
 ```shell
 ojd service start --timeout 30
@@ -24,57 +41,67 @@ ojd --no-input --json controller list | jq -r '.items[] | [.id, .name, .unit // 
 
 ## Read JSON Output
 
-Keys and values in `--json` output are stable identifiers, and OJD never translates them. A command that streams, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
+With `--json`, `ojd` prints stable data. OJD never translates keys and values. A streaming command, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
 
-Each object has `apiVersion`, which is `openjoystickdriver/v1alpha3`, and `kind`, the singular UpperCamelCase name of what the command prints: `ojd controller show` prints `Controller`, or `UnservedController` for a connected device that OJD does not handle, and `ojd status` prints `SystemStatus`. The list commands `controller list`, `permission list`, `setting list`, `binding list`, `profile list`, and `record list` print a `kind` that ends in `List`, such as `ControllerList`, with the entries in `items` and an empty `metadata`. An item has no `apiVersion` or `kind` of its own. `binding list` gives each item a `profile`, the profile it came from. `profile list` and `record list` report the profiles that cannot be loaded and the records that were skipped as warnings on standard error, one line each. A command that changes or removes something and has no object to print, such as `ojd profile delete` or `ojd controller rumble`, prints a `Status`: `status` is `Success`, and `details` holds the command's data. A command that fails prints no JSON: it exits with a non-zero code and writes the error on standard error. Values that OJD defines in output, such as `NotFound` or `BluetoothLE`, are UpperCamelCase with upper-case acronyms. The `status` of a `Status` and the `type` of a watch line keep the Kubernetes spelling.
+Each object has `apiVersion` (`openjoystickdriver/v1alpha3`) and `kind`, the singular UpperCamelCase name of the output. `ojd controller show` prints `Controller`, or `UnservedController` for a device OJD does not handle. `ojd status` prints `SystemStatus`.
 
-Enumerated values in `--json` output are UpperCamelCase, such as `NotPublished` and `InputRead`. `--plain` output and command-line arguments spell the same values in lowercase kebab-case, such as `not-published` and `input-read`; this includes routes, [virtual gamepad kinds](Glossary.md#terms) and protocol families (`virtual-hid`, `sdl-compatible`, `xbox-gip`).
+The list commands (`controller list`, `permission list`, `setting list`, `binding list`, `profile list`, `record list`) print a `kind` ending in `List`, such as `ControllerList`. Entries are in `items`, and `metadata` is empty. An item has no `apiVersion` or `kind`. `binding list` gives each item a `profile`.
 
-[`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command. Each command has one entry in `$defs`, named after its command path in lowerCamelCase: the entry for `ojd controller show` is `controllerShow`. Entries that start with `shared` are shapes that more than one command uses. The schema rejects keys that its release does not print, and a later release can add keys. Validate output against the schema from the same release.
+`profile list` and `record list` warn on standard error for a profile that cannot load or a record OJD skipped.
 
-Do not parse the human-readable output. It is translated, and it can change in each release.
+A command with no object to print, such as `ojd profile delete` or `ojd controller rumble`, prints a `Status`: `status` is `Success` and `details` holds the data. A failed command prints no JSON, exits non-zero, and writes the error on standard error.
+
+In `--json` output, enumerated values are UpperCamelCase, such as `NotPublished`, `InputRead`, and `BluetoothLE`. In `--plain` output and command-line arguments, they are lowercase kebab-case, such as `not-published` and `input-read`. The `status` of a `Status` and the `type` of a watch line keep the Kubernetes spelling. This includes routes, [virtual gamepad kinds](Glossary.md#terms), and protocol families (`virtual-hid`, `sdl-compatible`, `xbox-gip`).
+
+[`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes each command's output in `$defs`. The entry is named after the command path in lowerCamelCase, such as `controllerShow` for `ojd controller show`.
+
+Validate against the schema from the same release, which rejects keys that release does not print. Do not parse the human-readable output.
 
 ## Name a Controller
 
-Commands take a `CONTROLLER` operand. Use one of these forms:
+A `CONTROLLER` operand takes one of these forms:
 
-- A unit ID, such as `U-` and 16 characters. It stays the same across reconnects and service restarts while the controller uses the same USB port. It changes when you connect the controller to a different port, and every unit ID changes when the key file `~/Library/Application Support/OpenJoystickDriver/PortKeyInstallation.key` is replaced. Scripts can store it. A controller with no location ID has no unit ID.
-- `VVVV:PPPP`, the hexadecimal vendor and product ID. It names a controller model. When two connected controllers have the same model, the command fails and lists them.
-- An ID from `ojd controller list`, such as `E-` and 16 characters. It lasts only until the controller disconnects, so do not store it.
+- A unit ID, `U-` and 16 characters. It survives a reconnect or service restart on the same USB port, and changes with another port. Replacing `~/Library/Application Support/OpenJoystickDriver/PortKeyInstallation.key` changes every unit ID. Scripts can store it. A controller with no location ID has none.
+- `VVVV:PPPP`, the vendor and product numbers in hexadecimal. It names a model. When two connected controllers share a model, the command fails and lists them.
+- An ID from `ojd controller list`, `E-` and 16 characters. It lasts only until the controller disconnects. Do not store it.
 
-`ojd controller list --json` gives the unit ID of each controller in `unit`.
+`ojd controller list --json` gives each unit ID in `unit`.
 
 ## Watch Controllers
 
-`ojd controller watch --all --json` reports every controller on one stream, so a program does not have to reconnect when a controller comes and goes. Each line is one JSON object with a `type` and an `object`, as in a Kubernetes watch. The line has no `apiVersion` or `kind` of its own. `object` is a `Controller` with its own `apiVersion` and `kind`, and its `id` is the ID from `ojd controller list`:
+Run `ojd controller watch --all --json` to follow all controllers in one stream. Each line has a `type` and an `object`, as in a Kubernetes watch, and no `apiVersion` or `kind`. `object` is a `Controller` whose `id` is the ID from `ojd controller list`.
 
-- `ADDED`: a controller connected. `object` has the fields of an `ojd controller list` entry, including `unit`. The first lines report the controllers already connected.
-- `MODIFIED`: the controller's input changed. `object` has the same fields and `input`, the whole input state. With `--output`, `output` has the values of the controller's virtual gamepad.
-- `DELETED`: the controller disconnected. `object` is the controller's last state.
+- `ADDED`: A controller connected. `object` has the fields of a `controller list` entry, including `unit`. The first lines list connected controllers.
+- `MODIFIED`: The input changed. `object` has the same fields and `input`, the whole input state. With `--output`, `output` has the values of the controller's virtual gamepad.
+- `DELETED`: The controller disconnected. `object` is its last state.
 
 ```shell
 ojd --no-input controller watch --all --json | jq -c 'select(.type != "MODIFIED")'
 ```
 
-The service is polled every 16 ms for input, and every 250 ms for connected controllers.
+`ojd` asks the service for input every 16 ms. The interval for the controller list is not verified.
 
 ## Read the Endpoint
 
-A program that runs all the time can read controller events from the endpoint, a local socket, instead of running `ojd controller watch`. The endpoint is off by default, and it serves only the programs that you grant:
+A long-running program can read controller events from the endpoint, a local socket, instead of running `ojd controller watch` repeatedly. The endpoint is off by default and serves only programs you grant.
 
 1. Turn on the endpoint: `ojd access enable`.
-2. Grant your program: `ojd access grant /Applications/Reader.app`. To find the ID of a program that the endpoint refused, run `ojd access list`.
-3. Read the socket path: `ojd --json access status | jq -r .socketPath`. It is in your user's temporary folder, and it exists only while the endpoint is on.
+2. Grant your program: `ojd access grant /Applications/Reader.app`. To find the ID of a refused program, run `ojd access list`.
+3. Read the socket path: `ojd --json access status | jq -r .socketPath`. The socket is in your user's temporary folder and exists only while the endpoint is on.
 
-The program sends and receives JSON objects, one per line, each at most 64 KiB:
+Each line is one JSON object of at most 64 KiB. Each line except a watch line has `apiVersion` and a `kind`.
 
-Each line except a watch line has `apiVersion`, which is `openjoystickdriver/v1alpha3`, and a `kind`:
-
-1. The endpoint sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"…"}` first. A granted program can ignore it; a [token](#use-a-token) client signs it.
+1. The endpoint sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"…"}`. A granted program can ignore it. A [token](#use-a-token) client signs it.
 2. Within 5 seconds, the program sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"]}`.
-3. The endpoint answers a `Welcome`, with `version` and the granted `scopes`, or a `Status` with `status` `Failure`, `code`, and `message`, and closes the connection. A line with another `apiVersion` gets `E1009`, a line without `apiVersion` or `kind`, or with one that is `null` or not a string, gets `E1011`, and a `kind` that the endpoint does not accept at that point gets `E1010`.
-4. The program sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers"}`. Add `"output":true` for the values of the virtual gamepad.
-5. The endpoint sends the same `ADDED`, `MODIFIED`, and `DELETED` watch lines as `ojd controller watch --all --json`.
+3. The endpoint answers with a `Welcome` (`version` and granted `scopes`), or with a `Status` of `Failure` and closes the connection.
+4. The program sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers"}`. Add `"output":true` for the virtual gamepad values.
+5. The endpoint sends the `ADDED`, `MODIFIED`, and `DELETED` lines of `ojd controller watch --all --json`.
+
+The endpoint refuses some lines with an error code:
+
+- `E1009`: The line has another `apiVersion`.
+- `E1011`: The line has no `apiVersion` or `kind`, or one is `null` or not a string.
+- `E1010`: The endpoint does not accept that `kind` at that point.
 
 ```python
 import json
@@ -97,16 +124,16 @@ with socket.socket(socket.AF_UNIX) as endpoint:
             print(event["type"], event["object"]["id"])
 ```
 
-`python3` is signed by Apple, so to run this example, grant `/usr/bin/python3`. Every Python script you run then gets the access. Grant a signed app of your own for regular use.
+To run this example, grant `/usr/bin/python3`, which gives every Python script the access. For regular use, grant a signed app of your own.
 
 ### Use a Token
 
-A program that cannot be granted by its signature, such as a script, can use a token instead. The program does not send the token. It proves that it has the token by signing the challenge:
+A program you can't grant by signature, such as a script, can use a token, which works like a password. The program signs the challenge to prove it has the token and never sends it.
 
-1. Create the token: `ojd access grant --token reader`. The command prints the token once, and the service keeps only its SHA-256 hash.
-2. Join four lines, each ending with a newline: `OpenJoystickDriver endpoint hello 1`, the challenge's `nonce`, the page's origin, and the WebSocket's port. On the socket, the origin and port lines are empty.
-3. Compute the HMAC-SHA256 of those lines, keyed with the SHA-256 of the token, and write it as lowercase hex.
-4. Send the token's name and the HMAC in the `Hello`: `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"],"tokenName":"reader","proof":"…"}`.
+1. Create the token: `ojd access grant --token reader`. The command prints it once. The service keeps only its SHA-256 hash.
+2. Join four lines, each ending with a newline: `OpenJoystickDriver endpoint hello 1`, the challenge `nonce`, the origin of the page, and the WebSocket port. On the socket, the origin and port lines are empty.
+3. Compute the HMAC-SHA256 of those lines, with the SHA-256 of the token as the key. Write it as lowercase hex.
+4. Add the token name and HMAC to the `Hello`: `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"],"tokenName":"reader","proof":"…"}`.
 
 ```python
 import hashlib
@@ -129,19 +156,19 @@ hello = {
 lines.write(json.dumps(hello) + "\n")
 ```
 
-This replaces the `readline` and the first `write` in the example above.
+This code replaces the `readline` and first `write` above.
 
-Any program that reads the token can use it, so store it like a password. Remove it with `ojd access revoke token:reader`.
+Any program that reads the token can use it. Store it like a password. To remove it, run `ojd access revoke token:reader`.
 
-`AccessGrants.plist`, in the OpenJoystickDriver Application Support folder, is secret too. The SHA-256 hashes in it are the HMAC keys, so a program that reads the file can sign challenges as any token in it. The service writes the file so that only your user can read it. Keep it out of support reports, exports, backups, and anything else that you share, and revoke every token if it leaks.
+`AccessGrants.plist` in the Application Support folder is also secret. Its SHA-256 hashes are the HMAC keys, so a program that reads it can sign as any token in it. Keep it out of support reports, exports, and backups. If it leaks, revoke every token.
 
 ### Use the WebSocket
 
-A web page, such as a stream overlay, can read the endpoint through a WebSocket:
+A web page, such as a stream overlay, can read the endpoint through a WebSocket.
 
-1. Turn on the WebSocket: `ojd access web enable`. It listens on `127.0.0.1`. The first time, the system picks a free port, and the service saves it, so the port stays the same. Choose a port with `--port`. `ojd access status` shows the port. The WebSocket is separate from `ojd access enable`, which turns on only the socket.
-2. Grant a token for the page's origin, with the port from `ojd access status`: `ojd access grant --token overlay --origin http://127.0.0.1:PORT`.
-3. Put the page in the `Overlays` folder that `ojd access status` shows. The WebSocket's port serves the folder at `http://127.0.0.1:PORT/`, and a folder serves its `index.html`.
+1. Turn on the WebSocket: `ojd access web enable`. It listens on `127.0.0.1`. The first time, the system picks a free port and the service saves it. Choose one with `--port`. `ojd access status` shows it. `ojd access enable` does not turn on the WebSocket.
+2. Grant a token for the page origin with the port from `ojd access status`: `ojd access grant --token overlay --origin http://127.0.0.1:PORT`.
+3. Put the page in the `Overlays` folder that `ojd access status` shows. The port serves it at `http://127.0.0.1:PORT/`, and a folder serves its `index.html`.
 4. The page connects to `ws://127.0.0.1:PORT/endpoint` and exchanges the same messages, one JSON object per text message. It signs the challenge with its [token](#use-a-token), its origin, and the port.
 
 ```javascript
@@ -188,93 +215,88 @@ endpoint.onmessage = async (message) => {
 };
 ```
 
-The WebSocket accepts a page only from an origin that a token is granted for, and the token must be granted for that origin. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket's port. It refuses pages opened from a file, whose origin is `null`. Use `127.0.0.1` in the address, not `localhost`, which the WebSocket refuses. When another program already uses the port, `ojd access web enable` fails. When the service starts and finds the port in use, `ojd access status` shows the WebSocket as on but not listening. In both cases, choose another port with `ojd access web enable --port PORT`, and grant tokens for the new origin.
+The WebSocket accepts a page only from an origin you granted a token for. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket port. It refuses pages opened from a file (origin `null`) and the address `localhost`. Use `127.0.0.1`.
 
-An error line is a `Status` with `status` `Failure` and a `code` from `E1001` to `E1011`. Look up each code, its cause, and its fix on [Error codes](Error-Codes.md). With `E1009`, `E1010` and `E1011`, `details.supportedAPIVersions` lists the `apiVersion` values that the endpoint accepts. The endpoint serves at most 8 socket connections and 8 WebSocket connections at the same time. When a program reads too slowly, the endpoint keeps only the newest `MODIFIED` line of each controller. When 256 lines wait, it sends `E1006` and closes the connection.
+If another program uses the port, `ojd access web enable` fails, or `ojd access status` shows the WebSocket as on but not listening. Choose another port with `ojd access web enable --port PORT` and grant tokens for the new origin.
 
-[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line, and the [SDK endpoint reference](../docs/sdk/endpoint.md) documents each message, the errors, the grants, and the versions. To drive a virtual gamepad through the endpoint, see [Drive a Virtual Gamepad Through the Endpoint](#drive-a-virtual-gamepad-through-the-endpoint).
+An error line is a `Status` of `Failure` with a `code` from `E1001` to `E1011`. See [Error codes](Error-Codes.md). With `E1009` to `E1011`, `details.supportedAPIVersions` lists the accepted `apiVersion` values.
+
+The endpoint serves at most 8 socket and 8 WebSocket connections. For a slow reader, it keeps only the newest `MODIFIED` line of each controller. At 256 waiting lines, it sends `E1006` and closes the connection.
+
+[`endpoint.schema.json`](../Resources/Schemas/endpoint.schema.json) describes each line. The [SDK endpoint reference](../docs/sdk/endpoint.md) documents messages, errors, grants, and versions.
 
 ### Use the WebSocket From an App
 
-A sandboxed app cannot connect to the socket: macOS refuses the connection with `EPERM`. It can use the WebSocket instead:
+A sandboxed app can't connect to the socket (`EPERM`) but can use the WebSocket.
 
 1. Give the app the `com.apple.security.network.client` entitlement.
-2. Turn on the WebSocket with `ojd access web enable`, and create a token without `--origin`: `ojd access grant --token myapp`.
+2. Turn on the WebSocket with `ojd access web enable`. Create a token without `--origin`: `ojd access grant --token myapp`.
 3. Connect to `ws://127.0.0.1:PORT/endpoint` without an `Origin` header.
 4. Sign the challenge with the token, an empty origin line, and the port.
 
-Any local program that has such a token can use it, also programs of other users on the same Mac, so store it like a password. On the WebSocket, a token without origins works only from a client that sends no `Origin`, and web browsers always send one, so web pages cannot use it.
+Any local program with such a token can use it, including programs of other users. Store it like a password. A token without origins works only from a client that sends no `Origin`, so web pages can't use it.
 
 ### Drive a Virtual Gamepad Through the Endpoint
 
-A program with the `control` scope can drive a virtual gamepad through the endpoint, as [`ojd virtual feed`](#drive-a-virtual-gamepad) does:
+A `control` program can press buttons on a virtual gamepad, as [`ojd virtual feed`](#drive-a-virtual-gamepad) does.
 
-1. Grant the scope: `ojd access grant --token driver --scope control`. Add `--scope read` to grant both. A token that has `--origin` cannot have `control`, because a web page cannot use it.
+1. Run `ojd access grant --token driver --scope control`. Add `--scope read` for both. A token with `--origin` can't have `control`.
 2. Send a `Hello` with `"scopes":["Control"]`.
-3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The virtual gamepad kind IDs are `Generic`, `SDLCompatible` and `GameControllerCompatible`; every virtual gamepad kind the service publishes is open to a client with the `control` scope. An unknown id is refused with `E1003`, and the message names the id and lists the accepted kinds.
-4. The endpoint answers `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}` when the virtual gamepad exists.
-5. Send one frame per line, each with `apiVersion` and `"kind":"Frame"`. A frame has the keys of an `ojd virtual feed` line, and the service plays frames with the same rules.
-6. The endpoint sends each rumble command that a game sends to the virtual gamepad as one `RumbleCommand` line, the same as `ojd virtual feed` prints. Its `type` is `SetRumble` or `StopRumble`. The `virtualFeed` entry of the output schema describes it.
+3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The kind IDs are `Generic`, `SDLCompatible`, and `GameControllerCompatible`. An unknown ID gets `E1003`, whose message lists the accepted kinds.
+4. The endpoint answers `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}`.
+5. Send one frame per line, with `apiVersion` and `"kind":"Frame"`. A frame has the keys of an `ojd virtual feed` line and plays by the same rules. While 256 frames wait, the endpoint stops reading lines.
+6. The endpoint sends each game rumble command as a `RumbleCommand` line, as `ojd virtual feed` prints. Its `type` is `SetRumble` or `StopRumble`. See `virtualFeed` in the output schema.
 
-Closing the connection removes the virtual gamepad at once and drops the frames that have not played. After the last frame, send a `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drain"}` line and stay connected until the endpoint answers `Drained`, which comes when every frame sent before the `Drain` has played, the last one for its full time. A `Drain` is refused with `E1010` before the `FeedSession`. Each frame plays for its `holdMilliseconds`, and at least 8 ms. While 256 frames wait, the endpoint stops reading lines. When the client sends no frame line for 2 seconds after its last frame has played, the endpoint closes the connection with `E1008` and removes the virtual gamepad, so a stalled client does not hold a button. The 2 seconds start when the queue is empty and the last frame's time has elapsed, so frames that wait or play, and a long hold, never cause the close. Rumble lines that the endpoint sends do not count. To keep the gamepad after the last frame has played, send another line within 2 seconds. The endpoint runs at most 4 virtual gamepads at the same time, and answers another `feed` with `E1007`. When the virtual gamepad does not start, or the service stops it, the endpoint sends `E1008`.
+Closing the connection removes the virtual gamepad and drops unplayed frames. After the last frame, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drain"}` and stay connected until the endpoint answers `Drained`, when every earlier frame has played. Before the `FeedSession`, a `Drain` gets `E1010`.
 
-The [reference client](../Scripts/SDK/reference_client.py) presses the south button for 100 ms, prints the rumble commands that the endpoint sends, sends a `Drain` line after the release, and stays connected until the endpoint answers `Drained`. When the endpoint sends an error or closes the connection earlier, it exits with the error. With `E1009`, `E1010`, or `E1011`, it also reports the supported `apiVersion` values. It uses only the Python standard library. Set `OJD_TOKEN` to the token that `ojd access grant` printed, and run `python3 reference_client.py feed`. To subscribe instead, run `python3 reference_client.py watch`. Games and latency with the endpoint are not verified.
+After the last frame has played, 2 seconds with no line closes the connection with `E1008` and removes the virtual gamepad, so a stalled client holds no button. To keep the gamepad, send another line within 2 seconds. The endpoint runs at most 4 virtual gamepads and answers another `feed` with `E1007`. It sends `E1008` if the virtual gamepad does not start or the service stops it.
+
+The [reference client](../Scripts/SDK/reference_client.py) uses only the Python standard library. It presses South for 100 ms and prints rumble commands. Set `OJD_TOKEN` to the token that `ojd access grant` printed. Run `python3 reference_client.py feed`, or `watch` to subscribe. Games and latency through the endpoint are not verified.
 
 ### Change a Profile Through the Endpoint
 
-A program with the `control` scope can activate, deactivate or change one profile, as `ojd profile activate`, `deactivate` and `set` do:
+A `control` program can activate, deactivate, or change one profile, as `ojd profile activate`, `deactivate`, and `set` do. After the `Hello` and `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}`.
 
-1. Grant the scope and send a `Hello` with `"scopes":["Control"]`, as in the section above.
-2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}`. `action` is `Activate`, `Deactivate` or `Set`. `profile` is the UUID or the name of the profile. `Set` takes a `key` and a `value`, read as in `ojd profile set`; a `value` of `null` removes a member.
-3. The endpoint answers a `ProfileResult` with the profile and whether it is active. A request that the service refuses, such as one for a profile that does not exist, gets a `Status` failure with the code that `ojd` prints, such as `E2012`, and the connection stays open for the next request.
-4. A `ProfileRequest` may follow another one. A `Subscription` or a `FeedRequest` ends the exchange.
+- `action` is `Activate`, `Deactivate`, or `Set`. `profile` is the UUID or name.
+- `Set` takes a `key` and `value`, read as `ojd profile set` does. A `value` of `null` removes a member.
+- The endpoint answers with a `ProfileResult`, or with a `Status` failure carrying the code `ojd` prints, such as `E2012`. The connection stays open for another `ProfileRequest`. A `Subscription` or `FeedRequest` ends the exchange.
 
 ### Rumble, Player Number and Light Through the Endpoint
 
-A program with the `control` scope can drive one controller, as `ojd controller rumble`, `player` and `light` do:
+A `control` program can drive one controller, as `ojd controller rumble`, `player`, and `light` do. The Shortcuts actions run the same code. After the `Hello` and `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputRequest","controller":"054C:0CE6","action":"Rumble","left":200,"duration":1.5}`.
 
-1. Send a `Hello` with `"scopes":["Control"]`, as in the section above.
-2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputRequest","controller":"054C:0CE6","action":"Rumble","left":200,"duration":1.5}`. `controller` is a controller id or a `VID:PID` model. `action` is `Rumble`, `Player` or `Light`.
-3. `Rumble` takes `left`, `right`, `leftTrigger` and `rightTrigger` (0 to 255) and `duration` in seconds (above 0, at most 5, default 0.45). With no motor named, both main motors run at 180. `Player` takes `player` (0 to 4). `Light` takes a `color` of six hex digits and a `brightness` (0 to 255), at least one of them.
-4. The endpoint answers an `OutputResult` with one entry for each command that ran. A controller that lacks the output, or an unknown or ambiguous controller, gets a `Status` failure with the code that `ojd` prints, and the connection stays open. A malformed request gets `E1003` and the connection closes.
-
-The Shortcuts actions Rumble Controller, Set Player Indicator and Set Controller Light run the same code.
+- `controller` is a controller ID or a `VID:PID` model. `action` is `Rumble`, `Player`, or `Light`.
+- `Rumble` takes `left`, `right`, `leftTrigger`, and `rightTrigger` (0 to 255), and `duration` in seconds (above 0, at most 5, default 0.45). With no motor named, both main motors run at 180.
+- `Player` takes `player` (0 to 4). `Light` takes a `color` of six hex digits and a `brightness` (0 to 255). Give at least one.
+- The endpoint answers with an `OutputResult`, one entry for each command that ran. If the controller lacks the output, or is unknown or ambiguous, it answers with a `Status` failure and keeps the connection open. A malformed request gets `E1003` and the connection closes.
 
 ### Watch Profiles and Mod Packages Through the Endpoint
 
-A program with the `Read` scope can watch the profile list or the mod package list instead of the controllers:
+A `Read` program can watch profiles or mod packages. After the `Hello` and `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Profiles"}`, or `"stream":"Mods"`. These streams refuse `output`.
 
-1. Send a `Hello` with `"scopes":["Read"]`, as in the section above.
-2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Profiles"}`, or `"stream":"Mods"`. These streams refuse `output`.
-3. The endpoint answers a `Profiles` line with every profile and whether it is active, or a `Mods` line as for a `ModList`, and sends the whole list again each time it changes. It reads the lists twice a second.
-4. Any line after the `Subscription` ends the connection.
+The endpoint answers with a `Profiles` line (every profile, and whether it is active) or a `Mods` line, and resends the whole list on each change. It reads the lists twice a second. Any later line ends the connection.
 
 ### List Mod Packages Through the Endpoint
 
-A program with the `Read` scope can list the installed mod packages, as `ojd mod list --json` does:
+A `Read` program can list installed mod packages, as `ojd mod list --json` does. After the `Hello` and `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ModList"}`.
 
-1. Send a `Hello` with `"scopes":["Read"]`, as in the section above.
-2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ModList"}`.
-3. The endpoint answers `Mods` with one entry for each package: `name`, `files`, and `version` and `author` when the package states them. An entry with a `problem` holds a package that the service does not use. The connection stays open, so a `ModList` may follow a `ModList` or a `ProfileRequest`.
+The endpoint answers with `Mods`, one entry for each package: `name`, `files`, and `version` and `author` when stated. An entry with a `problem` is a package the service does not use. The connection stays open for another `ModList` or `ProfileRequest`.
 
-### What ran against the installed build
+### Results From the Installed Build
 
-The messages above ran through the socket against build `8456f9de8665`, with a token that held `Read` and `Control`. The scripts and their output are in [`evidence/scripting/`](../evidence/scripting/):
+These messages ran through the socket against build `8456f9de8665`, with a token holding `Read` and `Control`. See [`evidence/scripting/`](../evidence/scripting/).
 
-- `ProfileRequest` activated, renamed (`Set` of `name`), and deactivated a profile, each answered by a `ProfileResult`. A profile that does not exist got `E2012` and the connection stayed open; a `Set` without `value` got `E1003`; a client with only `Read` got `E1002`.
-- `ModList` answered an empty `mods` list, then the package after `ojd mod install` on the same connection, then an empty list after `ojd mod remove`.
-- The `Profiles` and `Mods` subscriptions sent the whole list at once and again after each change that `ojd` made. `output` on `Profiles` and the stream `Logs` got `E1003`.
-- A `FeedRequest` for `Generic`, `SDLCompatible` and `GameControllerCompatible` each got a `FeedSession`, and `Drain` got `Drained`. `DualShock` got `E1003` with the accepted personas.
-- `OutputRequest` was tried with an 8BitDo Ultimate 2C on Bluetooth LE, which OpenJoystickDriver serves by its HID descriptor with no rumble, player lights or light color. Each of `Rumble`, `Player` and `Light` got `E2013` with the same text `ojd controller rumble`, `player` and `light` print, and an unknown controller got `E2012`. Rumble, a player number, and a light that a controller carries out are not shown yet.
+- Profile requests, `ModList`, the `Profiles` and `Mods` subscriptions, and `FeedRequest` for each kind worked as described. A missing profile got `E2012`, and a `Read`-only client got `E1002`.
+- `OutputRequest` on an 8BitDo Ultimate 2C over Bluetooth LE (no rumble, player lights, or light color) got `E2013`. Whether a controller carries out rumble, a player number, or a light color is not verified.
 
 ## Change Profiles
 
-A profile is an XML property list file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. To read one in a script, convert it with `plutil -convert json -o - FILE.plist`.
+A profile is an XML property list. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. In a script, change a profile with the commands below rather than by hand, and read one with `plutil -convert json -o - FILE.plist`.
 
-- `ojd profile get PROFILE KEY` prints one value. `ojd profile set PROFILE KEY VALUE` changes one value. `KEY` is a path of key names and array indexes, joined by dots.
-- `ojd profile export PROFILE` prints the whole file. `ojd profile import FILE` adds it again, or replaces the profile with the same ID. Use `-` as `FILE` to read standard input.
-- `ojd profile validate FILE` checks a file against the schema and against the rules that span fields. It does not need the service.
-- `ojd profile activate PROFILE` and `ojd profile deactivate PROFILE` apply a profile and stop it.
+- `ojd profile get PROFILE KEY` prints one value. `ojd profile set PROFILE KEY VALUE` changes one. `KEY` is a path of key names and array indexes joined by dots.
+- `ojd profile export PROFILE` prints the whole file. `ojd profile import FILE` adds a file or replaces the profile with the same ID. Use `-` as `FILE` to read standard input.
+- `ojd profile validate FILE` checks a file against the schema and cross-field rules. It does not need the service.
+- `ojd profile activate PROFILE` applies a profile. `ojd profile deactivate PROFILE` stops it.
 
 ```shell
 ojd profile get Racing stickMappings.0.tuning.innerDeadzone
@@ -283,11 +305,11 @@ ojd profile export Racing --output racing.plist
 ojd profile validate racing.plist
 ```
 
-To limit a profile to one controller, set `device.unit` to the controller's unit ID. To choose the virtual gamepad for one controller, use `ojd virtual set PROFILE CONTROLLER --unit`.
+To limit a profile to one controller, set `device.unit` to its unit ID. To choose the virtual gamepad for one controller, use `ojd virtual set PROFILE CONTROLLER --unit`.
 
 ## Drive a Virtual Gamepad
 
-`ojd virtual feed --as PROFILE` publishes a virtual gamepad and reads one JSON object per line from standard input. Each line gives the state of the whole gamepad. A control that the line does not name is neutral. The virtual gamepad kinds are `sdl-compatible` and `generic`.
+`ojd virtual feed --as PROFILE` publishes a virtual gamepad. It reads one JSON object per line from standard input. Each line is the whole gamepad state, and a control it does not name is neutral. `--as` takes a [virtual gamepad kind](Glossary.md#terms): `sdl-compatible`, `generic`, or `game-controller-compatible`.
 
 ```shell
 {
@@ -298,28 +320,28 @@ To limit a profile to one controller, set `device.unit` to the controller's unit
 } | ojd virtual feed --as generic
 ```
 
-This example holds the South button for 1 second, then moves the left stick fully left and pulls the right trigger halfway for 1 second. When the input ends, the virtual gamepad is removed.
+This holds South for 1 second, then moves the left stick fully left and pulls the right trigger halfway for 1 second. When the input ends, OJD removes the gamepad.
 
-To tap a button without waiting in the script, write the press with `holdMilliseconds` and the release after it:
+To tap a button without waiting, write the press with `holdMilliseconds` and the release after it:
 
 ```shell
 printf '%s\n' '{"buttons":["South"],"holdMilliseconds":50}' '{}' | ojd virtual feed --as generic
 ```
 
-- `buttons` and `dpad` list the controls that are pressed. They take the names that `button:` and `dpad:` binding sources use, such as `South` and `up`.
-- `axes` maps axis names to values. Sticks, such as `LeftStickX`, go from -1 to 1, with Y down. The triggers, `LeftTrigger` and `RightTrigger`, go from 0 to 1.
-- The service plays the lines in order. Each line lasts at least 8 ms, and then until the next line plays. Add `holdMilliseconds`, from 0 to 60000, to keep a line longer.
-- When lines arrive faster than every 8 ms, they wait in a queue of at most 256 lines, so a full queue is about 2 seconds behind. A line without `holdMilliseconds` replaces the last waiting line when that one has no `holdMilliseconds` and the same `buttons` and `dpad`. A press or release is never dropped.
-- Each rumble command that a game sends to the virtual gamepad prints on standard output as one JSON object per line. The `virtualFeed` entry of the output schema describes it.
-- The service removes the virtual gamepad when the input ends and every line has played, when you press Control-C, or when it gets no update for 2 seconds. The command sends updates while it waits for input.
-- A line that is not valid stops the command with exit code 64. A line is not valid when it has an unknown key or lists a button or D-pad direction twice.
-- The service runs at most 4 feeds from `ojd virtual feed` at the same time. Endpoint clients have 4 more of their own, so they cannot take these.
+- `buttons` and `dpad` list the pressed controls, using the names of `button:` and `dpad:` binding sources, such as `South` and `up`.
+- `axes` maps axis names to values. Sticks, such as `LeftStickX`, go from -1 to 1, with Y down. `LeftTrigger` and `RightTrigger` go from 0 to 1.
+- The service plays lines in order. Each lasts at least 8 ms, then until the next plays. Add `holdMilliseconds` (0 to 60000) to keep a line longer.
+- Lines that arrive faster than every 8 ms wait in a queue of at most 256 (about 2 seconds when full). A line without `holdMilliseconds` replaces the last waiting line when that has none and the same `buttons` and `dpad`. The service never drops a press or release.
+- Each game rumble command prints on standard output as one JSON object per line (see `virtualFeed` in the output schema).
+- The service removes the virtual gamepad when the input ends and every line has played, on Control-C, or after 2 seconds with no update (the command sends updates while it waits).
+- An invalid line stops the command with exit code 64: an unknown key, or a button or D-pad direction listed twice.
+- The service runs at most 4 `ojd virtual feed` feeds at once. Endpoint clients have 4 more.
 
 Games and latency with `ojd virtual feed` are not verified.
 
-### What the virtual gamepad carries
+### What the Virtual Gamepad Carries
 
-The virtual gamepad is a standard gamepad. Each profile has a fixed set of buttons, so some controls on a physical controller have no output. A control that is not carried does nothing on the virtual gamepad, whether it is passed through or assigned to a gamepad output.
+The virtual gamepad has a fixed set of buttons, so some physical controls have no output. A control it does not carry does nothing, whether passed through or assigned to a gamepad output. The table covers `generic` and `sdl-compatible`. The controls of `game-controller-compatible` are not verified here.
 
 | Control | `generic` | `sdl-compatible` |
 | --- | --- | --- |
@@ -336,14 +358,14 @@ The virtual gamepad is a standard gamepad. Each profile has a fixed set of butto
 | Stick touch, trackpad touch, left trackpad click | Not carried | Not carried |
 | Right trackpad click | Right stick click on the classic Steam Controller, otherwise not carried | Right stick click on the classic Steam Controller, otherwise not carried |
 
-- `generic` has 16 buttons and all 16 are in use. Its layout is the published contract for the product ID `1209:4A4F`, so a new button would need a new product ID.
-- `sdl-compatible` sends the Xbox One USB packets that SDL's HIDAPI driver reads: an 18-byte input report, and Guide in a second report. They have no field for Capture, and SDL reads no other button from them.
-- The right pad of the classic Steam Controller is its right stick, and the controller has no separate right stick click, so its pad click is the right stick click. The Steam Deck and the Steam Triton have a right stick click of their own, so their right pad click is a different control and is not carried.
-- The D-pad buttons of `sdl-compatible` stay clear. The D-pad is the hat.
+- `generic` has 16 buttons, all in use. Its layout is the contract for product ID `1209:4A4F`, so a seventeenth button needs another ID.
+- `sdl-compatible` sends the Xbox One USB packets that the SDL HIDAPI driver reads: an 18-byte input report, and Guide in a second report. They have no Capture field.
+- The classic Steam Controller's right pad is its right stick, and its pad click is the right stick click. The Steam Deck and Steam Triton have their own right stick click, and their right pad click is not carried.
+- The D-pad buttons of `sdl-compatible` stay clear, because the D-pad is the hat.
 
 ## Use AppleScript or JavaScript for Automation
 
-The app has no AppleScript dictionary. A script runs `ojd` through `do shell script`, whose `PATH` lacks `/usr/local/bin`, so it names the link in full. Turn on the link in Settings first. These examples read another path from the `OJD` environment variable.
+The app has no AppleScript dictionary. AppleScript and JavaScript for Automation run `ojd` through `do shell script`, whose `PATH` lacks `/usr/local/bin`, so name the link in full and turn it on in Settings first. These examples read another path from the `OJD` environment variable.
 
 ```applescript
 set ojd to system attribute "OJD"
@@ -364,48 +386,44 @@ const lines = status.unboundDevices.map((device) => `${device.name} (${device.co
 `Service ${status.service.state}; ${status.controllers.length} controllers; unbound: ${lines.join(", ") || "none"}`;
 ```
 
-`osascript -l JavaScript unbound-devices.js` prints `Service Running; 0 controllers; unbound: 8BitDo Ultimate 2C Wireless Controller (USB)` while another program holds that controller. Both scripts and their output are in [`evidence/scripting/`](../evidence/scripting/).
+`osascript -l JavaScript unbound-devices.js` prints `Service Running; 0 controllers; unbound: 8BitDo Ultimate 2C Wireless Controller (USB)` while another program holds that controller. Both are in [`evidence/scripting/`](../evidence/scripting/).
 
 ## Use Shortcuts
 
-On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
+On macOS 13 or later, the Shortcuts app lists these actions, so you can control OpenJoystickDriver with no code:
 
 | Action | Takes | Returns |
 | --- | --- | --- |
-| Get Controllers | Nothing | The connected controllers, each with a name and a model |
-| Get Battery Level | A controller | The battery charge in percent |
-| Activate Profile | A profile | The profile, now active |
-| Deactivate Profile | A profile | The profile, now inactive |
-| Set Profile Value | A profile, a key, and a value | The profile, with the value changed |
-| Get OpenJoystickDriver Version | Nothing | The version of the installed app |
-| List Mod Packages | Nothing | The names of the installed mod packages |
-| Install Mod Package | A folder, and whether to replace an installed package of the same name | The name of the installed package |
-| Remove Mod Package | A package name | The name of the removed package |
-| Rumble Controller | A controller, an intensity (0 to 255), and a duration in seconds | Nothing |
-| Set Player Indicator | A controller and a player number (0 to 4) | Nothing |
-| Set Controller Light | A controller, a color, and a brightness | Nothing |
+| Get Controllers | Nothing | Connected controllers, each with name and model |
+| Get Battery Level | A controller | Battery charge in percent |
+| Activate Profile | A profile | The profile |
+| Deactivate Profile | A profile | The profile |
+| Set Profile Value | A profile, key, and value | The changed profile |
+| Get OpenJoystickDriver Version | Nothing | Installed app version |
+| List Mod Packages | Nothing | Installed mod package names |
+| Install Mod Package | A folder, and whether to replace a package of the same name | Installed package name |
+| Remove Mod Package | A package name | Removed package name |
+| Rumble Controller | A controller, intensity (0 to 255), duration in seconds | Nothing |
+| Set Player Indicator | A controller and player number (0 to 4) | Nothing |
+| Set Controller Light | A controller, color, and brightness | Nothing |
 
-The actions run in the app, so the app must be installed. They do not use `ojd`.
+The actions run in the app and do not use `ojd`.
 
-When you choose a controller, the list shows each connected controller, and then one entry for each connected model. A shortcut stores the controller in the same forms as `CONTROLLER` in [Name a Controller](#name-a-controller):
+The controller list shows each connected controller, then one entry for each connected model. A shortcut stores the controller in the forms of [Name a Controller](#name-a-controller):
 
-- A single controller shows its model and its ID under its name, such as `2DC8:310A  U-kZ7dCdQP-6vkJyz4`. It is stored by its unit ID, or by its `ojd controller list` ID when it has no unit ID. The unit ID changes when you connect the controller to a different USB port, and the list ID changes each time the controller connects.
-- A model entry shows "Any connected" and the model under its name, such as `Any connected 2DC8:310A`, so one connected controller appears twice under the same name. A wireless receiver and its controller are one entry, under the model the receiver reports. A model entry is stored as `VVVV:PPPP`. It finds the connected controller of that model on any port. When two connected controllers have the same model, the action fails and lists them. You can also type `VVVV:PPPP` in the search field.
+- A single controller shows its model and ID, such as `2DC8:310A  U-kZ7dCdQP-6vkJyz4`. The shortcut stores its unit ID, or its list ID when it has none.
+- A model entry reads like `Any connected 2DC8:310A`. The shortcut stores `VVVV:PPPP` and finds that model on any port. When two connected controllers share a model, the action fails and lists them. You can type `VVVV:PPPP` in the search field.
 
-The list holds the controllers connected when it opens. Shortcuts does not refresh an open list, so after you connect a controller, close the list and open it again.
+Shortcuts does not refresh an open list, so reopen it after you connect a controller. With no controller connected, a shortcut asks for one in a window, even from `shortcuts run`. Get Battery Level fails when the controller reports no level, and returns the lowest value of a range such as `30-39%`.
 
-A shortcut that runs with no controller connected asks for one in a window, even from `shortcuts run`.
+Run a shortcut from another program with the `shortcuts` command or a `shortcuts://` link.
 
-Get Battery Level fails when the controller reports no battery level. When the controller reports a range, such as `30-39%`, the action returns the lowest value of the range.
+- Raycast: The Shortcuts extension runs a shortcut by name, or a Script Command runs `shortcuts run "Low Battery Check"`.
+- Stream Deck: An Open action with `shortcuts://run-shortcut?name=Low%20Battery%20Check`.
 
-To run a shortcut from another program, use the `shortcuts` command or a `shortcuts://` link:
+No command runs an action by name, only a shortcut you built. To pass the folder for Install Mod Package, pass a `file://` URL. A plain path fails with "Invalid URL".
 
-- Raycast: the Shortcuts extension runs a shortcut by name, or a Script Command can run `shortcuts run "Low Battery Check"`.
-- Stream Deck: an Open action with the link `shortcuts://run-shortcut?name=Low%20Battery%20Check` runs the shortcut.
-
-`shortcuts run` runs a shortcut that you build in the Shortcuts app first; no command runs an action by name. To pass the folder of Install Mod Package as input, pass a `file://` URL, because the action reads text only as a URL; a plain path fails with "Invalid URL".
-
-This example builds four shortcuts in the Shortcuts app, each with one action whose input is the Shortcut Input: "OJD List Mod Packages", "OJD Install Mod Package", "OJD Remove Mod Package", and "OJD Set Controller Light" with the controller set. Then it runs them from Terminal:
+This example runs four shortcuts you build, each with one action taking the Shortcut Input: "OJD List Mod Packages", "OJD Install Mod Package", "OJD Remove Mod Package", and "OJD Set Controller Light" (controller set).
 
 ```sh
 printf '%s' "file://$PWD/docs/sdk/sample/" > folder.txt
@@ -416,7 +434,7 @@ shortcuts run "OJD Remove Mod Package" --input-path name.txt
 shortcuts run "OJD Set Controller Light"
 ```
 
-Run against the installed build with an 8BitDo Ultimate 2C (`2DC8:310A`) connected (`evidence/scripting/shortcuts.txt`):
+Run on the installed build with an 8BitDo Ultimate 2C (`2DC8:310A`) connected (`evidence/scripting/shortcuts.txt`):
 
 ```text
 ojd-sample
@@ -425,9 +443,9 @@ ojd-sample
 Error: 8BitDo Ultimate 2C Wireless Controller has no programmable light color. Run 'ojd controller show E-xNZcxwus_aDu6Q8k' to see what it supports.
 ```
 
-Each action prints the package name it installed, listed, or removed, and `ojd mod list` agrees after each step. Set Controller Light refuses with the text `ojd controller light` prints for a controller with no light.
+Set Controller Light refuses with the text `ojd controller light` prints for a controller with no light. To use no fixed controller, start with Get Controllers and Get Item from List (First Item), and pass that item.
 
-To run a controller action with no controller fixed in the shortcut, start it with Get Controllers and Get Item from List (First Item), and pass that item as the controller. "OJD Rumble First Controller" and "OJD Set Player First Controller" (player 2) built that way each exit 0 from `shortcuts run`. A shortcut whose Set Profile Value has its profile chosen and the Shortcut Input as the value renames the profile:
+To rename a profile, set the Set Profile Value action to the chosen profile and the Shortcut Input as the value:
 
 ```sh
 printf 'OJD Shortcut Renamed' > value.txt

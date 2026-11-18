@@ -1,21 +1,25 @@
-# Start: control the Mac with a controller
+# Start: Control the Mac with a Controller
 
-Make controller buttons press keys, click the mouse, move the pointer, or scroll.
+Make controller buttons press keys, click, move the pointer, or scroll.
 
-## Before you begin
+## Before You Begin
 
-Install OJD and connect the controller. See [Start: play a game with a controller](Start-Play-a-Game.md). Keyboard and pointer output needs **Accessibility** access: click **Permission Missing: Accessibility** in the menu-bar menu, or run `ojd permission request input-inject`.
+Install OJD and connect the controller. See [Start: Play a Game with a Controller](Start-Play-a-Game.md). Allow **Accessibility** by clicking **Permission Missing: Accessibility** in the menu-bar menu.
 
-## Steps in the app
+## Make a Profile in the App
 
-1. Open the **Profiles** area and click **New profile**.
-2. In the **New profile** sheet, enter a name, select the controller in the **Controller** list, and select the application scope. Click **Create**.
-3. Select the [profile](Glossary.md#terms) and open the **Assignments** section. Click **Add assignment**.
-4. In the **Press a controller control** sheet, click **Listen for control** and press a button on the controller.
-5. Select a **Destination**. For a key, click **Capture key** and press the key. Click **Add assignment**.
-6. Click **Save**, then click **Set active**.
+A [profile](Glossary.md#terms) holds what each control does.
 
-## Steps in Terminal
+1. Click **Profiles**, then **New Profile**.
+2. Enter a **Profile name**, choose your **Controller** and **Target**, and choose a **Template** such as **Empty**.
+3. Click **Create**, select the profile, and click **Add Assignment**.
+4. Click **Listen for Control** and press a button.
+5. Choose a **Destination**. For a key, click **Capture Key** and press it.
+6. Click **Add Assignment**, then **Save**, then **Set Active**.
+
+Press the button. The Mac reacts as if you pressed the key.
+
+## Make a Profile in Terminal
 
 ```shell
 ojd profile create "My controller" --controller 045E:02FD
@@ -23,11 +27,11 @@ ojd binding set "My controller" button:south key:space
 ojd profile activate "My controller"
 ```
 
-Replace `045E:02FD` with the VID:PID of your controller, which `ojd controller list` shows. `ojd binding set` also takes `mouse:BUTTON`, `move:x|y`, and `scroll:x|y` as targets. `ojd binding list "My controller"` lists the assignments.
+Replace `045E:02FD` with your controller's ID from `ojd controller list`. Targets can also be `mouse:BUTTON`, `move:x|y`, and `scroll:x|y`.
 
-## Further reading
+## Further Reading
 
-- [Profiles](Remapping-Profiles.md#creating-a-profile)
-- [Bindings and actions](Bindings-and-Actions.md#add-an-assignment-in-the-app)
-- [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md)
-- [Permissions and security](Permissions-and-Security.md#permissions)
+- [Creating a Profile](Remapping-Profiles.md#creating-a-profile)
+- [Add an Assignment in the App](Bindings-and-Actions.md#add-an-assignment-in-the-app)
+- [Sticks, Triggers, Touchpad, and Motion](Sticks-Triggers-Touchpad-and-Motion.md)
+- [Permissions](Permissions-and-Security.md#permissions)

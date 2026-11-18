@@ -1,6 +1,6 @@
-# Support ladder
+# Support Ladder
 
-Support a controller with the first of five steps that works, and stop there: nothing, a patch, a record, a generator script, and source.
+Try these five ways to add OpenJoystickDriver (OJD) support for a controller, from least work to most. Stop at the first that works.
 
 ## Contents
 
@@ -11,23 +11,25 @@ Support a controller with the first of five steps that works, and stop there: no
 - [Step 5: Source](#step-5-source)
 - [Further Reading](#further-reading)
 
-Steps 1 to 3 need no build and no pull request. Every document is an XML property list. `plutil -lint FILE.plist` checks one, `plutil -convert json -o - FILE.plist` reads one as JSON, and `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON. Each document declares `apiVersion` `openjoystickdriver/v1alpha3`.
+Steps 1 to 3 need no build and no pull request.
+
+A patch or a record is a small XML property list that tells OJD how a controller works. `plutil -lint FILE.plist` checks one, and `plutil -convert json -o - FILE.plist` reads one as JSON. Each file declares `apiVersion` `openjoystickdriver/v1alpha3`.
 
 ## Step 1: Nothing
 
-OJD binds a controller without a record by its interface signature (Xbox USB and GIP) or by its HID report descriptor.
+Many controllers work with no file. Without a record, OJD recognizes a controller by its interface signature (Xbox USB and GIP) or its HID report descriptor.
 
-1. Run `ojd controller list` and find the VID:PID of the controller.
-2. Run `ojd controller show VVVV:PPPP`. It shows the identity, who handles the controller, its capabilities, and its [virtual gamepad](Glossary.md#terms). For a connected device that OJD does not handle it shows the reason and the next step instead.
-3. In the **Controllers** area, click **Open Input Test...** and press every control.
+1. Run `ojd controller list` to find the vendor and product numbers (VID:PID, such as `045E:02EA`).
+2. Run `ojd controller show VVVV:PPPP`. It shows the identity, handler, capabilities, and [virtual gamepad](Glossary.md#terms). For a device OJD doesn't handle, it shows the reason and next step.
+3. In **Controllers**, click **Open Input Test** and press every control.
 
-Stop here when every control reads correctly. When the controller is [handled by macOS](Glossary.md#terms) and you want OJD to handle it, run `ojd controller claim VVVV:PPPP`.
+Stop here if every control reads correctly. If the controller is [Handled by macOS](Glossary.md#terms) and you want OJD to handle it, run `ojd controller claim VVVV:PPPP`.
 
 ## Step 2: A Patch
 
-A `ControllerPatch` changes the fields of a bundled record that differ: an endpoint, a startup write, a control, a tuning value. The `selector` names the model, `patch` holds the values to change, and `remove` lists key paths to delete. See [Controller records](Controller-Records.md#how-records-work).
+Use a patch when OJD knows your controller but one detail is wrong, such as a stick deadzone. A `ControllerPatch` changes only the differing fields of the bundled record. `selector` names the model, `patch` holds the changes, and `remove` lists key paths to delete. See [Controller records](Controller-Records.md#how-records-work).
 
-1. Run `ojd record draft VVVV:PPPP > 045e-02ea.patch.plist` and press every control for 10 seconds. For a model with a bundled record, the draft is a patch. Or write the file yourself.
+1. Run `ojd record draft VVVV:PPPP > 045e-02ea.patch.plist` and press every control for 10 seconds. For a model with a bundled record, the draft is a patch.
 2. Correct the file. This complete patch sets the stick deadzone of `045E:02EA`:
 
    ```xml
@@ -58,18 +60,18 @@ A `ControllerPatch` changes the fields of a bundled record that differ: an endpo
    </plist>
    ```
 
-3. Run `ojd record validate 045e-02ea.patch.plist`. It exits with code 1 when the patch is invalid, and refuses a patch that changes nothing in the record.
-4. Run `ojd record install 045e-02ea.patch.plist`. The running service applies it without a replug.
-5. Run `ojd record show 045E:02EA` to see the effective record and the layer of each field.
+3. Run `ojd record validate 045e-02ea.patch.plist`. It exits with code 1 for an invalid patch or one that changes nothing.
+4. Run `ojd record install 045e-02ea.patch.plist`. The running service applies it.
+5. Run `ojd record show 045E:02EA` to see the applied record and the layer of each field.
 
-To undo, run `ojd record remove 045E:02EA`.
+To undo it, run `ojd record remove 045E:02EA`.
 
 ## Step 3: A Record
 
-A `Controller` states the whole model: modes, input, rumble, and tuning. OJD refuses a `Controller` for a model that has a bundled record; write a patch instead.
+Use a record when OJD has no entry for your controller. A `Controller` describes the whole model: modes, input, rumble, and tuning. For a model with a bundled record, write a patch instead.
 
-1. Run `ojd record draft VVVV:PPPP > 1209-0001.plist` for a connected controller, or `ojd record draft VVVV:PPPP --from-sdl > 1209-0001.plist` to start from its SDL_GameControllerDB line.
-2. Correct the file. This complete record is the sample controller of [`docs/sdk/sample`](../docs/sdk/sample) (`1209:0001`, a pid.codes test ID):
+1. Run `ojd record draft VVVV:PPPP > 1209-0001.plist` for a connected controller. To start from its SDL_GameControllerDB line, run `ojd record draft VVVV:PPPP --from-sdl > 1209-0001.plist` instead.
+2. Correct the file. This record is the sample in [`docs/sdk/sample`](../docs/sdk/sample), with pid.codes test ID `1209:0001`:
 
    ```xml
    <?xml version="1.0" encoding="UTF-8"?>
@@ -244,23 +246,22 @@ A `Controller` states the whole model: modes, input, rumble, and tuning. OJD ref
    ```
 
 3. Run `ojd record validate 1209-0001.plist`.
-4. Run `ojd record install 1209-0001.plist`. Add `--dry-run` to see the target path and write nothing.
-5. Replay a capture against the record: run `ojd --json controller capture VVVV:PPPP > capture.jsonl`, then `ojd record test VVVV:PPPP --packets capture.jsonl --expect state.json`. The command lists each control that differs.
+4. Run `ojd record install 1209-0001.plist`. Add `--dry-run` to see the target path without writing.
+5. Test the record against a capture. Run `ojd --json controller capture VVVV:PPPP > capture.jsonl`, then `ojd record test VVVV:PPPP --packets capture.jsonl --expect state.json`. It lists each differing field.
 
-To share a record with others, pack it in a [mod package](Writing-Controller-Mods.md).
+To share a record, put it in a [mod package](Writing-Controller-Mods.md).
 
 ## Step 4: A Generator Script
 
-One JavaScript file whose `generate` function returns the records of a product family. Use it when several models share one layout and differ in a few values.
+Use a generator script when several models share one layout. One JavaScript file returns the records of a product family.
 
-1. Write the script. [Generating documents with scripts](Generating-Documents-with-Scripts.md) shows one that writes three records.
-2. Print the documents: `ojd generate family.js`.
-3. Write them into a folder: `ojd generate family.js --output Controllers`. The command checks every document before it writes any, and writes nothing when one fails.
-4. Validate and install each file as in step 3: `ojd record validate Controllers/VVVV-PPPP.plist`, then `ojd record install Controllers/VVVV-PPPP.plist`.
+1. Write the script. [Generating documents with scripts](Generating-Documents-with-Scripts.md) shows one for three records.
+2. Print the documents with `ojd generate family.js`, or write them into a folder with `ojd generate family.js --output Controllers`.
+3. Validate and install each file as in step 3: `ojd record validate Controllers/VVVV-PPPP.plist`, then `ojd record install Controllers/VVVV-PPPP.plist`.
 
 ## Step 5: Source
 
-A protocol family OJD lacks needs source: a handshake, an encryption, or a connection that no document can state. Before you write Swift, check that steps 2 and 3 cannot state the fact: a fact about one model is a record field and never a model branch in Swift. [CONTRIBUTING.md](../CONTRIBUTING.md) lists the setup and the checks, and [Reporting a bug](Reporting-a-Bug.md) lists what to include with a capture.
+Use source when the controller needs a protocol family OJD lacks, such as a handshake or encryption. First check that steps 2 and 3 can't state the fact. A fact about one model is a record field, not a Swift branch. See [CONTRIBUTING.md](../CONTRIBUTING.md) and [Reporting a bug](Reporting-a-Bug.md).
 
 ## Further Reading
 

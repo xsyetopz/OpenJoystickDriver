@@ -1,6 +1,6 @@
 # Glossary
 
-Each term below names one concept in the app, the menus, the command line prose, and this wiki.
+Each term means one thing in the app, its menus, the command-line help, and this guide. **Replaces** lists older or informal words for the same thing. **Command line** shows what the `ojd` tool calls it.
 
 ## Terms
 
@@ -17,15 +17,15 @@ Each term below names one concept in the app, the menus, the command line prose,
 
 ## Rules
 
-- The command line keeps every command, flag, schema value, and error code. The entry of a term names the value it stands for, so a script reads the same output as before.
+- The command line keeps every command, flag, schema value, and error code. The entry of a term names the value it stands for, so a script gets the same output.
 - In All Controls, the app shows the command line value beside the term. In Simple, it shows the term alone. See [Using the app](Using-the-App.md).
 - An error message that names a key of a file writes the key as the file spells it, such as `persona`.
-- A text that names a place in System Settings writes the name as macOS shows it, such as "Driver Extensions".
+- Text that names a place in System Settings writes the name as macOS shows it, such as "Driver Extensions".
 - "Protocol" keeps its meaning as the language that a controller and the Mac speak, as in `ojd protocol`.
 - Each language translates a term one way. See [LOCALIZATION.md](../LOCALIZATION.md).
 
-## Further reading
+## Further Reading
 
-- [Using the app](Using-the-App.md)
-- [Command reference](Command-Reference.md)
-- [Playing games](Playing-Games.md)
+- [Using the App](Using-the-App.md)
+- [Command Reference](Command-Reference.md)
+- [Playing Games](Playing-Games.md)
