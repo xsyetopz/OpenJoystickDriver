@@ -61,7 +61,7 @@ Validate against the schema from the same release, which rejects keys that relea
 
 A `CONTROLLER` operand takes one of these forms:
 
-- A unit ID, `U-` and 16 characters. It survives a reconnect or service restart on the same USB port, and changes with another port. Replacing `~/Library/Application Support/OpenJoystickDriver/PortKeyInstallation.key` changes every unit ID. Scripts can store it. A controller with no location ID has none.
+- A unit ID, `U-` and 16 characters. It survives a reconnect or service restart on the same USB port, and changes with another port. Replacing `~/Library/Application Support/OpenJoystickDriver/PortKeyInstallation.key` changes every unit ID. A Bluetooth LE controller's unit ID comes from the identifier this Mac gave the controller, not a port. Scripts can store it.
 - `VVVV:PPPP`, the vendor and product numbers in hexadecimal. It names a model. When two connected controllers share a model, the command fails and lists them.
 - An ID from `ojd controller list`, `E-` and 16 characters. It lasts only until the controller disconnects. Do not store it.
 

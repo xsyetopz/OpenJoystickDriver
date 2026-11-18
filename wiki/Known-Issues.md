@@ -26,10 +26,6 @@ The Wii Remote pointer reaches a profile, not a game. The default and Generic [v
 
 Unplugging a USB controller or dongle while OJD runs may crash it. Reports come from macOS 27.0, when every controller behind one USB hub disconnected at once. OJD keeps loaded the macOS plug-in that each controller uses, which removes the suspected cause. Whether that stops the crash is unconfirmed. If it crashes, open the app again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Crash When You Unplug a Controller](Troubleshooting.md#crash-when-you-unplug-a-controller).
 
-## A Controller With No Location Takes Only a Model Override
-
-**Apply to** in the controller's details offers **This controller** only when macOS reports its location. Without a location, an override applies to every controller with the same ID.
-
 ## The Xbox USB Driver Reads Only Seven Xbox Controllers
 
 The [Xbox USB driver](Glossary.md#terms) matches only the seven USB IDs in Apple's grant, listed in [Building from Source](Building-from-Source.md). OJD reaches other wired Xbox controllers through raw USB access, or macOS handles them.

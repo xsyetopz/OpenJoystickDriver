@@ -33,8 +33,8 @@ enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
 
   /// Returns the choices for `device`.
   ///
-  /// The unit scope needs a unit ID, which the service refuses to resolve for a controller that
-  /// reports no location.
+  /// The unit scope needs a unit ID, which a controller with neither an IOKit location nor a
+  /// Bluetooth LE peripheral identifier lacks.
   ///
   /// - Parameter device: The controller.
   /// - Returns: The choices for `device`.

@@ -88,7 +88,7 @@ ojd controller unpair PAIR
 `CONTROLLER` is an ID from `ojd controller list`, a unit ID, or `VVVV:PPPP`, in any letter case. When `VVVV:PPPP` matches two connected controllers, the command fails and lists them. Use an ID to pick one.
 
 - An ID (`E-` and 16 characters) is a session token. It changes on each connection, so scripts should not store it.
-- A unit ID (`U-` and 16 characters) comes from the model, USB port, and interface. It survives reconnects and restarts on the same port, changes when the controller moves to another port, and is absent without a location ID. Scripts can store it.
+- A unit ID (`U-` and 16 characters) comes from the model, USB port, and interface. A Bluetooth LE controller's comes from the model and the identifier this Mac gave the controller. It survives reconnects and restarts on the same port, and changes when the controller moves to another port. Scripts can store it.
 
 When the controller does not deliver a result, the command prints no JSON, exits non-zero, and writes the error on standard error.
 
