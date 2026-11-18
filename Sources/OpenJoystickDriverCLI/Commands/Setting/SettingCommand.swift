@@ -398,6 +398,7 @@ struct SettingSetCommand: AsyncParsableCommand {
           CLILocalized.format(
             "platform.macos.cli.setting.set.notApplied",
             setting.rawValue,
+            CLILocalized.text(SystemSettingsPlace.loginItems.localizationKey()),
             setting.rawValue
           )
         )

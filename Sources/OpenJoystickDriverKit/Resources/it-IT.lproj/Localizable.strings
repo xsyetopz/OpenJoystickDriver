@@ -130,8 +130,8 @@
 "ui.settings.notifications.profileNotifications" = "Profilo attivato o cambiato";
 /* Title of the switch in the General pane of the settings window that opens the app when the user logs in. */
 "ui.settings.general.startAtLogin" = "Apri al login";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings, General and Login Items are names in macOS and are written as macOS shows them. */
-"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Consenti OpenJoystickDriver in Impostazioni di Sistema > Generali > Elementi login.";
+/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. */
+"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Consenti OpenJoystickDriver in Impostazioni di Sistema > %@.";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "Invia notifica di prova";
 /* Result of the update check: the installed version is the latest. */
@@ -982,6 +982,20 @@
 "term.keyboardPointer" = "Tastiera e puntatore";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Accessibilità";
+/* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItems" = "Generali > Elementi login";
+/* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItemsAndExtensions" = "Generali > Elementi login ed estensioni";
+/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.inputMonitoring" = "Privacy e sicurezza > Monitoraggio input";
+/* Path of the Accessibility pane in System Settings on macOS 13 to 26, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.accessibility" = "Privacy e sicurezza > Accessibilità";
+/* Path of the Device Control and Data Access pane in System Settings on macOS 27 and later, which replaces Accessibility, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.deviceControl" = "Privacy e sicurezza > Controllo del dispositivo e accesso ai dati";
+/* Path in System Settings on macOS 13 and 14 where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.securityApproval" = "Privacy e sicurezza";
+/* Path of the Driver Extensions pane in System Settings on macOS 15 and later, where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.driverExtensions" = "Generali > Elementi login ed estensioni > Estensioni per i driver";
 /* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
 "platform.macos.term.postEventAccess" = "Accesso a Post Event";
 /* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
@@ -2307,8 +2321,8 @@
 "cli.transportExtension.activate.discussion" = "Esegui ojd dall’interno di /Applications/OpenJoystickDriver.app. L’attesa dell’approvazione termina con codice 0.";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
 "cli.transportExtension.group.activated" = "L’estensione è attiva.";
-/* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
-"platform.macos.cli.transportExtension.group.approval" = "La richiesta richiede la tua approvazione. Consentila in Impostazioni di Sistema > Generali > Elementi login ed estensioni > Estensioni driver.";
+/* Message of 'ojd transport-extension' when macOS needs the user to approve the Xbox USB driver. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to the approval for the running macOS, such as General > Login Items & Extensions > Driver Extensions. */
+"platform.macos.cli.transportExtension.group.approval" = "La richiesta richiede la tua approvazione. Consentila in Impostazioni di Sistema > %@.";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
 "cli.transportExtension.group.bundleMissing" = "L’app non contiene %@.dext. Esegui «just install-dev», poi riprova da /Applications.";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
@@ -2389,12 +2403,6 @@
 "cli.permission.group.purposePostEvent" = "Invia eventi di tastiera, puntatore e scorrimento rimappati";
 /* Remark added in parentheses to the purpose of a permission in 'ojd permission list' when the active profile needs it. */
 "cli.permission.group.requiredByProfile" = "richiesto dal profilo attivo";
-/* Path of the Accessibility pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputInject" = "Privacy e sicurezza > Accessibilità";
-/* Path of the Driver Extensions pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneUsbTransport" = "Generali > Elementi login ed estensioni > Estensioni driver";
-/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputRead" = "Privacy e sicurezza > Monitoraggio input";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
 "cli.permission.group.purposeInputInject" = "Pubblicare l’output del gamepad virtuale";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
@@ -2495,8 +2503,8 @@
 "platform.macos.cli.setting.set.discussion" = "I valori sono true o false. Termina con codice 1 quando macOS lascia launchAtLogin disattivato finché non lo approvi in Impostazioni di Sistema.";
 /* Help text of the KEY argument of 'ojd setting set'. launchAtLogin is a setting name and stays as written. */
 "cli.setting.set.key" = "L’impostazione da modificare, ad esempio launchAtLogin.";
-/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
-"platform.macos.cli.setting.set.notApplied" = "macOS non ha applicato %1$@. Consenti OpenJoystickDriver in Impostazioni di Sistema > Generali > Elementi login ed estensioni, poi esegui «ojd setting get %2$@».";
+/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name, %2$@ is the path to Login Items for the running macOS, such as General > Login Items, and %3$@ repeats the setting name as the argument of the command in quotes, which stays as written. */
+"platform.macos.cli.setting.set.notApplied" = "macOS non ha applicato %1$@. Consenti OpenJoystickDriver in Impostazioni di Sistema > %2$@, poi esegui «ojd setting get %3$@».";
 /* Message printed after 'ojd setting set'. %1$@ is the setting name, which stays as written, and %2$@ is the value the service applied, true or false. */
 "cli.setting.set.success" = "%1$@ impostato su %2$@.";
 /* Help text of the VALUE argument of 'ojd setting set'. true and false stay as written. */

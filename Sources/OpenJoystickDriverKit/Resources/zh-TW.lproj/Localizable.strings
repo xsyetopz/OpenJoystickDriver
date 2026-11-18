@@ -130,8 +130,8 @@
 "ui.settings.notifications.profileNotifications" = "設定檔已啟用或已切換";
 /* Title of the switch in the General pane of the settings window that opens the app when the user logs in. */
 "ui.settings.general.startAtLogin" = "登入時打開";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings, General and Login Items are names in macOS and are written as macOS shows them. */
-"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "請在「系統設定」>「一般」>「登入項目」中允許 OpenJoystickDriver。";
+/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. */
+"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "請在「系統設定」> %@ 中允許 OpenJoystickDriver。";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "傳送測試通知";
 /* Result of the update check: the installed version is the latest. */
@@ -982,6 +982,20 @@
 "term.keyboardPointer" = "鍵盤與指標";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "輔助使用";
+/* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItems" = "一般 > 登入項目";
+/* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItemsAndExtensions" = "一般 > 登入項目與延伸功能";
+/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.inputMonitoring" = "隱私權與安全性 > 輸入監控";
+/* Path of the Accessibility pane in System Settings on macOS 13 to 26, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.accessibility" = "隱私權與安全性 > 輔助使用";
+/* Path of the Device Control and Data Access pane in System Settings on macOS 27 and later, which replaces Accessibility, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.deviceControl" = "隱私權與安全性 > 裝置控制和資料取用";
+/* Path in System Settings on macOS 13 and 14 where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.securityApproval" = "隱私權與安全性";
+/* Path of the Driver Extensions pane in System Settings on macOS 15 and later, where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.driverExtensions" = "一般 > 登入項目與延伸功能 > 驅動程式延伸功能";
 /* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
 "platform.macos.term.postEventAccess" = "Post Event 取用權限";
 /* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
@@ -2307,8 +2321,8 @@
 "cli.transportExtension.activate.discussion" = "請執行 /Applications/OpenJoystickDriver.app 內的 ojd。等待核准時會以結束碼 0 結束。";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
 "cli.transportExtension.group.activated" = "延伸功能已啟用。";
-/* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
-"platform.macos.cli.transportExtension.group.approval" = "此要求需要您的核准。請在「系統設定」>「一般」>「登入項目與延伸功能」>「驅動程式延伸功能」中允許。";
+/* Message of 'ojd transport-extension' when macOS needs the user to approve the Xbox USB driver. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to the approval for the running macOS, such as General > Login Items & Extensions > Driver Extensions. */
+"platform.macos.cli.transportExtension.group.approval" = "此要求需要您的核准。請在「系統設定」> %@ 中允許。";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
 "cli.transportExtension.group.bundleMissing" = "App 中不包含 %@.dext。請執行「just install-dev」，然後從 /Applications 重試。";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
@@ -2389,12 +2403,6 @@
 "cli.permission.group.purposePostEvent" = "傳送重新對應的鍵盤、指標與捲動事件";
 /* Remark added in parentheses to the purpose of a permission in 'ojd permission list' when the active profile needs it. */
 "cli.permission.group.requiredByProfile" = "使用中的設定檔需要";
-/* Path of the Accessibility pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputInject" = "隱私權與安全性 > 輔助使用";
-/* Path of the Driver Extensions pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneUsbTransport" = "一般 > 登入項目與延伸功能 > 驅動程式延伸功能";
-/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputRead" = "隱私權與安全性 > 輸入監控";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
 "cli.permission.group.purposeInputInject" = "發布虛擬遊戲控制器輸出";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
@@ -2495,8 +2503,8 @@
 "platform.macos.cli.setting.set.discussion" = "值為 true 或 false。如果在您於「系統設定」中核准之前 macOS 讓 launchAtLogin 維持關閉，則會以結束碼 1 結束。";
 /* Help text of the KEY argument of 'ojd setting set'. launchAtLogin is a setting name and stays as written. */
 "cli.setting.set.key" = "要更改的設定，例如 launchAtLogin。";
-/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
-"platform.macos.cli.setting.set.notApplied" = "macOS 未套用 %1$@。請在「系統設定」>「一般」>「登入項目」中允許 OpenJoystickDriver，然後執行「ojd setting get %2$@」。";
+/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name, %2$@ is the path to Login Items for the running macOS, such as General > Login Items, and %3$@ repeats the setting name as the argument of the command in quotes, which stays as written. */
+"platform.macos.cli.setting.set.notApplied" = "macOS 未套用 %1$@。請在「系統設定」> %2$@ 中允許 OpenJoystickDriver，然後執行「ojd setting get %3$@」。";
 /* Message printed after 'ojd setting set'. %1$@ is the setting name, which stays as written, and %2$@ is the value the service applied, true or false. */
 "cli.setting.set.success" = "已將 %1$@ 設為 %2$@。";
 /* Help text of the VALUE argument of 'ojd setting set'. true and false stay as written. */

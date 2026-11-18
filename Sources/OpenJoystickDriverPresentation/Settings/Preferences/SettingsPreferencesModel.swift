@@ -230,7 +230,10 @@
         if enabled, !startAtLogin {
           failControl(
             .loginItem,
-            OJDLocalized.string("platform.macos.ui.settings.general.startAtLoginApprovalRequired")
+            OJDLocalized.formatted(
+              "platform.macos.ui.settings.general.startAtLoginApprovalRequired",
+              OJDLocalized.string(SystemSettingsPlace.loginItems.localizationKey())
+            )
           )
         } else {
           failControl(.loginItem, nil)

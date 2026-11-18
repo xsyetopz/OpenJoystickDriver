@@ -32,7 +32,10 @@ struct SettingsFailureBesideControlTests {
 
     #expect(
       model.failure(beside: .loginItem)
-        == OJDLocalized.string("platform.macos.ui.settings.general.startAtLoginApprovalRequired")
+        == OJDLocalized.formatted(
+          "platform.macos.ui.settings.general.startAtLoginApprovalRequired",
+          OJDLocalized.string(SystemSettingsPlace.loginItems.localizationKey())
+        )
     )
     #expect(model.errorMessage == nil)
     #expect(model.failure(beside: .pauseShortcut) == nil)

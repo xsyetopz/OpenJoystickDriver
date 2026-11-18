@@ -130,8 +130,8 @@
 "ui.settings.notifications.profileNotifications" = "Cấu hình đã kích hoạt hoặc chuyển đổi";
 /* Title of the switch in the General pane of the settings window that opens the app when the user logs in. */
 "ui.settings.general.startAtLogin" = "Khởi động khi đăng nhập";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings, General and Login Items are names in macOS and are written as macOS shows them. */
-"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Cho phép OpenJoystickDriver trong Cài đặt hệ thống > Cài đặt chung > Mục đăng nhập.";
+/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. */
+"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Cho phép OpenJoystickDriver trong Cài đặt hệ thống > %@.";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "Gửi thông báo thử";
 /* Result of the update check: the installed version is the latest. */
@@ -982,6 +982,20 @@
 "term.keyboardPointer" = "Bàn phím & con trỏ";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Trợ năng";
+/* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItems" = "Cài đặt chung > Mục đăng nhập";
+/* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItemsAndExtensions" = "Cài đặt chung > Mục đăng nhập & Phần mở rộng";
+/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.inputMonitoring" = "Quyền riêng tư & Bảo mật > Giám sát đầu vào";
+/* Path of the Accessibility pane in System Settings on macOS 13 to 26, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.accessibility" = "Quyền riêng tư & Bảo mật > Trợ năng";
+/* Path of the Device Control and Data Access pane in System Settings on macOS 27 and later, which replaces Accessibility, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.deviceControl" = "Quyền riêng tư & Bảo mật > Điều khiển thiết bị và truy cập dữ liệu";
+/* Path in System Settings on macOS 13 and 14 where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.securityApproval" = "Quyền riêng tư & Bảo mật";
+/* Path of the Driver Extensions pane in System Settings on macOS 15 and later, where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.driverExtensions" = "Cài đặt chung > Mục đăng nhập & Phần mở rộng > Phần mở rộng trình điều khiển";
 /* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
 "platform.macos.term.postEventAccess" = "Quyền truy cập Post Event";
 /* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
@@ -2307,8 +2321,8 @@
 "cli.transportExtension.activate.discussion" = "Hãy chạy ojd bên trong /Applications/OpenJoystickDriver.app. Chờ phê duyệt thì thoát với mã 0.";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
 "cli.transportExtension.group.activated" = "Phần mở rộng đang hoạt động.";
-/* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
-"platform.macos.cli.transportExtension.group.approval" = "Yêu cầu cần bạn phê duyệt. Hãy cho phép trong Cài đặt hệ thống > Cài đặt chung > Mục đăng nhập & Phần mở rộng > Phần mở rộng trình điều khiển.";
+/* Message of 'ojd transport-extension' when macOS needs the user to approve the Xbox USB driver. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to the approval for the running macOS, such as General > Login Items & Extensions > Driver Extensions. */
+"platform.macos.cli.transportExtension.group.approval" = "Yêu cầu cần bạn phê duyệt. Hãy cho phép trong Cài đặt hệ thống > %@.";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
 "cli.transportExtension.group.bundleMissing" = "Ứng dụng không chứa %@.dext. Hãy chạy “just install-dev”, rồi thử lại từ /Applications.";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
@@ -2389,12 +2403,6 @@
 "cli.permission.group.purposePostEvent" = "Gửi sự kiện bàn phím, con trỏ và cuộn đã ánh xạ lại";
 /* Remark added in parentheses to the purpose of a permission in 'ojd permission list' when the active profile needs it. */
 "cli.permission.group.requiredByProfile" = "hồ sơ đang dùng yêu cầu";
-/* Path of the Accessibility pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputInject" = "Quyền riêng tư & Bảo mật > Trợ năng";
-/* Path of the Driver Extensions pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneUsbTransport" = "Cài đặt chung > Mục đăng nhập & Phần mở rộng > Phần mở rộng trình điều khiển";
-/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputRead" = "Quyền riêng tư & Bảo mật > Giám sát đầu vào";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
 "cli.permission.group.purposeInputInject" = "Cung cấp đầu ra tay cầm ảo";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
@@ -2495,8 +2503,8 @@
 "platform.macos.cli.setting.set.discussion" = "Giá trị là true hoặc false. Thoát với mã 1 khi macOS để launchAtLogin ở trạng thái tắt cho đến khi bạn phê duyệt trong Cài đặt hệ thống.";
 /* Help text of the KEY argument of 'ojd setting set'. launchAtLogin is a setting name and stays as written. */
 "cli.setting.set.key" = "Cài đặt để thay đổi, như launchAtLogin.";
-/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
-"platform.macos.cli.setting.set.notApplied" = "macOS không áp dụng %1$@. Hãy cho phép OpenJoystickDriver trong Cài đặt hệ thống > Cài đặt chung > Mục đăng nhập, rồi chạy “ojd setting get %2$@”.";
+/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name, %2$@ is the path to Login Items for the running macOS, such as General > Login Items, and %3$@ repeats the setting name as the argument of the command in quotes, which stays as written. */
+"platform.macos.cli.setting.set.notApplied" = "macOS không áp dụng %1$@. Hãy cho phép OpenJoystickDriver trong Cài đặt hệ thống > %2$@, rồi chạy “ojd setting get %3$@”.";
 /* Message printed after 'ojd setting set'. %1$@ is the setting name, which stays as written, and %2$@ is the value the service applied, true or false. */
 "cli.setting.set.success" = "Đã đặt %1$@ thành %2$@.";
 /* Help text of the VALUE argument of 'ojd setting set'. true and false stay as written. */

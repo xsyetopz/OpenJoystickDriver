@@ -167,8 +167,9 @@ func submitTransportExtension(
   case .human:
     if result == .awaitingApproval {
       CLIOutput.stderr(
-        CLILocalized.text(
-          "platform.macos.cli.transportExtension.group.approval"
+        CLILocalized.format(
+          "platform.macos.cli.transportExtension.group.approval",
+          CLILocalized.text(SystemSettingsPlace.driverApproval.localizationKey())
         )
       )
     } else {

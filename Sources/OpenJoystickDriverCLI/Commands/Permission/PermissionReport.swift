@@ -58,18 +58,13 @@ enum PermissionID: String, CaseIterable, Sendable {
 
   /// Where the user allows this permission in System Settings.
   var localizedSettingsPane: String {
-    switch self {
-    case .inputRead:
-      CLILocalized.text(
-        "platform.macos.cli.permission.group.paneInputRead"
-      )
-    case .inputInject, .postEvent:
-      CLILocalized.text("platform.macos.cli.permission.group.paneInputInject")
-    case .usbTransport:
-      CLILocalized.text(
-        "platform.macos.cli.permission.group.paneUsbTransport"
-      )
-    }
+    let place: SystemSettingsPlace =
+      switch self {
+      case .inputRead: .inputMonitoring
+      case .inputInject, .postEvent: .accessibility
+      case .usbTransport: .driverApproval
+      }
+    return CLILocalized.text(place.localizationKey())
   }
 }
 

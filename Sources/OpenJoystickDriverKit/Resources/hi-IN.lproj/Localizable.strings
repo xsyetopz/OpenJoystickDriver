@@ -130,8 +130,8 @@
 "ui.settings.notifications.profileNotifications" = "प्रोफ़ाइल सक्रिय हुई या बदली गई";
 /* Title of the switch in the General pane of the settings window that opens the app when the user logs in. */
 "ui.settings.general.startAtLogin" = "लॉगिन पर शुरू करें";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings, General and Login Items are names in macOS and are written as macOS shows them. */
-"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "सिस्टम सेटिंग्स > सामान्य > लॉगिन आइटम में OpenJoystickDriver को अनुमति दें।";
+/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. */
+"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "सिस्टम सेटिंग्स > %@ में OpenJoystickDriver को अनुमति दें।";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "परीक्षण सूचना भेजें";
 /* Result of the update check: the installed version is the latest. */
@@ -982,6 +982,20 @@
 "term.keyboardPointer" = "कीबोर्ड और पॉइंटर";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "ऐक्सेसिबिलिटी";
+/* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItems" = "सामान्य > लॉगिन आइटम";
+/* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.loginItemsAndExtensions" = "सामान्य > लॉगइन आइटम और एक्सटेंशन";
+/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.inputMonitoring" = "गोपनीयता और सुरक्षा > इनपुट मॉनिटरिंग";
+/* Path of the Accessibility pane in System Settings on macOS 13 to 26, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.accessibility" = "गोपनीयता और सुरक्षा > ऐक्सेसिबिलिटी";
+/* Path of the Device Control and Data Access pane in System Settings on macOS 27 and later, which replaces Accessibility, shown in permission messages. It is written as macOS shows it. */
+"platform.macos.term.settingsPlace.deviceControl" = "गोपनीयता और सुरक्षा > डिवाइस नियंत्रण और डेटा ऐक्सेस";
+/* Path in System Settings on macOS 13 and 14 where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.securityApproval" = "गोपनीयता और सुरक्षा";
+/* Path of the Driver Extensions pane in System Settings on macOS 15 and later, where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
+"platform.macos.term.settingsPlace.driverExtensions" = "सामान्य > लॉगइन आइटम और एक्सटेंशन > ड्राइवर एक्सटेंशन";
 /* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
 "platform.macos.term.postEventAccess" = "Post Event एक्सेस";
 /* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
@@ -2307,8 +2321,8 @@
 "cli.transportExtension.activate.discussion" = "/Applications/OpenJoystickDriver.app के अंदर का ojd चलाएँ। स्वीकृति का इंतज़ार होने पर कोड 0 के साथ बाहर निकलता है।";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
 "cli.transportExtension.group.activated" = "एक्सटेंशन सक्रिय है।";
-/* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
-"platform.macos.cli.transportExtension.group.approval" = "अनुरोध के लिए आपकी स्वीकृति चाहिए। इसे सिस्टम सेटिंग्स > सामान्य > लॉगिन आइटम और एक्सटेंशन > ड्राइवर एक्सटेंशन में अनुमति दें।";
+/* Message of 'ojd transport-extension' when macOS needs the user to approve the Xbox USB driver. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to the approval for the running macOS, such as General > Login Items & Extensions > Driver Extensions. */
+"platform.macos.cli.transportExtension.group.approval" = "अनुरोध के लिए आपकी स्वीकृति चाहिए। इसे सिस्टम सेटिंग्स > %@ में अनुमति दें।";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
 "cli.transportExtension.group.bundleMissing" = "ऐप में %@.dext नहीं है। “just install-dev” चलाएँ, फिर /Applications से दोबारा कोशिश करें।";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
@@ -2389,12 +2403,6 @@
 "cli.permission.group.purposePostEvent" = "रीमैप किए गए कीबोर्ड, पॉइंटर और स्क्रोल इवेंट भेजें";
 /* Remark added in parentheses to the purpose of a permission in 'ojd permission list' when the active profile needs it. */
 "cli.permission.group.requiredByProfile" = "सक्रिय प्रोफ़ाइल को आवश्यक";
-/* Path of the Accessibility pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputInject" = "गोपनीयता और सुरक्षा > ऐक्सेसिबिलिटी";
-/* Path of the Driver Extensions pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneUsbTransport" = "सामान्य > लॉगिन आइटम और एक्सटेंशन > ड्राइवर एक्सटेंशन";
-/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
-"platform.macos.cli.permission.group.paneInputRead" = "गोपनीयता और सुरक्षा > इनपुट मॉनिटरिंग";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
 "cli.permission.group.purposeInputInject" = "वर्चुअल गेमपैड का आउटपुट प्रकाशित करना";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
@@ -2495,8 +2503,8 @@
 "platform.macos.cli.setting.set.discussion" = "मान true या false होते हैं। जब तक आप सिस्टम सेटिंग्स में स्वीकृति नहीं देते और macOS launchAtLogin को बंद रखता है, तब कोड 1 के साथ बाहर निकलता है।";
 /* Help text of the KEY argument of 'ojd setting set'. launchAtLogin is a setting name and stays as written. */
 "cli.setting.set.key" = "बदलने की सेटिंग, जैसे launchAtLogin।";
-/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
-"platform.macos.cli.setting.set.notApplied" = "macOS ने %1$@ लागू नहीं किया। सिस्टम सेटिंग्स > सामान्य > लॉगिन आइटम में OpenJoystickDriver को अनुमति दें, फिर “ojd setting get %2$@” चलाएँ।";
+/* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name, %2$@ is the path to Login Items for the running macOS, such as General > Login Items, and %3$@ repeats the setting name as the argument of the command in quotes, which stays as written. */
+"platform.macos.cli.setting.set.notApplied" = "macOS ने %1$@ लागू नहीं किया। सिस्टम सेटिंग्स > %2$@ में OpenJoystickDriver को अनुमति दें, फिर “ojd setting get %3$@” चलाएँ।";
 /* Message printed after 'ojd setting set'. %1$@ is the setting name, which stays as written, and %2$@ is the value the service applied, true or false. */
 "cli.setting.set.success" = "%1$@ को %2$@ पर सेट किया गया।";
 /* Help text of the VALUE argument of 'ojd setting set'. true and false stay as written. */
