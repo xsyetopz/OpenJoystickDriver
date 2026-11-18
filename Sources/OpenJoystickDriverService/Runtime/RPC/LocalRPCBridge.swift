@@ -246,6 +246,18 @@ extension ApplicationServiceServer {
     case .exchangeVirtualFeed:
       let value = try decode(LocalServiceRPCVirtualFeedExchangeArguments.self)
       return try send(virtualFeeds.exchange(token: value.token, frames: value.frames))
+    case .waitForVirtualFeedFeedback:
+      let value = try decode(LocalServiceRPCVirtualFeedWaitArguments.self)
+      let milliseconds = min(
+        max(0, value.timeoutMilliseconds),
+        LocalServiceRPCVirtualFeedWaitArguments.maximumTimeoutMilliseconds
+      )
+      return try send(
+        await virtualFeeds.waitForFeedback(
+          token: value.token,
+          timeout: TimeInterval(milliseconds) / 1000
+        )
+      )
     case .closeVirtualFeed:
       let value = try decode(LocalServiceRPCVirtualFeedCloseArguments.self)
       return try send(await virtualFeeds.close(token: value.token))

@@ -17,7 +17,7 @@ struct LocalRPCBridgeTests {
     "sendTestNotification", "reportTestNotificationResult", "setVirtualHIDProfileOverride",
     "resetVirtualHIDProfileOverride", "setControllerServer", "setControllerTuning",
     "recalibrateController",
-    "openVirtualFeed", "exchangeVirtualFeed",
+    "openVirtualFeed", "exchangeVirtualFeed", "waitForVirtualFeedFeedback",
     "closeVirtualFeed", "suspendController", "resumeController",
     "disconnectWirelessController", "resetSettings", "getSettings", "setSetting",
     "getAccessStatus", "setAccessEnabled", "grantAccess", "revokeAccess",

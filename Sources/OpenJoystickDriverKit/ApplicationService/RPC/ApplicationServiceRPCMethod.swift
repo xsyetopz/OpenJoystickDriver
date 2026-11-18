@@ -45,6 +45,8 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case openVirtualFeed
   /// Exchanges frames and output commands with a virtual feed.
   case exchangeVirtualFeed
+  /// Waits until a virtual feed has an output command to collect, or closes.
+  case waitForVirtualFeedFeedback
   /// Closes a virtual feed.
   case closeVirtualFeed
   /// Suspends a controller's session.
@@ -109,14 +111,15 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case resetRemappingProfileLibrary
 
   /// True for a method whose reply stays open until something happens, so the server cancels it
-  /// when its client closes the connection: the status wait, which is held up to the hold time, and
-  /// the test notification request, which waits for the app's report.
+  /// when its client closes the connection: the status wait, which is held up to the hold time, the
+  /// feed feedback wait, held up to its timeout, and the test notification request, which waits for
+  /// the app's report.
   ///
   /// Every other method runs to completion even if the client has left, because it changes state
   /// or asks the system for something that must not stop halfway.
   var holdsReplyOpen: Bool {
     switch self {
-    case .waitForServiceStatusChange, .sendTestNotification: true
+    case .waitForServiceStatusChange, .waitForVirtualFeedFeedback, .sendTestNotification: true
     default: false
     }
   }

@@ -106,8 +106,10 @@ struct VirtualFeedCommand: AsyncParsableCommand {
   /// Sends each frame as soon as it is read, in order, and a heartbeat when no frame arrives, until
   /// the input ends and the feed has played every frame.
   ///
-  /// Stops reading input while ``VirtualFeedExchangeResult/maximumQueuedFrames`` frames wait to be
-  /// sent.
+  /// A held feedback wait wakes the loop as soon as the host sends a command, so a command prints
+  /// within one exchange of its arrival rather than at the next heartbeat. Only the loop exchanges,
+  /// so commands print in the order the host sent them. Stops reading input while
+  /// ``VirtualFeedExchangeResult/maximumQueuedFrames`` frames wait to be sent.
   private static func feed(
     _ client: ApplicationServiceClient,
     token: UUID,
@@ -146,9 +148,33 @@ struct VirtualFeedCommand: AsyncParsableCommand {
         signal?.yield()
       }
     }
+    let watcher = Task {
+      let heartbeat = UInt64(VirtualFeedExchangeResult.heartbeatSeconds * 1_000_000_000)
+      while !Task.isCancelled {
+        let started = DispatchTime.now().uptimeNanoseconds
+        let ready = try? await client.waitForVirtualFeedFeedback(
+          token: token,
+          timeoutMilliseconds: Int(VirtualFeedExchangeResult.heartbeatSeconds * 1000)
+        )
+        guard ready == true else {
+          // A wait that failed or ended early, such as on a service without the request, waits out
+          // the heartbeat so the watcher does not spin; the heartbeat exchange still collects.
+          let elapsed = DispatchTime.now().uptimeNanoseconds - started
+          if elapsed < heartbeat { try? await Task.sleep(nanoseconds: heartbeat - elapsed) }
+          continue
+        }
+        input.withLock { $0.feedbackWaiting = true }
+        signal?.yield()
+        // The next wait would return at once until the loop has collected the commands.
+        while input.withLock({ $0.feedbackWaiting }), !Task.isCancelled {
+          try? await Task.sleep(nanoseconds: 2_000_000)
+        }
+      }
+    }
     defer {
       reader.cancel()
       ticker.cancel()
+      watcher.cancel()
       signal?.finish()
     }
     var woken = wakes.makeAsyncIterator()
@@ -166,10 +192,11 @@ struct VirtualFeedCommand: AsyncParsableCommand {
       }
       let draining = next.finished && queued > 0
       let now = ProcessInfo.processInfo.systemUptime
-      if !next.pending.isEmpty || draining
+      if !next.pending.isEmpty || draining || next.feedbackWaiting
         || now - lastExchange >= VirtualFeedExchangeResult.heartbeatSeconds
       {
         lastExchange = now
+        input.withLock { $0.feedbackWaiting = false }
         let frames = next.pending
         let result = try await ServiceConnection.withDeadline(seconds: timeout) {
           try await client.exchangeVirtualFeed(token: token, frames: frames)
@@ -188,7 +215,11 @@ struct VirtualFeedCommand: AsyncParsableCommand {
           )
         }
       }
-      if next.finished, queued == 0, input.withLock({ $0.pending.isEmpty }) { return }
+      if next.finished, queued == 0,
+        input.withLock({ $0.pending.isEmpty && !$0.feedbackWaiting })
+      {
+        return
+      }
       guard await woken.next() != nil else { throw CancellationError() }
     }
   }
@@ -199,6 +230,8 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     var pending: [VirtualFeedFrame] = []
     /// True once the input has ended.
     var finished = false
+    /// True while the feed holds host commands that no exchange has collected.
+    var feedbackWaiting = false
     /// The 1-based number of the first line that is not a frame.
     var invalidLine: Int?
   }

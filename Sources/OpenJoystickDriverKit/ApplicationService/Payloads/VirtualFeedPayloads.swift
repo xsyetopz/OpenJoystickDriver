@@ -257,6 +257,23 @@ public struct VirtualFeedExchangeResult: Codable, Equatable, Sendable {
   }
 }
 
+/// Arguments of `waitForVirtualFeedFeedback`: the feed's token and how long the reply may wait.
+public struct LocalServiceRPCVirtualFeedWaitArguments: Codable, Sendable {
+  /// The longest wait the service holds a reply for, in milliseconds.
+  public static let maximumTimeoutMilliseconds = 1000
+  /// The token of the feed.
+  public let token: UUID
+  /// How long the reply may wait, in milliseconds; the service caps it at
+  /// ``maximumTimeoutMilliseconds``.
+  public let timeoutMilliseconds: Int
+
+  /// Creates the arguments for the feed `token` names.
+  public init(token: UUID, timeoutMilliseconds: Int) {
+    self.token = token
+    self.timeoutMilliseconds = timeoutMilliseconds
+  }
+}
+
 /// Arguments of `closeVirtualFeed`.
 public struct LocalServiceRPCVirtualFeedCloseArguments: Codable, Sendable {
   /// The token of the feed to close.

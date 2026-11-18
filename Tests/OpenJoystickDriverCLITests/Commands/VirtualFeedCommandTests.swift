@@ -155,6 +155,61 @@ struct VirtualFeedCommandTests {
     #expect(first["duration"] == nil)
   }
 
+  /// A command the host sends while the input is idle prints before the next heartbeat: the
+  /// feedback wait wakes an exchange that collects it.
+  @Test(.timeLimit(.minutes(1)))
+  func commandSentWhileInputIsIdlePrintsBeforeHeartbeat() async throws {
+    let waits = NSLock()
+    nonisolated(unsafe) var waited = false
+    let collected = NSLock()
+    nonisolated(unsafe) var queued: [ControllerOutputCommand] = []
+    let service = try FakeService(devices: []) { method, arguments in
+      switch method {
+      case .openVirtualFeed: return encoded(VirtualFeedSession(token: Self.token))
+      case .waitForVirtualFeedFeedback:
+        let first = waits.withLock {
+          defer { unsafe waited = true }
+          return unsafe !waited
+        }
+        guard first else { return encoded(false) }
+        collected.withLock { unsafe queued = [.stopRumble] }
+        return encoded(true)
+      case .exchangeVirtualFeed:
+        let sent =
+          (try? JSONDecoder().decode(
+            LocalServiceRPCVirtualFeedExchangeArguments.self,
+            from: arguments
+          ))?.frames.count ?? 0
+        let feedback = collected.withLock {
+          defer { unsafe queued = [] }
+          return unsafe queued
+        }
+        return encoded(
+          VirtualFeedExchangeResult(feedback: feedback, closed: false, accepted: sent)
+        )
+      case .closeVirtualFeed: return encoded(true)
+      default: return nil
+      }
+    }
+    let input: @Sendable () -> AsyncStream<String> = {
+      AsyncStream { continuation in
+        continuation.yield("{}")
+        Task {
+          // Shorter than the heartbeat, so only the wait can collect the command in time.
+          try? await Task.sleep(nanoseconds: 250_000_000)
+          continuation.finish()
+        }
+      }
+    }
+
+    let result = await VirtualFeedCommand.$standardInputLines.withValue(input) {
+      await service.run(["virtual", "feed", "--as", "generic", "--json"])
+    }
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardOutput.contains(#""type":"StopRumble""#))
+  }
+
   @Test(arguments: [
     #"{"buttons":["jump"]}"#, "not json", #"{"axes":{"x":1}}"#, #"{"holdMilliseconds":60001}"#,
     #"{"holdMilliseconds":-1}"#, #"{"buttons":["South","South"]}"#,

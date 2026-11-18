@@ -341,7 +341,8 @@ ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
   - Buttons, D-pad directions, and stick axes take the names of the `button:`, `dpad:`, and `axis:` binding sources. The triggers are the axes `LeftTrigger` and `RightTrigger`. A missing control is neutral.
   - Sticks run from -1 to 1 with Y down. Triggers run from 0 to 1.
   - Frames play in order, each for at least 8 ms. `holdMilliseconds` (0 to 60000) keeps one longer.
-  - Each rumble command that a game sends prints as one `RumbleCommand` object per line, with `type` `SetRumble` or `StopRumble`.
+  - A frame without `holdMilliseconds` that has the same buttons and D-pad as the last queued frame takes its place, so a fast stream of stick or trigger moves does not build a queue. A press or release always plays.
+  - Each rumble command that a game sends prints as one `RumbleCommand` object per line, with `type` `SetRumble` or `StopRumble`, as soon as the service receives it, also while no input arrives. Commands print in the order the game sent them.
   - The service removes the gamepad when the input ends, on Control-C, or after 2 seconds with no update.
   - A line that is not a frame, such as one with an unknown key or a button listed twice, exits with code 64.
   - The service runs at most 4 feeds from this command. Endpoint clients have 4 more.
