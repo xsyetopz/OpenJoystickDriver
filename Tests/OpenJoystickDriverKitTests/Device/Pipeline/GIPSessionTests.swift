@@ -37,7 +37,7 @@ struct GIPSessionTests {
     )
 
     let startTask = Task { await pipeline.start() }
-    await waitUntil("the first input is dispatched", deadline: 5) { dispatcher.inputCount > 0 }
+    await waitUntil("the first input is dispatched") { dispatcher.inputCount > 0 }
 
     let events = await pad.events
     #expect(dispatcher.inputCount > 0)

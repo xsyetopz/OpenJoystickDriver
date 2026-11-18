@@ -20,7 +20,8 @@ struct USBSignatureDiscoveryTests {
     #expect(
       await manager.handleUSBDeviceAdded(device, provider: provider) == .claimed([identifier])
     )
-    await provider.session.waitForFirstRead()
+    // A GIP session arms its input read before its startup writes.
+    await waitUntil("the startup write is sent") { await provider.session.writes.first != nil }
 
     // Discovery only reads configuration 1; the pipeline's open sends SET_CONFIGURATION.
     #expect(await provider.descriptorReads == [1])
@@ -55,7 +56,8 @@ struct USBSignatureDiscoveryTests {
     #expect(
       await manager.handleUSBDeviceAdded(device, provider: provider) == .claimed([identifier])
     )
-    await provider.session.waitForFirstRead()
+    // A GIP session arms its input read before its startup writes.
+    await waitUntil("the startup write is sent") { await provider.session.writes.first != nil }
 
     #expect(await provider.descriptorReads == [1])
     #expect(await provider.options?.configurationValue == 1)
@@ -112,7 +114,8 @@ struct USBSignatureDiscoveryTests {
     #expect(
       await manager.handleUSBDeviceAdded(device, provider: provider) == .claimed([identifier])
     )
-    await provider.session.waitForFirstRead()
+    // A GIP session arms its input read before its startup writes.
+    await waitUntil("the startup write is sent") { await provider.session.writes.first != nil }
 
     #expect(await provider.descriptorReads == [1])
     #expect(await provider.options?.configurationValue == nil)
@@ -136,7 +139,8 @@ struct USBSignatureDiscoveryTests {
     #expect(
       await manager.handleUSBDeviceAdded(device, provider: provider) == .claimed([identifier])
     )
-    await provider.session.waitForFirstRead()
+    // A GIP session arms its input read before its startup writes.
+    await waitUntil("the startup write is sent") { await provider.session.writes.first != nil }
 
     #expect(await provider.session.writes.first?.endpoint == 0x01)
     #expect(await provider.session.readEndpoints.first == 0x81)

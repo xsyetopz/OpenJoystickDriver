@@ -117,7 +117,7 @@ extension DevicePipeline {
 
       // Linux reads the IN endpoint before it writes the first startup packet; a pad that sends
       // its first report once, without an announce, sends it to that read.
-      let armedRead = plan.armsInputBeforeStartup ? armInputRead(handle: handle) : nil
+      let armedRead = plan.armsInputBeforeStartup ? await armInputRead(handle: handle) : nil
 
       guard
         await performUSBHandshake(handle: handle, device: device, runGeneration: generation)
@@ -176,15 +176,23 @@ extension DevicePipeline {
   }
 
   /// Starts the interrupt IN read that the input loop takes as its first read.
-  func armInputRead(handle: any USBTransportSession) -> Task<[UInt8], any Error> {
-    let endpoint = transportProfile.inputEndpoint
-    return Task {
-      try await handle.read(
-        endpoint: endpoint,
+  ///
+  /// Returns once the read has left this actor for the session, so the session receives it
+  /// before any startup write this actor sends after the return.
+  func armInputRead(handle: any USBTransportSession) async -> Task<[UInt8], any Error> {
+    let (started, signal) = AsyncStream<Void>.makeStream()
+    // The task reads `self`, so it runs on this actor, which is free only once the task suspends
+    // on the session's read; the wait below resumes after that, however busy the machine is.
+    let read = Task {
+      signal.finish()
+      return try await handle.read(
+        endpoint: self.transportProfile.inputEndpoint,
         length: gipReadPacketLength,
         timeout: gipReadTimeoutMs
       )
     }
+    for await _ in started {}
+    return read
   }
 
   /// Waits for the platform to announce that the exclusive owner let go of the interface.
