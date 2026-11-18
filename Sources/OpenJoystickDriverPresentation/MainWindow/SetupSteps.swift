@@ -60,7 +60,11 @@ enum SetupSteps {
           kind: .bluetooth,
           sentenceKey: "ui.setupSteps.bluetooth",
           buttonKey: bluetooth == .notAsked
-            ? "action.request" : "platform.macos.ui.setup.openSystemSettings"
+            ? "action.request"
+            : SystemSettingsPlace.appKey(
+              settings: "platform.macos.ui.setup.openSystemSettings",
+              preferences: "platform.macos.ui.setup.openSystemPreferences"
+            )
         )
       )
     }
@@ -85,7 +89,12 @@ enum SetupSteps {
     case .loading, .requesting, .available: break
     }
     return settingsOpenFailed
-      ? OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed") : nil
+      ? OJDLocalized.string(
+        SystemSettingsPlace.appKey(
+          settings: "platform.macos.ui.setup.openSystemSettingsFailed",
+          preferences: "platform.macos.ui.setup.openSystemPreferencesFailed"
+        )
+      ) : nil
   }
 
   /// Whether a request to macOS is in flight.

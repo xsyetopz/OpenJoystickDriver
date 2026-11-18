@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// What a permission row says about its permission, apart from the words it shows as a value.
 enum AccessPermissionState: String, CaseIterable, Equatable, Sendable {
@@ -33,7 +34,11 @@ enum AccessPermissionState: String, CaseIterable, Equatable, Sendable {
   var messageKey: String? {
     switch self {
     case .granted, .notAsked, .checking: return nil
-    case .denied: return "platform.macos.ui.access.permission.denied.message"
+    case .denied:
+      return SystemSettingsPlace.appKey(
+        settings: "platform.macos.ui.access.permission.denied.message",
+        preferences: "platform.macos.ui.access.permission.denied.messageSystemPreferences"
+      )
     case .notNeeded: return "ui.access.permission.notNeeded.message"
     case .limited: return "ui.access.permission.limited.message"
     }

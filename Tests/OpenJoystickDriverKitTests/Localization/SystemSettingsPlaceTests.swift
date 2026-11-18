@@ -18,7 +18,10 @@ struct SystemSettingsPlaceTests {
     (.accessibility, 27, "deviceControl"),
     (.driverApproval, 14, "securityApproval"),
     (.driverApproval, 15, "driverExtensions"),
-    (.inputMonitoring, 13, "inputMonitoring"),
+    (.inputMonitoring, 13, "inputMonitoringMacOS13"),
+    (.inputMonitoring, 14, "inputMonitoringMacOS14"),
+    (.inputMonitoring, 15, "inputMonitoringMacOS15"),
+    (.inputMonitoring, 26, "inputMonitoringMacOS15"),
     (.inputMonitoring, 27, "inputMonitoring"),
   ])
   func keyMatchesTheMacOSRelease(place: SystemSettingsPlace, major: Int, name: String) {
@@ -36,6 +39,18 @@ struct SystemSettingsPlaceTests {
     #expect(
       SystemSettingsPlace.appLocalizationKey(on: version(major))
         == "platform.macos.term.settingsApp.\(name)"
+    )
+  }
+
+  @Test(arguments: [(12, "preferences"), (13, "settings"), (27, "settings")])
+  func messageKeyMatchesTheSettingsApp(major: Int, expected: String) {
+    #expect(
+      SystemSettingsPlace.appKey(
+        settings: "settings",
+        preferences: "preferences",
+        on: version(major)
+      )
+        == expected
     )
   }
 

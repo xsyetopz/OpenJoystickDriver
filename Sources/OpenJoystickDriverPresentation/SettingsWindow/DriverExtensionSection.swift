@@ -1,6 +1,7 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
   import AppKit
+  import OpenJoystickDriverKit
   import SwiftUI
 
   /// The Xbox USB driver extension section of Settings > Advanced: its state, and Uninstall while
@@ -64,7 +65,11 @@
       case .invalid: return "ui.setup.invalidDetail"
       case .unavailable: return "ui.setup.unavailableDetail"
       case .running: return "ui.setup.runningDetail"
-      case .needsApproval: return "platform.macos.ui.setup.approvalDetail"
+      case .needsApproval:
+        return SystemSettingsPlace.appKey(
+          settings: "platform.macos.ui.setup.approvalDetail",
+          preferences: "platform.macos.ui.setup.approvalDetailSystemPreferences"
+        )
       case .cancelled: return "ui.setup.cancelledDetail"
       case .timedOut: return "ui.setup.timedOutDetail"
       case .failed: return "ui.setup.failedDetail"

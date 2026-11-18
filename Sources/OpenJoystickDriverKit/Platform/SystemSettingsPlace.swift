@@ -24,14 +24,26 @@ package enum SystemSettingsPlace: Sendable, CaseIterable {
       : "platform.macos.term.settingsApp.systemSettings"
   }
 
+  /// The catalog key of the message that names the settings app `version` shows: `preferences`
+  /// names System Preferences on macOS 12, and `settings` names System Settings on macOS 13 and
+  /// later.
+  package static func appKey(
+    settings: String,
+    preferences: String,
+    on version: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
+  ) -> String {
+    version.majorVersion < 13 ? preferences : settings
+  }
+
   /// The catalog key of the path that `version` shows.
   ///
   /// macOS 12 lists the permissions under Security & Privacy > Privacy and asks for the driver in
   /// Security & Privacy > General. It has no login item for OJD, because SMAppService needs
   /// macOS 13, so login items resolve to the macOS 13 path. macOS 13 and 14 list login items
   /// under General > Login Items and ask for the driver in Privacy & Security; macOS 15 moves
-  /// both under Login Items & Extensions. macOS 27 renames Accessibility to Device Control and
-  /// Data Access.
+  /// both under Login Items & Extensions. Some languages spell Input Monitoring differently in
+  /// macOS 13, 14, 15 to 26, and 27. macOS 27 renames Accessibility to Device Control and Data
+  /// Access.
   package func localizationKey(
     on version: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
   ) -> String {
@@ -42,9 +54,13 @@ package enum SystemSettingsPlace: Sendable, CaseIterable {
         ? "platform.macos.term.settingsPlace.loginItemsAndExtensions"
         : "platform.macos.term.settingsPlace.loginItems"
     case .inputMonitoring:
-      return major < 13
-        ? "platform.macos.term.settingsPlace.preferencesInputMonitoring"
-        : "platform.macos.term.settingsPlace.inputMonitoring"
+      switch major {
+      case ..<13: return "platform.macos.term.settingsPlace.preferencesInputMonitoring"
+      case 13: return "platform.macos.term.settingsPlace.inputMonitoringMacOS13"
+      case 14: return "platform.macos.term.settingsPlace.inputMonitoringMacOS14"
+      case 15..<27: return "platform.macos.term.settingsPlace.inputMonitoringMacOS15"
+      default: return "platform.macos.term.settingsPlace.inputMonitoring"
+      }
     case .accessibility:
       if major < 13 { return "platform.macos.term.settingsPlace.preferencesAccessibility" }
       return major >= 27

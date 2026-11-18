@@ -22,7 +22,13 @@
     var status: String? {
       switch settings.authorization {
       case .denied:
-        return OJDLocalized.string("platform.macos.ui.settings.notifications.notificationsDenied")
+        return OJDLocalized.string(
+          SystemSettingsPlace.appKey(
+            settings: "platform.macos.ui.settings.notifications.notificationsDenied",
+            preferences:
+              "platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences"
+          )
+        )
       case .notDetermined:
         return OJDLocalized.string("ui.settings.notifications.notificationPermissionRequired")
       case .checking: return nil
@@ -31,15 +37,27 @@
       switch (settings.alertStyle, settings.soundsEnabled) {
       case (.none, false):
         return OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationBannersAndSoundOff"
+          SystemSettingsPlace.appKey(
+            settings: "platform.macos.ui.settings.notifications.notificationBannersAndSoundOff",
+            preferences:
+              "platform.macos.ui.settings.notifications.bannersAndSoundOffSystemPreferences"
+          )
         )
       case (.none, _):
         return OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationBannersOffDetail"
+          SystemSettingsPlace.appKey(
+            settings: "platform.macos.ui.settings.notifications.notificationBannersOffDetail",
+            preferences:
+              "platform.macos.ui.settings.notifications.bannersOffDetailSystemPreferences"
+          )
         )
       case (_, false):
         return OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationSoundOffDetail"
+          SystemSettingsPlace.appKey(
+            settings: "platform.macos.ui.settings.notifications.notificationSoundOffDetail",
+            preferences:
+              "platform.macos.ui.settings.notifications.notificationSoundOffDetailSystemPreferences"
+          )
         )
       case (.banner, true), (.alert, true), (.unknown, _), (_, nil): return nil
       }

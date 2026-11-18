@@ -150,7 +150,10 @@ func submitTransportExtension(
     throw CLIFailure(
       .systemRequestFailed,
       CLILocalized.text(
-        "platform.macos.cli.transportExtension.group.timeout"
+        SystemSettingsPlace.appKey(
+          settings: "platform.macos.cli.transportExtension.group.timeout",
+          preferences: "platform.macos.cli.transportExtension.group.timeoutSystemPreferences"
+        )
       )
     )
   case .failed:
@@ -186,7 +189,10 @@ struct TransportExtensionActivateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "activate",
     abstract: CLILocalized.text(
-      "platform.macos.cli.transportExtension.activate.abstract"
+      SystemSettingsPlace.appKey(
+        settings: "platform.macos.cli.transportExtension.activate.abstract",
+        preferences: "platform.macos.cli.transportExtension.activate.abstractSystemPreferences"
+      )
     ),
     discussion: CLILocalized.text(
       "cli.transportExtension.activate.discussion"

@@ -640,7 +640,11 @@
       errorMessage =
         errorDescription
         ?? OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationsDenied"
+          SystemSettingsPlace.appKey(
+            settings: "platform.macos.ui.settings.notifications.notificationsDenied",
+            preferences:
+              "platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences"
+          )
         )
     }
 

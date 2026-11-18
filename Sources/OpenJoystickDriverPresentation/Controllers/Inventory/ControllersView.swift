@@ -63,7 +63,14 @@
           screen.synchronizeSelection()
         }.alert(isPresented: $driverApprovalFailed) {
           Alert(
-            title: Text(OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")),
+            title: Text(
+              OJDLocalized.string(
+                SystemSettingsPlace.appKey(
+                  settings: "platform.macos.ui.setup.openSystemSettingsFailed",
+                  preferences: "platform.macos.ui.setup.openSystemPreferencesFailed"
+                )
+              )
+            ),
             dismissButton: .default(Text(OJDLocalized.string("action.ok")))
           )
         }

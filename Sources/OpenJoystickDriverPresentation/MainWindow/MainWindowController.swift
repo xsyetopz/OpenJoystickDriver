@@ -94,7 +94,12 @@
             )
           case .approveDriver:
             if !SystemExtensionApproval.openSystemSettings() {
-              return OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")
+              return OJDLocalized.string(
+                SystemSettingsPlace.appKey(
+                  settings: "platform.macos.ui.setup.openSystemSettingsFailed",
+                  preferences: "platform.macos.ui.setup.openSystemPreferencesFailed"
+                )
+              )
             }
           case .showLibrary: _ = navigationModel.requestArea(.library)
           }

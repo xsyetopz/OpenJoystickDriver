@@ -63,7 +63,12 @@ struct AccessPermissionRow: Equatable, Identifiable {
   /// The button of a missing permission; nil while nothing is missing.
   var actionTitleKey: String? {
     guard status.isMissing else { return nil }
-    return needsRequest ? "action.request" : "platform.macos.ui.setup.openSystemSettings"
+    return needsRequest
+      ? "action.request"
+      : SystemSettingsPlace.appKey(
+        settings: "platform.macos.ui.setup.openSystemSettings",
+        preferences: "platform.macos.ui.setup.openSystemPreferences"
+      )
   }
 }
 

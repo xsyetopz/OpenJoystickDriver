@@ -96,24 +96,32 @@
 "ui.settings.advanced.discardAction" = "ทิ้งการแก้ไข";
 /* Title of the switch that turns on the developer tools in the Advanced pane of the settings window. */
 "ui.settings.advanced.enableDeveloperTools" = "เปิดใช้งานเครื่องมือนักพัฒนา";
-/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Settings is the name of the macOS app. */
+/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationBannersAndSoundOff" = "แบนเนอร์และเสียงถูกปิดใช้งานในการตั้งค่าระบบ";
+/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.bannersAndSoundOffSystemPreferences" = "แบนเนอร์และเสียงถูกปิดใช้งานในการตั้งค่าระบบ";
 /* Value of the notification row in the Access area when macOS has turned off banners for the app. */
 "ui.settings.notifications.notificationBannersOff" = "ปิดแบนเนอร์";
-/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. */
+/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationBannersOffDetail" = "แบนเนอร์การแจ้งเตือนถูกปิดใช้งานในการตั้งค่าระบบ";
+/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.bannersOffDetailSystemPreferences" = "แบนเนอร์การแจ้งเตือนถูกปิดใช้งานในการตั้งค่าระบบ";
 /* Status text in the Notifications pane of the settings window when the user has not allowed notifications in macOS. */
 "ui.settings.notifications.notificationPermissionRequired" = "ต้องได้รับอนุญาตก่อนจึงจะส่งการแจ้งเตือนได้";
 /* Value of the notification row in the Access area when macOS has turned off sounds for the app. */
 "ui.settings.notifications.notificationSoundOff" = "ปิดเสียง";
-/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Settings is the name of the macOS app. */
+/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationSoundOffDetail" = "เสียงการแจ้งเตือนถูกปิดใช้งานในการตั้งค่าระบบ";
+/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.notificationSoundOffDetailSystemPreferences" = "เสียงการแจ้งเตือนถูกปิดใช้งานในการตั้งค่าระบบ";
 /* Title of the switch in the Notifications pane of the settings window that plays a sound with a notification. */
 "ui.settings.notifications.notificationSounds" = "เล่นเสียง";
 /* Name of the notification permission in the Access area. */
 "ui.settings.notifications.notifications" = "การแจ้งเตือน";
-/* Error shown when the user turns on notifications in the app while macOS denies them. System Settings is the name of the macOS app. OpenJoystickDriver is the product name. */
+/* Error shown when the user turns on notifications in the app while macOS denies them. System Settings is the name of the macOS app. OpenJoystickDriver is the product name. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationsDenied" = "การแจ้งเตือนสำหรับ OpenJoystickDriver ถูกปิดใช้งานในการตั้งค่าระบบ";
+/* Error shown when the user turns on notifications in the app while macOS denies them. System Preferences is the name of the macOS app. OpenJoystickDriver is the product name. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences" = "การแจ้งเตือนสำหรับ OpenJoystickDriver ถูกปิดใช้งานในการตั้งค่าระบบ";
 /* Button in the Notifications pane of the settings window that opens the notification settings of macOS. */
 "ui.settings.general.openNotificationSettings" = "เปิดการตั้งค่าการแจ้งเตือน";
 /* Button in a pane of the settings window that opens System Settings, the macOS app. */
@@ -986,8 +994,14 @@
 "platform.macos.term.settingsPlace.loginItems" = "ทั่วไป > รายการเข้าสู่ระบบ";
 /* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.loginItemsAndExtensions" = "ทั่วไป > รายการเข้าสู่ระบบและส่วนขยาย";
-/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
+/* Path of the Input Monitoring pane in System Settings on macOS 27 and later, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.term.settingsPlace.inputMonitoring" = "ความเป็นส่วนตัวและความปลอดภัย > การตรวจสอบสัญญาณเข้า";
+/* Path of the Input Monitoring pane in System Settings on macOS 13, shown in permission messages. It is written as macOS 13 shows it. */
+"platform.macos.term.settingsPlace.inputMonitoringMacOS13" = "ความเป็นส่วนตัวและความปลอดภัย > การตรวจสอบสัญญาณเข้า";
+/* Path of the Input Monitoring pane in System Settings on macOS 14, shown in permission messages. It is written as macOS 14 shows it. */
+"platform.macos.term.settingsPlace.inputMonitoringMacOS14" = "ความเป็นส่วนตัวและความปลอดภัย > การตรวจสอบสัญญาณเข้า";
+/* Path of the Input Monitoring pane in System Settings on macOS 15 to 26, shown in permission messages. It is written as macOS 26 shows it. */
+"platform.macos.term.settingsPlace.inputMonitoringMacOS15" = "ความเป็นส่วนตัวและความปลอดภัย > การตรวจสอบสัญญาณเข้า";
 /* Path of the Accessibility pane in System Settings on macOS 13 to 26, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.term.settingsPlace.accessibility" = "ความเป็นส่วนตัวและความปลอดภัย > การช่วยการเข้าถึง";
 /* Path of the Device Control and Data Access pane in System Settings on macOS 27 and later, which replaces Accessibility, shown in permission messages. It is written as macOS shows it. */
@@ -1380,18 +1394,24 @@
 "ui.mapping.automatic" = "อัตโนมัติ";
 /* Value of the virtual gamepad kind when the app picks it. %@ is the name of the picked kind. */
 "ui.virtualProfile.automaticSelected" = "อัตโนมัติ (%@)";
-/* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
+/* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.setup.approvalDetail" = "อนุญาตไดรเวอร์ในการตั้งค่าระบบเพื่อใช้คอนโทรลเลอร์ USB ของ Microsoft ที่รองรับ";
+/* Detail line of the problem banner when the driver extension waits for approval. System Preferences is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.setup.approvalDetailSystemPreferences" = "อนุญาตไดรเวอร์ในการตั้งค่าระบบเพื่อใช้คอนโทรลเลอร์ USB ของ Microsoft ที่รองรับ";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "ไดรเวอร์ Xbox USB";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
 "ui.setup.invalidDetail" = "ไดรเวอร์ Xbox USB ที่ฝังอยู่ไม่ถูกต้อง ซ่อมแซมโดยติดตั้งแอปนี้ใหม่";
 /* Detail line of the problem banner when the app has no driver extension. The user reinstalls the signed app. */
 "ui.setup.missingDetail" = "แอปนี้ไม่มีไดรเวอร์ Xbox USB ติดตั้งแอปที่ลงนามแล้วใหม่";
-/* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. */
+/* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.setup.openSystemSettings" = "เปิดการตั้งค่าระบบ";
-/* Title of the alert shown when the System Settings app could not be opened. */
+/* Button that opens the System Preferences app on the pane where the user can allow the permission or the extension. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.setup.openSystemPreferences" = "เปิดการตั้งค่าระบบ";
+/* Title of the alert shown when the System Settings app could not be opened. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.setup.openSystemSettingsFailed" = "ไม่สามารถเปิดการตั้งค่าระบบได้";
+/* Title of the alert shown when the System Preferences app could not be opened. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.setup.openSystemPreferencesFailed" = "ไม่สามารถเปิดการตั้งค่าระบบได้";
 /* Detail line of the problem banner when the driver extension needs activation or replacement. The app repairs it when the user presses the repair button. OpenJoystickDriver is the product name. */
 "ui.setup.repairDetail" = "OpenJoystickDriver จะซ่อมแซมไดรเวอร์ Xbox USB โดยไม่ต้องใช้เครื่องมือนักพัฒนา";
 /* Message of the confirmation alert that removes the driver extension from the settings window. */
@@ -2325,8 +2345,10 @@
 "platform.macos.cli.shared.error.permissionStillMissing" = "ยังไม่มีสิทธิ์เข้าถึง %1$@ อนุญาต OpenJoystickDriver ใน%2$@ > %3$@ แล้วเรียกใช้ “ojd permission request” อีกครั้ง";
 /* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. */
 "platform.macos.cli.transportExtension.group.abstract" = "แสดง เปิดใช้งาน หรือปิดใช้งานไดรเวอร์ Xbox USB";
-/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. */
+/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.cli.transportExtension.activate.abstract" = "ขอให้ macOS เปิดใช้งานส่วนขยาย อาจต้องได้รับอนุญาตในการตั้งค่าระบบ";
+/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.transportExtension.activate.abstractSystemPreferences" = "ขอให้ macOS เปิดใช้งานส่วนขยาย อาจต้องได้รับอนุญาตในการตั้งค่าระบบ";
 /* Long description in the help of 'ojd transport-extension activate'. The ojd program and the path stay as written. */
 "cli.transportExtension.activate.discussion" = "เรียกใช้ ojd ที่อยู่ใน /Applications/OpenJoystickDriver.app การรอการอนุญาตจะออกด้วยรหัส 0";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
@@ -2359,8 +2381,10 @@
 "platform.macos.cli.transportExtension.status.unavailable" = "macOS ไม่ได้รายงานการลงทะเบียนส่วนขยาย: %@ ลองอีกครั้ง หรือเรียกใช้ “systemextensionsctl list”";
 /* Error of 'ojd transport-extension' when macOS rejects the request. Both commands in quotes stay as written. */
 "platform.macos.cli.transportExtension.group.submitFailed" = "macOS ปฏิเสธคำขอ เรียกใช้ “ojd transport-extension status” และตรวจสอบ “systemextensionsctl list”";
-/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Settings is the name of the macOS app. The command in quotes stays as written. */
+/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Settings is the name of the macOS app. The command in quotes stays as written. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.cli.transportExtension.group.timeout" = "macOS ดำเนินการตามคำขอไม่เสร็จทันเวลา ตรวจสอบการตั้งค่าระบบว่ามีข้อความขออนุญาตหรือไม่ แล้วเรียกใช้ “ojd transport-extension status”";
+/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Preferences is the name of the macOS app. The command in quotes stays as written. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.transportExtension.group.timeoutSystemPreferences" = "macOS ดำเนินการตามคำขอไม่เสร็จทันเวลา ตรวจสอบการตั้งค่าระบบว่ามีข้อความขออนุญาตหรือไม่ แล้วเรียกใช้ “ojd transport-extension status”";
 /* One-line summary of 'ojd log' in the command list and at the top of its help. */
 "cli.log.group.abstract" = "แสดงบันทึกการใช้งานของบริการหรือพิมพ์ตำแหน่งที่เก็บ";
 /* One-line summary of 'ojd log path' in the command list and at the top of its help. The command line after 'Open it with:' stays as written, including the backslashes before the quotes. */
@@ -2573,12 +2597,16 @@
 "cli.controller.capture.warning" = "เนื้อหาแพ็กเก็ตแตกต่างกันไปตามคอนโทรลเลอร์ ตรวจสอบก่อนแชร์";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
 "cli.controller.disconnect.abstract" = "เลิกเชื่อมต่อคอนโทรลเลอร์บลูทูธแบบคลาสสิก";
-/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. */
+/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.cli.controller.disconnect.discussion" = "ปิดการเชื่อมต่อบลูทูธแบบคลาสสิก คอนโทรลเลอร์ยังคงจับคู่อยู่และเชื่อมต่อใหม่เมื่อคุณเปิดอีกครั้ง รออย่างน้อย 6 วินาทีให้บลูทูธยืนยัน บริการไม่สามารถเลิกเชื่อมต่อคอนโทรลเลอร์ Bluetooth Low Energy ได้ ให้ปิดคอนโทรลเลอร์หรือเลิกเชื่อมต่อในการตั้งค่าระบบ > บลูทูธ";
+/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.controller.disconnect.discussionSystemPreferences" = "ปิดการเชื่อมต่อบลูทูธแบบคลาสสิก คอนโทรลเลอร์ยังคงจับคู่อยู่และเชื่อมต่อใหม่เมื่อคุณเปิดอีกครั้ง รออย่างน้อย 6 วินาทีให้บลูทูธยืนยัน บริการไม่สามารถเลิกเชื่อมต่อคอนโทรลเลอร์ Bluetooth Low Energy ได้ ให้ปิดคอนโทรลเลอร์หรือเลิกเชื่อมต่อในการตั้งค่าระบบ > บลูทูธ";
 /* Message printed after 'ojd controller disconnect' disconnected the controller. %@ is the controller name. */
 "cli.controller.disconnect.done" = "เลิกเชื่อมต่อ %@ แล้ว";
-/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Settings and Bluetooth are macOS names. */
+/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Settings and Bluetooth are macOS names. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.cli.controller.disconnect.bluetoothLe" = "%@ เชื่อมต่อผ่าน Bluetooth Low Energy และบริการไม่สามารถเลิกเชื่อมต่อได้ ปิดคอนโทรลเลอร์ หรือเลิกเชื่อมต่อในการตั้งค่าระบบ > บลูทูธ";
+/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Preferences and Bluetooth are macOS names. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.controller.disconnect.bluetoothLeSystemPreferences" = "%@ เชื่อมต่อผ่าน Bluetooth Low Energy และบริการไม่สามารถเลิกเชื่อมต่อได้ ปิดคอนโทรลเลอร์ หรือเลิกเชื่อมต่อในการตั้งค่าระบบ > บลูทูธ";
 /* Error of 'ojd controller disconnect' when the Bluetooth disconnect fails. %1$@ names the step that failed and %2$@ is the system's reason, which can end with an error code. */
 "cli.controller.disconnect.failed" = "การเลิกเชื่อมต่อบลูทูธล้มเหลวระหว่าง %1$@: %2$@";
 /* Error of 'ojd controller disconnect' for a controller on a wire. %@ is the controller name. */
@@ -3733,8 +3761,10 @@
 "ui.access.web.on" = "เปิดที่ %1$@ หน้าเว็บที่ %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "ปิด";
-/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.access.permission.denied.message" = "macOS ปฏิเสธสิทธิ์นี้ หรืออ่านสถานะของสิทธิ์ไม่ได้ โปรดอนุญาตในการตั้งค่าระบบ";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.access.permission.denied.messageSystemPreferences" = "macOS ปฏิเสธสิทธิ์นี้ หรืออ่านสถานะของสิทธิ์ไม่ได้ โปรดอนุญาตในการตั้งค่าระบบ";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "โปรไฟล์ที่ใช้งานอยู่ไม่ได้ใช้สิทธิ์นี้";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
@@ -5503,8 +5533,10 @@
 "ui.help.retryService" = "อ่านสถานะของบริการอีกครั้ง";
 /* Tooltip of the banner button that restarts the request listener of the service. */
 "ui.help.restartListener" = "เริ่มตัวรับฟังคำขอของบริการใหม่";
-/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. It is shown on macOS 13 and later, where the settings app is System Settings. */
 "platform.macos.ui.help.openDriverApproval" = "อนุมัติไดรเวอร์ Xbox USB ในการตั้งค่าระบบ";
+/* Tooltip of the banner button that opens System Preferences, the macOS settings app, to approve the driver extension. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.help.openDriverApprovalSystemPreferences" = "อนุมัติไดรเวอร์ Xbox USB ในการตั้งค่าระบบ";
 /* Tooltip of the banner button that repairs the driver extension. */
 "ui.help.repairDriver" = "ซ่อมแซมไดรเวอร์ Xbox USB";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */

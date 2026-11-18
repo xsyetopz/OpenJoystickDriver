@@ -60,7 +60,11 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
       case .invalid: return "ui.setup.invalidDetail"
       case .unavailable: return "ui.setup.unavailableDetail"
       case .running: return "ui.setup.runningDetail"
-      case .needsApproval: return "platform.macos.ui.setup.approvalDetail"
+      case .needsApproval:
+        return SystemSettingsPlace.appKey(
+          settings: "platform.macos.ui.setup.approvalDetail",
+          preferences: "platform.macos.ui.setup.approvalDetailSystemPreferences"
+        )
       case .cancelled: return "ui.setup.cancelledDetail"
       case .timedOut: return "ui.setup.timedOutDetail"
       case .failed: return "ui.setup.failedDetail"
@@ -233,7 +237,11 @@ enum MainWindowProblemAction: Equatable, Sendable {
     switch self {
     case .retryService: return "action.tryAgain"
     case .restartListener: return "status.listenerFailure.restart"
-    case .openDriverApproval: return "platform.macos.ui.setup.openSystemSettings"
+    case .openDriverApproval:
+      return SystemSettingsPlace.appKey(
+        settings: "platform.macos.ui.setup.openSystemSettings",
+        preferences: "platform.macos.ui.setup.openSystemPreferences"
+      )
     case .repairDriver: return "ui.setup.repairDriver"
     case .showAccess: return "ui.extra.grantAccess"
     }
@@ -244,7 +252,11 @@ enum MainWindowProblemAction: Equatable, Sendable {
     switch self {
     case .retryService: return "ui.help.retryService"
     case .restartListener: return "ui.help.restartListener"
-    case .openDriverApproval: return "platform.macos.ui.help.openDriverApproval"
+    case .openDriverApproval:
+      return SystemSettingsPlace.appKey(
+        settings: "platform.macos.ui.help.openDriverApproval",
+        preferences: "platform.macos.ui.help.openDriverApprovalSystemPreferences"
+      )
     case .repairDriver: return "ui.help.repairDriver"
     case .showAccess: return "ui.help.requestMissingPermissions"
     }

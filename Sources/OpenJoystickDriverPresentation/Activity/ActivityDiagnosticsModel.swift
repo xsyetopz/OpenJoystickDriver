@@ -17,7 +17,11 @@ enum ActivityCheckFix: Equatable {
   var titleKey: String {
     switch self {
     case .requestInputRead, .requestInputInject: return "action.request"
-    case .approveDriver: return "platform.macos.ui.setup.openSystemSettings"
+    case .approveDriver:
+      return SystemSettingsPlace.appKey(
+        settings: "platform.macos.ui.setup.openSystemSettings",
+        preferences: "platform.macos.ui.setup.openSystemPreferences"
+      )
     case .showLibrary: return "ui.activity.fix.showLibrary"
     }
   }

@@ -150,7 +150,10 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
       "cli.controller.disconnect.abstract"
     ),
     discussion: CLILocalized.text(
-      "platform.macos.cli.controller.disconnect.discussion"
+      SystemSettingsPlace.appKey(
+        settings: "platform.macos.cli.controller.disconnect.discussion",
+        preferences: "platform.macos.cli.controller.disconnect.discussionSystemPreferences"
+      )
     )
   )
 
@@ -208,7 +211,10 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
       return CLIFailure(
         .controllerRequestFailed,
         CLILocalized.format(
-          "platform.macos.cli.controller.disconnect.bluetoothLe",
+          SystemSettingsPlace.appKey(
+            settings: "platform.macos.cli.controller.disconnect.bluetoothLe",
+            preferences: "platform.macos.cli.controller.disconnect.bluetoothLeSystemPreferences"
+          ),
           device.name
         )
       )

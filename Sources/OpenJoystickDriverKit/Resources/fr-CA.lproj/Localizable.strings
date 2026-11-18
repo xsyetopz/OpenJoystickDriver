@@ -96,24 +96,32 @@
 "ui.settings.advanced.discardAction" = "Ignorer les modifications";
 /* Title of the switch that turns on the developer tools in the Advanced pane of the settings window. */
 "ui.settings.advanced.enableDeveloperTools" = "Activer les outils de développement";
-/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Settings is the name of the macOS app. */
-"platform.macos.ui.settings.notifications.notificationBannersAndSoundOff" = "Les bannières et les sons sont désactivés dans Réglages Système.";
+/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.settings.notifications.notificationBannersAndSoundOff" = "Les bannières et les sons sont désactivés dans Réglages système.";
+/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.bannersAndSoundOffSystemPreferences" = "Les bannières et les sons sont désactivés dans Préférences Système.";
 /* Value of the notification row in the Access area when macOS has turned off banners for the app. */
 "ui.settings.notifications.notificationBannersOff" = "Bannières désactivées";
-/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. */
-"platform.macos.ui.settings.notifications.notificationBannersOffDetail" = "Les bannières de notification sont désactivées dans Réglages Système.";
+/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.settings.notifications.notificationBannersOffDetail" = "Les bannières de notification sont désactivées dans Réglages système.";
+/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.bannersOffDetailSystemPreferences" = "Les bannières de notification sont désactivées dans Préférences Système.";
 /* Status text in the Notifications pane of the settings window when the user has not allowed notifications in macOS. */
 "ui.settings.notifications.notificationPermissionRequired" = "Une autorisation est requise avant l’envoi des notifications.";
 /* Value of the notification row in the Access area when macOS has turned off sounds for the app. */
 "ui.settings.notifications.notificationSoundOff" = "Son désactivé";
-/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Settings is the name of the macOS app. */
-"platform.macos.ui.settings.notifications.notificationSoundOffDetail" = "Les sons de notification sont désactivés dans Réglages Système.";
+/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.settings.notifications.notificationSoundOffDetail" = "Les sons de notification sont désactivés dans Réglages système.";
+/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.notificationSoundOffDetailSystemPreferences" = "Les sons de notification sont désactivés dans Préférences Système.";
 /* Title of the switch in the Notifications pane of the settings window that plays a sound with a notification. */
 "ui.settings.notifications.notificationSounds" = "Émettre un son";
 /* Name of the notification permission in the Access area. */
 "ui.settings.notifications.notifications" = "Notifications";
-/* Error shown when the user turns on notifications in the app while macOS denies them. System Settings is the name of the macOS app. OpenJoystickDriver is the product name. */
-"platform.macos.ui.settings.notifications.notificationsDenied" = "Les notifications d’OpenJoystickDriver sont désactivées dans Réglages Système.";
+/* Error shown when the user turns on notifications in the app while macOS denies them. System Settings is the name of the macOS app. OpenJoystickDriver is the product name. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.settings.notifications.notificationsDenied" = "Les notifications d’OpenJoystickDriver sont désactivées dans Réglages système.";
+/* Error shown when the user turns on notifications in the app while macOS denies them. System Preferences is the name of the macOS app. OpenJoystickDriver is the product name. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences" = "Les notifications d’OpenJoystickDriver sont désactivées dans Préférences Système.";
 /* Button in the Notifications pane of the settings window that opens the notification settings of macOS. */
 "ui.settings.general.openNotificationSettings" = "Ouvrir les réglages de notification";
 /* Button in a pane of the settings window that opens System Settings, the macOS app. */
@@ -131,7 +139,7 @@
 /* Title of the switch in the General pane of the settings window that opens the app when the user logs in. */
 "ui.settings.general.startAtLogin" = "Ouvrir à la connexion";
 /* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. */
-"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Autorisez OpenJoystickDriver dans Réglages Système > %@.";
+"platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "Autorisez OpenJoystickDriver dans Réglages système > %@.";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "Envoyer une notification de test";
 /* Result of the update check: the installed version is the latest. */
@@ -983,11 +991,17 @@
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Accessibilité";
 /* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
-"platform.macos.term.settingsPlace.loginItems" = "Général > Éléments d’ouverture";
+"platform.macos.term.settingsPlace.loginItems" = "Général > Ouverture";
 /* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.loginItemsAndExtensions" = "Général > Éléments d’ouverture et extensions";
-/* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
+/* Path of the Input Monitoring pane in System Settings on macOS 27 and later, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.term.settingsPlace.inputMonitoring" = "Confidentialité et sécurité > Surveillance des entrées";
+/* Path of the Input Monitoring pane in System Settings on macOS 13, shown in permission messages. It is written as macOS 13 shows it. */
+"platform.macos.term.settingsPlace.inputMonitoringMacOS13" = "Confidentialité et sécurité > Surveillance des entrées";
+/* Path of the Input Monitoring pane in System Settings on macOS 14, shown in permission messages. It is written as macOS 14 shows it. */
+"platform.macos.term.settingsPlace.inputMonitoringMacOS14" = "Confidentialité et sécurité > Surveillance des entrées";
+/* Path of the Input Monitoring pane in System Settings on macOS 15 to 26, shown in permission messages. It is written as macOS 26 shows it. */
+"platform.macos.term.settingsPlace.inputMonitoringMacOS15" = "Confidentialité et sécurité > Surveillance des entrées";
 /* Path of the Accessibility pane in System Settings on macOS 13 to 26, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.term.settingsPlace.accessibility" = "Confidentialité et sécurité > Accessibilité";
 /* Path of the Device Control and Data Access pane in System Settings on macOS 27 and later, which replaces Accessibility, shown in permission messages. It is written as macOS shows it. */
@@ -997,7 +1011,7 @@
 /* Path of the Driver Extensions pane in System Settings on macOS 15 and later, where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.driverExtensions" = "Général > Éléments d’ouverture et extensions > Extensions de pilote";
 /* Name of the System Settings app on macOS 13 and later, which fills messages that send the user there. It is written as macOS shows it. */
-"platform.macos.term.settingsApp.systemSettings" = "Réglages Système";
+"platform.macos.term.settingsApp.systemSettings" = "Réglages système";
 /* Name of the System Preferences app on macOS 12, which fills messages that send the user there. It is written as macOS 12 shows it. */
 "platform.macos.term.settingsApp.systemPreferences" = "Préférences Système";
 /* Path of the Input Monitoring list in System Preferences on macOS 12, shown in permission messages. It is written as macOS 12 shows it. */
@@ -1380,18 +1394,24 @@
 "ui.mapping.automatic" = "Automatique";
 /* Value of the virtual gamepad kind when the app picks it. %@ is the name of the picked kind. */
 "ui.virtualProfile.automaticSelected" = "Automatique (%@)";
-/* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
-"platform.macos.ui.setup.approvalDetail" = "Approuvez le pilote dans Réglages Système pour utiliser les manettes USB Microsoft prises en charge.";
+/* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.setup.approvalDetail" = "Approuvez le pilote dans Réglages système pour utiliser les manettes USB Microsoft prises en charge.";
+/* Detail line of the problem banner when the driver extension waits for approval. System Preferences is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.setup.approvalDetailSystemPreferences" = "Approuvez le pilote dans Préférences Système pour utiliser les manettes USB Microsoft prises en charge.";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Pilote USB Xbox";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
 "ui.setup.invalidDetail" = "Le pilote USB Xbox intégré n’est pas valide. Réinstallez cette app pour le réparer.";
 /* Detail line of the problem banner when the app has no driver extension. The user reinstalls the signed app. */
 "ui.setup.missingDetail" = "Cette app ne contient pas le pilote USB Xbox. Réinstallez l’app signée.";
-/* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. */
-"platform.macos.ui.setup.openSystemSettings" = "Ouvrir Réglages Système";
-/* Title of the alert shown when the System Settings app could not be opened. */
-"platform.macos.ui.setup.openSystemSettingsFailed" = "Impossible d’ouvrir Réglages Système.";
+/* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.setup.openSystemSettings" = "Ouvrir Réglages système";
+/* Button that opens the System Preferences app on the pane where the user can allow the permission or the extension. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.setup.openSystemPreferences" = "Ouvrir Préférences Système";
+/* Title of the alert shown when the System Settings app could not be opened. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.setup.openSystemSettingsFailed" = "Impossible d’ouvrir Réglages système.";
+/* Title of the alert shown when the System Preferences app could not be opened. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.setup.openSystemPreferencesFailed" = "Impossible d’ouvrir Préférences Système.";
 /* Detail line of the problem banner when the driver extension needs activation or replacement. The app repairs it when the user presses the repair button. OpenJoystickDriver is the product name. */
 "ui.setup.repairDetail" = "OpenJoystickDriver réparera le pilote USB Xbox sans outils de développement.";
 /* Message of the confirmation alert that removes the driver extension from the settings window. */
@@ -2325,8 +2345,10 @@
 "platform.macos.cli.shared.error.permissionStillMissing" = "L’accès %1$@ est toujours manquant. Autorisez OpenJoystickDriver dans %2$@ > %3$@, puis relancez « ojd permission request ».";
 /* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. */
 "platform.macos.cli.transportExtension.group.abstract" = "Affiche, active ou désactive le pilote USB Xbox.";
-/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. */
-"platform.macos.cli.transportExtension.activate.abstract" = "Demande à macOS d’activer l’extension. Une approbation dans Réglages Système peut être nécessaire.";
+/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.cli.transportExtension.activate.abstract" = "Demande à macOS d’activer l’extension. Une approbation dans Réglages système peut être nécessaire.";
+/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.transportExtension.activate.abstractSystemPreferences" = "Demande à macOS d’activer l’extension. Une approbation dans Préférences Système peut être nécessaire.";
 /* Long description in the help of 'ojd transport-extension activate'. The ojd program and the path stay as written. */
 "cli.transportExtension.activate.discussion" = "Lancez le ojd se trouvant dans /Applications/OpenJoystickDriver.app. L’attente de l’approbation se termine avec le code 0.";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
@@ -2359,8 +2381,10 @@
 "platform.macos.cli.transportExtension.status.unavailable" = "macOS n’a pas signalé l’enregistrement de l’extension : %@. Réessayez, ou exécutez « systemextensionsctl list ».";
 /* Error of 'ojd transport-extension' when macOS rejects the request. Both commands in quotes stay as written. */
 "platform.macos.cli.transportExtension.group.submitFailed" = "macOS a rejeté la demande. Exécutez « ojd transport-extension status » et vérifiez « systemextensionsctl list ».";
-/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Settings is the name of the macOS app. The command in quotes stays as written. */
-"platform.macos.cli.transportExtension.group.timeout" = "macOS n’a pas terminé la demande à temps. Vérifiez dans Réglages Système si une demande d’approbation s’affiche, puis exécutez « ojd transport-extension status ».";
+/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Settings is the name of the macOS app. The command in quotes stays as written. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.cli.transportExtension.group.timeout" = "macOS n’a pas terminé la demande à temps. Vérifiez dans Réglages système si une demande d’approbation s’affiche, puis exécutez « ojd transport-extension status ».";
+/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Preferences is the name of the macOS app. The command in quotes stays as written. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.transportExtension.group.timeoutSystemPreferences" = "macOS n’a pas terminé la demande à temps. Vérifiez dans Préférences Système si une demande d’approbation s’affiche, puis exécutez « ojd transport-extension status ».";
 /* One-line summary of 'ojd log' in the command list and at the top of its help. */
 "cli.log.group.abstract" = "Affiche les journaux du service ou indique où ils se trouvent.";
 /* One-line summary of 'ojd log path' in the command list and at the top of its help. The command line after 'Open it with:' stays as written, including the backslashes before the quotes. */
@@ -2510,11 +2534,11 @@
 /* One-line summary of 'ojd setting set' in the command list and at the top of its help. */
 "cli.setting.set.abstract" = "Modifie un réglage.";
 /* Long description in the help of 'ojd setting set'. true, false, launchAtLogin and System Settings stay as written. */
-"platform.macos.cli.setting.set.discussion" = "Les valeurs sont true ou false. Se termine avec le code 1 quand macOS laisse launchAtLogin désactivé tant que vous ne l’avez pas approuvé dans Réglages Système.";
+"platform.macos.cli.setting.set.discussion" = "Les valeurs sont true ou false. Se termine avec le code 1 quand macOS laisse launchAtLogin désactivé tant que vous ne l’avez pas approuvé dans Réglages système.";
 /* Help text of the KEY argument of 'ojd setting set'. launchAtLogin is a setting name and stays as written. */
 "cli.setting.set.key" = "Le réglage à modifier, par exemple launchAtLogin.";
 /* Error of 'ojd setting set' when macOS does not apply a setting that needs approval. %1$@ is the setting name, %2$@ is the path to Login Items for the running macOS, such as General > Login Items, and %3$@ repeats the setting name as the argument of the command in quotes, which stays as written. */
-"platform.macos.cli.setting.set.notApplied" = "macOS n’a pas appliqué %1$@. Autorisez OpenJoystickDriver dans Réglages Système > %2$@, puis exécutez « ojd setting get %3$@ ».";
+"platform.macos.cli.setting.set.notApplied" = "macOS n’a pas appliqué %1$@. Autorisez OpenJoystickDriver dans Réglages système > %2$@, puis exécutez « ojd setting get %3$@ ».";
 /* Message printed after 'ojd setting set'. %1$@ is the setting name, which stays as written, and %2$@ is the value the service applied, true or false. */
 "cli.setting.set.success" = "%1$@ défini sur %2$@.";
 /* Help text of the VALUE argument of 'ojd setting set'. true and false stay as written. */
@@ -2573,12 +2597,16 @@
 "cli.controller.capture.warning" = "Le contenu des paquets varie selon la manette. Vérifiez-le avant de le partager.";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
 "cli.controller.disconnect.abstract" = "Déconnecter une manette Bluetooth classique.";
-/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. */
-"platform.macos.cli.controller.disconnect.discussion" = "Ferme la connexion Bluetooth classique. La manette reste jumelée et se reconnecte quand vous la rallumez. Attend au moins 6 secondes la confirmation de Bluetooth. Le service ne peut pas déconnecter une manette Bluetooth Low Energy. Éteignez-la ou déconnectez-la dans Réglages Système > Bluetooth.";
+/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.cli.controller.disconnect.discussion" = "Ferme la connexion Bluetooth classique. La manette reste jumelée et se reconnecte quand vous la rallumez. Attend au moins 6 secondes la confirmation de Bluetooth. Le service ne peut pas déconnecter une manette Bluetooth Low Energy. Éteignez-la ou déconnectez-la dans Réglages système > Bluetooth.";
+/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.controller.disconnect.discussionSystemPreferences" = "Ferme la connexion Bluetooth classique. La manette reste jumelée et se reconnecte quand vous la rallumez. Attend au moins 6 secondes la confirmation de Bluetooth. Le service ne peut pas déconnecter une manette Bluetooth Low Energy. Éteignez-la ou déconnectez-la dans Préférences Système > Bluetooth.";
 /* Message printed after 'ojd controller disconnect' disconnected the controller. %@ is the controller name. */
 "cli.controller.disconnect.done" = "%@ déconnectée.";
-/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Settings and Bluetooth are macOS names. */
-"platform.macos.cli.controller.disconnect.bluetoothLe" = "%@ est connectée par Bluetooth Low Energy, et le service ne peut pas la déconnecter. Éteignez la manette ou déconnectez-la dans Réglages Système > Bluetooth.";
+/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Settings and Bluetooth are macOS names. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.cli.controller.disconnect.bluetoothLe" = "%@ est connectée par Bluetooth Low Energy, et le service ne peut pas la déconnecter. Éteignez la manette ou déconnectez-la dans Réglages système > Bluetooth.";
+/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Preferences and Bluetooth are macOS names. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.cli.controller.disconnect.bluetoothLeSystemPreferences" = "%@ est connectée par Bluetooth Low Energy, et le service ne peut pas la déconnecter. Éteignez la manette ou déconnectez-la dans Préférences Système > Bluetooth.";
 /* Error of 'ojd controller disconnect' when the Bluetooth disconnect fails. %1$@ names the step that failed and %2$@ is the system's reason, which can end with an error code. */
 "cli.controller.disconnect.failed" = "Échec de la déconnexion Bluetooth pendant %1$@ : %2$@.";
 /* Error of 'ojd controller disconnect' for a controller on a wire. %@ is the controller name. */
@@ -4317,8 +4345,10 @@
 "ui.access.web.on" = "Activé sur %1$@, pages sur %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "Désactivé";
-/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
-"platform.macos.ui.access.permission.denied.message" = "macOS a refusé cette autorisation, ou son état n’a pas pu être lu. Autorisez-la dans Réglages Système.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.access.permission.denied.message" = "macOS a refusé cette autorisation, ou son état n’a pas pu être lu. Autorisez-la dans Réglages système.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.access.permission.denied.messageSystemPreferences" = "macOS a refusé cette autorisation, ou son état n’a pas pu être lu. Autorisez-la dans Préférences Système.";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "Les profils actifs n’utilisent pas cette autorisation.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
@@ -5504,8 +5534,10 @@
 "ui.help.retryService" = "Relire l'état du service";
 /* Tooltip of the banner button that restarts the request listener of the service. */
 "ui.help.restartListener" = "Redémarrer l'écouteur de requêtes du service";
-/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. */
-"platform.macos.ui.help.openDriverApproval" = "Approuver le pilote USB Xbox dans Réglages Système";
+/* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. It is shown on macOS 13 and later, where the settings app is System Settings. */
+"platform.macos.ui.help.openDriverApproval" = "Approuver le pilote USB Xbox dans Réglages système";
+/* Tooltip of the banner button that opens System Preferences, the macOS settings app, to approve the driver extension. It is shown on macOS 12, where the settings app is System Preferences. */
+"platform.macos.ui.help.openDriverApprovalSystemPreferences" = "Approuver le pilote USB Xbox dans Préférences Système";
 /* Tooltip of the banner button that repairs the driver extension. */
 "ui.help.repairDriver" = "Réparer le pilote USB Xbox";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */
