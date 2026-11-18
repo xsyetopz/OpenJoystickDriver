@@ -163,6 +163,7 @@ let package = Package(
       resources: [
         .copy("Protocol/Catalog/SchemaRejections"), .copy("Protocol/Catalog/SDLMappingFixtures"),
         .copy("Protocol/Drivers/Nintendo/Fixtures/Wii"),
+        .copy("Protocol/Drivers/Generic/Fixtures/Ultimate2C"),
       ]
     ),
     .target(

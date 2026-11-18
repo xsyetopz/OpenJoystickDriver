@@ -5,8 +5,8 @@ import Testing
 
 /// The 8BitDo Ultimate 2C records.
 ///
-/// The `2DC8:301B` record is checked against `ordered-controls-120s.txt`. The sources of
-/// `2DC8:301D` and `2DC8:3109` are the HID usage tables and the Z/Rz layout of
+/// The `2DC8:301B` record is checked against the captures under `Fixtures/Ultimate2C/`.
+/// The sources of `2DC8:301D` and `2DC8:3109` are the HID usage tables and the Z/Rz layout of
 /// `docs/testing/8bitdo-ultimate-2c.md`; no capture of those two identities backs them.
 struct EightBitDoUltimate2CTests {
   private static let bluetooth = ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)
@@ -53,8 +53,9 @@ struct EightBitDoUltimate2CTests {
     #expect(down?.state.rightTrigger == UnipolarValue(normalized: 0))
   }
 
-  /// L4 sets button usage 3 and R4 usage 6 over Bluetooth LE (`ordered-controls-120s.txt`) and
-  /// on the receiver (`2c-receiver-301c/rear-unassigned-60s.txt`).
+  /// L4 sets button usage 3 and R4 usage 6 over Bluetooth LE
+  /// (`2c-bluetooth-301b/ordered-controls-120s.txt`) and on the receiver
+  /// (`2c-receiver-301c/rear-unassigned-60s.txt`).
   @Test(arguments: [UInt16(0x301B), 0x301C])
   func rearButtonsAreFirstPaddles(productID: UInt16) throws {
     let parser = HIDDescriptorDriver(
@@ -115,11 +116,10 @@ struct EightBitDoUltimate2CTests {
     #expect(Self.parse(parser, usage: 0x33, 255) == nil)
   }
 
-  /// The reports of a capture under `evidence/`, each as the bytes after the report ID.
+  /// The reports of a capture under `Fixtures/Ultimate2C/`, each as the bytes after the report ID.
   private static func capturedReports(_ path: String, length: Int) throws -> [[UInt8]] {
-    var root = URL(fileURLWithPath: #filePath)
-    for _ in 0..<6 { root.deleteLastPathComponent() }
-    let capture = root.appendingPathComponent("openspec/changes/0-6-0-alpha-3/evidence/\(path)")
+    let fixtures = try #require(Bundle.module.resourceURL).appendingPathComponent("Ultimate2C")
+    let capture = fixtures.appendingPathComponent(path)
     return try String(contentsOf: capture, encoding: .utf8).split(separator: "\n")
       .filter { $0.contains(" rx ") }
       .map {
@@ -128,7 +128,7 @@ struct EightBitDoUltimate2CTests {
   }
 
   /// The sign of a stick byte: 0 to 255 spans the axis, so the rest byte `7F` reads just below
-  /// zero, the `(-128, -128)` of `ojd-watch-120s.txt`.
+  /// zero, the `(-128, -128)` of `2c-bluetooth-301b/ojd-watch-120s.txt`.
   private static func direction(of byte: UInt8) -> Int16 {
     byte < 0x80 ? -1 : 1
   }
