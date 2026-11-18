@@ -9,13 +9,13 @@ body:
         Fill each field with exact values.
         Test the problem on the `main` branch first. See [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
 
-        **You fill Part 1.** Only you hold your Mac, your controller, and what you saw. An AI tool must not fill Part 1 for you.
+        **You fill Part 1** from your own Mac, your own controller, and what you saw.
 
-        **An AI tool can draft Part 2.** Read each draft. Correct it. Part 2 needs real output from your Mac.
+        **An AI tool can draft Part 2.** You read each draft, correct it, and confirm it. Part 2 holds real output from your Mac.
 
         **Part 3 records the AI tool.** Skip Part 3 if you used no AI tool.
 
-        **Evidence comes first.** Each claim needs pasted command output, a file, a log excerpt, or a screenshot. The form does not accept "not verified", "unsure", or "not checked". Run the command first. If you cannot run a command, use the field "Commands you could not run".
+        **Each claim comes with its proof:** pasted command output, a file, a log excerpt, or a screenshot. Run the command, then write the claim. For a command that cannot run, fill in "Commands you could not run".
 
         Rules: [AI Agents](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#ai-agents).
   - type: markdown
@@ -29,7 +29,7 @@ body:
       description: |-
         Click the menu-bar item. Choose **About OpenJoystickDriver**. Copy the text after **Version**. Or run `ojd --version`.
         [Other ways to get it](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#finding-the-version).
-        Copy the whole line. A line without `+build.` is not the whole line.
+        Copy the whole line. The whole line contains `+build.`.
       placeholder: |
         0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)
     validations:
@@ -104,6 +104,37 @@ body:
         Write the setting that you used and what the controller says it acts as. Write `None` if your controller has no such setting.
       placeholder: |
         Switch on X; acts as an Xbox 360 controller
+    validations:
+      required: true
+  - type: textarea
+    id: all-modes
+    attributes:
+      label: Every mode and connection, with its VID:PID
+      description: |-
+        One controller often has several VID:PIDs: one for each mode and each connection. The 8BitDo Ultimate 2C has a different one over Bluetooth, over its receiver in each mode, and over a cable in DInput mode.
+        Read the maker's manual or website for every mode, switch position, and button combination. Then try each one with each connection the controller has: cable, Bluetooth, and receiver.
+        Write one row for each try: the connection, how you entered the mode, the VID:PID from `ojd controller list` or `system_profiler SPUSBDataType`, and what OpenJoystickDriver did.
+        Link the manual or the page that you read.
+      render: markdown
+      placeholder: |
+        Manual: <link>
+
+        | Connection | How to enter the mode | VID:PID | What OpenJoystickDriver did |
+        | --- | --- | --- | --- |
+        | Bluetooth LE | Switch to BT, then pair in System Settings | 2dc8:301b | Every control works |
+        | Receiver | Switch to 2.4G | 2dc8:301c | Listed, no input |
+        | USB cable | Hold B while you switch the pad on (DInput) | 2dc8:301d | Not listed |
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Controller firmware version
+      description: |-
+        Read it in the maker's app, such as 8BitDo Ultimate Software, GameSir Nexus, or Xbox Accessories. A firmware update can change the VID:PID and the packets.
+        Write the app that you read it in. Write `No maker app` if the maker has none.
+      placeholder: |
+        6.6.4, read in GameSir Nexus on Windows
     validations:
       required: true
   - type: textarea
@@ -225,17 +256,66 @@ body:
         <paste the output>
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Part 2b: Intelligence (an AI tool can gather these; you confirm them)
+
+        The maintainer owns few of the controllers people report. Data from other systems and other projects often holds the fix. [How to collect each file](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Reporting-a-Bug#gather-data-from-other-systems).
+  - type: textarea
+    id: macos-descriptors
+    attributes:
+      label: Descriptors from macOS
+      description: |-
+        Run `ioreg -r -c IOHIDDevice -l -w0 > ioreg-hid.txt` and `ioreg -p IOUSB -l -w0 > ioreg-usb.txt`. Attach both.
+        Paste the `ReportDescriptor` line of this controller. A Bluetooth controller has it in `ioreg-hid.txt`.
+        If the controller has a HID interface, also attach the output of `ojd record draft <controller> > draft.plist`, made while you press each control.
+      placeholder: |
+        ioreg-hid.txt, ioreg-usb.txt and draft.plist attached.
+        "ReportDescriptor" = <05010905a101...>
+    validations:
+      required: true
+  - type: textarea
+    id: other-systems
+    attributes:
+      label: Data from Windows or Linux
+      description: |-
+        Plug the controller into a Windows PC, a Linux PC, a Steam Deck, or a Raspberry Pi, if you have one. Attach what each made:
+        - Linux: `sudo lsusb -v -d VVVV:PPPP`, a `hid-recorder` recording, a usbmon capture in Wireshark from before the plug-in, and `sudo dmesg | tail -50`.
+        - Windows: the **Hardware Ids** from Device Manager, a USB Device Tree Viewer dump, and a USBPcap capture in Wireshark from before the plug-in.
+        Write what works there, the driver or app that serves it, and the mode or switch setting.
+        Write `No Windows or Linux computer` if you have neither.
+      placeholder: |
+        Linux 6.12, Steam Deck: xpad binds, every control works.
+        lsusb.txt, plug-in.pcapng and dmesg.txt attached.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: What others found about this controller
+      description: |-
+        Link each source that names this controller or its VID:PID, with the line or section that matters:
+        - Linux drivers (`xpad.c`, `hid-*.c`), SDL (`controller_list.h`, SDL_GameControllerDB), Steam Input, and other driver projects.
+        - Issues, forum threads, and reviews, with the firmware and mode they name.
+        - The maker's manual page on modes and button combinations.
+        Write each place that you searched, with the search words, and what each search found.
+      placeholder: |
+        - xpad.c lists 3537:1010 as "GameSir G7 SE": https://github.com/torvalds/linux/blob/44696aa3a489d2baf58efa61b37833f100072bee/drivers/input/joystick/xpad.c#L399
+        - SDL_GameControllerDB has no 3537:1082 line; searched "3537" and "1082".
+        - Reddit thread: firmware 6.6.4 changed the PID: <link>
+    validations:
+      required: true
   - type: textarea
     id: unrun
     attributes:
       label: Commands you could not run
       description: |-
         Write `None` if you ran each command that this form asks for.
-        If you could not run a command, write three things for that command.
+        For each command that could not run, write all three:
         1. The exact step that failed, or the exact item that was missing.
         2. The exact error text, or the exact reason. For example, write the version that you found and the version that the command needs.
         3. What you tried instead, with its output.
-        An answer with fewer than three things is not accepted.
       placeholder: |
         None
 
@@ -251,7 +331,7 @@ body:
     attributes:
       label: Other details
       description: |-
-        Name other operating systems or drivers where the controller works. Name the setting that you used there. Add the output that shows it.
+        Add anything else that you found, with the output, file, or link that shows it.
   - type: markdown
     attributes:
       value: |
@@ -275,8 +355,8 @@ body:
     attributes:
       label: Commands the AI tool ran, with their output
       description: |-
-        Paste each command with its real output. Do not shorten the output. Do not retype it.
-        An AI tool must not mark an item as done without the output that shows it.
+        Paste each command with its whole output, copied as it printed.
+        An item counts as done when its output is here.
       render: text
       placeholder: |
         $ ojd controller watch 045e:028e --duration 10
@@ -287,7 +367,7 @@ body:
       label: What you checked by hand
       description: |-
         List each claim of the AI tool that you checked yourself. For each claim, write the command or the action that you used, and its output.
-        Remove each claim that you did not check.
+        Keep only the claims you checked.
   - type: dropdown
     id: change-status
     attributes:
@@ -301,8 +381,7 @@ body:
     attributes:
       label: How you tested the change
       description: |-
-        Write each command that you ran, the controller and the connection that you used, and the output.
-        You must run this test yourself.
+        Run the change on your own controller. Write each command that you ran, the controller and the connection that you used, and the output.
   - type: textarea
     id: maintainer-prompt
     attributes:
@@ -328,6 +407,8 @@ body:
         - label: I read [Supported controllers](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers).
           required: true
         - label: This issue covers one controller.
+          required: true
+        - label: I read the maker's manual or website and tried every mode and connection that it lists. Each one has a row with its VID:PID.
           required: true
         - label: I ran each command on my own Mac with this controller connected. Each value about my Mac and my controller is true.
           required: true

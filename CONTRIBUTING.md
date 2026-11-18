@@ -33,6 +33,7 @@ Capture a candidate with `just diagnose-record /tmp/controller-candidate.json --
 
 - Toolchain: `.swift-version` and `Package.swift`. Warnings are errors. Justify `nonisolated(unsafe)` on the same line.
 - Style: `.swift-format` and `.swiftlint.yml`. Do not copy them here or add SwiftLint rules that fight the formatter. Run SwiftLint with `--no-cache --strict`. No `// swiftlint:disable` except for an `@objc` callback that cannot comply, with the reason on that line.
+- Names in code read as headlines, without articles: `skipEndsStep`, not `skipEndsTheStep`. A control named `A` stays, as in `pressAOpensMenu`.
 - GUI and CLI text: `LOCALIZATION.md`. Tests check codes, routes, identifiers, paths and structure, not help text, and do not read `.swift` source.
 - Decimal integers in stored documents (`.plist`) and in JSON messages. The one exception is raw bytes in a `session` (`bytes`, `data`, a probe's expected bytes): uppercase hex pairs separated by single spaces, such as `42 03 00 00`.
 - Keep the existing `print` diagnostics; add no logging stack. Parser errors stay local: log and skip.
@@ -55,15 +56,17 @@ OJD is under the Mozilla Public License 2.0, which permits commercial use.
 
 Use the issue forms: Bug Report, Controller Support, and Feature Request. Each form serves a person and the AI tool that the person uses. The person fills the hardware, macOS and test fields. An AI tool can draft the other fields, and the person confirms them. One optional section records the AI tool. A pull request holds one logical change and fills every section of its template, with the checks run and whether you tested on your own hardware. Report security problems privately, as [`SECURITY.md`](SECURITY.md) describes. Open tasks: [issues](https://github.com/xsyetopz/OpenJoystickDriver/issues).
 
-Write exact values; vague or missing details get the issue sent back.
+Write exact values. The maintainer owns few of the reported controllers, so the report is the only source of them.
 
-- Version: the whole line from **About OpenJoystickDriver** of the build you ran, for example `0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)`. Not `alpha`, `beta`, `latest`, or a commit. See [Finding the Version](#finding-the-version).
+- Version: the whole line from **About OpenJoystickDriver** of the build you ran, for example `0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)`. It names one build; `alpha`, `latest` or a commit names many. See [Finding the Version](#finding-the-version).
 - macOS: version and build from `sw_vers`, for example `15.6.1 (24G90)`.
-- Controller: model name, VID:PID, and connection.
+- Controller: model name, VID:PID, connection, and firmware version.
+- Every mode and connection: read the maker's manual or website, try each mode, switch position and button combination over each connection the controller has, and list the VID:PID of each with how to enter it. One controller often has several; the 8BitDo Ultimate 2C has a different VID:PID over Bluetooth, over its receiver in each mode, and over a cable in DInput mode.
+- Intelligence: descriptors and packet captures from macOS, Windows and Linux, and links to what others found about the controller (Linux drivers, SDL, Steam Input, other driver projects, issues, forum threads). [Gather Data From Other Systems](wiki/Reporting-a-Bug.md#gather-data-from-other-systems) lists the commands.
 - Steps: numbered, one action each.
 - Results: what you saw, with error text and codes copied exactly.
-- Evidence: each claim has pasted command output, a file, a log excerpt, or a screenshot. Run the command first. Do not write "not verified", "unsure", or "not checked".
-- A command that you cannot run: write the exact step that failed or was missing, the exact error or reason (for example, the Xcode version that you found), and what you tried instead, with its output.
+- Evidence: each claim comes with pasted command output, a file, a log excerpt, or a screenshot. Run the command, then write the claim.
+- A command that cannot run: write the exact step that failed or was missing, the exact error or reason (for example, the Xcode version that you found), and what you tried instead, with its output.
 
 ### Finding the Version
 
@@ -83,11 +86,13 @@ Copy the version from the build that ran, while it runs. A line without `+build.
 A human operator stands behind every issue, comment and pull request an agent writes, and reads it before it is posted. The operator posts it under their own account, and fills the hardware, macOS and "I tested this" fields. In the issue forms, the **AI tool** section records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand. The pull request template has the same section.
 
 - Keep the attribution your harness adds to commits and pull requests. If it adds none, end each commit message with a trailer that names the model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The operator stays the commit author.
-- Write plainly and briefly, in the words a user would use. No preamble, recap, extra headings, or emoji: fill the fields and stop.
-- State only what a command, the source, or the operator showed. Do not guess. Do not mark an item as done without the command output that shows it.
-- Run the command before you write the claim. Do not write "not verified", "unsure", or "not checked". If you cannot run a command, write three things: the exact step that failed or was missing, the exact error or reason, and what you tried instead.
-- Install each missing tool before you run a check: `just setup` offers the Homebrew formulas, such as `just`, and an Xcode whose Swift is `.swift-version` or newer comes from Apple. "Not installed" or "unavailable" is not a check result. Report a check as blocked only when the operator's Mac cannot run the tool, and name the tool version and the macOS version that it needs.
-- Get the version yourself on the operator's Mac, as [Finding the Version](#finding-the-version) shows, while the build that was tested runs. A commit or "not recorded" does not replace it. When the command fails, ask the operator to copy the line from the About window.
+- Write plainly and briefly, in the words a user would use. Fill the fields and end there, without preamble, recap, extra headings, or emoji.
+- State what a command, the source, or the operator showed. Mark an item done next to the output that shows it.
+- Run the command, then write the claim. For a command that cannot run, write three things: the exact step that failed or was missing, the exact error or reason, and what you tried instead.
+- Run the compiled OJD code on the controller, and give its counts: packets received, snapshots decoded, and parse errors, with each control pressed and released. A replay of captured bytes through a separate script is a lead for that run.
+- Gather intelligence before you propose a cause: the maker's manual for every mode, the VID:PID of each mode, descriptors and captures from Windows or Linux, and what Linux drivers, SDL and other projects say about the controller. Cross-check with a second driver or system where one is at hand, and name each source with its line.
+- Install each missing tool before you run a check: `just setup` offers the Homebrew formulas, such as `just`, and an Xcode whose Swift is `.swift-version` or newer comes from Apple. A check result is the tool's output. Report a check as blocked only when the operator's Mac cannot run the tool, and name the tool version and the macOS version that it needs.
+- Get the version yourself on the operator's Mac, as [Finding the Version](#finding-the-version) shows, while the build that was tested runs. When the command fails, ask the operator to copy the line from the About window.
 
 A fix that the operator tested on their hardware comes with a prompt for the maintainer's agent, in a code block, with numbered steps another agent can follow without guessing:
 

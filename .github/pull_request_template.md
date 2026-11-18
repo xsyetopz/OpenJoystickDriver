@@ -1,10 +1,9 @@
 <!--
 Fill each section with exact values. Delete these comments before you submit.
-You fill what only you hold: the hardware facts and the "I tested this" statements.
-An AI tool can draft the other sections. Read each draft and correct it.
-Evidence comes first. Each claim needs pasted command output, a file, a log excerpt, or a screenshot.
-Do not write "not verified", "unsure", or "not checked". Run the command first.
-If you cannot run a command, fill in "Commands you could not run".
+You fill the hardware facts and the "I tested this" statements from your own Mac and controller.
+An AI tool can draft the other sections. You read each draft, correct it, and confirm it.
+Each claim comes with its proof: pasted command output, a file, a log excerpt, or a screenshot.
+Run the command, then write the claim. For a command that cannot run, fill in "Commands you could not run".
 -->
 
 ## Summary
@@ -32,7 +31,7 @@ Output 1:
 ## Checks
 
 <!-- Run each check. Tick a box only when the check passed, and paste its output in "Evidence". -->
-<!-- If a tool is missing, run `just setup`. "Not installed" is not a check result. -->
+<!-- If a tool is missing, run `just setup`, then run the check. -->
 
 - [ ] `just verify` passed. Paste the last lines of its output.
 
@@ -40,16 +39,15 @@ Output 1:
 
 <!--
 Write "None" if you ran each command above.
-For each command that you could not run, write three things.
+For each command that could not run, write all three.
 1. The exact step that failed, or the exact item that was missing.
 2. The exact error text, or the exact reason. For example, write the Xcode version that you found and the version that the command needs. The file `.swift-version` names the Swift version.
 3. What you tried instead, with its output.
-An answer with fewer than three things is not accepted.
 -->
 
 ## Hardware Testing (you fill this)
 
-<!-- You must run this test on your own Mac. An AI tool must not fill this section. Fill in each line, and paste the output in "Evidence". -->
+<!-- You run this test on your own Mac and fill each line yourself. Paste the output in "Evidence". -->
 <!-- Use these commands where they apply: `ojd controller watch <controller> --duration 10`, `ojd controller capture <controller> --duration 10 --json > capture.jsonl`, `ojd controller rumble <controller> --left 255 --right 255 --duration 2`, `ojd controller light <controller> --color FF8000`, `ojd virtual show <controller>`. -->
 
 - Controller name and VID:PID (the two hexadecimal numbers that identify the controller model):
@@ -60,10 +58,15 @@ An answer with fewer than three things is not accepted.
 - Rumble, with the output of `ojd controller rumble` and what you felt:
 - Lights, with the output of `ojd controller light` and what you saw:
 - Virtual gamepad, with the output of `ojd virtual show`:
+- Every mode and connection of the controller, from the maker's manual, with the VID:PID of each and how to enter it:
+
+## Sources
+
+<!-- Link each outside source that this change takes facts from: Linux drivers, SDL, other driver projects, Windows or Linux captures, issues, forum threads, the maker's manual. Name the line or section, and the fact taken from it. Facts from GPL sources, such as IDs and byte values, are welcome; the code is written independently. Write "None" if the change uses none. -->
 
 ## AI Tool
 
-<!-- Write "None" if you used no AI tool. Rules: CONTRIBUTING.md#ai-agents. An AI tool must not mark an item as done without the output that shows it. -->
+<!-- Write "None" if you used no AI tool. Rules: CONTRIBUTING.md#ai-agents. An item counts as done when its output is here. -->
 
 - AI tool, version, and model:
 - What the AI tool produced (files and sections):
@@ -75,7 +78,7 @@ An answer with fewer than three things is not accepted.
 - [ ] The base branch is `main` ([Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch)).
 - [ ] This pull request holds one logical change.
 - [ ] Each changed behavior has a row in "Evidence" with a command and its output.
-- [ ] I did not edit generated controller records or generated DriverKit files by hand.
+- [ ] Generated controller records and generated DriverKit files changed only through their generators.
 - [ ] I updated the docs, the wiki pages, and the localization strings that this change affects.
 - [ ] I read the whole diff. I stand behind it.
 - [ ] If an AI tool helped, I described it in "AI Tool", and each commit keeps the attribution trailer.
