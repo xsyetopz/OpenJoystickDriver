@@ -39,8 +39,11 @@ struct ControllerCheckCommandTests {
     #expect(steps.allSatisfy { $0["outcome"] as? String == "Skipped" })
   }
 
+  /// Each step ends on input, so the 30-second limit holds on a busy machine; Skipped is
+  /// covered by `skipsEachControlThatNeverMoves`.
   @Test
-  func reportsAPressedControlAsRespondedAndTheRestSkipped() async throws {
+  func reportsEachMovedControlAsResponded() async throws {
+    // Arrange
     let reads = Counter()
     let pad = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
@@ -48,17 +51,25 @@ struct ControllerCheckCommandTests {
     )
     let service = try FakeService(devices: [pad]) { method, _ in
       guard method == .getControllerState else { return nil }
-      return doubleEncoded(
-        reads.next() == 2 ? ControllerState(pressed: [.south]) : ControllerState.neutral
-      )
+      let state: ControllerState =
+        switch reads.next() {
+        case 2: ControllerState(pressed: [.south])
+        case 3: ControllerState(leftStick: StickPosition(x: .min, y: .center))
+        default: .neutral
+        }
+      return doubleEncoded(state)
     }
+
+    // Act
     let result = await service.run([
-      "controller", "check", token("pad-1"), "--duration", "2", "--json",
+      "controller", "check", token("pad-1"), "--duration", "30", "--json",
     ])
+
+    // Assert
     #expect(result.code == 0, "\(result.standardError)")
     let steps = try #require(try result.json()["steps"] as? [[String: Any]])
     #expect(steps.map { $0["control"] as? String } == ["South", "LeftStick"])
-    #expect(steps.map { $0["outcome"] as? String } == ["Responded", "Skipped"])
+    #expect(steps.map { $0["outcome"] as? String } == ["Responded", "Responded"])
   }
 
   @Test

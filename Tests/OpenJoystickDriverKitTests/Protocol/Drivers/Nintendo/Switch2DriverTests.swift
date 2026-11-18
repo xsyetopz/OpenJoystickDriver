@@ -293,12 +293,13 @@ struct Switch2DriverTests {
   func captureKeepsReportWhoseIDDriverIgnores() async {
     var ignored = Array(Switch2Report.state(buttons: 1))
     ignored[0] = 0x09
+    // A stopped clock keeps the capture lease from lapsing on a busy machine.
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 0x057E, productID: 0x2069),
       transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
       driver: Switch2Driver(),
       dispatcher: CapturingOutputDispatcher()
-    )
+    ) { 1_000_000_000 }
     await pipeline.start()
     _ = await pipeline.getPacketLog()
     await pipeline.feedHIDData(Data(ignored))

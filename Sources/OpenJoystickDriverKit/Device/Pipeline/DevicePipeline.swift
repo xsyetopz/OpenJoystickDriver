@@ -315,6 +315,9 @@ actor DevicePipeline {
       macOSOwnedOutput?.setsStartupPlayerIndicator == true
       || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)
     self.inputConnectionActive = !tunedPlan.requiresInputConnectionBeforeOutput
-    self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
+    self.packetLog = PacketLogBuffer(
+      maxEntries: maxPacketLogEntries,
+      uptimeNanoseconds: uptimeNanoseconds
+    )
   }
 }
