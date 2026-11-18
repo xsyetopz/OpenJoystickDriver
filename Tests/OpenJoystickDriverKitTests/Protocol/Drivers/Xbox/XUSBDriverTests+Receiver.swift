@@ -124,7 +124,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverAcceptsExactlyTheStateBytes() throws {
+  func testWirelessReceiverAcceptsExactStateBytes() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
     let state = try #require(parser.parseReport(Data(Receiver.capture02A9.prefix(18)))?.state)
     #expect(state.leftStick.x == BipolarValue(260))

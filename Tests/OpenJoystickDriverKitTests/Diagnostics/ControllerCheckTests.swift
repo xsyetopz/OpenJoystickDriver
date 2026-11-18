@@ -61,7 +61,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func controlHeldAtTheStartIsIgnoredUntilReleased() {
+  func controlHeldAtStartIgnoredUntilReleased() {
     var run = ControllerCheckRun(controls: [.button(.south)])
     run.observe(ControllerState(pressed: [.south]))
     run.observe(ControllerState(pressed: [.south]))
@@ -73,7 +73,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func anotherControlMovingEndsTheStepAndNamesIt() throws {
+  func otherControlMovingEndsStepAndNamesIt() throws {
     var run = ControllerCheckRun(controls: [.button(.south), .button(.east)])
     run.observe(.neutral)
     run.observe(ControllerState(pressed: [.west]))
@@ -88,7 +88,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func dpadReadsTheHat() {
+  func dpadReadsHat() {
     var run = ControllerCheckRun(controls: [.button(.dpadUp), .button(.dpadRight)])
     run.observe(.neutral)
     run.observe(ControllerState(hat: .northEast))
@@ -98,7 +98,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func stickKeepsTheRangeSeenAndEndsAtRest() throws {
+  func stickKeepsSeenRangeAndEndsAtRest() throws {
     var run = ControllerCheckRun(controls: [.stick(left: true)])
     run.observe(.neutral)
     run.observe(ControllerState(leftStick: StickPosition(x: .max, y: .center)))
@@ -117,7 +117,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func skipEndsTheStep() {
+  func skipEndsStep() {
     var run = ControllerCheckRun(controls: [.button(.south), .trigger(.leftTrigger)])
     run.observe(.neutral)
     run.skip()
@@ -131,7 +131,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func onlyACheckWhereEveryControlRespondedOffersValidation() {
+  func onlyCheckWithEveryControlRespondingOffersValidation() {
     let responded = check(steps: [step("South"), step("East")])
     #expect(responded.allResponded)
     #expect(ControllerCheckIssue.validationText(for: responded) != nil)
@@ -186,7 +186,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func connectionNamesAnOptionOfTheForm() {
+  func connectionNamesFormOption() {
     let validated = check(steps: [step("South")])
     let url = ControllerCheckIssue.validationURL(for: validated)
     let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
@@ -196,7 +196,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func eachPrefilledFieldNamesAFieldOfItsForm() throws {
+  func eachPrefilledFieldNamesFormField() throws {
     let templates = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().appendingPathComponent(".github/ISSUE_TEMPLATE")
@@ -218,7 +218,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func documentTextAddsTheEnvelopeToTheFields() throws {
+  func documentTextAddsEnvelopeToFields() throws {
     let text = try check(steps: [step("South")]).documentText()
     let object = try #require(
       JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any]
@@ -235,7 +235,7 @@ struct ControllerCheckTests {
   }
 
   @Test
-  func documentEncodesCamelCaseFieldsWithoutTheSerialNumber() throws {
+  func documentEncodesCamelCaseFieldsWithoutSerialNumber() throws {
     let encoded = try JSONEncoder().encode(
       check(steps: [step("South")], serialNumber: "SN-7F3A-SECRET")
     )
