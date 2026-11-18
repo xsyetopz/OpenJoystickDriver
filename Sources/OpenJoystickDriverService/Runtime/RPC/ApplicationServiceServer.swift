@@ -39,6 +39,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let connectedIdentifierProvider: @Sendable () async -> [LogicalControllerID]
   /// Admits the feedback of the virtual gamepad to the physical controllers.
   let feedbackGate: VirtualOutputFeedbackGate
+  /// The virtual identities every user-space backend of this server reserves from.
+  let virtualIdentities = SharedVirtualIdentityRegistry()
   /// The user settings file that every `ojd setting` key reads and writes.
   let settings: SettingsStore
   /// Turns launch at login on and off.
@@ -278,6 +280,7 @@ extension ApplicationServiceServer {
       UserSpaceDispatcherFactoryContext(
         deviceManager: deviceManager,
         feedbackGate: feedbackGate,
+        virtualIdentities: virtualIdentities,
         profileOverrides: virtualHIDProfileOverrides,
         timeouts: virtualOutputTransitionTimeouts,
         clock: virtualOutputTransitionClock

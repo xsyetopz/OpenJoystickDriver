@@ -137,6 +137,7 @@ extension UserSpaceOutputDispatcher {
       for identifier in identifiers { lifecycleGenerations[identifier, default: 0] &+= 1 }
       creationTasks.removeAll()
       creationRetryPolicies.removeAll()
+      identities.releaseAll(holder: identityHolder)
       _status = .off
       for task in tasks { task.cancel() }
       let drains = resources.map { $0.beginClose() }

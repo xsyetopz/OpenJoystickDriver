@@ -9,7 +9,7 @@ import Testing
 struct IOHIDVirtualDevicePublisherTests {
   private static func identity(of identifier: LogicalControllerID) -> VirtualDeviceIdentity {
     var registry = VirtualIdentityRegistry()
-    return registry.reserve(identifier)
+    return registry.reserve(identifier, holder: UUID())
   }
 
   @Test

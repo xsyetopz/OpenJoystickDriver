@@ -76,6 +76,7 @@ extension ApplicationServiceRuntime {
       publisher: IOHIDVirtualDevicePublisher(),
       profile: profile,
       format: format,
+      identities: context.virtualIdentities,
       onOutputCommand: outputHandler
     ) { identifier in
       _ = await feedbackGate.quiesceAndNeutralize(

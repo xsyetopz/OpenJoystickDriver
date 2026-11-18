@@ -7,6 +7,8 @@ struct UserSpaceDispatcherFactoryContext: Sendable {
   let deviceManager: DeviceManager
   /// The gate for the feedback of the virtual gamepad.
   let feedbackGate: VirtualOutputFeedbackGate
+  /// The virtual identities that every backend shares, so no two controllers publish one.
+  let virtualIdentities: SharedVirtualIdentityRegistry
   /// The store of the Advanced profile overrides.
   let profileOverrides: VirtualHIDProfileOverrideStore
   /// The time limits of a transition.

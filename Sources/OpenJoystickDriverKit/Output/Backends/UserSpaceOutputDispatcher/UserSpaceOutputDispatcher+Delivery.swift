@@ -104,7 +104,7 @@ extension UserSpaceOutputDispatcher {
       let retryPolicy = creationRetryPolicies[identifier] ?? UserSpaceDeviceCreationRetryPolicy()
       guard retryPolicy.permitsAttempt(at: now) else { throw CreationError.createFailed }
 
-      let identity = identityRegistry.reserve(identifier)
+      let identity = identities.reserve(identifier, holder: identityHolder)
       let task = Task { try await self.createEntry(for: identifier, identity: identity) }
       creationTasks[identifier] = task
       return (task, generation)
