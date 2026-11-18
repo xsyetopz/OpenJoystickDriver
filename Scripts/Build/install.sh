@@ -52,7 +52,7 @@ install_fast() {
   local DEXT_DIR_DST="$APP_DST/Contents/Library/SystemExtensions"
   local DEXT_DIR_SRC="$APP_SRC/Contents/Library/SystemExtensions"
   if [[ "$OJD_HOST_USERCLIENT" != "1" ]]; then
-    echo "  Skipped: the host profile cannot open the DEXT user client, so the app ships without it"
+    echo "  Skipped: the app ships without the DEXT, because $OJD_NO_DEXT_REASON"
   elif [[ -d "$DEXT_DIR_DST" ]]; then
     rm -rf "$DEXT_DIR_SRC" 2>/dev/null || true
     mkdir -p "$DEXT_DIR_SRC"
@@ -99,7 +99,7 @@ install_full() {
     python3 "$PROJECT_DIR/Scripts/Build/install_app.py" \
       --retire-driverkit \
       "$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
-    echo "  Xbox USB ownership is unavailable until Apple grants DriverKit user-client access."
+    echo "  Xbox USB ownership is unavailable: $OJD_NO_DEXT_REASON."
     return 0
   fi
 

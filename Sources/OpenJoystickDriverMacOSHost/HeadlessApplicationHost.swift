@@ -49,8 +49,7 @@ final class HeadlessApplicationHost {
     #if canImport(AppIntents)
       if #available(macOS 13, *) {
         // The Shortcuts entity queries read the running service through this dependency.
-        let automationService = runtime.automationService
-        unsafe AppDependencyManager.shared.add(dependency: automationService)
+        registerAutomationDependency(runtime.automationService)
       }
     #endif
     #if canImport(AppKit) && canImport(SwiftUI)
@@ -66,6 +65,20 @@ final class HeadlessApplicationHost {
       dispatchMain()
     #endif
   }
+
+  #if canImport(AppIntents)
+    /// Hands the running service to the App Intents dependency store.
+    ///
+    /// The macOS 27 SDK declares `AppDependencyManager.shared` as `nonisolated(unsafe)`, so reading
+    /// it needs `unsafe`; the macOS 26 SDK, which a Command Line Tools build uses, declares it
+    /// safe, where the same marker is reported as unnecessary. Ignoring that report keeps one
+    /// source for both SDKs while strict memory safety still rejects a missing marker.
+    @available(macOS 13, *)
+    @diagnose(UnnecessaryUnsafe, as: ignored)
+    private func registerAutomationDependency(_ service: any AutomationService) {
+      unsafe AppDependencyManager.shared.add(dependency: service)
+    }
+  #endif
 
   /// Prints why the service cannot start and exits.
   ///

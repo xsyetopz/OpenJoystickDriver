@@ -6,12 +6,12 @@ Run everything through `just`. `just` lists the recipes.
 
 | Need | Detail |
 | --- | --- |
-| Xcode | Launched once, for the macOS SDK and `xcodebuild`. `Package.swift`: swift-tools-version:6.4.0, macOS 12 deployment floor. CI: Xcode 27.0, xcode-27 runner. |
-| Swift toolchain | Xcode's, at least `.swift-version` (6.4.0, the oldest that builds for macOS 12). `Scripts/Platform/environment.sh` wraps every Swift command: it puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH` and stops when that `swift` is older. A swift.org toolchain does not fit: from 6.0.1 its runtime libraries target macOS 13, so linking for the macOS 12 floor warns, and a warning fails the build. |
-| Homebrew | Install `just` first. `just setup` installs the pinned Swift toolchain (when swiftly is present), swiftlint, ruff, and shellcheck (when missing), resolves the BuildTools package, and sets the Git hooks path. |
+| Xcode | Launched once, for the macOS SDK and `xcodebuild`. `Package.swift`: swift-tools-version:6.4.0, macOS 12 deployment floor. CI: Xcode 27.0, xcode-27 runner. Without Xcode, see [Building Without Xcode](#building-without-xcode). |
+| Swift toolchain | With Xcode, Xcode's, at least `.swift-version` (6.4.0, the oldest that builds for macOS 12). `Scripts/Platform/environment.sh` wraps every Swift command: it puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH` and stops when that `swift` is older. Without Xcode, a swift.org toolchain that swiftly installs; from 6.0.1 its runtime libraries target macOS 13, so linking for the macOS 12 floor prints linker warnings. |
+| Homebrew | Install `just` first. `just setup` installs the pinned Swift toolchain (when swiftly is present), swiftlint, ruff, and shellcheck (when missing), and sets the Git hooks path. |
 | Python 3 | `just schema-env` creates the schema-validation environment. |
 
-Full Xcode, not only the Command Line Tools: check-profiles, check-schemas, driverkit-check, catalog-regenerate, errors-regenerate, diagnose-record, test-parsers-macos14, and every build, install, and release recipe. The first four build OJDRepositoryTool, the only validator of controller records, protocol descriptions, profiles, and personas; it also prints Swift-owned constants such as apiVersion and the `ojd` exit statuses. Not verified: plain swift build or swift test with only the Command Line Tools.
+Full Xcode, not only the Command Line Tools: check-profiles, check-schemas, driverkit-check, catalog-regenerate, errors-regenerate, diagnose-record, test-parsers-macos14, build-dext, and every release recipe. The first four build OJDRepositoryTool, the only validator of controller records, protocol descriptions, profiles, and personas; it also prints Swift-owned constants such as apiVersion and the `ojd` exit statuses. `build-dev`, `install-dev`, and `install-fast-dev` also run without Xcode; see [Building Without Xcode](#building-without-xcode).
 
 Clone and set up:
 
@@ -50,6 +50,20 @@ just install-fast-dev      # needs Apple Development signing
 ```
 
 `just verify` runs the complete validation CI repeats.
+
+## Building Without Xcode
+
+With only the Command Line Tools, or with `DEVELOPER_DIR=/Library/Developer/CommandLineTools` on a Mac that has Xcode, `just build-dev`, `install-dev`, and `install-fast-dev` build the app with SwiftPM, for editors such as VS Code. Install [swiftly](https://www.swift.org/install/macos/), then run `just setup`, which installs the `.swift-version` toolchain.
+
+| Part | Without Xcode |
+| --- | --- |
+| Swift | The swift.org toolchain that swiftly installs. The Command Line Tools' own `swift` stops with an error: their macOS 27 SDK declares `@State` as a macro whose plugin ships only with Xcode, and their macOS 26 SDK carries a standard library interface that strict memory safety rejects. |
+| SDK | The newest Command Line Tools SDK whose SwiftUI macros the toolchain can expand, the macOS 26 SDK on Command Line Tools 27. The build prints which SDK it uses. |
+| App bundle | `Scripts/Build/bundles.sh` assembles `.build/swiftpm-app/OpenJoystickDriver.app` in the layout an Xcode build has, then signs it the same way. |
+| Xbox USB driver | Left out, because the DriverKit SDK ships only with Xcode. `install-dev` retires an installed driver. |
+| Shortcuts | The app has no `Metadata.appintents`, which only Xcode extracts, so Shortcuts lists none of its actions. |
+| Release builds | `build-release` stops: a release needs the driver and the App Intents metadata. |
+| Tests | `just test` and `just typecheck` build the package for macOS 13, the lowest macOS with Swift Testing's `.timeLimit`, and skip the Xcode schemes, which need `xcodebuild`. |
 
 ## Building in Xcode
 

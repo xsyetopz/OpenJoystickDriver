@@ -10,9 +10,9 @@ Most users don't need to build. `CHANGELOG.md` lists what each build contains. O
 
 You need these items:
 
-- A Mac with the Xcode command-line tools. A few steps need full Xcode.
+- A Mac with the Xcode command-line tools. The [Xbox USB driver](Glossary.md#terms) and Shortcuts actions need full Xcode.
 - An Apple Developer team.
-- Two development provisioning profiles, one for the app and one for the [Xbox USB driver](Glossary.md#terms) (`com.openjoystickdriver.XboxUSBDevice`). Name the files `OpenJoystickDriver.provisionprofile` and `OpenJoystickDriver_XboxUSBDevice.provisionprofile`.
+- Two development provisioning profiles, one for the app and one for the Xbox USB driver (`com.openjoystickdriver.XboxUSBDevice`). Name the files `OpenJoystickDriver.provisionprofile` and `OpenJoystickDriver_XboxUSBDevice.provisionprofile`.
   - The app profile needs the `com.apple.developer.hid.virtual.device` entitlement. Its `com.apple.developer.driverkit.userclient-access` entitlement must name `com.openjoystickdriver.XboxUSBDevice`.
   - The Xbox USB driver profile needs `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` with Apple's exact seven VID:PID pairs, and no HID entitlement.
   - `just signing-install-profiles` copies the files under those names. `just signing-configure` writes their paths to `.env.dev`.
@@ -65,7 +65,7 @@ You need these items:
 | Ad-hoc signing for the Xbox USB driver | `just build-dext` stops with `DriverKit extensions cannot use ad-hoc signing`. |
 | Plain `swift build` binary | No entitlements. Not verified: OJD reads controllers but can't publish the [virtual gamepad](Glossary.md#terms). |
 | Xbox USB driver profile without the exact `transport.usb` entitlement | The build stops. |
-| Only the Command Line Tools, no Xcode | Not verified for `swift build` or `swift test`. |
+| Only the Command Line Tools, no Xcode | Install [swiftly](https://www.swift.org/install/macos/) before `just setup`. `just install-dev` builds the app without the Xbox USB driver, and Shortcuts lists none of its actions. |
 | Tester DMG | Signed and notarized by the maintainer. Runs on macOS 12 or later. Needs no Apple developer account. |
 
 ### Which Controllers Need the Xbox USB Driver

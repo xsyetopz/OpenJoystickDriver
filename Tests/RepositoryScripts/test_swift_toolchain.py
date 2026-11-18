@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+from Scripts.Platform.swift_sdk import FOUNDATION_MODULE
 
 PROJECT_DIR = Path(__file__).resolve().parents[2]
 WITH_ENV = str(PROJECT_DIR / "Scripts/with-env.sh")
@@ -33,6 +36,7 @@ class SwiftToolchainTests(unittest.TestCase):
                 root / "Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift",
                 xcode_version,
             )
+            stub(root / "Developer/usr/bin/xcodebuild", xcode_version)
             other = stub(root / "other/swift", PINNED)
             env = {
                 **os.environ,
@@ -63,6 +67,58 @@ class SwiftToolchainTests(unittest.TestCase):
         result, _ = self.run_swift("6.3")
         self.assertEqual(result.returncode, 2)
         self.assertIn(".swift-version", result.stderr)
+        self.assertNotIn("ran:", result.stdout)
+
+    def run_without_xcode(self, path: list[Path]) -> subprocess.CompletedProcess[str]:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            module = root / "Developer/SDKs/MacOSX26.sdk" / FOUNDATION_MODULE
+            module.mkdir(parents=True)
+            (module / "arm64e-apple-macos.swiftinterface").write_text(
+                f"// swift-compiler-version: Apple Swift version {PINNED}\n",
+                encoding="utf-8",
+            )
+            # /usr/bin/python3 asks xcrun for the developer folder, which this stub lacks.
+            tools = root / "tools"
+            tools.mkdir()
+            (tools / "python3").symlink_to(sys.executable)
+            folders = [str(folder.parent) for folder in path] + [str(tools)]
+            env = {
+                **os.environ,
+                "DEVELOPER_DIR": str(root / "Developer"),
+                "HOME": str(root / "home"),
+                "PATH": ":".join([*folders, "/usr/bin", "/bin", "/usr/sbin", "/sbin"]),
+            }
+            env.pop("SDKROOT", None)
+            return subprocess.run(
+                [WITH_ENV, "swift", "build", "--show-bin-path"],
+                env=env,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+    def test_without_xcode_a_swift_org_toolchain_runs(self) -> None:
+        # Arrange
+        with tempfile.TemporaryDirectory() as directory:
+            toolchain = stub(Path(directory) / "toolchain/swift", PINNED)
+
+            # Act
+            result = self.run_without_xcode([toolchain])
+
+        # Assert
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            result.stdout.strip(), f"ran:{toolchain}:build --show-bin-path"
+        )
+
+    def test_without_xcode_the_system_swift_stops(self) -> None:
+        # Act
+        result = self.run_without_xcode([])
+
+        # Assert
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("swift.org toolchain", result.stderr)
         self.assertNotIn("ran:", result.stdout)
 
 

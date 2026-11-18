@@ -70,7 +70,7 @@ Choose Apple menu > **System Settings** > **General** > **Login Items & Extensio
 
 ### Do I Need Xcode?
 
-Only to build OJD from source. Building with only the Command Line Tools is untested. See [Building From Source](Building-from-Source.md).
+Only to build OJD from source with the Xbox USB driver and Shortcuts actions. With only the Command Line Tools and the swift.org toolchain, the build leaves both out. See [Building From Source](Building-from-Source.md).
 
 ## Controllers
 

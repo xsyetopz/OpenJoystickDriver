@@ -3,17 +3,39 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  // The keys are spelled out instead of using `@Entry`: that macro's plugin ships only with Xcode,
+  // and the Command Line Tools build has to compile this module too.
+  private enum InterfaceLevelKey: EnvironmentKey {
+    static var defaultValue: InterfaceLevel { .default }
+  }
+
+  private enum DeveloperToolsEnabledKey: EnvironmentKey {
+    static var defaultValue: Bool { false }
+  }
+
+  private enum PreferencesKey: EnvironmentKey {
+    static var defaultValue: SettingsPreferencesModel? { nil }
+  }
+
   extension EnvironmentValues {
     /// How much of the interface shows; the main window sets it from the Settings preference.
-    @Entry
-    var ojdInterfaceLevel = InterfaceLevel.default
+    var ojdInterfaceLevel: InterfaceLevel {
+      get { self[InterfaceLevelKey.self] }
+      set { self[InterfaceLevelKey.self] = newValue }
+    }
+
     /// Whether the developer switch is on; a developer row also needs Advanced.
-    @Entry
-    var ojdDeveloperToolsEnabled = false
+    var ojdDeveloperToolsEnabled: Bool {
+      get { self[DeveloperToolsEnabledKey.self] }
+      set { self[DeveloperToolsEnabledKey.self] = newValue }
+    }
+
     /// The preferences that store the interface level, so a view can switch it; the main window
     /// sets it.
-    @Entry
-    var ojdPreferences: SettingsPreferencesModel?
+    var ojdPreferences: SettingsPreferencesModel? {
+      get { self[PreferencesKey.self] }
+      set { self[PreferencesKey.self] = newValue }
+    }
   }
 
   /// Hides a view when its row is not shown at the environment's level.

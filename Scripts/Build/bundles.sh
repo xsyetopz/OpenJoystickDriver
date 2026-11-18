@@ -1,5 +1,66 @@
 # shellcheck shell=bash
 
+# SwiftPM's build folder for the app when Xcode is not selected.
+SWIFTPM_APP_ROOT="$PROJECT_DIR/.build/swiftpm-app"
+
+# Builds the app with Xcode, which also extracts the App Intents metadata that Shortcuts reads.
+# Usage: _xcode_app_bundle <configuration> <actions...>
+_xcode_app_bundle() {
+  local configuration="$1"
+  shift
+  # The app target passes -package-name to see the package's `package` symbols. SwiftPM names the
+  # package after the checkout directory (lowercased, C99-mangled), so a renamed clone or a
+  # worktree must pass that name.
+  local swift_package_name
+  swift_package_name="$(basename "$PROJECT_DIR" | tr '[:upper:]' '[:lower:]' |
+    tr -c 'a-z0-9_\n' '_')"
+  if [[ "$swift_package_name" == [0-9]* ]]; then
+    swift_package_name="_${swift_package_name:1}"
+  fi
+  # TOOLCHAINS is unset because the package must build with the selected Xcode's own toolchain.
+  env -u TOOLCHAINS xcodebuild \
+    -project "$GUI_PROJECT" \
+    -scheme "$GUI_SCHEME" \
+    -configuration "$configuration" \
+    -destination "generic/platform=macOS" \
+    -derivedDataPath "$GUI_DERIVED_DATA" \
+    ARCHS="arm64 x86_64" \
+    ONLY_ACTIVE_ARCH=NO \
+    ENABLE_DEBUG_DYLIB=NO \
+    OJD_SWIFT_PACKAGE_NAME="$swift_package_name" \
+    CODE_SIGNING_ALLOWED=NO \
+    "$@"
+}
+
+# Builds the debug app with SwiftPM and lays it out as Xcode does. The bundle has no App Intents
+# metadata, which only Xcode extracts, so Shortcuts lists none of the app's actions.
+# Usage: _swiftpm_app_bundle <app>
+_swiftpm_app_bundle() {
+  local app="$1"
+  swift build --scratch-path "$SWIFTPM_APP_ROOT" --arch arm64 --arch x86_64 \
+    --product OpenJoystickDriver
+  local products
+  products="$(swift build --scratch-path "$SWIFTPM_APP_ROOT" --arch arm64 --arch x86_64 \
+    --show-bin-path)"
+  local app_sources="$PROJECT_DIR/Sources/OpenJoystickDriver"
+  rm -rf "$app"
+  mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
+  cp "$products/OpenJoystickDriver" "$app/Contents/MacOS/"
+  cp "$app_sources/App/Info.plist" "$app/Contents/Info.plist"
+  /usr/bin/plutil -insert CFBundleSupportedPlatforms -array "$app/Contents/Info.plist"
+  /usr/bin/plutil -insert CFBundleSupportedPlatforms.0 -string MacOSX "$app/Contents/Info.plist"
+  printf 'APPL????' > "$app/Contents/PkgInfo"
+  cp "$app_sources/Resources/OpenJoystickDriver.icns" "$app_sources/App/PrivacyInfo.xcprivacy" \
+    "$PROJECT_DIR/THIRD_PARTY_NOTICES.md" "$app/Contents/Resources/"
+  # The app target's own resource bundle holds only the files copied above, which Xcode places at
+  # the top of Resources too.
+  for bundle in "$products"/*.bundle; do
+    [[ "$(basename "$bundle")" == "OpenJoystickDriver_OpenJoystickDriver.bundle" ]] ||
+      ditto "$bundle" "$app/Contents/Resources/$(basename "$bundle")"
+  done
+  echo "WARN: built without Xcode, so the app has no DriverKit extension and Shortcuts lists none of its actions."
+}
+
 build_app_bundle() {
   _require_codesign_identity
 
@@ -48,34 +109,20 @@ build_app_bundle() {
     actions=(clean build)
   fi
   echo "Building $configuration app (universal)..."
-  # The app target passes -package-name to see the package's `package` symbols. SwiftPM names the
-  # package after the checkout directory (lowercased, C99-mangled), so a renamed clone or a
-  # worktree must pass that name.
-  local swift_package_name
-  swift_package_name="$(basename "$PROJECT_DIR" | tr '[:upper:]' '[:lower:]' |
-    tr -c 'a-z0-9_\n' '_')"
-  if [[ "$swift_package_name" == [0-9]* ]]; then
-    swift_package_name="_${swift_package_name:1}"
-  fi
-  # Xcode extracts the App Intents metadata that Shortcuts reads, which `swift build` cannot.
-  # TOOLCHAINS is unset because the package must build with the selected Xcode's own toolchain.
-  env -u TOOLCHAINS xcodebuild \
-    -project "$GUI_PROJECT" \
-    -scheme "$GUI_SCHEME" \
-    -configuration "$configuration" \
-    -destination "generic/platform=macOS" \
-    -derivedDataPath "$GUI_DERIVED_DATA" \
-    ARCHS="arm64 x86_64" \
-    ONLY_ACTIVE_ARCH=NO \
-    ENABLE_DEBUG_DYLIB=NO \
-    OJD_SWIFT_PACKAGE_NAME="$swift_package_name" \
-    CODE_SIGNING_ALLOWED=NO \
-    "${actions[@]}"
-  local built_app="$GUI_DERIVED_DATA/Build/Products/$configuration/OpenJoystickDriver.app"
-  if [[ ! -d "$built_app/Contents/Resources/Metadata.appintents" ]]; then
-    echo "ERROR: $built_app has no Contents/Resources/Metadata.appintents."
-    echo "Fix: build the app target of $GUI_PROJECT, which runs the App Intents metadata extraction."
-    exit 1
+  local built_app
+  if (( OJD_HAS_XCODE )); then
+    _xcode_app_bundle "$configuration" "${actions[@]}"
+    built_app="$GUI_DERIVED_DATA/Build/Products/$configuration/OpenJoystickDriver.app"
+    if [[ ! -d "$built_app/Contents/Resources/Metadata.appintents" ]]; then
+      echo "ERROR: $built_app has no Contents/Resources/Metadata.appintents."
+      echo "Fix: build the app target of $GUI_PROJECT, which runs the App Intents metadata extraction."
+      exit 1
+    fi
+  else
+    [[ "$OJD_ENV" != "release" ]] ||
+      die "a release build needs Xcode, for the DEXT and the App Intents metadata; select it with DEVELOPER_DIR"
+    built_app="$SWIFTPM_APP_ROOT/OpenJoystickDriver.app"
+    _swiftpm_app_bundle "$built_app"
   fi
 
   mkdir -p "$PROJECT_DIR/.build"

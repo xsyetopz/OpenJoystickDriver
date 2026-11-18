@@ -66,11 +66,31 @@ fi
 if [[ -n "${DEVELOPER_DIR:-}" ]]; then
   XCODE_SELECT_PATH="$DEVELOPER_DIR"
 fi
+# 1 when the selected developer folder is Xcode's, 0 for the Command Line Tools. Without Xcode the
+# app builds through SwiftPM and ships without the DriverKit extension and App Intents metadata;
+# `DEVELOPER_DIR=/Library/Developer/CommandLineTools` selects that route on a Mac with Xcode too.
+OJD_HAS_XCODE=0
+[[ -x "$XCODE_SELECT_PATH/usr/bin/xcodebuild" ]] && OJD_HAS_XCODE=1
+export OJD_HAS_XCODE
 
-# Every Swift command runs the swift of the selected Xcode, so one compiler writes `.build`. The
-# swift.org toolchains from 6.0.1 on build their runtime for macOS 13, so linking a macOS 12
-# target against them warns; Xcode's toolchain links against the SDK instead.
-export PATH="$XCODE_SELECT_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin:$PATH"
+# Every Swift command runs one swift, so one compiler writes `.build`. With Xcode it is the swift of
+# Xcode's default toolchain, which links against the SDK. Without Xcode it is a swift.org toolchain
+# (`just setup` installs it through swiftly): the Command Line Tools' own swift cannot build the
+# app, because their newest SDK declares `@State` as a macro whose plugin ships only with Xcode, and
+# their older SDK carries a standard library interface that strict memory safety rejects. The
+# swift.org toolchains from 6.0.1 on build their runtime for macOS 13, so linking the macOS 12
+# target against them warns.
+if (( OJD_HAS_XCODE )); then
+  export PATH="$XCODE_SELECT_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin:$PATH"
+else
+  [[ -d "$HOME/.swiftly/bin" ]] && export PATH="$HOME/.swiftly/bin:$PATH"
+  SWIFT_PATH="$(command -v swift)" || SWIFT_PATH=""
+  case "$SWIFT_PATH" in
+    "" | /usr/bin/swift | "$XCODE_SELECT_PATH"/*)
+      die "building without Xcode needs a swift.org toolchain: install swiftly (https://www.swift.org/install/macos/), then run just setup"
+      ;;
+  esac
+fi
 SWIFT_PATH="$(command -v swift)" || die "swift is not on PATH"
 _SWIFT_PINNED="$(tr -d '[:space:]' < "$PROJECT_DIR/.swift-version")"
 _SWIFT_FOUND="$("$SWIFT_PATH" --version 2>&1 |
@@ -91,10 +111,14 @@ if [[ ! -d "$_DEFAULT_SDKROOT" && -d "$XCODE_SELECT_PATH/SDKs/MacOSX.sdk" ]]; th
 fi
 _SDKROOT_EXPLICIT=0
 [[ -n "${SDKROOT:-}" ]] && _SDKROOT_EXPLICIT=1
+# Without Xcode only the Command Line Tools' SDKs qualify: SwiftPM gives a swift.org toolchain no
+# plugin folder of an Xcode SDK, so the SwiftUI macros in that SDK would not expand.
+_SDK_ROOTS=()
+(( OJD_HAS_XCODE )) || _SDK_ROOTS=("$XCODE_SELECT_PATH/SDKs")
 SDKROOT="$(python3 "$LIB_DIR/swift_sdk.py" "$SWIFT_PATH" "${SDKROOT:-$_DEFAULT_SDKROOT}" \
-  "$_SDKROOT_EXPLICIT")" || die "no macOS SDK fits $SWIFT_PATH"
+  "$_SDKROOT_EXPLICIT" ${_SDK_ROOTS[@]+"${_SDK_ROOTS[@]}"})" || die "no macOS SDK fits $SWIFT_PATH"
 export SDKROOT
-unset _DEFAULT_SDKROOT _SDKROOT_EXPLICIT
+unset _DEFAULT_SDKROOT _SDKROOT_EXPLICIT _SDK_ROOTS
 unset XCODE_SELECT_PATH
 
 # One identity signs the app, its resource bundles and the DEXT: `signing configure` picks the

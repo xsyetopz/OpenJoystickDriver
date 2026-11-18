@@ -171,8 +171,9 @@ PY
 # Sets OJD_HOST_USERCLIENT to 1 when the GUI profile grants user-client access to the DEXT, or
 # to 0 when a development profile has no grant for it (no key, or a list naming only other bundle
 # IDs): Apple has not granted it yet, so the app is built without the DEXT and without Xbox USB
-# ownership. Any other value, allow-any access, or a release profile without the grant is
-# fatal.
+# ownership. A build without Xcode sets 0 too, because only Xcode has the DriverKit SDK.
+# OJD_NO_DEXT_REASON says why the DEXT is left out. Any other value, allow-any access, or a release
+# profile without the grant is fatal.
 _require_host_access_profile() {
   local profile="$1" decoded="$DRIVERKIT_ROOT/profile-entitlements.plist"
   mkdir -p "$DRIVERKIT_ROOT"
@@ -202,6 +203,11 @@ else:
 PY
 )" || exit 1
   OJD_HOST_USERCLIENT="$state"
+  OJD_NO_DEXT_REASON="the host profile cannot open the DEXT user client"
+  if (( ! OJD_HAS_XCODE )); then
+    OJD_HOST_USERCLIENT=0
+    OJD_NO_DEXT_REASON="the DriverKit SDK ships only with Xcode"
+  fi
 }
 
 _resolve_host_entitlements() {
@@ -209,7 +215,7 @@ _resolve_host_entitlements() {
   _require_host_access_profile "$profile"
   resolve_entitlements "$GUI_ENTITLEMENTS_TEMPLATE" "$output"
   if [[ "$OJD_HOST_USERCLIENT" != "1" ]]; then
-    echo "Host profile lacks DriverKit user-client access; building without the DEXT (no Xbox USB ownership)"
+    echo "Building without the DEXT (no Xbox USB ownership): $OJD_NO_DEXT_REASON"
     python3 - "$output" <<'PY'
 import plistlib
 import sys
@@ -407,7 +413,7 @@ build_dext_bundle() {
   if [[ "$OJD_HOST_USERCLIENT" == "1" ]]; then
     _build_dext "$configuration" "$app"
   else
-    echo "Skipping the DriverKit extension: the host profile cannot open its user client"
+    echo "Skipping the DriverKit extension: $OJD_NO_DEXT_REASON"
     rm -rf "$app/Contents/Library/SystemExtensions"
   fi
 
