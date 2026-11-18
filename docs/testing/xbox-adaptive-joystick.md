@@ -1,127 +1,85 @@
 # Capture Xbox Adaptive Joystick Packets
 
-OJD needs the USB identity and packets from an Xbox Adaptive Joystick connected directly to a Mac before adding a standalone device record.
+OJD needs the USB identity and packets of an Xbox Adaptive Joystick connected directly to a Mac before adding a record.
 
-Microsoft documents direct PC use, USB-C, and 7 physical buttons, but not the standalone VID/PID, interface, endpoint, or report bytes. A public Reddit comment mentions `USB\VID_045E&PID_0B1A\...`, but OJD needs tester output before committing a record.
+Microsoft documents direct PC use, USB-C, 7 physical buttons, not the standalone VID/PID, interface, endpoint, or report bytes. A public Reddit comment mentions `USB\VID_045E&PID_0B1A\...`. No record until tester output.
 
-## What to send back
+## What to Send Back
 
-Paste full command failures to distinguish HID parsing, raw USB, and DriverKit next steps.
+Fill in the [form](#paste-back-report-form). Paste full output of failed commands and commands finding no device or packets; it shows whether HID, raw USB, or DriverKit comes next.
 
-Include:
+## 1. macOS Native Checks
 
-- macOS version
-- OJD version or commit, if used
-- whether the joystick is plugged directly into the Mac by USB-C
-- exact commands you ran
-- full output from commands that found no device or no packets
-- any byte notes you already know
+1. Plug the joystick directly into the Mac; run:
 
-## 1. macOS native checks
+   ```bash
+   system_profiler SPUSBDataType
+   ioreg -p IOUSB -l -w0
+   ioreg -r -c IOHIDDevice -l -w0
+   ```
 
-Plug the joystick directly into the Mac, then run:
+2. Paste entries mentioning Xbox, Microsoft, Adaptive, joystick, gamepad, or `045e`. If none, unplug, rerun, paste the entries that disappeared.
+3. Record, if visible: vendor and product ID (hex and decimal); product, manufacturer, serial strings; interface number; class, subclass, protocol; endpoint addresses and max packet sizes; HID, raw USB, or both.
 
-```bash
-system_profiler SPUSBDataType
-ioreg -p IOUSB -l -w0
-ioreg -r -c IOHIDDevice -l -w0
-```
+## 2. OJD Device Listing
 
-Paste the entries that mention Xbox, Microsoft, Adaptive, joystick, gamepad, or `045e`. If no obvious entry appears, unplug the joystick, run the commands again, and paste the entries that disappeared.
+1. From the repository root:
 
-Record these fields if visible:
+   ```bash
+   swift run OpenJoystickDriverHIDTool --list
+   ```
 
-- vendor ID and product ID in hex and decimal
-- product, manufacturer, and serial strings
-- interface number
-- class, subclass, and protocol
-- endpoint addresses and max packet sizes
-- whether macOS exposes it as HID, raw USB, or both
+2. Paste `VID:0x45e` lines or Microsoft-looking devices. If VID/PID differs, use that pair below.
 
-## 2. OJD device listing
+## 3. HID Monitor
 
-From the repository root:
-
-```bash
-swift run OpenJoystickDriverHIDTool --list
-```
-
-Paste any `VID:0x45e` or Microsoft-looking lines. If the joystick appears under a different VID/PID, use that exact pair in the commands below.
-
-## 3. HID monitor
-
-If `--list` shows the joystick as an IOHID device, run the HID monitor with the observed VID/PID:
+If `--list` shows an IOHID device, replace `0x0000` with the observed PID:
 
 ```bash
 swift run OpenJoystickDriverHIDTool --monitor --vid 0x045e --pid 0x0000 --seconds 30
 ```
 
-Replace `0x0000` with the observed PID. Paste every `REPORT ... bytes=...`, `VALUE ...`, and `POLL ...` line. If the monitor prints `Monitoring 0 device(s)` or no reports, keep the full output and continue to raw USB.
+Paste every `REPORT ... bytes=...`, `VALUE ...`, `POLL ...` line. On `Monitoring 0 device(s)` or no reports, keep the output and continue to raw USB.
 
-## 4. Raw USB monitor
+## 4. Raw USB Monitor
 
-Run the controller-neutral USB facade first. It uses direct IOUSBHost when the interface is accessible. If live registry evidence instead proves an exclusive owner, a USBDriverKit experiment requires a development configuration whose exact personality matches the observed VID/PID, a signed host, and an installed and approved development DEXT. Do not broaden the production personality. Run an endpoint sweep:
+Run the controller-neutral USB facade first; it uses direct IOUSBHost when the interface is accessible. If registry evidence shows an exclusive owner, a USBDriverKit experiment needs a development configuration with a matching VID/PID personality, signed host, and installed, approved development DEXT. Do not broaden the production personality.
 
-```bash
-swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --length 64 --seconds 20
-```
+1. Sweep endpoints:
 
-The tool reports the selected route. If a required DEXT service does not appear, capture `just diagnose-dext`; there is no interface-detach fallback.
+   ```bash
+   swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --length 64 --seconds 20
+   ```
 
-If the sweep finds an endpoint, repeat with that endpoint while pressing one control at a time:
+2. Read the reported route. If a required DEXT service is missing, capture `just diagnose-dext`; no interface-detach fallback.
+3. If the sweep finds an endpoint, repeat with it, pressing one control at a time:
 
-```bash
-swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --endpoint 0x81 \
-  --length 64 --seconds 30
-```
+   ```bash
+   swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --endpoint 0x81 \
+     --length 64 --seconds 30
+   ```
 
-Replace the VID, PID, and endpoint with the values from the sweep.
+## 5. Packets to Capture
 
-## 5. Packets to capture
+One control per packet; return to neutral between captures. Capture neutral; stick full left, right, up, down, center; stick click press and release; X1 to X6 press and release; any mode, profile, or remap state that changes the packet.
 
-Return to neutral between captures. One changed control per packet is enough.
+Per capture, paste the label, `REPORT ... bytes=...` or `USB_REPORT ... bytes=...`, report ID (if any), length, interface and endpoint (raw USB), known byte or bit meaning.
 
-Capture:
+## 6. OJD App Check
 
-- neutral, untouched
-- stick full left, right, up, down, then center
-- stick click press and release
-- X1 press and release
-- X2 press and release
-- X3 press and release
-- X4 press and release
-- X5 press and release
-- X6 press and release
-- any mode, profile, or remap state that changes the packet
+If OJD sees the joystick:
 
-For each capture, paste:
+1. In **Controllers**, select it.
+2. Click **Open Input Test** (live input) or **Capture Packets...**.
+3. For each action, paste recent RX entries; say whether on-screen state changed.
 
-- label
-- `REPORT ... bytes=...` or `USB_REPORT ... bytes=...`
-- report ID, if present
-- packet length
-- interface and endpoint, for raw USB
-- any known byte or bit meaning
+If only macOS tools see it, say so: it needs a DriverKit or raw USB path, not just a record.
 
-## 6. OJD app check
+## Minimum Parser Evidence
 
-If OJD sees the joystick in the app or application service path, open Controller Settings, enable Live, and use `input packets` for packet capture. For each action above, paste the recent RX entries and say whether the on-screen state changed.
+A parser needs: exact VID/PID; neutral packet; an independent packet per button; stick X/Y min, max, center packets; report length; report ID behavior (if any); interface and endpoint for raw USB.
 
-If OJD cannot see it but macOS native tools can, say that. That points toward a DriverKit/raw USB path instead of a record-only fix.
-
-## Minimum parser evidence
-
-Start a parser only after collecting:
-
-- exact VID/PID
-- neutral packet
-- one independent packet for every button
-- stick X/Y min, max, and center packets
-- report length
-- report ID behavior, if any
-- interface and endpoint for raw USB captures
-
-## Paste-back report form
+## Paste-Back Report Form
 
 ```text
 macOS version:

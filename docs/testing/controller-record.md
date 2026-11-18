@@ -1,100 +1,117 @@
 # Test a Controller Record
 
-Validate candidate OJD property list records without Apple Developer Program membership. A raw USB probe uses direct IOUSBHost when macOS permits app ownership. A device claimed by OJD's restricted USBDriverKit route also requires the signed application and extension.
-
-The probe supports raw-USB `GIP` records and wired or wireless-receiver `XUSB` records. HID, Bluetooth, and unknown protocols need their own tools.
+Validates candidate OJD property list records without Apple Developer Program membership. A raw USB probe uses direct IOUSBHost when macOS permits app ownership; a device claimed by the restricted USBDriverKit route also needs the signed application and extension. Supported: raw-USB GIP records, wired or wireless-receiver XUSB records. HID, Bluetooth, other protocols: other tools.
 
 ## Prerequisites
 
-Install the Xcode command-line tools, then clone OJD:
+1. Install the Xcode command-line tools.
+2. Clone OJD:
 
-```bash
-xcode-select --install
-git clone https://github.com/xsyetopz/OpenJoystickDriver.git
-cd OpenJoystickDriver
-```
+   ```bash
+   xcode-select --install
+   git clone https://github.com/xsyetopz/OpenJoystickDriver.git
+   cd OpenJoystickDriver
+   ```
 
-`--validate-only` needs no paid Apple account, provisioning profile, application signing, or system-extension approval. A physical probe through the restricted DEXT route requires the development signing assets described in [Signing assets](../development/signing.md), an installed and approved `com.openjoystickdriver.XboxUSBDevice` extension signed with the `transport.usb` entitlement, and a host authorized to open its user client. Direct IOUSBHost probes do not use that user client. OJD does not use libusb.
+`--validate-only` needs no paid Apple account, profile, signing, or extension approval. A physical probe through the restricted DEXT route needs:
 
-## 1. Save the candidate record
+- Development signing assets: [Signing assets](../development/signing.md)
+- Installed, approved `com.openjoystickdriver.XboxUSBDevice` extension signed with the `transport.usb` entitlement
+- Host authorized to open its user client
 
-Save the proposed controller record outside the bundled record directory until you verify its VID, PID, interface, endpoints, and startup behavior. For example:
+Direct IOUSBHost probes skip the user client. No libusb.
+
+## 1. Save the Candidate Record
+
+Keep the record outside the bundled directory until VID, PID, interface, endpoints, and startup are verified:
 
 ```text
 /tmp/controller-candidate.plist
 ```
 
-Use decimal numbers in the property list. Before probing, review `protocol.initialization`. The command sends only OJD-modeled startup behavior:
+Use decimal numbers. Review `protocol.initialization` first; the command sends only OJD-modeled startup:
 
-- GIP: the named initialization actions (the driver default when omitted); profiles may disable the default keep-alive when hardware evidence requires it.
-- Xbox 360 wired: the steady Player 1 ring-light packet.
-- Xbox 360 wireless receiver: no output until a logical controller connects, then the receiver-wrapped steady Player 1 packet.
-- A record containing `XboxGIP/rumble-begin` and `XboxGIP/rumble-end` sends those brief initialization packets because they are part of that record's declared initialization.
+| Record | Startup sent |
+| --- | --- |
+| GIP | Named initialization actions (driver default when omitted) |
+| Xbox 360 wired | Steady Player 1 ring-light packet |
+| Xbox 360 wireless receiver | Nothing until a controller connects, then the receiver-wrapped Player 1 packet |
+| `XboxGIP/rumble-begin`, `XboxGIP/rumble-end` | Those brief packets, as declared initialization |
 
-`protocol.keepAlive` is an optional boolean for GIP records. Omit it to keep the default-enabled behavior. Set it to `false` only when device evidence requires periodic host output to be disabled.
+`protocol.keepAlive`: optional boolean for GIP records. Default: on. Set false only when device evidence requires it.
 
-## 2. Validate without opening hardware
+## 2. Validate Without Opening Hardware
 
 ```bash
 just diagnose-record /tmp/controller-candidate.plist --validate-only
 ```
 
-Expected output ends with:
+Expected final line:
 
 ```text
 RECORD_VALIDATION result=valid
 ```
 
-Validation rejects unsupported protocol drivers, HID transports, invalid endpoint directions, invalid variants, and unknown startup packet names before opening a device.
+Rejected before opening a device: unsupported protocol drivers, HID transports, invalid endpoint directions and variants, unknown startup packet names.
 
-## 3. Probe the physical controller
+## 3. Probe the Physical Controller
 
-Quit games, Steam, and other controller tools first. Install and approve a signed development build, connect the controller directly by USB, then run:
+1. Quit games, Steam, and other controller tools.
+2. Install and approve a signed development build.
+3. Connect the controller by USB.
+4. Run:
 
-```bash
-just diagnose-record /tmp/controller-candidate.plist --seconds 30
-```
+   ```bash
+   just diagnose-record /tmp/controller-candidate.plist --seconds 30
+   ```
 
-During the capture, press one control at a time and return it to neutral. The probe prints:
+5. During the capture, press one control at a time, returning to neutral.
 
-- `RECORD`: the exact identity, the endpoints and configuration resolved for the matched device, and startup names. With `--validate-only` it shows the record's own values.
-- `USB_DEVICE` and `USB_CLAIM`: the matched physical USB path.
-- `RECORD_BINDING result=refused`: the observed interface violates the record's interface contract; or the device's configuration descriptor could not be read: `reason=device-in-use` when the host refused the read and names the program that holds the device (close it), `reason=configuration-unreadable` for any other read failure (reconnect the controller and retry), and `reason=configuration-unobserved` when the facts read belong to another service (retry). The probe exits with code 4 before it opens or writes to the device.
-- `RECORD_HANDSHAKE`: whether the protocol startup completed.
-- `USB_TX`: additional Xbox 360 startup output.
-- `USB_RX`: every received input packet.
-- `EVENT`: OJD parser output for changed controls.
-- `RECORD_SUMMARY`: packet, parsed-event, and parse-error counts.
+| Output line | Meaning |
+| --- | --- |
+| RECORD | Identity, endpoints, configuration resolved for the matched device, startup names. With --validate-only, the record's own values |
+| USB_DEVICE, USB_CLAIM | Matched physical USB path |
+| RECORD_BINDING result=refused | Interface violates the record's contract, or the configuration descriptor was unreadable. Exit code 4, before the probe opens or writes to the device |
+| RECORD_HANDSHAKE | Whether protocol startup completed |
+| USB_TX | Additional Xbox 360 startup output |
+| USB_RX | Every received input packet |
+| EVENT | Parser output for changed controls |
+| RECORD_SUMMARY | Packet, parsed-event, parse-error counts |
 
-If the interface is unavailable, preserve the selected route and live registry owner. Use `just diagnose-dext` when the selected model requires the restricted extension. There is no detach or cross-transport fallback.
+| Refusal `reason` | Meaning and action |
+| --- | --- |
+| device-in-use | Host refused the read and names the program holding the device; close it |
+| configuration-unreadable | Another read failure; reconnect and retry |
+| configuration-unobserved | Facts read belong to another service; retry |
 
-## 4. Report results
+Interface unavailable: keep the route and live registry owner. Model requires the restricted extension: `just diagnose-dext`. No detach or cross-transport fallback.
 
-Identify the distribution path that produced the behavior. An installed app and a source-built record probe are different test subjects:
+## 4. Report Results
 
-- Installed app / shared DMG: report the exact DMG filename and attach `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG. For an installed copy, also run:
+Say which subject produced the behavior:
 
-  ```bash
-  ojd diagnose --output support-report.json
-  ```
+| Subject | Report |
+| --- | --- |
+| Installed app / shared DMG | DMG filename; attach `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG; for an installed copy also run `ojd diagnose --output support-report.json` |
+| Source-built record probe | Checkout commit and working-tree state, record path, full `just diagnose-record ...` command and output. Says nothing about the installed app or a shared DMG |
 
-  This exercises the packaged Developer ID-signed app and its embedded DEXT; it does not use the Swift sources in a checkout. The notarized, stapled community tester package can replace the DriverKit extension with SIP enabled. The report's `controllers[].binding` and `unboundDevices[]` show how each connection was classified: outcome, reason, rule, matched predicates, catalog record ID, access backend, interface summaries, and rejected candidates. It records only whether a serial number is present, never its value, and no packet payloads.
-- Source-built record probe: report the checkout commit and working-tree state, the record path, and the complete `just diagnose-record ...` command and output. This route builds/runs the probe from the current source checkout and is not evidence about the installed app or a shared DMG.
+The diagnose run exercises the packaged Developer ID-signed app and its embedded DEXT, not a checkout. The notarized, stapled tester package can replace the DriverKit extension with SIP enabled. `controllers[].binding` and `unboundDevices[]` show how OJD classified each connection: outcome, reason, rule, matched predicates, catalog record ID, access backend, interface summaries, rejected candidates. Only whether a serial number exists is recorded, never its value; no packet payloads.
 
-Do not mix these reports: a source probe can validate a record while an older installed app or DEXT is still the behavior being observed, and an installed DMG cannot prove that an uncommitted source change was included.
+Do not mix them: a source probe can validate a record while an older installed app or DEXT still produces the behavior.
 
-Attach the complete command, output, and these details to the controller's GitHub issue:
+Attach the full command, output, and these to the controller's GitHub issue:
 
-- macOS version and Mac model
-- controller name and connection mode
-- exact OJD commit
-- shared tester DMG filename and build-info file when testing an installed artifact
-- tester `version` (SemVer with `+build.<number>.sha.<commit>` metadata) and `bundle_version` from the build-info file when testing an installed artifact
-- exact record property list
-- selected USB route; include DriverKit extension version and activation state when applicable
-- whether the controller stayed powered on
-- neutral plus one press/release for every control
-- any missing, duplicated, delayed, or incorrect `EVENT` lines
-- any `PARSE_ERROR` or zero-packet summary
+| Item |
+| --- |
+| macOS version and Mac model |
+| Controller name and connection mode |
+| OJD commit |
+| Installed artifact: tester DMG filename; `version` (SemVer with `+build.<number>.sha.<commit>` metadata) and `bundle_version` from the build-info file |
+| Record property list |
+| USB route, with DriverKit extension version and activation state when applicable |
+| Whether the controller stayed powered on |
+| Neutral plus one press/release for every control |
+| Missing, duplicated, delayed, or wrong EVENT lines |
+| Any PARSE_ERROR or zero-packet summary |
 
-Schema validation proves only that the operational record is well formed. Record correct input, stable reconnect, and any claimed rumble or LED observations in the matching testing document and issue; do not add verification metadata to the runtime record.
+Schema validation proves only that the record is well formed. Record input, reconnect, rumble, and LED observations in the matching testing document and issue; add no verification metadata to the runtime record.

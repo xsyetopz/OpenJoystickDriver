@@ -1,16 +1,16 @@
 # Test Razer Wolverine V3 Tournament Edition
 
-This test covers [OpenJoystickDriver issue #14][1] for USB device `5426:2627` (`1532:0A43` in hexadecimal).
+For [issue #14][1] and USB device 5426:2627 (1532:0A43 hexadecimal).
 
-The candidate record selects OJD's wired Xbox One GIP parser instead of `HIDDescriptor` and takes the interrupt endpoints IN `0x81` and OUT `0x01` from a patch. The reporter of pull request #39 saw a successful handshake, the LED on, and the buttons, sticks, triggers and D-pad working with these endpoints; no capture is attached. It declares no `shareButton` or `paddles` flags. The request proposed those flags without packet evidence, and OJD has no paddle packet decoder.
+The candidate record selects the wired Xbox One GIP parser, not `HIDDescriptor`, with patch endpoints IN `0x81`, OUT `0x01`. Pull request #39 reported a handshake, LED on, and working buttons, sticks, triggers, D-pad; no capture is attached. No `shareButton` or `paddles` flags: no packet evidence, and OJD has no paddle decoder.
 
-The input mapping and output details have no capture. Validation is signing-free. This pair is not in the current production Apple USB entitlement, so the USB facade tries direct IOUSBHost. Use an exact development DEXT experiment only if live ownership evidence requires it.
+Input and output: no capture. Validation needs no signing. The production Apple USB entitlement omits this pair, so the facade tries IOUSBHost; use an exact development DEXT only if ownership evidence requires it.
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/14
 
-## Validate the bundled record
+## Validate the Bundled Record
 
-Run from the repository root:
+From the repository root:
 
 ```bash
 just diagnose-record \
@@ -18,26 +18,27 @@ just diagnose-record \
   --validate-only
 ```
 
-Expected result:
+Expected:
 
 ```text
-PROFILE_VALIDATION result=valid
+RECORD_VALIDATION result=valid
 ```
 
-## Run the USB probe
+## Run the USB Probe
 
-Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
+1. Quit Steam, games, and controller tools; connect by USB.
+2. Run:
 
-```bash
-just diagnose-record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.plist \
-  --seconds 30
-```
+   ```bash
+   just diagnose-record \
+     Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.plist \
+     --seconds 30
+   ```
 
-Press and release one control at a time. Confirm that the controller stays powered, `PROFILE_HANDSHAKE` succeeds, `USB_RX` packets arrive, and `EVENT` lines match each control.
+3. Press and release each control. Check the controller stays powered, `RECORD_HANDSHAKE` succeeds, `USB_RX` arrives, and `EVENT` lines match.
 
-If the interface is unavailable, preserve the selected route and registry owner; there is no detach or cross-transport fallback.
+Interface unavailable: keep route and registry owner; no detach or cross-transport fallback.
 
-Attach the complete output to issue #14 with the macOS version, Mac model, controller firmware if known, exact OJD commit, selected USB route, and any missing or incorrect controls. The output can contain raw controller packets; inspect it before publishing.
+Attach full output (raw packets; inspect first) to #14 with macOS version, Mac model, firmware (if known), OJD commit, USB route, missing or wrong controls.
 
-Schema validation alone does not prove complete support. Document missing physical handshake, input, reconnect, rumble, and lighting observations until obtained.
+Schema validation proves no support. Record missing handshake, input, reconnect, rumble, lighting.

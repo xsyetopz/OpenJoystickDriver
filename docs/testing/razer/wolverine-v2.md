@@ -1,16 +1,16 @@
 # Testing the Razer Wolverine V2
 
-This procedure covers [OpenJoystickDriver issue #19][1] for USB device `5426:2601` (`1532:0A29` in hexadecimal).
+For [issue #19][1] and USB device 5426:2601 (1532:0A29 hexadecimal).
 
-The bundled record comes from Linux xpad, patched with the locally captured interface-0 endpoints `0x81`/`0x01`. It omits the proposed `shareButton` and `paddles` flags. The report contains no input packet layout that identifies either control, and OJD has no paddle packet decoder.
+Bundled record: Linux xpad, patched with captured interface-0 endpoints `0x81`/`0x01`. Omitted proposed `shareButton` and `paddles` flags: no packet layout identifies them, and OJD has no paddle decoder.
 
-The record also omits `SetConfiguration1BeforeClaim` and a 200 ms post-handshake delay. Enumeration reports configuration 1 but does not establish that OJD must select it, and no timing evidence supports the delay. The GIP parser, Xbox One defaults, input mapping, reconnect, LED, and rumble remain unverified.
+Also omitted: `SetConfiguration1BeforeClaim` (enumeration reports configuration 1 without showing OJD must select it) and a 200 ms post-handshake delay (no timing evidence). Not verified: GIP parser, Xbox One defaults, input mapping, reconnect, LED, rumble.
 
-Validation is signing-free. This pair is not in the current production Apple USB entitlement, so the USB facade tries direct IOUSBHost. Use an exact development DEXT experiment only if live ownership evidence requires it.
+Validation needs no signing. The production Apple USB entitlement omits this pair, so the facade tries IOUSBHost; use an exact development DEXT only if ownership evidence requires it.
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/19
 
-## Validate the bundled record
+## Validate the Bundled Record
 
 From the repository root:
 
@@ -20,37 +20,40 @@ just diagnose-record \
   --validate-only
 ```
 
-Expected result:
+Expected:
 
 ```text
 RECORD_VALIDATION result=valid
 ```
 
-## Run the raw USB probe
+## Run the Raw USB Probe
 
-Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
+1. Quit Steam, games, and controller tools; connect by USB.
+2. Run:
 
-```bash
-just diagnose-record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a29.plist \
-  --seconds 45
-```
+   ```bash
+   just diagnose-record \
+     Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a29.plist \
+     --seconds 45
+   ```
 
-Confirm the controller remains powered, `RECORD_HANDSHAKE` succeeds, and `USB_RX` packets arrive on the captured endpoint. Test neutral plus press/release for every button, D-pad direction, trigger, stick axis, stick click, and any extra control exposed by the device. Unplug and reconnect the controller, then repeat the handshake and a representative control check.
+3. Check the controller stays powered, `RECORD_HANDSHAKE` succeeds, and `USB_RX` arrives on the captured endpoint.
+4. Test neutral, press every button, D-pad direction, trigger, stick axis and click, extra control.
+5. Reconnect; repeat the handshake and one control check.
 
-If the interface is unavailable, preserve the selected route and registry owner; there is no detach or cross-transport fallback.
+Interface unavailable: keep route and registry owner. No detach or cross-transport fallback.
 
-## Check physical output with an installed app
+## Check Physical Output With an Installed App
 
-Check LED and rumble with a separately installed current OpenJoystickDriver app. Use the [physical-output procedure](../physical-output.md) to generate a device-specific plan (`ojd` is the [command-line tool](../../../wiki/Command-Line.md)):
+Check LED and rumble in an installed app per [physical output](../physical-output.md) (`ojd` is the [command-line tool](../../../wiki/Command-Line.md)):
 
 ```bash
 ojd controller list
 ojd controller show 1532:0A29
 ```
 
-Run each generated step individually. Record the player-indicator result and, where the plan exposes them, left and right main rumble plus left and right trigger rumble. This output check does not establish support by itself.
+Run each step alone. Record the player-indicator result and, where planned, left, right, and trigger rumble. This alone proves no support.
 
-Attach the probe output and physical-output results to issue #19 with macOS version, Mac model, controller firmware if known, exact OJD commit, selected USB route, and results for handshake, every control, reconnect, the indicator, and each exposed actuator. Probe output can contain raw controller packets; inspect and redact it before publication.
+Attach probe output (raw packets; inspect and redact) and output results to #19 with macOS version, Mac model, firmware (if known), OJD commit, USB route, and handshake, control, reconnect, indicator, and actuator results.
 
-Endpoint captures, validation, and output plans do not prove complete support. Document missing input, reconnect, indicator, and output observations until accepted physical evidence covers them.
+Endpoint captures, validation, and plans prove no support. Record missing input, reconnect, indicator, output.

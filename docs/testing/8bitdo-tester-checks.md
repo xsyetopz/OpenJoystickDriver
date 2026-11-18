@@ -1,207 +1,221 @@
 # 8BitDo Tester Checks
 
-Each card below checks one 8BitDo identity on a tester build. The files you send decide what the bundled record maps, so a record stays unverified until its card comes back.
+A record stays unverified until its card returns.
 
-## Before any card
+## Before Any Card
 
-1. Install the tester build the maintainer sends, as in [Test a tester build](tester-builds.md), and keep `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG.
-2. Install the command-line tool: open the app's Settings and click Install Command-Line Tool ([Command line](../../wiki/Command-Line.md)).
-3. Quit games, Steam and other controller tools.
-4. Make one folder per card and run the card's commands inside it, for example `mkdir -p ~/ojd-T1 && cd ~/ojd-T1`.
+1. Install the tester build ([Test a Tester Build](tester-builds.md)); keep `OpenJoystickDriver-TESTER-BUILD.txt` from the DMG.
+2. In Settings, click **Install Command-Line Tool** ([Command Line](../../wiki/Command-Line.md)).
+3. Quit games, Steam, and other controller tools.
+4. Make one folder per card, run its commands inside. Example: `mkdir -p ~/ojd-T1 && cd ~/ojd-T1`.
 
-`capture.jsonl` records 20 seconds. Start pressing when the command starts, press one control at a time, and return it to rest before the next one.
+`capture.jsonl` records 20 seconds. Press from command start, one control at a time, returning each to rest.
 
-### Control order
+### Control Order
 
-Press the controls in this order during a capture, and skip a control the pad lacks:
+Skip any control the pad lacks.
 
-1. A, B, X, Y.
-2. LB, RB.
-3. L3, R3 (stick clicks).
-4. View, Menu, Home, Capture.
-5. Each rear button: left side before right side, upper before lower.
-6. Left stick up, right, down, left; then the right stick the same way.
-7. D-pad up, right, down, left.
-8. LT, then RT, each pressed fully and released slowly.
+| Step | Controls |
+| --- | --- |
+| 1 | A, B, X, Y |
+| 2 | LB, RB |
+| 3 | L3, R3 (stick clicks) |
+| 4 | View, Menu, Home, Capture |
+| 5 | Each rear button: left side before right side, upper before lower |
+| 6 | Left stick up, right, down, left; then the right stick the same way |
+| 7 | D-pad up, right, down, left |
+| 8 | LT, then RT, each pressed fully and released slowly |
 
-### What to send back
+### What to Send Back
 
-For every card send `OpenJoystickDriver-TESTER-BUILD.txt`, every file the card's commands wrote, and one line that lists the controls you pressed in order. Write down anything that differs from the order above.
+Per card: `OpenJoystickDriver-TESTER-BUILD.txt`, every file the card's commands wrote, and one line listing the controls pressed, in order, with any difference from the order above.
 
-## T1 Ultimate 2C over Bluetooth LE (`2DC8:301B`)
+## T1 Ultimate 2C over Bluetooth LE (2DC8:301B)
 
-Mode: pair the Ultimate 2C with the Mac over Bluetooth.
+1. Pair the Ultimate 2C over Bluetooth.
+2. Run:
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > hid.txt
-ioreg -p IOUSB -l -w0 > usb.txt
-ojd controller list > list.txt
-ojd controller show 2DC8:301B > show.txt
-ojd controller capture 2DC8:301B --duration 20 --json > capture.jsonl
-```
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > hid.txt
+   ioreg -p IOUSB -l -w0 > usb.txt
+   ojd controller list > list.txt
+   ojd controller show 2DC8:301B > show.txt
+   ojd controller capture 2DC8:301B --duration 20 --json > capture.jsonl
+   ```
 
-Control order: the right stick up, right, down, left first, then LT and RT, then the full [control order](#control-order) including L4 and R4.
+3. During the capture, press the right stick up, right, down, left; LT, RT; then the [control order](#control-order) with L4 and R4.
+4. Report which right-stick directions moved a value in `ojd` and which moved a trigger.
 
-Send: the common files, and which right-stick directions moved a value in `ojd` and which moved a trigger.
+## T2 Ultimate 2C Receiver (2DC8:301C)
 
-## T2 Ultimate 2C receiver (`2DC8:301C`)
+1. Plug in the receiver, pad off.
+2. Run together (first line reads the bus at 0, 3, 8, 15 seconds):
 
-Mode: plug the receiver in with the pad switched off. Run the first line at once; it reads the bus at 0, 3, 8 and 15 seconds.
+   ```shell
+   ioreg -p IOUSB -l -w0 > usb-0s.txt; sleep 3; ioreg -p IOUSB -l -w0 > usb-3s.txt; sleep 5; ioreg -p IOUSB -l -w0 > usb-8s.txt; sleep 7; ioreg -p IOUSB -l -w0 > usb-15s.txt
+   ioreg -r -c IOHIDDevice -l -w0 > hid.txt
+   ojd controller list > list.txt
+   ```
 
-```shell
-ioreg -p IOUSB -l -w0 > usb-0s.txt; sleep 3; ioreg -p IOUSB -l -w0 > usb-3s.txt; sleep 5; ioreg -p IOUSB -l -w0 > usb-8s.txt; sleep 7; ioreg -p IOUSB -l -w0 > usb-15s.txt
-ioreg -r -c IOHIDDevice -l -w0 > hid.txt
-ojd controller list > list.txt
-```
+3. Switch the pad on.
+4. Run with the 8BitDo PID from `ojd controller list` (301C or 310A):
 
-Then switch the pad on and run these with the PID `ojd controller list` shows for 8BitDo (`301C` or `310A`):
+   ```shell
+   ojd controller show 2DC8:PPPP > show.txt
+   ojd controller capture 2DC8:PPPP --duration 20 --json > capture.jsonl
+   ```
 
-```shell
-ojd controller show 2DC8:PPPP > show.txt
-ojd controller capture 2DC8:PPPP --duration 20 --json > capture.jsonl
-```
+5. During the capture, follow the [control order](#control-order).
+6. Report whether the PID changed from 301C to 310A.
 
-Control order: the full [control order](#control-order).
+## T3 Ultimate 2C Adapter (2DC8:3109)
 
-Send: all files, and whether the PID changed from `301C` to `310A`.
+Read-only commands. Change no 8BitDo software settings.
 
-## T3 Ultimate 2C adapter (`2DC8:3109`)
+1. With the adapter in standby (pad off), run:
 
-Mode: the adapter in standby (pad off), then with the pad on. These commands only read; do not change settings in 8BitDo software during the check.
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > standby-hid.txt
+   ioreg -p IOUSB -l -w0 > standby-usb.txt
+   ojd controller list > standby-list.txt
+   ojd controller show 2DC8:3109 > standby-show.txt
+   ```
 
-With the pad off:
+2. Switch the pad on.
+3. Run:
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > standby-hid.txt
-ioreg -p IOUSB -l -w0 > standby-usb.txt
-ojd controller list > standby-list.txt
-ojd controller show 2DC8:3109 > standby-show.txt
-```
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > on-hid.txt
+   ioreg -p IOUSB -l -w0 > on-usb.txt
+   ojd controller list > on-list.txt
+   ojd controller show 2DC8:3109 > on-show.txt
+   ojd controller capture 2DC8:3109 --duration 20 --json > on-capture.jsonl
+   ```
 
-With the pad on:
+4. During `on-capture.jsonl`, follow the [control order](#control-order).
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > on-hid.txt
-ioreg -p IOUSB -l -w0 > on-usb.txt
-ojd controller list > on-list.txt
-ojd controller show 2DC8:3109 > on-show.txt
-ojd controller capture 2DC8:3109 --duration 20 --json > on-capture.jsonl
-```
+## T4 Ultimate 2C Wired in DInput (2DC8:301D)
 
-Control order: the full [control order](#control-order) during `on-capture.jsonl`.
+1. Hold B while switching the pad on.
+2. Connect the cable.
+3. Run:
 
-Send: both sets of files.
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > hid.txt
+   ioreg -p IOUSB -l -w0 > usb.txt
+   ojd controller list > list.txt
+   ojd controller show 2DC8:301D > show.txt
+   ojd controller capture 2DC8:301D --duration 20 --json > capture.jsonl
+   ```
 
-## T4 Ultimate 2C wired in DInput (`2DC8:301D`)
+4. During the capture, follow the [control order](#control-order), with each rear button.
+5. Report the position of each rear button pressed.
 
-Mode: hold B while you switch the pad on, then connect the cable.
+## T5 Ultimate 2 over Cable and Dongle (2DC8:6012)
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > hid.txt
-ioreg -p IOUSB -l -w0 > usb.txt
-ojd controller list > list.txt
-ojd controller show 2DC8:301D > show.txt
-ojd controller capture 2DC8:301D --duration 20 --json > capture.jsonl
-```
+1. Connect the Ultimate 2 by cable; run:
 
-Control order: the full [control order](#control-order), with each rear button.
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > cable-hid.txt
+   ioreg -p IOUSB -l -w0 > cable-usb.txt
+   ojd controller list > cable-list.txt
+   ojd controller show 2DC8:6012 > cable-show.txt
+   ojd controller capture 2DC8:6012 --duration 20 --json > cable-capture.jsonl
+   ```
 
-Send: the common files, and the position of each rear button you pressed.
+2. Replace the cable with the dongle; run:
 
-## T5 Ultimate 2 over cable and dongle (`2DC8:6012`)
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > dongle-hid.txt
+   ioreg -p IOUSB -l -w0 > dongle-usb.txt
+   ojd controller list > dongle-list.txt
+   ojd controller show 2DC8:6012 > dongle-show.txt
+   ojd controller capture 2DC8:6012 --duration 20 --json > dongle-capture.jsonl
+   ```
 
-Mode: connect the Ultimate 2 by cable and run the first block; then unplug the cable, connect the dongle and run the second block.
+3. During each capture, follow the [control order](#control-order), with the four rear buttons.
+4. Run the first command in DInput mode, the second in Switch mode. In each capture, hold the pad still 3 seconds; tilt forward and back; roll left and right; turn left and right.
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > cable-hid.txt
-ioreg -p IOUSB -l -w0 > cable-usb.txt
-ojd controller list > cable-list.txt
-ojd controller show 2DC8:6012 > cable-show.txt
-ojd controller capture 2DC8:6012 --duration 20 --json > cable-capture.jsonl
-```
+   ```shell
+   ojd controller capture 2DC8:6012 --duration 20 --json > dinput-motion.jsonl
+   ojd controller capture 2DC8:6012 --duration 20 --json > switch-motion.jsonl
+   ```
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > dongle-hid.txt
-ioreg -p IOUSB -l -w0 > dongle-usb.txt
-ojd controller list > dongle-list.txt
-ojd controller show 2DC8:6012 > dongle-show.txt
-ojd controller capture 2DC8:6012 --duration 20 --json > dongle-capture.jsonl
-```
+5. Report which button each rear button acts as (example: "upper left rear acts as L3").
 
-Control order: the full [control order](#control-order) in each capture, with the four rear buttons.
+## T6 Ultimate 2 Receiver and Dongle (2DC8:6013, 2DC8:3107)
 
-Then put the pad in DInput mode and run the first command; repeat in Switch mode with the second. During each, hold the pad still for 3 seconds, then tilt it forward and back, roll it left and right, and turn it left and right.
+1. Plug in the receiver, pad off.
+2. Run:
 
-```shell
-ojd controller capture 2DC8:6012 --duration 20 --json > dinput-motion.jsonl
-ojd controller capture 2DC8:6012 --duration 20 --json > switch-motion.jsonl
-```
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > 6013-off-hid.txt
+   ioreg -p IOUSB -l -w0 > 6013-off-usb.txt
+   ojd controller list > 6013-off-list.txt
+   ojd controller show 2DC8:6013 > 6013-off-show.txt
+   ojd controller capture 2DC8:6013 --duration 20 --json > 6013-off-capture.jsonl
+   ```
 
-Send: all files, and the button each rear button acts as on the pad (for example "upper left rear acts as L3").
+3. Switch the pad on; rerun with `on` for `off` in file names.
+4. Repeat both runs with the dongle, 3107 for 6013.
+5. During each `on` capture, follow the [control order](#control-order).
+6. Report the PID `ojd controller list` showed in each run.
 
-## T6 Ultimate 2 receiver and dongle (`2DC8:6013`, `2DC8:3107`)
+## T7 Ultimate 2 and Pro 3 on 2DC8:310B
 
-Mode: plug in the receiver with the pad off, run the block, switch the pad on and run it again with `on` in place of `off` in the file names. Repeat both runs with the dongle and `3107` in place of `6013`.
+1. Connect the Ultimate 2 in the mode that shows 310B.
+2. Run:
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > 6013-off-hid.txt
-ioreg -p IOUSB -l -w0 > 6013-off-usb.txt
-ojd controller list > 6013-off-list.txt
-ojd controller show 2DC8:6013 > 6013-off-show.txt
-ojd controller capture 2DC8:6013 --duration 20 --json > 6013-off-capture.jsonl
-```
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > ultimate2-hid.txt
+   ioreg -p IOUSB -l -w0 > ultimate2-usb.txt
+   ```
 
-Control order: the full [control order](#control-order) during each `on` capture.
+3. With a Pro 3, repeat with `pro3-` for `ultimate2-`.
+4. Report the mode switch position of each pad.
 
-Send: all files, and the PID `ojd controller list` showed in each run.
+No control order. Product strings and `bcdDevice` in the files decide the mode.
 
-## T7 Ultimate 2 and Pro 3 on `2DC8:310B`
+## T8 Ultimate 3-Mode over Bluetooth in Xbox Mode (2DC8:901B)
 
-Mode: connect the Ultimate 2 in the mode that shows `310B`; then, if you own one, the Pro 3 the same way.
+1. Set the pad to Xbox mode.
+2. Pair it over Bluetooth.
+3. Run:
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > ultimate2-hid.txt
-ioreg -p IOUSB -l -w0 > ultimate2-usb.txt
-```
+   ```shell
+   ioreg -r -c IOHIDDevice -l -w0 > hid.txt
+   ioreg -p IOUSB -l -w0 > usb.txt
+   ojd controller list > list.txt
+   ojd controller show 2DC8:901B > show.txt
+   ojd controller capture 2DC8:901B --duration 20 --json > capture.jsonl
+   ```
 
-For the Pro 3, run the same lines with `pro3-` in place of `ultimate2-`.
+4. During the capture, follow the [control order](#control-order).
 
-Control order: none; the product strings and `bcdDevice` in these files decide the mode.
+## T9 Watchdog with 2DC8:310A and 2DC8:6012 Served
 
-Send: all files, and the mode switch position of each pad.
+1. Connect the Ultimate 2C dongle (310A).
+2. Run `ojd controller show 2DC8:310A`; check OJD serves it.
+3. Touch no control. Run (each line saves time and bus state):
 
-## T8 Ultimate 3-mode over Bluetooth in Xbox mode (`2DC8:901B`)
+   ```shell
+   { date; ioreg -p IOUSB -l -w0; } > 310A-0min.txt
+   sleep 300; { date; ioreg -p IOUSB -l -w0; } > 310A-5min.txt
+   ojd controller suspend 2DC8:310A > 310A-suspend.txt
+   sleep 10; { date; ioreg -p IOUSB -l -w0; } > 310A-suspended-10s.txt
+   sleep 50; { date; ioreg -p IOUSB -l -w0; } > 310A-suspended-60s.txt
+   ojd controller resume 2DC8:310A > 310A-resume.txt
+   ojd controller list > 310A-list-after.txt
+   ```
 
-Mode: set the pad to Xbox mode and pair it with the Mac over Bluetooth.
+4. Repeat with the Ultimate 2, using 6012 for 310A.
+5. Report whether each pad worked again after `resume` without reconnecting.
 
-```shell
-ioreg -r -c IOHIDDevice -l -w0 > hid.txt
-ioreg -p IOUSB -l -w0 > usb.txt
-ojd controller list > list.txt
-ojd controller show 2DC8:901B > show.txt
-ojd controller capture 2DC8:901B --duration 20 --json > capture.jsonl
-```
+No control order.
 
-Control order: the full [control order](#control-order).
+## Further Reading
 
-Send: the common files.
-
-## T9 watchdog with `2DC8:310A` and `2DC8:6012` served
-
-Mode: connect the Ultimate 2C dongle (`310A`) and confirm with `ojd controller show 2DC8:310A` that OJD serves it. Touch no control during the check. Each line saves the time and the bus.
-
-```shell
-{ date; ioreg -p IOUSB -l -w0; } > 310A-0min.txt
-sleep 300; { date; ioreg -p IOUSB -l -w0; } > 310A-5min.txt
-ojd controller suspend 2DC8:310A > 310A-suspend.txt
-sleep 10; { date; ioreg -p IOUSB -l -w0; } > 310A-suspended-10s.txt
-sleep 50; { date; ioreg -p IOUSB -l -w0; } > 310A-suspended-60s.txt
-ojd controller resume 2DC8:310A > 310A-resume.txt
-ojd controller list > 310A-list-after.txt
-```
-
-Repeat the block with the Ultimate 2 (`6012`), with `6012` in place of `310A`.
-
-Control order: none.
-
-Send: all files, and for each pad whether it worked again after `resume` without reconnecting it.
+- [Test a Tester Build](tester-builds.md)
+- [8BitDo Ultimate 2](8bitdo-ultimate-2.md)
+- [8BitDo Ultimate 2C](8bitdo-ultimate-2c.md)
+- [Command Line](../../wiki/Command-Line.md)

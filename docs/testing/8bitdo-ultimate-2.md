@@ -1,47 +1,61 @@
 # 8BitDo Ultimate 2
 
-Every record on this page is unverified: no tester capture of an Ultimate 2 exists yet. The checks T5 to T7 in [the tester cards](8bitdo-tester-checks.md) return the captures.
+Every record is unverified: no Ultimate 2 capture exists. Checks T5 to T7 in [the tester cards](8bitdo-tester-checks.md) return it.
 
-| Identity | VID:PID | Record | Status |
-| --- | --- | --- | --- |
-| Ultimate 2, DInput, cable or 2.4 GHz dongle | `2DC8:6012` | `HIDDescriptor`, one `default` mode | Unverified |
-| Ultimate 2 receiver | `2DC8:6013` | `idle` mode | Unverified |
-| Ultimate 2 dongle | `2DC8:3107` | `idle` mode | Unverified |
-| Ultimate 3-mode, Bluetooth, Xbox mode | `2DC8:901B` | `HIDDescriptor`, one `default` mode | Unverified |
-| Ultimate 2 or Pro 3 | `2DC8:310B` | `XboxXUSB`, wired | Unverified; not named in the record |
+| Identity | VID:PID | Record |
+| --- | --- | --- |
+| Ultimate 2, DInput, cable or 2.4 GHz dongle | 2DC8:6012 | `HIDDescriptor`, one `default` mode |
+| Ultimate 2 receiver | 2DC8:6013 | `idle` mode |
+| Ultimate 2 dongle | 2DC8:3107 | `idle` mode |
+| Ultimate 3-mode, Bluetooth, Xbox mode | 2DC8:901B | `HIDDescriptor`, one `default` mode |
+| Ultimate 2 or Pro 3 | 2DC8:310B | `XboxXUSB`, wired; not named in the record |
 
-## 6012
+## 6012 Record
 
-The record reuses the usage map of the Ultimate 2C over Bluetooth ([the 2C record](8bitdo-ultimate-2c.md)): button usages 1, 2, 4, 5, 7, 8 and 11 to 15, left stick on `X` and `Y`, right stick on `Z` and `Rz`, triggers on Simulation page `0x02`, and the hat. No source in the tree states the Ultimate 2 descriptor, so the map is a starting assumption.
+Reuses the usage map of the [Ultimate 2C over Bluetooth](8bitdo-ultimate-2c.md): button usages 1, 2, 4, 5, 7, 8 and 11 to 15, left stick `X` and `Y`, right stick `Z` and `Rz`, triggers on Simulation page 0x02, hat. No source states the descriptor, so the map is assumed. One map serves cable and dongle; the cable capture decides if descriptors differ.
 
-One usage map serves the cable and the dongle. If the two descriptors disagree, the capture of the cable decides, and this page states the conflict.
+### Rear Buttons
 
-### Rear buttons
-
-The record maps no rear button. When a capture shows them, the order follows the physical position: the left pair is `LeftPaddle1` and `LeftPaddle2`, the right pair is `RightPaddle1` and `RightPaddle2`, upper button first. A paddle control is mapped only when a descriptor or capture shows its usage as a bit that is separate from every other control, and the usage numbers of the Ultimate 2 rear buttons are not known. The tester card T5 asks which button each rear usage is.
+None mapped. A capture would order them by position, upper first: `LeftPaddle1`, `LeftPaddle2`, `RightPaddle1`, `RightPaddle2`. A paddle maps only when its usage is its own bit in a descriptor or capture. Usage numbers are unknown; T5 asks which each is.
 
 ### Gyro
 
-The record declares no motion. The gyro in DInput and Switch mode gets a path only if a capture shows motion fields that an existing layout can decode.
+None declared. DInput and Switch mode get gyro only when a capture shows motion fields an existing layout decodes.
 
-## 6013 and 3107
+## 6013 and 3107 Records
 
-Both identities have a default mode with `idle: NoControllerLinked`: OJD recognizes them, sends no data, creates no virtual gamepad and reports `NoControllerLinked`. Nothing in the tree states a protocol for either, so the records map no controls instead of inventing a layout. A capture that shows gamepad input replaces the `idle` reason with the descriptor's mode and usage map.
+Both are `idle: NoControllerLinked`: OJD sends no data, creates no virtual gamepad, and reports `NoControllerLinked`. No protocol is sourced, so no controls map. Gamepad-input capture replaces `idle` with the descriptor's mode and usage map.
 
-## 901B
+## 901B Record
 
-The record maps the Xbox Bluetooth button order: usages 1 to 4 on `South`, `East`, `West` and `North`, 5 and 6 on the shoulders, 7 and 8 on `Back` and `Start`, 9 and 10 on the stick clicks, the Consumer `AC Home` usage on `Guide`, the sticks on `X`, `Y`, `Z` and `Rz`, the triggers on Simulation page `0x02` and the hat. No capture or descriptor of this pad exists, so the order is an assumption; tester check T8 returns the capture.
+Xbox Bluetooth button order:
 
-## 310B
+- Usages 1 to 4: `South`, `East`, `West`, `North`
+- Usages 5 and 6: shoulders
+- Usages 7 and 8: `Back`, `Start`
+- Usages 9 and 10: stick clicks
+- Consumer `AC Home`: `Guide`
+- Sticks: `X`, `Y`, `Z`, `Rz`
+- Triggers: Simulation page 0x02, and the hat
 
-The record keeps one `XboxXUSB` wired mode. The record format has no product name field, and no source in the tree confirms which models present `310B`, so the record names none. Tester check T7 returns the strings and `bcdDevice` that decide whether two modes are needed.
+No capture or descriptor exists, so the order is assumed. T8 returns the capture.
 
-## Keep-alive
+## 310B Record
 
-The question: does a pad leave the USB bus while OJD serves it and no input arrives? The research notes report a drop after about one second without host transfers; no source in the tree confirms it. The three outcomes:
+One `XboxXUSB` wired mode, no product name field, since no source confirms which models present 310B. T7 returns the strings and `bcdDevice` deciding whether two modes are needed.
 
-- No drop while served: the record has no keep-alive. This is the current state of `6012`, `6013`, `3107` and `901B`.
-- A drop only when no reader runs: this page states it, and OJD changes nothing.
-- A drop while OJD serves a raw-USB pad: the record gets a `session.keepAlive` with the measured interval and a packet test. A `HIDDescriptor` mode has no keep-alive field, so a drop on a HID pad is a finding for a change to the HID session fields, and OJD sends no periodic write.
+## Keep-Alive
 
-Tester check T9 measures `310A` and `6012`.
+Open question: does a pad leave the USB bus while served by OJD with no input? Research notes report a drop after about one second without host transfers. Not verified. Outcomes:
+
+- No drop while served: no keep-alive (6012, 6013, 3107, 901B have none).
+- A drop only when no reader runs: stated here, no change.
+- A drop on a raw-USB pad served by OJD: the record gets a `session.keepAlive` with the measured interval and a packet test.
+- A drop on a HID pad: a finding for a change to the HID session fields, since `HIDDescriptor` has no keep-alive field. OJD sends no periodic write.
+
+T9 measures 310A and 6012.
+
+## Further Reading
+
+- [8BitDo Tester Checks](8bitdo-tester-checks.md)
+- [8BitDo Ultimate 2C](8bitdo-ultimate-2c.md)
