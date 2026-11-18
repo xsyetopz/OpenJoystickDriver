@@ -116,7 +116,7 @@ Run `just setup` and `just verify` before opening a pull request; see [CONTRIBUT
 
 ## License
 
-[MPL-2.0](LICENSE) © 2026 Krystian J. The copyleft is file-level: changes to OJD's files are shared under MPL-2.0, and OJD's files may be combined with other code in a larger work. Releases up to and including 0.6.0-alpha.1 are MIT. Xbox and PlayStation are trademarks of Microsoft and Sony; OJD is not affiliated with either.
+[MPL-2.0](LICENSE).
 
 [releases]: https://github.com/xsyetopz/OpenJoystickDriver/releases
 [sponsor]: https://github.com/sponsors/xsyetopz

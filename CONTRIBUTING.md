@@ -46,7 +46,7 @@ Base every pull request on `main`, and check a bug against `main` before you ope
 
 ## License
 
-OJD is under the Mozilla Public License 2.0, which permits commercial use. Sign the [Contributor License Agreement](CLA.md) on your first pull request, so the maintainer can license your contribution under MPL-2.0 and other terms; the CLA check fails until you do.
+OJD is under the Mozilla Public License 2.0, which permits commercial use.
 
 - Code may come only from sources under MIT, BSD, zlib, CC0 or Apache-2.0. Add each source's notice to `THIRD_PARTY_NOTICES.md` in the same commit.
 - GPL, LGPL, AGPL and unlicensed sources give facts only, such as byte values or IDs, and the code for those facts is written independently.

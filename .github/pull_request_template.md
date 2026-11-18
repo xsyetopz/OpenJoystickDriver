@@ -79,4 +79,4 @@ An answer with fewer than three things is not accepted.
 - [ ] I updated the docs, the wiki pages, and the localization strings that this change affects.
 - [ ] I read the whole diff. I stand behind it.
 - [ ] If an AI tool helped, I described it in "AI Tool", and each commit keeps the attribution trailer.
-- [ ] I signed the [Contributor License Agreement](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CLA.md). Any third-party code comes from an MIT, BSD, zlib, CC0, or Apache-2.0 source, with its notice in `THIRD_PARTY_NOTICES.md`.
+- [ ] Any third-party code comes from an MIT, BSD, zlib, CC0, or Apache-2.0 source, with its notice in `THIRD_PARTY_NOTICES.md`.

@@ -55,6 +55,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Removed
 
+- The Contributor License Agreement and its pull request check. Contributions come in under MPL-2.0.
 - `OJDRepositoryTool mask-image`, which window-only capture replaces.
 - **BREAKING:** the `idle` property of a record, which the `idle` property of a mode replaces, and the binding reason `IdleIdentity`, which `NoControllerLinked` replaces.
 - **BREAKING:** the `appID` property of a profile's `applicationScope`, which `appIDs` replaces.
@@ -143,7 +144,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 - **BREAKING:** Every input field of a controller record, protocol description and `ControllerPatch` is `bitOffset` and `bitSize`, with bit 0 as the least significant bit of report byte 0, instead of `byte`, `mask` and `bits`, and `input` is `{ "layouts": [...] }`. The keys `byte`, `mask` and `bits` are refused as unknown keys of an input field. Rumble `byte` keys are unchanged.
 
-- **BREAKING:** OJD is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE) from this release on. Commercial use needs a separate license ([COMMERCIAL.md](COMMERCIAL.md)), and each pull request needs a signed [Contributor License Agreement](CLA.md). Releases up to and including 0.6.0-alpha.1 stay under the MIT License. The About panel names the license.
+- **BREAKING:** OJD is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE) from this release on. Commercial use needs a separate license ([COMMERCIAL.md](COMMERCIAL.md)), and each pull request needs a signed Contributor License Agreement. Releases up to and including 0.6.0-alpha.1 stay under the MIT License. The About panel names the license.
 - **BREAKING:** The `apiVersion` of every document, schema, CLI output line and endpoint message is `openjoystickdriver/v1alpha2`, and each schema `$id` starts with `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/`. OJD refuses each `openjoystickdriver/v1alpha1` file from 0.6.0-alpha.1 with `E5001` and leaves it unchanged: settings, access grants, profiles, your controller records, virtual device files and mods. [Update from 0.6.0-alpha.1](wiki/Updating-and-Uninstalling.md#update-from-060-alpha1) lists the step for each file.
 - `./Scripts/ojd catalog regenerate --write` writes the bundled copies of `Resources/Protocols` and `Resources/VirtualDevices` before it validates the records, and builds `OJDRepositoryTool` again after them. The tool built when the catalog rules load ships the earlier copies, so a change to an authored protocol description failed validation against them.
 - The repository scripts accept the Swift that `.swift-version` names (6.4.0, the oldest that builds for macOS 12) or a newer one, such as Xcode's 6.4.2; they stopped on any other version.
