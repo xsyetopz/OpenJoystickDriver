@@ -16,7 +16,10 @@ final class InstalledDriverUITests: XCTestCase {
     {
       throw XCTSkip("Quit the running OpenJoystickDriver to run this test.")
     }
-    let embedded = try XCTUnwrap(embeddedVersion(), "Install the app with just install-dev.")
+    // A machine with no installed app, such as a CI runner, has no driver for the test to check.
+    guard let embedded = embeddedVersion() else {
+      throw XCTSkip("Install the app with just install-dev to run this test.")
+    }
     let listing = try extensionListing()
     let activeLine = "\(extensionID) (\(embedded))"
     guard
