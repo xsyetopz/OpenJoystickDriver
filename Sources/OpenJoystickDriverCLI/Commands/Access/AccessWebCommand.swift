@@ -87,9 +87,9 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
         force: force,
         needsForce: AccessText.needsForce
       )
-      let port = automatic ? 0 : port
+      let requestedPort = automatic ? 0 : port
       let status = try await ServiceConnection.request {
-        try await $0.setWebAccess(enabled: true, port: port)
+        try await $0.setWebAccess(enabled: true, port: requestedPort)
       }
       try AccessWebCommand.print(status.web)
     }

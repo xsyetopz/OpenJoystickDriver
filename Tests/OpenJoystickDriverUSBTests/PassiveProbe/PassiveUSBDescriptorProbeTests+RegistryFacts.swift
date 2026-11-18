@@ -58,7 +58,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func observedUSBDeviceReleasePreservesBcdDeviceAndUnavailableValues() throws {
+  func observedUSBDeviceReleasePreservesBcdDeviceAndUnavailableValues() {
     let tuple = PassiveUSBDescriptorTuple(vendorID: 0x3537, productID: 0x1010)
     let root = fixtureRoot()
     let releaseRoot = PassiveUSBRegistryNode(

@@ -4,7 +4,7 @@ import Testing
 
 struct SDLLaunchEnvironmentTests {
   @Test
-  func setsTheMappingLineOfEachProfileOnceInProfileOrder() throws {
+  func setsMappingLineOfEachProfileOnceInProfileOrder() throws {
     let environment = try SDLLaunchEnvironment.environment(
       adding: [.sdlCompatible, .generic, .generic],
       to: ["PATH": "/usr/bin"],
@@ -18,7 +18,7 @@ struct SDLLaunchEnvironmentTests {
   }
 
   @Test
-  func keepsAValueThatIsAlreadySetFirst() throws {
+  func keepsValueThatIsAlreadySetFirst() throws {
     let environment = try SDLLaunchEnvironment.environment(
       adding: [.generic],
       to: [SDLLaunchEnvironment.variable: "abc,Mine,a:b0\n"],
@@ -29,7 +29,7 @@ struct SDLLaunchEnvironmentTests {
   }
 
   @Test
-  func failsWithoutAProfile() {
+  func failsWithoutProfile() {
     #expect(throws: SDLLaunchEnvironment.Failure.noProfile) {
       try SDLLaunchEnvironment.environment(
         adding: [],
@@ -40,7 +40,7 @@ struct SDLLaunchEnvironmentTests {
   }
 
   @Test
-  func theGameControllerBackendSetsExactlyItsHintsAndReplacesSetValues() throws {
+  func gameControllerBackendSetsExactlyItsHintsAndReplacesSetValues() throws {
     let environment = try SDLLaunchEnvironment.environment(
       adding: [.generic],
       to: ["PATH": "/usr/bin", "SDL_JOYSTICK_HIDAPI": "1", "SDL_JOYSTICK_HIDAPI_XBOX": "1"],

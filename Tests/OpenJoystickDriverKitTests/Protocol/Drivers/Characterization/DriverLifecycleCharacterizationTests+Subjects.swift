@@ -118,7 +118,7 @@ extension DriverLifecycleCharacterizationTests {
   static let flydigi = Subject(
     model: model(0xD7D7, 0x0041),
     host: .usb,
-    protocolID: .vendorFlydigi,
+    protocolID: .flydigi,
     variant: nil
   )
   static let ps3ThirdParty = Subject(
@@ -252,7 +252,7 @@ extension DriverLifecycleCharacterizationTests {
   ]
 
   @Test
-  func everySubjectBindsItsFamilyAndVariantThroughTheRegistry() throws {
+  func everySubjectBindsItsFamilyAndVariantThroughRegistry() throws {
     for subject in Self.subjects {
       let record = try #require(Self.registry.record(for: subject.model))
       let device = PhysicalDevice(

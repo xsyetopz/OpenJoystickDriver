@@ -30,11 +30,12 @@ extension CodeSigningIdentity {
   /// its publisher kind, publisher ID, and signing identifier.
   public var accessID: String {
     let key = "\(kind.rawValue)\n\(publisherID ?? "")\n\(identifier)"
-    return SHA256.hash(data: Data(key.utf8)).prefix(4).map { String(format: "%02x", $0) }.joined()
+    return SHA256.hash(data: Data(key.utf8)).prefix(4).map { unsafe String(format: "%02x", $0) }
+      .joined()
   }
 }
 
-/// A client the user allowed to use the endpoint, as stored in `AccessGrants.json`.
+/// A client the user allowed to use the endpoint, as stored in `AccessGrants.plist`.
 public struct AccessGrant: Codable, Equatable, Sendable {
   /// How the client is signed.
   public let kind: CodeSigningIdentity.Kind

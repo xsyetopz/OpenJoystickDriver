@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// How a `LayerSet` or `Pause` destination changes its state.
 public enum RemappingSwitchMode: String, CaseIterable, Codable, Equatable, Hashable, Sendable {

@@ -1,5 +1,5 @@
 import Darwin
-import Foundation
+public import Foundation
 
 /// One request frame: the method name and its JSON-encoded arguments.
 public struct LocalServiceRPCRequest: Codable, Sendable {
@@ -240,8 +240,8 @@ package enum LocalServiceRPCTransport {
       try setTimeout(descriptor, seconds: timeoutSeconds)
       var address = try socketAddress(path: socketPath)
       let status = withUnsafePointer(to: &address) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          Darwin.connect(descriptor, $0, socketAddressLength(path: socketPath))
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe Darwin.connect(descriptor, $0, socketAddressLength(path: socketPath))
         }
       }
       guard status == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
@@ -262,8 +262,8 @@ package enum LocalServiceRPCTransport {
     var address = sockaddr_un()
     address.sun_family = sa_family_t(AF_UNIX)
     _ = withUnsafeMutablePointer(to: &address.sun_path) { pointer in
-      pointer.withMemoryRebound(to: CChar.self, capacity: path.utf8.count + 1) { buffer in
-        path.withCString { source in strcpy(buffer, source) }
+      unsafe pointer.withMemoryRebound(to: CChar.self, capacity: path.utf8.count + 1) { buffer in
+        path.withCString { source in unsafe strcpy(buffer, source) }
       }
     }
     return address
@@ -285,8 +285,8 @@ package enum LocalServiceRPCTransport {
       tv_usec: Int32((clamped - floor(clamped)) * 1_000_000)
     )
     let size = socklen_t(MemoryLayout<timeval>.size)
-    guard setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, size) == 0,
-      setsockopt(descriptor, SOL_SOCKET, SO_SNDTIMEO, &timeout, size) == 0
+    guard unsafe setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, size) == 0,
+      unsafe setsockopt(descriptor, SOL_SOCKET, SO_SNDTIMEO, &timeout, size) == 0
     else { throw LocalServiceRPCError.connectionFailed(errno) }
   }
 
@@ -297,8 +297,8 @@ package enum LocalServiceRPCTransport {
   static func sendFrame(_ data: Data, to descriptor: Int32) throws {
     guard data.count <= maximumFrameBytes else { throw LocalServiceRPCError.invalidFrame }
     var length = UInt32(data.count).bigEndian
-    try withUnsafeBytes(of: &length) { try sendAll($0, to: descriptor) }
-    try data.withUnsafeBytes { try sendAll($0, to: descriptor) }
+    try withUnsafeBytes(of: &length) { try unsafe sendAll($0, to: descriptor) }
+    try unsafe data.withUnsafeBytes { try unsafe sendAll($0, to: descriptor) }
   }
 
   /// Reads one frame.
@@ -314,13 +314,13 @@ package enum LocalServiceRPCTransport {
   ) throws -> Data {
     var header = [UInt8](repeating: 0, count: 4)
     try header.withUnsafeMutableBytes {
-      try receiveAll($0, from: descriptor, closedBeforeAnyBytesError: closedBeforeFrameError)
+      try unsafe receiveAll($0, from: descriptor, closedBeforeAnyBytesError: closedBeforeFrameError)
     }
     let length = header.reduce(UInt32(0)) { ($0 << 8) | UInt32($1) }
     guard length <= maximumFrameBytes else { throw LocalServiceRPCError.invalidFrame }
     var data = Data(count: Int(length))
-    try data.withUnsafeMutableBytes {
-      try receiveAll($0, from: descriptor, closedBeforeAnyBytesError: .invalidFrame)
+    try unsafe data.withUnsafeMutableBytes {
+      try unsafe receiveAll($0, from: descriptor, closedBeforeAnyBytesError: .invalidFrame)
     }
     return data
   }
@@ -332,7 +332,7 @@ package enum LocalServiceRPCTransport {
     var offset = 0
     while offset < bytes.count {
       guard let base = bytes.baseAddress else { return }
-      let sent = Darwin.send(
+      let sent = unsafe Darwin.send(
         descriptor,
         base.advanced(by: offset),
         bytes.count - offset,
@@ -356,7 +356,12 @@ package enum LocalServiceRPCTransport {
     var offset = 0
     while offset < bytes.count {
       guard let base = bytes.baseAddress else { return }
-      let received = Darwin.recv(descriptor, base.advanced(by: offset), bytes.count - offset, 0)
+      let received = unsafe Darwin.recv(
+        descriptor,
+        base.advanced(by: offset),
+        bytes.count - offset,
+        0
+      )
       guard received > 0 else {
         if received < 0, errno == EAGAIN || errno == EWOULDBLOCK {
           throw LocalServiceRPCError.timeout

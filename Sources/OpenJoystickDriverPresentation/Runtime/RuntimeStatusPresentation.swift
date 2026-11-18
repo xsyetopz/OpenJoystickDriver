@@ -116,6 +116,15 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
   ///
   /// Set by `init(payload:)`; a presentation built from parts lists none.
   var unservedDevices: [RuntimeUnservedDevice] = []
+  /// The build the service reports; nil for a presentation built from parts.
+  ///
+  /// Set by `init(payload:)`.
+  var serviceBuild: BuildIdentity?
+  /// The Bluetooth access the service reports; nil for a presentation built from parts, or when
+  /// the service reports none.
+  ///
+  /// Set by `init(payload:)`.
+  var bluetoothAccess: BluetoothAccessState?
 
   /// Creates the presentation from the service status. `postEventAccess` and
   /// `requiresPostEventAccess` come from reads of their own; nil means not read.
@@ -124,23 +133,25 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
     postEventAccess: RemappingPostEventAccessState? = nil,
     requiresPostEventAccess: Bool? = nil
   ) {
-    let permissions = RuntimePermissionSummary(status: payload)
-    let outputState: RuntimeOutputState
+    let summary = RuntimePermissionSummary(status: payload)
+    let output: RuntimeOutputState
     if payload.userSpaceVirtualDeviceStatus?.isError == true {
-      outputState = .error
+      output = .error
     } else if payload.userSpaceVirtualDeviceEnabled == nil {
-      outputState = .unknown
+      output = .unknown
     } else if payload.userSpaceVirtualDeviceEnabled == false {
-      outputState = .unavailable
+      output = .unavailable
     } else {
-      outputState = .ready
+      output = .ready
     }
 
-    self.permissions = permissions
+    self.permissions = summary
+    self.serviceBuild = payload.buildIdentity
+    self.bluetoothAccess = payload.bluetoothAccess
     self.devices = payload.connectedDevices
-    self.unservedDevices = payload.unboundDevices.compactMap(RuntimeUnservedDevice.init)
+    self.unservedDevices = payload.unboundDevices.map(RuntimeUnservedDevice.init)
     self.virtualHIDProfileOverrideError = payload.virtualHIDProfileOverrideError
-    self.outputState = outputState
+    self.outputState = output
     self.outputDetail = RuntimePresentation.outputDetail(
       enabled: payload.userSpaceVirtualDeviceEnabled,
       status: payload.userSpaceVirtualDeviceStatus
@@ -148,8 +159,8 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
     self.postEventAccess = postEventAccess
     self.requiresPostEventAccess = requiresPostEventAccess
     self.readiness = Self.readiness(
-      permissions: permissions,
-      outputState: outputState,
+      permissions: summary,
+      outputState: output,
       postEventAccess: postEventAccess,
       requiresPostEventAccess: requiresPostEventAccess,
       devices: payload.connectedDevices
@@ -178,25 +189,42 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
   }
 }
 
-/// A connected device that OJD does not serve, with the sentence that says why and how to free it.
+/// A connected device that OJD does not serve, with the sentence that says why and the one that
+/// says what to do.
 struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
+  /// The title: the product name the device reported, `Wireless receiver` for a receiver with no
+  /// controller linked, and the identity when the device reported no name.
+  let title: String
   /// `VVVV:PPPP`, the identity `ojd` prints.
   let identity: String
   /// How the device connects.
   let connection: String
-  /// The sentence that says why OJD does not serve the device and how to free it.
+  /// The sentence that says why OJD does not serve the device.
   let explanation: String
+  /// The sentence that says what to do about it.
+  let nextStep: String
+  /// Why no protocol is bound to the device.
+  let reason: ProtocolBindingReason
+  /// The vendor and product ID of the device.
+  let modelID: ControllerModelID
+  /// Whether the detail offers Draft Record: the device is a HID pad.
+  let offersDraft: Bool
 
   /// The identity and the connection, which together identify the entry.
   var id: String { "\(identity) \(connection)" }
 
-  /// Creates the entry for an unbound device; nil when its reason has no sentence a person can act
-  /// on.
-  init?(_ device: ApplicationServiceUnboundDevice) {
-    guard let key = device.reason.explanationKey else { return nil }
-    identity = String(format: "%04x:%04x", device.vendorID, device.productID)
+  /// Creates the entry for an unbound device.
+  init(_ device: ApplicationServiceUnboundDevice) {
+    identity = unsafe String(format: "%04x:%04x", device.vendorID, device.productID)
+    title =
+      device.reason == .noControllerLinked
+      ? OJDLocalized.string("ui.controllers.wirelessReceiver") : device.name ?? identity
     connection = device.connection
-    explanation = OJDLocalized.string(key)
+    explanation = device.explanation(localize: OJDLocalized.string)
+    nextStep = OJDLocalized.string(device.reason.nextStepKey)
+    reason = device.reason
+    modelID = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+    offersDraft = device.isHIDGamepad
   }
 }
 
@@ -306,6 +334,8 @@ struct RuntimeVirtualHIDProfileOverrideState: Sendable, Equatable {
   var request: Request?
   /// The message of the last failed request, or nil.
   var failure: String?
+  /// Why the last choice sent nothing, or nil.
+  var notice: String?
 
   /// Whether a request is being applied.
   var inFlight: Bool { request != nil }

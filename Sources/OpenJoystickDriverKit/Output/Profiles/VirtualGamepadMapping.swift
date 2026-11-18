@@ -119,9 +119,9 @@ extension VirtualHIDProfileID {
   /// fields that its input reports change give the binding.
   ///
   /// - Throws: ``VirtualGamepadMappingError/descriptorNotParsable(_:)`` when the descriptor does
-  ///   not parse, or the error of ``makeProfile()``.
+  ///   not parse.
   public func gamepadMapping() throws -> VirtualGamepadMapping {
-    let profile = try makeProfile()
+    let profile = makeProfile()
     guard let parsed = HIDReportDescriptorParser.parse(descriptor: profile.descriptor) else {
       throw VirtualGamepadMappingError.descriptorNotParsable(self)
     }

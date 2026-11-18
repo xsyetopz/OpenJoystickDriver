@@ -30,9 +30,9 @@ struct SettingsFileRecoveryTests {
       at: store.folderURL,
       withIntermediateDirectories: true
     )
-    try Data(
-      (#"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Settings", "#
-        + #""showInMenuBar": false}"#).utf8
+    try PropertyListFixture.data(
+      json: #"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Settings", "#
+        + #""showInMenuBar": false}"#
     ).write(to: store.userFileURL)
   }
 
@@ -48,7 +48,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theModelExposesTheTypedErrorOfARejectedFile() throws {
+  func modelExposesTypedErrorOfRejectedFile() throws {
     try writeRejectedFile()
 
     let model = makeModel()
@@ -59,13 +59,13 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aUsableFileLeavesNoError() {
+  func usableFileLeavesNoError() {
     #expect(makeModel().settingsFileError == nil)
   }
 
   @Test
   @MainActor
-  func aChangeThatFailsOnARejectedFileKeepsTheTypedError() throws {
+  func changeThatFailsOnRejectedFileKeepsTypedError() throws {
     let model = makeModel()
     try writeRejectedFile()
 
@@ -77,7 +77,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func resetMovesTheFileToTheTrashAndClearsTheError() throws {
+  func resetMovesFileToTrashAndClearsError() throws {
     try writeRejectedFile()
     let model = makeModel()
 
@@ -96,7 +96,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aResetThatFailsShowsWhyAndKeepsTheError() throws {
+  func resetThatFailsShowsWhyAndKeepsError() throws {
     try writeRejectedFile()
     let failing = SettingsStore(directory: root) { _ in throw CocoaError(.fileWriteNoPermission) }
     let model = SettingsPreferencesModel(
@@ -116,16 +116,16 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test
-  func theStartupOffersRecoveryOnlyForAnUnusableFile() {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+  func startupOffersRecoveryOnlyForUnusableFile() {
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     #expect(SettingsFileStartup.decide(settingsError: nil) == .proceed)
     #expect(SettingsFileStartup.decide(settingsError: error) == .offerRecovery(error))
   }
 
   @Test(arguments: [true, false])
-  func theMenuBarItemShowsWhileTheSettingsFileCannotBeRead(showInMenuBar: Bool) {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+  func menuBarItemShowsWhileSettingsFileCannotBeRead(showInMenuBar: Bool) {
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     #expect(
       SettingsFileStartup.statusItemIsShown(showInMenuBar: showInMenuBar, settingsError: error)
@@ -138,7 +138,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theAlertDefaultsToShowInFinderAndQuitAnswersEscape() {
+  func alertDefaultsToShowInFinderAndQuitAnswersEscape() {
     let alert = SettingsUnreadableAlert.make(reason: "Reason")
 
     #expect(alert.messageText == OJDLocalized.string("ui.settings.advanced.unreadableTitle"))
@@ -157,7 +157,7 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test
-  func theButtonsMapToTheirChoices() {
+  func buttonsMapToTheirChoices() {
     #expect(SettingsUnreadableChoice(response: .alertFirstButtonReturn) == .showInFinder)
     #expect(SettingsUnreadableChoice(response: .alertSecondButtonReturn) == .resetSettings)
     #expect(SettingsUnreadableChoice(response: .alertThirdButtonReturn) == .quit)
@@ -165,7 +165,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func anAlertThatOffersMigrationHasMigrateFirstAndMapsItsButtons() {
+  func alertThatOffersMigrationHasMigrateFirstAndMapsItsButtons() {
     let alert = SettingsUnreadableAlert.make(reason: "Reason", offersMigration: true)
 
     #expect(alert.buttons.map(\.title).first == OJDLocalized.string("ui.migrate.action"))
@@ -179,8 +179,8 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theLaunchUpdateCheckSkipsWhileTheSettingsFileCannotBeRead() {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+  func launchUpdateCheckSkipsWhileSettingsFileCannotBeRead() {
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
     var checks = 0
 
     let outcome = LaunchUpdateCheck(
@@ -195,7 +195,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theLaunchUpdateCheckReportsWhyItDidOrDidNotRun() {
+  func launchUpdateCheckReportsWhyItDidOrDidNotRun() {
     var checks = 0
 
     let enabled = LaunchUpdateCheck(
@@ -215,22 +215,22 @@ struct SettingsFileRecoveryTests {
   }
 
   @Test
-  func theSkipLogNamesTheFeatureTheFileAndTheReason() {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+  func skipLogNamesFeatureFileAndReason() {
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     let message = SettingsSkipLog.message(
       feature: "the launch update check",
-      file: "/tmp/Settings.json",
+      file: "/tmp/Settings.plist",
       error: error
     )
 
-    #expect(message.hasPrefix("[Settings] /tmp/Settings.json cannot be read, skipping the launch"))
+    #expect(message.hasPrefix("[Settings] /tmp/Settings.plist cannot be read, skipping the launch"))
     #expect(message.contains(error.localizedDescription))
   }
 
   @Test
   @MainActor
-  func notificationsAreNotDeliveredWhileTheSettingsFileCannotBeRead() throws {
+  func notificationsAreNotDeliveredWhileSettingsFileCannotBeRead() throws {
     try store.set(.notifyControllerConnected, to: true)
     let delivery = RecoveryDeliverySpy()
     let monitor = RuntimeNotificationMonitor(settings: store, delivery: delivery)
@@ -241,12 +241,10 @@ struct SettingsFileRecoveryTests {
 
     try store.set(.showInDock, to: true)
     let url = store.userFileURL
-    var document = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+    var document = try PropertyListFixture.dictionary(at: url)
     document["showInDock"] = false
     document["showInMenuBar"] = false
-    try JSONSerialization.data(withJSONObject: document).write(to: url)
+    try PropertyListFixture.data(tree: document).write(to: url)
     #expect(throws: SettingsStoreError.self) { try store.load() }
     monitor.observe(RuntimeNotificationSnapshot(controllers: [:], activeProfiles: [:]))
     monitor.observe(RuntimeNotificationSnapshot(controllers: ["b": "Pad 2"], activeProfiles: [:]))
@@ -256,7 +254,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theErrorStaysWithItsButtonsUntilTheFileIsUsable() throws {
+  func errorStaysWithItsButtonsUntilFileIsUsable() throws {
     try writeRejectedFile()
     let model = makeModel()
 
@@ -268,7 +266,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aResetRunsTheWorkThatWaitedForTheFile() throws {
+  func resetRunsWorkThatWaitedForFile() throws {
     try writeRejectedFile()
     let model = makeModel()
     var recovered = 0
@@ -281,7 +279,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func aFailedResetRunsNothing() throws {
+  func failedResetRunsNothing() throws {
     try writeRejectedFile()
     let failing = SettingsStore(directory: root) { _ in throw CocoaError(.fileWriteNoPermission) }
     let model = SettingsPreferencesModel(
@@ -300,10 +298,10 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
-  func theFollowUpRunsTheUpdateCheckAndTheLoginRegistration() {
+  func followUpRunsUpdateCheckAndLoginRegistration() {
     var checks = 0
     var registrations = 0
-    let register: () throws -> Void = { registrations += 1 }
+    let register: () -> Void = { registrations += 1 }
 
     let followUp = SettingsRecoveryFollowUp(
       updateCheck: LaunchUpdateCheck(
@@ -323,12 +321,12 @@ struct SettingsFileRecoveryTests {
 private final class RecoveryDeliverySpy: RuntimeNotificationDelivering {
   private(set) var total = 0
 
-  func deliver(title: String, body: String, sound: Bool) { total += 1 }
+  func deliver(title _: String, body _: String, sound _: Bool) { total += 1 }
   nonisolated(nonsending) func deliverAwaitingSystem(
-    title: String,
-    body: String,
-    sound: Bool
-  ) async throws {
+    title _: String,
+    body _: String,
+    sound _: Bool
+  ) async {
     await Task.yield()
     total += 1
   }
@@ -338,7 +336,7 @@ private final class RecoveryLaunchAtLoginStub: LaunchAtLoginControlling {
   let isAvailable = true
   let isEnabled = false
 
-  func setEnabled(_ enabled: Bool) {}
+  func setEnabled(_: Bool) {}
 }
 
 private final class RecoveryAuthorizationStub: NotificationAuthorizationControlling,

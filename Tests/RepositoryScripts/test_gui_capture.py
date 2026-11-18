@@ -10,7 +10,6 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from Scripts.Command import dispatcher
 from Scripts.GUI import capture
 
 
@@ -33,28 +32,6 @@ APP_WINDOW: dict[str, object] = {
 
 
 class GuiCaptureTests(unittest.TestCase):
-    def test_dispatcher_routes_shots_capture(self) -> None:
-        with (
-            patch.object(
-                dispatcher, "exec_target", side_effect=TargetInvoked
-            ) as execute,
-            self.assertRaises(TargetInvoked),
-        ):
-            dispatcher.dispatch(["shots", "capture", "--all"])
-        execute.assert_called_once_with("GUI/capture.py", ["--all"], python=True)
-
-    def test_dispatcher_rejects_unknown_shots_command(self) -> None:
-        with self.assertRaises(SystemExit):
-            dispatcher.dispatch(["shots", "list"])
-
-    def test_dispatcher_names_missing_shots_command(self) -> None:
-        with (
-            patch.object(dispatcher, "die", side_effect=TargetInvoked) as die,
-            self.assertRaises(TargetInvoked),
-        ):
-            dispatcher.dispatch(["shots"])
-        die.assert_called_once_with("Unknown: shots (expected: capture)")
-
     def test_area_and_pane_are_exclusive_choices(self) -> None:
         self.assertEqual(capture.parse_args(["--area", "Library"]).area, "Library")
         self.assertEqual(
@@ -192,17 +169,14 @@ class GuiCaptureTests(unittest.TestCase):
             capture.shoot(1, "main", folder / "main.png", 1.0, clock, sleep)
         return commands, folder
 
-    def test_shoot_captures_the_screen_rectangle_of_the_window(self) -> None:
-        # screencapture -l draws the window alone over transparency, so translucent
-        # materials lose their backdrop; -R captures the screen as it shows.
+    def test_shoot_captures_the_window_alone_by_its_id(self) -> None:
+        # -l leaves out the desktop and other apps; -R would capture what lies behind.
         commands, folder = self.shoot_with([self.window(x=10.5)])
-        self.assertEqual(
-            commands[-1],
-            ["screencapture", "-x", "-R", "10.5,20,300,200", str(folder / "main.png")],
-        )
         captures = [command for command in commands if command[0] == "screencapture"]
-        self.assertEqual(len(captures), 1)
-        self.assertNotIn("-l", captures[0])
+        self.assertEqual(
+            captures,
+            [["screencapture", "-x", "-o", "-l9", str(folder / "main.png")]],
+        )
 
     def test_shoot_refuses_a_covered_window_and_names_the_owner(self) -> None:
         windows = [self.window(id=3, pid=7, owner="Code", x=200), self.window()]
@@ -736,26 +710,6 @@ class GuiCaptureTests(unittest.TestCase):
     def menu_window(self, **fields: object) -> dict:
         return self.window(layer=capture.MENU_LAYER, **fields)
 
-    def test_union_rectangle_spans_the_parent_menu_and_its_submenu(self) -> None:
-        parent = self.menu_window(id=1, x=100, y=33, width=200, height=300)
-        submenu = self.menu_window(id=2, x=300, y=120, width=150, height=500)
-        self.assertEqual(
-            capture.union_rectangle([parent, submenu]),
-            {"x": 100, "y": 33, "width": 350, "height": 587},
-        )
-        self.assertEqual(
-            capture.screen_rectangle(capture.union_rectangle([parent, submenu])),
-            "100,33,350,587",
-        )
-        # A submenu that opens to the left of its parent extends the rectangle to the left.
-        left = self.menu_window(id=3, x=-20, y=40, width=120, height=100)
-        self.assertEqual(capture.union_rectangle([parent, left])["x"], -20)
-        self.assertEqual(capture.union_rectangle([parent])["width"], 200)
-
-    def test_union_rectangle_refuses_no_window(self) -> None:
-        with self.assertRaises(capture.CaptureError):
-            capture.union_rectangle([])
-
     def test_menu_windows_are_the_popup_layer_windows_of_the_app(self) -> None:
         menu = self.menu_window(id=1)
         windows = [
@@ -791,7 +745,6 @@ class GuiCaptureTests(unittest.TestCase):
                 "menu-window",
                 "menu-help",
                 "menu-status-item",
-                "menu-status-item-profiles-activate",
             ],
         )
         by_name = {target.name: target for target in targets}
@@ -800,12 +753,8 @@ class GuiCaptureTests(unittest.TestCase):
             ("menu.profile", "activateProfile"),
         )
         self.assertEqual(
-            by_name["menu-status-item-profiles-activate"].path,
-            ("profiles", "profiles.activate"),
-        )
-        self.assertEqual(
             [by_name[name].depth for name in by_name],
-            [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 3],
+            [1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
         )
         self.assertTrue(by_name["menu-status-item"].status_item)
         self.assertFalse(by_name["menu-help"].status_item)
@@ -826,7 +775,7 @@ class GuiCaptureTests(unittest.TestCase):
         sources = capture.PROJECT_DIR / "Sources" / "OpenJoystickDriverPresentation"
         main_menu = (sources / "MainMenu" / "MainMenuModel.swift").read_text()
         renderer = (sources / "MainMenu" / "MainMenuRenderer.swift").read_text()
-        status = (sources / "MenuBar" / "StatusItemModel.swift").read_text()
+        (sources / "MenuBar" / "StatusItemModel.swift").read_text()
         status_menu = (
             sources / "MenuBar" / "MenuBarCoordinator+StatusMenu.swift"
         ).read_text()
@@ -834,8 +783,6 @@ class GuiCaptureTests(unittest.TestCase):
         self.assertIn(f'"{capture.MENU_BAR_ID_PREFIX}\\(sectionID)"', main_menu)
         self.assertIn(f'id: "{section}"', main_menu)
         self.assertIn(f'"{capture.ACTIVATE_PROFILE_ID}"', main_menu)
-        self.assertIn(f'id: "{capture.STATUS_PROFILES_ID}"', status)
-        self.assertIn(f'id: "{capture.STATUS_ACTIVATE_ID}"', status)
         self.assertIn("menuBarItemIdentifier(sectionID: section.id)", renderer)
         self.assertIn("setAccessibilityIdentifier(id)", renderer)
         self.assertIn("identify(item, as: entry.id)", status_menu)
@@ -847,7 +794,7 @@ class GuiCaptureTests(unittest.TestCase):
         )
         status = capture.MenuTarget("menu-status-item", (), status_item=True)
         status_sub = capture.MenuTarget(
-            "x", ("profiles", "profiles.activate"), status_item=True
+            "x", ("controller.a", "controller.a.pause"), status_item=True
         )
         self.assertEqual(capture.open_menu_command(main), ("open-menu", "menu.profile"))
         self.assertEqual(
@@ -857,7 +804,7 @@ class GuiCaptureTests(unittest.TestCase):
         self.assertEqual(capture.open_menu_command(status), ("open-status-menu",))
         self.assertEqual(
             capture.open_menu_command(status_sub),
-            ("open-status-menu", "profiles", "profiles.activate"),
+            ("open-status-menu", "controller.a", "controller.a.pause"),
         )
 
     def test_ax_command_line_carries_every_menu_argument(self) -> None:
@@ -1002,11 +949,6 @@ class GuiCaptureTests(unittest.TestCase):
         failure: Exception | None = None
         with (
             patch.object(capture, "run", side_effect=fake_run),
-            patch.object(
-                capture.repository_tool,
-                "binary",
-                return_value=Path("/tool/OJDRepositoryTool"),
-            ),
             patch.object(capture, "gui", side_effect=fake_gui),
             patch.object(capture, "on_screen_windows", side_effect=reads),
             patch("builtins.print"),
@@ -1018,10 +960,13 @@ class GuiCaptureTests(unittest.TestCase):
                 failure = error
         return events, folder, failure
 
-    def test_shoot_menu_captures_the_union_then_closes_with_escape(self) -> None:
+    def test_shoot_menu_captures_the_submenu_alone_then_closes_with_escape(
+        self,
+    ) -> None:
         parent = self.menu_window(id=1, x=100, y=33, width=200, height=300)
         submenu = self.menu_window(id=2, x=300, y=120, width=150, height=500)
-        both = [parent, submenu]
+        # Front to back: the submenu opened last comes first.
+        both = [submenu, parent]
         target = capture.MenuTarget("menu-profile", ("menu.profile", "activateProfile"))
         # No menu before the open; two reads settle the menus; close_menu reads them open,
         # then one fewer, then none.
@@ -1033,21 +978,7 @@ class GuiCaptureTests(unittest.TestCase):
             events,
             [
                 ("open-menu", "menu.profile", "activateProfile"),
-                [
-                    "screencapture",
-                    "-x",
-                    "-R",
-                    "100,33,350,587",
-                    str(folder / "menu.png"),
-                ],
-                [
-                    "/tool/OJDRepositoryTool",
-                    "mask-image",
-                    str(folder / "menu.png"),
-                    "100,33,350,587",
-                    "100,33,200,300",
-                    "300,120,150,500",
-                ],
+                ["screencapture", "-x", "-o", "-l2", str(folder / "menu.png")],
                 ("press-escape",),
                 ("press-escape",),
             ],
@@ -1133,16 +1064,9 @@ class GuiCaptureTests(unittest.TestCase):
         argv: list[str],
         ids: str,
         english: object = None,
-        tool: Exception | None = None,
     ) -> tuple[list, list]:
         shots: list[str] = []
         calls: list[tuple[str, ...]] = []
-
-        def fake_binary() -> Path:
-            calls.append(("build OJDRepositoryTool",))
-            if tool is not None:
-                raise tool
-            return Path("/tool/OJDRepositoryTool")
 
         def fake_gui(*command: str) -> str:
             calls.append(command)
@@ -1160,7 +1084,6 @@ class GuiCaptureTests(unittest.TestCase):
             patch.object(capture, "run"),
             patch.object(capture, "read_state", return_value=(True, None)),
             patch.object(capture, "gui", side_effect=fake_gui),
-            patch.object(capture.repository_tool, "binary", side_effect=fake_binary),
             patch.object(capture, "shoot"),
             patch.object(
                 capture,
@@ -1185,7 +1108,6 @@ class GuiCaptureTests(unittest.TestCase):
                 "menu-profile=menu-profile.png",
                 "menu-profile-activate-profile=menu-profile-activate-profile.png",
                 "menu-status-item=menu-status-item.png",
-                "menu-status-item-profiles-activate=menu-status-item-profiles-activate.png",
             ],
         )
 
@@ -1195,20 +1117,6 @@ class GuiCaptureTests(unittest.TestCase):
         area_shots, calls = self.run_menu_capture(["--area", "Library"], "menu.profile")
         self.assertEqual(area_shots, [])
         self.assertNotIn(("menu-ids",), calls)
-        self.assertNotIn(("build OJDRepositoryTool",), calls)
-
-    def test_menus_capture_builds_the_mask_tool_before_it_drives_the_app(self) -> None:
-        _, calls = self.run_menu_capture(["--menus"], "menu.profile")
-        self.assertEqual(calls[0], ("build OJDRepositoryTool",))
-
-    def test_a_mask_tool_that_does_not_build_stops_the_menus_capture(self) -> None:
-        failure = capture.repository_tool.ToolError(
-            "cannot build OJDRepositoryTool: no"
-        )
-        with self.assertRaisesRegex(
-            capture.CaptureError, "cannot build OJDRepositoryTool: no"
-        ):
-            self.run_menu_capture(["--menus"], "menu.profile", tool=failure)
 
     def test_only_sidebar_and_settings_captures_need_an_english_ui(self) -> None:
         refused = capture.CaptureError("the app UI language is de-DE")

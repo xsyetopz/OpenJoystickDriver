@@ -18,13 +18,13 @@
 
     /// The additional actions and the Add Action button.
     var body: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(OJDLocalized.string("ui.profiles.additionalActions"))
           .font(.headline)
         ScrollView {
-          VStack(alignment: .leading, spacing: 10) {
+          VStack(alignment: .leading, spacing: OJDSpacing.medium) {
             ForEach(actions) { action in
-              VStack(alignment: .leading, spacing: 5) {
+              VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
                 Picker(
                   OJDLocalized.string("term.destination"),
                   selection: destinationBinding(action)
@@ -37,33 +37,35 @@
                     ),
                     id: \.destination
                   ) { Text($0.title).tag($0.destination).disabled(!$0.isSupported) }
-                }
+                }.help(OJDLocalized.string("ui.capture.destinationHelp"))
                 PhysicalOutputDestinationFields(destination: destinationBinding(action))
                 HStack {
                   Button(
                     OJDLocalized.string("ui.profiles.bindingBehavior")
-                  ) { editing = action }
+                  ) { editing = action }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
                   Button(OJDLocalized.string("ui.profiles.moveUp")) {
                     move(action, by: -1)
                   }.disabled(actions.first?.id == action.id)
+                    .help(OJDLocalized.string("ui.profiles.moveActionUpHelp"))
                   Button(OJDLocalized.string("ui.profiles.moveDown")) {
                     move(action, by: 1)
                   }.disabled(actions.last?.id == action.id)
+                    .help(OJDLocalized.string("ui.profiles.moveActionDownHelp"))
                   Button(OJDLocalized.string("action.remove")) {
                     actions.removeAll { $0.id == action.id }
-                  }
+                  }.help(OJDLocalized.string("ui.profiles.removeActionHelp"))
                 }
               }
             }
           }
         }.frame(height: actions.isEmpty ? 0 : 170)
+        let firstDestination = DestinationOption.options(for: source, capabilities: capabilities)
+          .first?.destination
         Button(OJDLocalized.string("ui.profiles.addAction")) {
-          guard
-            let destination = DestinationOption.options(for: source, capabilities: capabilities)
-              .first?.destination
-          else { return }
-          actions.append(RemappingAction(destination: destination))
-        }.disabled(actions.count >= RemappingProfile.maximumBindingCount - 1)
+          if let firstDestination { actions.append(RemappingAction(destination: firstDestination)) }
+        }.disabled(
+          firstDestination == nil || actions.count >= RemappingProfile.maximumBindingCount - 1
+        ).help(OJDLocalized.string("ui.profiles.addActionHelp"))
       }.sheet(item: $editing) { action in
         BindingBehaviorSheet(
           binding: RemappingBinding(
@@ -78,7 +80,7 @@
           ),
           showsAdditionalActions: false,
           capabilities: capabilities
-        ) { behavior, duration, turbo, hold, tap, _ in
+        ) { behavior, duration, turbo, hold, tap, _, _ in
           replace(
             RemappingAction(
               id: action.id,

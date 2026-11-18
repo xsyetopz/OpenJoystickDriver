@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One input frame for a virtual feed: the pressed buttons and d-pad directions, the axis values,
 /// and how long the frame lasts at least.
@@ -70,11 +70,13 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
         debugDescription: "Unsupported apiVersion: \(apiVersion)"
       )
     }
-    if let kind = try container.decodeIfPresent(String.self, forKey: .kind), kind != Self.kind {
+    if let documentKind = try container.decodeIfPresent(String.self, forKey: .kind),
+      documentKind != Self.kind
+    {
       throw DecodingError.dataCorruptedError(
         forKey: .kind,
         in: container,
-        debugDescription: "Unexpected kind: \(kind)"
+        debugDescription: "Unexpected kind: \(documentKind)"
       )
     }
     buttons = try Self.decodeUnique(Control.self, forKey: .buttons, in: container)
@@ -104,7 +106,7 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
   ///
   /// - Throws: `DecodingError.dataCorrupted` when the list names a value twice.
   private static func decodeUnique<Value: Decodable & Hashable>(
-    _ type: Value.Type,
+    _: Value.Type,
     forKey key: CodingKeys,
     in container: KeyedDecodingContainer<CodingKeys>
   ) throws -> Set<Value> {
@@ -252,6 +254,23 @@ public struct VirtualFeedExchangeResult: Codable, Equatable, Sendable {
     self.closed = closed
     self.accepted = accepted
     self.queued = queued
+  }
+}
+
+/// Arguments of `waitForVirtualFeedFeedback`: the feed's token and how long the reply may wait.
+public struct LocalServiceRPCVirtualFeedWaitArguments: Codable, Sendable {
+  /// The longest wait the service holds a reply for, in milliseconds.
+  public static let maximumTimeoutMilliseconds = 1000
+  /// The token of the feed.
+  public let token: UUID
+  /// How long the reply may wait, in milliseconds; the service caps it at
+  /// ``maximumTimeoutMilliseconds``.
+  public let timeoutMilliseconds: Int
+
+  /// Creates the arguments for the feed `token` names.
+  public init(token: UUID, timeoutMilliseconds: Int) {
+    self.token = token
+    self.timeoutMilliseconds = timeoutMilliseconds
   }
 }
 

@@ -1,0 +1,68 @@
+== FeedRequest as Generic
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "FeedRequest", "as": "Generic"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","as":"Generic","kind":"FeedSession"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Frame", "buttons": ["South"], "holdMilliseconds": 100}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Frame"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Drain"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drained"}
+== FeedRequest as SDLCompatible
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "FeedRequest", "as": "SDLCompatible"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","as":"SDLCompatible","kind":"FeedSession"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Frame", "buttons": ["South"], "holdMilliseconds": 100}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Frame"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Drain"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drained"}
+== FeedRequest as GameControllerCompatible
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "FeedRequest", "as": "GameControllerCompatible"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","as":"GameControllerCompatible","kind":"FeedSession"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Frame", "buttons": ["South"], "holdMilliseconds": 100}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Frame"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Drain"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drained"}
+== refusals
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Control"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Control"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "FeedRequest", "as": "DualShock"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1003","kind":"Status","message":"DualShock is not a persona the service publishes. Send FeedRequest with a persona: SDLCompatible, Generic, GameControllerCompatible.","status":"Failure"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "FeedRequest", "as": "Generic"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1002","kind":"Status","message":"FeedRequest needs the control scope.","status":"Failure"}
+$ ojd --json status  -> exit 0
+  {
+    "apiVersion": "openjoystickdriver/v1alpha3",
+    "commandLineTool": {
+      "path": "/usr/local/bin/ojd",
+      "state": "Missing"
+    },
+    "controllers": [],
+    "kind": "SystemStatus",
+    "passThroughDevices": [],
+    "permissions": {
+      "inputInject": "Granted",
+      "inputRead": "Granted"
+    },
+    "service": {
+      "state": "Running",
+      "version": "0.6.0-alpha.2"
+    },
+    "skippedRecords": [],
+    "skippedVirtualDevices": [],
+    "transportExtension": {
+      "bundle": "Present",
+      "registration": "Active"
+    },
+    "unboundDevices": [],
+    "virtualDevice": {
+      "enabled": true,
+      "published": [],
+      "status": "automatic, publication: controller=LogicalControllerID(VID:0x2DC8 PID:0x301B loc=1152007200), session=1, publication=1, target=SDLCompatible, last-attempted=137004448539416, last-completed=137004448809625, status=ended, recovery=idle"
+    }
+  }
+exit 0

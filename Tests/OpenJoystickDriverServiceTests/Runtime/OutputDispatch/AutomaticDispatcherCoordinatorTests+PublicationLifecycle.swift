@@ -23,7 +23,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func installationUsesSuppressionChangedDuringSuspension() async throws {
+  func installationUsesSuppressionChangedDuringSuspension() async {
     let coordinator = AutomaticDispatcherCoordinator()
     let gate = InstallationGate()
 
@@ -46,8 +46,7 @@ extension AutomaticDispatcherCoordinatorTests {
 
   @Test(.timeLimit(.minutes(1)))
 
-
-  func suppressionRetiresOnlyPublicationAndRecreatesForTheCurrentSession() async throws {
+  func suppressionRetiresOnlyPublicationAndRecreatesForCurrentSession() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let first = InstallationBackend(stage: .none, gate: InstallationGate())
     let second = InstallationBackend(stage: .none, gate: InstallationGate())
@@ -133,7 +132,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func sameIdentifierReconnectCreatesANewPublicationWithoutChangingMode() async throws {
+  func sameIdentifierReconnectCreatesNewPublicationWithoutChangingMode() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let first = InstallationBackend(stage: .none, gate: InstallationGate())
     let second = InstallationBackend(stage: .none, gate: InstallationGate())
@@ -234,7 +233,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func stopThatTimesOutStillClearsRetirementOnceTheNativeCloseFinishes() async throws {
+  func stopThatTimesOutStillClearsRetirementOnceNativeCloseFinishes() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let gate = InstallationGate()
     let original = InstallationBackend(stage: .retirement, gate: gate)
@@ -260,7 +259,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func retargetBlockedByAnUnclosedSlotPublishesUntilTheCloseFinishes() async throws {
+  func retargetBlockedByUnclosedSlotPublishesUntilCloseFinishes() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let gate = InstallationGate()
     let original = InstallationBackend(stage: .retirement, gate: gate)
@@ -378,7 +377,7 @@ extension AutomaticDispatcherCoordinatorTests {
     #expect(restored.counts().closes == 1)
   }
   @Test(.timeLimit(.minutes(1)))
-  func unavailableProfileSelectionNeverBuildsABackend() async throws {
+  func unavailableProfileSelectionNeverBuildsBackend() async throws {
     let coordinator = AutomaticDispatcherCoordinator()
     let builds = AutomaticBuildCounter()
     let factory: AutomaticDispatcherCoordinator.Factory = { _ in

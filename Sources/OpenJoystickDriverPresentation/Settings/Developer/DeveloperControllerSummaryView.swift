@@ -25,9 +25,16 @@
             Text(device.name).tag(device.sessionToken.rawValue)
           }
         }
+        .disabled(model.controllerPickerUnavailableReason != nil)
+        .help(
+          model.controllerPickerUnavailableReason ?? OJDLocalized.string("ui.help.controllerPicker")
+        )
+        if let reason = model.controllerPickerUnavailableReason {
+          Text(reason).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
         if let device = model.selectedDevice { controllerFacts(device) }
         Button(OJDLocalized.string("action.refresh"), action: model.requestRefresh)
-          .disabled(model.isCapturing)
+          .disabled(model.isCapturing).help(OJDLocalized.string("ui.help.refreshControllers"))
       }
     }
 
@@ -48,16 +55,18 @@
       )
       OJDLabeledValue(OJDLocalized.string("ui.developer.route"), routeName(device.discoverySource))
       OJDLabeledValue(OJDLocalized.string("ui.developer.connection"), device.connection)
-      OJDLabeledValue(
-        OJDLocalized.string("ui.developer.usbEndpoints"),
-        String(
-          format: "%@ 0x%02X · %@ 0x%02X",
-          OJDLocalized.string("term.inputEndpoint"),
-          device.inputEndpoint,
-          OJDLocalized.string("term.outputEndpoint"),
-          device.outputEndpoint
+      if device.hasUSBEndpoints {
+        OJDLabeledValue(
+          OJDLocalized.string("ui.developer.usbEndpoints"),
+          unsafe String(
+            format: "%@ 0x%02X · %@ 0x%02X",
+            OJDLocalized.string("term.inputEndpoint"),
+            device.inputEndpoint,
+            OJDLocalized.string("term.outputEndpoint"),
+            device.outputEndpoint
+          )
         )
-      )
+      }
       OJDLabeledValue(
         OJDLocalized.string("ui.developer.buttons"),
         buttonValue(model.latestInput?.pressed)
@@ -75,8 +84,8 @@
     /// Returns the raw x and y values of the stick, or the centered position for nil; y points
     /// down.
     private func stickValue(_ stick: StickPosition?) -> String {
-      let stick = stick ?? .center
-      return "\(stick.x.rawValue), \(stick.y.rawValue)"
+      let position = stick ?? .center
+      return "\(position.x.rawValue), \(position.y.rawValue)"
     }
 
     /// Returns the names of the pressed controls, or None when nothing is pressed.

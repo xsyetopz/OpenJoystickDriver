@@ -8,16 +8,16 @@ struct SoakCheckLocalizationTests {
 
   /// Numbers as the catalog prints them: through the current locale.
   private func decimal(_ value: Double) -> String {
-    String(format: "%.1f", locale: .current, value)
+    unsafe String(format: "%.1f", locale: .current, value)
   }
 
   /// A count inside a plural entry: formatted with the locale of the selected language.
   private func pluralInteger(_ value: Int) -> String {
-    String(format: "%d", locale: Locale(identifier: "en_US"), value)
+    unsafe String(format: "%d", locale: Locale(identifier: "en_US"), value)
   }
 
   private func integer(_ value: Int) -> String {
-    String(format: "%d", locale: .current, value)
+    unsafe String(format: "%d", locale: .current, value)
   }
 
   private func stableSummary() throws -> RuntimeHealthSummary {
@@ -35,7 +35,7 @@ struct SoakCheckLocalizationTests {
   }
 
   @Test
-  func theDetailIsWordedByTheCatalogAndNeverStartsWithTheMachineIdentifier() throws {
+  func detailIsWordedByCatalogAndNeverStartsWithMachineIdentifier() throws {
     let summary = try stableSummary()
     #expect(summary.soakVerdict == .stable)
 
@@ -50,7 +50,7 @@ struct SoakCheckLocalizationTests {
   }
 
   @Test
-  func everyVerdictAndErrorHasAResolvedEntryInEveryLocale() {
+  func everyVerdictAndErrorHasResolvedEntryInEveryLocale() {
     let verdictKeys = RuntimeSoakVerdict.allCases.map(DiagnosticsService.verdictKey)
     let errorKeys = [
       "cli.diagnose.group.soakErrorProcessUnavailable",
@@ -74,7 +74,7 @@ struct SoakCheckLocalizationTests {
   }
 
   @Test
-  func samplingErrorsAreDescribedByTheCatalog() {
+  func samplingErrorsAreDescribedByCatalog() {
     #expect(
       RuntimeHealthSamplingError.processUnavailable(4_242).errorDescription
         == "Could not read runtime information for service process \(integer(4_242))."

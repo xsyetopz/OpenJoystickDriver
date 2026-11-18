@@ -1,66 +1,58 @@
 # Bindings and Actions
 
-Bindings connect controller controls to destinations, and combinations and layers let one profile do more with the same controls.
+Use assignments to make a control of your controller do something else. Use combinations and layers to let one [profile](Glossary.md#terms) do more with the same controls.
 
 ## Contents
 
 - [Assigning Buttons and Actions](#assigning-buttons-and-actions)
-- [Macros](#macros)
 - [Switch Profiles, Set Layers, and Pause](#switch-profiles-set-layers-and-pause)
 - [System Actions](#system-actions)
-- [Spoken Phrases](#spoken-phrases)
+- [MIDI Output](#midi-output)
 - [Combinations, Sequences, and Layers](#combinations-sequences-and-layers)
 - [Further Reading](#further-reading)
 
 ## Assigning Buttons and Actions
 
-An assignment connects one controller control to one destination, such as a keyboard key, a mouse button, or a virtual gamepad button.
+An assignment connects one control to one destination, such as a keyboard key, a mouse button, or a [virtual gamepad](Glossary.md#terms) button. A control can have only one assignment in a profile.
 
 ### Before You Begin
 
-- Create a profile. For more information, see [Creating a profile](Remapping-Profiles.md#creating-a-profile).
-- Connect the controller if you want to use **Listen for control**.
-- Grant Accessibility access if the destination is a keyboard key or a pointer action. For more information, see [Permissions](Permissions-and-Security.md).
+- Create a profile. See [Creating a profile](Remapping-Profiles.md#creating-a-profile).
+- Connect the controller to use **Listen for Control**.
+- Grant Accessibility access for keyboard and pointer destinations. See [Permissions](Permissions-and-Security.md).
 
 ### Destinations
 
 | Destination | Examples | Notes |
 | --- | --- | --- |
-| Keyboard | A key with optional Command, Control, Option, and Shift | Needs Accessibility access |
+| Keyboard | A key with optional modifiers | Needs Accessibility access |
 | Mouse button | Left, right, middle, back, forward | Needs Accessibility access |
-| Pointer movement | Horizontal or vertical | Continuous; the axis sets the speed of the cursor |
-| Pointer position | Horizontal or vertical | Continuous; the axis value from -1 to 1 places the cursor across the main display, and the other coordinate keeps its value; needs Accessibility access |
+| Pointer movement | Horizontal or vertical | Continuous; the axis sets the speed |
+| Pointer position | Horizontal or vertical | Continuous; the axis places the cursor on the main display |
 | Scroll | Horizontal or vertical | Continuous |
-| Gamepad button, D-pad, or axis | A virtual controller control | Needs virtual gamepad output |
-| Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Only on controllers that support it |
-| Macro | A macro of the profile | Discrete sources only; see [Macros](#macros) |
-| Profile switch | The next or previous profile, or a named profile of the same controller model | Discrete sources only; fires on press; see [Switch profiles, set layers, and pause](#switch-profiles-set-layers-and-pause) |
-| Layer set | Turn a layer of the profile on or off, or flip it | Discrete sources only; fires on press |
-| Pause | Pause or resume the controller, or flip it | Discrete sources only; fires on press |
-| System key | Play/pause, next or previous track, fast-forward, rewind, volume up or down, mute, display brightness, keyboard backlight | Discrete sources only; needs Accessibility access; see [System actions](#system-actions) |
-| System action | Mission Control | Discrete sources only; fires on press; see [System actions](#system-actions) |
-| Open application | An application by bundle identifier | Discrete sources only; fires on press; command line or profile file only |
-| Open URL | A web or other non-file URL | Discrete sources only; fires on press; command line or profile file only |
-| Run Shortcut | A shortcut of the Shortcuts app, by name | Discrete sources only; fires on press; command line or profile file only |
-| Type text | A fixed string | Discrete sources only; fires on press; needs Accessibility access; command line or profile file only |
-| Speak | A phrase the Mac says aloud | Discrete sources only; see [Spoken Phrases](#spoken-phrases) |
-| MIDI note or control change | A note on a channel, or a controller number | Needs no access; see [MIDI output](#midi-output) |
+| Gamepad button, D-pad, or axis | A virtual gamepad control | Needs virtual gamepad output |
+| Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Supported controllers only |
+| Macro | A macro of the profile | Buttons only; see [Macros](#macros) |
+| Profile switch, layer, pause | Change profile, layer, or pause state | Buttons only; see [Switch profiles, set layers, and pause](#switch-profiles-set-layers-and-pause) |
+| System key or action | Media, volume, Mission Control, Screenshot | Buttons only; see [System actions](#system-actions) |
+| Open application, Open URL, Run Shortcut | An app, a URL, or a named shortcut | Buttons only |
+| Type text | A fixed string | Buttons only; needs Accessibility access |
+| Speak | A phrase the Mac says | Buttons only; see [Spoken Phrases](#spoken-phrases) |
+| MIDI note or control change | A note or controller number on a channel | See [MIDI output](#midi-output) |
 
-A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
+"Buttons only" means an axis cannot be the source. These destinations fire on press.
 
-Each controller control can appear in only one assignment in a profile.
+A gamepad destination needs the virtual gamepad turned on in the profile. Paddles, grips, and function buttons cannot be gamepad outputs. See [What the virtual gamepad carries](Automating-OpenJoystickDriver.md#what-the-virtual-gamepad-carries) and [About profiles](Remapping-Profiles.md#about-profiles).
 
 ### Add an Assignment In the App
 
-1. Select the profile and open the **Assignments** section.
-2. Click **Add assignment**.
-3. In the **Press a controller control** sheet, select a control in the **Controller control** list. Or click **Listen for control** and press the control on the controller.
-4. Select a **Destination**.
-5. If the destination is a key, click **Capture key** and press the key with any modifiers. Press <kbd>Escape</kbd> to cancel the capture.
-6. Click **Add assignment**.
-7. Click **Save**.
+1. Open the profile's **Assignments** section and click **Add Assignment**.
+2. Select a control in the **Controller control** list, or click **Listen for Control** and press it.
+3. Select a **Destination**.
+4. For a key, click **Capture Key** and press the key with any modifiers.
+5. Click **Add Assignment**, then **Save**.
 
-The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **Sticks**, **Triggers**, **Stick clicks**, **Touch**, **Motion**, and **System controls**. To remove an assignment, use its **Remove assignment** button.
+To remove an assignment, click its **Remove Assignment** button.
 
 ### Add an Assignment With the Command Line
 
@@ -68,7 +60,7 @@ The section groups assignments as **Face buttons**, **Shoulders**, **D-pad**, **
 ojd binding set "My controller" button:south key:space
 ```
 
-A control has one assignment, so this command replaces the control's assignment. The `SOURCE` and `TARGET` values use this syntax:
+The command replaces the control's assignment. The `SOURCE` and `TARGET` values use this syntax:
 
 ```text
 SOURCE: button:NAME | dpad:DIRECTION
@@ -86,103 +78,99 @@ TARGET: key:KEY[:mods=alt,control,meta,shift]
         physical:player:0...4
         physical:color:RED:GREEN:BLUE
         physical:brightness:0...1
+        physical:adaptive:left|right:off
+        physical:adaptive:left|right:resistance:START:STRENGTH
         midi-note:CHANNEL:NOTE[:VELOCITY]
         midi-cc:CHANNEL:CONTROLLER
+        macro:NAME
+        profile:switch:next|previous|PROFILE-ID
+        layer:NAME:on|off|toggle
+        pause:on|off|toggle
+        system-key:KEY | system:ACTION
+        open-app:BUNDLE-ID | open-url:URL
+        shortcut:NAME | text:TEXT
+        speak:TEXT (add --voice IDENTIFIER)
 ```
 
-To remove an assignment, run `ojd binding clear PROFILE SOURCE`. To list the assignments, run `ojd binding list PROFILE`. For the options of `ojd binding set`, see [Command reference](Command-Reference.md).
+To remove an assignment, run `ojd binding clear PROFILE SOURCE`. To list them, run `ojd binding list PROFILE`. For all options, see [Command reference](Command-Reference.md).
 
 ### Set a Behavior
 
 The behavior decides how a press turns into output.
 
-1. Click **Behavior...** on the assignment row.
-2. In the **Assignment behavior** sheet, select a behavior.
-3. Click **Apply**, then click **Save**.
+Click **Behavior...** on the assignment row, select a behavior, then click **Apply** and **Save**.
 
 | Behavior | Result |
 | --- | --- |
 | **Hold** | The destination stays active while you hold the control. This is the default. |
 | **Toggle** | Each press switches the destination on or off. |
-| **Tap on press** | The destination taps once when you press the control. |
-| **Tap on release** | The destination taps once when you release the control. |
-| **Pulse** | The destination stays active for the **Pulse duration**. The default is 100 ms. |
+| **Tap on press** | The destination taps once when you press. |
+| **Tap on release** | The destination taps once when you release. |
+| **Pulse** | The destination stays active for the **Pulse duration** (default 100 ms). |
 | **Press only** | OJD sends only the press. |
 | **Release only** | OJD sends only the release. |
 
-The table describes each behavior by its name. Hardware results are not verified. The command line option is `--behavior hold|toggle|tap-on-press|tap-on-release|pulse|press|release`. Use `--pulse-ms 1...5000` with `pulse`.
+Behaviors are untested on real hardware.
 
 ### Turbo, Long Hold, and Multi-Tap
 
-These options are in the **Assignment behavior** sheet. They work only when the behavior is **Hold**. Turbo cannot be combined with long hold or multi-tap.
+These options need the **Hold** behavior. Turbo cannot combine with the other two.
 
-- **Turbo** repeats the destination while you hold the control. Set the **Repeat rate** (1 to 60 Hz) and the **Duty cycle** (0.05 to 0.95). Optionally set a delay before the first repeat (0 to 2500 ms) and a cap on the number of repeats (1 to 500). Turbo works with keyboard, mouse button, gamepad button, and D-pad destinations.
-- **Long hold** sends a second destination after you hold the control for the **Hold duration** (100 to 5000 ms).
-- **Multi-tap** sends a second destination when you tap the control 2 to 5 times, each press within the **Tap window** (50 to 1000 ms) of the last release. Each tap count has its own destination, and counts are unique.
+- **Turbo** repeats the destination while you hold the control. Set the **Repeat rate** (1 to 60 Hz) and **Duty cycle** (0.05 to 0.95). You can add a delay (0 to 2500 ms) and a repeat cap (1 to 500). It works with keyboard, mouse button, and gamepad destinations.
+- **Long hold** sends a second destination after the **Hold duration** (100 to 5000 ms).
+- **Multi tap** sends a destination for 2 to 5 taps, each within the **Tap window** (50 to 1000 ms) of the last release. Each count has its own destination.
 
-Long hold and multi-tap need a discrete source, such as a button, and a destination that is not continuous.
+Long hold and multi-tap need a button source and a destination that is not continuous. With multi-tap, the base destination waits for the longest tap window, so it fires later. To add more actions to one assignment, use **Add Action** in the behavior sheet.
 
-With multi-tap entries, the base destination waits for the longest tap window to see whether another tap follows, so it fires later than without them. `ojd binding list` shows this wait as `tap-delay`.
+For the command line options, see [Command reference](Command-Reference.md).
 
-The command line options are `--turbo-rate`, `--turbo-duty`, `--turbo-delay MS`, `--turbo-max COUNT`, `--long-hold MS:TARGET`, and `--multi-tap COUNT:MS:TARGET`. `--turbo-delay` and `--turbo-max` need `--turbo-rate` and `--turbo-duty`. Repeat `--multi-tap` for more counts. For example, `--long-hold 500:key:key-b` and `--multi-tap 3:300:key:key-b`. The command line help lists these options for keyboard and mouse button destinations only. Whether the command line accepts them for gamepad destinations is not verified.
-
-You can also add more actions to one assignment. In the behavior sheet, use **Add action**, **Move up**, **Move down**, and **Remove**. The command line option is `--actions-json`.
+The **Note (optional)** field of the behavior sheet takes up to 200 characters and shows under the assignment.
 
 ### Macros
 
-A macro is a named list of steps that runs when its source becomes active. A profile holds up to 16 macros of up to 32 steps. Hardware status: Not checked.
+A macro is a named list of steps. A profile holds up to 16 macros of up to 32 steps. Macros are untested on real hardware.
 
 1. Open the **Macros** section and click **Add macro**.
 2. Enter a **Macro name** (1 to 40 characters, unique in the profile).
-3. Use **Add step** to add a step. Use the arrow buttons to reorder steps and the minus button to remove one. The steps are:
-   - **Tap**: press and release a key or button at once.
-   - **Press** and **Release**: hold a key or button down, then let it go.
-   - **Chord**: press several keys or buttons together, hold them for the **Hold time**, then release them in reverse order. Use **Add key to chord** for more.
-   - **Wait**: pause 0 to 5000 ms before the next step.
-4. Set **Repeat** to **Fixed number of times** (1 to 500) or **While held**, which runs again until you release the control.
+3. Use **Add Step** to add steps:
+   - **Tap** presses and releases a key or button.
+   - **Press** and **Release** hold a key or button down, then let it go.
+   - **Chord** presses several keys together, holds them for the **Hold time**, then releases them.
+   - **Wait** pauses 0 to 5000 ms.
+4. Set **Repeat** to **Fixed Number of Times** (1 to 500) or **While Held**.
 5. Set **When pressed again while running** to **Ignore** or **Restart**.
-6. Turn on **Stop when released** to stop the macro and release everything it holds when you release the control.
+6. Optionally turn on **Stop when released**.
 7. Confirm the sheet, then click **Save**.
 
-To run a macro, choose it as the **Destination** of an assignment. The destination list shows the macros of the profile for any source that is not a continuous axis. A step can be a keyboard key, a mouse button, a virtual gamepad button, or a D-pad direction. A step cannot be another macro. A macro that is the destination of an assignment cannot be removed until you change that assignment.
+To run a macro, choose it as the **Destination** of an assignment. A step can be a key, a mouse button, a gamepad button, or a D-pad direction, not another macro.
 
-A macro stops and releases every key and button it holds when its source is released with **Stop when released** on, when the profile changes or stops, and when the controller disconnects. One pass takes at most 30 seconds, and a fixed repeat at most 5 minutes, counting the waits and chord hold times; OJD rejects a longer macro when it saves.
-
-The command line is `ojd macro` and the target `macro:NAME` of `ojd binding set`. For more information, see [Command reference](Command-Reference.md#macro).
+A macro stops and releases everything it holds when the profile changes or stops, or the controller disconnects. One pass takes at most 30 seconds, and a fixed repeat at most 5 minutes. For the command line, see [Command reference](Command-Reference.md#macro).
 
 ### Spoken Phrases
 
-The **Speak** destination makes the Mac say a short text aloud when you press the control. Hardware status: Not checked.
+The **Speak** destination makes the Mac say a short text aloud when you press the control. It is untested on real hardware.
 
-1. Choose **Speak** as the **Destination** of an assignment.
+1. Choose **Speak** as the **Destination**.
 2. Enter the **Text**, 1 to 128 characters.
-3. Optionally enter a **Voice identifier**, such as `com.apple.voice.compact.en-US.Samantha`. With none, the Mac uses the system voice.
+3. Optionally enter a **Voice identifier**. Without one, the Mac uses the system voice.
 
-Pressing the control again while the phrase is still speaking stops it and says it again from the start, so repeated presses never queue phrases. Speech stops at once when the profile is paused or deactivated, or when the controller disconnects. Speech needs no Accessibility access. A macro step cannot speak.
-
-OJD rejects an empty text, a text over 128 characters and an empty voice identifier when it loads a profile. It rejects a voice that this Mac does not have when you activate the profile.
-
-The command line target is `speak:TEXT` of `ojd binding set`, with `--voice IDENTIFIER` for the voice:
-
-```sh
-ojd binding set Racing button:north speak:Reloading --voice com.apple.voice.compact.en-US.Samantha
-```
+Pressing the control while the phrase plays restarts it. Speech needs no Accessibility access, and a macro step cannot speak. OJD rejects a voice this Mac does not have when you activate the profile.
 
 ### Tune an Analog Control
 
-When you assign a stick axis or trigger axis, the row has an **Adjust...** button. It opens a sheet with these settings:
+For a stick or trigger axis, **Adjust...** opens these settings. It needs the **All Controls** interface.
 
-- Deadzone, 0 to 0.95. The default is 0.1.
-- **Gain**, 0.1 to 10. The default is 1.
+- Deadzone, 0 to 0.95 (default 0.1).
+- **Gain**, 0.1 to 10 (default 1).
 - **Invert axis**.
-- **Response curve**: `linear`, `ease-in`, `ease-out`, or `smooth-step` on the command line.
-- **Digital threshold**, 0.01 to 1. The default is 0.5. The threshold decides when an axis counts as pressed for a button destination.
+- **Response curve**: linear, ease-in, ease-out, or smooth-step.
+- **Digital threshold**, 0.01 to 1 (default 0.5). It sets when an axis counts as pressed for a button destination.
 
-The command line options are `--deadzone`, `--gain`, `--invert`, `--response-curve`, and `--digital-threshold`. An axis source needs these settings. A non-axis source cannot have them.
+Only axis sources take these settings. For the command line, see [Command reference](Command-Reference.md).
 
 ### Region Sources
 
-A region source is on while a stick, trigger, or touch contact is inside a range, so every behavior, macro, layer, and combination works with it.
+A region source is on while a stick, trigger, or touch is inside a range.
 
 ```text
 SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
@@ -190,128 +178,105 @@ SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
         touch:SURFACE:area:X:Y:W:H
 ```
 
-`INNER-OUTER` are stick deflections from 0 to 1 after the dead zone, `FROM-TO` on a stick are degrees clockwise from up, `FROM-TO` on a trigger are pulls from 0 to 1, and the touch values are fractions of the surface. For example, `ojd binding set "My controller" stick-region:left:0.8-1 key:key-a` presses A while the left stick is pushed past 0.8. Regions of one stick and bands of one trigger must not overlap. To add one in the app, use **Regions** in the **Controller** section. For the fields and the live position view, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md#set-regions).
+`INNER-OUTER` are stick deflections from 0 to 1 after the dead zone. On a stick, `FROM-TO` are degrees clockwise from up. On a trigger, they are pulls from 0 to 1. Touch values are fractions of the surface. For example, `ojd binding set "My controller" stick-region:left:0.8-1 key:key-a` presses A while the left stick is pushed past 0.8. Regions of one stick must not overlap. In the app, use **Regions** in the **Controller** section. See [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md#set-regions).
 
 ### Restore Or Clear Assignments
 
-- To remove every assignment, select **Clear all inputs**.
-- To return to pass-through, select **Restore Default Input** in the **Profile actions** menu.
+To remove every assignment or return to pass-through, see [Clear All Assignments](Remapping-Profiles.md#clear-all-assignments).
 
 ## Switch Profiles, Set Layers, and Pause
 
-Three destinations change what OJD does instead of sending input. Each fires when its source is pressed. Hardware status: Not checked.
+Three destinations change what OJD does instead of sending input. Each fires on press. They are untested on real hardware.
 
-- **Next profile** and **Previous profile** activate the neighbor of the active profile among the profiles for the same controller model and application scope. The order is the profile name without regard to case, then the profile identifier, and it wraps around. A profile switch to a named profile must name a profile for the same controller model. Otherwise OJD rejects the profile.
+- **Next profile** and **Previous profile** activate the neighbor of the active profile among profiles for the same controller model and scope. The order is by name and wraps. A named profile must be for the same model.
 - **Turn layer on**, **Turn layer off**, and **Toggle layer** set a layer of the same profile.
-- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything it holds, including running macros, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or a disconnect ends the pause. While the pause lasts, the Controllers detail lists Remapping as Paused, the menu bar menu shows a disabled Paused row under the controller, and `ojd status` reports `paused`.
-
-Each switch writes a line to the service log with the old and new profile names, and a failed switch writes its error there. To read the log, run `ojd log`.
-
-To assign them with the command line, use these targets with `ojd binding set`:
-
-```sh
-ojd binding set Racing button:start profile:switch:next
-ojd binding set Racing button:back profile:switch:PROFILE-ID
-ojd binding set Racing button:west layer:Aim:toggle
-ojd binding set Racing button:guide pause:toggle
-```
-
-The layer in `layer:NAME:MODE` is a layer of the profile, found by name without regard to case. The modes are `on`, `off`, and `toggle`.
+- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or disconnect ends the pause.
 
 ## System Actions
 
-These destinations make the Mac do something instead of sending a key or a button. Hardware status: Not checked.
+These destinations make the Mac do something instead of sending a key or button. They are untested on real hardware.
 
-- **System key** sends a media, volume, display brightness, or keyboard backlight key. It sends the key down when you press the control and the key up when you release it, so holding the control repeats the key as holding the key does. The names are `play-pause`, `next-track`, `previous-track`, `fast-forward`, `rewind`, `volume-up`, `volume-down`, `mute`, `brightness-up`, `brightness-down`, `keyboard-illumination-up`, and `keyboard-illumination-down`. It does not take turbo.
-- **Mission Control** opens Mission Control.
-- **Open application** opens an application by its bundle identifier, such as `com.apple.TextEdit`.
-- **Open URL** opens a URL in its default application. A `file:` URL is rejected.
-- **Run Shortcut** runs a shortcut of the Shortcuts app by name. A shortcut that asks for input waits for you. OJD does not wait for it to finish.
-- **Type text** types a fixed string as keyboard events. While macOS has secure input on, such as in a password field, macOS may not deliver the keys, and OJD reports that secure input is on.
+- **System key** sends a media, volume, display brightness, or keyboard backlight key. Holding the control repeats the key.
+- **Mission Control** and **Launchpad** open them. Where macOS has no Launchpad, it opens the Apps app.
+- **Screenshot**, **Lock Screen**, and **Show Desktop** press Shift-Command-3, Control-Command-Q, and F11.
+- **Open application** opens an app by bundle identifier, such as `com.apple.TextEdit`.
+- **Open URL** opens a URL in its default app. OJD rejects `file:` URLs.
+- **Run Shortcut** runs a Shortcuts app shortcut by name.
+- **Type text** types a fixed string. While macOS has secure input on, such as in a password field, macOS may not deliver the keys, and OJD reports it.
 
-All of them except System key act once when you press the control and do nothing on release. They take the behaviors **Hold**, **Tap on press**, **Tap on release**, and **Press**. **Toggle**, **Release**, and **Pulse** fail validation. A failed action writes its error to the Activity log and the service log, and the profile keeps working. To read the log, run `ojd log`.
+Screenshot, Lock Screen, Show Desktop, and Type text need Accessibility access. The others need no permission.
 
-To assign them with the command line, use these targets with `ojd binding set`:
+If you changed or turned off a system shortcut in System Settings, its action does nothing.
 
-```sh
-ojd binding set Racing button:north system-key:volume-up
-ojd binding set Racing button:west system:mission-control
-ojd binding set Racing button:east open-app:com.apple.TextEdit
-ojd binding set Racing button:south open-url:https://example.com
-ojd binding set Racing button:start shortcut:"Dim Lights"
-ojd binding set Racing button:back text:hello
-```
+All except System key act once on press and do nothing on release. They accept the behaviors **Hold**, **Tap on press**, **Tap on release**, and **Press only**. Other behaviors fail validation. A failed action writes its error to the logs, and the profile keeps working.
 
-The app lists the system keys, Mission Control, and one entry each for Open application, Open URL, Run Shortcut, and Type text in the destination pickers. Choosing one of the four shows a text field for its application identifier, URL, Shortcut name, or text.
-
-OJD does not offer Show Desktop, App Exposé, Launchpad, or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one of them, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
+OJD offers no App Exposé or display brightness setting. For one, set a keyboard shortcut in **System Settings**, then assign a **Keyboard** destination with it.
 
 ## MIDI Output
 
-A **MIDI note** or **MIDI control change** destination sends MIDI to music apps. While an active profile uses one, OJD publishes a MIDI source named `OpenJoystickDriver`; pick it as the input of the app. OJD removes the source after the last note-off, once no active profile uses MIDI. No access permission is needed. If the system refuses to create the source, the assignment fails with error `E3032` and nothing is sent.
+A **MIDI note** or **MIDI control change** destination sends MIDI to music apps. While an active profile uses one, OJD publishes a MIDI source named `OpenJoystickDriver`. Pick it as the input of the app. No permission is needed. If the system refuses the source, the assignment fails with error `E3032`.
 
-| Destination | File type | Sends |
-| --- | --- | --- |
-| MIDI note | `MidiNote` with `channel` 1 to 16, `note` 0 to 127, and `velocity` 1 to 127 | Note-on when the control is pressed and note-off when it is released |
-| MIDI control change | `MidiControlChange` with `channel` 1 to 16 and `controller` 0 to 127 | A button sends 127 when pressed and 0 when released. A trigger sends its position as 0 to 127. A stick axis sends its position with the center at 64. A value is sent only when it changes. |
+| Destination | Sends |
+| --- | --- |
+| MIDI note | Note-on on press and note-off on release; channel 1 to 16, note 0 to 127, velocity 1 to 127 |
+| MIDI control change | A button sends 127 on press and 0 on release. A trigger sends 0 to 127. A stick axis sends its position, centered at 64. Only changes are sent. |
 
-With the command line, `midi-note:CHANNEL:NOTE` sends velocity 127, and `midi-note:CHANNEL:NOTE:VELOCITY` sets it. For example, `ojd binding set PROFILE button:south midi-note:1:60:100` sends `90 3C 64` on press and `80 3C 00` on release. `midi-cc:CHANNEL:CONTROLLER` takes a control change, and only it fits an axis or trigger source. A macro step cannot send MIDI. Deactivating the profile releases every held note before the source goes away. The app's destination list offers MIDI note 60 on channel 1 and controller 1 on channel 1; edit the profile file for other numbers. For the file format, see [Profile file reference](Profile-File-Reference.md).
+On the command line, `midi-note:CHANNEL:NOTE` sends velocity 127. For example, `ojd binding set PROFILE button:south midi-note:1:60:100` sends `90 3C 64` on press and `80 3C 00` on release. Only `midi-cc` fits an axis or trigger. A macro step cannot send MIDI.
+
+The app offers note 60 and controller 1, both on channel 1. For other numbers, edit the profile file. See [Profile file reference](Profile-File-Reference.md).
 
 ## Combinations, Sequences, and Layers
 
-Chords, sequences, and layers let one profile do more with the same controls.
-
 ### Concepts
 
-- A chord is a set of two or more controls that you press together. It sends one destination.
-- A sequence is a list of two or more controls that you press in order. It sends one destination. A sequence is a trigger. It does not send several outputs.
+- A chord is two or more controls pressed together. It sends one destination.
+- A sequence is two or more controls pressed in order. It sends one destination.
 - A layer is a second set of assignments. It is active while you hold an activator control, or after you press it once.
 
-Chords and sequences cannot use axis controls or continuous destinations such as pointer movement. A chord source set must be unique in the profile.
+Chords and sequences cannot use axes or continuous destinations. A chord's control set must be unique in the profile.
 
 ### Before You Begin
 
-Create a profile and open it. For more information, see [Creating a profile](Remapping-Profiles.md#creating-a-profile).
+[Create a profile](Remapping-Profiles.md#creating-a-profile) and open it.
 
 ### Add a Chord
 
 1. Open the **Combinations** section.
-2. In **Chords**, click **Add chord**.
-3. Select the first control in **Control 1**.
-4. Click **Add control** and select at least one more control.
-5. Select a **Chord mode**: **Modifier** or **Simultaneous**.
-6. Set the **Press window**. The default is 50 ms and the range is 1 to 1000 ms.
-7. Select a **Destination**.
-8. Confirm the sheet, then click **Save**.
+2. In **Chords**, click **Add Chord**.
+3. Select the first control, then click **Add Control** for at least one more.
+4. Select a **Chord mode**: **Modifier** or **Simultaneous**.
+5. Set the **Press window** (default 50 ms, range 1 to 1000 ms).
+6. Select a **Destination**.
+7. Confirm the sheet, then click **Save**.
 
-The sheet shows this hint: "The destination fires while all selected controls are pressed."
+The destination fires while all selected controls are pressed.
 
-To add or delete a chord with the command line, run `ojd profile edit PROFILE`, then add or change the entry in `chords` in the profile file. For the file format, see [Profile file reference](Profile-File-Reference.md).
+On the command line, run `ojd profile edit PROFILE` and change `chords`. See [Profile file reference](Profile-File-Reference.md).
 
 ### Add a Sequence
 
 1. Open the **Combinations** section.
-2. In **Sequences**, click **Add sequence**.
-3. Add at least two controls in the order that you press them.
-4. Set the **Completion window**. The range is 200 to 10000 ms.
+2. In **Sequences**, click **Add Sequence**.
+3. Add at least two controls in the order you press them.
+4. Set the **Completion window** (200 to 10000 ms).
 5. Select a **Destination**.
 6. Confirm the sheet, then click **Save**.
 
-To add or delete a sequence with the command line, run `ojd profile edit PROFILE`, then add or change the entry in `sequences` in the profile file. For the file format, see [Profile file reference](Profile-File-Reference.md).
+On the command line, change `sequences` with `ojd profile edit PROFILE`.
 
 ### Add a Layer
 
 1. Open the **Layers** section.
-2. Click **Add layer**.
+2. Click **Add Layer**.
 3. Enter a **Layer name** (1 to 40 characters).
-4. Select the **Activator**. The activator is a button or a D-pad direction.
+4. Select the **Activator**, a button or D-pad direction.
 5. Select the **Activation**: **Hold** or **Toggle**.
 6. Confirm the sheet, then click **Save**.
-7. In the layer, click **Add assignment** to add assignments that work while the layer is active.
+7. In the layer, click **Add Assignment** for assignments that work while it is active.
 
-**Hold** keeps the layer active while you hold the activator. **Toggle** switches the layer on or off each time you press the activator. The activator cannot also be an assignment in the profile.
+**Hold** keeps the layer active while you hold the activator. **Toggle** switches it on or off with each press. The activator cannot also be an assignment in the profile.
 
-To add, change, or delete a layer with the command line, run `ojd profile edit PROFILE`, then add or change the entry in `layers` in the profile file. For the file format, see [Profile file reference](Profile-File-Reference.md). A layer can also have its own **Motion tuning**. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
+On the command line, change `layers` with `ojd profile edit PROFILE`. For a layer's **Motion Tuning**, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
 
 ## Further Reading
 

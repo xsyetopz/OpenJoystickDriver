@@ -36,11 +36,12 @@
 
     /// The title and subtitle that Shortcuts shows for the entity.
     var displayRepresentation: DisplayRepresentation {
-      // A model entry shows only the model; a single controller also shows its own ID.
-      DisplayRepresentation(
-        title: "\(name)",
-        subtitle: isModelMatch ? "\(model)" : "\(model)  \(id)"
-      )
+      // A model entry and the controller it resolves to share a name, so the subtitle tells them
+      // apart.
+      let subtitle =
+        isModelMatch
+        ? Localization().string("ui.shortcuts.controller.anyOfModel", model) : "\(model)  \(id)"
+      return DisplayRepresentation(title: "\(name)", subtitle: "\(subtitle)")
     }
   }
 
@@ -69,7 +70,7 @@
     }
 
     /// Every controller that the service lists, offered as suggestions.
-    func suggestedEntities() async throws -> [ControllerEntity] {
+    func suggestedEntities() async -> [ControllerEntity] {
       await service.controllers().map(ControllerEntity.init)
     }
   }

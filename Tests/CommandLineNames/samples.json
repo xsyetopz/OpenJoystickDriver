@@ -17,6 +17,8 @@
     "XboxOneGIP": "xbox-one-gip",
     "W3C": "w3c",
     "read": "read",
+    "generate": "generate",
+    "lookup": "lookup",
     "raw-usb": "raw-usb"
   },
   "values": [
@@ -34,7 +36,6 @@
     "ValveSteamController",
     "ValveSteamTriton",
     "ValveSteamDeck",
-    "VendorFlydigi",
     "VendorPS3ThirdParty",
     "VendorGameSir",
     "VendorNVIDIAShield",

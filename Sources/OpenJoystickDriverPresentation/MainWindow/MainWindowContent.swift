@@ -59,6 +59,8 @@
     let activity: ActivityModel
     /// The Explain Error Code sheet's model.
     let errorCodeExplainer: ErrorCodeExplainerModel
+    /// The What's New sheet's model.
+    let whatsNew: WhatsNewModel
     /// The Library area's model.
     let libraryArea: LibraryViewModel
     /// The Access area's model.
@@ -83,10 +85,16 @@
     var profiles: ProfilesViewModel
     /// The models of every area's screen.
     let screens: MainWindowScreens
+    /// The Settings preferences, which hold the interface level.
+    @ObservedObject
+    var preferences: SettingsPreferencesModel
 
     /// The list half of the selected area, rebuilt when the area changes.
     var body: some View {
       list.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
+        .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+        .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
+        .environment(\.ojdPreferences, preferences)
     }
 
     /// The list half of the selected area.
@@ -97,7 +105,8 @@
         ControllersView(
           screen: screens.controllers,
           column: .list,
-          openInputTest: screens.openInputTest
+          openInputTest: screens.openInputTest,
+          openArea: navigation.showArea
         )
       case .profiles:
         ProfilesView(
@@ -127,25 +136,46 @@
     var profiles: ProfilesViewModel
     /// The models of every area's screen.
     let screens: MainWindowScreens
+    /// The Settings preferences, which hold the interface level.
+    @ObservedObject
+    var preferences: SettingsPreferencesModel
     /// Whether opening System Settings for the driver extension approval failed, which shows an
     /// alert.
     @State
     private var driverApprovalFailed = false
-
     /// The problem banner above the selected area, with the alerts of the main window.
     var body: some View {
-      VStack(spacing: 0) {
+      VStack(spacing: OJDSpacing.none) {
         MainWindowProblemBanner(
-          problems: MainWindowProblem.current(
-            permissions: runtime.permissionState,
-            status: runtime.statusState,
-            driver: runtime.systemExtensionSetupState,
-            liveUpdatesFallbackReason: runtime.liveUpdatesFallbackReason,
-            listenerFailure: runtime.listenerFailure
-          ),
+          problems: runtime.mainWindowProblems,
           perform: perform
         )
-        area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
+        if navigation.setupSteps.isShown {
+          SetupStepsView(
+            steps: openSetupSteps,
+            isRequesting: SetupSteps.isRequesting(
+              permissionState: runtime.permissionState,
+              postEventAccessState: runtime.postEventAccessState
+            ),
+            failure: SetupSteps.failure(
+              permissionState: runtime.permissionState,
+              postEventAccessState: runtime.postEventAccessState,
+              settingsOpenFailed: runtime.permissionSettingsOpenFailed
+            ),
+            perform: performSetupStep
+          ) {
+            navigation.dismissSetupSteps()
+          }
+        } else {
+          area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
+            .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+            .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
+            .environment(\.ojdPreferences, preferences)
+        }
+      }.onChange(of: openSetupSteps) { steps in
+        navigation.updateSetupSteps(loaded: runtime.loadState == .available, openSteps: steps.count)
+      }.onChange(of: runtime.loadState) { state in
+        navigation.updateSetupSteps(loaded: state == .available, openSteps: openSetupSteps.count)
       }.frame(
         maxWidth: .infinity,
         minHeight: 0,
@@ -160,24 +190,44 @@
       ).background(
         Color.clear.alert(isPresented: $driverApprovalFailed) {
           Alert(
-            title: Text(OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")),
+            title: Text(
+              OJDLocalized.string(
+                SystemSettingsMessage.openSettingsFailed.localizationKey()
+              )
+            ),
             dismissButton: .default(Text(OJDLocalized.string("action.ok")))
           )
         }
-      ).background(ErrorCodeExplainerSheetHost(model: screens.errorCodeExplainer)).alert(
-        isPresented: $navigation.isDiscardConfirmationPresented
-      ) {
-        Alert(
-          title: Text(OJDLocalized.string("ui.settings.advanced.discardTitle")),
-          message: Text(OJDLocalized.string("ui.settings.advanced.discardProfileMessage")),
-          primaryButton: .destructive(
-            Text(OJDLocalized.string("ui.settings.advanced.discardAction"))
-          ) {
-            navigation.discardPendingArea()
-          },
-          secondaryButton: .cancel { navigation.cancelPendingArea() }
-        )
-      }
+      ).background(
+        Color.clear.alert(isPresented: bluetoothFailurePresented) {
+          Alert(
+            title: Text(OJDLocalized.string("ui.extra.actionFailedTitle")),
+            message: Text(runtime.bluetoothRequestFailure ?? ""),
+            dismissButton: .default(Text(OJDLocalized.string("action.ok")))
+          )
+        }
+      ).background(ErrorCodeExplainerSheetHost(model: screens.errorCodeExplainer)).background(
+        WhatsNewSheetHost(model: screens.whatsNew)
+      ).background(
+        // An alert on this VStack would keep the areas inside it from presenting their own.
+        Color.clear.alert(isPresented: $navigation.isDiscardConfirmationPresented) {
+          Alert(
+            title: Text(OJDLocalized.string("ui.settings.advanced.discardTitle")),
+            message: Text(OJDLocalized.string("ui.settings.advanced.discardProfileMessage")),
+            primaryButton: .destructive(
+              Text(OJDLocalized.string("ui.settings.advanced.discardAction"))
+            ) {
+              navigation.discardPendingArea()
+            },
+            secondaryButton: .cancel { navigation.cancelPendingArea() }
+          )
+        }
+      )
+    }
+
+    /// The setup steps that are still open.
+    private var openSetupSteps: [SetupStep] {
+      SetupSteps.open(permissionState: runtime.permissionState, statusState: runtime.statusState)
     }
 
     /// The detail half of the selected area.
@@ -188,7 +238,8 @@
         ControllersView(
           screen: screens.controllers,
           column: .detail,
-          openInputTest: screens.openInputTest
+          openInputTest: screens.openInputTest,
+          openArea: navigation.showArea
         )
       case .profiles:
         ProfilesView(
@@ -209,6 +260,34 @@
       }
     }
 
+    /// Runs the fix that a setup step offers.
+    private func performSetupStep(_ step: SetupStep) {
+      runtime.permissionSettingsOpenFailed = false
+      switch step.kind {
+      case .permission(.inputRead):
+        PermissionAccessActions.requestControllerAccess(viewModel: runtime, requirement: .inputRead)
+      case .permission(.inputInject):
+        PermissionAccessActions.requestAccessibilityAccess(viewModel: runtime)
+      case .permission(.postEvent):
+        PermissionAccessActions.requestPostEventAccess(viewModel: runtime)
+      case .permission(.notification):
+        preconditionFailure("A notification setting is never a setup step")
+      case .bluetooth:
+        PermissionAccessActions.requestBluetoothAccess(
+          viewModel: runtime,
+          opensSettings: step.buttonKey != "action.request"
+        )
+      }
+    }
+
+    /// Whether the alert for a failed Bluetooth request shows; dismissing clears the failure.
+    private var bluetoothFailurePresented: Binding<Bool> {
+      Binding(
+        get: { runtime.bluetoothRequestFailure != nil },
+        set: { if !$0 { runtime.bluetoothRequestFailure = nil } }
+      )
+    }
+
     /// Runs the fix that a problem in the banner offers.
     private func perform(_ action: MainWindowProblemAction) {
       switch action {
@@ -216,7 +295,9 @@
       case .restartListener: Task { @MainActor in await runtime.restartListener() }
       case .openDriverApproval: driverApprovalFailed = !SystemExtensionApproval.openSystemSettings()
       case .repairDriver: Task { @MainActor in await runtime.repairSystemExtension() }
-      case .showAccess: navigation.requestArea(.access)
+      case .showAccess:
+        navigation.requestArea(.access)
+        PermissionAccessActions.requestAccess(viewModel: runtime)
       }
     }
 

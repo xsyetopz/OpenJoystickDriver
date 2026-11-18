@@ -8,14 +8,16 @@ import Testing
 @Suite(.serialized, .timeLimit(.minutes(2)), .removingTemporarySockets)
 struct LocalRPCBridgeTests {
   private static let controllerMethodNames: Set = [
-    "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState", "getPacketLog",
+    "getStatus", "requestRequiredAccess", "requestAccess", "requestBluetoothAccess",
+    "getControllerState", "getPacketLog",
     "getVirtualOutputState",
     "sendControllerOutput", "playControllerSpeaker", "stopControllerSpeaker",
     "previewPhysicalColor", "releasePhysicalColorPreview",
     "getVirtualDeviceDiagnostics", "getFrameTimings", "waitForServiceStatusChange",
     "sendTestNotification", "reportTestNotificationResult", "setVirtualHIDProfileOverride",
     "resetVirtualHIDProfileOverride", "setControllerServer", "setControllerTuning",
-    "openVirtualFeed", "exchangeVirtualFeed",
+    "recalibrateController",
+    "openVirtualFeed", "exchangeVirtualFeed", "waitForVirtualFeedFeedback",
     "closeVirtualFeed", "suspendController", "resumeController",
     "disconnectWirelessController", "resetSettings", "getSettings", "setSetting",
     "getAccessStatus", "setAccessEnabled", "grantAccess", "revokeAccess",
@@ -31,14 +33,14 @@ struct LocalRPCBridgeTests {
   ]
 
   @Test
-  func theServersFeedsKeepTheProductionIdleTimeout() async throws {
+  func serversFeedsKeepProductionIdleTimeout() async throws {
     try await withServer { server in
       #expect(server.virtualFeeds.idleTimeout == 2)
     }
   }
 
   @Test
-  func methodRawValuesAreTheWireNames() {
+  func methodRawValuesAreWireNames() {
     #expect(
       Set(ApplicationServiceRPCMethod.allCases.map(\.rawValue))
         == Self.controllerMethodNames.union(Self.remappingMethodNames)
@@ -62,7 +64,36 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func unknownMethodNameFailsWithTheUnknownMethodMessage() async throws {
+  func requestBluetoothAccessAsksControlAndGetStatusReportsItsState() async throws {
+    let requests = RequestCounter()
+    let control = BluetoothAccessControl(
+      state: { requests.hasRequest ? .granted : .notAsked },
+      request: {
+        requests.increment()
+        return .granted
+      }
+    )
+    try await withServer(bluetoothAccess: control) { server in
+      let before = try JSONDecoder().decode(
+        ApplicationServiceStatusPayload.self,
+        from: await server.getStatus()
+      )
+      #expect(before.bluetoothAccess == .notAsked)
+      #expect(!requests.hasRequest)
+      #expect(server.requestBluetoothAccess() == .granted)
+      #expect(requests.count == 1)
+    }
+  }
+
+  @Test
+  func serverWithoutBluetoothReportsItUnavailable() async throws {
+    try await withServer { server in
+      #expect(server.requestBluetoothAccess() == .unavailable)
+    }
+  }
+
+  @Test
+  func unknownMethodNameFailsWithUnknownMethodMessage() async throws {
     try await withServer { server in
       let response = await handle(server, method: "noSuchMethod", arguments: Data("{}".utf8))
 
@@ -72,7 +103,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func remappingFailureTravelsInTheStructuredErrorField() async throws {
+  func remappingFailureTravelsInStructuredErrorField() async throws {
     try await withServer { server in
       let arguments = try JSONEncoder().encode(
         ApplicationServiceRemappingProfileIDArguments(profileID: UUID())
@@ -86,7 +117,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func remappingFailureArrivesAtTheClientAsTheTypedError() async throws {
+  func remappingFailureArrivesAtClientAsTypedError() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -107,7 +138,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aStatusNotificationReachesAWaitingClient() async throws {
+  func statusNotificationReachesWaitingClient() async throws {
     let statusCenter = NotificationCenter()
     try await withServer(statusCenter: statusCenter) { server in
       let socketPath = unregisteredSocketPath()
@@ -131,7 +162,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func sendTestNotificationEndsWithTheAppsReport() async throws {
+  func sendTestNotificationEndsWithAppsReport() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -163,7 +194,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aClientThatClosesDuringAHeldWaitLeavesTheHeldCountAndMissesTheAnnouncement() async throws {
+  func clientThatClosesDuringHeldWaitLeavesHeldCountAndMissesAnnouncement() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -211,7 +242,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aClientThatClosesASendTestNotificationRequestWithdrawsIt() async throws {
+  func clientThatClosesSendTestNotificationRequestWithdrawsIt() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
       let rpcServer = LocalServiceRPCServer(
@@ -250,7 +281,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func frameTimingsDecodeTheLastSecondsAndTheEmptyRequest() async throws {
+  func frameTimingsDecodeLastSecondsAndEmptyRequest() async throws {
     try await withServer { server in
       for lastSeconds in [nil, 1, FrameTimingRecorder.windowSeconds] {
         let arguments = try JSONEncoder().encode(
@@ -274,7 +305,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func frameTimingsRefuseALastSecondsOutsideTheWindowAsInvalidRequest() async throws {
+  func frameTimingsRefuseLastSecondsOutsideWindowAsInvalidRequest() async throws {
     try await withServer { server in
       for lastSeconds in [-1, 0, FrameTimingRecorder.windowSeconds + 1] {
         let arguments = try JSONEncoder().encode(
@@ -294,7 +325,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aReportOfNoAnswerIsRefusedWithItsOwnText() async throws {
+  func reportOfNoAnswerIsRefusedWithItsOwnText() async throws {
     try await withServer { server in
       let arguments = try JSONEncoder().encode(
         TestNotificationReport(announcement: UUID(), outcome: .noAnswer)
@@ -315,7 +346,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aVirtualOutputStatusChangeAnnouncesOnceAfterTheLockIsReleased() async throws {
+  func virtualOutputStatusChangeAnnouncesOnceAfterLockIsReleased() async throws {
     try await withServer { server in
       let lockHeldDuringPost = LockedFlag()
       let observer = NotificationCenter.default.addObserver(
@@ -342,7 +373,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aRepeatedVirtualOutputStatusAnnouncesNothing() async throws {
+  func repeatedVirtualOutputStatusAnnouncesNothing() async throws {
     try await withServer { server in
       #expect(
         await Self.announcements(from: server) {
@@ -353,7 +384,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aProfileReloadAnnouncesFromTheRemappingCoordinator() async throws {
+  func profileReloadAnnouncesFromRemappingCoordinator() async throws {
     try await withServer { server in
       #expect(
         await Self.announcements(from: server.remappingRequests) {
@@ -364,7 +395,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func anOverrideResetAnnouncesFromTheServer() async throws {
+  func overrideResetAnnouncesFromServer() async throws {
     try await withServer { server in
       #expect(
         await Self.announcements(from: server) { _ = server.resetVirtualHIDProfileSettings() } == 1
@@ -393,7 +424,7 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
-  func aListenerRestartAfterStopBeginsRefusesAsStopping() async throws {
+  func listenerRestartAfterStopBeginsRefusesAsStopping() async throws {
     let socketPath = temporarySocketPath()
     try await withServer { server in
       let listener = LocalServiceRPCServer(
@@ -431,6 +462,7 @@ struct LocalRPCBridgeTests {
   /// announcements of other tests in the process cannot answer a wait of this one.
   private func withServer(
     statusCenter: NotificationCenter = NotificationCenter(),
+    bluetoothAccess: BluetoothAccessControl? = nil,
     _ body: (ApplicationServiceServer) async throws -> Void
   ) async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
@@ -467,7 +499,8 @@ struct LocalRPCBridgeTests {
       statusChanges: ServiceStatusChanges(
         center: statusCenter,
         workspaceCenter: NotificationCenter()
-      )
+      ),
+      bluetoothAccess: bluetoothAccess
     )
     try await body(server)
   }
@@ -485,4 +518,13 @@ private final class LockedFlag: @unchecked Sendable {
   private var flag = false
   var isSet: Bool { lock.withLock { flag } }
   func set() { lock.withLock { flag = true } }
+}
+
+/// Records the Bluetooth access requests that a test server received.
+private final class RequestCounter: @unchecked Sendable {
+  private let lock = NSLock()
+  private var requests: [Void] = []
+  var count: Int { lock.withLock { requests.count } }
+  var hasRequest: Bool { lock.withLock { !requests.isEmpty } }
+  func increment() { lock.withLock { requests.append(()) } }
 }

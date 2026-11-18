@@ -1,5 +1,3 @@
-"""Certificates embedded in provisioning profiles and Keychain code-signing identities."""
-
 from __future__ import annotations
 
 import hashlib
@@ -8,7 +6,6 @@ import subprocess
 
 
 def certificate_sha1_list(profile: dict) -> list[str]:
-    """SHA1 of every certificate in the profile's DeveloperCertificates, in profile order."""
     certificates = profile.get("DeveloperCertificates", [])
     for index, certificate in enumerate(certificates):
         if not isinstance(certificate, (bytes, bytearray)):
@@ -22,10 +19,6 @@ def certificate_sha1_list(profile: dict) -> list[str]:
 
 
 def keychain_identities(prefix: str) -> dict[str, str]:
-    """Valid code-signing identities named `<prefix>: ...`, as SHA1 to display name.
-
-    Fails when `security` cannot list identities.
-    """
     result = subprocess.run(
         ["security", "find-identity", "-v", "-p", "codesigning"],
         capture_output=True,
@@ -50,7 +43,6 @@ def keychain_identities(prefix: str) -> dict[str, str]:
 def shared_identity_sha1s(
     profile_sha1_lists: list[list[str]], identities: dict[str, str]
 ) -> list[str]:
-    """Identity SHA1s embedded in every profile, sorted for a deterministic choice."""
     return sorted(
         sha1
         for sha1 in identities

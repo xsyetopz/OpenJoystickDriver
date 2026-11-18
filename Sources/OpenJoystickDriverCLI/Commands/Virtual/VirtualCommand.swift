@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// The `ojd virtual` command group: shows, sets, resets and feeds the virtual gamepad personas, and
 /// exports their mappings or launches a program with them.
@@ -68,6 +68,9 @@ struct VirtualShowReport: Encodable, Equatable {
     let sdl: VirtualSDLReport?
     /// The W3C description of the live persona; absent with no persona.
     let w3c: VirtualW3CReport?
+    /// True when the controller has rumble motors and its live persona carries no rumble, so no
+    /// game can rumble it.
+    let gameRumbleUnavailable: Bool
 
     /// Creates the entry from the service's description of `device`.
     ///
@@ -87,6 +90,7 @@ struct VirtualShowReport: Encodable, Equatable {
       let mapping = try decision.selection?.profileID.gamepadMapping()
       sdl = mapping.map(VirtualSDLReport.init)
       w3c = mapping.map(VirtualW3CReport.init)
+      gameRumbleUnavailable = device.personaWithoutGameRumble != nil
     }
   }
 
@@ -164,21 +168,26 @@ struct VirtualShowCommand: AsyncParsableCommand {
       )
     }
     let idWidth = report.controllers.map(\.id.count).max() ?? 0
-    for controller in report.controllers {
-      let id = controller.id.padding(toLength: idWidth, withPad: " ", startingAt: 0)
+    for entry in report.controllers {
+      let id = entry.id.padding(toLength: idWidth, withPad: " ", startingAt: 0)
       let profile: String
-      if controller.unavailable {
+      if entry.unavailable {
         profile = CLILocalized.text("cli.virtual.show.unavailable")
-      } else if let live = controller.profile {
+      } else if let live = entry.profile {
         profile =
           "\(CommandLineName.kebab(live)) "
-          + "(\(controller.source.map { CommandLineName.kebab($0.rawValue) } ?? ""))"
+          + "(\(entry.source.map { CommandLineName.kebab($0.rawValue) } ?? ""))"
       } else {
         profile = CLILocalized.text("cli.virtual.show.none")
       }
-      CLIOutput.stdout("\(id)  \(controller.name)  \(profile)")
-      if let live = controller.profile, controller.sdl?.worksWithDefaultSDLHints == false {
+      CLIOutput.stdout("\(id)  \(entry.name)  \(profile)")
+      if let live = entry.profile, entry.sdl?.worksWithDefaultSDLHints == false {
         CLIOutput.stdout("\(id)  \(sdlHintsNote(live))")
+      }
+      if entry.gameRumbleUnavailable,
+        let live = entry.profile.flatMap({ VirtualHIDProfileID(rawValue: $0) })
+      {
+        CLIOutput.stdout("\(id)  \(noGameRumbleNote(live))")
       }
     }
     CLIOutput.stdout(
@@ -267,6 +276,11 @@ private func printChange(
         CommandLineName.kebab(report.source.rawValue)
       )
     )
+    if device.physicalOutputCapabilities.supportsRumble, let live = result.live,
+      !live.carriesRumble
+    {
+      CLIOutput.stdout(noGameRumbleNote(live))
+    }
   }
 }
 
@@ -305,17 +319,17 @@ struct VirtualSetCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let selector = controller
-      let profile = profile
-      let unit = unit
+      let chosenProfile = profile
+      let perUnit = unit
       let (device, result) = try await ServiceConnection.request(
         timeout: CLIContext.current.waitTimeout
       ) { client in
         let device = try await selector.resolve(with: client)
-        try requireUnit(unit, device)
+        try requireUnit(perUnit, device)
         let result = try await client.setVirtualHIDProfileOverride(
-          profile.rawValue,
+          chosenProfile.rawValue,
           for: .session(device.sessionToken),
-          unit: unit
+          unit: perUnit
         )
         return (device, result)
       }
@@ -413,15 +427,15 @@ struct VirtualResetCommand: AsyncParsableCommand {
       )
       return
     }
-    let unit = unit
+    let perUnit = unit
     let (device, result) = try await ServiceConnection.request(
       timeout: CLIContext.current.waitTimeout
     ) { client in
       let device = try await selector.resolve(with: client)
-      try requireUnit(unit, device)
+      try requireUnit(perUnit, device)
       let result = try await client.resetVirtualHIDProfileOverride(
         for: .session(device.sessionToken),
-        unit: unit
+        unit: perUnit
       )
       return (device, result)
     }

@@ -119,7 +119,7 @@ struct USBHIDAdmissionOrderTests {
   }
 
   @Test
-  func nativeControllerAcknowledgesItsUSBServiceOnceAndReleasesItWhenGone() async throws {
+  func nativeControllerAcknowledgesItsUSBServiceOnceAndReleasesItWhenGone() async {
     let provider = makeProvider()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),

@@ -23,7 +23,7 @@ struct ControllerReferenceResolutionTests {
   private var connected: [ConnectedController] { [first, second, other] }
 
   @Test
-  func aSessionTokenOrPortKeyResolvesToItsControllerAmongIdenticalModels() throws {
+  func sessionTokenOrPortKeyResolvesToItsControllerAmongIdenticalModels() throws {
     for controller in [first, second] {
       let session = ControllerReference.session(controller.sessionToken)
       #expect(try session.resolve(in: connected) == controller)
@@ -33,12 +33,12 @@ struct ControllerReferenceResolutionTests {
   }
 
   @Test
-  func aModelResolvesWhenOneConnectedControllerHasIt() throws {
+  func modelResolvesWhenOneConnectedControllerHasIt() throws {
     #expect(try ControllerReference.model(other.model).resolve(in: connected) == other)
   }
 
   @Test
-  func aModelSharedBySeveralControllersReportsEveryMatch() {
+  func modelSharedBySeveralControllersReportsEveryMatch() {
     let reference = ControllerReference.model(first.model)
     let ambiguous = ControllerReferenceError.ambiguous(
       reference,
@@ -49,7 +49,7 @@ struct ControllerReferenceResolutionTests {
   }
 
   @Test
-  func aReferenceToNoConnectedControllerIsNotFound() {
+  func referenceToNoConnectedControllerIsNotFound() {
     let references: [ControllerReference] = [
       .session(.fixture("gone")),
       .port(.fixture("gone")),

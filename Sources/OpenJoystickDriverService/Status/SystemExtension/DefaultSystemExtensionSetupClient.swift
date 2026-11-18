@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// Submits system-extension requests for the app's setup flow.
 ///

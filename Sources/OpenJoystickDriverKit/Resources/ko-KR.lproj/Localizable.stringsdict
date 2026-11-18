@@ -52,7 +52,7 @@
 			<string>할당 %d개</string>
 		</dict>
 	</dict>
-	<!-- Summary in the support diagnostics of how many virtual controller output devices OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The Korean plural forms are a first draft that a native speaker reviews. -->
+	<!-- Summary in the support diagnostics of how many virtual gamepads OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The Korean plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.debug.outputDevices</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -210,6 +210,56 @@
 			<string>lld</string>
 			<key>other</key>
 			<string>중지됨 · 패킷 %lld개</string>
+		</dict>
+	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d분</string>
+			<key>one</key>
+			<string>%d분</string>
+			<key>two</key>
+			<string>%d분</string>
+			<key>few</key>
+			<string>%d분</string>
+			<key>many</key>
+			<string>%d분</string>
+			<key>other</key>
+			<string>%d분</string>
+		</dict>
+	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Korean plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>변경된 숨겨진 설정 %d개</string>
+			<key>one</key>
+			<string>변경된 숨겨진 설정 %d개</string>
+			<key>two</key>
+			<string>변경된 숨겨진 설정 %d개</string>
+			<key>few</key>
+			<string>변경된 숨겨진 설정 %d개</string>
+			<key>many</key>
+			<string>변경된 숨겨진 설정 %d개</string>
+			<key>other</key>
+			<string>변경된 숨겨진 설정 %d개</string>
 		</dict>
 	</dict>
 </dict>

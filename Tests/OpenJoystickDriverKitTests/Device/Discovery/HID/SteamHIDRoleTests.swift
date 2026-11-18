@@ -7,13 +7,13 @@ import Testing
 
 /// Steam Controller HID roles.
 ///
-/// The interface layouts follow Linux `hid-steam.c` (hid-steam.c:1098–1108) through
+/// The interface layouts follow Linux `hid-steam.c` (hid-steam.c:1098-1108) through
 /// ``steamHIDInterface(number:gamepad:)``; they are not a macOS capture.
 struct SteamHIDRoleTests {
   static let dongleLocation: UInt32 = 0x0031_0000
 
   @Test
-  func dongleRunsOneRolePerSlotAndRoutesEachConnection() async throws {
+  func dongleRunsOneRolePerSlotAndRoutesEachConnection() async {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableFeatureReports()
     let recorder = HIDRoleEventRecorder()
@@ -32,7 +32,7 @@ struct SteamHIDRoleTests {
     await manager.scheduleHIDInitializationsForTest(connections)
     await Self.waitForInitializations(of: manager)
 
-    // Interface 0 has no feature report, so it is no role; slots 1–4 each run a pipeline.
+    // Interface 0 has no feature report, so it is no role; slots 1-4 each run a pipeline.
     let slots = (1...4).map { Self.slot($0) }
     #expect(Set(await manager.pipelines.keys) == Set(slots))
     #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.interfaceContractMismatch])
@@ -86,7 +86,7 @@ struct SteamHIDRoleTests {
   }
 
   @Test
-  func wiredControllerBindsOnlyInterfaceTwoAndHoldsItsSiblingsClaim() async throws {
+  func wiredControllerBindsOnlyInterfaceTwoAndHoldsItsSiblingsClaim() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -154,7 +154,7 @@ struct SteamHIDRoleTests {
   }
 
   @Test
-  func onlyTheSteamFamilyDeclaresRoles() throws {
+  func onlySteamFamilyDeclaresRoles() {
     let registry = ProtocolDriverRegistry()
     #expect(
       Set(registry.hidRoleModels)
@@ -167,7 +167,7 @@ struct SteamHIDRoleTests {
     )
     let slot = Self.dongle(interface: 1).physicalDevice
     #expect(registry.hidConnectionRole(of: slot) == .interface(1))
-    #expect(registry.hidConnectionRole(of: Self.dongle(interface: 0).physicalDevice) == .notARole)
+    #expect(registry.hidConnectionRole(of: Self.dongle(interface: 0).physicalDevice) == .notRole)
     // A gamepad interface whose USB interface number was not observed fails closed.
     let unnumbered = PhysicalDevice(
       vendorID: 0x28DE,
@@ -180,7 +180,7 @@ struct SteamHIDRoleTests {
         )
       ]
     )
-    #expect(registry.hidConnectionRole(of: unnumbered) == .notARole)
+    #expect(registry.hidConnectionRole(of: unnumbered) == .notRole)
     let gameSir = PhysicalDevice(
       vendorID: 0x3537,
       productID: 0x100B,
@@ -190,7 +190,7 @@ struct SteamHIDRoleTests {
   }
 
   /// SDL `HIDAPI_DriverSteamTriton_IsSupportedDevice`: dongle controllers live on interfaces
-  /// 2–5; the Bluetooth LE controller has no USB interface number.
+  /// 2-5; the Bluetooth LE controller has no USB interface number.
   @Test
   func tritonDongleSlotsAreInterfacesTwoToFiveAndBluetoothIsItsLocation() {
     let registry = ProtocolDriverRegistry()
@@ -201,7 +201,7 @@ struct SteamHIDRoleTests {
           productID: productID,
           interfaces: [steamHIDInterface(number: number)]
         )
-        let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notARole
+        let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notRole
         #expect(registry.hidConnectionRole(of: dongle) == expected)
       }
     }

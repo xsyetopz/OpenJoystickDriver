@@ -105,7 +105,7 @@ actor RemappingRoutingCore {
     await operationCheckpoint(.apply)
     _ = try requireOperationalPermit(permit)
     if case .unreconciled = profileTransactionState { return }
-    if suppressionBegan && !profileTransactionState.blocksOutput {
+    if suppressionBegan, !profileTransactionState.blocksOutput {
       for identifier in sortedIdentifiers {
         guard case .virtualGamepad = routes[identifier]?.selection else { continue }
         await notifyVirtualGamepadStop(identifier)
@@ -275,7 +275,7 @@ actor RemappingRoutingCore {
   func tick(
     at uptimeNanoseconds: UInt64,
     requiring proposedPermit: RemappingEmissionPermit?,
-    onPublished: @escaping @Sendable () -> Void = {}
+    onPublished _: @Sendable () -> Void = {}
   ) async throws {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()

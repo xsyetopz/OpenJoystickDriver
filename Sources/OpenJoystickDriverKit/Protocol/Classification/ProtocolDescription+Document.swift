@@ -63,8 +63,11 @@ extension ProtocolDescription {
         input = try container.decodeOptional(ControllerRecordDocument.Input.self, for: "input")
         tuning = try container.decodeOptional(ControllerRecordDocument.Tuning.self, for: "tuning")?
           .tuning
-        let variants = try container.decodeOptional([String: VariantDefaults].self, for: "variants")
-        guard variants?.isEmpty != true else {
+        let perVariant = try container.decodeOptional(
+          [String: VariantDefaults].self,
+          for: "variants"
+        )
+        guard perVariant?.isEmpty != true else {
           throw DecodingError.dataCorrupted(
             .init(
               codingPath: decoder.codingPath + [DocumentKey("variants")],
@@ -72,8 +75,8 @@ extension ProtocolDescription {
             )
           )
         }
-        variantTuning = variants?.compactMapValues(\.tuning) ?? [:]
-        variantRumble = variants?.compactMapValues(\.rumble) ?? [:]
+        variantTuning = perVariant?.compactMapValues(\.tuning) ?? [:]
+        variantRumble = perVariant?.compactMapValues(\.rumble) ?? [:]
         receiverPowerOff = try container.decodeOptional(
           ReceiverPowerOff.self,
           for: "receiverPowerOff"
@@ -100,9 +103,7 @@ extension ProtocolDescription {
             condition: condition
           )
         } catch let problem as ControllerRecordProblem {
-          throw DecodingError.dataCorrupted(
-            .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-          )
+          throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
         }
       }
     }
@@ -209,21 +210,19 @@ extension ProtocolDescription {
       /// count or key is rejected.
       init(from decoder: any Decoder) throws {
         var list = try decoder.unkeyedContainer()
-        var writes: [RecordStartupWrite] = []
+        var decoded: [RecordStartupWrite] = []
         while !list.isAtEnd {
           let container = try list.nestedContainer(keyedBy: DocumentKey.self)
           try container.rejectUnknown(allowed: ["report", "bytes", "transport"])
           do {
-            writes.append(
+            decoded.append(
               try ControllerRecordDocument.StartupWrite.hidWrite(container, condition: .always)
             )
           } catch let problem as ControllerRecordProblem {
-            throw DecodingError.dataCorrupted(
-              .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-            )
+            throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
           }
         }
-        guard (1...16).contains(writes.count) else {
+        guard (1...16).contains(decoded.count) else {
           throw DecodingError.dataCorrupted(
             .init(
               codingPath: decoder.codingPath,
@@ -231,7 +230,7 @@ extension ProtocolDescription {
             )
           )
         }
-        self.writes = writes
+        self.writes = decoded
       }
     }
 
@@ -249,7 +248,7 @@ extension ProtocolDescription {
         try container.rejectUnknown(allowed: ["action", "variants"])
         let actionName = try container.decode(String.self, for: "action")
         let names = try container.decodeOptional([String].self, for: "variants")
-        guard let action = InputStartAction(rawValue: actionName), names?.isEmpty != true,
+        guard let parsed = InputStartAction(rawValue: actionName), names?.isEmpty != true,
           Set(names ?? []).count == names?.count ?? 0
         else {
           throw DecodingError.dataCorrupted(
@@ -259,7 +258,7 @@ extension ProtocolDescription {
             )
           )
         }
-        self.action = action
+        self.action = parsed
         variants = names ?? []
       }
     }
@@ -306,6 +305,8 @@ extension ProtocolDescription {
     let kind: String?
     /// The name of the protocol family.
     let family: String
+    /// The name of a documented family as a person reads it; nil for a built-in family.
+    let displayName: String?
     /// The family's implemented variants.
     let variants: [PhysicalProtocolVariantID]
     /// Whether catalog records store the family's variant.
@@ -353,12 +354,12 @@ extension ProtocolDescription {
         let kindName = try container.decode(String.self, for: "rule")
         let names = try container.decodeOptional([String].self, for: "parameters")
         let variantNames = try container.decodeOptional([String].self, for: "variants")
-        let variants = (variantNames ?? []).compactMap(PhysicalProtocolVariantID.init(rawValue:))
-        guard let kind = ParameterRule.Kind(rawValue: kindName),
-          (kind == .none) == (names == nil), names?.isEmpty != true,
+        let known = (variantNames ?? []).compactMap(PhysicalProtocolVariantID.init(rawValue:))
+        guard let ruleKind = ParameterRule.Kind(rawValue: kindName),
+          (ruleKind == .none) == (names == nil), names?.isEmpty != true,
           Set(names ?? []).count == names?.count ?? 0,
-          variantNames?.isEmpty != true, variants.count == variantNames?.count ?? 0,
-          Set(variants).count == variants.count
+          variantNames?.isEmpty != true, known.count == variantNames?.count ?? 0,
+          Set(known).count == known.count
         else {
           throw DecodingError.dataCorrupted(
             .init(
@@ -369,7 +370,7 @@ extension ProtocolDescription {
             )
           )
         }
-        rule = ParameterRule(kind: kind, parameters: Set(names ?? []), variants: Set(variants))
+        rule = ParameterRule(kind: ruleKind, parameters: Set(names ?? []), variants: Set(known))
       }
     }
 
@@ -397,7 +398,8 @@ extension ProtocolDescription {
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
-        "apiVersion", "kind", "family", "variants", "storesVariant", "endpoints", "rawUSB",
+        "apiVersion", "kind", "family", "displayName", "variants", "storesVariant", "endpoints",
+        "rawUSB",
         "recordSections", "sessionKeys", "tuningKeys", "rawUSBTuningKeys", "controls",
         "recordCapabilities",
         "macOSOwnedOutput", "inputStart",
@@ -406,6 +408,15 @@ extension ProtocolDescription {
       apiVersion = try container.decodeOptional(String.self, for: "apiVersion")
       kind = try container.decodeOptional(String.self, for: "kind")
       family = try container.decode(String.self, for: "family")
+      displayName = try container.decodeOptional(String.self, for: "displayName")
+      guard displayName?.isEmpty != true else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath + [DocumentKey("displayName")],
+            debugDescription: "displayName must not be empty"
+          )
+        )
+      }
       let variantNames = try container.decodeOptional([String].self, for: "variants")
       let familyVariants = (variantNames ?? [])
         .compactMap(PhysicalProtocolVariantID.init(rawValue:))

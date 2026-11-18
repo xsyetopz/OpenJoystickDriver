@@ -16,6 +16,7 @@ extension RemappingProfileLibrary {
     let loaded = try loadIfNeeded()
     return RemappingProfileLibrarySnapshot(
       profiles: allProfiles(loaded).sorted(by: Self.profileOrder),
+      lastUsed: lastUsed(among: allProfiles(loaded)),
       activeProfiles: loaded.activeProfiles.map {
         RemappingActiveProfileSelection(
           model: $0.model,
@@ -26,10 +27,12 @@ extension RemappingProfileLibrary {
       issues: profileIssues.keys.sorted { $0.uuidString < $1.uuidString }.map { issueID in
         let kind: ApplicationServiceRemappingProfileIssue.Kind
         let code: ErrorCode
+        var staleFile: String?
         switch profileIssues[issueID] {
-        case .damagedProfile(_, _, let damageCode):
+        case .damagedProfile(let fileName, _, let damageCode):
           kind = .damagedProfile
           code = damageCode
+          if fileName.hasSuffix(".json") { staleFile = fileName }
         case .unusableLibrary, nil:
           kind = .unusableLibrary
           code = .corruptLibrary
@@ -38,9 +41,13 @@ extension RemappingProfileLibrary {
           id: issueID,
           kind: kind,
           code: code,
-          message: kind == .damagedProfile
-            ? "This saved profile could not be read and can be removed."
-            : "The list of active profiles could not be read and must be reset."
+          message: staleFile.map {
+            "\($0) was saved by an earlier version. Migrate it, or remove it."
+          }
+            ?? (kind == .damagedProfile
+              ? "This saved profile could not be read and can be removed."
+              : "The list of active profiles could not be read and must be reset."),
+          fileName: staleFile
         )
       }
     )
@@ -204,7 +211,7 @@ extension RemappingProfileLibrary {
     let model = RemappingProfileModel(profile.device)
     let units = Dictionary(uniqueKeysWithValues: known.map { ($0.id, $0.device.unit) })
     // Replace any active entry for this profile or for the same model, unit, and application
-    // scope. Multiple profiles per device are allowed — one per unit and application scope.
+    // scope, so a device can have one profile per unit and application scope.
     proposed.activeProfiles.removeAll {
       $0.profileID == profileID
         || ($0.model == model && ($0.applicationScope ?? .global) == profile.applicationScope
@@ -218,6 +225,7 @@ extension RemappingProfileLibrary {
       )
     )
     try replace(with: proposed)
+    recordUse(of: profile.id, among: known)
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [model])
   }
 
@@ -278,6 +286,23 @@ extension RemappingProfileLibrary {
     unit: String?,
     frontmostAppID: String?
   ) throws -> RemappingProfile? {
+    try activeProfileSelection(
+      vendorID: vendorID,
+      productID: productID,
+      unit: unit,
+      frontmostAppID: frontmostAppID
+    )?.profile
+  }
+
+  /// The profile that drives one controller and the frontmost app that selected it.
+  ///
+  /// The app is nil unless the profile won as the app-scoped match for `frontmostAppID`.
+  func activeProfileSelection(
+    vendorID: UInt16,
+    productID: UInt16,
+    unit: String?,
+    frontmostAppID: String?
+  ) throws -> (profile: RemappingProfile, appID: String?)? {
     let loaded = try loadIfNeeded()
     try requireUsableLibrary()
     let model = RemappingProfileModel(vendorID: vendorID, productID: productID)
@@ -297,16 +322,19 @@ extension RemappingProfileLibrary {
     // Prefer an app-scoped profile matching the frontmost app (last activated wins)
     if let appID = frontmostAppID,
       let profile = preferred(
-        candidates.filter { $0.scope == .application(appID: appID) }
+        candidates.filter {
+          if case .application(let appIDs)? = $0.scope { return appIDs.contains(appID) }
+          return false
+        }
       )
     {
-      return profile
+      return (profile, appID)
     }
 
     // Fall back to the last-activated global-scope profile
-    if let profile = preferred(candidates.filter { $0.scope == .global }) { return profile }
+    if let profile = preferred(candidates.filter { $0.scope == .global }) { return (profile, nil) }
 
     // Fall back to the last active profile for this controller
-    return preferred(candidates)
+    return preferred(candidates).map { ($0, nil) }
   }
 }

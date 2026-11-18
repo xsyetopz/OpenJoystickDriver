@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -24,7 +25,7 @@ struct ControllerRecordDraftTests {
   ]
 
   @Test
-  func mapsTheControlsTheDescriptorStates() throws {
+  func mapsControlsDescriptorStates() throws {
     let draft = try #require(
       ControllerRecordDraft(
         model: Self.unbundled,
@@ -35,9 +36,7 @@ struct ControllerRecordDraftTests {
     )
     #expect(draft.operation == .add && draft.family == .hidReportLayout)
     #expect(draft.reportID == 1 && draft.reportLength == 6)
-    let document = try #require(
-      JSONSerialization.jsonObject(with: draft.document) as? [String: Any]
-    )
+    let document = try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
     let layouts = try #require(
       (document["input"] as? [String: Any])?["layouts"] as? [[String: Any]]
     )
@@ -66,7 +65,7 @@ struct ControllerRecordDraftTests {
 
   /// Only reports with the chosen ID and at least the chosen length count.
   @Test
-  func reportsTheBytesThatChanged() throws {
+  func reportsBytesThatChanged() throws {
     let draft = try #require(
       ControllerRecordDraft(
         model: Self.unbundled,
@@ -85,7 +84,7 @@ struct ControllerRecordDraftTests {
   }
 
   @Test
-  func patchesABundledModel() throws {
+  func patchesBundledModel() throws {
     let bundled = try #require(
       ControllerRecordSet.bundled.records.values.sorted { $0.model < $1.model }.first {
         $0.family == "HIDDescriptor"
@@ -107,7 +106,7 @@ struct ControllerRecordDraftTests {
 
   /// Without a usable descriptor, a new model gets `HIDDescriptor` and the common report length.
   @Test(arguments: [nil, [0x05, 0x01, 0x09, 0x05, 0xA1, 0x01, 0xC0]] as [[UInt8]?])
-  func fallsBackToTheDescriptorFamily(descriptor: [UInt8]?) throws {
+  func fallsBackToDescriptorFamily(descriptor: [UInt8]?) throws {
     let reports: [[UInt8]] = [[0, 1, 2], [0, 1, 3], [0, 1, 2], [7]]
     let draft = try #require(
       ControllerRecordDraft(
@@ -131,10 +130,9 @@ struct ControllerRecordDraftTests {
     )
   }
 
-  /// The draft is in the record file format: the header members in file order, then the other
-  /// members sorted, and every nested object sorted, since only the top level has a guide.
+  /// The draft is a canonical property list: reading it and writing it again gives its bytes.
   @Test
-  func theDraftIsInTheRecordFileFormat() throws {
+  func draftIsInRecordFileFormat() throws {
     let draft = try #require(
       ControllerRecordDraft(
         model: Self.unbundled,
@@ -143,23 +141,12 @@ struct ControllerRecordDraftTests {
         reports: Self.reports
       )
     )
-    let text = draft.text
-    #expect(try OrderedJSON.parse(draft.document).formatted() == text)
-    guard case .object(let members) = try OrderedJSON.parse(draft.document) else {
-      Issue.record("the draft is not an object")
-      return
-    }
+    let document = try OrderedJSON(document: draft.document, file: "draft")
+    #expect(try document.plistData() == draft.document)
+    let tree = try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
     #expect(
-      members.map(\.key) == ["apiVersion", "kind", "vendorID", "productID", "modes", "input"]
+      Set(tree.keys) == ["apiVersion", "kind", "vendorID", "productID", "modes", "input"]
     )
-    #expect(text.hasPrefix("{\n  \"apiVersion\": \"\(OpenJoystickDriverAPI.version)\",\n"))
-    #expect(text.contains("\n  \"vendorID\": 4660,\n  \"productID\": 22136,\n"))
-    #expect(
-      text.contains(
-        "\"report\": {\n          \"id\": 1,\n          \"length\": {\n"
-          + "            \"atLeast\": 6\n          }\n        }"
-      )
-    )
-    #expect(text.contains("{\n      \"id\": \"default\",\n      \"protocol\": {\n"))
+    #expect(tree["vendorID"] as? Int == 4660 && tree["productID"] as? Int == 22136)
   }
 }

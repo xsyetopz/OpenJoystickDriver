@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import Foundation
   import OpenJoystickDriverKit
@@ -62,6 +63,9 @@
     @Published
     private(set) var selectedDevice: ApplicationServiceDeviceDescription?
 
+    /// Why the last export of the packet capture failed, or nil.
+    @Published
+    private(set) var exportError: String?
     /// The latest input of the selected controller.
     @Published
     private(set) var latestInput: ControllerState?
@@ -119,6 +123,11 @@
       self.sleep = sleep
     }
 
+    /// Why the controller pop-up cannot be used, or nil while it has an option.
+    var controllerPickerUnavailableReason: String? {
+      devices.isEmpty ? OJDLocalized.string("ui.developer.noControllers") : nil
+    }
+
     /// Whether a capture is starting or running.
     var isCapturing: Bool {
       if case .capturing = captureState { return true }
@@ -130,7 +139,7 @@
     /// when none is selected.
     var defaultExportFilename: String {
       let identity =
-        selectedDevice.map { String(format: "%04X-%04X", $0.vendorID, $0.productID) }
+        selectedDevice.map { unsafe String(format: "%04X-%04X", $0.vendorID, $0.productID) }
         ?? "controller"
       return "OpenJoystickDriver-packets-\(identity).json"
     }
@@ -249,7 +258,8 @@
       return try encoder.encode(packets)
     }
 
-    /// Asks for a destination and writes the captured packets there; a failed write shows an alert.
+    /// Asks for a destination and writes the captured packets there; a failed write shows in
+    /// ``exportError``, beside the Export button.
     func exportPacketCapture() {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string(
@@ -259,10 +269,17 @@
       panel.canCreateDirectories = true
       panel.begin { [weak self] response in
         guard response == .OK, let url = panel.url, let self else { return }
-        do { try self.encodedPacketLog().write(to: url, options: .atomic) } catch {
-          NSAlert(error: error).runModal()
-        }
+        writePacketCapture(to: url)
       }
+    }
+
+    /// Writes the captured packets to `url` and sets ``exportError`` to the reason a write fails,
+    /// or to nil when it succeeds.
+    func writePacketCapture(to url: URL) {
+      do {
+        try encodedPacketLog().write(to: url, options: .atomic)
+        exportError = nil
+      } catch { exportError = RuntimePresentation.userFacingError(error) }
     }
 
     /// Copies the captured packets to the general pasteboard as aligned text rows.
@@ -293,7 +310,7 @@
         withPad: " ",
         startingAt: 0
       )
-      return String(
+      return unsafe String(
         format: "+%7.3fs  %@  %5d  %@",
         packet.timestamp - firstTimestamp,
         direction,
@@ -361,9 +378,9 @@
       predecessor?.cancel()
       let task = Task { [weak self, predecessor] in
         if let predecessor { await predecessor.value }
-        guard let self, self.operationIsCurrent(generation) else { return }
+        guard let self, operationIsCurrent(generation) else { return }
         await operation(self, generation)
-        if self.operationGeneration == generation { self.operationTask = nil }
+        if operationGeneration == generation { operationTask = nil }
       }
       operationTask = task
       return task
@@ -384,8 +401,8 @@
     /// ``observedExtraInputs``.
     private func updateObservedExtraInputs(from state: ControllerState?) {
       guard let state else { return }
-      // Core face/shoulder/stick/dpad set only. Share, Mute, touchpad, and future paddles
-      // must surface here so packet-mapped extras are visible in Developer Tools.
+      // Share, Mute, touchpad and paddle controls fall outside the core set, so they show here
+      // as packet-mapped extras.
       let observed = state.pressed.subtracting(InputTestButtonPresentation.coreDiagnosticControls)
       let extras = Set(observedExtraInputs).union(observed)
       observedExtraInputs = Control.allCases.filter(extras.contains)

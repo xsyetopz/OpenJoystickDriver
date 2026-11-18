@@ -78,9 +78,8 @@ struct DestinationOption: Hashable {
   /// Open application, open URL, run Shortcut, type text and speak carry a value, so each is listed
   /// once with a starting value that the destination fields change.
   static let all: [Self] = {
-    // Keep the ordinary keyboard destination first so source changes can fall back to a useful,
-    // conventional choice instead of an arbitrary enum ordering.  Modifier combinations are
-    // limited to arrow and function keys; capture can still preserve any custom destination.
+    // Space comes first so a source change falls back to a familiar choice instead of enum order.
+    // Modifier combinations cover only arrow and function keys; capture keeps other destinations.
     let keyboardKeys =
       [RemappingKeyboardKey.space] + RemappingKeyboardKey.allCases.filter { $0 != .space }
     let plainKeyboard = keyboardKeys.map { key in
@@ -107,10 +106,10 @@ struct DestinationOption: Hashable {
       )
     }
     let mouse = RemappingMouseButton.allCases.map { button in
-      let destination = RemappingDestination.mouseButton(button)
+      let target = RemappingDestination.mouseButton(button)
       return Self(
-        destination: destination,
-        title: RuntimePresentation.destinationLabel(destination),
+        destination: target,
+        title: RuntimePresentation.destinationLabel(target),
         isSupported: true
       )
     }
@@ -247,7 +246,35 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         turbo: binding.turbo,
         longHold: binding.longHold,
         multiTap: binding.multiTap,
-        additionalActions: actions
+        additionalActions: actions,
+        remark: binding.remark
+      )
+    }
+    if let layerID {
+      return try replacingLayerBinding(layerID: layerID, bindingID: bindingID, transform: transform)
+    }
+    return try replacingBinding(bindingID, transform)
+  }
+
+  /// Returns the draft with the remark of an assignment set, in the layer when `layerID` is
+  /// given, or cleared when `remark` is nil.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing or the result
+  ///   breaks a profile rule.
+  func settingRemark(_ remark: String?, for bindingID: UUID, layerID: UUID? = nil) throws -> Self {
+    let transform: (RemappingBinding) -> RemappingBinding = { binding in
+      RemappingBinding(
+        id: binding.id,
+        source: binding.source,
+        destination: binding.destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
+        axisTuning: binding.axisTuning,
+        turbo: binding.turbo,
+        longHold: binding.longHold,
+        multiTap: binding.multiTap,
+        additionalActions: binding.additionalActions,
+        remark: remark
       )
     }
     if let layerID {

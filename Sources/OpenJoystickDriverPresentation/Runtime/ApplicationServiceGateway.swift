@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// The service status, permission and controller input requests of the runtime.
 protocol RuntimeStatusGateway: Sendable {
@@ -17,6 +17,8 @@ protocol RuntimeStatusGateway: Sendable {
   func requestPermission(
     _ requirement: PermissionManager.Requirement
   ) async throws -> PermissionManager.Snapshot
+  /// Asks macOS for Bluetooth access and returns its state.
+  func requestBluetoothAccess() async throws -> BluetoothAccessState
   /// Returns the latest input state of the controller, or nil when the service has none.
   func controllerState(for selector: ControllerReference) async throws -> ControllerState?
 }
@@ -25,6 +27,11 @@ protocol RuntimeStatusGateway: Sendable {
 protocol ControllerDiagnosticsGateway: Sendable {
   /// Returns the latest input state of the controller, or nil when the service has none.
   func controllerState(for selector: ControllerReference) async throws -> ControllerState?
+  /// Returns the values the controller's virtual gamepad last reported, after stick transfer, dead
+  /// zone and remapping, or nil when no virtual gamepad publishes the controller.
+  func virtualOutputState(
+    for selector: ControllerReference
+  ) async throws -> ApplicationServiceVirtualOutputState?
   /// Returns the packet log of the controller.
   func packetLog(for selector: ControllerReference) async throws -> [PacketLogEntry]
 }
@@ -129,9 +136,18 @@ protocol VirtualOutputGateway: Sendable {
   ) async throws -> WirelessControllerDisconnectResult
 }
 
+/// The recalibration request of the service.
+protocol ControllerRecalibrationGateway: Sendable {
+  /// Runs a recalibration step on the controller, or resets its stored calibration.
+  func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult
+}
+
 /// Every request of the service that the app makes.
 protocol ApplicationServiceGateway: RuntimeStatusGateway, ControllerDiagnosticsGateway,
-  RemappingGateway, VirtualOutputGateway
+  RemappingGateway, VirtualOutputGateway, ControllerRecalibrationGateway
 {}
 
 /// Why a gateway request failed.
@@ -160,6 +176,23 @@ package actor ApplicationServiceClientGateway: ApplicationServiceGateway {
   /// Creates the gateway on a client.
   package init(client: ApplicationServiceClient = ApplicationServiceClient()) {
     self.client = client
+  }
+}
+
+extension ApplicationServiceClientGateway: ControllerRecalibrationGateway {
+  /// Runs a recalibration step on a controller, or resets its stored calibration.
+  ///
+  /// - Parameters:
+  ///   - controller: The controller.
+  ///   - action: The step to run, or the reset.
+  /// - Returns: What the service stored or cleared, or why it stored nothing.
+  /// - Throws: The error of the request.
+  func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult {
+    await ensureConnection()
+    return try await client.recalibrateController(controller, action: action)
   }
 }
 

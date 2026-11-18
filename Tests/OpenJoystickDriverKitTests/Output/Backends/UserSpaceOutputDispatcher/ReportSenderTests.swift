@@ -32,7 +32,7 @@ private final class OrderedReportBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   private let lock = NSLock()
   private var reports: [[UInt8]] = []
@@ -78,11 +78,11 @@ private final class CancellableReportBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   let state = CancellableSendState()
 
-  func send(_ report: [UInt8]) async throws {
+  func send(_: [UInt8]) async throws {
     await state.markEntered()
     try await Task.sleep(nanoseconds: .max)
   }
@@ -118,13 +118,13 @@ private final class NonCooperativeReportBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   private let lock = NSLock()
   let gate = NonCooperativeSendGate()
   private var closes = 0
 
-  func send(_ report: [UInt8]) async { await gate.wait() }
+  func send(_: [UInt8]) async { await gate.wait() }
   func close() { lock.withLock { closes += 1 } }
   func closeCount() -> Int { lock.withLock { closes } }
 }
@@ -134,13 +134,13 @@ private final class SlowTeardownBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   let gate = ReportSendGate()
   private let lock = NSLock()
   private var closes = 0
 
-  func send(_ report: [UInt8]) async { await Task.yield() }
+  func send(_: [UInt8]) async { await Task.yield() }
   func close() { lock.withLock { closes += 1 } }
   func waitUntilClosed() async { await gate.wait() }
   func closeCount() -> Int { lock.withLock { closes } }
@@ -237,7 +237,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func slowConsumerKeepsTheQueueBoundedAndDeliversTheNewestFrame() async throws {
+  func slowConsumerKeepsQueueBoundedAndDeliversNewestFrame() async throws {
     let capacity = 4
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
@@ -269,7 +269,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func fullQueueNeverEvictsAHostReplyAndFailsItWhenNoFrameCanYield() async throws {
+  func fullQueueNeverEvictsHostReplyAndFailsItWhenNoFrameCanYield() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
     let sender = UserSpaceReportSender(queueCapacity: 2)
@@ -301,7 +301,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func suppressionBetweenReportsSkipsTheRemainingReportAndCanResume() async throws {
+  func suppressionBetweenReportsSkipsRemainingReportAndCanResume() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
     let sender = UserSpaceReportSender()
@@ -384,7 +384,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func closeCancelsAStalledCurrentSend() async {
+  func closeCancelsStalledCurrentSend() async {
     let backend = CancellableReportBackend()
     let sender = UserSpaceReportSender()
     sender.attach(backend)
@@ -408,7 +408,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func nativeSendThatNeverFinishesTimesOutAtTheDeadline() async {
+  func nativeSendThatNeverFinishesTimesOutAtDeadline() async {
     let backend = NonCooperativeReportBackend()
     let deadline: UInt64 = 50_000_000
     let timer = ManualDeadlineTimer()
@@ -434,7 +434,7 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func closeCompletesOnlyAfterTheNativeDeviceHasBeenTornDown() async {
+  func closeCompletesOnlyAfterNativeDeviceHasBeenTornDown() async {
     let backend = SlowTeardownBackend()
     let sender = UserSpaceReportSender()
     sender.attach(backend)

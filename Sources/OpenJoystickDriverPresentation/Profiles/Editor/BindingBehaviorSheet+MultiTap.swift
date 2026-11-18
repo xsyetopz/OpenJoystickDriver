@@ -8,7 +8,7 @@
     /// The tap-count entries, the button that adds one, and the delay they add to the base
     /// destination.
     var multiTapSection: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         HStack {
           Text(OJDLocalized.string("ui.profiles.multiTap")).font(.subheadline.weight(.semibold))
           Spacer()
@@ -17,7 +17,7 @@
               to: multiTapEntries,
               destination: .keyboard(key: .space, modifiers: [])
             )
-          }.disabled(
+          }.help(OJDLocalized.string("ui.profiles.addMultiTapHelp")).disabled(
             !supportsActivation || turboEnabled || behavior != .hold
               || MultiTapEntries.unusedCounts(in: multiTapEntries).isEmpty
           )
@@ -29,7 +29,7 @@
           Text(
             OJDLocalized.formatted(
               "ui.profiles.tapDelay",
-              String(format: "%.0f ms", multiTapEntries.longestWindowMs)
+              unsafe String(format: "%.0f ms", multiTapEntries.longestWindowMs)
             )
           ).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
@@ -46,7 +46,7 @@
           in: multiTapEntries
         )
       }
-      return VStack(alignment: .leading, spacing: 8) {
+      return VStack(alignment: .leading, spacing: OJDSpacing.small) {
         HStack {
           Picker(
             OJDLocalized.string("ui.profiles.tapCount"),
@@ -67,13 +67,14 @@
               (MultiTapEntries.unusedCounts(in: multiTapEntries) + [count]).sorted(),
               id: \.self
             ) { Text("\($0)").tag($0) }
-          }
+          }.help(OJDLocalized.string("ui.profiles.tapCountHelp"))
           Button(OJDLocalized.string("action.remove")) {
             multiTapEntries = MultiTapEntries.removing(count: count, from: multiTapEntries)
-          }
+          }.help(OJDLocalized.string("ui.profiles.removeMultiTapHelp"))
         }
         valueSlider(
           title: OJDLocalized.string("ui.profiles.tapWindow"),
+          help: OJDLocalized.string("ui.profiles.tapWindowHelp"),
           value: Binding(
             get: { entry.windowMs },
             set: {

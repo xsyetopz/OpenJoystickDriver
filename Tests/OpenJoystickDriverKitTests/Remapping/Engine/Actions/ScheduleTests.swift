@@ -28,7 +28,7 @@ struct RemappingScheduleTests {
   }
 
   @Test
-  func continuousAndMultipleTurboDeadlinesChooseTheEarliestWork() async throws {
+  func continuousAndMultipleTurboDeadlinesChooseEarliestWork() async throws {
     let engine = RemappingEventEngine(sink: RemappingTestSink())
     let currentProfile = profile(bindings: [
       turboBinding(source: .button(.south), key: .a, rate: 10, duty: 0.5),

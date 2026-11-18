@@ -25,12 +25,12 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     numericProperties: [String: UInt64],
     depth: Int?
   ) throws -> [PassiveUSBRegistryNode] {
-    let matching = IOServiceMatching(className)
+    let matching = unsafe IOServiceMatching(className)
     for (key, rawValue) in numericProperties {
       var value = Int64(bitPattern: rawValue)
-      if let number = CFNumberCreate(kCFAllocatorDefault, .sInt64Type, &value) {
+      if let number = unsafe CFNumberCreate(kCFAllocatorDefault, .sInt64Type, &value) {
         let cfKey = key as CFString
-        CFDictionarySetValue(
+        unsafe CFDictionarySetValue(
           matching,
           Unmanaged.passUnretained(cfKey).toOpaque(),
           Unmanaged.passUnretained(number).toOpaque()
@@ -38,7 +38,7 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
       }
     }
     var iterator: io_iterator_t = 0
-    let result = IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator)
+    let result = unsafe IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator)
     guard result == kIOReturnSuccess else {
       throw PassiveUSBDescriptorProbeError.matchingFailed(result)
     }
@@ -76,8 +76,8 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     for key in numericKeys {
       if let value = property(service, key: key), CFGetTypeID(value) == CFNumberGetTypeID() {
         var raw: Int64 = 0
-        let number = unsafeDowncast(value, to: CFNumber.self)
-        if CFNumberGetValue(number, .sInt64Type, &raw) {
+        let number = unsafe unsafeDowncast(value, to: CFNumber.self)
+        if unsafe CFNumberGetValue(number, .sInt64Type, &raw) {
           properties[key] = .unsignedInteger(UInt64(bitPattern: raw))
         }
       }
@@ -91,7 +91,7 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     var children: [PassiveUSBRegistryNode] = []
     if depth.map({ $0 > 0 }) ?? true {
       var iterator: io_iterator_t = 0
-      let result = IORegistryEntryGetChildIterator(service, kIOServicePlane, &iterator)
+      let result = unsafe IORegistryEntryGetChildIterator(service, kIOServicePlane, &iterator)
       guard result == kIOReturnSuccess else {
         throw PassiveUSBDescriptorProbeError.matchingFailed(result)
       }
@@ -115,14 +115,16 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
   /// Returns the registry entry ID of `service`, or nil when IOKit cannot give one.
   private func registryEntryID(_ service: io_service_t) -> UInt64? {
     var value: UInt64 = 0
-    return IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess ? value : nil
+    return unsafe IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess
+      ? value : nil
   }
 
   /// Returns the registry path of `service` in the service plane, or an empty string when IOKit
   /// cannot give one.
   private func registryPath(_ service: io_service_t) -> String {
     var buffer = [CChar](repeating: 0, count: 4_096)
-    guard IORegistryEntryGetPath(service, kIOServicePlane, &buffer) == kIOReturnSuccess else {
+    guard unsafe IORegistryEntryGetPath(service, kIOServicePlane, &buffer) == kIOReturnSuccess
+    else {
       return ""
     }
     let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
@@ -131,7 +133,7 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
 
   /// Reads the registry property `key` of `service`.
   private func property(_ service: io_service_t, key: String) -> AnyObject? {
-    IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
+    unsafe IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
       .takeRetainedValue()
   }
 
@@ -150,7 +152,9 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
   /// Returns the class name of `service`, `IORegistryEntry` when IOKit cannot give one.
   private func registryClass(_ service: io_service_t) -> String {
     var buffer = [CChar](repeating: 0, count: 128)
-    guard IOObjectGetClass(service, &buffer) == kIOReturnSuccess else { return "IORegistryEntry" }
+    guard unsafe IOObjectGetClass(service, &buffer) == kIOReturnSuccess else {
+      return "IORegistryEntry"
+    }
     let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
     return String(bytes: bytes, encoding: .utf8) ?? "IORegistryEntry"
   }

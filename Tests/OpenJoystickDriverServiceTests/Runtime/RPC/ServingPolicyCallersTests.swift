@@ -10,7 +10,7 @@ struct ServingPolicyCallersTests {
   /// The service reports why nothing publishes from the route the policy decided, and publishes
   /// for exactly the routes that publish.
   @Test(arguments: ServingFixture.all)
-  func theServiceReportsTheRouteThePolicyDecided(_ fixture: ServingFixture) {
+  func serviceReportsRoutePolicyDecided(_ fixture: ServingFixture) {
     let route = ServingPolicy.route(
       for: fixture.device,
       outputEnabled: fixture.outputEnabled,
@@ -32,6 +32,7 @@ struct ServingPolicyCallersTests {
       "native HID": .nativeHIDPassThrough,
       "native claimed by OJD": nil,
       "seized HID": nil,
+      "native pad GameController leaves unlisted": nil,
       "seized HID with override": nil,
       "raw USB claimed by OJD": nil,
       "extension owned": nil,
@@ -40,7 +41,7 @@ struct ServingPolicyCallersTests {
     ]
 
   @Test(arguments: ServingFixture.all)
-  func theServiceNamesTheReasonEachRouteGives(_ fixture: ServingFixture) throws {
+  func serviceNamesReasonEachRouteGives(_ fixture: ServingFixture) throws {
     let expected = try #require(Self.expectedReasons[fixture.name], "\(fixture.name)")
     let reason = ApplicationServiceServer.notPublishedReason(
       of: fixture.route,
@@ -50,7 +51,7 @@ struct ServingPolicyCallersTests {
   }
 
   @Test
-  func everyFixtureHasAnExpectedReason() {
+  func everyFixtureHasExpectedReason() {
     #expect(Set(ServingFixture.all.map(\.name)) == Set(Self.expectedReasons.keys))
   }
 
@@ -85,7 +86,7 @@ struct ServingPolicyCallersTests {
     outputEnabled: Bool,
     _ body: (ProfileOverrideServerFixture) async throws -> Void
   ) async throws {
-    let server = try await VirtualOutputTests().profileOverrideServer(
+    let server = await VirtualOutputTests().profileOverrideServer(
       identifiers,
       outputEnabled: outputEnabled
     )
@@ -98,7 +99,7 @@ struct ServingPolicyCallersTests {
 
   @MainActor
   @Test
-  func theServiceReportsTheReasonTheSessionAndTheProfileGive() async throws {
+  func serviceReportsReasonSessionAndProfileGive() async throws {
     let published = LogicalControllerID(vendorID: 0x3537, productID: 0x100B)
     try await Self.withServer([published], outputEnabled: true) { server in
       // A controller the dispatcher has not published, so the service decides the reason itself.
@@ -157,7 +158,7 @@ struct ServingPolicyCallersTests {
   /// `virtual show` report and claim check, and the GUI's persona and ownership picker.
   @MainActor
   @Test(arguments: ServingFixture.all)
-  func theServiceDescriptionTheWatchStreamServesTheCLIAndTheGUIAnswerWhatThePolicyDecided(
+  func serviceDescriptionWatchStreamServesCLIAndGUIAnswerWhatPolicyDecided(
     _ fixture: ServingFixture
   ) async throws {
     let id = LogicalControllerID(vendorID: 0x3537, productID: 0x100B)

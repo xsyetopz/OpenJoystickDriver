@@ -52,7 +52,7 @@
 			<string>%d назначений</string>
 		</dict>
 	</dict>
-	<!-- Summary in the support diagnostics of how many virtual controller output devices OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The Russian plural forms are a first draft that a native speaker reviews. -->
+	<!-- Summary in the support diagnostics of how many virtual gamepads OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The Russian plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.debug.outputDevices</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -264,6 +264,56 @@
 			<string>Остановлено · %lld пакетов</string>
 			<key>other</key>
 			<string>Остановлено · %lld пакета</string>
+		</dict>
+	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d минут</string>
+			<key>one</key>
+			<string>%d минута</string>
+			<key>two</key>
+			<string>%d минуты</string>
+			<key>few</key>
+			<string>%d минуты</string>
+			<key>many</key>
+			<string>%d минут</string>
+			<key>other</key>
+			<string>%d минут</string>
+		</dict>
+	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Russian plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Изменено %d скрытого параметра</string>
+			<key>one</key>
+			<string>Изменён %d скрытый параметр</string>
+			<key>two</key>
+			<string>Изменено %d скрытого параметра</string>
+			<key>few</key>
+			<string>Изменено %d скрытых параметра</string>
+			<key>many</key>
+			<string>Изменено %d скрытых параметров</string>
+			<key>other</key>
+			<string>Изменено %d скрытого параметра</string>
 		</dict>
 	</dict>
 </dict>

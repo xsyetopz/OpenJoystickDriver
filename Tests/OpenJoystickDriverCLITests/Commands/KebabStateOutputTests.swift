@@ -30,7 +30,7 @@ struct KebabStateOutputTests {
   }
 
   @Test
-  func theUnboundReasonIsKebabCaseInPlainAndHumanOutput() async throws {
+  func unboundReasonIsKebabCaseInPlainAndHumanOutput() async throws {
     let unbound = ApplicationServiceUnboundDevice(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -55,7 +55,33 @@ struct KebabStateOutputTests {
   }
 
   @Test
-  func aDeviceHeldByAnotherProgramIsExplainedInHumanOutputOnly() async throws {
+  func unboundDeviceNameInJSONOnlyWhenObserved() async throws {
+    func device(_ productID: UInt16, name: String?) -> ApplicationServiceUnboundDevice {
+      ApplicationServiceUnboundDevice(
+        vendorID: 0x2DC8,
+        productID: productID,
+        name: name,
+        connection: "USB",
+        accessBackend: .rawUSB,
+        reason: .deviceInUse,
+        rejectedCandidates: [],
+        interfaces: []
+      )
+    }
+    let service = try FakeService(
+      devices: [],
+      unboundDevices: [
+        device(0x310A, name: "8BitDo Ultimate 2C Wireless Controller"), device(0x301C, name: nil),
+      ]
+    )
+    let json = await runStatus(service, ["--json"])
+    let devices = try #require(try json.json()["unboundDevices"] as? [[String: Any]])
+    #expect(devices.first?["name"] as? String == "8BitDo Ultimate 2C Wireless Controller")
+    #expect(devices.last?["name"] == nil)
+  }
+
+  @Test
+  func deviceHeldByAnotherProgramIsExplainedInHumanOutputOnly() async throws {
     let held = ApplicationServiceUnboundDevice(
       vendorID: 0x3537,
       productID: 0x1010,
@@ -76,7 +102,55 @@ struct KebabStateOutputTests {
   }
 
   @Test
-  func theInputHealthIsKebabCaseInPlainAndHumanOutput() async throws {
+  func deviceInUseNamesItsHolderInStatusOutput() async throws {
+    let held = ApplicationServiceUnboundDevice(
+      vendorID: 0x3537,
+      productID: 0x1010,
+      connection: "USB",
+      accessBackend: .rawUSB,
+      reason: .deviceInUse,
+      rejectedCandidates: [],
+      interfaces: [],
+      exclusiveOwner: USBExclusiveOwner(processID: 70602, name: "steam_osx")
+    )
+    let service = try FakeService(devices: [], unboundDevices: [held])
+    let human = await runStatus(service, [])
+    let plain = await runStatus(service, ["--plain"])
+    let json = try await runStatus(service, ["--json"]).json()
+    let devices = try #require(json["unboundDevices"] as? [[String: Any]])
+    let owner = try #require(devices.first?["owner"] as? [String: Any])
+
+    #expect(human.standardOutput.contains("Used by steam_osx (process 70602)"))
+    #expect(!human.standardOutput.contains(CLILocalized.text("ui.controllers.deviceInUse")))
+    #expect(plain.standardOutput.contains("owner\t3537:1010\t70602\tsteam_osx\n"))
+    #expect(owner["name"] as? String == "steam_osx")
+  }
+
+  @Test
+  func interfaceContractMismatchExplainedWithNextStepInHumanOutputOnly() async throws {
+    let unbound = ApplicationServiceUnboundDevice(
+      vendorID: 0x3537,
+      productID: 0x1022,
+      connection: "USB",
+      accessBackend: .hid,
+      reason: .interfaceContractMismatch,
+      rejectedCandidates: [],
+      interfaces: []
+    )
+    let service = try FakeService(devices: [], unboundDevices: [unbound])
+    let human = await runStatus(service, [])
+    let plain = await runStatus(service, ["--plain"])
+    let sentence = CLILocalized.text("ui.controllers.interfaceContractMismatch")
+    let nextStep = CLILocalized.text("ui.controllers.interfaceContractMismatch.nextStep")
+
+    #expect(sentence != "ui.controllers.interfaceContractMismatch")
+    #expect(human.standardOutput.contains(sentence))
+    #expect(human.standardOutput.contains(nextStep))
+    #expect(!plain.standardOutput.contains(sentence))
+  }
+
+  @Test
+  func inputHealthIsKebabCaseInPlainAndHumanOutput() async throws {
     let service = try FakeService(devices: [
       .fixture(id: "pad-1"),
       .fixture(

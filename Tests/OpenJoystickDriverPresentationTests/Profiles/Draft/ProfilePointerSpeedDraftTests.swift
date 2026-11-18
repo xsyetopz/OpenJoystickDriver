@@ -44,7 +44,7 @@ struct ProfilePointerSpeedDraftTests {
   }
 
   @Test
-  func liveScaleFollowsTheControllerState() {
+  func liveScaleFollowsControllerState() {
     let speed = RemappingPointerSpeed(
       driver: RemappingPointerSpeedDriver(type: .trigger, side: .left),
       minScale: 1,

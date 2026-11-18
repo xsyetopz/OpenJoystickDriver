@@ -117,7 +117,7 @@ struct ControllerCapabilitiesTests {
   ]
 
   @Test(arguments: golden)
-  func catalogProfilesDeclareTheParserControlSet(
+  func catalogProfilesDeclareParserControlSet(
     name: String,
     vendorID: UInt16,
     productID: UInt16,
@@ -180,7 +180,7 @@ struct ControllerCapabilitiesTests {
   }
 
   @Test
-  func intersectionKeepsSharedControlsAndTheWeakerSampleFormats() {
+  func intersectionKeepsSharedControlsAndWeakerSampleFormats() {
     let first = ControllerCapabilities(
       controls: [.dpadUp, .dpadDown, .dpadLeft, .dpadRight, .guide, .touchpadClick],
       touchContactCount: 2,

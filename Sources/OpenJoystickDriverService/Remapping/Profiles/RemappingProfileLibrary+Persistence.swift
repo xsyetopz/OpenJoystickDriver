@@ -14,8 +14,21 @@ extension RemappingProfileLibrary {
     var profiles: [RemappingProfile] = []
     for url in try profileFileURLs() {
       let data = try Self.read(url)
+      if url.pathExtension == "json" {
+        let header = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        if (header?["apiVersion"] as? String)?.hasPrefix("openjoystickdriver/") == true {
+          issues.append(
+            .damagedProfile(
+              fileName: url.lastPathComponent,
+              data: data,
+              code: .unsupportedAPIVersion
+            )
+          )
+        }
+        continue
+      }
       do {
-        let profile = try RemappingProfileFileStore.load(from: data)
+        let profile = try RemappingProfileFileStore.load(from: data, file: url.path)
         guard url.lastPathComponent == Self.profileFileName(profile.id) else {
           throw RemappingProfileLibraryError.corruptLibrary
         }
@@ -36,7 +49,11 @@ extension RemappingProfileLibrary {
     if FileManager.default.fileExists(atPath: selectionsURL.path) {
       let data = try Self.read(selectionsURL)
       if data.count <= Self.maximumEncodedBytes,
-        let decoded = try? JSONDecoder().decode([RemappingPersistedActiveProfile].self, from: data)
+        let decoded = try? DocumentCoder.decode(
+          [RemappingPersistedActiveProfile].self,
+          from: data,
+          file: selectionsURL.path
+        )
       {
         let profilesByID = Dictionary(
           uniqueKeysWithValues: allProfiles(
@@ -66,10 +83,10 @@ extension RemappingProfileLibrary {
   /// The error code of a profile file that cannot be used: the code a request gives the same
   /// failure for a library error, otherwise the code of the refused document.
   static func damageCode(_ error: any Error) -> ErrorCode {
-    guard let error = error as? RemappingProfileLibraryError else {
+    guard let libraryError = error as? RemappingProfileLibraryError else {
       return RemappingProfileFileStore.problemCode(error)
     }
-    return RemappingRequestCoordinator.rpcError(error).code.errorCode
+    return RemappingRequestCoordinator.rpcError(libraryError).code.errorCode
   }
 
   /// Writes the profile files that changed, the selections when they changed, and deletes the
@@ -82,13 +99,11 @@ extension RemappingProfileLibrary {
       try Self.createPrivateDirectory(profilesDirectory)
       try manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: directory.path)
       for profile in proposed.profiles where !current.profiles.contains(profile) {
-        let data = Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+        let data = Data(try RemappingProfileFileStore.encodedPlist(profile).utf8)
         try Self.writePrivate(data, to: profileURL(profile.id))
       }
       if proposed.activeProfiles != current.activeProfiles {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try Self.writePrivate(encoder.encode(proposed.activeProfiles), to: selectionsURL)
+        try Self.writePrivate(DocumentCoder.encode(proposed.activeProfiles), to: selectionsURL)
       }
       let keptIDs = Set(proposed.profiles.map(\.id))
       for profile in current.profiles where !keptIDs.contains(profile.id) {
@@ -99,7 +114,8 @@ extension RemappingProfileLibrary {
     library = proposed
   }
 
-  /// The `*.json` files in `Profiles/`, sorted by name.
+  /// The `*.plist` files in `Profiles/`, and the `.json` files an earlier alpha left, sorted by
+  /// name.
   func profileFileURLs() throws -> [URL] {
     guard FileManager.default.fileExists(atPath: profilesDirectory.path) else { return [] }
     do {
@@ -108,7 +124,7 @@ extension RemappingProfileLibrary {
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
       )
-      .filter { $0.pathExtension == "json" }
+      .filter { ["plist", "json"].contains($0.pathExtension) }
       .sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch { throw RemappingProfileLibraryError.unreadableLibrary }
   }

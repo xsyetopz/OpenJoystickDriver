@@ -18,9 +18,8 @@ enum RemappingMotionProjection {
   /// The local space reads pitch from X and yaw from Y. The player space takes yaw about gravity
   /// from the Y and Z rates, scaled by `yawRelaxation` and limited by the combined Y and Z rate.
   /// The world space projects the rate onto the controller's X axis made perpendicular to gravity
-  /// for pitch, and onto gravity for yaw. In the world space,
-  /// pitch is zero while the larger Y or Z gravity component is at or below
-  /// `sideReductionThreshold`, and full from twice that.
+  /// for pitch, and onto gravity for yaw. In the world space, pitch is zero while the larger Y or Z
+  /// gravity component is at or below `sideReductionThreshold`, and full from twice that.
   static func project(
     _ gyro: ControllerMotionVector,
     gravity: ControllerMotionVector,

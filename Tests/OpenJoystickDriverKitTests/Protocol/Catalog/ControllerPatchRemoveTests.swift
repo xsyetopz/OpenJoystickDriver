@@ -1,0 +1,193 @@
+import Foundation
+import Testing
+
+@testable import OpenJoystickDriverKit
+
+// The tests use fixture records and documents and never load the bundled catalog.
+struct ControllerPatchRemoveTests {
+  private static let identity = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
+
+  private static func json(_ text: String) throws -> OrderedJSON {
+    try OrderedJSON.parse(Data(text.utf8))
+  }
+
+  private static func document(
+    remove: [String]? = nil,
+    patch: [String: Any]? = nil,
+    selector: ControllerPatch.Selector = .identity(identity)
+  ) -> [String: Any] {
+    var document = ControllerPatch.document(selector: selector, body: patch ?? [:])
+    if let remove { document["remove"] = remove }
+    return document
+  }
+
+  private static func parse(
+    remove: [String]? = nil,
+    patch: [String: Any]? = nil,
+    selector: ControllerPatch.Selector = .identity(identity)
+  ) throws -> ControllerPatch {
+    try ControllerPatch.parse(
+      OrderedJSON(foundation: document(remove: remove, patch: patch, selector: selector))
+    )
+  }
+
+  private static func refusal(_ document: [String: Any]) -> ControllerRecordProblem? {
+    do {
+      _ = try ControllerPatch.parse(OrderedJSON(foundation: document))
+      return nil
+    } catch { return error as? ControllerRecordProblem }
+  }
+
+  private static let record = #"""
+    {"vendorID": 4660, "productID": 43981,
+      "usb": {"interface": 0, "configuration": "SetConfiguration1BeforeClaim"},
+    "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
+    "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
+    """#
+
+  @Test
+  func removedKeyGone() throws {
+    let patch = try Self.parse(remove: ["usb.configuration"])
+    let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
+    let expected = try Self.json(
+      #"""
+      {"vendorID": 4660, "productID": 43981, "usb": {"interface": 0},
+        "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
+      "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
+      """#
+    )
+    #expect(result == expected)
+  }
+
+  @Test
+  func removedSectionGone() throws {
+    let patch = try Self.parse(remove: ["input"])
+    let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
+    #expect(result["input"] == nil)
+    #expect(result["usb"] != nil)
+  }
+
+  @Test
+  func nestedDottedPathRemovesOnlyItsKey() throws {
+    let patch = try Self.parse(remove: ["input.hidUsageMap.usages"])
+    let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
+    #expect(result["input"] == (try Self.json(#"{"hidUsageMap": {"reportID": 1}}"#)))
+  }
+
+  @Test
+  func pathRecordLacksChangesNothing() throws {
+    let record = try Self.json(Self.record)
+    let patch = try Self.parse(remove: ["bluetoothLE.name", "usb.interface.deeper", "server"])
+    #expect(ControllerPatchMerge.apply(patch, to: record) == record)
+  }
+
+  @Test
+  func removeAppliesBeforePatch() throws {
+    let patch = try Self.parse(remove: ["usb"], patch: ["usb": ["interface": 3]])
+    let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.record))
+    // Removed after the merge, `usb` would be gone; applied before it, only the patch's key stays.
+    #expect(result["usb"] == (try Self.json(#"{"interface": 3}"#)))
+  }
+
+  @Test
+  func patchOnlyRemovesValidFile() throws {
+    let patch = try Self.parse(remove: ["tuning.stickDeadzone"])
+    #expect(patch.remove == [["tuning", "stickDeadzone"]])
+    #expect(patch.body.members?.isEmpty == true)
+  }
+
+  @Test
+  func pathOutsideRecordSchemaRefusedByName() throws {
+    let paths = [
+      "bogus", "bogus.key", "tuning.bogus", "usb..interface", ".usb", "usb.", "",
+      "apiVersion", "vendorID",
+    ]
+    for path in paths {
+      let problem = try #require(Self.refusal(Self.document(remove: [path])), "\(path)")
+      #expect(problem.code == .invalidControllerRecord, "\(path)")
+      #expect(problem.description == "remove path \(path) is not in the record schema", "\(path)")
+    }
+  }
+
+  @Test
+  func malformedRemoveListRefused() throws {
+    let duplicate = try #require(Self.refusal(Self.document(remove: ["usb", "usb"])))
+    #expect(duplicate.description == "remove path usb is listed twice")
+    #expect(Self.refusal(Self.document(remove: [])) != nil)
+    var notText = Self.document(remove: ["usb"])
+    notText["remove"] = [1]
+    #expect(Self.refusal(notText) != nil)
+    var neither = Self.document()
+    neither["patch"] = nil
+    #expect(Self.refusal(neither) != nil)
+  }
+
+  @Test
+  func allPatchRefusesRemoveOutsideTuningKeys() throws {
+    for path in ["usb", "tuning", "usb.interface"] {
+      let problem = try #require(
+        Self.refusal(Self.document(remove: [path], selector: .all)),
+        "\(path)"
+      )
+      #expect(problem.code == .invalidControllerRecord, "\(path)")
+    }
+  }
+
+  @Test
+  func removeMessagesNameFileKeyPathRuleAndFix() throws {
+    let english = Localization(preferredLanguages: ["en-US"])
+    let identity = Self.identity
+    func message(_ remove: [String], selector: ControllerPatch.Selector? = nil) throws -> String {
+      let selector = selector ?? .identity(identity)
+      let problem = try #require(Self.refusal(Self.document(remove: remove, selector: selector)))
+      return ControllerRecordSet.problemDescription(
+        problem,
+        includingCode: false,
+        document: "record",
+        localization: english,
+        file: "a.patch.plist"
+      )
+    }
+    #expect(
+      try message(["usb", "usb"])
+        == "a.patch.plist, remove: The path usb is listed twice. "
+        + "Fix: Delete one of the two entries."
+    )
+    #expect(
+      try message(["bogus"])
+        == "a.patch.plist, remove: The path bogus is not in the record schema. Fix: Use a key path "
+        + "that the record schema has, or delete the entry."
+    )
+    #expect(
+      try message(["usb"], selector: .all)
+        == "a.patch.plist, remove: An all patch may remove only tuning keys, not usb. Fix: Remove "
+        + "only tuning keys here, or use a patch for one controller."
+    )
+  }
+
+  @Test
+  func patchBodyMessagesNameFileKeyPathRuleAndFix() throws {
+    let english = Localization(preferredLanguages: ["en-US"])
+    func message(_ patch: [String: Any]) throws -> String {
+      let problem = try #require(Self.refusal(Self.document(patch: patch)))
+      return ControllerRecordSet.problemDescription(
+        problem,
+        includingCode: false,
+        document: "record",
+        localization: english,
+        file: "a.patch.plist"
+      )
+    }
+    #expect(
+      try message(["vendorID": 1])
+        == "a.patch.plist, patch: Patch must hold modes, name, placeholderSerial, usb, "
+        + "bluetoothLE, capabilities, server, route, heldByAppleDriver, input, or tuning. "
+        + "Fix: Keep only those sections and give at least one of them."
+    )
+    #expect(
+      try message(["modes": [["protocol": ["family": "XInput"]]]])
+        == "a.patch.plist, patch.modes: Each entry must hold an id and only id, protocol, match, "
+        + "interface, session, idle, or input. Fix: Give each entry an id and delete any other key."
+    )
+  }
+}

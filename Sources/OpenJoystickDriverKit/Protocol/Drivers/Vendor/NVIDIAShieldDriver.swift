@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The report ID of the state report.
 private let shieldStateReportID: UInt8 = 0x01
@@ -117,7 +117,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
 
   /// Decodes a state report (16 bytes for V103, 23 or more for V104) or a V103 touch report; any
   /// other report is ignored.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = [UInt8](data)
     var next = state
     switch bytes.first {

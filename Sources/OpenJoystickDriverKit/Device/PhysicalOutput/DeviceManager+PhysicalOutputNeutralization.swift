@@ -5,7 +5,7 @@ extension DeviceManager {
   /// Sets every physical output of the controller to its neutral value and drops its claims.
   ///
   /// A pending rumble stop is cancelled first. The rumble stops if the controller supports it, and
-  /// each supported player indicator, colour, brightness and adaptive trigger returns to its
+  /// each supported player indicator, color, brightness and adaptive trigger returns to its
   /// neutral value in a stable channel order. With `detachedInfo`, the writes go to a detached HID
   /// connection that this manager still owns.
   func neutralizePhysicalOutputs(
@@ -53,21 +53,23 @@ extension DeviceManager {
   }
 
   /// The one connected controller `controller` names; nil when none, or more than one, does.
-  package func connectedIdentifier(for controller: ControllerReference) -> LogicalControllerID? {
+  package func connectedIdentifier(
+    for controller: ControllerReference
+  ) async -> LogicalControllerID? {
     guard !isStopping else { return nil }
-    return try? resolve(controller)
+    return try? await resolve(controller)
   }
 
   /// The one connected controller `controller` names.
   package func resolve(
     _ controller: ControllerReference
-  ) throws(ControllerReferenceError) -> LogicalControllerID {
-    try controller.resolve(in: connectedControllers()).logicalControllerID
+  ) async throws(ControllerReferenceError) -> LogicalControllerID {
+    try await controller.resolve(in: connectedControllers()).logicalControllerID
   }
 
   /// Every connected controller with the token of its attachment, sorted by key.
-  package func connectedControllers() -> [ConnectedController] {
-    pipelines.keys.sorted().compactMap { identifier in
+  package func connectedControllers() async -> [ConnectedController] {
+    await connectedLogicalControllerIDs().sorted().compactMap { identifier in
       deviceInfos[identifier].map {
         ConnectedController(
           logicalControllerID: identifier,

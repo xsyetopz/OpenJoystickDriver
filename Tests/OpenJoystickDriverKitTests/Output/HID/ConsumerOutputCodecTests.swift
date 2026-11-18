@@ -79,7 +79,7 @@ struct ConsumerOutputCodecTests {
   }
 
   @Test
-  func rumbleDurationComesFromTheReport() throws {
+  func rumbleDurationComesFromReport() throws {
     let format = XboxOneGIPHIDReportFormat()
     // Magnitudes span 0...100; 255 clamps to full strength.
     let intensities = RumbleIntensities(
@@ -167,7 +167,7 @@ struct ConsumerOutputCodecTests {
   }
 
   @Test
-  func shortAndMisframedReportsAreRejectedByTheCodec() throws {
+  func shortAndMisframedReportsAreRejectedByCodec() throws {
     let xboxOne = XboxOneGIPHIDReportFormat()
     #expect(throws: VirtualHostReportError.malformed) {
       try consumerOutput(9, [0x09, 0x00, 0x00, 0x09, 0x00, 0x0F, 10, 20], in: xboxOne)
@@ -186,7 +186,7 @@ struct ConsumerOutputCodecTests {
   }
 
   @Test
-  func oversizedAndUndeclaredReportsAreRejectedByTheCodec() throws {
+  func oversizedAndUndeclaredReportsAreRejectedByCodec() throws {
     let xboxOne = XboxOneGIPHIDReportFormat()
     #expect(throws: VirtualHostReportError.tooLarge) {
       try consumerOutput(9, gipRumbleReport(activation: 0x0F) + [0], in: xboxOne)
@@ -200,7 +200,7 @@ struct ConsumerOutputCodecTests {
   /// The Xbox Series Bluetooth rumble report: ID 3, the enable mask, trigger and motor magnitudes
   /// `0...100`, duration in 10 ms units, start delay and loop count.
   @Test
-  func theXboxSeriesBluetoothFormatDecodesReportThreeAndOnlyIt() throws {
+  func xboxSeriesBluetoothFormatDecodesReportThreeAndOnlyIt() throws {
     let series = XboxSeriesBluetoothHIDReportFormat()
     let intensities = RumbleIntensities(
       lowFrequency: .max,
@@ -222,7 +222,7 @@ struct ConsumerOutputCodecTests {
   }
 
   @Test
-  func theInputOnlyGenericFormatRejectsEveryOutputReport() {
+  func inputOnlyGenericFormatRejectsEveryOutputReport() {
     // An unnumbered vendor report (marker `0x4F`), the short Xbox 360 forms, and a numbered Xbox
     // One report.
     let reports: [(UInt32, [UInt8])] = [

@@ -1,3 +1,4 @@
+import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
@@ -44,7 +45,7 @@ struct SettingTestNotificationCommandTests {
   }
 
   @Test
-  func withoutTimeoutTheCommandWaitsForAnAnswerSlowerThanTheRequestDeadline() async throws {
+  func withoutTimeoutCommandWaitsForAnswerSlowerThanRequestDeadline() async throws {
     let socketPath = temporarySocketPath()
     let delay = Duration.milliseconds(800)
     #expect(delay > .seconds(ServiceTimeouts.request))
@@ -60,10 +61,10 @@ struct SettingTestNotificationCommandTests {
   }
 
   /// The seconds as the help and the wiki write them.
-  private static func seconds(_ value: Double) -> String { String(format: "%g", value) }
+  private static func seconds(_ value: Double) -> String { unsafe String(format: "%g", value) }
 
   @Test
-  func theHelpNamesTheDefaultDeadlineFromServiceTimeouts() {
+  func helpNamesDefaultDeadlineFromServiceTimeouts() {
     let discussion = SettingTestNotificationCommand.configuration.discussion
 
     #expect(discussion.contains(Self.seconds(ServiceTimeouts.testNotification)))
@@ -71,7 +72,7 @@ struct SettingTestNotificationCommandTests {
   }
 
   @Test
-  func theWikiNamesTheDeadlinesFromServiceTimeouts() throws {
+  func wikiNamesDeadlinesFromServiceTimeouts() throws {
     let repository = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
@@ -98,7 +99,7 @@ struct SettingTestNotificationCommandTests {
   }
 
   @Test
-  func aShownNotificationSucceedsInEachFormat() async throws {
+  func shownNotificationSucceedsInEachFormat() async throws {
     let socketPath = temporarySocketPath()
     let received = Locked<[String]>([])
     let server = try serve(outcome: .shown, socketPath: socketPath, received: received)
@@ -156,7 +157,7 @@ struct SettingTestNotificationCommandTests {
   }
 
   @Test
-  func aFailedDeliveryNamesTheSystemsReason() async throws {
+  func failedDeliveryNamesSystemsReason() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(outcome: .failed("the system refused"), socketPath: socketPath)
     defer { server.stop() }
@@ -169,7 +170,7 @@ struct SettingTestNotificationCommandTests {
   }
 
   @Test
-  func aStoppedServiceFailsWithE2004() async {
+  func stoppedServiceFailsWithE2004() async {
     let result = await run([], socketPath: temporarySocketPath())
 
     #expect(result.code == 69)

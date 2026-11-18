@@ -44,24 +44,29 @@ extension DeviceManager {
     _ key: UnboundDeviceKey,
     vendorID: UInt16,
     productID: UInt16,
+    productName: String?,
     connection: String,
     backend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [PhysicalInterfaceSignature]
+    interfaces: [PhysicalInterfaceSignature],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
+    let name = productName?.trimmingCharacters(in: .whitespacesAndNewlines)
     unboundDevices[key] = UnboundDeviceSnapshot(
       vendorID: vendorID,
       productID: productID,
+      name: name?.isEmpty == false ? name : nil,
       connection: connection,
       accessBackend: backend,
       reason: reason,
       rejectedCandidates: rejectedCandidates,
-      interfaces: interfaces.map(ProtocolBindingResult.InterfaceSummary.init)
+      interfaces: interfaces.map(ProtocolBindingResult.InterfaceSummary.init),
+      exclusiveOwner: exclusiveOwner
     )
     notifyServiceStatusChanged()
     print(
-      "[DeviceManager] \(backend.rawValue) device left unbound:"
+      unsafe "[DeviceManager] \(backend.rawValue) device left unbound:"
         + String(format: " %04x:%04x", vendorID, productID) + " reason=\(reason.rawValue)"
     )
   }
@@ -72,6 +77,7 @@ extension DeviceManager {
     unboundDevices[key] = UnboundDeviceSnapshot(
       vendorID: recorded.vendorID,
       productID: recorded.productID,
+      name: recorded.name,
       connection: recorded.connection,
       accessBackend: recorded.accessBackend,
       reason: reason,
@@ -123,6 +129,7 @@ extension DeviceManager {
       .hid(connection.connectionID),
       vendorID: identifier.model.vendorID,
       productID: identifier.model.productID,
+      productName: connection.physicalDevice.productName,
       connection: connection.physicalDevice.transportProperty ?? "HID",
       backend: connection.accessBackend,
       reason: reason,

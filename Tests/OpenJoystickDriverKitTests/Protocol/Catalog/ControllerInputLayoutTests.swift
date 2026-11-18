@@ -114,7 +114,7 @@ struct ControllerInputLayoutTests {
       try inputLayout(
         """
         {"report": {"length": {"exactly": 2}},
-         "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
+          "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
         """
       )
     )
@@ -148,7 +148,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aTableHatNamesDirectionsForMaskedValues() throws {
+  func tableHatNamesDirectionsForMaskedValues() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 1}},
@@ -164,7 +164,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aSymmetricAxisDividesBothSidesByTheMaximum() throws {
+  func symmetricAxisDividesBothSidesByMaximum() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
@@ -180,7 +180,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func aSymmetricAxisWithoutRangeUsesTheFullRange() throws {
+  func symmetricAxisWithoutRangeUsesFullRange() throws {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
@@ -202,5 +202,72 @@ struct ControllerInputLayoutTests {
   @Test(arguments: invalidLayouts)
   func rejectsInvalidLayouts(json: String) {
     #expect(throws: DecodingError.self) { try inputLayout(json) }
+  }
+
+  @Test
+  func decodedLayoutProblemReadsInChosenLanguage() {
+    let english = Localization(preferredLanguages: ["en-US"])
+    do {
+      _ = try inputLayout(
+        #"{"report": {"length": {"atLeast": 3}}, "axes": ["#
+          + #"{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8}, "#
+          + #"{"control": "LeftStickX", "bitOffset": 16, "bitSize": 8}]}"#
+      )
+      Issue.record("two axes of one control were accepted")
+    } catch {
+      #expect(
+        ControllerRecordSet.problemDescription(
+          error,
+          document: "record",
+          localization: english,
+          file: "046d-c21d.plist"
+        )
+          == "046d-c21d.plist, input.layouts[].axes: Axes must name distinct stick axes. "
+          + "Fix: Name each stick axis once."
+      )
+    }
+  }
+
+  @Test
+  func messagesNameFileKeyPathRuleAndFix() {
+    let english = Localization(preferredLanguages: ["en-US"])
+    func message(reportID: UInt8?, minimumLength: Int) -> String? {
+      do {
+        _ = try ControllerInputLayout(
+          reportID: reportID,
+          minimumLength: minimumLength,
+          requiresExactLength: false,
+          buttons: [(.south, ReportBitField(bitOffset: 8, bitSize: 1))],
+          axes: [],
+          hat: [],
+          leftTrigger: nil,
+          rightTrigger: nil,
+          touch: nil
+        )
+        return nil
+      } catch {
+        return error.localizedDescription(english, file: "046d-c21d.plist")
+      }
+    }
+    #expect(
+      message(reportID: 0, minimumLength: 2)
+        == "046d-c21d.plist, input.layouts[].report.id: A report ID is 1...255. "
+        + "Fix: Set the ID to a whole number from 1 to 255, or leave it out."
+    )
+    #expect(
+      message(reportID: nil, minimumLength: 65)
+        == "046d-c21d.plist, input.layouts[].report.length: "
+        + "A report is 1...64 bytes long, with its ID byte. Fix: Set the length inside that range."
+    )
+    do {
+      _ = try ControllerInputLayouts(layouts: [])
+      Issue.record("an empty layout list was accepted")
+    } catch {
+      #expect(
+        error.localizedDescription(english, file: "046d-c21d.plist")
+          == "046d-c21d.plist, input.layouts: Input must list at least one layout. "
+          + "Fix: Add a layout, or delete input."
+      )
+    }
   }
 }

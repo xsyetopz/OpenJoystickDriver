@@ -73,7 +73,7 @@ struct RemappingProfileEditingTests {
   }
 
   @Test
-  func layerBindingReplacesTheBindingForTheSameSource() throws {
+  func layerBindingReplacesBindingForSameSource() throws {
     let original = profile()
     var edited = original
     try edited.addLayer(name: "Aim", activator: .button(.east), activationMode: .hold)

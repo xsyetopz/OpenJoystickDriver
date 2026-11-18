@@ -20,7 +20,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func theFileRoundTripsAndNamesTheCodeTheErrnoAndTheTime() throws {
+  func fileRoundTripsAndNamesCodeErrnoAndTime() throws {
     let path = temporarySocketPath()
     let failure = ServiceListenerFailure(
       errorNumber: EMFILE,
@@ -45,7 +45,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aMissingFileIsAbsentAndClearingItIsNotAnError() throws {
+  func missingFileIsAbsentAndClearingItIsNotError() throws {
     let path = temporarySocketPath()
 
     #expect(ServiceListenerFailure.read(socketPath: path) == .absent)
@@ -53,27 +53,27 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aMalformedFileIsAProblemNamingTheFile() throws {
+  func malformedFileIsProblemNamingFile() throws {
     let cases = [
       "not json",
       "[]",
       "{}",
       "{\"apiVersion\":\"openjoystickdriver/v0\",\"kind\":\"ServiceListenerFailure\"}",
-      "{\"apiVersion\":\"openjoystickdriver/v1alpha2\",\"kind\":\"Settings\"}",
+      "{\"apiVersion\":\"openjoystickdriver/v1alpha3\",\"kind\":\"Settings\"}",
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2035","errno":9,"time":"2027-01-15T08:00:00Z","pid":1}
       """,
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2034","errno":9,"time":"yesterday","pid":1}
       """,
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2034","errno":9,"time":"2027-01-15T08:00:00Z","pid":1,"extra":1}
       """,
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2034","errno":9,"time":"2027-01-15T08:00:00Z"}
       """,
     ]
@@ -90,7 +90,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aFileThatIsTooLargeOrNotARegularFileIsAProblem() throws {
+  func fileThatIsTooLargeOrNotRegularFileIsProblem() throws {
     let large = temporarySocketPath()
     let largePath = try plant(String(repeating: " ", count: 5000), socketPath: large)
     defer { try? FileManager.default.removeItem(atPath: largePath) }
@@ -113,7 +113,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aReusedIdentifierWithAnotherStartTimeIsNotTheWritingProcess() throws {
+  func reusedIdentifierWithAnotherStartTimeIsNotWritingProcess() throws {
     let path = temporarySocketPath()
     let now = ServiceListenerFailure.ProcessIdentity.current
     #expect(ServiceListenerFailure.ProcessIdentity.lookup(now.identifier) == .running(now))
@@ -137,7 +137,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func theFailureIsCurrentOnlyWhileTheWritingProcessRuns() throws {
+  func failureIsCurrentOnlyWhileWritingProcessRuns() throws {
     let path = temporarySocketPath()
     let time = Date(timeIntervalSince1970: 1_800_000_000)
     let running = ServiceListenerFailure(
@@ -165,7 +165,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aFailedUnlinkThrowsItsOwnErrorWithTheErrno() throws {
+  func failedUnlinkThrowsItsOwnErrorWithErrno() throws {
     let socket = temporarySocketPath()
     let path = ServiceListenerFailure.path(forSocket: socket)
     // A folder with a file in it cannot be unlinked.
@@ -185,7 +185,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aRecordOfAnotherUserHasItsOwnProblem() throws {
+  func recordOfAnotherUserHasItsOwnProblem() throws {
     let socket = temporarySocketPath()
     try ServiceListenerFailure(
       errorNumber: EBADF,
@@ -206,7 +206,7 @@ struct ServiceListenerFailureTests {
   }
 
   @Test
-  func aLookupThatFailsNamesWhySoAProcessOfAnotherUserIsNotTheWriter() {
+  func lookupThatFailsNamesWhySoProcessOfAnotherUserIsNotWriter() {
     typealias Lookup = ServiceListenerFailure.ProcessIdentity.Lookup
     #expect(Lookup.failed(with: ESRCH) == .noSuchProcess)
     #expect(Lookup.failed(with: EPERM) == .belongsToAnotherUser)
@@ -218,13 +218,13 @@ struct ServiceListenerFailureTests {
   }
 
   @Test(.enabled(if: geteuid() != 0, "root may inspect every process"))
-  func theSystemProcessOfAnotherUserBelongsToAnotherUser() {
+  func systemProcessOfAnotherUserBelongsToAnotherUser() {
     // launchd (pid 1) belongs to root, so a user that is not root gets EPERM.
     #expect(ServiceListenerFailure.ProcessIdentity.lookup(1) == .belongsToAnotherUser)
   }
 
   @Test
-  func aLookupThatFailsForAnotherReasonIsReportedNotGuessed() throws {
+  func lookupThatFailsForAnotherReasonIsReportedNotGuessed() throws {
     let socket = temporarySocketPath()
     let failure = ServiceListenerFailure(
       errorNumber: EBADF,
@@ -241,7 +241,7 @@ struct ServiceListenerFailureTests {
 
     let found = problem(reading)
     #expect(found?.path == ServiceListenerFailure.path(forSocket: socket))
-    #expect(found?.detail.contains(String(cString: strerror(EINVAL))) == true)
+    unsafe #expect(found?.detail.contains(String(cString: strerror(EINVAL))) == true)
     #expect(
       found?.detail.contains("errno") == true || found?.detail.contains(String(EINVAL)) == true
     )

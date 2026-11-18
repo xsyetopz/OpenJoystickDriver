@@ -36,15 +36,15 @@
 
     /// The title, the kind and input pickers, the fields, the live view and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(label("title")).font(.headline)
         Picker(label("kind"), selection: $draft.kind) {
           ForEach(ProfileRegionDraft.Kind.allCases, id: \.self) { kind in
             Text(kindLabel(kind)).tag(kind)
           }
-        }.pickerStyle(SegmentedPickerStyle())
+        }.help(tooltip("kind")).pickerStyle(SegmentedPickerStyle())
         ScrollView {
-          VStack(alignment: .leading, spacing: 12) {
+          VStack(alignment: .leading, spacing: OJDSpacing.medium) {
             inputPicker
             fields
             liveView
@@ -53,7 +53,7 @@
                 DestinationOption.options(for: sourceOrDefault, including: destination),
                 id: \.destination
               ) { option in Text(option.title).tag(option.destination) }
-            }
+            }.help(OJDLocalized.string("ui.capture.destinationHelp"))
             if case .keyboard = destination {
               KeyboardDestinationCaptureView(
                 destination: $destination,
@@ -67,10 +67,13 @@
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { presentationMode.wrappedValue.dismiss() }
-          Button(OJDLocalized.string("action.addAssignment")) { add() }
-            .disabled(keyboardDestinationCleared)
+            .help(OJDLocalized.string("ui.help.cancelSheet"))
+          Button(OJDLocalized.string("action.addAssignment")) { add() }.help(
+            OJDLocalized.string("ui.profiles.addAssignmentHelp")
+          )
+          .disabled(keyboardDestinationCleared)
         }
-      }.padding(28).frame(width: 500, height: 640).task { await poll() }
+      }.ojdSheet(.regular).frame(height: 640).task { await poll() }
     }
 
     /// The source of the draft, or the first stick ring while a number cannot be read.
@@ -90,18 +93,18 @@
         Picker(label("input"), selection: $draft.stick) {
           Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(RemappingStickSource.left)
           Text(OJDLocalized.string("ui.profiles.gyro.rightStick")).tag(RemappingStickSource.right)
-        }
+        }.help(tooltip("input"))
       case .trigger:
         Picker(label("input"), selection: $draft.trigger) {
           Text(OJDLocalized.string("ui.profiles.trigger.left")).tag(RemappingTriggerSource.left)
           Text(OJDLocalized.string("ui.profiles.trigger.right")).tag(RemappingTriggerSource.right)
-        }
+        }.help(tooltip("input"))
       case .touch:
         Picker(label("input"), selection: $draft.surface) {
           ForEach(RemappingTouchSurface.allCases, id: \.self) { surface in
             Text(RuntimePresentation.touchSurfaceLabel(surface)).tag(surface)
           }
-        }
+        }.help(tooltip("input"))
       }
     }
 
@@ -110,33 +113,41 @@
     private var fields: some View {
       switch draft.kind {
       case .stick:
-        field(label("innerRadius"), $draft.innerRadius)
-        field(label("outerRadius"), $draft.outerRadius)
-        field(label("fromDegrees"), $draft.fromDegrees)
-        field(label("toDegrees"), $draft.toDegrees)
-        field(OJDLocalized.string("ui.profiles.trigger.hysteresis"), $draft.hysteresis)
+        field(label("innerRadius"), help: tooltip("innerRadius"), $draft.innerRadius)
+        field(label("outerRadius"), help: tooltip("outerRadius"), $draft.outerRadius)
+        field(label("fromDegrees"), help: tooltip("fromDegrees"), $draft.fromDegrees)
+        field(label("toDegrees"), help: tooltip("toDegrees"), $draft.toDegrees)
+        field(
+          OJDLocalized.string("ui.profiles.trigger.hysteresis"),
+          help: OJDLocalized.string("ui.profiles.trigger.hysteresisHelp"),
+          $draft.hysteresis
+        )
       case .trigger:
-        field(label("from"), $draft.from)
-        field(label("to"), $draft.to)
-        field(OJDLocalized.string("ui.profiles.trigger.hysteresis"), $draft.hysteresis)
+        field(label("from"), help: tooltip("from"), $draft.from)
+        field(label("to"), help: tooltip("to"), $draft.to)
+        field(
+          OJDLocalized.string("ui.profiles.trigger.hysteresis"),
+          help: OJDLocalized.string("ui.profiles.trigger.hysteresisHelp"),
+          $draft.hysteresis
+        )
       case .touch:
-        field(label("x"), $draft.x)
-        field(label("y"), $draft.y)
-        field(label("width"), $draft.width)
-        field(label("height"), $draft.height)
+        field(label("x"), help: tooltip("x"), $draft.x)
+        field(label("y"), help: tooltip("y"), $draft.y)
+        field(label("width"), help: tooltip("width"), $draft.width)
+        field(label("height"), help: tooltip("height"), $draft.height)
       }
     }
 
     /// The live position of the input, or a note that no controller is connected.
     @ViewBuilder
     private var liveView: some View {
-      VStack(alignment: .leading, spacing: 6) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(label("live")).font(.subheadline)
         if let state {
           let reading = draft.reading(of: state, tuning: tuning)
           ProfileRegionLiveView(draft: draft, reading: reading, decimalSeparator: separator)
             .frame(height: draft.kind == .trigger ? 24 : 160)
-          Text(readingText(reading)).font(.caption)
+          Text(readingText(reading)).font(.body)
         } else {
           Text(label("noController")).font(.caption).foregroundColor(
             Color(NSColor.secondaryLabelColor)
@@ -163,15 +174,21 @@
     }
 
     /// A text field titled `title`.
-    private func field(_ title: String, _ value: Binding<String>) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+    private func field(_ title: String, help: String, _ value: Binding<String>) -> some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(title)
         TextField(title, text: value).textFieldStyle(RoundedBorderTextFieldStyle())
+          .ojdAccessibilityLabel(title).help(help)
       }
     }
 
     /// Returns the text of the region string called `key`.
     private func label(_ key: String) -> String { OJDLocalized.string("ui.profiles.region." + key) }
+
+    /// Returns the tooltip of the region field called `key`.
+    private func tooltip(_ key: String) -> String {
+      OJDLocalized.string("ui.profiles.region." + key + "Help")
+    }
 
     /// Returns the name of a region kind.
     private func kindLabel(_ kind: ProfileRegionDraft.Kind) -> String {

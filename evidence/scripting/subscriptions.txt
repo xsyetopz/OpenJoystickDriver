@@ -1,0 +1,32 @@
+== Profiles
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Subscription", "stream": "Profiles"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Profiles","profiles":[{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":false,"model":"2DC8:301B","name":"ojd-trial-617"}]}
+$ ojd profile activate ojd-trial-617  -> exit 0
+  Activated 'ojd-trial-617' for 2DC8:301B.
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Profiles","profiles":[{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":true,"model":"2DC8:301B","name":"ojd-trial-617"}]}
+$ ojd profile deactivate ojd-trial-617  -> exit 0
+  Deactivated 'ojd-trial-617'.
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Profiles","profiles":[{"id":"F9C99628-CB59-442D-A779-385E91D73386","isActive":false,"model":"2DC8:301B","name":"ojd-trial-617"}]}
+== Mods
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Subscription", "stream": "Mods"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[]}
+$ ojd mod install /tmp/ojd-6-17/pkg/scratch-trial  -> exit 0
+  Installed ~/Library/Application Support/OpenJoystickDriver/Packages/scratch-trial. The running service applies it now.
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[{"author":"6.17 trial","files":["Controllers/ffee-0001.plist"],"name":"scratch-trial","version":"0.0.1"}]}
+$ ojd mod remove scratch-trial --force  -> exit 0
+  Deleted ~/Library/Application Support/OpenJoystickDriver/Packages/scratch-trial.
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[]}
+== refusals: output on Profiles, an unknown stream
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Subscription", "stream": "Profiles", "output": true}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1003","kind":"Status","message":"Send Subscription with the Controllers, Profiles or Mods stream, or FeedRequest. Only Controllers takes output.","status":"Failure"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Hello", "scopes": ["Read"], "tokenName": "trial617", "proof": "[REDACTED]"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","scopes":["Read"],"version":"0.6.0-alpha.2"}
+-> {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Subscription", "stream": "Logs"}
+<- {"apiVersion":"openjoystickdriver/v1alpha3","code":"E1003","kind":"Status","message":"Send Subscription with the Controllers, Profiles or Mods stream, or FeedRequest. Only Controllers takes output.","status":"Failure"}
+exit 0

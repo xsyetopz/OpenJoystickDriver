@@ -11,7 +11,7 @@ struct WiiSpeakerTests {
   /// The nibbles `0, 7, F, 7, F, 2, 0, 9` come from ffmpeg's `adpcm_yamaha` step scale, worked
   /// through in a separate script; WiiBrew names the codec but publishes no table.
   @Test
-  func theEncoderMatchesTheReferenceVector() {
+  func encoderMatchesReferenceVector() {
     var encoder = WiiSpeakerEncoder()
     let bytes = encoder.encode([0, 1000, -1000, 32767, -32768, 500, 500, 0])
     #expect(bytes == [0x70, 0x7F, 0x2F, 0x90])
@@ -20,13 +20,13 @@ struct WiiSpeakerTests {
   }
 
   @Test
-  func anOddSampleCountEndsWithAZeroSample() {
+  func oddSampleCountEndsWithZeroSample() {
     var encoder = WiiSpeakerEncoder()
     #expect(encoder.encode([0, 1000, -1000]).count == 2)
   }
 
   @Test
-  func aTwentyByteDataReportCarriesItsLengthInTheHighBitsAndTheRumbleBit() throws {
+  func twentyByteDataReportCarriesItsLengthInHighBitsAndRumbleBit() throws {
     let driver = WiiDriver(tuning: nil, irFormat: nil)
     let data = [UInt8](repeating: 0xAB, count: 20)
     #expect(reports(try driver.encode(.speaker(.data(data)))) == [[0x18, 0xA0] + data])
@@ -37,7 +37,7 @@ struct WiiSpeakerTests {
   }
 
   @Test
-  func aPacketOfNoBytesOrMoreThanTwentyIsRefused() {
+  func packetOfNoBytesOrMoreThanTwentyIsRefused() {
     let driver = WiiDriver(tuning: nil, irFormat: nil)
     #expect(throws: ControllerOutputError.invalidValue) {
       try driver.encode(.speaker(.data([])))
@@ -48,7 +48,7 @@ struct WiiSpeakerTests {
   }
 
   @Test(arguments: [false, true])
-  func theStartAndStopScriptsMatchTheSpeakerFixture(rumbling: Bool) throws {
+  func startAndStopScriptsMatchSpeakerFixture(rumbling: Bool) throws {
     let driver = WiiDriver(tuning: nil, irFormat: nil)
     if rumbling {
       _ = try driver.encode(.setRumble(RumbleIntensities(lowFrequency: .max), duration: .held))
@@ -62,7 +62,7 @@ struct WiiSpeakerTests {
   }
 
   @Test
-  func aClipLongerThanTheTuningLimitOrEmptyIsRefused() {
+  func clipLongerThanTuningLimitOrEmptyIsRefused() {
     let driver = WiiDriver(tuning: nil, irFormat: nil)
     #expect(throws: ControllerOutputError.invalidValue) {
       try driver.encode(.speaker(.start(seconds: 10.5)))
@@ -73,7 +73,7 @@ struct WiiSpeakerTests {
   }
 
   @Test
-  func theSpeakerRateEqualsTheDescriptionDivisor() throws {
+  func speakerRateEqualsDescriptionDivisor() throws {
     let wii = try #require(PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote)
     let config = wii.scripts.speaker.compactMap { step -> [UInt8]? in
       if case .write(_, let bytes) = step, bytes.count == 7 { bytes } else { nil }
@@ -83,7 +83,7 @@ struct WiiSpeakerTests {
   }
 
   @Test
-  func theStreamSendsOnePacketPerFortySamplesOnTheInjectedClock() {
+  func streamSendsOnePacketPerFortySamplesOnInjectedClock() {
     var stream = WiiSpeakerStream(encoded: [UInt8](repeating: 1, count: 50), rate: 6_000)
     let interval: UInt64 = 40 * 1_000_000_000 / 6_000
     func at(_ nanoseconds: UInt64) -> MonotonicTimestamp { .init(nanoseconds: nanoseconds) }

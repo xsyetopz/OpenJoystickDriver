@@ -77,7 +77,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testAllZeroReportIsTheNeutralSnapshot() throws {
+  func testAllZeroReportIsNeutralSnapshot() throws {
     let parser = XUSBDriver()
     let packet = makeXbox360ReportLE()
     let events = try parser.parseReport(packet)
@@ -195,7 +195,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testPushingTheStickUpReadsANegativeY() throws {
+  func testPushingStickUpReadsNegativeY() throws {
     let parser = XUSBDriver()
     // Raw positive LSY and RSY are up, which the state reads as negative.
     let state = try #require(
@@ -215,7 +215,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testRepeatedReportRepeatsTheSnapshot() throws {
+  func testRepeatedReportRepeatsSnapshot() throws {
     let parser = XUSBDriver()
     let report = makeXbox360ReportLE(buttons: 1 << 12, lt: 200, lsx: 10_000)
     let first = try parser.parseReport(report)
@@ -283,7 +283,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testWiredStartupLeavesThePlayerSlotToTheManager() {
+  func testWiredStartupLeavesPlayerSlotToManager() {
     let parser = XUSBDriver()
 
     #expect(parser.startupWrites().isEmpty)

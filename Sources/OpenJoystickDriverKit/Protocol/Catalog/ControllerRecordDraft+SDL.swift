@@ -58,16 +58,17 @@ extension ControllerRecordDraft {
       ],
       "input": ["hidUsageMap": converted.usageMap.json],
     ]
-    guard let json = try? OrderedJSON(foundation: document, order: .recordKeys) else {
+    guard let json = try? OrderedJSON(foundation: document), let data = try? json.plistData() else {
       throw .rejected("the record cannot be written")
     }
     operation = .add
+    missingSections = []
     family = .hidDescriptor
     reportID = nil
     reportLength = nil
     capturedReports = 0
     changedBytes = []
-    text = json.formatted()
+    text = String(bytes: data, encoding: .utf8) ?? ""
   }
 }
 
@@ -81,13 +82,13 @@ extension ControllerRecordDraft.SDLFailure {
   public func message(identity: String, localize: (String) -> String) -> String {
     switch self {
     case .hasRecord:
-      String(format: localize("cli.record.draft.sdl.hasRecord"), identity)
+      unsafe String(format: localize("cli.record.draft.sdl.hasRecord"), identity)
     case .descriptorContract(let violation):
-      String(format: localize("cli.record.draft.sdl.contract"), identity, violation.rawValue)
+      unsafe String(format: localize("cli.record.draft.sdl.contract"), identity, violation.rawValue)
     case .noLine(let guid):
-      String(format: localize("cli.record.draft.sdl.noLine"), identity, guid ?? "")
+      unsafe String(format: localize("cli.record.draft.sdl.noLine"), identity, guid ?? "")
     case .rejected(let reason):
-      String(format: localize("cli.record.draft.sdl.rejected"), identity, reason)
+      unsafe String(format: localize("cli.record.draft.sdl.rejected"), identity, reason)
     }
   }
 }

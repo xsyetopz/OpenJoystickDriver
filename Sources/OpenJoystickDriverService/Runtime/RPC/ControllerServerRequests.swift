@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
   /// Sets who serves the controller model in the user's record for it.
@@ -11,15 +11,15 @@ extension ApplicationServiceServer {
     productID: Int,
     server: ControllerServer
   ) async -> ControllerServerResult {
-    let systemGamepadConnected = await connectedDevices().contains {
+    let servableBySystem = await connectedDevices().contains {
       $0.vendorID == vendorID && $0.productID == productID
-        && $0.physicalOwnership == .systemGamepad
+        && ($0.physicalOwnership == .systemGamepad || $0.gameControllerSupported)
     }
     let result = Self.setControllerServer(
       vendorID: vendorID,
       productID: productID,
       server: server,
-      systemGamepadConnected: systemGamepadConnected
+      servableBySystem: servableBySystem
     )
     if result.failure == nil { NotificationCenter.postServiceStatusChanged(from: self) }
     return result
@@ -27,13 +27,15 @@ extension ApplicationServiceServer {
 
   /// Writes `server` to the model's user record in `directory`.
   ///
-  /// A raw-USB family, or a model macOS does not serve natively, is refused; a model whose record
-  /// already gives it to OJD counts as native, because OJD seized a controller macOS would serve.
+  /// A model whose record reaches it through raw USB or the extension, or that macOS can not serve
+  /// natively, is refused; the extension claims a model Apple's driver holds only through an
+  /// activation request, never through this record. A model whose record already gives it to OJD
+  /// counts as native, because OJD seized a controller macOS would serve.
   static func setControllerServer(
     vendorID: Int,
     productID: Int,
     server: ControllerServer,
-    systemGamepadConnected: Bool,
+    servableBySystem: Bool,
     directory: URL = ControllerRecordSet.userDirectory
   ) -> ControllerServerResult {
     let records = ControllerRecordSet.load(userDirectory: directory)
@@ -57,8 +59,8 @@ extension ApplicationServiceServer {
     let model = ControllerModelID(vendorID: vendor, productID: product)
     let record = records.records[model]
     let previous = record?.server ?? .system
-    if record?.usesRawUSB == true { return refused(.rawUSB, previous) }
-    guard systemGamepadConnected || previous == .ojd else { return refused(.notNative, previous) }
+    if let record, record.accessRoute != .system { return refused(.rawUSB, previous) }
+    guard servableBySystem || previous == .ojd else { return refused(.notNative, previous) }
     let change: ControllerRecordWriter.Change
     do {
       change = try ControllerRecordWriter.change(

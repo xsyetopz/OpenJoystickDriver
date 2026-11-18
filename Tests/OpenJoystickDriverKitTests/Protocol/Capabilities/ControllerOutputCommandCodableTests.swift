@@ -12,7 +12,7 @@ struct ControllerOutputCommandCodableTests {
   }
 
   @Test
-  func commandsEncodeToTheDocumentedShape() throws {
+  func commandsEncodeToDocumentedShape() throws {
     let rumble = RumbleIntensities(lowFrequency: .max, rightTrigger: UnipolarValue(257))
     let cases: [(ControllerOutputCommand, String)] = [
       (
@@ -126,7 +126,7 @@ struct ControllerOutputCommandCodableTests {
   }
 
   @Test
-  func resultsEncodeTheOutcomeAndDroppedChannels() throws {
+  func resultsEncodeOutcomeAndDroppedChannels() throws {
     #expect(
       try json(ControllerOutputResult(.delivered, droppedRumbleChannels: [.leftTrigger]))
         == #"{"droppedRumbleChannels":["LeftTrigger"],"outcome":"Delivered"}"#

@@ -8,7 +8,7 @@ import Testing
 @Suite(.serialized)
 struct InputCaptureTests {
   @Test
-  func listensUntilItFindsAControllerControl() async {
+  func listensUntilItFindsControllerControl() async {
     let selector = ControllerReference.session(.fixture("live"))
     let released = ControllerState.neutral
     var pressed = released
@@ -32,7 +32,7 @@ struct InputCaptureTests {
   }
 
   @Test
-  func listenIgnoresAControlHeldBeforeListening() async {
+  func listenIgnoresControlHeldBeforeListening() async {
     let selector = ControllerReference.session(.fixture("live"))
     var held = ControllerState.neutral
     held.pressed = [.south]
@@ -54,7 +54,7 @@ struct InputCaptureTests {
   }
 
   @Test
-  func listenPublishesTheTransitionSourceWhenAnotherControlWasAlreadyHeld() async {
+  func listenPublishesTransitionSourceWhenAnotherControlWasAlreadyHeld() async {
     let selector = ControllerReference.session(.fixture("live"))
     var baseline = ControllerState.neutral
     baseline.pressed = [.south]

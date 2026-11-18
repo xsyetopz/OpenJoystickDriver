@@ -12,7 +12,7 @@ extension ApplicationServiceRuntime {
     return AutomaticUserSpaceOutputDispatcher(
       deviceManager: context.deviceManager,
       builder: { profileID in
-        let profile = try profileID.makeProfile()
+        let profile = profileID.makeProfile()
         return try makeUserSpaceOutputDispatcher(
           profile: profile.identity,
           format: profile.reportFormat,
@@ -35,7 +35,7 @@ extension ApplicationServiceRuntime {
         .identity
       },
       identityBuilder: { profileID, identity in
-        let profile = try profileID.makeProfile()
+        let profile = profileID.makeProfile()
         return try makeUserSpaceOutputDispatcher(
           profile: profile.identity.applying(identity),
           format: profile.reportFormat,
@@ -51,7 +51,7 @@ extension ApplicationServiceRuntime {
     profileID: VirtualHIDProfileID,
     onOutputCommand: @escaping UserSpaceOutputDispatcher.OutputCommandHandler
   ) throws -> any VirtualFeedDevice {
-    let profile = try profileID.makeProfile()
+    let profile = profileID.makeProfile()
     return try UserSpaceOutputDispatcher(
       publisher: IOHIDVirtualDevicePublisher(),
       profile: profile.identity,
@@ -76,6 +76,7 @@ extension ApplicationServiceRuntime {
       publisher: IOHIDVirtualDevicePublisher(),
       profile: profile,
       format: format,
+      identities: context.virtualIdentities,
       onOutputCommand: outputHandler
     ) { identifier in
       _ = await feedbackGate.quiesceAndNeutralize(

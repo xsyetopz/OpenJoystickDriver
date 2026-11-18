@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Byte limits on the messages of the remapping RPC methods.
 ///
@@ -86,13 +86,22 @@ public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Senda
   public let code: ErrorCode
   /// A human-readable description of the problem.
   public let message: String
+  /// The name of the stale `.json` file of an earlier alpha, or nil for any other issue.
+  public let fileName: String?
 
   /// Creates a profile issue from its values.
-  public init(id: UUID, kind: Kind = .damagedProfile, code: ErrorCode, message: String) {
+  public init(
+    id: UUID,
+    kind: Kind = .damagedProfile,
+    code: ErrorCode,
+    message: String,
+    fileName: String? = nil
+  ) {
     self.id = id
     self.kind = kind
     self.code = code
     self.message = message
+    self.fileName = fileName
   }
 
   /// The keys of the JSON encoding.
@@ -105,6 +114,8 @@ public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Senda
     case code
     /// The `message` key.
     case message
+    /// The `fileName` key.
+    case fileName
   }
 
   /// Decodes the value from `decoder`.
@@ -114,6 +125,7 @@ public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Senda
     kind = try container.decode(Kind.self, forKey: .kind)
     code = try container.decode(ErrorCode.self, forKey: .code)
     message = try container.decode(String.self, forKey: .message)
+    fileName = try container.decodeIfPresent(String.self, forKey: .fileName)
   }
 }
 
@@ -484,6 +496,20 @@ public struct ApplicationServiceRemappingRoutePayload: Codable, Equatable, Senda
   }
 }
 
+/// When a profile was last activated.
+public struct ApplicationServiceRemappingProfileUse: Codable, Equatable, Sendable {
+  /// The ID of the profile.
+  public let profileID: UUID
+  /// The time of the activation, in seconds since 1970.
+  public let usedAt: Double
+
+  /// Creates the entry for the profile `profileID` activated at `usedAt`.
+  public init(profileID: UUID, usedAt: Double) {
+    self.profileID = profileID
+    self.usedAt = usedAt
+  }
+}
+
 /// A profile a mod package serves, and the package that serves it.
 public struct ApplicationServiceRemappingPackageProfile: Codable, Equatable, Sendable {
   /// The ID of the profile.
@@ -513,6 +539,8 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
   public let profileIssues: [ApplicationServiceRemappingProfileIssue]
   /// The profiles in `profiles` that a package serves, sorted by profile id.
   public let packageProfiles: [ApplicationServiceRemappingPackageProfile]
+  /// When each activated profile in `profiles` was last activated, sorted by profile id.
+  public let lastUsed: [ApplicationServiceRemappingProfileUse]
   /// The state of the macOS permission to post input events.
   public let postEventAccess: RemappingPostEventAccessState
 
@@ -524,6 +552,7 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
     joyConPairs: [ApplicationServiceJoyConPairPayload] = [],
     profileIssues: [ApplicationServiceRemappingProfileIssue] = [],
     packageProfiles: [ApplicationServiceRemappingPackageProfile] = [],
+    lastUsed: [ApplicationServiceRemappingProfileUse] = [],
     postEventAccess: RemappingPostEventAccessState
   ) {
     self.profiles = profiles
@@ -532,6 +561,7 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
     self.joyConPairs = joyConPairs
     self.profileIssues = profileIssues
     self.packageProfiles = packageProfiles
+    self.lastUsed = lastUsed
     self.postEventAccess = postEventAccess
   }
 }
@@ -613,7 +643,7 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     /// The profile has a missing or unsupported `apiVersion`.
     case unsupportedAPIVersion = "unsupported_api_version"
 
-    /// The stable error code of this failure, listed in `Resources/ErrorCodes.json`.
+    /// The stable error code of this failure, listed in `Resources/ErrorCodes.plist`.
     public var errorCode: ErrorCode {
       switch self {
       case .controllerUnavailable: .controllerUnavailable

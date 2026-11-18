@@ -56,7 +56,7 @@ extension VirtualDeviceProfile {
 
   /// Official USB product string plus published VID/PID, not the physical pad name.
   public var publishedUSBIdentityLabel: String {
-    "\(productName) (\(String(format: "%04X:%04X", vendorID, productID)))"
+    "\(productName) (\(unsafe String(format: "%04X:%04X", vendorID, productID)))"
   }
 }
 
@@ -67,10 +67,7 @@ extension PhysicalProtocolID {
     switch self {
     case .xboxXID, .xboxXUSB, .xboxGIP: .xbox
     case .sonySixaxis, .sonyDualShock4, .sonyDualSense, .vendorPS3ThirdParty: .playstation
-    case .hidDescriptor, .hidReportLayout, .nintendoSwitch1, .nintendoSwitch2,
-      .nintendoSwitchInputOnly, .valveSteamController, .valveSteamTriton, .valveSteamDeck,
-      .vendorFlydigi, .vendorGameSir, .vendorNVIDIAShield, .nintendoWii:
-      .generic
+    default: .generic
     }
   }
 }

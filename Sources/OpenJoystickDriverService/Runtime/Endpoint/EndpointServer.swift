@@ -6,7 +6,7 @@ import OpenJoystickDriverMacOSPlatform
 /// The opt-in socket on which granted local programs read controller events, and the opt-in
 /// WebSocket on `127.0.0.1` for token clients such as browser overlays.
 ///
-/// `AccessGrants.json` says whether each listens and which signed clients and tokens it serves;
+/// `AccessGrants.plist` says whether each listens and which signed clients and tokens it serves;
 /// the socket exists only while the endpoint is enabled.
 ///
 /// - Note: `@unchecked Sendable` because the mutable fields are guarded by `lock`. Grant and
@@ -48,6 +48,10 @@ final class EndpointServer: @unchecked Sendable {
   ///
   /// Nil refuses every feed.
   let feeds: VirtualFeedRegistry?
+  /// The service that answers the profile requests, as the App Intents use it.
+  let automation: any AutomationService
+  /// The store that `ModList` reads, the one `ojd mod` and the App Intents use.
+  let modStore: ModPackageStore
   /// Identifies the program at the other end of a socket.
   let identify: Identify
   /// Told when a stream line about a controller went to the subscribers, with the uptime in
@@ -100,6 +104,8 @@ final class EndpointServer: @unchecked Sendable {
     source: any ControllerWatchSource,
     version: String = ApplicationVersion.current,
     feeds: VirtualFeedRegistry? = nil,
+    automation: any AutomationService,
+    modStore: ModPackageStore = ModPackageStore(),
     identify: @escaping Identify = EndpointClient.identify,
     streamDelivered: (@Sendable (ControllerSessionToken, UInt64) async -> Void)? = nil,
     beforeAcceptWait: (@Sendable (AccessTransport, Int) -> Void)? = nil,
@@ -116,6 +122,8 @@ final class EndpointServer: @unchecked Sendable {
     self.source = source
     self.version = version
     self.feeds = feeds
+    self.automation = automation
+    self.modStore = modStore
     self.streamDelivered = streamDelivered
     self.identify = identify
   }
@@ -289,8 +297,8 @@ final class EndpointServer: @unchecked Sendable {
     do {
       var address = try LocalServiceRPCTransport.socketAddress(path: socketPath)
       let bindStatus = withUnsafePointer(to: &address) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          Darwin.bind(
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe Darwin.bind(
             descriptor,
             $0,
             LocalServiceRPCTransport.socketAddressLength(path: socketPath)
@@ -298,18 +306,19 @@ final class EndpointServer: @unchecked Sendable {
         }
       }
       guard bindStatus == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
-      guard chmod(socketPath, S_IRUSR | S_IWUSR) == 0, Darwin.listen(descriptor, 16) == 0 else {
+      guard unsafe chmod(socketPath, S_IRUSR | S_IWUSR) == 0, Darwin.listen(descriptor, 16) == 0
+      else {
         throw LocalServiceRPCError.connectionFailed(errno)
       }
     } catch {
       Darwin.close(descriptor)
-      unlink(socketPath)
+      unsafe unlink(socketPath)
       throw error
     }
     let socketListener: AcceptListener
     do { socketListener = try AcceptListener(listening: descriptor, acceptCall: acceptCall) } catch
     {
-      unlink(socketPath)
+      unsafe unlink(socketPath)
       throw error
     }
     listener = socketListener
@@ -327,7 +336,7 @@ final class EndpointServer: @unchecked Sendable {
         socketListener.finish()
         return
       }
-      self.acceptConnections(socketListener, generation: generation)
+      acceptConnections(socketListener, generation: generation)
     }
   }
 
@@ -339,17 +348,17 @@ final class EndpointServer: @unchecked Sendable {
     stopped.wake()
     listener = nil
     socketGeneration += 1
-    unlink(socketPath)
+    unsafe unlink(socketPath)
   }
 
   /// Removes a socket file that a stopped service left behind; refuses any other file.
   private func removeStaleSocket() throws {
     var information = stat()
-    guard lstat(socketPath, &information) == 0 else { return }
+    guard unsafe lstat(socketPath, &information) == 0 else { return }
     guard information.st_uid == geteuid(), information.st_mode & S_IFMT == S_IFSOCK else {
       throw LocalServiceRPCError.peerRejected
     }
-    guard unlink(socketPath) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
+    guard unsafe unlink(socketPath) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
   }
 
   /// Owns the listener: waits on it and on its wake pipe, and closes it when it ends.
@@ -379,7 +388,7 @@ final class EndpointServer: @unchecked Sendable {
         // that follows is the stop, not a fault.
         guard lock.withLock({ socketGeneration == generation }) else { return }
         guard
-          AcceptFailure.continuesAfter(
+          unsafe AcceptFailure.continuesAfter(
             errno: code,
             server: "EndpointServer",
             wake: listener.wakeRead,
@@ -394,13 +403,19 @@ final class EndpointServer: @unchecked Sendable {
         return
       }
       var noSignal: Int32 = 1
-      setsockopt(accepted, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
+      unsafe setsockopt(
+        accepted,
+        SOL_SOCKET,
+        SO_NOSIGPIPE,
+        &noSignal,
+        socklen_t(MemoryLayout<Int32>.size)
+      )
       BlockingWork.detach(label: "com.openjoystickdriver.endpoint.connection") { [weak self] in
         guard let self else {
           Darwin.close(accepted)
           return
         }
-        self.serve(EndpointConnection(descriptor: accepted))
+        serve(EndpointConnection(descriptor: accepted))
       }
     }
   }

@@ -4,17 +4,17 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// The families whose descriptions hold the input layout, which `ReportLayoutDriver` decodes:
-/// `XboxXID`, `NintendoSwitchInputOnly` and `VendorFlydigi`.
+/// `XboxXID`, `NintendoSwitchInputOnly` and the bundled documented family `VendorFlydigi`.
 ///
 /// Their decoded frames are pinned by `DriverParseCharacterizationTests`, `XboxXIDFieldSweepTests`
 /// and each family's parser suite.
 struct DescribedLayoutFamilyTests {
   private static let described: [PhysicalProtocolID] = [
-    .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi,
+    .xboxXID, .nintendoSwitchInputOnly, .flydigi,
   ]
 
   @Test(arguments: described)
-  func descriptionsDeclareTheirLayoutThroughTheInputSection(family: PhysicalProtocolID) {
+  func descriptionsDeclareTheirLayoutThroughInputSection(family: PhysicalProtocolID) {
     let description = family.protocolDescription
     #expect(description.recordSections.contains(.input))
     #expect(description.inputLayouts != nil)
@@ -22,7 +22,7 @@ struct DescribedLayoutFamilyTests {
   }
 
   @Test(arguments: described)
-  func advertisedControlsContainEveryControlTheLayoutDecodes(family: PhysicalProtocolID) throws {
+  func advertisedControlsContainEveryControlLayoutDecodes(family: PhysicalProtocolID) throws {
     let layout = try #require(family.protocolDescription.inputLayouts)
     #expect(layout.controls.isSubset(of: family.describedControls.controls))
     let driver = ReportLayoutDriver(
@@ -38,17 +38,17 @@ struct DescribedLayoutFamilyTests {
   /// `ReportLayoutDriver(describedBy:)` traps on a description that sets no input layout, so
   /// the registry may route only the families that set one.
   @Test
-  func exactlyTheDescribedFamiliesSetAnInputLayout() {
+  func exactlyDescribedFamiliesSetInputLayout() {
     let withLayout = PhysicalProtocolID.allCases.filter {
       $0.protocolDescription.inputLayouts != nil
     }
-    #expect(Set(withLayout) == Set(Self.described))
+    #expect(Set(withLayout) == Set(Self.described.filter { !$0.isDocumented }))
   }
 
   /// `ReportLayoutDriver` traps when a raw-USB rumble template has no USB output, so every
   /// variant's raw-USB template must send through the output the described initializer supplies.
   @Test(arguments: described)
-  func everyRawUSBRumbleTemplateSendsThroughTheDriversUSBOutput(
+  func everyRawUSBRumbleTemplateSendsThroughDriversUSBOutput(
     family: PhysicalProtocolID
   ) throws {
     let variants: [PhysicalProtocolVariantID?] =
@@ -74,7 +74,7 @@ struct DescribedLayoutFamilyTests {
   }
 
   @Test
-  func xidDeclaresTheTwentyByteReportOfAnyLength() throws {
+  func xidDeclaresTwentyByteReportOfAnyLength() throws {
     let layout = try #require(ProtocolDescription.bundled[.xboxXID]?.inputLayouts?.layouts.first)
     #expect(layout.reportID == nil)
     #expect(layout.minimumLength == 20)
@@ -82,7 +82,7 @@ struct DescribedLayoutFamilyTests {
   }
 
   @Test
-  func switchInputOnlyDeclaresTheSevenByteReportWithoutAnID() throws {
+  func switchInputOnlyDeclaresSevenByteReportWithoutID() throws {
     let layout = try #require(
       ProtocolDescription.bundled[.nintendoSwitchInputOnly]?.inputLayouts?.layouts.first
     )
@@ -94,7 +94,7 @@ struct DescribedLayoutFamilyTests {
   @Test
   func flydigiDeclaresExactlyFifteenBytesWithReportID1() throws {
     let layout = try #require(
-      ProtocolDescription.bundled[.vendorFlydigi]?.inputLayouts?.layouts.first
+      PhysicalProtocolID.flydigi.protocolDescription.inputLayouts?.layouts.first
     )
     #expect(layout.reportID == 1)
     #expect(layout.minimumLength == 15)

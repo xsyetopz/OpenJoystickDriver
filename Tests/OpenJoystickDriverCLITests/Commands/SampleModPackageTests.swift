@@ -41,7 +41,7 @@ struct SampleModPackageTests {
   }
 
   @Test
-  func modValidateAcceptsTheSample() async throws {
+  func modValidateAcceptsSample() async throws {
     let support = Support()
 
     let result = await run(["mod", "validate", Self.sample, "--json"], in: support)
@@ -52,13 +52,14 @@ struct SampleModPackageTests {
     #expect(json["name"] as? String == "ojd-sample")
     #expect(
       json["files"] as? [String] == [
-        "Controllers/1209-0001.json", "Profiles/sample-pad.json", "VirtualDevices/1209-0001.json",
+        "Controllers/1209-0001.plist", "Profiles/sample-pad.plist",
+        "VirtualDevices/1209-0001.plist",
       ]
     )
   }
 
   @Test
-  func recordTestReplaysTheSampleRecord() async throws {
+  func recordTestReplaysSampleRecord() async throws {
     let support = Support()
     let install = await run(["mod", "install", Self.sample, "--json"], in: support)
     #expect(install.code == 0, "\(install.standardError)")

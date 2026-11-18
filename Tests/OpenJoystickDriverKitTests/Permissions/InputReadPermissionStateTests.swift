@@ -4,7 +4,7 @@ import Testing
 
 struct InputReadPermissionStateTests {
   @Test
-  func anAccessStateDecodesOnlyItsListedSpellings() throws {
+  func accessStateDecodesOnlyItsListedSpellings() throws {
     for state in PermissionManager.AccessState.allCases {
       let data = Data("\"\(state.rawValue)\"".utf8)
       #expect(try JSONDecoder().decode(PermissionManager.AccessState.self, from: data) == state)
@@ -12,7 +12,7 @@ struct InputReadPermissionStateTests {
   }
 
   @Test(arguments: ["granted", "GRANTED", "denied", "unknown", "", "Allowed"])
-  func anAccessStateRefusesAnyOtherSpelling(raw: String) {
+  func accessStateRefusesAnyOtherSpelling(raw: String) {
     #expect(PermissionManager.AccessState(rawValue: raw) == nil)
     #expect(throws: DecodingError.self) {
       try JSONDecoder().decode(
@@ -23,7 +23,7 @@ struct InputReadPermissionStateTests {
   }
 
   @Test(arguments: ["granted", "Allowed", ""])
-  func aStatusPayloadRefusesAnInvalidPermissionState(raw: String) throws {
+  func statusPayloadRefusesInvalidPermissionState(raw: String) throws {
     let valid = ApplicationServiceStatusPayload(
       inputRead: .granted,
       inputInject: .denied,

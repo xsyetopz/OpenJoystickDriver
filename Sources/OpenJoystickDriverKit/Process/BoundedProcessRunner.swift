@@ -1,5 +1,5 @@
 import Darwin
-import Foundation
+public import Foundation
 
 /// Captured result from a child process whose runtime and output are bounded.
 public struct BoundedProcessResult: Equatable, Sendable {
@@ -88,7 +88,7 @@ public enum BoundedProcessRunner {
       var buffer = [UInt8](repeating: 0, count: 65_536)
       while true {
         let byteCount = buffer.withUnsafeMutableBytes { bytes in
-          Darwin.read(readDescriptor, bytes.baseAddress, bytes.count)
+          unsafe Darwin.read(readDescriptor, bytes.baseAddress, bytes.count)
         }
         if byteCount > 0 {
           capture.append(Data(buffer.prefix(byteCount)))

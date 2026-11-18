@@ -22,7 +22,7 @@ struct EndpointServerTests {
   )
 
   @Test
-  func aDisabledEndpointHasNoSocket() async throws {
+  func disabledEndpointHasNoSocket() async throws {
     try await withEndpointServer { server, _ in
       server.start()
       #expect(!FileManager.default.fileExists(atPath: server.socketPath))
@@ -32,7 +32,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func disablingRemovesTheSocketAndClosesEveryConnection() async throws {
+  func disablingRemovesSocketAndClosesEveryConnection() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -50,7 +50,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aDisableAndEnableCycleLeavesOneAcceptLoop() async throws {
+  func disableAndEnableCycleLeavesOneAcceptLoop() async throws {
     try await withEndpointServer { server, _ in
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
       for _ in 0..<5 {
@@ -75,7 +75,9 @@ struct EndpointServerTests {
     var address = try LocalServiceRPCTransport.socketAddress(path: path)
     let length = LocalServiceRPCTransport.socketAddressLength(path: path)
     let status = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(descriptor, $0, length) }
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe connect(descriptor, $0, length)
+      }
     }
     try #require(status == 0)
     return descriptor
@@ -91,7 +93,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func stoppingTheEndpointDuringAWaitForResourcesEndsTheLoopAtOnce() async throws {
+  func stoppingEndpointDuringWaitForResourcesEndsLoopAtOnce() async throws {
     let reports = Reports()
     let failing: @Sendable (Int32) -> Int32 = { _ in
       errno = EMFILE
@@ -115,7 +117,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aNormalStopReportsNoAcceptFailure() async throws {
+  func normalStopReportsNoAcceptFailure() async throws {
     let reports = Reports()
     let inAccept = DispatchSemaphore(value: 0)
     let proceed = DispatchSemaphore(value: 0)
@@ -146,7 +148,7 @@ struct EndpointServerTests {
   /// A loop held between its generation check and its wait must not take over the listener that
   /// replaced its own: its descriptor stays open until it ends, so the number is not reused.
   @Test
-  func aLoopHeldBeforeItsWaitDoesNotTakeTheNextListenersFirstClient() async throws {
+  func loopHeldBeforeItsWaitDoesNotTakeNextListenersFirstClient() async throws {
     let gate = AcceptLoopGate(holding: .socket)
     try await withEndpointServer(beforeAcceptWait: gate.hook) { server, _ in
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -166,7 +168,7 @@ struct EndpointServerTests {
   }
 
   @Test(arguments: [#"["read"]"#, #"["control"]"#])
-  func aScopeInTheEarlierSpellingIsRefused(scopes: String) async throws {
+  func scopeInEarlierSpellingIsRefused(scopes: String) async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read, .control])
@@ -181,7 +183,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func theStreamInTheEarlierSpellingIsRefused() async throws {
+  func streamInEarlierSpellingIsRefused() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -195,7 +197,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func anUngrantedClientIsRefusedAndListedUntilGranted() async throws {
+  func ungrantedClientIsRefusedAndListedUntilGranted() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       let client = try await EndpointTestClient(path: server.socketPath)
@@ -215,7 +217,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func anAdHocClientIsRefusedAndCannotBeGranted() async throws {
+  func adHocClientIsRefusedAndCannotBeGranted() async throws {
     try await withEndpointServer(identity: Self.adHoc) { server, _ in
       try server.setEnabled(true)
       let client = try await EndpointTestClient(path: server.socketPath)
@@ -230,7 +232,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aGrantedClientStreamsControllerEvents() async throws {
+  func grantedClientStreamsControllerEvents() async throws {
     try await withEndpointServer { server, fixture in
       fixture.source.set(devices: ["pad-1"], state: ControllerState(pressed: [.south]))
       try server.setEnabled(true)
@@ -274,7 +276,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aModifiedUpdateReportsItsSessionTokenToStreamDelivered() async throws {
+  func modifiedUpdateReportsItsSessionTokenToStreamDelivered() async throws {
     let delivered = Locked<[ControllerSessionToken]>([])
     let record: @Sendable (ControllerSessionToken, UInt64) async -> Void = { token, _ in
       delivered.withLock { $0.append(token) }
@@ -296,7 +298,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aLateSubscriberFirstReceivesTheConnectedControllers() async throws {
+  func lateSubscriberFirstReceivesConnectedControllers() async throws {
     try await withEndpointServer { server, fixture in
       fixture.source.set(devices: ["pad-1"], state: ControllerState(pressed: [.south]))
       try server.setEnabled(true)
@@ -314,7 +316,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func revokingClosesTheClientsConnections() async throws {
+  func revokingClosesClientsConnections() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -331,7 +333,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aTokenClientIsWelcomedWithoutAReadableSignature() async throws {
+  func tokenClientIsWelcomedWithoutReadableSignature() async throws {
     try await withEndpointServer(identity: nil) { server, _ in
       try server.setEnabled(true)
       let granted = try server.grantToken(name: "script", origins: [], scopes: [.read])
@@ -353,7 +355,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aWrongTokenIsRefusedAndListed() async throws {
+  func wrongTokenIsRefusedAndListed() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -371,7 +373,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func eachConnectionGetsAFreshChallengeFirst() async throws {
+  func eachConnectionGetsFreshChallengeFirst() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       let first = try await EndpointTestClient(path: server.socketPath)
@@ -388,7 +390,7 @@ struct EndpointServerTests {
 
   /// A proof is bound to its connection's nonce, so a proof seen once cannot be replayed.
   @Test
-  func aProofForAnotherNonceIsRefused() async throws {
+  func proofForAnotherNonceIsRefused() async throws {
     try await withEndpointServer(identity: nil) { server, _ in
       try server.setEnabled(true)
       let granted = try server.grantToken(name: "script", origins: [], scopes: [.read])
@@ -402,7 +404,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func revokingATokenClosesItsConnections() async throws {
+  func revokingTokenClosesItsConnections() async throws {
     try await withEndpointServer(identity: nil) { server, _ in
       try server.setEnabled(true)
       let granted = try server.grantToken(name: "script", origins: [], scopes: [.read])
@@ -426,18 +428,18 @@ struct EndpointServerTests {
     (clientLine("Hello", #","scopes":[]"#), "E1003"),
     (clientLine("Subscription", #","stream":"Controllers""#), "E1010"),
     (#"{"kind":"Hello","scopes":["Read"]}"#, "E1011"),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","scopes":["Read"]}"#, "E1011"),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","scopes":["Read"]}"#, "E1011"),
     (#"{}"#, "E1011"),
     (#"{"apiVersion":null,"kind":"Hello","scopes":["Read"]}"#, "E1011"),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","kind":null,"scopes":["Read"]}"#, "E1011"),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":null,"scopes":["Read"]}"#, "E1011"),
     (#"{"apiVersion":1,"kind":"Hello","scopes":["Read"]}"#, "E1011"),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","kind":["Hello"],"scopes":["Read"]}"#, "E1011"),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":["Hello"],"scopes":["Read"]}"#, "E1011"),
     (#"[1]"#, "E1003"),
     (clientLine("Welcome", #","scopes":["Read"]"#), "E1010"),
     (clientLine("Greeting", #","scopes":["Read"]"#), "E1010"),
     (clientLine("Hello", #","scopes":["Read","Control"]"#), "E1002"),
   ])
-  func aBadHelloGetsAnError(hello: String, code: String) async throws {
+  func badHelloGetsError(hello: String, code: String) async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -461,7 +463,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aClientGrantedControlIsWelcomedWithControl() async throws {
+  func clientGrantedControlIsWelcomedWithControl() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.control])
@@ -481,7 +483,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aClientGrantedOnlyReadIsRefusedControl() async throws {
+  func clientGrantedOnlyReadIsRefusedControl() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -495,7 +497,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aSessionWithoutReadCannotSubscribe() async throws {
+  func sessionWithoutReadCannotSubscribe() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read, .control])
@@ -512,7 +514,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aKeepAliveOutsideAFeedIsRefusedWithE1010() async throws {
+  func keepAliveOutsideFeedIsRefusedWithE1010() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -525,7 +527,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aSecondSubscribeEndsTheConnection() async throws {
+  func secondSubscribeEndsConnection() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -538,7 +540,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func theNinthConnectionIsRefused() async throws {
+  func ninthConnectionIsRefused() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -556,7 +558,7 @@ struct EndpointServerTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aNewClientIsServedWhileTheLimitOfIdleClientsIsHeld() async throws {
+  func newClientIsServedWhileLimitOfIdleClientsIsHeld() async throws {
     try await withEndpointServer { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
@@ -599,7 +601,7 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aDamagedFileIsReportedAndKeepsTheEndpointClosed() async throws {
+  func damagedFileIsReportedAndKeepsEndpointClosed() async throws {
     try await withEndpointServer { server, fixture in
       try FileManager.default.createDirectory(
         at: fixture.directory,
@@ -615,14 +617,18 @@ struct EndpointServerTests {
   }
 
   @Test
-  func aStaleSocketFileIsReplaced() async throws {
+  func staleSocketFileIsReplaced() async throws {
     try await withEndpointServer { server, fixture in
       try fixture.store.save(AccessGrantFile(enabled: true, grants: []))
       let stale = socket(AF_UNIX, SOCK_STREAM, 0)
       var address = try LocalServiceRPCTransport.socketAddress(path: server.socketPath)
       let bound = withUnsafePointer(to: &address) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          bind(stale, $0, LocalServiceRPCTransport.socketAddressLength(path: server.socketPath))
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe bind(
+            stale,
+            $0,
+            LocalServiceRPCTransport.socketAddressLength(path: server.socketPath)
+          )
         }
       }
       #expect(bound == 0)

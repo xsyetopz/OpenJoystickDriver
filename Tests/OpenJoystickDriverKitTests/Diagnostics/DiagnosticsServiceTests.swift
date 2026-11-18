@@ -6,7 +6,7 @@ import Testing
 
 struct DiagnosticsServiceTests {
   @Test
-  func aVirtualDeviceErrorShowsItsMessageOnce() {
+  func virtualDeviceErrorShowsItsMessageOnce() {
     let status = ApplicationServiceStatusPayload(
       inputRead: .granted,
       inputInject: .granted,
@@ -49,7 +49,7 @@ struct DiagnosticsServiceTests {
   }
 
   @Test
-  func aRejectedSDLLineWarnsUnderItsCode() {
+  func rejectedSDLLineWarnsUnderItsCode() {
     let pad = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
       name: "Test Pad",
@@ -63,7 +63,7 @@ struct DiagnosticsServiceTests {
   }
 
   @Test
-  func theInputMappingCheckPassesWithoutARejectionAndSkipsWithoutAStatus() {
+  func inputMappingCheckPassesWithoutRejectionAndSkipsWithoutStatus() {
     let pad = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     #expect(DiagnosticsService.inputMappingCheck(snapshot(devices: [pad])).status == .pass)
     #expect(DiagnosticsService.inputMappingCheck(snapshot(devices: nil)).status == .skip)
@@ -77,7 +77,10 @@ struct DiagnosticsServiceTests {
       productID: 0x2009,
       serialNumber: "000000000001"
     )
-    let check = DiagnosticsService.switchSerialCheck(snapshot(devices: [pad]))
+    let check = DiagnosticsService.switchSerialCheck(
+      snapshot(devices: [pad]),
+      records: .bundled
+    )
     #expect(check.id == "switch-placeholder-serial" && check.status == .warn)
     #expect(check.detail.contains("057E:2009"))
     #expect(check.detail.contains("000000000001"))
@@ -96,7 +99,10 @@ struct DiagnosticsServiceTests {
       vendorID: 0x057E,
       productID: 0x2009
     )
-    let check = DiagnosticsService.switchSerialCheck(snapshot(devices: [genuine, none]))
+    let check = DiagnosticsService.switchSerialCheck(
+      snapshot(devices: [genuine, none]),
+      records: .bundled
+    )
     #expect(check.status == .pass)
   }
 
@@ -106,7 +112,37 @@ struct DiagnosticsServiceTests {
       id: "pad-1",
       serialNumber: "000000000001"
     )
-    #expect(DiagnosticsService.switchSerialCheck(snapshot(devices: [other])).status == .skip)
-    #expect(DiagnosticsService.switchSerialCheck(snapshot(devices: nil)).status == .skip)
+    let skipped = DiagnosticsService.switchSerialCheck(
+      snapshot(devices: [other]),
+      records: .bundled
+    )
+    #expect(skipped.status == .skip)
+    #expect(
+      DiagnosticsService.switchSerialCheck(snapshot(devices: nil), records: .bundled).status
+        == .skip
+    )
+  }
+
+  @Test
+  func diagnoseSkipsWhenRecordHasNoPlaceholderSerial() throws {
+    let record = try ControllerRecordSet.makeRecord(
+      OrderedJSON(foundation: [
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 0x057E,
+        "productID": 0x2009,
+        "modes": [["id": "default", "protocol": ["family": "NintendoSwitch1"]]],
+      ]),
+      layers: [:]
+    )
+    let records = ControllerRecordSet(records: [record.model: record], userFiles: [])
+    let pad = ApplicationServiceDeviceDescription.fixture(
+      id: "pad-1",
+      vendorID: 0x057E,
+      productID: 0x2009,
+      serialNumber: "000000000001"
+    )
+    let check = DiagnosticsService.switchSerialCheck(snapshot(devices: [pad]), records: records)
+    #expect(check.status == .skip)
   }
 }

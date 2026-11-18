@@ -383,7 +383,9 @@ function run(argv) {
 				)
 				.join("\n");
 		case "press-label": {
-			const target = descendants(focusedWindow(app)).find((element) => label(element) === argument);
+			const target = descendants(focusedWindow(app)).find(
+				(element) => shown(element, "AXTitle") === argument || shown(element, "AXDescription") === argument,
+			);
 			if (!target) throw new Error("the focused window has no element labeled " + argument);
 			press(target);
 			delay(SETTLE_SECONDS);

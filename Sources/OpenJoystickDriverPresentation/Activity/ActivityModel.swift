@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 /// The two views of the Activity area; the toolbar's segmented control switches them.
@@ -30,17 +31,22 @@ enum ActivityLogFollowing {
   }
 }
 
-/// An action of the Activity area that did not happen: the alert's title and, when there is more
-/// to say, its message.
+/// An action of the Activity area that did not happen: the title and, when there is more to say,
+/// the message.
 struct ActivityActionFailure: Equatable {
-  /// The alert's title.
+  /// What did not happen.
   let title: String
-  /// The alert's message, or nil when the title says it all.
+  /// Why, or nil when the title says it all.
   let message: String?
+
+  /// The title, followed by the message when there is one.
+  var text: String { [title, message].compactMap { $0 }.joined(separator: " ") }
 }
 
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import AppKit
+  import OpenJoystickDriverKit
   import SwiftUI
 
   /// The state of the Activity area: which view it shows, the log and the diagnostic checks.
@@ -55,9 +61,12 @@ struct ActivityActionFailure: Equatable {
     let diagnostics: ActivityDiagnosticsModel
     /// The last action that failed.
     ///
-    /// The alert shows in both views.
+    /// The failure row shows in both views.
     @Published
     var failure: ActivityActionFailure?
+    /// Why the fix of a check row failed, by check id; the row shows it under its details.
+    @Published
+    var fixFailures: [String: String] = [:]
     /// Does the action of a fix button and returns why it could not.
     private let performFix: @MainActor (ActivityCheckFix) -> String?
 
@@ -72,9 +81,9 @@ struct ActivityActionFailure: Equatable {
       self.performFix = performFix
     }
 
-    /// Does the action of a fix button and shows an alert when it fails.
-    func perform(_ fix: ActivityCheckFix) {
-      if let title = performFix(fix) { failure = ActivityActionFailure(title: title, message: nil) }
+    /// Does the fix of the check `checkID` and keeps why it failed, if it did, for that check row.
+    func perform(_ fix: ActivityCheckFix, forCheck checkID: String) {
+      fixFailures[checkID] = performFix(fix)
     }
   }
 
@@ -84,19 +93,23 @@ struct ActivityActionFailure: Equatable {
     @ObservedObject
     var model: ActivityModel
 
-    /// The Activity content with the alert for the model's failure.
+    /// The Activity content under the row of the model's failure, which Dismiss clears.
     var body: some View {
-      content.alert(
-        isPresented: Binding(
-          get: { model.failure != nil },
-          set: { if !$0 { model.failure = nil } }
-        )
-      ) {
-        Alert(
-          title: Text(model.failure?.title ?? ""),
-          message: model.failure?.message.map { Text($0) },
-          dismissButton: .default(Text(OJDLocalized.string("action.ok")))
-        )
+      VStack(spacing: OJDSpacing.none) {
+        if let failure = model.failure {
+          HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
+            Text(failure.text).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
+              horizontal: false,
+              vertical: true
+            )
+            Spacer(minLength: 12)
+            Button(OJDLocalized.string("action.dismiss")) { model.failure = nil }
+              .help(OJDLocalized.string("ui.help.dismiss"))
+          }.padding(.horizontal, 12).padding(.vertical, 8)
+          Divider()
+        }
+        HiddenChangeNotice(content: .needsAdvanced).padding(.horizontal, OJDSpacing.medium)
+        content
       }
     }
 
@@ -104,8 +117,13 @@ struct ActivityActionFailure: Equatable {
     @ViewBuilder
     private var content: some View {
       switch model.mode {
-      case .log: ActivityLogView(model: model.log)
-      case .diagnostics: ActivityDiagnosticsView(model: model.diagnostics, perform: model.perform)
+      case .log: ActivityLogView(model: model.log).ojdInterfaceRow(ActivityRow.log)
+      case .diagnostics:
+        ActivityDiagnosticsView(
+          model: model.diagnostics,
+          failures: model.fixFailures,
+          perform: model.perform
+        ).ojdInterfaceRow(ActivityRow.diagnostics)
       }
     }
   }

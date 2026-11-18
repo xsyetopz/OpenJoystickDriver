@@ -1,14 +1,17 @@
-import CryptoKit
+public import CryptoKit
 import Foundation
 
 /// The stable, user-facing slot of one controller: its model, the USB port it is plugged into,
-/// and the interface it is reached through.
+/// and the interface it is reached through; or, for a Bluetooth LE controller, its model and the
+/// peripheral identifier this Mac gave it.
 ///
-/// A port key is `U-` and an HMAC of `vid:pid:locationID:interface` under the installation key,
-/// which the service loads from its private file `PortKeyInstallation.key` in the application data
-/// directory (see ``PortKeyInstallationStore``). It stays the same across reconnects and service
-/// restarts while the controller uses the same port, and changes when it moves to another port.
-/// It never includes the serial number. A controller with no location ID has no port key.
+/// A port key is `U-` and an HMAC under the installation key, which the service loads from its
+/// private file `PortKeyInstallation.key` in the application data directory (see
+/// ``PortKeyInstallationStore``). The HMAC covers `vid:pid:locationID:interface`, or
+/// `vid:pid:BLE:identifier` for a Bluetooth LE peripheral. It stays the same across reconnects and
+/// service restarts while the controller uses the same port, or is the same peripheral, and changes
+/// when it moves to another port. It never includes the serial number. A controller reached through
+/// a raw USB service with no location ID has no port key.
 public struct ControllerPortKey: Hashable, Sendable {
   /// The prefix of every port key.
   static let prefix = "U-"
@@ -22,21 +25,24 @@ public struct ControllerPortKey: Hashable, Sendable {
     rawValue = text
   }
 
-  /// The port key of `controller` under `installationKey`; nil without a location ID.
+  /// The port key of `controller` under `installationKey`; nil without a location ID or a
+  /// Bluetooth LE peripheral identifier.
   public static func of(
     _ controller: LogicalControllerID,
     installationKey: SymmetricKey
   ) -> Self? {
-    guard let locationID = controller.address?.locationID else { return nil }
-    let identity = controller.hardware
-    let interface = controller.address?.interfaceNumber.map { String(format: "%02X", $0) } ?? "-"
-    let preimage = String(
-      format: "%04X:%04X:%08X:%@",
-      identity.model.vendorID,
-      identity.model.productID,
-      locationID,
-      interface
-    )
+    let model = controller.hardware.model
+    let slot: String
+    switch controller.address {
+    case .ioKit(let locationID, let interfaceNumber):
+      let interface = interfaceNumber.map { unsafe String(format: "%02X", $0) } ?? "-"
+      slot = unsafe String(format: "%08X:%@", locationID, interface)
+    case .gattPeripheral(let identifier):
+      slot = "BLE:\(identifier.uuidString)"
+    case .usbService, nil:
+      return nil
+    }
+    let preimage = unsafe String(format: "%04X:%04X:", model.vendorID, model.productID) + slot
     let digest = HMAC<SHA256>.authenticationCode(for: Data(preimage.utf8), using: installationKey)
     return Self(rawValue: PrefixedIdentifierText.make(prefix: prefix, bytes: digest))
   }

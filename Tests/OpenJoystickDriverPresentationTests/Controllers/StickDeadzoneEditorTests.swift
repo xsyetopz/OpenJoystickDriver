@@ -25,23 +25,43 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func aSecondChangeWhileOneIsInFlightIsDropped() async {
+  func lastChangeMadeWhileOneInFlightWrittenAfterIt() async {
+    let gateway = GatewayStub()
+    let viewModel = RuntimeViewModel(gateway: gateway)
+    let editor = StickDeadzoneEditor()
+    let device = Self.device()
+    var reads = 0
+
+    let changes = [0.02, 0.03, 0.04].map { value in
+      Task { await editor.change(to: value, for: device, viewModel: viewModel) { reads += 1 } }
+    }
+    for change in changes { await change.value }
+
+    let requests = await gateway.tuningRequests
+    #expect(requests.map(\.value) == [0.02, 0.04])
+    #expect(reads == 2)
+    #expect(!editor.isWriting)
+  }
+
+  @Test
+  func resetMadeWhileOneInFlightWrittenAfterIt() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
     let device = Self.device()
 
-    async let first: Void = editor.change(to: 0.02, for: device, viewModel: viewModel) {}
-    async let second: Void = editor.change(to: 0.02, for: device, viewModel: viewModel) {}
-    _ = await (first, second)
+    let changes = [0.02, nil].map { value in
+      Task { await editor.change(to: value, for: device, viewModel: viewModel) {} }
+    }
+    for change in changes { await change.value }
 
     let requests = await gateway.tuningRequests
-    #expect(requests.map(\.value) == [0.02])
+    #expect(requests.map(\.value) == [0.02, nil])
     #expect(!editor.isWriting)
   }
 
   @Test
-  func theEditorStaysBusyUntilTheRecordIsRead() async {
+  func editorStaysBusyUntilRecordIsRead() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let editor = StickDeadzoneEditor()
@@ -56,7 +76,7 @@ struct StickDeadzoneEditorTests {
   }
 
   @Test
-  func aRefusedChangeDoesNotReadTheRecordAndFreesTheEditor() async {
+  func refusedChangeDoesNotReadRecordAndFreesEditor() async {
     let gateway = GatewayStub()
     await gateway.setTuningFailure(.invalidRecord)
     let viewModel = RuntimeViewModel(gateway: gateway)

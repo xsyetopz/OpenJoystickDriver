@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OpenJoystickDriverKit
 
@@ -16,7 +17,8 @@ enum ActivityCheckFix: Equatable {
   var titleKey: String {
     switch self {
     case .requestInputRead, .requestInputInject: return "action.request"
-    case .approveDriver: return "platform.macos.ui.setup.openSystemSettings"
+    case .approveDriver:
+      return SystemSettingsMessage.openSettings.localizationKey()
     case .showLibrary: return "ui.activity.fix.showLibrary"
     }
   }

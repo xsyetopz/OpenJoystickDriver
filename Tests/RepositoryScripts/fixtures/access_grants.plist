@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>enabled</key>
+	<true/>
+	<key>grants</key>
+	<array>
+		<dict>
+			<key>grantedAt</key>
+			<string>2026-01-01T00:00:00Z</string>
+			<key>identifier</key>
+			<string>com.example.overlay</string>
+			<key>path</key>
+			<string>/Applications/Overlay.app</string>
+			<key>publisher</key>
+			<dict>
+				<key>id</key>
+				<string>ABCDE12345</string>
+				<key>kind</key>
+				<string>Signed</string>
+			</dict>
+			<key>scopes</key>
+			<array>
+				<string>Read</string>
+			</array>
+		</dict>
+	</array>
+	<key>kind</key>
+	<string>AccessGrants</string>
+	<key>tokens</key>
+	<array>
+		<dict>
+			<key>grantedAt</key>
+			<string>2026-01-01T00:00:00Z</string>
+			<key>name</key>
+			<string>stream-overlay</string>
+			<key>origins</key>
+			<array>
+				<string>http://127.0.0.1:8080</string>
+			</array>
+			<key>scopes</key>
+			<array>
+				<string>Read</string>
+			</array>
+			<key>tokenSHA256</key>
+			<string>0000000000000000000000000000000000000000000000000000000000000000</string>
+		</dict>
+	</array>
+	<key>web</key>
+	<dict>
+		<key>enabled</key>
+		<true/>
+		<key>port</key>
+		<integer>49152</integer>
+	</dict>
+</dict>
+</plist>

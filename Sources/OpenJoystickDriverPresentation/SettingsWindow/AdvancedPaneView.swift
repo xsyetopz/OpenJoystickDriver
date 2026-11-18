@@ -23,22 +23,27 @@
       Form {
         SettingsErrorSection(preferences: preferences)
         CommandLineToolSection(commandLineTool: commandLineTool)
+          .ojdInterfaceRow(SettingsRow.commandLineTool)
         DriverExtensionSection(runtime: runtime)
-        Section(OJDLocalized.string("ui.settings.advanced.developerTools")) {
+          .ojdInterfaceRow(SettingsRow.driverExtension)
+        Section {
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.advanced.enableDeveloperTools"),
+            help: OJDLocalized.string("ui.help.developerTools"),
             description: OJDLocalized.string("ui.settings.advanced.developerToolsDescription"),
             isOn: Binding(
               get: { preferences.developerToolsEnabled },
               set: { preferences.setDeveloperToolsEnabled($0) }
             )
           )
-        }
-        if preferences.developerToolsEnabled {
+        }.ojdInterfaceRow(SettingsRow.developerToolsSwitch)
+        if preferences.developerToolsVisible {
           DeveloperToolsView(model: developerTools)
+            .ojdInterfaceRow(SettingsRow.developerTools)
           DeveloperSoakTestSection(model: developerTools.soakTest)
+            .ojdInterfaceRow(SettingsRow.developerTools)
         }
-      }.ojdGroupedForm()
+      }.ojdGroupedForm().ojdSettingsInterfaceLevel(preferences)
     }
   }
 

@@ -42,7 +42,7 @@
     /// The sheet's title, the two pickers, the hint about sessions, and the Cancel and Pair
     /// buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.pairJoyCons"))
           .font(.headline.weight(.semibold))
         Text(profile.name).font(.caption).foregroundColor(.secondary)
@@ -54,7 +54,7 @@
             Text(device.name + " · " + device.sessionToken.rawValue)
               .tag(Optional(device.sessionToken))
           }
-        }
+        }.help(OJDLocalized.string("ui.profiles.joyConLeftHelp"))
         Picker(
           OJDLocalized.string("ui.profiles.joyConRight"),
           selection: $rightSessionToken
@@ -63,7 +63,7 @@
             Text(device.name + " · " + device.sessionToken.rawValue)
               .tag(Optional(device.sessionToken))
           }
-        }
+        }.help(OJDLocalized.string("ui.profiles.joyConRightHelp"))
         Text(
           OJDLocalized.string(
             "ui.profiles.joyConPairSessionHint"
@@ -71,15 +71,18 @@
         ).font(.caption).foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true)
         HStack {
           Spacer()
-          Button(OJDLocalized.string("action.cancel")) { dismiss() }
+          Button(OJDLocalized.string("action.cancel")) { dismiss() }.help(
+            OJDLocalized.string("ui.help.cancelSheet")
+          )
           Button(OJDLocalized.string("ui.profiles.pair")) {
             if let leftSessionToken, let rightSessionToken {
               onPair(leftSessionToken, rightSessionToken)
             }
             dismiss()
           }.disabled(leftSessionToken == nil || rightSessionToken == nil)
+            .help(OJDLocalized.string("ui.profiles.pairHelp"))
         }
-      }.padding(28).frame(width: 480)
+      }.ojdSheet(.regular)
     }
 
     /// Dismisses the sheet.

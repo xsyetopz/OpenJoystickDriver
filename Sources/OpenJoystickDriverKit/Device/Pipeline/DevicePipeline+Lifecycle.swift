@@ -23,7 +23,9 @@ extension DevicePipeline {
     startIdleMonitor()
 
     switch transport {
-    case .usb(let device): startUSBRun(device: device)
+    case .usb(let device):
+      // A pipeline admitted suspended holds no session; its resume opens one.
+      if sessionState == .active { startUSBRun(device: device) }
     case .hid:
       // HID pipeline: data fed via feedHIDData(); no separate startup loop needed
       print("[DevicePipeline] HID pipeline ready" + " for \(identifier)")
@@ -238,6 +240,11 @@ extension DevicePipeline {
     state.connection = currentConnectionState()
     return state
   }
+  /// The latest observed state as the driver reported it, before the stored calibration.
+  func rawInputState() -> ControllerState { currentRawInputState }
+  /// The latest angular velocity as the driver reported it, before the stored gyro offset; nil
+  /// while the controller has reported no motion.
+  func rawAngularVelocity() -> ControllerMotionVector? { currentRawAngularVelocity }
   /// The state of the controller session.
   func controllerSessionState() -> ControllerSessionState { sessionState }
   /// The link and power state of the controller.
@@ -273,6 +280,9 @@ extension DevicePipeline {
   /// The result of the latest startup output; nil before any.
   func startupCommandStatus() -> String? { startupOutputStatus }
 
+  /// Whether a controller is attached: a receiver slot with none stays open for pairing only.
+  func hasConnectedController() -> Bool { inputConnectionActive }
+
   /// Records `status` as the result of the startup output.
   func recordStartupOutputStatus(_ status: String) { startupOutputStatus = status }
   /// Returns captured packets and renews the capture lease; reading is what enables capture.
@@ -291,10 +301,10 @@ extension DevicePipeline {
     }
     staleWatchTask = Task { [weak self] in
       while !Task.isCancelled, let self {
-        guard let due = await self.staleDeadline(timeout: timeout) else { break }
-        let now = self.uptimeNanoseconds()
+        guard let due = await staleDeadline(timeout: timeout) else { break }
+        let now = uptimeNanoseconds()
         if now >= due {
-          await self.announceStale()
+          await announceStale()
           break
         }
         try? await Task.sleep(nanoseconds: due &- now)
@@ -318,9 +328,10 @@ extension DevicePipeline {
 
   /// The freshness and recovery state of the controller's input reports.
   ///
-  /// A session that has read no input yet is stale once the liveness timeout passes. The failure
-  /// reason tells the likely cause: reports arrive but their freshness does not advance, the guide
-  /// button was not pressed, or no reports arrive.
+  /// A session that has read no input yet is awaiting input, and stale once the liveness timeout
+  /// passes. A stale or waiting session has a failure reason that tells the likely cause: reports
+  /// arrive but their freshness does not advance, the guide button was not pressed, or no reports
+  /// arrive.
   func inputHealth() -> ControllerInputHealth {
     let now = uptimeNanoseconds()
     let reference = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds
@@ -334,11 +345,13 @@ extension DevicePipeline {
       age >= timeout
     {
       state = .stale
+    } else if lastObservedInputReportNanoseconds == nil {
+      state = .awaitingInput
     } else {
       state = .healthy
     }
     let failureReason: ControllerInputHealthFailureReason?
-    if state == .healthy {
+    if state == .healthy || state == .awaitingInput {
       failureReason = nil
     } else if let timeout = plan.inputReportLivenessTimeoutNanoseconds,
       let observationAge, observationAge < timeout

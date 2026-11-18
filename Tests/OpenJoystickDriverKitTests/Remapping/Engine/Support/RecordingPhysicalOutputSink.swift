@@ -24,7 +24,7 @@ final class RecordingPhysicalOutputSink: RemappingPhysicalOutputSink, @unchecked
     if rejectSets { throw RemappingEventEngineError.sinkUnavailable }
   }
 
-  func releaseAll(for identifier: LogicalControllerID) throws {
+  func releaseAll(for identifier: LogicalControllerID) {
     lock.withLock { recorded.append(.releaseAll(identifier)) }
   }
 

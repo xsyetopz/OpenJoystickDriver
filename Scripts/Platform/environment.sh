@@ -17,7 +17,7 @@ OJD_APP_CLI="/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDri
 # Stop with an error when the installed app executable is missing.
 require_ojd_app_cli() {
   [[ -x "$OJD_APP_CLI" ]] ||
-    die "OpenJoystickDriver is not installed at $OJD_APP_CLI; run ./Scripts/ojd build install dev"
+    die "OpenJoystickDriver is not installed at $OJD_APP_CLI; run just install-dev"
 }
 
 # Run the app executable as the `ojd` command line, which it selects by argv[0].
@@ -102,7 +102,10 @@ unset XCODE_SELECT_PATH
 IDENTITY="${CODESIGN_IDENTITY:--}"
 export GUI_PROJECT="$PROJECT_DIR/OpenJoystickDriver.xcodeproj"
 export GUI_SCHEME="OpenJoystickDriverApp"
-export GUI_DERIVED_DATA="$PROJECT_DIR/.build/xcode"
+# The app build has its own derived data: `just swift::xcode` builds `.build/xcode` for the active
+# architecture with a debug dylib, and Xcode keeps that dylib in a later build of the same
+# products, so the app would ship an arm64-only dylib beside its universal executable.
+export GUI_DERIVED_DATA="$PROJECT_DIR/.build/xcode-app"
 OJD_APP_INFO_PLIST="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Info.plist"
 OJD_DEFAULT_BUNDLE_SHORT_VERSION="$(/usr/bin/plutil -extract CFBundleShortVersionString raw -o - "$OJD_APP_INFO_PLIST" 2>/dev/null)"
 if [[ ! "$OJD_DEFAULT_BUNDLE_SHORT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
@@ -196,8 +199,8 @@ verify_profile_cert() (
     echo ""
     echo "Repair:"
     echo "  1) Regenerate the provisioning profile selecting the certificate you have locally."
-    echo "  2) Reinstall profiles: ./Scripts/ojd signing install-profiles"
-    echo "  3) Re-generate env:     ./Scripts/ojd signing configure"
+    echo "  2) Reinstall profiles: just signing-install-profiles"
+    echo "  3) Re-generate env:     just signing-configure"
     echo ""
     return 1
   fi

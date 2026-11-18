@@ -25,8 +25,8 @@ extension VirtualDevice {
       /// Reads the member as text, whatever its scalar type.
       init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let text = try? container.decode(String.self) {
-          self.text = text
+        if let string = try? container.decode(String.self) {
+          self.text = string
         } else if let number = try? container.decode(Double.self) {
           self.text = "\(number)"
         } else if let flag = try? container.decode(Bool.self) {
@@ -172,10 +172,14 @@ extension VirtualDevice {
     source: Source,
     requiresMatch: Bool
   ) throws -> Self {
-    let decoder = JSONDecoder()
+    let file =
+      switch source {
+      case .file(let name): name
+      case .unnamed: "virtual device"
+      }
     let document: Document
     do {
-      let header = try decoder.decode(Header.self, from: data)
+      let header = try DocumentCoder.decode(Header.self, from: data, file: file)
       if let problem = OpenJoystickDriverAPI.headerProblem(
         apiVersion: header.apiVersion?.text,
         kind: header.kind?.text,
@@ -188,7 +192,9 @@ extension VirtualDevice {
         }
         throw DocumentHeaderProblem(code: .unsupportedAPIVersion, located)
       }
-      document = try decoder.decode(Document.self, from: data)
+      document = try DocumentCoder.decode(Document.self, from: data, file: file)
+    } catch let error as DocumentCoderError {
+      throw ControllerRecordProblem(code: error.code, error.description)
     } catch let error as DecodingError {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
@@ -199,18 +205,26 @@ extension VirtualDevice {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.persona",
+        arguments: [VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")],
         "persona must be one of "
           + VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
       )
     }
     if requiresMatch, document.match == nil {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file must hold match")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.matchRequired",
+        "the file must hold match"
+      )
     }
     let match = try document.match.map(Self.match)
     let layout = try document.layout.map { value in
       guard let layout = VirtualDeviceLayout(rawValue: value) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.layout",
+          arguments: [VirtualDeviceLayout.allCases.map(\.rawValue).joined(separator: ", ")],
           "layout must be one of "
             + VirtualDeviceLayout.allCases.map(\.rawValue).joined(separator: ", ")
         )
@@ -220,6 +234,7 @@ extension VirtualDevice {
     if let transport = document.transport, !["USB", "Bluetooth"].contains(transport) {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.transport",
         "transport must be USB or Bluetooth"
       )
     }
@@ -227,6 +242,7 @@ extension VirtualDevice {
       guard let labels = VirtualIdentityGlyphFamily(rawValue: value) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.labels",
           "labels must be Xbox or Generic"
         )
       }
@@ -238,6 +254,7 @@ extension VirtualDevice {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.matchExtras",
           "a file with match selects a persona and holds no layout, transport, or "
             + "worksWithDefaultSDLHints"
         )
@@ -248,6 +265,7 @@ extension VirtualDevice {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.definition",
           "a persona definition must hold layout, transport, labels, worksWithDefaultSDLHints, "
             + "and identity with version"
         )
@@ -270,7 +288,11 @@ extension VirtualDevice {
   private static func match(_ match: Document.Match) throws -> VirtualHIDProfileOverrideStore.Model
   {
     if let unit = match.unit, ControllerPortKey(rawValue: unit) == nil {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "match.unit is not a unit ID")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.matchUnit",
+        "match.unit is not a unit ID"
+      )
     }
     return VirtualHIDProfileOverrideStore.Model(
       vendorID: try id(match.vendorID, "match.vendorID", from: 1),
@@ -287,6 +309,8 @@ extension VirtualDevice {
       guard !value.isEmpty else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.identityText",
+          arguments: [key],
           "identity.\(key) must be a nonempty string"
         )
       }
@@ -309,6 +333,8 @@ extension VirtualDevice {
     guard value >= minimum, let id = UInt16(exactly: value) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.idRange",
+        arguments: [name, "\(minimum)"],
         "\(name) must be \(minimum)...65535"
       )
     }

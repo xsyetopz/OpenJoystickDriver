@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -13,7 +14,7 @@ private final class CountingProbeReader: ControllerModeProbeReader {
   var readCount: Int { reads.withLock { $0 } }
 
   func readFeatureReport(
-    _ request: PhysicalHIDFeatureReadRequest
+    _: PhysicalHIDFeatureReadRequest
   ) -> PhysicalHIDReportResult<Data> {
     reads.withLock { $0 += 1 }
     return reply
@@ -37,7 +38,7 @@ struct ControllerModeMatchTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
       "modes": [["id": "default", "protocol": ["family": family]]] + modes,
     ]
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 
   private static func mode(
@@ -63,7 +64,7 @@ struct ControllerModeMatchTests {
   private static func problem(
     _ modes: [[String: Any]],
     family: String = "SonySixaxis"
-  ) throws
+  )
     -> String?
   {
     do {
@@ -114,7 +115,7 @@ struct ControllerModeMatchTests {
 
   /// "One model, two modes": the wired and the Bluetooth link of one record are two modes.
   @Test
-  func aWiredAndABluetoothLinkSelectTheirOwnMode() async throws {
+  func wiredAndBluetoothLinkSelectTheirOwnMode() async throws {
     let profile = try Self.profile([
       Self.mode("wired", match: ["link": "USB"]),
       Self.mode("bluetooth", match: ["link": "BluetoothClassic"]),
@@ -129,7 +130,7 @@ struct ControllerModeMatchTests {
 
   /// "Dongle and wired": a receiver link and a USB link of one model each run their own mode.
   @Test
-  func aDongleAndAWiredLinkSelectTheirOwnMode() async throws {
+  func dongleAndWiredLinkSelectTheirOwnMode() async throws {
     let profile = try Self.profile([
       Self.mode("dongle", match: ["link": "ProprietaryRadioReceiver"]),
       Self.mode("wired", match: ["link": "USB"]),
@@ -146,7 +147,7 @@ struct ControllerModeMatchTests {
   ///
   /// A model whose record is no receiver never reports it.
   @Test
-  func aReceiverRecordReportsTheRadioLinkAndSelectsItsMode() async throws {
+  func receiverRecordReportsRadioLinkAndSelectsItsMode() async throws {
     func profile(variant: String?) throws -> DeviceRuntimeProfile {
       var protocolKeys: [String: Any] = ["family": "ValveSteamController"]
       protocolKeys["variant"] = variant
@@ -160,7 +161,7 @@ struct ControllerModeMatchTests {
         "modes": [["id": "default", "protocol": protocolKeys], radio],
       ]
       return try #require(
-        try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+        try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
       ).profile
     }
     let dongle = try profile(variant: "Dongle")
@@ -182,7 +183,7 @@ struct ControllerModeMatchTests {
   }
 
   @Test
-  func aLinkKeyNeedsEveryInterfaceOnThatLink() async throws {
+  func linkKeyNeedsEveryInterfaceOnThatLink() async throws {
     let profile = try Self.profile([Self.mode("bluetooth", match: ["link": "BluetoothClassic"])])
     let mixed = Self.device(
       interfaces: [
@@ -207,7 +208,7 @@ struct ControllerModeMatchTests {
   }
 
   @Test
-  func aBCDDeviceRangeIsInclusive() async throws {
+  func bcdDeviceRangeIsInclusive() async throws {
     let profile = try Self.profile([
       Self.mode("early", match: ["bcdDevice": ["min": 0x0100, "max": 0x0200]])
     ])
@@ -221,7 +222,7 @@ struct ControllerModeMatchTests {
   }
 
   @Test
-  func anInterfaceSignatureNeedsOneInterfaceThatHoldsEveryField() async throws {
+  func interfaceSignatureNeedsOneInterfaceThatHoldsEveryField() async throws {
     let profile = try Self.profile([
       Self.mode(
         "hid",
@@ -251,7 +252,7 @@ struct ControllerModeMatchTests {
   /// Two interfaces of one class triple are told apart by their endpoint sets: the listed
   /// endpoints must pair one-to-one with the interface's and none may be left over.
   @Test
-  func anEndpointSetTellsApartInterfacesOfOneClassTriple() async throws {
+  func endpointSetTellsApartInterfacesOfOneClassTriple() async throws {
     func signature(_ endpoints: [[String: Any]]) -> [String: Any] {
       [
         "interfaceClass": 255, "interfaceSubclass": 93, "interfaceProtocol": 1,
@@ -328,17 +329,17 @@ struct ControllerModeMatchTests {
   ///
   /// The same signature on a raw-USB mode is accepted.
   @Test
-  func aHIDModeWithEndpointsIsRefusedAndARawUSBModeIsNot() throws {
+  func hidModeWithEndpointsRefusedAndRawUSBModeNot() {
     let endpoints: [[String: Any]] = [["direction": "In", "transferType": "Interrupt"]]
     let match: [String: Any] = ["interfaceSignature": Self.signature(endpoints: endpoints)]
-    let hid = try Self.problem([Self.mode("x", match: match)])
+    let hid = Self.problem([Self.mode("x", match: match)])
     #expect(hid?.contains("endpoints") == true)
-    let rawUSB = try Self.problem(
+    let rawUSB = Self.problem(
       [Self.mode("x", match: match, family: "XboxGIP")],
       family: "XboxGIP"
     )
     #expect(rawUSB == nil)
-    let withoutEndpoints = try Self.problem([
+    let withoutEndpoints = Self.problem([
       Self.mode(
         "x",
         match: [
@@ -353,7 +354,7 @@ struct ControllerModeMatchTests {
 
   /// A probe is the costly key: it is read only after every cheap key of its mode holds.
   @Test
-  func aProbeIsReadOnlyAfterTheCheapKeysHold() async throws {
+  func probeIsReadOnlyAfterCheapKeysHold() async throws {
     let profile = try Self.profile([
       Self.mode("probed", match: ["link": "BluetoothClassic", "probes": [Self.answers]])
     ])
@@ -372,7 +373,7 @@ struct ControllerModeMatchTests {
 
   /// A mode with no probe is selectable on a route that cannot read one.
   @Test
-  func aModeWithoutAProbeIsSelectableWithoutAnIOHIDRoute() async throws {
+  func modeWithoutProbeIsSelectableWithoutIOHIDRoute() async throws {
     let profile = try Self.profile([
       Self.mode("bluetooth", match: ["link": "BluetoothClassic"]),
       Self.mode("probed", match: ["probes": [Self.answers]]),
@@ -397,7 +398,7 @@ struct ControllerModeMatchTests {
 
   /// A mode runs the steps of its own `session` only; a mode without a session runs none.
   @Test
-  func aModeRunsOnlyItsOwnSession() throws {
+  func modeRunsOnlyItsOwnSession() throws {
     let write: [String: Any] = [
       "report": ["kind": "Feature", "id": 244, "length": 5], "bytes": "42 03 00 00",
     ]
@@ -420,7 +421,7 @@ struct ControllerModeMatchTests {
       ],
     ]
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
     ).profile
     #expect(profile.startupWrites.count == 1)
     #expect(profile.applying(modeID: "plain")?.startupWrites.isEmpty == true)
@@ -435,7 +436,7 @@ struct ControllerModeMatchTests {
   /// The DS3 record holds Bluetooth as a link of its own mode, with the enable report as that
   /// mode's session.
   @Test
-  func theDS3RecordSelectsItsBluetoothModeByLink() async throws {
+  func dS3RecordSelectsItsBluetoothModeByLink() async throws {
     let ds3 = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
     let profile = try #require(DeviceCatalog().record(for: ds3))
     #expect(profile.startupWrites.isEmpty)
@@ -475,7 +476,7 @@ struct ControllerModeMatchTests {
 
   /// A mode's `interface` range picks the interface the driver binds to.
   @Test
-  func aModeInterfaceRangeChoosesTheBoundInterface() throws {
+  func modeInterfaceRangeChoosesBoundInterface() throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-modes-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -486,7 +487,7 @@ struct ControllerModeMatchTests {
       extras: ["interface": ["first": 2, "last": 3]]
     )
     try Self.recordData(modes: [ranged]).write(
-      to: directory.appendingPathComponent("1234-abcd.json")
+      to: directory.appendingPathComponent("1234-abcd.plist")
     )
     let set = ControllerRecordSet.load(userDirectory: directory)
     #expect(set.problems.isEmpty)
@@ -514,7 +515,7 @@ struct ControllerModeMatchTests {
   // MARK: Decoder rejections, matched by the Python schema tests
 
   @Test
-  func theDecoderRejectsTheSameBadModesAsTheSchema() throws {
+  func decoderRejectsSameBadModesAsSchema() {
     let usb = ["link": "USB"]
     let cases: [(String, [[String: Any]], String)] = [
       ("no match", [["id": "x", "protocol": ["family": "SonySixaxis"]]], "match"),
@@ -602,7 +603,7 @@ struct ControllerModeMatchTests {
       ),
     ]
     for (name, modes, fragment) in cases {
-      let problem = try Self.problem(modes)
+      let problem = Self.problem(modes)
       #expect(
         problem?.contains(fragment) == true,
         Comment(rawValue: "\(name): \(problem ?? "accepted")")
@@ -612,14 +613,14 @@ struct ControllerModeMatchTests {
 
   /// A record without a `default` mode leaves a device that matches none of its modes unsupported.
   @Test
-  func aRecordWithoutADefaultModeLeavesAnUnmatchedDeviceUnsupported() async throws {
+  func recordWithoutDefaultModeLeavesUnmatchedDeviceUnsupported() async throws {
     let record: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
       "vendorID": Int(Self.model.vendorID), "productID": Int(Self.model.productID),
       "modes": [Self.mode("named", match: ["product": "Wireless Controller"])],
     ]
     let validated = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
     )
     let catalog = DeviceCatalog(
       records: ControllerRecordSet(records: [Self.model: validated], userFiles: [])
@@ -654,29 +655,29 @@ struct ControllerModeMatchTests {
   }
 
   @Test
-  func theDecoderRejectsAModeListWithTwoDefaults() throws {
-    func decode(_ modes: [[String: Any]]?) throws -> String? {
+  func decoderRejectsModeListWithTwoDefaults() {
+    func decode(_ modes: [[String: Any]]?) -> String? {
       var record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
         "vendorID": 1, "productID": 2,
       ]
       record["modes"] = modes
       do {
-        _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+        _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
         return nil
       } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
     }
     let other = Self.mode("x", match: ["link": "USB"])
     let plainDefault: [String: Any] = ["id": "default", "protocol": ["family": "SonySixaxis"]]
-    #expect(try decode(nil) != nil)
-    #expect(try decode([]) != nil)
-    #expect(try decode([other]) == nil)
+    #expect(decode(nil) != nil)
+    #expect(decode([]) != nil)
+    #expect(decode([other]) == nil)
     #expect(
-      try decode([plainDefault, plainDefault])?.contains("at most one mode with the id default")
+      decode([plainDefault, plainDefault])?.contains("at most one mode with the id default")
         == true
     )
     #expect(
-      try decode([plainDefault, other, other])?.contains("mode IDs must be unique") == true
+      decode([plainDefault, other, other])?.contains("mode IDs must be unique") == true
     )
   }
 
@@ -696,14 +697,14 @@ struct ControllerModeMatchTests {
       ]
       record["modes"] = [rawDefault.merging(extras) { $1 }]
       #expect(throws: (any Error).self, Comment(rawValue: name)) {
-        try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+        try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       }
     }
   }
 
   /// Vader 5S: the GIP mode is the default and the XUSB mode is keyed on `FF/5D/01`.
   @Test
-  func theVader5SRunsGIPOrXUSBFromItsInterfaceSignature() async throws {
+  func vader5SRunsGIPOrXUSBFromItsInterfaceSignature() async throws {
     let vader = ControllerModelID(vendorID: 0x37D7, productID: 0x2801)
     let profile = try #require(ControllerRecordSet.bundled.records[vader]?.profile)
     func run(_ triple: (UInt8, UInt8, UInt8)?) async -> (PhysicalProtocolID, [String]) {
@@ -747,7 +748,7 @@ struct ControllerModeMatchTests {
   /// "Shared product ID": the Balance Board and the Wii U Pro Controller share the Wii Remote
   /// VID:PID, and the records, which have no default mode, match neither.
   @Test
-  func theWiiRecordsMatchOnlyTheirProductString() async throws {
+  func wiiRecordsMatchOnlyTheirProductString() async throws {
     let cases: [(ControllerModelID, own: String, other: String)] = [
       (
         ControllerModelID(vendorID: 0x057E, productID: 0x0306), "Nintendo RVL-CNT-01",

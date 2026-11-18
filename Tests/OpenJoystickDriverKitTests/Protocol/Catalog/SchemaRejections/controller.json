@@ -1,11 +1,90 @@
 {
   "cases": [
     {
+      "name": "XboxXUSB refuses presence inquiry resend tuning",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 681,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": { "family": "XboxXUSB", "variant": "Receiver" }
+          }
+        ],
+        "tuning": { "presenceResendReports": 16 }
+      }
+    },
+    {
+      "name": "rejects an empty placeholderSerial",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1406,
+        "productID": 8201,
+        "placeholderSerial": "",
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "NintendoSwitch1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an empty name",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 16701,
+        "productID": 8452,
+        "name": "",
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "XboxXUSB",
+              "variant": "Wired"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a name that is not a string",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 16701,
+        "productID": 8452,
+        "name": 16701,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "XboxXUSB",
+              "variant": "Wired"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "rejects invalid modes: empty modes",
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -17,7 +96,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -42,7 +121,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -64,7 +143,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -98,7 +177,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -132,7 +211,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -168,7 +247,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -196,7 +275,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -221,7 +300,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -247,7 +326,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -275,7 +354,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -306,7 +385,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -334,7 +413,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -364,7 +443,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -397,7 +476,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -430,7 +509,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -467,7 +546,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -504,7 +583,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -541,7 +620,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -578,7 +657,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -614,7 +693,7 @@
       "name": "rejects invalid modes: endpoints on a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -652,7 +731,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -683,7 +762,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -712,7 +791,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -747,7 +826,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -782,7 +861,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -816,7 +895,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -850,7 +929,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -886,7 +965,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -922,7 +1001,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -958,7 +1037,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -991,7 +1070,7 @@
       "name": "single mode records get the same per mode checks: report-layout without a layout",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1006,10 +1085,10 @@
       }
     },
     {
-      "name": "single mode records get the same per mode checks: layout under another family",
+      "name": "single mode records get the same per mode checks: template under a family that does not encode it",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1018,42 +1097,6 @@
             "id": "default",
             "protocol": {
               "family": "SonySixaxis"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 8
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "single mode records get the same per mode checks: template under HIDDescriptor",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDDescriptor"
             },
             "session": {
               "rumble": {
@@ -1075,7 +1118,7 @@
       "name": "single mode records get the same per mode checks: template under a raw-USB family",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1105,7 +1148,7 @@
       "name": "validator rejects duplicate ids and overflowing bytes: duplicate id",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1153,7 +1196,7 @@
       "name": "validator rejects duplicate ids and overflowing bytes: bcdDevice min above max",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1183,7 +1226,7 @@
       "name": "validator rejects duplicate ids and overflowing bytes: interface first above last",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1214,7 +1257,7 @@
       "name": "validator rejects duplicate ids and overflowing bytes: bytes past length",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1246,61 +1289,10 @@
       }
     },
     {
-      "name": "validator rejects modes that break record level rules: input layout on a mode that is not HIDReportLayout",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDReportLayout"
-            }
-          },
-          {
-            "id": "x",
-            "protocol": {
-              "family": "SonySixaxis"
-            },
-            "match": {
-              "probes": [
-                {
-                  "report": 239,
-                  "length": 64,
-                  "expect": "Answers"
-                }
-              ]
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 8
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "validator rejects modes that break record level rules: HIDReportLayout mode without the input layout",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1333,7 +1325,7 @@
       "name": "validator rejects modes that break record level rules: rumble template on a mode whose driver does not encode it",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1347,7 +1339,7 @@
           {
             "id": "x",
             "protocol": {
-              "family": "HIDDescriptor"
+              "family": "SonySixaxis"
             },
             "match": {
               "probes": [
@@ -1375,10 +1367,123 @@
       }
     },
     {
-      "name": "validator rejects modes that break record level rules: present controls on a mode whose driver does not declare them",
+      "name": "rejects a rumble template on a HIDDescriptor mode: a USB packet target",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "USB",
+                  "length": 6
+                },
+                "lowFrequency": {
+                  "byte": 2
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: no motor field",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 5,
+                  "length": 8
+                },
+                "bytes": "05 00 00 00 00 00 00 00"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: no report",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "lowFrequency": {
+                  "byte": 2
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: a motor byte outside the report",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 5,
+                  "length": 4
+                },
+                "lowFrequency": {
+                  "byte": 4
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "validator rejects modes that break record level rules: present controls that no mode driver declares",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1386,7 +1491,7 @@
           {
             "id": "default",
             "protocol": {
-              "family": "SonyDualSense"
+              "family": "SonySixaxis"
             }
           },
           {
@@ -1414,7 +1519,7 @@
       "name": "bluetooth le needs every mode switch 2",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1450,7 +1555,7 @@
       "name": "hid usage map needs every mode hid descriptor",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1495,7 +1600,7 @@
       "name": "route needs every mode raw usb",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1529,7 +1634,7 @@
       "name": "server needs every mode hid",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1557,7 +1662,7 @@
       "name": "session follows the protocol of its own mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1593,7 +1698,7 @@
       "name": "tuning keys are read by every mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1629,7 +1734,7 @@
       "name": "usb endpoints differ from the default of some mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1664,7 +1769,7 @@
       "name": "usb needs every mode raw usb",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1700,7 +1805,7 @@
       "name": "endpoints are accepted on raw usb and refused on hid",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1737,7 +1842,7 @@
       "name": "rejects what a raw usb mode cannot carry: interface on raw USB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1768,7 +1873,7 @@
       "name": "rejects what a raw usb mode cannot carry: HID session on raw USB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1807,7 +1912,7 @@
       "name": "rejects what a raw usb mode cannot carry: USB packets in a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1833,7 +1938,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1867,7 +1972,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1887,7 +1992,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1914,7 +2019,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1941,7 +2046,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1968,7 +2073,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -1995,7 +2100,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2022,7 +2127,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2049,7 +2154,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2076,7 +2181,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2102,7 +2207,7 @@
       "name": "rejects sessions a mode cannot run: control on a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2154,7 +2259,7 @@
       "name": "rejects sessions a mode cannot run: settle on a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2175,7 +2280,7 @@
       "name": "rejects sessions a mode cannot run: shutdown on a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2200,7 +2305,7 @@
       "name": "rejects sessions a mode cannot run: keep-alive on a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2228,7 +2333,7 @@
       "name": "rejects sessions a mode cannot run: keep-alive on a family that declares one",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2256,7 +2361,7 @@
       "name": "validator rejects control transfers that disagree with themselves: data count differs from wLength",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2287,7 +2392,7 @@
       "name": "validator rejects control transfers that disagree with themselves: bcdDevice min above max",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2324,7 +2429,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1356,
         "productID": 616,
@@ -2355,7 +2460,7 @@
       "name": "validator rejects a packet the description lacks: action=XboxGIP/missing",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2374,7 +2479,7 @@
       "name": "validator rejects overlapping capabilities",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2472,7 +2577,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "vendorID": 1118,
         "productID": 746,
         "modes": [
@@ -2490,7 +2595,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "ControllerPatch",
         "vendorID": 1118,
         "productID": 746,
@@ -2508,7 +2613,7 @@
       "name": "rejects protocol default endpoints: XboxGIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2532,7 +2637,7 @@
       "name": "rejects protocol default endpoints: XboxXUSB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2557,7 +2662,7 @@
       "name": "rejects protocol default endpoints: XboxXID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2582,7 +2687,7 @@
       "name": "rejects protocol default endpoints: VendorGameSir",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2608,7 +2713,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2628,7 +2733,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2648,7 +2753,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2671,7 +2776,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2690,7 +2795,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2708,7 +2813,7 @@
       "name": "rejects unknown vocabulary: missing stored variant",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2726,7 +2831,7 @@
       "name": "rejects unknown vocabulary: transport variant stored",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2745,7 +2850,7 @@
       "name": "rejects unknown vocabulary: variant of another family",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2764,7 +2869,7 @@
       "name": "rejects unknown vocabulary: usb block on HID family",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2785,7 +2890,7 @@
       "name": "rejects unknown vocabulary: usb block on GameSir enhanced HID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2810,7 +2915,7 @@
       "name": "rejects unknown vocabulary: GameSir enhanced HID without a model parameter",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2829,7 +2934,7 @@
       "name": "rejects unknown vocabulary: GameSir enhanced HID with both model parameters",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2852,7 +2957,7 @@
       "name": "rejects unknown vocabulary: GameSir vendor USB inner grips",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2874,7 +2979,7 @@
       "name": "rejects unknown vocabulary: GameSir vendor USB lighting slots",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2897,7 +3002,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2918,7 +3023,7 @@
       "name": "rejects unknown vocabulary: wrong-family parameter",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2940,7 +3045,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2960,7 +3065,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2982,7 +3087,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3001,7 +3106,7 @@
       "name": "rejects unknown vocabulary: wrong parameter type",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3024,7 +3129,7 @@
       "name": "rejects unknown vocabulary: out-of-range share offset",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3047,7 +3152,7 @@
       "name": "rejects unknown vocabulary: unknown enum value",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3068,7 +3173,7 @@
       "name": "rejects unknown vocabulary: false flag",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3091,7 +3196,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3113,7 +3218,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3133,7 +3238,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3152,7 +3257,7 @@
       "name": "rejects unknown vocabulary: XUSB initialization",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3172,7 +3277,7 @@
       "name": "rejects unknown vocabulary: both Joy-Con sides",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3193,7 +3298,7 @@
       "name": "rejects unknown vocabulary: GameCube on Switch 1",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3214,7 +3319,7 @@
       "name": "rejects unknown vocabulary: Switch 2 with two layouts",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3235,7 +3340,7 @@
       "name": "rejects unknown vocabulary: Switch input-only with a parameter",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3257,7 +3362,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3278,7 +3383,7 @@
       "name": "rejects unknown vocabulary: Steam Deck with a variant",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3297,7 +3402,7 @@
       "name": "rejects unknown vocabulary: Steam Triton without a variant",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3316,7 +3421,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3338,7 +3443,7 @@
       "name": "rejects unknown vocabulary: Switch 2 with a variant",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3358,7 +3463,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3379,7 +3484,7 @@
       "name": "rejects unknown vocabulary: Bluetooth-only with a layout",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3401,7 +3506,7 @@
       "name": "rejects unknown vocabulary: XUSB rumble absence",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3424,7 +3529,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3446,7 +3551,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3465,7 +3570,7 @@
       "name": "rejects unknown vocabulary: present on GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3486,7 +3591,7 @@
       "name": "rejects unknown vocabulary: partial Edge controls",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3508,7 +3613,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3530,7 +3635,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3553,7 +3658,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3576,7 +3681,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3598,7 +3703,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3617,7 +3722,7 @@
       "name": "rejects invalid report layouts: missing input",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3632,47 +3737,11 @@
       }
     },
     {
-      "name": "rejects invalid report layouts: input on another family",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "VendorPS3ThirdParty"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 2
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 8,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "rejects invalid report layouts: report ID 0",
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3710,7 +3779,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3747,7 +3816,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3777,7 +3846,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3812,7 +3881,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3850,7 +3919,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3885,7 +3954,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3922,7 +3991,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3953,7 +4022,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -3990,7 +4059,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4023,10 +4092,553 @@
       }
     },
     {
+      "name": "rejects invalid touch layouts: neither spots nor sticks",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: radius of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 0,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: spot on a stick axis",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "LeftStickX",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stride of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 0,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stick drives one axis twice",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickY"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: slot past the report length",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 5,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "rejects invalid touch layouts: stick axis a layout axis also names",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 6473,
+        "productID": 1026,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDReportLayout"
+            }
+          }
+        ],
+        "input": {
+          "layouts": [
+            {
+              "report": {
+                "id": 1,
+                "length": {
+                  "exactly": 18
+                }
+              },
+              "touch": {
+                "contacts": {
+                  "bitOffset": 8,
+                  "stride": 32,
+                  "slots": 4,
+                  "count": {
+                    "bitOffset": 136,
+                    "bitSize": 8
+                  },
+                  "tip": {
+                    "bitOffset": 0,
+                    "bitSize": 1
+                  },
+                  "id": {
+                    "bitOffset": 4,
+                    "bitSize": 4
+                  },
+                  "x": {
+                    "bitOffset": 8,
+                    "bitSize": 12
+                  },
+                  "y": {
+                    "bitOffset": 20,
+                    "bitSize": 12
+                  }
+                },
+                "radius": 150,
+                "spots": [
+                  {
+                    "control": "South",
+                    "x": 1069,
+                    "y": 3834
+                  }
+                ],
+                "sticks": [
+                  {
+                    "x": 875,
+                    "y": 665,
+                    "travel": 800,
+                    "alongX": {
+                      "control": "LeftStickY",
+                      "inverted": true
+                    },
+                    "alongY": {
+                      "control": "LeftStickX"
+                    }
+                  }
+                ]
+              },
+              "axes": [
+                {
+                  "control": "LeftStickX",
+                  "bitOffset": 8,
+                  "bitSize": 8
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "rejects invalid report layouts: axis past the report length",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4070,7 +4682,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4114,7 +4726,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4159,7 +4771,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4204,7 +4816,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4251,7 +4863,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4289,7 +4901,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4327,7 +4939,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4364,7 +4976,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4402,7 +5014,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4440,7 +5052,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4476,7 +5088,7 @@
       "name": "rejects invalid report layouts: unaligned BigEndian axis",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4513,7 +5125,7 @@
       "name": "rejects invalid report layouts: BigEndian axis of 12 bits",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4551,7 +5163,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4588,7 +5200,7 @@
       "name": "rejects invalid report layouts: field in the report ID byte",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4626,7 +5238,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4647,7 +5259,7 @@
       "name": "rejects invalid report layouts: overlapping selectors",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4699,7 +5311,7 @@
       "name": "rejects invalid report layouts: overlapping selectors without an ID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4750,7 +5362,7 @@
       "name": "rejects invalid report layouts: dpad pressure elsewhere",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4772,7 +5384,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4806,7 +5418,7 @@
       "name": "rejects a resend interval that a keep alive would retime: family keepAlive",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4844,7 +5456,7 @@
       "name": "rejects a rumble template the driver ignores: Shield without Shield2015",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4874,7 +5486,7 @@
       "name": "rejects a rumble template the driver ignores: GameSir USB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4905,7 +5517,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4924,7 +5536,7 @@
       "name": "rejects invalid ownership and session: GIP ownership",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4943,7 +5555,7 @@
       "name": "rejects invalid ownership and session: XUSB ownership",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4963,7 +5575,7 @@
       "name": "rejects invalid ownership and session: GameSir USB ownership",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -4983,7 +5595,7 @@
       "name": "rejects invalid ownership and session: template on DualSense",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5017,7 +5629,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5041,7 +5653,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5072,7 +5684,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5100,7 +5712,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5131,7 +5743,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5166,7 +5778,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5186,7 +5798,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5218,7 +5830,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5250,7 +5862,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5282,7 +5894,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5313,7 +5925,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5342,7 +5954,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: bytes shorter than the report",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5373,7 +5985,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: bytes without the report ID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5404,7 +6016,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: counter on a motor byte",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5437,7 +6049,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: counter on the report ID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5470,7 +6082,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: motor wider than the report",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5501,7 +6113,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: overlapping motors",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5536,7 +6148,7 @@
       "name": "rejects malformed template bytes encodings counter and resend: usb packet in a HID mode",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5566,7 +6178,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5585,7 +6197,7 @@
       "name": "route extension owned applies only to raw usb families: DualSense route",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5604,7 +6216,7 @@
       "name": "route extension owned applies only to raw usb families: third-party route",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5624,7 +6236,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5646,7 +6258,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5822,7 +6434,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5854,7 +6466,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5886,7 +6498,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5918,7 +6530,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5951,7 +6563,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -5983,7 +6595,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6015,7 +6627,7 @@
       "name": "rejects invalid startup writes: GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6046,7 +6658,7 @@
       "name": "rejects invalid startup writes: XUSB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6078,7 +6690,7 @@
       "name": "rejects invalid startup writes: GameSir USB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6110,7 +6722,7 @@
       "name": "rejects invalid startup writes: rumble on Sixaxis",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6155,7 +6767,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6188,7 +6800,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6221,7 +6833,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6253,7 +6865,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6285,7 +6897,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6318,7 +6930,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6354,7 +6966,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6381,7 +6993,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6408,7 +7020,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6435,7 +7047,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6462,7 +7074,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6489,7 +7101,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6516,7 +7128,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6542,7 +7154,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6568,7 +7180,7 @@
       "name": "rejects invalid startup writes: packet on a HID family",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6593,7 +7205,7 @@
       "name": "rejects invalid startup writes: packet on XID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6618,7 +7230,7 @@
       "name": "rejects invalid startup writes: packet with an initialization list",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6645,7 +7257,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6679,7 +7291,7 @@
       "name": "dualsense third party maker: rejects unprobedSensors without a maker",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 5426,
         "productID": 746,
@@ -6700,7 +7312,7 @@
       "name": "dualsense third party maker: rejects unprobedTouchpad without a maker",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 5426,
         "productID": 746,
@@ -6721,7 +7333,7 @@
       "name": "dualsense third party maker: rejects forcedVibration without a maker",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 5426,
         "productID": 746,
@@ -6742,7 +7354,7 @@
       "name": "dualsense third party maker: rejects role without a maker",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 5426,
         "productID": 746,
@@ -6763,7 +7375,7 @@
       "name": "dualshock4 role and motion scale are exclusive: rejects role with scale",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6785,7 +7397,7 @@
       "name": "family timings are limited to their families: rejects lizard resend on GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6806,7 +7418,7 @@
       "name": "family timings are limited to their families: rejects command timeout on GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6827,7 +7439,7 @@
       "name": "family timings are limited to their families: rejects presence resend on DualSense",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6848,7 +7460,7 @@
       "name": "family timings are limited to their families: rejects disconnect delay on GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6869,7 +7481,7 @@
       "name": "family timings are limited to their families: rejects handshake pacing on XUSB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6892,7 +7504,7 @@
       "name": "family timings are limited to their families: rejects transfer timeout on DualSense",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6914,7 +7526,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6937,7 +7549,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6960,7 +7572,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -6982,7 +7594,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7005,7 +7617,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7027,7 +7639,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7049,7 +7661,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7070,7 +7682,7 @@
       "name": "steam triton requires a variant: rejects triton unknown variant",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7089,7 +7701,7 @@
       "name": "switch layouts are one value: rejects JoyConLeft JoyConRight",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7110,7 +7722,7 @@
       "name": "switch layouts are one value: rejects JoyConRight GameCube",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7132,7 +7744,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7154,7 +7766,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7177,7 +7789,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7199,7 +7811,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7222,7 +7834,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7244,7 +7856,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7266,7 +7878,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7287,7 +7899,7 @@
       "name": "tuning is limited to its families: rejects liveness on DualSense",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7308,7 +7920,7 @@
       "name": "tuning is limited to its families: rejects liveness on GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7329,7 +7941,7 @@
       "name": "tuning is limited to its families: rejects recovery interval on DualSense",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7350,7 +7962,7 @@
       "name": "tuning is limited to its families: rejects recovery rounds on DualShock 4",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7371,7 +7983,7 @@
       "name": "tuning is limited to its families: rejects recovery on Switch 2",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7396,7 +8008,7 @@
       "name": "tuning is limited to its families: rejects recovery on Switch input-only",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7418,7 +8030,7 @@
       "name": "tuning is limited to its families: rejects startup interval on GIP",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7439,7 +8051,7 @@
       "name": "tuning is limited to its families: rejects output interval on XUSB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7461,7 +8073,7 @@
       "name": "tuning is limited to its families: rejects startup interval on XID",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7483,7 +8095,7 @@
       "name": "tuning is limited to its families: rejects output interval on GameSir USB",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -7502,46 +8114,10 @@
       }
     },
     {
-      "name": "a byte layout belongs to report layout only",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 65534,
-        "productID": 1,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "HIDDescriptor"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 1
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "a byte layout belongs to report layout only (2)",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7571,7 +8147,7 @@
       "name": "a usage map belongs to hid descriptor only",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7602,7 +8178,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7624,7 +8200,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7648,7 +8224,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7679,7 +8255,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7710,7 +8286,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7741,7 +8317,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7772,7 +8348,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7803,7 +8379,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7837,7 +8413,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7868,7 +8444,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7900,7 +8476,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7932,7 +8508,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7964,7 +8540,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -7996,7 +8572,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8030,7 +8606,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8065,7 +8641,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8096,7 +8672,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8128,7 +8704,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8159,7 +8735,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8190,7 +8766,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8222,7 +8798,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8254,7 +8830,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8295,7 +8871,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8327,7 +8903,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8359,7 +8935,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8391,7 +8967,7 @@
       "name": "rejects invalid usages: same half twice",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8430,7 +9006,7 @@
       "name": "rejects invalid usages: whole axis and a half",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8467,7 +9043,7 @@
       "name": "rejects invalid usages: button trigger next to a half",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8505,7 +9081,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8537,7 +9113,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8568,7 +9144,7 @@
       "name": "validator rejects what the schema cannot express: duplicate usage",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8604,7 +9180,7 @@
       "name": "validator rejects what the schema cannot express: empty axis range",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8638,7 +9214,7 @@
       "name": "validator rejects what the schema cannot express: reversed axis range",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 65534,
         "productID": 1,
@@ -8673,7 +9249,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8692,7 +9268,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8711,7 +9287,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8730,7 +9306,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8750,7 +9326,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8770,7 +9346,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8790,7 +9366,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8810,7 +9386,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8830,7 +9406,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8861,7 +9437,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8892,7 +9468,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8924,7 +9500,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8946,7 +9522,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8968,7 +9544,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -8996,7 +9572,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -9030,7 +9606,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -9074,7 +9650,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -9111,7 +9687,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -9144,15 +9720,15 @@
       }
     },
     {
-      "name": "rejects idle false",
+      "name": "rejects a record-level idle",
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 11720,
         "productID": 12316,
-        "idle": false,
+        "idle": "NoControllerLinked",
         "modes": [
           {
             "id": "default",
@@ -9164,21 +9740,108 @@
       }
     },
     {
-      "name": "rejects idle with a usage map",
+      "name": "rejects a mode idle of true",
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 11720,
         "productID": 12316,
-        "idle": true,
         "modes": [
           {
             "id": "default",
             "protocol": {
               "family": "HIDDescriptor"
+            },
+            "idle": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a mode idle with an unknown reason",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "Sleeping"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a mode idle with a session",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "NoControllerLinked",
+            "session": {
+              "settleMilliseconds": 100
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a mode idle with an interface range",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "Bootloader",
+            "interface": {
+              "first": 0,
+              "last": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an all-idle record with a usage map",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "NoControllerLinked"
           }
         ],
         "input": {
@@ -9195,15 +9858,264 @@
       }
     },
     {
-      "name": "rejects idle with a second mode",
+      "name": "rejects an all-idle record with a server",
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
+        "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
         "vendorID": 11720,
         "productID": 12316,
-        "idle": true,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "NoControllerLinked"
+          }
+        ],
+        "server": "OJD"
+      }
+    },
+    {
+      "name": "rejects a validation of a mode the record does not have",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "xinput",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with an issue number below 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 0,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with a date that is not yyyy-MM-dd",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "14.11.2026"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a validation with an unknown key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "validations": [
+          {
+            "issue": 12,
+            "mode": "default",
+            "appVersion": "0.6.0",
+            "date": "2026-11-14",
+            "verified": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "calibration: rejects a stick range of zero",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftStickRange": 0 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick range above 2",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightStickRange": 2.5 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick centre above 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftStickCenterX": 1.5 }
+      }
+    },
+    {
+      "name": "calibration: rejects a stick centre below -1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightStickCenterY": -1.1 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger rest of 1",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftTriggerRest": 1 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger full press of 0",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "rightTriggerFull": 0 }
+      }
+    },
+    {
+      "name": "calibration: rejects a trigger whose rest is not below its full press",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [{ "id": "default", "protocol": { "family": "HIDDescriptor" } }],
+        "tuning": { "leftTriggerRest": 0.8, "leftTriggerFull": 0.5 }
+      }
+    },
+    {
+      "name": "rejects an input on the default mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an input on an idle mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
         "modes": [
           {
             "id": "default",
@@ -9212,12 +10124,70 @@
             }
           },
           {
-            "id": "other",
+            "id": "asleep",
             "protocol": {
               "family": "HIDDescriptor"
             },
             "match": {
-              "product": "Receiver"
+              "product": "Android GamePad"
+            },
+            "idle": "NoControllerLinked",
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects descriptorShapes in a mode input",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 9571,
+        "productID": 1318,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          },
+          {
+            "id": "android",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Android GamePad"
+            },
+            "input": {
+              "hidUsageMap": {
+                "usages": [
+                  {
+                    "kind": "Button",
+                    "page": 9,
+                    "usage": 4,
+                    "control": "South"
+                  }
+                ]
+              },
+              "descriptorShapes": [
+                {
+                  "usages": []
+                }
+              ]
             }
           }
         ]

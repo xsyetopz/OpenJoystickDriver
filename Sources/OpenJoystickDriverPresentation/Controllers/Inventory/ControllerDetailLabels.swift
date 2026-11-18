@@ -25,18 +25,6 @@ enum ControllerDetailLabels {
     }
   }
 
-  /// Returns the localization key of the reason the output is disabled.
-  ///
-  /// - Parameter reason: The reason.
-  /// - Returns: The localization key of the reason the output is disabled.
-  static func servingReasonKey(_ reason: OutputDisabledReason) -> String {
-    switch reason {
-    case .userDisabled: return notPublishedReasonKey(.outputDisabled)
-    case .upstreamVirtualDevice: return notPublishedReasonKey(.upstreamVirtualDevice)
-    case .noVirtualProfile: return notPublishedReasonKey(.noVirtualProfile)
-    }
-  }
-
   /// Returns the localization key of the reason the input health failed.
   ///
   /// - Parameter reason: The reason.

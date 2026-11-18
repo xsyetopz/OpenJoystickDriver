@@ -13,7 +13,7 @@ struct RemappingExtraButtonTests {
     (Control.auxiliary1, .auxiliary1), (Control.auxiliary2, .auxiliary2),
     (Control.leftPaddle1, .leftPaddle1), (Control.rightPaddle1, .rightPaddle1),
   ])
-  func extraButtonCanHoldAndReleaseAKeyboardAction(
+  func extraButtonCanHoldAndReleaseKeyboardAction(
     physical: Control,
     source: Control
   ) throws {
@@ -63,7 +63,7 @@ struct RemappingExtraButtonTests {
   @Test(arguments: [
     (0x1102, true), (0x1205, false), (0x1303, false),
   ])
-  func rightPadPassthroughIsConsumedByAnExplicitMapping(
+  func rightPadPassthroughIsConsumedByExplicitMapping(
     productID: UInt16,
     padIsRightStick: Bool
   ) throws {

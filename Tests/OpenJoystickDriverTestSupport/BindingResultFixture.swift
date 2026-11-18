@@ -1,4 +1,4 @@
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 extension ProtocolBindingResult {
   /// A `HIDDescriptor` binding with no observed interfaces, for descriptions whose binding

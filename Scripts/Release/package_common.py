@@ -1,5 +1,3 @@
-"""Shared standard-library helpers for release DMG packaging."""
-
 from __future__ import annotations
 
 import os
@@ -18,8 +16,6 @@ def die(message: str) -> NoReturn:
 
 
 class CommandFailure(Exception):
-    """A child command failed; preserve its shell-visible exit status."""
-
     def __init__(self, returncode: int) -> None:
         self.returncode = 128 - returncode if returncode < 0 else returncode
         super().__init__(f"command exited with status {self.returncode}")
@@ -106,7 +102,6 @@ def cleanup_workdirs(paths: tuple[Path, ...], mount_dir: Path) -> None:
 
 
 def embedded_dext(app_path: Path) -> Path:
-    """The XboxUSBDevice dext embedded in the app; it is required."""
     dext = (
         app_path
         / "Contents/Library/SystemExtensions/com.openjoystickdriver.XboxUSBDevice.dext"

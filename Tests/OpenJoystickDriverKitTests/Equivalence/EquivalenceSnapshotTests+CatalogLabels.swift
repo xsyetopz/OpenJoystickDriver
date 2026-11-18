@@ -22,11 +22,11 @@ extension EquivalenceSnapshotCatalogTests {
     case .valveSteamController: "valve-steam-controller"
     case .valveSteamTriton: "valve-steam-triton"
     case .valveSteamDeck: "valve-steam-deck"
-    case .vendorFlydigi: "vendor-flydigi"
     case .vendorPS3ThirdParty: "vendor-ps3-third-party"
     case .vendorGameSir: "vendor-game-sir"
     case .vendorNVIDIAShield: "vendor-nvidia-shield"
     case .nintendoWii: "nintendo-wii"
+    default: id.commandLineName
     }
   }
 
@@ -76,27 +76,7 @@ extension EquivalenceSnapshotCatalogTests {
     }
   }
 
-  static func label(_ key: ControllerTuning.Key) -> String {
-    switch key {
-    case .stickDeadzone: "stickDeadzone"
-    case .inputLivenessTimeoutMs: "inputLivenessTimeoutMs"
-    case .hidStartupRecoveryIntervalMs: "hidStartupRecoveryIntervalMs"
-    case .hidStartupRecoveryRounds: "hidStartupRecoveryRounds"
-    case .hidStartupIntervalMs: "hidStartupIntervalMs"
-    case .minimumHIDOutputIntervalMs: "minimumHIDOutputIntervalMs"
-    case .lizardResendTicks: "lizardResendTicks"
-    case .usbCommandTimeoutMs: "usbCommandTimeoutMs"
-    case .presenceResendReports: "presenceResendReports"
-    case .adapterDisconnectDelayMs: "adapterDisconnectDelayMs"
-    case .usbStartupIntervalMs: "usbStartupIntervalMs"
-    case .usbStartupRetryDelayMs: "usbStartupRetryDelayMs"
-    case .usbTransferTimeoutMs: "usbTransferTimeoutMs"
-    case .frameQueueCapacity: "frameQueueCapacity"
-    case .irWriteIntervalMs: "irWriteIntervalMs"
-    case .speakerMaxSeconds: "speakerMaxSeconds"
-    case .replyTimeoutMs: "replyTimeoutMs"
-    }
-  }
+  static func label(_ key: ControllerTuning.Key) -> String { key.rawValue }
 
   static func label(_ motor: PhysicalRumbleMotor) -> String {
     switch motor {
@@ -130,6 +110,6 @@ extension EquivalenceSnapshotCatalogTests {
   }
 
   static func hex(_ bytes: [UInt8]) -> String {
-    bytes.map { String(format: "%02X", $0) }.joined()
+    bytes.map { unsafe String(format: "%02X", $0) }.joined()
   }
 }

@@ -1,5 +1,3 @@
-"""Convert the flat `wiki/` pages into GitHub wiki pages."""
-
 from __future__ import annotations
 
 import argparse
@@ -24,7 +22,6 @@ class WikiBuildError(RuntimeError):
 
 
 def page_files(source: pathlib.Path) -> list[pathlib.Path]:
-    """Return the pages to publish, and reject layouts the wiki cannot serve."""
     subfolders = sorted(entry.name for entry in source.iterdir() if entry.is_dir())
     if subfolders:
         raise WikiBuildError(
@@ -42,7 +39,6 @@ def page_files(source: pathlib.Path) -> list[pathlib.Path]:
 
 
 def reject_case_collisions(names: list[str]) -> None:
-    """Reject page names that differ only in case, which name one wiki page."""
     seen: dict[str, str] = {}
     for name in names:
         key = pathlib.PurePath(name).stem.casefold()
@@ -54,12 +50,10 @@ def reject_case_collisions(names: list[str]) -> None:
 def rewrite_target(
     target: str, page_names: frozenset[str], repository: str, ref: str, source: str
 ) -> str:
-    """Rewrite one link target from its repository form to its wiki form."""
     if target.startswith("#") or SCHEME.match(target):
         return target
     path, separator, anchor = target.partition("#")
     if path.startswith("../") and path.endswith(IMAGE_SUFFIXES):
-        # A wiki page shows a repository image only from its raw URL.
         return f"https://raw.githubusercontent.com/{repository}/{ref}/{path[3:]}"
     if path.startswith("../"):
         return (
@@ -78,7 +72,6 @@ def rewrite_target(
 def convert(
     text: str, page_names: frozenset[str], repository: str, ref: str, source: str
 ) -> str:
-    """Rewrite every link outside fenced code blocks."""
 
     def replace(match: re.Match[str]) -> str:
         return match.group(1) + rewrite_target(
@@ -106,7 +99,6 @@ def convert(
 def build(
     source: pathlib.Path, output: pathlib.Path, repository: str, ref: str
 ) -> list[str]:
-    """Write the wiki pages into `output`, which must be empty or missing."""
     pages = page_files(source)
     if output.exists() and any(output.iterdir()):
         raise WikiBuildError(f"output directory is not empty: {output}")
@@ -124,7 +116,7 @@ def build(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="ojd docs build-wiki", description=__doc__)
+    parser = argparse.ArgumentParser(prog="just wiki-build")
     parser.add_argument("output", type=pathlib.Path, help="empty output directory")
     parser.add_argument(
         "--repository",

@@ -1,13 +1,13 @@
-import Foundation
+public import Foundation
 
 /// The `apiVersion` of every JSON document and line that `ojd --json` prints, that the endpoint
 /// speaks, and that OJD reads or writes as a file.
 public enum OpenJoystickDriverAPI {
   /// The supported `apiVersion`.
-  public static let version = "openjoystickdriver/v1alpha2"
+  public static let version = "openjoystickdriver/v1alpha3"
 
   /// The start of the `$id` of every JSON Schema under `Resources/Schemas`; the file name follows.
-  public static let schemaBase = "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/"
+  public static let schemaBase = "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/"
 
   /// Why a document with this `apiVersion` and `kind` is not a supported `expected`, or nil when
   /// it is.
@@ -29,7 +29,8 @@ public enum OpenJoystickDriverAPI {
     guard (apiVersion as? String) == version else {
       return DocumentHeaderProblem(
         code: .unsupportedAPIVersion,
-        "apiVersion \(apiVersion) is not supported; the supported apiVersion is \(version)"
+        "apiVersion \(apiVersion) is not supported; the supported apiVersion is \(version); "
+          + "run `ojd migrate` to convert"
       )
     }
     guard let kind else {

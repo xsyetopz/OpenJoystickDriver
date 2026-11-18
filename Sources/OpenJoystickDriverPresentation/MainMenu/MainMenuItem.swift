@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// Modifier keys of a menu key equivalent, independent of AppKit.
 struct MainMenuModifiers: OptionSet, Hashable, Sendable {
@@ -62,6 +63,11 @@ enum MainMenuAction: Hashable, Sendable {
   case delete
   /// Select everything.
   case selectAll
+  /// Focus the search field of the list in view.
+  case find
+
+  /// Do what the toolbar item of the action does.
+  case toolbar(MainWindowToolbarAction)
 
   /// Show an area of the main window.
   case showArea(MainWindowArea)
@@ -71,6 +77,8 @@ enum MainMenuAction: Hashable, Sendable {
   case toggleSidebar
   /// Enter or exit full screen.
   case toggleFullScreen
+  /// Set how much of the interface shows.
+  case setInterfaceLevel(InterfaceLevel)
 
   /// A disabled row that names the controller the menu acts on, or says there is none.
   case controllerTarget
@@ -101,6 +109,10 @@ enum MainMenuAction: Hashable, Sendable {
   case explainErrorCode
   /// Copy the support report.
   case copySupportReport
+  /// Open the wiki page of the main-window area in view.
+  case openAreaHelp
+  /// Show the tour of the main window.
+  case showMainWindowTour
   /// Open the page to report a problem.
   case reportProblem
   /// Open the project page in the default browser.
@@ -114,6 +126,75 @@ extension MainMenuAction {
     switch self {
     case .importProfile, .exportProfile, .activateProfile, .installRecordOrMod: return true
     default: return false
+    }
+  }
+}
+
+extension MainMenuAction {
+  /// The level of the command, from `docs/development/interface-audit.md`.
+  ///
+  /// The menus M01 to M17 are Simple; a command of a hidden control follows that control: the
+  /// toolbar item for `toolbar`, S05 for Explain Error Code, the Library for Install Record or
+  /// Mod, and the activity log for Activity Log and Save Activity Log.
+  var interfaceRowLevel: InterfaceRowLevel {
+    switch self {
+    case .toolbar(let action): return action.interfaceRowLevel
+    case .installRecordOrMod, .saveActivityLog, .showActivityLog, .explainErrorCode:
+      return .advanced
+    default: return .simple
+    }
+  }
+}
+
+extension MainMenuAction {
+  /// The localization key of the tooltip of the item that performs the action.
+  var helpKey: String {
+    switch self {
+    case .about: "ui.help.menu.about"
+    case .settings: "ui.help.menu.settings"
+    case .services: "ui.help.menu.services"
+    case .hide: "ui.help.menu.hide"
+    case .hideOthers: "ui.help.menu.hideOthers"
+    case .showAll: "ui.help.menu.showAll"
+    case .quit: "ui.help.menu.quit"
+    case .importProfile: "ui.help.importProfile"
+    case .exportProfile: "ui.help.exportProfile"
+    case .installRecordOrMod: "ui.help.menu.installRecordOrMod"
+    case .close: "ui.help.menu.close"
+    case .saveSupportReport: "ui.help.menu.saveSupportReport"
+    case .saveActivityLog: "ui.help.saveActivityLog"
+    case .undo: "ui.help.menu.undo"
+    case .redo: "ui.help.menu.redo"
+    case .cut: "ui.help.menu.cut"
+    case .copy: "ui.help.menu.copy"
+    case .paste: "ui.help.menu.paste"
+    case .delete: "ui.help.menu.delete"
+    case .selectAll: "ui.help.menu.selectAll"
+    case .find: "ui.help.menu.find"
+    case .toolbar(let action): action.descriptionKey
+    case .showArea: "ui.help.menu.showArea"
+    case .toggleToolbar: "ui.help.menu.toggleToolbar"
+    case .toggleSidebar: "ui.help.menu.toggleSidebar"
+    case .toggleFullScreen: "ui.help.menu.toggleFullScreen"
+    case .setInterfaceLevel(let level):
+      level == .simple ? "ui.help.menu.interfaceSimple" : "ui.help.menu.interfaceAdvanced"
+    case .controllerTarget: "ui.help.menu.controllerTarget"
+    case .suspendOrResumeController: "ui.help.suspend"
+    case .testInput: "ui.help.menu.testInput"
+    case .disconnectWirelessLink: "ui.help.disconnectWireless"
+    case .showControllerInWindow: "ui.help.menu.showControllerInWindow"
+    case .activateProfile: "ui.help.menu.activateProfile"
+    case .deactivateProfile: "ui.help.menu.deactivateProfile"
+    case .minimize: "platform.macos.ui.help.menu.minimize"
+    case .zoom: "ui.help.menu.zoom"
+    case .bringAllToFront: "ui.help.menu.bringAllToFront"
+    case .showActivityLog: "ui.help.menu.showActivityLog"
+    case .explainErrorCode: "ui.help.menu.explainErrorCode"
+    case .copySupportReport: "ui.help.menu.copySupportReport"
+    case .openAreaHelp: "ui.help.menu.openAreaHelp"
+    case .showMainWindowTour: "ui.help.menu.showMainWindowTour"
+    case .reportProblem: "ui.help.menu.reportProblem"
+    case .openProjectWebsite: "ui.help.menu.openProjectWebsite"
     }
   }
 }
@@ -133,6 +214,13 @@ enum MainMenuRequirement: Hashable, Sendable {
   case controllerHasActiveProfile
   /// A profile is selected in the Profiles screen.
   case profileSelected
+  /// The toolbar item of the action is shown and enabled.
+  case toolbarAction(MainWindowToolbarAction)
+  /// The toolbar item of the action is not shown disabled: the command works from any area, and
+  /// waits only while the area that shows the item has it disabled.
+  case toolbarActionNotDisabled(MainWindowToolbarAction)
+  /// The list in view has a search field that shows.
+  case searchFieldInView
   /// Never holds; keeps an informational item disabled.
   case unavailable
 }
@@ -238,6 +326,12 @@ struct MainMenuState: Equatable, Sendable {
   var hasSelectedProfile = false
   /// Whether the main window exists.
   var hasMainWindow = false
+  /// The toolbar actions that are shown and enabled.
+  var enabledToolbarActions: Set<MainWindowToolbarAction> = []
+  /// The toolbar actions that are shown and disabled.
+  var disabledToolbarActions: Set<MainWindowToolbarAction> = []
+  /// Whether the list in view has a search field that shows.
+  var hasSearchFieldInView = false
   /// Whether the Settings window exists.
   var hasSettingsWindow = false
   /// Whether the main window is full screen.
@@ -246,6 +340,8 @@ struct MainMenuState: Equatable, Sendable {
   var isToolbarVisible = false
   /// Whether the sidebar shows.
   var isSidebarVisible = true
+  /// How much of the interface shows; the View menu checks the matching item.
+  var interfaceLevel = InterfaceLevel.default
 
   /// The controller the Controller and Profile menus act on: the one selected in the Controllers
   /// area.
@@ -266,6 +362,9 @@ struct MainMenuState: Equatable, Sendable {
     case .wirelessController: return controller?.isWireless == true
     case .controllerHasActiveProfile: return controller?.hasActiveProfile == true
     case .profileSelected: return hasSelectedProfile
+    case .toolbarAction(let action): return enabledToolbarActions.contains(action)
+    case .toolbarActionNotDisabled(let action): return !disabledToolbarActions.contains(action)
+    case .searchFieldInView: return hasSearchFieldInView
     case .unavailable: return false
     }
   }

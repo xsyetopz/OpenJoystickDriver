@@ -12,7 +12,7 @@ struct RecordOwnershipReportTests {
   /// The value `DeviceManager.deviceDescription` reports comes from the catalog that the
   /// bundled, package, and user layers produce, so a user patch shows as `ojd`.
   @Test
-  func theCatalogRecordCarriesTheOwnershipOfTheMergedLayers() throws {
+  func catalogRecordCarriesOwnershipOfMergedLayers() throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-record-ownership-\(UUID().uuidString)",
       isDirectory: true
@@ -20,13 +20,13 @@ struct RecordOwnershipReportTests {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
     #expect(DeviceCatalog().record(for: Self.gameSir)?.server == .system)
-    try JSONSerialization.data(
-      withJSONObject: ControllerPatch.document(
+    try PropertyListFixture.data(
+      tree: ControllerPatch.document(
         selector: .identity(ControllerModelID(vendorID: 0x3537, productID: 0x100B)),
         body: ["server": "OJD"]
       )
     )
-    .write(to: directory.appendingPathComponent("3537-100b.patch.json"))
+    .write(to: directory.appendingPathComponent("3537-100b.patch.plist"))
 
     let records = ControllerRecordSet.load(userDirectory: directory)
 
@@ -35,7 +35,7 @@ struct RecordOwnershipReportTests {
   }
 
   @Test
-  func theDescriptionEncodesAndDecodesTheRecordOwnership() throws {
+  func descriptionEncodesAndDecodesRecordOwnership() throws {
     let device = ApplicationServiceDeviceDescription.fixture(id: "A")
     #expect(device.recordServer == .system)
     let object = try Self.object(of: device)
@@ -47,7 +47,7 @@ struct RecordOwnershipReportTests {
   }
 
   @Test(arguments: ["recordServer", "recordAccessRoute"])
-  func aPayloadWithoutARecordOwnershipFieldFailsToDecode(field: String) throws {
+  func payloadWithoutRecordOwnershipFieldFailsToDecode(field: String) throws {
     var object = try Self.object(of: .fixture(id: "A"))
     object[field] = nil
 

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The report ID of the state report.
 private let switch2StateReportID: UInt8 = 0x05
@@ -137,7 +137,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
   static var commandChannel: ProtocolDescription.CommandChannel {
     guard let channel = PhysicalProtocolID.nintendoSwitch2.protocolDescription.commandChannel
     else {
-      preconditionFailure("nintendo-switch2.json sets no commandChannel")
+      preconditionFailure("nintendo-switch2.plist sets no commandChannel")
     }
     return channel
   }
@@ -375,7 +375,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
   }
 
   /// Decodes a `0x05` state report of at least 64 bytes; any other report is ignored.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     guard bytes.count >= switch2StateReportLength, bytes[0] == switch2StateReportID else {
       return nil

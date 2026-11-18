@@ -1,117 +1,122 @@
 # Updating and Uninstalling
 
-Check for a new OpenJoystickDriver version, and remove the app and its data when you no longer need them.
+Update OpenJoystickDriver (OJD), or remove the app and its data from your Mac.
 
 ## Contents
 
 - [Update](#update)
   - [How Update Checks Work](#how-update-checks-work)
   - [Release Builds and Tester Builds](#release-builds-and-tester-builds)
-  - [Check For Updates](#check-for-updates)
-  - [Install a New Version](#install-a-new-version)
-  - [Update from 0.6.0-alpha.1](#update-from-060-alpha1)
+  - [Check for Updates](#check-for-updates)
+  - [Install an Update](#install-an-update)
+  - [Update from an Earlier Alpha](#update-from-an-earlier-alpha)
   - [Get a Fix](#get-a-fix)
 - [Uninstall](#uninstall)
   - [Remove the App](#remove-the-app)
-  - [Files That Stay On Your Mac](#files-that-stay-on-your-mac)
+  - [Files That Stay on Your Mac](#files-that-stay-on-your-mac)
   - [Remove the Data](#remove-the-data)
 - [Further Reading](#further-reading)
 
 ## Update
 
-This section explains how to check for a new OpenJoystickDriver (OJD) version and how to get a fix.
-
 ### How Update Checks Work
 
-OJD checks for updates only when you ask. It has no timer and does not check in the background. An update check never downloads or installs anything.
+OJD checks for updates only when you ask. If you turn on **Check for updates automatically** in the **General** pane of **Settings**, it also checks once at each launch and once when you turn the setting on. A check never downloads or installs anything.
 
-A check reads the version tags of the OJD repository on GitHub and reports the highest version. By default it ignores prerelease versions. A prerelease build is newer than every stable release, so a default check run from it finds nothing. To include prereleases, turn on **Include prerelease updates** in **Settings**. In the command line, add `--prerelease` to `update check`.
+A check reads the version tags of the OJD repository on GitHub and reports the highest version. It ignores prereleases by default, so a check from a prerelease build finds nothing. To include them, turn on **Include prerelease updates** in **Settings**, or add `--prerelease` to `ojd update check`.
 
-When a newer version exists, **View Update** opens the tag page in your browser. You download and install the new version yourself.
+**View Update** opens the version's page in your browser. You install it yourself.
 
 ### Release Builds and Tester Builds
 
-A release build is a public DMG named `OpenJoystickDriver-VERSION-macOS.dmg`. The maintainer notarizes it.
+A release build is a public, notarized DMG named `OpenJoystickDriver-VERSION-macOS.dmg`.
 
-A tester build is a private, notarized DMG that the maintainer sends to testers. It contains a fix that is not in a release yet. It also contains `OpenJoystickDriver-TESTER-BUILD.txt`, which names the commit and the build version. A tester build version has the form `VERSION+build.NUMBER.sha.COMMIT`.
+A tester build is a notarized DMG with a fix that isn't in a release. It appears on the [GitHub Releases page](https://github.com/xsyetopz/OpenJoystickDriver/releases) and is linked from the issue it answers. `0.6.0-alpha.2.tester.1` comes after `0.6.0-alpha.2` and before `0.6.0-alpha.3`.
 
-An update check does not find tester builds. The maintainer sends them directly.
+A DMG sent directly holds `OpenJoystickDriver-TESTER-BUILD.txt`, which names the commit and build version.
 
 ### Check for Updates
 
-1. Open OJD.
-2. Open **Settings**.
-3. In **Updates**, click **Check Now**.
-4. If the result is **Update available**, click **View Update**.
+1. Choose OpenJoystickDriver > **Settings...**.
+2. In **Updates** on the **General** pane, click **Check Now**.
 
-To check from the terminal, run the following command. Add `--prerelease` to include prerelease versions.
+   ![The General pane of Settings. A red arrow points to Check Now, which asks GitHub for a newer OJD and installs nothing](../docs/screenshots/steps/check-for-updates.png)
+
+3. If it says **Update available**, click **View Update**.
+
+Or run this in Terminal:
 
 ```shell
 ojd update check
 ```
 
-### Install a New Version
+### Install an Update
 
 1. Quit OJD.
-2. Open the new DMG.
-3. Drag **OpenJoystickDriver** to **Applications**. Replace the old app when macOS asks.
-4. Open OJD.
+2. Open the downloaded DMG.
+3. Drag **OpenJoystickDriver** to **Applications**. Click **Replace**.
+4. Open OJD from **Applications**.
+5. If OJD shows **Repair Xbox USB Driver**, click it.
+6. Unplug each USB controller that uses the [Xbox USB driver](Glossary.md#terms), then plug it in again. Otherwise macOS can keep the old driver.
 
-Your profiles stay in place because they are stored outside the app.
+> [!IMPORTANT]
+> Open OJD from **Applications**, not from the DMG. macOS turns on the Xbox USB driver only for an app in **Applications**.
 
-### Update from 0.6.0-alpha.1
+Your [profiles](Glossary.md#terms) stay in place.
 
-OJD 0.6.0-alpha.2 reads only files with `apiVersion: openjoystickdriver/v1alpha2`. It refuses each file from 0.6.0-alpha.1, which has `openjoystickdriver/v1alpha1`, with error `E5001`, and it does not change the file. The message names the file, the version it found, and the supported version.
+After an update, **Driver Extensions** in **System Settings** can list the old driver until you restart. You don't need to remove it.
 
-To convert them, run the following command. The Migrate button in the launch alert and in the **Access** area does the same.
+If **Input Monitoring** or **Accessibility** shows OJD as allowed but OJD reads no controller, remove OJD from the list and add it again:
 
-```shell
+1. Choose Apple menu > **System Settings**, then click **Privacy & Security**.
+2. Click **Input Monitoring** (or **Accessibility**), select **OpenJoystickDriver**, and click **-**.
+3. Click **+** and choose **OpenJoystickDriver** in **Applications**.
+
+If OJD isn't in the list, see [If OpenJoystickDriver Isn't in the List](Permissions-and-Security.md#if-openjoystickdriver-isnt-in-the-list).
+
+### Update from an Earlier Alpha
+
+OJD 0.6.0-alpha.3 reads only XML property list files (`.plist`) with `apiVersion: openjoystickdriver/v1alpha3`. Files from alpha.1 and alpha.2 are JSON and fail with `E5001`. A file that isn't an XML property list fails with `E5010`.
+
+OJD converts old files each time the service starts. You can also run it yourself:
+
+```sh
+ojd migrate --dry-run
 ojd migrate
 ```
 
-`ojd migrate` converts `Settings.json`, `AccessGrants.json`, your profiles, your controller records and your virtual device files. It copies each original to `Migrated/` in the OJD support folder before it writes the converted file, so nothing is lost. Run `ojd migrate --dry-run` first to list what it would convert without changing a file.
+`--dry-run` lists what would convert and writes nothing. `ojd migrate` writes each converted `.plist` beside the original and copies the original to `Migrated/` in the OJD support folder. Each file gets one verdict: `Migrated`, `Current`, `Failed`, or `Foreign`. A file it can't convert stays unchanged, and the command exits with `E5009`. `ojd migrate FOLDER` scans a folder you name. For `E5001`, the app offers **Migrate** next to the error.
 
-A file that `ojd migrate` cannot convert stays unchanged, and the command exits with error `E5009` and names the file and the reason. Convert that file by hand: change the `apiVersion` line to `openjoystickdriver/v1alpha2`, then run `ojd profile validate FILE` or `ojd record validate FILE` and fix what it reports. The `CHANGELOG.md` file lists the fields that changed.
-
-`ojd migrate` does not convert installed mods, and `ojd mod validate` refuses them. Install a version of the mod made for 0.6.0-alpha.2.
+A file from 0.5 has no `apiVersion`, so create the profile again. `ojd mod validate` refuses a mod that isn't a `v1alpha3` package.
 
 ### Get a Fix
 
-If a bug is fixed in the source but not yet released, you have two options:
-
-- Wait for the next tester build.
-- Build the branch yourself. For more information, see [Building OpenJoystickDriver](Building-from-Source.md).
-
-The `CHANGELOG.md` file in the repository lists what each build contains.
+For an unreleased fix, wait for a tester build or build the branch yourself. See [Building From Source](Building-from-Source.md). `CHANGELOG.md` lists what each build contains.
 
 ## Uninstall
 
-This section explains how to remove OpenJoystickDriver (OJD) and the files it leaves on your Mac.
-
-Removing the app alone leaves a login item, privacy entries, a system extension, and data files. Follow the steps in order.
+Moving the app to the Trash leaves a login item, privacy entries, the [Xbox USB driver](Glossary.md#terms), and data files on your Mac. Follow the steps in order.
 
 ### Remove the App
 
-1. Turn off the login item. Run the following command.
+1. Turn off the login item. In **Settings** > **General**, turn off **Start at login**. Or run this command.
 
    ```shell
    ojd setting set launchAtLogin false
    ```
 
-2. If you approved the OJD driver extension, remove it. In **Settings** > **Advanced**, under **Xbox USB Driver**, click **Uninstall**. Or run the following command.
+2. If you approved the Xbox USB driver, remove it. In **Settings** > **Advanced**, under **Xbox USB Driver**, click **Uninstall**. Or run this command.
 
    ```shell
    ojd transport-extension deactivate
    ```
 
-3. Quit OJD from the menu bar item.
-4. Move **OpenJoystickDriver** from **Applications** to the Trash.
+3. Click the OJD icon in the menu bar and choose **Quit OpenJoystickDriver**.
+4. Drag **OpenJoystickDriver** from **Applications** to the Trash.
 
-Both commands work only from the copy in `/Applications`.
+The driver commands work only with the copy in `/Applications`.
 
 ### Files That Stay on Your Mac
-
-Removing the app does not remove these items.
 
 | Item | Location |
 | --- | --- |
@@ -121,27 +126,27 @@ Removing the app does not remove these items.
 | Settings | Preferences domain `com.openjoystickdriver` |
 | Privacy entries | **System Settings** > **Privacy & Security** |
 
-Each profile is a file in `Profiles/`, and `ActiveProfiles.json` lists the active profiles. Files whose names contain `.backup-` are recovery copies.
+Files whose names contain `.backup-` are recovery copies.
 
 ### Remove the Data
 
-1. Remove the folder `~/Library/Application Support/OpenJoystickDriver`.
-2. Remove the folder `~/Library/Logs/OpenJoystickDriver`.
-3. Remove the settings. Run the following command.
+1. Move the folder `~/Library/Application Support/OpenJoystickDriver` to the Trash.
+2. Move the folder `~/Library/Logs/OpenJoystickDriver` to the Trash.
+3. Remove the settings. Run this command.
 
    ```shell
    defaults delete com.openjoystickdriver
    ```
 
-4. In **System Settings** > **Privacy & Security**, remove **OpenJoystickDriver** from **Input Monitoring** and **Accessibility**. Select the entry and click the minus button.
+4. In **System Settings** > **Privacy & Security**, click **Input Monitoring**, select **OpenJoystickDriver**, and click **-**. Do the same in **Accessibility**.
 
 > [!NOTE]
-> Export the profiles you want to keep before you remove the data. For more information, see [Importing and exporting profiles](Remapping-Profiles.md).
+> Export the profiles you want to keep before you remove the data. See [Importing and exporting profiles](Remapping-Profiles.md#importing-and-exporting-profiles).
 
-The notification entry stays in **System Settings** > **Notifications**. Not verified: whether macOS removes it by itself.
+The notification entry stays in **System Settings** > **Notifications**. Whether macOS removes it is untested.
 
 ## Further Reading
 
 - [Known issues](Known-Issues.md)
-- [Reporting a bug](Reporting-a-Bug.md)
-- [Permissions and security](Permissions-and-Security.md)
+- [Reporting a Bug](Reporting-a-Bug.md)
+- [Permissions and Security](Permissions-and-Security.md)

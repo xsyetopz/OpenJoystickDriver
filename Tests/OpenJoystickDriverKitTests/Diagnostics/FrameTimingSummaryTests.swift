@@ -36,7 +36,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func theWindowCountAndSpanAreTheFramesAndTheFirstToLastRead() {
+  func windowCountAndSpanAreFramesAndFirstToLastRead() {
     let summary = FrameTimingSummary(window: Self.window(), lastSeconds: 10)
 
     #expect(summary.frames == 101)
@@ -44,7 +44,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func theReadIntervalPercentilesAreNearestRank() throws {
+  func readIntervalPercentilesAreNearestRank() throws {
     let summary = FrameTimingSummary(window: Self.window(), lastSeconds: 10)
 
     let interval = try #require(gap(.readToRead, in: summary))
@@ -55,7 +55,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func theStallThresholdIsThreeMedianReadIntervalsAndCountsOnlyLongerIntervals() throws {
+  func stallThresholdIsThreeMedianReadIntervalsAndCountsOnlyLongerIntervals() throws {
     let summary = FrameTimingSummary(window: Self.window(), lastSeconds: 10)
 
     #expect(FrameTimingSummary.stallIntervalMultiplier == 3)
@@ -65,7 +65,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func anIntervalEqualToTheThresholdIsNotAStall() throws {
+  func intervalEqualToThresholdIsNotStall() throws {
     var read: UInt64 = 0
     let window = (0..<5).map { index in
       read += index == 3 ? 3_000_000 : 1_000_000
@@ -81,7 +81,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func theStageGapsAreMeasuredOnTheFramesThatReachedBothStages() throws {
+  func stageGapsAreMeasuredOnFramesThatReachedBothStages() throws {
     let summary = FrameTimingSummary(window: Self.window(), lastSeconds: 10)
 
     let parse = try #require(gap(.readToParse, in: summary))
@@ -110,7 +110,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func aGapNoFrameMeasuredIsAbsentAndTheGapsKeepPipelineOrder() {
+  func gapNoFrameMeasuredIsAbsentAndGapsKeepPipelineOrder() {
     let window = Self.window().map {
       FrameTiming(
         sequence: $0.sequence,
@@ -128,7 +128,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func aStampThatPrecedesTheEarlierStageIsNotASample() throws {
+  func stampThatPrecedesEarlierStageIsNotSample() throws {
     let window = [
       FrameTiming(
         sequence: 0,
@@ -166,7 +166,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func anEmptyWindowHasNothingToSummarize() {
+  func emptyWindowHasNothingToSummarize() {
     #expect(
       FrameTimingSummary(window: [], lastSeconds: 10)
         == FrameTimingSummary(lastSeconds: 10, frames: 0, spanNanoseconds: 0, gaps: [], stalls: nil)
@@ -174,7 +174,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func theWholeRingKeepsTheStageGapsButMeasuresNoReadIntervalAndNoStall() {
+  func wholeRingKeepsStageGapsButMeasuresNoReadIntervalAndNoStall() {
     let summary = FrameTimingSummary(window: Self.window(), lastSeconds: nil)
 
     #expect(summary.lastSeconds == nil)
@@ -189,7 +189,7 @@ struct FrameTimingSummaryTests {
   }
 
   @Test
-  func theSnapshotOfARecorderCarriesTheSummaryOfItsWindow() {
+  func snapshotOfRecorderCarriesSummaryOfItsWindow() {
     let identifier = LogicalControllerID(vendorID: 1, productID: 2)
     let recorder = FrameTimingRecorder()
     for index in 0..<30 {

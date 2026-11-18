@@ -1,46 +1,8 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
-/// The `PROFILE` argument: a profile UUID, or a profile name matched exactly but without regard
-/// to case.
-struct ProfileSelector: ExpressibleByArgument, Equatable, Sendable {
-  /// The argument as typed.
-  let text: String
-
-  /// Parses `argument`; fails when it is empty.
-  init?(argument: String) {
-    guard !argument.isEmpty else { return nil }
-    text = argument
-  }
-
-  /// The one profile this selector names.
-  ///
-  /// - Throws: ``CLIFailure`` with exit code 1 when no profile or several profiles match.
-  func resolve(in profiles: [RemappingProfile]) throws -> RemappingProfile {
-    if let id = UUID(uuidString: text), let profile = profiles.first(where: { $0.id == id }) {
-      return profile
-    }
-    let matches = profiles.filter { $0.name.caseInsensitiveCompare(text) == .orderedSame }
-    if matches.count == 1, let profile = matches.first { return profile }
-    guard matches.isEmpty else {
-      let message = CLILocalized.plural(
-        "cli.profile.group.selectorAmbiguous",
-        text,
-        matches.count
-      )
-      let lines = matches.map { "  \($0.id.uuidString)  \($0.name)" }
-      throw CLIFailure(.notFound, ([message] + lines).joined(separator: "\n"))
-    }
-    throw CLIFailure(
-      .notFound,
-      CLILocalized.format(
-        "cli.profile.group.selectorNotFound",
-        text
-      )
-    )
-  }
-
+extension ProfileSelector: ExpressibleByArgument {
   /// Reads the profiles from the service and resolves this selector.
   ///
   /// - Throws: ``CLIFailure`` when the service is unreachable, or when no profile or several match.
@@ -114,35 +76,14 @@ extension RemappingProfile {
     }
     return self
   }
-
-  /// Checks that the controller reports the trigger or stick of the pointer speed.
-  ///
-  /// The model has no capability data, so this runs where the profile enters: `profile set` and
-  /// `profile import`. A controller that the catalog does not know is not checked.
-  ///
-  /// - Throws: ``CLIFailure`` with the invalid profile code when the controller lacks the driver.
-  func checkingPointerSpeedDriver() throws -> Self {
-    if let speed = pointerSpeed,
-      let capabilities = ProtocolDriverRegistry().profileCapabilities(
-        for: ControllerModelID(vendorID: device.vendorID, productID: device.productID)
-      ), !speed.isSupported(by: capabilities)
-    {
-      throw CLIFailure(
-        .invalidProfile,
-        CLILocalized.format(
-          "cli.profile.group.invalid",
-          RemappingValidationError.unsupportedPointerSpeedDriver.localizedDescription
-        )
-      )
-    }
-    return self
-  }
 }
 
 /// The templates that `ojd profile create --template` accepts.
 enum ProfileTemplate: String, CaseIterable, ExpressibleByArgument {
   /// Gyro motion drives a stick of the virtual gamepad.
   case gyroStick = "gyro-stick"
+  case keyboardNavigation = "keyboard-navigation"
+  case mouseClicks = "mouse-clicks"
 }
 
 extension RemappingGyroStickTemplate.Stick: ExpressibleByArgument {}

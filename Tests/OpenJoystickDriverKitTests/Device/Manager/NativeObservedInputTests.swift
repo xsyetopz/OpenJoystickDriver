@@ -72,7 +72,7 @@ struct NativeObservedInputTests {
   }
 
   @Test
-  func nativeSixaxisControllersOfOneModelTakeDistinctReusablePlayerSlots() async throws {
+  func nativeSixaxisControllersOfOneModelTakeDistinctReusablePlayerSlots() async {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()
@@ -177,7 +177,7 @@ struct NativeObservedInputTests {
   }
 
   @Test
-  func elementValuesAreRoutedOnlyToADriverThatParsesThem() async {
+  func elementValuesAreRoutedOnlyToDriverThatParsesThem() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -195,7 +195,7 @@ struct NativeObservedInputTests {
   }
 
   @Test
-  func siblingEntriesDoNotKeepALocationNative() async {
+  func siblingEntriesDoNotKeepLocationNative() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -219,7 +219,7 @@ struct NativeObservedInputTests {
   }
 
   @Test
-  func locationZeroIsNeverTreatedAsANativeController() async {
+  func locationZeroIsNeverTreatedAsNativeController() async {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey,

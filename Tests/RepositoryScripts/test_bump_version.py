@@ -48,6 +48,42 @@ class BumpVersionTests(unittest.TestCase):
         self.assertEqual(self.run_bump(root, "0.5.0-beta.5"), 0)
         self.assertEqual(self.short_version(root), "0.5.0-beta.5")
 
+    def test_bumps_each_semver_part_from_the_current_version(self) -> None:
+        cases = {
+            ("0.6.0-alpha.3", "prerelease"): "0.6.0-alpha.4",
+            ("0.6.0-alpha.3", "beta"): "0.6.0-beta.1",
+            ("0.6.0-beta.2", "rc"): "0.6.0-rc.1",
+            ("0.6.0-alpha.3", "release"): "0.6.0",
+            ("0.6.0-alpha.3", "patch"): "0.6.1",
+            ("0.6.0", "minor"): "0.7.0",
+            ("0.6.2", "major"): "1.0.0",
+            ("0.6.0", "alpha"): "0.6.1-alpha.1",
+        }
+        for (current, part), expected in cases.items():
+            with self.subTest(current=current, part=part):
+                root = self.make_root()
+                (root / INFO_PLIST).write_bytes(
+                    plistlib.dumps({"CFBundleShortVersionString": current})
+                )
+
+                self.assertEqual(self.run_bump(root, part), 0)
+                self.assertEqual(self.short_version(root), expected)
+
+    def test_refuses_a_bump_the_current_version_cannot_take(self) -> None:
+        for current, part in [
+            ("0.6.0", "prerelease"),
+            ("0.6.0", "release"),
+            ("0.6.0-rc.1", "beta"),
+        ]:
+            with self.subTest(current=current, part=part):
+                root = self.make_root()
+                (root / INFO_PLIST).write_bytes(
+                    plistlib.dumps({"CFBundleShortVersionString": current})
+                )
+
+                self.assertNotEqual(self.run_bump(root, part), 0)
+                self.assertEqual(self.short_version(root), current)
+
     def test_refuses_build_metadata_and_keeps_the_app_version(self) -> None:
         root = self.make_root()
 

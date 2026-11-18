@@ -24,6 +24,9 @@ enum ControllerServerChange {
 
   /// Sets `server` for the model of the controller that `selector` names, and prints the result.
   ///
+  /// A claim of a model that Apple's driver holds sends the extension activation request instead
+  /// and prints its state, because only the extension can take the controller from Apple's driver.
+  ///
   /// - Throws: ``CLIFailure`` when the controller is not found, its model cannot change hands, the
   ///   record is not valid, or the file cannot be written.
   static func run(
@@ -34,6 +37,14 @@ enum ControllerServerChange {
   ) async throws {
     try await global.run {
       let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
+      if server == .ojd, device.isHeldByAppleDriver {
+        try await submitTransportExtension(
+          .activate,
+          done: .active,
+          message: CLILocalized.text("cli.transportExtension.group.activated")
+        )
+        return
+      }
       let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
       let records = RecordStore.load()
       try checkSupported(
@@ -59,23 +70,36 @@ enum ControllerServerChange {
           [result.identity, CommandLineName.kebab(result.server.rawValue), result.file]
         ])
       case .human:
+        let removal = change.data == nil
         if dryRun {
           CLIOutput.stdout(
-            CLILocalized.format(
-              "cli.controller.group.serverDryRun",
-              result.identity,
-              CommandLineName.kebab(result.server.rawValue),
-              result.file
-            )
+            removal
+              ? CLILocalized.format(
+                "cli.controller.group.serverRemovedDryRun",
+                result.identity,
+                result.file
+              )
+              : CLILocalized.format(
+                "cli.controller.group.serverDryRun",
+                result.identity,
+                CommandLineName.kebab(result.server.rawValue),
+                result.file
+              )
           )
         } else {
           CLIOutput.success(
-            CLILocalized.format(
-              "cli.controller.group.serverSuccess",
-              result.identity,
-              CommandLineName.kebab(result.server.rawValue),
-              result.file
-            )
+            removal
+              ? CLILocalized.format(
+                "cli.controller.group.serverRemoved",
+                result.identity,
+                result.file
+              )
+              : CLILocalized.format(
+                "cli.controller.group.serverSuccess",
+                result.identity,
+                CommandLineName.kebab(result.server.rawValue),
+                result.file
+              )
           )
         }
       }

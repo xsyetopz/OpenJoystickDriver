@@ -6,7 +6,7 @@ import Testing
 
 struct RuntimePresentationErrorsTests {
   @Test
-  func aReadOnlyPackageProfileShowsTheLocalizedExplanationWithItsCode() {
+  func readOnlyPackageProfileShowsLocalizedExplanationWithItsCode() {
     let error = ApplicationServiceRemappingRPCError(
       code: .packageProfileReadOnly,
       message: "A package profile cannot be changed."
@@ -29,7 +29,7 @@ struct RuntimePresentationErrorsTests {
   }
 
   @Test
-  func anUpperCamelValueBecomesWordsAndAKeyboardKeyLabelIsUnchanged() {
+  func upperCamelValueBecomesWordsAndKeyboardKeyLabelIsUnchanged() {
     #expect(
       RuntimePresentation.upperCamelWords(PhysicalRumbleMotor.lowFrequency.rawValue)
         == "Low Frequency"

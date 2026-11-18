@@ -47,8 +47,8 @@
     /// with the sheets and confirmations it opens.
     var body: some View {
       GeometryReader { proxy in
-        VStack(alignment: .leading, spacing: 0) {
-          editorHeader(width: proxy.size.width)
+        VStack(alignment: .leading, spacing: OJDSpacing.none) {
+          editorHeader
           Divider()
           sectionNavigation(width: proxy.size.width)
           Divider()
@@ -96,7 +96,7 @@
                   vendorID: draft.profile.device.vendorID,
                   productID: draft.profile.device.productID
                 )
-                return try? await viewModel.gateway.controllerState(for: .model(model))
+                return try await viewModel.gateway.controllerState(for: .model(model))
               },
               onSave: { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
             )
@@ -137,7 +137,8 @@
               turbo,
               longHold,
               multiTap,
-              actions in
+              actions,
+              remark in
               applyDraftChange {
                 try draft.settingBindingBehaviors(
                   behavior: behavior,
@@ -147,6 +148,7 @@
                   multiTap: multiTap,
                   for: binding.id
                 ).settingAdditionalActions(actions, for: binding.id)
+                  .settingRemark(remark, for: binding.id)
               }
             }
           case .chord:
@@ -188,7 +190,8 @@
               turbo,
               longHold,
               multiTap,
-              actions in
+              actions,
+              remark in
               applyDraftChange {
                 try draft.settingLayerBindingBehaviors(
                   behavior: behavior,
@@ -199,6 +202,7 @@
                   longHold: longHold,
                   multiTap: multiTap
                 ).settingAdditionalActions(actions, for: binding.id, layerID: layerID)
+                  .settingRemark(remark, for: binding.id, layerID: layerID)
               }
             }
           }
@@ -262,13 +266,10 @@
     }
 
     /// The header: the profile's name, the details and activation buttons, the actions menu, the
-    /// facts, the conflict banner and the warning about suppressed input.
-    ///
-    /// - Parameter width: The width of the editor, which decides how the facts are laid out.
-    /// - Returns: The header.
-    func editorHeader(width: CGFloat) -> some View {
-      VStack(alignment: .leading, spacing: 10) {
-        HStack(alignment: .center, spacing: 10) {
+    /// conflict banner and the warning about suppressed input.
+    var editorHeader: some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
+        HStack(alignment: .center, spacing: OJDSpacing.medium) {
           Text(draft.profile.name).font(.headline.weight(.semibold)).frame(
             maxWidth: .infinity,
             alignment: .leading
@@ -277,29 +278,31 @@
           )
           OJDCompactSymbolButton(
             symbolName: "pencil",
-            label: OJDLocalized.string("ui.profiles.details")
+            label: OJDLocalized.string("ui.profiles.details"),
+            help: OJDLocalized.string("ui.profiles.detailsHelp")
           ) { activeSheet = .metadata }
           primaryActivationAction
           profileActionMenu
         }
-        if width < ProfilePresentationPolicy.compactNavigationWidth {
-          VStack(alignment: .leading, spacing: 4) { profileFacts }
-        } else {
-          HStack(spacing: 10) { profileFacts }
-        }
         if showingConflict {
           ConflictBanner(
             reload: {
-              showingConflict = false
               Task { @MainActor in
                 await viewModel.refresh()
-                if case .available(let snapshot) = viewModel.remappingState,
-                  let latest = snapshot.profiles.first(where: { $0.id == profile.id })
-                {
+                switch viewModel.remappingState {
+                case .available(let snapshot):
+                  guard let latest = snapshot.profiles.first(where: { $0.id == profile.id })
+                  else {
+                    saveError = OJDLocalized.string("ui.profiles.reloadUnavailable")
+                    return
+                  }
+                  showingConflict = false
                   expectedCurrent = latest
                   draft = RuntimeProfileDraft(profile: latest)
                   saveError = nil
                   reportEditingState()
+                case .unavailable(let message), .error(let message): saveError = message
+                case .loading: saveError = OJDLocalized.string("ui.profiles.reloadUnavailable")
                 }
               }
             },
@@ -307,7 +310,7 @@
           )
         }
         if draft.profile.suppressesAllControllerInput {
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             Text(
               OJDLocalized.string(
                 "ui.profiles.emptyInputWarning"
@@ -315,22 +318,12 @@
             ).foregroundColor(Color(NSColor.systemOrange))
             Button(
               OJDLocalized.string("ui.profiles.restoreDefaultInput")
-            ) { restoreDefaultInput() }
-          }.font(.caption)
+            ) { restoreDefaultInput() }.help(
+              OJDLocalized.string("ui.profiles.restoreDefaultInputHelp")
+            )
+          }.font(.body)
         }
       }.padding(.horizontal, 28).padding(.vertical, 18)
-    }
-
-    /// The target, the number of assignments and the activation state of the profile.
-    @ViewBuilder
-    var profileFacts: some View {
-      Text(RuntimePresentation.profileScopeLabel(draft.profile.applicationScope)).foregroundColor(
-        Color(NSColor.secondaryLabelColor)
-      )
-      Text(assignmentCountLabel(draft.profile.bindings.count)).foregroundColor(
-        Color(NSColor.secondaryLabelColor)
-      )
-      Text(activationLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
     }
 
     /// The Set Active or Deactivate button; a Joy-Con pair profile has none.
@@ -342,6 +335,11 @@
             isActive ? "action.deactivate" : "action.setActive"
           )
         ) { isActive ? deactivateProfile() : requestActivation() }.disabled(isMutationActive)
+          .help(
+            OJDLocalized.string(
+              isActive ? "ui.profiles.deactivateHelp" : "ui.profiles.setActiveHelp"
+            )
+          )
       }
     }
 
@@ -359,7 +357,7 @@
         )
         ForEach(menuActions, id: \.self) { action in Text(action.title).tag(Optional(action)) }
       }.pickerStyle(PopUpButtonPickerStyle()).labelsHidden().frame(width: 132)
-        .disabled(isMutationActive)
+        .disabled(isMutationActive).help(OJDLocalized.string("ui.profiles.actionsHelp"))
     }
 
     /// The picker of the editor section: a segmented control, or a pop-up menu when the editor is
@@ -378,6 +376,8 @@
               Text(section.title).tag(section)
             }
           }.pickerStyle(SegmentedPickerStyle()).labelsHidden()
+            .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.editorSection"))
+            .help(OJDLocalized.string("ui.profiles.editorSectionHelp"))
         } else {
           HStack {
             Text(OJDLocalized.string("ui.profiles.editorSection"))
@@ -388,6 +388,7 @@
               }
             }.labelsHidden().pickerStyle(PopUpButtonPickerStyle()).frame(maxWidth: .infinity)
               .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.editorSection"))
+              .help(OJDLocalized.string("ui.profiles.editorSectionHelp"))
           }
         }
       }.padding(.horizontal, 28).padding(.vertical, 10)

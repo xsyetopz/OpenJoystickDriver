@@ -29,14 +29,14 @@
         Toggle(
           title,
           isOn: Binding(get: { value.wrappedValue > 0 }, set: { value.wrappedValue = $0 ? 255 : 0 })
-        )
+        ).help(OJDLocalized.string("ui.help.rumbleToggle"))
       } else {
         InputTestSliderRow(
           title: title,
           valueText: "\(Int(value.wrappedValue.rounded()))",
           accessibilityLabel: title
         ) {
-          Slider(value: value, in: 0...255)
+          Slider(value: value, in: 0...255).help(OJDLocalized.string("ui.help.rumbleIntensity"))
         }
       }
     }
@@ -78,7 +78,7 @@
     /// The row.
     var body: some View {
       OJDLabeledRow(title) {
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           control.labelsHidden().ojdAccessibilityLabel(accessibilityLabel)
             .ojdAccessibilityValue(valueText)
           Text(valueText)
@@ -94,10 +94,17 @@
     /// The form: the controller header and the sections the controller supports.
     var body: some View {
       Form {
-        Section { controllerHeader }
+        Section {
+          controllerHeader
+          GuidedCheckRow(
+            check: model.guidedCheck,
+            canStart: model.canStartGuidedCheck,
+            start: model.startGuidedCheck
+          )
+        }.ojdInterfaceRow(InputTestRow.status)
         ForEach(model.visibleSections, id: \.self) { section in
           switch section {
-          case .liveInput: Section { liveInput }
+          case .liveInput: Section { liveInput }.ojdInterfaceRow(InputTestRow.controlDiagram)
           case .motion:
             Section(header: Text(OJDLocalized.string("ui.motion.calibration.title"))) {
               MotionCalibrationControls(model: model.motionCalibration)
@@ -108,7 +115,7 @@
                 rumbleContent
                 if outputErrorBelongs(to: [.rumble]) { outputErrorView }
               }
-            }
+            }.ojdInterfaceRow(InputTestRow.rumble)
           case .lighting:
             Section(header: Text(OJDLocalized.string("ui.inputTest.lighting"))) {
               InputTestOutputControlsView(settings: model.outputSettings) {
@@ -117,8 +124,15 @@
                   outputErrorView
                 }
               }
-            }
+            }.ojdInterfaceRow(InputTestRow.lighting)
           }
+        }
+        Section(header: Text(OJDLocalized.string("ui.controllers.recalibrate.title"))) {
+          ControllerRecalibrationControls(
+            gateway: model.gateway,
+            selector: model.isDeviceConnected
+              ? model.device.map { .session($0.sessionToken) } : nil
+          )
         }
       }.ojdGroupedForm().onReceive(runtimeViewModel.$statusState) { state in
         guard case .available(let status) = state else { return }
@@ -129,7 +143,7 @@
     /// The header: the session state with its symbol, and the connection, protocol and ID of the
     /// controller.
     private var controllerHeader: some View {
-      HStack(spacing: 10) {
+      HStack(spacing: OJDSpacing.medium) {
         OJDSystemSymbol(name: statusSemanticState.presentation.symbolName, fallback: statusLabel)
           .foregroundColor(Color(statusSemanticState.presentation.tone.color))
           .accessibilityHidden(true)
@@ -165,8 +179,11 @@
 
     /// The live input of the controller.
     var liveInput: some View {
-      InputTestLiveInputView(liveState: model.liveState, presentation: presentation)
-        .frame(maxWidth: .infinity, alignment: .topLeading)
+      InputTestLiveInputView(
+        liveState: model.liveState,
+        presentation: presentation,
+        layout: model.controlLayout
+      ).frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
     /// The rumble controls, or the note that the controller has no rumble.
@@ -175,6 +192,8 @@
       if model.capabilities.supportsRumble {
         Group {
           ForEach(model.capabilities.rumbleMotors, id: \.self) { rumbleControl(for: $0) }
+          Text(OJDLocalized.string("ui.inputTest.rumbleAppliesOnTest")).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
           InputTestSliderRow(
             title: OJDLocalized.string("ui.inputTest.duration"),
             valueText: OJDLocalized.formatted(
@@ -191,15 +210,16 @@
                 InputTestViewModel.rumbleDurationRange.upperBound
               ),
               step: 50
-            )
+            ).help(OJDLocalized.string("ui.help.rumbleDuration"))
           }
         }.disabled(!model.canSendOutput || model.isOutputBusy)
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           Button(OJDLocalized.string("ui.inputTest.testRumble")) {
             model.testRumble()
           }.disabled(!model.canSendOutput || model.isOutputBusy)
+            .help(OJDLocalized.string("ui.help.testRumble"))
           Button(OJDLocalized.string("action.stop")) { model.stopRumble() }
-            .disabled(!model.canStopRumble)
+            .disabled(!model.canStopRumble).help(OJDLocalized.string("ui.help.stopRumble"))
           Spacer()
           outputStatus(for: .rumble)
         }
@@ -213,17 +233,20 @@
     private var lightingContent: some View {
       Group {
         if model.capabilities.supportsPlayerIndicator {
-          VStack(alignment: .leading, spacing: 6) {
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
             Text(OJDLocalized.string("ui.inputTest.playerIndicator"))
-            Picker("", selection: playerIndicatorBinding) {
-              Text(OJDLocalized.string("ui.inputTest.off")).tag(PhysicalPlayerIndicator.off)
-              Text("1").tag(PhysicalPlayerIndicator.player1)
-              Text("2").tag(PhysicalPlayerIndicator.player2)
-              Text("3").tag(PhysicalPlayerIndicator.player3)
-              Text("4").tag(PhysicalPlayerIndicator.player4)
-            }.pickerStyle(.segmented).labelsHidden()
-              .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.playerIndicator"))
-            Button(OJDLocalized.string("action.apply")) { model.applyPlayerIndicator() }
+            HStack {
+              Picker("", selection: playerIndicatorBinding) {
+                Text(OJDLocalized.string("ui.inputTest.off")).tag(PhysicalPlayerIndicator.off)
+                Text("1").tag(PhysicalPlayerIndicator.player1)
+                Text("2").tag(PhysicalPlayerIndicator.player2)
+                Text("3").tag(PhysicalPlayerIndicator.player3)
+                Text("4").tag(PhysicalPlayerIndicator.player4)
+              }.pickerStyle(.segmented).labelsHidden()
+                .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.playerIndicator"))
+                .help(OJDLocalized.string("ui.help.playerIndicator"))
+              outputStatus(for: .playerIndicator)
+            }
           }
         }
         if model.capabilities.lightingFeatures.contains(.programmableColor) {
@@ -231,16 +254,17 @@
             HStack {
               OJDPhysicalColorWell(color: colorBinding).frame(width: 44, height: 24)
               Button(OJDLocalized.string("action.apply")) { model.applyColor() }
+                .help(OJDLocalized.string("ui.help.applyLight"))
             }
           }
         }
         if model.capabilities.supportsProgrammableBrightness {
-          VStack(alignment: .leading, spacing: 3) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             HStack {
               Text(OJDLocalized.string("ui.inputTest.brightness"))
               Spacer()
               Text("\(Int(model.brightness.rounded()))").font(
-                .system(.caption, design: .monospaced)
+                .system(.body, design: .monospaced)
               )
             }
             HStack {
@@ -248,6 +272,7 @@
                 .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.brightness"))
                 .ojdAccessibilityValue("\(Int(model.brightness.rounded()))")
               Button(OJDLocalized.string("action.apply")) { model.applyBrightness() }
+                .help(OJDLocalized.string("ui.help.applyLight"))
             }
           }
         }
@@ -268,7 +293,7 @@
     @ViewBuilder
     private var outputErrorView: some View {
       if let error = model.outputError {
-        Text(error).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+        Text(error).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
           horizontal: false,
           vertical: true
         ).ojdAccessibilityLabel(
@@ -346,9 +371,9 @@
       )
     }
 
-    /// The binding to the player indicator.
+    /// The binding to the player indicator; choosing one applies it.
     private var playerIndicatorBinding: Binding<PhysicalPlayerIndicator> {
-      Binding(get: { model.playerIndicator }, set: { model.playerIndicator = $0 })
+      Binding(get: { model.playerIndicator }, set: { model.choosePlayerIndicator($0) })
     }
 
     /// The binding to the brightness.

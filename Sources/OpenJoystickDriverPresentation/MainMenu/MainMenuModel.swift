@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// The main menu as data: titles, key equivalents, actions, enabled rules and GUI counterparts.
 ///
@@ -19,6 +20,11 @@ enum MainMenuModel {
     allItems.first { $0.action == action }
   }
 
+  /// Returns the item that does what the toolbar item of `action` does.
+  static func item(forToolbar action: MainWindowToolbarAction) -> MainMenuItem? {
+    item(for: action.menuAction)
+  }
+
   /// Returns whether the item is enabled in the state; an item on the responder chain counts as
   /// enabled, because AppKit validates it.
   static func isEnabled(_ item: MainMenuItem, state: MainMenuState) -> Bool {
@@ -26,6 +32,12 @@ enum MainMenuModel {
     case .responderChain: return true
     case .requires(let requirements): return requirements.allSatisfy(state.satisfies)
     }
+  }
+
+  /// Returns whether the item shows a checkmark: the interface level item of the current level.
+  static func isChecked(_ item: MainMenuItem, state: MainMenuState) -> Bool {
+    guard case .setInterfaceLevel(let level) = item.action else { return false }
+    return level == state.interfaceLevel
   }
 
   /// The text of the controller target row: the selected controller's name; the key that says no
@@ -84,6 +96,15 @@ enum MainMenuModel {
     }
   }
 
+  /// Returns the localization key of the tooltip of `item` in `state`: the item that resumes a
+  /// suspended controller says so.
+  static func helpKey(of item: MainMenuItem, state: MainMenuState) -> String {
+    if item.action == .suspendOrResumeController, state.controller?.isSuspended == true {
+      return "ui.help.resume"
+    }
+    return item.action.helpKey
+  }
+
   /// Returns the entry of an item.
   ///
   /// The modifiers apply only when `key` is not empty.
@@ -108,6 +129,18 @@ enum MainMenuModel {
         enabled: enabled,
         guiCounterpart: gui
       )
+    )
+  }
+
+  /// Returns the entry of the command that carries a toolbar action: the toolbar item's title,
+  /// enabled while the toolbar item is shown and enabled.
+  private static func toolbarEntry(_ action: MainWindowToolbarAction) -> MainMenuEntry {
+    entry(
+      "toolbar.\(action.rawValue)",
+      action.labelKey,
+      action: .toolbar(action),
+      enabled: .requires([.mainWindow, .toolbarAction(action)]),
+      gui: .area(action.area)
     )
   }
 
@@ -167,8 +200,9 @@ enum MainMenuModel {
     ]
   )
 
-  /// The File menu: importing and exporting profiles, installing a record or mod, closing the
-  /// window, and saving the support report and the activity log.
+  /// The File menu: importing and exporting profiles, installing a record or mod, the Library and
+  /// Access commands of the toolbar, closing the window, and saving the support report and the
+  /// activity log.
   private static let fileSection = MainMenuSection(
     id: "file",
     titleKey: "ui.menu.file.title",
@@ -178,16 +212,23 @@ enum MainMenuModel {
         "ui.menu.file.importProfile",
         key: "o",
         action: .importProfile,
-        enabled: needsMainWindow,
+        enabled: .requires([.mainWindow, .toolbarActionNotDisabled(.importProfile)]),
         gui: .area(.profiles)
       ),
       entry(
         "installRecordOrMod",
         "ui.menu.file.installRecordOrMod",
         action: .installRecordOrMod,
-        enabled: needsMainWindow,
+        enabled: .requires([.mainWindow, .toolbarActionNotDisabled(.installLibraryItem)]),
         gui: .area(.library)
       ),
+      .separator,
+      toolbarEntry(.validateLibraryItem),
+      toolbarEntry(.testLibraryRecord),
+      toolbarEntry(.removeLibraryItem),
+      .separator,
+      toolbarEntry(.grantProgram),
+      toolbarEntry(.createToken),
       .separator,
       entry(
         "close",
@@ -202,7 +243,9 @@ enum MainMenuModel {
         "exportProfile",
         "ui.menu.file.exportProfile",
         action: .exportProfile,
-        enabled: .requires([.mainWindow, .profileSelected]),
+        enabled: .requires([
+          .mainWindow, .profileSelected, .toolbarActionNotDisabled(.exportProfile),
+        ]),
         gui: .area(.profiles)
       ),
       entry(
@@ -215,12 +258,14 @@ enum MainMenuModel {
         "saveActivityLog",
         "ui.menu.file.saveActivityLog",
         action: .saveActivityLog,
+        enabled: .requires([.toolbarActionNotDisabled(.saveActivityLog)]),
         gui: .area(.activity)
       ),
+      toolbarEntry(.showActivityLogInFinder),
     ]
   )
 
-  /// The Edit menu: Undo, Redo, Cut, Copy, Paste, Delete and Select All.
+  /// The Edit menu: Undo, Redo, Cut, Copy, Copy Activity Log, Paste, Delete, Select All and Find.
   private static let editSection = MainMenuSection(
     id: "edit",
     titleKey: "ui.menu.edit.title",
@@ -259,6 +304,7 @@ enum MainMenuModel {
         enabled: .responderChain,
         gui: .standardCommand
       ),
+      toolbarEntry(.copyActivityLog),
       entry(
         "paste",
         "ui.menu.edit.paste",
@@ -282,11 +328,20 @@ enum MainMenuModel {
         enabled: .responderChain,
         gui: .standardCommand
       ),
+      .separator,
+      entry(
+        "find",
+        "ui.menu.edit.find",
+        key: "f",
+        action: .find,
+        enabled: .requires([.mainWindow, .searchFieldInView]),
+        gui: .standardCommand
+      ),
     ]
   )
 
-  /// The View menu: one item for each area of the main window, then the toolbar, sidebar and full
-  /// screen items.
+  /// The View menu: one item for each area of the main window, then the Activity commands of the
+  /// toolbar, then the toolbar, sidebar and full screen items.
   private static let viewSection = MainMenuSection(
     id: "view",
     titleKey: "ui.menu.view.title",
@@ -300,6 +355,23 @@ enum MainMenuModel {
         gui: .area(area)
       )
     } + [
+      .separator,
+      entry(
+        "interfaceLevel.simple",
+        "ui.menu.view.interfaceSimple",
+        action: .setInterfaceLevel(.simple),
+        gui: .settingsPane(.general)
+      ),
+      entry(
+        "interfaceLevel.advanced",
+        "ui.menu.view.interfaceAdvanced",
+        action: .setInterfaceLevel(.advanced),
+        gui: .settingsPane(.general)
+      ),
+      .separator,
+      toolbarEntry(.activityMode),
+      toolbarEntry(.activityFilter),
+      toolbarEntry(.runDiagnostics),
       .separator,
       entry(
         "toggleToolbar",
@@ -382,7 +454,8 @@ enum MainMenuModel {
     ]
   )
 
-  /// The Profile menu: Activate Profile and Deactivate Profile.
+  /// The Profile menu: Activate Profile, Deactivate Profile and the Profiles commands of the
+  /// toolbar.
   private static let profileSection = MainMenuSection(
     id: "profile",
     titleKey: "ui.menu.profile.title",
@@ -401,6 +474,12 @@ enum MainMenuModel {
         enabled: .requires([.controller, .controllerHasActiveProfile]),
         gui: .area(.profiles)
       ),
+      .separator,
+      toolbarEntry(.newProfile),
+      toolbarEntry(.duplicateProfile),
+      toolbarEntry(.convertProfile),
+      toolbarEntry(.deleteProfile),
+      toolbarEntry(.validateProfileFile),
     ]
   )
 
@@ -435,8 +514,8 @@ enum MainMenuModel {
     ]
   )
 
-  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Report Problem and
-  /// the project page.
+  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Help for This Area,
+  /// Report Problem and the project page.
   private static let helpSection = MainMenuSection(
     id: "help",
     titleKey: "ui.menu.help.title",
@@ -462,6 +541,19 @@ enum MainMenuModel {
         gui: .area(.activity)
       ),
       .separator,
+      entry(
+        "openAreaHelp",
+        "ui.menu.help.helpForThisArea",
+        action: .openAreaHelp,
+        gui: .externalLink
+      ),
+      entry(
+        "showMainWindowTour",
+        "ui.menu.help.mainWindowTour",
+        action: .showMainWindowTour,
+        enabled: needsMainWindow,
+        gui: .area(.controllers)
+      ),
       entry(
         "reportProblem",
         "ui.menu.help.reportProblem",

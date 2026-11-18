@@ -111,6 +111,12 @@ extension RemappingProfile {
         throw RemappingValidationError.duplicateSource(binding.source)
       }
       try validate(binding, at: index)
+      if let remark = binding.remark {
+        guard remark.trimmingCharacters(in: .whitespacesAndNewlines) == remark,
+          RemappingBinding.remarkLengthRange.contains(remark.count),
+          remark.unicodeScalars.allSatisfy({ !CharacterSet.controlCharacters.contains($0) })
+        else { throw RemappingValidationError.bindingRemarkInvalid(index: index) }
+      }
       for action in binding.additionalActions {
         try validateIdentifier(action.id, identifiers: &identifiers)
         try validate(
@@ -247,9 +253,16 @@ extension RemappingProfile {
 
   /// Checks the bundle identifier of an application scope.
   private func validateApplicationScope() throws {
-    guard case .application(let identifier) = applicationScope else { return }
-    guard Self.isValidAppID(identifier) else {
-      throw RemappingValidationError.invalidAppID(identifier)
+    guard case .application(let identifiers) = applicationScope else { return }
+    guard !identifiers.isEmpty else { throw RemappingValidationError.noAppIDs }
+    var seen = Set<String>()
+    for identifier in identifiers {
+      guard Self.isValidAppID(identifier) else {
+        throw RemappingValidationError.invalidAppID(identifier)
+      }
+      guard seen.insert(identifier).inserted else {
+        throw RemappingValidationError.duplicateAppID(identifier)
+      }
     }
   }
 

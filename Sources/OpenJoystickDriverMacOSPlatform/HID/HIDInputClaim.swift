@@ -93,15 +93,15 @@ struct HIDInputClaim: Equatable {
     closing sharedOptions: IOOptionBits?
   ) -> Self {
     if let sharedOptions { _ = port.close(sharedOptions) }
-    let seizeResult = port.open(IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
-    guard seizeResult == kIOReturnSuccess else {
+    let seize = port.open(IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
+    guard seize == kIOReturnSuccess else {
       // A refused seize can leave the client registered with the device; closing it ends that.
       _ = port.close(IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
       return Self(
-        seizeResult: seizeResult,
+        seizeResult: seize,
         inputResult: port.open(IOOptionBits(kIOHIDOptionsTypeNone))
       )
     }
-    return Self(seizeResult: seizeResult, inputResult: seizeResult)
+    return Self(seizeResult: seize, inputResult: seize)
   }
 }

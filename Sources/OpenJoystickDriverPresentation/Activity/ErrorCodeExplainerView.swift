@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
@@ -32,21 +33,22 @@
 
     /// The title, the code field, the answer and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(OJDLocalized.string("ui.console.explain.title")).font(.headline)
         TextField(OJDLocalized.string("ui.console.explain.prompt"), text: $model.typedCode) {
           model.explain()
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.console.explain.prompt"))
+          .help(OJDLocalized.string("ui.help.errorCodeField"))
         answer.frame(maxWidth: .infinity, minHeight: 64, alignment: .topLeading)
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.done")) { model.isPresented = false }
-            .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.closeSheet"))
           Button(OJDLocalized.string("ui.console.explain.action")) { model.explain() }
-            .keyboardShortcut(.defaultAction)
+            .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.explain"))
             .disabled(model.typedCode.trimmingCharacters(in: .whitespaces).isEmpty)
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
 
     /// The answer for the typed code: its facts and explanation, a note that the code is unknown,
@@ -55,7 +57,7 @@
     private var answer: some View {
       switch model.answer {
       case .explained(let facts)?:
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
           Text(facts.code).font(.system(.body, design: .monospaced))
           ForEach(Self.factLines(facts), id: \.self) { line in
             Text(line).foregroundColor(Color(NSColor.secondaryLabelColor))

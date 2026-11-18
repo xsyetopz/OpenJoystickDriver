@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -15,7 +16,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func theErrorCodesBelongToTheModDomain() {
+  func errorCodesBelongToModDomain() {
     let codes: [ErrorCode] = [
       .invalidManifest, .requiresExcludesVersion, .invalidPackageContent, .packageClash,
       .packageAlreadyInstalled, .packageNotInstalled,
@@ -25,7 +26,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func aValidPackageInstallsListsAndRemoves() throws {
+  func validPackageInstallsListsAndRemoves() throws {
     try Fixture.with { fixture in
       let folder = try fixture.makePackage(
         controllers: [try Fixture.record(0x1234, 0xABCD)],
@@ -38,7 +39,9 @@ struct ModPackageStoreTests {
       #expect(installed.directory.lastPathComponent == "arcade-pack")
       #expect(store.list().map(\.name) == ["arcade-pack"])
       #expect(store.list().first?.manifest?.version == "1.0.0")
-      let installedRecord = installed.directory.appendingPathComponent("Controllers/1234-abcd.json")
+      let installedRecord = installed.directory.appendingPathComponent(
+        "Controllers/1234-abcd.plist"
+      )
       #expect(FileManager.default.fileExists(atPath: installedRecord.path))
       try store.remove("arcade-pack")
       #expect(store.list().isEmpty)
@@ -47,7 +50,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func installingANameThatIsInstalledNeedsReplace() throws {
+  func installingNameThatIsInstalledNeedsReplace() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       try store.install(try fixture.makePackage(controllers: [try Fixture.record(0x1234, 0xABCD)]))
@@ -60,7 +63,7 @@ struct ModPackageStoreTests {
       try store.install(second, replace: true)
       let installed = try #require(store.list().first)
       #expect(installed.manifest?.version == "2.0.0")
-      #expect(installed.manifest?.controllers == ["1234-abce.json"])
+      #expect(installed.manifest?.controllers == ["1234-abce.plist"])
       let entries = try FileManager.default.contentsOfDirectory(atPath: fixture.packages.path)
       #expect(entries == ["arcade-pack"])
     }
@@ -89,7 +92,7 @@ struct ModPackageStoreTests {
   }
 
   @Test
-  func aBadManifestIsRefused() throws {
+  func badManifestIsRefused() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       let store = fixture.store()
@@ -99,8 +102,8 @@ struct ModPackageStoreTests {
         ["requires": ["minimum": "0.6.0", "extra": 1]], ["extra": true],
         ["kind": "Controller"],
         ["$schema": "https://example.com/mod-package.schema.json"],
-        ["controllers": ["../1234-abcd.json"]],
-        ["controllers": ["1234-abcd.json", "1234-abcd.json"]],
+        ["controllers": ["../1234-abcd.plist"]],
+        ["controllers": ["1234-abcd.plist", "1234-abcd.plist"]],
         ["controllers": []],
       ] {
         let folder = try fixture.makePackage(controllers: [record], manifest: overrides)
@@ -112,7 +115,7 @@ struct ModPackageStoreTests {
       )
       #expect(code { try store.validate(unsupportedVersion) } == .unsupportedAPIVersion)
       let noManifest = try fixture.makePackage(controllers: [record])
-      try FileManager.default.removeItem(at: noManifest.appendingPathComponent("mod.json"))
+      try FileManager.default.removeItem(at: noManifest.appendingPathComponent("mod.plist"))
       #expect(code { try store.validate(noManifest) } == .invalidManifest)
       let empty = try fixture.makePackage()
       #expect(code { try store.validate(empty) } == .invalidManifest)
@@ -138,22 +141,24 @@ struct ModPackageStoreTests {
       #expect(code { try store.validate(brokenRecord) } == .invalidPackageContent)
       let bundled = try fixture.makePackage(controllers: [try Fixture.record(0x366C, 0x0005)])
       #expect(code { try store.validate(bundled) } == .invalidPackageContent)
-      let misnamed = try fixture.makePackage(controllers: [("other.json", record.data)])
+      let misnamed = try fixture.makePackage(controllers: [("other.plist", record.data)])
       #expect(code { try store.validate(misnamed) } == .invalidManifest)
 
       let persona = Fixture.persona(0x1234, 0xABCD)
       let brokenPersona = try fixture.makePackage(virtualDevices: [(persona.name, Data("[]".utf8))])
       #expect(code { try store.validate(brokenPersona) } == .invalidPackageContent)
-      let wrongPersona = try fixture.makePackage(virtualDevices: [("x.json", persona.data)])
+      let wrongPersona = try fixture.makePackage(virtualDevices: [("x.plist", persona.data)])
       #expect(code { try store.validate(wrongPersona) } == .invalidManifest)
-      let brokenProfile = try fixture.makePackage(profiles: [("p.json", Data("{}".utf8))])
+      let brokenProfile = try fixture.makePackage(profiles: [
+        ("p.plist", PropertyListFixture.bytes(json: "{}"))
+      ])
       #expect(code { try store.validate(brokenProfile) } == .unsupportedAPIVersion)
       #expect(store.list().isEmpty)
     }
   }
 
   @Test
-  func aClashWithTheUserOrAnotherPackageIsRefusedAndForceDoesNotOverrideIt() throws {
+  func clashWithUserOrAnotherPackageIsRefusedAndForceDoesNotOverrideIt() throws {
     try Fixture.with { fixture in
       let store = fixture.store()
       let record = try Fixture.record(0x1234, 0xABCD)
@@ -166,7 +171,7 @@ struct ModPackageStoreTests {
       #expect(code { try store.install(clashing, replace: true) } == .packageClash)
       try FileManager.default.removeItem(at: fixture.controllers)
 
-      try fixture.write([("renamed.json", persona.data)], kind: "VirtualDevices", in: fixture.root)
+      try fixture.write([("renamed.plist", persona.data)], kind: "VirtualDevices", in: fixture.root)
       let samePersona = try fixture.makePackage(virtualDevices: [persona])
       #expect(code { try store.validate(samePersona) } == .packageClash)
       try FileManager.default.removeItem(at: fixture.virtualDevices)
@@ -174,13 +179,13 @@ struct ModPackageStoreTests {
       let mine = try Fixture.profile(id: id, name: "Mine")
       try fixture.write([mine], kind: "Profiles", in: fixture.root)
       let sameID = try Fixture.profile(id: id, name: "Theirs")
-      let byID = try fixture.makePackage(profiles: [("a.json", sameID.data)])
+      let byID = try fixture.makePackage(profiles: [("a.plist", sameID.data)])
       #expect(code { try store.validate(byID) } == .packageClash)
       let sameName = try Fixture.profile(name: "mine")
-      let byName = try fixture.makePackage(profiles: [("a.json", sameName.data)])
+      let byName = try fixture.makePackage(profiles: [("a.plist", sameName.data)])
       #expect(code { try store.validate(byName) } == .packageClash)
       let twice = try fixture.makePackage(profiles: [
-        ("a.json", profile.data), ("b.json", profile.data),
+        ("a.plist", profile.data), ("b.plist", profile.data),
       ])
       #expect(code { try store.validate(twice) } == .packageClash)
       try FileManager.default.removeItem(at: fixture.profiles)

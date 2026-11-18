@@ -33,8 +33,8 @@ enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
 
   /// Returns the choices for `device`.
   ///
-  /// The unit scope needs a unit ID, which the service refuses to resolve for a controller that
-  /// reports no location.
+  /// The unit scope needs a unit ID, which a controller with neither an IOKit location nor a
+  /// Bluetooth LE peripheral identifier lacks.
   ///
   /// - Parameter device: The controller.
   /// - Returns: The choices for `device`.
@@ -47,10 +47,10 @@ enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
   /// - Parameter device: The controller.
   /// - Returns: The scope of the stored override when one exists, else the model.
   static func initial(for device: ApplicationServiceDeviceDescription) -> Self {
-    guard device.portKey != nil, let scope = device.virtualHIDProfile?.overrideScope else {
+    guard device.portKey != nil, let stored = device.virtualHIDProfile?.overrideScope else {
       return .model
     }
-    return Self(scope)
+    return Self(stored)
   }
 }
 

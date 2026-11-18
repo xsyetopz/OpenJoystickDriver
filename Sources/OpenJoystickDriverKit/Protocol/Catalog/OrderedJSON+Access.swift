@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension OrderedJSON {
   /// The members of an object, or nil for any other value.
@@ -11,6 +11,12 @@ extension OrderedJSON {
   /// such member.
   subscript(key: String) -> Self? {
     members?.first { $0.key == key }?.value
+  }
+
+  /// The items of an array, or nil for any other value.
+  var array: [Self]? {
+    guard case .array(let items) = self else { return nil }
+    return items
   }
 
   /// The text of a string value.
@@ -36,6 +42,41 @@ extension OrderedJSON {
       with: Data(compact().utf8),
       options: .fragmentsAllowed
     )
+  }
+
+  /// The value of the document `data`, an XML property list; `file` names it in a refusal.
+  public init(document data: Data, file: String) throws {
+    self = try Self(foundation: DocumentCoder.read(data, file: file))
+  }
+
+  /// The value as a canonical document.
+  ///
+  /// A number written as an integer is an `integer` and any other number a `real`. `null` has no
+  /// property list form and is refused.
+  public func plistData() throws -> Data { try DocumentCoder.write(plistValue()) }
+
+  private func plistValue() throws -> Any {
+    switch self {
+    case .object(let members):
+      return try Dictionary(
+        uniqueKeysWithValues: members.map { ($0.key, try $0.value.plistValue()) }
+      )
+    case .array(let items): return try items.map { try $0.plistValue() }
+    case .string(let text): return text
+    case .bool(let flag): return flag
+    case .number(let text):
+      if let whole = Int64(text) { return whole }
+      if let wide = UInt64(text) { return wide }
+      guard let real = Double(text), real.isFinite else {
+        throw Self.Problem(reason: .notJSONValue("\(text) is not a number"), offset: nil)
+      }
+      return real
+    case .null:
+      throw Self.Problem(
+        reason: .notJSONValue("a property list cannot hold null; remove the key"),
+        offset: nil
+      )
+    }
   }
 
   /// Whether the two values are the same JSON value: object members in any order, and numbers by

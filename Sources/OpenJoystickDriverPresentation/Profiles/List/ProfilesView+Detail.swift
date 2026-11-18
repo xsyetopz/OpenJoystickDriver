@@ -34,7 +34,7 @@
       if let selectedRecoveryIssue {
         profileRecoveryDetail(selectedRecoveryIssue)
       } else if let selectedProfile {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: OJDSpacing.none) {
           refreshStatus
           if selectedProfile.joyConPair != nil { joyConPairControls(selectedProfile) }
           ProfileEditorView(
@@ -101,6 +101,12 @@
             .fixedSize(horizontal: false, vertical: true)
             .ojdAccessibilityLabel(presentation.title)
             .ojdAccessibilityValue(presentation.accessibilityValue)
+          if presentation.offersMigration {
+            Button(OJDLocalized.string("ui.migrate.action")) { migrateStoredDocuments() }
+              .disabled(library.profileRecoveryInFlight)
+              .help(OJDLocalized.string("ui.migrate.actionHelp"))
+            besideError(.migration)
+          }
           Button(
             OJDLocalized.string(
               issue.kind == .damagedProfile
@@ -111,8 +117,28 @@
               issue.kind == .damagedProfile
               ? .deleteDamagedProfile(issue.id) : .resetLibrary(issue.id)
           }.disabled(library.profileRecoveryInFlight)
+            .help(
+              OJDLocalized.string(
+                issue.kind == .damagedProfile
+                  ? "ui.profiles.deleteDamagedHelp" : "ui.profiles.resetLibraryHelp"
+              )
+            )
+          besideError(.recovery)
         }
       }.ojdGroupedForm()
+    }
+
+    /// The failure of a request that the control `origin` started, in red under the control; empty
+    /// while that control has no failure.
+    ///
+    /// - Parameter origin: The control that started the request.
+    /// - Returns: The message, or nothing.
+    @ViewBuilder
+    func besideError(_ origin: ProfileActionOrigin) -> some View {
+      if let message = screen.profileActionError(beside: origin) {
+        Text(message).font(.body).foregroundColor(Color(NSColor.systemRed))
+          .fixedSize(horizontal: false, vertical: true)
+      }
     }
 
     /// The Joy-Con pair row of a profile: Pair Joy-Cons, or Unpair Joy-Cons for each active pair.
@@ -122,14 +148,20 @@
     @ViewBuilder
     func joyConPairControls(_ profile: RemappingProfile) -> some View {
       let sessions = currentSnapshot?.joyConPairs.filter { $0.profileID == profile.id } ?? []
-      HStack(spacing: 10) {
+      HStack(spacing: OJDSpacing.medium) {
         Text(OJDLocalized.string("ui.profiles.joyConPair")).font(
-          .caption.weight(.semibold)
+          .body.weight(.semibold)
         )
         if sessions.isEmpty {
           Button(
             OJDLocalized.string("ui.profiles.pairJoyCons")
           ) { pairingProfile = profile }.disabled(!hasAvailableJoyConPair || isProfileActionBlocked)
+            .help(
+              OJDLocalized.string(
+                hasAvailableJoyConPair
+                  ? "ui.profiles.pairJoyConsHelp" : "ui.profiles.pairJoyConsNeedsBothHelp"
+              )
+            )
         } else {
           Text(OJDLocalized.string("ui.profiles.joyConPairActive")).font(
             .caption
@@ -137,15 +169,23 @@
           ForEach(sessions, id: \.sessionID) { session in
             Button(OJDLocalized.string("ui.profiles.unpairJoyCons")) {
               Task { @MainActor in
-                profileActionError = await viewModel.unpairRemappingJoyCons(
-                  sessionID: session.sessionID
+                screen.failProfileAction(
+                  await viewModel.unpairRemappingJoyCons(sessionID: session.sessionID),
+                  beside: .joyCon
                 )
               }
-            }.disabled(isProfileActionBlocked)
+            }.disabled(isProfileActionBlocked).help(
+              OJDLocalized.string("ui.profiles.unpairJoyConsHelp")
+            )
           }
+        }
+        if sessions.isEmpty, !hasAvailableJoyConPair {
+          Text(OJDLocalized.string("ui.profiles.joyConPairNeedsBoth")).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer()
       }.padding(.horizontal, 28).padding(.top, 10)
+      besideError(.joyCon).padding(.horizontal, 28)
     }
 
     /// The snapshot of the available state, or the last snapshot.
@@ -169,8 +209,9 @@
       EmptyStateView(
         symbol: "slider.horizontal.3",
         title: OJDLocalized.string("ui.profiles.none"),
-        message: OJDLocalized.string("ui.profiles.createMessage")
-      )
+        actionTitle: OJDLocalized.string("ui.profiles.new"),
+        actionHelp: OJDLocalized.string("ui.help.newProfile")
+      ) { screen.beginCreatingProfile() }
     }
 
     /// Returns the text for the number of assignments.
@@ -199,7 +240,7 @@
     var refreshStatus: some View {
       switch viewModel.remappingState {
       case .loading:
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           ProgressView()
           Text(OJDLocalized.string("ui.profiles.refreshing"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))

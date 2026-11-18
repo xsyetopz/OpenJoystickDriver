@@ -211,6 +211,7 @@ extension CLIFailure {
       CLILocalized.format(
         "platform.macos.cli.shared.error.permissionStillMissing",
         missing.map(\.localizedName).joined(separator: ", "),
+        CLILocalized.text(SystemSettingsPlace.appLocalizationKey()),
         missing.map(\.localizedSettingsPane).joined(separator: " and ")
       )
     )

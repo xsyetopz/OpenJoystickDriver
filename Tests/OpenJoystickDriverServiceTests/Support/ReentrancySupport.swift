@@ -52,7 +52,7 @@ final class BlockingReleaseSink: RemappingSystemInputSink, @unchecked Sendable {
 
   var actions: [RemappingSystemInputAction] { lock.withLock { recordedActions } }
 
-  func send(_ action: RemappingSystemInputAction) throws {
+  func send(_ action: RemappingSystemInputAction) {
     if action == .keyUp(.space) {
       lock.withLock { releaseBlocked = true }
       releaseGate.wait()

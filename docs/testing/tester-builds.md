@@ -1,21 +1,25 @@
 # Test a Tester Build
 
-A tester build is a notarized DMG of an unpublished build, made by the maintainer so you can check a fix. It is not the same as a build you compile yourself: it is signed with Developer ID and works without any Apple developer account. Maintainers: see [Create a local tester build](../development/tester-builds.md).
+A tester build is a notarized, Developer ID signed DMG of an unpublished build, made to check a fix. No Apple developer account needed. Maintainers: see [Create a local tester build](../development/tester-builds.md).
 
-## Get and Install One
+## Get and Install a Tester Build
 
-The maintainer sends you the DMG. Do not change its contents.
+1. Get the unmodified DMG:
+   - From the pre-release linked in your issue, or the [pre-release list](https://github.com/xsyetopz/OpenJoystickDriver/releases).
+   - **Settings**: turn on **Include prerelease updates**, click **Check Now**. See [Updating](../../wiki/Updating-and-Uninstalling.md#release-builds-and-tester-builds).
+   - From the maintainer.
+2. Drag `OpenJoystickDriver.app` to `/Applications`.
+3. Open the app; approve macOS permissions in the order in [Install](../../wiki/Getting-Started.md#installing-openjoystickdriver). Approve the driver extension only for one of the [seven Microsoft models](../../wiki/Supported-Controllers.md#supported-controllers).
+4. Reproduce the problem.
 
-1. Open the DMG and drag `OpenJoystickDriver.app` to `/Applications`.
-2. Open the app and approve the macOS permissions it asks for, in the order in [Install](../../wiki/Getting-Started.md#installing-openjoystickdriver). Approve the driver extension only if your controller is one of the [seven Microsoft models](../../wiki/Supported-Controllers.md#supported-controllers).
-3. Reproduce the problem with the packaged app.
+## DMG Contents
 
-## What Is In the DMG
-
-`OpenJoystickDriver.app` and `OpenJoystickDriver-TESTER-BUILD.txt`. The text file names the source commit, version, bundle build number, signing type, and notarization result. The version is the release SemVer plus build metadata, such as `0.5.0-beta.5+build.1.14.89.sha.0123456789ab`.
+`OpenJoystickDriver.app` and `OpenJoystickDriver-TESTER-BUILD.txt` (source commit, version, build number, signing type, notarization result). Version is release SemVer plus build metadata, such as `0.5.0-beta.5+build.1.14.89.sha.0123456789ab`.
 
 ## Report the Build
 
-Attach `OpenJoystickDriver-TESTER-BUILD.txt` to your issue, and say which build fixed or did not fix the problem. To see what changed, read `CHANGELOG.md` in the repository. Then add the support report and any capture from [Report a bug](../../wiki/Reporting-a-Bug.md).
+1. Attach `OpenJoystickDriver-TESTER-BUILD.txt` to your issue.
+2. State whether it fixed the problem. `CHANGELOG.md` lists changes.
+3. Add the support report and captures from [Report a bug](../../wiki/Reporting-a-Bug.md).
 
-For controller-record tests, also follow [Test a controller record](controller-record.md).
+Record tests also need [Test a controller record](controller-record.md).

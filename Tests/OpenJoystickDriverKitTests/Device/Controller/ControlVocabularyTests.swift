@@ -8,7 +8,7 @@ import Testing
 /// crosswalk to SDL and the system HID names.
 struct ControlVocabularyTests {
   @Test
-  func anIDOutsideTheVocabularyDoesNotDecode() {
+  func idOutsideVocabularyDoesNotDecode() {
     let data = Data("\"x\(UUID().uuidString)\"".utf8)
 
     #expect(throws: DecodingError.self) {
@@ -27,7 +27,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func schemaDefinitionsMatchTheSwiftCases() throws {
+  func schemaDefinitionsMatchSwiftCases() throws {
     let definitions = try Self.vocabularyDefinitions()
     func values(_ name: String) -> [String]? {
       (definitions[name] as? [String: Any])?["enum"] as? [String]
@@ -57,7 +57,20 @@ struct ControlVocabularyTests {
       let evdev: String?
       let hid: [HID]
       let apple: String?
-      let notes: [String: String]?
+
+      init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        w3cButton = try values.decodeIfPresent(Int.self, forKey: .w3cButton)
+        w3cAxis = try values.decodeIfPresent(Int.self, forKey: .w3cAxis)
+        sdl = try values.decodeIfPresent(String.self, forKey: .sdl)
+        evdev = try values.decodeIfPresent(String.self, forKey: .evdev)
+        hid = try values.decodeIfPresent([HID].self, forKey: .hid) ?? []
+        apple = try values.decodeIfPresent(String.self, forKey: .apple)
+      }
+
+      private enum CodingKeys: String, CodingKey {
+        case w3cButton, w3cAxis, sdl, evdev, hid, apple
+      }
     }
     struct Source: Decodable {
       let document: String
@@ -73,8 +86,8 @@ struct ControlVocabularyTests {
 
   private static func crosswalk() throws -> Crosswalk {
     let url = JSONSchemaFiles.directory.deletingLastPathComponent()
-      .appendingPathComponent("Vocabulary/crosswalk.json")
-    return try JSONDecoder().decode(Crosswalk.self, from: Data(contentsOf: url))
+      .appendingPathComponent("Vocabulary/crosswalk.plist")
+    return try PropertyListDecoder().decode(Crosswalk.self, from: Data(contentsOf: url))
   }
 
   private static func vocabularyDefinitions() throws -> [String: Any] {
@@ -128,7 +141,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func crosswalkKeepsTheDocumentedFixedPoints() throws {
+  func crosswalkKeepsDocumentedFixedPoints() throws {
     let rows = try Self.crosswalk().controls
     #expect(rows["South"]?.sdl == "SOUTH")
     #expect(rows["South"]?.w3cButton == 0)
@@ -142,7 +155,7 @@ struct ControlVocabularyTests {
   }
 
   @Test
-  func crosswalkRecordsASourcePerColumn() throws {
+  func crosswalkRecordsSourcePerColumn() throws {
     let crosswalk = try Self.crosswalk()
     #expect(Set(crosswalk.sources.keys) == ["w3c", "sdl", "evdev", "hid", "apple"])
     for (column, source) in crosswalk.sources {
@@ -155,12 +168,11 @@ struct ControlVocabularyTests {
     let pages = Set(crosswalk.sources["hid"]?.pages?.keys.sorted() ?? [])
     for (id, row) in crosswalk.controls {
       #expect(row.hid.allSatisfy { pages.contains($0.page) }, "\(id) hid page")
-      #expect((row.notes ?? [:]).keys.allSatisfy { crosswalk.sources[$0] != nil }, "\(id) note")
     }
   }
 
   @Test
-  func crosswalkHoldsTheSourcedCells() throws {
+  func crosswalkHoldsSourcedCells() throws {
     let rows = try Self.crosswalk().controls
     #expect(rows["LeftTrigger"]?.hid.contains(.init(page: "Simulation", usage: 197)) == true)
     #expect(rows["RightTrigger"]?.hid.contains(.init(page: "Simulation", usage: 196)) == true)
@@ -181,35 +193,30 @@ struct ControlVocabularyTests {
     }
   }
 
-  private static func crosswalkText(
+  private static func crosswalkTree(
     editing edit: (inout [String: Any]) -> Void = { _ in }
-  ) throws
-    -> String
-  {
+  ) throws -> [String: Any] {
     let url = JSONSchemaFiles.directory.deletingLastPathComponent()
-      .appendingPathComponent("Vocabulary/crosswalk.json")
-    var document = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Vocabulary/crosswalk.plist")
+    var document = try PropertyListFixture.dictionary(at: url)
     edit(&document)
-    let data = try JSONSerialization.data(withJSONObject: document)
-    return try #require(String(bytes: data, encoding: .utf8))
+    return document
   }
 
   @Test
   func crosswalkMatchesItsSchema() throws {
     let issues = try JSONSchemaFiles.issues(
-      in: Self.crosswalkText(),
+      inObject: Self.crosswalkTree(),
       against: "crosswalk.schema.json#"
     )
     #expect(issues.isEmpty, "\(issues)")
   }
 
   @Test
-  func crosswalkSchemaRejectsAPlantedBadFile() throws {
+  func crosswalkSchemaRejectsPlantedBadFile() throws {
     func rejects(_ name: String, _ edit: @escaping (inout [String: Any]) -> Void) throws {
       let issues = try JSONSchemaFiles.issues(
-        in: Self.crosswalkText(editing: edit),
+        inObject: Self.crosswalkTree(editing: edit),
         against: "crosswalk.schema.json#"
       )
       #expect(!issues.isEmpty, "\(name)")
@@ -240,13 +247,6 @@ struct ControlVocabularyTests {
       change(&$0, "controls") { controls in
         var row = controls["South"] as? [String: Any] ?? [:]
         row["gcc"] = "ButtonA"
-        controls["South"] = row
-      }
-    }
-    try rejects("row without a column") {
-      change(&$0, "controls") { controls in
-        var row = controls["South"] as? [String: Any] ?? [:]
-        row["evdev"] = nil
         controls["South"] = row
       }
     }

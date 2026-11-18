@@ -6,6 +6,8 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   public let vendorID: UInt16
   /// The USB product ID.
   public let productID: UInt16
+  /// The product name the device reported, trimmed; nil when it reported none or a blank one.
+  public let name: String?
   /// Connection label (e.g. "USB", "Bluetooth").
   public let connection: String
   /// How OJD reaches the device.
@@ -17,19 +19,26 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   public let rejectedCandidates: [ProtocolBindingResult.RejectedCandidate]
   /// Class facts of the interfaces observed when the device was rejected.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
+  /// The client that holds the device exclusively; nil unless ``reason`` is
+  /// ``ProtocolBindingReason/deviceInUse`` and the host named the holder.
+  public let exclusiveOwner: USBExclusiveOwner?
 
   /// Creates the description from its values.
   public init(
     vendorID: UInt16,
     productID: UInt16,
+    name: String? = nil,
     connection: String,
     accessBackend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [ProtocolBindingResult.InterfaceSummary]
+    interfaces: [ProtocolBindingResult.InterfaceSummary],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     self.vendorID = vendorID
     self.productID = productID
+    self.name = name
+    self.exclusiveOwner = exclusiveOwner
     self.connection = connection
     self.accessBackend = accessBackend
     self.reason = reason
@@ -49,16 +58,57 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
 }
 
 extension ApplicationServiceUnboundDevice {
+  /// `VVVV:PPPP`, the identity `ojd` prints and accepts.
+  public var identity: String { unsafe String(format: "%04X:%04X", vendorID, productID) }
+
+  /// Whether the device is a HID pad: read over HID, with an interface that has a Game Pad or
+  /// Joystick usage.
+  public var isHIDGamepad: Bool {
+    accessBackend == .hid
+      && interfaces.contains {
+        $0.hasGamePadOrJoystickCollection == true
+          || ($0.primaryUsage?.usagePage == 1
+            && [4, 5].contains($0.primaryUsage?.usage))
+      }
+  }
+
+  /// The command that drafts a record for a HID pad; nil for any other device.
+  public var draftCommand: String? { isHIDGamepad ? "ojd record draft \(identity)" : nil }
+
+  /// The command that captures the packets of a device no protocol matches, to attach to a support
+  /// request; nil for any other reason.
+  public var captureCommand: String? {
+    reason == .noProtocolMatch
+      ? "ojd controller capture \(identity) --duration 10 --json > capture.jsonl" : nil
+  }
+
+  /// The sentence that says why OJD does not serve the device.
+  ///
+  /// A device in use whose holder is known names the holder with
+  /// ``USBExclusiveOwner/heldMessage(for:localize:)``; every other case uses the reason's own
+  /// sentence.
+  ///
+  /// - Parameter localize: Returns the catalog text of a key.
+  /// - Returns: The localized sentence.
+  public func explanation(localize: (String) -> String) -> String {
+    guard reason == .deviceInUse, let exclusiveOwner else {
+      return localize(reason.explanationKey)
+    }
+    return USBExclusiveOwner.heldMessage(for: exclusiveOwner, localize: localize)
+  }
+
   /// Creates the description from the service's unbound-device snapshot.
   package init(snapshot: UnboundDeviceSnapshot) {
     self.init(
       vendorID: snapshot.vendorID,
       productID: snapshot.productID,
+      name: snapshot.name,
       connection: snapshot.connection,
       accessBackend: snapshot.accessBackend,
       reason: snapshot.reason,
       rejectedCandidates: snapshot.rejectedCandidates,
-      interfaces: snapshot.interfaces
+      interfaces: snapshot.interfaces,
+      exclusiveOwner: snapshot.exclusiveOwner
     )
   }
 }
@@ -117,8 +167,10 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   ///
   /// While set, every controller selects automatically.
   public let virtualHIDProfileOverrideError: String?
+  /// The Bluetooth access of the service; nil when the service does not report it.
+  public let bluetoothAccess: BluetoothAccessState?
 
-  /// Creates a new ApplicationServiceStatusPayload.
+  /// Creates a status payload.
   public init(
     buildIdentity: BuildIdentity = .current(),
     inputRead: PermissionManager.AccessState,
@@ -128,7 +180,8 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     passThroughDevices: [ApplicationServicePassThroughDevice] = [],
     userSpaceVirtualDeviceEnabled: Bool? = nil,
     userSpaceVirtualDeviceStatus: VirtualOutputBackendStatus? = nil,
-    virtualHIDProfileOverrideError: String? = nil
+    virtualHIDProfileOverrideError: String? = nil,
+    bluetoothAccess: BluetoothAccessState? = nil
   ) {
     self.buildIdentity = buildIdentity
     self.inputRead = inputRead
@@ -139,6 +192,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
     self.virtualHIDProfileOverrideError = virtualHIDProfileOverrideError
+    self.bluetoothAccess = bluetoothAccess
   }
 
   /// The keys of the JSON encoding.
@@ -161,5 +215,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     case userSpaceVirtualDeviceStatus
     /// The `virtualHIDProfileOverrideError` key.
     case virtualHIDProfileOverrideError
+    /// The `bluetoothAccess` key.
+    case bluetoothAccess
   }
 }

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Why the persona directory cannot be read.
 public enum VirtualHIDProfileOverrideError: Error, Equatable, Sendable {
@@ -42,7 +42,7 @@ public struct VirtualPersonaFile: Equatable, Sendable {
   public let problem: String?
 }
 
-/// Per-controller-model and per-unit personas, stored as `VirtualDevices/<id>.json` files that
+/// Per-controller-model and per-unit personas, stored as `VirtualDevices/<id>.plist` files that
 /// follow `virtual-device.schema.json`.
 ///
 /// A file matches a VID:PID model, or one unit of it (see ``ControllerPortKey``). A unit's persona
@@ -51,7 +51,7 @@ public struct VirtualPersonaFile: Equatable, Sendable {
 /// A folder named ``unreadFolderName`` beside the directory is not read, and ``files`` lists it
 /// with the reason when it holds a visible file, so that the files a user keeps there are not
 /// ignored without a word.
-/// `set` writes `vvvv-pppp.json` or `vvvv-pppp-<unit>.json`, and keeps the identity of a persona
+/// `set` writes `vvvv-pppp.plist` or `vvvv-pppp-<unit>.plist`, and keeps the identity of a persona
 /// that already matches.
 public struct VirtualHIDProfileOverrideStore: Sendable {
   /// The `kind` of a persona file.
@@ -85,10 +85,11 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     /// The unit ID of one controller of the model; nil for the whole model.
     var unit: String?
 
-    /// The name of the persona file: `vvvv-pppp.json`, with `-<unit>` before the extension for a
+    /// The name of the persona file: `vvvv-pppp.plist`, with `-<unit>` before the extension for a
     /// unit.
     var fileName: String {
-      String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".json"
+      unsafe String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "")
+        + ".plist"
     }
   }
 
@@ -230,11 +231,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     }
     do {
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-      let data = try JSONSerialization.data(
-        withJSONObject: document,
-        options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-      )
-      try data.write(
+      try DocumentCoder.write(document).write(
         to: existing.flatMap { $0.fromPackage ? nil : $0.url }
           ?? directory.appendingPathComponent(model.fileName),
         options: .atomic
@@ -297,7 +294,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   /// Adds the personas of the installed packages, in package-name order.
   ///
   /// A package that cannot be used, such as one whose `requires` leaves out the running version,
-  /// adds none, and its `mod.json` is listed with the reason. A persona whose match a user file or
+  /// adds none, and its `mod.plist` is listed with the reason. A persona whose match a user file or
   /// an earlier package already holds is skipped and listed with that reason.
   private func addPackageFiles(to loaded: inout Loaded) {
     for package in packages.list() {
@@ -318,6 +315,10 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
             let owner = first.fromPackage ? "package file " : "user file "
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: first.fromPackage
+                ? "error.E5007.virtualDevice.matchTakenByPackageFile"
+                : "error.E5007.virtualDevice.matchTakenByUserFile",
+              arguments: [first.url.lastPathComponent],
               "same match as \(owner)\(first.url.lastPathComponent)"
             )
           }
@@ -337,16 +338,17 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
 
   /// Loads the persona files of the directory in file-name order; a missing directory holds none.
   private func loadUserFiles() -> Result<Loaded, VirtualHIDProfileOverrideError> {
-    let urls: [URL]
+    let listed: [URL]
     do {
-      urls = try FileManager.default.contentsOfDirectory(
+      listed = try FileManager.default.contentsOfDirectory(
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch CocoaError.fileReadNoSuchFile {
       return .success(Loaded())
     } catch { return .failure(.unreadableDirectory(error.localizedDescription)) }
+    let urls = listed.filter { $0.pathExtension == "plist" }
     var loaded = Loaded()
     for url in urls {
       do {
@@ -354,6 +356,8 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
         if let first = loaded.personas[model] {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.virtualDevice.matchTakenByUserFile",
+            arguments: [first.url.lastPathComponent],
             "same match as \(first.url.lastPathComponent)"
           )
         }
@@ -368,6 +372,9 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
         )
       }
     }
+    for url in listed where url.pathExtension == "json" {
+      loaded.files.append(VirtualPersonaFile(url: url, problem: DocumentMigrator.staleProblem))
+    }
     return .success(loaded)
   }
 
@@ -378,7 +385,11 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   static func parse(_ data: Data) throws -> (Model, VirtualPersona) {
     let device = try VirtualDevice.decode(data, source: .unnamed, requiresMatch: true)
     guard let model = device.match else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file must hold match")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.matchRequired",
+        "the file must hold match"
+      )
     }
     let identity = device.identity.map { identity in
       VirtualPersona.Identity(

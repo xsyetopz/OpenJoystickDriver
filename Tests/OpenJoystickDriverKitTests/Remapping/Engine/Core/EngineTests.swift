@@ -5,7 +5,7 @@ import Testing
 
 struct RemappingEngineTests {
   @Test
-  func xboxAndPlayStationAliasesReachTheSameFaceAndShoulderSources() async throws {
+  func xboxAndPlayStationAliasesReachSameFaceAndShoulderSources() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let aliases: [(Control, RemappingSource)] = [
@@ -246,7 +246,7 @@ struct RemappingEngineTests {
   }
 
   @Test
-  func sharedModifiersRemainDownUntilTheLastChordReleases() async throws {
+  func sharedModifiersRemainDownUntilLastChordReleases() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [

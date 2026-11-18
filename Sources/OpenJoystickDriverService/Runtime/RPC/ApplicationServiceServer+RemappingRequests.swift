@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 
 /// Each handler throws `ApplicationServiceRemappingRPCError`, which the local RPC bridge sends
 /// as a structured remapping error.
@@ -13,7 +13,7 @@ extension ApplicationServiceServer {
   /// Reloads the profile files after they change on disk and refreshes the affected routes.
   func reloadRemappingProfiles() async {
     if case .failure(let error) = await remappingRequests.reloadProfiles() {
-      fputs("[Profiles] Reload failed: \(error.message)\n", stderr)
+      unsafe fputs("[Profiles] Reload failed: \(error.message)\n", unsafe stderr)
     }
   }
 
@@ -65,7 +65,7 @@ extension ApplicationServiceServer {
   }
 
   /// Replaces `profile` if the stored one equals `expectedCurrent`, and returns the snapshot.
-  func updateRemappingProfile(
+  package func updateRemappingProfile(
     _ profile: RemappingProfile,
     expectedCurrent: RemappingProfile
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {

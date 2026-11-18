@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -32,7 +33,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func aNameSelectorIgnoresCaseAndAnAmbiguousNameListsTheIDs() async throws {
+  func nameSelectorIgnoresCaseAndAmbiguousNameListsIDs() async throws {
     let first = FakeProfileLibrary.profile("Pad")
     let second = FakeProfileLibrary.profile("pad")
     let service = try Self.service(
@@ -54,7 +55,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func createMakesAPassthroughProfileForTheModel() async throws {
+  func createMakesPassthroughProfileForModel() async throws {
     let library = FakeProfileLibrary([])
     let service = try Self.service(library)
 
@@ -67,7 +68,7 @@ struct ProfileCommandTests {
     let created = try #require(library.stored.first)
     #expect(created.name == "Racing")
     #expect(created.device == RemappingDeviceScope(vendorID: 0x054C, productID: 0x0CE6))
-    #expect(created.applicationScope == .application(appID: "com.example.game"))
+    #expect(created.applicationScope == .application(appIDs: ["com.example.game"]))
     #expect(created.outputPolicy.virtualGamepad == .passthrough)
     let profile = try #require(try result.json()["profile"] as? [String: Any])
     #expect(profile["id"] as? String == created.id.uuidString)
@@ -75,7 +76,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func createWithTheGyroStickTemplateDrivesTheChosenStick() async throws {
+  func createWithGyroStickTemplateDrivesChosenStick() async throws {
     let library = FakeProfileLibrary([])
     let service = try Self.service(library)
 
@@ -93,7 +94,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func createWithTheGyroStickTemplateFailsForAModelWithoutMotionAndStoresNothing() async throws {
+  func createWithGyroStickTemplateFailsForModelWithoutMotionAndStoresNothing() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Racing")])
     let service = try Self.service(library)
 
@@ -107,7 +108,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func stickAndActivationNeedATemplate() async throws {
+  func stickAndActivationNeedTemplate() async throws {
     let service = try Self.service(FakeProfileLibrary([]))
 
     let result = await service.run([
@@ -118,7 +119,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func duplicateAndRenameKeepTheOriginalContents() async throws {
+  func duplicateAndRenameKeepOriginalContents() async throws {
     let binding = RemappingBinding(
       source: .button(.south),
       destination: .keyboard(key: .space, modifiers: [])
@@ -146,7 +147,39 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func deleteNeedsForceWithoutATerminalAndDryRunChangesNothing() async throws {
+  func convertCreatesCopyForTargetModelAndListsWhatItLeavesOut() async throws {
+    let kept = RemappingBinding(
+      source: .button(.south),
+      destination: .keyboard(key: .space, modifiers: [])
+    )
+    let lost = RemappingBinding(
+      source: .button(.leftPaddle1),
+      destination: .keyboard(key: .escape, modifiers: [])
+    )
+    let original = FakeProfileLibrary.profile("Pad", bindings: [kept, lost])
+    let library = FakeProfileLibrary([original])
+    let service = try Self.service(library)
+
+    let result = await service.run(
+      ["profile", "convert", "Pad", "--controller", "054C:0CE6", "--json"]
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let stored = library.stored
+    #expect(stored.count == 2)
+    #expect(stored.first { $0.id == original.id } == original)
+    let converted = try #require(stored.first { $0.id != original.id })
+    #expect(converted.device == RemappingDeviceScope(vendorID: 0x054C, productID: 0x0CE6))
+    #expect(converted.name == "Pad 054C:0CE6")
+    #expect(converted.bindings == [kept])
+    let leftOut = try #require(try result.json()["leftOut"] as? [[String: Any]])
+    #expect(leftOut.count == 1)
+    #expect(leftOut.first?["section"] as? String == "Binding")
+    #expect(leftOut.first?["sources"] as? [String] == ["button:left-paddle1"])
+  }
+
+  @Test
+  func deleteNeedsForceWithoutTerminalAndDryRunChangesNothing() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try Self.service(library)
 
@@ -164,7 +197,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func recoverActsOnEachIssueAndNeedsForceWithoutATerminal() async throws {
+  func recoverActsOnEachIssueAndNeedsForceWithoutTerminal() async throws {
     let damaged = ApplicationServiceRemappingProfileIssue(
       id: UUID(),
       code: .invalidProfile,
@@ -206,7 +239,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func activateRefusesAProfileThatBlocksAllInputUnlessAllowed() async throws {
+  func activateRefusesProfileThatBlocksAllInputUnlessAllowed() async throws {
     let empty = FakeProfileLibrary.profile("Empty", virtualGamepad: .mapped)
     let library = FakeProfileLibrary([empty])
     let service = try Self.service(library)
@@ -228,7 +261,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func activateNeedsConfirmationForALaunchingAction() async throws {
+  func activateNeedsConfirmationForLaunchingAction() async throws {
     let url = "steam://run/440?launch=1"
     let launching = FakeProfileLibrary.profile(
       "Launch",
@@ -248,7 +281,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func activateNamesAMissingPostEventAccess() async throws {
+  func activateNamesMissingPostEventAccess() async throws {
     let typing = FakeProfileLibrary.profile(
       "Typing",
       bindings: [
@@ -277,7 +310,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func exportWritesADocumentThatImportReadsBackFromStandardInput() async throws {
+  func exportWritesDocumentThatImportReadsBackFromStandardInput() async throws {
     let binding = RemappingBinding(source: .button(.east), destination: .mouseButton(.left))
     let original = FakeProfileLibrary.profile("Pad", bindings: [binding])
     let library = FakeProfileLibrary([original])
@@ -293,7 +326,7 @@ struct ProfileCommandTests {
       operation: { await service.run(["profile", "import", "-", "--json"]) }
     )
     let invalid = await RecordStore.$standardInput.withValue(
-      { Data("{}".utf8) },
+      { PropertyListFixture.bytes(json: "{}") },
       operation: { await service.run(["profile", "import", "-"]) }
     )
 
@@ -305,9 +338,53 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func validateChecksAFileWithoutTheService() async throws {
+  func createTakesAppOptionMoreThanOnce() async throws {
+    let library = FakeProfileLibrary([])
+    let service = try Self.service(library)
+
+    let result = await service.run([
+      "profile", "create", "Racing", "--controller", "054c:0ce6", "--app", "com.example.one",
+      "--app", "com.example.two", "--json",
+    ])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(
+      library.stored.first?.applicationScope
+        == .application(appIDs: ["com.example.one", "com.example.two"])
+    )
+    let profile = try #require(try result.json()["profile"] as? [String: Any])
+    #expect(profile["scope"] as? String == "app:com.example.one,com.example.two")
+  }
+
+  @Test
+  func importWithAppReplacesScopeOfImportedProfile() async throws {
+    let original = FakeProfileLibrary.profile("Pad")
+    let library = FakeProfileLibrary([])
+    let service = try Self.service(library)
+    let document = Data(try RemappingProfileFileStore.encodedPlist(original).utf8)
+
+    let result = await RecordStore.$standardInput.withValue(
+      { document },
+      operation: {
+        await service.run([
+          "profile", "import", "-", "--app", "com.example.one", "--app", "com.example.two",
+          "--json",
+        ])
+      }
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let stored = try #require(library.stored.first)
+    #expect(stored.id == original.id)
+    #expect(
+      stored.applicationScope == .application(appIDs: ["com.example.one", "com.example.two"])
+    )
+  }
+
+  @Test
+  func validateChecksFileWithoutService() async throws {
     let profile = FakeProfileLibrary.profile("Pad")
-    let document = Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+    let document = Data(try RemappingProfileFileStore.encodedPlist(profile).utf8)
     let run = { (data: Data, arguments: [String]) in
       await RecordStore.$standardInput.withValue(
         { data },
@@ -318,8 +395,8 @@ struct ProfileCommandTests {
     let json = await run(document, ["--json"])
     let plain = await run(document, ["--plain"])
     let human = await run(document, [])
-    let invalidJSON = await run(Data(#"{"name":"Pad"}"#.utf8), ["--json"])
-    let invalid = await run(Data("{}".utf8), [])
+    let invalidJSON = await run(PropertyListFixture.bytes(json: #"{"name":"Pad"}"#), ["--json"])
+    let invalid = await run(PropertyListFixture.bytes(json: "{}"), [])
 
     #expect(json.code == 0, "\(json.standardError)")
     #expect(try json.json()["valid"] as? Bool == true)
@@ -334,8 +411,8 @@ struct ProfileCommandTests {
     #expect(invalid.code == 1)
     #expect(invalid.standardError.hasPrefix("error[E5001]: "))
     let unsupportedVersion = await run(
-      Data(
-        #"{"apiVersion":"unsupported.example/v9","kind":"Profile","name":"Pad"}"#.utf8
+      PropertyListFixture.bytes(
+        json: #"{"apiVersion":"unsupported.example/v9","kind":"Profile","name":"Pad"}"#
       ),
       ["--json"]
     )
@@ -344,7 +421,9 @@ struct ProfileCommandTests {
     #expect(unsupportedVersion.standardError.contains("unsupported.example/v9"))
     #expect(unsupportedVersion.standardError.contains(OpenJoystickDriverAPI.version))
     let alpha1 = await run(
-      Data(#"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Profile","name":"Pad"}"#.utf8),
+      PropertyListFixture.bytes(
+        json: #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Profile","name":"Pad"}"#
+      ),
       []
     )
     #expect(alpha1.code == 1)
@@ -353,7 +432,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func getPrintsOneValueAndSetSavesAValidChange() async throws {
+  func getPrintsOneValueAndSetSavesValidChange() async throws {
     let binding = RemappingBinding(source: .button(.east), destination: .mouseButton(.left))
     let original = FakeProfileLibrary.profile("Pad", bindings: [binding])
     let library = FakeProfileLibrary([original])
@@ -396,7 +475,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func setPointerSpeedSavesTheDocumentedExampleAndRejectsOutOfRangeScales() async throws {
+  func setPointerSpeedSavesDocumentedExampleAndRejectsOutOfRangeScales() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Racing")])
     let service = try Self.service(library)
     let example =
@@ -436,16 +515,17 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func editReturnsTheSavedProfileAndRejectsAChangedID() throws {
+  func editReturnsSavedProfileAndRejectsChangedID() throws {
     let original = FakeProfileLibrary.profile("Pad")
     let renamed = ProfileEditor.$open.withValue(
       { url in
         let text = try String(contentsOf: url, encoding: .utf8)
-        try text.replacingOccurrences(of: "\"Pad\"", with: "\"Main\"").write(
-          to: url,
-          atomically: true,
-          encoding: .utf8
-        )
+        try text.replacingOccurrences(of: "<string>Pad</string>", with: "<string>Main</string>")
+          .write(
+            to: url,
+            atomically: true,
+            encoding: .utf8
+          )
       },
       operation: { Result { try ProfileEditCommand.edit(original) } }
     )
@@ -469,9 +549,9 @@ struct ProfileCommandTests {
 
   /// The same refused profile gets the same code from import, validate, and edit.
   @Test
-  func everyCommandGivesAnInvalidProfileTheInvalidProfileCode() async throws {
-    let invalid = Data(
-      #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#.utf8
+  func everyCommandGivesInvalidProfileInvalidProfileCode() async throws {
+    let invalid = PropertyListFixture.bytes(
+      json: #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#
     )
     let service = try Self.service(FakeProfileLibrary([]))
     let imported = await RecordStore.$standardInput.withValue(
@@ -496,7 +576,7 @@ struct ProfileCommandTests {
   }
 
   @Test
-  func editNeedsATerminal() async throws {
+  func editNeedsTerminal() async throws {
     let service = try Self.service(FakeProfileLibrary([FakeProfileLibrary.profile("Pad")]))
     let result = await service.run(["profile", "edit", "Pad", "--no-input"])
     #expect(result.code == 64)

@@ -1,34 +1,42 @@
 - **[Home](Home.md)**
-- **Start here**
-  - [Getting started](Getting-Started.md)
-  - [Using the app](Using-the-App.md)
-  - [Testing a controller](Testing-a-Controller.md)
+- **Start Here**
+  - [Play a Game](Start-Play-a-Game.md)
+  - [Control the Mac](Start-Control-the-Mac.md)
+  - [Set Up Several Macs](Start-Set-Up-Several-Macs.md)
+  - [Add Support for a Controller](Start-Add-Support-for-a-Controller.md)
+- **Learn the Basics**
+  - [Getting Started](Getting-Started.md)
+  - [Using the App](Using-the-App.md)
+  - [Testing a Controller](Testing-a-Controller.md)
 - **Controllers**
-  - [Supported controllers](Supported-Controllers.md)
-  - [Connecting controllers](Connecting-Controllers.md)
+  - [Supported Controllers](Supported-Controllers.md)
+  - [Connecting Controllers](Connecting-Controllers.md)
   - [Wii Remote](Wii-Remote.md)
-  - [Controller records](Controller-Records.md)
-  - [Writing controller mods](Writing-Controller-Mods.md)
 - **Games**
-  - [Playing games](Playing-Games.md)
+  - [Playing Games](Playing-Games.md)
 - **Remapping**
-  - [Remapping profiles](Remapping-Profiles.md)
-  - [Bindings and actions](Bindings-and-Actions.md)
-  - [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md)
-  - [Profile file reference](Profile-File-Reference.md)
+  - [Profiles](Remapping-Profiles.md)
+  - [Bindings and Actions](Bindings-and-Actions.md)
+  - [Sticks, Triggers, Touchpad, and Motion](Sticks-Triggers-Touchpad-and-Motion.md)
+  - [Profile File Reference](Profile-File-Reference.md)
 - **Your Mac**
-  - [Permissions and security](Permissions-and-Security.md)
-  - [Updating and uninstalling](Updating-and-Uninstalling.md)
-- **Command line**
-  - [Command line](Command-Line.md)
-  - [Command reference](Command-Reference.md)
-  - [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
-  - [WebRTC bridge](WebRTC-Bridge.md)
+  - [Permissions and Security](Permissions-and-Security.md)
+  - [Updating and Uninstalling](Updating-and-Uninstalling.md)
 - **Help**
-  - [Troubleshooting](Troubleshooting.md)
-  - [Known issues](Known-Issues.md)
-  - [Error codes](Error-Codes.md)
   - [FAQ](FAQ.md)
-  - [Reporting a bug](Reporting-a-Bug.md)
-- **Advanced**
-  - [Building from source](Building-from-Source.md)
+  - [Troubleshooting](Troubleshooting.md)
+  - [Known Issues](Known-Issues.md)
+  - [Error Codes](Error-Codes.md)
+  - [Glossary](Glossary.md)
+  - [Reporting a Bug](Reporting-a-Bug.md)
+- **For Advanced Users**
+  - [Using the Command Line](Command-Line.md)
+  - [Command Reference](Command-Reference.md)
+  - [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
+  - [WebRTC Bridge](WebRTC-Bridge.md)
+  - [Support Ladder](Support-Ladder.md)
+  - [Controller Records](Controller-Records.md)
+  - [Controller Record Modes](Controller-Record-Modes.md)
+  - [Writing Controller Mods](Writing-Controller-Mods.md)
+  - [Generating Documents with Scripts](Generating-Documents-with-Scripts.md)
+  - [Building From Source](Building-from-Source.md)

@@ -1,8 +1,8 @@
-import Foundation
+public import Foundation
 
 extension GameSirDriver {
 
-  // Share is emitted but not yet declared until per-model evidence confirms it.
+  // Share is emitted but stays undeclared until per-model evidence confirms it.
   /// Keep-alives run on the USB and HID channels of the wired G7 Pro, and on the HID channel
   /// otherwise.
   public var sessionPlan: DriverSessionPlan {
@@ -34,7 +34,7 @@ extension GameSirDriver {
   }
 
   /// Decodes a wired G7 Pro or an enhanced HID report; nil for a report that carries no input.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = [UInt8](data)
 
     switch gameSirProtocol {

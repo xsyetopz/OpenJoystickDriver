@@ -1,5 +1,5 @@
 import Darwin
-import Foundation
+package import Foundation
 import OpenJoystickDriverKit
 
 /// Hands a command-line run over to the `ojd` in the installed app.
@@ -74,24 +74,24 @@ package enum InstalledCLIForwarder {
     }
 
     let strings = ["ojd"] + arguments
-    var pointers: [UnsafeMutablePointer<CChar>?] = strings.map { string in
-      string.withCString { strdup($0) }
+    var pointers: [UnsafeMutablePointer<CChar>?] = unsafe strings.map { string in
+      string.withCString { unsafe strdup($0) }
     }
-    guard pointers.allSatisfy({ $0 != nil }) else {
-      release(pointers)
+    guard unsafe pointers.allSatisfy({ unsafe $0 != nil }) else {
+      unsafe release(pointers)
       Self.exit(with: allocationFailure)
     }
-    pointers.append(nil)
-    defer { release(pointers) }
+    unsafe pointers.append(nil)
+    defer { unsafe release(pointers) }
 
     let result = executable.path.withCString { path in
       pointers.withUnsafeMutableBufferPointer { buffer in
         guard let baseAddress = buffer.baseAddress else { return Int32(-1) }
-        return execv(path, baseAddress)
+        return unsafe execv(path, baseAddress)
       }
     }
     guard result == -1 else { return }
-    Self.exit(with: execFailure(String(cString: strerror(errno))))
+    unsafe Self.exit(with: execFailure(String(cString: strerror(errno))))
   }
 
   /// The failure for an installed executable that is older than the repository sources.
@@ -127,13 +127,15 @@ package enum InstalledCLIForwarder {
 
   /// Prints `failure` on standard error and exits with its code.
   private static func exit(with failure: CLIFailure) -> Never {
-    fputs(failure.line + "\n", stderr)
+    unsafe fputs(failure.line + "\n", stderr)
     Darwin.exit(failure.code.rawValue)
   }
 
   /// Frees the argument strings in `pointers`.
   private static func release(_ pointers: [UnsafeMutablePointer<CChar>?]) {
-    for pointer in pointers { if let pointer { free(UnsafeMutableRawPointer(pointer)) } }
+    for unsafe pointer in unsafe pointers {
+      if let allocated = unsafe pointer { unsafe free(UnsafeMutableRawPointer(allocated)) }
+    }
   }
 
   /// Tells whether the installed executable is no older than every repository file that built

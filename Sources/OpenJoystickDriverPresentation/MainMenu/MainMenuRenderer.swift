@@ -1,6 +1,7 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
   import AppKit
+  import OpenJoystickDriverKit
 
   /// The menus ``MainMenuRenderer`` built, with the ones AppKit tracks by role.
   struct RenderedMainMenu {
@@ -20,9 +21,13 @@
   /// coordinator, which performs the action by item id.
   @MainActor
   enum MainMenuRenderer {
-    /// Returns the menus built from ``MainMenuModel``; `target` performs the actions that do not go
-    /// through the responder chain.
-    static func render(target: MenuBarCoordinator) -> RenderedMainMenu {
+    /// Returns the menus built from ``MainMenuModel`` with the items that show at `level`;
+    /// `target` performs the actions that do not go through the responder chain.
+    static func render(
+      target: MenuBarCoordinator,
+      level: InterfaceLevel,
+      developerToolsEnabled: Bool
+    ) -> RenderedMainMenu {
       let appName = OJDLocalized.string("term.app.name")
       let menu = NSMenu(title: appName)
       let servicesMenu = NSMenu(title: OJDLocalized.string("ui.menu.app.services"))
@@ -31,7 +36,12 @@
       for section in MainMenuModel.sections {
         let submenu = NSMenu(title: title(section.titleKey, appName: appName))
         submenu.delegate = target
-        for entry in section.entries {
+        let entries = MainMenuModel.visibleEntries(
+          of: section,
+          level: level,
+          developerToolsEnabled: developerToolsEnabled
+        )
+        for entry in entries {
           switch entry {
           case .separator: submenu.addItem(.separator())
           case .item(let item):
@@ -42,6 +52,7 @@
         }
         let sectionItem = NSMenuItem(title: submenu.title, action: nil, keyEquivalent: "")
         identify(sectionItem, as: MainMenuModel.menuBarItemIdentifier(sectionID: section.id))
+        sectionItem.toolTip = OJDLocalized.string("ui.help.menu.section.\(section.id)")
         sectionItem.submenu = submenu
         menu.addItem(sectionItem)
         if section.id == "window" { windowMenu = submenu }
@@ -63,7 +74,14 @@
       switch title {
       case .key(let key): return OJDLocalized.string(key)
       case .verbatim(let text): return text
+      case .formatted(let key, let argument):
+        return OJDLocalized.formatted(key, text(of: argument))
       }
+    }
+
+    /// The checkmark state of the menu item of `item`.
+    static func checkmark(of item: MainMenuItem, state: MainMenuState) -> NSControl.StateValue {
+      MainMenuModel.isChecked(item, state: state) ? .on : .off
     }
 
     /// Gives the item its model id as its identifier, which the coordinator looks items up by,
@@ -78,7 +96,7 @@
     /// placeholder.
     static func title(_ key: String, appName: String) -> String {
       let text = OJDLocalized.string(key)
-      return text.contains("%@") ? String(format: text, appName) : text
+      return text.contains("%@") ? unsafe String(format: text, appName) : text
     }
 
     /// Returns the menu item for `item`, attached as ``routing(for:)`` says.
@@ -94,6 +112,7 @@
         keyEquivalent: item.keyEquivalent
       )
       identify(menuItem, as: item.id)
+      menuItem.toolTip = OJDLocalized.string(item.action.helpKey)
       menuItem.keyEquivalentModifierMask = modifierMask(item.modifiers)
       switch routing(for: item.action) {
       case .services:
@@ -102,6 +121,11 @@
         let profiles = NSMenu(title: menuItem.title)
         profiles.delegate = target
         menuItem.submenu = profiles
+      case .activityChoices:
+        menuItem.submenu =
+          item.action == .toolbar(.activityMode)
+          ? MainWindowController.makeActivityModeMenu(title: menuItem.title)
+          : MainWindowController.makeActivityFilterMenu(title: menuItem.title)
       case .responder(let selector):
         menuItem.action = selector
       case .informational:
@@ -120,6 +144,8 @@
       case services
       /// The item opens a submenu that the coordinator fills with profiles.
       case profileSubmenu
+      /// The item opens a submenu of the Activity choices, which the main window performs.
+      case activityChoices
       /// The item sends the selector down the responder chain.
       case responder(Selector)
       /// The coordinator performs the action by item id.
@@ -133,6 +159,9 @@
       if action == .services { return .services }
       if action == .activateProfile { return .profileSubmenu }
       if action == .controllerTarget { return .informational }
+      if action == .toolbar(.activityMode) || action == .toolbar(.activityFilter) {
+        return .activityChoices
+      }
       if let selector = responderSelector(for: action) { return .responder(selector) }
       return .coordinator
     }
@@ -172,7 +201,10 @@
         .installRecordOrMod, .saveSupportReport, .saveActivityLog, .showArea,
         .controllerTarget, .suspendOrResumeController, .testInput, .disconnectWirelessLink,
         .showControllerInWindow, .activateProfile, .deactivateProfile, .showActivityLog,
-        .explainErrorCode, .copySupportReport, .reportProblem, .openProjectWebsite:
+        .explainErrorCode, .copySupportReport, .openAreaHelp, .showMainWindowTour,
+        .reportProblem,
+        .openProjectWebsite, .find,
+        .toolbar, .setInterfaceLevel:
         return nil
       }
     }

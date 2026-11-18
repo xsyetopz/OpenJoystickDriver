@@ -59,7 +59,7 @@ struct DS4CalibrationTests {
   }
 
   @Test
-  func thirdPartyControllerKeepsNominalScaleAfterAValidFactoryReport() throws {
+  func thirdPartyControllerKeepsNominalScaleAfterValidFactoryReport() throws {
     let parser = DualShock4Driver(usesFactoryCalibration: false)
     let request = try #require(parser.startupFeatureReads().first)
     #expect(parser.consumeFeatureReply(factory(bluetooth: false), request: request))

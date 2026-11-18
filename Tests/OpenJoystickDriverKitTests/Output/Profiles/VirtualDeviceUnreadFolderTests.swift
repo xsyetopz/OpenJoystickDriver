@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -18,22 +19,22 @@ struct VirtualDeviceUnreadFolderTests {
     try body(support)
   }
 
-  private static let document = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "VirtualDevice",
-     "match": {"vendorID": 4617, "productID": 1}, "persona": "SDLCompatible"}
-    """.utf8
+  private static let document = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "VirtualDevice",
+        "match": {"vendorID": 4617, "productID": 1}, "persona": "SDLCompatible"}
+      """
   )
 
   @Test
-  func aPersonasFolderIsListedAndItsFilesAreNotRead() throws {
+  func personasFolderIsListedAndItsFilesAreNotRead() throws {
     try withSupportFolder { support in
       let unread = support.appendingPathComponent(
         VirtualHIDProfileOverrideStore.unreadFolderName,
         isDirectory: true
       )
       try FileManager.default.createDirectory(at: unread, withIntermediateDirectories: true)
-      try Self.document.write(to: unread.appendingPathComponent("1209-0001.json"))
+      try Self.document.write(to: unread.appendingPathComponent("1209-0001.plist"))
       let devices = support.appendingPathComponent(
         VirtualHIDProfileOverrideStore.directoryName,
         isDirectory: true
@@ -53,7 +54,7 @@ struct VirtualDeviceUnreadFolderTests {
   }
 
   @Test
-  func aPersonasFolderWithNoVisibleFilesListsNothing() throws {
+  func personasFolderWithNoVisibleFilesListsNothing() throws {
     try withSupportFolder { support in
       let unread = support.appendingPathComponent(
         VirtualHIDProfileOverrideStore.unreadFolderName,
@@ -72,7 +73,7 @@ struct VirtualDeviceUnreadFolderTests {
     try withSupportFolder { support in
       let devices = support.appendingPathComponent("VirtualDevices", isDirectory: true)
       try FileManager.default.createDirectory(at: devices, withIntermediateDirectories: true)
-      try Self.document.write(to: devices.appendingPathComponent("1209-0001.json"))
+      try Self.document.write(to: devices.appendingPathComponent("1209-0001.plist"))
       try Data().write(to: support.appendingPathComponent("Personas"))
       let store = VirtualHIDProfileOverrideStore(directory: devices)
 

@@ -32,13 +32,13 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test
-  func aValueIsWrittenAndRemoved() throws {
+  func valueIsWrittenAndRemoved() throws {
     try Self.withDirectory { directory in
       let written = Self.set(0.08, in: directory)
       #expect(written.failure == nil)
       #expect(written.created)
       #expect(written.previous == nil)
-      #expect(written.file?.hasSuffix("Controllers/2c22-2000.patch.json") == true)
+      #expect(written.file?.hasSuffix("Controllers/2c22-2000.patch.plist") == true)
       let model = ControllerModelID(vendorID: 0x2C22, productID: 0x2000)
       let loaded = ControllerRecordSet.load(userDirectory: directory)
       #expect(loaded.records[model]?.tuning.stickDeadzone == 0.08)
@@ -52,7 +52,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test(arguments: [0.0, 1.0, -0.1, 1.5])
-  func aValueOutOfRangeIsRefusedAndNothingIsWritten(_ value: Double) throws {
+  func valueOutOfRangeIsRefusedAndNothingIsWritten(_ value: Double) throws {
     try Self.withDirectory { directory in
       let result = Self.set(value, in: directory)
       #expect(result.failure == .invalidRecord)
@@ -63,7 +63,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test
-  func removingAKeyThatIsNotSetIsRefused() throws {
+  func removingKeyThatIsNotSetIsRefused() throws {
     try Self.withDirectory { directory in
       #expect(Self.set(nil, in: directory).failure == .notSet)
       #expect(!FileManager.default.fileExists(atPath: directory.path))
@@ -71,7 +71,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test
-  func modelWithoutARecordIsRefused() throws {
+  func modelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory in
       let result = Self.set(0.1, model: (0x1234, 0xABCD), in: directory)
       #expect(result.failure == .noRecord)
@@ -80,7 +80,7 @@ struct ControllerTuningRequestsTests {
   }
 
   @Test(arguments: [(-1, 0x2000), (0x2C22, 0x10000), (0x10000, 0x2000)])
-  func aVendorOrProductIDOutOfRangeIsAnInvalidRequest(_ model: (Int, Int)) throws {
+  func vendorOrProductIDOutOfRangeIsInvalidRequest(_ model: (Int, Int)) throws {
     try Self.withDirectory { directory in
       let result = Self.set(0.1, model: model, in: directory)
       #expect(result.failure == .invalidRequest)
@@ -95,7 +95,7 @@ struct ControllerTuningRequestsTests {
       key: .stickDeadzone,
       value: 0.08,
       previous: nil,
-      file: "/tmp/2c22-2000.patch.json",
+      file: "/tmp/2c22-2000.patch.plist",
       created: true,
       failure: nil
     )

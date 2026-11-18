@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A starting controller record for one connected controller, from its HID report descriptor
 /// and the input reports it sent while you pressed its controls.
@@ -32,7 +32,10 @@ public struct ControllerRecordDraft: Sendable {
   public let capturedReports: Int
   /// The report bytes that took more than one value, in byte order.
   public let changedBytes: [ChangedByte]
-  /// The record document in the record file text of ``OrderedJSON/formatted()``, as
+  /// The record sections the draft cannot fill and a valid record needs, such as `input`; empty
+  /// when the draft lacks none.
+  public let missingSections: [String]
+  /// The record document as an XML property list, in the text of ``OrderedJSON/plistData()``, as
   /// `ojd record install` reads it.
   public let text: String
   /// ``text`` as UTF-8.
@@ -54,6 +57,7 @@ public struct ControllerRecordDraft: Sendable {
     let layout = parsed.flatMap(Self.bestLayout(in:))
     guard layout != nil || !bundled else { return nil }
     operation = bundled ? .patch : .add
+    missingSections = []
     family = layout == nil ? .hidDescriptor : .hidReportLayout
 
     let chosen: (id: UInt8?, length: Int)?
@@ -77,24 +81,18 @@ public struct ControllerRecordDraft: Sendable {
     var fields: [String: Any] = ["modes": [defaultMode]]
     if let layout { fields["input"] = layout.json }
     let body: [String: Any]
-    var restatedModes: OrderedJSON?
     if bundled {
-      // A patch overrides `modes` as a whole, so it restates the bundled record's other modes.
-      if let modes = Self.bundledModes(of: model),
-        let defaultJSON = try? OrderedJSON(foundation: defaultMode)
-      {
-        restatedModes = .array(modes.map { $0["id"]?.string == "default" ? defaultJSON : $0 })
-      }
-      if ControllerRecordSet.bundled.records[model]?.family != family.rawValue {
-        // The byte layout replaces the old record's usage map instead of merging into it.
-        if ControllerRecordSet.bundled.records[model]?.profile.hidUsageMap != nil,
-          var input = fields["input"] as? [String: Any]
-        {
-          input["hidUsageMap"] = NSNull()
-          fields["input"] = input
+      var removed: [String] = []
+      let record = ControllerRecordSet.bundled.records[model]
+      if record?.family != family.rawValue {
+        // The default mode of the drafted family replaces the bundled one instead of merging.
+        removed.append("modes.default")
+        if record?.profile.hidUsageMap != nil, fields["input"] != nil {
+          // The byte layout replaces the old record's usage map instead of merging into it.
+          removed.append("input.hidUsageMap")
         }
       }
-      body = ControllerPatch.document(selector: .identity(model), body: fields)
+      body = ControllerPatch.document(selector: .identity(model), body: fields, remove: removed)
     } else {
       fields["apiVersion"] = OpenJoystickDriverAPI.version
       fields["kind"] = ControllerRecordDocument.kind
@@ -102,23 +100,10 @@ public struct ControllerRecordDraft: Sendable {
       fields["productID"] = Int(model.productID)
       body = fields
     }
-    guard var json = try? OrderedJSON(foundation: body, order: .recordKeys) else { return nil }
-    if let restatedModes {
-      json = ControllerPatchMerge.mergePatch(
-        json,
-        .object([.init(key: "patch", value: .object([.init(key: "modes", value: restatedModes)]))])
-      )
-    }
-    text = json.formatted()
-  }
-
-  /// The `modes` of the bundled record of `model`, as written in its document: member order and
-  /// number text are the file's.
-  private static func bundledModes(of model: ControllerModelID) -> [OrderedJSON]? {
-    guard let data = ControllerRecordSet.bundled.records[model]?.document,
-      case .array(let modes)? = (try? OrderedJSON.parse(data))?["modes"]
+    guard let json = try? OrderedJSON(foundation: body),
+      let data = try? json.plistData()
     else { return nil }
-    return modes
+    text = String(bytes: data, encoding: .utf8) ?? ""
   }
 
   /// The most common length among `reports`, the longest on a tie, or nil when none is 1 to 64

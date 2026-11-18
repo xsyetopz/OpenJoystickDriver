@@ -18,7 +18,7 @@ actor USBDiscoveryRecordingProvider: USBTransportProvider {
   func setDevices(_ devices: [USBTransportDevice]) { currentDevices = devices }
 
   func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured: DeviceTransportProfile
   ) -> USBTransportResolution {
     resolutionCount += 1
@@ -27,19 +27,19 @@ actor USBDiscoveryRecordingProvider: USBTransportProvider {
   }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) -> any USBTransportSession { USBDiscoveryRecordingSession() }
 }
 
 final class USBDiscoveryRecordingSession: USBTransportSession, @unchecked Sendable {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) -> Int { data.count }
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int { data.count }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.disconnected
   }
 }

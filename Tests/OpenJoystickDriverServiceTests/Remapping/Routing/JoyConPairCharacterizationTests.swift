@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 @testable import OpenJoystickDriverService
 
-/// Pins how a Joy-Con pair routes both halves into one engine device today.
+/// Pins how a Joy-Con pair routes both halves into one engine device.
 ///
 /// Each step sets one half's full button mask and stick in a full-mode `0x30` report, parses it
 /// with that half's catalog driver, and dispatches the parsed events from that half. The step line
@@ -61,7 +61,7 @@ struct JoyConPairCharacterizationTests {
         report[offset + 1] =
           UInt8(step.stick.x >> 8 & 0x0F) | UInt8(truncatingIfNeeded: step.stick.y << 4)
         report[offset + 2] = UInt8(truncatingIfNeeded: step.stick.y >> 4)
-        let event = try drivers[step.half]?.parse(
+        let event = drivers[step.half]?.parse(
           report: Data(report),
           receivedAt: MonotonicTimestamp(nanoseconds: 0)
         )

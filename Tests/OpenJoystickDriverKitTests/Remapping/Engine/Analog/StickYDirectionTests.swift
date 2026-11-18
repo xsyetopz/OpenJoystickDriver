@@ -10,7 +10,7 @@ struct StickYDirectionTests {
   private let device = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
 
   @Test(arguments: [true, false])
-  func stickUpFiresTheNegativeYDirectionBinding(left: Bool) throws {
+  func stickUpFiresNegativeYDirectionBinding(left: Bool) throws {
     let axis: RemappingAxis = left ? .leftStickY : .rightStickY
     let profile = RemappingProfile(
       name: "Y directions",
@@ -49,7 +49,7 @@ struct StickYDirectionTests {
   }
 
   @Test
-  func stickUpMovesThePointerUpInEveryPointerMode() {
+  func stickUpMovesPointerUpInEveryPointerMode() {
     for mode in [RemappingStickMode.pointerArea, .pointerRing] {
       var stick = RemappingStickRuntime(
         mapping: RemappingStickMapping(
@@ -75,7 +75,7 @@ struct StickYDirectionTests {
   }
 
   @Test
-  func stickUpMovesThePointerUpThroughTheEngine() {
+  func stickUpMovesPointerUpThroughEngine() {
     var engine = RemappingEngineState()
     let profile = RemappingProfile(
       name: "Aim",

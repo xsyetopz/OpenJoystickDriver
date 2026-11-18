@@ -1,194 +1,154 @@
 # Troubleshooting
 
-Find solutions for common OpenJoystickDriver (OJD) problems: a controller that is not detected, a game that does not see the controller, and crashes.
+Fix common OpenJoystickDriver (OJD) problems: an undetected controller, a game that misses the controller, and crashes.
 
 ## Contents
 
-- [Controller Is Not Detected](#controller-is-not-detected)
+- [If a Controller Isn't Detected](#if-a-controller-isnt-detected)
   - [Check the Basics](#check-the-basics)
   - [Check the Controller ID](#check-the-controller-id)
   - [Special Cases](#special-cases)
-  - [Check From the Terminal](#check-from-the-terminal)
+  - [Check from the Terminal](#check-from-the-terminal)
 - [Game Does Not See the Controller](#game-does-not-see-the-controller)
   - [Check OJD First](#check-ojd-first)
   - [Understand Why Apps Differ](#understand-why-apps-differ)
-  - [Try the Other Virtual Profile](#try-the-other-virtual-profile)
+  - [Try a Different Kind](#try-a-different-kind)
+  - [If a Button Does Nothing in Steam](#if-a-button-does-nothing-in-steam)
   - [Try a Different Controller Mode](#try-a-different-controller-mode)
-- [The Home Button Opens Games](#the-home-button-opens-games)
-- [App Crashes Or Does Not Start](#app-crashes-or-does-not-start)
+- [If the Home Button Opens Games](#if-the-home-button-opens-games)
+- [App Crashes or Does Not Start](#app-crashes-or-does-not-start)
   - [Collect Information](#collect-information)
-  - [Crash At Every Start](#crash-at-every-start)
   - [Crash When You Unplug a Controller](#crash-when-you-unplug-a-controller)
   - [Damaged Profile Files](#damaged-profile-files)
 - [Further Reading](#further-reading)
 
-## Controller Is Not Detected
-
-This section explains what to check when OJD does not list your controller or shows no input.
+## If a Controller Isn't Detected
 
 ### Check the Basics
 
-1. Make sure OJD runs. Look for the menu bar item.
-2. Open the **Access** area and check **Input Monitoring**. OJD cannot read a controller without it. For more information, see [Permissions](Permissions-and-Security.md).
-3. If **Input Monitoring** needs attention, click **Request...**.
-4. Allow it in **System Settings**.
-5. Click **Restart OpenJoystickDriver**.
-6. Reconnect the controller. OJD never reconnects a Bluetooth controller by itself.
+1. Make sure OJD runs. Look for its icon in the menu bar.
+2. Click **Access** in the sidebar and check **Input Monitoring**. OJD can't read a controller without it. See [Permissions](Permissions-and-Security.md).
+3. If it needs attention, click **Request...** and allow it in **System Settings**.
+4. Click **Restart OpenJoystickDriver**.
+5. Reconnect the controller. OJD never reconnects Bluetooth controllers.
 
 ### Check the Controller ID
 
-Each connection mode has its own VID:PID. A controller in USB mode and the same controller in Bluetooth mode look like different devices. A dongle has its own ID too.
+Each [connection](Glossary.md#terms) has its own ID. A controller over USB and over Bluetooth looks like two devices, and a dongle has its own ID.
 
-1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](Connecting-Controllers.md).
-2. Look for it in [Supported controllers](Supported-Controllers.md).
-
-The built-in catalog has 697 records. A record without a physical test is unverified. An unverified controller may work, may partly work, or may not work.
+1. Find your controller's ID. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
+2. Look for it in [Supported Controllers](Supported-Controllers.md).
 
 ### Special Cases
 
-- **Xbox One or Xbox Series controller on USB:** These controllers need the OJD driver extension. Check the **Xbox USB Driver** banner below the toolbar of the app window. If it shows **Open System Settings**, click it and approve the extension. If it shows **Repair Xbox USB Driver**, click it. **Xbox USB Driver** in **Settings** > **Advanced** shows the state of the extension. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
-- **Clone or fake controller:** It may report itself in a way the catalog does not cover. For more information, see [Clone and fake controllers](Supported-Controllers.md).
-- **Dongle:** A dongle problem is separate from a controller problem. Test the controller in another connection mode if it has one.
-- **The app shows OpenJoystickDriver cannot reach its service:** Run `ojd service start`, then run `ojd status`.
-- **SDL sees 0 controllers:** Grant **Input Monitoring** and **Accessibility**, restart OJD, and try again.
-- **Xbox USB driver extension install fails:** Rebuild the signed app, then run `ojd transport-extension activate`.
-- **The controller shows Used by another app:** That app reads the controller directly, so OJD cannot. You do not need to do anything for OJD. It serves the controller when the app lets go. The controller detail and `ojd controller list` show the app name.
-- **Input stays held, or the status says Needs attention:** Release the controls. Then check the controller input health with `ojd status --json`.
+- An Xbox One or Xbox Series controller on USB needs the [Xbox USB driver](Glossary.md#terms). If the banner below the toolbar shows **Open System Settings** or **Repair Xbox USB Driver**, click it. See [Xbox USB Driver](Connecting-Controllers.md#xbox-usb-driver).
+- If the driver doesn't install, run `ojd transport-extension activate`.
+- A clone or fake controller may not match OJD's list. See [Clone and Fake Controllers](Supported-Controllers.md#clone-and-fake-controllers).
+- With a dongle, the problem may be the dongle. Try another controller mode.
+- If the app shows **OpenJoystickDriver cannot reach its service**, run `ojd service start`, then `ojd status`.
+- If SDL games see no controllers, allow **Input Monitoring** and **Accessibility**, then reopen OJD. This fix is untested.
+- If `ojd status` or the Controllers page lists the controller as unserved with "Used by" and an app name, that app has it, and `ojd controller list` leaves it out. OJD takes it back when the app lets go.
+- If a control seems stuck, or the status shows **Needs attention**, let go of all controls, then run `ojd status --json`.
 
 ### Check from the Terminal
 
-Run the following command to see the runtime state.
+Run:
 
 ```shell
 ojd status
 ```
 
-For more information about `ojd`, see [Using the command line](Command-Line.md).
-
-If the controller is still missing, report it. For more information, see [Reporting a bug](Reporting-a-Bug.md).
+See [Using the Command Line](Command-Line.md). If the controller is still missing, see [Reporting a Bug](Reporting-a-Bug.md).
 
 ## Game Does Not See the Controller
 
-This section explains what to check when a controller works in OJD but not in a game or app.
-
 ### Check OJD First
 
-1. Open the **Input Test** window for the controller. For more information, see [Testing a controller](Testing-a-Controller.md).
-2. Press buttons. If **Input Test** shows no input, see [Controller is not detected](#controller-is-not-detected).
-3. In the **Access** area, check **Accessibility**. OJD needs it to publish the virtual controller.
+1. Open **Input Test** for the controller. See [Testing a Controller](Testing-a-Controller.md).
+2. Press buttons. If it shows no input, see [If a Controller Isn't Detected](#if-a-controller-isnt-detected).
+3. Click **Access** in the sidebar and check **Accessibility**, which OJD needs for the [virtual gamepad](Glossary.md#terms).
 
 ### Understand Why Apps Differ
 
-OJD publishes a virtual controller. Each app reads it with its own API, so an app can read one virtual profile and not see another. Apps that use SDL, such as Steam, read the `SDLCompatible` profile. Apps that use the Apple Game Controller framework, such as Safari and **System Settings**, read the `GameControllerCompatible` profile and do not see `SDLCompatible`.
+An app can see one virtual gamepad [kind](Glossary.md#terms) and miss another. Apps that use SDL, such as Steam, read the default (Xbox-style) kind. Apps that use Apple's Game Controller framework, such as Safari and **System Settings**, read only the Game Controller kind.
 
-OJD cannot add SDL to other apps. Each app ships its own SDL version.
+Results are in [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility). None is a guarantee.
 
-These results are not a guarantee.
+### Try a Different Kind
 
-| App | Result |
-| --- | --- |
-| Steam | Reads input and rumble of the `SDLCompatible` profile in a maintainer test |
-| CrossOver and Wine | One tester saw no controller with the Xbox profile at `045E:02FD`. Not verified with the `SDLCompatible` profile at `045E:0B0C` |
-| RPCS3 | One tester saw a controller with no input with the Xbox profile at `045E:02FD`. Not verified with the `SDLCompatible` profile at `045E:0B0C` |
-| OpenEmu | One tester saw buttons map to wrong controls with the Xbox profile. Works with the `Generic` profile |
+This tests whether the kind causes the problem. If another kind fixes a game, report it.
 
-For each result and its source, see [Game and app compatibility](Playing-Games.md#game-and-app-compatibility).
-
-### Try the Other Virtual Profile
-
-The design of OJD is to pick the virtual profile by itself. Use this step only to find out whether the profile is the cause. If a profile fixes a game, report it.
-
-1. In **Controllers**, select the controller.
-2. In **Advanced**, find **Virtual HID profile**. It appears only for controllers that OJD publishes.
-3. Choose **Automatic** or one of the three profiles.
+1. Click **Controllers** in the sidebar, then select the controller.
+2. Expand **Advanced** and find **Virtual gamepad kind**.
+3. Choose **Automatic** or one of the three kinds.
 4. Test the game again.
 
-OpenEmu worked with the `Generic` profile in the same test. Steam with that profile was erratic and slow to respond. The override applies to every controller of that model.
+The override applies to every controller of that model. Steam with the Generic kind was erratic and slow.
 
-### A Button Does Nothing in Steam
+### If a Button Does Nothing in Steam
 
-Steam keeps its own mapping for each controller it has seen, and it does not read the mapping that OJD publishes. When Steam's mapping misses a button, Steam ignores that button even though OJD sends it. The maintainer saw this with the `Generic` profile: Steam's saved mapping had no Guide button, so the PS button of a DualShock 3 did nothing in Steam, while `ojd controller watch` showed `Guide` for each press.
+Steam keeps its own mapping for each controller. If it misses a button, Steam ignores it even though OJD sends it. The maintainer saw this with the Guide button of a DualShock 3.
 
-1. Run `ojd controller watch CONTROLLER --output` and press the button. If the line shows the button, OJD sends it.
-2. In Steam, open the controller's **Controller Layout** page and choose **Setup Device Inputs**.
-3. Press each button when Steam asks for it, including the Guide button.
+1. Run `ojd controller watch CONTROLLER --output` and press the button. If the line shows it, OJD sends it.
+2. In Steam, open **Controller Layout** for the controller and choose **Setup Device Inputs**.
+3. Press each button when Steam asks, including Guide.
 
-After that setup, Guide and Select worked in Steam, and Guide opened Big Picture mode. `ojd virtual export-mapping generic` prints the mapping that OJD publishes, so you can compare it with Steam's.
+After this, Guide and Select worked. To compare Steam's mapping with OJD's, run `ojd virtual export-mapping generic`.
 
 ### Try a Different Controller Mode
 
-Some controllers have a Switch Pro mode. In that mode macOS reads the controller itself, and OJD does not publish a virtual controller. One tester saw RPCS3, the browser, and **System Settings** work in that mode. HD rumble in that mode drives only the linear haptics. Not verified for other controllers.
+Some controllers have a Switch Pro mode. macOS then reads the controller itself, and OJD publishes no virtual gamepad. One tester saw RPCS3, the browser, and **System Settings** work. It is untested for other controllers.
 
-For more information, see [Game and app compatibility](Playing-Games.md).
+## If the Home Button Opens Games
 
-## The Home Button Opens Games
-
-macOS opens the Games app when you press the home button of a controller that it lists in **System Settings** > **Game Controllers**, which includes the OJD virtual controller with the `SDLCompatible` profile.
-On a PlayStation controller the home button is the PS button.
-To keep the button for your game or for Steam:
+macOS opens the Games app when you press the home button of a controller listed in **System Settings** > **Game Controllers**. On a PlayStation controller, that is the PS button. To keep the button for your game:
 
 1. Open **System Settings** > **Game Controllers**.
 2. Under **Home Button**, turn off **Enable Home Button Actions**, or choose another app in **Press Home Button to Open**.
 
 ## App Crashes or Does Not Start
 
-This section explains what to do when OJD crashes, does not start, or reports a damaged profile library.
-
 ### Collect Information
 
-1. Open the **Activity** area, or run the following command.
+1. Click **Activity** in the sidebar, or run:
 
    ```shell
    ojd log show --lines 200
    ```
 
 2. Note what you did before the crash.
-3. Report it. For more information, see [Reporting a bug](Reporting-a-Bug.md).
+3. Report it. See [Reporting a Bug](Reporting-a-Bug.md).
 
-OJD clears its log files at each start. Copy the logs before you start OJD again.
-
-### Crash at Every Start
-
-If OJD crashes at every start, two global profiles may be active for one controller model. This is a known issue.
-
-1. Quit OJD.
-2. Move `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.json` to another folder.
-3. Open OJD.
+Copy the logs before you open OJD again.
 
 ### Crash When You Unplug a Controller
 
-Unplugging a USB controller or dongle may crash OJD. Open OJD again. Restart OJD if stale virtual controllers stay in **System Settings**.
+Unplugging a USB controller or dongle may crash OJD, but not every time. OJD keeps each controller's macOS plug-in loaded to prevent it; whether that works is unconfirmed. Open OJD again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Known Issues](Known-Issues.md#unplugging-a-usb-controller-can-crash-the-app).
 
 ### Damaged Profile Files
 
-OJD reads each profile file in `Profiles/` and the list of active profiles in `ActiveProfiles.json`. It does not change a file when it finds damage. While damage exists, OJD blocks every change to your profiles until you repair it.
+Until you repair damage to a profile file or `ActiveProfiles.plist`, OJD blocks every profile change. To repair both kinds from Terminal, run `ojd profile recover`.
 
-OJD shows two kinds of damage in the **Profiles** area. To repair both from the command line, run `ojd profile recover`.
+#### Repair One Damaged Profile
 
-#### One Damaged Profile
-
-OJD keeps the valid profiles and marks the damaged profile **Needs attention**.
+OJD keeps the valid profiles and marks the damaged one **Needs attention**.
 
 1. Select the damaged profile.
 2. Click **Delete Damaged Profile...**.
 3. In the alert, click **Delete**.
 
-OJD saves a backup before it changes the file.
+#### Repair a Damaged Active Profile List
 
-#### Damaged Active Profile List
-
-If OJD cannot read `ActiveProfiles.json`, the area shows **Damaged active profile list**, and no profile is active.
+If OJD can't read `ActiveProfiles.plist`, the area shows **Damaged Active Profile List**, and no profile is active.
 
 1. Click **Back Up & Reset Active Profiles...**.
 2. In the alert, click **Back Up & Reset**.
 
-OJD saves a backup and then writes an empty list. Your profiles are kept, and none of them is active after this step.
+OJD keeps your profiles, but none is active afterward.
 
 #### Find the Backup
 
-Each backup is beside the file it copies: in `~/Library/Application Support/OpenJoystickDriver/Profiles/` for a profile, and in `~/Library/Application Support/OpenJoystickDriver/` for `ActiveProfiles.json`. The name has the form `FILE.backup-DATE-TIME-ID`. The time is local time.
-
-A backup is a copy of the file as it was before repair. To recover data, open the copy in a text editor. For more information, see [Profile file reference](Profile-File-Reference.md).
+OJD backs up each file before it changes it. The backup sits beside the file, in `~/Library/Application Support/OpenJoystickDriver/Profiles/` for a profile and one folder up for the list. The name is `FILE.backup-DATE-TIME-ID`. To recover data, open the copy in a text editor. See [Profile File Reference](Profile-File-Reference.md).
 
 ## Further Reading
 

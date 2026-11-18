@@ -1,69 +1,52 @@
 # Known Issues
 
-This page lists current OpenJoystickDriver (OJD) bugs and limits, with a workaround for each.
-
-## Two Global Profiles For One Controller Model Crash the App
-
-If two profiles with global scope are active for the same controller model, OJD crashes at every start.
-
-To recover:
-
-1. Quit OJD.
-2. Move `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.json` to another folder.
-3. Open OJD.
-
-OJD then opens with your profiles and none of them active. Do not activate a second global profile for a model that already has one. For more information, see [App crashes or does not start](Troubleshooting.md#app-crashes-or-does-not-start).
-
-## Rumble Does Not Reach Two Identical Controllers
-
-When two controllers have the same VID:PID, rumble from games and from **System Settings** does not reach either controller. Rumble from the **Input Test** window works.
+Current OpenJoystickDriver (OJD) bugs and limits, with a workaround for each.
 
 ## Two Controllers With One USB Serial Number
 
-Some controllers report the same VID:PID and the same USB serial number, such as two `057E:2009` pads that both report `000000000001`. OJD gives each one its own virtual controller. The first pad to connect keeps the identity that its serial gives. The second pad's identity includes its USB port, so apps may treat it as a new controller after you move it to another port. The two pads may swap virtual identities after a replug or a restart, because the first pad to connect keeps the plain identity.
+Two pads may share an ID and serial, such as `057E:2009` with `000000000001`. OJD gives each its own [virtual gamepad](Glossary.md#terms). The first pad to connect keeps the plain identity. The second pad's identity includes its USB port, so another port may look like a different controller. Pads may swap identities after a replug.
 
 ## A Pad Shows the Identity of a Switch Pro Controller
 
-Some pads report `057E:2009` and the USB serial `000000000001`, the identity and serial of a Nintendo Switch Pro Controller, while in their Switch mode. OJD binds every `057E:2009` pad as a Pro Controller, so such a pad gets that driver. `ojd diagnose` names each one in its `switch-placeholder-serial` check, and the check does not change the binding. Other pads can report the same serial, so the serial alone does not identify a model. The pad reports at its own interval in this mode, which OJD does not change.
+Some pads in Switch mode report the identity of a Switch Pro Controller: `057E:2009` and serial `000000000001`. OJD binds every `057E:2009` pad as a Pro Controller. `ojd diagnose` names each such pad in its `switch-placeholder-serial` check, which doesn't change the binding. The serial alone doesn't identify a model. These pads report at their own interval, which OJD doesn't change.
 
 ## A Wii Remote May Not Pair With macOS
 
-OJD does not pair a Wii Remote. macOS Bluetooth pairs it, and OJD reads the remote after macOS connects it. Which macOS versions pair the remote, with the 1 and 2 buttons or with the SYNC button, and whether macOS asks for a PIN, is not verified. If the remote does not appear in **System Settings** > **Bluetooth**, OJD cannot see it. For the steps, see [Pair the remote](Wii-Remote.md#pair-the-remote).
+macOS pairs the Wii Remote, not OJD. If the remote doesn't appear in **System Settings** > **Bluetooth**, OJD can't see it. Which macOS versions pair it with the 1 and 2 buttons or the SYNC button is untested. See [Pair the Remote](Wii-Remote.md#pair-the-remote).
 
-## The Virtual Controllers Carry No Pointer
+## Virtual Gamepads Carry No Pointer
 
-The controls `PointerX`, `PointerY`, and `PointerTracking` are in the control vocabulary, but the `SDLCompatible` and `Generic` personas publish gamepad controls only. A pointer reaches a profile or an SDK client, not a game that reads the virtual controller. The Wii Remote driver sends only `PointerTracking`, and only while the IR camera runs. Nothing switches the camera on yet, and the driver sends no `PointerX` or `PointerY` value. See [IR pointer](Wii-Remote.md#ir-pointer).
+The Wii Remote pointer reaches a profile, not a game. The default and Generic [virtual gamepad kinds](Glossary.md#terms) carry gamepad controls only. To move the mouse with the pointer, bind it in a profile. This is untested on a real remote. See [IR Pointer](Wii-Remote.md#ir-pointer).
 
 ## Unplugging a USB Controller Can Crash the App
 
-If you unplug a USB controller or dongle while OJD runs, OJD may crash. It may also leave stale virtual controllers in **System Settings**. Restart OJD to clear them.
+Unplugging a USB controller or dongle while OJD runs may crash it. Reports come from macOS 27.0, when every controller behind one USB hub disconnected at once. OJD keeps loaded the macOS plug-in that each controller uses, which removes the suspected cause. Whether that stops the crash is unconfirmed. If it crashes, open the app again. If stale virtual gamepads stay in **System Settings**, restart OJD. See [Crash When You Unplug a Controller](Troubleshooting.md#crash-when-you-unplug-a-controller).
 
-## A Controller With No Location Takes Only a Model Override
+## The Xbox USB Driver Reads Only Seven Xbox Controllers
 
-**Apply to** in the controller detail offers **This controller** only when macOS reports the controller's location, because the controller's unit ID comes from its location. Without one, the override applies to every controller with the same VID:PID.
-
-## The USB Extension Serves Only Seven Xbox Controllers
-
-The `com.openjoystickdriver.XboxUSBDevice` extension can only match the seven Microsoft USB IDs in Apple's grant: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, and `045E:0B12`. OJD reaches every other wired Xbox controller through raw USB access or leaves it to macOS. Adding an ID to the extension needs a new request to Apple, so the list stays as it is until Apple grants more.
+The [Xbox USB driver](Glossary.md#terms) matches only the seven USB IDs in Apple's grant, listed in [Building from Source](Building-from-Source.md). OJD reaches other wired Xbox controllers through raw USB access, or macOS handles them.
 
 ## Another App Reads a USB Controller Directly
 
-Steam or another app can open the USB interface of a controller exclusively. OJD never requests or seizes that interface. The controller detail and `ojd controller list` show **Used by** with the app name and process ID, as the USB host reports them. The state is informational, not an error. OJD opens the controller when the app releases it. Whether the host announces every release has not been confirmed on hardware.
+Steam, GOG Galaxy, Chrome, or another app can open a controller's USB interface exclusively. Quit the app to give the controller to OJD. While the app holds it, OJD does not serve the controller, so `ojd controller list` leaves it out. `ojd status` lists it under unserved devices with **Used by** and the app name, as do the Controllers page and the device's details in the app, and `ojd controller show VVVV:PPPP` prints the same sentence. When the host names no app, they say another program is using the controller. That is not an error. OJD takes the controller back when the app lets go.
 
-## Some Apps Do Not Read the Virtual Controller
+## Some Apps Don't Read the Virtual Gamepad
 
-CrossOver and older games that use SDL2 or IOHIDManager may not read the virtual Xbox controller. SDL names the `SDLCompatible` profile "Xbox Adaptive Controller". macOS reports its transport as `Virtual`, so SDL reads its reports as USB Xbox One packets, and the profile sends and takes those packets. Steam reads input and rumble of that profile in a test with a GameSir G7 SE. For more information, see [Game and app compatibility](Playing-Games.md).
+CrossOver and older SDL2 or IOHIDManager games may not read the virtual gamepad. Steam reads it, in a test with a GameSir G7 SE. See [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
 
-## macOS Still Lists Its Own Pad For a DualShock 3
+## macOS Still Lists Its Own Pad for a DualShock 3
 
-While OJD serves a DualShock 3 over USB, it holds the pad exclusively, so other apps cannot open it and macOS delivers the pad's input only to OJD. macOS still binds `AppleGCHIDUserEventDriver` to the pad and GameController still lists a second, synthetic "PLAYSTATION(R)3 Controller" (`05AC:0004`). Steam lists that pad as a "PLAYSTATION(R)3 Controller" over Bluetooth beside OJD's virtual controller, and it gives no input, because OJD holds the real pad. macOS refuses to hand a HID controller from its own driver to an app, so only a driver extension that Apple grants for the DualShock 3's USB ID could keep macOS off the pad. Choose OJD's virtual controller in the game and ignore the other one. The controller's detail shows **Also listed by the system**, and `ojd controller list` names the same state, for every controller that OJD serves while macOS also lists it. When another app already holds the pad exclusively, the controller's detail and `ojd controller list` show "Owned by another app" and OJD reads no input until that app lets go. `ojd diagnose` reports `hid-input-drops`: a warning means the system dropped input reports before OJD read them.
+OJD holds a USB DualShock 3 exclusively, but macOS still lists a second, synthetic "PLAYSTATION(R)3 Controller". Steam shows it beside the OJD virtual gamepad, with no input. macOS won't hand a HID controller from its own driver to an app.
+
+In the game, choose OJD's virtual gamepad and ignore the other. The controller's details show **Also listed by the system**.
+
+If another app holds the pad, the details show "Owned by another app", and OJD reads no input until it lets go. `ojd diagnose` reports `hid-input-drops`. A warning means the system dropped input reports.
 
 ## The OJD Menu Closes While Steam Is Open
 
-Steam brings its window to the front again while connected controllers send input, and macOS closes an open menu of another app when that happens.
-Click the OJD icon in the menu bar again, or switch to another app first.
+Steam brings its window forward while controllers send input, which closes the menu. Click the OJD icon again, or switch to another app first.
 
 ## Further Reading
 
-- [Game does not see the controller](Troubleshooting.md#game-does-not-see-the-controller)
-- [Reporting a bug](Reporting-a-Bug.md)
+- [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller)
+- [Reporting a Bug](Reporting-a-Bug.md)

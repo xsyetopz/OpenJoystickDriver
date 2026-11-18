@@ -22,9 +22,10 @@ private let usage = """
       --out <directory>
     OJDRepositoryTool facts
     OJDRepositoryTool kebab <value>...
-    OJDRepositoryTool mask-image <png> <frame> <keep>...
     OJDRepositoryTool format-json <file>...
-  A path is a file, or a directory whose .json files are checked.
+    OJDRepositoryTool to-plist <file.json>...
+    OJDRepositoryTool format-plist <file.plist>...
+  A path is a file, or a directory whose .plist files are checked.
   validate controllers and descriptions read a directory at any depth. apply-patches reads
   Controller files at any depth and writes each to its relative path, and refuses a patch file
   that is not at the path its selector gives: a vendor directory for a vendorID with productID,
@@ -34,14 +35,16 @@ private let usage = """
   domainCodePrefixes (the start of the codes of each error domain) and domainAreas (the en-US name
   of the area of each error domain). kebab prints one JSON object that maps
   each value to its CommandLineName.kebab spelling. Neither prints problems and both exit 0.
-  mask-image rewrites a `screencapture -R <frame>` PNG so that every pixel outside all <keep>
-  rectangles is transparent and every pixel inside one is unchanged. Each rectangle is
-  x,y,width,height in global points, and each <keep> lies inside <frame>. The pixels per point
-  are the image size over the frame size. It prints nothing and exits 0, or 64 for an image it
-  cannot read or write.
   format-json rewrites each file in the record file text of OrderedJSON.formatted(), keeping the
   order of keys and the text of numbers. It prints nothing and exits 0, or 64 for a file that is
   not JSON or cannot be read or written.
+  to-plist reads each JSON file and writes the canonical XML property list beside it, with the
+  extension .plist, in the form DocumentCoder writes: sorted keys, an integer for a number written
+  as an integer and a real for any other number. It leaves the JSON file, prints nothing and exits
+  0, or 64 for a file that is not JSON, holds null (a property list has no null), or cannot be
+  read or written.
+  format-plist rewrites each property list file in that canonical form, and exits 0 or 64 as
+  to-plist does.
   Each problem is one JSON line {"code", "file", "message"} on standard output. The exit status is
   0 without a problem, 1 with one, and 64 for a call that the tool refuses.
   """
@@ -51,13 +54,13 @@ private let usage = """
 /// - Throws: ``UsageError`` when `path` is not a directory.
 private func directory(_ path: String) throws -> URL {
   var isDirectory: ObjCBool = false
-  guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
+  guard unsafe FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
     isDirectory.boolValue
   else { throw UsageError(message: "\(path) is not a directory") }
   return URL(fileURLWithPath: path, isDirectory: true)
 }
 
-/// The files that `paths` name, in the order given; a directory stands for its `.json` files in
+/// The files that `paths` name, in the order given; a directory stands for its `.plist` files in
 /// file-name order.
 ///
 /// - Throws: ``UsageError`` when no path is given or a path does not exist.
@@ -65,7 +68,7 @@ private func files(_ paths: [String]) throws -> [URL] {
   guard !paths.isEmpty else { throw UsageError(message: "no path given") }
   return try paths.flatMap { path -> [URL] in
     var isDirectory: ObjCBool = false
-    guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) else {
+    guard unsafe FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) else {
       throw UsageError(message: "\(path) does not exist")
     }
     guard isDirectory.boolValue else { return [URL(fileURLWithPath: path)] }
@@ -73,7 +76,7 @@ private func files(_ paths: [String]) throws -> [URL] {
       at: URL(fileURLWithPath: path, isDirectory: true),
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
-    ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+    ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
   }
 }
 
@@ -146,6 +149,38 @@ private func formatJSON(_ paths: [String]) throws {
   }
 }
 
+/// Writes each of `paths`, a JSON file, as a canonical property list beside it.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func toPlist(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "to-plist needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      let data = try OrderedJSON.parse(Data(contentsOf: url)).plistData()
+      try data.write(to: url.deletingPathExtension().appendingPathExtension("plist"))
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
+/// Rewrites each of `paths`, an XML property list, in the canonical form.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func formatPlist(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "format-plist needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      let tree = try DocumentCoder.read(Data(contentsOf: url), file: url.lastPathComponent)
+      try DocumentCoder.write(tree).write(to: url)
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
 /// The JSON line, ending in a newline, that reports `problem` on standard output.
 private func line(_ problem: RepositoryProblem) throws -> Data {
   let object: [String: Any] = [
@@ -189,12 +224,16 @@ private func document(_ arguments: [String]) throws -> [String: Any]? {
 
 do {
   let arguments = Array(CommandLine.arguments.dropFirst())
-  if arguments.first == "mask-image" {
-    try MaskImage.run(Array(arguments.dropFirst()))
-    exit(0)
-  }
   if arguments.first == "format-json" {
     try formatJSON(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "to-plist" {
+    try toPlist(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "format-plist" {
+    try formatPlist(Array(arguments.dropFirst()))
     exit(0)
   }
   if let object = try document(arguments) {

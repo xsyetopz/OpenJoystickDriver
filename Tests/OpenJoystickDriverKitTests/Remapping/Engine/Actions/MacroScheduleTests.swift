@@ -16,7 +16,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func stepsRunInOrderAndWaitsHoldBackTheNextStep() {
+  func stepsRunInOrderAndWaitsHoldBackNextStep() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(name: "M", steps: [tap(.a), .wait(durationMs: 100), tap(.b)])
@@ -53,7 +53,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func countedRepeatRunsTheStepListThatManyTimes() {
+  func countedRepeatRunsStepListThatManyTimes() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(name: "M", steps: [tap(.a), .wait(durationMs: 10)], repeatMode: .count(3))
@@ -81,7 +81,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func whileHeldRepeatsUntilReleaseThenEndsTheRunningPass() {
+  func whileHeldRepeatsUntilReleaseThenEndsRunningPass() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(
@@ -100,7 +100,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func ignoreKeepsTheRunningPass() {
+  func ignoreKeepsRunningPass() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(
@@ -117,7 +117,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func restartReleasesTheRunningPassAndStartsANewOne() {
+  func restartReleasesRunningPassAndStartsNewOne() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(
@@ -153,7 +153,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func withoutInterruptTheMacroOutlivesTheSource() {
+  func withoutInterruptMacroOutlivesSource() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(name: "M", steps: [.chord(destinations: [key(.a)], holdMs: 100), tap(.b)])
@@ -167,7 +167,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func pressStepIsReleasedByReleaseStepOrAtTheEndOfThePass() {
+  func pressStepIsReleasedByReleaseStepOrAtEndOfPass() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(
@@ -185,7 +185,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func gamepadStepsGoThroughTheVirtualGamepad() {
+  func gamepadStepsGoThroughVirtualGamepad() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(
@@ -208,7 +208,7 @@ struct MacroScheduleTests {
   // MARK: Stop paths leave nothing down
 
   @Test
-  func controllerDisconnectStopsAWhileHeldMacro() {
+  func controllerDisconnectStopsWhileHeldMacro() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(
@@ -223,7 +223,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func profileChangeAndDeactivationStopTheMacro() {
+  func profileChangeAndDeactivationStopMacro() {
     for replacement in [nil, profile(RemappingMacro(name: "N", steps: [tap(.c)]))] {
       var state = RemappingEngineState()
       let profile = profile(
@@ -241,7 +241,7 @@ struct MacroScheduleTests {
   }
 
   @Test
-  func drainStopsTheMacroAfterTheSourceWasReleased() {
+  func drainStopsMacroAfterSourceWasReleased() {
     var state = RemappingEngineState()
     let profile = profile(
       RemappingMacro(name: "M", steps: [.press(key(.a)), .wait(durationMs: 100)])

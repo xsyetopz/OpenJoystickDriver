@@ -1,4 +1,4 @@
-import CryptoKit
+package import CryptoKit
 import Foundation
 
 /// Revocable authority for power notifications delivered by one runtime start.
@@ -37,7 +37,7 @@ func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UI
     let value = productName.trimmingCharacters(in: .whitespacesAndNewlines)
     if !value.isEmpty { return value }
   }
-  return String(format: "Controller %04x:%04x", vendorID, productID)
+  return unsafe String(format: "Controller %04x:%04x", vendorID, productID)
 }
 
 /// The wait between two polls of the USB transport provider by raw-USB detection, 500 ms.
@@ -136,6 +136,8 @@ public actor DeviceManager {
   var retiredHIDOutputQueues: [LogicalControllerID: PhysicalHIDOutputSerialQueue] = [:]
   /// The task that watches the access state of the host.
   var permissionWatchTask: Task<Void, Never>?
+  /// The task that disconnects idle Bluetooth controllers while the setting is on.
+  var idleDisconnectTask: Task<Void, Never>?
   /// Counts lifecycle changes; a detection run that started under an earlier count stops.
   var lifecycleGeneration: UInt64 = 0
   /// Whether a stop is in progress, so detection and event handling ignore new work.
@@ -258,5 +260,10 @@ extension DeviceManager {
   /// The session state of one connected controller; output routing checks it per input report.
   public func controllerSessionState(
     for identifier: LogicalControllerID
-  ) async -> ControllerSessionState? { await pipelines[identifier]?.controllerSessionState() }
+  ) async -> ControllerSessionState? {
+    guard let pipeline = pipelines[identifier], await pipeline.hasConnectedController(),
+      pipelines[identifier] === pipeline
+    else { return nil }
+    return await pipeline.controllerSessionState()
+  }
 }

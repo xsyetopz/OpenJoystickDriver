@@ -2,51 +2,96 @@ import Foundation
 
 /// Physical protocol families with an implemented OJD parser.
 ///
-/// The taxonomy in the protocol specification names more families; a family joins
-/// this enum only when a driver for it exists.
-public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
+/// A family joins this enum only when a driver for it exists.
+public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIterable, Codable {
+  /// The family's name, UpperCamelCase.
+  public let rawValue: String
+
+  private init(builtIn name: String) { rawValue = name }
+
+  /// A family that a description document names; it is not built in.
+  init(documented name: String) { rawValue = name }
+
+  /// The families with an implemented OJD parser, in declaration order.
+  public static let allCases: [Self] = [
+    .hidDescriptor, .hidReportLayout, .xboxXID, .xboxXUSB, .xboxGIP, .sonySixaxis, .sonyDualShock4,
+    .sonyDualSense, .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly,
+    .valveSteamController, .valveSteamTriton, .valveSteamDeck, .vendorPS3ThirdParty, .vendorGameSir,
+    .vendorNVIDIAShield, .nintendoWii,
+  ]
+
+  /// The family named `rawValue`: a built-in one, or one a loaded description document names.
+  public init?(rawValue: String) {
+    if let builtIn = Self.allCases.first(where: { $0.rawValue == rawValue }) {
+      self = builtIn
+    } else if DocumentedProtocolFamilies.description(named: rawValue) != nil {
+      self.init(documented: rawValue)
+    } else {
+      return nil
+    }
+  }
+
+  /// Decodes the family's name; a name that no family has is refused.
+  public init(from decoder: any Decoder) throws {
+    let name = try decoder.singleValueContainer().decode(String.self)
+    guard let family = Self(rawValue: name) else {
+      throw DecodingError.dataCorruptedError(
+        in: try decoder.singleValueContainer(),
+        debugDescription: "\(name) is not a protocol family"
+      )
+    }
+    self = family
+  }
+
+  /// Encodes the family's name.
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(rawValue)
+  }
+
+  /// Whether a description document names this family and OJD does not build it in.
+  public var isDocumented: Bool { !Self.allCases.contains(self) }
+
   /// Controllers recognised from their HID report descriptor alone.
-  case hidDescriptor = "HIDDescriptor"
+  public static let hidDescriptor = Self(builtIn: "HIDDescriptor")
   /// A fixed input-report layout from the controller record (``ControllerInputLayouts``).
-  case hidReportLayout = "HIDReportLayout"
+  public static let hidReportLayout = Self(builtIn: "HIDReportLayout")
   /// The original Xbox controller protocol (XID).
-  case xboxXID = "XboxXID"
+  public static let xboxXID = Self(builtIn: "XboxXID")
   /// The Xbox 360 controller protocol (XUSB).
-  case xboxXUSB = "XboxXUSB"
+  public static let xboxXUSB = Self(builtIn: "XboxXUSB")
   /// The Xbox One and later controller protocol (GIP).
-  case xboxGIP = "XboxGIP"
+  public static let xboxGIP = Self(builtIn: "XboxGIP")
   /// The Sony Sixaxis and DualShock 3 protocol.
-  case sonySixaxis = "SonySixaxis"
+  public static let sonySixaxis = Self(builtIn: "SonySixaxis")
   /// The Sony DualShock 4 protocol.
-  case sonyDualShock4 = "SonyDualShock4"
+  public static let sonyDualShock4 = Self(builtIn: "SonyDualShock4")
   /// The Sony DualSense protocol.
-  case sonyDualSense = "SonyDualSense"
+  public static let sonyDualSense = Self(builtIn: "SonyDualSense")
   /// The Nintendo Switch protocol with a subcommand channel.
-  case nintendoSwitch1 = "NintendoSwitch1"
+  public static let nintendoSwitch1 = Self(builtIn: "NintendoSwitch1")
   /// Nintendo Switch 2 controller (SDL `SDL_hidapi_switch2.c`): input report `0x05` after an init
   /// sequence on the vendor bulk interface, or the same state over its Bluetooth LE GATT link.
-  case nintendoSwitch2 = "NintendoSwitch2"
+  public static let nintendoSwitch2 = Self(builtIn: "NintendoSwitch2")
   /// Wired Switch pad with a fixed HID input report and no subcommand channel (SDL
   /// `SwitchInputOnlyController`).
-  case nintendoSwitchInputOnly = "NintendoSwitchInputOnly"
+  public static let nintendoSwitchInputOnly = Self(builtIn: "NintendoSwitchInputOnly")
   /// The Valve Steam Controller protocol.
-  case valveSteamController = "ValveSteamController"
+  public static let valveSteamController = Self(builtIn: "ValveSteamController")
   /// 2026 Steam Controller (SDL `SteamControllerTriton`): its own report IDs, settings feature
   /// report, and repeated rumble report.
-  case valveSteamTriton = "ValveSteamTriton"
+  public static let valveSteamTriton = Self(builtIn: "ValveSteamTriton")
   /// Steam Deck built-in controller (SDL `SteamControllerNeptune`): its own state report,
   /// settings, watchdog, and rumble report.
-  case valveSteamDeck = "ValveSteamDeck"
-  /// The Flydigi vendor protocol.
-  case vendorFlydigi = "VendorFlydigi"
+  public static let valveSteamDeck = Self(builtIn: "ValveSteamDeck")
   /// The vendor protocol of third-party PS3 pads.
-  case vendorPS3ThirdParty = "VendorPS3ThirdParty"
+  public static let vendorPS3ThirdParty = Self(builtIn: "VendorPS3ThirdParty")
   /// The GameSir vendor protocol.
-  case vendorGameSir = "VendorGameSir"
+  public static let vendorGameSir = Self(builtIn: "VendorGameSir")
   /// The NVIDIA SHIELD controller vendor protocol.
-  case vendorNVIDIAShield = "VendorNVIDIAShield"
+  public static let vendorNVIDIAShield = Self(builtIn: "VendorNVIDIAShield")
   /// The Nintendo Wii Remote (and Wii U Pro Controller) over Bluetooth Classic HID.
-  case nintendoWii = "NintendoWii"
+  public static let nintendoWii = Self(builtIn: "NintendoWii")
 
   /// The family-specific `defaults.session` fields this family's driver reads.
   ///
@@ -74,10 +119,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .xboxXUSB, .nintendoSwitch1, .sonyDualShock4, .hidReportLayout: [.startup]
     case .xboxGIP, .nintendoSwitch2, .vendorGameSir: [.startup, .keepAlive]
     case .valveSteamTriton, .valveSteamDeck: [.keepAlive]
-    case .hidDescriptor, .xboxXID, .sonySixaxis, .sonyDualSense,
-      .nintendoSwitchInputOnly, .valveSteamController, .vendorFlydigi, .vendorPS3ThirdParty,
-      .vendorNVIDIAShield, .nintendoWii:
-      []
+    default: []
     }
   }
 
@@ -102,7 +144,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
 
   /// The stem of this family's description file in `Resources/Protocols`: the command-line
   /// spelling of the family, which is also the family's token in `ojd` output and arguments.
-  public var descriptionFileStem: String { commandLineName }
+  public var descriptionFileStem: String { isDocumented ? rawValue : commandLineName }
 
   /// The family's token in `ojd` output and arguments.
   public var commandLineName: String { CommandLineName.kebab(rawValue) }
@@ -121,7 +163,8 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
 
   /// The family's name as `localization` resolves it.
   public func displayName(in localization: Localization) -> String {
-    localization.string(displayNameKey)
+    if isDocumented, let name = protocolDescription.displayName { return name }
+    return localization.string(displayNameKey)
   }
 
   /// Whether a binding's name adds its variant: the family stores its variant in its records,
@@ -140,7 +183,10 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
 
   /// This family's bundled protocol description, which holds the facts its driver reads.
   var protocolDescription: ProtocolDescription {
-    guard let description = ProtocolDescription.bundled[self] else {
+    guard
+      let description = ProtocolDescription.bundled[self]
+        ?? DocumentedProtocolFamilies.description(named: rawValue)
+    else {
       fatalError("[ProtocolDescription] No description for \(rawValue)")
     }
     return description
@@ -260,32 +306,27 @@ public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendabl
   /// The device's USB configuration could not be read, and nothing OJD observes clears the cause
   /// before the device reconnects.
   case configurationUnreadable = "ConfigurationUnreadable"
-  /// The device is an 8BitDo bootloader identity, which receives no traffic.
+  /// The device is an 8BitDo bootloader identity, or its matching mode is idle with the reason
+  /// `Bootloader`; it receives no traffic.
   case bootloaderIdentity = "BootloaderIdentity"
   /// The device's record has no `default` mode and no mode of it matched the device.
   case noModeMatched = "NoModeMatched"
-  /// The device's record names an identity that serves nothing, such as an idle receiver.
-  case idleIdentity = "IdleIdentity"
+  /// The device's matching mode is idle with the reason `NoControllerLinked`, such as a receiver
+  /// with no controller linked.
+  case noControllerLinked = "NoControllerLinked"
 }
 
 extension ProtocolBindingReason {
-  /// The catalog key of the sentence that tells a person why the device is unserved and how to free
-  /// it.
+  /// The catalog key of the sentence that tells a person why the device is not served.
   ///
-  /// Nil for a reason that the person cannot act on, which the app and `ojd` show by its ID alone.
-  public var explanationKey: String? {
-    switch self {
-    case .deviceInUse: return "ui.controllers.deviceInUse"
-    case .configurationUnreadable: return "ui.controllers.configurationUnreadable"
-    case .bootloaderIdentity: return "ui.controllers.bootloaderIdentity"
-    case .noModeMatched: return "ui.controllers.noModeMatched"
-    case .idleIdentity: return "ui.controllers.idleIdentity"
-    case .noProtocolMatch, .ambiguousProtocolMatch, .interfaceContractMismatch,
-      .descriptorContractMismatch, .unsupportedProtocolVariant, .unsupportedTransportVariant,
-      .virtualProfileUnavailable:
-      return nil
-    }
-  }
+  /// Every reason has one in every language; the app and `ojd` show it with ``nextStepKey``.
+  public var explanationKey: String { "ui.controllers.\(keySegment)" }
+
+  /// The catalog key of the sentence that tells a person what to do about the reason.
+  public var nextStepKey: String { "ui.controllers.\(keySegment).nextStep" }
+
+  /// The reason's ID in lowerCamelCase, the segment of its catalog keys.
+  private var keySegment: String { CommandLineName.keySegment(rawValue) }
 }
 
 /// Observed facts that supported a binding.
@@ -338,11 +379,16 @@ public struct ProtocolBinding: Equatable, Sendable {
   public let record: DeviceRuntimeProfile?
   /// What the database gave a HID pad without a record; nil for a record or another family.
   var sdl: SDLBindingResolution?
+  /// The record that fit no interface of the device when the `HIDDescriptor` rule serves it
+  /// instead; nil otherwise.
+  var unfitRecordID: String?
 
   /// Where the HID usage map of a `HIDDescriptor` binding comes from; nil for another family.
   public var inputMapping: InputMapping? {
     guard protocolID == .hidDescriptor else { return nil }
-    return sdl?.inputMapping ?? (record == nil ? .standardHIDUsageMap : .record)
+    var mapping = sdl?.inputMapping ?? (record == nil ? .standardHIDUsageMap : .record)
+    mapping.unfitRecordID = unfitRecordID
+    return mapping
   }
 
   /// The binding as a family and variant.
@@ -367,9 +413,11 @@ public enum ProtocolClassification: Equatable, Sendable {
 /// signature (the device-descriptor GIP triple only when an unconfigured device
 /// exposes no interface facts), then the `HIDDescriptor` contract.
 /// `HIDDescriptor` always requires the descriptor contract, including for catalog records.
-/// A validation failure never falls through to a lower level. One exception: a record of one
+/// A validation failure never falls through to a lower level. Two exceptions: a record of one
 /// Xbox USB family whose device exposes only the other family's interface signature binds by
-/// that signature.
+/// that signature, and a record that fits none of the HID interfaces of the device, when one of
+/// them passes the descriptor contract and the record does not state `server` `System`, yields
+/// to the `HIDDescriptor` rule.
 enum ProtocolClassifier {
   /// Selects the protocol family, variant and interface that drive `device` over `backend`, or
   /// says why none does.
@@ -389,17 +437,41 @@ enum ProtocolClassifier {
         $1.interfaceNumber ?? .max, $1.alternateSetting ?? .max
       )
     }
-    if device.model?.isBootloaderIdentity == true { return .unsupported(.bootloaderIdentity) }
     if let vendorID = device.vendorID, let productID = device.productID,
       let record = catalog.record(
         for: ControllerModelID(vendorID: vendorID, productID: productID),
         modeID: modeID
       )
     {
-      if record.isIdle { return .unsupported(.idleIdentity) }
-      if !record.hasDefaultMode, modeID == nil { return .unsupported(.noModeMatched) }
-      return otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
+      switch record.idleReason {
+      case .noControllerLinked?: return .unsupported(.noControllerLinked)
+      case .bootloader?: return .unsupported(.bootloaderIdentity)
+      case nil: break
+      }
+      if !record.hasDefaultMode, modeID == nil {
+        // No mode matches the device, so no mode of the record fits what it exposes.
+        guard backend == .hid, !interfaces.isEmpty else { return .unsupported(.noModeMatched) }
+        return descriptorFallback(
+          for: record,
+          device: device,
+          interfaces: interfaces,
+          backend: backend,
+          database: database
+        ) ?? .unsupported(.noModeMatched)
+      }
+      let result =
+        otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
         ?? bind(record, interfaces: interfaces, backend: backend)
+      guard recordFitsNoInterface(record, interfaces: interfaces, backend: backend) else {
+        return result
+      }
+      return descriptorFallback(
+        for: record,
+        device: device,
+        interfaces: interfaces,
+        backend: backend,
+        database: database
+      ) ?? mismatch(of: record, kept: result)
     }
     if let result = classifySignature(interfaces, backend: backend)
       ?? classifyDeviceSignature(device, backend: backend)
@@ -540,7 +612,7 @@ enum ProtocolClassifier {
   }
 
   /// The first interface whose observed HID facts satisfy the descriptor contract.
-  private static func descriptorInterface(
+  static func descriptorInterface(
     _ interfaces: [PhysicalInterfaceSignature]
   ) -> PhysicalInterfaceSignature? {
     interfaces.first { HIDDescriptorContract.violation(in: $0.hidLayout) == nil }

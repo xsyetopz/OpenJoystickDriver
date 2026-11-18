@@ -20,8 +20,19 @@ extension DualShock4DriverTests {
     #expect(try parser.parseReport(makeDS4Report(sensorTimestamp: 0xFFFF))?.isFresh == false)
   }
 
+  /// The NITHO MLT-KRMA-K by cable on M sends every USB report with a zero sensor timestamp.
   @Test
-  func testInvalidBluetoothReportLeavesTheLastValidState() throws {
+  func reportsWithZeroTimestampStayFresh() throws {
+    let parser = DualShock4Driver()
+
+    #expect(try parser.parseReport(makeDS4Report(sensorTimestamp: 0))?.isFresh == true)
+    let pressed = try parser.parseReport(makeDS4Report(buttons0: 0x28, sensorTimestamp: 0))
+    #expect(pressed?.isFresh == true)
+    #expect(pressed.contains(.press(.south)))
+  }
+
+  @Test
+  func testInvalidBluetoothReportLeavesLastValidState() throws {
     let parser = DualShock4Driver(prefersBluetooth: true)
     _ = try parser.parseReport(makeDS4BluetoothReport(buttons0: 0x28, sensorTimestamp: 1))
     var invalidReport = Array(makeDS4BluetoothReport(sensorTimestamp: 2))
@@ -70,7 +81,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testLevelTenRetainsTheObservedWiredPower() throws {
+  func testLevelTenRetainsObservedWiredPower() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report(status: 0x0A))
     #expect(parser.power == ds4Power(.discharging, 100...100, wired: false))

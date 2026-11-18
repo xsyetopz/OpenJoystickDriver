@@ -33,6 +33,9 @@ struct TransportExtensionStatusReport: Encodable, Equatable {
   let registration: StatusReport.Extension.Registration
   /// Extra text about the registration, when there is any.
   let detail: String?
+  /// Whether macOS still keeps a replaced version until the controller reconnects or the Mac
+  /// restarts.
+  let replacedVersionPending: Bool
 
   /// Creates the report from the extension status.
   init(_ status: ExtensionStatus) {
@@ -40,6 +43,7 @@ struct TransportExtensionStatusReport: Encodable, Equatable {
     bundle = summary.bundle
     registration = summary.registration
     detail = status.detail
+    replacedVersionPending = status.replacedVersionPending
   }
 }
 
@@ -91,6 +95,9 @@ struct TransportExtensionStatusCommand: AsyncParsableCommand {
         if let detail = report.detail, report.registration != .unavailable {
           CLIOutput.stdout(detail)
         }
+        if report.replacedVersionPending {
+          CLIOutput.stdout(CLILocalized.text("platform.macos.ui.setup.replacedPendingDetail"))
+        }
       }
       if case .unavailable(let reason) = status.registration {
         throw CLIFailure(
@@ -128,7 +135,7 @@ struct TransportExtensionResult: Encodable, Equatable {
 ///
 /// - Throws: ``CancellationError`` when the request is cancelled, and ``CLIFailure`` with
 ///   `systemRequestFailed` when the request times out or fails.
-private func submit(
+func submitTransportExtension(
   _ action: TransportExtensionSubmission.Action,
   done state: TransportExtensionResult.State,
   message: String
@@ -143,7 +150,7 @@ private func submit(
     throw CLIFailure(
       .systemRequestFailed,
       CLILocalized.text(
-        "platform.macos.cli.transportExtension.group.timeout"
+        SystemSettingsMessage.extensionTimeout.localizationKey()
       )
     )
   case .failed:
@@ -160,8 +167,10 @@ private func submit(
   case .human:
     if result == .awaitingApproval {
       CLIOutput.stderr(
-        CLILocalized.text(
-          "platform.macos.cli.transportExtension.group.approval"
+        CLILocalized.format(
+          "platform.macos.cli.transportExtension.group.approval",
+          CLILocalized.text(SystemSettingsPlace.appLocalizationKey()),
+          CLILocalized.text(SystemSettingsPlace.driverApproval.localizationKey())
         )
       )
     } else {
@@ -177,7 +186,7 @@ struct TransportExtensionActivateCommand: AsyncParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "activate",
     abstract: CLILocalized.text(
-      "platform.macos.cli.transportExtension.activate.abstract"
+      SystemSettingsMessage.activateAbstract.localizationKey()
     ),
     discussion: CLILocalized.text(
       "cli.transportExtension.activate.discussion"
@@ -191,7 +200,7 @@ struct TransportExtensionActivateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await submit(
+      try await submitTransportExtension(
         .activate,
         done: .active,
         message: CLILocalized.text("cli.transportExtension.group.activated")
@@ -220,7 +229,7 @@ struct TransportExtensionDeactivateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await submit(
+      try await submitTransportExtension(
         .deactivate,
         done: .inactive,
         message: CLILocalized.text("cli.transportExtension.group.deactivated")

@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import Foundation
   import OpenJoystickDriverKit
@@ -82,9 +83,14 @@
     /// The detail column: the error banner, the profile detail, and the sheets and alerts of the
     /// screen.
     private var detailColumn: some View {
-      VStack(alignment: .leading, spacing: 0) {
-        if let profileActionError {
-          ProfileActionErrorBanner(message: profileActionError) { self.profileActionError = nil }
+      VStack(alignment: .leading, spacing: OJDSpacing.none) {
+        if let commandError = screen.commandActionError {
+          ProfileActionErrorBanner(message: commandError) { self.profileActionError = nil }
+        }
+        if let profileActionBlock {
+          Text(profileActionBlock.message).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
+            .padding(.horizontal, 28).padding(.vertical, 6)
         }
         profileDetail.frame(maxWidth: .infinity, maxHeight: .infinity)
       }
@@ -98,7 +104,8 @@
               choices: ProfileControllerChoice.choices(
                 devices: connectedDevices,
                 profiles: profiles,
-                catalog: screen.catalogModels
+                catalog: screen.catalogModels,
+                names: screen.catalogNames
               ),
               profiles: profiles,
               isLoadingCatalog: screen.isLoadingCatalog,
@@ -111,13 +118,34 @@
           ProfileDuplicateSheet(source: source, profiles: profiles) { createProfile($0) }
         }
       ).background(
+        EmptyView().sheet(item: $screen.convertingProfile) { source in
+          ProfileConversionSheet(
+            source: source,
+            choices: ProfileControllerChoice.choices(
+              devices: connectedDevices,
+              profiles: profiles,
+              catalog: screen.catalogModels,
+              names: screen.catalogNames
+            ),
+            profiles: profiles,
+            isLoadingCatalog: screen.isLoadingCatalog
+          ) { convertProfile($0) }
+        }
+      ).background(
+        EmptyView().sheet(item: $screen.conversionReport) { report in
+          ProfileConversionReportSheet(report: report)
+        }
+      ).background(
         EmptyView().sheet(item: $screen.pairingProfile) { profile in
           ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
             Task { @MainActor in
-              profileActionError = await viewModel.pairRemappingJoyCons(
-                left: .session(left),
-                right: .session(right),
-                profileID: profile.id
+              screen.failProfileAction(
+                await viewModel.pairRemappingJoyCons(
+                  left: .session(left),
+                  right: .session(right),
+                  profileID: profile.id
+                ),
+                beside: .joyCon
               )
             }
           }
@@ -249,6 +277,14 @@
       }
     }
 
+    /// The profiles in the order that the list shows.
+    var sortedProfiles: [RemappingProfile] {
+      screen.listSort.sorted(
+        profiles,
+        lastUsed: ProfileListSort.lastUsed(in: currentSnapshot ?? lastKnownSnapshot)
+      )
+    }
+
     /// The selected profile; the first profile when the selection is not in the library, unless the
     /// editor preserves the selected profile after its deletion.
     var selectedProfile: RemappingProfile? {
@@ -269,14 +305,14 @@
 
     /// The profile list column: the loading state, the load error with Try Again, or the rows.
     var profileList: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         switch viewModel.remappingState {
         case .loading:
           LoadingStateView(
             message: OJDLocalized.string("ui.profiles.loading")
           ).padding(.horizontal, 14)
         case .unavailable(let message), .error(let message):
-          VStack(alignment: .leading, spacing: 6) {
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
             Text(
               OJDLocalized.string("ui.profiles.loadError")
             ).font(.caption.weight(.semibold))
@@ -285,10 +321,17 @@
             Button(
               OJDLocalized.string("action.tryAgain"),
               action: refreshProfiles
-            )
+            ).help(OJDLocalized.string("ui.profiles.tryAgainHelp"))
           }.padding(.horizontal, 14)
         case .available:
           if !profiles.isEmpty || !(currentSnapshot?.profileIssues.isEmpty ?? true) {
+            if profiles.count > 1 {
+              Picker(OJDLocalized.string("ui.profiles.sort"), selection: $screen.listSort) {
+                ForEach(ProfileListSort.allCases) { sort in
+                  Text(OJDLocalized.string(sort.titleKey)).tag(sort)
+                }
+              }.help(OJDLocalized.string("ui.profiles.sortHelp")).padding(.horizontal, 14)
+            }
             profileListRows
           }
         }
@@ -299,8 +342,8 @@
     /// The rows of the profiles, then those of the damaged entries.
     var profileListRows: some View {
       List(selection: profileListSelection) {
-        ForEach(profiles) { profile in
-          HStack(spacing: 8) {
+        ForEach(sortedProfiles) { profile in
+          HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               let semanticState: SemanticState = isActive(profile) ? .active : .inactive
               OJDSystemSymbol(
@@ -310,7 +353,7 @@
                   : OJDLocalized.string("ui.profiles.notActive")
               ).foregroundColor(Color(semanticState.presentation.tone.color))
             }
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
               Text(profile.name).lineLimit(1)
               Text(
                 ProfileScopeCaption.text(
@@ -328,7 +371,7 @@
         }
         ForEach(currentSnapshot?.profileIssues ?? []) { issue in
           let presentation = ProfileIssuePresentation(issue)
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               OJDSystemSymbol(
                 name: issue.kind == .damagedProfile
@@ -341,7 +384,7 @@
                 )
               )
             }
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
               Text(presentation.title).lineLimit(1)
               Text(presentation.code).font(.caption).foregroundColor(
                 Color(NSColor.secondaryLabelColor)

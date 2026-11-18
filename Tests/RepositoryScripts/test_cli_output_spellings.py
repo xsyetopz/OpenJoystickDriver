@@ -4,7 +4,7 @@ from typing import Any
 from Scripts.Quality import repository_tool, validate_schemas
 
 SCHEMA = "cli-output.schema.json"
-VERSION = "openjoystickdriver/v1alpha2"
+VERSION = "openjoystickdriver/v1alpha3"
 INTENSITIES = {
     key: 0
     for key in (

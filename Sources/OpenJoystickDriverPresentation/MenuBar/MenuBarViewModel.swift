@@ -8,13 +8,10 @@
   final class MenuBarViewModel {
     /// The runtime state that the menu bar item reads.
     let runtime: RuntimeViewModel
-    /// Formats the status line.
-    private let localization: Localization
 
     /// Creates the view model on `runtime`.
-    init(runtime: RuntimeViewModel, localization: Localization = Localization()) {
+    init(runtime: RuntimeViewModel) {
       self.runtime = runtime
-      self.localization = localization
     }
 
     /// The connected controllers, or none while the service status is not available.
@@ -23,84 +20,61 @@
       return status.devices
     }
 
-    /// Whether the Access area has a permission to grant; see
-    /// ``AccessReadiness/hasMissingPermission(permissionState:statusState:)``.
-    var needsPermissionAttention: Bool {
-      AccessReadiness.hasMissingPermission(
+    /// The problems that need the user's action: the service when its state is a problem, then each
+    /// permission the Access area shows as missing.
+    var problems: [StatusItemProblem] {
+      var found: [StatusItemProblem] = []
+      let readiness = ServiceReadiness.resolve(
+        ServiceReadinessInput(
+          status: runtime.statusState,
+          listenerStopped: runtime.listenerFailure != nil,
+          registration: ServiceReadiness.currentRegistration(for: runtime.statusState)
+        )
+      )
+      if readiness.isProblem { found.append(.service(readiness)) }
+      found += AccessReadiness.missingPermissions(
         permissionState: runtime.permissionState,
         statusState: runtime.statusState
-      )
-    }
-
-    /// The status line: readiness, controller count and active profile.
-    ///
-    /// The active profile is the global one when there is one, else the last active profile.
-    var summaryTitle: String {
-      let readiness: String
-      let controllerSummary: String
-      switch runtime.statusState {
-      case .loading:
-        readiness = OJDLocalized.string("status.starting")
-        controllerSummary = RuntimePresentation.deviceCountLabel(0)
-      case .available(let status):
-        readiness = status.readinessLabel
-        controllerSummary = status.deviceCountLabel
-      case .unavailable, .error:
-        readiness = OJDLocalized.string("status.needsAttention")
-        controllerSummary = RuntimePresentation.deviceCountLabel(0)
-      }
-
-      let profileSummary: String
-      if case .available(let snapshot) = runtime.remappingState,
-        let activeProfile = snapshot.activeProfiles.last(where: { $0.applicationScope == .global })
-          ?? snapshot.activeProfiles.last,
-        let profile = snapshot.profiles.first(where: { $0.id == activeProfile.profileID })
-      {
-        profileSummary = profile.name
-      } else {
-        profileSummary = OJDLocalized.string(
-          "status.noActiveProfile"
-        )
-      }
-      return StatusItemStatusLine.make(
-        readiness: readiness,
-        controllers: controllerSummary,
-        profile: profileSummary,
-        localization: localization,
-        locale: .current
-      )
+      ).map(StatusItemProblem.missingPermission)
+      return found
     }
 
     /// The data that the status menu is built from.
     var statusItemState: StatusItemState {
-      var profiles: [StatusItemState.Profile] = []
       var snapshot: ApplicationServiceRemappingSnapshotPayload?
       if case .available(let available) = runtime.remappingState {
         snapshot = available
       }
-      if let snapshot {
-        let activeIDs = Set(snapshot.activeProfiles.map(\.profileID))
-        profiles = snapshot.profiles.map {
-          StatusItemState.Profile(id: $0.id, name: $0.name, isActive: activeIDs.contains($0.id))
-        }
-      }
       return StatusItemState(
-        statusLine: summaryTitle,
-        needsAccess: needsPermissionAttention,
+        problems: problems,
         controllers: devices.map {
-          StatusItemState.Controller(
+          var controller = StatusItemState.Controller(
             id: $0.sessionToken.rawValue,
             name: $0.name,
             isSuspended: $0.sessionState == .suspended,
             isWireless: $0.supportsWirelessDisconnect,
-            isPaused: $0.paused,
             profiles: Self.profiles(applyingTo: $0, in: snapshot)
           )
+          controller.battery = $0.connectionState?.power.battery.percentageText
+          controller.profileInForce = Self.profileInForceText(
+            $0.profileInForce,
+            appName: ProfileAppChoices.appName
+          )
+          return controller
         },
-        profiles: profiles,
-        profileListRead: snapshot != nil,
-        statusSymbolName: summarySemanticState.presentation.symbolName
+        profileListRead: snapshot != nil
       )
+    }
+
+    /// The profile name for a controller row, followed by the app that selected the profile.
+    static func profileInForceText(
+      _ profile: ApplicationServiceProfileInForce?,
+      appName: (String) -> String
+    ) -> String? {
+      guard let profile else { return nil }
+      return profile.appID.map {
+        OJDLocalized.formatted("ui.menu.controller.profileForApp", profile.name, appName($0))
+      } ?? profile.name
     }
 
     /// The profiles of the snapshot that apply to the controller: its model, and its unit when the
@@ -122,18 +96,9 @@
       }.map { StatusItemState.Profile(id: $0.id, name: $0.name, isActive: $0.id == activeID) }
     }
 
-    /// The state whose symbol sits beside the status line.
-    var summarySemanticState: SemanticState {
-      switch runtime.statusState {
-      case .loading: return .loading
-      case .available(let status): return status.readiness == .ready ? .healthy : .attention
-      case .unavailable, .error: return .failure
-      }
-    }
-
     /// Reads the driver extension setup and the service status again.
     func refresh() async {
-      await runtime.refreshSystemExtensionSetup()
+      runtime.refreshSystemExtensionSetup()
       await runtime.refresh()
     }
 

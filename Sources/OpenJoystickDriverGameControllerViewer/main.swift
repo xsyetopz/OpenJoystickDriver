@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import GameController
 import SwiftUI
 
@@ -70,10 +71,10 @@ func change(of element: GCControllerElement, on controller: String) -> ElementCh
 /// Adding zero turns -0 into 0.
 func describe(_ change: ElementChange) -> String {
   if let x = change.x, let y = change.y {
-    return String(format: "x %+.2f  y %+.2f", x + 0, y + 0)
+    return unsafe String(format: "x %+.2f  y %+.2f", x + 0, y + 0)
   }
   let pressed = change.pressed == true ? "  pressed" : ""
-  return String(format: "%.2f%@", (change.value ?? 0) + 0, pressed)
+  return unsafe String(format: "%.2f%@", (change.value ?? 0) + 0, pressed)
 }
 
 /// The controls of a controller in layout order: face buttons, shoulders, the system buttons,
@@ -217,23 +218,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   /// The window of the viewer.
   private var window: NSWindow?
   /// The observers of the controller connection notifications.
-  private var observers: [NSObjectProtocol] = []
+  private var observers: [any NSObjectProtocol] = []
   /// The encoder of the JSON lines.
   private let encoder = JSONEncoder()
 
   /// Opens the window and starts to follow the controllers.
-  func applicationDidFinishLaunching(_ notification: Notification) {
-    let window = NSWindow(
+  func applicationDidFinishLaunching(_: Notification) {
+    let viewer = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 520, height: 640),
       styleMask: [.titled, .closable, .miniaturizable, .resizable],
       backing: .buffered,
       defer: false
     )
-    window.title = "GameController Input Viewer"
-    window.contentView = NSHostingView(rootView: ViewerView(model: model))
-    window.center()
-    window.makeKeyAndOrderFront(nil)
-    self.window = window
+    viewer.title = "GameController Input Viewer"
+    viewer.contentView = NSHostingView(rootView: ViewerView(model: model))
+    viewer.center()
+    viewer.makeKeyAndOrderFront(nil)
+    self.window = viewer
     NSApp.activate(ignoringOtherApps: true)
 
     // Notifications and GameController handlers all run on the main queue.
@@ -248,7 +249,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   /// Ends the viewer when the window closes.
-  func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+  func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool { true }
 
   /// Attaches every connected controller and refreshes the element list.
   private func attachControllers() {
@@ -275,8 +276,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
   /// Prints the element's value as a JSON line and refreshes the list.
   private func report(_ element: GCControllerElement, on controller: String) {
-    guard let change = change(of: element, on: controller) else { return }
-    if let line = try? encoder.encode(change) {
+    guard let changed = change(of: element, on: controller) else { return }
+    if let line = try? encoder.encode(changed) {
       FileHandle.standardOutput.write(line + Data("\n".utf8))
     }
     redraw()

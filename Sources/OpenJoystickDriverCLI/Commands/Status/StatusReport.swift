@@ -190,10 +190,16 @@ struct StatusReport: Encodable, Equatable {
     let vendorID: Int
     /// The USB product ID.
     let productID: Int
+    /// The product name the device reported; absent when it reported none or for a device that
+    /// passes through.
+    let name: String?
     /// How the device connects.
     let connection: String
     /// Why the device has no binding; absent for a device that passes through.
     let reason: String?
+    /// The client that holds the device exclusively; absent unless the reason is `DeviceInUse`
+    /// and the host named the holder.
+    let owner: USBExclusiveOwner?
     /// The SDL_GameControllerDB line found for a HID pad that fails the descriptor contract; absent
     /// when none was.
     let inputMapping: InputMapping?
@@ -219,7 +225,7 @@ struct StatusReport: Encodable, Equatable {
   ///
   /// Read from the files, so present while the service is stopped.
   let skippedRecords: [SkippedRecord]
-  /// The `all.patch.json` OJD ignored whole; absent when it applied the file or there is none.
+  /// The `all.patch.plist` OJD ignored whole; absent when it applied the file or there is none.
   let ignoredDefaults: SkippedRecord?
   /// Virtual device files OJD skipped, and a `Personas` folder it does not read.
   ///
@@ -282,8 +288,10 @@ struct StatusReport: Encodable, Equatable {
       Device(
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
+        name: $0.name,
         connection: $0.connection,
         reason: $0.reason.rawValue,
+        owner: $0.exclusiveOwner,
         inputMapping: $0.rejectedCandidates.lazy.compactMap(\.inputMapping).first
       )
     }
@@ -291,8 +299,10 @@ struct StatusReport: Encodable, Equatable {
       Device(
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
+        name: nil,
         connection: $0.connection,
         reason: nil,
+        owner: nil,
         inputMapping: nil
       )
     }
@@ -302,5 +312,5 @@ struct StatusReport: Encodable, Equatable {
 /// Returns `VVVV:PPPP`, the hex identity that `ojd` prints and accepts for a USB or Bluetooth
 /// device.
 func deviceIdentity(vendorID: Int, productID: Int) -> String {
-  String(format: "%04X:%04X", vendorID, productID)
+  unsafe String(format: "%04X:%04X", vendorID, productID)
 }

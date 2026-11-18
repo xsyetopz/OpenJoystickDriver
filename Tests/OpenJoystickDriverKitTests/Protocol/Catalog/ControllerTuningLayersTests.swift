@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ControllerTuningLayersTests {
-  /// A directory that holds `Controllers/` and its `all.patch.json` for one test.
+  /// A directory that holds `Controllers/` and its `all.patch.plist` for one test.
   private final class Root {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-layers-\(UUID().uuidString)",
@@ -17,20 +17,33 @@ struct ControllerTuningLayersTests {
       _ tuning: String,
       apiVersion: String = OpenJoystickDriverAPI.version
     ) throws {
+      try writeDefaultsPatch(#"{"tuning":\#(tuning)}"#, apiVersion: apiVersion)
+    }
+
+    func writeDefaultsPatch(
+      _ set: String,
+      apiVersion: String = OpenJoystickDriverAPI.version
+    ) throws {
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
       let json =
         #"{"apiVersion":"\#(apiVersion)","kind":"ControllerPatch","selector":{"all":true},"#
-        + #""patch":{"tuning":\#(tuning)}}"#
-      try Data(json.utf8).write(to: defaultsFile)
+        + #""patch":\#(set)}"#
+      try OrderedJSON.parse(Data(json.utf8)).plistData().write(to: defaultsFile)
     }
 
-    func writePatch(_ set: String, for identity: ControllerModelID) throws {
+    func writePatch(
+      _ set: String,
+      remove: [String] = [],
+      for identity: ControllerModelID
+    ) throws {
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
+      let paths = remove.map { "\"" + $0 + "\"" }.joined(separator: ",")
+      let removed = remove.isEmpty ? "" : #""remove":[\#(paths)],"#
       let json =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
         + #""selector":{"vendorID":\#(identity.vendorID),"productID":\#(identity.productID)},"#
-        + #""patch":\#(set)}"#
-      try Data(json.utf8).write(
+        + #"\#(removed)"patch":\#(set)}"#
+      try OrderedJSON.parse(Data(json.utf8)).plistData().write(
         to: controllers.appendingPathComponent(
           ControllerPatch.Selector.identity(identity).fileName
         )
@@ -52,7 +65,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func withoutAFileEveryKeyIsADriverDefault() throws {
+  func withoutFileEveryKeyIsDriverDefault() throws {
     let root = Root()
     let record = try #require(root.load().records[try bareRecord().model])
 
@@ -62,7 +75,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aGlobalDefaultFillsAKeyTheRecordLeavesUnset() throws {
+  func globalDefaultFillsKeyRecordLeavesUnset() throws {
     let root = Root()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#)
     let bare = try bareRecord()
@@ -74,7 +87,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aUserRecordBeatsTheGlobalDefaultAndKeysLayerIndividually() throws {
+  func userRecordBeatsGlobalDefaultAndKeysLayerIndividually() throws {
     let root = Root()
     let bare = try bareRecord()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#)
@@ -87,7 +100,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aPatchOverridesTheFrameQueueCapacityOfOneModelOnly() throws {
+  func patchOverridesFrameQueueCapacityOfOneModelOnly() throws {
     let root = Root()
     let bare = try bareRecord()
     try root.writeDefaults(#"{"frameQueueCapacity":16}"#)
@@ -104,7 +117,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aGlobalDefaultBeatsTheBundledTuningOfAKey() throws {
+  func globalDefaultBeatsBundledTuningOfKey() throws {
     let root = Root()
     // The bundled HID record 11C1:5600 sets `stickDeadzone` to 0.02.
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
@@ -117,19 +130,50 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aNullInAUserPatchDeletesABundledTuningKey() throws {
+  func removeOfTuningKeyDeletesItFromBundledRecord() throws {
     let root = Root()
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
-    try root.writePatch(#"{"tuning":null}"#, for: identity)
+    try root.writePatch(
+      #"{"tuning":{"hidStartupIntervalMs":20}}"#,
+      remove: ["tuning.stickDeadzone"],
+      for: identity
+    )
 
     let record = try #require(root.load().records[identity])
 
     #expect(record.tuning.stickDeadzone == nil)
     #expect(record.tuningLayers["stickDeadzone"] == nil)
+    #expect(record.tuningLayers["hidStartupIntervalMs"] == .user)
   }
 
   @Test
-  func aUserPatchOfOneTuningKeyKeepsTheBundledOthers() throws {
+  func removeOfTuningSectionClearsEveryKeyLayer() throws {
+    let root = Root()
+    let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
+    try root.writePatch(
+      #"{"tuning":{"hidStartupIntervalMs":20}}"#,
+      remove: ["tuning"],
+      for: identity
+    )
+
+    let record = try #require(root.load().records[identity])
+
+    #expect(record.tuning.stickDeadzone == nil)
+    #expect(record.tuningLayers["stickDeadzone"] == nil)
+    #expect(record.tuning.hidStartupIntervalMilliseconds == 20)
+    #expect(record.tuningLayers["hidStartupIntervalMs"] == .user)
+  }
+
+  @Test
+  func allPatchOfAnotherSectionMakesDefaultsFileInvalid() throws {
+    let root = Root()
+    try root.writeDefaultsPatch(#"{"usb":{"interface":1}}"#)
+
+    #expect(root.load().defaults?.problem != nil)
+  }
+
+  @Test
+  func userPatchOfOneTuningKeyKeepsBundledOthers() throws {
     let root = Root()
     // The bundled HID record 11C1:5600 sets `stickDeadzone` to 0.02.
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
@@ -145,7 +189,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aGlobalKeyOutsideTheFamilyScopeDoesNotApply() throws {
+  func globalKeyOutsideFamilyScopeDoesNotApply() throws {
     let root = Root()
     try root.writeDefaults(#"{"inputLivenessTimeoutMs":2500}"#)
     let bare = try bareRecord()
@@ -159,7 +203,7 @@ struct ControllerTuningLayersTests {
   @Test(arguments: [
     #"{"stickDeadzone":3}"#, #"{"unknownKey":1}"#, #"{"stickDeadzone":"0.2"}"#,
   ])
-  func anInvalidDefaultsFileIsIgnoredWholeAndReported(tuning: String) throws {
+  func invalidDefaultsFileIsIgnoredWholeAndReported(tuning: String) throws {
     let root = Root()
     try root.writeDefaults(tuning)
     let bare = try bareRecord()
@@ -171,7 +215,7 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func anUnsupportedAPIVersionMakesTheDefaultsFileInvalid() throws {
+  func unsupportedAPIVersionMakesDefaultsFileInvalid() throws {
     let root = Root()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#, apiVersion: "unsupported.example/v9")
 

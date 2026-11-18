@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// Builds, names and writes the support report.
 package enum SupportReportService {
@@ -56,7 +56,7 @@ package enum SupportReportService {
     to outputURL: URL,
     overwrite: Bool = false
   ) throws {
-    if !overwrite && FileManager.default.fileExists(atPath: outputURL.path) {
+    if !overwrite, FileManager.default.fileExists(atPath: outputURL.path) {
       throw NSError(
         domain: "OpenJoystickDriver.SupportReport",
         code: NSFileWriteFileExistsError,

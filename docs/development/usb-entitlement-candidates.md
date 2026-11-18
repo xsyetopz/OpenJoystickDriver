@@ -1,14 +1,30 @@
 # USB DriverKit Entitlement Candidates
 
-These catalog identities are candidates for a future Apple USB DriverKit entitlement application.
+Catalog identities that could go into an Apple USB DriverKit entitlement request.
 
-Raw USB controllers use one of two access backends. The `USBExtension` backend covers the identities in the checked-in DEXT entitlement and personality: seven Microsoft GIP identities, `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, and `045E:0B12` (`Sources/OpenJoystickDriverUSB/Configuration.swift`). Every other raw USB controller uses the `RawUSB` backend.
+## Contents
 
-The identities below pass the catalog's raw-USB parser predicate (`DeviceCatalog.supportsRawUSBPipeline`: `usb` transport with a `GIP`, `XUSB`, `XID`, or `GameSir` driver) and use `RawUSB`. OJD does not request entitlement coverage for them, because adding every identity can take weeks. Moving an identity to `USBExtension` needs that coverage.
+- [GIP (77)](#gip-77)
+- [XUSB (165)](#xusb-165)
+- [XID (59)](#xid-59)
+- [GameSir (6)](#gamesir-6)
+- [HID Controllers That macOS Also Lists (1)](#hid-controllers-that-macos-also-lists-1)
 
-Listing an identity here does not mean it was observed on hardware. Each one is a conditional catalog candidate from the generated records in `Sources/OpenJoystickDriverKit/Resources/Controllers/`. When the catalog changes, recompute the list with the same predicate.
+Raw USB controllers use one of two backends:
 
-To move an identity to `USBExtension`: obtain Apple-issued USB transport entitlement coverage, add the pair to the DEXT configuration and entitlement, pass the signing-profile validation in `Scripts/Build/driverkit.sh`, and record hardware results under `docs/testing/`.
+- `USBExtension` covers seven Microsoft GIP identities in the DEXT entitlement and personality (`Sources/OpenJoystickDriverUSB/Configuration.swift`): `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, `0B12`.
+- `RawUSB` serves every other raw USB controller.
+
+The tables list identities with a raw-USB record (`DeviceCatalog.rawUSBModels`). They use `RawUSB`. OJD requests no coverage for them: adding every identity can take weeks.
+
+These are catalog candidates, not hardware observations. Recompute from `Sources/OpenJoystickDriverKit/Resources/Controllers/` when the catalog changes.
+
+To move an identity to `USBExtension`:
+
+1. Get Apple-issued USB transport entitlement coverage.
+2. Add the pair to the DEXT configuration and entitlement.
+3. Pass the signing-profile validation in `Scripts/Build/driverkit.sh`.
+4. Record hardware results under `docs/testing/`.
 
 ## GIP (77)
 
@@ -113,7 +129,7 @@ To move an identity to `USBExtension`: obtain Apple-issued USB transport entitle
 
 ## HID Controllers That macOS Also Lists (1)
 
-These HID-class controllers fall outside the raw-USB predicate above. OJD serves them through the HID stack and holds them exclusively, but Apple's `AppleGCHIDUserEventDriver` stays bound and GameController lists a second, synthetic pad with no input. macOS refuses to hand a HID-class interface from its own driver to an app (`0xE00002C9`, [GameSir family](../testing/gamesir-family.md)), so only a driver extension with USB transport coverage for the identity keeps Apple's driver off the controller.
+OJD holds these HID-class controllers exclusively through the HID stack. `AppleGCHIDUserEventDriver` stays bound, so GameController lists a second pad with no input. macOS refuses to hand a HID-class interface to an app (`0xE00002C9`, [GameSir family](../testing/gamesir-family.md)). Only a driver extension with USB transport coverage avoids this.
 
 | VID | PIDs |
 | --- | --- |

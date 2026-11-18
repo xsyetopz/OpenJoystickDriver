@@ -7,18 +7,42 @@
 
   extension ControllerDetailView {
 
-    /// The detail form: the header, the suspended session, the facts, Input Test, the server
-    /// picker, the virtual gamepad rows, the Tuning section and Advanced.
+    /// The detail form: the header, the state with its one button, the exclusive hold or the
+    /// suspended session, the facts, the server picker, the virtual gamepad rows, the Tuning
+    /// section and Advanced.
     var body: some View {
       Form {
         Section { controllerHeader }
+        HiddenChangeNotice(content: .changed(hiddenChangeCount))
+        Section {
+          ControllerReadinessCard(
+            readiness: readiness,
+            isActionEnabled: readiness.action != .openInputTest
+              || device.sessionState != .suspended,
+            showsAction: !viewModel.mainWindowProblems.contains {
+              $0.offersFix(of: readiness.action)
+            },
+            perform: perform
+          )
+        }
         if showsSessionState {
           Section {
+            if device.holdsExclusively {
+              OJDLabeledRow(OJDLocalized.string("ui.controllers.exclusiveOwner")) {
+                HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
+                  Text(OJDLocalized.string("status.controllerExclusive"))
+                    .fixedSize(horizontal: false, vertical: true)
+                  Button(OJDLocalized.string("ui.menu.controller.suspend")) {
+                    Task { @MainActor in await viewModel.suspendController(device) }
+                  }.help(OJDLocalized.string("ui.help.suspend"))
+                }
+              }
+            }
             if device.sessionState == .suspended {
               OJDLabeledRow(OJDLocalized.string("ui.controllers.suspended")) {
                 Button(OJDLocalized.string("ui.menu.controller.resume")) {
                   Task { @MainActor in await viewModel.resumeController(device) }
-                }
+                }.help(OJDLocalized.string("ui.help.resume"))
               }
             }
             if let failure = viewModel.controllerActionFailures[device.sessionToken.rawValue] {
@@ -28,25 +52,59 @@
         }
         Section {
           activeProfileRow
-          ForEach(ControllerDetailFacts.general(for: device)) { fact in
-            if fact.kind == .serialNumber {
+          ForEach(
+            ControllerDetailFacts.general(for: device, appName: ProfileAppChoices.appName)
+          ) { fact in
+            switch fact.kind {
+            case .serialNumber:
               SerialNumberRow(label: fact.label, serial: fact.value, visibility: $serialVisibility)
-            } else {
+                .ojdInterfaceRow(ControllerDetailRow.serialNumber)
+            case .publication, .serving:
+              OJDLabeledValue(fact.label, fact.value).ojdInterfaceRow(
+                ControllerDetailRow.servingFacts
+              )
+            default:
               OJDLabeledValue(fact.label, fact.value)
             }
           }
         }
-        Section { inputTestAction }
+        Section {
+          ForEach(record?.validations ?? [], id: \.issue) { validation in
+            OJDLabeledRow(OJDLocalized.string("ui.controllers.communityVerified")) {
+              Link(
+                OJDLocalized.formatted(
+                  "ui.controllers.communityVerifiedMode",
+                  validation.modeID,
+                  "#\(validation.issue)"
+                ),
+                destination: validation.issueURL
+              ).help(OJDLocalized.string("ui.help.communityLink"))
+            }
+          }
+          ControllerLookupButton(
+            model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
+            record: record
+          ).disabled(!hasLoadedRecord)
+        }
+        if device.isHeldByAppleDriver {
+          Section {
+            ControllerClaimButton(viewModel: viewModel)
+          }.ojdInterfaceRow(ControllerDetailRow.appleDriverHold)
+        }
         if ControllerServerPicker.isShown(for: device) {
           Section {
-            ControllerServerPicker(viewModel: viewModel, device: device)
+            ControllerServerPicker(
+              viewModel: viewModel,
+              device: device,
+              hasRecord: record != nil || !hasLoadedRecord
+            )
             if let record {
               OJDLabeledValue(
                 OJDLocalized.string("ui.controllers.server.source"),
                 ControllerDetailFacts.serverSourceText(record)
               )
             }
-          }
+          }.ojdInterfaceRow(ControllerDetailRow.servedBy)
         }
         if device.physicalOwnership != .systemGamepad {
           // A per-controller identity resets the picker state on a different selection.
@@ -61,20 +119,20 @@
               connectedDevices: connectedDevices,
               viewModel: viewModel,
               actions: actions
-            )
+            ).ojdInterfaceRow(ControllerDetailRow.mappingActions)
           }
         }
         if let record {
           Section {
-            StickDeadzoneRow(
+            ControllerCalibrationSection(
               viewModel: viewModel,
               device: device,
               setting: StickDeadzoneSetting(record: record)
-            ) { await loadRecord() }
-            tuningDisclosure(for: record)
-          }
+            ) { await loadRecord() }.ojdInterfaceRow(ControllerDetailRow.stickDeadzone)
+            tuningDisclosure(for: record).ojdInterfaceRow(ControllerDetailRow.tuning)
+          }.ojdInterfaceRow(ControllerDetailRow.tuning)
         }
-        Section { advancedDisclosure }
+        Section { advancedDisclosure }.ojdInterfaceRow(ControllerDetailRow.identifiers)
       }.task(id: recordLoadID) { await loadRecord() }.sheet(item: $actions.timedKind) { kind in
         ControllerTimedActionSheet(
           kind: kind,
@@ -89,6 +147,14 @@
         .ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
     }
 
+    /// How many hidden rows hold a value other than their default.
+    private var hiddenChangeCount: Int {
+      ControllerDetailRow.changedHiddenRows(
+        virtualGamepadOverride: device.virtualHIDProfile?.override,
+        stickDeadzone: record.map(StickDeadzoneSetting.init(record:))
+      ).count
+    }
+
     /// Reloads the record when the controller or who serves its model changes.
     private var recordLoadID: String {
       "\(device.sessionToken.rawValue) \(device.recordServer.rawValue)"
@@ -98,6 +164,7 @@
     private func loadRecord() async {
       let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
       record = await Task.detached { ControllerRecordSet.load().records[model] }.value
+      hasLoadedRecord = true
     }
 
     /// Every connected controller; nil while the service status is not available.
@@ -131,13 +198,16 @@
       } label: {
         Button(OJDLocalized.string("cli.controller.show.labelTuning")) { showsTuning.toggle() }
           .buttonStyle(.plain).frame(maxWidth: .infinity, alignment: .leading)
+          .help(OJDLocalized.string("ui.help.showTuning"))
       }
     }
 
-    /// Suspending, resuming and disconnecting a wireless link are commands of the Controller menu
-    /// and the status item; the detail shows only a suspended session and a failed command.
+    /// Whether the detail shows the session section: an exclusive hold with Suspend, a suspended
+    /// session with Resume, or a failed command.
+    ///
+    /// Disconnecting a wireless link stays a command of the Controller menu and the status item.
     private var showsSessionState: Bool {
-      device.sessionState == .suspended
+      device.holdsExclusively || device.sessionState == .suspended
         || viewModel.controllerActionFailures[device.sessionToken.rawValue] != nil
     }
 
@@ -150,9 +220,11 @@
           OJDLabeledValue(fact.label, fact.value)
         }
         ControllerTimedActionRows(device: device, actions: actions)
+          .ojdInterfaceRow(ControllerDetailRow.developerActions)
       } label: {
         Button(OJDLocalized.string("ui.virtualProfile.advanced")) { showsAdvanced.toggle() }
           .buttonStyle(.plain).frame(maxWidth: .infinity, alignment: .leading)
+          .help(OJDLocalized.string("ui.help.showAdvanced"))
       }
     }
 
@@ -161,7 +233,7 @@
     /// - Parameter message: The message of the failure.
     /// - Returns: The failed command with the failure symbol and its message.
     private func controllerActionFailure(_ message: String) -> some View {
-      HStack(alignment: .top, spacing: 8) {
+      HStack(alignment: .top, spacing: OJDSpacing.small) {
         OJDSystemSymbol(
           name: SemanticState.failure.presentation.symbolName,
           fallback: OJDLocalized.string("status.needsAttention")
@@ -175,18 +247,9 @@
       ).ojdAccessibilityValue(message)
     }
 
-    /// The Input Test row with its Open button, disabled while the session is suspended.
-    private var inputTestAction: some View {
-      OJDLabeledRow(OJDLocalized.string("ui.inputTest.title")) {
-        Button(OJDLocalized.string("ui.inputTest.open")) {
-          openInputTest(device)
-        }.disabled(device.sessionState == .suspended)
-      }
-    }
-
     /// The header: the controller's glyph, its name and its connection.
     private var controllerHeader: some View {
-      HStack(alignment: .center, spacing: 10) {
+      HStack(alignment: .center, spacing: OJDSpacing.medium) {
         let presentation = device.publishedIdentityPresentation
         OJDSystemSymbol(
           name: presentation.controllerSymbolName,
@@ -194,7 +257,7 @@
           fallbackSymbolName: presentation.controllerSymbolFallback
         ).font(.title).foregroundColor(presentation.glyphFamily.controllerSymbolColor)
           .accessibilityHidden(true)
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(device.name).font(.headline.weight(.semibold)).lineLimit(1)
           Text(connectionValue.displayText)
             .foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -218,7 +281,10 @@
           OJDLocalized.string("status.none")
         )
       case .profile(let name):
-        OJDLabeledValue(OJDLocalized.string("ui.controllers.activeProfile"), name)
+        OJDLabeledValue(
+          OJDLocalized.string("ui.controllers.activeProfile"),
+          device.profileInForce?.name ?? name
+        )
       case .unavailable(let message):
         profileFailureRow(
           label: OJDLocalized.string(
@@ -243,7 +309,7 @@
     ///   - message: The message of the failure.
     /// - Returns: The Active Profile row for a profile that cannot be read, with Try Again.
     private func profileFailureRow(label: String, message: String) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         HStack {
           Text(OJDLocalized.string("ui.controllers.activeProfile"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -258,6 +324,7 @@
           vertical: true
         )
         Button(OJDLocalized.string("action.tryAgain"), action: retry)
+          .help(OJDLocalized.string("ui.help.tryAgain"))
 
       }
     }

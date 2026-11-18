@@ -54,15 +54,17 @@ struct RecordValidation: Encodable, Equatable {
   /// - Throws: ``CLIFailure`` when the record is not valid.
   static func check(_ path: String, data: Data) throws -> ValidatedControllerRecord {
     do { return try ControllerRecordSet.validate(data) } catch {
-      let problem = ControllerRecordSet.problemDescription(
+      let description = ControllerRecordSet.problemDescription(
         error,
         includingCode: false,
-        document: "record"
+        document: "record",
+        localization: Localization(),
+        file: path == "-" ? nil : path
       )
-      if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: problem)) }
+      if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: description)) }
       throw CLIFailure(
         ControllerRecordSet.problemCode(error) ?? .invalidInputFile,
-        CLILocalized.format("cli.record.group.invalid", path, problem)
+        CLILocalized.format("cli.record.group.invalid", path, description)
       )
     }
   }
@@ -134,7 +136,7 @@ struct RecordValidateCommand: AsyncParsableCommand {
 }
 
 /// The `ojd record install` command: checks a record and writes it to the user's record folder as
-/// `vvvv-pppp.json`.
+/// `vvvv-pppp.plist`.
 ///
 /// Replacing an installed record needs a confirmation, or `--force` without a terminal.
 struct RecordInstallCommand: AsyncParsableCommand {

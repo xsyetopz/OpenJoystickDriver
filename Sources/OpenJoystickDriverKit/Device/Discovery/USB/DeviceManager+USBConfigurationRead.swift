@@ -11,8 +11,10 @@ extension DeviceManager {
   ///
   /// - A refusal with an exclusive owner reported records ``ProtocolBindingReason/deviceInUse``
   ///   and holds the service until it re-enumerates or the host reports no owner
-  ///   (`releaseHeldUSBServices(in:provider:generation:)`).
-  /// - A refusal with no owner reported, or whose owner cannot be read, records
+  ///   (`releaseHeldUSBServices(in:provider:generation:)`). The owner is the device's, or
+  ///   interface 0's when the device names none, because a client such as Steam that holds only
+  ///   that interface still makes the host refuse the read while the device property stays empty.
+  /// - A refusal with no owner reported on either, or whose owner cannot be read, records
   ///   ``ProtocolBindingReason/configurationUnreadable``: nothing OJD can observe clears it, so
   ///   the service waits for re-enumeration.
   /// - Any other failure is read again on the next poll, up to `usbConfigurationReadAttempts`
@@ -54,7 +56,7 @@ extension DeviceManager {
     let owner: String?
     let ownerNote: String
     do {
-      owner = try await provider.exclusiveOwner(of: device)
+      owner = try await currentUSBOwner(of: device, provider: provider)
       ownerNote = owner.map { "held by \($0)" } ?? "the host reports no exclusive owner"
     } catch {
       owner = nil
@@ -78,12 +80,17 @@ extension DeviceManager {
       "[DeviceManager] USB device \(device.serviceID) refused the configuration read: "
         + "\(ownerNote); left unclaimed until it re-enumerates or the host reports no owner"
     )
-    recordUnreadableConfiguration(device, reason: .deviceInUse, interfaces: interfaces)
+    recordUnreadableConfiguration(
+      device,
+      reason: .deviceInUse,
+      interfaces: interfaces,
+      exclusiveOwner: USBExclusiveOwner(registryValue: owner)
+    )
     return .ignored
   }
 
   /// Makes the polling loop attach a held service again once the host reports no exclusive owner
-  /// for it, while the USB device stays attached.
+  /// for its device or interface 0, while the USB device stays attached.
   ///
   /// A service whose owner changes stays held. When the owner cannot be read, the service is not
   /// watched further: its record changes to ``ProtocolBindingReason/configurationUnreadable`` and
@@ -97,7 +104,7 @@ extension DeviceManager {
       guard let device = enumeration.acknowledgedDevices[service] else { continue }
       let current: String?
       do {
-        current = try await provider.exclusiveOwner(of: device)
+        current = try await currentUSBOwner(of: device, provider: provider)
       } catch {
         guard isCurrentUSBDetection(generation) else { return }
         guard heldUSBServices[service] == owner else { continue }
@@ -127,21 +134,33 @@ extension DeviceManager {
     usbConfigurationReadFailures = usbConfigurationReadFailures.filter { present.contains($0.key) }
   }
 
+  /// The client that holds `device`, or nil when neither the device nor interface 0 names one.
+  private func currentUSBOwner(
+    of device: USBTransportDevice,
+    provider: any USBTransportProvider
+  ) async throws -> String? {
+    if let owner = try await provider.exclusiveOwner(of: device) { return owner }
+    return try await provider.interfaceExclusiveOwner(of: device, interfaceNumber: 0)
+  }
+
   /// Records the service as unbound for `reason`, with the interfaces observed.
   private func recordUnreadableConfiguration(
     _ device: USBTransportDevice,
     reason: ProtocolBindingReason,
-    interfaces: [PhysicalInterfaceSignature]
+    interfaces: [PhysicalInterfaceSignature],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     recordUnboundDevice(
       .usb(device.serviceAddress),
       vendorID: device.vendorID,
       productID: device.productID,
+      productName: device.productName,
       connection: "USB",
       backend: DeviceAccessBackend(route: device.route),
       reason: reason,
       rejectedCandidates: [],
-      interfaces: interfaces
+      interfaces: interfaces,
+      exclusiveOwner: exclusiveOwner
     )
   }
 }

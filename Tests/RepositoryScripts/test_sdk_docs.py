@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import plistlib
 import re
 import unittest
 from pathlib import Path
@@ -12,7 +13,17 @@ from Scripts.SDK import reference_client
 ROOT = Path(__file__).resolve().parents[2]
 VECTOR = ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "endpoint_hello_proof.json"
 PAGE = ROOT / "docs" / "sdk" / "endpoint.md"
-CLIENT_KINDS = {"Hello", "Subscription", "FeedRequest", "Frame", "KeepAlive", "Drain"}
+CLIENT_KINDS = {
+    "Hello",
+    "Subscription",
+    "FeedRequest",
+    "ProfileRequest",
+    "ModList",
+    "OutputRequest",
+    "Frame",
+    "KeepAlive",
+    "Drain",
+}
 DOCUMENTED_KINDS = {
     "Challenge",
     "Hello",
@@ -20,6 +31,13 @@ DOCUMENTED_KINDS = {
     "Subscription",
     "FeedRequest",
     "FeedSession",
+    "ProfileRequest",
+    "ProfileResult",
+    "ModList",
+    "Mods",
+    "OutputRequest",
+    "OutputResult",
+    "Profiles",
     "Frame",
     "KeepAlive",
     "Drain",
@@ -75,7 +93,7 @@ class SDKDocsTests(unittest.TestCase):
     def test_the_examples_name_the_endpoint_api_version(self) -> None:
         for example in examples():
             version = example.get("apiVersion") or example["object"]["apiVersion"]
-            self.assertEqual(version, "openjoystickdriver/v1alpha2")
+            self.assertEqual(version, "openjoystickdriver/v1alpha3")
 
     def test_a_bad_example_would_fail(self) -> None:
         bad = {"apiVersion": "unsupported.example/v9", "kind": "Hello"}
@@ -83,9 +101,7 @@ class SDKDocsTests(unittest.TestCase):
             self.client_lines.validate(bad)
 
     def endpoint_catalog(self) -> list[dict[str, Any]]:
-        catalog = json.loads(
-            (ROOT / "Resources" / "ErrorCodes.json").read_text(encoding="utf-8")
-        )
+        catalog = plistlib.loads((ROOT / "Resources" / "ErrorCodes.plist").read_bytes())
         return [entry for entry in catalog["codes"] if entry["domain"] == "Endpoint"]
 
     def error_rows(self) -> list[tuple[str, str, str]]:

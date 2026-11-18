@@ -10,12 +10,13 @@ struct ProfileSchemaTests {
   /// Uses every kind of source, destination, physical output, and mapping.
   static let richDocument = #"""
     {
-      "apiVersion": "openjoystickdriver/v1alpha2",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Profile",
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
       "device": {"vendorID": 1356, "productID": 3302, "unit": "U-AbCd_123-xyzW09q"},
-      "applicationScope": {"type": "Application", "appID": "com.example.game"},
+      "applicationScope": {"type": "Application",
+        "appIDs": ["com.example.game", "com.example.other"]},
       "outputPolicy": {"virtualGamepad": "Mapped", "physicalInput": "Exclusive"},
       "physicalColor": {"red": 255, "green": 32, "blue": 0},
       "motionTuning": {
@@ -48,6 +49,7 @@ struct ProfileSchemaTests {
       "bindings": [
         {
           "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D61",
+          "remark": "Jump when pressed",
           "source": {"type": "Button", "button": "South"},
           "destination": {"type": "Keyboard", "key": "Space", "modifiers": ["Shift", "Meta"]},
           "longHold": {
@@ -214,10 +216,12 @@ struct ProfileSchemaTests {
     """#
 
   @Test
-  func aRichProfileIsAcceptedByTheDecoderAndTheSchema() throws {
-    let profile = try RemappingProfileFileStore.load(from: Data(Self.richDocument.utf8))
-    #expect(try CLIOutputSchema.profileIssues(in: Self.richDocument).isEmpty)
-    let encoded = try RemappingProfileFileStore.encodedJSON(profile)
+  func richProfileIsAcceptedByDecoderAndSchema() throws {
+    let profile = try RemappingProfileFileStore.load(
+      from: PropertyListFixture.data(json: Self.richDocument)
+    )
+    #expect(try CLIOutputSchema.profileIssues(inJSON: Self.richDocument).isEmpty)
+    let encoded = try RemappingProfileFileStore.encodedPlist(profile)
     #expect(try CLIOutputSchema.profileIssues(in: encoded).isEmpty)
   }
 
@@ -260,8 +264,92 @@ struct ProfileSchemaTests {
       "axis in a chord", #"{"type": "Button", "button": "Back"}"#,
       #"{"type": "Axis", "axis": "LeftTrigger"}"#
     ),
+    (
+      "profile name over 80 characters", #""name": "Everything""#,
+      "\"name\": \"" + String(repeating: "a", count: 81) + "\""
+    ),
+    (
+      "profile name with a control character", #""name": "Everything""#,
+      #""name": "Every\u007fthing""#
+    ),
+    ("profile name with a space at the end", #""name": "Everything""#, #""name": "Everything ""#),
+    (
+      "layer name over 40 characters", #""name": "Menus""#,
+      "\"name\": \"" + String(repeating: "a", count: 41) + "\""
+    ),
+    ("layer name with a control character", #""name": "Menus""#, #""name": "Me\u007fnus""#),
+    (
+      "gyro activation source with the Always mode", #""activationMode": "WhileHeld""#,
+      #""activationMode": "Always""#
+    ),
+    (
+      "Off adaptive trigger effect with a strength",
+      #""kind": "Resistance", "startPosition": 0.3, "strength": 0.7"#,
+      #""kind": "Off", "startPosition": 0, "strength": 0.7"#
+    ),
   ])
-  func aBrokenProfileIsRejectedByTheDecoderAndTheSchema(
+  func brokenProfileIsRejectedByDecoderAndSchema(
+    problem: String,
+    original: String,
+    replacement: String
+  ) throws {
+    try Self.expectRejection(problem, original, replacement)
+  }
+
+  @Test(arguments: [
+    ("empty binding remark", #""remark": """#),
+    (
+      "binding remark over 200 characters",
+      "\"remark\": \"" + String(repeating: "a", count: 201) + "\""
+    ),
+    ("binding remark with a control character", #""remark": "Jump\u007f""#),
+    ("binding remark with a space at the end", #""remark": "Jump ""#),
+    ("binding remark that is not text", #""remark": 5"#),
+  ])
+  func brokenBindingRemarkRejectedByDecoderAndSchema(
+    problem: String,
+    replacement: String
+  ) throws {
+    try Self.expectRejection(problem, #""remark": "Jump when pressed""#, replacement)
+  }
+
+  private static func expectRejection(
+    _ problem: String,
+    _ original: String,
+    _ replacement: String
+  ) throws {
+    #expect(richDocument.contains(original), "\(problem)")
+    let broken = richDocument.replacingOccurrences(of: original, with: replacement)
+    do {
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
+      Issue.record("\(problem): the profile loads")
+    } catch {
+      #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile, "\(problem)")
+    }
+    #expect(try !CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
+  }
+
+  /// Rules between fields, which the schema cannot state: the decoder refuses the profile and the
+  /// schema accepts it. `wiki/Profile-File-Reference.md` lists them.
+  @Test(arguments: [
+    ("lean hysteresis above threshold", #""hysteresisDegrees": 5"#, #""hysteresisDegrees": 25"#),
+    ("steering deadzone above full scale", #""deadzoneDegrees": 2"#, #""deadzoneDegrees": 50"#),
+    (
+      "flick hysteresis above threshold", #""flickThreshold": 0.8, "flickHysteresis": 0.2"#,
+      #""flickThreshold": 0.3, "flickHysteresis": 0.4"#
+    ),
+    (
+      "stick deadzones fill the travel", #""innerDeadzone": 0.1, "outerDeadzone": 0.05"#,
+      #""innerDeadzone": 0.9, "outerDeadzone": 0.5"#
+    ),
+    ("soft threshold above full", #""softThreshold": 0.2"#, #""softThreshold": 0.95"#),
+    ("grid column outside the grid", #""column": 1, "row": 0"#, #""column": 2, "row": 0"#),
+    (
+      "pulse duration without the Pulse behavior", #""multiTap": [{"#,
+      #""pulseDurationMs": 200, "multiTap": [{"#
+    ),
+  ])
+  func ruleAcrossFieldsRefusedByDecoderOnly(
     problem: String,
     original: String,
     replacement: String
@@ -269,16 +357,16 @@ struct ProfileSchemaTests {
     #expect(Self.richDocument.contains(original), "\(problem)")
     let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
     do {
-      _ = try RemappingProfileFileStore.load(from: Data(broken.utf8))
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
       Issue.record("\(problem): the profile loads")
     } catch {
       #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile, "\(problem)")
     }
-    #expect(try !CLIOutputSchema.profileIssues(in: broken).isEmpty, "\(problem)")
+    #expect(try CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
   }
 
   @Test
-  func schemaEnumsMatchTheSwiftCases() throws {
+  func schemaEnumsMatchSwiftCases() throws {
     let pairs: [(String, [String])] = [
       ("button", Self.raw(Control.self)),
       ("axis", Self.raw(RemappingAxis.self)),
@@ -329,7 +417,7 @@ struct ProfileSchemaTests {
   }
 
   @Test
-  func vocabularyAndKeyboardEnumsMatchTheSwiftCases() throws {
+  func vocabularyAndKeyboardEnumsMatchSwiftCases() throws {
     let vocabulary = try #require(
       try JSONSchemaFiles.document(named: "vocabulary.schema.json")["$defs"] as? [String: Any]
     )

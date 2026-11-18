@@ -25,7 +25,7 @@
     }
 
     /// Deletes a damaged profile file or resets an unusable library through the service, closes the
-    /// alert and shows a failure in the error banner.
+    /// alert and shows a failure beside the button.
     ///
     /// - Parameters:
     ///   - issueID: The identifier of the profile issue.
@@ -33,14 +33,28 @@
     func recoverProfileIssue(_ issueID: UUID, resetLibrary: Bool) {
       activeAlert = nil
       Task { @MainActor in
-        profileActionError =
+        let failure =
           resetLibrary
           ? await library.resetRemappingProfileLibrary(issueID: issueID)
           : await library.deleteDamagedRemappingProfile(issueID: issueID)
-        if profileActionError == nil {
+        screen.failProfileAction(failure, beside: .recovery)
+        if failure == nil {
           selectedRecoveryIssueID = nil
           selectFirstProfileIfNeeded()
         }
+      }
+    }
+
+    /// Converts the stored documents of an earlier alpha, then refreshes the profiles; a document
+    /// that cannot be converted shows beside the Migrate button.
+    func migrateStoredDocuments() {
+      Task { @MainActor in
+        let failed = DocumentMigrator().run(dryRun: false).contains { $0.verdict == .failed }
+        await viewModel.refresh()
+        screen.failProfileAction(
+          failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil,
+          beside: .migration
+        )
       }
     }
 
@@ -65,11 +79,11 @@
     ///
     /// - Parameter action: The action to request.
     func requestProfileAction(_ action: ProfileEditorAction) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       switch profileEditorTransition.request(action) {
       case .perform(let action): performProfileAction(action)
       case .confirmDiscard: activeAlert = .discard(action.profileID)
-      case .blocked: break
+      case .blocked: profileActionError = ProfileActionBlock.changeRunning.message
       }
     }
 
@@ -79,14 +93,14 @@
     ///
     /// - Parameter action: The action to run.
     func performProfileAction(_ action: ProfileEditorAction) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       switch action {
       case .select(let profileID):
         preservedEditorProfile = nil
         selectedProfileID = profileID
       case .importProfile(let profile):
         let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
-        guard beginProfileMutation(request) else { return }
+        guard beginProfileMutationOrExplain(request) else { return }
         Task { @MainActor in
           let result = await library.importRemappingProfile(profile, request: request)
           handleProfileMutationResult(result)
@@ -94,7 +108,7 @@
       }
     }
 
-    /// Selects the profile that a create or import just added; selecting the selected profile does
+    /// Selects the profile that a create or import added; selecting the selected profile does
     /// nothing.
     ///
     /// - Parameter profileID: The profile to select.
@@ -112,9 +126,6 @@
     }
 
     /// Returns whether the profile is active in the snapshot that the screen shows.
-    ///
-    /// - Parameter profile: The profile to check.
-    /// - Returns: Whether the profile is active in the snapshot that the screen shows.
     func isActive(_ profile: RemappingProfile) -> Bool {
       let snapshot: ApplicationServiceRemappingSnapshotPayload?
       switch viewModel.remappingState {
@@ -130,12 +141,29 @@
     ///
     /// - Parameter profile: The profile to add.
     func createProfile(_ profile: RemappingProfile) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       let request = RuntimeMutationRequest(operation: .create(profileID: profile.id))
-      guard beginProfileMutation(request) else { return }
+      guard beginProfileMutationOrExplain(request) else { return }
       Task { @MainActor in
         let result = await library.createRemappingProfile(profile, request: request)
         handleProfileMutationResult(result)
+      }
+    }
+
+    /// Adds the converted profile to the library and, once it is saved, shows what the conversion
+    /// left out.
+    ///
+    /// - Parameter conversion: The conversion that the Convert sheet made.
+    func convertProfile(_ conversion: RemappingProfileConversion) {
+      guard !refuseProfileAction() else { return }
+      let request = RuntimeMutationRequest(operation: .create(profileID: conversion.profile.id))
+      guard beginProfileMutationOrExplain(request) else { return }
+      Task { @MainActor in
+        let result = await library.createRemappingProfile(conversion.profile, request: request)
+        handleProfileMutationResult(result)
+        if case .succeeded = result {
+          screen.conversionReport = ProfileConversionReport(conversion)
+        }
       }
     }
 
@@ -146,13 +174,13 @@
     ///
     /// - Parameter profileID: The profile to delete.
     func deleteProfile(_ profileID: UUID) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       activeAlert = nil
       let restoreDirtyStateOnFailure = selectedProfileID == profileID && editorHasUnsavedChanges
       let request = RuntimeMutationRequest(operation: .delete(profileID: profileID))
-      guard beginProfileMutation(request, restoresDirtyOnFailure: restoreDirtyStateOnFailure) else {
-        return
-      }
+      guard
+        beginProfileMutationOrExplain(request, restoresDirtyOnFailure: restoreDirtyStateOnFailure)
+      else { return }
       if selectedProfileID == profileID {
         setEditorDirty(false)
         preservedEditorProfile = nil
@@ -321,9 +349,6 @@
     }
 
     /// Returns whether the operation is a profile action: not an update from the editor.
-    ///
-    /// - Parameter operation: The operation of a request.
-    /// - Returns: Whether the operation is a profile action: not an update from the editor.
     func isProfileAction(_ operation: RuntimeMutationOperation) -> Bool {
       switch operation {
       case .create, .delete, .activate, .deactivate, .importProfile: return true
@@ -336,9 +361,31 @@
       library.activeMutationOperation != nil || profileEditorTransition.isEditingBlocked
     }
 
+    /// Why profile creation, import, delete and the like must wait, or nil.
+    var profileActionBlock: ProfileActionBlock? {
+      screen.actionBlock(library: library, runtime: viewModel)
+    }
+
     /// Whether profile creation, import, delete and the like must wait.
-    var isProfileActionBlocked: Bool {
-      screen.isActionBlocked(library: library, runtime: viewModel)
+    var isProfileActionBlocked: Bool { profileActionBlock != nil }
+
+    /// Shows the reason profile actions must wait in the error banner and returns whether they do.
+    func refuseProfileAction() -> Bool {
+      guard let profileActionBlock else { return false }
+      profileActionError = profileActionBlock.message
+      return true
+    }
+
+    /// Takes the ownership of a request, or says that another change holds it.
+    func beginProfileMutationOrExplain(
+      _ request: RuntimeMutationRequest,
+      restoresDirtyOnFailure: Bool = false
+    ) -> Bool {
+      guard beginProfileMutation(request, restoresDirtyOnFailure: restoresDirtyOnFailure) else {
+        profileActionError = ProfileActionBlock.changeRunning.message
+        return false
+      }
+      return true
     }
 
     /// Whether the snapshot lists damaged profiles or an unusable library.

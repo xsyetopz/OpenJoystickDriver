@@ -14,10 +14,10 @@
       let snapshot = liveState.snapshot
       let pressed = snapshot.pressed
       let symbols = InputTestControllerSymbolSet.resolve(for: presentation.glyphFamily)
-      return VStack(spacing: 10) {
+      return VStack(spacing: OJDSpacing.medium) {
         shoulderRow(snapshot: snapshot, symbols: symbols)
         Divider()
-        HStack(alignment: .center, spacing: 18) {
+        HStack(alignment: .center, spacing: OJDSpacing.large) {
           dpadCluster(hat: snapshot.hat).frame(maxWidth: .infinity)
           systemCluster(pressed: pressed, symbols: symbols).frame(
             maxWidth: .infinity
@@ -25,7 +25,7 @@
           faceButtonCluster(pressed: pressed, symbols: symbols).frame(maxWidth: .infinity)
         }
         Divider()
-        HStack(alignment: .top, spacing: 24) {
+        HStack(alignment: .top, spacing: OJDSpacing.xLarge) {
           InputTestStickView(
             title: OJDLocalized.string("ui.inputTest.leftStick"),
             x: snapshot.leftStick.x.normalized,
@@ -41,23 +41,55 @@
             clickActive: pressed.contains(.rightStickClick)
           )
         }
-        let additionalButtons = InputTestButtonPresentation.additionalControls(in: snapshot)
+        if layout.hasPointer {
+          Divider()
+          InputTestPointerView(
+            x: snapshot.pointer.x.normalized,
+            y: snapshot.pointer.y.normalized,
+            tracking: pressed.contains(.pointerTracking)
+          )
+        }
+        let surfaces = layout.touchSurfaces(for: snapshot)
+        if !surfaces.isEmpty {
+          Divider()
+          HStack(alignment: .top, spacing: OJDSpacing.xLarge) {
+            ForEach(surfaces, id: \.self) { surface in
+              InputTestTouchSurfaceView(
+                title: OJDLocalized.string(Self.touchSurfaceTitleKey(surface)),
+                frame: snapshot.touch.first { $0.surface == surface }
+              )
+            }
+          }
+        }
+        let additionalButtons = layout.extraButtons(for: snapshot)
         if !additionalButtons.isEmpty {
           Divider()
-          VStack(alignment: .leading, spacing: 8) {
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
             Text(OJDLocalized.string("ui.inputTest.additionalButtons"))
               .font(.subheadline.weight(.semibold))
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: OJDSpacing.small) {
               ForEach(additionalButtons, id: \.self) { control in
                 InputTestIndicator(
                   title: InputTestButtonPresentation.localizedTitle(for: control),
-                  active: true
+                  active: pressed.contains(control)
                 )
               }
             }
           }.frame(maxWidth: .infinity, alignment: .leading)
         }
       }.padding(6)
+    }
+
+    /// Returns the localization key of a touch surface's name.
+    ///
+    /// - Parameter surface: The surface.
+    /// - Returns: The localization key of the surface's name.
+    private static func touchSurfaceTitleKey(_ surface: ControllerTouchSurface) -> String {
+      switch surface {
+      case .primary: "ui.inputTest.touchSurfacePrimary"
+      case .left: "ui.inputTest.touchSurfaceLeft"
+      case .right: "ui.inputTest.touchSurfaceRight"
+      }
     }
 
     /// The shoulder buttons and the triggers with their values.
@@ -70,7 +102,7 @@
       snapshot: ControllerState,
       symbols: InputTestControllerSymbolSet
     ) -> some View {
-      HStack(spacing: 10) {
+      HStack(spacing: OJDSpacing.medium) {
         indicator(symbols.leftShoulder, active: snapshot.pressed.contains(.leftShoulder))
         indicator(
           symbols.leftTrigger,
@@ -94,9 +126,9 @@
     /// - Returns: The cluster.
     private func dpadCluster(hat: HatDirection) -> some View {
       let directions = RuntimePresentation.dpadDirections(hat)
-      return VStack(spacing: 6) {
+      return VStack(spacing: OJDSpacing.small) {
         dpadIndicator(.up, title: "ui.inputTest.dpadUp", active: directions.contains(.up))
-        HStack(spacing: 6) {
+        HStack(spacing: OJDSpacing.small) {
           dpadIndicator(.left, title: "ui.inputTest.dpadLeft", active: directions.contains(.left))
           dpadIndicator(
             .right,
@@ -138,7 +170,7 @@
       pressed: Set<Control>,
       symbols: InputTestControllerSymbolSet
     ) -> some View {
-      HStack(spacing: 6) {
+      HStack(spacing: OJDSpacing.small) {
         indicator(
           symbols.view,
           active: pressed.contains(.back)
@@ -158,9 +190,9 @@
       pressed: Set<Control>,
       symbols: InputTestControllerSymbolSet
     ) -> some View {
-      VStack(spacing: 6) {
+      VStack(spacing: OJDSpacing.small) {
         indicator(symbols.northFace, active: pressed.contains(.north))
-        HStack(spacing: 6) {
+        HStack(spacing: OJDSpacing.small) {
           indicator(symbols.westFace, active: pressed.contains(.west))
           indicator(symbols.eastFace, active: pressed.contains(.east))
         }

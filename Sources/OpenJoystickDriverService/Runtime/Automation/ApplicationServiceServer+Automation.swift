@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 extension ApplicationServiceServer: AutomationService {
   /// Returns the controllers that the service drives.

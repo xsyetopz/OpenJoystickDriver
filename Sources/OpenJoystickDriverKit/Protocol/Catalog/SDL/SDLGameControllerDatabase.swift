@@ -69,7 +69,7 @@ struct SDLGameControllerDatabase: Sendable {
   ///
   /// Throws ``SDLDatabaseProblem`` for the first malformed line.
   init(text: String) throws {
-    var lines: [SDLGUID: Line] = [:]
+    var parsed: [SDLGUID: Line] = [:]
     for (index, raw) in text.split(separator: "\n", omittingEmptySubsequences: false).enumerated() {
       let line = raw.trimmingCharacters(in: .whitespaces)
       guard !line.isEmpty, !line.hasPrefix("#") else { continue }
@@ -81,9 +81,9 @@ struct SDLGameControllerDatabase: Sendable {
           description: "a line needs a 32-digit GUID, a name and at least one field"
         )
       }
-      lines[guid] = Line(name: parts[1], fields: Array(parts[2...]))
+      parsed[guid] = Line(name: parts[1], fields: Array(parts[2...]))
     }
-    self.lines = lines
+    self.lines = parsed
   }
 
   /// The line for `guid` at the first tier that has one.

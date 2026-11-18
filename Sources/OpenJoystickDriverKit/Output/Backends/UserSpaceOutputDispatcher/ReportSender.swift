@@ -147,15 +147,15 @@ final class UserSpaceReportSender: Sendable {
 
     /// Ends the send with `result`; only the first call counts.
     private func finish(_ result: Result<Void, any Error>) {
-      let (continuation, cancelDeadline) = state.withLock {
+      let (waiting, cancel) = state.withLock {
         state -> (CheckedContinuation<Void, any Error>?, DeadlineTimer.Cancel?) in
         guard !state.completed else { return (nil, nil) }
         state.completed = true
         defer { state.continuation = nil }
         return (state.continuation, state.cancelDeadline)
       }
-      cancelDeadline?()
-      continuation?.resume(with: result)
+      cancel?()
+      waiting?.resume(with: result)
     }
   }
 
@@ -220,14 +220,14 @@ final class UserSpaceReportSender: Sendable {
     self.nativeSendDeadlineNanoseconds = nativeSendDeadlineNanoseconds
     self.deadlineTimer = deadlineTimer
     self.queueCapacity = queueCapacity
-    let (wakes, continuation) = AsyncStream.makeStream(
+    let (wakes, wakeContinuation) = AsyncStream.makeStream(
       of: Void.self,
       bufferingPolicy: .bufferingNewest(1)
     )
-    self.continuation = continuation
+    self.continuation = wakeContinuation
     let worker = Task { [weak self] in
       for await _ in wakes {
-        while let self, let submission = self.dequeue() { await self.publish(submission) }
+        while let self, let submission = dequeue() { await publish(submission) }
       }
     }
     state.withLock { $0.worker = worker }

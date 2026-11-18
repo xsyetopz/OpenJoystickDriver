@@ -1,6 +1,6 @@
-import Foundation
+public import Foundation
 
-/// The user's global tuning defaults, from the `all` patch `all.patch.json` in the `Controllers`
+/// The user's global tuning defaults, from the `all` patch `all.patch.plist` in the `Controllers`
 /// directory.
 ///
 /// The `all` patch is the first patch of the user layer, so a key here sits above the bundled and
@@ -20,10 +20,10 @@ public struct ControllerDefaults: Equatable, Sendable {
   /// The file name of the `all` patch.
   public static let fileName = ControllerPatch.Selector.all.fileName
 
-  /// `~/Library/Application Support/OpenJoystickDriver/Controllers/all.patch.json`.
+  /// `~/Library/Application Support/OpenJoystickDriver/Controllers/all.patch.plist`.
   public static var userFile: URL { file(in: ControllerRecordSet.userDirectory) }
 
-  /// `all.patch.json` in the controller-record directory `controllers`.
+  /// `all.patch.plist` in the controller-record directory `controllers`.
   public static func file(in controllers: URL) -> URL {
     controllers.appendingPathComponent(fileName)
   }
@@ -53,28 +53,29 @@ public struct ControllerDefaults: Equatable, Sendable {
 
   /// The patch and the range-checked `tuning` of an `all` patch document.
   ///
-  /// Like every patch, it refuses text that is not plain UTF-8 and an object that names a member
-  /// twice.
+  /// Like every patch, it refuses a file that is not an XML property list.
   static func validate(
     _ data: Data,
     file: String? = nil
   ) throws -> (patch: ControllerPatch, tuning: ControllerTuning) {
-    try ControllerRecordSet.requireUTF8(data)
-    let patch = try ControllerPatch.parse(try ControllerRecordSet.ordered(data), file: file)
-    guard patch.selector == .all else {
+    let parsedPatch = try ControllerPatch.parse(
+      try ControllerRecordSet.ordered(data, file: file ?? fileName),
+      file: file
+    )
+    guard parsedPatch.selector == .all else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.tuningDefaults.selector",
         "the selector must be all in \(fileName)"
       )
     }
-    let values = (patch.body["tuning"]?.members ?? []).filter { $0.value != .null }
+    let values = parsedPatch.body["tuning"]?.members ?? []
     do {
       let section = try JSONSerialization.data(
         withJSONObject: OrderedJSON.object(values).foundationValue()
       )
-      return (
-        patch, try JSONDecoder().decode(ControllerRecordDocument.Tuning.self, from: section).tuning
-      )
+      let decoded = try JSONDecoder().decode(ControllerRecordDocument.Tuning.self, from: section)
+      return (parsedPatch, decoded.tuning)
     } catch let error as DecodingError {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,

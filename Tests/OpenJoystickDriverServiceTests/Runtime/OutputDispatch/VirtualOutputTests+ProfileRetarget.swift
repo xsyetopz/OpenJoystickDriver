@@ -40,7 +40,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func profileOverrideChangesTheBuiltProfile() async throws {
+  func profileOverrideChangesBuiltProfile() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     overrides.set(.generic, vendorID: 1)
@@ -56,7 +56,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func retargetRebuildsOnlyTheTargetController() async throws {
+  func retargetRebuildsOnlyTargetController() async throws {
     let first = LogicalControllerID(vendorID: 1, productID: 2)
     let second = LogicalControllerID(vendorID: 3, productID: 4)
     let overrides = ProfileOverrideBox()
@@ -78,7 +78,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func retargetActivatesTheReplacementThenNeutralizesBeforeRetiring() async throws {
+  func retargetActivatesReplacementThenNeutralizesBeforeRetiring() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -98,7 +98,7 @@ extension VirtualOutputTests {
   }
 
   @Test(arguments: [ProfileRetargetFailure.build, .activation])
-  func failedRetargetKeepsThePriorBackend(failure: ProfileRetargetFailure) async throws {
+  func failedRetargetKeepsPriorBackend(failure: ProfileRetargetFailure) async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -130,7 +130,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func dispatchAfterAnOverrideChangeKeepsTheBackendUntilRetarget() async throws {
+  func dispatchAfterOverrideChangeKeepsBackendUntilRetarget() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -153,7 +153,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func retargetCarriesRemappingSuppressionToTheReplacement() async throws {
+  func retargetCarriesRemappingSuppressionToReplacement() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -170,7 +170,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func retargetWhileSuppressedPublishesTheNewProfileOnResume() async throws {
+  func retargetWhileSuppressedPublishesNewProfileOnResume() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -195,7 +195,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func retargetOfAStoppedControllerBuildsNothingAndTheNextSessionUsesTheOverride() async throws {
+  func retargetOfStoppedControllerBuildsNothingAndNextSessionUsesOverride() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -214,7 +214,7 @@ extension VirtualOutputTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func stoppingDuringAnInFlightRetargetKeepsNoSelectionOrBackend() async throws {
+  func stoppingDuringInFlightRetargetKeepsNoSelectionOrBackend() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -244,7 +244,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func retargetWithAnUnchangedProfileIsANoOp() async throws {
+  func retargetWithUnchangedProfileIsNoOp() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()
@@ -262,7 +262,7 @@ extension VirtualOutputTests {
   /// The automatic persona is `SDLCompatible`; opting in to `Generic` switches the live backend
   /// without the controller being unplugged or replugged.
   @Test
-  func theAutomaticPersonaIsSDLCompatibleAndOptInSwitchesToGenericWithoutReplug() async throws {
+  func automaticPersonaIsSDLCompatibleAndOptInSwitchesToGenericWithoutReplug() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
     let overrides = ProfileOverrideBox()
     let log = RetargetEventLog()

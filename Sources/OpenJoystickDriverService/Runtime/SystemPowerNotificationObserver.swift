@@ -64,17 +64,17 @@ final class SystemPowerNotificationObserver: @unchecked Sendable {
     started = true
     let eventStream = AsyncStream<QueuedEvent>.makeStream(bufferingPolicy: .unbounded)
     eventContinuation = eventStream.continuation
-    let handler = self.handler
-    let powerSource = self.powerSource
+    let deliver = self.handler
+    let power = self.powerSource
     deliveryTask = Task { [weak self] in
       for await queued in eventStream.stream {
-        let canDeliver = !Task.isCancelled && self?.canDeliver == true
-        if canDeliver { await handler(queued.event) }
-        if let id = queued.sleepNotificationID { powerSource.allowPowerChange(notificationID: id) }
-        if !canDeliver { return }
+        let deliverable = !Task.isCancelled && self?.canDeliver == true
+        if deliverable { await deliver(queued.event) }
+        if let id = queued.sleepNotificationID { power.allowPowerChange(notificationID: id) }
+        if !deliverable { return }
       }
     }
-    powerSource.start { [weak self] message in self?.receive(message) }
+    power.start { [weak self] message in self?.receive(message) }
   }
 
   /// Stops observing and returns when the delivery task has finished.
@@ -88,14 +88,14 @@ final class SystemPowerNotificationObserver: @unchecked Sendable {
       started = false
       eventContinuation?.finish()
       eventContinuation = nil
-      let deliveryTask = deliveryTask
-      let powerSource = powerSource
+      let delivery = deliveryTask
+      let power = powerSource
       let task = Task {
-        if let deliveryTask {
-          deliveryTask.cancel()
-          await deliveryTask.value
+        if let delivery {
+          delivery.cancel()
+          await delivery.value
         }
-        powerSource.stop()
+        power.stop()
       }
       stopTask = task
       lock.unlock()

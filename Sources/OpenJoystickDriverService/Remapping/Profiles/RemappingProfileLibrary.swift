@@ -63,8 +63,8 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
 
 /// The single application-service writer for locally authored remapping profiles.
 ///
-/// Each profile is its own `Profiles/<id>.json` file in the profile-file format, and the active
-/// selections are `ActiveProfiles.json`, both under `directory`. The profiles of the installed
+/// Each profile is its own `Profiles/<id>.plist` file in the profile-file format, and the active
+/// selections are `ActiveProfiles.plist`, both under `directory`. The profiles of the installed
 /// packages in `Packages/` are served read-only beside them; they are never written, counted
 /// against the profile limit, or deleted.
 actor RemappingProfileLibrary {
@@ -73,7 +73,9 @@ actor RemappingProfileLibrary {
   /// The most bytes of one encoded profile.
   static let maximumEncodedBytes = RemappingPayloadLimits.maximumEncodedBytes
   /// The name of the selections file.
-  static let selectionsFileName = "ActiveProfiles.json"
+  static let selectionsFileName = "ActiveProfiles.plist"
+  /// The name of the file that holds when each profile was last activated.
+  static let lastUsedFileName = "LastUsed.plist"
 
   /// The directory of the library files.
   let directory: URL
@@ -87,16 +89,20 @@ actor RemappingProfileLibrary {
   let runningVersion: String?
   /// The speech output that tells which voices this Mac has.
   let speechOutput: any RemappingSpeechOutput
+  /// The clock that stamps the last use of a profile.
+  let clock: @Sendable () -> Date
 
   /// Creates the library in `directory`.
   init(
     directory: URL = RemappingProfileLibrary.defaultDirectory,
     runningVersion: String? = nil,
-    speechOutput: any RemappingSpeechOutput = AVSpeechOutput()
+    speechOutput: any RemappingSpeechOutput = AVSpeechOutput(),
+    clock: @escaping @Sendable () -> Date = Date.init
   ) {
     self.directory = directory
     self.runningVersion = runningVersion
     self.speechOutput = speechOutput
+    self.clock = clock
   }
 
   /// The application data directory.
@@ -118,5 +124,5 @@ actor RemappingProfileLibrary {
   }
 
   /// Returns the file name of the profile `id`.
-  static func profileFileName(_ id: UUID) -> String { "\(id.uuidString).json" }
+  static func profileFileName(_ id: UUID) -> String { RemappingProfileFileStore.fileName(for: id) }
 }

@@ -1,14 +1,3 @@
-"""Pairs the Swift compiler with a macOS SDK whose Swift interfaces it can read.
-
-A compiler cannot read the interfaces of an SDK built by a newer Swift: the swift.org 6.3
-toolchain fails on the macOS 27 SDK with "unknown argument: '-target-arch-variant'". The SDK
-records its compiler in each `.swiftinterface` header, so the pairing compares that version
-with the compiler's own.
-
-Usage: swift_sdk.py <swift-binary> <preferred-sdk> <explicit: 0|1>
-Prints the SDK path to use; exits 1 with the reason when no installed SDK fits.
-"""
-
 from __future__ import annotations
 
 import re
@@ -49,7 +38,6 @@ def compiler_version(swift: str) -> Version | None:
 
 
 def interface_version(sdk: Path) -> Version | None:
-    """The Swift version that built `sdk`'s Foundation interface; nil without one."""
     for interface in sorted((sdk / FOUNDATION_MODULE).glob("*.swiftinterface")):
         with interface.open(encoding="utf-8", errors="replace") as source:
             for line in source:
@@ -61,7 +49,6 @@ def interface_version(sdk: Path) -> Version | None:
 
 
 def installed_sdks(roots: Iterable[Path] = SDK_ROOTS) -> list[Path]:
-    """Every installed macOS SDK once, the symlinks resolved to their targets."""
     found: dict[Path, None] = {}
     for root in roots:
         for sdk in sorted(root.glob("MacOSX*.sdk")):
@@ -77,7 +64,6 @@ def readable(compiler: Version, sdk: Path) -> bool:
 def select_sdk(
     compiler: Version, preferred: Path, candidates: Iterable[Path]
 ) -> Path | None:
-    """`preferred` when `compiler` reads it, else the readable SDK built by the newest Swift."""
     if readable(compiler, preferred):
         return preferred
     versions = [(interface_version(sdk), sdk) for sdk in candidates]
@@ -91,7 +77,10 @@ def select_sdk(
 
 def main(argv: list[str]) -> int:
     if len(argv) != 3:
-        print(__doc__, file=sys.stderr)
+        print(
+            "usage: swift_sdk.py <swift> <preferred-sdk> <explicit 0|1>",
+            file=sys.stderr,
+        )
         return 2
     swift, preferred, explicit = argv[0], Path(argv[1]), argv[2] == "1"
     compiler = compiler_version(swift)

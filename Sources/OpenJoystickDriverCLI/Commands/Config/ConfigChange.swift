@@ -3,7 +3,7 @@ import Foundation
 import OpenJoystickDriverKit
 
 /// What `ojd config set` and `ojd config unset` share: they set or remove one tuning key in the
-/// user's patch of a controller model, or in `all.patch.json`, and print the same result.
+/// user's patch of a controller model, or in `all.patch.plist`, and print the same result.
 enum ConfigChange {
   /// The `--json` result. `value` is absent for `unset`, and `previous` while no layer set the key.
   struct Result: Encodable, Equatable {
@@ -13,7 +13,7 @@ enum ConfigChange {
     let value: Double?
     /// The number the user's record held before, or nil when no layer set the key.
     let previous: Double?
-    /// The controller model as `VVVV:PPPP`, or nil for `all.patch.json`.
+    /// The controller model as `VVVV:PPPP`, or nil for `all.patch.plist`.
     let controller: String?
     /// The path of the file that the command writes.
     let file: String
@@ -64,7 +64,7 @@ enum ConfigChange {
     return .set(key, try number(value))
   }
 
-  /// Applies `edit` to the record of `model`, or to `all.patch.json` without a model, and prints
+  /// Applies `edit` to the record of `model`, or to `all.patch.plist` without a model, and prints
   /// the result.
   ///
   /// - Throws: ``CLIFailure`` when the model has no record, the file or the result is not valid, an

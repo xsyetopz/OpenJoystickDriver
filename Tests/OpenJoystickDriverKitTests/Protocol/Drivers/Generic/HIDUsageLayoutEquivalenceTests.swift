@@ -6,11 +6,12 @@ import Testing
 
 /// Pins the `HIDDescriptor` usage tables to the output the coded tables produced.
 ///
-/// `Tests/HIDUsageGolden/hid-usage-layouts.txt` was rendered by the driver before its tables moved
-/// into records. These samples are hand-written element values, not hardware captures: every button
-/// usage, every Generic Desktop axis and hat value, and the Simulation and Consumer usages the
-/// tables name, each fed to every layout over several logical ranges and both with and without a
-/// report ID. The golden holds one line per step, so a changed table names the step that moved.
+/// `Tests/HIDUsageGolden/hid-usage-layouts.txt` was rendered by the driver from its coded tables,
+/// before the tables came from records. These samples are hand-written element values, not
+/// hardware captures: every button usage, every Generic Desktop axis and hat value, and the
+/// Simulation and Consumer usages the tables name, each fed to every layout over several logical
+/// ranges and both with and without a report ID. The golden holds one line per step, so a
+/// changed table names the step that moved.
 struct HIDUsageLayoutEquivalenceTests {
   private typealias Parse = DriverParseCharacterizationTests
 
@@ -30,7 +31,7 @@ struct HIDUsageLayoutEquivalenceTests {
     0xC4, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x02, 0x81, 0x02, 0xC0,
   ])
 
-  /// Each layout comes from the record or description that now declares it.
+  /// Each layout comes from the record or description that declares it.
   private func drivers() throws -> [(name: String, driver: HIDDescriptorDriver)] {
     let model = ControllerModelID(vendorID: 0xFFFE, productID: 1)
     return [
@@ -42,7 +43,7 @@ struct HIDUsageLayoutEquivalenceTests {
       ),
       (
         "ZRzBrakeLeft",
-        HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, 0x301B))
+        HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, 0x301D))
       ),
       (
         "DragonRise",
@@ -186,7 +187,7 @@ struct HIDUsageLayoutEquivalenceTests {
   }
 
   @Test
-  func everyUsageTableMatchesTheCodedOutput() throws {
+  func everyUsageTableMatchesCodedOutput() throws {
     let rendered = try render()
     let file = EquivalenceSnapshotStore.directory.deletingLastPathComponent()
       .appendingPathComponent("HIDUsageGolden/hid-usage-layouts.txt")

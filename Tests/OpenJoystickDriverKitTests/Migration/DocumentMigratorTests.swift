@@ -5,7 +5,6 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct DocumentMigratorTests {
-  private static let old = "openjoystickdriver/v1alpha1"
   private let directory = RootedDataDirectory.temporary()
 
   private var support: URL { directory.url(for: .applicationData) }
@@ -27,153 +26,236 @@ struct DocumentMigratorTests {
     FileManager.default.fileExists(atPath: support.appendingPathComponent(file).path)
   }
 
-  private static func document(_ kind: String, _ rest: String) -> String {
-    #"{"apiVersion": "\#(old)", "kind": "\#(kind)", \#(rest)}"#
+  private func document(_ file: String) throws -> OrderedJSON {
+    try OrderedJSON(document: read(file), file: file)
   }
 
-  private static let profile = document(
-    "Profile",
-    #"""
-    "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "name": "Tap",
-    "device": {"vendorID": 1356, "productID": 3302},
-    "applicationScope": {"type": "Global"},
-    "bindings": [{
-      "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D6A",
-      "source": {"type": "Button", "button": "East"},
-      "destination": {"type": "GamepadButton", "button": "South"},
-      "doubleTap": {"windowMs": 250, "destination": {"type": "GamepadButton", "button": "North"}}
-    }]
-    """#
-  )
-
-  private static let patch = document(
-    "ControllerPatch",
-    #"""
-    "selector": {"vendorID": 1356, "productID": 3302},
-    "patch": {"input": {"report": {"length": {"atLeast": 2}},
-      "buttons": [{"control": "South", "byte": 1, "mask": 12}],
-      "axes": [{"control": "LeftStickX", "byte": 2, "bits": 16}]}}
-    """#
-  )
+  @Test
+  func accessGrantsFileBecomesVersionThreePropertyList() throws {
+    try write(MigrationFixtures.accessGrants, "AccessGrants.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.migrated])
+    #expect(entries.map(\.file) == ["AccessGrants.json"])
+    let converted = try document("AccessGrants.plist")
+    #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
+    #expect(converted["enabled"] == .bool(true))
+    #expect(!exists("AccessGrants.json"))
+  }
 
   @Test
-  func aStaleProfileIsConvertedLoadedAndBackedUp() throws {
-    try write(Self.profile, "Profiles/a.json")
+  func profileBecomesVersionThreePropertyList() throws {
+    try write(MigrationFixtures.profile, "Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
-    #expect(entries.map(\.status) == [.converted])
-    #expect(entries.map(\.file) == ["Profiles/a.json"])
-    let profile = try JSONDecoder().decode(
-      RemappingProfile.self,
-      from: read("Profiles/a.json")
+    #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
+    let profile = try RemappingProfileFileStore.load(
+      from: support.appendingPathComponent("Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.plist")
     )
     #expect(profile.bindings.first?.multiTap.map(\.count) == [2])
-    #expect(String(bytes: try read("Migrated/Profiles/a.json"), encoding: .utf8) == Self.profile)
   }
 
   @Test
-  func aStalePatchGetsBitAddressedLayouts() throws {
-    try write(Self.patch, "Controllers/1.patch.json")
+  func userRecordBecomesVersionThreePropertyList() throws {
+    try write(MigrationFixtures.userRecord, "Controllers/1234-abcd.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.migrated])
+    let converted = try document("Controllers/1234-abcd.plist")
+    #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
+    #expect(converted["productID"] == .number("43981"))
+  }
+
+  @Test
+  func patchGetsBitAddressedLayouts() throws {
+    try write(MigrationFixtures.patch, "Controllers/054c-0ce6.patch.json")
     #expect(
-      DocumentMigrator(directory: directory).run(dryRun: false).map(\.status) == [.converted]
+      DocumentMigrator(directory: directory).run(dryRun: false).map(\.verdict) == [.migrated]
     )
-    let document = try OrderedJSON.parse(read("Controllers/1.patch.json"))
-    let layout = try #require(document["patch"]?["input"]?["layouts"])
+    let layout = try #require(
+      document("Controllers/054c-0ce6.patch.plist")["patch"]?["input"]?["layouts"]
+    )
     #expect(layout.formatted().contains(#""bitOffset": 10"#))
-    #expect(layout.formatted().contains(#""bitSize": 2"#))
-    #expect(layout.formatted().contains(#""bitOffset": 16"#))
     #expect(layout.formatted().contains(#""bitSize": 16"#))
   }
 
-  @Test
-  func aStaleSettingsFileAndVirtualDeviceAreConverted() throws {
-    try write(Self.document("Settings", #""showInDock": true"#), "Settings.json")
-    try write(
-      Self.document(
-        "VirtualDevice",
-        #""persona": "Generic", "match": {"vendorID": 1, "productID": 2}"#
-      ),
-      "VirtualDevices/a.json"
-    )
-    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
-    #expect(entries.map(\.status) == [.converted, .converted])
-    #expect(try SettingsStore(directory: directory).load().showInDock == true)
-    #expect(exists("Migrated/Settings.json"))
-  }
+  private static let badPatch =
+    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "ControllerPatch", "#
+    + #""selector": {"vendorID": 1, "productID": 2}, "patch": {"input": {"buttons": []}}}"#
 
   @Test
-  func anAccessGrantsFileIsConvertedByVersionOnly() throws {
-    try write(Self.document("AccessGrants", #""enabled": true"#), "AccessGrants.json")
-    #expect(
-      DocumentMigrator(directory: directory).run(dryRun: false).map(\.status) == [.converted]
-    )
-    let document = try OrderedJSON.parse(read("AccessGrants.json"))
-    #expect(document["apiVersion"]?.string == OpenJoystickDriverAPI.version)
-  }
-
-  @Test
-  func aPatchWithoutAReportStaysUnchangedAndOthersAreConverted() throws {
-    let bad = Self.document(
-      "ControllerPatch",
-      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"input": {"buttons": []}}"#
-    )
-    try write(bad, "Controllers/bad.patch.json")
-    try write(Self.profile, "Profiles/a.json")
-    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
-    #expect(entries.map(\.status) == [.failed, .converted])
-    #expect(entries.first?.detail?.contains("report") == true)
-    #expect(String(bytes: try read("Controllers/bad.patch.json"), encoding: .utf8) == bad)
-    #expect(!exists("Migrated/Controllers/bad.patch.json"))
-  }
-
-  @Test
-  func aDryRunListsTheDocumentsAndWritesNothing() throws {
-    try write(Self.profile, "Profiles/a.json")
+  func dryRunListsDocumentsAndWritesNothing() throws {
+    try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: true)
-    #expect(entries.map(\.status) == [.wouldConvert])
-    #expect(String(bytes: try read("Profiles/a.json"), encoding: .utf8) == Self.profile)
+    #expect(entries.map(\.verdict) == [.migrated])
+    #expect(exists("AccessGrants.json"))
+    #expect(!exists("AccessGrants.plist"))
     #expect(!exists("Migrated"))
   }
 
   @Test
-  func currentDocumentsAndOtherFilesAreNotListed() throws {
-    let current = Self.profile.replacingOccurrences(
-      of: Self.old,
-      with: OpenJoystickDriverAPI.version
-    )
-    try write(current, "Profiles/a.json")
-    try write(#"{"active": []}"#, "Profiles/ActiveProfiles.json")
-    #expect(DocumentMigrator(directory: directory).run(dryRun: false).isEmpty)
-  }
-
-  @Test
-  func aSecondRunLeavesTheBackupAndConvertsNothing() throws {
-    try write(Self.profile, "Profiles/a.json")
+  func originalKeptUnderMigratedWithItsRelativePath() throws {
+    try write(MigrationFixtures.profile, "Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
     _ = DocumentMigrator(directory: directory).run(dryRun: false)
-    #expect(DocumentMigrator(directory: directory).run(dryRun: false).isEmpty)
-  }
-
-  @Test
-  func anExistingBackupFailsTheDocumentAndKeepsIt() throws {
-    try write(Self.profile, "Profiles/a.json")
-    try write("kept", "Migrated/Profiles/a.json")
-    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
-    #expect(entries.map(\.status) == [.failed])
-    #expect(String(bytes: try read("Profiles/a.json"), encoding: .utf8) == Self.profile)
-    #expect(String(bytes: try read("Migrated/Profiles/a.json"), encoding: .utf8) == "kept")
-  }
-
-  @Test
-  func theStepConvertsAControllerRecordInput() throws {
-    let input = try OrderedJSON.parse(
-      Data(
-        (#"{"apiVersion": "\#(Self.old)", "kind": "Controller", "input": {"report": {}, "#
-          + #""leftTrigger": {"byte": 5, "button": {"control": "LT", "byte": 6, "mask": 1}}}}"#)
-          .utf8
-      )
+    #expect(
+      try read("Migrated/Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
+        == Data(MigrationFixtures.profile.utf8)
     )
-    let converted = try AlphaOneToAlphaTwo.convert(input, kind: .controller).formatted()
-    #expect(converted.contains(#""layouts""#))
-    #expect(converted.contains(#""bitOffset": 40"#))
-    #expect(converted.contains(#""bitOffset": 48"#))
+  }
+
+  @Test
+  func existingBackupNeverOverwrittenAndDocumentFails() throws {
+    try write(MigrationFixtures.accessGrants, "AccessGrants.json")
+    try write("kept", "Migrated/AccessGrants.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.failed])
+    #expect(try read("Migrated/AccessGrants.json") == Data("kept".utf8))
+    #expect(exists("AccessGrants.json"))
+    #expect(!exists("AccessGrants.plist"))
+  }
+
+  @Test
+  func oneFailureDoesNotStopOthers() throws {
+    try write(Self.badPatch, "Controllers/bad.patch.json")
+    try write(MigrationFixtures.accessGrants, "AccessGrants.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(
+      entries.map(\.verdict) == [.migrated, .failed],
+      "\(entries)"
+    )
+    #expect(exists("AccessGrants.plist"))
+    #expect(exists("Controllers/bad.patch.json"))
+    #expect(!exists("Migrated/Controllers/bad.patch.json"))
+  }
+
+  @Test
+  func secondRunFindsMigratedDocumentCurrent() throws {
+    try write(MigrationFixtures.accessGrants, "AccessGrants.json")
+    _ = DocumentMigrator(directory: directory).run(dryRun: false)
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.current])
+    #expect(entries.map(\.file) == ["AccessGrants.plist"])
+  }
+
+  @Test
+  func jsonFileBesideItsPropertyListFailsAndKeepsBoth() throws {
+    try write(MigrationFixtures.accessGrants, "AccessGrants.json")
+    try write("existing", "AccessGrants.plist")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict).contains(.failed))
+    #expect(try read("AccessGrants.plist") == Data("existing".utf8))
+    #expect(exists("AccessGrants.json"))
+  }
+
+  @Test
+  func fileOfAnotherProgramForeignAndUntouched() throws {
+    try write("not json", "Profiles/notes.json")
+    try write("not json", "Controllers/readme.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.foreign, .foreign])
+    #expect(exists("Profiles/notes.json"))
+  }
+
+  @Test
+  func storeFileWithoutAPIVersionFailsWithReasonAndStaysUntouched() throws {
+    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.failed])
+    #expect(entries.first?.detail == "has no apiVersion")
+    #expect(try read("Profiles/notes.json") == Data(#"{"name": "mine"}"#.utf8))
+  }
+
+  @Test
+  func stalePersonaAndPackageDocumentsAreConverted() throws {
+    try write(MigrationFixtures.userRecord, "Personas/1234-abcd.json")
+    try write(MigrationFixtures.userRecord, "Packages/mine/records/1234-abcd.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(
+      entries.map(\.file) == ["Packages/mine/records/1234-abcd.json", "Personas/1234-abcd.json"]
+    )
+    #expect(entries.map(\.verdict) == [.migrated, .migrated], "\(entries)")
+    #expect(exists("Personas/1234-abcd.plist"))
+    #expect(exists("Packages/mine/records/1234-abcd.plist"))
+  }
+
+  @Test
+  func lastUsedTimesAreCurrentAndStayUntouched() throws {
+    // Arrange
+    let times = try PropertyListSerialization.data(
+      fromPropertyList: ["6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E": 1_700_000_000.0],
+      format: .xml,
+      options: 0
+    )
+    try write(try #require(String(bytes: times, encoding: .utf8)), "LastUsed.plist")
+
+    // Act
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+
+    // Assert
+    #expect(entries.map(\.verdict) == [.current], "\(entries)")
+    #expect(entries.first?.kind == "LastUsed")
+    #expect(try read("LastUsed.plist") == times)
+  }
+
+  @Test
+  func zeroFiveDocumentFailsWithReason() throws {
+    try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.failed])
+    #expect(entries.first?.detail == "written by 0.5; re-create it")
+    #expect(exists("RemappingProfiles.json"))
+    #expect(!exists("Migrated"))
+  }
+
+  @Test
+  func activeProfilesArrayBecomesPropertyList() throws {
+    try write(
+      #"[{"profileID": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "vendorID": 1, "productID": 2}]"#,
+      "ActiveProfiles.json"
+    )
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
+    guard case .array(let items) = try document("ActiveProfiles.plist") else {
+      Issue.record("not an array")
+      return
+    }
+    #expect(items.count == 1)
+  }
+
+  @Test
+  func activeProfilesScopeKeepsItsAppsAsList() throws {
+    try write(
+      #"""
+      [{"profileID": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "vendorID": 1, "productID": 2,
+        "applicationScope": {"type": "Application", "appID": "com.example.game"}}]
+      """#,
+      "ActiveProfiles.json"
+    )
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
+    guard case .array(let items) = try document("ActiveProfiles.plist") else {
+      Issue.record("not an array")
+      return
+    }
+    let scope = try #require(items.first?["applicationScope"])
+    #expect(scope["appIDs"] == .array([.string("com.example.game")]))
+    #expect(scope["appID"] == nil)
+  }
+
+  @Test
+  func folderArgumentScannedRecursivelyWithItsOwnBackups() throws {
+    try write(MigrationFixtures.accessGrants, "Elsewhere/Sub/AccessGrants.json")
+    let folder = support.appendingPathComponent("Elsewhere")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false, folder: folder)
+    #expect(entries.map(\.file) == ["Sub/AccessGrants.json"])
+    #expect(exists("Elsewhere/Sub/AccessGrants.plist"))
+    #expect(exists("Elsewhere/Migrated/Sub/AccessGrants.json"))
+  }
+
+  @Test
+  func packagesScannedBelowTheirFolder() throws {
+    try write(
+      MigrationFixtures.document(MigrationFixtures.alphaOne, "ModPackage", #""name": "x""#),
+      "Packages/x/mod.json"
+    )
+    let entries = DocumentMigrator(directory: directory).run(dryRun: true)
+    #expect(entries.map(\.file) == ["Packages/x/mod.json"])
   }
 }

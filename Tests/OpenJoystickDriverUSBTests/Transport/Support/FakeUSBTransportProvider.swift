@@ -21,8 +21,8 @@ actor FakeUSBTransportProvider: USBTransportProvider {
   func devices() throws -> [USBTransportDevice] { try devicesResult.get() }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) throws -> any USBTransportSession {
     openCount += 1
     return try openResult.get()
@@ -30,11 +30,11 @@ actor FakeUSBTransportProvider: USBTransportProvider {
 }
 
 private final class FakeUSBTransportSession: USBTransportSession, @unchecked Sendable {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int { data.count }
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int { data.count }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] { [] }
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) -> [UInt8] { [] }
 }

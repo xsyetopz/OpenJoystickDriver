@@ -48,7 +48,7 @@
 
     /// The title, the trigger picker, its fields and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.trigger.title")).font(
           .headline
         )
@@ -62,7 +62,9 @@
           Text(OJDLocalized.string("ui.profiles.trigger.right")).tag(
             RemappingTriggerSource.right
           )
-        }.pickerStyle(SegmentedPickerStyle())
+        }.help(OJDLocalized.string("ui.profiles.trigger.sourceHelp")).pickerStyle(
+          SegmentedPickerStyle()
+        )
         ScrollView {
           ProfileTriggerFields(draft: selected == .left ? $left : $right).padding(.trailing, 8)
         }
@@ -75,11 +77,11 @@
               right = ProfileTriggerDraft(source: .right, mapping: nil)
             }
             errorMessage = nil
-          }
+          }.help(OJDLocalized.string("ui.help.reset"))
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.save")) {
             do {
               let separator = Locale.current.decimalSeparator ?? "."
@@ -89,10 +91,9 @@
               try onSave(mappings)
               presentationMode.wrappedValue.dismiss()
             } catch { errorMessage = RuntimePresentation.userFacingError(error) }
-          }
+          }.help(OJDLocalized.string("ui.help.save"))
         }
-      }.padding(28).frame(
-        width: 500,
+      }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(
           enabled: selected == .left ? left.enabled : right.enabled,
           compact: 260,

@@ -26,7 +26,7 @@ struct HomePathOutputTests {
   private struct Document: Encodable { let path: String }
 
   @Test
-  func humanTextShowsTheTildeAndEveryOtherWriteKeepsTheHomePath() throws {
+  func humanTextShowsTildeAndEveryOtherWriteKeepsHomePath() throws {
     let path = "\(Self.home)/Library/x"
     let written = try capture {
       CLIOutput.stdout("out \(path)")
@@ -47,7 +47,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func logShowPrintsTheTildeAndLogPathKeepsTheAbsoluteFolder() async throws {
+  func logShowPrintsTildeAndLogPathKeepsAbsoluteFolder() async throws {
     let logs = URL(fileURLWithPath: "\(Self.home)/Library/Logs/OpenJoystickDriver")
     let environment = LogEnvironment(
       directory: { logs },
@@ -85,7 +85,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func modInstallDryRunPrintsTheTildeAndJSONAndPlainKeepTheAbsolutePath() async throws {
+  func modInstallDryRunPrintsTildeAndJSONAndPlainKeepAbsolutePath() async throws {
     let source = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-home-mod-\(UUID().uuidString)", isDirectory: true)
     defer { try? FileManager.default.removeItem(at: source) }
@@ -95,16 +95,16 @@ struct HomePathOutputTests {
       "apiVersion": OpenJoystickDriverAPI.version, "kind": "Controller", "vendorID": 0xFFF1,
       "productID": 1, "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
     ]
-    try JSONSerialization.data(withJSONObject: record).write(
-      to: controllers.appendingPathComponent("fff1-0001.json")
+    try PropertyListFixture.data(tree: record).write(
+      to: controllers.appendingPathComponent("fff1-0001.plist")
     )
     let manifest: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind,
       "name": "arcade-pack", "version": "1.2.3", "author": "Tester",
-      "requires": ["minimum": "0.6.0"], "controllers": ["fff1-0001.json"],
+      "requires": ["minimum": "0.6.0"], "controllers": ["fff1-0001.plist"],
     ]
-    try JSONSerialization.data(withJSONObject: manifest).write(
-      to: source.appendingPathComponent("mod.json")
+    try PropertyListFixture.data(tree: manifest).write(
+      to: source.appendingPathComponent("mod.plist")
     )
     let packages = Self.unusedFolder("packages")
     let installed = packages.appendingPathComponent("arcade-pack").path
@@ -128,16 +128,16 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func recordInstallDryRunPrintsTheTildeAndJSONAndPlainKeepTheAbsolutePath() async throws {
-    let patch = Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-       "selector": {"vendorID": 13932, "productID": 5},
-       "patch": {"tuning": {"stickDeadzone": 0.08}}}
-      """.utf8
+  func recordInstallDryRunPrintsTildeAndJSONAndPlainKeepAbsolutePath() async throws {
+    let patch = PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+          "selector": {"vendorID": 13932, "productID": 5},
+        "patch": {"tuning": {"stickDeadzone": 0.08}}}
+        """
     )
     let records = Self.unusedFolder("records")
-    let installed = records.appendingPathComponent("366c-0005.patch.json").path
+    let installed = records.appendingPathComponent("366c-0005.patch.plist").path
 
     func run(_ arguments: [String]) async -> CLIRun {
       await RecordStore.$directory.withValue(records) {
@@ -159,7 +159,7 @@ struct HomePathOutputTests {
   }
 
   @Test
-  func accessListPrintsTheTildeForAClientPathAndJSONKeepsItAbsolute() async throws {
+  func accessListPrintsTildeForClientPathAndJSONKeepsItAbsolute() async throws {
     let program = "\(Self.home)/Applications/Reader.app"
     let identity = CodeSigningIdentity(
       kind: .signed,

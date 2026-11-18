@@ -14,6 +14,10 @@ struct ControllerShowReport: Encodable, Equatable {
     /// The client that holds the controller's USB interface exclusively; absent when none does or
     /// the interface names none.
     let owner: USBExclusiveOwner?
+    /// Every process that holds the controller's HID device or USB interfaces open.
+    let holders: [USBExclusiveOwner]
+    /// Whether OJD's own open of the controller is exclusive, so another app cannot open it.
+    let holdsExclusively: Bool
     /// Whether the controller risks being exposed twice to apps.
     let duplicateExposureRisk: String
     /// Who serves the model: the `server` setting, or `ojd` for a controller the system cannot
@@ -100,6 +104,32 @@ struct ControllerShowReport: Encodable, Equatable {
     let replyTimeoutMs: Int?
     /// How many virtual gamepad reports may wait behind the one being sent.
     let frameQueueCapacity: Int?
+    /// The stored centre of the left stick X axis.
+    let leftStickCenterX: Double?
+    /// The stored centre of the left stick Y axis.
+    let leftStickCenterY: Double?
+    /// The stored centre of the right stick X axis.
+    let rightStickCenterX: Double?
+    /// The stored centre of the right stick Y axis.
+    let rightStickCenterY: Double?
+    /// The stored left stick deflection that reads as full.
+    let leftStickRange: Double?
+    /// The stored right stick deflection that reads as full.
+    let rightStickRange: Double?
+    /// The stored rest value of the left trigger.
+    let leftTriggerRest: Double?
+    /// The stored fully pressed value of the left trigger.
+    let leftTriggerFull: Double?
+    /// The stored rest value of the right trigger.
+    let rightTriggerRest: Double?
+    /// The stored fully pressed value of the right trigger.
+    let rightTriggerFull: Double?
+    /// The stored gyro offset about the X axis, in radians per second.
+    let gyroOffsetX: Double?
+    /// The stored gyro offset about the Y axis, in radians per second.
+    let gyroOffsetY: Double?
+    /// The stored gyro offset about the Z axis, in radians per second.
+    let gyroOffsetZ: Double?
 
     /// Creates the tuning from `tuning`; nil when the record sets no tuning.
     init?(_ tuning: ControllerTuning) {
@@ -121,6 +151,19 @@ struct ControllerShowReport: Encodable, Equatable {
       speakerMaxSeconds = tuning.speakerMaxSeconds
       replyTimeoutMs = tuning.replyTimeoutMilliseconds
       frameQueueCapacity = tuning.frameQueueCapacity
+      leftStickCenterX = tuning.calibration.values[.leftStickCenterX]
+      leftStickCenterY = tuning.calibration.values[.leftStickCenterY]
+      rightStickCenterX = tuning.calibration.values[.rightStickCenterX]
+      rightStickCenterY = tuning.calibration.values[.rightStickCenterY]
+      leftStickRange = tuning.calibration.values[.leftStickRange]
+      rightStickRange = tuning.calibration.values[.rightStickRange]
+      leftTriggerRest = tuning.calibration.values[.leftTriggerRest]
+      leftTriggerFull = tuning.calibration.values[.leftTriggerFull]
+      rightTriggerRest = tuning.calibration.values[.rightTriggerRest]
+      rightTriggerFull = tuning.calibration.values[.rightTriggerFull]
+      gyroOffsetX = tuning.calibration.values[.gyroOffsetX]
+      gyroOffsetY = tuning.calibration.values[.gyroOffsetY]
+      gyroOffsetZ = tuning.calibration.values[.gyroOffsetZ]
     }
 
     /// The set values as `name=value`, in record-file order.
@@ -143,6 +186,19 @@ struct ControllerShowReport: Encodable, Equatable {
         speakerMaxSeconds.map { "speakerMaxSeconds=\($0)" },
         replyTimeoutMs.map { "replyTimeoutMs=\($0)" },
         frameQueueCapacity.map { "frameQueueCapacity=\($0)" },
+        leftStickCenterX.map { "leftStickCenterX=\($0)" },
+        leftStickCenterY.map { "leftStickCenterY=\($0)" },
+        rightStickCenterX.map { "rightStickCenterX=\($0)" },
+        rightStickCenterY.map { "rightStickCenterY=\($0)" },
+        leftStickRange.map { "leftStickRange=\($0)" },
+        rightStickRange.map { "rightStickRange=\($0)" },
+        leftTriggerRest.map { "leftTriggerRest=\($0)" },
+        leftTriggerFull.map { "leftTriggerFull=\($0)" },
+        rightTriggerRest.map { "rightTriggerRest=\($0)" },
+        rightTriggerFull.map { "rightTriggerFull=\($0)" },
+        gyroOffsetX.map { "gyroOffsetX=\($0)" },
+        gyroOffsetY.map { "gyroOffsetY=\($0)" },
+        gyroOffsetZ.map { "gyroOffsetZ=\($0)" },
       ].compactMap { $0 }
     }
   }
@@ -159,6 +215,9 @@ struct ControllerShowReport: Encodable, Equatable {
     let overrideScope: VirtualHIDProfileOverrideScope?
     /// Whether the controller has no virtual gamepad profile to publish.
     let unavailable: Bool
+    /// True when the controller has rumble motors and `profile` carries no rumble, so no game
+    /// can rumble it.
+    let gameRumbleUnavailable: Bool
   }
 
   /// How OJD serves the controller, as `ServingPolicy` decides it.
@@ -169,9 +228,13 @@ struct ControllerShowReport: Encodable, Equatable {
     let persona: String?
     /// Why a route publishes nothing; absent for a route that serves.
     let reason: String?
+    /// True when Apple's driver holds the controller, so a claim activates the extension; absent
+    /// otherwise.
+    let heldByAppleDriver: Bool?
 
     /// Creates the description from the serving decision.
-    init(_ decision: ServingDecision) {
+    init(_ decision: ServingDecision, heldByAppleDriver: Bool) {
+      self.heldByAppleDriver = heldByAppleDriver ? true : nil
       route = decision.route.id
       persona = decision.selection?.profileID.rawValue
       reason = decision.route.disabledReason?.rawValue
@@ -318,13 +381,15 @@ struct ControllerShowReport: Encodable, Equatable {
         physical: device.physicalOwnership.rawValue,
         hidInput: device.hidInputOwnership.rawValue,
         owner: device.inputOwner,
+        holders: device.holders,
+        holdsExclusively: device.holdsExclusively,
         duplicateExposureRisk: device.duplicateExposureRisk.rawValue,
-        server: offersServerChoice ? record?.server ?? .system : .ojd,
+        server: offersServerChoice ? record?.statedServer ?? device.recordServer : .ojd,
         serverSource: offersServerChoice
           ? record?.serverSource ?? ControllerRecord.defaultServerSource
           : ControllerRecord.routeServerSource
       ),
-      serving: Serving(device.servingDecision),
+      serving: Serving(device.servingDecision, heldByAppleDriver: device.isHeldByAppleDriver),
       parameters: device.parameters,
       record: record.map(Record.init),
       inputMapping: device.bindingResult.inputMapping,
@@ -346,7 +411,8 @@ struct ControllerShowReport: Encodable, Equatable {
           source: device.servingDecision.selection?.source.reported,
           override: $0.override?.rawValue,
           overrideScope: $0.overrideScope,
-          unavailable: device.servingDecision.route == .outputDisabled(.noVirtualProfile)
+          unavailable: device.servingDecision.route == .outputDisabled(.noVirtualProfile),
+          gameRumbleUnavailable: device.personaWithoutGameRumble != nil
         )
       },
       publication: device.publication.map {

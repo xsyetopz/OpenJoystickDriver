@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A vendor-class USB interface that carries the controller's commands beside its HID interface.
 ///
@@ -96,6 +96,9 @@ public struct DriverSessionPlan: Equatable, Sendable {
   public let hidPlayerIndicatorFollowsFirstInput: Bool
   /// USB command interface for `.usb` writes of a controller bound over HID; nil when none.
   public let usbCommandChannel: USBCommandChannel?
+  /// True when the session has an interrupt IN read pending before it sends the USB startup
+  /// writes, for a pad that sends its first report only to a read already waiting.
+  public let armsInputBeforeStartup: Bool
   /// What the user does before the controller sends input, from the family's description for the
   /// bound variant (``withDefaults(of:variant:)``); nil when input starts on its own.
   public internal(set) var inputStartAction: InputStartAction?
@@ -120,7 +123,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
     minimumHIDOutputIntervalNanoseconds: UInt64 = 0,
     assignsStartupPlayerIndicator: Bool = false,
     hidPlayerIndicatorFollowsFirstInput: Bool = false,
-    usbCommandChannel: USBCommandChannel? = nil
+    usbCommandChannel: USBCommandChannel? = nil,
+    armsInputBeforeStartup: Bool = false
   ) {
     self.inputReportLivenessTimeoutNanoseconds = inputReportLivenessTimeoutNanoseconds
     self.requiresInputConnectionBeforeOutput = requiresInputConnectionBeforeOutput
@@ -140,6 +144,7 @@ public struct DriverSessionPlan: Equatable, Sendable {
     self.assignsStartupPlayerIndicator = assignsStartupPlayerIndicator
     self.hidPlayerIndicatorFollowsFirstInput = hidPlayerIndicatorFollowsFirstInput
     self.usbCommandChannel = usbCommandChannel
+    self.armsInputBeforeStartup = armsInputBeforeStartup
   }
 
   /// This plan with the timings and the input start action that the protocol description of
@@ -237,7 +242,7 @@ extension PhysicalProtocolID {
   /// A description that defaults none for a key its driver reads is a defect.
   func described(_ key: KeyPath<ControllerTuning, Int?>, in tuning: ControllerTuning?) -> Int {
     guard let value = driverTuning().overlaid(by: tuning ?? .none)[keyPath: key] else {
-      preconditionFailure("\(descriptionFileStem).json defaults no \(key)")
+      preconditionFailure("\(descriptionFileStem).plist defaults no \(key)")
     }
     return value
   }
@@ -259,7 +264,7 @@ extension PhysicalProtocolID {
     record: RumbleOutputTemplate?
   ) -> RumbleOutputTemplate {
     guard let template = rumbleTemplate(variant: variant, record: record) else {
-      preconditionFailure("\(descriptionFileStem).json sets no rumble template")
+      preconditionFailure("\(descriptionFileStem).plist sets no rumble template")
     }
     return template
   }
@@ -269,7 +274,7 @@ extension PhysicalProtocolID {
   /// A description that sets none for a count its driver reads is a defect.
   func described(limit: KeyPath<ProtocolDescription, Int?>) -> Int {
     guard let value = protocolDescription[keyPath: limit] else {
-      preconditionFailure("\(descriptionFileStem).json sets no \(limit)")
+      preconditionFailure("\(descriptionFileStem).plist sets no \(limit)")
     }
     return value
   }
@@ -281,7 +286,7 @@ extension PhysicalProtocolID {
   /// A driver adds only what its record or layout makes true.
   var describedControls: ControllerCapabilities {
     guard let controls = protocolDescription.controls else {
-      preconditionFailure("\(descriptionFileStem).json describes no controls")
+      preconditionFailure("\(descriptionFileStem).plist describes no controls")
     }
     return controls
   }
@@ -332,6 +337,10 @@ public protocol PhysicalProtocolDriver: AnyObject {
 
   /// Resets protocol state whenever a physical transport session starts or ends.
   func resetProtocolState()
+
+  /// Drops the bytes of a frame that a later report would complete, after a report the record's
+  /// input layouts decode turned out to be no frame of the family.
+  func discardPartialInput()
 
   /// Writes that start a session, sent in order at ``DriverSessionPlan`` startup spacing; called
   /// again for every startup attempt.
@@ -411,6 +420,8 @@ extension PhysicalProtocolDriver {
   public var wiiRemoteStatus: WiiRemoteStatus? { nil }
   /// Default: the driver keeps no protocol state to reset.
   public func resetProtocolState() {}
+  /// Default: the driver buffers no partial frame.
+  public func discardPartialInput() {}
   /// Default: no startup writes.
   public func startupWrites() -> [PhysicalOutputWrite] { [] }
   /// Default: no activation writes.

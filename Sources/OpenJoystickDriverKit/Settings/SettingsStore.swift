@@ -1,8 +1,8 @@
-import Foundation
+public import Foundation
 
 /// The failures of reading or changing the user settings file.
 public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
-  /// The file is not valid JSON of the `Settings` kind (including an unknown key).
+  /// The file is not an XML property list of the `Settings` kind (including an unknown key).
   case damaged(file: String)
   /// The file's `apiVersion` or `kind` is not the supported one; the problem names the file.
   case unsupported(file: String, problem: DocumentHeaderProblem)
@@ -61,7 +61,7 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
   }
 }
 
-/// Reads and writes the `Settings.json` file through the `DataDirectory` port.
+/// Reads and writes the `Settings.plist` file through the `DataDirectory` port.
 ///
 /// The layers, lowest to highest precedence:
 /// 1. the built-in defaults (``ApplicationSettingKey/defaultValue``);
@@ -73,10 +73,10 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
 /// app, the service, and the CLI cannot lose each other's updates.
 public struct SettingsStore: Sendable {
   /// The name of the user settings file.
-  public static let fileName = "Settings.json"
+  public static let fileName = "Settings.plist"
   /// The sidecar file whose advisory lock serializes updates.
-  public static let lockFileName = "Settings.json.lock"
-  /// The location whose `Settings.json` is read and written.
+  public static let lockFileName = "Settings.plist.lock"
+  /// The location whose `Settings.plist` is read and written.
   public static let location = DataLocation.applicationData
 
   /// The data directory that locates the settings folder.
@@ -89,7 +89,7 @@ public struct SettingsStore: Sendable {
   public init(
     directory: any DataDirectory = MacOSDataDirectory(),
     trash: @escaping @Sendable (URL) throws -> Void = {
-      try FileManager.default.trashItem(at: $0, resultingItemURL: nil)
+      try unsafe FileManager.default.trashItem(at: $0, resultingItemURL: nil)
     }
   ) {
     self.directory = directory
@@ -118,6 +118,43 @@ public struct SettingsStore: Sendable {
   /// Whether the user turned launch at login off, so the app must not register itself again.
   public func launchAtLoginOptOut() throws -> Bool { try load().launchAtLoginOptOut ?? false }
 
+  /// The interface level after the user file and the built-in default apply.
+  public func interfaceLevel() throws -> InterfaceLevel {
+    try load().interfaceLevel ?? .default
+  }
+
+  /// Stores the interface level in the user file.
+  public func setInterfaceLevel(_ level: InterfaceLevel) throws {
+    try update { $0.interfaceLevel = level }
+  }
+
+  /// The pause shortcut, or nil while none is set.
+  public func pauseShortcut() throws -> PauseShortcut? { try load().pauseShortcut }
+
+  /// Stores the pause shortcut in the user file, or removes it when `shortcut` is nil.
+  public func setPauseShortcut(_ shortcut: PauseShortcut?) throws {
+    try update { $0.pauseShortcut = shortcut }
+  }
+
+  /// Minutes without changed input after which a Bluetooth controller disconnects, or nil while
+  /// the setting is off.
+  public func idleDisconnectMinutes() throws -> Int? { try load().idleDisconnectMinutes }
+
+  /// Stores the idle disconnect time in the user file, or turns it off when `minutes` is nil.
+  public func setIdleDisconnectMinutes(_ minutes: Int?) throws {
+    try update { $0.idleDisconnectMinutes = minutes }
+  }
+
+  /// The version whose changelog section the app showed last, or nil while none was shown.
+  public func lastShownChangelogVersion() throws -> String? {
+    try load().lastShownChangelogVersion
+  }
+
+  /// Stores the version whose changelog section the app showed.
+  public func setLastShownChangelogVersion(_ version: String) throws {
+    try update { $0.lastShownChangelogVersion = version }
+  }
+
   /// Stores `value` for `key` in the user file.
   public func set(_ key: ApplicationSettingKey, to value: Bool) throws {
     try update([key: value])
@@ -125,6 +162,11 @@ public struct SettingsStore: Sendable {
 
   /// Stores every value in `values` in the user file in one write.
   public func update(_ values: [ApplicationSettingKey: Bool]) throws {
+    try update { document in for (key, value) in values { document[key] = value } }
+  }
+
+  /// Changes the user file's document with `change` in one locked write.
+  private func update(_ change: (inout SettingsDocument) -> Void) throws {
     let url = userFileURL
     do {
       try FileManager.default.createDirectory(
@@ -135,15 +177,14 @@ public struct SettingsStore: Sendable {
     } catch { throw SettingsStoreError.unwritable(file: url.path) }
     try locked {
       var document = try read(url)
-      for (key, value) in values { document[key] = value }
-      if values[.showInMenuBar] != nil || values[.showInDock] != nil,
-        document.hasNoVisibleEntryPoint
-      {
+      let before = document
+      change(&document)
+      let entryPointChanged =
+        before.showInMenuBar != document.showInMenuBar || before.showInDock != document.showInDock
+      if entryPointChanged, document.hasNoVisibleEntryPoint {
         throw SettingsStoreError.noVisibleEntryPoint
       }
-      let encoder = JSONEncoder()
-      encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-      do { try encoder.encode(document).write(to: url, options: .atomic) } catch {
+      do { try DocumentCoder.encode(document).write(to: url, options: .atomic) } catch {
         throw SettingsStoreError.unwritable(file: url.path)
       }
     }
@@ -166,7 +207,7 @@ public struct SettingsStore: Sendable {
   /// Runs `body` while holding the advisory lock on the sidecar file in the settings folder.
   private func locked<Result>(_ body: () throws -> Result) throws -> Result {
     let url = userFileURL
-    let lock = open(
+    let lock = unsafe open(
       folderURL.appendingPathComponent(Self.lockFileName).path,
       O_CREAT | O_RDWR | O_CLOEXEC,
       0o600
@@ -191,7 +232,7 @@ public struct SettingsStore: Sendable {
       return SettingsDocument()
     } catch { throw SettingsStoreError.damaged(file: url.path) }
     do {
-      let document = try JSONDecoder().decode(SettingsDocument.self, from: data)
+      let document = try DocumentCoder.decode(SettingsDocument.self, from: data, file: url.path)
       if document.hasNoVisibleEntryPoint {
         throw SettingsStoreError.storedNoVisibleEntryPoint(file: url.path)
       }

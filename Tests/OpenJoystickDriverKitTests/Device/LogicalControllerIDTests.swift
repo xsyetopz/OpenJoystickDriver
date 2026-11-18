@@ -6,7 +6,7 @@ import Testing
 
 struct LogicalControllerIDTests {
   @Test
-  func logDescriptionNotesASerialWithoutRevealingIt() {
+  func logDescriptionNotesSerialWithoutRevealingIt() {
     let identifier = LogicalControllerID(
       vendorID: 0x054C,
       productID: 0x09CC,
@@ -20,7 +20,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func hardwareIdentityIgnoresTheAddress() {
+  func hardwareIdentityIgnoresAddress() {
     let first = LogicalControllerID(
       vendorID: 0x045E,
       productID: 0x0719,
@@ -142,7 +142,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func virtualIdentityOfASerialControllerSurvivesAPortChange() {
+  func virtualIdentityOfSerialControllerSurvivesPortChange() {
     let before = LogicalControllerID(
       vendorID: 0x045E,
       productID: 0x0B12,
@@ -164,6 +164,8 @@ struct LogicalControllerIDTests {
         == UserSpaceVirtualDeviceConstants.locationID(for: after)
     )
   }
+
+  private static let holder = UUID()
 
   private static func sharedSerialPad(locationID: UInt32) -> LogicalControllerID {
     LogicalControllerID(
@@ -190,17 +192,20 @@ struct LogicalControllerIDTests {
   @Test
   func sameSerialControllersGetDistinctVirtualIdentities() {
     var registry = VirtualIdentityRegistry()
-    let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000))
-    let second = registry.reserve(Self.sharedSerialPad(locationID: 0x1500_0000))
+    let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000), holder: Self.holder)
+    let second = registry.reserve(
+      Self.sharedSerialPad(locationID: 0x1500_0000),
+      holder: Self.holder
+    )
 
     #expect(first.serialNumber != second.serialNumber)
     #expect(first.locationID != second.locationID)
   }
 
   @Test
-  func firstSameSerialControllerKeepsThePlainIdentity() {
+  func firstSameSerialControllerKeepsPlainIdentity() {
     var registry = VirtualIdentityRegistry()
-    let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000))
+    let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000), holder: Self.holder)
 
     #expect(first.serialNumber == "OpenJoystickDriver-UserSpace:d7b8ce84d34c45a2")
   }
@@ -210,36 +215,38 @@ struct LogicalControllerIDTests {
     var registry = VirtualIdentityRegistry()
     let a = Self.sharedSerialPad(locationID: 0x1400_0000)
     let b = Self.sharedSerialPad(locationID: 0x1500_0000)
-    let firstA = registry.reserve(a)
-    let firstB = registry.reserve(b)
+    let firstA = registry.reserve(a, holder: Self.holder)
+    let firstB = registry.reserve(b, holder: Self.holder)
 
-    #expect(registry.reserve(a) == firstA)
-    #expect(registry.reserve(b) == firstB)
-    registry.release(a)
-    #expect(registry.reserve(b) == firstB)
+    #expect(registry.reserve(a, holder: Self.holder) == firstA)
+    #expect(registry.reserve(b, holder: Self.holder) == firstB)
+    registry.release(a, holder: Self.holder)
+    #expect(registry.reserve(b, holder: Self.holder) == firstB)
   }
 
   @Test
   func stoppedControllerReleasesItsIdentity() {
     var registry = VirtualIdentityRegistry()
     let a = Self.sharedSerialPad(locationID: 0x1400_0000)
-    let first = registry.reserve(a)
-    _ = registry.reserve(Self.sharedSerialPad(locationID: 0x1500_0000))
-    registry.release(a)
+    let first = registry.reserve(a, holder: Self.holder)
+    _ = registry.reserve(Self.sharedSerialPad(locationID: 0x1500_0000), holder: Self.holder)
+    registry.release(a, holder: Self.holder)
 
-    #expect(registry.reserve(Self.sharedSerialPad(locationID: 0x1600_0000)) == first)
+    #expect(
+      registry.reserve(Self.sharedSerialPad(locationID: 0x1600_0000), holder: Self.holder) == first
+    )
   }
 
   @Test
-  func locationIDCollisionResolvesToTheNextFreeValue() {
+  func locationIDCollisionResolvesToNextFreeValue() {
     let (a, b) = Self.collidingPads()
     #expect(
       UserSpaceVirtualDeviceConstants.locationID(for: a)
         == UserSpaceVirtualDeviceConstants.locationID(for: b)
     )
     var registry = VirtualIdentityRegistry()
-    let first = registry.reserve(a)
-    let second = registry.reserve(b)
+    let first = registry.reserve(a, holder: Self.holder)
+    let second = registry.reserve(b, holder: Self.holder)
 
     #expect(first.locationID == UserSpaceVirtualDeviceConstants.locationID(for: a))
     #expect(second.locationID == first.locationID + 1)
@@ -251,7 +258,7 @@ struct LogicalControllerIDTests {
     let (a, b) = Self.collidingPads()
     func run() -> [VirtualDeviceIdentity] {
       var registry = VirtualIdentityRegistry()
-      return [registry.reserve(a), registry.reserve(b)]
+      return [registry.reserve(a, holder: Self.holder), registry.reserve(b, holder: Self.holder)]
     }
     let firstRun = run()
     let secondRun = run()
@@ -259,7 +266,7 @@ struct LogicalControllerIDTests {
   }
 
   @Test
-  func applicationServiceEncodingsCarryTheSessionTokenAndNotTheSerial() throws {
+  func applicationServiceEncodingsCarrySessionTokenAndNotSerial() throws {
     let serial = "RPC-Private-Serial"
     let identifier = LogicalControllerID(vendorID: 0x045E, productID: 0x028E, serialNumber: serial)
     let token = ControllerSessionToken.issue()
@@ -349,9 +356,9 @@ struct LogicalControllerIDTests {
 }
 
 private struct AnyEncodable: Encodable {
-  private let encodeValue: (Encoder) throws -> Void
+  private let encodeValue: (any Encoder) throws -> Void
 
   init(_ value: any Encodable) { self.encodeValue = value.encode }
 
-  func encode(to encoder: Encoder) throws { try encodeValue(encoder) }
+  func encode(to encoder: any Encoder) throws { try encodeValue(encoder) }
 }

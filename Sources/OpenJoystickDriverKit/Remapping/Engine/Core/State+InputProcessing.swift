@@ -132,16 +132,16 @@ extension RemappingEngineState {
     devices[identifier] = device
 
     var actions: [RemappingEngineAction] = []
-    for direction in removed.sorted(by: Self.dpadLessThan) {
+    for released in removed.sorted(by: Self.dpadLessThan) {
       actions += setSource(
-        .dpad(direction),
+        .dpad(released),
         isActive: false,
         for: identifier,
         at: uptimeNanoseconds
       )
     }
-    for direction in added.sorted(by: Self.dpadLessThan) {
-      actions += setSource(.dpad(direction), isActive: true, for: identifier, at: uptimeNanoseconds)
+    for pressed in added.sorted(by: Self.dpadLessThan) {
+      actions += setSource(.dpad(pressed), isActive: true, for: identifier, at: uptimeNanoseconds)
     }
     return actions
   }
@@ -305,7 +305,7 @@ extension RemappingEngineState {
         at: uptimeNanoseconds
       )
     }
-    if isActive && !wasConsumed {
+    if isActive, !wasConsumed {
       device.chords.sequenceHistory.append(
         RemappingSequenceHistoryEntry(
           source: source,

@@ -8,7 +8,7 @@ struct RemappingProfileStrictDecodingTests {
     "", "bindings.0", "bindings.0.source", "bindings.0.destination", "stickMappings.0",
     "gyroOutput", "layers.0", "layers.0.activator", "outputPolicy", "device", "applicationScope",
   ])
-  func unknownKeyAnywhereRejectsTheProfile(path: String) throws {
+  func unknownKeyAnywhereRejectsProfile(path: String) throws {
     let components = path.split(separator: ".").map(String.init)
     let document = try inject("unexpected", into: sampleDocument(), at: components[...])
     let data = try JSONSerialization.data(withJSONObject: document)
@@ -41,8 +41,23 @@ struct RemappingProfileStrictDecodingTests {
     #expect(throws: DecodingError.self) {
       try decoder.decode(
         RemappingApplicationScope.self,
-        from: Data(#"{"type":"Global","appID":"com.example.app"}"#.utf8)
+        from: Data(#"{"type":"Global","appIDs":["com.example.app"]}"#.utf8)
       )
+    }
+  }
+
+  @Test
+  func applicationScopeWithAppIDRefusedByName() {
+    do {
+      _ = try JSONDecoder().decode(
+        RemappingApplicationScope.self,
+        from: Data(#"{"type":"Application","appID":"com.example.app"}"#.utf8)
+      )
+      Issue.record("appID was accepted")
+    } catch DecodingError.dataCorrupted(let context) {
+      #expect(context.debugDescription.contains("appID is not a key; use appIDs"))
+    } catch {
+      Issue.record("\(error)")
     }
   }
 
@@ -58,7 +73,7 @@ struct RemappingProfileStrictDecodingTests {
       id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
       name: "Strict",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
-      applicationScope: .application(appID: "com.example.app"),
+      applicationScope: .application(appIDs: ["com.example.app"]),
       outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
       gyroOutput: RemappingGyroOutput(mode: .mouse),
       stickMappings: [RemappingStickMapping(source: .right, mode: .flick)],

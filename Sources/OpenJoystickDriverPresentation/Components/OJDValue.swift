@@ -48,13 +48,13 @@ extension OJDValue {
 
   /// A USB endpoint address; 0 means the controller reports none.
   static func endpoint(_ address: UInt8) -> OJDValue {
-    address == 0 ? .none : .text(String(format: "0x%02X", address))
+    address == 0 ? .none : .text(unsafe String(format: "0x%02X", address))
   }
 
   /// A USB vendor and product pair; both 0 means the controller reports none.
   static func usbIdentifier(vendorID: UInt16, productID: UInt16) -> OJDValue {
     vendorID == 0 && productID == 0
-      ? .none : .text(String(format: "%04X:%04X", vendorID, productID))
+      ? .none : .text(unsafe String(format: "%04X:%04X", vendorID, productID))
   }
 
   /// The value for a sentence that VoiceOver or a sentence template reads: the spoken

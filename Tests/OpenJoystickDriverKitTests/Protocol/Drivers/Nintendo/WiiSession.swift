@@ -53,7 +53,7 @@ final class WiiSession {
   /// holds `count` writes after `from`.
   func answer(from: Int, count: Int) throws {
     var acknowledged = from
-    while log.count < from + count && clock < 2_000_000_000 {
+    while log.count < from + count, clock < 2_000_000_000 {
       if acknowledged < log.count {
         try feed([0x22, 0, 0, log[acknowledged].report[0], 0])
         acknowledged += 1

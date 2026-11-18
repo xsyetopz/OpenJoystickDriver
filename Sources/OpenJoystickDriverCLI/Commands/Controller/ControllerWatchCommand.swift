@@ -60,10 +60,10 @@ struct ControllerFirstPress: Encodable, Equatable {
   /// The first control pressed in `state` that `previous` did not hold, in `Control` order,
   /// then the D-pad id for the hat when it leaves neutral; a diagonal names its vertical id.
   init?(previous: ControllerState, state: ControllerState) {
-    if let control = Control.allCases.first(where: {
+    if let pressed = Control.allCases.first(where: {
       state.pressed.contains($0) && !previous.pressed.contains($0)
     }) {
-      self.control = control.rawValue
+      self.control = pressed.rawValue
       direction = nil
     } else if state.hat != .neutral, state.hat != previous.hat {
       control = state.hat.dpadControl.rawValue
@@ -367,7 +367,6 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
             try await client.packetLog(for: .session(device.sessionToken))
           }
         }
-        var cursor = PacketLogSnapshotCursor(snapshot: try await read())
         CLIOutput.stderr(
           CLILocalized.text(
             "cli.controller.capture.warning"
@@ -383,12 +382,9 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
           )
         }
         var received = false
-        _ = try await pollController(duration: duration) {
-          for entry in cursor.consume(snapshot: try await read()) {
-            received = true
-            try Self.print(entry)
-          }
-          return false
+        try await PacketLogStream.follow(duration: duration, read: read) { entry in
+          received = true
+          try Self.print(entry)
         }
         if !received, CLIContext.current.format == .human {
           CLIOutput.stderr(
@@ -423,7 +419,7 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
 
   /// Prints `entry` as JSON, as a `--plain` row or as a human line.
   private static func print(_ entry: PacketLogEntry) throws {
-    let time = String(format: "%.3f", entry.timestamp)
+    let time = unsafe String(format: "%.3f", entry.timestamp)
     switch CLIContext.current.format {
     case .json: try CLIOutput.jsonLine(JSONPacket(entry))
     case .plain:

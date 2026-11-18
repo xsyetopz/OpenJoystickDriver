@@ -51,29 +51,29 @@ final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable
 
   /// Registers the get-report and set-report handlers, then activates the device.
   func activate(hostReports: UserSpaceHostReportHandler) {
-    guard let device = lock.withLock({ isClosed ? nil : device }) else { return }
-    IOHIDUserDeviceRegisterGetReportBlock(device) { type, reportID, report, reportLength in
+    guard let live = lock.withLock({ isClosed ? nil : device }) else { return }
+    unsafe IOHIDUserDeviceRegisterGetReportBlock(live) { type, reportID, report, reportLength in
       do {
         guard let identifier = UInt32(exactly: reportID) else {
           throw VirtualHostReportError.malformed
         }
-        let bytes = try hostReports.getReport(
+        let bytes = try unsafe hostReports.getReport(
           type: try Self.reportType(type),
           reportID: identifier,
           maxSize: Int(reportLength.pointee)
         )
-        for (index, byte) in bytes.enumerated() { report[index] = byte }
-        reportLength.pointee = bytes.count
+        for (index, byte) in bytes.enumerated() { unsafe report[index] = byte }
+        unsafe reportLength.pointee = bytes.count
         return kIOReturnSuccess
       } catch {
-        reportLength.pointee = 0
+        unsafe reportLength.pointee = 0
         return Self.ioKitError(error)
       }
     }
-    IOHIDUserDeviceRegisterSetReportBlock(device) { type, reportID, report, reportLength in
+    unsafe IOHIDUserDeviceRegisterSetReportBlock(live) { type, reportID, report, reportLength in
       do {
         guard reportLength >= 0 else { throw VirtualHostReportError.malformed }
-        let bytes = Array(UnsafeBufferPointer(start: report, count: Int(reportLength)))
+        let bytes = unsafe Array(UnsafeBufferPointer(start: report, count: Int(reportLength)))
         try hostReports.acknowledgeSetReport(
           type: try Self.reportType(type),
           reportID: reportID,
@@ -82,8 +82,8 @@ final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable
         return kIOReturnSuccess
       } catch { return Self.ioKitError(error) }
     }
-    IOHIDUserDeviceSetDispatchQueue(device, queue)
-    IOHIDUserDeviceActivate(device)
+    IOHIDUserDeviceSetDispatchQueue(live, queue)
+    IOHIDUserDeviceActivate(live)
   }
 
   /// Resumes the tasks that wait for the cancel handler.
@@ -124,14 +124,14 @@ final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable
   /// - Throws: ``CancellationError`` when the device is closed, and ``IOKitReportError`` when IOKit
   ///   refuses the report.
   private func sendNow(_ report: [UInt8]) throws {
-    guard let device = lock.withLock({ isClosed ? nil : device }) else {
+    guard let live = lock.withLock({ isClosed ? nil : device }) else {
       throw CancellationError()
     }
     // Interrupt IN for IOKit clients (`hid_read`). GetReport is a separate control path.
     let result = report.withUnsafeBytes { pointer -> IOReturn in
       guard let base = pointer.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDUserDeviceHandleReportWithTimeStamp(
-        device,
+      return unsafe IOHIDUserDeviceHandleReportWithTimeStamp(
+        live,
         mach_absolute_time(),
         base.assumingMemoryBound(to: UInt8.self),
         pointer.count
@@ -142,13 +142,13 @@ final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable
 
   /// Cancels the device; later sends fail.
   func close() {
-    let device = lock.withLock { () -> IOHIDUserDevice? in
+    let closing = lock.withLock { () -> IOHIDUserDevice? in
       guard !isClosed else { return nil }
       isClosed = true
       defer { self.device = nil }
       return self.device
     }
-    if let device { IOHIDUserDeviceCancel(device) }
+    if let closing { IOHIDUserDeviceCancel(closing) }
   }
 
   /// Returns the report type that `type` names.

@@ -16,7 +16,7 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
   public var commandLineName: String { CommandLineName.kebab(rawValue) }
 
   /// The profile this identifier names.
-  public func makeProfile() throws -> any VirtualHIDProfile {
+  public func makeProfile() -> any VirtualHIDProfile {
     switch VirtualDevice.definition(of: self).layout {
     case .xboxOneGIP?: return XboxOneGIPHIDProfile()
     case .xboxSeriesBluetooth?: return XboxSeriesBluetoothHIDProfile()
@@ -193,9 +193,9 @@ struct OJDGenericHIDProfile: VirtualHIDProfile {
 
   /// Returns nil, because the generic report format has no output report.
   func consumerOutput(
-    type: VirtualHostReportType,
-    reportID: UInt32,
-    bytes: [UInt8]
+    type _: VirtualHostReportType,
+    reportID _: UInt32,
+    bytes _: [UInt8]
   ) -> ControllerOutputCommand? { nil }
 }
 

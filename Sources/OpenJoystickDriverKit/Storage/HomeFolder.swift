@@ -9,10 +9,10 @@ public enum HomeFolder {
   ///
   /// A longer folder name that starts with `home` is left alone.
   public static func redacting(_ text: String, home: String) -> String {
-    let home = home.hasSuffix("/") ? String(home.dropLast()) : home
-    guard !home.isEmpty,
+    let base = home.hasSuffix("/") ? String(home.dropLast()) : home
+    guard !base.isEmpty,
       let expression = try? NSRegularExpression(
-        pattern: NSRegularExpression.escapedPattern(for: home) + #"(?=$|[/\s"':,;)\]])"#,
+        pattern: NSRegularExpression.escapedPattern(for: base) + #"(?=$|[/\s"':,;)\]])"#,
         options: .anchorsMatchLines
       )
     else { return text }

@@ -24,21 +24,30 @@
           Text(OJDLocalized.string("ui.developer.packetFilterAll")).tag(
             DeveloperToolsViewModel.PacketFilter.all
           )
-        }.pickerStyle(.segmented).labelsHidden()
-        HStack(spacing: 8) {
+        }.pickerStyle(.segmented).labelsHidden().help(OJDLocalized.string("ui.help.packetFilter"))
+        HStack(spacing: OJDSpacing.small) {
           if model.isCapturing {
             Button(OJDLocalized.string("action.stop"), action: model.stopCapture)
+              .help(OJDLocalized.string("ui.help.stopCapture"))
           } else {
             Button(OJDLocalized.string("ui.developer.startCapture"), action: model.startCapture)
               .disabled(model.selectedDevice == nil)
+              .help(OJDLocalized.string("ui.help.startCapture"))
           }
           Button(OJDLocalized.string("action.clear"), action: model.clearCapture)
             .disabled(model.packets.isEmpty && model.observedExtraInputs.isEmpty)
+            .help(OJDLocalized.string("ui.help.clearCapture"))
           Spacer(minLength: 12)
           Button(OJDLocalized.string("action.copyAll"), action: model.copyPacketCapture)
-            .disabled(model.packets.isEmpty)
+            .disabled(model.packets.isEmpty).help(OJDLocalized.string("ui.help.copyCapture"))
           Button(OJDLocalized.string("action.export"), action: model.exportPacketCapture)
-            .disabled(model.packets.isEmpty)
+            .disabled(model.packets.isEmpty).help(OJDLocalized.string("ui.help.exportCapture"))
+        }
+        if let exportError = model.exportError {
+          Text(exportError).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
         }
         packetList(displayedPackets)
         if model.hiddenIdlePacketCount > 0 {
@@ -108,7 +117,7 @@
 
     /// Returns a label with the SF Symbol `symbol` and `text`, read by VoiceOver as one element.
     private func statusLabel(_ text: String, symbol: String) -> some View {
-      HStack(spacing: 6) {
+      HStack(spacing: OJDSpacing.small) {
         OJDSystemSymbol(
           name: symbol,
           fallback: OJDLocalized.string("term.status")
@@ -182,9 +191,8 @@
 
       /// Returns the number of packets.
       ///
-      /// - Parameter tableView: The packet table.
       /// - Returns: The number of packets.
-      func numberOfRows(in tableView: NSTableView) -> Int { packets.count }
+      func numberOfRows(in _: NSTableView) -> Int { packets.count }
 
       /// Returns the cell that shows one field of a packet.
       ///
@@ -207,7 +215,7 @@
           ?? NSTableCellView()
         cell.identifier = identifier
         let textField: NSTextField
-        if let existing = cell.textField {
+        if let existing = unsafe cell.textField {
           textField = existing
         } else {
           textField = NSTextField(labelWithString: "")
@@ -218,7 +226,7 @@
           )
           textField.lineBreakMode = .byClipping
           cell.addSubview(textField)
-          cell.textField = textField
+          unsafe cell.textField = textField
           NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 4),
             textField.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -4),
@@ -229,7 +237,7 @@
         let firstTimestamp = packets.first?.timestamp ?? packet.timestamp
         switch tableColumn?.identifier.rawValue {
         case "time":
-          textField.stringValue = String(format: "+%.3fs", packet.timestamp - firstTimestamp)
+          textField.stringValue = unsafe String(format: "+%.3fs", packet.timestamp - firstTimestamp)
         case "direction": textField.stringValue = packet.direction.rawValue.uppercased()
         case "bytes": textField.stringValue = String(packet.length)
         default: textField.stringValue = packet.hex

@@ -139,6 +139,12 @@ struct StatusCommand: AsyncParsableCommand {
         "unbound", deviceIdentity(vendorID: device.vendorID, productID: device.productID),
         device.connection, device.reason.map(CommandLineName.kebab) ?? "",
       ])
+      if let owner = device.owner {
+        rows.append([
+          "owner", deviceIdentity(vendorID: device.vendorID, productID: device.productID),
+          owner.processID.map { "\($0)" } ?? "", owner.name,
+        ])
+      }
       if let mapping = device.inputMapping {
         rows.append(
           ["input-mapping", deviceIdentity(vendorID: device.vendorID, productID: device.productID)]
@@ -287,8 +293,14 @@ struct StatusCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           "  \(identity)  \(device.connection)  \(device.reason.map(CommandLineName.kebab) ?? "")"
         )
-        if let key = device.reason.flatMap(ProtocolBindingReason.init(rawValue:))?.explanationKey {
-          CLIOutput.stdout("    \(CLILocalized.text(key))")
+        if let reason = device.reason.flatMap(ProtocolBindingReason.init(rawValue:)) {
+          let held =
+            reason == .deviceInUse
+            ? device.owner.map {
+              USBExclusiveOwner.heldMessage(for: $0, localize: CLILocalized.text)
+            } : nil
+          CLIOutput.stdout("    \(held ?? CLILocalized.text(reason.explanationKey))")
+          CLIOutput.stdout("    \(CLILocalized.text(reason.nextStepKey))")
         }
         printMapping(device.inputMapping)
       }

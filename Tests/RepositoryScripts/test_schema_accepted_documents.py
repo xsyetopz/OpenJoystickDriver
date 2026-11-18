@@ -7,6 +7,7 @@ this covers the other direction, so a schema that is stricter than Swift fails h
 from __future__ import annotations
 
 import json
+import plistlib
 import unittest
 from pathlib import Path
 
@@ -14,10 +15,10 @@ from Scripts.Quality import repository_tool, validate_schemas
 
 ROOT = Path(__file__).resolve().parents[2]
 RECORD = (
-    ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-028e.json"
+    ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-028e.plist"
 )
-DESCRIPTION = ROOT / "Resources/Protocols/nintendo-switch-input-only.json"
-PROFILE = ROOT / "docs/sdk/sample/Profiles/sample-pad.json"
+DESCRIPTION = ROOT / "Resources/Protocols/nintendo-switch-input-only.plist"
+PROFILE = ROOT / "docs/sdk/sample/Profiles/sample-pad.plist"
 
 
 class SchemaAcceptedDocumentTests(unittest.TestCase):
@@ -30,7 +31,11 @@ class SchemaAcceptedDocumentTests(unittest.TestCase):
         validator = validate_schemas.Draft202012Validator(
             self.documents[schema], registry=self.registry
         )
-        validator.validate(json.loads(path.read_text(encoding="utf-8")))
+        validator.validate(
+            plistlib.loads(path.read_bytes())
+            if path.suffix == ".plist"
+            else json.loads(path.read_text(encoding="utf-8"))
+        )
 
     def test_a_controller_record_is_accepted_by_the_schema_and_by_swift(self) -> None:
         self.assert_schema_accepts("controller.schema.json", RECORD)

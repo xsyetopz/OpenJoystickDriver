@@ -52,7 +52,7 @@ extension DriverParseCharacterizationTests {
   // MARK: - Switch 1
 
   /// The 49-byte full report 0x30: a 24-bit button word at 3–5 (D-pad in the low nibble of 5),
-  /// packed 12-bit sticks at 6 and 9 centred on 2048.
+  /// packed 12-bit sticks at 6 and 9 centered on 2048.
   static var switchSteps: [Step] {
     typealias Pro = ProtocolPacketFixtures.SwitchPro
     let base = Array(Pro.inputReport())

@@ -1,35 +1,24 @@
 # Using the Command Line
 
-Use `ojd`, the OpenJoystickDriver command line, to check status, start or stop the service, and manage controllers and controller records.
-
-This page explains how to run `ojd`, which options apply to every command, how to read its output, and what its exit codes mean.
-
-## Contents
-
-- [Run a Command](#run-a-command)
-- [Shell Completion](#shell-completion)
-- [Global Options](#global-options)
-- [Environment Variables](#environment-variables)
-- [The Service](#the-service)
-- [Configuration](#configuration)
-- [Mod Packages](#mod-packages)
-- [Output](#output)
-- [Exit Codes](#exit-codes)
-- [Further Reading](#further-reading)
+`ojd` is the OpenJoystickDriver command line. Use it in Terminal to check status, start or stop the service, and manage controllers.
 
 ## Run a Command
 
-The command-line tool is named `ojd`. It is the app's own executable: when it runs under the name `ojd`, it acts as the command line, and under any other name it opens the app.
+`ojd` is the app's own executable. Under the name `ojd` it acts as the command line. Under any other name it opens the app.
 
-To install `ojd`, open the app's Settings and click Install Command-Line Tool. The app links `/usr/local/bin/ojd` to its executable, and macOS asks for an administrator password when that folder needs it. Uninstall in the same place removes the link. The app never replaces a file at that path that is not a link.
+To install `ojd`:
 
-To link it yourself instead, create the link in a folder on your `PATH`:
+1. Choose OpenJoystickDriver > **Settings...**.
+2. Click **Advanced**, then click **Install Command-Line Tool** (needs the **All Controls** interface).
+3. If macOS asks for an administrator password, type it.
+
+The app links `/usr/local/bin/ojd` to its executable. It never replaces a file at that path that isn't a link. **Uninstall** in the same place removes the link.
+
+To link it yourself, create the link in a folder on your `PATH`. Writing to `/usr/local/bin` can need `sudo`.
 
 ```shell
 ln -s /Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver /usr/local/bin/ojd
 ```
-
-Writing to `/usr/local/bin` can need `sudo`. To remove the tool, delete the link: `rm /usr/local/bin/ojd`.
 
 Then run a command:
 
@@ -37,71 +26,49 @@ Then run a command:
 ojd status
 ```
 
-The [command reference](Command-Reference.md) lists every command. `ojd --help` lists them too, and `ojd COMMAND --help` shows the options of one command.
+`ojd --help` lists every command, and `ojd COMMAND --help` shows the options of one. The [command reference](Command-Reference.md) covers them all.
 
-To start, run `ojd status` to check the service, extension, and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
+## Common Commands
+
+- `ojd status` checks the service, the [Xbox USB driver](Glossary.md#terms), and the permissions. It works without the service.
+- `ojd diagnose` runs every check.
+- `ojd controller list` lists connected controllers.
+- `ojd controller show CONTROLLER` shows one controller, including which apps hold it open.
+- `ojd controller suspend CONTROLLER` lets another app open the controller. `ojd controller resume CONTROLLER` takes it back.
+- `ojd controller check CONTROLLER` asks for each control in turn and prints what each did.
+- `ojd service start` and `ojd service stop` start and stop the service. No other command starts it.
+- `ojd explain E2004` explains an error code. See [Error codes](Error-Codes.md).
+
+## Global Options
+
+These work on every command, before or after the command name.
+
+- `--json`: Print JSON on standard output.
+- `--plain`: Print one tab-separated record per line. It cannot be combined with `--json`.
+- `-q`, `--quiet`: Do not print success messages.
+- `--no-color`: Do not use color.
+- `--no-input`: Never ask a question. A command that needs a missing value fails and names the option that gives it.
+- `--timeout SECONDS`: How long to wait for each request to the service. The default is 0.5 seconds, above 0.
+- `-h`, `--help`: Show help.
+- `--version`: Show the version.
+
+Each of `--no-input`, `--timeout`, and `--no-color` has a variable: `OJD_NO_INPUT`, `OJD_TIMEOUT`, and `OJD_COLOR` (`auto`, `always`, or `never`). A flag beats its variable. An invalid value exits with code 64.
 
 ## Shell Completion
 
-`ojd --generate-completion-script SHELL` prints a completion script for `zsh`, `bash`, or `fish`. For example, in zsh:
+`ojd --generate-completion-script SHELL` prints a completion script for `zsh`, `bash`, or `fish`. In zsh, with the folder on your `fpath`:
 
 ```shell
 ojd --generate-completion-script zsh > ~/.zfunc/_ojd
 ```
 
-The folder must be on your `fpath`.
-
-## Global Options
-
-These options work on every command, before or after the command name. `ojd --json status` and `ojd status --json` do the same thing. `ojd --help` lists them, and the help of each command points there instead of repeating them.
-
-- `--json`: Print JSON on standard output.
-- `--plain`: Print one record per line on standard output, with tab-separated fields.
-- `-q`, `--quiet`: Do not print success messages on standard error.
-- `--no-color`: Do not use color.
-- `--no-input`: Never ask a question. A command that needs a missing value fails and names the option that gives it.
-- `--timeout SECONDS`: How long to wait for each request to the service. The default is 0.5 seconds. For `service`, `virtual set`, and `virtual reset` commands, it bounds the whole command, and the default is 5 seconds. For `permission request`, the default is 10 seconds. The value must be a number above 0.
-- `-h`, `--help`: Show help on standard output.
-- `--version`: Show the version line of **About OpenJoystickDriver**, for example `0.6.0-alpha.1+build.1.19.57.sha.558c65ce0196 (1.19.57)`.
-
-`--json` and `--plain` cannot be used together.
-
-## Environment Variables
-
-These variables stand in for a global option that the command line leaves out. A flag beats its variable, and an empty variable counts as unset.
-
-- `OJD_NO_INPUT`: `1`, `true`, or `yes` acts as `--no-input`, and `0`, `false`, or `no` does not, in any letter case.
-- `OJD_TIMEOUT`: Seconds, as for `--timeout`.
-- `OJD_COLOR`: `auto` follows the rules under [Output](#output), `always` uses color even off a terminal or with `NO_COLOR` set, and `never` acts as `--no-color`.
-
-Any other `OJD_NO_INPUT` value, or an invalid `OJD_TIMEOUT` or `OJD_COLOR` value, is a usage error and exits with code 64.
-
-For contributors: an `ojd` built from the repository hands each command to the installed app's `ojd`. Set `OJD_RUN_REPOSITORY_CLI=1` to run the repository build itself instead.
-
-## The Service
-
-Most commands send requests to the OpenJoystickDriver service, which runs inside the app. No command starts the service by itself. Start it with `ojd service start`, and stop it with `ojd service stop`.
-
-A command that needs the service exits with code 69 when the service is not running. `ojd status` works without the service and reports it as stopped. It exits with 69 (`E2034`) while the service runs with a stopped request listener, and with 1 (`E2035`) when the record of that cannot be used; see [status](Command-Reference.md#status).
-
-## Configuration
-
-`ojd config show` prints each effective tuning value and the layer that set it: the driver default, the bundled record, a package, your `all.patch.json`, or your record. A key that no layer sets shows `Driver default`, except `stickDeadzone`, which shows `Not set` because the driver applies no deadzone of its own. It reads the files directly, so it works without the service. With `--controller` and the service running, it also lists the active profile's stick deadzones in the `profile` layer. `ojd config set KEY VALUE` and `ojd config unset KEY` change a key in your record of one controller with `--controller VVVV:PPPP`, or in `all.patch.json` without it. See [Controller records](Controller-Records.md#set-a-default-for-every-controller) and [Set the Deadzone of a Stick That Rests Off Center](Controller-Records.md#set-the-deadzone-of-a-stick-that-rests-off-center).
-
-## Mod Packages
-
-`ojd mod` validates, installs, lists, and removes mod packages. It reads and writes files directly, so it works without the service. A running service applies a change to the installed packages without a restart. See [Writing controller mods](Writing-Controller-Mods.md).
-
 ## Output
 
-- Data goes to standard output. Progress messages, warnings, and errors go to standard error.
-- Human-readable output is translated and can change between releases. Do not parse it in scripts.
-- `--json` output is one JSON object. A command that streams, such as `ojd controller watch`, prints one object per line. Each object and each line has `apiVersion` (`openjoystickdriver/v1alpha2`) and `kind`, the singular UpperCamelCase name of what the command prints, such as `Controller` for `ojd controller show`. The lines of `ojd controller watch --all` are the exception: each has a `type` (`ADDED`, `MODIFIED`, or `DELETED`) and an `object` that has its own `apiVersion` and `kind`. A command that lists things, such as `ojd controller list`, prints a `kind` that ends in `List`, with the entries in `items` and an empty `metadata`. A command that changes or removes something and has no object to print, such as `ojd profile delete`, prints a `Status`, with `status` `Success` and its data in `details`. A command that fails prints no JSON: it exits with a non-zero code and writes the error on standard error. Values that OJD defines in output, such as `NotFound` or `HID`, are UpperCamelCase with upper-case acronyms. Keys and values are stable identifiers and are never translated. [`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command. The schema is strict: it lists every key and value that its release prints, and rejects others. Within a major version, the output only gains keys and values: a later release never removes a key, a value, or a command's output, never makes an always-present key optional, and never gives a value a new type such as `null`. Before 1.0, each minor version counts as a major version, so 0.6 can break the output of 0.5.
-  A program that reads one release's output keeps working with later releases of the same major version.
-  Because a later release can add keys and values, validate output against the schema from the same release.
-- `--plain` output has one record per line, with tab-separated fields. The first field names the kind of record. Fields are stable identifiers and are never translated.
-- Errors use one format: `error[E2004]: WHAT FAILED. HOW TO FIX IT.` The code in the brackets is stable, so a script can branch on it. An error that the service reports for remapping carries an `E3xxx` code, and an error of `ojd mod` carries an `E4xxx` code, or `E5001` when a package file has an unsupported `apiVersion`. `ojd explain E2004` prints what a code means, and [Error codes](Error-Codes.md) lists them all.
-- Color appears only on a terminal. `NO_COLOR`, `TERM=dumb`, `--no-color`, and `OJD_COLOR=never` turn it off. `OJD_COLOR=always` turns it on anywhere, except under `--no-color`.
+- Data goes to standard output. Progress, warnings, and errors go to standard error.
+- Human-readable output changes between releases. Scripts should use `--json` or `--plain`.
+- `--json` output follows [`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json). Within a major version, output only gains keys. Before 1.0, each minor version counts as a major version.
+- Errors read `error[E2004]: WHAT FAILED. HOW TO FIX IT.` The code is stable, so a script can branch on it.
+- Color appears only on a terminal. `NO_COLOR` and `TERM=dumb` turn it off.
 
 ## Exit Codes
 
@@ -112,7 +79,7 @@ A command that needs the service exits with code 69 when the service is not runn
 | 64 | Usage error: an unknown command or option, or an invalid value. |
 | 69 | The service is not running. Start it with `ojd service start`. |
 | 77 | A macOS permission is missing. |
-| 127 | An `ojd` built from the repository could not hand the command to the installed app. |
+| 127 | A repository build of `ojd` could not hand the command to the installed app. |
 | 130 | Interrupted with Control-C. |
 | 143 | Terminated with SIGTERM. |
 

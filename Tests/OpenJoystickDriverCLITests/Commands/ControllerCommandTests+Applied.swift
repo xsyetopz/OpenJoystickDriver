@@ -15,7 +15,7 @@ struct ControllerShowAppliedTests {
   )
 
   @Test
-  func showReportsTheEffectiveTuningInJSONPlainAndHumanOutput() async throws {
+  func showReportsEffectiveTuningInJSONPlainAndHumanOutput() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1", tuning: Self.tuning)
     ])
@@ -44,7 +44,7 @@ struct ControllerShowAppliedTests {
   }
 
   @Test
-  func showLeavesOutTuningWhenTheRecordSetsNone() async throws {
+  func showLeavesOutTuningWhenRecordSetsNone() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])
@@ -58,7 +58,7 @@ struct ControllerShowAppliedTests {
   }
 
   @Test
-  func showNamesMacOSAsTheOutputOwnerNextToTheNarrowedCapabilities() async throws {
+  func showNamesMacOSAsOutputOwnerNextToNarrowedCapabilities() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1", physicalOutputOwner: .system)
     ])
@@ -81,7 +81,7 @@ struct ControllerShowAppliedTests {
   }
 
   @Test
-  func showSaysNothingAboutTheOutputOwnerWhenOJDDrivesTheOutput() async throws {
+  func showSaysNothingAboutOutputOwnerWhenOJDDrivesOutput() async throws {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     ])

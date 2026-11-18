@@ -145,6 +145,8 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   private var stopped = false
   /// Feeds whose device is being built, so concurrent opens count against the limit.
   private var reserved: [VirtualFeedPool: Int] = [:]
+  /// Wakes ``waitForFeedback(token:timeout:)`` when a host command arrives or a feed closes.
+  let feedbackSignal = VirtualFeedFeedbackSignal()
 
   /// Creates a registry that builds feed devices with `factory`.
   init(
@@ -286,6 +288,14 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
+  /// Whether an exchange would return a host command or report the feed closed.
+  func hasFeedbackToReport(token: UUID) -> Bool {
+    lock.withLock {
+      guard let session = sessions[token] else { return true }
+      return session.returnSink == nil && !session.feedback.isEmpty
+    }
+  }
+
   /// Whether a feed with the token is open.
   func isOpen(token: UUID) -> Bool { lock.withLock { sessions[token] != nil } }
 
@@ -347,6 +357,7 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       return false
     }
     resumePlayWaiters(of: session, played: false)
+    feedbackSignal.notify(token)
     session.watchdog?.cancel()
     session.player?.cancel()
     session.returner?.cancel()
@@ -356,13 +367,14 @@ final class VirtualFeedRegistry: @unchecked Sendable {
 
   /// Closes every feed and refuses further ones.
   func stop() async {
-    let closing = lock.withLock { () -> [Session] in
+    let closing = lock.withLock { () -> [UUID: Session] in
       stopped = true
       defer { sessions.removeAll() }
-      return Array(sessions.values)
+      return sessions
     }
-    for session in closing {
+    for (token, session) in closing {
       resumePlayWaiters(of: session, played: false)
+      feedbackSignal.notify(token)
       session.watchdog?.cancel()
       session.player?.cancel()
       session.returner?.cancel()
@@ -383,6 +395,7 @@ final class VirtualFeedRegistry: @unchecked Sendable {
       if excess > 0 { session.feedback.removeFirst(excess) }
       scheduleReturn(of: session, token: token)
     }
+    feedbackSignal.notify(token)
   }
 
   /// Starts the session's `returner` when it has a sink that is ready and one is not running.
@@ -531,7 +544,7 @@ final class VirtualFeedDeviceSink: OutputSink {
   ///   the failure of the device.
   func consume(
     _ frame: StreamFrame,
-    onDelivered: @escaping @Sendable () -> Void
+    onDelivered: @Sendable () -> Void
   ) async throws {
     guard case .gamepad(let state, let identifier) = frame else {
       throw StreamBoundaryError.unsupported(destination)

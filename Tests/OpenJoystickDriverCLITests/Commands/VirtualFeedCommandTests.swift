@@ -29,8 +29,8 @@ struct VirtualFeedCommandTests {
             from: arguments
           ))?.frames.count ?? 0
         let (isFirst, count) = exchanged.withLock {
-          defer { first = false }
-          return (first, counts.isEmpty ? 0 : counts.removeFirst())
+          defer { unsafe first = false }
+          return unsafe (first, counts.isEmpty ? 0 : counts.removeFirst())
         }
         return encoded(
           VirtualFeedExchangeResult(
@@ -74,7 +74,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func everyFrameReachesTheFeedInOrderAndTheFeedClosesWhenTheInputEnds() async throws {
+  func everyFrameReachesFeedInOrderAndFeedClosesWhenInputEnds() async throws {
     let service = try Self.service()
     let result = await Self.run(
       service,
@@ -102,7 +102,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func framesTheFeedDidNotAcceptAreSentAgainInOrder() async throws {
+  func framesFeedDidNotAcceptAreSentAgainInOrder() async throws {
     let service = try Self.service(accepting: 1)
     let input = [#"{"buttons":["South"]}"#, "{}", #"{"dpad":["DpadUp"]}"#, "{}"]
     let result = await Self.run(service, input: input)
@@ -118,7 +118,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func theFeedClosesOnlyAfterItPlayedEveryFrame() async throws {
+  func feedClosesOnlyAfterItPlayedEveryFrame() async throws {
     let service = try Self.service(queued: [3, 2, 1])
     let result = await Self.run(service, input: ["{}"])
 
@@ -142,17 +142,72 @@ struct VirtualFeedCommandTests {
     #expect(lines.count == 2)
     #expect(
       lines.last
-        == #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"RumbleCommand","#
+        == #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RumbleCommand","#
         + #""type":"StopRumble"}"#
     )
     let first = try #require(
       try JSONSerialization.jsonObject(with: Data((lines.first ?? "").utf8)) as? [String: Any]
     )
-    #expect(first["apiVersion"] as? String == "openjoystickdriver/v1alpha2")
+    #expect(first["apiVersion"] as? String == "openjoystickdriver/v1alpha3")
     #expect(first["kind"] as? String == "RumbleCommand")
     #expect(first["type"] as? String == "SetRumble")
     #expect(first["durationMilliseconds"] as? Int == 200)
     #expect(first["duration"] == nil)
+  }
+
+  /// A command the host sends while the input is idle prints before the next heartbeat: the
+  /// feedback wait wakes an exchange that collects it.
+  @Test(.timeLimit(.minutes(1)))
+  func commandSentWhileInputIsIdlePrintsBeforeHeartbeat() async throws {
+    let waits = NSLock()
+    nonisolated(unsafe) var waited = false
+    let collected = NSLock()
+    nonisolated(unsafe) var queued: [ControllerOutputCommand] = []
+    let service = try FakeService(devices: []) { method, arguments in
+      switch method {
+      case .openVirtualFeed: return encoded(VirtualFeedSession(token: Self.token))
+      case .waitForVirtualFeedFeedback:
+        let first = waits.withLock {
+          defer { unsafe waited = true }
+          return unsafe !waited
+        }
+        guard first else { return encoded(false) }
+        collected.withLock { unsafe queued = [.stopRumble] }
+        return encoded(true)
+      case .exchangeVirtualFeed:
+        let sent =
+          (try? JSONDecoder().decode(
+            LocalServiceRPCVirtualFeedExchangeArguments.self,
+            from: arguments
+          ))?.frames.count ?? 0
+        let feedback = collected.withLock {
+          defer { unsafe queued = [] }
+          return unsafe queued
+        }
+        return encoded(
+          VirtualFeedExchangeResult(feedback: feedback, closed: false, accepted: sent)
+        )
+      case .closeVirtualFeed: return encoded(true)
+      default: return nil
+      }
+    }
+    let input: @Sendable () -> AsyncStream<String> = {
+      AsyncStream { continuation in
+        continuation.yield("{}")
+        Task {
+          // Shorter than the heartbeat, so only the wait can collect the command in time.
+          try? await Task.sleep(nanoseconds: 250_000_000)
+          continuation.finish()
+        }
+      }
+    }
+
+    let result = await VirtualFeedCommand.$standardInputLines.withValue(input) {
+      await service.run(["virtual", "feed", "--as", "generic", "--json"])
+    }
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardOutput.contains(#""type":"StopRumble""#))
   }
 
   @Test(arguments: [
@@ -161,7 +216,7 @@ struct VirtualFeedCommandTests {
     #"{"dpad":["DpadUp","DpadUp"]}"#,
     #"{"button":["South"]}"#,
   ])
-  func aLineThatIsNotAFrameExitsSixtyFourAndClosesTheFeed(line: String) async throws {
+  func lineThatIsNotFrameExitsSixtyFourAndClosesFeed(line: String) async throws {
     let service = try Self.service()
     let result = await Self.run(service, input: ["{}", "", line])
 
@@ -171,7 +226,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func aFeedTheServiceClosedExitsOne() async throws {
+  func feedServiceClosedExitsOne() async throws {
     let service = try Self.service(
       result: VirtualFeedExchangeResult(feedback: [], closed: true)
     )
@@ -182,7 +237,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func anUnknownProfileIsAUsageError() async throws {
+  func unknownProfileIsUsageError() async throws {
     let service = try Self.service()
     let result = await service.run(["virtual", "feed", "--as", "unknown"])
 
@@ -191,7 +246,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func plainIsAUsageError() async throws {
+  func plainIsUsageError() async throws {
     let service = try Self.service()
     let result = await Self.run(service, input: ["{}"], ["--plain"])
 
@@ -201,7 +256,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func aCloseThatWasInterruptedIsReportedWithItsOwnLocalizedText() {
+  func closeThatWasInterruptedIsReportedWithItsOwnLocalizedText() {
     let failure = VirtualFeedCommand.closeFailure(CancellationError())
 
     #expect(failure.id == .serviceRequestFailed)
@@ -210,7 +265,7 @@ struct VirtualFeedCommandTests {
   }
 
   @Test
-  func aCloseThatTimedOutKeepsItsOwnFailure() {
+  func closeThatTimedOutKeepsItsOwnFailure() {
     #expect(
       VirtualFeedCommand.closeFailure(CLIFailure.timedOut(seconds: 3))
         == CLIFailure.timedOut(seconds: 3)

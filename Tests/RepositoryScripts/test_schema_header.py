@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import plistlib
 import unittest
 from pathlib import Path
 from typing import Any
@@ -19,27 +20,36 @@ def load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_plist(path: Path) -> dict[str, Any]:
+    return plistlib.loads(path.read_bytes())
+
+
 def instances() -> dict[str, dict[str, Any]]:
     """One valid document for each kind that has a header, by schema stem."""
     controller = next(
-        (ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers").glob("*/*.json")
+        (ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers").glob("*/*.plist")
     )
     return {
-        "controller": load(controller),
+        "controller": load_plist(controller),
         "controller-patch": {
             **schema_header.header("ControllerPatch"),
             "selector": {"vendorID": 0x1209, "productID": 1},
             "patch": {"tuning": {"stickDeadzone": 0.02}},
         },
-        "virtual-device": load(SAMPLE / "VirtualDevices/1209-0001.json"),
-        "profile": load(SAMPLE / "Profiles/sample-pad.json"),
-        "mod-package": load(SAMPLE / "mod.json"),
-        "error-codes": load(ROOT / "Resources/ErrorCodes.json"),
-        "crosswalk": load(ROOT / "Resources/Vocabulary/crosswalk.json"),
-        "access-grants": load(FIXTURES / "access_grants.json"),
-        "protocol-description": load(ROOT / "Resources/Protocols/xbox-xusb.json"),
-        "settings": load(FIXTURES / "settings.json"),
-        "service-listener-failure": load(FIXTURES / "service_listener_failure.json"),
+        "virtual-device": load_plist(SAMPLE / "VirtualDevices/1209-0001.plist"),
+        "profile": load_plist(SAMPLE / "Profiles/sample-pad.plist"),
+        "mod-package": load_plist(SAMPLE / "mod.plist"),
+        "error-codes": load_plist(ROOT / "Resources/ErrorCodes.plist"),
+        "crosswalk": load_plist(ROOT / "Resources/Vocabulary/crosswalk.plist"),
+        "access-grants": load_plist(FIXTURES / "access_grants.plist"),
+        "protocol-description": load_plist(
+            ROOT / "Resources/Protocols/xbox-xusb.plist"
+        ),
+        "settings": load_plist(FIXTURES / "settings.plist"),
+        "service-listener-failure": load_plist(
+            FIXTURES / "service_listener_failure.plist"
+        ),
+        "controller-check": load(FIXTURES / "controller_check.json"),
     }
 
 
@@ -106,6 +116,37 @@ class SchemaHeaderTests(unittest.TestCase):
                 changed = {**document, "$schema": schema_header.schema_id(stem)}
                 with self.assertRaises(validate_schemas.ValidationError):
                     self.validator(stem).validate(changed)
+
+    def test_rejects_an_invalid_pause_shortcut(self) -> None:
+        document = instances()["settings"]
+        shortcuts = {
+            "no modifier": {"key": "P", "modifiers": []},
+            "shift only": {"key": "P", "modifiers": ["Shift"]},
+            "repeated modifier": {"key": "P", "modifiers": ["Command", "Command"]},
+            "lower case modifier": {"key": "P", "modifiers": ["command"]},
+            "unknown key": {"key": "Home", "modifiers": ["Command"]},
+            "unknown member": {"key": "P", "modifiers": ["Command"], "extra": True},
+            "no key": {"modifiers": ["Command"]},
+        }
+        for name, shortcut in shortcuts.items():
+            with (
+                self.subTest(name),
+                self.assertRaises(validate_schemas.ValidationError),
+            ):
+                self.validator("settings").validate(
+                    {**document, "pauseShortcut": shortcut}
+                )
+
+    def test_rejects_an_invalid_last_shown_changelog_version(self) -> None:
+        document = instances()["settings"]
+        for name, version in {"empty": "", "number": 3, "boolean": True}.items():
+            with (
+                self.subTest(name),
+                self.assertRaises(validate_schemas.ValidationError),
+            ):
+                self.validator("settings").validate(
+                    {**document, "lastShownChangelogVersion": version}
+                )
 
     def test_no_schema_directory_is_versioned(self) -> None:
         directories = [p for p in (ROOT / "Resources/Schemas").iterdir() if p.is_dir()]

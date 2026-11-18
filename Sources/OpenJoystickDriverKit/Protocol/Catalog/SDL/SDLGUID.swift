@@ -20,23 +20,23 @@ struct SDLGUID: Hashable, Sendable, CustomStringConvertible {
   {
     let name = manufacturer.flatMap { $0.isEmpty ? nil : $0 + " " + product } ?? product
     let crc = Self.crc16(Array(name.utf8))
-    var bytes: [UInt8] = []
+    var packed: [UInt8] = []
     for word in [Self.usbBus, crc, vendorID, 0, productID, 0, version, 0] {
-      bytes += [UInt8(word & 0xFF), UInt8(word >> 8)]
+      packed += [UInt8(word & 0xFF), UInt8(word >> 8)]
     }
-    self.bytes = bytes
+    self.bytes = packed
   }
 
   /// The GUID written as `text`, or nil unless it is 32 hexadecimal digits.
   init?(_ text: String) {
     let digits = Array(text)
     guard digits.count == 32 else { return nil }
-    var bytes: [UInt8] = []
+    var packed: [UInt8] = []
     for pair in stride(from: 0, to: 32, by: 2) {
       guard let byte = UInt8(String(digits[pair..<pair + 2]), radix: 16) else { return nil }
-      bytes.append(byte)
+      packed.append(byte)
     }
-    self.bytes = bytes
+    self.bytes = packed
   }
 
   /// The GUID made of `bytes`.
@@ -49,7 +49,7 @@ struct SDLGUID: Hashable, Sendable, CustomStringConvertible {
   var withoutVersion: Self { zeroing(12..<14) }
 
   /// The 32 lowercase hexadecimal digits.
-  var description: String { bytes.map { String(format: "%02x", $0) }.joined() }
+  var description: String { bytes.map { unsafe String(format: "%02x", $0) }.joined() }
 
   /// This GUID with the bytes in `range` zeroed.
   private func zeroing(_ range: Range<Int>) -> Self {

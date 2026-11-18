@@ -1,7 +1,7 @@
 import Foundation
 
 /// An app setting the service can read and apply; each raw value is the stable key that
-/// `ojd setting` takes and that names the setting in `Settings.json`.
+/// `ojd setting` takes and that names the setting in `Settings.plist`.
 public enum ApplicationSettingKey: String, Codable, CaseIterable, Sendable {
   /// Open OJD at login.
   case launchAtLogin

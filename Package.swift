@@ -1,4 +1,4 @@
-// swift-tools-version:6.4.0
+// swift-tools-version: 6.4
 import Foundation
 import PackageDescription
 
@@ -15,16 +15,6 @@ let swifterKitDependency: Package.Dependency =
   useLocalSwifterKit && FileManager.default.fileExists(atPath: localSwifterKitPath)
   ? .package(path: localSwifterKitPath)
   : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.4.1")
-
-#if arch(arm64)
-  /// The target triple of the Swift Testing targets on this host.
-  let testTargetTriple = "arm64-apple-macosx14.0"
-#elseif arch(x86_64)
-  /// The target triple of the Swift Testing targets on this host.
-  let testTargetTriple = "x86_64-apple-macosx14.0"
-#else
-  #error("Unsupported host architecture for Swift Testing target triple")
-#endif
 
 /// The OpenJoystickDriver package.
 let package = Package(
@@ -161,9 +151,7 @@ let package = Package(
     .executableTarget(
       name: "ParserCompatibilityHarness",
       dependencies: ["OpenJoystickDriverKit", "ProtocolPacketFixtures"],
-      path: "Tests/ParserCompatibilityHarness",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/ParserCompatibilityHarness"
     ),
     .testTarget(
       name: "OpenJoystickDriverKitTests",
@@ -175,16 +163,13 @@ let package = Package(
       resources: [
         .copy("Protocol/Catalog/SchemaRejections"), .copy("Protocol/Catalog/SDLMappingFixtures"),
         .copy("Protocol/Drivers/Nintendo/Fixtures/Wii"),
-      ],
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+        .copy("Protocol/Drivers/Generic/Fixtures/Ultimate2C"),
+      ]
     ),
     .target(
       name: "ProtocolPacketFixtures",
       path: "Tests/ProtocolPacketFixtures",
-      resources: [.copy("Switch2")],
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      resources: [.copy("Switch2")]
     ),
     .testTarget(
       name: "OpenJoystickDriverUSBTests",
@@ -192,16 +177,12 @@ let package = Package(
         "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "ProtocolPacketFixtures",
         .product(name: "SwifterKit", package: "SwifterKit"),
       ],
-      path: "Tests/OpenJoystickDriverUSBTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverUSBTests"
     ),
     .target(
       name: "OpenJoystickDriverTestSupport",
       dependencies: ["OpenJoystickDriverKit"],
-      path: "Tests/OpenJoystickDriverTestSupport",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverTestSupport"
     ),
     .testTarget(
       name: "OpenJoystickDriverServiceTests",
@@ -210,37 +191,33 @@ let package = Package(
         "OpenJoystickDriverPresentation", "OpenJoystickDriverTestSupport",
         .product(name: "BridgeCore", package: "BridgeCore"),
       ],
-      path: "Tests/OpenJoystickDriverServiceTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverServiceTests"
     ),
     .testTarget(
       name: "OpenJoystickDriverCLITests",
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverService", "OpenJoystickDriverCLI",
         "OpenJoystickDriverTestSupport",
+        // `ojd generate` starts this executable as its helper process.
+        "OpenJoystickDriver",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Tests/OpenJoystickDriverCLITests",
-      exclude: ["Fixtures"],
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      exclude: ["Fixtures"]
     ),
     .testTarget(
       name: "OJDRepositoryToolTests",
-      dependencies: ["OpenJoystickDriverKit", "OJDRepositoryTool"],
-      path: "Tests/OJDRepositoryToolTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      dependencies: [
+        "OpenJoystickDriverKit", "OJDRepositoryTool", "OpenJoystickDriverTestSupport",
+      ],
+      path: "Tests/OJDRepositoryToolTests"
     ),
     .testTarget(
       name: "OpenJoystickDriverMacOSPlatformTests",
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverMacOSPlatform", "OpenJoystickDriverTestSupport",
       ],
-      path: "Tests/OpenJoystickDriverMacOSPlatformTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverMacOSPlatformTests"
     ),
     .testTarget(
       name: "OpenJoystickDriverPresentationTests",
@@ -248,9 +225,7 @@ let package = Package(
         "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverPresentation",
         "OpenJoystickDriverTestSupport",
       ],
-      path: "Tests/OpenJoystickDriverPresentationTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverPresentationTests"
     ),
   ]
 )
@@ -261,3 +236,31 @@ let package = Package(
 for target in package.targets {
   target.swiftSettings = (target.swiftSettings ?? []) + [.treatAllWarnings(as: .error)]
 }
+
+// >>> swift-bedrock
+// Managed by swift-bedrock: Swift 6, the upcoming features, strict memory safety,
+// and warnings as errors, for every target.
+package.swiftLanguageModes = [.v6]
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+  target.swiftSettings =
+    (target.swiftSettings ?? []) + [
+      .enableUpcomingFeature("ExistentialAny"),
+      .enableUpcomingFeature("InternalImportsByDefault"),
+      .enableUpcomingFeature("MemberImportVisibility"),
+      .enableUpcomingFeature("InferIsolatedConformances"),
+      .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+      .enableUpcomingFeature("ImmutableWeakCaptures"),
+      .strictMemorySafety(),
+      .treatAllWarnings(as: .error),
+    ]
+}
+// <<< swift-bedrock
+
+// >>> swift-bedrock-cxx
+// Managed by swift-bedrock: C++20, and C++ interop for every Swift target, since a
+// target that imports a C++ module, even through another target, needs it.
+package.cxxLanguageStandard = .cxx20
+for target in package.targets where [.regular, .executable, .test].contains(target.type) {
+  target.swiftSettings = (target.swiftSettings ?? []) + [.interoperabilityMode(.Cxx)]
+}
+// <<< swift-bedrock-cxx

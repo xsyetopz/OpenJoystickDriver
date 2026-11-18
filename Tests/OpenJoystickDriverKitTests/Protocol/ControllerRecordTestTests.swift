@@ -22,7 +22,7 @@ struct ControllerRecordTestTests {
   private func state(_ state: ControllerState) throws -> Data { try JSONEncoder().encode(state) }
 
   @Test
-  func aMatchingStateHasNoDifferences() throws {
+  func matchingStateHasNoDifferences() throws {
     let result = try record.test(
       capture: Data(Self.capture.utf8),
       expectation: state(ControllerState(pressed: [.south]))
@@ -33,7 +33,7 @@ struct ControllerRecordTestTests {
   }
 
   @Test
-  func aDifferingFieldIsNamed() throws {
+  func differingFieldIsNamed() throws {
     let result = try record.test(
       capture: Data(Self.capture.utf8),
       expectation: state(ControllerState(pressed: [.east]))
@@ -44,7 +44,7 @@ struct ControllerRecordTestTests {
   }
 
   @Test
-  func aBadCaptureLineNamesItsLine() throws {
+  func badCaptureLineNamesItsLine() throws {
     let capture = Data((Self.capture + "not json\n").utf8)
 
     #expect {
@@ -56,7 +56,7 @@ struct ControllerRecordTestTests {
   }
 
   @Test
-  func aLengthThatDisagreesWithTheHexIsRefused() throws {
+  func lengthThatDisagreesWithHexIsRefused() throws {
     let capture = Data(#"{"direction": "Rx", "hex": "01 02", "length": 3}"#.utf8)
 
     #expect {
@@ -70,7 +70,7 @@ struct ControllerRecordTestTests {
   }
 
   @Test
-  func anExpectationThatIsNotAStateIsRefused() throws {
+  func expectationThatIsNotStateIsRefused() throws {
     #expect {
       try record.test(capture: Data(Self.capture.utf8), expectation: Data("[]".utf8))
     } throws: { error in
@@ -80,7 +80,7 @@ struct ControllerRecordTestTests {
   }
 
   @Test
-  func aCaptureWithoutInputIsRefused() throws {
+  func captureWithoutInputIsRefused() throws {
     let capture = Data(#"{"direction": "Tx", "hex": "01", "length": 1}"#.utf8)
 
     #expect {
@@ -91,7 +91,7 @@ struct ControllerRecordTestTests {
   }
 
   @Test
-  func eachErrorNamesTheInputsInWords() {
+  func eachErrorNamesInputsInWords() {
     let model = Self.model
     let errors: [ControllerRecordTestError] = [
       .capture(line: 2, problem: "bad"), .expectation(problem: "bad"), .replay(.noParser),

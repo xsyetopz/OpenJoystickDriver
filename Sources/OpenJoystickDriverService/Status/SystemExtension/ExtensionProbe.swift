@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 import OpenJoystickDriverUSB
 
 /// Reads the state of the transport extension from the app bundle and from `systemextensionsctl`.
@@ -27,7 +27,8 @@ package enum ExtensionProbe {
         bundle: bundle,
         registration: registration(from: result),
         embedded: embedded,
-        installed: installedFacts(from: result.output)
+        installed: installedFacts(from: result.output),
+        replacedVersionPending: replacedVersionPending(in: result.output)
       )
     } catch {
       return ExtensionStatus(
@@ -80,14 +81,15 @@ package enum ExtensionProbe {
     return .absent
   }
 
-  /// Returns the version that the first line of `output` for the extension shows, or nil when the
-  /// line has none.
+  /// Returns the version that the extension's "activated enabled" line of `output` shows, else its
+  /// first line, or nil when the line has none.
+  ///
+  /// After an upgrade macOS keeps listing the replaced version as "terminated waiting to uninstall
+  /// on reboot", often above the active one, so the first line alone can name a stale version.
   static func installedFacts(from output: String) -> ExtensionVersionFacts? {
-    guard
-      let line = output.components(separatedBy: .newlines).first(where: {
-        $0.contains(extensionID)
-      })
-    else { return nil }
+    let lines = output.components(separatedBy: .newlines).filter { $0.contains(extensionID) }
+    let active = lines.first { $0.localizedCaseInsensitiveContains("activated enabled") }
+    guard let line = active ?? lines.first else { return nil }
     let versionToken = line.split { $0 == " " || $0 == "\t" }.first { token in
       token.contains("/") && token.first == "("
     }
@@ -103,6 +105,16 @@ package enum ExtensionProbe {
       shortVersion: short,
       buildVersion: build
     )
+  }
+
+  /// Returns whether `output` lists a version of the extension that waits to uninstall on reboot.
+  ///
+  /// macOS keeps a replaced driver for a connected device until the device reconnects or the Mac
+  /// restarts, and the SIP-protected store cannot be cleared sooner.
+  static func replacedVersionPending(in output: String) -> Bool {
+    output.components(separatedBy: .newlines).contains { line in
+      line.contains(extensionID) && line.localizedCaseInsensitiveContains("waiting to uninstall")
+    }
   }
 
   /// Accepts a SemVer short version or a kext-grammar build version.

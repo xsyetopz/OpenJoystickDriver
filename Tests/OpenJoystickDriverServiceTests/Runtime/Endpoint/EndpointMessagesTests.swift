@@ -5,7 +5,7 @@ import Testing
 
 @testable import OpenJoystickDriverService
 
-/// Round trips of the endpoint messages on `openjoystickdriver/v1alpha2` against
+/// Round trips of the endpoint messages on `openjoystickdriver/v1alpha3` against
 /// `endpoint.schema.json`: what Swift encodes the schema accepts, and what the schema accepts from
 /// a client Swift decodes.
 struct EndpointMessagesTests {
@@ -23,7 +23,7 @@ struct EndpointMessagesTests {
   }
 
   @Test
-  func theServiceLinesEncodeToLinesTheSchemaAccepts() throws {
+  func serviceLinesEncodeToLinesSchemaAccepts() throws {
     let lines = [
       try Self.encoded(EndpointChallenge(nonce: Self.nonce)),
       try Self.encoded(EndpointWelcome(version: "0.6.0", scopes: [.read, .control])),
@@ -38,7 +38,7 @@ struct EndpointMessagesTests {
   }
 
   @Test
-  func everyServiceLineCarriesTheVersionAndItsKind() throws {
+  func everyServiceLineCarriesVersionAndItsKind() throws {
     let expected: [(any Encodable, String)] = [
       (EndpointChallenge(nonce: Self.nonce), "Challenge"),
       (EndpointWelcome(version: "0.6.0", scopes: [.read]), "Welcome"),
@@ -50,13 +50,13 @@ struct EndpointMessagesTests {
         try JSONSerialization.jsonObject(with: Data(Self.encoded(message).utf8))
           as? [String: Any]
       )
-      #expect(object["apiVersion"] as? String == "openjoystickdriver/v1alpha2")
+      #expect(object["apiVersion"] as? String == "openjoystickdriver/v1alpha3")
       #expect(object["kind"] as? String == kind)
     }
   }
 
   @Test
-  func aFeedSessionNamesItsPersona() throws {
+  func feedSessionNamesItsPersona() throws {
     let object = try #require(
       try JSONSerialization.jsonObject(
         with: Data(Self.encoded(EndpointFeedSession(as: .sdlCompatible)).utf8)
@@ -71,7 +71,7 @@ struct EndpointMessagesTests {
   }
 
   @Test
-  func aFrameEncodesToALineTheSchemaAccepts() throws {
+  func frameEncodesToLineSchemaAccepts() throws {
     let frame = VirtualFeedFrame(
       buttons: [.south],
       dpad: [.up],
@@ -88,14 +88,14 @@ struct EndpointMessagesTests {
 
   @Test(arguments: [
     (#"{"apiVersion":null,"kind":"Hello"}"#, ErrorCode.missingHeader),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","kind":null}"#, .missingHeader),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":null}"#, .missingHeader),
     (#"{"apiVersion":7,"kind":"Hello"}"#, .missingHeader),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","kind":{}}"#, .missingHeader),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":{}}"#, .missingHeader),
     (#"{"kind":"Hello"}"#, .missingHeader),
     (#"{"apiVersion":"openjoystickdriver/v2","kind":null}"#, .missingHeader),
     (#"["Hello"]"#, .invalidMessage),
   ])
-  func aHeaderThatIsMissingOrNotStringsIsRefused(line: String, code: ErrorCode) {
+  func headerThatIsMissingOrNotStringsIsRefused(line: String, code: ErrorCode) {
     #expect(EndpointHeader.refusal(of: Data(line.utf8), accepting: ["Hello"])?.code == code)
   }
 
@@ -105,7 +105,7 @@ struct EndpointMessagesTests {
     clientLine("FeedRequest", #","as":"Generic""#),
     clientLine("FeedRequest", #","as":"SDLCompatible""#),
   ])
-  func aClientLineTheSchemaAcceptsDecodesInSwift(line: String) throws {
+  func clientLineSchemaAcceptsDecodesInSwift(line: String) throws {
     #expect(try Self.issues(line).isEmpty)
     let request = try JSONDecoder().decode(EndpointRequest.self, from: Data(line.utf8))
     #expect(request.apiVersion == OpenJoystickDriverAPI.version)
@@ -121,7 +121,7 @@ struct EndpointMessagesTests {
         + #""axes":{"LeftStickX":-1,"LeftTrigger":1},"holdMilliseconds":8"#
     ),
   ])
-  func aFrameLineTheSchemaAcceptsDecodesInSwift(line: String) throws {
+  func frameLineSchemaAcceptsDecodesInSwift(line: String) throws {
     #expect(try Self.issues(line).isEmpty)
     _ = try JSONDecoder().decode(VirtualFeedFrame.self, from: Data(line.utf8))
   }
@@ -135,15 +135,15 @@ struct EndpointMessagesTests {
     clientLine(
       "Status",
       #","status":"Failure","code":"E1003","message":"m","details":"#
-        + #"{"supportedAPIVersions":["openjoystickdriver/v1alpha2"]}"#
+        + #"{"supportedAPIVersions":["openjoystickdriver/v1alpha3"]}"#
     ),
   ])
-  func aLineOutsideTheSchemaIsRefused(line: String) throws {
+  func lineOutsideSchemaIsRefused(line: String) throws {
     #expect(!(try Self.issues(line).isEmpty), "\(line)")
   }
 
   @Test(arguments: ["PointerX", "PointerY"])
-  func aFrameWithAPointerAxisIsRefusedByTheSchemaAndSwift(axis: String) throws {
+  func frameWithPointerAxisIsRefusedBySchemaAndSwift(axis: String) throws {
     let line = clientLine("Frame", #","axes":{"\#(axis)":0.5}"#)
     #expect(!(try Self.issues(line).isEmpty))
     #expect(throws: DecodingError.self) {

@@ -5,7 +5,7 @@ import Foundation
 /// Only the Wii Remote driver reports it; every other family leaves
 /// ``ControllerConnectionState/wiiRemote`` nil.
 public struct WiiRemoteStatus: Codable, Equatable, Sendable {
-  /// The extension kinds of `nintendo-wii.json`, by the description's kind name.
+  /// The extension kinds of `nintendo-wii.plist`, by the description's kind name.
   public enum ExtensionKind: String, Codable, CaseIterable, Sendable {
     /// The Nunchuk.
     case nunchuk = "Nunchuk"
@@ -54,7 +54,7 @@ public struct WiiRemoteStatus: Codable, Equatable, Sendable {
 
 extension WiiRemoteStatus {
   /// The report mode as the hex byte, such as `0x31`.
-  public var reportModeText: String { String(format: "0x%02X", reportMode) }
+  public var reportModeText: String { unsafe String(format: "0x%02X", reportMode) }
 
   /// The extension in the user's language: its name, the unknown ID, or none.
   public func extensionText(_ localization: Localization = Localization()) -> String {

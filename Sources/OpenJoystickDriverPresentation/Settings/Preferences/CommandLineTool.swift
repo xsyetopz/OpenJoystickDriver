@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
@@ -100,10 +101,12 @@
 
     /// Returns whether the error says that the change needs administrator rights.
     private static func needsAdministrator(_ error: any Error) -> Bool {
-      let error = error as NSError
-      if error.domain == NSCocoaErrorDomain { return error.code == NSFileWriteNoPermissionError }
-      return error.domain == NSPOSIXErrorDomain
-        && (error.code == Int(EACCES) || error.code == Int(EPERM))
+      let nsError = error as NSError
+      if nsError.domain == NSCocoaErrorDomain {
+        return nsError.code == NSFileWriteNoPermissionError
+      }
+      return nsError.domain == NSPOSIXErrorDomain
+        && (nsError.code == Int(EACCES) || nsError.code == Int(EPERM))
     }
 
     /// Quotes `text` as one POSIX shell word.
@@ -133,7 +136,7 @@
       // `executeAndReturnError` reports through an `NSDictionary`.
       // swiftlint:disable:next legacy_objc_type
       var error: NSDictionary?
-      script?.executeAndReturnError(&error)
+      unsafe script?.executeAndReturnError(&error)
       guard let error else { return }
       if error[NSAppleScript.errorNumber] as? Int == userCancelled {
         throw CommandLineToolLink.Failure.cancelled

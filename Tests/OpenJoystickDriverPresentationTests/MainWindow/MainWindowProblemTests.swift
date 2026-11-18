@@ -20,17 +20,24 @@ struct MainWindowProblemTests {
     )
   }
 
+  private static let failure = SystemExtensionRequestFailure(
+    domain: "OSSystemExtensionErrorDomain",
+    code: 4,
+    text: "No"
+  )
+
   private func permissions(_ read: RuntimePermissionState) -> RuntimePermissionLoadState {
     .available(RuntimePermissionSummary(inputRead: read, inputInject: .granted))
   }
 
   @Test
-  func aHealthyAppHasNoProblemAndNoBanner() {
+  func healthyAppHasNoProblemAndNoBanner() {
     #expect(
       MainWindowProblem.current(
         permissions: permissions(.granted),
         status: status(inputRead: .granted),
         driver: .active,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).isEmpty
@@ -40,6 +47,7 @@ struct MainWindowProblemTests {
         permissions: .loading,
         status: .loading,
         driver: .checking,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).isEmpty
@@ -47,7 +55,7 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func theAccessProblemFollowsTheSameRuleAsTheStatusItemAndTheAccessArea() {
+  func accessProblemFollowsSameRuleAsStatusItemAndAccessArea() {
     let cases: [(RuntimePermissionLoadState, RuntimeStatusState, Bool)] = [
       (permissions(.granted), status(inputRead: .denied), false),
       (permissions(.denied), status(inputRead: .granted), true),
@@ -63,6 +71,7 @@ struct MainWindowProblemTests {
         permissions: reading,
         status: payload,
         driver: .active,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
@@ -73,6 +82,7 @@ struct MainWindowProblemTests {
         permissions: permissions(.granted),
         status: status(inputRead: .denied),
         driver: .active,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).contains(.accessMissing)
@@ -85,48 +95,112 @@ struct MainWindowProblemTests {
       MainWindowProblem.current(
         permissions: .unavailable,
         status: .unavailable("down"),
-        driver: .awaitingApproval,
+        driver: .needsApproval,
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.serviceUnavailable("down"), .driver(.awaitingApproval)]
+        == [.service(.stopped, "down"), .driver(.needsApproval, controllers: ["Pad"])]
     )
     #expect(
       MainWindowProblem.current(
         permissions: permissions(.denied),
         status: status(inputRead: .denied),
-        driver: .failed,
+        driver: .failed(Self.failure),
+        extensionRouteControllers: ["Pad"],
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.driver(.failed), .accessMissing]
+        == [.driver(.failed(Self.failure), controllers: ["Pad"]), .accessMissing]
     )
   }
 
   @Test
   func eachProblemNamesItsAction() {
-    #expect(MainWindowProblem.serviceUnavailable("down").action == .retryService)
-    #expect(MainWindowProblem.driver(.awaitingApproval).action == .openDriverApproval)
-    #expect(MainWindowProblem.driver(.needsActivation).action == .repairDriver)
-    #expect(MainWindowProblem.driver(.invalid).action == .repairDriver)
-    #expect(MainWindowProblem.driver(.missingEmbedded).action == nil)
+    #expect(MainWindowProblem.service(.stopped, "down").action == .retryService)
+    #expect(
+      MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).action == .openDriverApproval
+    )
+    #expect(
+      MainWindowProblem.driver(.needsActivation, controllers: ["Pad"]).action == .repairDriver
+    )
+    #expect(MainWindowProblem.driver(.invalid, controllers: ["Pad"]).action == nil)
+    #expect(
+      MainWindowProblem.driver(.unavailable("probe failed"), controllers: ["Pad"]).action == nil
+    )
+    #expect(MainWindowProblem.driver(.missingEmbedded, controllers: ["Pad"]).action == nil)
     #expect(MainWindowProblem.accessMissing.action == .showAccess)
   }
 
   @Test
-  func onlyProblemsThatNeedTheServiceOrAReinstallAreFailures() {
-    #expect(MainWindowProblem.serviceUnavailable("down").isFailure)
-    #expect(MainWindowProblem.driver(.missingEmbedded).isFailure)
-    #expect(!MainWindowProblem.driver(.awaitingApproval).isFailure)
+  func driverProblemNeedsConnectedControllerRoutedThroughExtension() {
+    for connected in [false, true] {
+      let problems = MainWindowProblem.current(
+        permissions: permissions(.granted),
+        status: status(inputRead: .granted),
+        driver: .needsActivation,
+        extensionRouteControllers: connected ? ["Pad"] : [],
+        liveUpdatesFallbackReason: nil,
+        listenerFailure: nil
+      )
+      #expect(problems.contains(.driver(.needsActivation, controllers: ["Pad"])) == connected)
+    }
+    #expect(RuntimeStatusState.loading.extensionRouteControllerNames.isEmpty)
+  }
+
+  @Test
+  func driverBannerNamesControllersThatNeedExtension() {
+    let title = MainWindowProblem.driver(.needsActivation, controllers: ["Pad", "Stick"]).title
+    #expect(title.contains("Pad") && title.contains("Stick"))
+    #expect(MainWindowProblem.accessMissing.title == OJDLocalized.string("ui.banner.access.title"))
+  }
+
+  @Test
+  func runningRequestShowsProgressWithDisabledButton() {
+    let problem = MainWindowProblem.driver(.running, controllers: ["Pad"])
+    #expect(problem.detailKey == "ui.setup.runningDetail")
+    #expect(problem.actionTitleKey == "ui.setup.repairRunning")
+    #expect(!problem.isActionEnabled)
+    #expect(MainWindowProblem.driver(.needsActivation, controllers: ["Pad"]).isActionEnabled)
+  }
+
+  @Test
+  func eachRequestOutcomeHasItsOwnTextAndButton() {
+    let cases: [(SystemExtensionSetupState, String, MainWindowProblemAction?)] = [
+      (
+        .needsApproval, SystemSettingsMessage.driverApprovalDetail.localizationKey(),
+        .openDriverApproval
+      ),
+      (.cancelled, "ui.setup.cancelledDetail", .repairDriver),
+      (.timedOut, "ui.setup.timedOutDetail", .repairDriver),
+      (.failed(Self.failure), "ui.setup.failedDetail", .repairDriver),
+      (.unavailable("probe failed"), "ui.setup.unavailableDetail", nil),
+      (.missingEmbedded, "ui.setup.missingDetail", nil),
+      (.invalid, "ui.setup.invalidDetail", nil),
+    ]
+    for (state, detailKey, action) in cases {
+      let problem = MainWindowProblem.driver(state, controllers: ["Pad"])
+      #expect(problem.detailKey == detailKey, "\(state)")
+      #expect(problem.action == action, "\(state)")
+      #expect((problem.actionTitleKey == nil) == (action == nil), "\(state)")
+    }
+  }
+
+  @Test
+  func onlyProblemsThatNeedServiceOrReinstallAreFailures() {
+    #expect(MainWindowProblem.service(.stopped, "down").isFailure)
+    #expect(MainWindowProblem.driver(.missingEmbedded, controllers: ["Pad"]).isFailure)
+    #expect(!MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).isFailure)
     #expect(!MainWindowProblem.accessMissing.isFailure)
   }
 
   @Test
-  func pollingInsteadOfLiveUpdatesIsAQuietProblemWithItsReason() {
+  func pollingInsteadOfLiveUpdatesIsQuietProblemWithItsReason() {
     let problems = MainWindowProblem.current(
       permissions: permissions(.granted),
       status: status(inputRead: .granted),
       driver: .active,
+      extensionRouteControllers: ["Pad"],
       liveUpdatesFallbackReason: .timeout,
       listenerFailure: nil
     )
@@ -138,7 +212,38 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func anEmptyOrMissingValueShowsNone() {
+  func unreadableOverrideStoreBannerProblemNotControlProblem() {
+    let unreadable = RuntimeStatusState.available(
+      RuntimeStatusPresentation(
+        payload: ApplicationServiceStatusPayload(
+          inputRead: .granted,
+          inputInject: .granted,
+          connectedDevices: [],
+          virtualHIDProfileOverrideError: "unsupported-schema"
+        )
+      )
+    )
+    let problems = MainWindowProblem.current(
+      permissions: permissions(.granted),
+      status: unreadable,
+      driver: .active,
+      extensionRouteControllers: ["Pad"],
+      liveUpdatesFallbackReason: nil,
+      listenerFailure: nil
+    )
+    #expect(problems.count == 1)
+    #expect(problems.first?.titleKey == "ui.virtualProfile.title")
+    #expect(problems.first?.isFailure == false)
+    #expect(problems.first?.action == nil)
+    guard case .virtualProfileStore(let message) = problems.first else {
+      Issue.record("expected the override store problem")
+      return
+    }
+    #expect(message.contains("unsupported-schema"))
+  }
+
+  @Test
+  func emptyOrMissingValueShowsNone() {
     #expect(OJDValue(nil).displayText == OJDLocalized.string("status.none"))
     #expect(OJDValue("").displayText == OJDLocalized.string("status.none"))
     #expect(OJDValue(nil).accessibilityKey == "status.none")
@@ -159,14 +264,14 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func sentencesReadAMissingValueAsAWordAndNotAHyphen() {
+  func sentencesReadMissingValueAsWordAndNotHyphen() {
     #expect(OJDValue.none.spokenText == OJDLocalized.string("status.none"))
     #expect(OJDValue.none.spokenText != "-")
     #expect(OJDValue.text("x").spokenText == "x")
   }
 
   @Test
-  func theSerialNumberStartsHiddenAndTheEyeTogglesIt() {
+  func serialNumberStartsHiddenAndEyeTogglesIt() {
     var visibility = SerialNumberVisibility()
     let serial = OJDValue.text("ABC123")
     #expect(visibility.presentation(of: serial).isObscured)
@@ -185,10 +290,39 @@ struct MainWindowProblemTests {
   }
 
   @Test
-  func aMissingSerialNumberShowsNoneWithoutAnEye() {
+  func missingSerialNumberShowsNoneWithoutEye() {
     let presentation = SerialNumberVisibility().presentation(of: .none)
     #expect(!presentation.canToggle)
     #expect(!presentation.isObscured)
     #expect(presentation.displayText == OJDLocalized.string("status.none"))
+  }
+
+  @Test
+  func bannerRowWithButtonOffersFixOfMatchingControllerCard() {
+    #expect(
+      MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).offersFix(of: .setUpDriver)
+    )
+    #expect(
+      MainWindowProblem.driver(.needsActivation, controllers: ["Pad"]).offersFix(of: .setUpDriver)
+    )
+    #expect(MainWindowProblem.accessMissing.offersFix(of: .openAccess))
+  }
+
+  @Test
+  func driverRowWithoutButtonLeavesCardsButton() {
+    #expect(
+      !MainWindowProblem.driver(.missingEmbedded, controllers: ["Pad"]).offersFix(of: .setUpDriver)
+    )
+    #expect(!MainWindowProblem.driver(.invalid, controllers: ["Pad"]).offersFix(of: .setUpDriver))
+  }
+
+  @Test
+  func bannerRowOffersOnlyFixOfItsOwnProblem() {
+    #expect(!MainWindowProblem.accessMissing.offersFix(of: .setUpDriver))
+    #expect(
+      !MainWindowProblem.driver(.needsApproval, controllers: ["Pad"]).offersFix(of: .openAccess)
+    )
+    #expect(!MainWindowProblem.accessMissing.offersFix(of: .openInputTest))
+    #expect(!MainWindowProblem.service(.stopped, "").offersFix(of: .openTroubleshooting))
   }
 }

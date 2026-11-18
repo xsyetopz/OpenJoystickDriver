@@ -17,8 +17,17 @@ extension DevicePipeline {
     // samples still go out with this one.
     let held = coalescedInput
     coalescedInput = nil
+    if let parsed {
+      currentRawInputState = parsed.state
+      if let latest = parsed.motion.last { currentRawAngularVelocity = latest.angularVelocity }
+    }
     let event = parsed.map(normalized)
-    if event != nil { lastObservedInputReportNanoseconds = now }
+    if event != nil {
+      if lastObservedInputReportNanoseconds == nil {
+        NotificationCenter.postServiceStatusChanged(from: self)
+      }
+      lastObservedInputReportNanoseconds = now
+    }
     if let timeout = plan.inputReportLivenessTimeoutNanoseconds {
       if let last = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds,
         now - last >= timeout
@@ -46,6 +55,7 @@ extension DevicePipeline {
     }
     let previousInput = currentInputState
     currentInputState = event.state
+    idleInput.observe(event.state, at: now)
 
     if !externalOutputAllowed { return }
     if waitingForExternalNeutral {
@@ -121,20 +131,23 @@ extension DevicePipeline {
     await dispatch(pending)
   }
 
-  /// Applies the normalization a driver leaves to the pipeline: each trigger button the driver's
-  /// protocol has no digital signal for is derived from its analog trigger, with hysteresis
-  /// against the last normalized state.
+  /// Applies the normalization a driver leaves to the pipeline: the stored calibration, which also
+  /// removes the gyro offset from each motion sample, then each
+  /// trigger button the driver's protocol has no digital signal for, derived from its analog
+  /// trigger with hysteresis against the last normalized state.
   func normalized(_ event: ControllerEvent) -> ControllerEvent {
+    let stored = calibration()
     let state = TriggerButtonDerivation.applying(
-      to: event.state,
+      to: stored.applying(to: event.state),
       previous: currentInputState,
       capabilities: driver.capabilities
     )
-    guard state != event.state else { return event }
+    let motion = event.motion.map(stored.applying)
+    guard state != event.state || motion != event.motion else { return event }
     return ControllerEvent(
       timestamp: event.timestamp,
       state: state,
-      motion: event.motion,
+      motion: motion,
       touchFrames: event.touchFrames,
       isFresh: event.isFresh
     )
@@ -180,4 +193,18 @@ extension DevicePipeline {
   func currentConnectionState() -> ControllerConnectionState? {
     binding.map { connectionState(binding: $0, interface: interface) }
   }
+}
+
+extension DevicePipeline {
+  /// Whether the controller is on Bluetooth and its input state has not changed for `minutes`.
+  func isIdleDisconnectDue(afterMinutes minutes: Int) -> Bool {
+    IdleDisconnectPolicy.isDue(
+      transport: currentConnectionState()?.transport,
+      idleNanoseconds: idleInput.idleNanoseconds(at: uptimeNanoseconds()),
+      afterMinutes: minutes
+    )
+  }
+
+  /// Starts the idle time again, so a failed disconnect is retried after a full period.
+  func restartIdleWindow() { idleInput.restart(at: uptimeNanoseconds()) }
 }

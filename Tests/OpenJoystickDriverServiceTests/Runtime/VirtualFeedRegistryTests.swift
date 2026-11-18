@@ -8,14 +8,14 @@ import Testing
 @Suite(.serialized)
 struct VirtualFeedRegistryTests {
   @Test
-  func theProductionIdleTimeoutIsTwoSecondsAndIsTheRegistryDefault() {
+  func productionIdleTimeoutIsTwoSecondsAndIsRegistryDefault() {
     #expect(VirtualFeedExchangeResult.idleTimeoutSeconds == 2)
     let registry = VirtualFeedRegistry { _, _ in throw CancellationError() }
     #expect(registry.idleTimeout == VirtualFeedExchangeResult.idleTimeoutSeconds)
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFeedPublishesItsProfileSendsFramesAndReturnsTheHostsCommands() async throws {
+  func feedPublishesItsProfileSendsFramesAndReturnsHostsCommands() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -56,7 +56,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func framesPlayInOrderEachForItsHoldAndAtLeastTheMinimum() async throws {
+  func framesPlayInOrderEachForItsHoldAndAtLeastMinimum() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let registry = factory.registry(clock: time.clock)
@@ -89,7 +89,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aDelayedSendDoesNotShortenTheNextGapBelowTheMinimum() async throws {
+  func delayedSendDoesNotShortenNextGapBelowMinimum() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let registry = factory.registry(clock: time.clock)
@@ -113,7 +113,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func queuedFramesCoalesceOnlyWhenButtonsAndDpadMatchWithoutAHold() async throws {
+  func queuedFramesCoalesceOnlyWhenButtonsAndDpadMatchWithoutHold() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -140,7 +140,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func aFullQueueAcceptsOnlyTheFramesThatFit() async throws {
+  func fullQueueAcceptsOnlyFramesThatFit() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -156,7 +156,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func closingStopsTheFramesThatWait() async throws {
+  func closingStopsFramesThatWait() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -174,7 +174,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFailedSendClosesTheFeed() async throws {
+  func failedSendClosesFeed() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -193,7 +193,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func closingRemovesTheDeviceOnceAndLaterExchangesReportClosed() async throws {
+  func closingRemovesDeviceOnceAndLaterExchangesReportClosed() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
@@ -207,7 +207,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFeedWithoutExchangesClosesAfterTheIdleTimeout() async throws {
+  func feedWithoutExchangesClosesAfterIdleTimeout() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let registry = factory.registry(idleTimeout: 0.125, clock: time.clock)
@@ -228,7 +228,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aBurstThatPlaysLongerThanTheIdleTimeoutIsNotClosed() async throws {
+  func burstThatPlaysLongerThanIdleTimeoutIsNotClosed() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let registry = factory.registry(idleTimeout: 0.25, clock: time.clock)
@@ -261,7 +261,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aFrameHeldLongerThanTheIdleTimeoutIsNotClosedBeforeItsHoldEnds() async throws {
+  func frameHeldLongerThanIdleTimeoutIsNotClosedBeforeItsHoldEnds() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let registry = factory.registry(idleTimeout: 0.25, clock: time.clock)
@@ -293,7 +293,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aSendThatHangsClosesTheFeedOnceTheFrameTimePlusTheIdleTimeoutPasses() async throws {
+  func sendThatHangsClosesFeedOnceFrameTimePlusIdleTimeoutPasses() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let registry = factory.registry(idleTimeout: 0.25, clock: time.clock)
@@ -320,7 +320,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func theFifthFeedIsRefusedBeforeItsDeviceIsBuilt() async throws {
+  func fifthFeedIsRefusedBeforeItsDeviceIsBuilt() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     for _ in 0..<VirtualFeedRegistry.maximumFeeds {
@@ -352,7 +352,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func anActivationThatHangsFailsAfterTheTimeoutAndKeepsNoFeed() async throws {
+  func activationThatHangsFailsAfterTimeoutAndKeepsNoFeed() async throws {
     let factory = FakeFeedFactory()
     factory.hangsActivation = true
     let registry = factory.registry(activationTimeout: 0.1)
@@ -368,7 +368,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func cancellingAnOpenThatHangsClosesItsDevice() async throws {
+  func cancellingOpenThatHangsClosesItsDevice() async throws {
     let factory = FakeFeedFactory()
     factory.hangsActivation = true
     let registry = factory.registry(activationTimeout: 60)
@@ -385,7 +385,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func anUnknownProfileIsRefusedWithoutADevice() async throws {
+  func unknownProfileIsRefusedWithoutDevice() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
 
@@ -396,7 +396,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func aFailedActivationClosesTheDeviceAndKeepsNoFeed() async throws {
+  func failedActivationClosesDeviceAndKeepsNoFeed() async throws {
     let factory = FakeFeedFactory()
     factory.failsActivation = true
     let registry = factory.registry()
@@ -411,7 +411,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func aCancellationThrownByTheActivationFailsItInsteadOfCancellingTheOpen() async throws {
+  func cancellationThrownByActivationFailsItInsteadOfCancellingOpen() async throws {
     let factory = FakeFeedFactory()
     factory.cancelsActivation = true
     let registry = factory.registry()
@@ -441,7 +441,7 @@ struct VirtualFeedRegistryTests {
   }
 
   @Test
-  func uncollectedCommandsKeepOnlyTheNewest() async throws {
+  func uncollectedCommandsKeepOnlyNewest() async throws {
     let factory = FakeFeedFactory()
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")

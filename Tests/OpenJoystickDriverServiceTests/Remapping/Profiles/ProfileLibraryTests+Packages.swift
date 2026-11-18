@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
@@ -79,7 +80,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func userProfilesCannotTakeAPackageProfileName() async throws {
+  func userProfilesCannotTakePackageProfileName() async throws {
     try await withLibrary { library, directory in
       try installPackage("arcade-pack", [makeProfile(name: "Arcade")], in: directory)
       let own = makeProfile(name: "Mine")
@@ -115,7 +116,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func removedPackageBehavesLikeAMissingProfile() async throws {
+  func removedPackageBehavesLikeMissingProfile() async throws {
     try await withLibrary { library, directory in
       let shipped = makeProfile(name: "Arcade")
       try installPackage("arcade-pack", [shipped], in: directory)
@@ -137,7 +138,7 @@ extension ProfileLibraryTests {
   }
 
   @Test
-  func writesNeverTouchThePackagesFolder() async throws {
+  func writesNeverTouchPackagesFolder() async throws {
     try await withLibrary { library, directory in
       let shipped = makeProfile(name: "Arcade")
       try installPackage("arcade-pack", [shipped], in: directory)
@@ -181,9 +182,9 @@ extension ProfileLibraryTests {
     try FileManager.default.createDirectory(at: profileFolder, withIntermediateDirectories: true)
     var fileNames: [String] = []
     for (index, profile) in profiles.enumerated() {
-      let fileName = "profile-\(index).json"
+      let fileName = "profile-\(index).plist"
       fileNames.append(fileName)
-      try Data(try RemappingProfileFileStore.encodedJSON(profile).utf8).write(
+      try Data(try RemappingProfileFileStore.encodedPlist(profile).utf8).write(
         to: profileFolder.appendingPathComponent(fileName)
       )
     }
@@ -192,15 +193,15 @@ extension ProfileLibraryTests {
       "version": "1.0.0", "author": "Tester", "requires": ["minimum": "0.6.0"],
       "profiles": fileNames,
     ]
-    try JSONSerialization.data(withJSONObject: manifest).write(
-      to: folder.appendingPathComponent("mod.json")
+    try PropertyListFixture.data(tree: manifest).write(
+      to: folder.appendingPathComponent("mod.plist")
     )
   }
 
   private func writeUserProfile(_ profile: RemappingProfile, in directory: URL) throws {
     let folder = directory.appendingPathComponent("Profiles", isDirectory: true)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-    try Data(try RemappingProfileFileStore.encodedJSON(profile).utf8).write(
+    try Data(try RemappingProfileFileStore.encodedPlist(profile).utf8).write(
       to: folder.appendingPathComponent(RemappingProfileLibrary.profileFileName(profile.id))
     )
   }

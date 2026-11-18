@@ -5,14 +5,14 @@ import OpenJoystickDriverKit
 struct ControllerFact: Equatable, Identifiable {
   /// What a fact says, which names the row.
   enum Kind: Hashable {
+    /// The app in front that selected the profile in force.
+    case profileSelectedBy
     /// Whether a virtual device publishes the controller.
     case publication
     /// Whether a `Pause` has the controller pass through unmapped.
     case paused
     /// The route that serves the controller.
     case serving
-    /// The protocol binding of the controller.
-    case controllerProtocol
     /// The serial number.
     case serialNumber
     /// The health of the input session.
@@ -21,7 +21,7 @@ struct ControllerFact: Equatable, Identifiable {
     case battery
     /// Whether the controller charges.
     case chargingState
-    /// Whether the controller is on a cable.
+    /// Whether the controller is on a cable, while its charging state is unknown.
     case cableState
     /// The report mode of a Wii Remote.
     case wiiReportMode
@@ -45,10 +45,8 @@ struct ControllerFact: Equatable, Identifiable {
     case parser
     /// Who owns the controller's input and output.
     case ownership
-    /// Whether the system lists the controller too.
+    /// The concern of the physical ownership, when the system does not list the controller too.
     case duplicateExposureRisk
-    /// The owner of the controller's output, when it is the system.
-    case outputOwner
     /// Where the controller's record comes from.
     case record
     /// Where the HID usage map comes from.
@@ -73,6 +71,8 @@ struct ControllerFact: Equatable, Identifiable {
     case outputEndpoint
     /// The client that holds the controller exclusively.
     case exclusiveOwner
+    /// Every process that holds the controller open.
+    case holders
     /// Whether the system also lists the controller.
     case alsoListedBySystem
   }
@@ -97,13 +97,26 @@ enum ControllerDetailFacts {
   /// Returns the facts every user wants: what is published and how, the controller's state, and
   /// what it can do.
   ///
-  /// - Parameter device: The controller.
+  /// - Parameters:
+  ///   - device: The controller.
+  ///   - appName: The name of the app with a bundle identifier.
   /// - Returns: The facts every user wants: what is published and how, the controller's state, and
   ///   what it can do.
   static func general(
-    for device: ApplicationServiceDeviceDescription
+    for device: ApplicationServiceDeviceDescription,
+    appName: (String) -> String = { $0 }
   ) -> [ControllerFact] {
     let output = device.physicalOutputCapabilities
+    let selectedBy =
+      device.profileInForce?.appID.map {
+        [
+          fact(
+            .profileSelectedBy,
+            "ui.controllers.profileSelectedBy.label",
+            .text(appName($0))
+          )
+        ]
+      } ?? []
     let paused =
       device.paused
       ? [
@@ -115,12 +128,7 @@ enum ControllerDetailFacts {
       ] : []
     let always = [
       fact(.publication, "cli.controller.show.labelPublication", publication(device)),
-      fact(.serving, "ui.controllers.serving.label", .text(servingText(device))),
-      fact(
-        .controllerProtocol,
-        "term.protocol",
-        .text(device.protocolBinding.displayName)
-      ),
+      fact(.serving, "ui.controllers.serving.label", .text(device.servingRouteLabel)),
       fact(.serialNumber, "term.serialNumber", serialNumber(device)),
     ]
     // A controller that another client holds runs no input session, so it has no input health.
@@ -131,7 +139,11 @@ enum ControllerDetailFacts {
     let power = [
       fact(.battery, "ui.controllers.battery", battery(device)),
       fact(.chargingState, "ui.controllers.chargingState", chargingState(device)),
-      fact(.cableState, "ui.controllers.cableState", cableState(device)),
+      fact(
+        .cableState,
+        "ui.controllers.cableState",
+        chargingState(device) == .none ? cableState(device) : .none
+      ),
     ]
     let wiiRemote =
       device.connectionState?.wiiRemote.map {
@@ -176,6 +188,11 @@ enum ControllerDetailFacts {
           )
         )
       ] : []
+    let holders = fact(
+      .holders,
+      "ui.controllers.holders",
+      list(device.holders.map { $0.label(localize: OJDLocalized.string) })
+    )
     let listed =
       device.duplicateExposureRisk == .systemGameController
       ? [
@@ -185,7 +202,7 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("status.controllerAlsoListedBySystem"))
         )
       ] : []
-    return paused + always + input + held + listed
+    return selectedBy + paused + always + input + held + [holders] + listed
       + (power + wiiRemote + capabilities).filter { $0.value != .none }
   }
 
@@ -208,18 +225,18 @@ enum ControllerDetailFacts {
     let now = DispatchTime.now().uptimeNanoseconds
     let optional = [
       fact(
-        .outputOwner,
-        "cli.controller.show.labelOutputOwner",
-        device.physicalOutputOwner == .system
-          ? .text(OJDLocalized.string("platform.macos.cli.controller.show.outputOwnerMacos"))
-          : .none
+        .duplicateExposureRisk,
+        "ui.controllers.duplicateExposureRisk",
+        // The General facts already say that the system lists the controller too.
+        device.duplicateExposureRisk == .systemGameController
+          ? .none : .text(duplicateExposureText(device.duplicateExposureRisk))
       ),
       fact(
         .controls,
         "cli.controller.show.labelControls",
         list(
           Control.allCases.filter(device.capabilities.controls.contains).map {
-            RuntimePresentation.sourceLabel(.button($0))
+            controlText($0)
           }
         )
       ),
@@ -231,8 +248,7 @@ enum ControllerDetailFacts {
       fact(
         .inputMapping,
         "cli.controller.show.labelInputMapping",
-        device.bindingResult.inputMapping.map { .text($0.rowText(localize: OJDLocalized.string)) }
-          ?? .none
+        device.bindingResult.inputMapping.map { .text(inputMappingText($0)) } ?? .none
       ),
       fact(.inputReportFormat, "ui.controllers.inputReportFormat", OJDValue(health.reportFormat)),
       fact(
@@ -253,13 +269,8 @@ enum ControllerDetailFacts {
     ].filter { $0.value != .none }
     return [
       fact(.unitID, "cli.controller.show.labelUnit", .reported(device.portKey?.rawValue)),
-      fact(.parser, "term.parser", .reported(device.protocolBinding.commandLineName)),
+      fact(.parser, "term.parser", parserText(device)),
       fact(.ownership, "cli.controller.show.labelOwnership", .text(ownershipText(device))),
-      fact(
-        .duplicateExposureRisk,
-        "ui.controllers.duplicateExposureRisk",
-        .text(duplicateExposureText(device.duplicateExposureRisk))
-      ),
       fact(.record, "cli.controller.show.labelRecord", .text(recordText(record))),
     ] + optional + [
       fact(.usbIdentifier, "ui.controllers.usbIdentifier", usbIdentifier(device)),
@@ -294,22 +305,13 @@ enum ControllerDetailFacts {
   /// - Returns: Whether a virtual device publishes the controller, why not, and for a failed send
   ///   the failure text, localized; "None" when the service reports none.
   static func publication(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
-    device.publication.map { .text(publicationText($0)) } ?? .none
-  }
-
-  /// Returns the route, with why it publishes nothing when it does not.
-  ///
-  /// - Parameter device: The controller.
-  /// - Returns: The route, with why it publishes nothing when it does not.
-  static func servingText(_ device: ApplicationServiceDeviceDescription) -> String {
-    guard let reason = device.servingDecision.route.disabledReason else {
-      return device.servingRouteLabel
-    }
-    return OJDLocalized.formatted(
-      "ui.controllers.serving.withReason",
-      device.servingRouteLabel,
-      OJDLocalized.string(ControllerDetailLabels.servingReasonKey(reason))
-    )
+    // The Input row already says the controller waits for its first input.
+    let inputRowSaysWaiting =
+      device.hidInputOwnership != .ownedByAnotherClient
+      && device.inputHealth.state == .awaitingInput
+    return device.publication.map {
+      .text(publicationText($0, omittingNoInputYet: inputRowSaysWaiting))
+    } ?? .none
   }
 
   /// Returns the input health state, with its failure reason when it has one.
@@ -352,7 +354,8 @@ enum ControllerDetailFacts {
       return OJDLocalized.string(
         ControllerDetailLabels.physicalOwnershipKey(.upstreamVirtualDevice)
       )
-    case .systemGameController: return OJDLocalized.string("ui.controllers.alsoListedBySystem")
+    case .systemGameController:
+      return OJDLocalized.string(ControllerDetailLabels.physicalOwnershipKey(.systemGamepad))
     case .unknownOwnership:
       return OJDLocalized.string(ControllerDetailLabels.physicalOwnershipKey(.unknown))
     }
@@ -384,6 +387,7 @@ enum ControllerDetailFacts {
   /// - Returns: The localization key of the input health state.
   private static func inputHealthKey(_ state: ControllerInputHealthState) -> String {
     switch state {
+    case .awaitingInput: return "ui.controllers.inputHealth.awaitingInput"
     case .healthy: return "ui.controllers.inputHealth.healthy"
     case .stale: return "ui.controllers.inputHealth.stale"
     case .waitingForNeutral: return "ui.controllers.inputHealth.waitingForNeutral"
@@ -413,15 +417,22 @@ enum ControllerDetailFacts {
 
   /// Returns the publication state, with the reason or the failure when it has one.
   ///
-  /// - Parameter publication: The publication status the service reported.
+  /// - Parameters:
+  ///   - publication: The publication status the service reported.
+  ///   - omittingNoInputYet: Whether to leave out the reason that the controller waits for input.
   /// - Returns: The publication state, with the reason or the failure when it has one.
-  static func publicationText(_ publication: ApplicationServicePublicationStatus) -> String {
+  static func publicationText(
+    _ publication: ApplicationServicePublicationStatus,
+    omittingNoInputYet: Bool = false
+  ) -> String {
     let state = OJDLocalized.string(publicationKey(publication.state))
     let detail: String
     switch publication.state {
     case .published: return state
     case .notPublished:
-      guard let reason = publication.reason else { return state }
+      guard let reason = publication.reason, !(omittingNoInputYet && reason == .noInputYet) else {
+        return state
+      }
       detail = OJDLocalized.string(ControllerDetailLabels.notPublishedReasonKey(reason))
     case .failed:
       guard let failure = publication.failure else { return state }

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension ApplicationServiceClient {
 
@@ -41,6 +41,11 @@ extension ApplicationServiceClient {
     _ requirement: PermissionManager.Requirement
   ) async throws -> PermissionManager.Snapshot {
     try await call(.requestAccess, LocalServiceRPCPermissionArguments(requirement: requirement))
+  }
+
+  /// Asks macOS for Bluetooth access and returns the state of the access afterward.
+  public func requestBluetoothAccess() async throws -> BluetoothAccessState {
+    try await call(.requestBluetoothAccess, LocalServiceRPCEmptyArguments())
   }
 
   /// Reads the input state of `controller`; nil when the controller has no input state.
@@ -296,6 +301,18 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Runs `action` on `controller`: a step reads raw input for about two seconds and stores what it
+  /// measured; `reset` removes the stored calibration and clears the gyro offset.
+  public func recalibrateController(
+    _ controller: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) async throws -> ControllerRecalibrationResult {
+    try await call(
+      .recalibrateController,
+      ControllerRecalibrationArguments(controller: controller, action: action)
+    )
+  }
+
   /// Returns the selected controller's model, or that unit only when `unit` is true, to automatic
   /// virtual HID profile selection.
   public func resetVirtualHIDProfileOverride(
@@ -309,42 +326,6 @@ extension ApplicationServiceClient {
         unit: unit
       )
     )
-  }
-
-  /// Publishes a virtual controller with the `profile` virtual HID profile, such as `Generic`,
-  /// that this client drives with ``exchangeVirtualFeed(token:frames:)``.
-  ///
-  /// Only OpenJoystickDriver's own signed executables can call this; other programs use
-  /// `ojd virtual feed`.
-  public func openVirtualFeed(profile: String) async throws -> VirtualFeedSession {
-    try await call(.openVirtualFeed, LocalServiceRPCVirtualFeedOpenArguments(profile: profile))
-  }
-
-  /// Queues `frames` on the feed and returns the output commands queued since the previous
-  /// exchange.
-  ///
-  /// Send the frames past ``VirtualFeedExchangeResult/accepted`` again later. Exchange at least
-  /// every ``VirtualFeedExchangeResult/idleTimeoutSeconds`` to keep the feed open.
-  ///
-  /// Only OpenJoystickDriver's own signed executables can call this; other programs use
-  /// `ojd virtual feed`.
-  public func exchangeVirtualFeed(
-    token: UUID,
-    frames: [VirtualFeedFrame] = []
-  ) async throws -> VirtualFeedExchangeResult {
-    try await call(
-      .exchangeVirtualFeed,
-      LocalServiceRPCVirtualFeedExchangeArguments(token: token, frames: frames)
-    )
-  }
-
-  /// Removes the feed's virtual controller; false when no open feed has the token.
-  ///
-  /// Only OpenJoystickDriver's own signed executables can call this; other programs use
-  /// `ojd virtual feed`.
-  @discardableResult
-  public func closeVirtualFeed(token: UUID) async throws -> Bool {
-    try await call(.closeVirtualFeed, LocalServiceRPCVirtualFeedCloseArguments(token: token))
   }
 
   /// Suspends the session of `controller`.

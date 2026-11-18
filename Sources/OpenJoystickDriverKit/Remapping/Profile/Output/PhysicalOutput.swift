@@ -30,15 +30,10 @@ public enum RemappingPhysicalOutput: Codable, Equatable, Hashable, Sendable {
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
-    /// The `Rumble` case.
     case rumble = "Rumble"
-    /// The `PlayerIndicator` case.
     case playerIndicator = "PlayerIndicator"
-    /// The `Color` case.
     case color = "Color"
-    /// The `Brightness` case.
     case brightness = "Brightness"
-    /// The `AdaptiveTrigger` case.
     case adaptiveTrigger = "AdaptiveTrigger"
 
     /// Keys that a profile document may give for this case, which `type` selects.
@@ -55,23 +50,14 @@ public enum RemappingPhysicalOutput: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a physical output, merged across all cases.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `motor`.
     case motor
-    /// The JSON key of `intensity`.
     case intensity
-    /// The JSON key of `indicator`.
     case indicator
-    /// The JSON key of `red`.
     case red
-    /// The JSON key of `green`.
     case green
-    /// The JSON key of `blue`.
     case blue
-    /// The JSON key of `trigger`.
     case trigger
-    /// The JSON key of `effect`.
     case effect
   }
 

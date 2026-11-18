@@ -21,7 +21,7 @@ actor USBEnumerationPollingProvider: USBTransportProvider {
   }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) throws -> any USBTransportSession { throw USBTransportError.notSupported }
 }

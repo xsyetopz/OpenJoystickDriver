@@ -1,26 +1,28 @@
 # Menu-Bar and Settings UI Architecture
 
-- **Status:** Architecture decision
-- **Scope:** The macOS menu-bar app, reusable settings window, and controller-mapping editor.
-- **Out of scope:** DriverKit topology, controller-record generation, profile-schema changes, and new diagnostic RPCs.
+- Status: Architecture decision
+- Scope: menu-bar app, settings window, mapping editor.
+- Out of scope: DriverKit topology, record generation, profile-schema changes, added diagnostic RPCs.
 
 ## Decision
 
-The UI lives in the `OpenJoystickDriverPresentation` library, which depends on `OpenJoystickDriverKit` only. The `OpenJoystickDriver` executable composes it with the runtime.
+The UI is the `OpenJoystickDriverPresentation` library, which depends only on `OpenJoystickDriverKit`. The `OpenJoystickDriver` executable composes it with the runtime.
 
-- `NSStatusItem` and a shallow `NSMenu` provide the menu-bar surface.
-- `MainWindowController` owns the main window, its sidebar areas, the last area and the window geometry across launches, and close/reopen behavior; `SettingsWindowController` owns the Settings window and its panes.
-- SwiftUI renders the settings content. AppKit remains the lifecycle shell.
-- `ApplicationServiceRuntime` starts once. The shell receives an injected `ApplicationServiceGateway` backed by `ApplicationServiceClient`.
-- The UI never starts a CLI subprocess, creates another runtime, or opens another RPC server.
-- macOS 12 is the deployment floor. Newer APIs require an availability check and an older path.
-- The consumer UI covers ordinary button, D-pad, axis, trigger, keyboard, mouse, pointer, scroll, and axis-tuning workflows. Advanced automation remains CLI-only.
+| Component | Role |
+| --- | --- |
+| NSStatusItem, shallow NSMenu | Menu-bar surface |
+| `MainWindowController` | Main window, sidebar areas, geometry across launches, close and reopen |
+| SettingsWindowController | Settings |
+| SwiftUI / AppKit | SwiftUI renders content; AppKit is the lifecycle shell |
+| `ApplicationServiceRuntime` | Starts once. The shell gets an injected `ApplicationServiceGateway` backed by `ApplicationServiceClient` |
+
+The UI starts no CLI subprocess, second runtime, or RPC server. The consumer UI covers button, D-pad, axis, trigger, keyboard, mouse, pointer, scroll, and axis-tuning workflows. Advanced automation is CLI-only.
 
 ## Runtime Boundary
 
-`ApplicationServiceRuntime` is the `@MainActor` composition and process-lifecycle owner. It starts and stops the service actors but does not perform controller I/O or serve as a presentation gateway. `DeviceManager` owns physical discovery and sessions; the remapping router, permission manager, and application server retain their existing isolated responsibilities.
+`ApplicationServiceRuntime` (@MainActor) owns the process lifecycle, starts and stops the service actors, and does no controller I/O. `DeviceManager` owns discovery and sessions.
 
-`HeadlessApplicationHost` is the composition root; it lives in `OpenJoystickDriverMacOSHost`, which the executable installs through `PlatformHost`. A no-argument launch starts the runtime and the AppKit presentation shell. Argument-bearing launches keep the existing CLI path.
+HeadlessApplicationHost, the composition root in OpenJoystickDriverMacOSHost, starts the runtime and AppKit shell; with arguments, the CLI runs.
 
 ```text
 main.swift
@@ -35,76 +37,81 @@ main.swift
                                 └─ ApplicationServiceClient / local RPC
 ```
 
-The gateway is the only presentation-to-service seam. Views and view models do not access `DeviceManager`, `RemappingProfileLibrary`, socket frames, or CLI parsers. `OpenJoystickDriverKit` remains independent of SwifterKit.
+The gateway is the only presentation-to-service seam: views and view models never touch `DeviceManager`, RemappingProfileLibrary, socket frames, or CLI parsers. `OpenJoystickDriverKit` does not depend on SwifterKit.
 
-Input Test uses this same seam for live input, rumble, player indicators, brightness, motion calibration, and tokenized temporary color previews. It does not bypass RPC through the in-process runtime. Releasing a preview token restores the next authoritative physical-color owner.
+Input Test uses the gateway for live input, output, motion calibration, and tokenized color previews; releasing a token restores the next physical-color owner.
 
 ## Presentation Ownership
 
-Feature and screen ViewModels are `@MainActor` and own asynchronous workflow state. Store service payloads once and derive presentation values from them. Views own only transient visual state; coordinators own AppKit lifecycle and panels.
+@MainActor ViewModels own async workflow state: store service payloads once, derive presentation values. Views own transient visual state; coordinators own AppKit lifecycle and panels.
 
-`RuntimeViewModel` is the single controller-inventory refresh coordinator for settings and the menu bar. Overlapping callers merge their requested scopes into one trailing refresh rather than dropping work, and only one gateway request executes at a time. A transient background failure preserves the last authoritative inventory. Controllers selection is reconciled only when that inventory changes.
+`RuntimeViewModel` is the one inventory refresh coordinator for settings and the menu bar: overlapping callers merge into one trailing refresh, one gateway request at a time. A transient failure keeps the last authoritative inventory.
 
-Developer snapshot and capture requests use one replaceable operation. Switching controllers, refreshing, stopping capture, and closing the window cancel and await the predecessor; publication also requires both the current operation generation and session token. Device I/O, parsing, packet differencing, classification, and bulk row formatting remain outside `@MainActor`. The main actor publishes observable snapshots and owns the SwiftUI/AppKit lifecycle only.
+Developer snapshot and capture requests use one replaceable operation; switching controllers, refreshing, stopping capture, and closing the window cancel and await the predecessor. Publication needs the current generation and session token. Device I/O, parsing, packet differencing, and row formatting stay off @MainActor.
 
 | Area | Owner | Boundary |
 | --- | --- | --- |
-| App lifecycle and status item | `Sources/OpenJoystickDriverPresentation/MenuBar/MenuBarCoordinator.swift` | AppKit activation, status menu, and termination only |
-| Main window | `Sources/OpenJoystickDriverPresentation/MainWindow/` | One reusable window, sidebar areas, toolbar, problem banner, and the last area and geometry across launches |
+| App lifecycle and status item | `Sources/OpenJoystickDriverPresentation/MenuBar/MenuBarCoordinator.swift` | AppKit activation, status menu, termination only |
+| Main window | `Sources/OpenJoystickDriverPresentation/MainWindow/` | One reusable window, sidebar areas, toolbar, problem banner, last area and geometry |
 | Main menu | `Sources/OpenJoystickDriverPresentation/MainMenu/` | Menu model and its AppKit rendering |
-| Settings window | `Sources/OpenJoystickDriverPresentation/SettingsWindow/` | General, Notifications, and Advanced panes and toolbar selection |
-| Developer diagnostics | `Sources/OpenJoystickDriverPresentation/Settings/Developer/` | Replaceable diagnostic operation, compact controller facts, bounded capture presentation, and virtualized packet rows |
+| Settings window | `Sources/OpenJoystickDriverPresentation/SettingsWindow/` | General, Notifications, Advanced panes, toolbar selection |
+| Developer diagnostics | `Sources/OpenJoystickDriverPresentation/Settings/Developer/` | Replaceable diagnostic operation, controller facts, bounded capture, virtualized packet rows |
 | Shared settings primitives | `Sources/OpenJoystickDriverPresentation/Components/{SettingsRows,StateViews}.swift` | Headers, rows, loading, empty, and error states |
-| Controller details and identity | `Sources/OpenJoystickDriverPresentation/Controllers/Inventory/ControllersView.swift` | Connected devices, identity selection, loading, failure, and retry |
-| Profiles and editor | `Sources/OpenJoystickDriverPresentation/Profiles/{List/ProfilesView,Editor/ProfileEditorViews}.swift` | Selection, drafts, assignments, save/conflict flow, and profile actions |
+| Controller details and identity | `Sources/OpenJoystickDriverPresentation/Controllers/Inventory/ControllersView.swift` | Connected devices, identity selection, loading, failure, retry |
+| Profiles and editor | `Sources/OpenJoystickDriverPresentation/Profiles/{List/ProfilesView,Editor/ProfileEditorViews}.swift` | Selection, drafts, assignments, save/conflict flow, profile actions |
 | Mapping capture | `Sources/OpenJoystickDriverPresentation/Profiles/Editor/MappingCaptureViews.swift`, `Sources/OpenJoystickDriverPresentation/InputCapture/KeyboardCaptureViews.swift` | Controller and keyboard capture plus axis adjustment |
-| Presentation state | `Sources/OpenJoystickDriverPresentation/Runtime/{RuntimeViewModel,SupportState}.swift` | Loading, permission, input, virtual HID profile override, mutation, diagnostics, and conflict state |
-| Service adapter | `Sources/OpenJoystickDriverPresentation/Runtime/ApplicationServiceGateway.swift` | Typed `ApplicationServiceClient` calls and stable presentation errors |
+| Presentation state | `Sources/OpenJoystickDriverPresentation/Runtime/{RuntimeViewModel,SupportState}.swift` | Loading, permission, input, virtual HID profile override, mutation, diagnostics, conflict state |
+| Service adapter | `Sources/OpenJoystickDriverPresentation/Runtime/ApplicationServiceGateway.swift` | Typed `ApplicationServiceClient` calls, stable presentation errors |
 
-Add files only for focused, independently testable capabilities. Group related helpers rather than splitting by individual control or visual role.
+Add files only for focused, independently testable capabilities.
 
 ## Settings Surface
 
 ### Menu Bar
 
-Menu items:
+`StatusItemModel` holds the menu as data; `MenuBarCoordinator+StatusMenu.swift` renders it.
 
-- one readiness, controller-count, and active-profile summary;
-- a Controllers submenu with Suspend or Resume, Test Input, Active Profile, Disconnect Wireless Link and Show in Window per controller;
-- a Profiles submenu with Activate and Deactivate;
-- `Grant Access` only when a permission is missing;
-- Open Window, Settings, Help, and Quit.
+| Row | Content |
+| --- | --- |
+| Problem (one per problem needing the user) | `Permission Missing: <name>` opens Access at that permission; a service problem row starts the service (title text not verified). MenuBarViewModel reads problems from the status RPC via StatusItemState.problems |
+| Controller (one per connected) | Battery level, active profile, paused state. With none: disabled No Controller Connected row |
+| Controller submenu | Checkmarked profile list ending in No Profile (More Profiles after ten, opening Profiles); Pause or Resume; Test Input; Show in Window; for wireless, Disconnect Bluetooth Connection |
+| Fixed | Open OpenJoystickDriver, Settings, Quit |
 
-Do not put refresh, profile editing, logs, reports, packet streams, raw identifiers, catalog audits, support tests, contributor diagnostics, or metrics dashboards in the menu.
+The menu has two levels. Activity Log, Explain Error Code, Report Problem, and Project Website are in Help. Keep logs, reports, packet streams, raw identifiers, and audits out.
+
+The icon is a controller symbol, or a warning triangle while a problem row exists. Its accessibility label is the first problem, no controller connected, or ready.
+
+The item sets `behavior = .removalAllowed`. Command-dragging it out makes `isVisible` false; `MenuBarCoordinator` then writes Show in menu bar off and Show in Dock on in one write (`SettingsPreferencesModel.menuBarItemRemoved()`) and opens the main window. A failed write shows the item again. The store refuses a write that turns both off; a settings file with both off reads as `storedNoVisibleEntryPoint`, opening the main window at launch with an alert offering Reset Settings, Show in Finder, and Quit. `applicationShouldHandleReopen` opens the main window.
 
 ### Main Window
 
-The main window has a sidebar with five areas, selected with Command-1 to Command-5: Controllers, Profiles, Library, Access and Activity. Dirty profile edits intercept an area change and offer Cancel or Discard.
+Dirty profile edits intercept an area change, offering Cancel or Discard.
 
-1. **Controllers:** the connected controllers and the selected controller's detail: facts, Input Test, the Served by picker, the virtual HID profile, Draft Record and Capture Packets.
-2. **Profiles:** profile list and the selected profile's Assignments editor.
-3. **Library:** controller records and mods, with Validate, Install, Replace, Remove and Test Record.
-4. **Access:** permission rows with a request action each, the local endpoint, programs with access, tokens, refused requests and open connections.
-5. **Activity:** the log and the diagnostics checks.
+| Area | Shortcut | Content |
+| --- | --- | --- |
+| Controllers | Command-1 | Connected controllers, selected controller facts, Input Test, Handled by picker, virtual HID profile, Draft Record, Capture Packets |
+| Profiles | Command-2 | Profile list, Assignments editor |
+| Library | Command-3 | Controller records and mods; Validate, Install, Replace, Remove, Test Record |
+| Access | Command-4 | Permissions, local endpoint, programs with access, tokens, refused requests, open connections |
+| Activity | Command-5 | Log, diagnostics checks |
 
-The Settings window has three panes: General, Notifications and Advanced. Raw packet, watch, and catalog workflows remain CLI-only except for the Developer Tools in the Advanced pane.
-
-The resizable window opens at its initial size and reuses one controller. Profile rows use native list/table controls, not a bitmap or coordinate hit map.
+Settings has General, Notifications, and Advanced panes. Raw packet, watch, and catalog workflows are CLI-only, except Developer Tools in Advanced. Profile rows use native list and table controls, not a bitmap hit map.
 
 ### Profile Editing
 
-- Capture is non-blocking, cancellable with Cancel or Escape, and keeps the window usable.
-- Axis adjustment is available only for axis and axis-direction sources.
-- Native key capture handles modifiers and Clear.
-- Saves go through `updateRemappingProfile(_:expectedCurrent:)`.
-- A conflict preserves the draft and offers Reload or Keep editing. It never overwrites silently.
-- Profile mutation controls are disabled while a save or other mutation is active.
-- Delete uses destructive button semantics.
-- Profile alerts use one `alert(item:)`; capture and adjustment use one `sheet(item:)`.
+| Topic | Rule |
+| --- | --- |
+| Capture | Non-blocking; Cancel or Escape stops it |
+| Axis adjustment | Only axis and axis-direction sources |
+| Key capture | Native; handles modifiers and Clear |
+| Save | `updateRemappingProfile(_:expectedCurrent:)`; a conflict keeps the draft and offers Reload or Keep Editing |
+| Mutation | Controls disabled; Delete uses destructive button semantics |
+| Presentation | One `alert(item:)` for profile alerts; one `sheet(item:)` for capture and adjustment |
 
 ## Gateway Contract
 
-`ApplicationServiceGateway` covers the current presentation surfaces:
+`ApplicationServiceGateway` covers:
 
 ```text
 status()
@@ -123,48 +130,58 @@ remappingPostEventAccess()/requestRemappingPostEventAccess()
 setVirtualHIDProfileOverride(profile, for: selector)/resetVirtualHIDProfileOverride(for: selector)
 ```
 
-The adapter connects the existing client, returns typed payloads, and maps transport failures to stable presentation errors. It does not expose socket paths, CLI text, or raw RPC descriptions.
+The adapter returns typed payloads, maps transport failures to stable presentation errors, and exposes no socket paths, CLI text, or raw RPC descriptions.
 
 ## State and Permission Rules
 
-- Loading, unavailable, empty, denied, requesting, saving, conflict, and failed states are explicit.
-- A stale async response cannot replace newer permission, post-event, virtual HID profile, or input state.
-- A superseded permission request does not open a Privacy & Security pane.
-- A denied result opens the matching native recovery destination. Only the authoritative follow-up read establishes a grant.
-- Controller publication and CoreGraphics keyboard/pointer posting remain separate permission paths.
-- Failed controller-identity requests remain retry intent only; the picker and accessibility value use the last authoritative identity.
+| Topic | Rule |
+| --- | --- |
+| States | Loading, unavailable, empty, denied, requesting, saving, conflict, failed are explicit |
+| Stale response | Cannot replace newer permission, post-event, virtual HID profile, or input state |
+| Permission request | Superseded: opens no Privacy & Security pane. Denied: opens the recovery pane. Only the authoritative follow-up read establishes a grant |
+| Paths | Controller publication and CoreGraphics keyboard and pointer posting have separate permission paths |
+| Identity request | A failed one is retry intent only; the picker uses the last authoritative identity |
 
 ## Compatibility and Accessibility
 
-- Keep newer APIs behind `#available`; use AppKit template images and SwiftUI compatibility modifiers for macOS 12.
-- Prefer 28-point controls and never make an interactive target smaller than 20 points.
-- Use semantic system colors, system typography, and text plus icon/shape for state. Never rely on color alone.
-- Keep full values available to VoiceOver when visual text truncates.
-- Preserve keyboard and mouse paths, Escape cancellation, reduced-motion alternatives, and Full Keyboard Access through the visible toolbar, lists, rows, and editor controls.
-- Add no generated artwork. Use SF Symbols with AppKit template fallbacks.
+| Topic | Rule |
+| --- | --- |
+| Deployment floor | macOS 12. Newer APIs behind `#available` with an older path; AppKit template images and SwiftUI compatibility modifiers |
+| Targets | 28 points preferred, 20 minimum for interactive targets |
+| Color and type | Semantic system colors and typography; text plus icon or shape for state |
+| VoiceOver | Full values available when text truncates |
+| Keyboard and motion | Keyboard paths, Escape cancellation, reduced-motion alternatives, Full Keyboard Access |
+| Symbols | SF Symbols with AppKit template fallbacks |
 
 ## Validation
 
-Run the repository gates relevant to the change:
+Run the fitting gates:
 
 ```bash
-./Scripts/ojd catalog regenerate --check
-./Scripts/ojd check profiles
+just catalog-regenerate --check
+just check-profiles
 just lint
 python3 -m unittest discover -s Tests/RepositoryScripts
-./Scripts/ojd check driverkit
+just driverkit-check
 swift test
 ```
 
-The package tests cover injected gateway state, permission generation, profile drafts, diagnostics, and settings navigation. Runtime acceptance still requires a signed app on supported macOS versions:
+Package tests cover injected gateway state, permission generation, profile drafts, diagnostics, and settings navigation. Runtime acceptance needs a signed app on supported macOS versions:
 
-- TCC transitions;
-- VoiceOver and Full Keyboard Access;
-- appearance and reduced motion;
-- hardware and DriverKit activation checks.
+| Check |
+| --- |
+| TCC transitions |
+| VoiceOver and Full Keyboard Access |
+| Appearance and reduced motion |
+| Hardware and DriverKit activation |
 
 ## Design References
 
 - [Apple Settings HIG](https://developer.apple.com/design/human-interface-guidelines/settings)
 - [Apple Accessibility HIG](https://developer.apple.com/design/human-interface-guidelines/accessibility)
 - [Apple Designing for macOS HIG](https://developer.apple.com/design/human-interface-guidelines/designing-for-macos/)
+
+## Further Reading
+
+- [Architecture](architecture.md)
+- [Source Topology](source-topology.md)

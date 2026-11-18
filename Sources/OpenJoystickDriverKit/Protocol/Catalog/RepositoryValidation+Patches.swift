@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 extension RepositoryValidation {
   /// Applies the built-in patches under `patches` to the Controller files under `controllers` with
@@ -65,7 +65,7 @@ extension RepositoryValidation {
           at: destination.deletingLastPathComponent(),
           withIntermediateDirectories: true
         )
-        try document.formattedData().write(to: destination, options: .atomic)
+        try document.plistData().write(to: destination, options: .atomic)
       }
     } catch {
       return [
@@ -93,15 +93,15 @@ extension RepositoryValidation {
     let document: OrderedJSON
   }
 
-  /// Reads each JSON file under `directory` as a record and appends a problem to `problems` for
-  /// each file that is not a valid record.
+  /// Reads each property list file under `directory` as a record and appends a problem to
+  /// `problems` for each file that is not a valid record.
   /// - Returns: The records that read.
   private static func readRecords(
     under directory: URL,
     problems: inout [RepositoryProblem]
   ) -> [RecordFile] {
     let urls: [URL]
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem):
       problems.append(problem)
       return []
@@ -111,13 +111,13 @@ extension RepositoryValidation {
     for url in urls {
       do {
         let data = try RepositoryProblem.read(url)
-        try ControllerRecordSet.requireUTF8(data)
-        let document = try ControllerRecordSet.ordered(data)
+        let document = try ControllerRecordSet.ordered(data, file: url.lastPathComponent)
         guard let vendorID = document["vendorID"]?.integer.flatMap(UInt16.init(exactly:)),
           let productID = document["productID"]?.integer.flatMap(UInt16.init(exactly:))
         else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.record.identityRange",
             "vendorID must be 1...65535 and productID 0...65535"
           )
         }
@@ -135,15 +135,16 @@ extension RepositoryValidation {
     return files
   }
 
-  /// Reads each JSON file under `directory` as a patch and appends a problem to `problems` for each
-  /// file that is not a valid patch or that is not stored at the path of its selector.
+  /// Reads each property list file under `directory` as a patch and appends a problem to
+  /// `problems` for each file that is not a valid patch or that is not stored at the path of its
+  /// selector.
   /// - Returns: The patches that read.
   private static func readPatches(
     under directory: URL,
     problems: inout [RepositoryProblem]
   ) -> [PatchFile] {
     let urls: [URL]
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem):
       problems.append(problem)
       return []
@@ -153,13 +154,14 @@ extension RepositoryValidation {
     for url in urls {
       do {
         let data = try RepositoryProblem.read(url)
-        try ControllerRecordSet.requireUTF8(data)
-        let order = try ControllerRecordSet.ordered(data)
+        let order = try ControllerRecordSet.ordered(data, file: url.lastPathComponent)
         let patch = try ControllerPatch.parse(order, file: url.lastPathComponent)
         let expected = patchPath(of: patch.selector)
         guard relativePath(of: url, under: directory) == expected else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.patch.path",
+            arguments: [expected],
             "the patch path must be \(expected)"
           )
         }
@@ -174,7 +176,7 @@ extension RepositoryValidation {
   /// Where a built-in patch with `selector` is stored under the patch directory.
   private static func patchPath(of selector: ControllerPatch.Selector) -> String {
     guard case .identity(let model) = selector else { return selector.fileName }
-    return String(format: "%04x/", model.vendorID) + selector.fileName
+    return unsafe String(format: "%04x/", model.vendorID) + selector.fileName
   }
 
   /// The path of `url` below `directory`, with `/` between components.

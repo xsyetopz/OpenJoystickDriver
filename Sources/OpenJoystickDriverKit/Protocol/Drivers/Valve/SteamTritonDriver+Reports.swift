@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension SteamTritonDriver {
 
@@ -114,7 +114,7 @@ extension SteamTritonDriver {
   private static let leftPadTouch: UInt32 = 0x0200_0000
 
   /// Decodes a state report; battery and wireless status reports update state and carry no input.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     guard let id = bytes.first else { return nil }
     switch id {

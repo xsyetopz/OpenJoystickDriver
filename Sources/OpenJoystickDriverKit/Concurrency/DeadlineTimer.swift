@@ -70,7 +70,7 @@ private final class SleepGate: @unchecked Sendable {
   /// Guards the stored values.
   private let lock = NSLock()
   /// The sleeping task; nil before `arm(_:cancelTimer:)` and after it resumes.
-  private var continuation: CheckedContinuation<Void, Error>?
+  private var continuation: CheckedContinuation<Void, any Error>?
   /// Cancels the timer; nil before `arm(_:cancelTimer:)`.
   private var cancelTimer: DeadlineTimer.Cancel?
   /// The outcome that arrived before the task armed the gate.
@@ -79,7 +79,7 @@ private final class SleepGate: @unchecked Sendable {
   /// Stores the sleeping task and its timer cancellation, or finishes at once when an outcome
   /// arrived early.
   func arm(
-    _ continuation: CheckedContinuation<Void, Error>,
+    _ continuation: CheckedContinuation<Void, any Error>,
     cancelTimer: @escaping DeadlineTimer.Cancel
   ) {
     let outcome = lock.withLock { () -> Outcome? in
@@ -102,7 +102,7 @@ private final class SleepGate: @unchecked Sendable {
   /// Records the first `outcome`, cancels the timer and resumes the sleeping task.
   private func finish(_ outcome: Outcome) {
     let pending = lock.withLock {
-      () -> (CheckedContinuation<Void, Error>, DeadlineTimer.Cancel?)? in
+      () -> (CheckedContinuation<Void, any Error>, DeadlineTimer.Cancel?)? in
       guard early == nil else { return nil }
       early = outcome
       guard let continuation else { return nil }
@@ -119,7 +119,7 @@ private final class SleepGate: @unchecked Sendable {
 
   /// Resumes `continuation` normally for a fired timer, or with `CancellationError` for a
   /// cancellation.
-  private func resume(_ continuation: CheckedContinuation<Void, Error>, _ outcome: Outcome) {
+  private func resume(_ continuation: CheckedContinuation<Void, any Error>, _ outcome: Outcome) {
     switch outcome {
     case .fired: continuation.resume()
     case .cancelled: continuation.resume(throwing: CancellationError())

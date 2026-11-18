@@ -52,7 +52,7 @@
 
     /// The title, the surface picker, its fields and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.touch.title")).font(
           .headline
         )
@@ -69,22 +69,25 @@
           Text(OJDLocalized.string("ui.mapping.touchSurfaceRight")).tag(
             RemappingTouchSurface.right
           ).disabled(!canSelect(.right))
-        }.pickerStyle(SegmentedPickerStyle())
+        }.help(OJDLocalized.string("ui.profiles.touch.surfaceHelp")).pickerStyle(
+          SegmentedPickerStyle()
+        )
         ScrollView { ProfileTouchFields(draft: selectedDraft).padding(.trailing, 8) }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
         HStack {
           Button(OJDLocalized.string("action.reset")) {
             resetSelected()
             errorMessage = nil
-          }
+          }.help(OJDLocalized.string("ui.help.reset"))
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
-          Button(OJDLocalized.string("action.save")) { save() }
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
+          Button(OJDLocalized.string("action.save")) { save() }.help(
+            OJDLocalized.string("ui.help.save")
+          )
         }
-      }.padding(28).frame(
-        width: 500,
+      }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(
           enabled: selectedDraft.wrappedValue.enabled,
           compact: 260,

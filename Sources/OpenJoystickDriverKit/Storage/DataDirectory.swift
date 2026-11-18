@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The kinds of per-user location a store can ask the platform for.
 public enum DataLocation: String, CaseIterable, Sendable {

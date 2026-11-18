@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>kind</key>
+	<string>VirtualDevice</string>
+	<key>match</key>
+	<dict>
+		<key>productID</key>
+		<integer>1</integer>
+		<key>vendorID</key>
+		<integer>4617</integer>
+	</dict>
+	<key>persona</key>
+	<string>SDLCompatible</string>
+</dict>
+</plist>

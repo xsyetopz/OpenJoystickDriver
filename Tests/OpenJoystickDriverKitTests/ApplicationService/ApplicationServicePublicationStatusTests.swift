@@ -20,7 +20,7 @@ struct ApplicationServicePublicationStatusTests {
       #"{"state":"Failed","failure":"send failed"}"#,
     ]
   )
-  func aMatchingStateAndFieldsDecode(json: String) {
+  func matchingStateAndFieldsDecode(json: String) {
     #expect(Self.decode(json) != nil)
   }
 
@@ -37,7 +37,7 @@ struct ApplicationServicePublicationStatusTests {
       #"{"state":"Published","failure":"x"}"#,
     ]
   )
-  func aMismatchedStateAndFieldsFailToDecode(json: String) {
+  func mismatchedStateAndFieldsFailToDecode(json: String) {
     #expect(Self.decode(json) == nil)
   }
 
@@ -61,7 +61,7 @@ struct ApplicationServicePublicationStatusTests {
   }
 
   @Test
-  func theReasonsAreTheSchemaEnum() throws {
+  func reasonsAreSchemaEnum() throws {
     let schema = try JSONSchemaFiles.document(named: "cli-output.schema.json")
     let definitions = try #require(schema["$defs"] as? [String: Any])
     var node: Any = try #require(definitions["controllerShow"])

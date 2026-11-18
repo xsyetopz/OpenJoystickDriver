@@ -1,0 +1,15 @@
+# profile=sdl-compatible tag=gc
+# probe: just diagnose-gamecontroller --seconds 34
+# started: 2026-11-12T23:15:11Z
+Scripts/Diagnostics/backend.sh gamecontroller --seconds 34
+GameController probe
+Listening for 34s
+
+HID GamePad support:
+- 045E:028E "GamePad-1" transport=Virtual gamecontroller=yes
+- 045E:0B0C "Xbox Adaptive Controller" transport=Virtual gamecontroller=yes
+
+Initial controllers: 0
+evidence supports_hid=true connect=false extended_profile=false live_input=false disconnect=false reconnect=false haptics=unclaimed
+# probe exit: 0
+# feed exit: 0

@@ -9,7 +9,7 @@ struct AccessValueSpellingTests {
   }
 
   @Test
-  func scopesAreUpperCamelCaseAndTheCommandLineNamesAreKebabCase() {
+  func scopesAreUpperCamelCaseAndCommandLineNamesAreKebabCase() {
     #expect(EndpointScope.allCases.map(\.rawValue) == ["Read", "Control"])
     #expect(EndpointScope.allCases.map(\.commandLineName) == ["read", "control"])
     #expect(CommandLineName.collisions(in: EndpointScope.self).isEmpty)
@@ -19,7 +19,7 @@ struct AccessValueSpellingTests {
   }
 
   @Test(arguments: ["read", "control", "Reads", "READ", ""])
-  func aScopeRefusesAnyOtherSpelling(raw: String) {
+  func scopeRefusesAnyOtherSpelling(raw: String) {
     #expect(!Self.decodes(EndpointScope.self, raw))
     #expect(EndpointScope(rawValue: raw) == nil)
   }
@@ -34,12 +34,12 @@ struct AccessValueSpellingTests {
   }
 
   @Test(arguments: ["signed", "platform", "adHoc", "ad-hoc"])
-  func aPublisherKindRefusesAnyOtherSpelling(raw: String) {
+  func publisherKindRefusesAnyOtherSpelling(raw: String) {
     #expect(!Self.decodes(CodeSigningIdentity.Kind.self, raw))
   }
 
   @Test(arguments: ["socket", "web"])
-  func aTransportRefusesAnyOtherSpelling(raw: String) {
+  func transportRefusesAnyOtherSpelling(raw: String) {
     #expect(!Self.decodes(AccessTransport.self, raw))
   }
 
@@ -68,7 +68,7 @@ struct AccessValueSpellingTests {
   }
 
   @Test
-  func acronymValuesSpellTheAcronymInUpperCase() {
+  func acronymValuesSpellAcronymInUpperCase() {
     #expect(ControllerOwnershipObservation.extensionOwnedUSB.rawValue == "ExtensionOwnedUSB")
     #expect(ControllerOwnershipObservation.systemHIDVisible.rawValue == "SystemHIDVisible")
     #expect(DuplicateExposureRisk.systemHIDVisible.rawValue == "SystemHIDVisible")

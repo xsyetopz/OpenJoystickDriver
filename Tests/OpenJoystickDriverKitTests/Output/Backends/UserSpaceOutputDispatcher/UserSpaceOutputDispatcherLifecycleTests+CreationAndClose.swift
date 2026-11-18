@@ -45,7 +45,7 @@ extension UserSpaceOutputDispatcherLifecycleTests {
   }
 
   @Test
-  func closeCancelsBackendBeforeDrainingCapturedDispatch() async throws {
+  func closeCancelsBackendBeforeDrainingCapturedDispatch() async {
     let sendGate = UserSpaceDispatcherTestGate()
     let backend = UserSpaceDispatcherTestBackend(sendGate: sendGate)
     let dispatcher = UserSpaceOutputDispatcher { _ in backend }
@@ -96,7 +96,7 @@ extension UserSpaceOutputDispatcherLifecycleTests {
   }
 
   @Test
-  func aCreatedDeviceIsActivatedOnceBeforeItsFirstReport() async throws {
+  func createdDeviceIsActivatedOnceBeforeItsFirstReport() async throws {
     let backend = UserSpaceDispatcherTestBackend()
     let dispatcher = UserSpaceOutputDispatcher { _ in backend }
     let identifier = LogicalControllerID(vendorID: 1, productID: 2)

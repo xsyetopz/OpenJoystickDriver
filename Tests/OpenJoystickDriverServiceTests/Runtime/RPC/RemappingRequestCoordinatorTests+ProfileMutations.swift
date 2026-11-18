@@ -6,7 +6,7 @@ import Testing
 
 extension RemappingRequestCoordinatorTests {
   @Test
-  func aProfileThatFailsValidationFailsWithTheInvalidProfileCode() async throws {
+  func profileThatFailsValidationFailsWithInvalidProfileCode() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let profile = RemappingProfile(
@@ -26,7 +26,7 @@ extension RemappingRequestCoordinatorTests {
   }
 
   @Test
-  func pairingMutationUsesLibraryProfileAndReturnsTheAuthoritativeSessionSnapshot() async throws {
+  func pairingMutationUsesLibraryProfileAndReturnsAuthoritativeSessionSnapshot() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let profile = RemappingProfile(
@@ -104,7 +104,6 @@ extension RemappingRequestCoordinatorTests {
 
   @Test
 
-
   func activeUpdateAndDeleteReleaseHeldStateBeforeSuccess() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
@@ -181,7 +180,7 @@ extension RemappingRequestCoordinatorTests {
   }
 
   @Test
-  func movingAnActiveProfileRefreshesItsFormerModelAndClearsSelection() async throws {
+  func movingActiveProfileRefreshesItsFormerModelAndClearsSelection() async throws {
     let harness = try await makeHarness()
 
     defer { harness.routerHarness.removeFiles() }
@@ -275,7 +274,6 @@ extension RemappingRequestCoordinatorTests {
 
   @Test
 
-
   func failedActiveModelMoveRestoresExactLibraryAndBothRoutes() async throws {
     let harness = try makeRollbackHarness()
     defer { harness.removeFiles() }
@@ -349,7 +347,7 @@ extension RemappingRequestCoordinatorTests {
   }
 
   @Test
-  func resetSettingsDoesNotDeleteTheRemappingProfileLibrary() async throws {
+  func resetSettingsDoesNotDeleteRemappingProfileLibrary() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
     let original = profile(name: "Desktop")
@@ -367,7 +365,7 @@ extension RemappingRequestCoordinatorTests {
   }
 
   @Test
-  func aPackageProfileRefusalReachesRPCClientsAsE3029() {
+  func packageProfileRefusalReachesRPCClientsAsE3029() {
     let error = RemappingRequestCoordinator.rpcError(
       RemappingProfileLibraryError.packageProfileReadOnly
     )

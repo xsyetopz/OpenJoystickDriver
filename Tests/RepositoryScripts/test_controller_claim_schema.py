@@ -73,7 +73,7 @@ class ControllerClaimSchemaTests(unittest.TestCase):
         self.assertEqual(
             show["properties"]["serving"]["properties"]["route"]["enum"], list(ROUTES)
         )
-        self.assertIn("serving", show["required"])
+        self.assertIn("serving", show["then"]["required"])
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@
     ///
     /// A refused edit shows in the editor.
     func addBinding(source: RemappingSource, destination: RemappingDestination) {
-      guard !isEditingDisabled else { return }
+      guard !refuseEdit() else { return }
       do {
         draft = try draft.addingBinding(source: source, destination: destination)
         activeSheet = nil
@@ -21,7 +21,7 @@
 
     /// Removes the assignment from the draft.
     func removeBinding(_ id: UUID) {
-      guard !isEditingDisabled else { return }
+      guard !refuseEdit() else { return }
       do {
         draft = try draft.removingBinding(id)
         saveError = nil
@@ -31,7 +31,7 @@
 
     /// Sets the axis tuning of the assignment in the draft.
     func updateAxisTuning(_ tuning: RemappingAxisTuning, for id: UUID) {
-      guard !isEditingDisabled else { return }
+      guard !refuseEdit() else { return }
       do {
         draft = try draft.settingAxisTuning(tuning, for: id)
         saveError = nil
@@ -41,27 +41,11 @@
 
     /// Replaces the draft with `profile`, the edited details.
     func updateMetadata(_ profile: RemappingProfile) {
-      guard !isEditingDisabled else { return }
+      guard !refuseEdit() else { return }
       draft = RuntimeProfileDraft(profile: profile)
       localError = nil
       saveError = nil
       reportEditingState()
-    }
-
-    /// The text that says whether the profile is active; a Joy-Con pair profile reads as the state
-    /// of its session.
-    var activationLabel: String {
-      if profile.joyConPair != nil {
-        return OJDLocalized.string("ui.profiles.joyConSessionState")
-      }
-      return OJDLocalized.string(
-        isActive ? "ui.profiles.active" : "ui.profiles.notActive"
-      )
-    }
-
-    /// Returns the text for the number of assignments.
-    func assignmentCountLabel(_ count: Int) -> String {
-      OJDLocalized.plural("ui.profiles.assignments", count: count)
     }
 
     /// The actions of the editor's menu: Restore Default Input while the draft suppresses all
@@ -127,7 +111,7 @@
     ///
     /// Does nothing while another change runs.
     func activateProfile(allowEmpty: Bool) {
-      guard !isMutationActive else { return }
+      guard !refuseEdit() else { return }
       let request = RuntimeMutationRequest(operation: .activate(profileID: profile.id))
       guard onMutationStarted(request) else { return }
       Task { @MainActor in
@@ -144,7 +128,7 @@
     ///
     /// Does nothing while another change runs.
     func deactivateProfile() {
-      guard !isMutationActive else { return }
+      guard !refuseEdit() else { return }
       let request = RuntimeMutationRequest(operation: .deactivate(profileID: profile.id))
       guard onMutationStarted(request) else { return }
       Task { @MainActor in
@@ -160,7 +144,7 @@
     ///
     /// Does nothing while another change runs.
     func deactivateAllProfiles() {
-      guard !isMutationActive else { return }
+      guard !refuseEdit() else { return }
       let request = RuntimeMutationRequest(operation: .deactivate(profileID: nil))
       guard onMutationStarted(request) else { return }
       Task { @MainActor in
@@ -252,7 +236,7 @@
     /// A refused edit shows in the editor and leaves the draft as it is. Does nothing while editing
     /// is disabled.
     func applyDraftChange(_ change: () throws -> RuntimeProfileDraft) {
-      guard !isEditingDisabled else { return }
+      guard !refuseEdit() else { return }
       do {
         draft = try change()
         localError = nil
@@ -264,16 +248,21 @@
     /// Saves the draft through the profile library.
     ///
     /// The result is reconciled when the request returns and when the library reports the change.
-    /// Does nothing while the draft equals the stored profile, a save runs or editing is disabled.
+    /// Does nothing while the draft equals the stored profile, where the Save button is
+    /// unavailable; while a save runs or editing is disabled, it shows the reason.
     func save() {
-      guard draft.profile != expectedCurrent, !saveInFlight, !isEditingDisabled else { return }
+      guard canSave, !refuseEdit() else { return }
       let operation = RuntimeMutationOperation.update(profileID: profile.id)
       let request = RuntimeMutationRequest(operation: operation)
-      guard saveState.begin(request) else { return }
+      guard saveState.begin(request) else {
+        localError = ProfileEditingBlock.saving.message
+        return
+      }
       saveError = nil
       localError = nil
       guard onMutationStarted(request) else {
         finishSave()
+        localError = ProfileEditingBlock.changeRunning.message
         return
       }
       reportEditingState()

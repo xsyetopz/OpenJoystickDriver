@@ -8,12 +8,12 @@ import Testing
 @MainActor
 struct ControllerRecordWatcherPackageReplaceTests {
   private static func record(_ productID: Int) -> Data {
-    Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-       "vendorID": 4660,
-       "productID": \(productID), "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
-      """.utf8
+    PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
+          "vendorID": 4660,
+        "productID": \(productID), "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+        """
     )
   }
 
@@ -24,7 +24,7 @@ struct ControllerRecordWatcherPackageReplaceTests {
       at: folder.appendingPathComponent("Controllers"),
       withIntermediateDirectories: true
     )
-    let files = productIDs.map { String(format: "1234-%04x.json", $0) }
+    let files = productIDs.map { unsafe String(format: "1234-%04x.plist", $0) }
     for (file, productID) in zip(files, productIDs) {
       try record(productID).write(to: folder.appendingPathComponent("Controllers/\(file)"))
     }
@@ -32,14 +32,16 @@ struct ControllerRecordWatcherPackageReplaceTests {
     let manifest = """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
       "name": "arcade-pack", "version": "1.0.0",
-       "author": "Tester", "requires": {"minimum": "0.6.0"}, "controllers": [\(list)]}
+        "author": "Tester", "requires": {"minimum": "0.6.0"}, "controllers": [\(list)]}
       """
-    try Data(manifest.utf8).write(to: folder.appendingPathComponent("mod.json"))
+    try PropertyListFixture.data(json: manifest).write(
+      to: folder.appendingPathComponent("mod.plist")
+    )
     return folder
   }
 
   @Test
-  func appliesAgainWhenAnInstalledPackageIsReplaced() async throws {
+  func appliesAgainWhenInstalledPackageIsReplaced() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-replace-\(UUID().uuidString)",
       isDirectory: true

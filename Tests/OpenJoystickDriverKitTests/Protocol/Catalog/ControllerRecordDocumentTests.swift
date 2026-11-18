@@ -70,7 +70,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func rejectsDualSenseModelParametersWithoutTheThirdPartyMaker() {
+  func rejectsDualSenseModelParametersWithoutThirdPartyMaker() {
     for vendorID in [0x054C, 0x1532] {
       for parameters in [["role": "Receiver"], ["unprobedTouchpad": true]]
         as [[String: any Sendable]]
@@ -101,7 +101,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test(arguments: PhysicalProtocolID.allCases.filter { !$0.storesVariant })
-  func rejectsVariantsTheTransportDecides(family: PhysicalProtocolID) throws {
+  func rejectsVariantsTransportDecides(family: PhysicalProtocolID) throws {
     // A report-layout row must carry its layout; any other row must not.
     let extra: [String: any Sendable] =
       family == .hidReportLayout ? ["input": Self.minimalInput] : [:]
@@ -149,7 +149,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func rejectsAnUnknownRecordField() {
+  func rejectsUnknownRecordField() {
     #expect(throws: DecodingError.self) {
       try decode(protocol: ["family": "XboxGIP"], extra: ["notAField": "usb"])
     }
@@ -170,7 +170,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func presentControlsAreOnlyTheDualSenseEdgeSet() throws {
+  func presentControlsAreOnlyDualSenseEdgeSet() throws {
     let edge = ["LeftPaddle1", "RightPaddle1", "Auxiliary1", "Auxiliary2"]
     let dualSense: [String: any Sendable] = ["family": "SonyDualSense"]
     let document = try decode(protocol: dualSense, capabilities: ["present": edge])
@@ -212,7 +212,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func noCatalogRowNamesAnAssemblyPolicy() {
+  func noCatalogRowNamesAssemblyPolicy() {
     let registry = ProtocolDriverRegistry()
     for model in registry.hidModels + registry.rawUSBModels {
       let record = registry.record(for: model)
@@ -231,7 +231,7 @@ struct ControllerRecordDocumentTests {
   }
 
   @Test
-  func schemaVocabularyMatchesTheSwiftEnums() throws {
+  func schemaVocabularyMatchesSwiftEnums() throws {
     let schema = try Self.controllerSchema()
     let definitions = try #require(schema["$defs"] as? [String: Any])
     // The description defines the ids; the schema holds only their shape.
@@ -245,10 +245,14 @@ struct ControllerRecordDocumentTests {
       #expect(identifier.range(of: pattern, options: .regularExpression) != nil, "\(identifier)")
     }
 
-    // Every implemented family has catalog rows, so the schema lists all of them.
+    // A description document may name a family, so the schema holds the name's shape.
     let protocolSchema = try #require(definitions["protocol"] as? [String: Any])
     let properties = try #require(protocolSchema["properties"] as? [String: Any])
-    #expect(Self.enumValues(properties["family"]) == PhysicalProtocolID.allCases.map(\.rawValue))
+    let family = try #require(properties["family"] as? [String: Any])
+    let familyPattern = try #require(family["pattern"] as? String)
+    for builtIn in PhysicalProtocolID.allCases {
+      #expect(builtIn.rawValue.range(of: familyPattern, options: .regularExpression) != nil)
+    }
     #expect(
       Self.enumValues(properties["assembly"]) == ControllerAssemblyPolicy.allCases.map(\.name)
     )
@@ -272,18 +276,23 @@ struct ControllerRecordDocumentTests {
     }
   }
 
-  /// An input layout belongs to the `HIDReportLayout` family, which cannot run without one.
+  /// The `HIDReportLayout` family cannot run without an input layout, and every family may hold
+  /// one.
   @Test
-  func inputLayoutIsRequiredExactlyForTheReportLayoutFamily() throws {
+  func inputLayoutRequiredForReportLayoutFamilyAndAcceptedByEveryFamily() throws {
+    let gip = try decode(protocol: ["family": "XboxGIP"], extra: ["input": Self.minimalInput])
+    #expect(gip.inputLayouts?.controls == [.south])
     let document = try decode(
       protocol: ["family": "HIDReportLayout"],
       extra: ["input": Self.minimalInput]
     )
     #expect(document.inputLayouts?.controls == [.south])
     #expect(throws: DecodingError.self) { try decode(protocol: ["family": "HIDReportLayout"]) }
-    #expect(throws: DecodingError.self) {
-      try decode(protocol: ["family": "HIDDescriptor"], extra: ["input": Self.minimalInput])
-    }
+    let descriptor = try decode(
+      protocol: ["family": "HIDDescriptor"],
+      extra: ["input": Self.minimalInput]
+    )
+    #expect(descriptor.inputLayouts?.controls == [.south])
   }
 
   /// The smallest valid `input` section: one button in a one-byte report.
@@ -297,7 +306,7 @@ struct ControllerRecordDocumentTests {
   ]
 
   @Test
-  func decodesTuningWhereADriverReadsIt() throws {
+  func decodesTuningWhereDriverReadsIt() throws {
     let ds4 = try decode(
       protocol: ["family": "SonyDualShock4"],
       extra: ["tuning": ["stickDeadzone": 0.05, "inputLivenessTimeoutMs": 1_500]]
@@ -364,8 +373,7 @@ struct ControllerRecordDocumentTests {
       ("NintendoSwitch2", ["usbCommandTimeoutMs": 60_001]),
       ("XboxGIP", ["presenceResendReports": 0]),
       ("XboxGIP", ["presenceResendReports": 1_001]),
-      ("XboxXUSB", ["presenceResendReports": 0]),
-      ("XboxXUSB", ["presenceResendReports": 1_001]),
+      ("XboxXUSB", ["presenceResendReports": 16]),
       ("SonyDualShock4", ["adapterDisconnectDelayMs": 0]),
       ("SonyDualShock4", ["adapterDisconnectDelayMs": 60_001]),
       ("XboxGIP", ["usbStartupIntervalMs": -1]),
@@ -411,7 +419,7 @@ struct ControllerRecordDocumentTests {
   ]
 
   @Test
-  func decodesTheBluetoothLEVibrationCharacteristicOfASwitch2Controller() throws {
+  func decodesBluetoothLEVibrationCharacteristicOfSwitch2Controller() throws {
     let document = try decode(
       protocol: Self.switch2,
       extra: ["bluetoothLE": ["vibrationCharacteristic": Self.vibrationUUID]]

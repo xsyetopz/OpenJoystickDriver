@@ -1,66 +1,101 @@
 # Contributor Documentation
 
-This directory holds the development notes and hardware-evidence records for OpenJoystickDriver contributors and maintainers; user guides live in [`wiki/`](../wiki/Home.md).
+These pages are for contributors and maintainers. To use the app, read the [user guides](../wiki/Home.md).
+
+## Contents
+
+- [Development](#development)
+- [SDK](#sdk)
+- [Localization](#localization)
+- [Hardware Evidence](#hardware-evidence)
 
 ## Development
 
-- [Apple Controller Ownership and Transport Evidence](development/apple-controller-ownership.md): How macOS ownership determines which Apple USB transport can reach a physical interface.
-- [Architecture](development/architecture.md): The application bundle, persistent host process, and generated DriverKit system extension.
-- [Building From Source](development/building-from-source.md): Building, checking, and installing through `./Scripts/ojd`.
-- [CLI and Application Runtime](development/cli-and-runtime.md): The menu-bar app runtime and the headless expert CLI.
-- [Compatibility Source Notes](development/compatibility-sources.md): External projects that provide design or protocol evidence.
-- [Environment Files](development/environment.md): The optional local environment file that repository scripts load.
-- [Experimental Controller Status](development/experimental-controllers.md): Entries with implementation work but incomplete hardware evidence.
-- [Implementation Status](development/implementation-status.md): The persistent application runtime and what it owns.
-- [Public Endpoint Design](development/public-endpoint-design.md): The socket, handshake, and grants that let approved programs read controllers and drive a virtual gamepad.
-- [Menu-Bar and Settings UI Architecture](development/menu-bar-settings-architecture.md): The architecture decision for the menu-bar and settings UI.
-- [Reconcile A GitHub Release](development/releases.md): The procedure after the release commit and changelog are complete.
-- [Remapping](development/remapping.md): Profile actions and chord timing, with links to the focused remapping pages.
-- [Advanced Remapping Controls](development/remapping-advanced-controls.md): Angular, area, ring, scroll, steering, lean, and trigger modes.
-- [Remapping Calibration](development/remapping-calibration.md): Physical motion conversion, factory calibration, and fusion.
-- [Remapping Input Samples](development/remapping-input-samples.md): Motion, touch, extra-control, and paired-controller input.
-- [Remapping Motion Processing](development/remapping-motion.md): Per-device motion processing, projections, tuning, and layer overrides.
-- [Signing The App and XboxUSBDevice DEXT](development/signing.md): The two independently provisioned code items and their signing steps.
-- [Source Topology](development/source-topology.md): SwiftPM targets, capability directories, and durable source owners.
-- [Create A Local Tester Build](development/tester-builds.md): Maintainer steps for making a tester build.
-- [USB DriverKit Entitlement Candidates](development/usb-entitlement-candidates.md): Catalog identities that are candidates for a USB DriverKit entitlement application.
-- [Wire Protocols](development/wire-protocols.md): How OJD classifies physical pads by host wire protocol.
-- [Xbox Fallback Identities](development/xbox-identities.md): What a safe published virtual profile needs beyond a product name.
-- [Import Controller Identities From Linux xpad](development/xpad-import.md): How the generated runtime catalog takes identities from pinned sources.
+For contributors who build, sign, or change the app. Start with [Architecture](development/architecture.md).
+
+- [Apple Controller Ownership and Transport Evidence](development/apple-controller-ownership.md)
+- [Architecture](development/architecture.md)
+- [Building From Source](development/building-from-source.md)
+- [CLI and Application Runtime](development/cli-and-runtime.md)
+- [Compatibility Source Notes](development/compatibility-sources.md)
+- [Document-Defined Protocol Families](development/document-defined-families.md)
+- [Environment Files](development/environment.md)
+- [Experimental Controller Status](development/experimental-controllers.md)
+- [Implementation Status](development/implementation-status.md)
+- [InputConfig Preset Library: Import Measurement](development/inputconfig-presets.md)
+- [Installer Format: DMG or Package](development/installer-format.md)
+- [Interface Audit: 0.6.0-alpha.2](development/interface-audit.md)
+- [Public Endpoint Design](development/public-endpoint-design.md)
+- [Menu-Bar and Settings UI Architecture](development/menu-bar-settings-architecture.md)
+- [Reconcile a GitHub Release](development/releases.md)
+- [Remapping](development/remapping.md)
+- [Advanced Remapping Controls](development/remapping-advanced-controls.md)
+- [Remapping Calibration](development/remapping-calibration.md)
+- [Remapping Input Samples](development/remapping-input-samples.md)
+- [Remapping Motion Processing](development/remapping-motion.md)
+- [Scripting Surfaces](development/scripting-surfaces.md)
+- [Signing the App and XboxUSBDevice DEXT](development/signing.md)
+- [Source Topology](development/source-topology.md)
+- [Terminology Survey](development/terminology-survey.md)
+- [Create a Local Tester Build](development/tester-builds.md)
+- [USB DriverKit Entitlement Candidates](development/usb-entitlement-candidates.md)
+- [Virtual Profile Selection: What GameController and SDL3 Read](development/virtual-profile-selection.md)
+- [Wire Protocols](development/wire-protocols.md)
+- [Xbox Fallback Identities](development/xbox-identities.md)
+- [Import Controller Identities From Linux xpad](development/xpad-import.md)
 
 ## SDK
 
-- [SDK Endpoint](sdk/endpoint.md): The handshake, messages, errors, grants, and versions of the endpoint, and its reference client.
-- [WebRTC Bridge](sdk/webrtc-bridge.md): The separate program that carries a controller between two Macs over a WebRTC data channel.
+For developers who write a client for the local endpoint.
+
+- [SDK Endpoint](sdk/endpoint.md): Handshake, messages, errors, and grants.
+- [WebRTC Bridge](sdk/webrtc-bridge.md): Carries a controller between two Macs.
+
+## Localization
+
+For translators and reviewers.
+
+- [Localization Review 0.6.0](localization/review-0.6.0.md): The 20 non-English locales.
 
 ## Hardware Evidence
 
-- [8BitDo Ultimate 2C Wireless](testing/8bitdo-ultimate-2c.md): Testing each mode, which enumerates as a different identity.
-- [Browser Gamepad API Manual Evidence](testing/browser-gamepad-api.md): The manual protocol for browser Gamepad API evidence.
-- [Consumer-Binding Evidence](testing/consumer-binding.md): How to interpret compatibility claims, with observed consumer results.
-- [Test A Controller Record](testing/controller-record.md): Validating candidate OJD JSON records without Apple Developer Program membership.
-- [Flydigi Tester Checks](testing/flydigi-tester-checks.md): The cards testers follow to check each Flydigi record.
-- [Flydigi Apex 4 (DInput)](testing/flydigi-apex-4.md): The DInput identity `04B4:2412`, a source-derived record that no tester has confirmed.
-- [Flydigi Vader 4 Pro (Bluetooth)](testing/flydigi-vader-4-pro.md): The Bluetooth identity `D7D7:0041` observed on macOS 26.5.
-- [Test The GameSir G7 Pro, Cyclone 2, and G7 Pro 8K PC](testing/gamesir-family.md): Source-backed records that are not hardware-verified.
-- [Probe macOS Haptics Backends](testing/haptics-backends.md): Diagnostics that separate backend inventory, GameController haptics, SDL output, and direct rumble.
-- [Joy-Con Input Validation](testing/joy-con.md): The left and right Joy-Con records imported from pinned Nintendo sources.
-- [Test Logitech F310 XInput Mapping](testing/logitech-f310.md): The F310 XInput mapping test.
-- [Test The Nacon Revolution X Pro](testing/nacon-revolution-x.md): The Revolution X Pro USB test.
-- [Test Physical Output](testing/physical-output.md): Manual output tests generated from a connected controller's capabilities.
-- [Test Razer Wolverine V3 Tournament Edition](testing/razer/v3-te.md): The V3 Tournament Edition USB test.
-- [Testing The Razer Wolverine V2](testing/razer/wolverine-v2.md): The Wolverine V2 USB test.
-- [Test The SCUF Envision Pro](testing/scuf-envision-pro.md): The wired record for HID identity `2E95:434D`.
-- [SIXAXIS and DUALSHOCK 3](testing/sixaxis-vs-ds3.md): What the host can read to tell the two `054C:0268` models apart.
-- [Third-party PS3 controllers](testing/ps3-third-party.md): Non-Sony PS3 pads, sticks and adapters that do not speak Sony's protocol.
-- [Third-party DualSense controllers](testing/dualsense-third-party.md): Non-Sony PS5 pads, sticks and receivers that speak the DualSense protocol.
-- [Wired Switch input-only pads](testing/switch-input-only.md): Licensed wired Switch pads that send one fixed HID report.
-- [Switch 2 controllers over USB](testing/switch-2.md): The Switch 2 Pro Controller, Joy-Con 2 and NSO GameCube controller over USB.
-- [Steam Controller (2026, Triton)](testing/steam-triton.md): The 2026 Steam Controller over USB, Bluetooth LE and its dongles.
-- [Test Steam Controller Hardware](testing/steam-controller.md): The original Steam Controller over USB, its wireless receiver, and Bluetooth LE.
-- [Test the Steam Deck Controller](testing/steam-deck.md): The Deck's built-in controller when macOS runs on Deck hardware.
-- [Test A Tester Build](testing/tester-builds.md): How testers check a fix with a notarized tester DMG.
-- [Test WR-007 USB HID Receiver](testing/wr-007.md): The WR-007 receiver test.
-- [Test An Xbox 360 Wireless Receiver](testing/xbox-360-wireless-receiver.md): The test of three Microsoft receiver IDs.
-- [Capture Xbox Adaptive Joystick Packets](testing/xbox-adaptive-joystick.md): The USB identity and packets needed before adding a device record.
-- [Test Microsoft Xbox One Controller (Model 1537)](testing/xbox/1537.md): The Model 1537 USB test.
+For testers who check a controller and for maintainers who judge compatibility claims. Read [Consumer-Binding Evidence](testing/consumer-binding.md) first, then [Test a Controller Record](testing/controller-record.md).
+
+- [8BitDo Tester Checks](testing/8bitdo-tester-checks.md)
+- [8BitDo Ultimate 2](testing/8bitdo-ultimate-2.md)
+- [8BitDo Ultimate 2C Wireless](testing/8bitdo-ultimate-2c.md)
+- [Browser Gamepad API Manual Evidence](testing/browser-gamepad-api.md)
+- [Consumer-Binding Evidence](testing/consumer-binding.md)
+- [Test a Controller Record](testing/controller-record.md)
+- [Flydigi Tester Checks](testing/flydigi-tester-checks.md)
+- [Flydigi Apex 4 (DInput)](testing/flydigi-apex-4.md)
+- [Flydigi Vader 4 Pro (Bluetooth)](testing/flydigi-vader-4-pro.md)
+- [Flydigi Vader 5 Pro 2.4 GHz Dongle](testing/flydigi-vader-5-pro.md)
+- [Flydigi Vader 5S (USB)](testing/flydigi-vader-5s.md)
+- [Test the GameSir G7 Pro, Cyclone 2, and G7 Pro 8K PC](testing/gamesir-family.md)
+- [Gyro-to-Stick Hardware Check](testing/gyro-stick.md)
+- [Probe macOS Haptics Backends](testing/haptics-backends.md)
+- [Joy-Con Input Validation](testing/joy-con.md)
+- [Test Logitech F310 XInput Mapping](testing/logitech-f310.md)
+- [Test the Nacon Revolution X Pro](testing/nacon-revolution-x.md)
+- [NITHO MLT-KRMA-K Test Record](testing/nitho-mlt-krma-k.md)
+- [Test Physical Output](testing/physical-output.md)
+- [Test Razer Wolverine V3 Tournament Edition](testing/razer/v3-te.md)
+- [Testing the Razer Wolverine V2](testing/razer/wolverine-v2.md)
+- [Test the SCUF Envision Pro](testing/scuf-envision-pro.md)
+- [SIXAXIS and DUALSHOCK 3](testing/sixaxis-vs-ds3.md)
+- [Third-Party PS3 Controllers](testing/ps3-third-party.md)
+- [Third-Party DualSense Controllers](testing/dualsense-third-party.md)
+- [Wired Switch Input-Only Pads](testing/switch-input-only.md)
+- [Test Switch 2 Controllers](testing/switch-2.md)
+- [Steam Controller (2026, Triton)](testing/steam-triton.md)
+- [Test Steam Controller Hardware](testing/steam-controller.md)
+- [Test the Steam Deck Controller](testing/steam-deck.md)
+- [Test a Tester Build](testing/tester-builds.md)
+- [Test WR-007 USB HID Receiver](testing/wr-007.md)
+- [Test an Xbox 360 Wireless Receiver](testing/xbox-360-wireless-receiver.md)
+- [Capture Xbox Adaptive Joystick Packets](testing/xbox-adaptive-joystick.md)
+- [Xbox Nano Controller Test Record](testing/xbox-nano.md)
+- [Xbox One Controller Model 1537 (`045E:02D1`) Detection](testing/xbox-one-02d1.md)
+- [Test Microsoft Xbox One Controller (Model 1537)](testing/xbox/1537.md)
+- [ZD O+ in Switch Mode](testing/zd-o-plus.md)

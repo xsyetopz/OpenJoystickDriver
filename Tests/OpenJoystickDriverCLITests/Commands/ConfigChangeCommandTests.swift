@@ -15,8 +15,8 @@ struct ConfigChangeCommandTests {
     )
 
     var controllers: URL { root.appendingPathComponent("Controllers", isDirectory: true) }
-    var modelFile: URL { controllers.appendingPathComponent("2c22-2000.patch.json") }
-    var allFile: URL { controllers.appendingPathComponent("all.patch.json") }
+    var modelFile: URL { controllers.appendingPathComponent("2c22-2000.patch.plist") }
+    var allFile: URL { controllers.appendingPathComponent("all.patch.plist") }
 
     deinit { try? FileManager.default.removeItem(at: root) }
   }
@@ -31,8 +31,7 @@ struct ConfigChangeCommandTests {
   }
 
   private func patch(_ file: URL) throws -> [String: Any] {
-    let object = try JSONSerialization.jsonObject(with: Data(contentsOf: file))
-    return try #require(object as? [String: Any])
+    try PropertyListFixture.dictionary(at: file)
   }
 
   /// The `stickDeadzone` row of `config show --json` as a value and a layer.
@@ -48,7 +47,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setWithAControllerWritesThatModelsPatch() async throws {
+  func setWithControllerWritesThatModelsPatch() async throws {
     let directory = Directory()
     let result = await run(
       ["set", "stickDeadzone", "0.08", "--controller", Self.model, "--json"],
@@ -73,7 +72,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setWithoutAControllerWritesAllPatchJSON() async throws {
+  func setWithoutControllerWritesAllPatchJSON() async throws {
     let directory = Directory()
     let result = await run(["set", "stickDeadzone", "0.05", "--json"], in: directory)
 
@@ -91,7 +90,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setNamesThePreviousValueAndPrintsHumanOutput() async throws {
+  func setNamesPreviousValueAndPrintsHumanOutput() async throws {
     let directory = Directory()
     _ = await run(["set", "stickDeadzone", "0.1"], in: directory)
     let result = await run(["set", "stickDeadzone", "0.2", "--json"], in: directory)
@@ -106,7 +105,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func unsetWithAControllerRemovesTheKeyAndTheEmptyPatch() async throws {
+  func unsetWithControllerRemovesKeyAndEmptyPatch() async throws {
     let directory = Directory()
     _ = await run(["set", "stickDeadzone", "0.08", "--controller", Self.model], in: directory)
     _ = await run(["set", "frameQueueCapacity", "32", "--controller", Self.model], in: directory)
@@ -133,7 +132,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func unsetWithoutAControllerRemovesTheKeyFromAllPatchJSON() async throws {
+  func unsetWithoutControllerRemovesKeyFromAllPatchJSON() async throws {
     let directory = Directory()
     _ = await run(["set", "stickDeadzone", "0.05"], in: directory)
 
@@ -146,7 +145,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func aGlobalOptionAfterANegativeValueStaysAnOption() async throws {
+  func globalOptionAfterNegativeValueStaysOption() async {
     let result = await run(["set", "stickDeadzone", "-0.5", "--json"], in: Directory())
 
     #expect(result.code == 64)
@@ -155,7 +154,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test(arguments: ["0", "1", "1.5", "-0.5"])
-  func setRefusesAValueOutOfRangeAndWritesNothing(_ value: String) async throws {
+  func setRefusesValueOutOfRangeAndWritesNothing(_ value: String) async {
     let directory = Directory()
     for options in [["--controller", Self.model], []] {
       let result = await run(["set", "stickDeadzone", value] + options, in: directory)
@@ -170,7 +169,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setRefusesAValueThatIsNotANumberAndAnUnknownKey() async throws {
+  func setRefusesValueNotNumberAndUnknownKey() async {
     let directory = Directory()
     let text = await run(["set", "stickDeadzone", "wide"], in: directory)
     let unknown = await run(["set", "stickDeadzon", "0.1"], in: directory)
@@ -182,7 +181,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test(arguments: ["0x1p-3", "nan", "inf", "-inf", "1e-1", "1_0", " 0.1", "0.1 ", "+0.1", "."])
-  func setAcceptsOnlyAPlainDecimalNumber(_ value: String) async throws {
+  func setAcceptsOnlyPlainDecimalNumber(_ value: String) async {
     let directory = Directory()
     let result = await run(["set", "stickDeadzone", value], in: directory)
 
@@ -192,7 +191,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test(arguments: ["0.15", ".15", "00.15", "0.150"])
-  func setAcceptsAPlainDecimalNumber(_ value: String) async throws {
+  func setAcceptsPlainDecimalNumber(_ value: String) async throws {
     let directory = Directory()
     let result = await run(["set", "stickDeadzone", value, "--json"], in: directory)
 
@@ -201,7 +200,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func unsetRefusesAKeyThatIsNotSet() async throws {
+  func unsetRefusesKeyNotSet() async {
     let directory = Directory()
     for options in [["--controller", Self.model], []] {
       let result = await run(["unset", "stickDeadzone"] + options, in: directory)
@@ -213,7 +212,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setRefusesAModelWithoutARecord() async throws {
+  func setRefusesModelWithoutRecord() async {
     let directory = Directory()
     let result = await run(
       ["set", "stickDeadzone", "0.1", "--controller", "1234:ABCD"],
@@ -226,7 +225,7 @@ struct ConfigChangeCommandTests {
   }
 
   @Test
-  func setRefusesAKeyTheModelsDriverDoesNotRead() async throws {
+  func setRefusesKeyModelsDriverDoesNotRead() async {
     let directory = Directory()
     let result = await run(
       ["set", "lizardResendTicks", "10", "--controller", Self.model],

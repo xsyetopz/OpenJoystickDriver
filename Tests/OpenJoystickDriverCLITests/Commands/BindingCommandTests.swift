@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -7,7 +8,7 @@ import Testing
 @Suite(.serialized)
 struct BindingCommandTests {
   @Test
-  func setAddsABindingAndReplacingItKeepsItsID() async throws {
+  func setAddsBindingAndReplacingItKeepsItsID() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -34,7 +35,23 @@ struct BindingCommandTests {
   }
 
   @Test
-  func setStoresASpokenPhraseWithItsVoiceAndRejectsAVoiceOnAnotherTarget() async throws {
+  func replacingBindingKeepsItsRemark() async throws {
+    let noted = RemappingBinding(
+      source: .button(.south),
+      destination: .keyboard(key: .space, modifiers: []),
+      remark: "Jump"
+    )
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad", bindings: [noted])])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let replaced = await service.run(["binding", "set", "Pad", "button:south", "mouse:left"])
+
+    #expect(replaced.code == 0, "\(replaced.standardError)")
+    #expect(library.stored.first?.bindings.first?.remark == "Jump")
+  }
+
+  @Test
+  func setStoresSpokenPhraseWithItsVoiceAndRejectsVoiceOnAnotherTarget() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -124,7 +141,7 @@ struct BindingCommandTests {
   }
 
   @Test
-  func setRejectsDoubleTapAndAMalformedMultiTap() async throws {
+  func setRejectsDoubleTapAndMalformedMultiTap() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -142,7 +159,7 @@ struct BindingCommandTests {
   }
 
   @Test
-  func listShowsTurboDelayAndMultiTapWithTheAddedWait() async throws {
+  func listShowsTurboDelayAndMultiTapWithAddedWait() async throws {
     let binding = RemappingBinding(
       source: .button(.south),
       destination: .keyboard(key: .space, modifiers: []),
@@ -184,7 +201,7 @@ struct BindingCommandTests {
   }
 
   @Test
-  func listSpellsABehaviorInKebabCaseForPlainAndAsTheDocumentValueForJSON() async throws {
+  func listSpellsBehaviorInKebabCaseForPlainAndAsDocumentValueForJSON() async throws {
     let binding = RemappingBinding(
       source: .button(.south),
       destination: .keyboard(key: .space, modifiers: []),
@@ -204,7 +221,7 @@ struct BindingCommandTests {
   }
 
   @Test
-  func clearRemovesNamedSourcesAndFailsForAnUnboundOne() async throws {
+  func clearRemovesNamedSourcesAndFailsForUnboundOne() async throws {
     let bindings = [
       RemappingBinding(source: .button(.south), destination: .keyboard(key: .space, modifiers: [])),
       RemappingBinding(source: .button(.east), destination: .keyboard(key: .escape, modifiers: [])),
@@ -222,7 +239,7 @@ struct BindingCommandTests {
   }
 
   @Test
-  func clearAllNeedsForceAndKeepsTheOutputPolicy() async throws {
+  func clearAllNeedsForceAndKeepsOutputPolicy() async throws {
     let binding = RemappingBinding(
       source: .button(.south),
       destination: .keyboard(key: .space, modifiers: [])
@@ -251,7 +268,7 @@ struct BindingCommandTests {
     (RemappingVirtualGamepadPolicy.mapped, true, true), (.mapped, false, false),
     (.passthrough, true, false),
   ])
-  func clearAllWarnsWhenAnActiveProfileNowBlocksAConnectedController(
+  func clearAllWarnsWhenActiveProfileNowBlocksConnectedController(
     policy: RemappingVirtualGamepadPolicy,
     connected: Bool,
     warns: Bool

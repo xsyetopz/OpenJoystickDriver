@@ -17,12 +17,14 @@ struct NamedPacketPlan: Equatable, Sendable {
     guard Self.countRange.contains(packets.count) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.namedPacketPlan.count",
         "namedPackets name 1...16 packets"
       )
     }
     guard Set(packets.map(\.id)).count == packets.count else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.namedPacketPlan.uniqueId",
         "each named packet id appears at most once"
       )
     }
@@ -54,12 +56,14 @@ struct NamedPacket: Equatable, Sendable {
     guard Self.isWellFormed(id) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.namedPacketPlan.idForm",
         "a named packet id is a family, a slash and lowercase words joined by hyphens"
       )
     }
     guard bytes.count >= 3, sessionByte == NamedPacketPlan.sequenceByteIndex else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.namedPacketPlan.shape",
         "a named packet has at least 3 bytes and its session byte is 2"
       )
     }

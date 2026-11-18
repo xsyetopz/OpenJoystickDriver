@@ -25,14 +25,15 @@ extension ControllerRecordSet {
   /// The records of the packages in `directory`, in package-name order.
   ///
   /// A package that cannot be used, such as one whose `requires` leaves out the running version, is
-  /// skipped and its `mod.json` is listed with the reason. A package record that fails validation,
+  /// skipped and its `mod.plist` is listed with the reason. A package record that fails validation,
   /// has the wrong file name, or repeats the model of an earlier package's record is skipped and
   /// listed with its reason. `runningVersion` is the OJD version that the `requires` of a package
   /// is checked against; nil means the running one. Package Controller files apply first, then the
   /// package patches in the order of ``ControllerPatchMerge/ordered(_:)``.
   static func packageRecords(
     in directory: URL,
-    runningVersion: String? = nil
+    runningVersion: String? = nil,
+    localization: Localization = Localization()
   ) -> ControllerPackageRecords {
     var packaged = ControllerPackageRecords(records: bundled.records)
     var entries: [ControllerLayerEntry] = []
@@ -59,7 +60,12 @@ extension ControllerRecordSet {
         )
       }
     }
-    let applied = applyLayer(entries, layer: .package, to: &packaged.records).files
+    let applied = applyLayer(
+      entries,
+      layer: .package,
+      localization: localization,
+      to: &packaged.records
+    ).files
     for position in 0...applied.count {
       packaged.files += manifestProblems.filter { $0.position == position }.map(\.file)
       if position < applied.count { packaged.files.append(applied[position]) }

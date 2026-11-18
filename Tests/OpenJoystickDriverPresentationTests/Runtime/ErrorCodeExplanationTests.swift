@@ -5,14 +5,14 @@ import Testing
 
 struct ErrorCodeExplanationTests {
   @Test
-  func aCodeMapsToTheExplanationOjdExplainPrints() throws {
+  func codeMapsToExplanationOjdExplainPrints() throws {
     let code = try #require(ErrorCode(rawValue: "E3029"))
     #expect(ErrorCodeExplanation.lookup("E3029") == .explained(code.facts))
     #expect(code.facts.explanation == code.localizedExplanation)
   }
 
   @Test
-  func factsCarryTheAreaExitStatusAndWireValueOjdExplainPrints() {
+  func factsCarryAreaExitStatusAndWireValueOjdExplainPrints() {
     let cli = ErrorCode.serviceUnavailable.facts
     #expect(cli.exitCode == 69)
     #expect(cli.wire == nil)
@@ -24,7 +24,7 @@ struct ErrorCodeExplanationTests {
   }
 
   @Test
-  func theCaseAndSurroundingSpaceOfTheCodeDoNotMatter() {
+  func caseAndSurroundingSpaceOfCodeDoNotMatter() {
     #expect(ErrorCodeExplanation.lookup("  e3029\n") == ErrorCodeExplanation.lookup("E3029"))
   }
 

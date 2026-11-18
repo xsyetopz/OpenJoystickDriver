@@ -123,6 +123,67 @@ struct ProbeTests {
   }
 
   @Test
+  func readsInstalledVersionFromActiveLineWhenUpgradeLeavesOldLine() {
+    // Arrange: macOS lists the replaced version until the next restart.
+    let identifier = ExtensionProbe.extensionID
+    let output = """
+      *\t\t9PQP6CDMQT\t\(identifier) (0.6.0-alpha.2/1.25.4)\tXboxUSBDevice\t\
+      [terminated waiting to uninstall on reboot]
+      *\t*\t9PQP6CDMQT\t\(identifier) (0.6.0-alpha.3/1.30.13)\tXboxUSBDevice\t\
+      [activated enabled]
+      """
+
+    // Act
+    let facts = ExtensionProbe.installedFacts(from: output)
+
+    // Assert
+    #expect(
+      facts
+        == ExtensionVersionFacts(
+          extensionID: identifier,
+          shortVersion: "0.6.0-alpha.3",
+          buildVersion: "1.30.13"
+        )
+    )
+  }
+
+  @Test
+  func reportsReplacedVersionPendingWhileListingKeepsOldLine() {
+    // Arrange
+    let identifier = ExtensionProbe.extensionID
+    let output = """
+      *\t\t9PQP6CDMQT\t\(identifier) (0.6.0-alpha.2/1.25.4)\tXboxUSBDevice\t\
+      [terminated waiting to uninstall on reboot]
+      *\t*\t9PQP6CDMQT\t\(identifier) (0.6.0-alpha.3/1.30.13)\tXboxUSBDevice\t\
+      [activated enabled]
+      """
+
+    // Act
+    let pending = ExtensionProbe.replacedVersionPending(in: output)
+
+    // Assert
+    #expect(pending)
+  }
+
+  @Test
+  func reportsNoReplacedVersionWhenOnlyActiveLineListed() {
+    // Arrange: another extension's stale line does not count.
+    let identifier = ExtensionProbe.extensionID
+    let output = """
+      *\t\tOTHERTEAM1\tcom.example.Other (1.0/1)\tOther\t\
+      [terminated waiting to uninstall on reboot]
+      *\t*\t9PQP6CDMQT\t\(identifier) (0.6.0-alpha.3/1.30.13)\tXboxUSBDevice\t\
+      [activated enabled]
+      """
+
+    // Act
+    let pending = ExtensionProbe.replacedVersionPending(in: output)
+
+    // Assert
+    #expect(!pending)
+  }
+
+  @Test
   func missingEmbeddedBundleRemainsSeparateFromOSRegistration() throws {
     let temporary = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString,

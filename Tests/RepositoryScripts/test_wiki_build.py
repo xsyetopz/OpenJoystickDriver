@@ -3,16 +3,10 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
-from Scripts.Command import dispatcher
 from Scripts.Documentation.wiki import build as wiki
 
 REPOSITORY = "owner/name"
-
-
-class TargetInvoked(Exception):
-    pass
 
 
 class WikiBuildTests(unittest.TestCase):
@@ -100,22 +94,6 @@ class WikiBuildTests(unittest.TestCase):
         self.assertIn("Home.md", written)
         self.assertIn("_Sidebar.md", written)
         self.assertNotIn("AGENTS.md", written)
-
-    def test_dispatcher_routes_build_wiki(self) -> None:
-        with (
-            patch.object(
-                dispatcher, "exec_target", side_effect=TargetInvoked
-            ) as execute,
-            self.assertRaises(TargetInvoked),
-        ):
-            dispatcher.dispatch(["docs", "build-wiki", "out"])
-        execute.assert_called_once_with(
-            "Documentation/wiki/build.py", ["out"], python=True
-        )
-
-    def test_dispatcher_requires_an_output_directory(self) -> None:
-        with self.assertRaises(SystemExit):
-            dispatcher.dispatch(["docs", "build-wiki"])
 
 
 if __name__ == "__main__":

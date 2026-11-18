@@ -63,7 +63,7 @@ extension RuntimeProfileDraft {
 
   /// Returns the draft with the assignment of `source` in the layer set to `destination`.
   ///
-  /// Behavior, pulse duration and additional actions of an existing assignment stay.
+  /// Behavior, pulse duration, additional actions and remark of an existing assignment stay.
   ///
   /// - Throws: ``RuntimeProfileDraftError`` when the layer is missing or the assignment breaks a
   ///   profile rule.
@@ -88,7 +88,8 @@ extension RuntimeProfileDraft {
         turbo: turbo,
         longHold: longHold,
         multiTap: multiTap,
-        additionalActions: existing?.additionalActions ?? []
+        additionalActions: existing?.additionalActions ?? [],
+        remark: existing?.remark
       )
       try profile.setLayerBinding(binding, in: layerID)
     }
@@ -113,7 +114,8 @@ extension RuntimeProfileDraft {
         turbo: binding.turbo,
         longHold: binding.longHold,
         multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions
+        additionalActions: binding.additionalActions,
+        remark: binding.remark
       )
     }
   }
@@ -144,7 +146,8 @@ extension RuntimeProfileDraft {
         turbo: turbo,
         longHold: longHold,
         multiTap: multiTap,
-        additionalActions: binding.additionalActions
+        additionalActions: binding.additionalActions,
+        remark: binding.remark
       )
     }
   }

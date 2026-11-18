@@ -37,7 +37,7 @@ struct BuildIdentityTests {
   }
 
   @Test
-  func aboutLineAddsTheBundleVersionAsTheAboutPanelShowsIt() {
+  func aboutLineAddsBundleVersionAsAboutPanelShowsIt() {
     let identity = BuildIdentity(
       semanticVersion: "0.6.0-alpha.1",
       appBundleVersion: "1.19.57",
@@ -49,7 +49,7 @@ struct BuildIdentityTests {
   }
 
   @Test
-  func statusJSONExposesBuildIdentityAtTheTopLevel() throws {
+  func statusJSONExposesBuildIdentityAtTopLevel() throws {
     let identity = BuildIdentity(
       semanticVersion: "0.5.0-beta.4",
       appBundleVersion: "1.4.89",
@@ -71,7 +71,7 @@ struct BuildIdentityTests {
   }
 
   @Test
-  func currentReadsTheAppBundleThroughTheInstalledLink() throws {
+  func currentReadsAppBundleThroughInstalledLink() throws {
     let root = FileManager.default.temporaryDirectory
       .appendingPathComponent(UUID().uuidString, isDirectory: true)
     defer { try? FileManager.default.removeItem(at: root) }
@@ -106,7 +106,7 @@ struct BuildIdentityTests {
   }
 
   @Test
-  func aMissingSourceStateIsUnknownAndAnInvalidOneIsRefused() throws {
+  func missingSourceStateIsUnknownAndInvalidOneIsRefused() throws {
     #expect(try BuildIdentity(info: [:]).sourceState == .unknown)
     #expect(try BuildIdentity(info: ["OJDSourceState": "Dirty"]).sourceState == .dirty)
     for name in ["clean", "dirty", "unknown", "notAWord"] {

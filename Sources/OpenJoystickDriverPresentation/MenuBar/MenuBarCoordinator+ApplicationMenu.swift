@@ -1,6 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
-  import AppKit
+  package import AppKit
   import Combine
   import Darwin
   import OpenJoystickDriverKit
@@ -9,8 +9,18 @@
 
   extension MenuBarCoordinator: NSMenuDelegate, NSMenuItemValidation {
     /// Builds the main menu bar and registers its Services, Window and Help menus with the app.
-    func makeApplicationMenu() -> NSMenu {
-      let rendered = MainMenuRenderer.render(target: self)
+    ///
+    /// The menus hold the items that show at `level`; the values default to the preferences, and
+    /// the observer of a change passes the new ones, which the preferences hold only after it runs.
+    func makeApplicationMenu(
+      level: InterfaceLevel? = nil,
+      developerToolsEnabled: Bool? = nil
+    ) -> NSMenu {
+      let rendered = MainMenuRenderer.render(
+        target: self,
+        level: level ?? preferences.interfaceLevel,
+        developerToolsEnabled: developerToolsEnabled ?? preferences.developerToolsEnabled
+      )
       let application = NSApplication.shared
       application.servicesMenu = rendered.servicesMenu
       application.windowsMenu = rendered.windowMenu
@@ -41,7 +51,11 @@
       state.selectedControllerID = mainWindow?.selectedControllerID
       state.hasMainWindow = mainWindow != nil
       state.hasSelectedProfile = mainWindow?.hasSelectedProfile == true
+      state.enabledToolbarActions = mainWindow?.enabledToolbarActions ?? []
+      state.disabledToolbarActions = mainWindow?.disabledToolbarActions ?? []
+      state.hasSearchFieldInView = mainWindow?.searchFieldInView != nil
       state.hasSettingsWindow = settingsWindow != nil
+      state.interfaceLevel = preferences.interfaceLevel
       if let window = NSApplication.shared.keyWindow {
         state.isFullScreen = window.styleMask.contains(.fullScreen)
         state.isToolbarVisible = window.toolbar?.isVisible == true
@@ -58,7 +72,7 @@
     /// Activate Profile submenu.
     package func menuNeedsUpdate(_ menu: NSMenu) {
       let state = mainMenuState()
-      if menu.supermenu?.items.first(where: { $0.submenu === menu })?.identifier?.rawValue
+      if unsafe menu.supermenu?.items.first(where: { $0.submenu === menu })?.identifier?.rawValue
         == MainMenuModel.item(for: .activateProfile)?.id
       {
         populateActivateProfileMenu(menu)
@@ -69,6 +83,8 @@
         guard let id = menuItem.identifier?.rawValue,
           let item = MainMenuModel.allItems.first(where: { $0.id == id })
         else { continue }
+        menuItem.state = MainMenuRenderer.checkmark(of: item, state: state)
+        menuItem.toolTip = OJDLocalized.string(MainMenuModel.helpKey(of: item, state: state))
         if item.action == .controllerTarget {
           menuItem.title = MainMenuRenderer.text(
             of: MainMenuModel.controllerTargetTitle(state: state)
@@ -116,24 +132,23 @@
         preconditionFailure("\(action) opens a submenu")
       case .saveSupportReport: beginSaveSupportReport()
       case .saveActivityLog: beginSaveActivityLog()
+      case .setInterfaceLevel(let level): preferences.setInterfaceLevel(level)
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
+      case .find: mainWindow?.focusSearchField()
+      case .toolbar(let toolbarAction): mainWindow?.perform(toolbarAction)
       case .controllerTarget:
         // Informational row; it carries no action.
         preconditionFailure("\(action) has no action")
       case .suspendOrResumeController:
-        guard let controller = state.controller, let device = device(for: controller) else {
-          return
-        }
-        Task { @MainActor in
+        guard let controller = state.controller else { return }
+        runControllerAction(controller.id) { device in
           if controller.isSuspended {
-            await viewModel.resumeController(device)
+            await self.viewModel.resumeController(device)
           } else {
-            await viewModel.suspendController(device)
+            await self.viewModel.suspendController(device)
           }
         }
-      case .testInput:
-        guard let controller = state.controller else { return }
-        mainWindow?.showInputTest(controllerID: controller.id)
+      case .testInput: showInputTest(controllerID: state.controller?.id)
       case .disconnectWirelessLink:
         guard let controller = state.controller, let device = device(for: controller) else {
           return
@@ -153,6 +168,9 @@
       case .showActivityLog: mainWindow?.showMainWindow(area: .activity)
       case .explainErrorCode: mainWindow?.showErrorCodeExplainer()
       case .copySupportReport: copySupportReportWithFeedback()
+      case .openAreaHelp:
+        NSWorkspace.shared.open((mainWindow?.selectedArea ?? .controllers).wikiURL)
+      case .showMainWindowTour: showMainWindowTour()
       case .reportProblem: open(urlString: StatusItemModel.problemReport)
       case .openProjectWebsite: openProjectPage(nil)
       case .services, .hide, .hideOthers, .showAll, .undo, .redo, .cut, .copy, .paste, .delete,
@@ -184,12 +202,14 @@
           keyEquivalent: ""
         )
         placeholder.isEnabled = false
+        placeholder.toolTip = profileListRead ? OJDLocalized.string("ui.help.menu.noProfiles") : nil
         menu.addItem(placeholder)
         return
       }
       let activeIDs = Set(snapshot.activeProfiles.map(\.profileID))
       for profile in snapshot.profiles {
         let item = NSMenuItem(title: profile.name, action: nil, keyEquivalent: "")
+        item.toolTip = OJDLocalized.string("ui.help.menu.profileItem")
         item.representedObject = profile.id
         if activeIDs.contains(profile.id) {
           item.state = .on
@@ -251,25 +271,37 @@
       message: String,
       style: NSAlert.Style = .informational
     ) {
-      let alert = NSAlert()
-      alert.alertStyle = style
-      alert.messageText = title
-      alert.informativeText = message
-      alert.addButton(withTitle: OJDLocalized.string("action.ok"))
-      alert.runActivatingApp()
+      MenuBarAlerts.notice(title: title, message: message, style: style).runActivatingApp()
+    }
+
+    /// Shows the tour of the main window, one alert per area, until the person is done.
+    private func showMainWindowTour() {
+      var tour = MainWindowTour()
+      while true {
+        let choices = tour.choices
+        let step = tour.current
+        mainWindow?.showMainWindow(area: step.area)
+        let alert = MenuBarAlerts.tourStep(step, choices: choices)
+        let response = alert.runActivatingApp()
+        guard let choice = MenuBarAlerts.tourChoice(response: response, choices: choices) else {
+          return
+        }
+        switch choice {
+        case .next: tour.next()
+        case .back: tour.back()
+        case .done: return
+        }
+      }
     }
 
     /// Asks to confirm, then disconnects the wireless link of `device`.
     private func confirmDisconnectWireless(_ device: ApplicationServiceDeviceDescription) {
       let confirmation = WirelessDisconnectConfirmation(controllerName: device.name)
-      let alert = NSAlert()
-      alert.alertStyle = .warning
-      alert.messageText = confirmation.title
-      alert.informativeText = confirmation.message
-      alert.addButton(withTitle: confirmation.confirmTitle).hasDestructiveAction = true
-      alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
-      guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
-      Task { @MainActor in await viewModel.disconnectWirelessController(device) }
+      let alert = MenuBarAlerts.disconnectWireless(confirmation)
+      guard MenuBarAlerts.isConfirmed(alert.runActivatingApp()) else { return }
+      runControllerAction(device.sessionToken.rawValue) { device in
+        await self.viewModel.disconnectWirelessController(device)
+      }
     }
 
     /// Deactivates the active profile of the controller model of `device`, and shows an alert when
@@ -374,14 +406,14 @@
 
     /// Opens the project page in the default browser.
     @objc
-    func openProjectPage(_ sender: Any?) {
+    func openProjectPage(_: Any?) {
       guard let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") else { return }
       NSWorkspace.shared.open(url)
     }
 
     /// Shows the About panel with the app version and a link to the project page.
     @objc
-    func showAbout(_ sender: Any?) {
+    func showAbout(_: Any?) {
       let repositoryTitle = OJDLocalized.string("ui.menu.projectPage")
       let credits = NSMutableAttributedString(string: repositoryTitle)
       if let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") {
@@ -393,7 +425,7 @@
       ]
       if let icon = NSImage(named: NSImage.applicationIconName) { options[.applicationIcon] = icon }
       NSApplication.shared.orderFrontStandardAboutPanel(options: options)
-      NSApplication.shared.activate(ignoringOtherApps: true)
+      AppForeground.activate()
     }
   }
 

@@ -5,7 +5,7 @@ import Testing
 
 struct JoyConParserTests {
   @Test(arguments: [UInt16(0x2006), UInt16(0x2007)])
-  func catalogSelectsSideAndIgnoresTheAbsentStick(_ productID: UInt16) throws {
+  func catalogSelectsSideAndIgnoresAbsentStick(_ productID: UInt16) throws {
     let registry = ProtocolDriverRegistry()
     let model = ControllerModelID(vendorID: 0x057E, productID: productID)
     let parser = try #require(try catalogParser(model, registry: registry) as? Switch1Driver)
@@ -29,7 +29,7 @@ struct JoyConParserTests {
   }
 
   @Test
-  func eachHalfIgnoresTheOtherHalfsButtonBits() throws {
+  func eachHalfIgnoresOtherHalfsButtonBits() throws {
     var bytes = [UInt8](repeating: 0, count: 12)
     bytes[0] = 0x30
     bytes[3] = 0xFF

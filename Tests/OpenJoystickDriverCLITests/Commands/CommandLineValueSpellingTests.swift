@@ -5,7 +5,7 @@ import Testing
 
 struct CommandLineValueSpellingTests {
   @Test
-  func permissionIDsAreUpperCamelCaseInJSONAndKebabCaseOnTheCommandLine() {
+  func permissionIDsAreUpperCamelCaseInJSONAndKebabCaseOnCommandLine() {
     #expect(
       PermissionID.allCases.map(\.rawValue) == [
         "InputRead", "InputInject", "USBTransport", "PostEvent",
@@ -29,7 +29,7 @@ struct CommandLineValueSpellingTests {
   }
 
   @Test
-  func mappingFormatsAreUpperCaseInJSONAndLowercaseOnTheCommandLine() {
+  func mappingFormatsAreUpperCaseInJSONAndLowercaseOnCommandLine() {
     #expect(VirtualMappingFormat.allCases.map(\.rawValue) == ["SDL", "W3C"])
     #expect(VirtualMappingFormat.allValueStrings == ["sdl", "w3c"])
     #expect(VirtualMappingFormat(argument: "sdl") == .sdl)
@@ -42,7 +42,7 @@ struct CommandLineValueSpellingTests {
   }
 
   @Test
-  func theStatusReportEnumsAreUpperCamelCase() {
+  func statusReportEnumsAreUpperCamelCase() {
     #expect(ServiceStateResult.State.running.rawValue == "Running")
     #expect(TransportExtensionResult.State.awaitingApproval.rawValue == "AwaitingApproval")
     #expect(StatusReport.Extension.Bundle.invalid.rawValue == "Invalid")

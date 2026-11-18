@@ -42,7 +42,7 @@ struct KeepAliveDescriptionTests {
   // MARK: - Decoder
 
   @Test
-  func acceptsAKeepAliveWithItsIntervalAndWrites() throws {
+  func acceptsKeepAliveWithItsIntervalAndWrites() throws {
     let description = try decode(
       family: .xboxGIP,
       gip(#"{"intervalMilliseconds": 4000, "writes": [\#(Self.usbWrite)]}"#)
@@ -72,7 +72,7 @@ struct KeepAliveDescriptionTests {
       writes500 + #"{"bytes": "01", "when": {"parameter": "layout", "is": ["Pro"]}}]}"#,
     ]
   )
-  func rejectsAMalformedKeepAlive(keepAlive: String) {
+  func rejectsMalformedKeepAlive(keepAlive: String) {
     #expect(
       rejection(family: .xboxGIP, gip(keepAlive))?.code == .invalidProtocolDescription,
       "\(keepAlive)"
@@ -87,7 +87,7 @@ struct KeepAliveDescriptionTests {
       hidWriteHead + #""crc32Seed": 1}"#,
     ]
   )
-  func rejectsStartupOnlyMembersInAKeepAliveWrite(write: String) {
+  func rejectsStartupOnlyMembersInKeepAliveWrite(write: String) {
     let body =
       #""tuningKeys": ["hidStartupIntervalMs"], "defaults": {"session": {"keepAlive": "#
       + #"{"intervalMilliseconds": 500, "writes": [\#(write)]}}}"#
@@ -95,7 +95,7 @@ struct KeepAliveDescriptionTests {
   }
 
   @Test
-  func rejectsAKeepAliveTheFamilyCannotRun() {
+  func rejectsKeepAliveFamilyCannotRun() {
     let interval = #"{"intervalMilliseconds": 500}"#
     // A HID write for a raw-USB family, and a raw-USB write for a HID family.
     #expect(
@@ -138,7 +138,7 @@ struct KeepAliveDescriptionTests {
         + #""defaults": {"variants": {"USB": {"tuning": {"KEY": 500}}}}"#,
     ]
   )
-  func rejectsTheIntervalAsATuningKey(template: String) throws {
+  func rejectsIntervalAsTuningKey(template: String) throws {
     let family = PhysicalProtocolID.xboxGIP
     _ = try decode(
       family: family,
@@ -193,7 +193,7 @@ struct KeepAliveDescriptionTests {
   }
 
   @Test
-  func switch2KeepsItsIntervalInTheDescription() {
+  func switch2KeepsItsIntervalInDescription() {
     let description = PhysicalProtocolID.nintendoSwitch2.protocolDescription
     #expect(description.keepAlive?.intervalMilliseconds == 12)
     #expect(description.keepAliveWrites(variant: .usb).isEmpty)
@@ -202,7 +202,7 @@ struct KeepAliveDescriptionTests {
   }
 
   @Test
-  func steamDeckSendsTheLizardWatchdogEverySecond() {
+  func steamDeckSendsLizardWatchdogEverySecond() {
     let driver = SteamDeckDriver()
     #expect(driver.sessionPlan.hidKeepAliveIntervalNanoseconds == 1_000_000_000)
     let features = driver.keepAliveWrites().hidFeatures
@@ -230,7 +230,7 @@ struct KeepAliveDescriptionTests {
   /// A driver names the channels it keeps alive and takes the one interval from its
   /// description; no driver carries a `0` placeholder.
   @Test
-  func driversNameTheirKeepAliveChannelsAndTakeTheIntervalFromTheDescription() throws {
+  func driversNameTheirKeepAliveChannelsAndTakeIntervalFromDescription() throws {
     let cases: [(String, PhysicalProtocolID, DriverSessionPlan, Set<KeepAliveChannel>)] = [
       (
         "GameSir enhanced HID", .vendorGameSir,

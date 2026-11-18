@@ -18,12 +18,13 @@ struct ControllerCommand: AsyncParsableCommand {
       ),
     subcommands: [
       ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
-      ControllerCaptureCommand.self, ControllerRumbleCommand.self, ControllerLightCommand.self,
+      ControllerCheckCommand.self, ControllerCaptureCommand.self, ControllerRumbleCommand.self,
+      ControllerLightCommand.self,
       ControllerPlayerCommand.self, ControllerSpeakerCommand.self, ControllerSuspendCommand.self,
       ControllerResumeCommand.self,
       ControllerDisconnectCommand.self, ControllerCalibrateCommand.self, ControllerPairCommand.self,
       ControllerUnpairCommand.self, ControllerClaimCommand.self,
-      ControllerReleaseCommand.self,
+      ControllerReleaseCommand.self, ControllerLookupCommand.self,
     ]
   )
 
@@ -152,8 +153,16 @@ struct ControllerShowCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let selector = controller
-      let devices = try await ServiceConnection.request {
-        try await $0.getStatus().connectedDevices
+      let status = try await ServiceConnection.request { try await $0.getStatus() }
+      let devices = status.connectedDevices
+      if case .model(let model) = selector.reference,
+        selector.reference.matches(in: devices).isEmpty,
+        let unserved = status.unboundDevices.first(where: {
+          $0.vendorID == model.vendorID && $0.productID == model.productID
+        })
+      {
+        try UnservedControllerReport(unserved).print()
+        return
       }
       let device = try selector.resolve(in: devices)
       let record = RecordStore.load().records[
@@ -200,6 +209,12 @@ struct ControllerShowCommand: AsyncParsableCommand {
     rows += [
       ["input-health", CommandLineName.kebab(detail.inputHealth.state)],
       ["ownership", CommandLineName.kebab(detail.ownership.physical)],
+    ]
+    rows += detail.ownership.holders.map {
+      ["holder", $0.processID.map { "\($0)" } ?? "", $0.name]
+    }
+    rows += [
+      ["holds-exclusively", "\(detail.ownership.holdsExclusively)"],
       [
         "server", CommandLineName.kebab(detail.ownership.server.rawValue),
         CommandLineName.kebab(detail.ownership.serverSource),
@@ -209,6 +224,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
         detail.serving.reason.map(CommandLineName.kebab) ?? "",
       ],
       ["persona", detail.serving.persona.map(CommandLineName.kebab) ?? ""],
+    ]
+    if detail.serving.heldByAppleDriver == true { rows.append(["served-by", "macos"]) }
+    rows += [
       ["controls", detail.capabilities.controls.map(CommandLineName.kebab).joined(separator: ",")],
       [
         "rumble-motors",
@@ -336,6 +354,14 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ),
       (CLILocalized.text("cli.controller.show.labelRecord"), recordText(detail.record)),
     ]
+    if detail.serving.heldByAppleDriver == true {
+      rows.append(
+        (
+          CLILocalized.text("platform.macos.cli.controller.show.labelServedBy"),
+          CLILocalized.format("platform.macos.cli.controller.show.servedByMacOS", detail.id)
+        )
+      )
+    }
     if let mapping = detail.inputMapping {
       rows.append(
         (
@@ -374,6 +400,24 @@ struct ControllerShowCommand: AsyncParsableCommand {
         )
       )
     }
+    rows.append(
+      (
+        CLILocalized.text("ui.controllers.holders"),
+        list(detail.ownership.holders.map { $0.label(localize: CLILocalized.text) })
+      )
+    )
+    let nextStep = CLILocalized.text("cli.controller.show.labelNextStep")
+    if detail.ownership.holdsExclusively {
+      rows += [
+        (
+          CLILocalized.text("ui.controllers.exclusiveOwner"),
+          CLILocalized.text("status.controllerExclusive")
+        ),
+        (nextStep, CLILocalized.format("cli.controller.show.suspendHint", detail.id)),
+      ]
+    } else if detail.session == ControllerSessionState.suspended.rawValue {
+      rows.append((nextStep, CLILocalized.format("cli.controller.show.resumeHint", detail.id)))
+    }
     // The output lists above hold only what macOS leaves undone, so say why.
     if detail.capabilities.outputOwner == ControllerServer.system.rawValue {
       rows.append(
@@ -398,6 +442,11 @@ struct ControllerShowCommand: AsyncParsableCommand {
           } ?? none
         )
       )
+      if virtual.gameRumbleUnavailable,
+        let profile = virtual.profile.flatMap({ VirtualHIDProfileID(rawValue: $0) })
+      {
+        rows.append(("", noGameRumbleNote(profile)))
+      }
     }
     if let publication = detail.publication {
       rows.append(

@@ -41,7 +41,7 @@ struct USBSignatureDiscoveryTests {
   }
 
   @Test
-  func unconfiguredCataloguedRowWithoutPinsIsConfiguredByTheOpen() async {
+  func unconfiguredCataloguedRowWithoutPinsIsConfiguredByOpen() async {
     // 1532:0A43 names only the GIP family and does not set configuration before the claim.
     let device = usbDevice(vendorID: 0x1532, productID: 0x0A43, route: .rawUSB)
     let provider = SignatureDiscoveryProvider(
@@ -144,7 +144,7 @@ struct USBSignatureDiscoveryTests {
   }
 
   @Test
-  func descriptorContractViolationLeavesTheDeviceUnboundBeforeAnyWrite() async {
+  func descriptorContractViolationLeavesDeviceUnboundBeforeAnyWrite() async {
     let device = usbDevice(vendorID: 0x1234, productID: 0x5678, route: .rawUSB)
     let wrongInterface = PhysicalDevice(
       serviceAddress: device.serviceAddress,
@@ -183,7 +183,7 @@ struct USBSignatureDiscoveryTests {
       USBTransportError?.some(.inputOutput)
     ),
   ])
-  func unreadableDescriptorOfAnUnpinnedDeviceIsRetried(
+  func unreadableDescriptorOfUnpinnedDeviceIsRetried(
     model: LogicalControllerID,
     error: USBTransportError?
   ) async {
@@ -208,7 +208,7 @@ struct USBSignatureDiscoveryTests {
   }
 
   @Test
-  func registryOnlyDescriptorFactsLeaveASignatureDeviceUnbound() async {
+  func registryOnlyDescriptorFactsLeaveSignatureDeviceUnbound() async {
     let device = usbDevice(vendorID: 0x1234, productID: 0x5678, route: .rawUSB)
     let provider = SignatureDiscoveryProvider(
       device: device,
@@ -223,7 +223,7 @@ struct USBSignatureDiscoveryTests {
   }
 
   @Test
-  func uncataloguedDeviceWithoutASignatureIsReportedWithNoProtocolMatch() async {
+  func uncataloguedDeviceWithoutSignatureIsReportedWithNoProtocolMatch() async {
     let device = usbDevice(vendorID: 0x1234, productID: 0x5678, route: .rawUSB)
     let plain = PhysicalDevice(
       serviceAddress: device.serviceAddress,
@@ -241,7 +241,7 @@ struct USBSignatureDiscoveryTests {
   }
 
   @Test
-  func driverKitRouteNeverReadsTheConfiguration() async {
+  func driverKitRouteNeverReadsConfiguration() async {
     // 045E:02EA is a catalogued GIP row reached through the DEXT in production.
     let device = usbDevice(vendorID: 0x045E, productID: 0x02EA, route: .usbExtension)
     let provider = SignatureDiscoveryProvider(

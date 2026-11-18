@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>capabilities</key>
+	<dict>
+		<key>present</key>
+		<array>
+			<string>LeftPaddle1</string>
+			<string>RightPaddle1</string>
+			<string>Auxiliary1</string>
+			<string>Auxiliary2</string>
+		</array>
+	</dict>
+	<key>kind</key>
+	<string>Controller</string>
+	<key>modes</key>
+	<array>
+		<dict>
+			<key>id</key>
+			<string>default</string>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>SonyDualSense</string>
+			</dict>
+		</dict>
+	</array>
+	<key>productID</key>
+	<integer>3570</integer>
+	<key>vendorID</key>
+	<integer>1356</integer>
+</dict>
+</plist>

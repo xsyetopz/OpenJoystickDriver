@@ -7,7 +7,7 @@ import Testing
 
 extension PassiveUSBDescriptorProbeTests {
   @Test
-  func runtimeObservationSelectsOnlyTheExactRegistryEntry() throws {
+  func runtimeObservationSelectsOnlyExactRegistryEntry() throws {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 12,
@@ -60,7 +60,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func identicalAliasesParseAndDifferentAliasesAreAmbiguous() throws {
+  func identicalAliasesParseAndDifferentAliasesAmbiguous() {
     let bytes = ProtocolPacketFixtures.PassiveUSB.emptyConfiguration
     let root = PassiveUSBRegistryNode(
       serviceClass: "IOUSBHostDevice",

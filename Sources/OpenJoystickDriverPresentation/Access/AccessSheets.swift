@@ -16,7 +16,7 @@
     /// The title and lines of the confirmation, with scope toggles for a client grant.
     var body: some View {
       let confirmation = model.confirmation(for: pending)
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(confirmation.title).font(.headline).fixedSize(horizontal: false, vertical: true)
         if case .grantClient = pending { scopeToggles(scopes: $model.grantScopes) }
         ForEach(confirmation.lines, id: \.self) { line in
@@ -29,12 +29,12 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { model.cancelSheet() }.keyboardShortcut(
             .cancelAction
-          ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.cancel"))
+          ).help(OJDLocalized.string("a11y.access.cancel"))
           Button(confirmation.confirmTitle) { Task { await model.confirm(pending) } }
             .keyboardShortcut(.defaultAction).disabled(grantsNothing)
-            .ojdAccessibilityLabel(confirmation.confirmTitle)
+            .help(OJDLocalized.string("ui.help.confirmChange"))
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
 
     /// Whether a program grant has no scope chosen, which disables the confirm button.
@@ -52,13 +52,15 @@
 
     /// The token name, origins and scopes, a failure if any, and the Cancel and Continue buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(OJDLocalized.string("ui.access.token.form.title")).font(.headline)
         TextField(OJDLocalized.string("ui.access.token.name"), text: $model.tokenDraft.name)
           .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.tokenName"))
-        Text(OJDLocalized.string("ui.access.token.origins")).font(.caption)
+          .help(OJDLocalized.string("ui.help.tokenName"))
+        Text(OJDLocalized.string("ui.access.token.origins")).font(.body)
         TextEditor(text: $model.tokenDraft.originsText).font(.body).frame(height: 70)
           .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.tokenOrigins"))
+          .help(OJDLocalized.string("ui.help.tokenOrigins"))
         scopeToggles(scopes: $model.tokenDraft.scopes)
         if let failure = model.failure {
           Text(failure.message).foregroundColor(Color(SemanticTone.failure.color))
@@ -68,13 +70,13 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { model.cancelSheet() }.keyboardShortcut(
             .cancelAction
-          ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.cancel"))
+          ).help(OJDLocalized.string("a11y.access.cancel"))
           Button(OJDLocalized.string("ui.access.token.continue")) { model.requestGrantToken() }
-            .keyboardShortcut(.defaultAction).ojdAccessibilityLabel(
+            .keyboardShortcut(.defaultAction).help(
               OJDLocalized.string("a11y.access.tokenContinue")
             )
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
   }
 
@@ -87,7 +89,7 @@
 
     /// The issued token with its message, a Copy button and a Done button.
     var body: some View {
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(OJDLocalized.formatted("ui.access.token.issued.title", issued.name)).font(.headline)
         Text(OJDLocalized.string("ui.access.token.issued.message")).foregroundColor(
           Color(NSColor.secondaryLabelColor)
@@ -98,13 +100,13 @@
           Button(OJDLocalized.string("ui.access.token.copy")) {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(issued.token, forType: .string)
-          }.ojdAccessibilityLabel(OJDLocalized.string("a11y.access.copyToken"))
+          }.help(OJDLocalized.string("a11y.access.copyToken"))
           Spacer()
           Button(OJDLocalized.string("ui.access.done"), action: close).keyboardShortcut(
             .defaultAction
-          ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.done"))
+          ).help(OJDLocalized.string("a11y.access.done"))
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
   }
 
@@ -112,7 +114,7 @@
   @MainActor
   @ViewBuilder
   private func scopeToggles(scopes: Binding<Set<EndpointScope>>) -> some View {
-    VStack(alignment: .leading, spacing: 4) {
+    VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
       ForEach(EndpointScope.allCases, id: \.self) { scope in
         Toggle(
           AccessPresentation.scope(scope),
@@ -128,7 +130,7 @@
           )
         ).ojdAccessibilityLabel(
           OJDLocalized.formatted("a11y.access.scope", AccessPresentation.scope(scope))
-        )
+        ).help(AccessPresentation.scopeHelp(scope))
       }
     }
   }

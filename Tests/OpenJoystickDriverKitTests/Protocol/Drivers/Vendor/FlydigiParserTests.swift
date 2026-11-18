@@ -43,7 +43,7 @@ private func settled(_ parser: ReportLayoutDriver) {
 
 @Suite
 struct FlydigiParserTests {
-  static let family = PhysicalProtocolID.vendorFlydigi
+  static let family = PhysicalProtocolID.flydigi
   static let model = ControllerModelID(vendorID: 0xD7D7, productID: 0x0041)
 
   @Test(arguments: [0, 1, 2])
@@ -108,7 +108,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testRightStickDeflectionLeavesTheTriggersReleased() throws {
+  func testRightStickDeflectionLeavesTriggersReleased() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(rightStickX: 0x7F))
@@ -130,7 +130,7 @@ struct FlydigiParserTests {
   /// The digital trigger bit accompanies the analog value and must not be
   /// reported as a stick click.
   @Test
-  func testDigitalTriggerBitIsNotAStickClick() throws {
+  func testDigitalTriggerBitIsNotStickClick() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(shoulders: 0x04, leftTrigger: 0xFF))
@@ -221,7 +221,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testRepeatedReportRepeatsTheSnapshot() throws {
+  func testRepeatedReportRepeatsSnapshot() throws {
     let parser = flydigiDriver()
     settled(parser)
     let first = try parser.parseReport(CapturedReport.with(hatAndFace: 0x10))

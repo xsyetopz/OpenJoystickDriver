@@ -43,6 +43,8 @@ struct USBPipelineRecoveryPolicy: Sendable {
   let reconnectMaximumDelayNanoseconds: UInt64
   /// The wait before the pipeline opens the interface again after an access denial.
   let accessContentionDelayNanoseconds: UInt64
+  /// The failed handshakes in a row after which the pipeline stops starting the session.
+  var maximumHandshakeFailures = 5
 
   /// The reconnect wait after `attempt` failed tries: the base wait doubled per try, up to four
   /// doublings, and capped at the maximum.
@@ -122,6 +124,15 @@ actor DevicePipeline {
   let interface: PhysicalInterfaceSignature?
   /// The controller's latest observed state, including input hidden from output.
   var currentInputState = ControllerState.neutral
+  /// The latest observed state as the driver reported it, before the stored calibration.
+  var currentRawInputState = ControllerState.neutral
+  /// The latest angular velocity as the driver reported it, before the stored gyro offset; nil
+  /// while the controller has reported no motion.
+  var currentRawAngularVelocity: ControllerMotionVector?
+  /// The stored calibration of the controller's model, read for each report.
+  let calibration: @Sendable () -> ControllerCalibration
+  /// When the input state last changed, for the idle disconnect.
+  var idleInput: IdleInputTracker
   /// The state last sent to the dispatcher, without connection; neutral once the dispatcher was
   /// told the controller stopped.
   var lastDispatchedState = ControllerState.neutral
@@ -166,7 +177,9 @@ actor DevicePipeline {
   var consecutiveUSBIOErrors: Int = 0
   /// The latest USB open or handshake failed and no session has started since.
   ///
-  /// The pipeline keeps retrying; the device manager reads this to give a yielded HID route back.
+  /// The pipeline keeps retrying until the handshake has failed
+  /// ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row; the device manager
+  /// reads this to give a yielded HID route back.
   var usbSessionStartFailed = false
   /// The transport error of the latest failed USB startup write, cleared when a handshake starts.
   var lastUSBStartupError: USBTransportError?
@@ -218,7 +231,8 @@ actor DevicePipeline {
   /// The uptime in nanoseconds at which liveness monitoring of the session began, which stands in
   /// for the latest fresh report until one arrives.
   var inputHealthMonitoringStartedNanoseconds: UInt64?
-  /// The uptime in nanoseconds of the latest report that carried input, fresh or not.
+  /// The uptime in nanoseconds of the latest report that carried input, fresh or not;
+  /// nil until the USB session read one.
   var lastObservedInputReportNanoseconds: UInt64?
   /// Whether the output stays released after input was lost, until a fresh neutral report arrives;
   /// a change posts a service status change.
@@ -268,7 +282,8 @@ actor DevicePipeline {
     sessionState: ControllerSessionState = .active,
     idleTimeoutNanoseconds _: UInt64 = 30_000_000_000,
     idleMonitorIntervalNanoseconds: UInt64 = defaultIdleMonitorIntervalNanoseconds,
-    uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds }
+    uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+    calibration: (@Sendable () -> ControllerCalibration)? = nil
   ) {
     self.identifier = identifier
     self.transport = transport
@@ -286,15 +301,20 @@ actor DevicePipeline {
     self.usbRecoveryPolicy = usbRecoveryPolicy
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.frameTimings = frameTimings
+    self.calibration =
+      calibration ?? {
+        DeviceCatalog.current.withLock { $0.calibration(of: identifier.model) }
+      }
     self.uptimeNanoseconds = uptimeNanoseconds
+    self.idleInput = IdleInputTracker(now: uptimeNanoseconds())
     self.externalOutputAllowed = externalOutputAllowed
     self.sessionState = sessionState
-    let plan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
-    self.plan = plan
+    let tunedPlan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
+    self.plan = tunedPlan
     self.startupPlayerIndicatorPending =
       macOSOwnedOutput?.setsStartupPlayerIndicator == true
-      || (startupPlayerIndicator != nil && plan.hidPlayerIndicatorFollowsFirstInput)
-    self.inputConnectionActive = !plan.requiresInputConnectionBeforeOutput
+      || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)
+    self.inputConnectionActive = !tunedPlan.requiresInputConnectionBeforeOutput
     self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
   }
 }

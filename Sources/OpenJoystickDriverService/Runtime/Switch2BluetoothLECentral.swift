@@ -32,7 +32,8 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
   private let hub: Switch2BluetoothLEHub
   /// The serial queue of every CoreBluetooth call and callback.
   private let queue = DispatchQueue(label: "com.openjoystickdriver.switch2-bluetooth-le")
-  /// The central manager; nil until ``start()`` and after ``stop()``.
+  /// The central manager; nil until ``start()`` or ``requestAccessAndStart()`` creates it, and
+  /// after ``stop()``.
   private var central: CBCentralManager?
   /// The discovered controllers by peripheral identifier.
   private var links: [UUID: Link] = [:]
@@ -46,14 +47,59 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
   /// The UUID of the command reply characteristic.
   private let replyUUID = CBUUID(string: Switch2BluetoothLEProfile.commandReplyUUID)
 
-  /// Creates a central that feeds `hub`.
-  init(hub: Switch2BluetoothLEHub) { self.hub = hub }
+  /// Reads the Bluetooth authorization without showing a prompt.
+  private let authorization: @Sendable () -> CBManagerAuthorization
+  /// Creates the central manager, which shows the Bluetooth prompt; nil creates none.
+  private let makeManager:
+    @Sendable (any CBCentralManagerDelegate, DispatchQueue) -> CBCentralManager?
 
-  /// Creates the central, which asks for Bluetooth access on first use.
+  /// Creates a central that feeds `hub`.
+  ///
+  /// - Parameters:
+  ///   - hub: The hub that receives the GATT links.
+  ///   - authorization: Reads the Bluetooth authorization; the system's shows no prompt.
+  ///   - makeManager: Creates the central manager; defaults to `CBCentralManager`.
+  init(
+    hub: Switch2BluetoothLEHub,
+    authorization: @escaping @Sendable () -> CBManagerAuthorization = {
+      CBCentralManager.authorization
+    },
+    makeManager:
+      @escaping @Sendable (any CBCentralManagerDelegate, DispatchQueue) -> CBCentralManager? = {
+        CBCentralManager(delegate: $0, queue: $1)
+      }
+  ) {
+    self.hub = hub
+    self.authorization = authorization
+    self.makeManager = makeManager
+  }
+
+  /// Starts at app launch: creates the central only when Bluetooth access is already granted, so
+  /// launch never shows the Bluetooth prompt.
   func start() {
+    guard authorization() == .allowedAlways else { return }
+    createCentral()
+  }
+
+  /// The Bluetooth access, read without a prompt.
+  var accessState: BluetoothAccessState {
+    switch authorization() {
+    case .notDetermined: return .notAsked
+    case .denied: return .denied
+    case .restricted: return .restricted
+    case .allowedAlways: return .granted
+    @unknown default: return .restricted
+    }
+  }
+
+  /// Creates the central from a user action, which asks for Bluetooth access when undecided.
+  func requestAccessAndStart() { createCentral() }
+
+  /// Creates the central once.
+  private func createCentral() {
     queue.async {
       guard self.central == nil else { return }
-      self.central = CBCentralManager(delegate: self, queue: self.queue)
+      self.central = self.makeManager(self, self.queue)
     }
   }
 
@@ -106,7 +152,7 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
     didDiscover peripheral: CBPeripheral,
     advertisementData: [String: Any],
     // swiftlint:disable:next legacy_objc_type
-    rssi: NSNumber
+    rssi _: NSNumber
   ) {
     guard links[peripheral.identifier] == nil,
       let data = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data,
@@ -118,29 +164,29 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
   }
 
   /// Discovers the GATT service of the connected peripheral.
-  func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+  func centralManager(_: CBCentralManager, didConnect peripheral: CBPeripheral) {
     peripheral.delegate = self
     peripheral.discoverServices([serviceUUID])
   }
 
   /// Drops the peripheral that failed to connect.
   func centralManager(
-    _ central: CBCentralManager,
+    _: CBCentralManager,
     didFailToConnect peripheral: CBPeripheral,
-    error: (any Error)?
+    error _: (any Error)?
   ) { drop(peripheral) }
 
   /// Drops the peripheral that disconnected.
   func centralManager(
-    _ central: CBCentralManager,
+    _: CBCentralManager,
     didDisconnectPeripheral peripheral: CBPeripheral,
-    error: (any Error)?
+    error _: (any Error)?
   ) { drop(peripheral) }
 }
 
 extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   /// Discovers the characteristics of the service, or drops a peripheral that lacks it.
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: (any Error)?) {
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices _: (any Error)?) {
     guard let link = links[peripheral.identifier],
       let service = peripheral.services?.first(where: { $0.uuid == serviceUUID }),
       let vibration = Switch2BluetoothLEProfile.vibrationUUID(productID: link.productID)
@@ -159,7 +205,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   func peripheral(
     _ peripheral: CBPeripheral,
     didDiscoverCharacteristicsFor service: CBService,
-    error: (any Error)?
+    error _: (any Error)?
   ) {
     guard var link = links[peripheral.identifier],
       let vibrationUUID = Switch2BluetoothLEProfile.vibrationUUID(productID: link.productID)
@@ -186,7 +232,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   /// Admits the GATT link to the hub once the input and reply notifications are on.
   func peripheral(
     _ peripheral: CBPeripheral,
-    didUpdateNotificationStateFor characteristic: CBCharacteristic,
+    didUpdateNotificationStateFor _: CBCharacteristic,
     error: (any Error)?
   ) {
     guard error == nil, var link = links[peripheral.identifier] else {
@@ -248,5 +294,34 @@ private struct CoreBluetoothGATTPeripheral: GATTPeripheral, @unchecked Sendable 
       peripheral.writeValue(Data(bytes), for: target, type: .withoutResponse)
       return true
     }
+  }
+}
+
+/// Reads and requests the Bluetooth access of the service for the RPC server.
+struct BluetoothAccessControl: Sendable {
+  /// Reads the access without a prompt.
+  let state: @Sendable () -> BluetoothAccessState
+  /// Asks for the access, which shows the Bluetooth prompt when the user has not decided, and
+  /// returns the state at that moment.
+  let request: @Sendable () -> BluetoothAccessState
+
+  /// Creates a control from its two closures.
+  init(
+    state: @escaping @Sendable () -> BluetoothAccessState,
+    request: @escaping @Sendable () -> BluetoothAccessState
+  ) {
+    self.state = state
+    self.request = request
+  }
+
+  /// Creates a control that reads and requests through `central`.
+  init(central: Switch2BluetoothLECentral) {
+    self.init(
+      state: { central.accessState },
+      request: {
+        central.requestAccessAndStart()
+        return central.accessState
+      }
+    )
   }
 }

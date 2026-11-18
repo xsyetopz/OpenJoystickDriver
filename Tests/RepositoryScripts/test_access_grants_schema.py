@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import copy
-import json
+import plistlib
 import unittest
 from pathlib import Path
 from typing import Any
 
 from Scripts.Quality import validate_schemas
 
-FIXTURE = Path(__file__).resolve().parent / "fixtures" / "access_grants.json"
+FIXTURE = Path(__file__).resolve().parent / "fixtures" / "access_grants.plist"
 
 
 class AccessGrantsSchemaTests(unittest.TestCase):
@@ -19,8 +19,8 @@ class AccessGrantsSchemaTests(unittest.TestCase):
             registry=validate_schemas.schema_registry(documents),
             format_checker=validate_schemas.FormatChecker(),
         )
-        with FIXTURE.open(encoding="utf-8") as source:
-            self.document: dict[str, Any] = json.load(source)
+        with FIXTURE.open("rb") as source:
+            self.document: dict[str, Any] = plistlib.load(source)
 
     def test_the_fixture_is_accepted(self) -> None:
         self.assertTrue(self.validator.is_valid(self.document))

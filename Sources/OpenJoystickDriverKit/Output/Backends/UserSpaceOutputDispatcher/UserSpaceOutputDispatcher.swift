@@ -26,9 +26,11 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// The created devices by controller.
   internal var entries: [LogicalControllerID: Entry] = [:]
   /// The device creations in progress by controller.
-  internal var creationTasks: [LogicalControllerID: Task<Entry, Error>] = [:]
-  /// The serial numbers and LocationIDs of the controllers that have a device or a creation.
-  internal var identityRegistry = VirtualIdentityRegistry()
+  internal var creationTasks: [LogicalControllerID: Task<Entry, any Error>] = [:]
+  /// The serial numbers and LocationIDs of the controllers of every backend that shares it.
+  internal let identities: SharedVirtualIdentityRegistry
+  /// The holder this dispatcher reserves identities as.
+  internal let identityHolder = UUID()
   /// The pause between failed creation attempts by controller.
   internal var creationRetryPolicies: [LogicalControllerID: UserSpaceDeviceCreationRetryPolicy] =
     [:]
@@ -53,15 +55,19 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
 
   /// Publishes each controller's device through `publisher` with the identity `profile` and the
   /// reports `format` describes.
+  ///
+  /// Backends that share `identities` never publish the same serial number or LocationID.
   @preconcurrency
   package init(
     publisher: any VirtualHIDDevicePublisher,
     profile: VirtualDeviceProfile,
     format: any VirtualGamepadReportFormat,
+    identities: SharedVirtualIdentityRegistry = SharedVirtualIdentityRegistry(),
     onOutputCommand: OutputCommandHandler? = nil,
     onControllerDidStop: (@Sendable (LogicalControllerID) async -> Void)? = nil
   ) {
     self.format = format
+    self.identities = identities
     self.onOutputCommand = onOutputCommand
     self.onControllerDidStop = onControllerDidStop
     self.backendFactory = { identifier, identity in
@@ -79,9 +85,11 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
     testBackendFactory:
       @escaping @Sendable (LogicalControllerID) async throws -> any VirtualDeviceBackend,
     format: any VirtualGamepadReportFormat = OJDGenericGamepadFormat(),
+    identities: SharedVirtualIdentityRegistry = SharedVirtualIdentityRegistry(),
     onControllerDidStop: (@Sendable (LogicalControllerID) async -> Void)? = nil
   ) {
     self.format = format
+    self.identities = identities
     onOutputCommand = nil
     self.onControllerDidStop = onControllerDidStop
     self.backendFactory = { identifier, _ in try await testBackendFactory(identifier) }
@@ -93,11 +101,11 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
 extension UserSpaceOutputDispatcher: ControllerLifecycleListener {
   /// Closes the device of `identifier` and cancels its creation, then calls the stop handler.
   public func controllerDidStop(_ identifier: LogicalControllerID) async {
-    let resources = withRegistry { () -> (Entry?, Task<Entry, Error>?) in
+    let resources = withRegistry { () -> (Entry?, Task<Entry, any Error>?) in
       lifecycleGenerations[identifier, default: 0] &+= 1
       let creationTask = creationTasks.removeValue(forKey: identifier)
       creationRetryPolicies.removeValue(forKey: identifier)
-      identityRegistry.release(identifier)
+      identities.release(identifier, holder: identityHolder)
       let removed = entries.removeValue(forKey: identifier)
       recomputeStatusLocked()
       return (removed, creationTask)

@@ -109,6 +109,11 @@ struct UpdateCheckCommand: AsyncParsableCommand {
         )
       case .failed(let failure):
         throw Self.failure(failure.message, network: failure.reason == .transport)
+      case .onlyPrereleases:
+        throw Self.failure(
+          CLILocalized.text("cli.update.check.onlyPrereleases"),
+          network: false
+        )
       case .idle, .checking:
         throw Self.failure(
           CLILocalized.text("cli.update.check.incomplete"),

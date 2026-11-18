@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A validated raw-USB test plan loaded from a canonical controller record.
 ///
@@ -36,25 +36,27 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   ///   ``ControllerRecordProbeError/bootloaderIdentity`` when it names an 8BitDo bootloader
   ///   identity.
   public init(data: Data) throws {
-    let (decoded, profile) = try Self.validatedRecord(data)
-    guard !decoded.model.isBootloaderIdentity else {
+    let (decoded, built) = try Self.validatedRecord(data)
+    guard built.idleReason != .bootloader,
+      ControllerRecordSet.bundled.records[decoded.model]?.profile.idleReason != .bootloader
+    else {
       throw ControllerRecordProbeError.bootloaderIdentity
     }
     // The signing-free probe drives only the raw-USB Xbox families it can start safely.
-    guard Self.probeableProtocols.contains(profile.physicalProtocolID) else {
-      throw ControllerRecordProbeError.unsupportedProtocol(profile.physicalProtocolID.rawValue)
+    guard Self.probeableProtocols.contains(built.physicalProtocolID) else {
+      throw ControllerRecordProbeError.unsupportedProtocol(built.physicalProtocolID.rawValue)
     }
-    guard let binding = profile.rawUSBBinding else {
-      throw ControllerRecordProbeError.unsupportedProtocol(profile.physicalProtocolID.rawValue)
+    guard let binding = built.rawUSBBinding else {
+      throw ControllerRecordProbeError.unsupportedProtocol(built.physicalProtocolID.rawValue)
     }
     vendorID = decoded.model.vendorID
     productID = decoded.model.productID
-    name = String(format: "Controller %04x:%04x", vendorID, productID)
+    name = unsafe String(format: "Controller %04x:%04x", vendorID, productID)
     protocolBinding = binding
-    transportProfile = profile.transportProfile
-    startupPackets = profile.physicalProtocolID == .xboxGIP ? profile.gipStartupPackets : []
-    keepAlivePolicy = profile.gipKeepAlivePolicy
-    self.profile = profile
+    transportProfile = built.transportProfile
+    startupPackets = built.physicalProtocolID == .xboxGIP ? built.gipStartupPackets : []
+    keepAlivePolicy = built.gipKeepAlivePolicy
+    self.profile = built
   }
 
   /// The protocols whose records the probe can drive.
@@ -78,7 +80,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     profile: DeviceRuntimeProfile
   ) {
     do {
-      let decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(data))
+      let decoded = try ControllerRecordSet.decode(
+        ControllerRecordSet.ordered(data, file: "record")
+      )
       return (decoded, try DeviceCatalog.makeRuntimeProfile(decoded.document))
     } catch {
       // A coded reason leads with its code, like every other `E5001: ...` message.

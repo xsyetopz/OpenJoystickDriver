@@ -1,12 +1,12 @@
-import Foundation
+public import Foundation
 
 extension URL {
   /// The path with every symbolic link resolved, as a directory listing reports it.
   ///
   /// Unlike `resolvingSymlinksInPath()`, it keeps `/private` in `/private/var`.
   public var realPath: String {
-    guard let resolved = realpath(path, nil) else { return path }
-    defer { free(resolved) }
-    return String(cString: resolved)
+    guard let resolved = unsafe realpath(path, nil) else { return path }
+    defer { unsafe free(resolved) }
+    return unsafe String(cString: resolved)
   }
 }

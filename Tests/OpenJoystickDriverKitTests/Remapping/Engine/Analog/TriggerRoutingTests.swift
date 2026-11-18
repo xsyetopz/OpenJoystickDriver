@@ -26,7 +26,7 @@ struct TriggerRoutingTests {
   }
 
   @Test
-  func bufferedSoftPullUsesTheSharedMonotonicSchedulerAndDisconnectCancelsIt() {
+  func bufferedSoftPullUsesSharedMonotonicSchedulerAndDisconnectCancelsIt() {
     var engine = RemappingEngineState()
     let device = LogicalControllerID(vendorID: 1, productID: 2)
     let profile = profile(mode: .preferFull)
@@ -46,7 +46,7 @@ struct TriggerRoutingTests {
   }
 
   @Test
-  func explicitTriggerPassthroughRetainsTheAnalogVirtualContribution() {
+  func explicitTriggerPassthroughRetainsAnalogVirtualContribution() {
     var engine = RemappingEngineState()
     let device = LogicalControllerID(vendorID: 1, productID: 2)
     let profile = profile(mode: .simultaneous, passthrough: true)
@@ -60,7 +60,7 @@ struct TriggerRoutingTests {
   }
 
   @Test
-  func consumedTriggerMappingAlsoWithholdsTheTriggerClickFromPassthrough() {
+  func consumedTriggerMappingAlsoWithholdsTriggerClickFromPassthrough() {
     var engine = RemappingEngineState()
     let device = LogicalControllerID(vendorID: 1, productID: 2)
     let actions = engine.process(
@@ -73,7 +73,7 @@ struct TriggerRoutingTests {
   }
 
   @Test
-  func boundTriggerAxisAlsoWithholdsTheTriggerClickFromPassthrough() {
+  func boundTriggerAxisAlsoWithholdsTriggerClickFromPassthrough() {
     var engine = RemappingEngineState()
     let device = LogicalControllerID(vendorID: 1, productID: 2)
     let profile = passthroughProfile(
@@ -92,7 +92,7 @@ struct TriggerRoutingTests {
   }
 
   @Test
-  func boundTriggerClickAlsoWithholdsTheAnalogTriggerFromPassthrough() {
+  func boundTriggerClickAlsoWithholdsAnalogTriggerFromPassthrough() {
     var engine = RemappingEngineState()
     let device = LogicalControllerID(vendorID: 1, productID: 2)
     let profile = passthroughProfile(

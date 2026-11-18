@@ -1,44 +1,168 @@
 # Frequently Asked Questions
 
-This page gives short answers to common OpenJoystickDriver (OJD) questions.
+Short answers to common questions about OpenJoystickDriver (OJD).
 
-## Do I Need to Disable SIP or AMFI?
+## Contents
 
-No. Never disable System Integrity Protection (SIP) or AMFI for OJD. OJD needs neither, and this applies to every build type.
+- [About OpenJoystickDriver](#about-openjoystickdriver)
+- [Setting Up](#setting-up)
+- [Controllers](#controllers)
+- [Games and Apps](#games-and-apps)
+- [Your Data and Updates](#your-data-and-updates)
+- [Getting Help](#getting-help)
+- [Further Reading](#further-reading)
 
-## Do I Need the System Extension?
+## About OpenJoystickDriver
 
-OJD has one driver extension, and you approve it once. Its Xbox USB part is only for Xbox One and Xbox Series controllers on USB with these product IDs: `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, and `0B12`. Other controllers do not need that part. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+### What Does OpenJoystickDriver Do?
 
-## Can I Edit Controller Data or Add My Own Controller?
+It makes controllers that your Mac doesn't support work with Mac games, as a [virtual gamepad](Glossary.md#terms). It can also turn buttons into keys, clicks, and pointer movement. See [Getting Started](Getting-Started.md).
 
-Not inside the app: the controller catalog is part of the app bundle, and a change breaks its signature. A mod adds a controller record or patches one without touching the bundle; see [Writing controller mods](Writing-Controller-Mods.md). You can edit and share [profiles](Remapping-Profiles.md). To ask for a new controller, send a bug report.
+### Is It Free?
 
-## Where Is My Data Stored?
+Yes. OJD is open source under the Mozilla Public License 2.0. The code is on [GitHub](https://github.com/xsyetopz/OpenJoystickDriver).
 
-Profiles are files in `~/Library/Application Support/OpenJoystickDriver/Profiles/`, and the active profiles are listed in `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.json`. Logs are in `~/Library/Logs/OpenJoystickDriver/`. Settings are in the `com.openjoystickdriver` preferences domain. For more information, see [Uninstalling OpenJoystickDriver](Updating-and-Uninstalling.md).
+### Which Macs Does It Run On?
 
-## Why Does My Controller Work in One App but Not Another?
+Any Apple silicon or Intel Mac with macOS 12 (Monterey) or later.
 
-Each app reads controllers with its own API. Some apps that use SDL cannot read the virtual controller. For more information, see [Game does not see the controller](Troubleshooting.md#game-does-not-see-the-controller).
+### Is It Finished?
 
-## Does OJD Work with Steam?
+No. OJD is alpha software. Some controllers are untested on real hardware, and some games don't read the virtual gamepad. See [Known Issues](Known-Issues.md).
 
-Yes, with the Xbox virtual profile (`SDLCompatible`): the maintainer saw Steam read every control and move the rumble motors on macOS 27. One tester saw a phantom controller with no input when Steam read that profile. With the generic profile, Steam was erratic and slow to respond. For more information, see [Game and app compatibility](Playing-Games.md).
+## Setting Up
 
-## Why Is My Clone Controller Different?
+### Where Is the App After I Open It?
 
-A clone or fake controller may use different chips and report different data than the original. OJD may work with it, may partly work, or may not work. For more information, see [Clone and fake controllers](Supported-Controllers.md).
+In the menu bar. Click the controller icon and choose **Open OpenJoystickDriver**. To add a Dock icon, turn on **Show in Dock** in **Settings**. See [Find the Menu-Bar Icon](Getting-Started.md#find-the-menu-bar-icon).
 
-## When Do I Get a Fix?
+### Why Does OJD Ask for Input Monitoring and Accessibility?
 
-A fix arrives in the next tester build or release. To get it sooner, build the branch yourself. `CHANGELOG.md` lists what each build contains. For more information, see [Updating OpenJoystickDriver](Updating-and-Uninstalling.md).
+**Input Monitoring** lets OJD read your controller. **Accessibility** lets it run the virtual gamepad and send keys and pointer movements. See [Permissions](Permissions-and-Security.md#permissions).
 
-## Do I Need Xcode?
+### How Do I Allow the Permissions?
 
-Not to use OJD. To build it, you need the Swift compiler and the Xcode command-line tools. A few build steps need full Xcode. Not verified: building with only the Command Line Tools. For more information, see [Build options and limits](Building-from-Source.md).
+Choose Apple menu > **System Settings** > **Privacy & Security**. Click **Input Monitoring** and turn on **OpenJoystickDriver**. Go back, click **Accessibility**, and turn it on there too. On macOS 27, Accessibility is called **Device Control and Data Access**. See the [pictures for each step](Permissions-and-Security.md#grant-input-monitoring-and-accessibility).
+
+### OpenJoystickDriver Isn't in the List. What Do I Do?
+
+Click **+** under the list, choose **OpenJoystickDriver** in **Applications**, and turn on its switch. See [If OpenJoystickDriver Isn't in the List](Permissions-and-Security.md#if-openjoystickdriver-isnt-in-the-list).
+
+### How Do I Know the Permissions Are On?
+
+Open OJD and click **Access** in the sidebar. Each permission says **Allowed**.
+
+### Do I Need to Turn Off SIP or AMFI?
+
+No. OJD installs no kernel extension and needs neither turned off.
+
+### Does OJD Start When I Log In?
+
+On macOS 13 or later, yes. Turn off **Start at login** in **Settings** to stop it. See [Allow the Login Item](Getting-Started.md#allow-the-login-item).
+
+### Do I Need the Xbox USB Driver?
+
+Only for an Xbox One or Xbox Series controller on a USB cable. You approve the [Xbox USB driver](Glossary.md#terms) once in **System Settings**. See [Xbox USB Driver](Connecting-Controllers.md#xbox-usb-driver).
+
+### How Do I Turn On the Driver Extension?
+
+Choose Apple menu > **System Settings** > **General** > **Login Items & Extensions**. Scroll to **Extensions**, click **By Category**, then the **(i)** beside **Driver Extensions**. Turn on **OpenJoystickDriver** and click **Done**. See the [pictures for each step](Connecting-Controllers.md#approve-the-driver).
+
+### Do I Need Xcode?
+
+Only to build OJD from source. Building with only the Command Line Tools is untested. See [Building From Source](Building-from-Source.md).
+
+## Controllers
+
+### Will My Controller Work?
+
+Check [Supported Controllers](Supported-Controllers.md), or connect it and look for its name in the menu-bar menu.
+
+### How Do I Connect a Controller over Bluetooth?
+
+Put it in pairing mode. Choose Apple menu > **System Settings** > **Bluetooth**, point at it under **Nearby Devices**, and click **Connect**. See the [picture](Connecting-Controllers.md#connect-over-bluetooth).
+
+### How Do I Check That My Controller Works?
+
+Select it in **Controllers** and click **Open Input Test**. See [Testing a Controller](Testing-a-Controller.md).
+
+### What Does Working Mean?
+
+**Working** under a controller's name means OJD reads it and games can use it. Any other word comes with a line that says what to do next.
+
+### Can I Use Several Controllers at Once?
+
+Yes. Each gets its own virtual gamepad. See [How Games See Your Controller](Playing-Games.md#how-games-see-your-controller).
+
+### Why Does My Controller Say Handled by macOS?
+
+macOS already supports it, so OJD shows no virtual gamepad and games read it through macOS. For some controllers, the **Handled by** menu changes this. See [Controllers Area](Using-the-App.md#controllers-area).
+
+### Why Does My Clone Controller Act Differently?
+
+A clone can send different data than the original, so OJD may work with it fully, partly, or not at all. See [Clone and Fake Controllers](Supported-Controllers.md#clone-and-fake-controllers).
+
+### Can I Add a Controller That Isn't Supported?
+
+Yes, with a mod: a folder that adds or changes a [controller record](Controller-Records.md). You can't edit records inside the app. See [Add Support for a Controller](Start-Add-Support-for-a-Controller.md), [Writing Controller Mods](Writing-Controller-Mods.md), or [report a bug](Reporting-a-Bug.md) to ask.
+
+## Games and Apps
+
+### Why Does My Controller Work in One App but Not Another?
+
+Steam and many games read the default Xbox-style virtual gamepad. Safari and some Mac games read a different kind. See [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
+
+### What Is the Virtual Gamepad Kind?
+
+The [virtual gamepad kind](Glossary.md#terms) is what games think your controller is. Keep **Automatic** unless a game shows no input. Pick **For Steam and SDL games** for Steam, SDL games, and emulators. Pick **For Apple Game Controller games** for Safari and Mac games that use Apple's controller support. See [Virtual Gamepad Kind](Using-the-App.md#virtual-gamepad-kind).
+
+### Does OJD Work with Steam?
+
+Yes, with the default [virtual gamepad kind](Glossary.md#terms). The maintainer saw every control and rumble work on macOS 27, and one tester saw an extra controller with no input. See [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
+
+### Does Rumble Work in Games?
+
+It should, if the controller has motors and uses the default virtual gamepad. Rumble in games is untested on real hardware, and game lighting doesn't reach the controller. See [Rumble and Lighting](Playing-Games.md#rumble-and-lighting).
+
+### Can I Use My Controller as a Mouse or Keyboard?
+
+Yes, with a [profile](Glossary.md#terms). See [Control the Mac with a Controller](Start-Control-the-Mac.md) and [Profiles](Remapping-Profiles.md).
+
+## Your Data and Updates
+
+### Does OJD Connect to the Internet?
+
+Only to check GitHub for updates, when you click **Check Now** or turn on **Check for updates automatically** (off by default). It sends no controller data and installs nothing. See [How Update Checks Work](Updating-and-Uninstalling.md#how-update-checks-work).
+
+### How Do I Update OJD?
+
+Download the later disk image from [GitHub Releases](https://github.com/xsyetopz/OpenJoystickDriver/releases) and replace the app. Profiles and settings stay. See [Install an Update](Updating-and-Uninstalling.md#install-an-update).
+
+### Where Does OJD Keep My Data?
+
+Profiles and records are in `~/Library/Application Support/OpenJoystickDriver/`, logs in `~/Library/Logs/OpenJoystickDriver/`, and settings in the `com.openjoystickdriver` preferences domain. See [Data on Your Mac](Permissions-and-Security.md#data-on-your-mac).
+
+### How Do I Remove OJD?
+
+Quit OJD and move it to the Trash. Your data stays until you remove it. See [Uninstall](Updating-and-Uninstalling.md#uninstall).
+
+## Getting Help
+
+### What Do I Do When Something Doesn't Work?
+
+Try [Troubleshooting](Troubleshooting.md), then [Known Issues](Known-Issues.md), then [report a bug](Reporting-a-Bug.md).
+
+### How Do I Report a Bug?
+
+Choose **Help** > **Copy Support Report** and paste it into a GitHub issue with what happened. Read it before you share it. See [Reporting a Bug](Reporting-a-Bug.md).
+
+### When Do I Get a Fix?
+
+In the next tester build or release, which the maintainer links from the issue. See [Get a Fix](Updating-and-Uninstalling.md#get-a-fix).
 
 ## Further Reading
 
-- [Known issues](Known-Issues.md)
-- [Reporting a bug](Reporting-a-Bug.md)
+- [Getting Started](Getting-Started.md)
+- [Troubleshooting](Troubleshooting.md)
+- [Known Issues](Known-Issues.md)
+- [Glossary](Glossary.md)

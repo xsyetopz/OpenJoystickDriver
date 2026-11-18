@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 import os
+import plistlib
 import subprocess
 import sys
 import tempfile
+import xml.parsers.expat
 from pathlib import Path
 
 from ..Catalog.schema_header import (
@@ -33,22 +35,24 @@ GENERATED_RECORDS = (
 )
 AUTHORED_CONTROLLERS = ROOT / "Resources" / "Controllers"
 AUTHORED_PATCHES = ROOT / "Resources" / "ControllerPatches"
-ERROR_CODES = ROOT / "Resources" / "ErrorCodes.json"
-CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.json"
+ERROR_CODES = ROOT / "Resources" / "ErrorCodes.plist"
+CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.plist"
 PROTOCOL_DESCRIPTIONS = ROOT / "Resources" / "Protocols"
 VIRTUAL_DEVICES = ROOT / "Resources" / "VirtualDevices"
 SAMPLE_PACKAGE = ROOT / "docs" / "sdk" / "sample"
 ACCESS_GRANT_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "access_grants.json",
+    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "access_grants.plist",
 )
 SETTINGS_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "settings.json",
+    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "settings.plist",
 )
 SERVICE_LISTENER_FAILURE_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "service_listener_failure.json",
+    ROOT
+    / "Tests"
+    / "RepositoryScripts"
+    / "fixtures"
+    / "service_listener_failure.plist",
 )
-# The schema of each kind of file in the sample mod package, by its folder. A `Controllers`
-# file is a `ControllerPatch` or a `Controller`, which its `kind` tells apart.
 SAMPLE_FOLDER_SCHEMAS = {
     "Controllers": "controller",
     "VirtualDevices": "virtual-device",
@@ -59,6 +63,11 @@ SAMPLE_FOLDER_SCHEMAS = {
 def load_json(path: Path) -> object:
     with path.open(encoding="utf-8") as source:
         return json.load(source)
+
+
+def load_plist(path: Path) -> object:
+    with path.open("rb") as source:
+        return plistlib.load(source)
 
 
 def validate_schema_documents() -> dict[str, dict[str, object]]:
@@ -86,12 +95,10 @@ def schema_registry(documents: dict[str, dict[str, object]]) -> Registry:
 
 
 def api_version_group() -> str:
-    """The group of the `apiVersion`, the part before the slash."""
     return repository_tool.api_version().partition("/")[0]
 
 
 def api_version_consts(value: object, where: str = "") -> list[tuple[str, object]]:
-    """Every `const` in `value` that names an OJD `apiVersion`, with where it is."""
     found: list[tuple[str, object]] = []
     if isinstance(value, dict):
         const = value.get("const")
@@ -106,7 +113,6 @@ def api_version_consts(value: object, where: str = "") -> list[tuple[str, object
 
 
 def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
-    """Check each `$id`, `apiVersion` const, and `kind` const against the one source."""
     api_version = repository_tool.api_version()
     for name, document in documents.items():
         stem = name[: -len(SCHEMA_SUFFIX)]
@@ -127,7 +133,6 @@ def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
         properties = document.get("properties")
         if not isinstance(properties, dict):
             properties = {}
-            # A schema that declares the header in each oneOf branch.
             for branch in document.get("oneOf", []):  # type: ignore[attr-defined]
                 properties = {**properties, **branch.get("properties", {})}
         header = {
@@ -142,11 +147,10 @@ def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
 
 
 def sample_documents() -> list[tuple[str, Path]]:
-    """The files of the sample mod package with the schema each is read as."""
-    found: list[tuple[str, Path]] = [("mod-package", SAMPLE_PACKAGE / "mod.json")]
+    found: list[tuple[str, Path]] = [("mod-package", SAMPLE_PACKAGE / "mod.plist")]
     for folder, stem in SAMPLE_FOLDER_SCHEMAS.items():
-        for path in sorted((SAMPLE_PACKAGE / folder).glob("*.json")):
-            kind = load_json(path)
+        for path in sorted((SAMPLE_PACKAGE / folder).glob("*.plist")):
+            kind = load_plist(path)
             patch = (
                 isinstance(kind, dict) and kind.get("kind") == KINDS["controller-patch"]
             )
@@ -157,7 +161,7 @@ def sample_documents() -> list[tuple[str, Path]]:
                 )
             )
     known = {path for _, path in found}
-    unknown = sorted(set(SAMPLE_PACKAGE.rglob("*.json")) - known)
+    unknown = sorted(set(SAMPLE_PACKAGE.rglob("*.plist")) - known)
     if unknown:
         raise SchemaError(
             f"{unknown[0].relative_to(ROOT)}: no schema is named for this sample file"
@@ -170,10 +174,9 @@ def validate_documents(
     registry: Registry,
     paths: list[Path],
 ) -> None:
-    """Validates documents against a schema; the rules a schema cannot state are Swift's."""
     validator = Draft202012Validator(schema, registry=registry)
     for path in paths:
-        document = load_json(path)
+        document = load_plist(path) if path.suffix == ".plist" else load_json(path)
         try:
             validator.validate(document)
         except ValidationError as error:
@@ -185,8 +188,6 @@ def validate_documents(
 
 
 def validate_swift_rules(samples: list[tuple[str, Path]]) -> None:
-    """Every rule a schema cannot state is Swift's: `OJDRepositoryTool` checks the authored
-    controller records, the protocol descriptions and the sample profiles and virtual devices."""
     repository_tool.check(["validate", "controllers", str(AUTHORED_CONTROLLERS)])
     repository_tool.check(["validate", "descriptions", str(PROTOCOL_DESCRIPTIONS)])
     for stem, check in (
@@ -201,8 +202,6 @@ def validate_swift_rules(samples: list[tuple[str, Path]]) -> None:
 def validate_live_support_report(schema: dict[str, object], registry: Registry) -> None:
     with tempfile.TemporaryDirectory(prefix="ojd-schema-") as directory:
         report_path = Path(directory) / "support-report.json"
-        # argv[0] "ojd" selects the command line in the app executable. `diagnose` exits 1 when
-        # a check fails, such as a missing extension on CI, and still writes the report.
         command = ["ojd", "diagnose", "--output", str(report_path)]
         result = subprocess.run(
             command,
@@ -229,13 +228,13 @@ def main() -> int:
         documents = validate_schema_documents()
         validate_schema_identity(documents)
         registry = schema_registry(documents)
-        controller_records = sorted(GENERATED_RECORDS.glob("*/*.json"))
-        authored = sorted(AUTHORED_CONTROLLERS.glob("*/*.json"))
+        controller_records = sorted(GENERATED_RECORDS.glob("*/*.plist"))
+        authored = sorted(AUTHORED_CONTROLLERS.glob("*/*.plist"))
         patches = sorted(
-            [*AUTHORED_PATCHES.glob("*.json"), *AUTHORED_PATCHES.glob("*/*.json")]
+            [*AUTHORED_PATCHES.glob("*.plist"), *AUTHORED_PATCHES.glob("*/*.plist")]
         )
-        protocols = sorted(PROTOCOL_DESCRIPTIONS.glob("*.json"))
-        virtual_devices = sorted(VIRTUAL_DEVICES.glob("*.json"))
+        protocols = sorted(PROTOCOL_DESCRIPTIONS.glob("*.plist"))
+        virtual_devices = sorted(VIRTUAL_DEVICES.glob("*.plist"))
         validate_documents(
             documents["controller.schema.json"], registry, controller_records
         )
@@ -272,6 +271,8 @@ def main() -> int:
     except (
         OSError,
         json.JSONDecodeError,
+        plistlib.InvalidFileException,
+        xml.parsers.expat.ExpatError,
         SchemaError,
         ValidationError,
         repository_tool.ToolError,

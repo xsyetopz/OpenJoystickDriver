@@ -125,6 +125,9 @@ final class AccessViewModel: ObservableObject {
   /// Why the latest operation failed.
   @Published
   private(set) var failure: AccessFailure?
+  /// The permission that the Access area scrolls to, which the area clears once it has.
+  @Published
+  var focusedPermission: AccessPermissionRow.Kind?
   /// The open sheet, or nil when none is open.
   @Published
   var sheet: AccessSheet?
@@ -220,7 +223,7 @@ final class AccessViewModel: ObservableObject {
   /// Converts the stale documents, then loads the status again; a document that cannot be
   /// converted shows its failure.
   func migrate(using migrator: DocumentMigrator = DocumentMigrator()) async {
-    let failed = migrator.run(dryRun: false).contains { $0.status == .failed }
+    let failed = migrator.run(dryRun: false).contains { $0.verdict == .failed }
     await refresh()
     if failed {
       failure = AccessFailure(
@@ -275,15 +278,15 @@ final class AccessViewModel: ObservableObject {
 
   /// Asks to grant the program at `url`.
   func requestGrant(programAt url: URL) {
-    let url = url.standardizedFileURL
-    guard let identity = identityAtPath(url) else {
+    let standardized = url.standardizedFileURL
+    guard let identity = identityAtPath(standardized) else {
       failure = AccessFailure(
-        message: OJDLocalized.formatted("ui.access.grant.unsigned", url.path),
+        message: OJDLocalized.formatted("ui.access.grant.unsigned", standardized.path),
         code: .unsignedClient
       )
       return
     }
-    requestGrant(AccessClientCandidate(identity: identity, path: url.path))
+    requestGrant(AccessClientCandidate(identity: identity, path: standardized.path))
   }
 
   /// Asks to grant a refused client.
@@ -303,6 +306,7 @@ final class AccessViewModel: ObservableObject {
 
   /// Opens the token form with an empty draft.
   func requestTokenForm() {
+    failure = nil
     tokenDraft = AccessTokenDraft()
     sheet = .tokenForm
   }

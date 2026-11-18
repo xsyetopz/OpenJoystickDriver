@@ -17,7 +17,7 @@ struct XboxBluetoothDescriptorLayoutTests {
     RecordedHIDDescriptors.xboxOneSLinux, RecordedHIDDescriptors.xboxOneSWindows,
     RecordedHIDDescriptors.xboxSeries, RecordedHIDDescriptors.gameSirG7SE,
   ])
-  func recordedDescriptorsSatisfyTheContract(descriptor: Data) {
+  func recordedDescriptorsSatisfyContract(descriptor: Data) {
     #expect(
       HIDDescriptorContract.violation(in: HIDLayoutSummary(reportDescriptor: descriptor)) == nil
     )

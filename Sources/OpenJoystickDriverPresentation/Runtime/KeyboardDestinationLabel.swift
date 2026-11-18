@@ -34,7 +34,7 @@
       modifiers: Set<RemappingKeyModifier>
     ) -> some View {
       let ordered = modifiers.sorted { $0.rawValue < $1.rawValue }
-      return HStack(spacing: 4) {
+      return HStack(spacing: OJDSpacing.xSmall) {
         ForEach(ordered, id: \.self) { modifier in
           OJDSystemSymbol(
             name: RuntimePresentation.modifierSystemSymbolName(modifier),

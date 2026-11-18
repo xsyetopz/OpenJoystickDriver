@@ -26,14 +26,14 @@ struct ControllerPortKeyTests {
   }
 
   @Test
-  func theSameUnitOnTheSamePortHasTheSameWellFormedKey() throws {
+  func sameUnitOnSamePortHasSameWellFormedKey() throws {
     let key = try #require(portKey())
     #expect(key == portKey())
     #expect(ControllerPortKey(rawValue: key.rawValue) == key)
   }
 
   @Test
-  func thePortInterfaceAndInstallationKeySelectThePortKeyButTheSerialNumberDoesNot() {
+  func portInterfaceAndInstallationKeySelectPortKeyButSerialNumberDoesNot() {
     #expect(portKey(location: 0x0014_0000) != portKey())
     #expect(portKey(interface: 1) != portKey())
     #expect(portKey(interface: nil) != portKey())
@@ -50,8 +50,48 @@ struct ControllerPortKeyTests {
   }
 
   @Test
-  func aControllerWithoutALocationIDHasNoPortKey() {
+  func controllerWithoutLocationIDHasNoPortKey() {
     #expect(portKey(location: nil, interface: nil) == nil)
+  }
+
+  /// A stored unit ID names the same port in every release.
+  @Test
+  func portKeyIsTheHMACOfModelLocationAndInterface() throws {
+    let digest = HMAC<SHA256>.authenticationCode(
+      for: Data("054C:0CE6:00130000:00".utf8),
+      using: installationKey
+    )
+
+    let key = try #require(portKey())
+
+    #expect(key.rawValue == PrefixedIdentifierText.make(prefix: "U-", bytes: digest))
+  }
+
+  private func peripheralKey(_ peripheral: UUID, productID: UInt16 = 0x2066) -> ControllerPortKey? {
+    ControllerPortKey.of(
+      LogicalControllerID(
+        hardware: ControllerHardwareIdentity(
+          model: ControllerModelID(vendorID: 0x057E, productID: productID),
+          serialNumber: nil
+        ),
+        address: .gattPeripheral(peripheral)
+      ),
+      installationKey: installationKey
+    )
+  }
+
+  /// A Bluetooth LE controller has no location; its unit ID comes from its peripheral identifier,
+  /// so an override can name one of two identical pads.
+  @Test
+  func bluetoothLEPeripheralHasItsOwnPortKey() throws {
+    let first = try #require(UUID(uuidString: "6F1B8C1E-0F7A-4C55-9E0B-3D2A1C4B5E6F"))
+    let second = try #require(UUID(uuidString: "0A9E3D52-7B14-4F0C-8C61-5A2E9B7D1F30"))
+
+    let key = try #require(peripheralKey(first))
+
+    #expect(peripheralKey(first) == key)
+    #expect(peripheralKey(second) != key)
+    #expect(peripheralKey(first, productID: 0x2067) != key)
   }
 
   @Test(arguments: [

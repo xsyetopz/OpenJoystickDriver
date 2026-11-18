@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>input</key>
+	<dict>
+		<key>layouts</key>
+		<array>
+			<dict>
+				<key>axes</key>
+				<array>
+					<dict>
+						<key>bitOffset</key>
+						<integer>48</integer>
+						<key>bitSize</key>
+						<integer>16</integer>
+						<key>control</key>
+						<string>LeftStickX</string>
+						<key>max</key>
+						<integer>65535</integer>
+						<key>min</key>
+						<integer>0</integer>
+					</dict>
+				</array>
+				<key>leftTrigger</key>
+				<dict>
+					<key>bitOffset</key>
+					<integer>80</integer>
+					<key>bitSize</key>
+					<integer>10</integer>
+				</dict>
+				<key>report</key>
+				<dict>
+					<key>id</key>
+					<integer>32</integer>
+					<key>length</key>
+					<dict>
+						<key>exactly</key>
+						<integer>21</integer>
+					</dict>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+	<key>kind</key>
+	<string>Controller</string>
+	<key>modes</key>
+	<array>
+		<dict>
+			<key>id</key>
+			<string>default</string>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>XboxGIP</string>
+			</dict>
+		</dict>
+	</array>
+	<key>productID</key>
+	<integer>46705</integer>
+	<key>vendorID</key>
+	<integer>1103</integer>
+</dict>
+</plist>

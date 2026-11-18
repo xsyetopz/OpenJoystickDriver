@@ -22,7 +22,7 @@
 
     /// The name, controller, target app and output policy fields and the Cancel and Create buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(title).font(.headline)
         Form {
           if context.choices.isEmpty {
@@ -35,6 +35,7 @@
           } else {
             TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
               .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+              .help(OJDLocalized.string("ui.profiles.nameHelp"))
             if let message = nameProblem {
               Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
                 horizontal: false,
@@ -48,6 +49,7 @@
                 }
               }
             }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
+              .help(OJDLocalized.string("ui.profiles.controllerHelp"))
             if context.isLoadingCatalog {
               ProgressView().controlSize(.small)
             }
@@ -70,16 +72,21 @@
                 ProfileScopeKind.application
               )
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.target"))
+              .help(OJDLocalized.string("ui.profiles.targetHelp"))
             if fields.scopeKind == .application {
-              TextField(OJDLocalized.string("ui.profiles.appID"), text: $fields.appID)
-                .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.appID"))
+              ProfileAppChooser(appIDs: $fields.appIDs)
             }
             Picker(OJDLocalized.string("ui.profiles.template"), selection: $fields.template) {
               Text(OJDLocalized.string("ui.profiles.templateEmpty"))
                 .tag(ProfileCreationTemplate.empty)
               Text(OJDLocalized.string("ui.profiles.templateGyroStick"))
                 .tag(ProfileCreationTemplate.gyroStick)
+              Text(OJDLocalized.string("ui.profiles.templateKeyboardNavigation"))
+                .tag(ProfileCreationTemplate.bindings(.keyboardNavigation))
+              Text(OJDLocalized.string("ui.profiles.templateMouseClicks"))
+                .tag(ProfileCreationTemplate.bindings(.mouseClicks))
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.template"))
+              .help(OJDLocalized.string("ui.profiles.templateHelp"))
             if fields.template == .gyroStick {
               Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
                 Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(
@@ -89,16 +96,27 @@
                   RemappingGyroStickTemplate.Stick.right
                 )
               }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.gyro.output"))
+                .help(OJDLocalized.string("ui.profiles.gyro.outputHelp"))
               if fields.lacksMotion(in: context), let controller = fields.controller(in: context) {
                 Text(
                   OJDLocalized.formatted("ui.profiles.templateNoMotion", controller.label)
                 ).foregroundColor(Color(NSColor.systemRed))
               }
             }
-            if fields.template == .empty {
-              ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
+            let skipped = fields.skippedControls(in: context)
+            if !skipped.isEmpty {
+              Text(
+                OJDLocalized.formatted(
+                  "ui.profiles.templateSkipped",
+                  skipped.map(ControllerDetailFacts.controlName).joined(separator: ", ")
+                )
+              ).foregroundColor(Color(NSColor.secondaryLabelColor))
             }
-            if fields.showsValidation(isValid: proposedProfile != nil) && nameProblem == nil {
+            if fields.template != .gyroStick {
+              ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
+                .ojdInterfaceRow(ProfilesRow.outputPolicy)
+            }
+            if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {
               Text(OJDLocalized.string("ui.profiles.creationValidation"))
                 .foregroundColor(Color(NSColor.systemRed)).fixedSize(
                   horizontal: false,
@@ -111,14 +129,15 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.create")) {
             guard let proposedProfile else { return }
             onCreate(proposedProfile)
             presentationMode.wrappedValue.dismiss()
           }.disabled(proposedProfile == nil)
+            .help(OJDLocalized.string("ui.profiles.createHelp"))
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.regular)
     }
 
     /// The profile the fields describe, or nil.
@@ -129,7 +148,7 @@
     private var nameProblem: String? {
       let name = fields.name(in: context)
       if fields.isNameTaken(in: context) { return OJDLocalized.string("ui.error.duplicateProfile") }
-      if !name.isEmpty && ProfileNameValidation.trimmedName(name).isEmpty {
+      if !name.isEmpty, ProfileNameValidation.trimmedName(name).isEmpty {
         return OJDLocalized.string("ui.capture.profileNameValidation")
       }
       return nil
@@ -170,15 +189,16 @@
 
     /// The name field and the Cancel and Duplicate buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("action.duplicate")).font(.headline)
         Form {
           TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
             .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+            .help(OJDLocalized.string("ui.profiles.nameHelp"))
           if ProfileNaming.isTaken(shownName, in: profiles) {
             Text(OJDLocalized.string("ui.error.duplicateProfile"))
               .foregroundColor(Color(NSColor.systemRed))
-          } else if !shownName.isEmpty && ProfileNameValidation.trimmedName(shownName).isEmpty {
+          } else if !shownName.isEmpty, ProfileNameValidation.trimmedName(shownName).isEmpty {
             Text(OJDLocalized.string("ui.capture.profileNameValidation"))
               .foregroundColor(Color(NSColor.systemRed))
           }
@@ -187,14 +207,15 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }
+          }.help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.duplicate")) {
             guard let duplicate else { return }
             onDuplicate(duplicate)
             presentationMode.wrappedValue.dismiss()
           }.disabled(duplicate == nil)
+            .help(OJDLocalized.string("ui.profiles.duplicateHelp"))
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
 
     /// The name in the field.

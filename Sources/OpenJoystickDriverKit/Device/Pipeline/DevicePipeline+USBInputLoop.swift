@@ -1,17 +1,13 @@
 import Foundation
 
 extension DevicePipeline {
-  /// Reads the interrupt IN endpoint of `handle` and dispatches the parsed input until the run
-  /// ends.
-  ///
-  /// An idle pass lasts at least the loop cadence, so a transport that completes timeouts at once
-  /// cannot spin. Repeated I/O errors back off and then end the session.
-  ///
-  /// - Returns: How the caller goes on: reconnect, or wait before opening again after an access
-  ///   denial.
+  // An idle pass lasts at least the loop cadence, so a transport that completes timeouts at once
+  // cannot spin. Repeated I/O errors back off and then end the session. The armed read is the one
+  // started before the startup writes; the first pass takes its result in place of a new read.
   func runUSBInputLoop(
     handle: any USBTransportSession,
-    generation: UInt64
+    generation: UInt64,
+    armedRead: Task<[UInt8], any Error>? = nil
   ) async -> USBInputLoopRecovery {
     let inEndpoint = transportProfile.inputEndpoint
     print(
@@ -26,13 +22,20 @@ extension DevicePipeline {
     startUSBKeepAlive(handle: handle, generation: generation)
 
     var recovery = USBInputLoopRecovery.reconnect
+    var firstRead = armedRead
     while isCurrentUSBRun(generation) {
       let loopStartNs = uptimeNanoseconds()
       var shouldBreak = false
       var shouldThrottleIdle = false
       recovery = .reconnect
       do {
-        let bytes = try await readInterrupt(handle: handle, inEndpoint: inEndpoint)
+        let bytes: [UInt8]
+        if let armed = firstRead {
+          firstRead = nil
+          bytes = try await armed.value
+        } else {
+          bytes = try await readInterrupt(handle: handle, inEndpoint: inEndpoint)
+        }
         guard isCurrentUSBRun(generation) else { break }
         consecutiveUSBIOErrors = 0
         appendToPacketLog(bytes: bytes, direction: .received)
@@ -96,7 +99,7 @@ extension DevicePipeline {
 
       // Throttle idle timeouts only. Successful packets should dispatch at device cadence.
       let loopElapsedNs = uptimeNanoseconds() &- loopStartNs
-      if shouldThrottleIdle && loopElapsedNs < usbIdleLoopCadenceNs {
+      if shouldThrottleIdle, loopElapsedNs < usbIdleLoopCadenceNs {
         try? await Task.sleep(nanoseconds: usbIdleLoopCadenceNs &- loopElapsedNs)
       } else {
         await Task.yield()

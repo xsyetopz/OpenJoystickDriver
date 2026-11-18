@@ -8,7 +8,7 @@
     @MainActor
     @discardableResult
     func runActivatingApp() -> NSApplication.ModalResponse {
-      NSApplication.shared.activate(ignoringOtherApps: true)
+      AppForeground.activate()
       return runModal()
     }
   }

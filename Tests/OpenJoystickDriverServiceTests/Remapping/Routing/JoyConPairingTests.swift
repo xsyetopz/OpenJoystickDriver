@@ -5,8 +5,7 @@ import Testing
 
 struct JoyConPairingRoutingTests {
   @Test
-  func exactHalvesCombineIntoOneOutputAndDisconnectReturnsTheSurvivorToVirtualGamepad() async throws
-  {
+  func exactHalvesCombineIntoOneOutputAndDisconnectReturnsSurvivorToVirtualGamepad() async throws {
     let profile = pairProfile()
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
@@ -56,7 +55,7 @@ struct JoyConPairingRoutingTests {
   }
 
   @Test
-  func pairRequiresBothExactSidesAndRejectsAReusedSessionIdentifier() async throws {
+  func pairRequiresBothExactSidesAndRejectsReusedSessionIdentifier() async throws {
     let profile = pairProfile()
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
@@ -116,7 +115,7 @@ struct JoyConPairingRoutingTests {
   }
 
   @Test
-  func selectedHalfAloneFeedsPairCalibrationAndTransactionCancelsTheSession() async throws {
+  func selectedHalfAloneFeedsPairCalibrationAndTransactionCancelsSession() async throws {
     let profile = pairProfile(gyroSelection: .right)
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }

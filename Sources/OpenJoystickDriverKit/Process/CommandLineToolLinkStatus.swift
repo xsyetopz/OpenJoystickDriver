@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// What is at the path of the `ojd` command-line tool link.
 ///
@@ -53,14 +53,14 @@ public struct CommandLineToolLinkStatus: Equatable, Sendable {
       let present = (try? manager.attributesOfItem(atPath: path)) != nil
       return Self(state: present ? .blockedByFile : .missing, path: path)
     }
-    let target = URL(
+    let linkURL = URL(
       fileURLWithPath: destination,
       relativeTo: URL(fileURLWithPath: path).deletingLastPathComponent()
     ).resolvingSymlinksInPath()
-    guard manager.fileExists(atPath: target.path) else {
+    guard manager.fileExists(atPath: linkURL.path) else {
       return Self(state: .broken, path: path, target: destination)
     }
-    let ours = target.path == executable.resolvingSymlinksInPath().path
+    let ours = linkURL.path == executable.resolvingSymlinksInPath().path
     return Self(state: ours ? .installed : .linkedElsewhere, path: path, target: destination)
   }
 }

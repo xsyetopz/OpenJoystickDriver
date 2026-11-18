@@ -14,7 +14,7 @@ private final class AnnouncementTally: @unchecked Sendable {
 
 extension VirtualOutputTests {
   @Test
-  func activationAnnouncesTheSelectionAndPublicationItChangedAndNothingElse() async throws {
+  func activationAnnouncesSelectionAndPublicationItChangedAndNothingElse() async throws {
     let identifiers = [LogicalControllerID(vendorID: 1, productID: 2)]
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
       deviceManager: DeviceManager(

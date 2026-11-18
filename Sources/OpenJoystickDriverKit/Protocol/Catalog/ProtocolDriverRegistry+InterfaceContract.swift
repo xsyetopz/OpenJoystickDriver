@@ -16,7 +16,7 @@ extension ProtocolDriverRegistry {
   ///
   /// Every other family, and a receiver whose claim observed no qualifying interface, runs the
   /// claim itself as its one role, which ``makeDriver(for:model:claimed:slotOrdinal:)``
-  /// validates as before. So does a receiver whose catalog row pins its interface or endpoints:
+  /// validates. So does a receiver whose catalog row pins its interface or endpoints:
   /// a pin names one interface, so it stays authoritative as that single role and is validated
   /// against the observed interface like any pinned claim.
   func roleProfiles(
@@ -154,11 +154,7 @@ extension ProtocolDriverRegistry {
       }
     case .xboxXID: return true
     case .vendorGameSir: return interface.interfaceClass == 0xFF
-    case .hidDescriptor, .hidReportLayout, .sonySixaxis, .sonyDualShock4, .sonyDualSense,
-      .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly, .valveSteamController,
-      .valveSteamTriton, .valveSteamDeck, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield,
-      .nintendoWii:
-      return false
+    default: return false
     }
   }
 

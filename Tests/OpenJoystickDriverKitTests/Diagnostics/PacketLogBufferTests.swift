@@ -5,7 +5,7 @@ import Testing
 
 struct PacketLogBufferTests {
   @Test
-  func directionRawValuesAreTheWireStrings() {
+  func directionRawValuesAreWireStrings() {
     #expect(PacketLogDirection.received.rawValue == "Rx")
     #expect(PacketLogDirection.transmitted.rawValue == "Tx")
   }
@@ -26,7 +26,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func materializesTheExistingPacketLogContractOnRead() {
+  func materializesExistingPacketLogContractOnRead() {
     let buffer = armedBuffer(maxEntries: 3)
     buffer.append(bytes: [0x00, 0x0A, 0xFF], direction: .received, timestamp: 10)
     buffer.append(bytes: [], direction: .transmitted, timestamp: 11)
@@ -44,7 +44,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func keepsOnlyTheNewestBoundedEntries() {
+  func keepsOnlyNewestBoundedEntries() {
     let buffer = armedBuffer(maxEntries: 2)
     buffer.append(bytes: [1], direction: .received, timestamp: 1)
     buffer.append(bytes: [2], direction: .received, timestamp: 2)
@@ -56,7 +56,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func concurrentInputNeverExceedsTheRingLimit() {
+  func concurrentInputNeverExceedsRingLimit() {
     let buffer = armedBuffer(maxEntries: 200)
     DispatchQueue.concurrentPerform(iterations: 1_000) { value in
       buffer.append(
@@ -70,7 +70,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func recordsNothingUntilADiagnosticReaderArmsCapture() {
+  func recordsNothingUntilDiagnosticReaderArmsCapture() {
     let buffer = PacketLogBuffer(maxEntries: 4) { 1 }
     buffer.append(bytes: [0x01], direction: .received, timestamp: 1)
     #expect(buffer.entries().isEmpty)
@@ -81,7 +81,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func aLapsedLeaseStopsCaptureAndDiscardsWhatWasCaptured() {
+  func lapsedLeaseStopsCaptureAndDiscardsWhatWasCaptured() {
     let clock = PacketLogClock()
     let buffer = PacketLogBuffer(maxEntries: 4, captureLeaseNanoseconds: 10) { clock.now }
     buffer.armCapture()
@@ -101,7 +101,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func rearmingAfterALapseStartsFromAnEmptyRingWithoutAnInterveningPacket() {
+  func rearmingAfterLapseStartsFromEmptyRingWithoutInterveningPacket() {
     let clock = PacketLogClock()
     let buffer = PacketLogBuffer(maxEntries: 4, captureLeaseNanoseconds: 10) { clock.now }
     buffer.armCapture()
@@ -112,7 +112,7 @@ struct PacketLogBufferTests {
   }
 
   @Test
-  func theExpiryCheckDiscardsCapturedPacketsOnlyAfterTheLeaseLapses() {
+  func expiryCheckDiscardsCapturedPacketsOnlyAfterLeaseLapses() {
     let clock = PacketLogClock()
     let buffer = PacketLogBuffer(maxEntries: 4, captureLeaseNanoseconds: 10) { clock.now }
     buffer.armCapture()

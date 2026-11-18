@@ -354,7 +354,7 @@ private func transactionProfile(
     id: id,
     name: name,
     device: RemappingDeviceScope(vendorID: 1118, productID: 654),
-    applicationScope: .application(appID: "com.example.Game"),
+    applicationScope: .application(appIDs: ["com.example.Game"]),
     bindings: bindings
   )
 }

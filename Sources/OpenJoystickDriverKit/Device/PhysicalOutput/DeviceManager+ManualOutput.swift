@@ -10,7 +10,7 @@ extension DeviceManager {
     _ command: ControllerOutputCommand,
     for controller: ControllerReference
   ) async -> ControllerOutputResult {
-    guard let key = connectedIdentifier(for: controller) else {
+    guard let key = await connectedIdentifier(for: controller) else {
       return ControllerOutputResult(.notFound)
     }
     return await sendControllerOutput(command, toConnected: key)
@@ -184,7 +184,7 @@ extension DeviceManager {
     else { return .notFound }
     let outcome = await physicalOutputQueue(for: identifier).perform { [weak self] operation in
       guard let self else { return ControllerOutputResult.Outcome.cancelled }
-      return await self.performPhysicalOutput(
+      return await performPhysicalOutput(
         request,
         for: identifier,
         pipeline: pipeline,

@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OpenJoystickDriverKit
 
@@ -19,6 +20,16 @@ enum SoakTestField: CaseIterable {
     case .interval: "ui.developer.soakInterval"
     case .residentLimit: "ui.developer.soakResidentLimit"
     case .footprintLimit: "ui.developer.soakFootprintLimit"
+    }
+  }
+
+  /// The localization key of the field's tooltip.
+  var helpKey: String {
+    switch self {
+    case .seconds: "ui.help.soakDuration"
+    case .interval: "ui.help.soakInterval"
+    case .residentLimit: "ui.help.soakResidentLimit"
+    case .footprintLimit: "ui.help.soakFootprintLimit"
     }
   }
 

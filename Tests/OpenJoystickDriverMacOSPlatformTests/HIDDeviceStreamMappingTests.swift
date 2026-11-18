@@ -6,7 +6,7 @@ import Testing
 
 struct HIDDeviceStreamMappingTests {
   @Test
-  func iohidTransportPropertyMapsToTheHostTransport() {
+  func iohidTransportPropertyMapsToHostTransport() {
     #expect(HIDDeviceStream.hostTransport(forTransportProperty: "USB") == .usb)
     #expect(HIDDeviceStream.hostTransport(forTransportProperty: "Bluetooth") == .bluetoothClassic)
     #expect(
@@ -18,7 +18,14 @@ struct HIDDeviceStreamMappingTests {
   }
 
   @Test
-  func theBluetoothLEHubReportsTheIOHIDBluetoothLowEnergyTransport() {
+  func transportStringIOKitPublishesForBluetoothLEPadMapsToBluetoothLE() {
+    #expect(
+      HIDDeviceStream.hostTransport(forTransportProperty: "Bluetooth Low Energy") == .bluetoothLE
+    )
+  }
+
+  @Test
+  func bluetoothLEHubReportsIOHIDBluetoothLowEnergyTransport() {
     #expect(
       Switch2BluetoothLEProfile.hidTransportProperty == kIOHIDTransportBluetoothLowEnergyValue
     )
@@ -30,7 +37,7 @@ struct HIDDeviceStreamMappingTests {
   }
 
   @Test
-  func onlyDeniedInitialOpensEndTheHIDStream() {
+  func onlyDeniedInitialOpensEndHIDStream() {
     func failure(_ result: IOReturn) -> PhysicalHIDFailure? {
       guard
         case .accessFailure(let failure) = HIDDeviceStream.accessFailure(
@@ -46,7 +53,7 @@ struct HIDDeviceStreamMappingTests {
   }
 
   @Test
-  func iokitStatusCodesMapToTheNamedFailures() {
+  func iokitStatusCodesMapToNamedFailures() {
     #expect(PhysicalHIDFailure(ioReturn: kIOReturnTimeout) == .timedOut)
     #expect(PhysicalHIDFailure(ioReturn: kIOReturnBusy) == .busy)
     #expect(PhysicalHIDFailure(ioReturn: kIOReturnNotResponding) == .notResponding)

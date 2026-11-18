@@ -59,9 +59,106 @@ enum SettingCatalog {
     }
   }
 
+  /// The name of the pause shortcut, the one setting that holds text and not true or false.
+  static let pauseShortcutName = "pauseShortcut"
+
+  /// The name of the interface level, the other setting that holds text.
+  static let interfaceLevelName = "interfaceLevel"
+
+  /// Parses `text` as an interface level.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither `Simple` nor `Advanced`.
+  static func interfaceLevel(_ text: String) throws -> InterfaceLevel {
+    guard let level = InterfaceLevel(rawValue: text) else {
+      throw ValidationError(CLILocalized.format("cli.setting.set.badInterfaceLevel", text))
+    }
+    return level
+  }
+
+  /// Prints `level` as `key` and `value` JSON, or as the text alone.
+  static func printInterfaceLevel(_ level: InterfaceLevel) throws {
+    switch CLIContext.current.format {
+    case .json:
+      try CLIOutput.json(PauseShortcutResult(key: interfaceLevelName, value: level.rawValue))
+    case .plain, .human: CLIOutput.stdout(level.rawValue)
+    }
+  }
+
+  /// The name of the idle disconnect time, the setting that holds minutes or `off`.
+  static let idleDisconnectName = "idleDisconnectMinutes"
+
+  /// The text that turns the idle disconnect off.
+  static let idleDisconnectOff = "off"
+
+  /// Parses `text` as minutes in ``SettingsDocument/idleDisconnectRange``, or `off`.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither.
+  static func idleDisconnectMinutes(_ text: String) throws -> Int? {
+    guard text != idleDisconnectOff else { return nil }
+    guard let minutes = Int(text), SettingsDocument.idleDisconnectRange.contains(minutes) else {
+      throw ValidationError(
+        CLILocalized.format(
+          "cli.setting.set.badIdleDisconnect",
+          text,
+          String(SettingsDocument.idleDisconnectRange.lowerBound),
+          String(SettingsDocument.idleDisconnectRange.upperBound)
+        )
+      )
+    }
+    return minutes
+  }
+
+  /// Prints `minutes` as `key` and `value` JSON, or as the text alone.
+  static func printIdleDisconnect(_ minutes: Int?) throws {
+    let text = minutes.map(String.init) ?? idleDisconnectOff
+    switch CLIContext.current.format {
+    case .json: try CLIOutput.json(PauseShortcutResult(key: idleDisconnectName, value: text))
+    case .plain, .human: CLIOutput.stdout(text)
+    }
+  }
+
+  /// The text that clears the pause shortcut.
+  static let noShortcut = "none"
+
+  /// The settings file the pause shortcut is read from and written to; tests point it at a
+  /// temporary folder.
+  @TaskLocal
+  static var store = SettingsStore()
+
   /// The names of every setting, as shown in help and error text.
   static var keyNames: String {
-    ApplicationSettingKey.allCases.map(\.rawValue).joined(separator: ", ")
+    (ApplicationSettingKey.allCases.map(\.rawValue) + [
+      interfaceLevelName, pauseShortcutName, idleDisconnectName,
+    ])
+    .joined(separator: ", ")
+  }
+
+  /// Checks that `name` names a setting.
+  ///
+  /// - Throws: ``ValidationError`` when no setting has that name.
+  static func validate(name: String) throws {
+    if ![pauseShortcutName, interfaceLevelName, idleDisconnectName].contains(name) {
+      _ = try key(name)
+    }
+  }
+
+  /// Parses `text` as the pause shortcut, or `none` for no shortcut.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither.
+  static func pauseShortcut(_ text: String) throws -> PauseShortcut? {
+    guard text != noShortcut else { return nil }
+    do { return try PauseShortcut(parsing: text) } catch {
+      throw ValidationError(CLILocalized.format("cli.setting.set.badShortcut", text))
+    }
+  }
+
+  /// Prints the pause shortcut `value` as `key` and `value` JSON, or as the text alone.
+  static func printPauseShortcut(_ shortcut: PauseShortcut?) throws {
+    let text = shortcut?.text ?? noShortcut
+    switch CLIContext.current.format {
+    case .json: try CLIOutput.json(PauseShortcutResult(key: pauseShortcutName, value: text))
+    case .plain, .human: CLIOutput.stdout(text)
+    }
   }
 
   /// Returns the setting that `name` names.
@@ -118,6 +215,14 @@ struct SettingResult: Encodable, Equatable {
     case .plain, .human: CLIOutput.stdout(String(value))
     }
   }
+}
+
+/// The `--json` result of `setting get` and `setting set` for the pause shortcut.
+struct PauseShortcutResult: Encodable, Equatable {
+  /// The setting name.
+  let key: String
+  /// The shortcut as `control+option+P`, or `none`.
+  let value: String
 }
 
 /// The `ojd setting list` command: prints every setting with its value and description.
@@ -191,14 +296,26 @@ struct SettingGetCommand: AsyncParsableCommand {
   var global: GlobalOptions
 
   /// Checks that `key` names a setting.
-  func validate() throws { _ = try SettingCatalog.key(key) }
+  func validate() throws { try SettingCatalog.validate(name: key) }
 
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let key = try SettingCatalog.key(key)
-      let value = try await SettingCatalog.read().value(of: key) ?? key.defaultValue
-      try SettingResult.print(key, value: value)
+      if key == SettingCatalog.pauseShortcutName {
+        try SettingCatalog.printPauseShortcut(SettingCatalog.store.pauseShortcut())
+        return
+      }
+      if key == SettingCatalog.interfaceLevelName {
+        try SettingCatalog.printInterfaceLevel(SettingCatalog.store.interfaceLevel())
+        return
+      }
+      if key == SettingCatalog.idleDisconnectName {
+        try SettingCatalog.printIdleDisconnect(SettingCatalog.store.idleDisconnectMinutes())
+        return
+      }
+      let setting = try SettingCatalog.key(key)
+      let value = try await SettingCatalog.read().value(of: setting) ?? setting.defaultValue
+      try SettingResult.print(setting, value: value)
     }
   }
 }
@@ -210,7 +327,7 @@ struct SettingSetCommand: AsyncParsableCommand {
     commandName: "set",
     abstract: CLILocalized.text("cli.setting.set.abstract"),
     discussion: CLILocalized.text(
-      "platform.macos.cli.setting.set.discussion"
+      SystemSettingsMessage.settingSetDiscussion.localizationKey()
     )
   )
 
@@ -237,34 +354,63 @@ struct SettingSetCommand: AsyncParsableCommand {
   var global: GlobalOptions
 
   /// Checks that `key` names a setting and that `value` is a value for it.
-  func validate() throws { _ = try SettingCatalog.value(value, for: SettingCatalog.key(key)) }
+  func validate() throws {
+    if key == SettingCatalog.pauseShortcutName {
+      _ = try SettingCatalog.pauseShortcut(value)
+    } else if key == SettingCatalog.interfaceLevelName {
+      _ = try SettingCatalog.interfaceLevel(value)
+    } else if key == SettingCatalog.idleDisconnectName {
+      _ = try SettingCatalog.idleDisconnectMinutes(value)
+    } else {
+      _ = try SettingCatalog.value(value, for: SettingCatalog.key(key))
+    }
+  }
 
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let key = try SettingCatalog.key(key)
-      let requested = try SettingCatalog.value(value, for: key)
+      if key == SettingCatalog.pauseShortcutName {
+        let shortcut = try SettingCatalog.pauseShortcut(value)
+        try SettingCatalog.store.setPauseShortcut(shortcut)
+        try SettingCatalog.printPauseShortcut(shortcut)
+        return
+      }
+      if key == SettingCatalog.interfaceLevelName {
+        let level = try SettingCatalog.interfaceLevel(value)
+        try SettingCatalog.store.setInterfaceLevel(level)
+        try SettingCatalog.printInterfaceLevel(level)
+        return
+      }
+      if key == SettingCatalog.idleDisconnectName {
+        let minutes = try SettingCatalog.idleDisconnectMinutes(value)
+        try SettingCatalog.store.setIdleDisconnectMinutes(minutes)
+        try SettingCatalog.printIdleDisconnect(minutes)
+        return
+      }
+      let setting = try SettingCatalog.key(key)
+      let requested = try SettingCatalog.value(value, for: setting)
       let applied = try await ServiceConnection.request { client in
-        try await client.setSetting(key, to: requested)
-      }.value(of: key)
+        try await client.setSetting(setting, to: requested)
+      }.value(of: setting)
       guard applied == requested else {
         throw CLIFailure(
           .systemRequestFailed,
           CLILocalized.format(
-            "platform.macos.cli.setting.set.notApplied",
-            key.rawValue,
-            key.rawValue
+            SystemSettingsMessage.settingNotApplied.localizationKey(),
+            setting.rawValue,
+            CLILocalized.text(SystemSettingsPlace.loginItems.localizationKey()),
+            setting.rawValue
           )
         )
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(SettingResult(key: key.rawValue, value: requested))
-      case .plain: CLIOutput.plain([[key.rawValue, String(requested)]])
+      case .json: try CLIOutput.json(SettingResult(key: setting.rawValue, value: requested))
+      case .plain: CLIOutput.plain([[setting.rawValue, String(requested)]])
       case .human:
         CLIOutput.success(
           CLILocalized.format(
             "cli.setting.set.success",
-            key.rawValue,
+            setting.rawValue,
             String(requested)
           )
         )
@@ -273,8 +419,8 @@ struct SettingSetCommand: AsyncParsableCommand {
   }
 }
 
-/// The `ojd setting reset` command: moves `Settings.json` to the Trash, so every setting returns to
-/// its default.
+/// The `ojd setting reset` command: moves `Settings.plist` to the Trash, so every setting returns
+/// to its default.
 ///
 /// It works on the file itself, so it also fixes a file the service rejects and needs no running
 /// service.
@@ -312,12 +458,12 @@ struct SettingResetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let store = Self.store
-      let file = store.userFileURL.path
+      let settingsStore = Self.store
+      let file = settingsStore.userFileURL.path
       var moved = false
       if FileManager.default.fileExists(atPath: file) {
         try CLITerminal.confirm(CLILocalized.text("cli.setting.reset.confirm"), force: force)
-        moved = try store.moveToTrash()
+        moved = try settingsStore.moveToTrash()
       }
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(CLIStatus(details: Result(file: file, moved: moved)))
@@ -348,7 +494,7 @@ struct SettingTestNotificationCommand: AsyncParsableCommand {
     abstract: CLILocalized.text("cli.setting.testNotification.abstract"),
     discussion: CLILocalized.format(
       "cli.setting.testNotification.discussion",
-      String(format: "%g", ServiceTimeouts.testNotification)
+      unsafe String(format: "%g", ServiceTimeouts.testNotification)
     )
   )
 

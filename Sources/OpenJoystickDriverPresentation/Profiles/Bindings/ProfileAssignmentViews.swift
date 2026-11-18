@@ -159,9 +159,9 @@
 
     /// The source, the destination and their fields of one assignment.
     var body: some View {
-      VStack(alignment: .leading, spacing: 7) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         if layout == .inline {
-          HStack(alignment: .top, spacing: 12) {
+          HStack(alignment: .top, spacing: OJDSpacing.medium) {
             sourceField
             OJDSystemSymbol(name: "arrow.right", fallback: "->").foregroundColor(
               Color(NSColor.secondaryLabelColor)
@@ -173,7 +173,10 @@
           destinationField
         }
 
-        HStack(spacing: 8) {
+        if let remark = binding.remark {
+          Text(remark).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
+        HStack(spacing: OJDSpacing.small) {
           if binding.axisTuning != nil {
             Button(OJDLocalized.string("action.adjust")) {
               onAdjust(binding)
@@ -182,11 +185,13 @@
                 "ui.capture.adjust",
                 RuntimePresentation.sourceLabel(binding.source)
               )
+            ).ojdInterfaceRow(ProfilesRow.axisAdjustment).help(
+              OJDLocalized.string("ui.profiles.adjustHelp")
             )
           }
           Button(OJDLocalized.string("ui.profiles.behavior")) {
             onBehavior(binding)
-          }
+          }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
           Spacer(minLength: 0)
           Button(
             action: { onRemove(binding.id) },
@@ -196,7 +201,7 @@
             }
           ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
             OJDLocalized.string("action.removeAssignment")
-          ).help(OJDLocalized.string("action.removeAssignment"))
+          ).help(OJDLocalized.string("ui.profiles.removeAssignmentHelp"))
         }
       }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
         .vertical,
@@ -208,7 +213,7 @@
 
     /// The picker of the controller control.
     private var sourceField: some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(OJDLocalized.string("ui.capture.controllerControl")).font(
           .caption
         ).foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -219,14 +224,16 @@
           ) { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("ui.capture.controllerControl")
-        ).ojdAccessibilityValue(RuntimePresentation.sourceLabel(binding.source))
+        ).help(OJDLocalized.string("ui.capture.controlHelp")).ojdAccessibilityValue(
+          RuntimePresentation.sourceLabel(binding.source)
+        )
       }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// The picker of the destination, with the fields of a physical output and a note when the
     /// controller lacks the source or the destination.
     private var destinationField: some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(OJDLocalized.string("term.destination")).font(.caption)
           .foregroundColor(Color(NSColor.secondaryLabelColor))
         Picker("", selection: destinationBinding) {
@@ -246,7 +253,7 @@
           }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("term.destination")
-        ).ojdAccessibilityValue(
+        ).help(OJDLocalized.string("ui.capture.destinationHelp")).ojdAccessibilityValue(
           RuntimePresentation.destinationLabel(
             binding.destination,
             macros: draft.profile.macros,
@@ -263,7 +270,7 @@
             OJDLocalized.string(
               "ui.profiles.notSupportedByController"
             )
-          ).font(.caption).foregroundColor(Color(NSColor.systemOrange))
+          ).font(.body).foregroundColor(Color(NSColor.systemOrange))
         }
       }.frame(maxWidth: .infinity, alignment: .leading)
     }

@@ -88,8 +88,8 @@ struct RemappingDualStageTriggerRuntime {
     case .idle:
       guard softPhysical else { return setOutputs(soft: false, full: false) }
       let window = UInt64((mapping.skipWindowMs * 1_000_000).rounded())
-      let (deadline, overflow) = uptime.addingReportingOverflow(window)
-      phase = .pending(deadline: overflow ? .max : deadline)
+      let (due, overflow) = uptime.addingReportingOverflow(window)
+      phase = .pending(deadline: overflow ? .max : due)
       return setOutputs(soft: mapping.mode.emitsSoftWhileBuffered, full: false)
     case .pending(let deadline):
       guard softPhysical else {

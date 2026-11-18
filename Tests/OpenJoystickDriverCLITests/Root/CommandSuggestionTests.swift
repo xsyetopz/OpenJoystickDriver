@@ -9,7 +9,7 @@ struct CommandSuggestionTests {
     (["controller", "lst"], "lst", "ojd controller list"),
     (["--json", "--timeout", "3", "profle", "list"], "profle", "ojd profile"),
   ])
-  func aMistypedCommandSuggestsTheNearestName(
+  func mistypedCommandSuggestsNearestName(
     arguments: [String],
     typed: String,
     suggestion: String
@@ -21,7 +21,7 @@ struct CommandSuggestionTests {
   }
 
   @Test(arguments: [["bogus"], ["controller", "bogus"]])
-  func anUnknownCommandWithoutANearNameHasNoSuggestion(arguments: [String]) {
+  func unknownCommandWithoutNearNameHasNoSuggestion(arguments: [String]) {
     #expect(
       CommandSuggestion.match(arguments: arguments)
         == CommandSuggestion.Match(typed: "bogus", suggestion: nil)
@@ -34,18 +34,18 @@ struct CommandSuggestionTests {
     ["--", "stauts"],
     ["status", "--bogus"],
   ])
-  func noMatchOutsideTheCommandNames(arguments: [String]) {
+  func noMatchOutsideCommandNames(arguments: [String]) {
     #expect(CommandSuggestion.match(arguments: arguments) == nil)
   }
 
   @Test
-  func aSwapOfAdjacentLettersCostsOne() {
+  func swapOfAdjacentLettersCostsOne() {
     #expect(CommandSuggestion.editDistance("stauts", "status") == 1)
     #expect(CommandSuggestion.editDistance("", "log") == 3)
   }
 
   @Test
-  func aMistypedCommandExitsWithUsageAndRunsNothing() async {
+  func mistypedCommandExitsWithUsageAndRunsNothing() async {
     let result = await CLIRun.run(["stauts"])
 
     #expect(result.code == 64)
@@ -56,7 +56,7 @@ struct CommandSuggestionTests {
   }
 
   @Test
-  func anUnknownCommandWithoutASuggestionHasTheUnknownCommandCode() async {
+  func unknownCommandWithoutSuggestionHasUnknownCommandCode() async {
     let result = await CLIRun.run(["frobnicate"])
 
     #expect(result.code == 64)

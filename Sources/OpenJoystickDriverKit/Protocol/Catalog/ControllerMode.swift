@@ -132,6 +132,14 @@ extension ControllerModeMatch.InterfaceSignature.Endpoint {
   }
 }
 
+/// The reason a mode serves nothing: OJD sends the device no data and publishes no gamepad.
+public enum ControllerIdleReason: String, Equatable, Sendable {
+  /// A receiver that has no controller linked to it.
+  case noControllerLinked = "NoControllerLinked"
+  /// A controller in bootloader state, where a write risks a bad firmware image.
+  case bootloader = "Bootloader"
+}
+
 /// One alternative mode of a controller model: the protocol it runs and the keys that must all hold
 /// for it to be selected.
 ///
@@ -157,6 +165,12 @@ public struct ControllerMode: Equatable, Sendable {
   public let interfaceRange: ClosedRange<UInt8>?
   /// The steps this mode runs; the profile's session is replaced by it as a whole.
   public let session: ControllerSession
+  /// Why the mode serves nothing while it matches; nil for a mode that serves the device.
+  public let idle: ControllerIdleReason?
+  /// The input-report layouts this mode reads in place of the record's; nil reads the record's.
+  public let inputLayouts: ControllerInputLayouts?
+  /// The HID usage map this mode reads in place of the record's; nil reads the record's.
+  let hidUsageMap: HIDUsageMap?
 
   /// The probes of this mode's match.
   public var probes: [ControllerModeProbe] { match.probes }
@@ -177,6 +191,9 @@ extension DeviceRuntimeProfile {
     profile.assemblyPolicy = mode.assemblyPolicy
     profile.interfaceRange = mode.interfaceRange ?? interfaceRange
     profile.session = mode.session
+    profile.idleReason = mode.idle
+    if let layouts = mode.inputLayouts { profile.inputLayouts = layouts }
+    if let usageMap = mode.hidUsageMap { profile.hidUsageMap = usageMap }
     profile.transportProfile = transportProfile.settling(
       milliseconds: mode.session.settleMilliseconds
     )
@@ -244,8 +261,9 @@ public enum ControllerModeSelector {
       profile.physicalProtocolVariant.map { [.receiver, .dongle].contains($0) } ?? false
     // Two pads of one model differ in the log only by their location.
     let name =
-      String(format: "%04X:%04X", model.vendorID, model.productID)
-      + (device.physicalLocationIdentifier.map { String(format: " at location 0x%08X", $0) } ?? "")
+      unsafe String(format: "%04X:%04X", model.vendorID, model.productID)
+      + (device.physicalLocationIdentifier.map { unsafe String(format: " at location 0x%08X", $0) }
+        ?? "")
     // One read per report serves every probe of that report.
     var replies: [Int: PhysicalHIDReportResult<Data>] = [:]
     for mode in profile.modes where mode.match.holds(for: device, receiverRecord: receiverRecord) {
@@ -287,7 +305,7 @@ public enum ControllerModeSelector {
       guard let kind = interface.interfaceClass, let subclass = interface.interfaceSubclass,
         let code = interface.interfaceProtocol
       else { return nil }
-      return String(format: "%02X/%02X/%02X", kind, subclass, code)
+      return unsafe String(format: "%02X/%02X/%02X", kind, subclass, code)
     }
     log(
       "[DeviceManager] No mode of \(name) matched; \(fallback)"

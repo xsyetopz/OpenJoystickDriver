@@ -55,7 +55,6 @@ extension RuntimeProfileDraftTests {
 
   @Test
 
-
   func profileDraftPreservesCompatibleDestinationWhenChangingSource() throws {
     let binding = RemappingBinding(
       source: .button(.south),
@@ -221,7 +220,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func identifierInputAcceptsTheSameDecimalAndHexFormsAsTheCLI() {
+  func identifierInputAcceptsSameDecimalAndHexFormsAsCLI() {
     #expect(ProfileIdentifierInput.parse("4660") == 0x1234)
     #expect(ProfileIdentifierInput.parse(" 0x1234 ") == 0x1234)
     #expect(ProfileIdentifierInput.parse("0XFFFF") == UInt16.max)
@@ -238,7 +237,7 @@ extension RuntimeProfileDraftTests {
     draft = try draft.settingMetadata(
       name: "Application Profile",
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA),
-      applicationScope: .application(appID: "com.example.Game")
+      applicationScope: .application(appIDs: ["com.example.Game"])
     )
     draft = try draft.settingBindingBehaviors(
       turbo: nil,
@@ -251,13 +250,13 @@ extension RuntimeProfileDraftTests {
 
     #expect(draft.profile.name == "Application Profile")
     #expect(draft.profile.device == RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA))
-    #expect(draft.profile.applicationScope == .application(appID: "com.example.Game"))
+    #expect(draft.profile.applicationScope == .application(appIDs: ["com.example.Game"]))
     #expect(draft.profile.bindings[0].longHold?.durationMs == 500)
     #expect(draft.profile.bindings[0].multiTap.first?.windowMs == 250)
   }
 
   @Test
-  func removingAllBindingsKeepsTheOtherInputSettings() throws {
+  func removingAllBindingsKeepsOtherInputSettings() throws {
     var draft = RuntimeProfileDraft(profile: makeProfile())
     draft = try draft.addingChord(
       sources: [.button(.east), .button(.west)],
@@ -359,7 +358,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func inFlightSameProfileImportBlocksEditingAndPreservesAConcurrentDraft() {
+  func inFlightSameProfileImportBlocksEditingAndPreservesConcurrentDraft() {
     let profile = makeProfile()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
     var state = ProfileEditorTransitionState()
@@ -375,7 +374,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func activeImportBlocksSelectionWithoutQueueingAReplacementAction() {
+  func activeImportBlocksSelectionWithoutQueueingReplacementAction() {
     let profile = makeProfile()
     let otherProfileID = UUID()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
@@ -388,7 +387,7 @@ extension RuntimeProfileDraftTests {
   }
 
   @Test
-  func failedImportReleasesTheEditingBlock() {
+  func failedImportReleasesEditingBlock() {
     let profile = makeProfile()
     let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
     var state = ProfileEditorTransitionState()

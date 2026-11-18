@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The controller model, and optionally the one unit of it, that a profile is for.
 public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
@@ -18,18 +18,14 @@ public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a device scope.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `vendorID`.
     case vendorID
-    /// The JSON key of `productID`.
     case productID
-    /// The JSON key of `unit`.
     case unit
   }
 
   /// Decodes a device scope from a profile document.
   /// - Throws: `DecodingError` for an unknown key, a missing key, a bad value, or a `unit` that is
-  ///   not a
-  ///   port key.
+  ///   not a port key.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -56,53 +52,57 @@ public enum RemappingPayloadLimits {
 
 /// Declares which foreground application receives synthesized input.
 public enum RemappingApplicationScope: Codable, Equatable, Hashable, Sendable {
-  /// Only the application with this bundle identifier.
-  case application(appID: String)
+  /// Only the applications with these bundle identifiers.
+  case application(appIDs: [String])
   /// Whatever application is in front.
   case global
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
-    /// The `Application` case.
     case application = "Application"
-    /// The `Global` case.
     case global = "Global"
   }
 
   /// Profile document keys of an application scope.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `appID`.
-    case appID
+    case appIDs
   }
 
   /// Decodes an application scope from a profile document.
   ///
-  /// The `type` field selects the case, and `appID` is allowed only for `Application`.
+  /// The `type` field selects the case, and `appIDs` is allowed only for `Application`. A
+  /// document with the key `appID` is refused by name.
   /// - Throws: `DecodingError` for an unknown or misplaced key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
+    try decoder.rejectStaleKey("appID", use: "appIDs")
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let kind = try container.decode(Kind.self, forKey: .type)
-    let allowed: [CodingKeys] = kind == .application ? [.type, .appID] : [.type]
+    let allowed: [CodingKeys] = kind == .application ? [.type, .appIDs] : [.type]
     try container.rejectKeys(otherThan: allowed)
     switch kind {
     case .application:
-      self = .application(
-        appID: try container.decode(String.self, forKey: .appID)
-      )
+      let appIDs = try container.decode([String].self, forKey: .appIDs)
+      guard !appIDs.isEmpty else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .appIDs,
+          in: container,
+          debugDescription: "appIDs holds at least one bundle identifier"
+        )
+      }
+      self = .application(appIDs: appIDs)
     case .global: self = .global
     }
   }
 
-  /// Encodes the case under its `type` value, with `appID` only for an application.
+  /// Encodes the case under its `type` value, with `appIDs` only for an application.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     switch self {
-    case .application(let appID):
+    case .application(let appIDs):
       try container.encode(Kind.application, forKey: .type)
-      try container.encode(appID, forKey: .appID)
+      try container.encode(appIDs, forKey: .appIDs)
     case .global: try container.encode(Kind.global, forKey: .type)
     }
   }
@@ -176,15 +176,10 @@ public struct RemappingAxisTuning: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of an axis tuning.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `deadzone`.
     case deadzone
-    /// The JSON key of `gain`.
     case gain
-    /// The JSON key of `inverted`.
     case inverted
-    /// The JSON key of `responseCurve`.
     case responseCurve
-    /// The JSON key of `digitalActivationThreshold`.
     case digitalActivationThreshold
   }
 
@@ -236,13 +231,9 @@ public struct RemappingTurbo: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a turbo setting.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `repeatRateHz`.
     case repeatRateHz
-    /// The JSON key of `dutyCycle`.
     case dutyCycle
-    /// The JSON key of `initialDelayMs`.
     case initialDelayMs
-    /// The JSON key of `maxRepeats`.
     case maxRepeats
   }
 
@@ -291,6 +282,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
   public static let pulseDurationRange = 1.0...5000.0
   /// ``pulseDurationMs`` used when none is given.
   public static let defaultPulseDurationMs = 100.0
+  /// Allowed length of a ``remark``, in characters.
+  public static let remarkLengthRange = 1...200
   /// Stable identity of the binding inside its profile.
   public let id: UUID
   /// Controller input that triggers the binding.
@@ -311,6 +304,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
   public let multiTap: [RemappingMultiTap]
   /// Further actions that the same source triggers.
   public let additionalActions: [RemappingAction]
+  /// A note the user wrote about the binding, or `nil` for none.
+  public let remark: String?
 
   /// Creates a binding.
   public init(
@@ -323,7 +318,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     turbo: RemappingTurbo? = nil,
     longHold: RemappingLongHold? = nil,
     multiTap: [RemappingMultiTap] = [],
-    additionalActions: [RemappingAction] = []
+    additionalActions: [RemappingAction] = [],
+    remark: String? = nil
   ) {
     self.id = id
     self.source = source
@@ -335,30 +331,22 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     self.longHold = longHold
     self.multiTap = multiTap
     self.additionalActions = additionalActions
+    self.remark = remark
   }
 
   /// Profile document keys of a binding.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `id`.
     case id
-    /// The JSON key of `source`.
     case source
-    /// The JSON key of `destination`.
     case destination
-    /// The JSON key of `behavior`.
     case behavior
-    /// The JSON key of `pulseDurationMs`.
     case pulseDurationMs
-    /// The JSON key of `axisTuning`.
     case axisTuning
-    /// The JSON key of `turbo`.
     case turbo
-    /// The JSON key of `longHold`.
     case longHold
-    /// The JSON key of `multiTap`.
     case multiTap
-    /// The JSON key of `additionalActions`.
     case additionalActions
+    case remark
   }
 
   /// Decodes a binding from a profile document; omitted behavior, pulse duration and additional
@@ -382,6 +370,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
       try container.decodeIfPresent([RemappingMultiTap].self, forKey: .multiTap) ?? []
     additionalActions =
       try container.decodeIfPresent([RemappingAction].self, forKey: .additionalActions) ?? []
+    remark = try container.decodeIfPresent(String.self, forKey: .remark)
   }
 
   /// Encodes a binding and leaves out the fields that hold their default.
@@ -401,6 +390,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     if !additionalActions.isEmpty {
       try container.encode(additionalActions, forKey: .additionalActions)
     }
+    try container.encodeIfPresent(remark, forKey: .remark)
   }
 }
 
@@ -523,13 +513,36 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     self.macros = macros
   }
 
+  /// The profile with `scope` as its application scope.
+  public func withApplicationScope(_ scope: RemappingApplicationScope) -> Self {
+    Self(
+      id: id,
+      name: name,
+      device: device,
+      applicationScope: scope,
+      outputPolicy: outputPolicy,
+      physicalColor: physicalColor,
+      motionTuning: motionTuning,
+      gyroOutput: gyroOutput,
+      joyConPair: joyConPair,
+      pointerSpeed: pointerSpeed,
+      stickMappings: stickMappings,
+      triggerMappings: triggerMappings,
+      touchMappings: touchMappings,
+      bindings: bindings,
+      chords: chords,
+      sequences: sequences,
+      layers: layers,
+      macros: macros
+    )
+  }
+
   /// Decodes a profile from a profile document.
   ///
   /// Omitted optional sections take their defaults. The document header must name the profile kind
   /// and a supported API version.
   /// - Throws: `DecodingError` for an unknown key, a missing key or a bad value, or the header
-  ///   problem
-  ///   of a document of another kind or version.
+  ///   problem of a document of another kind or version.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)

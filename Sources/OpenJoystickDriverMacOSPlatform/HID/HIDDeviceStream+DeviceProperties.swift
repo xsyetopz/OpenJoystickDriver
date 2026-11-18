@@ -18,7 +18,8 @@ extension HIDDeviceStream {
     productID: UInt16,
     transportProperty: String?,
     nativePassThrough: Bool,
-    systemListsGameController: Bool
+    systemListsGameController: Bool,
+    gameControllerSupported: Bool
   ) -> PhysicalDevice {
     let primaryUsage = HIDUsageSignature(
       usagePage: unsignedProperty(device, kIOHIDPrimaryUsagePageKey).flatMap(UInt32.init(exactly:)),
@@ -100,7 +101,8 @@ extension HIDDeviceStream {
         )
       ],
       nativePassThrough: nativePassThrough,
-      systemListsGameController: systemListsGameController
+      systemListsGameController: systemListsGameController,
+      gameControllerSupported: gameControllerSupported
     )
   }
 
@@ -112,7 +114,7 @@ extension HIDDeviceStream {
   static func usbInterfaceNumber(for device: IOHIDDevice) -> UInt8? {
     guard let entry = retainedUSBInterfaceEntry(for: device) else { return nil }
     defer { IOObjectRelease(entry) }
-    let value = IORegistryEntryCreateCFProperty(
+    let value = unsafe IORegistryEntryCreateCFProperty(
       entry,
       "bInterfaceNumber" as CFString,
       kCFAllocatorDefault,
@@ -126,7 +128,9 @@ extension HIDDeviceStream {
     switch property {
     case kIOHIDTransportUSBValue: .usb
     case kIOHIDTransportBluetoothValue: .bluetoothClassic
-    case kIOHIDTransportBluetoothLowEnergyValue: .bluetoothLE
+    // macOS publishes "Bluetooth Low Energy" on a real BLE pad; the header constant is the
+    // spelling the Switch 2 hub synthesizes.
+    case kIOHIDTransportBluetoothLowEnergyValue, "Bluetooth Low Energy": .bluetoothLE
     default: nil
     }
   }

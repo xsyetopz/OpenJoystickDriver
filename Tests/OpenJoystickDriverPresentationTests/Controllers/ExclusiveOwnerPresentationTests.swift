@@ -30,7 +30,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func theDetailNamesTheHolder() {
+  func detailNamesHolder() {
     let facts = ControllerDetailFacts.general(
       for: device(ownership: .ownedByAnotherClient, owner: owner)
     )
@@ -49,7 +49,29 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func aHeldControllerShowsNoInputHealth() {
+  func detailListsEveryHolderWithItsProcessID() {
+    var opened = device(ownership: .exclusive, owner: nil)
+    opened.holders = [
+      USBExclusiveOwner(processID: 812, name: "Google Chrome He"),
+      USBExclusiveOwner(processID: nil, name: "IOHIDEventDriver"),
+    ]
+    let fact = ControllerDetailFacts.general(for: opened).first { $0.kind == .holders }
+    #expect(fact?.label == OJDLocalized.string("ui.controllers.holders"))
+    #expect(
+      fact?.value
+        == .text(
+          OJDLocalized.formatted("ui.controllers.holder", "Google Chrome He", "812")
+            + ", IOHIDEventDriver"
+        )
+    )
+    #expect(
+      ControllerDetailFacts.general(for: device(ownership: .exclusive, owner: nil))
+        .first { $0.kind == .holders }?.value == OJDValue.none
+    )
+  }
+
+  @Test
+  func heldControllerShowsNoInputHealth() {
     let held = ControllerDetailFacts.general(
       for: device(ownership: .ownedByAnotherClient, owner: owner)
     )
@@ -61,7 +83,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func theDetailSaysWhenAPauseHoldsTheController() {
+  func detailSaysWhenPauseHoldsController() {
     var paused = device(ownership: .exclusive, owner: nil)
     paused.paused = true
     let fact = ControllerDetailFacts.general(for: paused).first { $0.kind == .paused }
@@ -74,7 +96,7 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
-  func theDetailSaysWhenMacOSAlsoListsTheController() {
+  func detailSaysWhenMacOSAlsoListsController() {
     let listed = ApplicationServiceDeviceDescription.fixture(
       id: "listed",
       hidInputOwnership: .exclusive,

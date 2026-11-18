@@ -1,11 +1,14 @@
-import Foundation
+public import Foundation
 
-/// What a set of package or user files covers: controller identities, virtual devices, profiles.
+/// What a set of package or user files covers: controller identities, virtual devices, profiles,
+/// and protocol descriptions.
 private struct ModPackageClaims {
   /// The `Controller` and `ControllerPatch` file names.
   var controllerFiles: Set<String> = []
   /// The `VirtualDevice` file names.
   var virtualDevices: Set<String> = []
+  /// The protocol description file names.
+  var protocolFiles: Set<String> = []
   /// The profile UUIDs.
   var profileIDs: Set<UUID> = []
   /// The profile names, lowercased.
@@ -24,6 +27,9 @@ private struct ModPackageClaims {
     }
     if let file = virtualDevices.intersection(other.virtualDevices).min() {
       return "VirtualDevices/\(file)"
+    }
+    if let file = protocolFiles.intersection(other.protocolFiles).min() {
+      return "Protocols/\(file)"
     }
     if let id = profileIDs.intersection(other.profileIDs).min(by: { $0.uuidString < $1.uuidString })
     {
@@ -70,7 +76,8 @@ extension ModPackageStore {
     return manifest
   }
 
-  /// The folder that holds the user's `Controllers`, `VirtualDevices` and `Profiles` folders.
+  /// The folder that holds the user's `Controllers`, `VirtualDevices`, `Profiles` and `Protocols`
+  /// folders.
   private var userRoot: URL { directory.deletingLastPathComponent() }
 
   /// The E4002 refusal of `manifest` on the running version, or nil when its `requires` admits that
@@ -104,7 +111,7 @@ extension ModPackageStore {
     var claims = ModPackageClaims()
     let kinds = [
       ("Controllers", manifest.controllers + manifest.patches), ("Profiles", manifest.profiles),
-      ("VirtualDevices", manifest.virtualDevices),
+      ("VirtualDevices", manifest.virtualDevices), ("Protocols", manifest.protocols),
     ]
     for (kind, listed) in kinds {
       let present = Set(
@@ -112,15 +119,35 @@ extension ModPackageStore {
           at: folder.appendingPathComponent(kind),
           includingPropertiesForKeys: nil,
           options: [.skipsHiddenFiles]
-        ))?.map(\.lastPathComponent) ?? []
+        ))?.filter { !isScript($0) }.map(\.lastPathComponent) ?? []
       )
       if let file = Set(listed).subtracting(present).min() {
         throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is listed and missing")
       }
       if let file = present.subtracting(listed).min() {
-        throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is not listed in mod.json")
+        throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is not listed in mod.plist")
       }
     }
+    // A Controller file may name a family that the package defines, so those are read first.
+    var families: [DocumentedProtocolFamily] = []
+    for file in manifest.protocols {
+      do {
+        families.append(
+          try DocumentedProtocolFamilies.read(
+            folder.appendingPathComponent("Protocols/\(file)"),
+            package: manifest.name
+          )
+        )
+      } catch {
+        throw ModPackageError(
+          error.code == .unsupportedAPIVersion ? .unsupportedAPIVersion : .invalidPackageContent,
+          "Protocols/\(file): \(error.detail)"
+        )
+      }
+      claims.protocolFiles.insert(file)
+    }
+    DocumentedProtocolFamilies.register(families, owner: folder)
+    defer { DocumentedProtocolFamilies.register([], owner: folder) }
     // A patch may apply over a Controller file of the same package, so those are read first.
     var own: [ControllerModelID: ControllerRecord] = [:]
     let listed =
@@ -177,32 +204,45 @@ extension ModPackageStore {
     of data: Data,
     listedAs operation: ControllerRecordOperation
   ) throws {
-    let found = (try? OrderedJSON.parse(data))?["kind"]?.string
+    let found =
+      ((try? DocumentCoder.read(data, file: "package file")) as? [String: Any])?["kind"] as? String
     let kinds = [ControllerRecordDocument.kind, ControllerPatch.kind]
     let expected = operation == .add ? ControllerRecordDocument.kind : ControllerPatch.kind
     guard let found, found != expected, kinds.contains(found) else { return }
     let list = operation == .add ? "controllers" : "patches"
     throw ControllerRecordProblem(
       code: .invalidControllerRecord,
-      "a \(found) file is listed under \(list) in mod.json; \(list) lists \(expected) files"
+      key: "error.E5007.modPackage.kindMismatch",
+      arguments: [list, found, expected],
+      "a \(found) file is listed under \(list) in mod.plist; \(list) lists \(expected) files"
     )
   }
 
-  /// Refuses a link anywhere in `folder`, and an entry beside `mod.json` that is not one of the
-  /// three kind folders.
+  // A package holds documents only, so a script is skipped like a hidden file: it is never
+  // evaluated, and an install does not copy it.
+  static func isScript(_ url: URL) -> Bool {
+    url.pathExtension == "js" && !isLink(url) && !isDirectory(url)
+  }
+
+  /// Refuses a link anywhere in `folder`, and an entry beside `mod.plist` that is not one of the
+  /// four kind folders.
   ///
-  /// Hidden entries are skipped here, and an install does not copy them.
+  /// Hidden entries and scripts are skipped here, and an install does not copy them.
   private static func checkLayout(of folder: URL) throws {
     guard !isLink(folder) else {
       throw ModPackageError(.invalidPackageContent, "\(folder.lastPathComponent) is a link")
     }
-    let known: Set = [ModPackageManifest.fileName, "Controllers", "Profiles", "VirtualDevices"]
+    let known: Set = [
+      ModPackageManifest.fileName, "Controllers", "Profiles", "VirtualDevices", "Protocols",
+    ]
     let entries = try? FileManager.default.contentsOfDirectory(
       at: folder,
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
     )
-    if let name = (entries ?? []).map(\.lastPathComponent).filter({ !known.contains($0) }).min() {
+    let unknown = (entries ?? []).filter { !isScript($0) }.map(\.lastPathComponent)
+      .filter { !known.contains($0) }
+    if let name = unknown.min() {
       throw ModPackageError(.invalidPackageContent, "\(name) is not part of a package")
     }
     let walk = FileManager.default.enumerator(
@@ -242,6 +282,7 @@ extension ModPackageStore {
     var claims = ModPackageClaims()
     claims.controllerFiles = Set(manifest.controllers + manifest.patches)
     claims.virtualDevices = Set(manifest.virtualDevices)
+    claims.protocolFiles = Set(manifest.protocols)
     for file in manifest.profiles {
       if let profile = try? RemappingProfileFileStore.load(
         from: folder.appendingPathComponent("Profiles/\(file)")
@@ -252,7 +293,8 @@ extension ModPackageStore {
     return claims
   }
 
-  /// The claims of the user's `Controllers`, `VirtualDevices`, and `Profiles` folders in `root`.
+  /// The claims of the user's `Controllers`, `VirtualDevices`, `Profiles`, and `Protocols` folders
+  /// in `root`.
   private static func userClaims(_ root: URL) -> ModPackageClaims {
     func files(_ kind: String) -> [URL] {
       let urls = try? FileManager.default.contentsOfDirectory(
@@ -260,10 +302,11 @@ extension ModPackageStore {
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
       )
-      return (urls ?? []).filter { $0.pathExtension == "json" }
+      return (urls ?? []).filter { $0.pathExtension == "plist" }
     }
     var claims = ModPackageClaims()
     claims.controllerFiles = Set(files("Controllers").map(\.lastPathComponent))
+    claims.protocolFiles = Set(files("Protocols").map(\.lastPathComponent))
     for url in files("VirtualDevices") {
       if let model = (try? VirtualHIDProfileOverrideStore.parse(Data(contentsOf: url)))?.0 {
         claims.virtualDevices.insert(model.fileName)

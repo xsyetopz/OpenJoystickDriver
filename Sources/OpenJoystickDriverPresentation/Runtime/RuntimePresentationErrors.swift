@@ -21,20 +21,20 @@ extension RuntimePresentation {
   ///
   /// A remapping error from the service ends with its code, such as "(E3013)", so that a report
   /// names it and `ojd explain` can look it up.
-  static func userFacingError(_ error: Error) -> String {
+  static func userFacingError(_ error: any Error) -> String {
     let message = userFacingMessage(error)
-    guard let error = error as? ApplicationServiceRemappingRPCError else { return message }
+    guard let rpcError = error as? ApplicationServiceRemappingRPCError else { return message }
     return OJDLocalized.formatted(
       "ui.error.withCode",
       message,
-      error.code.errorCode.rawValue
+      rpcError.code.errorCode.rawValue
     )
   }
 
   /// Returns the message for `error` without a code.
-  private static func userFacingMessage(_ error: Error) -> String {
-    if let error = error as? ApplicationServiceRemappingRPCError {
-      switch error.code {
+  private static func userFacingMessage(_ error: any Error) -> String {
+    if let rpcError = error as? ApplicationServiceRemappingRPCError {
+      switch rpcError.code {
       case .profileUpdateConflict:
         return OJDLocalized.string(
           "ui.error.profileChanged"
@@ -105,9 +105,9 @@ extension RuntimePresentation {
 
   /// Returns whether the error means that the service or the profile engine cannot be reached: not
   /// connected, timed out, or a stopped or unavailable router.
-  static func isUnavailable(_ error: Error) -> Bool {
-    if let error = error as? ApplicationServiceRemappingRPCError {
-      switch error.code {
+  static func isUnavailable(_ error: any Error) -> Bool {
+    if let rpcError = error as? ApplicationServiceRemappingRPCError {
+      switch rpcError.code {
       case .routerEngineUnavailable, .routerLibraryUnavailable, .routerLibraryAndEngineUnavailable,
         .routerShutDown:
         return true
@@ -279,8 +279,8 @@ extension RuntimePresentation {
   /// Returns an underscore-separated value as capitalized words.
   static func humanized(_ value: String) -> String {
     value.split(separator: "_").map { part in
-      let value = String(part)
-      return value.isEmpty ? value : value.prefix(1).uppercased() + value.dropFirst()
+      let word = String(part)
+      return word.isEmpty ? word : word.prefix(1).uppercased() + word.dropFirst()
     }.joined(separator: " ")
   }
 }

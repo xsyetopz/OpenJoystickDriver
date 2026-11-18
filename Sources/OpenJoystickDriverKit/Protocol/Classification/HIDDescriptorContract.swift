@@ -44,7 +44,7 @@ public enum HIDDescriptorContract {
       return .malformedDescriptor
     }
     if parsed.containsUnsupportedItem { return .unsupportedItem }
-    if parsed.inputReportIDs.contains(0) && parsed.inputReportIDs.count > 1 {
+    if parsed.inputReportIDs.contains(0), parsed.inputReportIDs.count > 1 {
       return .mixedReportNumbering
     }
     if parsed.containsInvalidInputSize { return .invalidFieldSize }

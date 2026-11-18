@@ -28,7 +28,7 @@ struct RemappingRPCTests {
   /// A profile that fails to decode in a request gets the invalid-profile code, the same code the
   /// store gives the same document.
   @Test
-  func aRequestWithAnInvalidProfileFailsWithTheInvalidProfileCode() throws {
+  func requestWithInvalidProfileFailsWithInvalidProfileCode() throws {
     let version = OpenJoystickDriverAPI.version
     let document = #"{"apiVersion":"\#(version)","kind":"Profile","name":"Pad"}"#
     let request = Data(#"{"profile":\#(document)}"#.utf8)
@@ -55,7 +55,9 @@ struct RemappingRPCTests {
         #expect(error.code.errorCode == .invalidProfile)
       }
     }
-    do { _ = try RemappingProfileFileStore.load(from: Data(document.utf8)) } catch {
+    do {
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.bytes(json: document))
+    } catch {
       #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile)
     }
   }
@@ -63,7 +65,7 @@ struct RemappingRPCTests {
   /// A profile with a missing or unsupported `apiVersion` gets the unsupported-version code in a
   /// request, the same code the store gives the same document.
   @Test
-  func aRequestWithAnUnsupportedAPIVersionFailsWithTheUnsupportedAPIVersionCode() throws {
+  func requestWithUnsupportedAPIVersionFailsWithUnsupportedAPIVersionCode() throws {
     let documents = [
       #"{"kind":"Profile","name":"Pad"}"#,
       #"{"apiVersion":"ojd/v0","kind":"Profile","name":"Pad"}"#,
@@ -90,14 +92,16 @@ struct RemappingRPCTests {
       } catch let error as ApplicationServiceRemappingRPCError {
         #expect(error.code.errorCode == .unsupportedAPIVersion)
       }
-      do { _ = try RemappingProfileFileStore.load(from: Data(document.utf8)) } catch {
+      do {
+        _ = try RemappingProfileFileStore.load(from: PropertyListFixture.bytes(json: document))
+      } catch {
         #expect(RemappingProfileFileStore.problemCode(error) == .unsupportedAPIVersion)
       }
     }
   }
 
   @Test
-  func aProfileIssueWithoutAKindFailsToDecode() {
+  func profileIssueWithoutKindFailsToDecode() {
     let id = UUID().uuidString
     let issue = Data(#"{"id":"\#(id)","code":"E3008","message":"m"}"#.utf8)
     #expect(throws: DecodingError.self) {
@@ -121,7 +125,7 @@ struct RemappingRPCTests {
       )
     }
     let active = [
-      entry("Global", .global), entry("Game", .application(appID: "com.example.game")),
+      entry("Global", .global), entry("Game", .application(appIDs: ["com.example.game"])),
       entry("Other", .global, productID: 3),
     ]
 
@@ -311,7 +315,7 @@ struct RemappingRPCTests {
   }
 
   @Test
-  func argumentLimitLeavesRoomForTheBase64FramedEnvelope() throws {
+  func argumentLimitLeavesRoomForBase64FramedEnvelope() throws {
     let arguments = Data(count: ApplicationServiceRemappingRPC.maximumArgumentBytes)
     let request = LocalServiceRPCRequest(method: "createRemappingProfile", arguments: arguments)
     let encodedRequest = try JSONEncoder().encode(request)
@@ -418,11 +422,11 @@ struct RemappingRPCTests {
         )
       }
     }
-    let suffix = String(format: "%03d", index)
+    let suffix = unsafe String(format: "%03d", index)
     return RemappingProfile(
       name: String(repeating: "P", count: 77) + suffix,
       device: RemappingDeviceScope(vendorID: UInt16(index), productID: UInt16(index)),
-      applicationScope: .application(appID: "com." + String(repeating: "a", count: 251)),
+      applicationScope: .application(appIDs: ["com." + String(repeating: "a", count: 251)]),
       bindings: bindings
     )
   }

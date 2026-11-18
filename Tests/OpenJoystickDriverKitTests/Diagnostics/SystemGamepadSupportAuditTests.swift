@@ -72,7 +72,7 @@ struct SystemGamepadSupportAuditTests {
   }
 
   @Test
-  func bundledRecordsAreTheModelsOfTheLoadedCatalog() throws {
+  func bundledRecordsAreModelsOfLoadedCatalog() throws {
     let resources = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent()  // Diagnostics
       .deletingLastPathComponent()  // OpenJoystickDriverKitTests
@@ -82,7 +82,7 @@ struct SystemGamepadSupportAuditTests {
     let walker = try #require(
       FileManager.default.enumerator(at: resources, includingPropertiesForKeys: nil)
     )
-    let files = (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "json" }
+    let files = (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "plist" }
     let models = SystemGamepadSupportAuditor.bundledOJDRecords()
     #expect(models.count == files.count)
     #expect(models == models.sorted())

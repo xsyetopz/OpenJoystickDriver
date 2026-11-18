@@ -7,14 +7,28 @@ extension DeviceManager {
   public func controllerState(
     for controller: ControllerReference
   ) async -> ControllerState? {
-    guard let key = connectedIdentifier(for: controller)
+    guard let key = await connectedIdentifier(for: controller)
     else { return nil }
     return await pipelines[key]?.inputState()
   }
 
+  /// Returns the latest state of `identifier` as the controller reports it, before the stored
+  /// calibration; nil when it is not connected.
+  package func rawControllerState(for identifier: LogicalControllerID) async -> ControllerState? {
+    await pipelines[identifier]?.rawInputState()
+  }
+
+  /// Returns the latest angular velocity of `identifier` as the controller reports it, before the
+  /// stored gyro offset; nil when it is not connected or has reported no motion.
+  package func rawAngularVelocity(
+    for identifier: LogicalControllerID
+  ) async -> ControllerMotionVector? {
+    await pipelines[identifier]?.rawAngularVelocity()
+  }
+
   /// Returns the ownership evidence for the exact connected device identifier.
   ///
-  /// Missing identifiers intentionally fail closed to unknown ownership.
+  /// Missing identifiers fail closed to unknown ownership.
   public func ownershipObservation(
     for identifier: LogicalControllerID
   ) -> ControllerOwnershipObservation { deviceInfos[identifier]?.ownershipObservation ?? .unknown }
@@ -25,7 +39,7 @@ extension DeviceManager {
   public func packetLog(
     for controller: ControllerReference
   ) async -> [PacketLogEntry] {
-    guard let key = connectedIdentifier(for: controller)
+    guard let key = await connectedIdentifier(for: controller)
     else { return [] }
     return await pipelines[key]?.getPacketLog() ?? []
   }
@@ -54,8 +68,9 @@ extension DeviceManager {
 
   /// Stamps the endpoint delivery on the newest frame of the controller attached as `token`; a
   /// token that no connected controller holds stamps nothing.
-  public func endpointDelivered(session token: ControllerSessionToken, at nanoseconds: UInt64) {
-    guard let identifier = connectedIdentifier(for: .session(token)) else { return }
+  public func endpointDelivered(session token: ControllerSessionToken, at nanoseconds: UInt64) async
+  {
+    guard let identifier = await connectedIdentifier(for: .session(token)) else { return }
     frameTimings.endpointDelivered(for: identifier, at: nanoseconds)
   }
 
@@ -86,6 +101,7 @@ extension DeviceManager {
   ) async -> ConnectedDeviceSnapshot? {
     // A pipeline is registered only after its DeviceInfo; a missing one is mid-teardown.
     guard let pipeline = pipelines[id], let info = deviceInfos[id] else { return nil }
+    guard await pipeline.hasConnectedController(), pipelines[id] === pipeline else { return nil }
     let record = protocolDriverRegistry.runtimeProfile(for: info.binding)
     // A raw-USB pipeline runs on the profile resolved from the device's descriptor.
     let transportProfile =
@@ -110,6 +126,7 @@ extension DeviceManager {
       interfaceNumber: observedInterface,
       discoverySource: info.discoverySource.kind,
       physicalOwnership: ownership,
+      gameControllerSupported: info.physicalDevice?.gameControllerSupported ?? false,
       hidInputOwnership: usbHeld ? .ownedByAnotherClient : info.hidInputOwnership,
       inputOwner: usbHeld ? await pipeline.usbExclusiveOwner : nil,
       duplicateExposureRisk: info.duplicateExposureRisk,
@@ -129,7 +146,8 @@ extension DeviceManager {
       preferredBackends: record?.preferredBackends.map(\.rawValue) ?? [],
       physicalOutputCapabilities: await pipeline.physicalOutputCapabilities(),
       physicalOutputOwner: pipeline.macOSOwnedOutput == nil ? .ojd : .system,
-      recordServer: record?.server ?? .system,
+      recordServer: record.flatMap { $0.statesServer ? $0.server : nil }
+        ?? info.physicalDevice?.detectedServer ?? .system,
       recordAccessRoute: record?.accessRoute ?? .system,
       tuning: record?.tuning ?? .none,
       capabilities: protocolDriverRegistry.capabilities(
@@ -147,13 +165,23 @@ extension DeviceManager {
   }
 
   /// Returns live identifiers for connected controller pipelines.
-  public func connectedLogicalControllerIDs() -> [LogicalControllerID] { Array(pipelines.keys) }
+  public func connectedLogicalControllerIDs() async -> [LogicalControllerID] {
+    var identifiers: [LogicalControllerID] = []
+    for (identifier, pipeline) in pipelines {
+      if await pipeline.hasConnectedController(), pipelines[identifier] === pipeline {
+        identifiers.append(identifier)
+      }
+    }
+    return identifiers
+  }
 
   /// Returns controllers whose sessions can currently publish virtual output.
   public func activeLogicalControllerIDs() async -> [LogicalControllerID] {
     var identifiers: [LogicalControllerID] = []
-    for (identifier, pipeline) in pipelines where await pipeline.controllerSessionState() == .active
-    { identifiers.append(identifier) }
+    for identifier in await connectedLogicalControllerIDs()
+    where await pipelines[identifier]?.controllerSessionState() == .active {
+      identifiers.append(identifier)
+    }
     return identifiers
   }
 }

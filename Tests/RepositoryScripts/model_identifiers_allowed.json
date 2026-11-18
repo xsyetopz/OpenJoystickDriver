@@ -1,0 +1,10 @@
+[
+  {
+    "path": "Sources/OpenJoystickDriverUSB/Configuration.swift",
+    "reason": "The Microsoft product IDs are the list in Apple's transport.usb grant for the DriverKit extension; the extension may match no others, so the list is the entitlement and not a catalog fact."
+  },
+  {
+    "path": "Sources/OpenJoystickDriverUSB/PassiveProbe/PassiveUSBDescriptorProbe.swift",
+    "reason": "The authorized tuple 3537:1010 is the deliberate allow-list of the passive descriptor probe, which reads only a device that a maintainer named."
+  }
+]

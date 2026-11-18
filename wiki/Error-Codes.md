@@ -1,26 +1,20 @@
-# Error codes
+# Error Codes
 
-This page lists the stable error codes of OpenJoystickDriver (OJD), with the meaning of each code.
+These are the error codes of OpenJoystickDriver (OJD).
 
-## How codes work
+## How Codes Work
 
-Each code has the form `E` and four digits. The first digit gives the area:
+A code is `E` and four digits. The first digit gives the area:
 
-- `E1xxx` is the endpoint. A client of the endpoint gets the code in the `code` field of a `Status` line, whose `status` is `Failure`.
-- `E2xxx` is the command line.
-- `E3xxx` is remapping.
-- `E4xxx` is mod packages.
-- `E5xxx` is documents: the files and lines that OJD reads, such as a profile, a controller record, or a mod manifest.
+- `E1xxx`: the endpoint, through which a client can feed [virtual gamepads](Glossary.md#terms). Clients get it in the `code` field of a `Failure` status.
+- `E2xxx`: the command line.
+- `E3xxx`: remapping.
+- `E4xxx`: mod packages.
+- `E5xxx`: documents, such as a profile, a controller record, or a mod manifest.
 
-A code never changes its meaning.
-
-To look up a code offline, run `ojd explain E####`.
-
-Branch on the code in your program. The English message that comes with a code can change.
+A code keeps its meaning. The English message can change, so check the code. To look one up offline, run `ojd explain E####`.
 
 ## Codes
-
-The table is generated from the code catalog and the English text of OJD. The table lists every code.
 
 <!-- BEGIN GENERATED: error-codes -->
 | Code | Area | Meaning |
@@ -55,13 +49,13 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E2017 | Command line | That client is unsigned or ad-hoc signed, so it cannot be granted access. Sign it with a Developer ID and try again. Exit code 1. |
 | E2018 | Command line | 'ojd diagnose' found a failed check. Read its output and fix the failed items. Exit code 1. |
 | E2019 | Command line | The update check did not finish. Check your network connection and try again. Exit code 1. |
-| E2020 | Command line | The installed OpenJoystickDriver app is older than this ojd. Run './Scripts/ojd build install-fast dev', or set OJD_RUN_REPOSITORY_CLI=1 to run this build. Exit code 1. |
+| E2020 | Command line | The installed OpenJoystickDriver app is older than this ojd. Run 'just install-fast-dev', or set OJD_RUN_REPOSITORY_CLI=1 to run this build. Exit code 1. |
 | E2021 | Command line | A repository build of ojd could not hand the command to the installed app. Reinstall OpenJoystickDriver.app and run the command again. Exit code 127. |
 | E2022 | Command line | The state that the record's parser produced from the captured reports differs from the expected state. Read the fields that the command lists. Exit code 1. |
 | E2023 | Command line | This controller cannot be claimed or released: its protocol family uses raw USB, or the system does not serve it natively. The message names the reason. Exit code 1. |
 | E2024 | Command line | No endpoint client or token has this ID. Run ojd access to list the IDs, then use one of them. Exit code 1. |
-| E2025 | Command line | A client with this kind of signature cannot be granted, because any local program can claim its signature. Exit code 1. |
-| E2026 | Command line | Choose at least one scope to grant. Exit code 64. |
+| E2025 | Command line | A client with this kind of signature cannot be granted, because any local program can claim its signature. Sign it with a Developer ID and try again. Exit code 1. |
+| E2026 | Command line | The grant named no scope. Choose at least one scope to grant. Exit code 64. |
 | E2027 | Command line | The service is stopping. Start it, then try again. Exit code 1. |
 | E2028 | Command line | A token with this name exists. Revoke it first, or choose another name. Exit code 64. |
 | E2029 | Command line | This is not a token name. Use 1 to 64 letters, digits, dots, hyphens, or underscores. Exit code 64. |
@@ -102,18 +96,18 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3024 | Remapping | The remapping service hit an error it does not recognize. Run 'ojd diagnose' and report the problem with its output. Wire value `unexpected`. |
 | E3025 | Remapping | The profile produces no output. Add a binding or a light color to it, or activate it with --allow-empty. Wire value `profile_produces_no_output`. |
 | E3026 | Remapping | The Joy-Con pair profile takes its gyro from the other Joy-Con. Calibrate the motion of the controller that the profile selects for the gyro. Wire value `motion_gyro_not_selected`. |
-| E3027 | Remapping | No remapping profile is active for the controller, so it does not process motion. Activate a profile for it, bring its target app to the front, and try again. Wire value `motion_profile_inactive`. |
+| E3027 | Remapping | No profile is active for the controller, so it does not process motion. Activate a profile for it, bring its target app to the front, and try again. Wire value `motion_profile_inactive`. |
 | E3028 | Remapping | The remapping session of the controller changed while the request ran. Try again. Wire value `motion_session_changed`. |
 | E3029 | Remapping | A profile that comes from an installed package cannot be changed. Duplicate the profile and change the copy. Wire value `package_profile_read_only`. |
 | E3030 | Remapping | The action did not run because Post Event access is not granted. Grant it to OpenJoystickDriver and try again. Wire value `post_event_access_missing`. |
 | E3031 | Remapping | The action did not run because Automation access is not granted. Grant it to OpenJoystickDriver and try again. Wire value `automation_access_missing`. |
-| E3032 | Remapping | The action did not run because Secure Input is on. Close the app that has it on, such as a password field, and try again. Wire value `secure_input_enabled`. |
-| E3033 | Remapping | The action failed. Wire value `system_action_failed`. |
+| E3032 | Remapping | The text was not typed because Secure Input is on. Close the app that turned it on, then try again. Wire value `secure_input_enabled`. |
+| E3033 | Remapping | The action failed. Try again. Wire value `system_action_failed`. |
 | E3034 | Remapping | The MIDI action did not run because the system refused to create the MIDI source OpenJoystickDriver. Try again. Wire value `midi_source_refused`. |
-| E4001 | Mod packages | The package manifest mod.json is missing or invalid. Check it against the mod-package schema and run the command again. |
+| E4001 | Mod packages | The package manifest mod.plist is missing or invalid. Check it against the mod-package schema and run the command again. |
 | E4002 | Mod packages | The package requires a different version of OpenJoystickDriver than the one that runs. Install a package version that supports this version, or update OpenJoystickDriver. |
-| E4003 | Mod packages | A file of the package is invalid, missing, or not listed in mod.json. Fix the file that the command names and run it again. |
-| E4004 | Mod packages | The package covers a controller, persona, or profile that your own files or another installed package already hold. Remove the clashing file or package, or change the package, and run the command again. |
+| E4003 | Mod packages | A file of the package is invalid, missing, or not listed in mod.plist. Fix the file that the command names and run it again. |
+| E4004 | Mod packages | The package covers a controller, virtual gamepad, or profile that your own files or another installed package already hold. Remove the clashing file or package, or change the package, and run the command again. |
 | E4005 | Mod packages | A package with this name is already installed. Run the command with --force to replace it. |
 | E4006 | Mod packages | No installed package has this name. Run 'ojd mod list' to see the installed packages. |
 | E4007 | Mod packages | The package folder could not be changed. Check the free disk space and the folder permissions. |
@@ -121,14 +115,15 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E5002 | Documents | A protocol description is invalid. Check the file against the protocol-description schema and fix the field that the message names. |
 | E5003 | Documents | A protocol description names a family that differs from its file name. Name the file after its family. |
 | E5004 | Documents | A protocol description lists a variant that its family does not have. Use one of the variants of the family. |
-| E5005 | Documents | The access file AccessGrants.json is damaged. Fix the file or delete it, then grant access again. |
+| E5005 | Documents | The access file AccessGrants.plist is damaged. Fix the file or delete it, then grant access again. |
 | E5006 | Documents | The key file of the unit IDs, PortKeyInstallation.key, cannot be read or is not 32 bytes. Restore the file from a backup. If you delete it instead, OpenJoystickDriver creates a new key and every unit ID changes. |
 | E5007 | Documents | A controller record or patch is invalid. Check the file against its schema and fix the field that the message names. |
 | E5008 | Documents | The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft. |
 | E5009 | Documents | A stored document of an older version has no mechanical conversion, so ojd migrate leaves it unchanged. The message names the file and the field. Edit the file by hand to the supported apiVersion. |
+| E5010 | Documents | A stored document is not an XML property list, or it holds a date or data value. The message names the file and the form or the key path. Save the file as an XML property list with plutil -convert xml1. |
 <!-- END GENERATED: error-codes -->
 
-## Further reading
+## Further Reading
 
 - [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md#read-the-endpoint)
 - [Troubleshooting](Troubleshooting.md)

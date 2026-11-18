@@ -50,7 +50,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func stoppingDuringAnInFlightDescriptionLookupDoesNotRepopulateItsCache() async {
+  func stoppingDuringInFlightDescriptionLookupDoesNotRepopulateItsCache() async {
     let id = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
     let deviceDescription = description(id)
     let gate = DescriptionLookupGate()
@@ -82,7 +82,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func automaticBuildsTheXboxProfileForTheXboxLayout() async {
+  func automaticBuildsXboxProfileForXboxLayout() async {
     let id = LogicalControllerID(vendorID: 0x045E, productID: 0x0B12)
     let log = AutomaticProfileLog()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
@@ -102,7 +102,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func automaticProfileIgnoresTheProtocolBinding() async {
+  func automaticProfileIgnoresProtocolBinding() async {
     let gip = LogicalControllerID(vendorID: 0x045E, productID: 0x0B12)
     let sony = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let log = AutomaticProfileLog()
@@ -127,7 +127,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func automaticStatusNamesTheInstalledProfile() async {
+  func automaticStatusNamesInstalledProfile() async {
     let id = LogicalControllerID(vendorID: 0x045E, productID: 0x0B12)
     let log = AutomaticProfileLog()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
@@ -148,7 +148,7 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func repeatedDispatchReusesTheBackendUntilControllerStops() async {
+  func repeatedDispatchReusesBackendUntilControllerStops() async {
     let id = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
     let probe = ConcurrentFactoryProbe()
     let dispatcher = AutomaticUserSpaceOutputDispatcher(

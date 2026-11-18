@@ -3,7 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The persisted profile JSON shape of `ControllerColor`, alone and in a physical colour output.
+/// The persisted profile JSON shape of `ControllerColor`, alone and in a physical color output.
 struct ControllerColorTests {
   func json(_ value: some Encodable) throws -> String {
     let encoder = JSONEncoder()
@@ -34,7 +34,7 @@ struct ControllerColorTests {
   }
 
   @Test
-  func parsesSixHexDigitsWithAnOptionalHash() {
+  func parsesSixHexDigitsWithOptionalHash() {
     #expect(ControllerColor(hex: "#FF0080") == ControllerColor(red: 255, green: 0, blue: 128))
     #expect(ControllerColor(hex: "0a0b0c") == ControllerColor(red: 10, green: 11, blue: 12))
     for invalid in ["", "#", "FFF", "#FF00800", "GG0000", "+F0000", "##FF0000"] {

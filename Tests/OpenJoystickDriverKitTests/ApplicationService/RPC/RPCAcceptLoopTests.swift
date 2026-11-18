@@ -65,8 +65,8 @@ struct RPCAcceptLoopTests {
     try #require(descriptor >= 0)
     var address = try LocalServiceRPCTransport.socketAddress(path: server.socketPath)
     let status = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Darwin.connect(
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe Darwin.connect(
           descriptor,
           $0,
           LocalServiceRPCTransport.socketAddressLength(path: server.socketPath)
@@ -84,7 +84,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func stoppingEndsTheAcceptLoopAfterItClosedItsDescriptors() async throws {
+  func stoppingEndsAcceptLoopAfterItClosedItsDescriptors() async throws {
     let server = makeServer()
     let exited = DispatchSemaphore(value: 0)
     server.acceptLoopDidExit = { exited.signal() }
@@ -97,7 +97,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func startingARunningServerIsRefused() throws {
+  func startingRunningServerIsRefused() throws {
     let server = makeServer()
     try server.start()
     defer { server.stop() }
@@ -106,7 +106,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func aStopDuringStartLeavesTheServerStoppedAndRestartable() async throws {
+  func stopDuringStartLeavesServerStoppedAndRestartable() async throws {
     let server = makeServer(generation: 9)
     let exited = DispatchSemaphore(value: 0)
     server.acceptLoopDidExit = { exited.signal() }
@@ -126,7 +126,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func onlyOneOfTwoConcurrentStartsSucceeds() async throws {
+  func onlyOneOfTwoConcurrentStartsSucceeds() async {
     for _ in 0..<20 {
       let server = makeServer()
       let outcomes = await withTaskGroup(of: Bool.self) { group in
@@ -143,7 +143,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func anOldLoopThatExitsLateDoesNotEndTheNewestStart() async throws {
+  func oldLoopThatExitsLateDoesNotEndNewestStart() async throws {
     let server = makeServer(generation: 7)
     let exits = Counter()
     server.acceptLoopDidExit = { _ = exits.next() }
@@ -161,7 +161,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func aLoopThatRanOutOfResourcesReportsItWaitsAndAcceptsAgain() async throws {
+  func loopThatRanOutOfResourcesReportsItWaitsAndAcceptsAgain() async throws {
     let server = makeServer(generation: 3)
     let attempts = Counter()
     let reports = Reports()
@@ -184,7 +184,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func stoppingEndsTheWaitForResourcesAtOnce() async throws {
+  func stoppingEndsWaitForResourcesAtOnce() async throws {
     let server = makeServer()
     let reports = Reports()
     let exited = DispatchSemaphore(value: 0)
@@ -205,7 +205,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func aFatalAcceptFailureReportsItsCodeAndReleasesTheServer() async throws {
+  func fatalAcceptFailureReportsItsCodeAndReleasesServer() async throws {
     let server = makeServer(generation: 5)
     let reports = Reports()
     let exited = DispatchSemaphore(value: 0)
@@ -252,7 +252,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func aFailedPollEndsTheLoopAsAFailureToo() async throws {
+  func failedPollEndsLoopAsFailureToo() async throws {
     let server = makeServer()
     let exited = DispatchSemaphore(value: 0)
     let changes = Changes()
@@ -278,7 +278,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func stoppingTheServerRecordsNoFailure() async throws {
+  func stoppingServerRecordsNoFailure() async throws {
     let server = makeServer()
     let exited = DispatchSemaphore(value: 0)
     let changes = Changes()
@@ -293,7 +293,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func anOrderlyStopDeletesTheRecordOfAFailedListener() async throws {
+  func orderlyStopDeletesRecordOfFailedListener() async throws {
     let server = makeServer()
     let exited = DispatchSemaphore(value: 0)
     server.acceptLoopDidExit = { exited.signal() }
@@ -317,7 +317,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func aStartDeletesTheFileOfAnEarlierFailure() throws {
+  func startDeletesFileOfEarlierFailure() throws {
     let server = makeServer()
     try ServiceListenerFailure(errorNumber: EBADF, time: Date(), process: .current)
       .write(
@@ -333,9 +333,9 @@ struct RPCAcceptLoopTests {
 
 struct AcceptFailureWaitTests {
   @Test
-  func aPollFailureDuringTheWaitIsReportedAsFatalWithItsCode() {
+  func pollFailureDuringWaitIsReportedAsFatalWithItsCode() {
     nonisolated(unsafe) var lines: [String] = []
-    let goesOn = AcceptFailure.continuesAfter(
+    let goesOn = unsafe AcceptFailure.continuesAfter(
       errno: EMFILE,
       server: "Test",
       wake: -1,
@@ -345,23 +345,23 @@ struct AcceptFailureWaitTests {
         errno = EINVAL
         return -1
       },
-      report: { lines.append($0) }
+      report: { unsafe lines.append($0) }
     )
 
     #expect(!goesOn)
-    #expect(lines.count == 2)
-    #expect(lines[0].contains("Cannot accept connections"))
-    #expect(lines[1].contains(ErrorCode.requestListenerStopped.rawValue))
-    #expect(lines[1].contains("errno \(EINVAL)"))
+    unsafe #expect(lines.count == 2)
+    unsafe #expect(lines[0].contains("Cannot accept connections"))
+    unsafe #expect(lines[1].contains(ErrorCode.requestListenerStopped.rawValue))
+    unsafe #expect(lines[1].contains("errno \(EINVAL)"))
   }
 
   @Test
-  func aWakeDescriptorThatIsClosedIsAFailureNotAStop() {
+  func wakeDescriptorThatIsClosedIsFailureNotStop() {
     var ends: [Int32] = [-1, -1]
-    #expect(pipe(&ends) == 0)
+    unsafe #expect(pipe(&ends) == 0)
     Darwin.close(ends[0])
     Darwin.close(ends[1])
 
-    #expect(AcceptFailure.wait(milliseconds: 1_000, wake: ends[0]) == .failed(EBADF))
+    unsafe #expect(AcceptFailure.wait(milliseconds: 1_000, wake: ends[0]) == .failed(EBADF))
   }
 }

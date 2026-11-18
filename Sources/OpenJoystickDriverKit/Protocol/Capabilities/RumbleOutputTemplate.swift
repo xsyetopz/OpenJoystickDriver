@@ -68,12 +68,22 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
 
   /// Why a resend interval cannot be honored beside a mode's own keep-alive: the keep-alive's
   /// interval governs the USB timer.
-  static let resendWithKeepAliveProblem =
+  static let resendWithKeepAliveProblem = ControllerRecordProblem.rule(
+    "error.E5007.rumble.resendWithKeepAlive",
     "a rumble resendIntervalMilliseconds cannot be combined with a session keepAlive"
+  )
   /// Why a resend interval cannot be honored in a family that runs its own keep-alive: the
   /// description's interval governs the ticks.
-  static let resendWithFamilyKeepAliveProblem =
+  static let resendWithFamilyKeepAliveProblem = ControllerRecordProblem.rule(
+    "error.E5007.rumble.resendWithFamilyKeepAlive",
     "a rumble resendIntervalMilliseconds needs a family whose description declares no keepAlive"
+  )
+
+  /// Why a template needs a driver that encodes it.
+  static let driverProblem = ControllerRecordProblem.rule(
+    "error.E5007.rumble.templateDriver",
+    "rumble templates require a driver that encodes them"
+  )
 
   /// Where the template's bytes go.
   public enum Target: Hashable, Sendable {
@@ -152,12 +162,14 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
       guard report.kind != .input else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.rumble.reportKind",
           "a rumble template writes an output or feature report"
         )
       }
       guard (2...64).contains(report.length) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.rumble.reportLength",
           "a rumble report is 2...64 bytes long"
         )
       }
@@ -165,6 +177,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
       guard (1...64).contains(length) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.rumble.packetLength",
           "a rumble packet is 1...64 bytes long"
         )
       }
@@ -173,18 +186,21 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     guard base.count == target.length else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.bytesCover",
         "rumble template bytes must cover the whole report"
       )
     }
-    if let report = target.hidReport, report.reportID != 0, base[0] != report.reportID {
+    if let hid = target.hidReport, hid.reportID != 0, base[0] != hid.reportID {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.bytesReportId",
         "rumble template bytes must start with the report ID"
       )
     }
     guard !motors.isEmpty, motors.keys.allSatisfy(Self.templateMotors.contains) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.motors",
         "a rumble template names at least one motor"
       )
     }
@@ -199,6 +215,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.fields",
         "rumble motor and counter bytes must be distinct and follow the report ID inside the report"
       )
     }
@@ -207,6 +224,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.resendInterval",
         "a rumble resend interval is 1...60000 milliseconds"
       )
     }
@@ -219,9 +237,9 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
 
   /// The bytes of a template that names none: zeros after the report ID of a numbered report.
   static func zeroedBytes(for target: Target) -> [UInt8] {
-    var bytes = [UInt8](repeating: 0, count: target.length)
-    if let report = target.hidReport, report.reportID != 0 { bytes[0] = report.reportID }
-    return bytes
+    var zeroed = [UInt8](repeating: 0, count: target.length)
+    if let hid = target.hidReport, hid.reportID != 0 { zeroed[0] = hid.reportID }
+    return zeroed
   }
 
   /// The rumble motors the template drives.

@@ -15,7 +15,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aPackageRecordLayersBetweenBundledAndUser() throws {
+  func packageRecordLayersBetweenBundledAndUser() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try install(try fixture.makePackage(controllers: [record]), in: fixture)
@@ -40,7 +40,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aUserRecordBeatsAPackageRecordAndTheLoserIsListed() throws {
+  func userRecordBeatsPackageRecordAndLoserIsListed() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try install(try fixture.makePackage(controllers: [record]), in: fixture)
@@ -56,7 +56,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func amongPackagesTheFirstByNameWinsAndTheLoserIsListed() throws {
+  func amongPackagesFirstByNameWinsAndLoserIsListed() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       // Packages may not clash when installed, so a clash made by hand stands for one that
@@ -70,17 +70,25 @@ struct ModPackageLayeringTests {
         let target = fixture.packages.appendingPathComponent(name)
         try FileManager.default.copyItem(at: folder, to: target)
       }
-      let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
+      let set = ControllerRecordSet.load(
+        userDirectory: fixture.controllers,
+        localization: Localization(preferredLanguages: ["en-US"])
+      )
       #expect(set.records[Self.identity]?.file?.path.contains("alpha-pack") == true)
       let skipped = try #require(set.problems.first)
       #expect(set.problems.count == 1)
       #expect(skipped.url.path.contains("beta-pack"))
-      #expect(skipped.problem == "same controller as package alpha-pack")
+      #expect(
+        skipped.problem?.hasSuffix(
+          "vendorID, productID: The package alpha-pack already gives this controller. "
+            + "Fix: Remove one of the two packages, or change the IDs of this record."
+        ) == true
+      )
     }
   }
 
   @Test
-  func aUserPatchLayersOverAPackageRecord() throws {
+  func userPatchLayersOverPackageRecord() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       try install(try fixture.makePackage(controllers: [record]), in: fixture)
@@ -96,7 +104,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aUserPatchBeatsAPackagePatchAndANullDeletesTheKey() throws {
+  func userPatchBeatsPackagePatchAndRemoveDeletesKey() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       let packaged = try Fixture.patch(0x1234, 0xABCD, ["tuning": ["stickDeadzone": 0.1]])
@@ -111,7 +119,7 @@ struct ModPackageLayeringTests {
       #expect(beaten.records[Self.identity]?.tuning.stickDeadzone == 0.3)
       #expect(beaten.records[Self.identity]?.tuningLayers["stickDeadzone"] == .user)
 
-      let deleting = try Fixture.patch(0x1234, 0xABCD, ["tuning": NSNull()])
+      let deleting = try Fixture.patch(0x1234, 0xABCD, [:], remove: ["tuning"])
       try fixture.write([deleting], kind: "Controllers", in: fixture.root)
       let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
       let loaded = try #require(set.records[Self.identity])
@@ -122,20 +130,22 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aPackageWithAnInvalidManifestIsListedAndAppliesNothing() throws {
+  func packageWithInvalidManifestIsListedAndAppliesNothing() throws {
     try Fixture.with { fixture in
       let broken = fixture.packages.appendingPathComponent("broken-pack", isDirectory: true)
       try FileManager.default.createDirectory(at: broken, withIntermediateDirectories: true)
-      try Data("{}".utf8).write(to: broken.appendingPathComponent("mod.json"))
+      try PropertyListFixture.data(json: "{}").write(
+        to: broken.appendingPathComponent("mod.plist")
+      )
       let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
       #expect(set.records.count == ControllerRecordSet.bundled.records.count)
-      #expect(set.problems.map(\.url.lastPathComponent) == ["mod.json"])
+      #expect(set.problems.map(\.url.lastPathComponent) == ["mod.plist"])
       #expect(set.problems.first?.problem?.hasPrefix("E5001") == true)
     }
   }
 
   @Test
-  func aPackagePersonaLayersUnderTheUserPersona() throws {
+  func packagePersonaLayersUnderUserPersona() throws {
     try Fixture.with { fixture in
       let fromPackage = Fixture.persona(0x1234, 0xABCD, descriptor: "Generic")
       try install(try fixture.makePackage(virtualDevices: [fromPackage]), in: fixture)
@@ -154,7 +164,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func amongPackagesTheFirstPersonaByNameWins() throws {
+  func amongPackagesFirstPersonaByNameWins() throws {
     try Fixture.with { fixture in
       try FileManager.default.createDirectory(
         at: fixture.packages,
@@ -174,12 +184,12 @@ struct ModPackageLayeringTests {
       let skipped = try #require(store.problems.first)
       #expect(store.problems.count == 1)
       #expect(skipped.url.path.contains("beta-pack"))
-      #expect(skipped.problem == "same match as package file 1234-abcd.json")
+      #expect(skipped.problem == "same match as package file 1234-abcd.plist")
     }
   }
 
   @Test
-  func settingAPackagePersonaWritesAUserFileAndLeavesThePackageFile() throws {
+  func settingPackagePersonaWritesUserFileAndLeavesPackageFile() throws {
     try Fixture.with { fixture in
       let fromPackage = Fixture.persona(0x1234, 0xABCD, descriptor: "Generic")
       try install(try fixture.makePackage(virtualDevices: [fromPackage]), in: fixture)

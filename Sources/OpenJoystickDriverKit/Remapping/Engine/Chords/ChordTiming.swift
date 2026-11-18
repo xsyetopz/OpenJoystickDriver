@@ -1,7 +1,7 @@
 import Foundation
 
 extension RemappingDeviceState {
-  /// Chords that apply now.
+  /// Chords in effect.
   ///
   /// A chord of an active layer replaces the profile chord with the same sources, and is added when
   /// no profile chord has them.
@@ -31,7 +31,7 @@ extension RemappingDeviceState {
     }.map(\.element)
   }
 
-  /// Returns the chords that are selected now, largest first.
+  /// Returns the selected chords, largest first.
   ///
   /// A chord is selected when it matches, shares no source with a chord already selected, and no
   /// earlier chord that shares a source can still complete. A chord that contains the `source`

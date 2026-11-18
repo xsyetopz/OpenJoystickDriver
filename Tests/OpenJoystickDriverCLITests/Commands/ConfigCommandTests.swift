@@ -7,7 +7,7 @@ import Testing
 
 @Suite(.removingTemporarySockets)
 struct ConfigCommandTests {
-  /// A directory that holds `Controllers/` and its `all.patch.json` for one test.
+  /// A directory that holds `Controllers/` and its `all.patch.plist` for one test.
   private final class Root {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-config-\(UUID().uuidString)",
@@ -20,7 +20,7 @@ struct ConfigCommandTests {
       let json =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
         + #""selector":{"all":true},"patch":{"tuning":\#(tuning)}}"#
-      try Data(json.utf8).write(to: ControllerDefaults.file(in: controllers))
+      try PropertyListFixture.data(json: json).write(to: ControllerDefaults.file(in: controllers))
     }
 
     deinit { try? FileManager.default.removeItem(at: url) }
@@ -51,7 +51,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showListsEveryKeyAsADriverDefaultWithoutADefaultsFile() async throws {
+  func showListsEveryKeyAsDriverDefaultWithoutDefaultsFile() async throws {
     let run = await run(["show", "--json"], in: Root())
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -61,7 +61,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showReportsTheGlobalLayerForAKeyDefaultsJSONSets() async throws {
+  func showReportsGlobalLayerForKeyDefaultsJSONSets() async throws {
     let root = Root()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#)
 
@@ -74,7 +74,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showForAControllerReportsTheLayerOfItsEffectiveValue() async throws {
+  func showForControllerReportsLayerOfItsEffectiveValue() async throws {
     let root = Root()
     try root.writeDefaults(#"{"stickDeadzone":0.2}"#)
     let identity = try bareIdentity()
@@ -101,7 +101,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showNamesTheDriverDefaultOnlyForAKeyTheDriverGivesAValue() async throws {
+  func showNamesDriverDefaultOnlyForKeyDriverGivesValue() async throws {
     let run = await run(["show"], in: Root())
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -113,7 +113,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showForAControllerAddsTheActiveProfilesStickDeadzonesInTheProfileLayer() async throws {
+  func showForControllerAddsActiveProfilesStickDeadzonesInProfileLayer() async throws {
     let root = Root()
     let identity = try bareIdentity()
     let model = try bareModel()
@@ -146,11 +146,11 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showForAControllerWithoutARunningServiceHasNoProfileRows() async throws {
+  func showForControllerWithoutRunningServiceHasNoProfileRows() async throws {
     let identity = try bareIdentity()
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await self.run(["show", "--controller", identity, "--json"], in: Root())
+      await run(["show", "--controller", identity, "--json"], in: Root())
     }
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -184,7 +184,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showListsTheFamiliesThatReadEachKeyWithoutAController() async throws {
+  func showListsFamiliesThatReadEachKeyWithoutController() async throws {
     let run = await run(["show", "--json"], in: Root())
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -198,7 +198,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showForAControllerListsNoFamilies() async throws {
+  func showForControllerListsNoFamilies() async throws {
     let run = await run(["show", "--controller", try bareIdentity(), "--json"], in: Root())
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -206,7 +206,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showPrintsTheFamiliesNextToEachKeyInHumanOutput() async throws {
+  func showPrintsFamiliesNextToEachKeyInHumanOutput() async throws {
     let run = await run(["show"], in: Root())
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -217,7 +217,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showWarnsWhenNoConnectedControllerReadsAKeyDefaultsJSONSets() async throws {
+  func showWarnsWhenNoConnectedControllerReadsKeyDefaultsJSONSets() async throws {
     let gip = try record(family: "XboxGIP")
 
     let run = try await runWithService(
@@ -233,7 +233,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showDoesNotWarnWhenAConnectedControllerReadsTheKey() async throws {
+  func showDoesNotWarnWhenConnectedControllerReadsKey() async throws {
     let run = try await runWithService(
       defaults: #"{"inputLivenessTimeoutMs":900}"#,
       devices: [connected(try record(family: "SonyDualShock4"))]
@@ -244,7 +244,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showNotesASkippedCheckWithoutAConnectedController() async throws {
+  func showNotesSkippedCheckWithoutConnectedController() async throws {
     let run = try await runWithService(defaults: #"{"inputLivenessTimeoutMs":900}"#, devices: [])
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -256,12 +256,12 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showNotesASkippedCheckWithoutARunningService() async throws {
+  func showNotesSkippedCheckWithoutRunningService() async throws {
     let root = Root()
     try root.writeDefaults(#"{"inputLivenessTimeoutMs":900}"#)
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await self.run(["show", "--json"], in: root)
+      await run(["show", "--json"], in: root)
     }
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -277,7 +277,7 @@ struct ConfigCommandTests {
     try root.writeDefaults("{}")
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await self.run(["show", "--json"], in: root)
+      await run(["show", "--json"], in: root)
     }
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -285,7 +285,7 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showFailsForAControllerWithoutARecord() async {
+  func showFailsForControllerWithoutRecord() async {
     let run = await run(["show", "--controller", "FFFF:FFFF"], in: Root())
 
     #expect(run.code != 0)

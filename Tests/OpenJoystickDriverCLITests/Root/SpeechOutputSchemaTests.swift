@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -12,17 +13,17 @@ struct SpeechOutputSchemaTests {
   }
 
   @Test
-  func aSpokenPhraseWithOrWithoutAVoiceIsAccepted() throws {
+  func spokenPhraseWithOrWithoutVoiceIsAccepted() throws {
     for destination in [
       #"{"type": "Speak", "text": "Reloading"}"#,
       #"{"type": "Speak", "text": "Hi", "voice": "com.apple.voice.compact.en-US.Samantha"}"#,
     ] {
-      #expect(try CLIOutputSchema.profileIssues(in: Self.document(destination)).isEmpty)
+      #expect(try CLIOutputSchema.profileIssues(inJSON: Self.document(destination)).isEmpty)
     }
   }
 
   @Test
-  func anEmptyTextAnEmptyVoiceAndTextOf129CharactersAreRejected() throws {
+  func emptyTextEmptyVoiceAndTextOf129CharactersAreRejected() throws {
     let long = String(repeating: "a", count: 129)
     for destination in [
       #"{"type": "Speak", "text": ""}"#,
@@ -30,7 +31,7 @@ struct SpeechOutputSchemaTests {
       #"{"type": "Speak", "text": "Hi", "voice": ""}"#,
       #"{"type": "Speak"}"#,
     ] {
-      #expect(try !CLIOutputSchema.profileIssues(in: Self.document(destination)).isEmpty)
+      #expect(try !CLIOutputSchema.profileIssues(inJSON: Self.document(destination)).isEmpty)
     }
   }
 }

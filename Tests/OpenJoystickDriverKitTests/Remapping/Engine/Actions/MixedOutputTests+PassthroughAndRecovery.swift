@@ -101,7 +101,7 @@ extension RemappingMixedOutputTests {
   }
 
   @Test
-  func opposingDpadBindingsRestoreTheRemainingHeldDirection() async throws {
+  func opposingDpadBindingsRestoreRemainingHeldDirection() async throws {
     let sink = MixedOutputRecorder()
     let engine = RemappingEventEngine(sink: sink, gamepadSink: sink)
     let profile = makeProfile(bindings: [
@@ -130,7 +130,7 @@ extension RemappingMixedOutputTests {
   }
 
   @Test
-  func shutdownWaitsForAnAsynchronousVirtualSendBeforeNeutralization() async throws {
+  func shutdownWaitsForAsynchronousVirtualSendBeforeNeutralization() async throws {
     let system = MixedOutputRecorder()
     let virtual = SuspendedGamepadSink()
     let engine = RemappingEventEngine(sink: system, gamepadSink: virtual)
@@ -215,7 +215,7 @@ extension RemappingMixedOutputTests {
   }
 
   @Test
-  func gamepadDestinationRequiresAnEnabledOutputPolicy() throws {
+  func gamepadDestinationRequiresEnabledOutputPolicy() throws {
     let profile = RemappingProfile(
       name: "Disabled",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),

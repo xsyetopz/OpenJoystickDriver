@@ -5,7 +5,7 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The override of one controller model's virtual HID profile, matching
+  /// The override of one controller model's virtual gamepad kind, matching
   /// `ojd virtual set|reset`: Automatic clears the override.
   struct VirtualHIDProfileOverrideView: View {
     /// The model of the app's view of the service, which sends the override.
@@ -13,6 +13,9 @@
     var viewModel: RuntimeViewModel
     /// The controller.
     let device: ApplicationServiceDeviceDescription
+    /// How much of the interface shows: the identifier of a kind shows only in Advanced.
+    @Environment(\.ojdInterfaceLevel)
+    private var interfaceLevel
     /// The scope of the override: the model or only this controller.
     @State
     private var scope: VirtualHIDProfileScopeChoice
@@ -28,9 +31,9 @@
       _scope = State(initialValue: VirtualHIDProfileScopeChoice.initial(for: device))
     }
 
-    /// The profile picker, the scope picker or the model-scope note, the progress and the problems.
+    /// The profile picker, the scope picker, the progress and the problems.
     var body: some View {
-      VStack(alignment: .leading, spacing: 10) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Picker(
           OJDLocalized.string("ui.virtualProfile.title"),
           selection: overrideBinding
@@ -38,18 +41,26 @@
           Text(ControllerDetailFacts.automaticProfileLabel(device)).tag(
             VirtualHIDProfileID?.none
           )
-          ForEach(VirtualHIDProfileID.allCases, id: \.self) { profile in
-            Text("\(profile.identity.productName) (\(profile.rawValue))").tag(
+          ForEach(VirtualHIDProfileKinds.offered(for: device), id: \.self) { profile in
+            Text(VirtualHIDProfileKinds.optionTitle(for: profile, level: interfaceLevel)).tag(
               VirtualHIDProfileID?.some(profile)
             )
           }
-        }.disabled(overrideState.inFlight)
+        }.disabled(overrideState.inFlight).help(OJDLocalized.string("ui.help.virtualProfile"))
+        if let text = VirtualHIDProfileKinds.inForceText(for: device) {
+          Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        if let text = VirtualHIDProfileKinds.noGameRumbleText(for: device, level: interfaceLevel) {
+          Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
         if VirtualHIDProfileScopeChoice.offered(for: device).count > 1 {
           Picker(OJDLocalized.string("ui.controllers.virtual.scope"), selection: $scope) {
             ForEach(VirtualHIDProfileScopeChoice.offered(for: device), id: \.self) { choice in
               Text(OJDLocalized.string(choice.titleKey)).tag(choice)
             }
-          }.disabled(overrideState.inFlight)
+          }.disabled(overrideState.inFlight).help(OJDLocalized.string("ui.help.virtualScope"))
           if let holder = VirtualHIDProfileOverrideDecision.currentScope(for: device),
             holder != scope
           {
@@ -60,21 +71,19 @@
               )
             ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
           }
-        } else {
-          Text(OJDLocalized.string("ui.virtualProfile.modelScope")).font(.caption)
-            .foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
-              horizontal: false,
-              vertical: true
-            )
         }
         if overrideState.inFlight {
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             ProgressView()
             Text(updatingLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
           }.ojdAccessibilityLabel(updatingLabel)
         }
+        if let notice = overrideState.notice {
+          Text(notice).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
         ForEach(problems, id: \.self) { message in
-          HStack(alignment: .top, spacing: 8) {
+          HStack(alignment: .top, spacing: OJDSpacing.small) {
             OJDSystemSymbol(
               name: SemanticState.failure.presentation.symbolName,
               fallback: OJDLocalized.string("status.needsAttention")
@@ -97,7 +106,7 @@
     }
 
     /// The binding to the override that is shown, which is the pending choice until the status
-    /// reports it; choosing one sends the change when it would change anything.
+    /// reports it; choosing one sends the change, or shows why nothing is sent.
     private var overrideBinding: Binding<VirtualHIDProfileID?> {
       Binding(
         get: {
@@ -106,14 +115,10 @@
           return device.virtualHIDProfile?.override
         },
         set: { profile in
-          guard
-            VirtualHIDProfileOverrideDecision.decide(profile: profile, scope: scope, for: device)
-              == .send
-          else { return }
-          let device = device
-          let scope = scope.scope
+          let target = device
+          let selectedScope = scope
           Task { @MainActor in
-            await viewModel.setVirtualHIDProfileOverride(profile, for: device, scope: scope)
+            await viewModel.chooseVirtualHIDProfile(profile, scope: selectedScope, for: target)
           }
         }
       )
@@ -124,14 +129,9 @@
       OJDLocalized.string("ui.virtualProfile.updating")
     }
 
-    /// The messages of the failed override and of the override store.
-    private var problems: [String] {
-      var messages = overrideState.failure.map { [$0] } ?? []
-      if case .available(let status) = viewModel.statusState {
-        messages += status.virtualHIDProfileOverrideStoreMessages
-      }
-      return messages
-    }
+    /// The message of the failed override; the override store's messages show in the main window
+    /// banner.
+    private var problems: [String] { overrideState.failure.map { [$0] } ?? [] }
   }
 
 #endif

@@ -47,7 +47,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func unrecordedPadWithALineBindsWithTheDatabaseRule() throws {
+  func unrecordedPadWithLineBindsWithDatabaseRule() throws {
     let fixture = try fixture("8bitdo-m30")
     let binding = try binding(fixture.physicalDevice)
     #expect(binding.protocolID == .hidDescriptor)
@@ -61,7 +61,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func theDriverReadsTheConvertedMap() throws {
+  func driverReadsConvertedMap() throws {
     let fixture = try fixture("backbone-one")
     let binding = try binding(fixture.physicalDevice)
     let driver = try ProtocolDriverRegistry().makeDriver(
@@ -75,7 +75,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func padWithARecordIgnoresTheDatabase() throws {
+  func padWithRecordIgnoresDatabase() throws {
     let device = hidDevice(0x2DC8, 0x301B, version: 1)
     let guid = try #require(SDLGameControllerDatabase.guid(of: device))
     let database = try SDLGameControllerDatabase(
@@ -98,7 +98,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func padThatFailsTheDescriptorContractStaysUnboundAndNotesTheLine() throws {
+  func padThatFailsDescriptorContractStaysUnboundAndNotesLine() throws {
     let vendorOnly: [UInt8] = [
       0x06, 0x00, 0xFF, 0x09, 0x01, 0xA1, 0x01, 0x75, 0x08, 0x95, 0x3F, 0x81, 0x02, 0xC0,
     ]
@@ -115,7 +115,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func padWithoutALineReportsTheStandardMap() throws {
+  func padWithoutLineReportsStandardMap() throws {
     let binding = try binding(hidDevice(0x1234, 0x5678))
     #expect(binding.rule == .hidDescriptor)
     let mapping = try #require(binding.inputMapping)
@@ -124,7 +124,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func lineThatCannotConvertKeepsTheStandardMapAndSaysWhy() throws {
+  func lineThatCannotConvertKeepsStandardMapAndSaysWhy() throws {
     let binding = try binding(hidDevice(0x2DC8, 0x0651))
     #expect(binding.rule == .hidDescriptor)
     let mapping = try #require(binding.inputMapping)
@@ -134,7 +134,7 @@ struct SDLMappingBindingTests {
   }
 
   @Test
-  func theBindingResultCarriesTheMapping() throws {
+  func bindingResultCarriesMapping() throws {
     let fixture = try fixture("8bitdo-m30")
     let binding = try binding(fixture.physicalDevice)
     let result = ProtocolBindingResult(

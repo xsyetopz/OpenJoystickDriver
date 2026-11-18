@@ -27,15 +27,15 @@ actor SignatureDiscoveryProvider: USBTransportProvider {
 
   func devices() -> [USBTransportDevice] { [device] }
 
-  func physicalDeviceObservation(for device: USBTransportDevice) -> PhysicalDevice? { passive }
+  func physicalDeviceObservation(for _: USBTransportDevice) -> PhysicalDevice? { passive }
 
   func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured profile: DeviceTransportProfile
   ) -> USBTransportResolution { USBTransportResolution(profile: profile, physicalDevice: passive) }
 
   func configurationObservation(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configurationValue: UInt8
   ) throws -> PhysicalDevice? {
     descriptorReads.append(configurationValue)
@@ -44,7 +44,7 @@ actor SignatureDiscoveryProvider: USBTransportProvider {
   }
 
   func open(
-    _ device: USBTransportDevice,
+    _: USBTransportDevice,
     options: USBTransportOpenOptions
   ) -> any USBTransportSession {
     self.options = options

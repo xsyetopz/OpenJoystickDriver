@@ -23,7 +23,11 @@ enum HexBytes {
     what: String
   ) throws -> [UInt8] {
     guard let bytes = parse(try container.decode(String.self, for: key)) else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "\(what) \(message)")
+      throw ControllerRecordProblem.rule(
+        "error.E5007.record.hexBytes",
+        [key, what],
+        "\(what) \(message)"
+      )
     }
     return bytes
   }
@@ -141,13 +145,12 @@ extension ControllerRecordDocument {
         guard !writes.isEmpty else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.keepAlive.writesCount",
             "keepAlive names no writes or 1...8 of them"
           )
         }
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }
@@ -167,9 +170,7 @@ extension ControllerRecordDocument {
       do {
         write = try StartupWrite.usbWrite(container, condition: .always)
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }
@@ -210,7 +211,9 @@ extension ControllerRecordDocument {
         do {
           data = try HexBytes.decode(container, for: "data", what: "control transfer data")
         } catch let problem as ControllerRecordProblem {
-          throw invalid("data", problem.description)
+          throw DecodingError.dataCorrupted(
+            problem.context(at: decoder.codingPath + [DocumentKey("data")])
+          )
         }
       }
       let isInput = requestType & 0x80 != 0
@@ -263,11 +266,11 @@ extension ControllerRecordDocument {
         )
       }
       func text(_ key: String) throws -> String? {
-        guard let text = try container.decodeOptional(String.self, for: key) else { return nil }
-        guard !text.isEmpty else {
+        guard let decoded = try container.decodeOptional(String.self, for: key) else { return nil }
+        guard !decoded.isEmpty else {
           throw ModeDocument.invalid(key, "\(key) must not be empty", decoder)
         }
-        return text
+        return decoded
       }
       gate = VendorControlTransfer.Gate(
         manufacturer: try text("manufacturer"),

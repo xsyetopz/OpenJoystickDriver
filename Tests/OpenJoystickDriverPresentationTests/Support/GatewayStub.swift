@@ -72,6 +72,8 @@ actor GatewayStub: ApplicationServiceGateway {
     )] =
       []
   var resetAllRequestCount = 0
+  /// The session requests received, each as `suspend` or `resume` and the reference.
+  private(set) var sessionRequests: [String] = []
   var resetAllResult = true
   var serverRequests: [(model: ControllerModelID, server: ControllerServer)] = []
   var serverFailure: (failure: ControllerServerFailure, detail: String?)?
@@ -166,11 +168,11 @@ actor GatewayStub: ApplicationServiceGateway {
     snapshotPayload = payload
   }
 
-  func frameTimings(lastSeconds _: Int?) throws -> ApplicationServiceFrameTimingsPayload {
+  func frameTimings(lastSeconds _: Int?) -> ApplicationServiceFrameTimingsPayload {
     ApplicationServiceFrameTimingsPayload(controllers: [])
   }
 
-  func virtualDeviceDiagnostics() throws -> ApplicationServiceVirtualDeviceDiagnosticsPayload {
+  func virtualDeviceDiagnostics() -> ApplicationServiceVirtualDeviceDiagnosticsPayload {
     ApplicationServiceVirtualDeviceDiagnosticsPayload(
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: .backend("ready"),
@@ -178,13 +180,25 @@ actor GatewayStub: ApplicationServiceGateway {
     )
   }
 
-  func requestPermissions() throws -> PermissionManager.Snapshot {
+  func requestPermissions() -> PermissionManager.Snapshot {
     PermissionManager.Snapshot(inputRead: .granted, inputInject: .granted)
   }
 
   func requestPermission(
-    _ requirement: PermissionManager.Requirement
-  ) throws -> PermissionManager.Snapshot { try requestPermissions() }
+    _: PermissionManager.Requirement
+  ) -> PermissionManager.Snapshot { requestPermissions() }
+
+  /// The Bluetooth access requests received.
+  private(set) var bluetoothRequests = 0
+
+  /// Whether a Bluetooth access request throws.
+  var bluetoothShouldFail = false
+
+  func requestBluetoothAccess() throws -> BluetoothAccessState {
+    bluetoothRequests += 1
+    if bluetoothShouldFail { throw ApplicationServiceClientError.timeout }
+    return .granted
+  }
 
   func controllerState(for selector: ControllerReference) async throws -> ControllerState? {
     activeDeviceReads += 1
@@ -204,6 +218,15 @@ actor GatewayStub: ApplicationServiceGateway {
     }
     return inputState
   }
+
+  /// The values `virtualOutputState(for:)` returns.
+  private var virtualOutput: ApplicationServiceVirtualOutputState?
+
+  func setVirtualOutput(_ value: ApplicationServiceVirtualOutputState?) { virtualOutput = value }
+
+  func virtualOutputState(
+    for _: ControllerReference
+  ) -> ApplicationServiceVirtualOutputState? { virtualOutput }
 
   func packetLog(for selector: ControllerReference) async throws -> [PacketLogEntry] {
     activeDeviceReads += 1
@@ -226,7 +249,7 @@ actor GatewayStub: ApplicationServiceGateway {
 
   func setPacketEntries(_ entries: [PacketLogEntry]) { packetEntries = entries }
 
-  func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
+  func remappingSnapshot() -> ApplicationServiceRemappingSnapshotPayload {
     remappingSnapshotCallCount += 1
     return snapshotPayload
   }
@@ -240,7 +263,7 @@ actor GatewayStub: ApplicationServiceGateway {
 
   func createRemappingProfile(
     _ profile: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload {
+  ) -> ApplicationServiceRemappingSnapshotPayload {
     snapshotPayload = snapshot(
       profiles: snapshotPayload.profiles + [profile],
       activeProfiles: snapshotPayload.activeProfiles,
@@ -274,7 +297,7 @@ actor GatewayStub: ApplicationServiceGateway {
 
   func importRemappingProfile(
     _ profile: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload {
+  ) -> ApplicationServiceRemappingSnapshotPayload {
     var profiles = snapshotPayload.profiles
     if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
       profiles[index] = profile
@@ -302,38 +325,39 @@ actor GatewayStub: ApplicationServiceGateway {
   }
 
   func activateRemappingProfile(
-    id: UUID,
+    id _: UUID,
     allowEmpty: Bool
-  ) throws -> ApplicationServiceRemappingSnapshotPayload {
+  ) -> ApplicationServiceRemappingSnapshotPayload {
     activationAllowEmpty.append(allowEmpty)
     return snapshotPayload
   }
 
   func deactivateRemappingProfile(
-    vendorID: UInt16,
-    productID: UInt16
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    vendorID _: UInt16,
+    productID _: UInt16
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func deactivateRemappingProfile(
-    profileID: UUID
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    profileID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func remappingPostEventAccess() throws -> RemappingPostEventAccessState {
+  func remappingPostEventAccess() -> RemappingPostEventAccessState {
     snapshotPayload.postEventAccess
   }
 
-  func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState {
+  func requestRemappingPostEventAccess() -> RemappingPostEventAccessState {
     snapshotPayload.postEventAccess
   }
 
   func pairRemappingJoyCons(
-    left: ControllerReference,
-    right: ControllerReference,
-    profileID: UUID
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    left _: ControllerReference,
+    right _: ControllerReference,
+    profileID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func unpairRemappingJoyCons(sessionID: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func unpairRemappingJoyCons(sessionID _: UUID) -> ApplicationServiceRemappingSnapshotPayload {
+    snapshotPayload
+  }
 
   func setVirtualHIDProfileOverride(
     _ profile: VirtualHIDProfileID,
@@ -350,7 +374,7 @@ actor GatewayStub: ApplicationServiceGateway {
   }
 
   // swiftlint:disable async_without_await
-  func resetAllVirtualHIDProfileOverrides() async throws -> Bool {
+  func resetAllVirtualHIDProfileOverrides() async -> Bool {
     resetAllRequestCount += 1
     return resetAllResult
   }
@@ -372,7 +396,7 @@ actor GatewayStub: ApplicationServiceGateway {
   func setControllerServer(
     model: ControllerModelID,
     server: ControllerServer
-  ) throws -> ControllerServerResult {
+  ) -> ControllerServerResult {
     serverRequests.append((model, server))
     return ControllerServerResult(
       server: server,
@@ -384,11 +408,18 @@ actor GatewayStub: ApplicationServiceGateway {
     )
   }
 
+  func recalibrateController(
+    _: ControllerReference,
+    action: ControllerRecalibrationAction
+  ) -> ControllerRecalibrationResult {
+    ControllerRecalibrationResult(action: action)
+  }
+
   func setControllerTuning(
     model: ControllerModelID,
     key: ControllerTuning.Key,
     value: Double?
-  ) throws -> ControllerTuningResult {
+  ) -> ControllerTuningResult {
     tuningRequests.append((model, key, value))
     return ControllerTuningResult(
       key: key,
@@ -413,6 +444,7 @@ actor GatewayStub: ApplicationServiceGateway {
     overrideFailure = failure
   }
 
+  func setBluetoothShouldFail(_ value: Bool) { bluetoothShouldFail = value }
   func setOverrideError(_ error: ApplicationServiceClientError?) { overrideError = error }
 
   func gateOverrideRequests() { overrideRequestsAreGated = true }
@@ -439,13 +471,13 @@ actor GatewayStub: ApplicationServiceGateway {
 
 extension GatewayStub {
   func deleteDamagedRemappingProfile(
-    issueID: UUID
+    issueID _: UUID
   ) throws -> ApplicationServiceRemappingSnapshotPayload {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func resetRemappingProfileLibrary(
-    issueID: UUID
+    issueID _: UUID
   ) throws -> ApplicationServiceRemappingSnapshotPayload {
     throw ApplicationServiceClientError.invalidResponse
   }
@@ -453,17 +485,19 @@ extension GatewayStub {
 
 /// Every controller session request is refused as `notFound`.
 extension GatewayStub {
-  func suspendController(_ selector: ControllerReference) throws -> ControllerSuspendResult {
-    ControllerSuspendResult(state: .active, failure: .notFound)
+  func suspendController(_ selector: ControllerReference) -> ControllerSuspendResult {
+    sessionRequests.append("suspend \(selector)")
+    return ControllerSuspendResult(state: .active, failure: .notFound)
   }
 
-  func resumeController(_ selector: ControllerReference) throws -> ControllerResumeResult {
-    ControllerResumeResult(state: .suspended, failure: .notFound)
+  func resumeController(_ selector: ControllerReference) -> ControllerResumeResult {
+    sessionRequests.append("resume \(selector)")
+    return ControllerResumeResult(state: .suspended, failure: .notFound)
   }
 
   func disconnectWirelessController(
-    _ selector: ControllerReference
-  ) throws -> WirelessControllerDisconnectResult {
+    _: ControllerReference
+  ) -> WirelessControllerDisconnectResult {
     WirelessControllerDisconnectResult(state: .active, failure: .notFound)
   }
 }

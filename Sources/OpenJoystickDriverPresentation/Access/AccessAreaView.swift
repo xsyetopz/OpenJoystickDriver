@@ -48,13 +48,24 @@
     /// The Access form: the failure, if any, the permissions, then the load state or the endpoints
     /// and lists.
     var body: some View {
+      ScrollViewReader { proxy in
+        form.onReceive(model.$focusedPermission) { permission in
+          guard let permission else { return }
+          withAnimation { proxy.scrollTo(permission.rawValue, anchor: .top) }
+          model.focusedPermission = nil
+        }
+      }
+    }
+
+    /// The form of the area.
+    private var form: some View {
       Form {
         if let failure = model.failure {
           Section {
             errorView(failure, actionTitle: "ui.access.dismiss", action: model.dismissFailure)
           }
         }
-        permissionsSection
+        permissionsSection.ojdInterfaceRow(AccessRow.permissions)
         switch model.load {
         case .loading:
           Section { LoadingStateView(message: OJDLocalized.string("ui.access.loading")) }
@@ -68,7 +79,7 @@
           }
         case .loaded(let status):
           endpointsSection(status)
-          listSections(status)
+          listSections(status).ojdInterfaceRow(AccessRow.lists)
         }
       }.ojdGroupedForm().onAppear { notificationPermission.refresh() }.onReceive(
         NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
@@ -98,9 +109,9 @@
         message: failure.message,
         code: failure.code,
         detailsTitle: OJDLocalized.string("ui.access.details"),
-        detailsAccessibilityLabel: OJDLocalized.string("a11y.access.details"),
+        detailsHelp: OJDLocalized.string("a11y.access.details"),
         actionTitle: OJDLocalized.string(actionTitle),
-        actionAccessibilityLabel: OJDLocalized.string(
+        actionHelp: OJDLocalized.string(
           actionTitle == "ui.access.dismiss" ? "a11y.access.dismissError" : "a11y.access.tryAgain"
         ),
         action: action,
@@ -114,32 +125,54 @@
     /// The section of macOS permission rows, with a restart button while an input permission is
     /// missing.
     private var permissionsSection: some View {
-      let readiness = readiness
-      return Section(header: Text(OJDLocalized.string("ui.settings.notifications.accessReadiness")))
-      {
-        ForEach(readiness.rows) { row in permissionRow(row) }
-        if readiness.needsRestart {
+      let current = readiness
+      return Section(
+        header: Text(OJDLocalized.string("platform.macos.ui.access.permissions.title"))
+      ) {
+        ForEach(current.rows) { row in permissionRow(row).id(row.id) }
+        if current.needsRestart {
           Button(
             OJDLocalized.string("ui.permissions.restartApplication"),
             action: restartApplication
           )
-          .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.restart"))
+          .help(OJDLocalized.string("a11y.access.restart"))
         }
       }
     }
 
-    /// Returns the row for a permission, with a button when the permission is missing.
+    /// Returns the row for a permission: its name and use, its value, a button when the permission
+    /// is missing, and a sentence when the value alone does not say what to know.
     private func permissionRow(_ row: AccessPermissionRow) -> some View {
       let title = OJDLocalized.string(row.titleKey)
-      return OJDLabeledRow(title) {
-        HStack {
-          Text(row.status.value)
-          if let key = row.actionTitleKey {
-            Button(OJDLocalized.string(key)) { requestPermission(row.kind) }
-              .ojdAccessibilityLabel(
-                OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
-              )
-              .ojdAccessibilityValue(row.status.value)
+      let state = row.status.state
+      return HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+          Text(title)
+          Text(OJDLocalized.string(row.kind.purposeKey)).font(.caption).foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        Spacer(minLength: OJDSpacing.medium)
+        VStack(alignment: .trailing, spacing: OJDSpacing.xxSmall) {
+          HStack {
+            OJDSystemSymbol(name: state.symbolName, fallback: nil)
+              .foregroundColor(Color(row.status.tone.color)).accessibilityHidden(true)
+            Text(row.status.value)
+            if let key = row.actionTitleKey {
+              Button(OJDLocalized.string(key)) { requestPermission(row.kind) }
+                .ojdAccessibilityLabel(
+                  OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
+                )
+                .ojdAccessibilityValue(row.status.value)
+                .help(OJDLocalized.string("ui.help.requestPermission"))
+            }
+          }
+          if let key = state.messageKey {
+            Text(OJDLocalized.string(key)).font(.caption).foregroundStyle(.secondary)
+              .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
+          }
+          if row.kind == .notification, let message = notificationPermission.errorMessage {
+            Text(message).font(.body).foregroundColor(Color(NSColor.systemRed))
+              .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
           }
         }
       }
@@ -165,52 +198,67 @@
     /// Returns the section of the local endpoint toggle, the WebSocket toggle and the port field.
     private func endpointsSection(_ status: AccessStatusPayload) -> some View {
       Section {
-        Toggle(
-          OJDLocalized.string("ui.access.endpoint"),
-          isOn: Binding(
-            get: { status.enabled },
-            set: { isOn in
-              if isOn {
-                model.requestEnableEndpoint()
-              } else {
-                Task { await model.disableEndpoint() }
-              }
-            }
-          )
-        ).disabled(model.busy).help(OJDLocalized.formatted("ui.access.socket", status.socketPath))
-          .contextMenu { copySocketPathButton(status) }
-        if status.enabled { copySocketPathButton(status) }
-        Toggle(
-          OJDLocalized.string("ui.access.web"),
-          isOn: Binding(
-            get: { status.web.enabled },
-            set: { isOn in
-              if isOn { model.requestEnableWeb() } else { Task { await model.disableWeb() } }
-            }
-          )
-        ).disabled(model.busy).help(
-          OJDLocalized.formatted(
-            "ui.access.web.pages",
-            AccessPresentation.location(status.web.pagesPath)
-          )
-        )
-        if status.web.enabled {
-          Text(AccessPresentation.web(status.web)).font(.caption).foregroundColor(
-            Color(NSColor.secondaryLabelColor)
-          ).textSelection(.enabled)
-        } else {
-          OJDLabeledRow(OJDLocalized.string("ui.access.web.port")) {
-            HStack {
-              if model.canChooseAutomaticPort {
-                Button(OJDLocalized.string("ui.access.web.port.choose")) {
-                  model.chooseAutomaticPort()
-                }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port.choose"))
-              }
-              portField.labelsHidden().textFieldStyle(RoundedBorderTextFieldStyle())
-                .multilineTextAlignment(.trailing).frame(width: 120)
-                .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.webPort"))
+        Group {
+          endpointToggles(status)
+        }.ojdInterfaceRow(AccessRow.endpoint)
+        if !status.web.enabled {
+          portRow.ojdInterfaceRow(AccessRow.port)
+        }
+      }
+    }
+
+    /// Returns the local endpoint and WebSocket switches, with the web pages line.
+    @ViewBuilder
+    private func endpointToggles(_ status: AccessStatusPayload) -> some View {
+      Toggle(
+        OJDLocalized.string("ui.access.endpoint"),
+        isOn: Binding(
+          get: { status.enabled },
+          set: { isOn in
+            if isOn {
+              model.requestEnableEndpoint()
+            } else {
+              Task { await model.disableEndpoint() }
             }
           }
+        )
+      ).disabled(model.busy).help(OJDLocalized.formatted("ui.access.socket", status.socketPath))
+        .contextMenu { copySocketPathButton(status) }
+      if status.enabled { copySocketPathButton(status) }
+      Toggle(
+        OJDLocalized.string("ui.access.web"),
+        isOn: Binding(
+          get: { status.web.enabled },
+          set: { isOn in
+            if isOn { model.requestEnableWeb() } else { Task { await model.disableWeb() } }
+          }
+        )
+      ).disabled(model.busy).help(
+        OJDLocalized.formatted(
+          "ui.access.web.pages",
+          AccessPresentation.location(status.web.pagesPath)
+        )
+      )
+      if status.web.enabled {
+        Text(AccessPresentation.web(status.web)).font(.caption).foregroundColor(
+          Color(NSColor.secondaryLabelColor)
+        ).textSelection(.enabled)
+      }
+    }
+
+    /// The port row, shown while the WebSocket is off.
+    private var portRow: some View {
+      OJDLabeledRow(OJDLocalized.string("ui.access.web.port")) {
+        HStack {
+          if model.canChooseAutomaticPort {
+            Button(OJDLocalized.string("ui.access.web.port.choose")) {
+              model.chooseAutomaticPort()
+            }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port.choose"))
+              .help(OJDLocalized.string("ui.help.chooseAutomaticPort"))
+          }
+          portField.labelsHidden().textFieldStyle(RoundedBorderTextFieldStyle())
+            .multilineTextAlignment(.trailing).frame(width: 120)
+            .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.webPort"))
         }
       }
     }
@@ -219,14 +267,21 @@
     /// "Automatic" when enabling the WebSocket picks a free port.
     @ViewBuilder
     private var portField: some View {
+      portFieldBody.help(OJDLocalized.string("ui.help.webPort"))
+    }
+
+    /// The port field without its tooltip.
+    @ViewBuilder
+    private var portFieldBody: some View {
       if #available(macOS 13, *) {
         TextField(
           OJDLocalized.string("ui.access.web.port"),
           text: $model.portText,
           prompt: Text(model.portPlaceholder)
-        )
+        ).ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
       } else {
         TextField(model.portPlaceholder, text: $model.portText)
+          .ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
       }
     }
 
@@ -236,6 +291,7 @@
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(status.socketPath, forType: .string)
       }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.socket.copy"))
+        .help(OJDLocalized.string("ui.help.copySocketPath"))
     }
   }
 

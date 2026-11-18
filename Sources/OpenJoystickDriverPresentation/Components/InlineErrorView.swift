@@ -14,12 +14,12 @@
     let code: ErrorCode?
     /// The title of the Details control.
     let detailsTitle: String
-    /// The VoiceOver label of the Details control.
-    let detailsAccessibilityLabel: String
+    /// The tooltip of the Details control.
+    let detailsHelp: String
     /// The title of the action button.
     let actionTitle: String
-    /// The VoiceOver label of the action button.
-    let actionAccessibilityLabel: String
+    /// The tooltip of the action button.
+    let actionHelp: String
     /// Runs when the user presses the action button.
     let action: () -> Void
     /// The title of a second action button, or nil for none.
@@ -33,8 +33,8 @@
     /// The failure symbol and message in a group box, with the action button.
     var body: some View {
       GroupBox {
-        VStack(alignment: .leading, spacing: 8) {
-          HStack(alignment: .firstTextBaseline, spacing: 10) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
+          HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
             OJDSystemSymbol(
               name: SemanticState.failure.presentation.symbolName,
               fallback: OJDLocalized.string("status.needsAttention")
@@ -44,15 +44,16 @@
             Spacer(minLength: 0)
             if code != nil {
               Button(detailsTitle) { showsDetails.toggle() }
-                .ojdAccessibilityLabel(detailsAccessibilityLabel)
+                .help(detailsHelp)
             }
             if let secondaryActionTitle, let secondaryAction {
               Button(secondaryActionTitle, action: secondaryAction)
+                .help(OJDLocalized.string("ui.help.migrate"))
             }
-            Button(actionTitle, action: action).ojdAccessibilityLabel(actionAccessibilityLabel)
+            Button(actionTitle, action: action).help(actionHelp)
           }
           if showsDetails, let code {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
               Text(code.rawValue).font(.caption.weight(.semibold))
               Text(code.localizedExplanation).font(.caption).foregroundColor(
                 Color(NSColor.secondaryLabelColor)

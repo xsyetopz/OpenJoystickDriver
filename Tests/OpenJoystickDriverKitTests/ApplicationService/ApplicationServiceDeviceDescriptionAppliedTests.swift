@@ -6,7 +6,7 @@ import Testing
 
 struct ApplicationServiceDeviceDescriptionAppliedTests {
   @Test
-  func theOutputOwnerAndTuningSurviveTheWire() throws {
+  func outputOwnerAndTuningSurviveWire() throws {
     let tuning = ControllerTuning(stickDeadzone: 0.2, hidStartupRecoveryRounds: 3)
     let device = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
@@ -24,7 +24,7 @@ struct ApplicationServiceDeviceDescriptionAppliedTests {
   }
 
   @Test
-  func aPayloadWithoutTheAppliedFieldsDoesNotDecode() throws {
+  func payloadWithoutAppliedFieldsDoesNotDecode() throws {
     let encoded = try JSONEncoder().encode(
       ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     )

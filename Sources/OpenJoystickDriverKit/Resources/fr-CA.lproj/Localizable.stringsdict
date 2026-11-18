@@ -52,7 +52,7 @@
 			<string>%d attributions</string>
 		</dict>
 	</dict>
-	<!-- Summary in the support diagnostics of how many virtual controller output devices OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The French (Canada) plural forms are a first draft that a native speaker reviews. -->
+	<!-- Summary in the support diagnostics of how many virtual gamepads OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The French (Canada) plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.debug.outputDevices</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -246,6 +246,56 @@
 			<string>Arrêté · %lld de paquets</string>
 			<key>other</key>
 			<string>Arrêté · %lld paquets</string>
+		</dict>
+	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d min</string>
+			<key>one</key>
+			<string>%d min</string>
+			<key>two</key>
+			<string>%d min</string>
+			<key>few</key>
+			<string>%d min</string>
+			<key>many</key>
+			<string>%d min</string>
+			<key>other</key>
+			<string>%d min</string>
+		</dict>
+	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The French (Canada) plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d réglages masqués modifiés</string>
+			<key>one</key>
+			<string>%d réglage masqué modifié</string>
+			<key>two</key>
+			<string>%d réglages masqués modifiés</string>
+			<key>few</key>
+			<string>%d réglages masqués modifiés</string>
+			<key>many</key>
+			<string>%d réglages masqués modifiés</string>
+			<key>other</key>
+			<string>%d réglages masqués modifiés</string>
 		</dict>
 	</dict>
 </dict>

@@ -6,7 +6,7 @@ import Testing
 
 struct ExclusiveAccessMappingTests {
   @Test
-  func exclusiveAccessWithAnOwnerNamesTheOwner() {
+  func exclusiveAccessWithOwnerNamesOwner() {
     let owner = "pid 11070, steam_osx"
     #expect(
       IOUSBHostTransportProvider.transportError(kIOReturnExclusiveAccess, exclusiveOwner: owner)
@@ -15,7 +15,7 @@ struct ExclusiveAccessMappingTests {
   }
 
   @Test
-  func exclusiveAccessWithoutAnOwnerCarriesNone() {
+  func exclusiveAccessWithoutOwnerCarriesNone() {
     #expect(
       IOUSBHostTransportProvider.transportError(kIOReturnExclusiveAccess, exclusiveOwner: nil)
         == .ownedByAnotherClient(owner: nil)
@@ -27,7 +27,7 @@ struct ExclusiveAccessMappingTests {
   }
 
   @Test
-  func notPermittedStaysAccessDeniedWithoutTheOwner() {
+  func notPermittedStaysAccessDeniedWithoutOwner() {
     let owner = "pid 1, ignored"
     #expect(
       IOUSBHostTransportProvider.transportError(kIOReturnNotPermitted, exclusiveOwner: owner)
@@ -36,7 +36,7 @@ struct ExclusiveAccessMappingTests {
   }
 
   @Test
-  func notPrivilegedStaysAccessDeniedWithoutTheOwner() {
+  func notPrivilegedStaysAccessDeniedWithoutOwner() {
     let owner = "pid 1, ignored"
     #expect(
       IOUSBHostTransportProvider.transportError(kIOReturnNotPrivileged, exclusiveOwner: owner)
@@ -47,7 +47,7 @@ struct ExclusiveAccessMappingTests {
   /// On macOS 27 an interface that another process holds fails to open with
   /// `kIOReturnInternalError`; the owner the interface names is what says it is held.
   @Test
-  func aFailedOpenOfAnInterfaceAnotherClientNamesIsOwnedByIt() {
+  func failedOpenOfInterfaceAnotherClientNamesIsOwnedByIt() {
     let owner = "pid 20887, hold"
     #expect(
       IOUSBHostTransportProvider.openError(

@@ -1,7 +1,8 @@
-import Foundation
+package import Foundation
+import GameController
 import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 extension HIDDeviceStream {
 
@@ -64,12 +65,14 @@ extension HIDDeviceStream {
   /// ignores negative property keys) and a second object for any service that satisfies more
   /// than one matching dictionary. `handleDeviceAdded` opens only admitted devices.
   private func registerCallbacks() {
+    // The service is never frontmost, and the controller list was measured with this set.
+    GCController.shouldMonitorBackgroundEvents = true
     let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     self.manager = manager
     IOHIDManagerSetDeviceMatchingMultiple(manager, currentDeviceMatching())
-    let context = Unmanaged.passUnretained(self).toOpaque()
-    IOHIDManagerRegisterDeviceMatchingCallback(manager, Self.matchingCallback, context)
-    IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)
+    let context = unsafe Unmanaged.passUnretained(self).toOpaque()
+    unsafe IOHIDManagerRegisterDeviceMatchingCallback(manager, Self.matchingCallback, context)
+    unsafe IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)
     IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
     // Admit the devices already present in case matching callbacks do not report them.
     // Admission is idempotent per device and service.
@@ -106,7 +109,7 @@ extension HIDDeviceStream {
       )
       self.manager = nil
     }
-    let sharedOpens = seizeLock.withLock {
+    let sharedOpens = unsafe seizeLock.withLock {
       for devices in seizedByLocation.values {
         for device in devices {
           IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice))
@@ -114,11 +117,13 @@ extension HIDDeviceStream {
       }
       seizedByLocation.removeAll()
       releasedByLocation.removeAll()
+      closedByLocation.removeAll()
+      gameControllerListings.removeAll()
       connectionsByDeviceID.removeAll()
-      defer { sharedOpenByDeviceID.removeAll() }
-      return Array(sharedOpenByDeviceID.values)
+      defer { unsafe sharedOpenByDeviceID.removeAll() }
+      return unsafe Array(sharedOpenByDeviceID.values)
     }
-    sharedOpens.forEach(closeSharedOpen)
+    unsafe sharedOpens.forEach(closeSharedOpen)
     eventAdapter.reset()
     continuation.finish()
   }
@@ -191,7 +196,7 @@ extension HIDDeviceStream {
       var reportLength = request.length
       let result = bytes.withUnsafeMutableBufferPointer { pointer in
         guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-        return IOHIDDeviceGetReport(
+        return unsafe IOHIDDeviceGetReport(
           device,
           kIOHIDReportTypeFeature,
           CFIndex(request.reportID),
@@ -204,7 +209,7 @@ extension HIDDeviceStream {
     }
     print(
       "[HIDDeviceStream] Feature report read failed for loc=\(locationID)"
-        + " report=0x\(String(format: "%02X", request.reportID)) kr=\(lastResult)"
+        + " report=0x\(unsafe String(format: "%02X", request.reportID)) kr=\(lastResult)"
     )
     return .failed(.init(ioReturn: lastResult))
   }
@@ -234,10 +239,13 @@ extension HIDDeviceStream {
   /// Seizes again the devices ``releaseInputClaim(locationID:)`` released.
   ///
   /// When one seize is refused, the devices seized so far return to a shared open and the refusal
-  /// is the result.
+  /// is the result. A location whose handles ``closeDeviceHandles(locationID:)`` closed stays
+  /// closed until ``reopenDeviceHandles(locationID:)``.
   package func reacquireInputClaim(locationID: UInt32) -> PhysicalHIDClaimResult {
     seizeLock.withLock {
-      guard let devices = releasedByLocation[locationID], !devices.isEmpty else {
+      guard closedByLocation[locationID] == nil,
+        let devices = releasedByLocation[locationID], !devices.isEmpty
+      else {
         return .unavailable
       }
       var acquired: [IOHIDDevice] = []
@@ -260,6 +268,62 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Closes every handle this stream holds on the devices at a location, the seize and the input
+  /// open, so another process can open them.
+  ///
+  /// The share that ``releaseInputClaim(locationID:)`` leaves still blocks a client that seizes,
+  /// and a suspended controller needs no input.
+  @MainActor
+  package func closeDeviceHandles(locationID: UInt32) -> PhysicalHIDClaimResult {
+    let seized = seizeLock.withLock { seizedByLocation.removeValue(forKey: locationID) ?? [] }
+    let sharedOpens = unsafe seizeLock.withLock { () -> [SharedOpenDevice] in
+      let deviceIDs = connectionsByDeviceID.filter { $0.value.ioKitLocationID == locationID }.keys
+      return unsafe deviceIDs.compactMap { unsafe sharedOpenByDeviceID.removeValue(forKey: $0) }
+    }
+    guard unsafe !sharedOpens.isEmpty else { return .unavailable }
+    var closed: [ClosedDevice] = []
+    for unsafe sharedOpen in unsafe sharedOpens {
+      let device = unsafe sharedOpen.device
+      let wasSeized = seized.contains { CFEqual($0, device) }
+      if wasSeized { IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeSeizeDevice)) }
+      unsafe closeSharedOpen(sharedOpen)
+      closed.append(ClosedDevice(device: device, seized: wasSeized))
+    }
+    seizeLock.withLock { closedByLocation[locationID] = closed }
+    return .released
+  }
+
+  /// Opens again the devices ``closeDeviceHandles(locationID:)`` closed, seizing the ones that were
+  /// seized.
+  ///
+  /// A device whose open fails stays closed for the next call, and the failure is the result.
+  @MainActor
+  package func reopenDeviceHandles(locationID: UInt32) -> PhysicalHIDClaimResult {
+    guard let closed = seizeLock.withLock({ closedByLocation.removeValue(forKey: locationID) })
+    else { return .unavailable }
+    var stillClosed: [ClosedDevice] = []
+    var lastFailure: IOReturn?
+    for entry in closed {
+      let deviceID = trackingID(for: entry.device)
+      let claim = HIDInputClaim.admit(
+        port: HIDDeviceOpenPort(device: entry.device),
+        seize: entry.seized
+      )
+      if entry.seized {
+        record(claim, device: entry.device, deviceID: deviceID, locationID: locationID)
+      }
+      if claim.inputResult == kIOReturnSuccess {
+        attachInput(entry.device, deviceID: deviceID)
+      } else {
+        stillClosed.append(entry)
+        lastFailure = claim.inputResult
+      }
+    }
+    guard let lastFailure else { return .reacquired }
+    seizeLock.withLock { closedByLocation[locationID] = stillClosed }
+    return .failed(.init(ioReturn: lastFailure))
+  }
+
   /// Re-runs the seize of tracked non-native devices at a location whose earlier seize was
   /// refused or failed, attaches the input of a device that had no shared open, and yields
   /// `.ownershipChanged` when the location's ownership changes.
@@ -268,8 +332,9 @@ extension HIDDeviceStream {
     guard !eventAdapter.hasNativeDevice(locationID: locationID) else { return }
     let (tracked, sharedOpenIDs) = seizeLock.withLock {
       () -> ([UInt64: HIDDeviceConnection], Set<UInt64>) in
-      guard releasedByLocation[locationID]?.isEmpty ?? true else { return ([:], []) }
-      return (connectionsByDeviceID, Set(sharedOpenByDeviceID.keys))
+      guard releasedByLocation[locationID]?.isEmpty ?? true, closedByLocation[locationID] == nil
+      else { return ([:], []) }
+      return unsafe (connectionsByDeviceID, Set(sharedOpenByDeviceID.keys))
     }
     let candidateIDs = Self.inputClaimRetryCandidates(tracked: tracked, locationID: locationID) {
       eventAdapter.ownership(deviceID: $0)
@@ -339,7 +404,7 @@ extension HIDDeviceStream {
       let reportLength = bytes.count
       let result = bytes.withUnsafeMutableBufferPointer { pointer in
         guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-        return IOHIDDeviceSetReport(
+        return unsafe IOHIDDeviceSetReport(
           device,
           type,
           CFIndex(report.reportID),
@@ -352,7 +417,7 @@ extension HIDDeviceStream {
     }
     print(
       "[HIDDeviceStream] \(label) report failed for loc=\(locationID)"
-        + " report=0x\(String(format: "%02X", report.reportID)) kr=\(lastResult)"
+        + " report=0x\(unsafe String(format: "%02X", report.reportID)) kr=\(lastResult)"
     )
     return .failed(.init(ioReturn: lastResult))
   }
@@ -401,7 +466,7 @@ extension HIDDeviceStream {
     var reportLength = request.length
     let result = bytes.withUnsafeMutableBufferPointer { pointer in
       guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDDeviceGetReport(
+      return unsafe IOHIDDeviceGetReport(
         device,
         kIOHIDReportTypeFeature,
         CFIndex(request.reportID),
@@ -426,12 +491,18 @@ extension HIDDeviceStream {
     let reportLength = bytes.count
     let result = bytes.withUnsafeMutableBufferPointer { pointer in
       guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-      return IOHIDDeviceSetReport(device, type, CFIndex(report.reportID), baseAddress, reportLength)
+      return unsafe IOHIDDeviceSetReport(
+        device,
+        type,
+        CFIndex(report.reportID),
+        baseAddress,
+        reportLength
+      )
     }
     guard result == kIOReturnSuccess else {
       print(
         "[HIDDeviceStream] \(label) report failed for exact connection "
-          + "report=0x\(String(format: "%02X", report.reportID)) kr=\(result)"
+          + "report=0x\(unsafe String(format: "%02X", report.reportID)) kr=\(result)"
       )
       return .failed(.init(ioReturn: result))
     }
@@ -457,7 +528,7 @@ extension HIDDeviceStream {
         // needs the seize.
         if connection.physicalDevice.nativePassThrough {
           let permitted = reads ? type == kIOHIDReportTypeFeature : type == kIOHIDReportTypeOutput
-          return permitted && sharedOpenByDeviceID[deviceID] != nil
+          return unsafe permitted && sharedOpenByDeviceID[deviceID] != nil
         }
         return seizedByLocation[connection.ioKitLocationID]?.contains(where: {
           CFEqual($0, device)

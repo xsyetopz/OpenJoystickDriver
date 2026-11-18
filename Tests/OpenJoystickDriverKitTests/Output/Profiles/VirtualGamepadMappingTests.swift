@@ -1,11 +1,12 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
 
 struct VirtualGamepadMappingTests {
   @Test
-  func theGenericPersonaUsesTheCRCLessGUIDAndThePublishedButtonUsages() throws {
+  func genericPersonaUsesCRCLessGUIDAndPublishedButtonUsages() throws {
     let mapping = try VirtualHIDProfileID.generic.gamepadMapping()
     #expect(mapping.guid == "03000000091200004f4a000008040000")
     #expect(
@@ -19,7 +20,7 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test
-  func theSDLCompatiblePersonaReadsTheDpadAsButtonsAndBindsBothYAxesInverted() throws {
+  func sdlCompatiblePersonaReadsDpadAsButtonsAndBindsBothYAxesInverted() throws {
     let mapping = try VirtualHIDProfileID.sdlCompatible.gamepadMapping()
     #expect(mapping.guid == "030000005e0400000c0b000000000000")
     #expect(mapping.sdlMapping.contains("dpup:b"))
@@ -30,15 +31,13 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func theW3CDescriptionFollowsTheCrosswalk(id: VirtualHIDProfileID) throws {
+  func w3cDescriptionFollowsCrosswalk(id: VirtualHIDProfileID) throws {
     let mapping = try id.gamepadMapping()
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
-      .appendingPathComponent("Resources/Vocabulary/crosswalk.json")
-    let root = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Resources/Vocabulary/crosswalk.plist")
+    let root = try PropertyListFixture.dictionary(at: url)
     let controls = try #require(root["controls"] as? [String: [String: Any]])
     var buttons: [Int: String] = [:]
     var axes: [Int: String] = [:]
@@ -59,14 +58,12 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test
-  func everyNameInTheTableMatchesTheCrosswalk() throws {
+  func everyNameInTableMatchesCrosswalk() throws {
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
-      .appendingPathComponent("Resources/Vocabulary/crosswalk.json")
-    let root = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Resources/Vocabulary/crosswalk.plist")
+    let root = try PropertyListFixture.dictionary(at: url)
     let controls = try #require(root["controls"] as? [String: [String: Any]])
     // SDL3's element names as the crosswalk spells them, and the field a mapping string writes.
     let mappingKeys = [
@@ -91,7 +88,7 @@ struct VirtualGamepadMappingTests {
   }
 
   @Test
-  func thePersonaDefinitionStatesWhetherSDLWorksWithItsDefaultHints() throws {
+  func personaDefinitionStatesWhetherSDLWorksWithItsDefaultHints() throws {
     #expect(VirtualHIDProfileID.generic.worksWithDefaultSDLHints)
     #expect(VirtualHIDProfileID.sdlCompatible.worksWithDefaultSDLHints)
     for id in VirtualHIDProfileID.allCases {

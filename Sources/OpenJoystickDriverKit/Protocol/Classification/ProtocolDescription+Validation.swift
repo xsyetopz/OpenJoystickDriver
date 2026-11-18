@@ -53,15 +53,21 @@ extension ProtocolDescription {
   /// Why the defaults name something the family's driver does not read, or nil.
   ///
   /// The rule reads only this description, so it holds while the bundle is still loading.
-  var scopeViolation: String? {
+  var scopeViolation: ControllerRecordProblem? {
     if inputLayouts != nil, !recordSections.contains(.input) {
-      return "an input layout applies only to a family that reads one"
+      return .rule(
+        "error.E5007.protocolDescription.inputLayout",
+        "an input layout applies only to a family that reads one"
+      )
     }
     if hidUsageMap != nil || !hidUsageShapes.isEmpty, !recordSections.contains(.hidUsageMap) {
-      return "a HID usage map applies only to a family that reads one"
+      return .rule(
+        "error.E5007.protocolDescription.usageMap",
+        "a HID usage map applies only to a family that reads one"
+      )
     }
     if rumbleTemplate != nil || !variantRumble.isEmpty, !recordSections.contains(.rumble) {
-      return "rumble templates require a driver that encodes them"
+      return RumbleOutputTemplate.driverProblem
     }
     if let violation = rumbleTargetViolation { return violation }
     if keepAlive != nil,
@@ -72,54 +78,101 @@ extension ProtocolDescription {
       return RumbleOutputTemplate.resendWithFamilyKeepAliveProblem
     }
     if receiverPowerOff != nil, family != .xboxXUSB {
-      return "receiverPowerOff applies only to XboxXUSB"
+      return .rule(
+        "error.E5007.protocolDescription.receiverPowerOff",
+        "receiverPowerOff applies only to XboxXUSB"
+      )
     }
     if !startupWrites.isEmpty, rawUSB == .always {
-      return "HID startup writes apply only to HID controllers"
+      return .rule(
+        "error.E5007.session.hidStartup",
+        "HID startup writes apply only to HID controllers"
+      )
     }
     if sessionKeys != family.generalSessionFields {
       let read = family.generalSessionFields.map(\.rawValue).sorted()
       return read.isEmpty
-        ? "\(family.rawValue) reads no session keys"
-        : "\(family.rawValue) reads the session keys \(read.joined(separator: ", "))"
+        ? .rule(
+          "error.E5007.protocolDescription.sessionKeysNone",
+          [family.rawValue],
+          "\(family.rawValue) reads no session keys"
+        )
+        : .rule(
+          "error.E5007.protocolDescription.sessionKeysRead",
+          [family.rawValue, read.joined(separator: ", ")],
+          "\(family.rawValue) reads the session keys \(read.joined(separator: ", "))"
+        )
     }
     if let unlisted = presentGeneralSessionFields.subtracting(sessionKeys).map(\.rawValue).min() {
-      return "defaults.session sets \(unlisted), which sessionKeys does not list"
+      return .rule(
+        "error.E5007.protocolDescription.sessionKeyUnlisted",
+        [unlisted],
+        "defaults.session sets \(unlisted), which sessionKeys does not list"
+      )
     }
     if let violation = keepAliveViolation { return violation }
     if (activation + deactivation).contains(where: {
       $0.transport.map { !writeTransports.contains($0) } ?? false
     }) {
-      return "activation and deactivation name only a transport writeTransports lists"
+      return .rule(
+        "error.E5007.protocolDescription.activationTransport",
+        "activation and deactivation name only a transport writeTransports lists"
+      )
     }
     if presentSessionFields != family.sessionFields {
       let unread = presentSessionFields.subtracting(family.sessionFields).sorted()
       let missing = family.sessionFields.subtracting(presentSessionFields).sorted()
       return unread.isEmpty
-        ? "\(family.rawValue) must set \(missing.joined(separator: ", "))"
-        : "\(family.rawValue) does not read \(unread.joined(separator: ", "))"
+        ? .rule(
+          "error.E5007.protocolDescription.sessionMissing",
+          [family.rawValue, missing.joined(separator: ", ")],
+          "\(family.rawValue) must set \(missing.joined(separator: ", "))"
+        )
+        : .rule(
+          "error.E5007.protocolDescription.sessionUnread",
+          [family.rawValue, unread.joined(separator: ", ")],
+          "\(family.rawValue) does not read \(unread.joined(separator: ", "))"
+        )
     }
     if let namedPackets, !namedPackets.allIDs(startWith: "\(family.rawValue)/") {
-      return "each named packet id starts with \(family.rawValue)/"
+      return .rule(
+        "error.E5007.protocolDescription.namedPacketPrefix",
+        [family.rawValue],
+        "each named packet id starts with \(family.rawValue)/"
+      )
     }
     if rawUSB == .always, !tuningKeys.isEmpty {
-      return "a family that is always raw USB reads its tuning through rawUSBTuningKeys"
+      return .rule(
+        "error.E5007.protocolDescription.tuningRawUSB",
+        "a family that is always raw USB reads its tuning through rawUSBTuningKeys"
+      )
     }
     if rawUSB == .never, !rawUSBTuningKeys.isEmpty {
-      return "rawUSBTuningKeys apply only to a family with a raw-USB variant"
+      return .rule(
+        "error.E5007.protocolDescription.rawUSBTuningKeys",
+        "rawUSBTuningKeys apply only to a family with a raw-USB variant"
+      )
     }
     if let tuning {
       let scope = tuningKeys.union(rawUSBTuningKeys).union(ControllerTuning.Key.alwaysRead)
       for key in ControllerTuning.Key.allCases
       where tuning.setKeys.contains(key) && !scope.contains(key) {
-        return "\(key) is not read by the \(family.rawValue) driver"
+        return .rule(
+          "error.E5007.tuning.keyNotRead",
+          [key.rawValue, family.rawValue],
+          "\(key) is not read by the \(family.rawValue) driver"
+        )
       }
     }
     for (variant, tuning) in variantTuning.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
       let scope = tuningScope(variant: variant)
       for key in ControllerTuning.Key.allCases
       where tuning.setKeys.contains(key) && !scope.contains(key) {
-        return "\(key) is not read by the \(family.rawValue):\(variant.rawValue) driver"
+        return .rule(
+          "error.E5007.tuning.keyNotRead",
+          [key.rawValue, "\(family.rawValue):\(variant.rawValue)"],
+          "\(key) is not read by the \(family.rawValue):\(variant.rawValue) driver"
+        )
       }
     }
     return nil
@@ -138,9 +191,11 @@ extension ProtocolDescription {
   ///
   /// The flat template is checked against each variant of the family that has no template of its
   /// own; a family with no variants has the one unnamed variant.
-  var rumbleTargetViolation: String? {
-    let mismatch =
+  var rumbleTargetViolation: ControllerRecordProblem? {
+    let mismatch = ControllerRecordProblem.rule(
+      "error.E5007.rumble.templateKind",
       "a raw-USB variant's rumble template is a usb packet, and a HID variant's is a HID report"
+    )
     if let rumbleTemplate {
       let flatVariants: [PhysicalProtocolVariantID?] =
         variants.isEmpty ? [nil] : variants.map(Optional.some)
@@ -156,19 +211,29 @@ extension ProtocolDescription {
   }
 
   /// Why the keep-alive names something the family's driver does not read, or nil.
-  var keepAliveViolation: String? {
+  var keepAliveViolation: ControllerRecordProblem? {
     guard let keepAlive else { return nil }
     let reads = tuningKeys.union(rawUSBTuningKeys)
     for write in keepAlive.writes {
       switch write.payload {
       case .hid where rawUSB == .always:
-        return "a HID keep-alive write applies only to HID controllers"
+        return .rule(
+          "error.E5007.protocolDescription.keepAliveHID",
+          "a HID keep-alive write applies only to HID controllers"
+        )
       case .usb where rawUSB == .never:
-        return "a raw-USB keep-alive write applies only to a family with a raw-USB variant"
+        return .rule(
+          "error.E5007.protocolDescription.keepAliveUSB",
+          "a raw-USB keep-alive write applies only to a family with a raw-USB variant"
+        )
       default: break
       }
       if let key = write.resendTuning, !reads.contains(key) || tuning?.text(of: key) == nil {
-        return "resendTuning names \(key.rawValue), which the family must read and default"
+        return .rule(
+          "error.E5007.protocolDescription.keepAliveResendTuning",
+          [key.rawValue],
+          "resendTuning names \(key.rawValue), which the family must read and default"
+        )
       }
     }
     return nil

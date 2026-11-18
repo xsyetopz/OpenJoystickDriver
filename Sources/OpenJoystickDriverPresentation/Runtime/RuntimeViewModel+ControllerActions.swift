@@ -95,6 +95,38 @@ extension RuntimeViewModel {
     } catch { return RuntimePresentation.userFacingError(error) }
   }
 
+  /// Handles the choice of `profile` in `scope` in the Virtual HID profile pop-up: it sends the
+  /// change when it would change something, and otherwise keeps in
+  /// ``virtualHIDProfileOverrideStates`` the notice that says why nothing was sent.
+  ///
+  /// - Parameters:
+  ///   - profile: The kind chosen, or nil for Automatic.
+  ///   - scope: The scope the person chose.
+  ///   - device: The controller.
+  func chooseVirtualHIDProfile(
+    _ profile: VirtualHIDProfileID?,
+    scope: VirtualHIDProfileScopeChoice,
+    for device: ApplicationServiceDeviceDescription
+  ) async {
+    let model = RuntimeControllerModel(device)
+    guard virtualHIDProfileOverrideStates[model]?.inFlight != true else { return }
+    switch VirtualHIDProfileOverrideDecision.decide(profile: profile, scope: scope, for: device) {
+    case .send:
+      await setVirtualHIDProfileOverride(profile, for: device, scope: scope.scope)
+    case .unchanged:
+      virtualHIDProfileOverrideStates[model] = RuntimeVirtualHIDProfileOverrideState(
+        notice: OJDLocalized.string("ui.virtualProfile.unchanged")
+      )
+    case .otherScopeHolds(let holder):
+      virtualHIDProfileOverrideStates[model] = RuntimeVirtualHIDProfileOverrideState(
+        notice: OJDLocalized.string(
+          holder == .unit
+            ? "ui.virtualProfile.otherScopeHolds.unit" : "ui.virtualProfile.otherScopeHolds.model"
+        )
+      )
+    }
+  }
+
   /// Stores `profile` as the virtual HID profile override of the model of `device`, or of `device`
   /// alone for the unit scope.
   ///
@@ -153,17 +185,20 @@ extension RuntimeViewModel {
   /// Sets who serves the model of `device` to `server`: macOS natively, or OpenJoystickDriver as a
   /// virtual controller.
   ///
-  /// A refusal shows in the controller's detail, with the service's detail text for a record that
-  /// is invalid or cannot be written.
+  /// A refusal is kept in ``controllerServerFailures`` for the picker to show below itself, with
+  /// the service's detail text for a record that is invalid or cannot be written. A choice made
+  /// while the model's previous one runs is ignored.
   func setControllerServer(
     _ server: ControllerServer,
     for device: ApplicationServiceDeviceDescription
   ) async {
     let model = RuntimeControllerModel(device)
+    guard pendingControllerServers[model] == nil else { return }
     pendingControllerServers[model] = server
+    controllerServerFailures[model] = nil
     defer { pendingControllerServers[model] = nil }
     var accepted = false
-    await performControllerAction(device) {
+    controllerServerFailures[model] = await runControllerAction {
       let result = try await gateway.setControllerServer(
         model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
         server: server
@@ -202,6 +237,17 @@ extension RuntimeViewModel {
       return RuntimePresentation.controllerTuningFailure(failure, detail: result.detail)
     }
     return accepted
+  }
+
+  /// Whether the service is applying a server choice for the model of `device`.
+  func isControllerServerRequestRunning(for device: ApplicationServiceDeviceDescription) -> Bool {
+    pendingControllerServers[RuntimeControllerModel(device)] != nil
+  }
+
+  // The service refuses every choice for a model that no controller record describes
+  // (`noRecord`); its other refusals never reach a controller that shows the picker.
+  func controllerServerUnavailableReason(hasRecord: Bool) -> String? {
+    hasRecord ? nil : OJDLocalized.string("ui.controllers.server.noRecord")
   }
 
   /// The server the picker shows for `device`: the pending choice, or the record's server.
@@ -287,11 +333,16 @@ extension RuntimeViewModel {
     _ action: () async throws -> String?
   ) async {
     controllerActionFailures[device.sessionToken.rawValue] = nil
+    controllerActionFailures[device.sessionToken.rawValue] = await runControllerAction(action)
+  }
+
+  /// Runs `action`, refreshes the inventory, and returns the failure `action` returned or threw.
+  private func runControllerAction(_ action: () async throws -> String?) async -> String? {
     var failure: String?
     do { failure = try await action() } catch {
       failure = RuntimePresentation.userFacingError(error)
     }
     await refreshControllerInventory()
-    controllerActionFailures[device.sessionToken.rawValue] = failure
+    return failure
   }
 }

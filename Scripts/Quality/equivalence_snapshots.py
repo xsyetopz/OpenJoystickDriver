@@ -1,5 +1,3 @@
-"""Compare the tree with, or rewrite, the equivalence snapshots in Tests/EquivalenceSnapshots."""
-
 from __future__ import annotations
 
 import difflib
@@ -9,15 +7,12 @@ import sys
 import tempfile
 from pathlib import Path
 
-from ..Command.execution import swift_command
-
 ROOT = Path(__file__).resolve().parents[2]
 SNAPSHOTS = ROOT / "Tests" / "EquivalenceSnapshots"
 TEST_FILTER = "EquivalenceSnapshot"
 
 
 def parse_sections(text: str) -> dict[str, str]:
-    """Split snapshot text into `## title` sections keyed by title."""
     sections: dict[str, list[str]] = {}
     title: str | None = None
     for line in text.splitlines():
@@ -30,7 +25,6 @@ def parse_sections(text: str) -> dict[str, str]:
 
 
 def parse_header(text: str) -> str:
-    """Return the text before the first `## ` section line."""
     lines: list[str] = []
     for line in text.splitlines():
         if line.startswith("## "):
@@ -40,7 +34,6 @@ def parse_header(text: str) -> str:
 
 
 def diff_sections(expected: str, actual: str) -> list[str]:
-    """Describe the records that were changed, added, or removed."""
     before = parse_sections(expected)
     after = parse_sections(actual)
     lines: list[str] = []
@@ -62,7 +55,6 @@ def diff_sections(expected: str, actual: str) -> list[str]:
 
 
 def changed_lines(expected: str, actual: str) -> list[str]:
-    """The removed (`-`) and added (`+`) lines between two texts."""
     old = expected.splitlines()
     new = actual.splitlines()
     lines: list[str] = []
@@ -76,7 +68,6 @@ def changed_lines(expected: str, actual: str) -> list[str]:
 
 
 def diff_document(expected: str, actual: str) -> list[str]:
-    """Describe the lines that changed in a JSON snapshot, which has no `## ` sections."""
     if expected == actual:
         return []
     return ["  changed document", *changed_lines(expected, actual)]
@@ -86,7 +77,6 @@ SNAPSHOT_PATTERNS = ("*.txt", "*.json")
 
 
 def compare(snapshots: Path, actual: Path) -> dict[str, list[str]]:
-    """Return the diff lines per snapshot file name; empty when nothing differs."""
     names = {
         path.name
         for directory in (snapshots, actual)
@@ -114,7 +104,7 @@ def run_tests(extra: dict[str, str]) -> int:
     environment = os.environ.copy()
     environment.update(extra)
     return subprocess.run(
-        swift_command(["test", "--filter", TEST_FILTER]),
+        [str(ROOT / "Scripts/with-env.sh"), "swift", "test", "--filter", TEST_FILTER],
         cwd=ROOT,
         env=environment,
         check=False,
@@ -140,7 +130,7 @@ def check() -> int:
     for name, lines in differences.items():
         print(f"{name}:")
         print("\n".join(lines))
-    print(f"{count} difference(s). Run ./Scripts/ojd snapshots write to accept them.")
+    print(f"{count} difference(s). Run just snapshots-write to accept them.")
     return 1
 
 

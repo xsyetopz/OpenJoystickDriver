@@ -11,7 +11,7 @@ struct EndpointFeedTests {
   static let tool = EndpointFixture.tool
 
   @Test
-  func aFrameReachesTheVirtualGamepad() async throws {
+  func frameReachesVirtualGamepad() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await feeding(server)
@@ -30,7 +30,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func theHostsRumbleArrivesAsALine() async throws {
+  func hostsRumbleArrivesAsLine() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await feeding(server)
@@ -51,7 +51,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func closingTheClientRemovesTheGamepad() async throws {
+  func closingClientRemovesGamepad() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
     try await withEndpointServer(feeds: feeds) { server, _ in
@@ -66,7 +66,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func closingTheClientWhileTheQueueIsFullRemovesTheGamepad() async throws {
+  func closingClientWhileQueueIsFullRemovesGamepad() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
     try await withEndpointServer(feeds: feeds) { server, _ in
@@ -88,7 +88,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func revokingControlWhileTheGamepadStartsEndsTheFeed() async throws {
+  func revokingControlWhileGamepadStartsEndsFeed() async throws {
     let factory = FakeFeedFactory()
     factory.hangsActivation = true
     let feeds = factory.registry(activationTimeout: 60)
@@ -108,7 +108,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func closingTheClientWhileTheGamepadStartsEndsTheFeed() async throws {
+  func closingClientWhileGamepadStartsEndsFeed() async throws {
     let factory = FakeFeedFactory()
     factory.hangsActivation = true
     let feeds = factory.registry(activationTimeout: 60)
@@ -129,7 +129,7 @@ struct EndpointFeedTests {
 
   /// The client neither reads nor writes, so only the pump sees the closing connection.
   @Test
-  func aClosingConnectionRemovesTheGamepadWhileTheReaderAndWriterBlock() async throws {
+  func closingConnectionRemovesGamepadWhileReaderAndWriterBlock() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
     try await withEndpointServer(feeds: feeds) { server, _ in
@@ -156,7 +156,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func revokingControlEndsTheFeed() async throws {
+  func revokingControlEndsFeed() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
     try await withEndpointServer(feeds: feeds) { server, _ in
@@ -173,7 +173,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aFeedWithoutFrameLinesClosesAfterTheIdleTimeout() async throws {
+  func feedWithoutFrameLinesClosesAfterIdleTimeout() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.3, clock: time.clock)
@@ -201,7 +201,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aFeedThatKeepsSendingFramesOutlivesTheIdleTimeout() async throws {
+  func feedThatKeepsSendingFramesOutlivesIdleTimeout() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.5, clock: time.clock)
@@ -223,7 +223,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func keepAliveLinesHoldAnIdleFeedOpenPastTheIdleTimeout() async throws {
+  func keepAliveLinesHoldIdleFeedOpenPastIdleTimeout() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.5, clock: time.clock)
@@ -259,7 +259,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func anIdleFeedWithoutKeepAliveLinesClosesWithE1008() async throws {
+  func idleFeedWithoutKeepAliveLinesClosesWithE1008() async throws {
     let factory = FakeFeedFactory()
     let time = ManualVirtualFeedClock()
     let feeds = factory.registry(idleTimeout: 0.5, clock: time.clock)
@@ -282,7 +282,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aKeepAliveWithAnotherMemberIsRefused() async throws {
+  func keepAliveWithAnotherMemberIsRefused() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await feeding(server)
@@ -298,7 +298,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aFifthFeedIsRefused() async throws {
+  func fifthFeedIsRefused() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       var clients: [EndpointTestClient] = []
@@ -316,8 +316,41 @@ struct EndpointFeedTests {
     }
   }
 
+  @Test(arguments: VirtualHIDProfileID.allCases)
+  func everyPersonaOpensFeedSession(persona: VirtualHIDProfileID) async throws {
+    let factory = FakeFeedFactory()
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await welcomed(server)
+      await client.send(clientLine("FeedRequest", #","as":"\#(persona.rawValue)""#))
+
+      let line = try #require(await client.readLine())
+      #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
+      let object = try client.object(line)
+      #expect(object["kind"] as? String == "FeedSession")
+      #expect(object["as"] as? String == persona.rawValue)
+      #expect(factory.devices.first?.profile == persona)
+    }
+  }
+
+  @Test
+  func refusedPersonaNamesItAndListsAcceptedOnes() async throws {
+    let factory = FakeFeedFactory()
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await welcomed(server)
+      await client.send(clientLine("FeedRequest", #","as":"quokka""#))
+
+      let object = try await client.readObject()
+      let message = try #require(object["message"] as? String)
+      #expect(object["code"] as? String == "E1003")
+      #expect(message.contains("quokka"))
+      for persona in VirtualHIDProfileID.allCases {
+        #expect(message.contains(persona.rawValue))
+      }
+    }
+  }
+
   @Test(arguments: ["NotAPersona", "quokka"])
-  func anUnknownProfileIsInvalid(profile: String) async throws {
+  func unknownProfileIsInvalid(profile: String) async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       let client = try await welcomed(server)
@@ -341,14 +374,14 @@ struct EndpointFeedTests {
     (#"{"buttons":["South"]}"#, "E1011"),
     (#"{"apiVersion":"openjoystickdriver.io/v2","kind":"Frame","buttons":["South"]}"#, "E1009"),
     (#"{"kind":"Frame","buttons":["South"]}"#, "E1011"),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","buttons":["South"]}"#, "E1011"),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","buttons":["South"]}"#, "E1011"),
     (#"{"apiVersion":null,"kind":"Frame","buttons":["South"]}"#, "E1011"),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha2","kind":null,"buttons":["South"]}"#, "E1011"),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":null,"buttons":["South"]}"#, "E1011"),
     (#"{"apiVersion":2,"kind":"Frame","buttons":["South"]}"#, "E1011"),
     (clientLine("Greeting", ""), "E1010"),
     ("nonsense", "E1003"),
   ])
-  func aLineThatIsNotAFrameEndsTheFeed(line: String, code: String) async throws {
+  func lineThatIsNotFrameEndsFeed(line: String, code: String) async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
     try await withEndpointServer(feeds: feeds) { server, _ in
@@ -372,7 +405,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aSessionWithoutControlCannotFeed() async throws {
+  func sessionWithoutControlCannotFeed() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       try server.setEnabled(true)
@@ -388,7 +421,7 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func anOriginlessTokenFeedsOverTheWebSocket() async throws {
+  func originlessTokenFeedsOverWebSocket() async throws {
     let factory = FakeFeedFactory()
     try await withEndpointServer(feeds: factory.registry()) { server, _ in
       try server.setWebEnabled(true, port: nil)
@@ -462,7 +495,7 @@ private final class BlockedTransport: EndpointTransport, @unchecked Sendable {
     return .end
   }
 
-  func writeMessage(_ data: Data) -> Bool {
+  func writeMessage(_: Data) -> Bool {
     waitForRelease()
     return false
   }

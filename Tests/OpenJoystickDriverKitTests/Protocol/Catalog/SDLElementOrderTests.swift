@@ -16,7 +16,7 @@ struct SDLElementOrderTests {
   }
 
   @Test
-  func hatsAreTheHatSwitchUsage() {
+  func hatsAreHatSwitchUsage() {
     let lists = SDLElementLists(
       elements: [sdlElement(1, 0x39, order: 0, range: 0...7), sdlElement(1, 0x39, order: 1)]
     )
@@ -47,7 +47,7 @@ struct SDLElementOrderTests {
   }
 
   @Test
-  func arrivalOrderComesFromTheFieldNotTheArrayPosition() {
+  func arrivalOrderComesFromFieldNotArrayPosition() {
     let lists = SDLElementLists(
       elements: [sdlElement(9, 1, cookie: 1, order: 1), sdlElement(9, 1, cookie: 2, order: 0)]
     )

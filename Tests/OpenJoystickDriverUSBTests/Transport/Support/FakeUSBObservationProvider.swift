@@ -12,12 +12,12 @@ actor FakeUSBObservationProvider: USBPhysicalDeviceObservationProvider {
     self.observations = observations
   }
 
-  func devices() throws -> [USBTransportDevice] { devicesValue }
+  func devices() -> [USBTransportDevice] { devicesValue }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) throws -> any USBTransportSession { throw USBTransportError.notSupported }
 
-  func physicalDeviceObservations() throws -> [PhysicalDevice] { observations }
+  func physicalDeviceObservations() -> [PhysicalDevice] { observations }
 }

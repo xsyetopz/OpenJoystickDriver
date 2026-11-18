@@ -30,7 +30,7 @@ struct AppleGameControllerSyntheticHIDTests {
   }
 
   @Test
-  func signatureClassificationDoesNotOpenADevice() {
+  func signatureClassificationDoesNotOpenDevice() {
     #expect(AppleGameControllerSyntheticHID.ioClassName == "AppleGCSyntheticDevice")
     #expect(AppleGameControllerSyntheticHID.xbox360DeviceType == "Xbox360Controller")
     #expect(AppleGameControllerSyntheticHID.isSyntheticDevice(className: "AppleGCSyntheticDevice"))

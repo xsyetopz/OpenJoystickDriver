@@ -4,15 +4,9 @@ import Foundation
 /// the driver default applies, which the driver picks itself.
 public struct ControllerTuningValue: Equatable, Sendable {
   /// The tuning key.
-  ///
-  /// The tuning key. The value of the key; nil when no layer sets it.
   public let key: ControllerTuning.Key
-  /// The layer that sets the value.
-  ///
   /// The value of the key; nil when no layer sets it.
   public let value: Double?
-  /// Creates a value of a tuning key from the layer that sets it.
-  ///
   /// The layer that sets the value.
   public let layer: ControllerRecordLayer
 
@@ -48,7 +42,7 @@ extension ControllerRecord {
   public static let routeServerSource = "Route"
 
   /// The record layer that sets `server`: `Bundled`, `Package` or `User`; `Default` when no layer
-  /// sets it. `all.patch.json` holds only tuning, so `Global` never sets it.
+  /// sets it. `all.patch.plist` holds only tuning, so `Global` never sets it.
   public var serverSource: String {
     fieldLayers["server"]?.rawValue ?? Self.defaultServerSource
   }
@@ -60,7 +54,7 @@ extension ControllerRecord {
 }
 
 extension ControllerRecordSet {
-  /// Every tuning key with the value `all.patch.json` gives it, or the driver default.
+  /// Every tuning key with the value `all.patch.plist` gives it, or the driver default.
   public var defaultTuningValues: [ControllerTuningValue] {
     let tuning = defaults?.tuning ?? .none
     let layers = Dictionary(

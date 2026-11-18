@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -21,9 +22,9 @@ struct RawUSBModeTests {
     ].merging(extras) { $1 }
   }
 
-  private static func problem(_ record: [String: Any]) throws -> String? {
+  private static func problem(_ record: [String: Any]) -> String? {
     do {
-      _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+      _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       return nil
     } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
   }
@@ -41,7 +42,7 @@ struct RawUSBModeTests {
   private static var usbWrite: [String: Any] { ["bytes": "01 02"] }
 
   @Test
-  func aRawUSBRecordSelectsAnAlternativeModeFromItsInterfaceSignature() async throws {
+  func rawUSBRecordSelectsAlternativeModeFromItsInterfaceSignature() async throws {
     let signature: [String: Any] = [
       "interfaceClass": 255, "interfaceSubclass": 71, "interfaceProtocol": 208,
       "endpoints": [["direction": "In", "transferType": "Interrupt"]],
@@ -55,7 +56,7 @@ struct RawUSBModeTests {
       ),
     ])
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: document)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: document)).record
     ).profile
     let matching = PhysicalDevice(
       vendorID: Self.model.vendorID,
@@ -101,13 +102,13 @@ struct RawUSBModeTests {
 
   /// A raw-USB route has no feature-report read, so a mode that needs a probe never holds.
   @Test
-  func aRawUSBRouteNeverRunsAProbeMode() async throws {
+  func rawUSBRouteNeverRunsProbeMode() async throws {
     let probe: [String: Any] = ["report": 1, "length": 8, "expect": "Answers"]
     let document = Self.record(modes: [
       Self.gip("default"), Self.gip("probed", match: ["probes": [probe]]),
     ])
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: document)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: document)).record
     ).profile
     let selection = await ControllerModeSelector.select(
       from: profile,
@@ -120,7 +121,7 @@ struct RawUSBModeTests {
   }
 
   @Test
-  func aRawUSBModeKeepsAnInterfaceAndAHIDSessionOut() throws {
+  func rawUSBModeKeepsInterfaceAndHIDSessionOut() {
     let hidWrite: [String: Any] = [
       "report": ["kind": "Feature", "id": 1, "length": 2], "bytes": "02",
     ]
@@ -166,7 +167,7 @@ struct RawUSBModeTests {
       ),
     ]
     for (name, document, expected) in rejected {
-      let problem = try Self.problem(document)
+      let problem = Self.problem(document)
       #expect(
         problem?.contains(expected) == true,
         Comment(rawValue: "\(name): \(problem ?? "accepted")")
@@ -177,7 +178,7 @@ struct RawUSBModeTests {
   /// A record with one mode gets the same per-mode layout, template and capability checks as a
   /// record with several.
   @Test
-  func aSingleModeRecordObeysTheSamePerModeChecks() throws {
+  func singleModeRecordObeysSamePerModeChecks() {
     let layout: [String: Any] = [
       "layouts": [
         [
@@ -203,16 +204,16 @@ struct RawUSBModeTests {
     }
     let rejected: [(String, [String: Any])] = [
       ("report-layout without a layout", single("HIDReportLayout")),
-      ("layout under another family", single("SonySixaxis", ["input": layout])),
-      ("template under HIDDescriptor", single("HIDDescriptor", session: rumble)),
+      ("layout under HIDDescriptor", single("HIDDescriptor", ["input": layout])),
+      ("template under a family that does not encode it", single("SonySixaxis", session: rumble)),
       ("template under a raw-USB family", single("XboxGIP", session: rumble)),
     ]
     for (name, document) in rejected {
-      #expect(try Self.problem(document) != nil, Comment(rawValue: name))
+      #expect(Self.problem(document) != nil, Comment(rawValue: name))
     }
-    #expect(try Self.problem(single("HIDReportLayout", ["input": layout])) == nil)
+    #expect(Self.problem(single("HIDReportLayout", ["input": layout])) == nil)
     #expect(
-      try Self.problem(single("HIDReportLayout", ["input": layout], session: rumble)) == nil
+      Self.problem(single("HIDReportLayout", ["input": layout], session: rumble)) == nil
     )
   }
 }

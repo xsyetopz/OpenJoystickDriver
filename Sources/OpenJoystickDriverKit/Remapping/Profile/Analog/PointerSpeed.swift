@@ -23,9 +23,7 @@ public struct RemappingPointerSpeedDriver: Codable, Equatable, Hashable, Sendabl
 
   /// Profile document keys of a driver.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `type`.
     case type
-    /// The JSON key of `side`.
     case side
   }
 
@@ -68,13 +66,9 @@ public struct RemappingPointerSpeed: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a pointer speed.
   enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `driver`.
     case driver
-    /// The JSON key of `minScale`.
     case minScale
-    /// The JSON key of `maxScale`.
     case maxScale
-    /// The JSON key of `curve`.
     case curve
   }
 

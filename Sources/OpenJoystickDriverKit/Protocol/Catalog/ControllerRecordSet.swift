@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Where one part of an effective controller record comes from.
 ///
@@ -10,7 +10,7 @@ public enum ControllerRecordLayer: String, Codable, CaseIterable, Sendable {
   case bundled = "Bundled"
   /// A file of an installed mod package.
   case package = "Package"
-  /// The user's `all` patch, `all.patch.json`: the first patch of the user layer.
+  /// The user's `all` patch, `all.patch.plist`: the first patch of the user layer.
   case global = "Global"
   /// A file in the user's controller-record directory.
   case user = "User"
@@ -32,7 +32,7 @@ public struct ControllerRecord: Sendable {
   /// The controller model the record describes.
   public let model: ControllerModelID
   /// The merged record as a `controller.schema.json` document, in the record file text of
-  /// ``OrderedJSON/formatted()``.
+  /// ``OrderedJSON/plistData()``.
   public let text: String
   /// The layer of each top-level field of `text`, except `apiVersion`, `kind`, `vendorID`, and
   /// `productID`.
@@ -50,8 +50,21 @@ public struct ControllerRecord: Sendable {
   ///
   /// A user file over it wins, and ``layer`` names the user.
   public let packageFile: URL?
+  /// The model's USB product string, as the device reports it; nil when the record names none.
+  public let name: String?
+  /// The serial number that this model's firmware reports when it has none of its own; nil when
+  /// the record names none.
+  public let placeholderSerial: String?
+  /// The accepted community validations, oldest first as the record lists them; empty when the
+  /// record has none.
+  public let validations: [ControllerValidation]
   /// The protocol family.
   public let protocolID: PhysicalProtocolID
+  /// The latest validation of mode `modeID`; nil when the mode has none, so it is not community
+  /// verified.
+  public func validation(ofMode modeID: String) -> ControllerValidation? {
+    validations.last { $0.modeID == modeID }
+  }
   /// The protocol family's name, such as `XboxGIP`.
   public var family: String { protocolID.rawValue }
   /// The tuning keys this record's family reads.
@@ -71,8 +84,15 @@ public struct ControllerRecord: Sendable {
   /// Who serves the controller: `system` unless a layer sets `ojd`.
   public var server: ControllerServer { profile.server }
 
+  /// The server a layer states; nil when none does and detection decides.
+  public var statedServer: ControllerServer? { profile.statesServer ? profile.server : nil }
+
   /// The route the record asks for; nil leaves it to the family.
   public var route: ControllerRecordRoute? { profile.route }
+
+  /// Whether Apple's own driver extension holds the controller's USB interface, so only OJD's USB
+  /// extension can open it.
+  public var heldByAppleDriver: Bool { profile.heldByAppleDriver }
 
   /// Whether the record is a Switch 2 controller without `bluetoothLE`, which OJD reaches only
   /// over USB, because the Bluetooth LE central needs the vibration characteristic.
@@ -115,8 +135,8 @@ public struct ValidatedControllerRecord: Sendable {
   /// The selector of a patch file, or nil for a Controller file.
   public let selector: ControllerPatch.Selector?
 
-  /// The file name the record file must have in the user directory, such as `045e-028e.json` for a
-  /// Controller file and `045e-028e.patch.json` for a patch.
+  /// The file name the record file must have in the user directory, such as `045e-028e.plist` for a
+  /// Controller file and `045e-028e.patch.plist` for a patch.
   public var fileName: String {
     selector?.fileName ?? record.map { ControllerRecordSet.fileName(for: $0.model) } ?? ""
   }
@@ -135,11 +155,48 @@ public struct ControllerRecordProblem: Error, Equatable, Sendable, CustomStringC
   public let description: String
   /// The error code of the rejection.
   public let code: ErrorCode
+  /// The catalog key of the localized message for this rule, or nil when the rule has none yet.
+  ///
+  /// The message takes the file as `%1$@`, then ``arguments`` from `%2$@`.
+  public let key: String?
+  /// The values that the localized message names after the file, such as a file name.
+  public let arguments: [String]
 
   /// Creates a problem from an error code and a description.
   init(code: ErrorCode, _ description: String) {
     self.code = code
     self.description = description
+    self.key = nil
+    self.arguments = []
+  }
+
+  /// Creates a problem that has its own localized message under `key`.
+  ///
+  /// `description` is the English reason that stays stable for the repository tool.
+  init(code: ErrorCode, key: String, arguments: [String] = [], _ description: String) {
+    self.code = code
+    self.description = description
+    self.key = key
+    self.arguments = arguments
+  }
+
+  /// The decoding context that reports this problem at `codingPath`, keeping the problem so that
+  /// ``ControllerRecordSet/problemDescription(_:includingCode:document:localization:file:)`` can
+  /// read its localized message.
+  func context(at codingPath: [any CodingKey]) -> DecodingError.Context {
+    DecodingError.Context(
+      codingPath: codingPath,
+      debugDescription: description,
+      underlyingError: self
+    )
+  }
+
+  /// The message in `localization`, with `file` as the file it names, or ``description`` when the
+  /// rule has no localized message.
+  func localizedDescription(_ localization: Localization, file: String?) -> String {
+    guard let key else { return description }
+    let named = file ?? localization.string("error.E5007.thisFile")
+    return localization.formatted(key, arguments: [named] + arguments)
   }
 }
 
@@ -150,7 +207,7 @@ public struct ControllerRecordProblem: Error, Equatable, Sendable, CustomStringC
 public struct ControllerRecordSet: Sendable {
   /// The effective record of every model.
   public let records: [ControllerModelID: ControllerRecord]
-  /// Every `.json` file in the user directory except `all.patch.json`, in file-name order, then
+  /// Every `.plist` file in the user directory except `all.patch.plist`, in file-name order, then
   /// the record files of the installed packages in package-name order.
   public let userFiles: [ControllerRecordFile]
   /// The user's `all` patch, applied to every record; none for the bundled catalog alone.
@@ -197,17 +254,21 @@ public struct ControllerRecordSet: Sendable {
     }
   }
 
-  /// `vvvv-pppp.json`, the file name of a record for `model`.
+  /// `vvvv-pppp.plist`, the file name of a record for `model`.
   public static func fileName(for model: ControllerModelID) -> String {
-    String(format: "%04x-%04x.json", model.vendorID, model.productID)
+    unsafe String(format: "%04x-%04x.plist", model.vendorID, model.productID)
   }
 
   /// The bundled records, decoded once per process.
   private static func loadBundled() throws -> Self {
-    let urls = (Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? [])
+    let urls = (Bundle.module.urls(forResourcesWithExtension: "plist", subdirectory: nil) ?? [])
       .filter { isRecordFileName($0.lastPathComponent) }
     guard !urls.isEmpty else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "controller catalog is empty")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.record.catalogEmpty",
+        "controller catalog is empty"
+      )
     }
     let catalog = loadCatalog(urls)
     if let problem = catalog.problems.first { throw bundledFailure(problem) }
@@ -231,13 +292,16 @@ public struct ControllerRecordSet: Sendable {
   static func loadCatalog(
     _ urls: [URL]
   ) -> (records: [ControllerModelID: ControllerRecord], problems: [RepositoryProblem]) {
-    var records: [ControllerModelID: ControllerRecord] = [:]
-    var problems: [RepositoryProblem] = []
-    for url in urls.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+    var loaded: [ControllerModelID: ControllerRecord] = [:]
+    var files: [ControllerModelID: String] = [:]
+    var rejected: [RepositoryProblem] = []
+    let sortedURLs = urls.sorted {
+      ($0.lastPathComponent, $0.path) < ($1.lastPathComponent, $1.path)
+    }
+    for url in sortedURLs {
       do {
         let data = try RepositoryProblem.read(url)
-        try requireUTF8(data)
-        let document = try ordered(data)
+        let document = try ordered(data, file: url.lastPathComponent)
         let layers = Dictionary(
           uniqueKeysWithValues: fieldNames(of: document).map { ($0, ControllerRecordLayer.bundled) }
         )
@@ -245,27 +309,32 @@ public struct ControllerRecordSet: Sendable {
         guard url.lastPathComponent == fileName(for: record.model) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.record.fileName",
+            arguments: [fileName(for: record.model)],
             "filename must be \(fileName(for: record.model))"
           )
         }
-        guard records[record.model] == nil else {
+        if let first = files[record.model] {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
-            "duplicate controller identity"
+            key: "error.E5007.record.duplicateIdentity",
+            arguments: ["\(record.model)", first],
+            "duplicate controller identity \(record.model): \(first) already holds it"
           )
         }
-        records[record.model] = record
+        files[record.model] = url.path
+        loaded[record.model] = record
       } catch {
-        problems.append(RepositoryProblem(file: url.path, error: error, document: "record"))
+        rejected.append(RepositoryProblem(file: url.path, error: error, document: "record"))
       }
     }
-    return (records, problems)
+    return (loaded, rejected)
   }
 
-  /// Whether `name` is `vvvv-pppp.json` with hex digits.
+  /// Whether `name` is `vvvv-pppp.plist` with hex digits.
   private static func isRecordFileName(_ name: String) -> Bool {
-    guard name.count == 14, name.hasSuffix(".json") else { return false }
-    let stem = name.dropLast(5)
+    guard name.count == 15, name.hasSuffix(".plist") else { return false }
+    let stem = name.dropLast(6)
     guard stem[stem.index(stem.startIndex, offsetBy: 4)] == "-" else { return false }
     return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
   }
@@ -279,7 +348,12 @@ public struct ControllerRecordSet: Sendable {
   ) throws -> (model: ControllerModelID, document: ControllerRecordDocument) {
     let data: Data
     do { data = try JSONSerialization.data(withJSONObject: record.foundationValue()) } catch {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, error.localizedDescription)
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.record.unwritableValue",
+        arguments: [error.localizedDescription],
+        error.localizedDescription
+      )
     }
     let document = try JSONDecoder().decode(ControllerRecordDocument.self, from: data)
     guard let vendorID = UInt16(exactly: document.vendorID),
@@ -287,28 +361,18 @@ public struct ControllerRecordSet: Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.record.idRange",
         "vendorID must be 1...65535 and productID 0...65535"
       )
     }
     return (ControllerModelID(vendorID: vendorID, productID: productID), document)
   }
 
-  /// The members of `data` in file order.
+  /// The members of the XML property list `data`, in sorted order; `file` names it in a refusal.
   ///
-  /// Text that is not plain UTF-8, such as a file with a byte order mark or a UTF-16 file, and an
-  /// object that names a member twice are `invalidControllerRecord`.
-  static func ordered(_ data: Data) throws -> OrderedJSON {
-    do { return try OrderedJSON.parse(data) } catch {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "\(error)")
-    }
-  }
-
-  /// Refuses `data` unless it is plain UTF-8, with the problem ``ordered(_:)`` gives, before a
-  /// reader that accepts a byte order mark or UTF-16 reads it.
-  static func requireUTF8(_ data: Data) throws {
-    do { try OrderedJSON.requireUTF8(data) } catch {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "\(error)")
-    }
+  /// Any other form, and a `date` or `data` value, is `invalidDocumentForm`.
+  static func ordered(_ data: Data, file: String) throws -> OrderedJSON {
+    try OrderedJSON(document: data, file: file)
   }
 
   /// The record for `record`, whose ``ControllerRecord/text`` is `record` as it is: members in
@@ -324,7 +388,7 @@ public struct ControllerRecordSet: Sendable {
     let set = decoded.document.tuning.setKeys
     return ControllerRecord(
       model: decoded.model,
-      text: record.formatted(),
+      text: String(bytes: try record.plistData(), encoding: .utf8) ?? "",
       fieldLayers: layers,
       tuningLayers: tuningLayers
         ?? Dictionary(
@@ -332,6 +396,9 @@ public struct ControllerRecordSet: Sendable {
         ),
       userFile: userFile,
       packageFile: packageFile,
+      name: decoded.document.name,
+      placeholderSerial: decoded.document.placeholderSerial,
+      validations: decoded.document.validations,
       protocolID: decoded.document.protocolInfo.protocolID,
       tuningScope: Set(
         ControllerTuning.Key.allCases.filter { decoded.document.tuningScopeViolation($0) == nil }
@@ -365,6 +432,7 @@ public struct ControllerRecordSet: Sendable {
     switch error {
     case let problem as DocumentHeaderProblem: problem.code ?? .invalidControllerRecord
     case let problem as ControllerRecordProblem: problem.code
+    case let problem as DocumentCoderError: problem.code
     case is DecodingError, is OrderedJSON.Problem: .invalidControllerRecord
     default: nil
     }
@@ -375,10 +443,16 @@ public struct ControllerRecordSet: Sendable {
   /// A reason that has an error code leads with it, such as `E5001: `, because a reason is a plain
   /// string where it is listed. A caller that reports the code itself passes `includingCode:
   /// false`. A field path leads with `document`, the noun for the kind of file that was decoded.
+  ///
+  /// With `localization`, a rule that has its own message reads in that language and names `file`,
+  /// the file that failed, or "this record file" when `file` is nil. Without it the reason is the
+  /// English ``ControllerRecordProblem/description``.
   public static func problemDescription(
     _ error: any Error,
     includingCode: Bool = true,
-    document: String
+    document: String,
+    localization: Localization? = nil,
+    file: String? = nil
   ) -> String {
     func path(_ codingPath: [any CodingKey]) -> String {
       codingPath.map { $0.intValue.map { "[\($0)]" } ?? $0.stringValue }.joined(separator: ".")
@@ -387,10 +461,18 @@ public struct ControllerRecordSet: Sendable {
       codingPath.isEmpty ? text : "\(document).\(path(codingPath)): \(text)"
     }
     switch error {
-    case let problem as ControllerRecordProblem: return problem.description
+    case let problem as ControllerRecordProblem:
+      guard let localization else { return problem.description }
+      return problem.localizedDescription(localization, file: file)
+    case let problem as DocumentCoderError: return problem.description
     case let problem as DocumentHeaderProblem:
       return includingCode ? problem.description : problem.message
     case DecodingError.dataCorrupted(let context):
+      if let localization, let problem = context.underlyingError as? ControllerRecordProblem,
+        problem.key != nil
+      {
+        return problem.localizedDescription(localization, file: file)
+      }
       return located(context.codingPath, context.debugDescription)
     case DecodingError.keyNotFound(let key, let context):
       return located(context.codingPath, "missing field \(key.stringValue)")

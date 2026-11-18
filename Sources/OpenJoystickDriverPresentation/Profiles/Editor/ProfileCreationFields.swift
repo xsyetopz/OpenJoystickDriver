@@ -18,7 +18,8 @@ struct ProfileControllerChoice: Equatable, Identifiable {
 
   /// The identifier of the choice in the picker.
   let id: String
-  /// The controller's own name; nil for a model that is not connected.
+  /// The controller's own name: the connected controller's, else the USB product string its
+  /// record names; nil when neither has one.
   let name: String?
   /// The vendor ID.
   let vendorID: UInt16
@@ -37,10 +38,8 @@ struct ProfileControllerChoice: Equatable, Identifiable {
 
   /// The name in the picker: the controller's name, else the identifiers of the model, with the
   /// family unless the picker section names it.
-  ///
-  /// The catalog has no product names.
   var label: String {
-    if let name = OJDValue.reported(name).textOrNil { return name }
+    if let reported = OJDValue.reported(name).textOrNil { return reported }
     let identifiers = OJDValue.usbIdentifier(vendorID: vendorID, productID: productID).displayText
     if case .family = group { return identifiers }
     return familyName.map { "\($0) · \(identifiers)" } ?? identifiers
@@ -49,12 +48,15 @@ struct ProfileControllerChoice: Equatable, Identifiable {
   /// The connected controllers, then the models that none of them has: first those of `profiles`,
   /// then those of `catalog`, which maps each catalog model to its protocol family.
   ///
+  /// A model that is not connected takes its name from `names`, the record names by model.
+  ///
   /// Models are ordered by vendor and product; catalog models by family display name first, then by
   /// family, so each family's models stay together when two family names read alike.
   static func choices(
     devices: [ApplicationServiceDeviceDescription],
     profiles: [RemappingProfile],
-    catalog: [ControllerModelID: PhysicalProtocolID]
+    catalog: [ControllerModelID: PhysicalProtocolID],
+    names: [ControllerModelID: String] = [:]
   ) -> [Self] {
     let connected = devices.map {
       Self(
@@ -71,8 +73,8 @@ struct ProfileControllerChoice: Equatable, Identifiable {
       entries.sorted { $0.model < $1.model }.compactMap { model, group in
         guard seen.insert(model).inserted else { return nil }
         return Self(
-          id: String(format: "model-%04X-%04X", model.vendorID, model.productID),
-          name: nil,
+          id: unsafe String(format: "model-%04X-%04X", model.vendorID, model.productID),
+          name: names[model],
           vendorID: model.vendorID,
           productID: model.productID,
           family: catalog[model],
@@ -182,11 +184,12 @@ enum ProfileNaming {
 }
 
 /// What a new profile starts from.
-enum ProfileCreationTemplate: Equatable {
+enum ProfileCreationTemplate: Hashable {
   /// An empty profile.
   case empty
   /// Gyro motion drives a stick of the virtual gamepad.
   case gyroStick
+  case bindings(RemappingBindingTemplate)
 }
 
 /// The edits made in the profile creation sheet.
@@ -201,8 +204,8 @@ struct ProfileCreationFields: Equatable {
   var picked: ProfileControllerChoice?
   /// Whether the profile applies to every app or to one app.
   var scopeKind = ProfileScopeKind.global
-  /// The identifier of the app when the profile applies to one app.
-  var appID = ""
+  /// The bundle identifiers of the apps the profile applies to.
+  var appIDs: [String] = []
   /// The output policy `ojd profile create` starts with.
   var outputPolicy = RemappingOutputPolicy(virtualGamepad: .passthrough, physicalInput: .shared)
   /// What the profile starts from.
@@ -216,6 +219,34 @@ struct ProfileCreationFields: Equatable {
     return
       !(ProtocolDriverRegistry().profileCapabilities(for: controller.model)?.physicalInput
       .motion ?? false)
+  }
+
+  func skippedControls(in context: ProfileCreationContext) -> [Control] {
+    guard case .bindings(let bindings) = template, let controller = controller(in: context) else {
+      return []
+    }
+    return made(bindings, for: controller, in: context).skipped
+  }
+
+  private func made(
+    _ bindings: RemappingBindingTemplate,
+    for controller: ProfileControllerChoice,
+    in context: ProfileCreationContext
+  ) -> RemappingBindingTemplate.Made {
+    bindings.profile(
+      name: ProfileNameValidation.trimmedName(name(in: context)),
+      device: RemappingDeviceScope(vendorID: controller.vendorID, productID: controller.productID),
+      applicationScope: applicationScope,
+      outputPolicy: outputPolicy,
+      capabilities: ProtocolDriverRegistry().profileCapabilities(for: controller.model) ?? .unknown
+    )
+  }
+
+  private var applicationScope: RemappingApplicationScope {
+    switch scopeKind {
+    case .global: .global
+    case .application: .application(appIDs: appIDs)
+    }
   }
 
   /// The controller the profile belongs to; nil while none is picked and none is connected, or
@@ -250,11 +281,6 @@ struct ProfileCreationFields: Equatable {
   /// taken.
   func proposedProfile(in context: ProfileCreationContext) -> RemappingProfile? {
     guard let controller = controller(in: context), !isNameTaken(in: context) else { return nil }
-    let applicationScope: RemappingApplicationScope
-    switch scopeKind {
-    case .global: applicationScope = .global
-    case .application: applicationScope = .application(appID: appID)
-    }
     let device = RemappingDeviceScope(
       vendorID: controller.vendorID,
       productID: controller.productID
@@ -270,6 +296,8 @@ struct ProfileCreationFields: Equatable {
         outputPolicy: outputPolicy,
         bindings: []
       )
+    case .bindings(let bindings):
+      profile = made(bindings, for: controller, in: context).profile
     case .gyroStick:
       guard
         let made = try? RemappingGyroStickTemplate.profile(

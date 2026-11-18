@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -27,21 +28,21 @@ struct ModCommandTests {
       let folder = root.appendingPathComponent("Staging/\(UUID().uuidString)/\(name)")
       let controllers = folder.appendingPathComponent("Controllers", isDirectory: true)
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
-      let file = String(format: "fff1-%04x.json", productID)
+      let file = unsafe String(format: "fff1-%04x.plist", productID)
       let record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": "Controller",
         "vendorID": 0xFFF1,
         "productID": productID, "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
       ]
-      try JSONSerialization.data(withJSONObject: record).write(
+      try PropertyListFixture.data(tree: record).write(
         to: controllers.appendingPathComponent(file)
       )
       let manifest: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind, "name": name,
         "version": "1.2.3", "author": "Tester", "requires": requires, "controllers": [file],
       ]
-      try JSONSerialization.data(withJSONObject: manifest).write(
-        to: folder.appendingPathComponent("mod.json")
+      try PropertyListFixture.data(tree: manifest).write(
+        to: folder.appendingPathComponent("mod.plist")
       )
       return folder.path
     }
@@ -62,7 +63,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func validateReportsThePackageAndWritesNothing() async throws {
+  func validateReportsPackageAndWritesNothing() async throws {
     let support = Support()
     let folder = try support.makePackage()
 
@@ -73,13 +74,13 @@ struct ModCommandTests {
     let result = try json.json()
     #expect(result["valid"] as? Bool == true)
     #expect(result["name"] as? String == "arcade-pack")
-    #expect(result["files"] as? [String] == ["Controllers/fff1-0001.json"])
+    #expect(result["files"] as? [String] == ["Controllers/fff1-0001.plist"])
     #expect(human.code == 0)
     #expect(support.installed.isEmpty)
   }
 
   @Test
-  func aRefusedPackageExitsOneWithItsCode() async throws {
+  func refusedPackageExitsOneWithItsCode() async throws {
     let support = Support()
     let empty = support.root.appendingPathComponent("empty").path
     try FileManager.default.createDirectory(atPath: empty, withIntermediateDirectories: true)
@@ -98,15 +99,13 @@ struct ModCommandTests {
   }
 
   @Test
-  func aManifestWithAnUnsupportedAPIVersionIsRefusedWithE5001() async throws {
+  func manifestWithUnsupportedAPIVersionIsRefusedWithE5001() async throws {
     let support = Support()
     let folder = try support.makePackage()
-    let manifestURL = URL(fileURLWithPath: folder).appendingPathComponent("mod.json")
-    var manifest = try #require(
-      JSONSerialization.jsonObject(with: Data(contentsOf: manifestURL)) as? [String: Any]
-    )
+    let manifestURL = URL(fileURLWithPath: folder).appendingPathComponent("mod.plist")
+    var manifest = try PropertyListFixture.dictionary(at: manifestURL)
     manifest["apiVersion"] = "unsupported.example/v9"
-    try JSONSerialization.data(withJSONObject: manifest).write(to: manifestURL)
+    try PropertyListFixture.data(tree: manifest).write(to: manifestURL)
 
     let json = await run(["validate", folder, "--json"], in: support)
     let install = await run(["install", folder], in: support)
@@ -115,7 +114,7 @@ struct ModCommandTests {
     #expect(try json.json()["valid"] as? Bool == false)
     #expect(try json.json()["code"] as? String == "E5001")
     let problem = try #require(try json.json()["problem"] as? String)
-    #expect(problem.contains("mod.json"))
+    #expect(problem.contains("mod.plist"))
     #expect(problem.contains("unsupported.example/v9"))
     #expect(problem.contains(OpenJoystickDriverAPI.version))
     #expect(json.standardError.hasPrefix("error[E5001]: "))
@@ -141,14 +140,14 @@ struct ModCommandTests {
     #expect(items.first?["name"] as? String == "arcade-pack")
     #expect(items.first?["version"] as? String == "1.2.3")
     #expect(items.first?["author"] as? String == "Tester")
-    #expect(items.first?["files"] as? [String] == ["Controllers/fff1-0001.json"])
+    #expect(items.first?["files"] as? [String] == ["Controllers/fff1-0001.plist"])
     #expect(items.first?["problem"] == nil)
     #expect(remove.code == 0, "\(remove.standardError)")
     #expect(support.installed.isEmpty)
   }
 
   @Test
-  func installRefusesAnExistingNameUnlessForced() async throws {
+  func installRefusesExistingNameUnlessForced() async throws {
     let support = Support()
     let folder = try support.makePackage()
     _ = await run(["install", folder], in: support)
@@ -164,7 +163,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func forceNeverOverridesRequiresOrAClash() async throws {
+  func forceNeverOverridesRequiresOrClash() async throws {
     let support = Support()
     let first = try support.makePackage("first-pack")
     let rival = try support.makePackage("rival-pack")
@@ -206,7 +205,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func removeOfAMissingPackageIsE4006AndTouchesOnlyItsFolder() async throws {
+  func removeOfMissingPackageIsE4006AndTouchesOnlyItsFolder() async throws {
     let support = Support()
     _ = await run(["install", try support.makePackage()], in: support)
 
@@ -222,7 +221,7 @@ struct ModCommandTests {
   }
 
   @Test
-  func listNamesAPackageThatRequiresExcludesWithItsE4002Reason() async throws {
+  func listNamesPackageThatRequiresExcludesWithItsE4002Reason() async throws {
     let support = Support()
     _ = await run(["install", try support.makePackage()], in: support)
 

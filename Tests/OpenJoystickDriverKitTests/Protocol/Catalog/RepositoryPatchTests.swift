@@ -21,14 +21,26 @@ struct RepositoryPatchTests {
       at: url.deletingLastPathComponent(),
       withIntermediateDirectories: true
     )
-    try Data(text.utf8).write(to: url)
+    try OrderedJSON.parse(Data(text.utf8)).plistData().write(to: url)
+  }
+
+  /// The canonical bytes of the record at `url`, which compare by content whatever the key order.
+  private static func read(_ url: URL) throws -> Data {
+    try DocumentCoder.write(
+      DocumentCoder.read(Data(contentsOf: url), file: url.lastPathComponent)
+    )
+  }
+
+  /// The canonical bytes of the JSON `text`.
+  private static func dictionary(_ text: String) throws -> Data {
+    try DocumentCoder.write(JSONSerialization.jsonObject(with: Data(text.utf8)))
   }
 
   // MARK: patches write members in the order of the record, then of the patches
 
   private static let record = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha2",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Controller",
       "vendorID": 1234,
       "productID": 5678,
@@ -48,7 +60,7 @@ struct RepositoryPatchTests {
 
   private static let patch = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha2",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "ControllerPatch",
       "selector": {"vendorID": 1234, "productID": 5678},
       "patch": {
@@ -66,30 +78,31 @@ struct RepositoryPatchTests {
 
   private static let secondPatch = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha2",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "ControllerPatch",
       "selector": {"model": "04d2-162e"},
       "patch": {
-        "usb": {"zeta": null, "beta": true, "alpha": {"w": 0}},
+        "usb": {"beta": true, "alpha": {"w": 0}},
         "route": "ojd"
-      }
+      },
+      "remove": ["usb.endpoints"]
     }
     """
 
   @Test
-  func patchesAddMembersInPatchOrderAfterTheRecordsMembers() throws {
+  func patchesAddMembersInPatchOrderAfterRecordsMembers() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
-        to: directory.appendingPathComponent("records/04d2/04d2-162e.json")
+        to: directory.appendingPathComponent("records/04d2/04d2-162e.plist")
       )
       try Self.write(
         Self.patch,
-        to: directory.appendingPathComponent("patches/04d2/04d2-162e.patch.json")
+        to: directory.appendingPathComponent("patches/04d2/04d2-162e.patch.plist")
       )
       try Self.write(
         Self.secondPatch,
-        to: directory.appendingPathComponent("patches/model-04d2-162e.patch.json")
+        to: directory.appendingPathComponent("patches/model-04d2-162e.patch.plist")
       )
       let output = directory.appendingPathComponent("out")
       let problems = RepositoryValidation.applyPatches(
@@ -98,79 +111,65 @@ struct RepositoryPatchTests {
         output: output
       )
       #expect(problems.isEmpty, "\(problems)")
-      let written = try String(
-        contentsOf: output.appendingPathComponent("04d2/04d2-162e.json"),
-        encoding: .utf8
-      )
-      // The record's members keep their places; the first patch's new members follow in its
-      // order, then the second patch's; the array the first patch replaces has its items; a
-      // member the second patch deletes is gone.
+      // The array the first patch replaces is removed by the second patch; its other members
+      // and the new members of both patches are present.
       #expect(
-        written == """
-          {
-            "apiVersion": "openjoystickdriver/v1alpha2",
-            "kind": "Controller",
-            "vendorID": 1234,
-            "productID": 5678,
-            "usb": {
-              "interface": 0,
-              "endpoints": [9, 8, 7, 6],
-              "nested": {
-                "m": 1,
-                "z": 3,
-                "a": 2
+        try Self.read(output.appendingPathComponent("04d2/04d2-162e.plist"))
+          == Self.dictionary(
+            """
+            {
+              "apiVersion": "openjoystickdriver/v1alpha3",
+              "kind": "Controller",
+              "vendorID": 1234,
+              "productID": 5678,
+              "usb": {
+                "interface": 0,
+                "nested": {"m": 1, "z": 3, "a": 2},
+                "alpha": {"y": 1, "x": 2, "w": 0},
+                "beta": true,
+                "zeta": 1
               },
-              "alpha": {
-                "y": 1,
-                "x": 2,
-                "w": 0
-              },
-              "beta": true
-            },
-            "tuning": {
-              "stickDeadzone": 0.2,
-              "frameQueueCapacity": 4
-            },
-            "server": "ojd",
-            "route": "ojd"
-          }
-
-          """
+              "tuning": {"stickDeadzone": 0.2, "frameQueueCapacity": 4},
+              "server": "ojd",
+              "route": "ojd"
+            }
+            """
+          )
       )
     }
   }
 
   @Test
-  func aPatchFileInADeeperDirectoryIsRefused() throws {
+  func patchFileInDeeperDirectoryIsRefused() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
-        to: directory.appendingPathComponent("records/04d2/04d2-162e.json")
+        to: directory.appendingPathComponent("records/04d2/04d2-162e.plist")
       )
       try Self.write(
         Self.patch,
-        to: directory.appendingPathComponent("patches/04d2/deeper/04d2-162e.patch.json")
+        to: directory.appendingPathComponent("patches/04d2/deeper/04d2-162e.patch.plist")
       )
       let problems = RepositoryValidation.applyPatches(
         controllers: directory.appendingPathComponent("records"),
         patches: directory.appendingPathComponent("patches"),
         output: directory.appendingPathComponent("out")
       )
-      #expect(problems.map(\.message).contains("the patch path must be 04d2/04d2-162e.patch.json"))
+      #expect(problems.map(\.message).contains("the patch path must be 04d2/04d2-162e.patch.plist"))
       #expect(problems.allSatisfy { $0.code == .invalidControllerRecord })
     }
   }
 
   @Test
-  func aPatchThatWritesTheSameNumberAnotherWayChangesNothing() throws {
+  func patchThatWritesSameNumberAnotherWayChangesNothing() throws {
     try Self.scratch { directory in
       try Self.write(
         Self.record,
-        to: directory.appendingPathComponent("records/04d2/04d2-162e.json")
+        to: directory.appendingPathComponent("records/04d2/04d2-162e.plist")
       )
       let patch = """
         {
-          "apiVersion": "openjoystickdriver/v1alpha2",
+          "apiVersion": "openjoystickdriver/v1alpha3",
           "kind": "ControllerPatch",
           "selector": {"vendorID": 1234, "productID": 5678},
           "patch": {"usb": {"interface": 0.0}}
@@ -178,7 +177,7 @@ struct RepositoryPatchTests {
         """
       try Self.write(
         patch,
-        to: directory.appendingPathComponent("patches/04d2/04d2-162e.patch.json")
+        to: directory.appendingPathComponent("patches/04d2/04d2-162e.patch.plist")
       )
       let problems = RepositoryValidation.applyPatches(
         controllers: directory.appendingPathComponent("records"),
@@ -187,41 +186,6 @@ struct RepositoryPatchTests {
       )
       let model = ControllerModelID(vendorID: 1234, productID: 5678)
       #expect(problems.map(\.message) == ["the patch changes nothing in \(model)"])
-    }
-  }
-
-  @Test
-  func aPatchNumberIsWrittenAsThePatchFileSpellsIt() throws {
-    try Self.scratch { directory in
-      try Self.write(
-        Self.record,
-        to: directory.appendingPathComponent("records/04d2/04d2-162e.json")
-      )
-      let patch = """
-        {
-          "apiVersion": "openjoystickdriver/v1alpha2",
-          "kind": "ControllerPatch",
-          "selector": {"vendorID": 1234, "productID": 5678},
-          "patch": {"usb": {"scale": 1.29e2, "ratio": 0.50}}
-        }
-        """
-      try Self.write(
-        patch,
-        to: directory.appendingPathComponent("patches/04d2/04d2-162e.patch.json")
-      )
-      let output = directory.appendingPathComponent("out")
-      let problems = RepositoryValidation.applyPatches(
-        controllers: directory.appendingPathComponent("records"),
-        patches: directory.appendingPathComponent("patches"),
-        output: output
-      )
-      #expect(problems.isEmpty, "\(problems)")
-      let written = try String(
-        contentsOf: output.appendingPathComponent("04d2/04d2-162e.json"),
-        encoding: .utf8
-      )
-      #expect(written.contains("\"scale\": 1.29e2"))
-      #expect(written.contains("\"ratio\": 0.50"))
     }
   }
 }

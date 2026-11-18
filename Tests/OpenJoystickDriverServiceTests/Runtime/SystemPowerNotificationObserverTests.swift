@@ -109,7 +109,7 @@ struct SystemPowerNotificationObserverTests {
   }
 
   @Test
-  func allowsIdleSleepAtOnceWithoutAnEvent() async {
+  func allowsIdleSleepAtOnceWithoutEvent() async {
     let source = FakePowerSource()
     let recorder = PowerNotificationRecorder(blockWillSleep: false)
     let observer = SystemPowerNotificationObserver(powerSource: source) { event in

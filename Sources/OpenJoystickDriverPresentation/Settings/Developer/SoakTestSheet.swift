@@ -23,6 +23,7 @@
             vertical: true
           )
         Button(OJDLocalized.string("ui.developer.soakTestOpen")) { showsSheet = true }
+          .help(OJDLocalized.string("ui.help.soakOpen"))
           .sheet(isPresented: $showsSheet) { SoakTestSheet(model: model) }
       }
     }
@@ -40,14 +41,14 @@
 
     /// The title, the content of the test and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.developer.soakTest")).font(.headline)
         content
         HStack {
           Spacer()
           buttons
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
 
     /// Closes the sheet after a result; Done and Escape both end here.
@@ -57,28 +58,23 @@
       presentationMode.wrappedValue.dismiss()
     }
 
+    /// A text field titled and labeled with the name of `field`.
+    private func field(_ field: SoakTestField, _ text: Binding<String>) -> some View {
+      let title = OJDLocalized.string(field.labelKey)
+      return TextField(title, text: text).ojdAccessibilityLabel(title)
+        .help(OJDLocalized.string(field.helpKey))
+    }
+
     /// The entry fields, the running indicator or the result, as the state of the test says.
     @ViewBuilder
     private var content: some View {
       switch model.state {
       case .idle:
         Form {
-          TextField(
-            OJDLocalized.string(SoakTestField.seconds.labelKey),
-            text: $model.form.seconds
-          )
-          TextField(
-            OJDLocalized.string(SoakTestField.interval.labelKey),
-            text: $model.form.interval
-          )
-          TextField(
-            OJDLocalized.string(SoakTestField.residentLimit.labelKey),
-            text: $model.form.residentLimit
-          )
-          TextField(
-            OJDLocalized.string(SoakTestField.footprintLimit.labelKey),
-            text: $model.form.footprintLimit
-          )
+          field(.seconds, $model.form.seconds)
+          field(.interval, $model.form.interval)
+          field(.residentLimit, $model.form.residentLimit)
+          field(.footprintLimit, $model.form.footprintLimit)
           Text(OJDLocalized.string("ui.developer.soakLimitHint")).font(.caption)
             .foregroundColor(Color(NSColor.secondaryLabelColor))
           if let problem = model.problem {
@@ -89,19 +85,19 @@
           }
         }
       case .running:
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           ProgressView().controlSize(.small)
           Text(OJDLocalized.string("ui.developer.soakRunning"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
       case .finished(let row):
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
           Label {
             Text(OJDLocalized.string(row.statusKey)).font(.headline)
           } icon: {
             Image(systemName: row.symbolName).foregroundColor(
               ActivityDiagnosticsView.color(of: row.status)
-            )
+            ).accessibilityHidden(true)
           }
           Text(row.detail).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
         }
@@ -115,19 +111,20 @@
       switch model.state {
       case .idle:
         Button(OJDLocalized.string("action.cancel")) { presentationMode.wrappedValue.dismiss() }
-          .keyboardShortcut(.cancelAction)
+          .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.closeSheet"))
         Button(OJDLocalized.string("ui.developer.soakStart")) { model.start() }
           .keyboardShortcut(.defaultAction).disabled(model.problem != nil)
+          .help(OJDLocalized.string("ui.help.soakStart"))
       case .running:
         Button(OJDLocalized.string("action.stop")) { model.cancel() }
-          .keyboardShortcut(.cancelAction)
+          .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.soakStop"))
       case .finished:
         Button(OJDLocalized.string("ui.developer.soakStart")) {
           model.reset()
           model.start()
-        }
+        }.help(OJDLocalized.string("ui.help.soakAgain"))
         Button(OJDLocalized.string("action.done")) { dismissFinishedResult() }
-          .keyboardShortcut(.defaultAction)
+          .keyboardShortcut(.defaultAction).help(OJDLocalized.string("ui.help.closeSheet"))
         // Escape works without a focused control; the button is for the shortcut only.
         Button("") { dismissFinishedResult() }.keyboardShortcut(.cancelAction).frame(
           width: 0,

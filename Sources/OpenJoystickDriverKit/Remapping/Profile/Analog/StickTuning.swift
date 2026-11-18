@@ -52,15 +52,10 @@ public struct RemappingStickTuning: Codable, Equatable, Hashable, Sendable {
 
   /// Profile document keys of a stick calibration.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    /// The JSON key of `innerDeadzone`.
     case innerDeadzone
-    /// The JSON key of `outerDeadzone`.
     case outerDeadzone
-    /// The JSON key of `responseExponent`.
     case responseExponent
-    /// The JSON key of `invertX`.
     case invertX
-    /// The JSON key of `invertY`.
     case invertY
   }
 

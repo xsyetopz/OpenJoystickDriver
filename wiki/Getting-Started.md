@@ -1,6 +1,6 @@
 # Getting Started
 
-Learn what OpenJoystickDriver is, install it, and use your first controller.
+Install OpenJoystickDriver, allow what it needs, connect a controller, and see it work.
 
 ## Contents
 
@@ -11,96 +11,86 @@ Learn what OpenJoystickDriver is, install it, and use your first controller.
 
 ## About OpenJoystickDriver
 
-OpenJoystickDriver (OJD) is a macOS menu-bar app that reads game controllers and shows them to macOS games as a standard controller.
+OpenJoystickDriver (OJD) is a menu-bar app that makes game controllers work with Mac games. It reads your controller over USB, Bluetooth, or a 2.4 GHz wireless dongle. It then shows the controller to games as a [virtual gamepad](Glossary.md#terms).
 
-### How It Works
+A [profile](Glossary.md#terms) can also make controller buttons press keys, click the mouse, move the pointer, or scroll. See [Remapping Profiles](Remapping-Profiles.md).
 
-OJD is one bundle, `/Applications/OpenJoystickDriver.app`, with no helper app. It runs in your user session. It reads reports from a physical controller over USB, Bluetooth, or a 2.4 GHz dongle. It then publishes a virtual controller that games and apps can read.
+OJD is one app. It needs no kernel extension and no change to System Integrity Protection or Apple Mobile File Integrity. Xbox One and Xbox Series controllers on USB can use the [Xbox USB driver](Glossary.md#terms). See [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
 
-The virtual controller uses one of three profiles. Two profiles are an Xbox controller: one for SDL games and one for Apple's GameController framework. The third profile is a generic gamepad. OJD selects the SDL Xbox profile or the generic profile automatically. For more information, see [How games see your controller](Playing-Games.md).
-
-OJD can also remap controls. A profile can send controller input as keyboard, pointer, or scroll events. For more information, see [About profiles](Remapping-Profiles.md).
-
-### What OJD Does Not Need
-
-- OJD does not install a kernel extension.
-- OJD does not need you to turn off System Integrity Protection (SIP).
-- OJD does not need you to turn off Apple Mobile File Integrity (AMFI).
-
-OJD has one driver extension. Its Xbox USB part serves Xbox One and Xbox Series controllers on USB. Other controllers do not use that part. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
-
-### What OJD Is Not
-
-- OJD is not a guarantee that every game reads the virtual controller. Some apps that use SDL may not read it. For more information, see [Game and app compatibility](Playing-Games.md).
-- OJD is alpha software. Some controllers are not tested on real hardware. For more information, see [Supported controllers](Supported-Controllers.md).
+> [!NOTE]
+> OJD is alpha software. Some controllers are untested on real hardware, and some games don't read the virtual gamepad. See [Supported Controllers](Supported-Controllers.md) and [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
 
 ## Installing OpenJoystickDriver
 
-Install OpenJoystickDriver in the Applications folder, start it, and check the login item.
+You need a Mac with macOS 12 (Monterey) or later and a controller from [Supported Controllers](Supported-Controllers.md).
 
-### Requirements
-
-- macOS 12 (Monterey) or later.
-- A Mac with Apple silicon or an Intel processor. The app contains both.
-- A controller. For more information, see [Supported controllers](Supported-Controllers.md).
-
-### Install the App
-
-1. Open the OpenJoystickDriver disk image (`.dmg`).
-2. Drag **OpenJoystickDriver.app** onto the **Applications** shortcut in the same window.
+1. Open the OpenJoystickDriver disk image.
+2. Drag **OpenJoystickDriver.app** onto **Applications**.
 3. Eject the disk image.
 4. Open **OpenJoystickDriver** from the Applications folder.
 
-Release builds use the name `OpenJoystickDriver-VERSION-macOS.dmg`. Tester builds also contain the file `OpenJoystickDriver-TESTER-BUILD.txt` that lists the build details.
+> [!IMPORTANT]
+> Keep the app in `/Applications`. The login item and Xbox USB driver commands refuse to run from another folder.
 
-> [!NOTE]
-> Keep the app in `/Applications`. The commands that manage the login item and the system extension refuse to run from any other location.
+### Find the Menu-Bar Icon
 
-### First Start
+OJD has no Dock icon and opens no window by default. Click the controller icon in the menu bar, then choose **Open OpenJoystickDriver**. The icon turns into a warning triangle when something needs attention.
 
-OJD is a menu-bar app. It has no Dock icon. After it starts, a controller icon appears in the menu bar. Click the icon to open the status menu.
+![The controller icon in the menu bar. A red arrow points to it, and the box says to click it to see your controllers](../docs/screenshots/steps/menu-bar-icon.png)
 
-At start, OJD also does these actions:
+![The menu-bar menu. A red arrow points to Open OpenJoystickDriver, which opens the main window](../docs/screenshots/steps/open-the-app.png)
 
-- On macOS 13 and later, it registers itself as a login item. To turn this off, run the `ojd setting set launchAtLogin false` command. Turning off **Start at login** in **Settings**, or running that command, also records that you opted out, so OJD does not register itself again at the next start. If you change the login item in **System Settings** instead, OJD reads the change from macOS but does not record an opt-out. For more information, see [Settings window](Using-the-App.md#settings-window).
-- It checks the OJD driver extension. If the extension needs activation, OJD submits one request. macOS may then ask for your approval.
+To add a Dock icon, turn on **Show in Dock** in **Settings** > **General**. See [Settings Window](Using-the-App.md#settings-window).
 
-OJD asks for no privacy permission at start. You grant permissions later. For more information, see [Permissions](Permissions-and-Security.md#permissions).
+### Allow the Login Item
 
-### Approve the Login Item
+On macOS 13 or later, OJD starts when you log in, so your controllers work without opening it. If macOS asks, open Apple menu > **System Settings** > **General** > **Login Items & Extensions** and turn on **OpenJoystickDriver**. On macOS 12, open the app yourself after you log in.
 
-If macOS asks, allow OJD in **System Settings** > **General** > **Login Items**. Below macOS 13, OJD cannot register a login item. Open the app yourself after you sign in.
+To stop this, turn off **Start at login** in **Settings**, or run `ojd setting set launchAtLogin false`.
 
 ## Quickstart
 
-Use your first controller with OpenJoystickDriver in five steps.
+This takes about five minutes.
 
-### Before You Begin
+### Allow the Permissions OJD Needs
 
-Install the app first. For more information, see [Installing OpenJoystickDriver](#installing-openjoystickdriver).
+OJD needs two macOS permissions. **Input Monitoring** lets it read your controller. **Accessibility** lets it hand the controller to games. On macOS 27, Accessibility is called **Device Control and Data Access**.
 
-### Steps
+1. Click the menu-bar icon and choose **Open OpenJoystickDriver**.
+2. On **Finish Setting Up**, click **Request...** next to each permission.
+3. When macOS asks, allow OpenJoystickDriver. If it doesn't ask, turn it on in **System Settings** > **Privacy & Security**. [Step-by-step pictures](Permissions-and-Security.md#grant-input-monitoring-and-accessibility).
+4. Click **Done**.
 
-1. Install and open OpenJoystickDriver from the Applications folder.
-2. Grant access.
-   1. Click the controller icon in the menu bar.
-   2. If the menu shows **Grant Access**, click it. Allow OpenJoystickDriver in the **Input Monitoring** and **Accessibility** lists.
-   3. Open the app window. In the **Access** area, click **Restart OpenJoystickDriver** if it appears.
-3. Connect your controller with USB, Bluetooth, or a 2.4 GHz dongle.
-4. Check the controller.
-   1. Open the **Controllers** area.
-   2. Select your controller.
-   3. Click **Open Input Test...**.
-   4. Press buttons and move sticks. The Input Test window shows each control.
-5. Play a game. The game reads the virtual controller that OJD publishes.
+If the window shows **Permission needed** instead, click **Grant Access**. If the menu shows **Permission Missing**, click that row. After you allow a permission, click **Restart OpenJoystickDriver** in the **Access** area if it appears.
 
-If step 4 shows no input, see [Controller not detected](Troubleshooting.md). If the game shows no input, see [Game does not see the controller](Troubleshooting.md).
+**Check:** click **Access**. Both permissions say **Allowed**.
+
+![The Access area in OJD. A red arrow points to Access in the sidebar. A second arrow points to Allowed, and the box explains Input Monitoring and Accessibility](../docs/screenshots/steps/access-permissions.png)
+
+### Connect a Controller
+
+Connect your controller by USB cable, Bluetooth, or dongle. Its name appears in the menu-bar menu. A genuine Xbox One or Xbox Series controller on USB also needs the Xbox USB driver turned on. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
+
+### See the Controller Work
+
+1. In the app window, click **Controllers** and select your controller.
+2. Click **Open Input Test**.
+3. Press buttons and move the sticks.
+
+![The Controllers area. A red arrow points to Working under the controller's name, and the box says OJD reads the controller and games can use it. A second arrow points to Open Input Test](../docs/screenshots/steps/controller-working.png)
+
+**Working** under the controller's name means OJD reads it and games can use it. Any other word comes with a line that says what to do next. In the Input Test window, the status reads **Input active** while OJD receives input. See [Testing a Controller](Testing-a-Controller.md).
+
+### Play a Game
+
+Start the game. It reads the virtual gamepad. If the Input Test shows nothing, see [Controller Is Not Detected](Troubleshooting.md#if-a-controller-isnt-detected). If the game shows no input, see [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
 
 ## Further Reading
 
-- [Security model](Permissions-and-Security.md#security-model)
+- [Using the App](Using-the-App.md)
+- [Security Model](Permissions-and-Security.md#security-model)
 - [Permissions](Permissions-and-Security.md#permissions)
-- [Testing a controller](Testing-a-Controller.md)
-- [Supported controllers](Supported-Controllers.md)
-- [Xbox USB driver extension](Connecting-Controllers.md)
+- [Testing a Controller](Testing-a-Controller.md)
+- [Supported Controllers](Supported-Controllers.md)
+- [Connecting Controllers](Connecting-Controllers.md)
 - [Updating OpenJoystickDriver](Updating-and-Uninstalling.md)

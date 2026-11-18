@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -6,7 +7,7 @@ import Testing
 extension ControllerRecordWriterTests {
   /// `stickDeadzone` is read by every family, so it applies to a HID record.
   @Test
-  func tuningValueCreatesAPatchOfOnlyThatKey() throws {
+  func tuningValueCreatesPatchOfOnlyThatKey() throws {
     try Self.withDirectory { directory, _ in
       let change = try Self.change(
         .set(.stickDeadzone, 0.08),
@@ -15,7 +16,7 @@ extension ControllerRecordWriterTests {
       )
       #expect(change.created)
       #expect(change.previousTuning == nil)
-      #expect(change.file.lastPathComponent == "2c22-2000.patch.json")
+      #expect(change.file.lastPathComponent == "2c22-2000.patch.plist")
       try ControllerRecordWriter.write(change)
       let written = try Self.object(Data(contentsOf: change.file))
       #expect(written["kind"] as? String == "ControllerPatch")
@@ -30,7 +31,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func tuningValueKeepsTheServerAndNamesThePreviousValue() throws {
+  func tuningValueKeepsServerAndNamesPreviousValue() throws {
     try Self.withDirectory { directory, _ in
       try ControllerRecordWriter.write(try Self.change(Self.bundledHID, to: .ojd, in: directory))
       try Self.write(.set(.stickDeadzone, 0.1), for: .model(Self.bundledHID), in: directory)
@@ -50,7 +51,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func integerTuningValueIsWrittenAsAnInteger() throws {
+  func integerTuningValueIsWrittenAsInteger() throws {
     try Self.withDirectory { directory, _ in
       let change = try Self.change(
         .set(.frameQueueCapacity, 32),
@@ -58,12 +59,13 @@ extension ControllerRecordWriterTests {
         in: directory
       )
       let text = String(bytes: change.data ?? Data(), encoding: .utf8) ?? ""
-      #expect(text.contains("\"frameQueueCapacity\": 32\n"))
+      #expect(text.contains("<key>frameQueueCapacity</key>"))
+      #expect(text.contains("<integer>32</integer>"))
     }
   }
 
   @Test
-  func allControllersWritesTheAllPatch() throws {
+  func allControllersWritesAllPatch() throws {
     try Self.withDirectory { directory, _ in
       let change = try Self.change(
         .set(.stickDeadzone, 0.05),
@@ -112,7 +114,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func fractionForAnIntegerKeyIsRefused() throws {
+  func fractionForIntegerKeyIsRefused() throws {
     try Self.withDirectory { directory, _ in
       #expect(throws: ControllerRecordWriter.TuningFailure.self) {
         try Self.change(.set(.frameQueueCapacity, 0.5), for: .allControllers, in: directory)
@@ -121,7 +123,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func keyTheFamilyDoesNotReadIsRefusedForAModel() throws {
+  func keyFamilyDoesNotReadIsRefusedForModel() throws {
     try Self.withDirectory { directory, _ in
       do {
         _ = try Self.change(
@@ -144,7 +146,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func tuningForAModelWithoutARecordIsRefused() throws {
+  func tuningForModelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory, _ in
       #expect(throws: ControllerRecordWriter.TuningFailure.refused(.noRecord(Self.unbundled))) {
         try Self.change(.set(.stickDeadzone, 0.1), for: .model(Self.unbundled), in: directory)
@@ -153,11 +155,11 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func removingOneKeyKeepsTheOthers() throws {
+  func removingOneKeyKeepsOthers() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      try JSONSerialization.data(
-        withJSONObject: ControllerPatch.document(
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
+      try PropertyListFixture.data(
+        tree: ControllerPatch.document(
           selector: .identity(Self.bundledHID),
           body: ["tuning": ["stickDeadzone": 0.1, "frameQueueCapacity": 32]]
         )
@@ -176,11 +178,11 @@ extension ControllerRecordWriterTests {
 
   /// A record refuses an empty `tuning`, so the last key takes the section with it.
   @Test
-  func removingTheLastKeyRemovesTheSection() throws {
+  func removingLastKeyRemovesSection() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      try JSONSerialization.data(
-        withJSONObject: ControllerPatch.document(
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
+      try PropertyListFixture.data(
+        tree: ControllerPatch.document(
           selector: .identity(Self.bundledHID),
           body: ["server": "OJD", "tuning": ["stickDeadzone": 0.1]]
         )
@@ -193,7 +195,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func removingTheLastKeyOfAControllerFileRemovesTheSection() throws {
+  func removingLastKeyOfControllerFileRemovesSection() throws {
     try Self.withDirectory { directory, _ in
       let file = directory.appendingPathComponent(
         ControllerRecordSet.fileName(for: Self.unbundled)
@@ -204,7 +206,7 @@ extension ControllerRecordWriterTests {
         "modes": [["id": "default", "protocol": ["family": "HIDDescriptor"]]],
         "tuning": ["stickDeadzone": 0.1],
       ]
-      try JSONSerialization.data(withJSONObject: record).write(to: file)
+      try PropertyListFixture.data(tree: record).write(to: file)
       try Self.write(.remove(.stickDeadzone), for: .model(Self.unbundled), in: directory)
       #expect(try Self.object(Data(contentsOf: file))["tuning"] == nil)
       #expect(ControllerRecordSet.load(userDirectory: directory).problems.isEmpty)
@@ -213,7 +215,7 @@ extension ControllerRecordWriterTests {
 
   /// A patch needs a key, so removing its last one removes the file.
   @Test
-  func removingTheLastKeyOfThePatchRemovesTheFile() throws {
+  func removingLastKeyOfPatchRemovesFile() throws {
     try Self.withDirectory { directory, _ in
       try Self.write(.set(.stickDeadzone, 0.1), for: .allControllers, in: directory)
       let change = try Self.change(
@@ -230,7 +232,7 @@ extension ControllerRecordWriterTests {
   }
 
   @Test
-  func removingAKeyThatIsNotSetIsRefused() throws {
+  func removingKeyThatIsNotSetIsRefused() throws {
     try Self.withDirectory { directory, _ in
       let notSet = ControllerRecordWriter.TuningFailure.notSet(.stickDeadzone)
       #expect(throws: notSet) {

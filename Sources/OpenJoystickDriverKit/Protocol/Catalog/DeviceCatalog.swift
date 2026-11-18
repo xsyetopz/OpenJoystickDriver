@@ -36,17 +36,40 @@ package struct DeviceCatalog: Sendable {
   /// The exact catalog record for this model; there is no default record.
   func record(for model: ControllerModelID) -> DeviceRuntimeProfile? { profiles[model] }
 
+  /// The stored calibration of this model; none when it has no record.
+  package func calibration(of model: ControllerModelID) -> ControllerCalibration {
+    profiles[model]?.tuning.calibration ?? .none
+  }
+
   /// The exact catalog record running the named mode; nil when the record does not have it.
   func record(for model: ControllerModelID, modeID: String?) -> DeviceRuntimeProfile? {
     profiles[model]?.applying(modeID: modeID)
   }
 
-  /// Whether the record sets `server: ojd`, so OJD seizes the controller even when macOS serves it
-  /// natively.
+  /// The `server` the record states, which overrides the stream's own test of whether macOS
+  /// serves the controller; nil when no record states one.
   ///
   /// The stream reads it when a device is added.
-  package func takesOwnership(of model: ControllerModelID) -> Bool {
-    record(for: model)?.server == .ojd
+  package func statedServer(of model: ControllerModelID) -> ControllerServer? {
+    record(for: model).flatMap { $0.statesServer ? $0.server : nil }
+  }
+
+  /// Whether OJD decides to serve a HID device: its record reaches the controller through the
+  /// system HID stack, or no record exists and the classifier binds it.
+  ///
+  /// A model whose record reaches the controller through raw USB or the extension is served by
+  /// that route, so its HID object belongs to the system. A device with no record that the
+  /// classifier refuses is not served.
+  package func servesOverHID(_ device: PhysicalDevice) -> Bool {
+    if let vendorID = device.vendorID, let productID = device.productID,
+      let record = record(for: ControllerModelID(vendorID: vendorID, productID: productID))
+    {
+      return record.accessRoute == .system
+    }
+    guard case .bound = ProtocolClassifier.classify(device, backend: .hid, catalog: self) else {
+      return false
+    }
+    return true
   }
 
   /// The runtime profile for one decoded record; the record probe plan builds on it too.
@@ -55,6 +78,7 @@ package struct DeviceCatalog: Sendable {
     guard (1...65_535).contains(record.vendorID), (0...65_535).contains(record.productID) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.record.identityRange",
         "invalid controller identity \(record.vendorID):\(record.productID)"
       )
     }
@@ -67,6 +91,8 @@ package struct DeviceCatalog: Sendable {
     {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.deviceCatalog.usbConfiguration",
+        arguments: [configuration],
         "unsupported USB configuration \(configuration)"
       )
     }
@@ -74,8 +100,8 @@ package struct DeviceCatalog: Sendable {
     let keepAlivePolicy: GIPKeepAlivePolicy =
       protocolInfo.keepAliveEnabled.map { $0 ? .enabled : .disabled } ?? .enabled
 
-    return DeviceRuntimeProfile(
-      recordID: String(format: "%04x-%04x", record.vendorID, record.productID),
+    var profile = DeviceRuntimeProfile(
+      recordID: unsafe String(format: "%04x-%04x", record.vendorID, record.productID),
       transportProfile: DeviceTransportProfile(
         inputEndpoint: UInt8(inputEndpoint),
         outputEndpoint: UInt8(outputEndpoint),
@@ -99,12 +125,15 @@ package struct DeviceCatalog: Sendable {
       hidUsageMap: record.hidUsageMap,
       tuning: record.tuning,
       route: record.route,
+      heldByAppleDriver: record.heldByAppleDriver,
       bluetoothLEVibrationCharacteristic: record.bluetoothLE?.vibrationCharacteristic,
       interfaceRange: record.baseMode.interfaceRange,
       modes: record.modes.filter { !$0.isDefault }.map(\.mode),
       hasDefaultMode: record.defaultMode != nil,
-      isIdle: record.isIdle
+      idleReason: record.baseMode.idle
     )
+    profile.statesServer = record.server != nil
+    return profile
   }
 
   /// The runtime profile of a row that names only this family and stored variant: default endpoints

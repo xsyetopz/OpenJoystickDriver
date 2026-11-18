@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 
 /// The service state that the app's Shortcuts actions read, called in the app's own process.
 ///
@@ -7,6 +7,11 @@ import OpenJoystickDriverKit
 package protocol AutomationService: Sendable {
   /// The controllers that the service drives.
   func connectedDevices() async -> [ApplicationServiceDeviceDescription]
+  /// Sends one output command to the selected controller; the result reports what became of it.
+  func sendControllerOutput(
+    _ command: ControllerOutputCommand,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult
   /// Returns the snapshot of the remapping profiles, routes and issues.
   ///
   /// - Throws: ``ApplicationServiceRemappingRPCError`` when the snapshot fails.
@@ -25,6 +30,14 @@ package protocol AutomationService: Sendable {
     id: UUID
   ) async throws
     -> ApplicationServiceRemappingSnapshotPayload
+  /// Replaces `profile` if the stored one equals `expectedCurrent`, and returns the snapshot.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` when the stored profile changed or the
+  ///   update fails.
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload
 }
 
 /// A connected controller as Shortcuts shows it.
@@ -79,11 +92,11 @@ package struct AutomationAmbiguousModelError: Error, Equatable, LocalizedError, 
 
 /// Returns the `VVVV:PPPP` text of the vendor and product ID.
 private func automationModel(vendorID: UInt16, productID: UInt16) -> String {
-  String(format: "%04X:%04X", vendorID, productID)
+  unsafe String(format: "%04X:%04X", vendorID, productID)
 }
 
 /// A saved remapping profile as Shortcuts shows it.
-package struct AutomationProfile: Equatable, Sendable {
+package struct AutomationProfile: Encodable, Equatable, Sendable {
   /// The profile's identity.
   package let id: UUID
   /// The profile's name.
@@ -166,6 +179,26 @@ extension AutomationService {
   /// Deactivates the profile with `id` and returns it as the service reports it afterward.
   package func deactivateProfile(id: UUID) async throws -> AutomationProfile {
     try Self.profile(id: id, in: try await deactivateRemappingProfile(id: id))
+  }
+
+  /// Sets the value at `key` of the profile that `profile` names, as `ojd profile set` does, and
+  /// returns the profile as the service reports it afterward.
+  ///
+  /// - Throws: ``CodedFailure`` when the profile is unknown or ambiguous, or the edit leaves it
+  ///   invalid.
+  package func setProfileValue(
+    profile selector: ProfileSelector,
+    key: ProfileKey,
+    value: ProfileValue
+  ) async throws -> AutomationProfile {
+    let snapshot = try await getRemappingSnapshot()
+    let current = try selector.resolve(in: snapshot.profiles)
+    let edited = try ProfileSetting.change(current, key: key, to: value)
+    guard edited != current else { return AutomationProfile(current, snapshot: snapshot) }
+    return try Self.profile(
+      id: edited.id,
+      in: try await updateRemappingProfile(edited, expectedCurrent: current)
+    )
   }
 
   /// Returns the entry of the profile `id` in `snapshot`.

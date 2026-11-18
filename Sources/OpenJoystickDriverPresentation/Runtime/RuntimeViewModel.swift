@@ -39,6 +39,9 @@ final class RuntimeViewModel: ObservableObject {
   /// The Post Event access.
   @Published
   var postEventAccessState: RuntimePostEventAccessLoadState = .loading
+  /// Whether the latest attempt to open a Privacy & Security pane failed.
+  @Published
+  var permissionSettingsOpenFailed = false
   /// The pending and failed virtual HID profile override requests, keyed by controller model.
   @Published
   var virtualHIDProfileOverrideStates:
@@ -54,12 +57,22 @@ final class RuntimeViewModel: ObservableObject {
   /// keeps the choice instead of showing the record's value until the record changes.
   @Published
   var pendingControllerServers: [RuntimeControllerModel: ControllerServer] = [:]
+  /// Why the service refused the latest server choice of each controller model; cleared when the
+  /// model's next choice starts.
+  @Published
+  var controllerServerFailures: [RuntimeControllerModel: String] = [:]
   /// Why the latest background status read failed while the last controller list stays visible.
   @Published
   var liveStatusError: String?
+  /// Why the latest Bluetooth access request failed; cleared when the next request starts.
+  @Published
+  var bluetoothRequestFailure: String?
   /// Where the Xbox USB driver extension is.
   @Published
   private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
+  /// Whether macOS still keeps a replaced driver, which ends when the controller reconnects or the
+  /// Mac restarts; each update of ``systemExtensionSetupState`` publishes it.
+  var replacedDriverPending: Bool { systemExtensionSetup.status.replacedVersionPending }
   /// Counts the changes of the set of connected controllers.
   @Published
   var controllerInventoryGeneration = 0
@@ -156,7 +169,7 @@ final class RuntimeViewModel: ObservableObject {
   ///
   /// A service that stopped its request listener explains why, with the code and the error number,
   /// whatever the request failed with: the stopped listener removed the socket.
-  func statusFailureMessage(_ error: Error) -> String {
+  func statusFailureMessage(_ error: any Error) -> String {
     listenerFailure?.localizedSummary ?? RuntimePresentation.userFacingError(error)
   }
 
@@ -178,22 +191,21 @@ final class RuntimeViewModel: ObservableObject {
     resumeDeferredRefreshes()
   }
 
-  /// Reads the state of the driver extension at launch and activates the extension once when it
-  /// needs it.
-  func startSystemExtensionSetup() async {
-    await systemExtensionSetup.launch()
+  /// Reads the state of the driver extension at launch; it sends no request.
+  func startSystemExtensionSetup() {
+    systemExtensionSetup.launch()
     systemExtensionSetupState = systemExtensionSetup.state
   }
 
   /// Reads the state of the driver extension again.
-  func refreshSystemExtensionSetup() async {
-    await systemExtensionSetup.refresh()
+  func refreshSystemExtensionSetup() {
+    systemExtensionSetup.refresh()
     systemExtensionSetupState = systemExtensionSetup.state
   }
 
-  /// Reads the state of the driver extension and activates it when it needs activation or
-  /// replacement.
+  /// Asks macOS to activate or replace the driver extension, for the user's click.
   func repairSystemExtension() async {
+    if systemExtensionSetupState != .running { systemExtensionSetupState = .running }
     await systemExtensionSetup.repair()
     systemExtensionSetupState = systemExtensionSetup.state
   }
@@ -221,7 +233,7 @@ final class RuntimeViewModel: ObservableObject {
         schedulePendingScopedRefresh()
       }
     }
-    await refreshSystemExtensionSetup()
+    refreshSystemExtensionSetup()
     liveStatusGeneration += 1
     let statusGeneration = liveStatusGeneration
     loadState = .loading
@@ -249,8 +261,8 @@ final class RuntimeViewModel: ObservableObject {
         permissions = RuntimePermissionSummary(status: payload)
         authoritativePermissionSummary = permissions
       } else {
-        // A newer permission request owns the visible permission state.  Until its response is
-        // available, replace the payload's value with an honest checking state.
+        // A newer permission request owns the visible permission state. Until its response
+        // arrives, show unknown instead of the payload's value.
         permissions =
           authoritativePermissionSummary
           ?? RuntimePermissionSummary(inputRead: .unknown, inputInject: .unknown)
@@ -284,8 +296,8 @@ final class RuntimeViewModel: ObservableObject {
         authoritativePostEventAccess = currentPostEventAccess
         postEventAccessState = .available(currentPostEventAccess)
       } else {
-        // A newer access request owns the visible state.  Do not let this older snapshot roll its
-        // result back while the newer request is loading or has already completed.
+        // A newer access request owns the visible state; this older snapshot must not roll its
+        // result back, whether the request is loading or done.
         postEventAccess = authoritativePostEventAccess
       }
       updateStatusRemappingSnapshot(snapshot, postEventAccess: postEventAccess)
@@ -394,6 +406,25 @@ final class RuntimeViewModel: ObservableObject {
       updateStatusPermissions(.init(inputRead: .unknown, inputInject: .unknown))
       return nil
     }
+  }
+
+  /// Asks macOS, through the service, for Bluetooth access.
+  ///
+  /// Returns the state at the answer, or nil when the request failed, with
+  /// ``bluetoothRequestFailure`` saying why. The status shows the answer at once.
+  @discardableResult
+  func requestBluetoothAccess() async -> BluetoothAccessState? {
+    bluetoothRequestFailure = nil
+    let access: BluetoothAccessState
+    do { access = try await gateway.requestBluetoothAccess() } catch {
+      bluetoothRequestFailure = RuntimePresentation.userFacingError(error)
+      return nil
+    }
+    if case .available(var presentation) = statusState {
+      presentation.bluetoothAccess = access
+      statusState = .available(presentation)
+    }
+    return access
   }
 
   /// Asks macOS for the Post Event access.

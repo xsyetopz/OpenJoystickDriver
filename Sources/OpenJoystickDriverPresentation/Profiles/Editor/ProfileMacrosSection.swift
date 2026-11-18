@@ -17,11 +17,11 @@
     var body: some View {
       Section(
         header: HStack {
-          Text(OJDLocalized.string("ui.profiles.macros"))
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
-            label: OJDLocalized.string("ui.profiles.addMacro")
+            label: OJDLocalized.string("ui.profiles.addMacro"),
+            help: OJDLocalized.string("ui.profiles.addMacroHelp")
           ) { openSheet(.macro(nil)) }
         }
       ) {
@@ -35,11 +35,13 @@
             Spacer()
             OJDCompactSymbolButton(
               symbolName: "pencil",
-              label: OJDLocalized.string("ui.profiles.editMacro")
+              label: OJDLocalized.string("ui.profiles.editMacro"),
+              help: OJDLocalized.string("ui.profiles.editMacroHelp")
             ) { openSheet(.macro(macro)) }
             OJDCompactSymbolButton(
               symbolName: "minus.circle",
-              label: OJDLocalized.string("action.remove")
+              label: OJDLocalized.string("action.remove"),
+              help: OJDLocalized.string("ui.profiles.removeMacroHelp")
             ) { removeMacro(macro.id) }
           }
         }

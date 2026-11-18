@@ -68,20 +68,20 @@ actor ReceiverSlotProvider: USBTransportProvider {
 
   func setDevices(_ devices: [USBTransportDevice]) { listedDevices = devices }
 
-  func physicalDeviceObservation(for device: USBTransportDevice) -> PhysicalDevice? { passive }
+  func physicalDeviceObservation(for _: USBTransportDevice) -> PhysicalDevice? { passive }
 
   func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured profile: DeviceTransportProfile
   ) -> USBTransportResolution { USBTransportResolution(profile: profile, physicalDevice: passive) }
 
   func configurationObservation(
-    for device: USBTransportDevice,
-    configurationValue: UInt8
+    for _: USBTransportDevice,
+    configurationValue _: UInt8
   ) -> PhysicalDevice? { Self.descriptor }
 
   func open(
-    _ device: USBTransportDevice,
+    _: USBTransportDevice,
     options: USBTransportOpenOptions
   ) async throws -> any USBTransportSession {
     let interface = options.interfaceNumber

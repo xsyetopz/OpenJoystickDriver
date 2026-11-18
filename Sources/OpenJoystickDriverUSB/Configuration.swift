@@ -1,5 +1,5 @@
-import OpenJoystickDriverKit
-import SwifterKit
+public import OpenJoystickDriverKit
+public import SwifterKit
 
 /// Canonical configuration for OJD's restricted USBDriverKit extension.
 ///
@@ -15,6 +15,15 @@ public enum USBDriverKitExtensionConfiguration {
   public static let microsoftProductIDs: [UInt16] = [
     0x02D1, 0x02DD, 0x02E3, 0x02EA, 0x0B00, 0x0B0A, 0x0B12,
   ]
+
+  /// The records' models that Apple's own `XboxGamepad` driver extension holds, sorted.
+  ///
+  /// Apple's driver holds the USB interface of these models, so the direct route cannot open them
+  /// and only OJD's extension can take them over. The other models have no owner and use the
+  /// direct route.
+  public static func appleHeldModels(in records: ControllerRecordSet) -> [ControllerModelID] {
+    records.records.values.filter(\.heldByAppleDriver).map(\.model).sorted()
+  }
 
   /// The records' models whose route is `ExtensionOwned`, sorted.
   public static func extensionOwnedModels(in records: ControllerRecordSet) -> [ControllerModelID] {

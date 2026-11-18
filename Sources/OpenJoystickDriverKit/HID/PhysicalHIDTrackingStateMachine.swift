@@ -38,7 +38,7 @@ public enum UserSpaceVirtualDeviceConstants {
 
   /// Fail-closed admission check used by the IOKit physical HID input backend.
   ///
-  /// Virtual HID profiles intentionally spoof third-party product names, transports, and
+  /// Virtual HID profiles spoof third-party product names, transports, and
   /// VID/PID tuples. Apple does not guarantee that every property is surfaced on every callback,
   /// so no single marker is sufficient. Any OJD-owned marker, Apple's synthetic marker
   /// (`GCSyntheticDevice`), or a
@@ -63,7 +63,7 @@ public enum UserSpaceVirtualDeviceConstants {
     guard let value else { return false }
     let cfValue = value as CFTypeRef
     guard CFGetTypeID(cfValue) == CFBooleanGetTypeID() else { return false }
-    return CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
+    return unsafe CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
   }
 
   /// Whether the backend may process `event`; false for the events of Apple's synthetic device.
@@ -90,12 +90,12 @@ public enum UserSpaceVirtualDeviceConstants {
   }
 
   /// The virtual serial number hashed from `key`.
-  fileprivate static func serialNumber(forKey key: String) -> String {
+  static func serialNumber(forKey key: String) -> String {
     serialPrefix + hex64(fnv1a64(key))
   }
 
   /// The virtual LocationID hashed from `key`.
-  fileprivate static func locationID(forKey key: String) -> UInt32 {
+  static func locationID(forKey key: String) -> UInt32 {
     let low16 = UInt32(truncatingIfNeeded: fnv1a64(key) & 0xFFFF)
     // Avoid 0/1 because some consumers treat these as special/invalid.
     let safeLow16 = (low16 <= 1) ? (low16 &+ 2) : low16
@@ -103,18 +103,18 @@ public enum UserSpaceVirtualDeviceConstants {
   }
 
   /// The LocationID after `locationID`, wrapping within the 16 low bits and skipping 0 and 1.
-  fileprivate static func nextLocationID(after locationID: UInt32) -> UInt32 {
+  static func nextLocationID(after locationID: UInt32) -> UInt32 {
     let next = (locationID &+ 1) & 0xFFFF
     return VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace | (next <= 1 ? 2 : next)
   }
 
-  // MARK: - Private helpers
+  // MARK: - Identity keys
 
   /// The text that the hash of a virtual device's identity is taken from.
   ///
   /// It joins the vendor ID, the product ID, the serial number, the location ID (only without a
   /// serial number, or when `includingLocation`) and the interface number.
-  fileprivate static func stableKey(
+  static func stableKey(
     for identifier: LogicalControllerID,
     includingLocation: Bool = false
   ) -> String {
@@ -142,55 +142,7 @@ public enum UserSpaceVirtualDeviceConstants {
   }
 
   /// `v` as 16 lower-case hex digits.
-  private static func hex64(_ v: UInt64) -> String { String(format: "%016llx", v) }
-}
-
-/// The serial number and LocationID that one virtual device publishes.
-package struct VirtualDeviceIdentity: Sendable, Equatable {
-  /// The virtual serial number.
-  package let serialNumber: String
-  /// The virtual LocationID in the OJD namespace.
-  package let locationID: UInt32
-}
-
-/// The identities of the connected virtual devices; it gives each controller a serial number and a
-/// LocationID that no other connected controller holds.
-///
-/// The first controller of a VID:PID:serial key keeps the plain key. A later controller with the
-/// same key adds its location to the key.
-package struct VirtualIdentityRegistry: Sendable {
-  /// The key and identity each connected controller holds.
-  private var held: [LogicalControllerID: (key: String, identity: VirtualDeviceIdentity)] = [:]
-
-  /// A registry that holds no identity.
-  package init() {}
-
-  /// The identity of `identifier`, the one it already holds or a new one that no other controller
-  /// holds.
-  package mutating func reserve(_ identifier: LogicalControllerID) -> VirtualDeviceIdentity {
-    if let existing = held[identifier] { return existing.identity }
-    let plainKey = UserSpaceVirtualDeviceConstants.stableKey(for: identifier)
-    let keyIsHeld = held.values.contains { $0.key == plainKey }
-    let key =
-      keyIsHeld
-      ? UserSpaceVirtualDeviceConstants.stableKey(for: identifier, includingLocation: true)
-      : plainKey
-    var locationID = UserSpaceVirtualDeviceConstants.locationID(forKey: key)
-    while held.values.contains(where: { $0.identity.locationID == locationID }) {
-      locationID = UserSpaceVirtualDeviceConstants.nextLocationID(after: locationID)
-    }
-    let identity = VirtualDeviceIdentity(
-      serialNumber: UserSpaceVirtualDeviceConstants.serialNumber(forKey: key),
-      locationID: locationID
-    )
-    held[identifier] = (key, identity)
-    return identity
-  }
-
-  /// Frees the identity of `identifier`.
-  package mutating func release(_ identifier: LogicalControllerID) {
-    held.removeValue(forKey: identifier)
-  }
+  private static func hex64(_ v: UInt64) -> String { unsafe String(format: "%016llx", v) }
 }
 
 /// Minimal state machine shared by HID backend adapters for physical-device ownership.
@@ -237,7 +189,8 @@ public struct PhysicalHIDTrackingStateMachine {
     /// Whether macOS keeps serving the device, so OJD never seizes it.
     let nativePassThrough: Bool
     /// Whether removing the device disconnects it even when other devices stay at its location.
-    let disconnectsIndividually: Bool
+    var disconnectsIndividually: Bool
+    let enumerationKey: String?
     /// The observed ownership of the device.
     var ownership: HIDInputOwnership
   }
@@ -261,6 +214,11 @@ public struct PhysicalHIDTrackingStateMachine {
   /// A native pass-through device is never seized, so it stays out of its location's ownership
   /// and disconnect state. A device that `disconnectsIndividually` (an interface of a family with
   /// HID protocol roles) shares its location's ownership but disconnects on its own removal.
+  ///
+  /// A device whose `enumerationKey` differs from the key of a device already at its location is
+  /// that device's successor after a re-enumeration; the earlier device then disconnects on its
+  /// own removal too, whichever of the two events comes first. Devices with the same key, or
+  /// without one, are interfaces of one device.
   @discardableResult
   public mutating func register(
     deviceID: UInt64,
@@ -269,7 +227,8 @@ public struct PhysicalHIDTrackingStateMachine {
     ownership: HIDInputOwnership = .unknown,
     serviceID: UInt64? = nil,
     nativePassThrough: Bool = false,
-    disconnectsIndividually: Bool = false
+    disconnectsIndividually: Bool = false,
+    enumerationKey: String? = nil
   ) -> Bool {
     guard PhysicalHIDBackendEventPolicy.accepts(.deviceAdded, syntheticProperty: syntheticProperty),
       devices[deviceID] == nil
@@ -283,9 +242,17 @@ public struct PhysicalHIDTrackingStateMachine {
       serviceID: serviceID,
       nativePassThrough: nativePassThrough,
       disconnectsIndividually: disconnectsIndividually,
+      enumerationKey: enumerationKey,
       ownership: ownership
     )
     if !nativePassThrough {
+      if let enumerationKey {
+        for earlierID in deviceIDsByLocation[locationID] ?? [] {
+          guard let earlierKey = devices[earlierID]?.enumerationKey, earlierKey != enumerationKey
+          else { continue }
+          devices[earlierID]?.disconnectsIndividually = true
+        }
+      }
       deviceIDsByLocation[locationID, default: []].insert(deviceID)
     } else if locationID != 0 {
       nativeDeviceIDsByLocation[locationID, default: []].insert(deviceID)
@@ -427,7 +394,8 @@ public struct PhysicalHIDBackendEventAdapter {
     ownership: HIDInputOwnership = .unknown,
     serviceID: UInt64? = nil,
     nativePassThrough: Bool = false,
-    disconnectsIndividually: Bool = false
+    disconnectsIndividually: Bool = false,
+    enumerationKey: String? = nil
   ) -> Bool {
     tracking.register(
       deviceID: deviceID,
@@ -436,7 +404,8 @@ public struct PhysicalHIDBackendEventAdapter {
       ownership: ownership,
       serviceID: serviceID,
       nativePassThrough: nativePassThrough,
-      disconnectsIndividually: disconnectsIndividually
+      disconnectsIndividually: disconnectsIndividually,
+      enumerationKey: enumerationKey
     )
   }
 
@@ -525,7 +494,8 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
     ownership: HIDInputOwnership = .unknown,
     serviceID: UInt64? = nil,
     nativePassThrough: Bool = false,
-    disconnectsIndividually: Bool = false
+    disconnectsIndividually: Bool = false,
+    enumerationKey: String? = nil
   ) -> Bool {
     lock.withLock {
       adapter.add(
@@ -535,7 +505,8 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
         ownership: ownership,
         serviceID: serviceID,
         nativePassThrough: nativePassThrough,
-        disconnectsIndividually: disconnectsIndividually
+        disconnectsIndividually: disconnectsIndividually,
+        enumerationKey: enumerationKey
       )
     }
   }

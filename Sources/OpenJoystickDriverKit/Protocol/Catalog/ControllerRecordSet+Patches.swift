@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One file of a layer, and the package that holds it, or nil for the user's file.
 struct ControllerLayerEntry {
@@ -10,24 +10,45 @@ struct ControllerLayerEntry {
 
 extension ControllerRecordSet {
   /// The bundled catalog with the records and patches of the installed packages applied, then those
-  /// of the valid `.json` files in `directory`.
+  /// of the valid `.plist` files in `directory`.
+  ///
+  /// The descriptions of the documented families are loaded first, from the user's `Protocols`
+  /// folder and the installed packages; a description that is refused is listed in ``userFiles``.
   ///
   /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
-  /// its reason. `all.patch.json` in `directory` is the user's global ``ControllerDefaults``; it is
-  /// the first patch of the user layer and is reported in ``defaults`` rather than in
+  /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it
+  /// is the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
-  public static func load(userDirectory directory: URL = userDirectory) -> Self {
-    var packaged = packageRecords(in: ModPackageStore.directory(besides: directory))
+  public static func load(
+    userDirectory directory: URL = userDirectory,
+    localization: Localization = Localization()
+  ) -> Self {
+    let protocolFiles = DocumentedProtocolFamilies.load(besides: directory).refused
+    var packaged = packageRecords(
+      in: ModPackageStore.directory(besides: directory),
+      localization: localization
+    )
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
     let urls: [URL]
+    let stale: [ControllerRecordFile]
     do {
-      urls = try FileManager.default.contentsOfDirectory(
+      let listed = try FileManager.default.contentsOfDirectory(
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).sorted { $0.lastPathComponent < $1.lastPathComponent }
+      urls = listed.filter { $0.pathExtension == "plist" }
+      stale = listed.filter { $0.pathExtension == "json" }.map {
+        ControllerRecordFile(
+          url: $0,
+          model: nil,
+          operation: nil,
+          problem: DocumentMigrator.staleProblem
+        )
+      }
     } catch CocoaError.fileReadNoSuchFile {
       urls = []
+      stale = []
     } catch {
       let file = ControllerRecordFile(
         url: directory,
@@ -37,7 +58,7 @@ extension ControllerRecordSet {
       )
       return Self(
         records: packaged.records,
-        userFiles: [file] + packaged.files,
+        userFiles: protocolFiles + [file] + packaged.files,
         defaults: defaults
       )
     }
@@ -45,6 +66,7 @@ extension ControllerRecordSet {
     let applied = applyLayer(
       urls.map { ControllerLayerEntry(url: $0, owner: nil) },
       layer: .user,
+      localization: localization,
       to: &records
     )
     for (model, url) in applied.replaced { packaged.overridden(model, by: url) }
@@ -60,7 +82,8 @@ extension ControllerRecordSet {
     }
     return Self(
       records: records,
-      userFiles: applied.files.filter { $0.url != defaults.url } + packaged.files,
+      userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + stale
+        + packaged.files,
       defaults: defaults
     )
   }
@@ -74,6 +97,7 @@ extension ControllerRecordSet {
   static func applyLayer(
     _ entries: [ControllerLayerEntry],
     layer: ControllerRecordLayer,
+    localization: Localization = Localization(),
     to records: inout [ControllerModelID: ControllerRecord]
   ) -> (files: [ControllerRecordFile], replaced: [(ControllerModelID, URL)]) {
     var results: [URL: ControllerRecordFile] = [:]
@@ -88,6 +112,8 @@ extension ControllerRecordSet {
           guard name == fileName(for: record.model) else {
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: "error.E5007.userFile.fileNameRecord",
+              arguments: [fileName(for: record.model)],
               "the file name must be \(fileName(for: record.model))"
             )
           }
@@ -95,6 +121,8 @@ extension ControllerRecordSet {
             if let other = owners[record.model] {
               throw ControllerRecordProblem(
                 code: .invalidControllerRecord,
+                key: "error.E5007.userFile.packageSameController",
+                arguments: [other],
                 "same controller as package \(other)"
               )
             }
@@ -112,6 +140,8 @@ extension ControllerRecordSet {
           guard name == patch.selector.fileName else {
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: "error.E5007.userFile.fileNamePatch",
+              arguments: [patch.selector.fileName],
               "the file name must be \(patch.selector.fileName)"
             )
           }
@@ -122,7 +152,12 @@ extension ControllerRecordSet {
           url: entry.url,
           model: nil,
           operation: nil,
-          problem: problemDescription(error, document: "record")
+          problem: problemDescription(
+            error,
+            document: "record",
+            localization: localization,
+            file: entry.url.lastPathComponent
+          )
         )
       }
     }
@@ -131,7 +166,12 @@ extension ControllerRecordSet {
       let targets = records.keys.filter { patch.selector.selects($0) }.sorted()
       var failure: String?
       if targets.isEmpty, patch.selector != .all {
-        failure = "\(patch.selector.description) is not a known controller; use a Controller file"
+        failure = ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.userFile.unknownController",
+          arguments: [patch.selector.description],
+          "\(patch.selector.description) is not a known controller; use a Controller file"
+        ).localizedDescription(localization, file: entry.url.lastPathComponent)
       }
       for target in targets {
         guard let record = records[target] else {
@@ -139,7 +179,16 @@ extension ControllerRecordSet {
         }
         do {
           records[target] = try apply(patch, to: record, layer: layer, file: entry.url)
-        } catch { failure = failure ?? problemDescription(error, document: "record") }
+        } catch {
+          failure =
+            failure
+            ?? problemDescription(
+              error,
+              document: "record",
+              localization: localization,
+              file: entry.url.lastPathComponent
+            )
+        }
       }
       let model: ControllerModelID? =
         switch patch.selector {
@@ -168,13 +217,15 @@ extension ControllerRecordSet {
   /// Reads one Controller or ControllerPatch file.
   ///
   /// A document of any other kind is refused by the ControllerPatch header check. Both kinds
-  /// refuse, by ``ordered(_:)``, text that is not plain UTF-8 and an object that names a member
-  /// twice.
+  /// refuse, by ``ordered(_:file:)``, a file that is not an XML property list.
   static func parse(_ data: Data, file: URL?, layer: ControllerRecordLayer) throws -> ParsedFile {
-    try requireUTF8(data)
-    let document = try ordered(data)
+    let document = try ordered(data, file: file?.lastPathComponent ?? "record")
     guard document.members != nil else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.userFile.notDictionary",
+        "the file is not a dictionary"
+      )
     }
     if document["kind"]?.string == ControllerRecordDocument.kind {
       try OpenJoystickDriverAPI.requireHeader(
@@ -184,9 +235,12 @@ extension ControllerRecordSet {
         file: file?.lastPathComponent
       )
       let decoded = try decode(document)
+      try refuseBootloader(bundled.records[decoded.model])
       guard bundled.records[decoded.model] == nil else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.userFile.bundledController",
+          arguments: ["\(decoded.model)"],
           "\(decoded.model) is a bundled controller; use a patch to change it"
         )
       }
@@ -234,6 +288,8 @@ extension ControllerRecordSet {
       guard let upstream else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.userFile.unknownController",
+          arguments: [patch.selector.description],
           "\(patch.selector.description) is not a known controller; use a Controller file"
         )
       }
@@ -243,6 +299,18 @@ extension ControllerRecordSet {
         selector: patch.selector
       )
     }
+  }
+
+  /// Throws when `record` is a bootloader identity: its idle default mode is the bundled catalog's
+  /// to keep, so no user or package file adds, replaces or patches it.
+  private static func refuseBootloader(_ record: ControllerRecord?) throws {
+    guard let record, record.profile.idleReason == .bootloader else { return }
+    throw ControllerRecordProblem(
+      code: .invalidControllerRecord,
+      key: "error.E5007.userFile.bootloaderController",
+      arguments: ["\(record.model)"],
+      "\(record.model) is a bootloader identity; no user or package file changes it"
+    )
   }
 
   /// `upstream` with `patch` merged in by ``ControllerPatchMerge/apply(_:to:)`` and validated as a
@@ -256,35 +324,46 @@ extension ControllerRecordSet {
     layer: ControllerRecordLayer,
     file: URL?
   ) throws -> ControllerRecord {
-    let base = try ordered(upstream.document)
+    let base = try ordered(upstream.document, file: "record")
     guard base.members != nil else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
-        "the record is not a JSON object"
+        key: "error.E5007.userFile.upstreamNotDictionary",
+        "the record is not a dictionary"
       )
     }
     let isAll = patch.selector == .all
-    guard let body = ControllerPatchMerge.appliedBody(of: patch, to: base) else { return upstream }
-    let merged = ControllerPatchMerge.mergePatch(base, body)
+    if !isAll { try refuseBootloader(upstream) }
+    let body = ControllerPatchMerge.appliedBody(of: patch, to: base)
+    let removed = ControllerPatchMerge.appliedRemove(of: patch, to: base)
+    guard body != nil || !removed.isEmpty else { return upstream }
+    let merged = ControllerPatchMerge.apply(patch, to: base)
     if !isAll, merged.hasSameValue(as: base) {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.userFile.patchNoChange",
         "the patch changes nothing in the record"
       )
     }
     var layers = upstream.fieldLayers
     var tuningLayers = upstream.tuningLayers
-    for member in body.members ?? [] {
+    for path in removed {
+      let section = path[0]
+      if path.count == 1 {
+        layers[section] = nil
+        if section == "tuning" { tuningLayers = [:] }
+      } else if section == "tuning" {
+        tuningLayers[path[1]] = nil
+        if !isAll { layers[section] = layer }
+      } else {
+        layers[section] = layer
+      }
+    }
+    for member in body?.members ?? [] {
       let (key, value) = (member.key, member.value)
-      if !isAll { layers[key] = value == .null ? nil : layer }
+      if !isAll { layers[key] = layer }
       if key == "tuning" {
-        if value == .null {
-          tuningLayers = [:]
-        } else {
-          for setting in value.members ?? [] {
-            tuningLayers[setting.key] = setting.value == .null ? nil : (isAll ? .global : layer)
-          }
-        }
+        for setting in value.members ?? [] { tuningLayers[setting.key] = isAll ? .global : layer }
       }
     }
     return try makeRecord(

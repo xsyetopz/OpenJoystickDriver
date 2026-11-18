@@ -42,7 +42,7 @@ struct ControllerServerPickerTests {
       (.exclusiveRawUSB, .ojd, .rawAccess, false),
     ]
   )
-  func thePickerShowsOnlyForANativeOrOJDOwnedHIDController(
+  func pickerShowsOnlyForNativeOrOJDOwnedHIDController(
     physicalOwnership: ControllerOwnershipObservation,
     recordServer: ControllerServer,
     accessRoute: ControllerAccessRoute,
@@ -58,7 +58,7 @@ struct ControllerServerPickerTests {
   }
 
   @Test(arguments: [ControllerServer.ojd, .system])
-  func aChangeCallsTheGatewayWithTheModelIdentityAndTheValue(_ server: ControllerServer) async {
+  func changeCallsGatewayWithModelIdentityAndValue(_ server: ControllerServer) async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
     let device = Self.device(physicalOwnership: .systemGamepad)
@@ -69,11 +69,11 @@ struct ControllerServerPickerTests {
     #expect(requests.count == 1)
     #expect(requests.first?.model == ControllerModelID(vendorID: 0x3537, productID: 0x100B))
     #expect(requests.first?.server == server)
-    #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
+    #expect(viewModel.controllerServerFailures[RuntimeControllerModel(device)] == nil)
   }
 
   @Test
-  func aRefusalShowsE2023WithTheServiceDetail() async {
+  func refusalShowsE2023WithServiceDetail() async {
     let gateway = GatewayStub()
     await gateway.setServerFailure(.invalidRecord, detail: "bad record")
     let viewModel = RuntimeViewModel(gateway: gateway)
@@ -81,7 +81,8 @@ struct ControllerServerPickerTests {
 
     await viewModel.setControllerServer(.ojd, for: device)
 
-    let message = viewModel.controllerActionFailures[device.sessionToken.rawValue]
+    let message = viewModel.controllerServerFailures[RuntimeControllerModel(device)]
+    #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
     #expect(message == OJDLocalized.string("ui.controllers.server.invalidRecord") + " bad record")
   }
 }

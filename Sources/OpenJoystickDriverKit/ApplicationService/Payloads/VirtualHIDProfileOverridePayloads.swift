@@ -104,10 +104,10 @@ public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
   }
 
   /// Decodes the value from `decoder`.
-  public init(from decoder: Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let code = try container.decode(String.self, forKey: .code)
-    switch code {
+    let failureCode = try container.decode(String.self, forKey: .code)
+    switch failureCode {
     case "unknownProfile": self = .unknownProfile
     case "controllerNotFound": self = .controllerNotFound
     case "overrideRejectedByController": self = .overrideRejectedByController
@@ -122,13 +122,13 @@ public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
       throw DecodingError.dataCorruptedError(
         forKey: .code,
         in: container,
-        debugDescription: "Unknown virtual HID profile override failure: \(code)"
+        debugDescription: "Unknown virtual HID profile override failure: \(failureCode)"
       )
     }
   }
 
   /// Encodes the value into `encoder`.
-  public func encode(to encoder: Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(code, forKey: .code)
     switch self {

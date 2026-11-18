@@ -1,25 +1,25 @@
 # Test the Steam Deck Controller
 
-The Steam Deck's built-in controller is `0x28de:0x1205`, an internal USB device. Its record's `ValveSteamDeck` family selects `SteamDeckDriver`. The driver follows SDL `SDL_hidapi_steamdeck.c` and Linux `hid-steam.c` (`STEAM_QUIRK_DECK`). It is not hardware-verified. This path applies only when macOS runs on Deck hardware.
+Internal USB device 0x28de:0x1205. Family `ValveSteamDeck` selects `SteamDeckDriver`, following SDL `SDL_hidapi_steamdeck.c` and Linux `hid-steam.c` (`STEAM_QUIRK_DECK`). Not verified on hardware. Deck hardware only.
 
-## What the Driver Does
+## Driver Behavior
 
-- Reads the 64-byte state report with message type `0x09`: buttons, D-pad, rear buttons, stick touch, analog triggers, both sticks, both trackpads with pressure, and motion.
-- At start, clears the lizard-mode mappings, turns off trackpad mouse and haptic click, and turns off the watchdog that restores lizard mode.
-- Feeds the watchdog again every second, for firmware that ignores the watchdog setting. The one-second interval is an OJD choice. SDL feeds after 200 update passes.
-- Restores the default mappings and settings at stop.
-- Sends rumble to both motors. There is no LED and no trigger rumble.
+- Reads the 64-byte report, type 0x09: buttons, D-pad, rear buttons, stick touch, triggers, sticks, trackpads with pressure, motion.
+- At start: clears lizard-mode mappings; turns off trackpad mouse, haptic click, and the lizard-restoring watchdog.
+- Feeds the watchdog every second, for firmware that ignores the setting (OJD choice; SDL: every 200 update passes).
+- At stop: restores default mappings and settings.
+- Rumble on both motors. No LED or trigger rumble.
 
 ## Checks
 
-1. Run `ioreg -r -c IOHIDDevice -l -w0` and paste every `28de` entry with its parent `bInterfaceNumber` and `ReportDescriptor`.
-2. Run the HID monitor and press each button once:
+1. Run `ioreg -r -c IOHIDDevice -l -w0`. Paste each `28de` entry with parent `bInterfaceNumber` and `ReportDescriptor`.
+2. Monitor, pressing each button once:
 
    ```bash
    swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1205 --seconds 30
    ```
 
-3. Start OJD. Check in Controller Settings Live that buttons, sticks, triggers and trackpads move, and that the trackpads stop moving the cursor.
-4. Leave OJD running for two minutes without Steam. Check that the trackpads do not start to move the cursor again.
-5. Quit OJD. Check that the trackpads move the cursor again.
-6. Motion: lay the Deck flat, screen up, then tilt its right edge down and hold. Paste the motion values that `ojd controller watch 28DE:1205` prints (`ojd` is the [command-line tool](../../wiki/Command-Line.md)). This checks the axis signs, which come from SDL only.
+3. Start OJD. In **Controllers**, select the controller, click **Open Input Test**. Check inputs move and trackpads stop moving the cursor.
+4. Run OJD two minutes without Steam. Check the cursor stays still.
+5. Quit OJD. Check trackpads move the cursor.
+6. Lay the Deck flat, screen up; tilt the right edge down and hold. Paste motion from `ojd controller watch 28DE:1205` ([command-line tool](../../wiki/Command-Line.md)). Signs come from SDL only.

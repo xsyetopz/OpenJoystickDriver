@@ -21,7 +21,7 @@ enum ModStore {
 
   /// The failure that reports `error` with its E4xxx code.
   static func failure(_ error: ModPackageError, subject: String) -> CLIFailure {
-    CLIFailure(error.code, CLILocalized.format("cli.mod.group.refused", subject, error.detail))
+    ModPackageStore.failure(error, subject: subject)
   }
 }
 
@@ -77,28 +77,5 @@ struct ModPackageValidation: Encodable, Equatable {
       if CLIContext.current.format == .json { try CLIOutput.json(Self(error)) }
       throw ModStore.failure(error, subject: folder)
     }
-  }
-}
-
-/// One installed package in `mod list --json`. `problem` is why the package is not used.
-struct ModPackageEntry: Encodable, Equatable {
-  /// The package name.
-  let name: String
-  /// The package version.
-  let version: String?
-  /// The package author.
-  let author: String?
-  /// The files the package installs.
-  let files: [String]
-  /// Why OJD does not use the package, or nil when it does.
-  let problem: String?
-
-  /// Describes `package`.
-  init(_ package: ModPackage) {
-    name = package.name
-    version = package.manifest?.version
-    author = package.manifest?.author
-    files = package.manifest.map(\.listedFiles) ?? []
-    problem = package.problem
   }
 }

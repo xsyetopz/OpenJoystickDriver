@@ -89,9 +89,9 @@ final class InputScript: @unchecked Sendable {
   static func of(_ owner: AnyObject) -> InputScript {
     registryLock.withLock {
       let key = ObjectIdentifier(owner)
-      if let entry = registry[key], entry.owner.object === owner { return entry.script }
+      if let entry = unsafe registry[key], entry.owner.object === owner { return entry.script }
       let script = InputScript()
-      registry[key] = (Weak(owner), script)
+      unsafe registry[key] = (Weak(owner), script)
       return script
     }
   }

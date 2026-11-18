@@ -21,7 +21,7 @@ struct TransportExtensionCommandTests {
     actions: Locked<[TransportExtensionSubmission.Action]> = Locked([])
   ) async -> CLIRun {
     let submission:
-      @Sendable (TransportExtensionSubmission.Action) async throws ->
+      @Sendable (TransportExtensionSubmission.Action) async ->
         SystemExtensionSetupRequestResult = {
           action in
           actions.withLock { $0.append(action) }
@@ -48,6 +48,31 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
+  func statusReportsReplacedVersionPendingAsJSONAndHumanNote() async throws {
+    // Arrange
+    let pending = ExtensionStatus(
+      bundle: .present,
+      registration: .active("record line"),
+      replacedVersionPending: true
+    )
+    let current = ExtensionStatus(bundle: .present, registration: .active("record line"))
+
+    // Act
+    let pendingJSON = try await status(["--json"], pending).json()
+    let currentJSON = try await status(["--json"], current).json()
+    let human = await status([], pending)
+
+    // Assert
+    #expect(pendingJSON["replacedVersionPending"] as? Bool == true)
+    #expect(currentJSON["replacedVersionPending"] as? Bool == false)
+    #expect(
+      human.standardOutput.contains(
+        CLILocalized.text("platform.macos.ui.setup.replacedPendingDetail")
+      )
+    )
+  }
+
+  @Test
   func statusOmitsDetailWhenThereIsNone() async throws {
     let result = await status(["--json"], ExtensionStatus(bundle: .missing, registration: .absent))
 
@@ -59,7 +84,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func statusPrintsHumanRowsAndTheRegistrationRecord() async {
+  func statusPrintsHumanRowsAndRegistrationRecord() async {
     let result = await status(
       [],
       ExtensionStatus(bundle: .present, registration: .inactive("record line"))
@@ -74,7 +99,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func statusExitsOneWhenMacOSDoesNotReportTheRegistration() async {
+  func statusExitsOneWhenMacOSDoesNotReportRegistration() async {
     let result = await status(
       ["--plain"],
       ExtensionStatus(bundle: .present, registration: .unavailable("probe failed"))
@@ -87,7 +112,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func activateReportsTheStateAndSubmitsOneActivation() async throws {
+  func activateReportsStateAndSubmitsOneActivation() async throws {
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
     let jsonRun = await submit("activate", ["--json"], outcome: .active, actions: actions)
@@ -101,7 +126,7 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
-  func deactivateSubmitsADeactivation() async throws {
+  func deactivateSubmitsDeactivation() async throws {
     let actions = Locked<[TransportExtensionSubmission.Action]>([])
 
     let result = await submit("deactivate", ["--plain"], outcome: .inactive, actions: actions)
@@ -125,7 +150,11 @@ struct TransportExtensionCommandTests {
     #expect(try json.json()["state"] as? String == "AwaitingApproval")
   }
 
-  @Test(arguments: [SystemExtensionSetupRequestResult.failed, .timedOut])
+  @Test(arguments: [
+    SystemExtensionSetupRequestResult.failed(
+      SystemExtensionRequestFailure(domain: "OSSystemExtensionErrorDomain", code: 4, text: "x")
+    ), .timedOut,
+  ])
   func activateThatMacOSRejectsOrDoesNotFinishExitsOne(
     outcome: SystemExtensionSetupRequestResult
   ) async {

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "apple-docs": {
+      "type": "stdio",
+      "command": "bunx",
+      "args": [
+        "apple-docs-mcp-next@latest"
+      ]
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The report ID of the full input report.
 private let switchProFullReportID: UInt8 = 0x30
@@ -88,9 +88,9 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     )
     // Loading refuses a NintendoSwitch1 description without subcommands, so the guard cannot
     // fail.
-    guard let subcommands = PhysicalProtocolID.nintendoSwitch1.protocolDescription.subcommands
+    guard let described = PhysicalProtocolID.nintendoSwitch1.protocolDescription.subcommands
     else { fatalError("[ProtocolDescription] NintendoSwitch1 has no subcommands") }
-    self.subcommands = subcommands
+    self.subcommands = described
   }
 
   /// Clears the state of the session: neutral input and motion time re-anchored.
@@ -203,7 +203,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
   }
 
   /// Decodes one full `0x30` report; a `0x21` subcommand reply only feeds motion calibration.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     if bytes.first == 0x21 {
       consumeMotionCalibrationReply(bytes)

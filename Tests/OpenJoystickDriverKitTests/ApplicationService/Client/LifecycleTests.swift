@@ -7,16 +7,16 @@ import Testing
 @Suite("Application service lifecycle")
 struct LifecycleTests {
   @Test("login registration is skipped while the settings file is rejected")
-  func loginRegistrationDoesNotProceedOnAnUnreadableSettingsFile() throws {
+  func loginRegistrationDoesNotProceedOnUnreadableSettingsFile() throws {
     let root = RootedDataDirectory.temporary()
     let store = SettingsStore(directory: root)
     try FileManager.default.createDirectory(
       at: store.folderURL,
       withIntermediateDirectories: true
     )
-    try Data(
-      (#"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Settings", "#
-        + #""showInMenuBar": false}"#).utf8
+    try PropertyListFixture.bytes(
+      json: #"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Settings", "#
+        + #""showInMenuBar": false}"#
     ).write(to: store.userFileURL)
 
     #expect(throws: SettingsStoreError.storedNoVisibleEntryPoint(file: store.userFileURL.path)) {

@@ -1,6 +1,6 @@
 import CryptoKit
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 import Security
 
@@ -23,6 +23,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let remappingRouter: RemappingOutputRouter
   /// The access to posting system input events.
   let postEventAccess: CoreGraphicsPostEventAccess
+  /// Reads and requests the Bluetooth access; nil when the service has no Bluetooth central.
+  let bluetoothAccess: BluetoothAccessControl?
   /// The key under which the port keys of connected controllers are computed.
   let installationKey: SymmetricKey
   /// Serializes the remapping requests of the clients.
@@ -37,6 +39,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let connectedIdentifierProvider: @Sendable () async -> [LogicalControllerID]
   /// Admits the feedback of the virtual gamepad to the physical controllers.
   let feedbackGate: VirtualOutputFeedbackGate
+  /// The virtual identities every user-space backend of this server reserves from.
+  let virtualIdentities = SharedVirtualIdentityRegistry()
   /// The user settings file that every `ojd setting` key reads and writes.
   let settings: SettingsStore
   /// Turns launch at login on and off.
@@ -113,8 +117,10 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     settings: SettingsStore = SettingsStore(),
     personaDirectory: URL = VirtualHIDProfileOverrideStore.userDirectory,
     launchAtLogin: LaunchAtLoginControl? = nil,
-    statusChanges: ServiceStatusChanges = ServiceStatusChanges()
+    statusChanges: ServiceStatusChanges = ServiceStatusChanges(),
+    bluetoothAccess: BluetoothAccessControl? = nil
   ) {
+    self.bluetoothAccess = bluetoothAccess
     self.deviceManager = deviceManager
     self.statusChanges = statusChanges
     self.permissionManager = permissionManager
@@ -151,7 +157,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
       guard let self else {
         return LocalServiceRPCResponse(result: nil, error: "Service stopped.")
       }
-      return await self.handleLocalRPC(request)
+      return await handleLocalRPC(request)
     }
     let state = listenerState
     server.listenerFailureChanged = { state.set($0) }
@@ -163,6 +169,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     let endpoint = EndpointServer(
       source: ApplicationServiceWatchSource(server: self),
       feeds: virtualFeeds,
+      automation: self,
       streamDelivered: streamDelivered
     )
     endpoint.start()
@@ -174,7 +181,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     // so it never starts a listener on a service that is stopping.
     state.setRestart { [weak self, weak server] in
       guard let self, let server else { throw LocalServiceRPCError.stopping }
-      try self.restartListener(of: server)
+      try restartListener(of: server)
     }
     print("[ApplicationServiceServer] Listening on authenticated local RPC socket")
   }
@@ -273,6 +280,7 @@ extension ApplicationServiceServer {
       UserSpaceDispatcherFactoryContext(
         deviceManager: deviceManager,
         feedbackGate: feedbackGate,
+        virtualIdentities: virtualIdentities,
         profileOverrides: virtualHIDProfileOverrides,
         timeouts: virtualOutputTransitionTimeouts,
         clock: virtualOutputTransitionClock

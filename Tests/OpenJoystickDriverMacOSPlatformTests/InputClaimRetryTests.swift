@@ -8,7 +8,7 @@ struct InputClaimRetryTests {
   /// While another client seizes a device, macOS refuses OJD's shared open as well, so a device
   /// with a refused seize has no shared open and is still retried.
   @Test
-  func everyTrackedDeviceAtTheLocationWithARefusedOrFailedSeizeIsRetried() {
+  func everyTrackedDeviceAtLocationWithRefusedOrFailedSeizeIsRetried() {
     let ownerships: [UInt64: HIDInputOwnership] = [
       10: .ownedByAnotherClient, 11: .acquisitionFailed, 12: .exclusive, 20: .ownedByAnotherClient,
     ]

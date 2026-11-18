@@ -20,7 +20,7 @@ struct HIDElementDescriptionTests {
   }
 
   @Test
-  func inputsAreTheInputElementsNumberedInListingOrder() {
+  func inputsAreInputElementsNumberedInListingOrder() {
     for elements in Self.hostElements() {
       let inputs = elements.filter { HIDDeviceStream.reportKind(for: $0) == .input }
       let listing = HIDElementDescription.inputs(of: elements)

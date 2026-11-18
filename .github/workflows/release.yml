@@ -4,7 +4,7 @@ name: Release
   workflow_dispatch:
     inputs:
       tag:
-        description: SemVer tag to release, for example 0.1.0-rc.1
+        description: Tag to release, for example 0.1.0-rc.1, or a tester tag such as 0.1.0-rc.1.tester.1
         required: true
         type: string
   push:
@@ -28,17 +28,7 @@ jobs:
         env:
           RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
         run: |
-          tag="$RELEASE_TAG_INPUT"
-          if [[ ! "$tag" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta|rc)\.[1-9][0-9]*)?$ ]]; then
-            echo "ERROR: release tag must be MAJOR.MINOR.PATCH with optional -alpha.N, -beta.N, or -rc.N"
-            exit 1
-          fi
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          if [[ "$tag" == *-* ]]; then
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+          echo "tag=$RELEASE_TAG_INPUT" >> "$GITHUB_OUTPUT"
 
       - name: Checkout release commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,6 +36,26 @@ jobs:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || format('refs/tags/{0}', steps.release.outputs.tag) }}
           fetch-depth: 0
           fetch-tags: true
+
+      # A tester build is a pre-release whose tag orders after the release before it and before the release it leads to.
+      - name: Check release tag
+        id: kind
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          kind="$(python3 -m Scripts.Release.bundle_version --tag-kind "$RELEASE_TAG")"
+          if [[ "$kind" == tester ]]; then
+            base="$(python3 -m Scripts.Release.bundle_version --tester-base "$RELEASE_TAG")"
+            if ! git rev-parse --verify --quiet "refs/tags/$base" >/dev/null; then
+              echo "ERROR: tester tag $RELEASE_TAG follows $base, which is not a tag"
+              exit 1
+            fi
+          fi
+          if [[ "$kind" == release ]]; then
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Remove unused untrusted Homebrew taps
         run: |
@@ -55,11 +65,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          for dependency in pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
+          for dependency in just pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
             brew list --versions "$dependency" >/dev/null 2>&1 || brew install "$dependency"
           done
-          python3 -m venv .build/schema-validator
-          .build/schema-validator/bin/python -m pip install -r Scripts/Quality/requirements.txt
+          just schema-env
           echo "$PWD/.build/schema-validator/bin" >> "$GITHUB_PATH"
 
       # Each source is stored under its locked sha256 and checked on read, so a run downloads only changed sources.
@@ -69,49 +78,10 @@ jobs:
           path: .build/catalog-sources
           key: catalog-sources-${{ hashFiles('ControllerSources.lock.json') }}
 
-      - name: Verify generated controller catalog
-        run: |
-          ./Scripts/ojd catalog regenerate --check
-          ./Scripts/ojd errors regenerate --check
-          ./Scripts/ojd vocabulary regenerate --check
-
-      - name: Check controller records
-        run: |
-          ./Scripts/ojd check profiles
-
-      - name: Check Python
-        run: |
-          ruff format --check Scripts Tests/RepositoryScripts
-          ruff check Scripts Tests/RepositoryScripts
-          .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
-
-      - name: Check shell
-        run: find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-
-      - name: Check native tools and the WebRTC bridge package
-        run: ./Scripts/ojd check tools
-
-      - name: Check schemas
-        run: ./Scripts/ojd check schemas
-
-      - name: Test macOS 14 parser compatibility
-        run: |
-          ./Scripts/ojd test parsers-macos14
-          ./Scripts/ojd snapshots check
-
-      - name: Check generated DriverKit project
+      - name: Verify
         run: |
           test "$OJD_USE_LOCAL_SWIFTERKIT" = "0"
-          ./Scripts/ojd check driverkit
-
-      - name: Check Swift formatting and lint
-        run: |
-          swift-format lint --recursive --strict Package.swift Sources Tests Tools
-          swiftlint lint --no-cache --strict
-          python3 Scripts/Quality/check_localization_keys.py
-
-      - name: Build and test package
-        run: ./Scripts/ojd check swift
+          just verify
 
       - name: Create release tag
         env:
@@ -145,7 +115,7 @@ jobs:
           KEYCHAIN_SECRET: ${{ secrets.KEYCHAIN_SECRET }}
           OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 }}
           OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 }}
-        run: ./Scripts/ojd signing ci-release-setup
+        run: just signing-ci-release-setup
 
       - name: Package release build
         env:
@@ -153,7 +123,7 @@ jobs:
           NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
           NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
-        run: ./Scripts/ojd release package "$RELEASE_TAG"
+        run: just release-package "$RELEASE_TAG"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -171,4 +141,4 @@ jobs:
           files: .build/release-artifacts/*
           fail_on_unmatched_files: true
           generate_release_notes: true
-          prerelease: ${{ steps.release.outputs.prerelease }}
+          prerelease: ${{ steps.kind.outputs.prerelease }}

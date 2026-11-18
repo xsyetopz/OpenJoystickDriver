@@ -42,7 +42,7 @@ struct SettingResetCommandTests {
   }
 
   @Test
-  func forceMovesTheRejectedFileToTheTrash() async throws {
+  func forceMovesRejectedFileToTrash() async throws {
     try writeRejectedFile()
 
     let result = await run(["--force", "--json"])
@@ -61,7 +61,7 @@ struct SettingResetCommandTests {
   }
 
   @Test
-  func withoutForceAnUnattendedRunAsksForConfirmationAndKeepsTheFile() async throws {
+  func withoutForceUnattendedRunAsksForConfirmationAndKeepsFile() async throws {
     try writeRejectedFile()
 
     let result = await run([])
@@ -72,7 +72,7 @@ struct SettingResetCommandTests {
   }
 
   @Test
-  func withoutAFileNothingMovesAndNoConfirmationIsNeeded() async throws {
+  func withoutFileNothingMovesAndNoConfirmationIsNeeded() async throws {
     let human = await run([])
     let json = await run(["--json"])
 

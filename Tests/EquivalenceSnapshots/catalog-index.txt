@@ -333,6 +333,23 @@ output rumble=[low-frequency,high-frequency] binary=[] lighting=[player-indicato
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
 
+## 044F:B671
+protocol=xbox-gip variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+startup[0] usb ep=2 timeoutMs=2000 tolerated=false 0520010100
+startup[1] usb ep=2 timeoutMs=2000 tolerated=false 0A200203000114
+startup[2] usb ep=2 timeoutMs=2000 tolerated=false 062001020100
+keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
+gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
+inputLayout reportID=32 minimumLength=21
+inputLayout axis LeftStickX byte=6 bits=16 signed=false range=0...65535 inverted=false
+inputLayout trigger left byte=10 button=-
+parameters=
+
 ## 044F:D007
 protocol=vendor-ps3-third-party variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
@@ -500,25 +517,45 @@ gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=
 
 ## 045E:02E0
-protocol=hid-descriptor variant=- ownership=macos
+protocol=hid-report-layout variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+inputLayout reportID=1 minimumLength=16
+inputLayout button South 14&01
+inputLayout button East 14&02
+inputLayout button West 14&04
+inputLayout button North 14&08
+inputLayout button LeftShoulder 14&10
+inputLayout button RightShoulder 14&20
+inputLayout button Back 14&40
+inputLayout button Start 14&80
+inputLayout button LeftStickClick 15&01
+inputLayout button RightStickClick 15&02
+inputLayout axis LeftStickX byte=1 bits=16 signed=false range=0...65535 inverted=false
+inputLayout axis LeftStickY byte=3 bits=16 signed=false range=0...65535 inverted=false
+inputLayout axis RightStickX byte=5 bits=16 signed=false range=0...65535 inverted=false
+inputLayout axis RightStickY byte=7 bits=16 signed=false range=0...65535 inverted=false
+inputLayout hat table 13&FF 1=North,2=NorthEast,3=East,4=SouthEast,5=South,6=SouthWest,7=West,8=NorthWest
+inputLayout trigger left byte=9 button=-
+inputLayout trigger right byte=11 button=-
+inputLayout reportID=2 minimumLength=2
+inputLayout button Guide 1&01
 parameters=
 
 ## 045E:02E3
 protocol=xbox-gip variant=- ownership=macos
-transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=false settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-startup[0] usb ep=2 timeoutMs=2000 tolerated=false 0520010100
-startup[1] usb ep=2 timeoutMs=2000 tolerated=false 0A200203000114
-startup[2] usb ep=2 timeoutMs=2000 tolerated=false 062001020100
-keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
+startup[0] usb ep=1 timeoutMs=2000 tolerated=false 0520010100
+startup[1] usb ep=1 timeoutMs=2000 tolerated=false 0A200203000114
+startup[2] usb ep=1 timeoutMs=2000 tolerated=false 062001020100
+keepAlive[0] usb ep=1 timeoutMs=2000 tolerated=false 03200303000000
 gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=
 
@@ -874,8 +911,9 @@ protocol=hid-report-layout variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
 controls [Auxiliary1,Auxiliary2,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
-output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
-session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=100 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+rumbleTemplate output id=5 length=4 motors=high-frequency@3,low-frequency@2 bytes=050F0000 resendMs=100
 inputLayout reportID=4 minimumLength=32
 inputLayout button Auxiliary1 7&01
 inputLayout button Auxiliary2 7&02
@@ -4291,6 +4329,20 @@ keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
 gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=shareButton.fromEnd=18
 
+## 10F5:711E
+protocol=xbox-gip variant=- ownership=macos
+transport in=129 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=true settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+startup[0] usb ep=2 timeoutMs=2000 tolerated=false 0520010100
+startup[1] usb ep=2 timeoutMs=2000 tolerated=false 0A200203000114
+startup[2] usb ep=2 timeoutMs=2000 tolerated=false 062001020100
+keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
+gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
+parameters=
+
 ## 11C0:4001
 protocol=sony-dual-shock4 variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
@@ -4806,15 +4858,15 @@ parameters=
 
 ## 1532:0A43
 protocol=xbox-gip variant=- ownership=macos
-transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=false settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-startup[0] usb ep=2 timeoutMs=2000 tolerated=false 0520010100
-startup[1] usb ep=2 timeoutMs=2000 tolerated=false 0A200203000114
-startup[2] usb ep=2 timeoutMs=2000 tolerated=false 062001020100
-keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
+startup[0] usb ep=1 timeoutMs=2000 tolerated=false 0520010100
+startup[1] usb ep=1 timeoutMs=2000 tolerated=false 0A200203000114
+startup[2] usb ep=1 timeoutMs=2000 tolerated=false 062001020100
+keepAlive[0] usb ep=1 timeoutMs=2000 tolerated=false 03200303000000
 gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=
 
@@ -5027,6 +5079,15 @@ transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverrid
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency] binary=[] lighting=[player-indicator] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+parameters=
+
+## 1949:0402
+protocol=hid-descriptor variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
 
@@ -6419,6 +6480,15 @@ output rumble=[low-frequency,high-frequency] binary=[high-frequency] lighting=[p
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=1000
 parameters=
 
+## 2563:0526
+protocol=hid-descriptor variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+parameters=usageLayout=unknown
+
 ## 2563:0575
 protocol=hid-report-layout variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
@@ -6779,14 +6849,42 @@ keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
 gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=shareButton.fromEnd=18
 
+## 2DC8:2019
+protocol=xbox-gip variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+startup[0] usb ep=2 timeoutMs=2000 tolerated=false 0520010100
+startup[1] usb ep=2 timeoutMs=2000 tolerated=false 0A200203000114
+startup[2] usb ep=2 timeoutMs=2000 tolerated=false 062001020100
+keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
+gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
+parameters=
+
+## 2DC8:2027
+protocol=xbox-gip variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+startup[0] usb ep=2 timeoutMs=2000 tolerated=false 0520010100
+startup[1] usb ep=2 timeoutMs=2000 tolerated=false 0A200203000114
+startup[2] usb ep=2 timeoutMs=2000 tolerated=false 062001020100
+keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
+gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
+parameters=
+
 ## 2DC8:301B
-protocol=hid-descriptor variant=- ownership=macos
+protocol=hid-descriptor variant=- ownership=ojd
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-parameters=usageLayout=ZRzBrakeLeft
+parameters=usageLayout=ZRzBrakeLeftPaddles
 
 ## 2DC8:301C
 protocol=hid-descriptor variant=- ownership=macos
@@ -6795,7 +6893,7 @@ tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-parameters=
+parameters=usageLayout=ZRzBrakeLeftPaddles
 
 ## 2DC8:301D
 protocol=hid-descriptor variant=- ownership=macos
@@ -6848,6 +6946,24 @@ transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverrid
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency] binary=[] lighting=[player-indicator] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+parameters=
+
+## 2DC8:3208
+protocol=hid-descriptor variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+parameters=
+
+## 2DC8:5750
+protocol=hid-descriptor variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
 
@@ -7563,16 +7679,17 @@ parameters=
 
 ## 37D7:2801
 protocol=xbox-gip variant=- ownership=macos
-transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=true settleNs=200000000
+transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=true settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-startup[0] usb ep=1 timeoutMs=2000 tolerated=false 0520010100
+startup[0] usb ep=1 timeoutMs=2000 tolerated=false 012001090004203A0000008000
 startup[1] usb ep=1 timeoutMs=2000 tolerated=false 0A200203000114
 startup[2] usb ep=1 timeoutMs=2000 tolerated=false 062001020100
-keepAlive[0] usb ep=1 timeoutMs=2000 tolerated=false 03200303000000
-gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
+startup[3] usb ep=1 timeoutMs=2000 tolerated=false 0520030100
+keepAlive[0] usb ep=1 timeoutMs=2000 tolerated=false 03200403000000
+gip keepAlive=enabled startup=[012000090004203A0000008000,0A200003000114,062000020100,0520000100]
 parameters=
 
 ## 413D:2104

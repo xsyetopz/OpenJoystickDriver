@@ -18,8 +18,8 @@ extension VirtualOutputTests {
       ] as [String: Any],
     ]
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    try JSONSerialization.data(withJSONObject: document).write(
-      to: directory.appendingPathComponent("0001-0002.json")
+    try PropertyListFixture.data(tree: document).write(
+      to: directory.appendingPathComponent("0001-0002.plist")
     )
     return VirtualHIDProfileOverrideStore(directory: directory)
   }
@@ -97,13 +97,13 @@ extension VirtualOutputTests {
         "manufacturer": "Custom Maker",
       ] as [String: Any],
     ]
-    try JSONSerialization.data(withJSONObject: document).write(
-      to: directory.appendingPathComponent("0001-0002.json")
+    try PropertyListFixture.data(tree: document).write(
+      to: directory.appendingPathComponent("0001-0002.plist")
     )
   }
 
   @Test
-  func personaIdentityChangeRebuildsTheLiveDeviceAndAnUnchangedOneDoesNot() async throws {
+  func personaIdentityChangeRebuildsLiveDeviceAndUnchangedOneDoesNot() async throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("persona-identity-\(UUID().uuidString)", isDirectory: true)
     defer { try? FileManager.default.removeItem(at: directory) }
@@ -138,7 +138,7 @@ extension VirtualOutputTests {
     #expect(builds().count == 3)
 
     // A removed persona returns the controller to the built-in identity.
-    try FileManager.default.removeItem(at: directory.appendingPathComponent("0001-0002.json"))
+    try FileManager.default.removeItem(at: directory.appendingPathComponent("0001-0002.plist"))
     try await dispatcher.retarget(controller: custom)
     #expect(builds().count == 4)
     #expect(builds().last == "built SDLCompatible")

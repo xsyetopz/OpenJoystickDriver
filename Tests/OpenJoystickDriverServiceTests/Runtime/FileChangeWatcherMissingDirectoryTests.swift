@@ -8,7 +8,7 @@ struct FileChangeWatcherMissingDirectoryTests {
   /// A watched folder that does not exist yet is a normal state: the watcher reports a change
   /// once the folder appears.
   @Test
-  func reportsAChangeWhenAMissingDirectoryAppears() async throws {
+  func reportsChangeWhenMissingDirectoryAppears() async throws {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-watch-missing-\(UUID().uuidString)",
       isDirectory: true
@@ -29,7 +29,7 @@ struct FileChangeWatcherMissingDirectoryTests {
 
   /// A missing folder is not reported as a failure; other open errors are.
   @Test
-  func missingDirectoryIsNotAFailure() {
+  func missingDirectoryIsNotFailure() {
     #expect(FileChangeWatcher.isFailure(openErrno: ENOENT) == false)
     #expect(FileChangeWatcher.isFailure(openErrno: EACCES))
   }

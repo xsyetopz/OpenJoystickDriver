@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
@@ -12,6 +13,55 @@
     let stream: ApplicationServiceLogStream
     /// The line's text.
     let text: String
+
+    /// How serious the line is; its symbol and color both come from this.
+    var severity: ActivityLogSeverity { ActivityLogSeverity(stream: stream, text: text) }
+  }
+
+  /// How serious a log line is.
+  ///
+  /// The service logs carry no level field, so the stream and the line's opening word decide.
+  /// Standard output is information. A standard error line is a warning unless it opens with
+  /// `error`, `fatal` or `failed` after an optional `[Tag]`.
+  enum ActivityLogSeverity: Equatable {
+    /// A line from standard output.
+    case info
+    /// A standard error line that reports a condition the app works around.
+    case warning
+    /// A standard error line that reports a failure.
+    case error
+
+    /// Reads the severity of a line.
+    init(stream: ApplicationServiceLogStream, text: String) {
+      guard stream == .standardError else {
+        self = .info
+        return
+      }
+      var body = Substring(text.trimmingCharacters(in: .whitespaces))
+      if body.hasPrefix("["), let close = body.firstIndex(of: "]") {
+        body = body[body.index(after: close)...].drop { $0 == " " }
+      }
+      let lowered = body.lowercased()
+      self = ["error", "fatal", "failed"].contains(where: lowered.hasPrefix) ? .error : .warning
+    }
+
+    /// The tone that draws the line, or `nil` for the default label color.
+    var tone: SemanticTone? {
+      switch self {
+      case .info: return nil
+      case .warning: return .attention
+      case .error: return .failure
+      }
+    }
+
+    /// The SF Symbol before the line, or `nil` for none.
+    var symbolName: String? {
+      switch self {
+      case .info: return nil
+      case .warning: return "exclamationmark.triangle.fill"
+      case .error: return "xmark.octagon.fill"
+      }
+    }
   }
 
   /// Which streams the Activity log table shows: the segments of the toolbar's filter.
@@ -49,16 +99,6 @@
       return entries.filter { entry in
         includes(entry.stream)
           && (query.isEmpty || entry.text.localizedStandardContains(query))
-      }
-    }
-  }
-
-  extension ApplicationServiceLogStream {
-    /// The localization key of the stream's name in the Activity log.
-    var activityTitleKey: String {
-      switch self {
-      case .standardOutput: return "ui.console.output"
-      case .standardError: return "ui.console.errors"
       }
     }
   }

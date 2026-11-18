@@ -5,7 +5,7 @@ import Testing
 
 struct LocalizationTests {
   @Test
-  func packagesTheCompleteLocaleInventory() {
+  func packagesCompleteLocaleInventory() {
     let localizations = Localization.availableLocalizations()
     #expect(localizations.count == 22)
     let normalized = Set(localizations.map { $0.lowercased() })
@@ -16,7 +16,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func everyLocaleHasTheSameCurrentCatalogShape() {
+  func everyLocaleHasSameCurrentCatalogShape() {
     let sourceKeys = LocalizationCatalogAudit.keys(for: Localization.sourceLocalization)
     let sourcePlaceholders = LocalizationCatalogAudit.placeholderSignatures(
       for: Localization.sourceLocalization
@@ -27,6 +27,17 @@ struct LocalizationTests {
     for locale in Localization.availableLocalizations() {
       #expect(LocalizationCatalogAudit.keys(for: locale) == sourceKeys)
       #expect(LocalizationCatalogAudit.placeholderSignatures(for: locale) == sourcePlaceholders)
+    }
+  }
+
+  @Test
+  func everyReasonForNotServingControllerHasSentenceAndNextStepInEveryLocale() {
+    for locale in Localization.availableLocalizations() {
+      let keys = LocalizationCatalogAudit.keys(for: locale)
+      for reason in ProtocolBindingReason.allCases {
+        #expect(keys.contains(reason.explanationKey), "\(locale) has no \(reason.explanationKey)")
+        #expect(keys.contains(reason.nextStepKey), "\(locale) has no \(reason.nextStepKey)")
+      }
     }
   }
 
@@ -109,7 +120,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func eachPluralVariableCarriesTheCategoriesItsLanguageNeeds() {
+  func eachPluralVariableCarriesCategoriesItsLanguageNeeds() {
     func variable(_ categories: [String]) -> [String: Any] {
       var result: [String: Any] = [
         "NSStringFormatSpecTypeKey": "NSStringPluralRuleType",
@@ -153,7 +164,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func aCountValueNeedsAStringsdictEntryOfTheSameKey() {
+  func countValueNeedsStringsdictEntryOfSameKey() {
     let strings = [
       "files.moved": "%#@files@", "files.count": "%#@count@ files", "files.name": "%@",
     ]
@@ -166,7 +177,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func pluralResourcesCarryTheCategoriesEachLanguageNeeds() throws {
+  func pluralResourcesCarryCategoriesEachLanguageNeeds() throws {
     let root = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent()  // Localization
       .deletingLastPathComponent()  // OpenJoystickDriverKitTests
@@ -216,8 +227,8 @@ struct LocalizationTests {
   }
 
   @Test
-  func countedTextPicksTheFormOfTheSelectedLanguage() {
-    func text(_ language: String, _ key: String, _ arguments: CVarArg...) -> String {
+  func countedTextPicksFormOfSelectedLanguage() {
+    func text(_ language: String, _ key: String, _ arguments: any CVarArg...) -> String {
       Localization(preferredLanguages: [language]).plural(key, arguments: arguments)
     }
     #expect(
@@ -267,7 +278,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func connectedControllerCountsFollowThePluralRulesOfTheSelectedLanguage() {
+  func connectedControllerCountsFollowPluralRulesOfSelectedLanguage() {
     let english = Localization(preferredLanguages: ["en-US"])
     for (count, expected) in [
       (0, "0 controllers connected"), (1, "1 controller connected"),
@@ -287,13 +298,13 @@ struct LocalizationTests {
   }
 
   @Test
-  func aPluralKeyWithoutAnEntryRendersTheKeyItself() {
+  func pluralKeyWithoutEntryRendersKeyItself() {
     let english = Localization(preferredLanguages: ["en-US"])
     #expect(english.plural("missingPluralEntry", count: 3) == "missingPluralEntry")
   }
 
   @Test
-  func preferredLanguageSelectionUsesTheLocaleCatalog() {
+  func preferredLanguageSelectionUsesLocaleCatalog() {
     let resolver = Localization(preferredLanguages: ["fr-FR", "en-US"])
     #expect(resolver.resolvedLanguage?.lowercased() == "fr-fr")
     #expect(resolver.string("action.refresh") == "Actualiser")
@@ -390,7 +401,7 @@ struct LocalizationTests {
 
     let area = resolver.formatted(
       "cli.explain.group.area",
-      arguments: ["Endpoint" as CVarArg]
+      arguments: ["Endpoint" as any CVarArg]
     )
     #expect(area == "Area: Endpoint")
   }
@@ -423,7 +434,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func everyVariantThatABindingNamesHasOneDisplayNameKey() {
+  func everyVariantThatBindingNamesHasOneDisplayNameKey() {
     let sourceKeys = LocalizationCatalogAudit.keys(for: Localization.sourceLocalization)
     let named = PhysicalProtocolID.allCases.filter(\.namesVariant)
     #expect(
@@ -451,7 +462,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func aReceiverBindingReadsAsTheFamilyThenTheVariantInEnglish() {
+  func receiverBindingReadsAsFamilyThenVariantInEnglish() {
     let english = Localization(preferredLanguages: ["en-US"])
     #expect(
       ProtocolBindingID(.xboxXUSB, variant: .receiver).displayName(in: english)
@@ -460,7 +471,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func aBindingNamesItsVariantOnlyWhenTheFamilyStoresIt() {
+  func bindingNamesItsVariantOnlyWhenFamilyStoresIt() {
     let english = Localization(preferredLanguages: ["en-US"])
     #expect(english.string("term.protocolBinding.familyWithVariant", "A", "B") == "A, B")
     let receiver = ProtocolBindingID(.xboxXUSB, variant: .receiver)
@@ -487,7 +498,7 @@ struct LocalizationTests {
   }
 
   @Test
-  func brandAndTechnicalNamesEqualTheSourceInEveryLocale() {
+  func brandAndTechnicalNamesEqualSourceInEveryLocale() {
     let source = LocalizationCatalogAudit.values(for: Localization.sourceLocalization)
     let listed = LocalizationCatalogAudit.sameInEveryLocaleKeys
     #expect(listed.isSubset(of: Set(source.keys)), "\(listed.subtracting(source.keys).sorted())")

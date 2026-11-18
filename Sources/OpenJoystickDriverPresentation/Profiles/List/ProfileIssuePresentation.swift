@@ -17,13 +17,19 @@ struct ProfileIssuePresentation: Equatable {
     switch issue.kind {
     case .damagedProfile:
       title = OJDLocalized.string("ui.profiles.damagedProfile")
-      message = OJDLocalized.string("ui.profiles.damagedProfileMessage")
+      message =
+        issue.fileName.map { OJDLocalized.formatted("ui.profiles.staleProfileMessage", $0) }
+        ?? OJDLocalized.string("ui.profiles.damagedProfileMessage")
     case .unusableLibrary:
       title = OJDLocalized.string("ui.profiles.damagedLibrary")
       message = OJDLocalized.string("ui.profiles.damagedSelectionsMessage")
     }
     code = issue.code.rawValue
+    offersMigration = issue.code == .unsupportedAPIVersion
   }
+
+  /// Whether `ojd migrate` can fix the issue, so the screen offers Migrate before Delete.
+  let offersMigration: Bool
 
   /// The title with the code, as the detail's section header reads it.
   var titleWithCode: String { OJDLocalized.formatted("ui.error.withCode", title, code) }

@@ -1,25 +1,39 @@
 # Implementation Status
 
-OpenJoystickDriver 0.6 uses a persistent application runtime. The signed app host owns controller processing, virtual output, login registration, permission state, and the authenticated local RPC endpoint. No helper daemon or LaunchAgent is packaged.
+OpenJoystickDriver 0.6 runs a persistent application runtime. The signed app host owns controller processing, virtual output, login registration, permission state, and the authenticated RPC endpoint. Sources contain no helper daemon, LaunchAgent plist, or alternate RPC route.
 
-The foreground app owns the runtime and login item, and the authenticated Unix socket is the typed GUI/CLI service boundary. The installed-CLI forwarder prevents an unsigned or stale repository executable from impersonating the signed client. A profile with any other `apiVersion` is rejected. Sources and packaging contain no helper daemon, LaunchAgent plist, or alternate RPC route.
+The authenticated Unix socket is the typed GUI and CLI boundary. The installed-CLI forwarder blocks unsigned or stale executables from impersonating the signed client.
 
-Controller sessions distinguish physical connection from reversible OJD suspension. Virtual HID profile transitions use bounded shutdown and retain the actual live profile after a failed replacement. Complete DualShock 4 Bluetooth reports require a valid CRC. Every driver decodes each report into a full controller snapshot, stale report progress retires non-neutral OJD output after one second, and recovery requires a fresh neutral report. Idle input is never consumed as a wake event. Explicit wireless disconnect neutralizes and suspends one selected session before a bounded Bluetooth close, without reconnecting or affecting other controllers. GameSir G7 SE startup keeps the mandatory GIP LED-on command on every USB open and resume, with the latest startup result in diagnostics.
+Endpoint, schemas, and stored documents use `apiVersion` `openjoystickdriver/v1alpha3`. Others are rejected; `ojd migrate` converts older stored documents. `Scripts/SDK/reference_client.py` speaks only that version.
 
-Quit requests share one asynchronous teardown and leave the app stopped. TCC reopen remains a native system action. Profile-library versions other than the current schema return a typed unsupported-version error; loading an empty unsupported library does not rewrite its bytes or discard unknown fields.
+Sessions separate physical connection from reversible OJD suspension. A failed virtual HID profile replacement keeps the live profile.
 
-The CLI and signed application runtime report authoritative Input Monitoring and Accessibility states for `OpenJoystickDriver.app`. Input Monitoring gates physical controller reads. Accessibility gates virtual-HID publication. OJD never resets TCC.
+DualShock 4 Bluetooth reports need a valid CRC. Stale report progress retires non-neutral OJD output after one second. Recovery: a fresh neutral report.
 
-Controller records remain generated data, while shared protocol behavior remains in code. Event normalization removes duplicate and contradictory input, and output dispatch is concurrent across devices and ordered within each virtual device. Per-device host-report handlers validate control requests and decode the Xbox One rumble report. Codec tests do not establish signed consumer binding or hardware delivery; see [wire protocols](wire-protocols.md). Process and RPC calls have deadlines; buffers and frames are bounded; current-session logs have typed paths.
+GameSir G7 SE sends the GIP LED-on command on every USB open and resume. Diagnostics keep the latest result.
 
-`OpenJoystickDriverUSB` exposes one controller-neutral raw USB API. Accessible vendor-specific interfaces use app-side IOUSBHost. The SwifterKit adapter talks to the `XboxUSB` personality of the DriverKit extension only for an observed DEXT-owned service or a model covered by OJD's restricted production entitlement. The extension is `com.openjoystickdriver.XboxUSBDevice` with that one personality; the app publishes virtual gamepads through `IOHIDUserDevice`. SwifterKit generates its native project at build time, while this repository authors the USB configuration. Generation and unsigned native builds are locally validated. Signed activation, macOS approval, and physical USB delivery require an appropriately provisioned Mac and recorded evidence. Controllers with incomplete hardware evidence are listed in [experimental controllers](experimental-controllers.md).
+Another profile library schema version returns a typed unsupported-version error; an empty unsupported library keeps its bytes and unknown fields.
+
+CLI and app runtime report Input Monitoring and Accessibility states for `OpenJoystickDriver.app`. Input Monitoring gates physical controller reads; Accessibility gates virtual-HID publication. OJD never resets TCC.
+
+Controller records are generated; shared protocol behavior stays in code. Output dispatch is concurrent across devices, ordered per virtual device.
+
+Codec tests do not show signed consumer binding or hardware delivery ([wire protocols](wire-protocols.md)).
+
+`OpenJoystickDriverUSB` exposes one controller-neutral raw USB API; accessible vendor-specific interfaces use app-side IOUSBHost.
+
+The SwifterKit adapter talks to the DriverKit extension's XboxUSB personality only for an observed DEXT-owned service or a model under OJD's restricted production entitlement. The extension `com.openjoystickdriver.XboxUSBDevice` has that one personality. The app publishes virtual gamepads through `IOHIDUserDevice`.
+
+SwifterKit generates its native project at build time. Validated locally: generation, unsigned native builds. Needs a provisioned Mac and evidence: signed activation, macOS approval, physical USB delivery. Controllers with incomplete hardware evidence: [experimental controllers](experimental-controllers.md).
 
 ## Platform Boundaries
 
-On every supported macOS (12+), physical HID access uses IOHID and consumer virtual output uses `IOHIDUserDevice`. Raw USB uses IOUSBHost/USBDriverKit. `OpenJoystickDriverUSB` hides the USB host transport from parsers and application callers. OJD does not retain a libusb fallback.
+Every supported macOS (12+): physical HID uses IOHID, consumer virtual output uses IOHIDUserDevice, raw USB uses IOUSBHost and USBDriverKit. `OpenJoystickDriverUSB` hides USB host transport from parsers and app callers. No libusb fallback.
 
 ## Known Issues
 
-An intermittent crash ends the app on macOS 27.0 (26A428). It has been seen twice, with 0.5.0-beta.4 development builds. The main thread traps with `CFRelease() called with NULL` while `IOHIDManager` drops a removed device: `__IOHIDManagerDeviceRemoved` releases the device, `IODestroyPlugInInterface` destroys its `IOHIDDeviceClass`, and `CFPlugInRemoveInstanceForFactory` deallocates the plug-in bundle. No OJD frame is on the stack, and no other thread was doing HID work. The manager is OJD's `HIDDeviceStream`, scheduled on the main run loop.
+Intermittent app crash on macOS 27.0 (26A428). The main thread traps with `CFRelease() called with NULL` while IOHIDManager drops a removed device: `__IOHIDManagerDeviceRemoved` releases the device, `IODestroyPlugInInterface` destroys its IOHIDDeviceClass, `CFPlugInRemoveInstanceForFactory` deallocates the plug-in bundle. No OJD frame is on the stack; no other thread did HID work. Manager: OJD's `HIDDeviceStream`, main run loop.
 
-Before the second crash, the log showed every controller behind one USB 2 hub disconnect at the same moment. On macOS 27, Sony pads and the GameSir G7 SE load Apple's `GCHIDLib` plug-in rather than `IOHIDLib`, so a suspected trigger is the last `GCHIDLib`-backed device leaving the process. That trigger is unconfirmed. Per-device USB resets of each controller did not reproduce the crash, singly or several at once. Neither did a standalone `IOHIDManager` program. Controllers work normally once the app is relaunched. A reproduction still needs a whole-hub disconnect.
+Before the second crash, every controller behind one USB 2 hub disconnected at once. Reproduction needs a whole-hub disconnect. On macOS 27, Sony pads and the GameSir G7 SE load Apple's `GCHIDLib`, not `IOHIDLib`. Suspected trigger: the last `GCHIDLib`-backed device leaving the process. Not reproduced: per-device USB resets (singly or together), a standalone IOHIDManager program. Relaunch restores controllers.
+
+Mitigation, unconfirmed on the reporting hardware: `HIDPlugInBundles` holds a `CFBundle` reference to each plug-in that a matched device's `IOCFPlugInTypes` names, from `HIDDeviceStream.handleDeviceAdded` until the process exits. `CFBundleCreate` returns the bundle `CFPlugInCreate` gives IOKit (`HIDPlugInBundlesTests`), so `CFPlugInRemoveInstanceForFactory` never releases its last reference.

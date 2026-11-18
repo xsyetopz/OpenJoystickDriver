@@ -14,34 +14,34 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func everyAreaHasATitleKey() {
+  func everyAreaHasTitleKey() {
     for area in MainWindowArea.allCases {
       #expect(area.titleKey == "ui.sidebar.\(area.rawValue).title")
     }
   }
 
   @Test
-  func everyAreaTitleKeyIsInTheCatalog() {
+  func everyAreaTitleKeyIsInCatalog() {
     for area in MainWindowArea.allCases {
       #expect(OJDLocalized.string(area.titleKey) != area.titleKey, "\(area.titleKey)")
     }
   }
 
   @Test
-  func onlyControllersProfilesAndLibraryHaveAListColumn() {
+  func onlyControllersProfilesAndLibraryHaveListColumn() {
     #expect(MainWindowArea.allCases.filter(\.hasListColumn) == [.controllers, .profiles, .library])
   }
 
   @Test
   @MainActor
-  func theWindowOpensOnControllersWhenNoAreaWasChosen() {
+  func windowOpensOnControllersWhenNoAreaWasChosen() {
     let navigation = MainWindowNavigationModel(persistence: MemoryAreaPersistence())
     #expect(navigation.selectedArea == .controllers)
   }
 
   @Test
   @MainActor
-  func commandTwoSelectsProfilesAndTheTitleFollows() {
+  func commandTwoSelectsProfilesAndTitleFollows() {
     let navigation = MainWindowNavigationModel(persistence: MemoryAreaPersistence())
     let area = MainWindowArea.allCases.first { $0.keyEquivalent == "2" }
     #expect(area == .profiles)
@@ -51,7 +51,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func toolbarHoldsTheSidebarToggleAndNoAreaSwitcher() {
+  func toolbarHoldsSidebarToggleAndNoAreaSwitcher() {
     #expect(
       MainWindowToolbarLayout.fixedItems == [
         .toggleSidebar, .sidebarTrackingSeparator, .flexibleSpace,
@@ -67,11 +67,11 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func eachAreaShowsItsOwnActionsAfterTheFixedItems() {
+  func eachAreaShowsItsOwnActionsAfterFixedItems() {
     #expect(MainWindowArea.controllers.toolbarActions(activityMode: .log).isEmpty)
     let profileActions: [MainWindowToolbarAction] = [
-      .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .exportProfile,
-      .deleteProfile,
+      .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
+      .exportProfile, .deleteProfile,
     ]
     #expect(MainWindowArea.profiles.toolbarActions(activityMode: .log) == profileActions)
     #expect(
@@ -90,7 +90,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func profileActionsFollowTheSelectionTheBlockAndUnsavedChanges() {
+  func profileActionsFollowSelectionBlockAndUnsavedChanges() {
     func enabled(_ action: MainWindowToolbarAction, _ state: ProfileToolbarState) -> Bool {
       action.isEnabled(profile: state)
     }
@@ -103,14 +103,16 @@ struct MainWindowAreaTests {
     let unsaved = ProfileToolbarState(hasSelection: true, isBlocked: false, hasUnsavedChanges: true)
     let blocked = ProfileToolbarState(hasSelection: true, isBlocked: true, hasUnsavedChanges: false)
     let selectionActions: [MainWindowToolbarAction] = [
-      .duplicateProfile, .exportProfile, .deleteProfile,
+      .duplicateProfile, .convertProfile, .exportProfile, .deleteProfile,
     ]
     for action in selectionActions { #expect(!enabled(action, none)) }
     for action in selectionActions { #expect(enabled(action, selected)) }
     #expect(!enabled(.duplicateProfile, unsaved))
+    #expect(!enabled(.convertProfile, unsaved))
     #expect(!enabled(.exportProfile, unsaved))
     #expect(enabled(.deleteProfile, unsaved))
     #expect(!enabled(.duplicateProfile, blocked))
+    #expect(!enabled(.convertProfile, blocked))
     #expect(enabled(.exportProfile, blocked))
     #expect(!enabled(.deleteProfile, blocked))
     #expect(!enabled(.newProfile, blocked) && !enabled(.importProfile, blocked))
@@ -122,7 +124,7 @@ struct MainWindowAreaTests {
   }
 
   @Test
-  func activityActionsFollowTheViewItShows() {
+  func activityActionsFollowViewItShows() {
     #expect(
       MainWindowArea.activity.toolbarActions(activityMode: .log) == [
         .activityMode, .activityFilter, .activitySearch, .copyActivityLog,
@@ -153,11 +155,21 @@ struct MainWindowAreaTests {
       #expect(NSImage(systemSymbolName: action.symbolName, accessibilityDescription: nil) != nil)
       #expect(OJDLocalized.string(action.labelKey) != action.labelKey)
       #expect(OJDLocalized.string(action.descriptionKey) != action.descriptionKey)
+      #expect(action.descriptionKey != action.labelKey)
     }
   }
 
   @Test
-  func onlyControllersHasASummaryLineWhileTheServiceIsUnavailable() {
+  @MainActor
+  func librarySearchFieldShowsItsLabelForVoiceOver() throws {
+    let item = try #require(
+      MainWindowToolbarLayout.makeItem(for: .searchLibrary) as? NSSearchToolbarItem
+    )
+    #expect(item.searchField.placeholderString == item.label)
+  }
+
+  @Test
+  func onlyControllersHasSummaryLineWhileServiceIsUnavailable() {
     for area in MainWindowArea.allCases {
       #expect(MainWindowSummary.text(for: area, status: .loading).isEmpty)
     }

@@ -11,13 +11,14 @@ enum LocalizationCatalogAudit {
     "term.protocolFamily.sonyDualSense", "term.protocolFamily.sonyDualShock4",
     "term.protocolFamily.sonySixaxis", "term.protocolFamily.valveSteamController",
     "term.protocolFamily.valveSteamDeck", "term.protocolFamily.valveSteamTriton",
-    "term.protocolFamily.vendorFlydigi", "term.protocolFamily.vendorGameSir",
+    "term.protocolFamily.vendorGameSir",
     "term.protocolFamily.vendorNvidiaShield", "term.protocolFamily.xboxGip",
     "term.protocolFamily.xboxXid", "term.protocolFamily.xboxXusb",
     "term.protocolVariant.usb",
     "cli.controller.show.labelMotionPlus", "term.wiiExtension.nunchuk",
     "term.wiiExtension.classicController", "term.wiiExtension.classicControllerPro",
     "term.wiiExtension.motionPlus",
+    "platform.macos.ui.controllers.server.system", "ui.controllers.server.ojd",
   ]
 
   static let nonLinguisticSourceIdenticalKeys: Set<String> = sameInEveryLocaleKeys.union([
@@ -43,7 +44,7 @@ enum LocalizationCatalogAudit {
     "ui.settings.general.title", "ui.controllers.server.ojd", "term.macro", "ui.profiles.macros",
   ]
   private static let frenchTerms: Set<String> = [
-    "ui.library.field.source", "ui.library.field.transport", "ui.library.field.version",
+    "ui.library.field.version",
     "ui.capture.gain",
     "cli.controller.show.labelSession", "cli.controller.show.labelExtension",
     "cli.status.group.labelTransportExtension", "cli.status.group.labelService", "term.destination",
@@ -63,7 +64,7 @@ enum LocalizationCatalogAudit {
       "term.key.return", "term.key.shift", "term.key.tab",
     ],
     "de-DE": [
-      "term.parser", "term.protocolVariant.dongle",
+      "ui.shortcuts.action.removeMod.name", "term.parser", "term.protocolVariant.dongle",
       "ui.library.field.version", "ui.menu.controller.title", "ui.activity.filter",
       "ui.activity.column.details",
       "ui.access.details", "ui.library.details",
@@ -71,7 +72,7 @@ enum LocalizationCatalogAudit {
       "ui.access.transport.socket", "ui.access.token.issued.title", "ui.access.token.named",
       "ui.access.tokens", "ui.library.mods",
       "ui.capture.linear", "cli.access.status.socket",
-      "cli.controller.show.labelName", "term.controller", "term.status", "ui.console.stream",
+      "cli.controller.show.labelName", "term.controller", "term.status",
       "ui.developer.controller", "ui.developer.controllerDetails", "ui.profiles.speak.text",
       "ui.developer.route", "ui.inputTest.home", "term.key.control", "term.key.escape",
       "ui.mapping.guide",
@@ -81,10 +82,11 @@ enum LocalizationCatalogAudit {
       "ui.settings.general.version", "ui.profiles.pointerSpeed.driverTrigger",
       "ui.shortcuts.controller.name", "ui.shortcuts.controller.type",
       "ui.shortcuts.parameter.controller",
-      "ui.shortcuts.profile.name",
+      "ui.shortcuts.profile.name", "ui.profiles.sort.name", "ui.profiles.sort.controller",
+      "ui.profiles.apps",
     ],
-    "es-ES": spanishTerms.union(["ui.menu.window.zoom"]),
-    "es-MX": spanishTerms.union(["ui.menu.window.zoom"]),
+    "es-ES": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
+    "es-MX": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
     "fr-CA": frenchTerms.union(["ui.developer.packetColumnDirection"]).union([
       "ui.activity.column.message",
       "ui.menu.app.services", "ui.menu.window.zoom", "ui.settings.notifications.title",
@@ -95,13 +97,13 @@ enum LocalizationCatalogAudit {
     ]),
     "hi-IN": ["term.key.escape", "term.key.return"],
     "id-ID": [
-      "term.parser", "term.protocolVariant.dongle",
+      "ui.shortcuts.action.installMod.folder", "term.parser", "term.protocolVariant.dongle",
       "ui.library.layer.driver", "ui.access.token.issued.title", "ui.access.token.named",
       "ui.activity.filter", "ui.activity.mode.log",
       "ui.access.web.port", "ui.access.web.enable.port", "ui.menu.window.zoom",
       "ui.controllers.server.ojd",
       "cli.controller.show.labelInput", "cli.explain.group.area", "cli.explain.group.areaEndpoint",
-      "term.status", "ui.console.output", "ui.console.stream", "ui.developer.packetColumnData",
+      "term.status", "ui.console.output", "ui.developer.packetColumnData",
       "ui.inputTest.home", "ui.inputTest.menu",
       "term.key.capsLock", "term.key.meta",
       "term.key.control", "term.key.escape", "term.key.alt", "term.key.return", "term.key.shift",
@@ -112,7 +114,7 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.model", "ui.menu.file.title", "ui.menu.edit.title",
     ],
     "it-IT": [
-      "term.macro",
+      "term.macro", "ui.profiles.sort.controller",
       "term.parser", "term.protocolVariant.dongle",
       "ui.access.token.issued.title", "ui.access.token.named",
       "ui.menu.controller.title", "ui.menu.file.title", "ui.menu.window.zoom",
@@ -129,29 +131,29 @@ enum LocalizationCatalogAudit {
     ],
     "ja-JP": [
       "term.key.capsLock", "term.key.escape", "term.key.alt", "term.key.return",
-      "term.key.shift", "ui.profiles.appID",
+      "term.key.shift",
     ],
     "ko-KR": [
       "term.key.capsLock", "term.key.meta", "term.key.control", "term.key.escape",
       "term.key.alt", "term.key.return", "term.key.shift",
     ],
     "nl-NL": [
-      "term.macro",
+      "term.macro", "ui.profiles.sort.controller",
       "term.parser", "term.protocolVariant.dongle",
-      "ui.library.field.transport", "ui.access.details", "ui.library.details", "ui.activity.filter",
+      "ui.access.details", "ui.library.details", "ui.activity.filter",
       "ui.activity.column.details",
       "ui.access.token.issued.title", "ui.access.token.named", "ui.access.tokens",
       "ui.library.mods",
       "ui.menu.window.zoom",
-      "ui.sidebar.controllers.title", "ui.extra.controllers",
-      "ui.menu.controller.title", "ui.menu.help.title", "ui.extra.help",
+      "ui.sidebar.controllers.title",
+      "ui.menu.controller.title", "ui.menu.help.title",
       "ui.access.socket", "ui.access.transport.socket",
       "cli.access.status.socket", "cli.controller.show.labelProtocol",
       "cli.controller.show.labelRecord", "cli.controller.show.inputMappingRecord",
       "cli.controller.show.labelRumble",
       "cli.status.group.labelControllers", "cli.status.group.labelService", "term.controller",
       "term.protocol", "term.status",
-      "action.stop", "ui.console.stream", "ui.developer.controller",
+      "action.stop", "ui.developer.controller",
       "ui.developer.controllerDetails", "ui.developer.packetColumnBytes", "ui.developer.route",
       "ui.inputTest.home", "ui.inputTest.menu", "ui.inputTest.rumble", "term.key.capsLock",
       "term.key.meta", "term.key.control",
@@ -205,9 +207,8 @@ enum LocalizationCatalogAudit {
       "term.key.shift", "term.key.tab", "ui.mapping.guide", "ui.profiles.trackball.enabled",
       "ui.profiles.turbo", "ui.access.token.issued.title", "ui.access.token.named",
     ],
-    "zh-CN": ["term.key.alt", "term.key.shift", "ui.profiles.appID"],
-    "zh-HK": ["ui.profiles.appID"],
-    "zh-TW": ["term.key.escape", "term.key.alt", "ui.profiles.appID"],
+    "zh-CN": ["term.key.alt", "term.key.shift"],
+    "zh-TW": ["term.key.escape", "term.key.alt"],
   ]
 
   static func allowedSourceIdenticalEnglishProseKeys(for localization: String) -> Set<String> {
@@ -403,7 +404,11 @@ enum LocalizationCatalogAudit {
 
   private static func stringsDictionary(for localization: String) -> [String: Any] {
     guard let data = resourceData(for: localization, extension: "stringsdict"),
-      let value = try? PropertyListSerialization.propertyList(from: data, format: nil),
+      let value = try? unsafe PropertyListSerialization.propertyList(
+        from: data,
+        options: 0,
+        format: nil
+      ),
       let dictionary = value as? [String: Any]
     else { return [:] }
     return dictionary
@@ -415,7 +420,7 @@ enum LocalizationCatalogAudit {
     guard let expression = try? NSRegularExpression(pattern: pattern) else { return [:] }
     let range = NSRange(text.startIndex..<text.endIndex, in: text)
     var result: [String: String] = [:]
-    expression.enumerateMatches(in: text, range: range) { match, _, _ in
+    unsafe expression.enumerateMatches(in: text, range: range) { match, _, _ in
       guard let match, let keyRange = Range(match.range(at: 1), in: text),
         let valueRange = Range(match.range(at: 2), in: text)
       else { return }

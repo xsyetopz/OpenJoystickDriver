@@ -25,7 +25,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func theFirstAnswerRefreshesOnceAndAServiceNotificationRefreshesWithinOneSecond() async {
+  func firstAnswerRefreshesOnceAndServiceNotificationRefreshesWithinOneSecond() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let updates = makeUpdates(source, refreshed: refreshed)
@@ -43,7 +43,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aTestNotificationAnnouncementIsAnsweredAndRefreshesNothing() async {
+  func testNotificationAnnouncementIsAnsweredAndRefreshesNothing() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let answers = Answers()
@@ -63,7 +63,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aHoldTimeAnswerWithNoChangeRefreshesNothing() async {
+  func holdTimeAnswerWithNoChangeRefreshesNothing() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let updates = makeUpdates(source, refreshed: refreshed)
@@ -78,7 +78,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aRestartedServiceWithTheSameCountRefreshes() async {
+  func restartedServiceWithSameCountRefreshes() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let updates = makeUpdates(source, refreshed: refreshed)
@@ -124,7 +124,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aFailureWithChangingTextOfTheSameKindIsReportedOnce() async {
+  func failureWithChangingTextOfSameKindIsReportedOnce() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let modes = Modes()
@@ -148,7 +148,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aRecoveryBeforeTheThresholdNeverReportsPolling() async {
+  func recoveryBeforeThresholdNeverReportsPolling() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let logged = LogLines()
@@ -167,7 +167,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func aRestoredWaitAfterAReportedFallbackIsReportedOnceAndRefreshes() async {
+  func restoredWaitAfterReportedFallbackIsReportedOnceAndRefreshes() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let modes = Modes()
@@ -246,12 +246,12 @@ extension ServiceStatusRevision {
 /// A change source whose waits finish only when the test answers or fails them.
 private final class ScriptedChangeSource: ControllerChangeSource, @unchecked Sendable {
   private let lock = NSLock()
-  private var pending: [CheckedContinuation<ServiceStatusReply, Error>] = []
-  private var queued: [Result<ServiceStatusReply, Error>] = []
+  private var pending: [CheckedContinuation<ServiceStatusReply, any Error>] = []
+  private var queued: [Result<ServiceStatusReply, any Error>] = []
 
-  func waitForChange(after revision: ServiceStatusRevision?) async throws -> ServiceStatusReply {
+  func waitForChange(after _: ServiceStatusRevision?) async throws -> ServiceStatusReply {
     try await withCheckedThrowingContinuation { continuation in
-      let ready = lock.withLock { () -> Result<ServiceStatusReply, Error>? in
+      let ready = lock.withLock { () -> Result<ServiceStatusReply, any Error>? in
         if queued.isEmpty {
           pending.append(continuation)
           return nil
@@ -271,10 +271,10 @@ private final class ScriptedChangeSource: ControllerChangeSource, @unchecked Sen
       .success(ServiceStatusReply(revision: revision, event: event, announcement: announcement))
     )
   }
-  func fail(_ error: Error) { deliver(.failure(error)) }
+  func fail(_ error: any Error) { deliver(.failure(error)) }
 
-  private func deliver(_ result: Result<ServiceStatusReply, Error>) {
-    let waiting = lock.withLock { () -> CheckedContinuation<ServiceStatusReply, Error>? in
+  private func deliver(_ result: Result<ServiceStatusReply, any Error>) {
+    let waiting = lock.withLock { () -> CheckedContinuation<ServiceStatusReply, any Error>? in
       if pending.isEmpty {
         queued.append(result)
         return nil

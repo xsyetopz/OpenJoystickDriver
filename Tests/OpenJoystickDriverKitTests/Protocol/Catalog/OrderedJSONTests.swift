@@ -17,7 +17,7 @@ struct OrderedJSONTests {
     let walker = try #require(
       FileManager.default.enumerator(at: root, includingPropertiesForKeys: nil)
     )
-    return (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "json" }
+    return (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "plist" }
       .sorted { $0.path < $1.path }
   }
 
@@ -30,8 +30,8 @@ struct OrderedJSONTests {
     ] {
       for url in try Self.recordFiles(under: directory) {
         let data = try Data(contentsOf: url)
-        let text = try OrderedJSON.parse(data).formatted()
-        #expect(text == String(bytes: data, encoding: .utf8), "\(url.path)")
+        let written = try OrderedJSON(document: data, file: url.lastPathComponent).plistData()
+        #expect(written == data, "\(url.path)")
         checked += 1
       }
     }
@@ -41,7 +41,10 @@ struct OrderedJSONTests {
   @Test
   func everyLoadedBundledRecordDocumentIsItsFileText() throws {
     for url in try Self.recordFiles(under: "Sources/OpenJoystickDriverKit/Resources/Controllers") {
-      let document = try OrderedJSON.parse(Data(contentsOf: url))
+      let document = try OrderedJSON(
+        document: Data(contentsOf: url),
+        file: url.lastPathComponent
+      )
       guard case .object(let members) = document,
         case .number(let vendor)? = members.first(where: { $0.key == "vendorID" })?.value,
         case .number(let product)? = members.first(where: { $0.key == "productID" })?.value,
@@ -58,13 +61,13 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func usesTheFileSpacing() throws {
+  func usesFileSpacing() throws {
     let text = try OrderedJSON.parse(Data(#"{"a":1,"b":[true,null],"c":{}}"#.utf8)).formatted()
     #expect(text == "{\n  \"a\": 1,\n  \"b\": [true, null],\n  \"c\": {}\n}\n")
   }
 
   @Test
-  func arrayBreaksWhenItsLineWouldPass80Columns() throws {
+  func arrayBreaksWhenItsLineWouldPass80Columns() {
     let word = String(repeating: "x", count: 30)
     let value = OrderedJSON.object([
       .init(key: "k", value: .array([.string(word), .string(word)]))
@@ -78,7 +81,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func objectMembersKeepTheOrderOfTheGuideThenSort() throws {
+  func objectMembersKeepOrderOfGuideThenSort() throws {
     let object: [String: Any] = ["z": 1, "a": 2, "m": 3, "b": 4]
     let guide = OrderedJSON.object([
       .init(key: "m", value: .null), .init(key: "z", value: .null),
@@ -124,7 +127,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func aMemberNamedTwiceInOneObjectIsRefused() {
+  func memberNamedTwiceInOneObjectIsRefused() {
     let problem = Self.problem(Array(#"{"a": {"b": 1, "b": 2}}"#.utf8))
     #expect(problem == OrderedJSON.Problem(reason: .duplicateMember("b"), offset: 15))
     #expect(
@@ -134,7 +137,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func aByteOrderMarkIsRefusedByName() {
+  func byteOrderMarkIsRefusedByName() {
     let problem = Self.problem([0xEF, 0xBB, 0xBF] + Array("{}".utf8))
     #expect(problem?.reason == .byteOrderMark)
     #expect(
@@ -160,7 +163,7 @@ struct OrderedJSONTests {
   /// A zero byte past the first four bytes is a grammar problem at its offset, not a wide
   /// encoding; the first problem in the text is the one reported.
   @Test
-  func aZeroByteInUTF8TextIsASyntaxProblem() {
+  func zeroByteInUTF8TextIsSyntaxProblem() {
     let inString = Self.problem(Array(#"{"name": "a"#.utf8) + [0x00] + Array(#""}"#.utf8))
     let words = "a zero byte, which JSON text cannot carry"
     #expect(inString == OrderedJSON.Problem(reason: .syntax(words), offset: 11))
@@ -181,7 +184,7 @@ struct OrderedJSONTests {
     ("1e3", "1e3"), ("1.5e-7", "1.5e-7"), ("100.50", "100.50"), ("-0", "-0"), ("1E+2", "1E+2"),
     ("18446744073709551616", "18446744073709551616"), ("0.10", "0.10"), ("7", "7"),
   ])
-  func aGuidedNumberKeepsItsText(_ source: String, _ written: String) throws {
+  func guidedNumberKeepsItsText(_ source: String, _ written: String) throws {
     let data = Data("{\"n\": \(source)}".utf8)
     let value = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
     let text = try OrderedJSON(foundation: value, order: OrderedJSON.parse(data)).formatted()
@@ -189,7 +192,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func aChangedNumberIsWrittenFromItsValue() throws {
+  func changedNumberIsWrittenFromItsValue() throws {
     let guide = try OrderedJSON.parse(Data(#"{"n": 1e3, "m": 100.50}"#.utf8))
     let value: [String: Any] = ["n": 1001, "m": 0.25]
     let text = try OrderedJSON(foundation: value, order: guide).formatted()
@@ -202,7 +205,7 @@ struct OrderedJSONTests {
     ("18446744073709551616", "18446744073709551616"),
     ("3.14159265358979323846", "3.14159265358979323846"), ("-5", "-5"),
   ])
-  func anUnguidedNumberIsWrittenFromItsValue(_ source: String, _ written: String) throws {
+  func unguidedNumberIsWrittenFromItsValue(_ source: String, _ written: String) throws {
     let data = Data("[\(source)]".utf8)
     let value = try JSONSerialization.jsonObject(with: data)
     #expect(try OrderedJSON(foundation: value).formatted() == "[\(written)]\n")
@@ -222,7 +225,7 @@ struct OrderedJSONTests {
   /// `biome format` output for `{"k": [s, s]}` with `s` 16 and 17 ideographs: 79 columns stay on
   /// one line, 83 break, while the line is 47 and 49 characters long.
   @Test
-  func anArrayOfWideTextBreaksByColumns() throws {
+  func arrayOfWideTextBreaksByColumns() {
     func formatted(_ count: Int) -> String {
       let word = OrderedJSON.string(String(repeating: "日", count: count))
       return OrderedJSON.object([.init(key: "k", value: .array([word, word]))]).formatted()
@@ -239,7 +242,7 @@ struct OrderedJSONTests {
 
   /// The expected texts are `biome format` output for the same documents.
   @Test
-  func aNumberArrayThatDoesNotFitFillsItsLinesAsBiomeDoes() {
+  func numberArrayThatDoesNotFitFillsItsLinesAsBiomeDoes() {
     #expect(
       Self.numbers((1...40).map(String.init)).formatted() == """
         {
@@ -267,7 +270,7 @@ struct OrderedJSONTests {
 
   /// A line holds 80 columns with its comma; the last line has no comma.
   @Test
-  func aFilledLineHoldsEightyColumns() {
+  func filledLineHoldsEightyColumns() {
     let nines = String(repeating: "9, ", count: 25).dropLast()
     let last = String(repeating: "9, ", count: 26).dropLast(2)
     #expect(
@@ -307,7 +310,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func anObjectKeepsTheOrderOfItsGuideAndSortsTheRest() throws {
+  func objectKeepsOrderOfItsGuideAndSortsRest() throws {
     let guide = OrderedJSON.object([
       .init(key: "z", value: .number("1")), .init(key: "m", value: .number("2")),
     ])
@@ -316,7 +319,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func anArrayWithANonNumberPutsOneItemPerLine() {
+  func arrayWithNonNumberPutsOneItemPerLine() {
     let items: [OrderedJSON] = (1...28).map { .number(String($0)) } + [.string("x")]
     let text = OrderedJSON.object([.init(key: "mix", value: .array(items))]).formatted()
     #expect(text.contains("[\n    1,\n    2,\n"))
@@ -324,7 +327,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func theEncoderKeepsAnEmbeddedValueAsItIsAndSortsTheRest() throws {
+  func encoderKeepsEmbeddedValueAsItIsAndSortsRest() throws {
     struct Output: Encodable {
       let zebra: Int
       let apple: [String]
@@ -358,7 +361,7 @@ struct OrderedJSONTests {
   }
 
   @Test
-  func theEncoderWritesAnArrayOfEmbeddedValuesAndAnEmptyValueAsAnEmptyObject() throws {
+  func encoderWritesArrayOfEmbeddedValuesAndEmptyValueAsEmptyObject() throws {
     struct Empty: Encodable {}
     let list = try OrderedJSONEncoder().encode([OrderedJSON.number("1e400"), .string("x")])
     #expect(list == .array([.number("1e400"), .string("x")]))
@@ -366,12 +369,12 @@ struct OrderedJSONTests {
   }
 
   @Test(arguments: [Double.infinity, -Double.infinity, Double.nan])
-  func theEncoderRefusesANumberJSONCannotHold(_ value: Double) {
+  func encoderRefusesNumberJSONCannotHold(_ value: Double) {
     #expect(throws: EncodingError.self) { try OrderedJSONEncoder().encode([value]) }
   }
 
   @Test
-  func anotherEncoderRefusesAnOrderedValue() {
+  func anotherEncoderRefusesOrderedValue() {
     #expect(throws: EncodingError.self) { try JSONEncoder().encode(OrderedJSON.number("1e3")) }
   }
 
@@ -394,13 +397,13 @@ struct OrderedJSONTests {
 
   /// This Foundation reads a trailing comma, so the reader of record files is stricter.
   @Test
-  func aTrailingCommaIsRefused() {
+  func trailingCommaIsRefused() {
     #expect(throws: OrderedJSON.Problem.self) { try OrderedJSON.parse(Data(#"{"a":1,}"#.utf8)) }
     #expect(throws: OrderedJSON.Problem.self) { try OrderedJSON.parse(Data(#"[1,]"#.utf8)) }
   }
 
   @Test
-  func nestingIsAcceptedUpToTheLimit() throws {
+  func nestingIsAcceptedUpToLimit() throws {
     func nested(_ depth: Int) -> Data {
       Data((String(repeating: "[", count: depth) + String(repeating: "]", count: depth)).utf8)
     }

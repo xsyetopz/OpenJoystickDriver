@@ -68,7 +68,7 @@ enum AccessGrantStoreError: Error, Equatable, LocalizedError, Sendable {
   }
 }
 
-/// The contents of `AccessGrants.json`: whether the endpoint and its WebSocket are on, and the
+/// The contents of `AccessGrants.plist`: whether the endpoint and its WebSocket are on, and the
 /// granted clients and tokens.
 struct AccessGrantFile: Equatable, Sendable {
   /// The `kind` of the file.
@@ -185,13 +185,13 @@ extension AccessGrantFile: Codable {
   }
 }
 
-/// Reads and writes `AccessGrants.json`; the application service is its only writer.
+/// Reads and writes `AccessGrants.plist`; the application service is its only writer.
 ///
 /// A damaged file is an error, not an empty one, so a mistake never silently turns the endpoint
 /// off or drops grants that the user would then grant again.
 struct AccessGrantStore: Sendable {
   /// The name of the file.
-  static let fileName = "AccessGrants.json"
+  static let fileName = "AccessGrants.plist"
 
   /// The location of the file.
   let url: URL
@@ -217,7 +217,7 @@ struct AccessGrantStore: Sendable {
     }
     let decoded: AccessGrantFile?
     do {
-      decoded = try JSONDecoder().decode(AccessGrantFile.self, from: data)
+      decoded = try DocumentCoder.decode(AccessGrantFile.self, from: data, file: url.path)
     } catch let problem as AccessGrantHeaderProblem {
       throw AccessGrantStoreError.unsupported(problem.problem.located(in: url.path))
     } catch {
@@ -230,12 +230,10 @@ struct AccessGrantStore: Sendable {
     return file
   }
 
-  /// Writes `file` as JSON with owner-only permissions, creating the directory.
+  /// Writes `file` as an XML property list with owner-only permissions, creating the directory.
   func save(_ file: AccessGrantFile) throws {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
     try RemappingProfileLibrary.createPrivateDirectory(url.deletingLastPathComponent())
-    try RemappingProfileLibrary.writePrivate(encoder.encode(file), to: url)
+    try RemappingProfileLibrary.writePrivate(DocumentCoder.encode(file), to: url)
   }
 }
 

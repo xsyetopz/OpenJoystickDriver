@@ -18,7 +18,7 @@ struct AccessGrantStoreTests {
   )
 
   @Test
-  func aMissingFileIsAnEndpointThatIsOffWithNoGrants() throws {
+  func missingFileIsEndpointThatIsOffWithNoGrants() throws {
     try withStore { store, _ in
       let file = try store.load()
       #expect(file == AccessGrantFile())
@@ -26,7 +26,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func grantsRoundTripAndTheFileMatchesItsSchema() throws {
+  func grantsRoundTripAndFileMatchesItsSchema() throws {
     try withStore { store, _ in
       var file = AccessGrantFile()
       file.enabled = true
@@ -46,14 +46,20 @@ struct AccessGrantStoreTests {
 
       #expect(try store.load() == file)
       let text = try String(contentsOf: store.url, encoding: .utf8)
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      #expect(
+        try JSONSchemaFiles.issues(
+          inPropertyList: Data(text.utf8),
+          against: "access-grants.schema.json"
+        )
+        .isEmpty
+      )
       let mode = try FileManager.default.attributesOfItem(atPath: store.url.path)[.posixPermissions]
       #expect(mode as? Int == 0o600)
     }
   }
 
   @Test
-  func grantingAgainMergesScopesAndKeepsTheLatestPath() {
+  func grantingAgainMergesScopesAndKeepsLatestPath() {
     var file = AccessGrantFile()
     file.grant(tool, scopes: [.control], path: "/old/Tool", at: Date(timeIntervalSince1970: 0))
     let grant = file.grant(
@@ -70,7 +76,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func revokingSomeScopesKeepsTheRestAndRevokingAllRemovesTheGrant() throws {
+  func revokingSomeScopesKeepsRestAndRevokingAllRemovesGrant() throws {
     var file = AccessGrantFile()
     file.grant(tool, scopes: [.read, .control], path: "/Tool", at: Date())
 
@@ -84,7 +90,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aDamagedFileIsAnErrorAndIsNotReplaced() throws {
+  func damagedFileIsErrorAndIsNotReplaced() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       for text in [
@@ -102,15 +108,15 @@ struct AccessGrantStoreTests {
           + #""scopes":[],"#
           + #""grantedAt":"x","path":"/x"}],"tokens":[],"web":{"enabled":false,"port":47614}}"#,
       ] {
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-        #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+        #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
       }
     }
   }
 
   @Test
-  func aDamagedFileErrorCarriesItsCodeAndALocalizedText() {
+  func damagedFileErrorCarriesItsCodeAndLocalizedText() {
     let message = AccessGrantStoreError.damaged.errorDescription ?? ""
     #expect(message == "E5005: \(ErrorCode.damagedAccessGrants.localizedExplanation)")
     #expect(message.contains(AccessGrantStore.fileName))
@@ -123,7 +129,7 @@ struct AccessGrantStoreTests {
     #""publisher":{"kind":"Signed","id":"ABCDE12345"},"identifier":7"#,
     #""kind":"Signed","identifier":"a.out""#,
   ])
-  func aFileThatIsNotTheCurrentShapeIsDamagedAndLeftAsItWas(grant: String) throws {
+  func fileThatIsNotCurrentShapeIsDamagedAndLeftAsItWas(grant: String) throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let text =
@@ -131,10 +137,10 @@ struct AccessGrantStoreTests {
         + #""enabled":true,"grants":[{\#(grant),"#
         + #""scopes":["Read"],"grantedAt":"x","path":"/a.out"}],"tokens":[],"#
         + #""web":{"enabled":false,"port":47614}}"#
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
 
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-      #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+      #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
     }
   }
 
@@ -145,21 +151,21 @@ struct AccessGrantStoreTests {
       + #""origins":[],"scopes":["Read"],"grantedAt":"x","unexpected":1}],"#
       + #""web":{"enabled":false,"port":47614}"#,
   ])
-  func anUnknownKeyInTheFileTokensOrWebSettingsIsDamagedAndLeftAsItWas(rest: String) throws {
+  func unknownKeyInFileTokensOrWebSettingsIsDamagedAndLeftAsItWas(rest: String) throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let text =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
         + #""enabled":true,"grants":[],"# + rest + "}"
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
 
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-      #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+      #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
     }
   }
 
   @Test
-  func aMissingOrUnsupportedHeaderIsRefusedWithWhatWasFound() throws {
+  func missingOrUnsupportedHeaderIsRefusedWithWhatWasFound() throws {
     let supported = "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
     let body = #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":false}}"#
     let cases: [(String, ErrorCode?, String)] = [
@@ -170,12 +176,14 @@ struct AccessGrantStoreTests {
       (
         #"{"apiVersion":"unsupported.example/v9","kind":"AccessGrants","# + body,
         .unsupportedAPIVersion,
-        "apiVersion unsupported.example/v9 is not supported; \(supported)"
+        "apiVersion unsupported.example/v9 is not supported; \(supported); "
+          + "run `ojd migrate` to convert"
       ),
       (
         #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"AccessGrants","# + body,
         .unsupportedAPIVersion,
-        "apiVersion openjoystickdriver/v1alpha1 is not supported; \(supported)"
+        "apiVersion openjoystickdriver/v1alpha1 is not supported; \(supported); "
+          + "run `ojd migrate` to convert"
       ),
       (
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","# + body,
@@ -189,7 +197,7 @@ struct AccessGrantStoreTests {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       for (text, code, reason) in cases {
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         do {
           _ = try store.load()
           Issue.record("the header was accepted")
@@ -200,13 +208,13 @@ struct AccessGrantStoreTests {
             AccessGrantStoreError.unsupported(problem).code == code ?? .damagedAccessGrants
           )
         }
-        #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+        #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
       }
     }
   }
 
   @Test
-  func aTokenGrantStoresOnlyTheHashOfItsToken() throws {
+  func tokenGrantStoresOnlyHashOfItsToken() throws {
     try withStore { store, _ in
       var file = AccessGrantFile()
       let (token, grant) = try file.grantToken(
@@ -226,7 +234,13 @@ struct AccessGrantStoreTests {
       let text = try String(contentsOf: store.url, encoding: .utf8)
       #expect(!text.contains(token))
       #expect(text.contains(grant.tokenSHA256))
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      #expect(
+        try JSONSchemaFiles.issues(
+          inPropertyList: Data(text.utf8),
+          against: "access-grants.schema.json"
+        )
+        .isEmpty
+      )
     }
   }
 
@@ -277,7 +291,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func revokingATokenGrantByItsID() throws {
+  func revokingTokenGrantByItsID() throws {
     var file = AccessGrantFile()
     try file.grantToken(name: "overlay", origins: [], scopes: [.read, .control], at: Date())
 
@@ -290,7 +304,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aDamagedTokenGrantOrWebSettingIsAnError() throws {
+  func damagedTokenGrantOrWebSettingIsError() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let hash = String(repeating: "a", count: 64)
@@ -311,26 +325,26 @@ struct AccessGrantStoreTests {
           #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
           + #""enabled":true,"grants":[],"tokens":[\#(tokens)],"#
           + #""web":{"enabled":false,"port":47614}}"#
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
       }
       for port in [0, 80, 70_000] {
         let text =
           #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
           + #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":true,"port":\#(port)}}"#
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
       }
       // The port is chosen at the first enable, so only a WebSocket that was never on lacks one.
       let off =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
         + #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":false}}"#
-      try Data(off.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: off).write(to: store.url)
       #expect(try store.load().web.port == nil)
       let on =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
         + #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":true}}"#
-      try Data(on.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: on).write(to: store.url)
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
     }
   }
@@ -347,12 +361,18 @@ struct AccessGrantStoreTests {
       #expect(try store.load().grants.first?.scopes == [.control])
       #expect(try store.load().tokens.first?.scopes == [.control])
       let text = try String(contentsOf: store.url, encoding: .utf8)
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      #expect(
+        try JSONSchemaFiles.issues(
+          inPropertyList: Data(text.utf8),
+          against: "access-grants.schema.json"
+        )
+        .isEmpty
+      )
     }
   }
 
   @Test
-  func controlStoredBeforeItWorkedDamagesTheFileAndIsNeverHonored() throws {
+  func controlStoredBeforeItWorkedDamagesFileAndIsNeverHonored() throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let hash = String(repeating: "a", count: 64)
@@ -375,9 +395,9 @@ struct AccessGrantStoreTests {
             !(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty),
             "\(text)"
           )
-          try Data(text.utf8).write(to: store.url)
+          try PropertyListFixture.bytes(json: text).write(to: store.url)
           #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
-          #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+          #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
         }
       }
       // Without `control`, the same grants load as they are.
@@ -386,7 +406,7 @@ struct AccessGrantStoreTests {
         + #""enabled":true,"grants":["#
         + grant(#"["Read"]"#) + #"],"tokens":["#
         + token(#"["Read"]"#) + #"],"web":{"enabled":false}}"#
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
       let file = try store.load()
       #expect(file.grants.first?.scopes == [.read])
       #expect(file.tokens.first?.scopes == [.read])
@@ -394,7 +414,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func aTokenWithOriginsCannotHoldControl() {
+  func tokenWithOriginsCannotHoldControl() {
     var file = AccessGrantFile()
     #expect(throws: AccessGrantStoreError.originsWithControl) {
       try file.grantToken(
@@ -408,7 +428,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test(arguments: [#"["read","control"]"#, #"["control"]"#])
-  func aTokenWithOriginsHoldingControlIsDamagedAndLeftAsItWas(scopes: String) throws {
+  func tokenWithOriginsHoldingControlIsDamagedAndLeftAsItWas(scopes: String) throws {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let text =
@@ -418,15 +438,15 @@ struct AccessGrantStoreTests {
         + #""origins":["http://localhost:8080"],"scopes":\#(scopes),"#
         + #""grantedAt":"1970-01-01T00:00:00Z","controlGrantedAt":"1970-01-01T00:00:00Z"}],"#
         + #""web":{"enabled":false}}"#
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
 
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-      #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+      #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
     }
   }
 
   @Test
-  func refusedTokensAreKeptForADayByNameOriginAndTransport() {
+  func refusedTokensAreKeptForDayByNameOriginAndTransport() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)
     log.recordToken(name: nil, origin: nil, transport: .socket, scopes: [.read], at: start)
@@ -447,7 +467,7 @@ struct AccessGrantStoreTests {
   }
 
   @Test
-  func refusedClientsAreKeptForADay() {
+  func refusedClientsAreKeptForDay() {
     var log = AccessRefusalLog()
     let start = Date(timeIntervalSince1970: 0)
     log.record(tool, path: "/Tool", scopes: [.read], at: start)
@@ -463,7 +483,7 @@ struct AccessGrantStoreTests {
 
   /// The Python reference client checks its proof against the same vector.
   @Test
-  func aTokenAcceptsTheSharedProofVector() throws {
+  func tokenAcceptsSharedProofVector() throws {
     let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()  // Endpoint
       .deletingLastPathComponent()  // Runtime
       .deletingLastPathComponent()  // OpenJoystickDriverServiceTests

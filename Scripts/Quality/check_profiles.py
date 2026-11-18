@@ -1,5 +1,3 @@
-"""Check the canonical controller records with `OJDRepositoryTool`."""
-
 from __future__ import annotations
 
 import sys
@@ -23,7 +21,7 @@ def main() -> int:
             print(f"[FAIL] {line}", file=sys.stderr)
         return 1
     print(
-        f"Validated {len(list(RECORD_DIR.rglob('*.json')))} canonical controller record(s)."
+        f"Validated {len(list(RECORD_DIR.rglob('*.plist')))} canonical controller record(s)."
     )
     return 0
 

@@ -31,6 +31,7 @@
         if let profile = VirtualGamepadExport.profile(for: device) {
           OJDLabeledRow(OJDLocalized.string("ui.controllers.exportMapping")) {
             Button(OJDLocalized.string("action.export")) { export(profile) }
+              .help(OJDLocalized.string("ui.help.exportMapping"))
           }
           launchRows
 
@@ -40,6 +41,7 @@
         }
         OJDLabeledRow(OJDLocalized.string("ui.controllers.virtual.resetAll")) {
           Button(OJDLocalized.string("action.reset")) { confirmsResetAll = true }
+            .help(OJDLocalized.string("ui.help.resetAll"))
         }
         if let failure = resetAllFailure { ControllerNoticeText(text: failure, isError: true) }
         if let notice = actions.notice, notice.source == .exportMapping {
@@ -67,6 +69,7 @@
           Text(OJDLocalized.string("status.unavailable"))
         } else {
           Button(OJDLocalized.string("ui.controllers.launch.prompt")) { launch() }
+            .help(OJDLocalized.string("ui.help.launch"))
         }
       }
       if let devices = connectedDevices {
@@ -130,7 +133,7 @@
 
     /// The line.
     var body: some View {
-      Text(text).font(.caption).foregroundColor(
+      Text(text).font(.body).foregroundColor(
         isError
           ? Color(SemanticState.failure.presentation.tone.color)
           : Color(NSColor.secondaryLabelColor)
@@ -146,20 +149,35 @@
     @ObservedObject
     var actions: ControllerDetailActions
 
+    /// The three buttons.
+    @ViewBuilder
+    private var actionButtons: some View {
+      Button(OJDLocalized.string("ui.controllers.capturePackets")) {
+        actions.clearNotice()
+        actions.timedKind = .capturePackets
+      }.help(OJDLocalized.string("ui.help.capturePackets"))
+      Button(OJDLocalized.string("ui.controllers.draftRecord")) {
+        actions.clearNotice()
+        actions.timedKind = .draftRecord
+      }.help(OJDLocalized.string("ui.help.draftRecord"))
+      Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
+        actions.clearNotice()
+        actions.draftFromSDL(device: device)
+      }.help(OJDLocalized.string("ui.help.draftRecordFromSDL"))
+    }
+
     /// The three buttons and the result of the latest of their actions.
     var body: some View {
       Group {
-        Button(OJDLocalized.string("ui.controllers.capturePackets")) {
-          actions.clearNotice()
-          actions.timedKind = .capturePackets
-        }
-        Button(OJDLocalized.string("ui.controllers.draftRecord")) {
-          actions.clearNotice()
-          actions.timedKind = .draftRecord
-        }
-        Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
-          actions.clearNotice()
-          actions.draftFromSDL(device: device)
+        // One row; a column when the three titles do not fit the width. `ViewThatFits` needs
+        // macOS 13, so macOS 12 keeps the row.
+        if #available(macOS 13, *) {
+          ViewThatFits(in: .horizontal) {
+            HStack { actionButtons }
+            VStack(alignment: .leading) { actionButtons }
+          }
+        } else {
+          HStack { actionButtons }
         }
         if let notice = actions.notice, notice.source == .timedCapture {
           ControllerNoticeText(text: notice.text, isError: notice.isError)
@@ -188,7 +206,7 @@
 
     /// The vendor and product ID of the controller.
     private var identity: String {
-      String(format: "%04X:%04X", device.vendorID, device.productID)
+      unsafe String(format: "%04X:%04X", device.vendorID, device.productID)
     }
 
     /// Whether a capture runs.
@@ -197,7 +215,7 @@
     /// The title, the instruction, the duration field, the failures, and the Cancel and Start
     /// Capture buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(
           OJDLocalized.string(
             kind == .draftRecord
@@ -214,6 +232,7 @@
           TextField("", text: $durationText).frame(width: 80).multilineTextAlignment(.trailing)
             .disabled(isCapturing)
             .ojdAccessibilityLabel(OJDLocalized.string("ui.controllers.captureDuration"))
+            .help(OJDLocalized.string("ui.help.captureDuration"))
         }
         if seconds == nil {
           ControllerNoticeText(
@@ -231,11 +250,12 @@
           }
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { actions.cancelTimed() }
-            .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("ui.developer.startCapture")) { start() }
             .keyboardShortcut(.defaultAction).disabled(seconds == nil || isCapturing)
+            .help(OJDLocalized.string("ui.help.startCapture"))
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
 
     /// The instruction for the kind of capture, with the controller's name and ID.
@@ -251,13 +271,13 @@
     /// the capture ends.
     private func start() {
       guard let seconds else { return }
-      let device = device
+      let controller = device
       actions.startTimed(
         kind,
-        device: device,
+        device: controller,
         gateway: gateway,
         seconds: seconds
-      ) { ControllerRecordDrafting.physicalDescriptor(for: device) }
+      ) { ControllerRecordDrafting.physicalDescriptor(for: controller) }
     }
   }
 

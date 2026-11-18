@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
 import Testing
@@ -11,18 +12,25 @@ struct StatusItemProfileOperationTests {
     private(set) var requests: [RuntimeMutationRequest] = []
     var hasSelectedProfile: Bool { false }
     var selectedControllerID: String? { nil }
+    var selectedArea: MainWindowArea { .controllers }
+    var enabledToolbarActions: Set<MainWindowToolbarAction> { [] }
+    var disabledToolbarActions: Set<MainWindowToolbarAction> { [] }
+    var searchFieldInView: NSSearchField? { nil }
+    func perform(_: MainWindowToolbarAction) {}
+    func focusSearchField() {}
 
-    func showMainWindow(area: MainWindowArea?) {}
+    func showMainWindow(area _: MainWindowArea?) {}
+    func showAccess(permission _: AccessPermissionRow.Kind) {}
     func showErrorCodeExplainer() {}
-    func showController(id: String) {}
-    func showInputTest(controllerID: String) {}
+    func showController(id _: String) {}
+    func showInputTest(controllerID _: String) -> Bool { true }
     func importProfile() {}
     func exportProfile() {}
     func installRecordOrMod() {}
 
     func performMenuProfileMutation(
       _ request: RuntimeMutationRequest,
-      _ mutation: @MainActor (ProfileLibraryModel) async -> RuntimeMutationResult
+      _: @MainActor (ProfileLibraryModel) async -> RuntimeMutationResult
     ) async -> MenuProfileMutationOutcome? {  // swiftlint:disable:this async_without_await
       requests.append(request)
       return nil
@@ -44,7 +52,7 @@ struct StatusItemProfileOperationTests {
 
   @Test
   @MainActor
-  func operationIsRefusedWithoutSuccessWhileTheEditorHoldsAMutation() async {
+  func operationIsRefusedWithoutSuccessWhileEditorHoldsMutation() async {
     let window = BusyWindow()
     let id = UUID()
     let activated = await StatusItemProfileOperation.activate(profileID: id, allowEmpty: false)
@@ -61,7 +69,7 @@ struct StatusItemProfileOperationTests {
   }
 
   @Test
-  func aProfileWithOutputIsActivatedWithoutAsking() {
+  func profileWithOutputIsActivatedWithoutAsking() {
     let profile = makeProfile()
     let operation = StatusItemProfileOperation.activation(
       of: profile.id,
@@ -75,7 +83,7 @@ struct StatusItemProfileOperationTests {
   }
 
   @Test
-  func aProfileWithNoOutputIsActivatedOnlyAfterConfirmation() {
+  func profileWithNoOutputIsActivatedOnlyAfterConfirmation() {
     let profile = Self.emptyProfile()
     #expect(profile.producesNoOutput)
     let confirmed = StatusItemProfileOperation.activation(
@@ -97,7 +105,7 @@ struct StatusItemProfileOperationTests {
   }
 
   @Test
-  func aProfileTheLibraryLacksIsActivatedWithoutTheAllowance() {
+  func profileLibraryLacksIsActivatedWithoutAllowance() {
     let id = UUID()
     #expect(
       StatusItemProfileOperation.activation(of: id, in: [], postEventAccess: nil) { _ in true }
@@ -106,7 +114,7 @@ struct StatusItemProfileOperationTests {
   }
 
   @Test
-  func aLaunchingProfileIsActivatedOnlyAfterConfirmationWithoutTheEmptyAllowance() {
+  func launchingProfileIsActivatedOnlyAfterConfirmationWithoutEmptyAllowance() {
     let profile = RemappingProfile(
       id: UUID(),
       name: "Actions",

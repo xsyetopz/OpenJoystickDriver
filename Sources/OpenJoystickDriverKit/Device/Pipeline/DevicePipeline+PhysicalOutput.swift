@@ -4,7 +4,7 @@ extension DevicePipeline {
     plan.minimumHIDOutputIntervalNanoseconds
   }
 
-  /// The default colour of the controller from the driver; nil when it has none.
+  /// The default color of the controller from the driver; nil when it has none.
   func defaultColor() -> ControllerColor? { driver.defaultColor }
 
   /// Encodes `command` into the writes of the driver.
@@ -61,7 +61,7 @@ extension DevicePipeline {
       }
       return true
     } catch {
-      if let error = error as? USBTransportError, error.isDisconnected {
+      if let transport = error as? USBTransportError, transport.isDisconnected {
         await invalidateUSBHandle(handle)
       }
       print("[DevicePipeline] Output send failed for \(identifier): \(error)")

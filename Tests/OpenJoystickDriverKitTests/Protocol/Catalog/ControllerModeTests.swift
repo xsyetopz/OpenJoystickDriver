@@ -63,7 +63,7 @@ struct ControllerModeTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
     ]
     record["modes"] = [["id": "default", "protocol": ["family": family]]] + (modes ?? [])
-    return try JSONSerialization.data(withJSONObject: record.merging(extras) { $1 })
+    return try PropertyListFixture.data(tree: record.merging(extras) { $1 })
   }
 
   private static func profile(
@@ -81,7 +81,7 @@ struct ControllerModeTests {
     modes: [[String: Any]]?,
     family: String,
     extras: [String: Any]
-  ) throws -> String? {
+  ) -> String? {
     do {
       _ = try ControllerRecordSet.validate(recordData(modes: modes, family: family, extras: extras))
       return nil
@@ -102,7 +102,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aRecordWithTwoModesPicksEachByItsProbe() async throws {
+  func recordWithTwoModesPicksEachByItsProbe() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let answered = Data([0x00, 0x0A, 0xFF, 0x00])
 
@@ -144,7 +144,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aModeRequiresEveryProbeAndReadsEachReportOnce() async throws {
+  func modeRequiresEveryProbeAndReadsEachReportOnce() async throws {
     let profile = try Self.profile(modes: [
       [
         "id": "both",
@@ -163,7 +163,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aProbeWithoutAReplyFallsBackToTheDefaultModeAndLogsIt() async throws {
+  func probeWithoutReplyFallsBackToDefaultModeAndLogsIt() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let replies: [(String, PhysicalHIDReportResult<Data>)] = [
       ("timeout", timeout),
@@ -192,7 +192,7 @@ struct ControllerModeTests {
 
   /// Two pads of one model differ only by location, so each mode line names it.
   @Test
-  func modeLinesNameTheDeviceLocation() async throws {
+  func modeLinesNameDeviceLocation() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let log = Locked<[String]>([])
     let reader = ScriptedProbeReader([160: .success(Data([1]))])
@@ -212,7 +212,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aStallSatisfiesAStallsProbeAndAnAnswerSatisfiesItNot() async throws {
+  func stallSatisfiesStallsProbeAndAnswerSatisfiesItNot() async throws {
     let profile = try Self.profile(modes: [
       Self.mode(
         "quiet",
@@ -230,7 +230,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aStallWhereAnAnswerIsExpectedFallsBackToTheDefaultMode() async throws {
+  func stallWhereAnswerIsExpectedFallsBackToDefaultMode() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let log = Locked<[String]>([])
     let selection = await Self.select(
@@ -245,7 +245,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func onlyTheDevicesOwnRefusalIsAStall() async throws {
+  func onlyDevicesOwnRefusalIsStall() async throws {
     let profile = try Self.profile(modes: [
       Self.mode(
         "quiet",
@@ -257,10 +257,10 @@ struct ControllerModeTests {
     #expect(
       await Self.select(profile, reader: ScriptedProbeReader([5: unsupported])) == .matched("quiet")
     )
-    let notTheDevices: [PhysicalHIDFailure] = [
+    let notDevices: [PhysicalHIDFailure] = [
       .timedOut, .busy, .notResponding, .hostStatus(1), .hostStatus(2),
     ]
-    for code in notTheDevices {
+    for code in notDevices {
       let log = Locked<[String]>([])
       let selection = await Self.select(
         profile,
@@ -273,7 +273,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aDeviceOffTheIOHIDRouteIsNotProbed() async throws {
+  func deviceOffIOHIDRouteIsNotProbed() async throws {
     let profile = try Self.profile(modes: Self.twoModes)
     let reader = ScriptedProbeReader([160: .success(Data([1]))])
     let log = Locked<[String]>([])
@@ -290,7 +290,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aReadIsGivenTheDeadlineItWasAskedFor() async {
+  func readIsGivenDeadlineItWasAskedFor() async {
     let deadlines = Locked<[TimeInterval]>([])
     let reads = BoundedHIDRead { timeout, action in
       deadlines.withLock { $0.append(timeout) }
@@ -307,7 +307,7 @@ struct ControllerModeTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func aReadThatNeverReturnsGivesUpAtTheDeadline() async {
+  func readThatNeverReturnsGivesUpAtDeadline() async {
     let release = DispatchSemaphore(value: 0)
     let reads = BoundedHIDRead()
     let device = UUID()
@@ -336,7 +336,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aDeviceWithAReadOutstandingIsNotReadAgain() async {
+  func deviceWithReadOutstandingIsNotReadAgain() async {
     let release = DispatchSemaphore(value: 0)
     let reads = BoundedHIDRead()
     let device = UUID()
@@ -379,7 +379,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aRecordWithoutModesReadsNothing() async throws {
+  func recordWithoutModesReadsNothing() async throws {
     let profile = try Self.profile(modes: nil)
     let reader = ScriptedProbeReader([:])
     #expect(await Self.select(profile, reader: reader) == .noModes)
@@ -388,10 +388,10 @@ struct ControllerModeTests {
   }
 
   @Test
-  func theDualShock3EFProbeIsDecodedFromTheBundledRecord() async throws {
+  func dualShock3EFProbeIsDecodedFromBundledRecord() async throws {
     let ds3 = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
     let profile = try #require(ControllerRecordSet.bundled.records[ds3]?.profile)
-    #expect(profile.modes.map(\.id) == ["bluetooth", "feature-ef-answers"])
+    #expect(profile.modes.map(\.id) == ["nitho", "bluetooth", "feature-ef-answers"])
     let mode = try #require(profile.modes.last)
     #expect(mode.probes == [ControllerModeProbe(reportID: 0xEF, length: 49, expectation: .answers)])
     #expect(mode.physicalProtocolID == .sonySixaxis)
@@ -422,9 +422,9 @@ struct ControllerModeTests {
   }
 
   @Test
-  func aUserPatchMayReplaceTheModes() throws {
-    let patch = try JSONSerialization.data(
-      withJSONObject: ControllerPatch.document(
+  func userPatchMayReplaceModes() throws {
+    let patch = try PropertyListFixture.data(
+      tree: ControllerPatch.document(
         selector: .identity(ControllerModelID(vendorID: 0x2C22, productID: 0x2000)),
         body: [
           "modes": [["id": "default", "protocol": ["family": "HIDDescriptor"]]] + Self.twoModes
@@ -436,7 +436,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func invalidModesAreRejected() throws {
+  func invalidModesRejected() {
     let probe: [String: Any] = ["report": 160, "length": 8, "expect": "Answers"]
     func mode(
       _ id: String,
@@ -452,14 +452,6 @@ struct ControllerModeTests {
       var extras: [String: Any] = [:]
       let expected: String
     }
-    let layout: [String: Any] = [
-      "layouts": [
-        [
-          "report": ["length": ["atLeast": 8]],
-          "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1]],
-        ]
-      ]
-    ]
     let rumble: [String: Any] = [
       "rumble": [
         "report": ["kind": "Output", "id": 2, "length": 8],
@@ -467,7 +459,7 @@ struct ControllerModeTests {
       ]
     ]
     let needsLayout =
-      "every mode needs the record's input layout exactly when it is HIDReportLayout"
+      "a HIDReportLayout mode needs the record's input layout"
     let rejected: [Case] = [
       Case(
         name: "duplicate ID",
@@ -535,13 +527,6 @@ struct ControllerModeTests {
         expected: "a probe reads report 0...255 with a length of 1...65535"
       ),
       Case(
-        name: "input layout under a mode that is not HIDReportLayout",
-        modes: [mode("a", family: "SonySixaxis")],
-        family: "HIDReportLayout",
-        extras: ["input": layout],
-        expected: needsLayout
-      ),
-      Case(
         name: "HIDReportLayout mode without the input layout",
         modes: [mode("a", family: "HIDReportLayout")],
         family: "SonySixaxis",
@@ -550,9 +535,9 @@ struct ControllerModeTests {
       Case(
         name: "rumble template under a mode whose driver does not encode it",
         modes: [
-          mode("a", family: "HIDDescriptor").merging(["session": rumble]) { first, _ in first }
+          mode("a", family: "SonySixaxis").merging(["session": rumble]) { first, _ in first }
         ],
-        family: "VendorPS3ThirdParty",
+        family: "SonySixaxis",
         expected: "rumble templates require a driver that encodes them"
       ),
       Case(
@@ -594,19 +579,19 @@ struct ControllerModeTests {
           + "whose description declares no keepAlive"
       ),
       Case(
-        name: "present controls under a mode whose driver does not declare them",
+        name: "present controls that no mode driver declares",
         modes: [mode("a", family: "SonySixaxis")],
-        family: "SonyDualSense",
+        family: "SonySixaxis",
         extras: [
           "capabilities": [
             "present": ["LeftPaddle1", "RightPaddle1", "Auxiliary1", "Auxiliary2"]
           ]
         ],
-        expected: "capabilities must be deltas the driver of every mode declares"
+        expected: "capabilities must be deltas the driver of some mode declares"
       ),
     ]
     for rejection in rejected {
-      let problem = try Self.problem(
+      let problem = Self.problem(
         modes: rejection.modes,
         family: rejection.family,
         extras: rejection.extras

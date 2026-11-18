@@ -9,7 +9,7 @@ struct ControllerReferenceTests {
   private let model = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
 
   @Test
-  func parsesASessionTokenAPortKeyOrAModel() {
+  func parsesSessionTokenPortKeyOrModel() {
     #expect(ControllerReference("E-AbCd_123-xyzW09q") == .session(token))
     #expect(ControllerReference("U-AbCd_123-xyzW09q") == .port(portKey))
     #expect(ControllerReference("054C:0268") == .model(model))

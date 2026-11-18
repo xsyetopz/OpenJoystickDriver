@@ -1,6 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
-  import AppKit
+  package import AppKit
   import Combine
   import Darwin
   import OpenJoystickDriverKit
@@ -29,14 +29,14 @@
 
     /// Connects the notification center, the settings, the Dock icon, the menu-bar item and the
     /// live updates, then offers settings recovery when the file cannot be read.
-    package func applicationDidFinishLaunching(_ notification: Notification) {
+    package func applicationDidFinishLaunching(_: Notification) {
       bundledNotificationCenter?.delegate = notificationPresenter
       refreshStatus()
-      Task { @MainActor in await viewModel.startSystemExtensionSetup() }
+      Task { @MainActor in viewModel.startSystemExtensionSetup() }
       preferences.settingsRecovered = { [weak self] in
         guard let self else { return }
         SettingsRecoveryFollowUp(
-          updateCheck: self.launchUpdateCheck,
+          updateCheck: launchUpdateCheck,
           registerLogin: Self.registerLoginIfNeeded
         ).run()
       }
@@ -55,6 +55,28 @@
         preferences.$settingsFileError
       ).map { SettingsFileStartup.statusItemIsShown(showInMenuBar: $0, settingsError: $1) }
         .removeDuplicates().sink { [weak self] shown in self?.applyShowInMenuBar(shown) }
+      mainMenuVisibilityObservation = Publishers.CombineLatest(
+        preferences.$interfaceLevel,
+        preferences.$developerToolsEnabled
+      ).dropFirst().sink {
+        [weak self] level, developer in
+        NSApplication.shared.mainMenu = self?.makeApplicationMenu(
+          level: level,
+          developerToolsEnabled: developer
+        )
+      }
+      let hotKey = PauseHotKey { [weak self] in
+        guard let self else { return }
+        Task { @MainActor in await self.viewModel.togglePauseAll() }
+      }
+      pauseHotKey = hotKey
+      pauseShortcutObservation = preferences.$pauseShortcut.removeDuplicates().sink {
+        [preferences] shortcut in
+        do { try hotKey.register(shortcut) } catch { preferences.pauseShortcutRefused() }
+      }
+      if SettingsFileStartup.opensMainWindowAtLaunch(settingsError: preferences.settingsFileError) {
+        mainWindow?.showMainWindow(area: nil)
+      }
       Task { @MainActor in self.offerSettingsRecovery() }
       let updates = ControllerLiveUpdates(
         source: gatewayChangeSource,
@@ -106,7 +128,7 @@
       )
       {
       case .migrate:
-        let failed = DocumentMigrator().run(dryRun: false).contains { $0.status == .failed }
+        let failed = DocumentMigrator().run(dryRun: false).contains { $0.verdict == .failed }
         preferences.reloadSettings()
         offerSettingsRecovery(
           note: failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil
@@ -120,14 +142,14 @@
     }
 
     /// Reads the driver extension setup again when the app becomes active.
-    package func applicationDidBecomeActive(_ notification: Notification) {
-      Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
+    package func applicationDidBecomeActive(_: Notification) {
+      Task { @MainActor in viewModel.refreshSystemExtensionSetup() }
     }
 
     /// Reads the live status, opens the main window and returns true.
     package func applicationShouldHandleReopen(
-      _ sender: NSApplication,
-      hasVisibleWindows flag: Bool
+      _: NSApplication,
+      hasVisibleWindows _: Bool
     ) -> Bool {
       refreshLiveStatus()
       mainWindow?.showMainWindow(area: nil)
@@ -162,7 +184,7 @@
     }
 
     /// Stops the live status and removes the menu-bar item when the app terminates.
-    package func applicationWillTerminate(_ notification: Notification) {
+    package func applicationWillTerminate(_: Notification) {
       stopLiveStatus()
       removeStatusItem()
     }
@@ -183,7 +205,9 @@
       await withCheckedContinuation { continuation in
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
         { _, error in
-          if let error { fputs("Failed to relaunch OpenJoystickDriver: \(error)\n", stderr) }
+          if let error {
+            unsafe fputs("Failed to relaunch OpenJoystickDriver: \(error)\n", unsafe stderr)
+          }
           continuation.resume()
         }
       }
@@ -194,6 +218,7 @@
       mainWindow = MainWindowController(
         runtime: viewModel,
         supportReport: supportReport,
+        preferences: preferences,
         restartApplication: { [weak self] in self?.restartApplication() },
         openInputTest: { [weak self] device in self?.openInputTest(for: device) },
         visibilityChanged: { [weak self] isOpen in self?.dockIcon.setOpen(.workbench, isOpen) }
@@ -232,12 +257,22 @@
     private func installStatusItem() {
       let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
       statusItem = item
+      item.behavior = .removalAllowed
+      // macOS keeps the visibility of an item that the user dragged out, and the setting decides.
+      item.isVisible = true
+      statusItemVisibilityObservation = item.observe(\.isVisible) { [weak self] item, _ in
+        guard !item.isVisible else { return }
+        Task { @MainActor in self?.statusItemRemoved() }
+      }
       if let button = item.button {
-        button.toolTip = OJDLocalized.string("term.app.name")
-        button.image = MenuBarStatusItemImage.make(
-          accessibilityDescription: OJDLocalized.string("a11y.menuBar.statusItem")
-        )
-        button.setAccessibilityLabel(OJDLocalized.string("a11y.menuBar.statusItem"))
+        button.toolTip = OJDLocalized.string("ui.help.statusItem")
+      }
+      frontAppObserver = NSWorkspace.shared.notificationCenter.addObserver(
+        forName: NSWorkspace.didActivateApplicationNotification,
+        object: nil,
+        queue: .main
+      ) { [weak self] _ in
+        Task { @MainActor in self?.refreshLiveStatus() }
       }
       statusMenuTracker.onWillOpen = { [weak self] in self?.refreshLiveStatus() }
       // The menu runs the chosen item's action after it closes; rebuilding first would
@@ -254,9 +289,21 @@
       controllerLiveUpdates = nil
     }
 
+    /// Handles the user dragging the status item out of the menu bar.
+    ///
+    /// The Show in Menu Bar setting turns off, which removes the item and opens the main window.
+    /// The item returns when the setting cannot be stored.
+    private func statusItemRemoved() {
+      guard let item = statusItem, !item.isVisible else { return }
+      if !preferences.menuBarItemRemoved() { item.isVisible = true }
+    }
+
     /// Removes the menu-bar item and its menu.
     private func removeStatusItem() {
       guard let item = statusItem else { return }
+      statusItemVisibilityObservation = nil
+      frontAppObserver.map(NSWorkspace.shared.notificationCenter.removeObserver)
+      frontAppObserver = nil
       NSStatusBar.system.removeStatusItem(item)
       statusItem = nil
       statusMenu = nil
@@ -290,13 +337,22 @@
     /// An open menu is left alone and replaced when it closes.
     private func updateStatusMenu() {
       guard !statusMenuTracker.isOpen else { return }
+      let state = menuBarViewModel.statusItemState
       let menu = makeStatusMenu(
-        from: StatusItemModel.entries(for: menuBarViewModel.statusItemState),
+        from: StatusItemModel.entries(for: state),
         title: OJDLocalized.string("term.app.name")
       )
       menu.delegate = statusMenuTracker
       statusMenu = menu
       statusItem?.menu = menu
+      if let button = statusItem?.button {
+        let label = menuTitle(StatusItemModel.accessibilityTitle(for: state))
+        button.image = MenuBarStatusItemImage.make(
+          symbolName: StatusItemModel.symbolName(for: state),
+          accessibilityDescription: label
+        )
+        button.setAccessibilityLabel(label)
+      }
     }
   }
 

@@ -13,7 +13,7 @@ extension ProtocolClassifierTests {
       (0xFF, 0x47, 0xD0, .xboxGIP, .usb),
     ] as [(UInt8, UInt8, UInt8, PhysicalProtocolID, PhysicalProtocolVariantID)]
   )
-  func interfaceSignatureBindsWithoutACatalogRecord(
+  func interfaceSignatureBindsWithoutCatalogRecord(
     signature: (UInt8, UInt8, UInt8, PhysicalProtocolID, PhysicalProtocolVariantID)
   ) throws {
     let interface = usbInterface(0, signature.0, signature.1, signature.2)
@@ -49,7 +49,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func signatureWithoutAnInterruptPairIsAContractMismatch() {
+  func signatureWithoutInterruptPairIsContractMismatch() {
     let shapes: [[PhysicalEndpointSignature]] = [
       [], [endpoint(0x81, .in)], [endpoint(0x01, .out)],
       [endpoint(0x81, .in, .bulk), endpoint(0x01, .out, .bulk)],
@@ -128,7 +128,7 @@ extension ProtocolClassifierTests {
   // MARK: - HID descriptor
 
   @Test
-  func validDescriptorWithoutARecordBindsHIDDescriptor() throws {
+  func validDescriptorWithoutRecordBindsHIDDescriptor() throws {
     let binding = try bound(
       classify(
         unknownDevice([hidInterface(host: .bluetoothLE, descriptor: gamepad)]),
@@ -144,7 +144,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func failedDescriptorContractIsADescriptorMismatch() {
+  func failedDescriptorContractIsDescriptorMismatch() {
     for interfaces in [
       [hidInterface(host: .usb, descriptor: nil)],
       [hidInterface(host: .usb, descriptor: vendorOnly)], [],
@@ -157,7 +157,7 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func hidInterfaceNumberIsRecordedWithoutChangingTheBinding() throws {
+  func hidInterfaceNumberIsRecordedWithoutChangingBinding() throws {
     func hidDevice(
       _ vendorID: UInt16,
       _ productID: UInt16,

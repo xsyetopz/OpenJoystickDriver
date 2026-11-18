@@ -309,8 +309,8 @@ extension AutomaticDispatcherCoordinator {
   private func scheduleRecoveryRetry(_ controller: LogicalControllerID, token: UUID) {
     Task { [weak self] in
       guard let self else { return }
-      try? await Task.sleep(nanoseconds: self.recoveryDelayNanoseconds)
-      await self.retryPublication(controller, token: token)
+      try? await Task.sleep(nanoseconds: recoveryDelayNanoseconds)
+      await retryPublication(controller, token: token)
     }
   }
 

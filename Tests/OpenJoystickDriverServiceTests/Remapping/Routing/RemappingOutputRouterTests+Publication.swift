@@ -7,7 +7,7 @@ import Testing
 extension RemappingOutputRouterTests {
   /// The pipeline stamps `DeliveryVirtualDevice` for `ojd diagnose` from this callback.
   @Test
-  func aVirtualGamepadRouteReportsThePublishedFrame() async throws {
+  func virtualGamepadRouteReportsPublishedFrame() async throws {
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
     let device = remappingRouterDevice(1)
@@ -23,7 +23,7 @@ extension RemappingOutputRouterTests {
   }
 
   @Test
-  func aSuppressedFrameReportsNoPublication() async throws {
+  func suppressedFrameReportsNoPublication() async throws {
     let harness = try await RemappingRouterHarness.make()
     defer { harness.removeFiles() }
     harness.virtualOutput.suppressOutput = true

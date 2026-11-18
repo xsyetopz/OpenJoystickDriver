@@ -8,7 +8,7 @@ enum HIDConnectionRole: Equatable {
   /// The connection is one protocol role of its device, keyed with its USB interface number.
   case interface(UInt8)
   /// The connection belongs to a family that declares HID roles but is not one of them.
-  case notARole
+  case notRole
 }
 
 extension ProtocolDriverRegistry {
@@ -40,14 +40,14 @@ extension ProtocolDriverRegistry {
     guard let interface = device.interfaces?.first, device.interfaces?.count == 1,
       let descriptor = interface.hidLayout?.reportDescriptor,
       HIDReportDescriptorParser.parse(descriptor: Array(descriptor))?.containsFeatureItem == true
-    else { return .notARole }
+    else { return .notRole }
     guard let interfaceNumber = interface.interfaceNumber else {
-      return interface.hostTransport == .bluetoothLE ? .location : .notARole
+      return interface.hostTransport == .bluetoothLE ? .location : .notRole
     }
     if record.physicalProtocolID == .valveSteamTriton, record.physicalProtocolVariant == .dongle,
       !(2...5).contains(interfaceNumber)
     {
-      return .notARole
+      return .notRole
     }
     return .interface(interfaceNumber)
   }

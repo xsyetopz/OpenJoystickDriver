@@ -10,7 +10,7 @@ struct DevicePipelineSleepTests {
     (UInt8(3), [InputChange.leftStick(x: 0.8, y: 0)]), (UInt8(4), [.press(.east)]),
     (UInt8(6), [.hat(.north)]), (UInt8(7), [.leftTrigger(0.75), .press(.leftTrigger)]),
   ])
-  func testIdlePipelineForwardsTheFirstWakeInput(code: UInt8, expected: [InputChange]) async {
+  func testIdlePipelineForwardsFirstWakeInput(code: UInt8, expected: [InputChange]) async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -117,7 +117,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testPipelineSkipsSnapshotsThatDoNotChangeTheDispatchedState() async {
+  func testPipelineSkipsSnapshotsThatDoNotChangeDispatchedState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -184,7 +184,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testReconnectDoesNotKeepAForegroundMaskFromTheEndedConnection() async {
+  func testReconnectDoesNotKeepForegroundMaskFromEndedConnection() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 10462, productID: 4418),
@@ -255,7 +255,7 @@ private final class ScriptedInputParser: PhysicalProtocolDriver {
   let defaultColor: ControllerColor? = nil
   private var script = ScriptedState()
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let changes: [InputChange]
     switch data.first {
     case 1: changes = [.press(.south)]
@@ -301,7 +301,7 @@ private final class ScriptedLifecycleInputParser: PhysicalProtocolDriver {
     return state
   }
 
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     switch data.first {
     case 7:
       connected = true

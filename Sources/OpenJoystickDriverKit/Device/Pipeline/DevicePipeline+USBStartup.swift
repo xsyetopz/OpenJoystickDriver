@@ -39,6 +39,8 @@ extension DevicePipeline {
   ///
   /// An interface that another client holds is waited for, not seized. The waits between attempts
   /// grow with the reconnect policy.
+  /// A run whose handshake fails ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a
+  /// row ends, and leaves the failure in ``startupOutputStatus``.
   func startUSBPipeline(device: USBTransportDevice, generation: UInt64) async {
     guard let provider = usbTransportProvider else {
       print("[DevicePipeline] Missing USB transport provider for \(identifier)")
@@ -47,6 +49,7 @@ extension DevicePipeline {
     }
 
     var openAttempt: Int = 0
+    var failedHandshakes = 0
     while isCurrentUSBRun(generation) {
       let openResult = await openDeviceWithRetry(
         provider: provider,
@@ -110,12 +113,23 @@ extension DevicePipeline {
       usbExclusiveOwner = nil
       consecutiveUSBIOErrors = 0
       driver.resetProtocolState()
+      lastObservedInputReportNanoseconds = nil
+
+      // Linux reads the IN endpoint before it writes the first startup packet; a pad that sends
+      // its first report once, without an announce, sends it to that read.
+      let armedRead = plan.armsInputBeforeStartup ? armInputRead(handle: handle) : nil
 
       guard
         await performUSBHandshake(handle: handle, device: device, runGeneration: generation)
       else {
+        armedRead?.cancel()
         guard isCurrentUSBRun(generation) else { return }
         usbSessionStartFailed = true
+        failedHandshakes += 1
+        guard failedHandshakes < usbRecoveryPolicy.maximumHandshakeFailures else {
+          print("[DevicePipeline] Giving up the USB session start: \(identifier)")
+          return
+        }
         await resetUSBDeviceIfUnresponsive(device, provider: provider)
         // Try again while active, but slow down to avoid hot loops that launchd may kill
         // as "inefficient".
@@ -139,9 +153,14 @@ extension DevicePipeline {
       await reportUSBInputOwnership(ownership)
       guard isCurrentUSBRun(generation) else { return }
       openAttempt = 0
+      failedHandshakes = 0
       if !requiresInputConnectionBeforeOutput(), sessionState == .active { await activateOutput() }
 
-      let recovery = await runUSBInputLoop(handle: handle, generation: generation)
+      let recovery = await runUSBInputLoop(
+        handle: handle,
+        generation: generation,
+        armedRead: armedRead
+      )
 
       guard isCurrentUSBRun(generation) else { return }
 
@@ -153,6 +172,18 @@ extension DevicePipeline {
       case .accessDenied: delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
       }
       try? await Task.sleep(nanoseconds: delay)
+    }
+  }
+
+  /// Starts the interrupt IN read that the input loop takes as its first read.
+  func armInputRead(handle: any USBTransportSession) -> Task<[UInt8], any Error> {
+    let endpoint = transportProfile.inputEndpoint
+    return Task {
+      try await handle.read(
+        endpoint: endpoint,
+        length: gipReadPacketLength,
+        timeout: gipReadTimeoutMs
+      )
     }
   }
 
@@ -376,7 +407,7 @@ extension DevicePipeline {
   }
 
   /// Logs the failed open attempt `attempt`, counted from zero.
-  func handleOpenDeviceError(_ error: Error, attempt: Int) {
+  func handleOpenDeviceError(_ error: any Error, attempt: Int) {
     print("[DevicePipeline] Open attempt \(attempt + 1) failed" + " for \(identifier): \(error)")
   }
 }

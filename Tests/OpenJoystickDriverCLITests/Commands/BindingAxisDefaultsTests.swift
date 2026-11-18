@@ -6,7 +6,7 @@ import Testing
 @Suite(.serialized)
 struct BindingAxisDefaultsTests {
   @Test
-  func anAxisBindingWithoutTuningOptionsUsesTheKitDefaults() async throws {
+  func axisBindingWithoutTuningOptionsUsesKitDefaults() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -27,7 +27,7 @@ struct BindingAxisDefaultsTests {
   @Test(arguments: [
     ["--deadzone", "0.96"], ["--gain", "0.05"], ["--digital-threshold", "0"],
   ])
-  func aValueOutsideTheKitRangeIsRejected(option: [String]) async throws {
+  func valueOutsideKitRangeIsRejected(option: [String]) async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -40,7 +40,7 @@ struct BindingAxisDefaultsTests {
   }
 
   @Test
-  func theWiiPointerBindsToMouseMovement() async throws {
+  func wiiPointerBindsToMouseMovement() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Wii")])
     let service = try FakeService(devices: [], respond: library.respond)
 
@@ -53,7 +53,7 @@ struct BindingAxisDefaultsTests {
   }
 
   @Test
-  func theWiiPointerBindsToAnAbsolutePosition() async throws {
+  func wiiPointerBindsToAbsolutePosition() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Wii")])
     let service = try FakeService(devices: [], respond: library.respond)
 

@@ -122,7 +122,7 @@ struct NamedPacketDescriptionTests {
   }
 
   @Test
-  func aRecordCannotReferToAPacketInItsStartup() {
+  func recordCannotReferToPacketInItsStartup() {
     #expect(throws: (any Error).self) {
       _ = try JSONDecoder().decode(
         ControllerRecordDocument.SessionDocument.self,
@@ -132,7 +132,7 @@ struct NamedPacketDescriptionTests {
   }
 
   @Test
-  func theBundledGIPStartupIsTheThreeReferencedPackets() throws {
+  func bundledGIPStartupIsThreeReferencedPackets() throws {
     let description = PhysicalProtocolID.xboxGIP.protocolDescription
     let plan = try #require(description.namedPackets)
     let expected = ["power-on", "led-on", "auth-done"].compactMap {
@@ -143,7 +143,7 @@ struct NamedPacketDescriptionTests {
   }
 
   @Test
-  func theBundledGIPDescriptionHoldsTheEightPackets() throws {
+  func bundledGIPDescriptionHoldsEightPackets() throws {
     let plan = try #require(PhysicalProtocolID.xboxGIP.protocolDescription.namedPackets)
     #expect(
       plan.packets.map(\.id) == [

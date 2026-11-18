@@ -19,6 +19,14 @@ enum AccessPresentation {
     }
   }
 
+  /// The tooltip of the toggle of a scope: what the scope lets a program do.
+  static func scopeHelp(_ scope: EndpointScope) -> String {
+    switch scope {
+    case .read: OJDLocalized.string("ui.help.scopeRead")
+    case .control: OJDLocalized.string("ui.help.scopeControl")
+    }
+  }
+
   /// How a client was signed, with the publisher's ID for a signed one.
   static func signer(_ kind: CodeSigningIdentity.Kind, _ publisherID: String?) -> String {
     switch kind {

@@ -137,7 +137,7 @@ extension ProtocolDescription {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
         "lightingFeatures", "drivesRumble", "reports", "setsStartupPlayerIndicator",
-        "readsStartupFeatures", "rationale",
+        "readsStartupFeatures",
       ])
       guard !container.allKeys.isEmpty else {
         throw DecodingError.dataCorrupted(
@@ -168,8 +168,7 @@ extension ProtocolDescription {
           for: "setsStartupPlayerIndicator"
         ) ?? false,
         readsStartupFeatures: try container.decodeOptional(Bool.self, for: "readsStartupFeatures")
-          ?? false,
-        rationale: try container.decodeOptional(String.self, for: "rationale")
+          ?? false
       )
     }
   }

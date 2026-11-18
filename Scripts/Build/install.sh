@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Installation workflows exposed only through ./Scripts/ojd commands.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -28,7 +27,6 @@ next_dext_bundle_version() {
     ${installed[@]+"${installed[@]}"}
 }
 
-# True when systemextensionsctl lists the DEXT at this version, in any state.
 sysext_listed() {
   local listing
   listing="$(systemextensionsctl list 2>&1 || true)"
@@ -44,7 +42,7 @@ install_fast() {
   local APP_DST="/Applications/OpenJoystickDriver.app"
   local APP_SRC="$PROJECT_DIR/.build/debug/OpenJoystickDriver.app"
 
-  [[ -d "$APP_DST" ]] || die "$APP_DST not found. Run ./Scripts/ojd build install dev once first."
+  [[ -d "$APP_DST" ]] || die "$APP_DST not found. Run just install-dev once first."
 
   echo "=== Step 1: Build app (no dext) ==="
   build_app_bundle
@@ -136,17 +134,17 @@ install_full() {
 
   echo ""
   echo "=== Step 5: Submit sysext activation ==="
-  # The launched app requests activation itself when its embedded DEXT differs
-  # from the installed one. sysextd rejects a second request for the same
-  # extension while the first is in progress (OSSystemExtensionErrorDomain 4),
-  # so submit one only when the app's request does not appear.
+  # The app sends no activation request on its own. Wait briefly for a request
+  # that a user started in the app (sysextd rejects a second request for the
+  # same extension while the first is in progress, OSSystemExtensionErrorDomain 4),
+  # then submit one.
   local REQUEST_WAIT=0
   until sysext_listed "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION" || (( REQUEST_WAIT >= 10 )); do
     sleep 1
     REQUEST_WAIT=$(( REQUEST_WAIT + 1 ))
   done
   if sysext_listed "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION"; then
-    echo "  ✓ The app requested activation of ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION})"
+    echo "  ✓ An activation request for ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION})"
   # argv[0] "ojd" selects the command line in the app executable.
   elif (exec -a ojd "$OJD_APP_CLI" transport-extension activate); then
     echo "  ✓ Sysext activation request submitted"

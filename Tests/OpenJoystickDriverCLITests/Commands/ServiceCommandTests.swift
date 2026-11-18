@@ -35,7 +35,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func statusReportsAStoppedServiceAsStateAndExitsZero() async throws {
+  func statusReportsStoppedServiceAsStateAndExitsZero() async throws {
     let result = await runStatus(["--json"])
     #expect(result.code == 0)
     let json = try result.json()
@@ -50,26 +50,26 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func statusNamesTheSkippedRecordsOfTheInjectedDirectoryOnly() async throws {
+  func statusNamesSkippedRecordsOfInjectedDirectoryOnly() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-status-\(UUID().uuidString)",
       isDirectory: true
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.plist"))
 
     let withFile = await runStatus(["--plain"], records: directory)
     let withoutFile = await runStatus(["--plain"])
 
     #expect(withFile.code == 0, "\(withFile.standardError)")
     #expect(withFile.standardOutput.contains("skipped-record\t"))
-    #expect(withFile.standardOutput.contains("/broken.json\t"))
+    #expect(withFile.standardOutput.contains("/broken.plist\t"))
     #expect(!withoutFile.standardOutput.contains("skipped-record"))
   }
 
   @Test
-  func statusNamesAnIgnoredDefaultsFileAndSkippedVirtualDeviceFiles() async throws {
+  func statusNamesIgnoredDefaultsFileAndSkippedVirtualDeviceFiles() async throws {
     let support = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-status-\(UUID().uuidString)",
       isDirectory: true
@@ -81,8 +81,8 @@ struct ServiceCommandTests {
     )
     try FileManager.default.createDirectory(at: devices, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: support) }
-    try Data("{".utf8).write(to: support.appendingPathComponent("Controllers/all.patch.json"))
-    try Data("{".utf8).write(to: devices.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: support.appendingPathComponent("Controllers/all.patch.plist"))
+    try Data("{".utf8).write(to: devices.appendingPathComponent("broken.plist"))
 
     let json = await runStatus(["--json"], records: support.appendingPathComponent("Controllers"))
     let plain = await runStatus(["--plain"], records: support.appendingPathComponent("Controllers"))
@@ -90,10 +90,10 @@ struct ServiceCommandTests {
 
     let report = try json.json()
     let defaults = try #require(report["ignoredDefaults"] as? [String: String])
-    #expect(defaults["file"]?.hasSuffix("/Controllers/all.patch.json") == true)
-    #expect(defaults["problem"] == "JSON text, byte 1: expected a member name")
+    #expect(defaults["file"]?.hasSuffix("/Controllers/all.patch.plist") == true)
+    #expect(defaults["problem"] == "all.patch.plist is not an XML property list")
     let skipped = try #require(report["skippedVirtualDevices"] as? [[String: String]])
-    #expect(skipped.map { $0["file"]?.hasSuffix("/VirtualDevices/broken.json") } == [true])
+    #expect(skipped.map { $0["file"]?.hasSuffix("/VirtualDevices/broken.plist") } == [true])
     #expect(plain.standardOutput.contains("ignored-defaults\t"))
     #expect(plain.standardOutput.contains("skipped-virtual-device\t"))
     let cleanReport = try clean.json()
@@ -102,7 +102,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func statusNamesAPersonasFolderThatOJDDoesNotRead() async throws {
+  func statusNamesPersonasFolderThatOJDDoesNotRead() async throws {
     let support = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-status-\(UUID().uuidString)",
       isDirectory: true
@@ -110,7 +110,9 @@ struct ServiceCommandTests {
     let unread = support.appendingPathComponent("Personas", isDirectory: true)
     try FileManager.default.createDirectory(at: unread, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: support) }
-    try Data("{}".utf8).write(to: unread.appendingPathComponent("1209-0001.json"))
+    try PropertyListFixture.data(json: "{}").write(
+      to: unread.appendingPathComponent("1209-0001.plist")
+    )
     let records = support.appendingPathComponent("Controllers")
 
     let json = await runStatus(["--json"], records: records)
@@ -129,7 +131,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func statusReportsTheRunningServiceInJSONAndPlainRows() async throws {
+  func statusReportsRunningServiceInJSONAndPlainRows() async throws {
     let socketPath = temporarySocketPath()
     let payload = ApplicationServiceStatusPayload(
       inputRead: .granted,
@@ -191,7 +193,7 @@ struct ServiceCommandTests {
   }
 
   @Test(arguments: ["start", "wait"])
-  func startAndWaitReportARunningService(verb: String) async throws {
+  func startAndWaitReportRunningService(verb: String) async throws {
     let service = try FakeService(devices: [])
     let result = await service.run(["service", verb, "--json"])
     #expect(result.code == 0, "\(result.standardError)")
@@ -199,7 +201,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func waitWithoutAServiceExitsSixtyNineAfterTheTimeout() async {
+  func waitWithoutServiceExitsSixtyNineAfterTimeout() async {
     let result = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
       await CLIRun.run(["service", "wait", "--timeout", "0.2"])
     }
@@ -210,7 +212,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func stopWithoutAServiceReportsStopped() async throws {
+  func stopWithoutServiceReportsStopped() async throws {
     let result = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
       await CLIRun.run(["service", "stop", "--json"])
     }
@@ -219,7 +221,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func quietSuppressesTheSuccessMessage() async {
+  func quietSuppressesSuccessMessage() async {
     let path = temporarySocketPath()
     let loud = await ServiceConnection.$socketPath.withValue(path) {
       await CLIRun.run(["service", "stop"])
@@ -234,7 +236,7 @@ struct ServiceCommandTests {
   }
 
   @Test
-  func applicationBundleFollowsTheInstalledLink() {
+  func applicationBundleFollowsInstalledLink() {
     let executable = URL(
       fileURLWithPath: "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
     )

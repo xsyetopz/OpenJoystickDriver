@@ -1,7 +1,7 @@
 import AppKit
 import Carbon.HIToolbox
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 
 /// Performs system actions through AppKit, Core Graphics and the `shortcuts` tool.
 package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
@@ -34,6 +34,35 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
       URL(fileURLWithPath: "/System/Applications/Mission Control.app"),
       action: "MissionControl"
     )
+  }
+
+  /// Opens Launchpad, or Apps where the system has no Launchpad.
+  package func openLaunchpad() async throws {
+    for identifier in ["com.apple.launchpad.launcher", "com.apple.apps.launcher"] {
+      if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) {
+        try await open(url, action: "Launchpad")
+        return
+      }
+    }
+    throw RemappingSystemActionError.failed(
+      action: "Launchpad",
+      reason: "com.apple.launchpad.launcher"
+    )
+  }
+
+  /// Takes a screenshot of the screen with the system shortcut Shift-Command-3.
+  package func takeScreenshot() throws {
+    try postShortcut(CGKeyCode(kVK_ANSI_3), [.maskCommand, .maskShift], action: "Screenshot")
+  }
+
+  /// Locks the screen with the system shortcut Control-Command-Q.
+  package func lockScreen() throws {
+    try postShortcut(CGKeyCode(kVK_ANSI_Q), [.maskCommand, .maskControl], action: "LockScreen")
+  }
+
+  /// Shows the desktop with the system shortcut F11.
+  package func showDesktop() throws {
+    try postShortcut(CGKeyCode(kVK_F11), [], action: "ShowDesktop")
   }
 
   /// Opens the application with the bundle identifier.
@@ -85,9 +114,21 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
         guard let event = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: isDown) else {
           throw RemappingSystemActionError.failed(action: "TypeText", reason: String(character))
         }
-        event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
+        unsafe event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
         event.post(tap: .cghidEventTap)
       }
+    }
+  }
+
+  /// Presses and releases the key with the modifiers held.
+  private func postShortcut(_ key: CGKeyCode, _ flags: CGEventFlags, action: String) throws {
+    try requirePostEvent(action)
+    for isDown in [true, false] {
+      guard let event = CGEvent(keyboardEventSource: nil, virtualKey: key, keyDown: isDown) else {
+        throw RemappingSystemActionError.failed(action: action, reason: String(key))
+      }
+      event.flags = flags
+      event.post(tap: .cghidEventTap)
     }
   }
 

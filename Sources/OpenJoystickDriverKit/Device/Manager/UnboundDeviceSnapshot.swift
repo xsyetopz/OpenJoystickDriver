@@ -4,6 +4,8 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   public let vendorID: UInt16
   /// The USB product ID.
   public let productID: UInt16
+  /// The product name the device reported, trimmed; nil when it reported none or a blank one.
+  public let name: String?
   /// The connection label, such as "USB" or the HID transport property.
   public let connection: String
   /// The access backend that observed the device.
@@ -14,24 +16,31 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   public let rejectedCandidates: [ProtocolBindingResult.RejectedCandidate]
   /// The interfaces observed for the device.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
+  /// The client that holds the device exclusively; nil unless the reason is
+  /// ``ProtocolBindingReason/deviceInUse`` and the host named the holder.
+  public let exclusiveOwner: USBExclusiveOwner?
 
   /// Creates a snapshot from the observed device and its binding decision.
   public init(
     vendorID: UInt16,
     productID: UInt16,
+    name: String?,
     connection: String,
     accessBackend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [ProtocolBindingResult.InterfaceSummary]
+    interfaces: [ProtocolBindingResult.InterfaceSummary],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     self.vendorID = vendorID
     self.productID = productID
+    self.name = name
     self.connection = connection
     self.accessBackend = accessBackend
     self.reason = reason
     self.rejectedCandidates = rejectedCandidates
     self.interfaces = interfaces
+    self.exclusiveOwner = exclusiveOwner
   }
 
   /// The binding decision as a ``ProtocolBindingResult``.

@@ -28,13 +28,13 @@
     var onDidClose: () -> Void = {}
 
     /// Marks the menu open and calls ``onWillOpen``.
-    func menuWillOpen(_ menu: NSMenu) {
+    func menuWillOpen(_: NSMenu) {
       isOpen = true
       onWillOpen()
     }
 
     /// Marks the menu closed and calls ``onDidClose``.
-    func menuDidClose(_ menu: NSMenu) {
+    func menuDidClose(_: NSMenu) {
       isOpen = false
       onDidClose()
     }
@@ -49,27 +49,34 @@
       return menu
     }
 
-    /// Returns the menu item for `entry`: a separator, or an item with its state, symbol, submenu
+    /// Returns the menu item for `entry`: a separator, or an item with its state, submenu
     /// or action.
     ///
     /// Settings gets `Command-,` and Quit gets `Command-Q`.
     private func makeMenuItem(for entry: StatusItemEntry) -> NSMenuItem {
       if entry.isSeparator { return .separator() }
-      let title: String
-      switch entry.title {
-      case .key(let key):
-        title = MainMenuRenderer.title(key, appName: OJDLocalized.string("term.app.name"))
-      case .verbatim(let text): title = text
-      }
-      let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+      let title = menuTitle(entry.title)
+      let label =
+        entry.details.isEmpty
+        ? title
+        : OJDLocalized.formatted(
+          "ui.extra.controllerRow",
+          title,
+          ListFormatter.localizedString(byJoining: entry.details.map(MainMenuRenderer.text(of:)))
+        )
+      let item = NSMenuItem(title: label, action: nil, keyEquivalent: "")
       MainMenuRenderer.identify(item, as: entry.id)
       item.isEnabled = entry.isEnabled
       item.state = entry.isChecked ? .on : .off
-      if let symbolName = entry.symbolName { item.image = menuImage(symbol: symbolName) }
+      item.image = entry.symbolName.flatMap {
+        NSImage(systemSymbolName: $0, accessibilityDescription: nil)
+      }
       if let submenu = entry.submenu {
         item.submenu = makeStatusMenu(from: submenu, title: title)
+        item.toolTip = OJDLocalized.string("ui.help.menu.controllerSubmenu")
       } else if let action = entry.action {
         item.target = self
+        item.toolTip = OJDLocalized.string(action.helpKey)
         item.action = #selector(performStatusItemAction(_:))
         item.representedObject = StatusItemActionBox(action)
         if action == .showSettings {
@@ -83,6 +90,17 @@
       return item
     }
 
+    /// The text of a title, with the app name filled in for a key that takes it.
+    func menuTitle(_ title: StatusItemTitle) -> String {
+      switch title {
+      case .key(let key):
+        return MainMenuRenderer.title(key, appName: OJDLocalized.string("term.app.name"))
+      case .verbatim(let text): return text
+      case .formatted(let key, let argument):
+        return OJDLocalized.formatted(key, menuTitle(argument))
+      }
+    }
+
     /// Runs the action of the chosen status menu item.
     @objc
     func performStatusItemAction(_ sender: Any?) {
@@ -94,18 +112,22 @@
         runControllerAction(token) { device in await self.viewModel.suspendController(device) }
       case .resumeController(let token):
         runControllerAction(token) { device in await self.viewModel.resumeController(device) }
-      case .testInput(let token): mainWindow?.showInputTest(controllerID: token)
+      case .testInput(let token): showInputTest(controllerID: token)
       case .showController(let token): mainWindow?.showController(id: token)
       case .disconnectWireless(let token): disconnectWirelessController(sessionToken: token)
       case .activateProfile(let id):
         if let operation = confirmedActivation(of: id) { changeProfile(operation) }
       case .deactivateProfile(let id): changeProfile(.deactivate(profileID: id))
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
+      case .showPermission(let kind): mainWindow?.showAccess(permission: kind)
+      case .startService:
+        // A failed restart shows in the status line and the problem banner, which `refresh` keeps.
+        Task { @MainActor in
+          await viewModel.restartListener()
+          await viewModel.refresh()
+        }
       case .openWindow: mainWindow?.showMainWindow(area: nil)
       case .showSettings: settingsWindow?.showSettings(pane: nil)
-      case .explainErrorCode: mainWindow?.showErrorCodeExplainer()
-      case .openProjectWebsite: open(urlString: StatusItemModel.projectWebsite)
-      case .openProblemReport: open(urlString: StatusItemModel.problemReport)
       case .quit: NSApplication.shared.terminate(sender)
       }
     }
@@ -118,7 +140,7 @@
 
     /// Runs `action` on the connected controller with `sessionToken`, then shows its failure if the
     /// action recorded one.
-    private func runControllerAction(
+    func runControllerAction(
       _ sessionToken: String,
       _ action: @escaping @MainActor (ApplicationServiceDeviceDescription) async -> Void
     ) {
@@ -126,12 +148,24 @@
         let device = menuBarViewModel.devices.first(where: {
           $0.sessionToken.rawValue == sessionToken
         })
-      else { return }
+      else {
+        presentFailure(OJDLocalized.string("ui.inputTest.disconnected"))
+        return
+      }
       Task { @MainActor in
         await action(device)
         if let failure = viewModel.controllerActionFailures[sessionToken] {
           presentFailure(failure)
         }
+      }
+    }
+
+    /// Opens Input Test for the controller with `controllerID`, or shows an alert when there is no
+    /// such controller or the window cannot open it.
+    func showInputTest(controllerID: String?) {
+      guard let controllerID, mainWindow?.showInputTest(controllerID: controllerID) == true else {
+        presentFailure(OJDLocalized.string("ui.inputTest.disconnected"))
+        return
       }
     }
 
@@ -142,17 +176,10 @@
           $0.sessionToken.rawValue == sessionToken
         })
       else { return }
-      let alert = NSAlert()
-      alert.alertStyle = .warning
-      alert.messageText = OJDLocalized.string("ui.controllers.disconnectWirelessConfirmTitle")
-      alert.informativeText = OJDLocalized.formatted(
-        "ui.controllers.disconnectWirelessConfirmMessage",
-        device.name
+      let alert = MenuBarAlerts.disconnectWireless(
+        WirelessDisconnectConfirmation(controllerName: device.name)
       )
-      alert.addButton(withTitle: OJDLocalized.string("ui.controllers.disconnectWirelessConfirm"))
-        .hasDestructiveAction = true
-      alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
-      guard alert.runActivatingApp() == .alertFirstButtonReturn else { return }
+      guard MenuBarAlerts.isConfirmed(alert.runActivatingApp()) else { return }
       runControllerAction(sessionToken) { device in
         await self.viewModel.disconnectWirelessController(device)
       }
@@ -174,18 +201,7 @@
         in: profiles,
         postEventAccess: postEventAccess
       ) { confirmation in
-        let alert = NSAlert()
-        alert.alertStyle = .warning
-        if case .activateNotice(let message) = confirmation {
-          alert.messageText = OJDLocalized.string("ui.profiles.activationTitle")
-          alert.informativeText = message
-        } else {
-          alert.messageText = OJDLocalized.string("ui.profiles.emptyActivationTitle")
-          alert.informativeText = OJDLocalized.string("ui.profiles.emptyActivationMessage")
-        }
-        alert.addButton(withTitle: OJDLocalized.string("action.setActive"))
-        alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
-        return alert.runActivatingApp() == .alertFirstButtonReturn
+        return MenuBarAlerts.isConfirmed(MenuBarAlerts.activation(confirmation).runActivatingApp())
       }
     }
 
@@ -209,20 +225,8 @@
     }
 
     /// Shows an alert that names the failed action and gives `message`.
-    private func presentFailure(_ message: String) {
-      let alert = NSAlert()
-      alert.alertStyle = .warning
-      alert.messageText = OJDLocalized.string("ui.extra.actionFailedTitle")
-      alert.informativeText = message
-      alert.addButton(withTitle: OJDLocalized.string("action.ok"))
-      alert.runActivatingApp()
-    }
-
-    /// Returns the template SF Symbol `symbol` for a menu item, or nil when it does not exist.
-    func menuImage(symbol: String) -> NSImage? {
-      let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
-      image?.isTemplate = true
-      return image
+    func presentFailure(_ message: String) {
+      MenuBarAlerts.failure(message: message).runActivatingApp()
     }
   }
 

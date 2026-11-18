@@ -48,7 +48,7 @@ struct VirtualControllerBackendTests {
   }
 
   @Test
-  func testXboxOneVirtualOutputFormatDeclaresRumbleOutputSize() throws {
+  func testXboxOneVirtualOutputFormatDeclaresRumbleOutputSize() {
     let format = XboxOneGIPHIDReportFormat()
 
     #expect(format.inputReportID == 0x20)
@@ -57,7 +57,7 @@ struct VirtualControllerBackendTests {
   }
 
   @Test
-  func testVirtualOutputFormatsReturnFullyNeutralReportsAfterRelease() throws {
+  func testVirtualOutputFormatsReturnFullyNeutralReportsAfterRelease() {
     let generic = OJDGenericGamepadFormat().buildInputReport(from: VirtualGamepadState())
     let xone = XboxOneGIPHIDReportFormat().buildInputReport(from: VirtualGamepadState())
 

@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 import OpenJoystickDriverKit
 
 /// Reads the schemas in `Resources/Schemas` and validates JSON values against them.
@@ -45,6 +45,21 @@ package enum JSONSchemaFiles {
   /// `endpoint.schema.json#/$defs/welcome`.
   package static func issues(in text: String, against reference: String) throws -> [String] {
     let value = try JSONSerialization.jsonObject(with: Data(text.utf8), options: .fragmentsAllowed)
+    return try issues(inObject: value, against: reference)
+  }
+
+  // The validator checks the objects the property list holds.
+  package static func issues(
+    inPropertyList data: Data,
+    against reference: String
+  ) throws
+    -> [String]
+  {
+    try issues(inObject: PropertyListFixture.tree(data), against: reference)
+  }
+
+  /// The issues in the Foundation tree `value` against the schema at `reference`.
+  package static func issues(inObject value: Any, against reference: String) throws -> [String] {
     let file = String(reference.prefix { $0 != "#" })
     return try Validator().validate(value, against: ["$ref": reference], in: file, at: "$")
   }
@@ -111,7 +126,8 @@ package enum JSONSchemaFiles {
           ? [] : ["\(path): \(value) is not in \(options)"]
       case "const":
         return Self.equal(argument, value) ? [] : ["\(path): expected \(argument), got \(value)"]
-      case "properties", "additionalProperties", "required", "propertyNames", "minProperties":
+      case "properties", "additionalProperties", "required", "dependentRequired", "propertyNames",
+        "minProperties":
         guard let object = value as? [String: Any] else { return [] }
         return try checkObject(keyword, argument, schema: schema, object, in: file, at: path)
       case "prefixItems", "items", "minItems", "maxItems", "uniqueItems", "contains":
@@ -177,6 +193,13 @@ package enum JSONSchemaFiles {
       case "required":
         return (argument as? [String] ?? []).filter { object[$0] == nil }.map {
           "\(path): missing \($0)"
+        }
+      case "dependentRequired":
+        let dependencies = argument as? [String: [String]] ?? [:]
+        return dependencies.keys.sorted().filter { object[$0] != nil }.flatMap { key in
+          dependencies[key, default: []].filter { object[$0] == nil }.map {
+            "\(path): \(key) needs \($0)"
+          }
         }
       case "minProperties":
         return object.count >= (argument as? Int ?? 0) ? [] : ["\(path): too few properties"]

@@ -52,7 +52,7 @@
 			<string>%d تعيين</string>
 		</dict>
 	</dict>
-	<!-- Summary in the support diagnostics of how many virtual controller output devices OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The Arabic plural forms are a first draft that a native speaker reviews. -->
+	<!-- Summary in the support diagnostics of how many virtual gamepads OpenJoystickDriver publishes. %d is that number; the zero form says that none were detected. The Arabic plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.debug.outputDevices</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -300,6 +300,56 @@
 			<string>متوقف · %lld حزمة</string>
 			<key>other</key>
 			<string>متوقف · %lld حزمة</string>
+		</dict>
+	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d دقيقة</string>
+			<key>one</key>
+			<string>%d دقيقة</string>
+			<key>two</key>
+			<string>%d دقيقتان</string>
+			<key>few</key>
+			<string>%d دقائق</string>
+			<key>many</key>
+			<string>%d دقيقة</string>
+			<key>other</key>
+			<string>%d دقيقة</string>
+		</dict>
+	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Arabic plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>لا توجد إعدادات مخفية متغيرة (%d)</string>
+			<key>one</key>
+			<string>تم تغيير %d إعداد مخفي</string>
+			<key>two</key>
+			<string>تم تغيير %d إعدادين مخفيين</string>
+			<key>few</key>
+			<string>تم تغيير %d إعدادات مخفية</string>
+			<key>many</key>
+			<string>تم تغيير %d إعدادًا مخفيًا</string>
+			<key>other</key>
+			<string>تم تغيير %d إعداد مخفي</string>
 		</dict>
 	</dict>
 </dict>

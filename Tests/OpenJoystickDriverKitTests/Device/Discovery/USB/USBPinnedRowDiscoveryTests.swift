@@ -20,7 +20,7 @@ struct USBPinnedRowDiscoveryTests {
   }
 
   @Test(arguments: pinnedRows)
-  func pinnedRowWithAMatchingDescriptorRunsOnItsPins(_ row: PinnedRow) async {
+  func pinnedRowWithMatchingDescriptorRunsOnItsPins(_ row: PinnedRow) async {
     let device = usbDevice(row)
     let provider = provider(device, row, descriptor: interface(row.triple, 0x81, row.output))
     let manager = makeManager(provider)
@@ -48,7 +48,7 @@ struct USBPinnedRowDiscoveryTests {
   }
 
   @Test(arguments: pinnedRows)
-  func pinnedRowWithTheWrongInterfaceTripleIsRefused(_ row: PinnedRow) async {
+  func pinnedRowWithWrongInterfaceTripleIsRefused(_ row: PinnedRow) async {
     let device = usbDevice(row)
     let wrong: (UInt8, UInt8, UInt8) =
       row.triple.1 == 0x47 ? (0xFF, 0x5D, 0x01) : (0xFF, 0x47, 0xD0)
@@ -72,7 +72,7 @@ struct USBPinnedRowDiscoveryTests {
   }
 
   @Test
-  func pinnedRowWithAnUnreadableDescriptorIsRetried() async {
+  func pinnedRowWithUnreadableDescriptorIsRetried() async {
     let row = Self.pinnedRows[0]
     let device = usbDevice(row)
     let provider = SignatureDiscoveryProvider(

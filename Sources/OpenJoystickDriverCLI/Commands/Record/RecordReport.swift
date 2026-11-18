@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// Where `ojd record` reads and writes user controller records, and how it reads its input.
 enum RecordStore {
@@ -113,12 +113,12 @@ struct SkippedRecord: Encodable, Equatable {
     problem = file.problem ?? ""
   }
 
-  /// Describes the `all.patch.json` OJD ignored; nil when it applied the file or the file is
+  /// Describes the `all.patch.plist` OJD ignored; nil when it applied the file or the file is
   /// absent.
   init?(_ defaults: ControllerDefaults?) {
-    guard let defaults, let problem = defaults.problem else { return nil }
+    guard let defaults, let reason = defaults.problem else { return nil }
     file = defaults.url.path
-    self.problem = problem
+    problem = reason
   }
 }
 

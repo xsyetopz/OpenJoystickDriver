@@ -27,7 +27,7 @@ struct UpdateCommandTests {
   )
 
   @Test
-  func availableUpdatePrintsTheReleaseAndExitsZero() async throws {
+  func availableUpdatePrintsReleaseAndExitsZero() async throws {
     let prereleases = Locked<[Bool]>([])
     let human = await run(
       ["update", "check", "--prerelease"],
@@ -59,7 +59,7 @@ struct UpdateCommandTests {
   }
 
   @Test
-  func aRunningVersionNewerThanTheLatestReleaseReportsBothVersions() async throws {
+  func runningVersionNewerThanLatestReleaseReportsBothVersions() async throws {
     let state = UpdateCheckState.aheadOfLatestRelease(current: "0.6.0-alpha.1", latest: "v0.5.0")
     let human = await run(["update", "check"], state: state)
     let plain = await run(["update", "check", "--plain"], state: state)
@@ -87,7 +87,19 @@ struct UpdateCommandTests {
   }
 
   @Test
-  func onlyANetworkFailureSuggestsCheckingTheConnection() async {
+  func onlyPrereleasesPublishedPointsToPrereleaseFlag() async {
+    let result = await run(["update", "check"], state: .onlyPrereleases)
+
+    let reason = CLILocalized.text("cli.update.check.onlyPrereleases")
+    #expect(reason.contains("--prerelease"))
+    #expect(
+      result.standardError
+        == "error[E2019]: " + CLILocalized.format("cli.update.check.failedReason", reason) + "\n"
+    )
+  }
+
+  @Test
+  func onlyNetworkFailureSuggestsCheckingConnection() async {
     let network = UpdateCheckFailure(reason: .transport, message: "timed out")
     let version = UpdateCheckFailure(reason: .invalidCurrentVersion, message: "not SemVer")
     let networkResult = await run(["update", "check"], state: .failed(network))

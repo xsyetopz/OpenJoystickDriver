@@ -3,7 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-// Transcripts captured from the current drivers; later slices must not change these values.
+// Transcripts captured from the drivers; these values must not change.
 extension DriverLifecycleCharacterizationTests {
   @Test
   func gipUSBTranscript() throws {

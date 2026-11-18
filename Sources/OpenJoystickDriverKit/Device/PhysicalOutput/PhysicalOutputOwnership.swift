@@ -1,13 +1,13 @@
 import Foundation
 
 /// A physical output of a controller that claims compete for: one rumble motor, the player
-/// indicator, the colour, the brightness or one adaptive trigger.
+/// indicator, the color, the brightness or one adaptive trigger.
 enum PhysicalOutputChannel: Equatable, Hashable, Sendable {
   /// One rumble motor.
   case rumble(PhysicalRumbleMotor)
   /// The player indicator.
   case playerIndicator
-  /// The lighting colour.
+  /// The lighting color.
   case color
   /// The lighting brightness.
   case brightness
@@ -53,8 +53,8 @@ extension RemappingPhysicalOutput {
 /// The claims on the physical output channels of each controller, resolved to the effective output
 /// of a channel.
 ///
-/// A colour preview wins over a manual claim, a manual claim over a mapping claim, and the profile
-/// colour is the baseline of the colour channel only.
+/// A color preview wins over a manual claim, a manual claim over a mapping claim, and the profile
+/// color is the baseline of the color channel only.
 struct PhysicalOutputOwnership {
   /// One request for an output, ordered by its sequence.
   struct Claim: Sendable {
@@ -71,9 +71,9 @@ struct PhysicalOutputOwnership {
   /// Each channel's manual claims, oldest first: the newest wins, a failed command withdraws only
   /// its own, and a delivered one drops the older ones it replaced.
   private var manualClaims: [LogicalControllerID: [PhysicalOutputChannel: [Claim]]] = [:]
-  /// The colour previews by controller and preview token, which win over every other colour claim.
+  /// The color previews by controller and preview token, which win over every other color claim.
   private var temporaryColorPreviews: [LogicalControllerID: [UUID: Claim]] = [:]
-  /// The profile colour of each controller, which the colour channel falls back to.
+  /// The profile color of each controller, which the color channel falls back to.
   private var profileBaselines: [LogicalControllerID: RemappingPhysicalOutput] = [:]
   /// Counts the clearings of each controller's claims and of all claims, so a state captured
   /// before a clearing (neutralization, disconnect, teardown) is never restored after it.
@@ -124,7 +124,7 @@ struct PhysicalOutputOwnership {
   /// Adds one command's manual claims under one sequence and returns it, for `commitManual` or
   /// `withdrawManual` once the command's write finishes.
   ///
-  /// A neutral claim lets mapping claims show through, except a colour, where black is a real
+  /// A neutral claim lets mapping claims show through, except a color, where black is a real
   /// claim.
   @discardableResult
   mutating func setManual(
@@ -178,7 +178,7 @@ struct PhysicalOutputOwnership {
     return wasNewest
   }
 
-  /// Sets the colour preview claim of `token`, which wins over every other colour claim.
+  /// Sets the color preview claim of `token`, which wins over every other color claim.
   mutating func setTemporaryColor(
     _ output: RemappingPhysicalOutput,
     token: UUID,
@@ -191,7 +191,7 @@ struct PhysicalOutputOwnership {
     )
   }
 
-  /// Removes the colour preview claim of `token`.
+  /// Removes the color preview claim of `token`.
   mutating func releaseTemporaryColor(token: UUID, for identifier: LogicalControllerID) {
     temporaryColorPreviews[identifier]?[token] = nil
     if temporaryColorPreviews[identifier]?.isEmpty == true {
@@ -199,7 +199,7 @@ struct PhysicalOutputOwnership {
     }
   }
 
-  /// Sets the profile colour that the colour channel falls back to; nil removes it.
+  /// Sets the profile color that the color channel falls back to; nil removes it.
   mutating func setProfileColor(
     _ output: RemappingPhysicalOutput?,
     for identifier: LogicalControllerID
@@ -227,9 +227,9 @@ struct PhysicalOutputOwnership {
 
   /// The output that wins on `channel` of `identifier`, or nil when nothing claims it.
   ///
-  /// A colour preview wins first, then the newest manual claim, which counts only when it is not
-  /// neutral unless the channel is the colour, then the newest mapping claim, then the profile
-  /// colour.
+  /// A color preview wins first, then the newest manual claim, which counts only when it is not
+  /// neutral unless the channel is the color, then the newest mapping claim, then the profile
+  /// color.
   func effectiveOutput(
     for channel: PhysicalOutputChannel,
     device identifier: LogicalControllerID
@@ -253,7 +253,7 @@ struct PhysicalOutputOwnership {
     return channel == .color ? profileBaselines[identifier] : nil
   }
 
-  /// Mapping claims, colour previews and the profile colour on some channels of one controller, so
+  /// Mapping claims, color previews and the profile color on some channels of one controller, so
   /// a failed mapping or preview write rolls back only what it changed.
   ///
   /// Manual claims are not part of it: a failed manual command withdraws its own claim instead.
@@ -264,15 +264,15 @@ struct PhysicalOutputOwnership {
     let clearing: UInt64
     /// The mapping claims on `channels`.
     let mappingClaims: [PhysicalOutputChannel: [UUID: Claim]]
-    /// The colour previews of the controller.
+    /// The color previews of the controller.
     let colorPreviews: [UUID: Claim]?
-    /// The profile colour of the controller.
+    /// The profile color of the controller.
     let profileBaseline: RemappingPhysicalOutput?
     /// The channels that the state covers.
     let channels: Set<PhysicalOutputChannel>
   }
 
-  /// Captures the mapping claims on `channels`, with the colour previews and the profile colour, of
+  /// Captures the mapping claims on `channels`, with the color previews and the profile color, of
   /// `identifier`.
   func state(
     of channels: Set<PhysicalOutputChannel>,

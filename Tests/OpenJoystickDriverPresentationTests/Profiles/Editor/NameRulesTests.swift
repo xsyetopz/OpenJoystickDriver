@@ -10,7 +10,7 @@ struct NameRulesTests {
   }
 
   @Test
-  func rejectsWhitespaceOnlyNamesEvenWhenADeviceIsSelected() {
+  func rejectsWhitespaceOnlyNamesEvenWhenDeviceIsSelected() {
     #expect(ProfileNameValidation.trimmedName(" \n\t ").isEmpty)
   }
 }

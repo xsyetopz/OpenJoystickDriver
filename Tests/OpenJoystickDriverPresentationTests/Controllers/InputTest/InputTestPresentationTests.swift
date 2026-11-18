@@ -7,7 +7,7 @@ import Testing
 
 struct InputTestPresentationTests {
   @Test
-  func inputTestWindowUsesTheRequestedStableSizing() {
+  func inputTestWindowUsesRequestedStableSizing() {
     #expect(InputTestWindowSizingPolicy.defaultContentSize == NSSize(width: 900, height: 620))
     #expect(InputTestWindowSizingPolicy.minimumContentSize == NSSize(width: 700, height: 500))
     #expect(
@@ -17,7 +17,7 @@ struct InputTestPresentationTests {
   }
 
   @Test(arguments: ServingFixture.all)
-  func windowTitleNamesThePhysicalController(_ fixture: ServingFixture) {
+  func windowTitleNamesPhysicalController(_ fixture: ServingFixture) {
     let device = fixture.device
     let title = InputTestWindowTitle.make(for: device)
     #expect(title == "Input Test — \(fixture.name)")
@@ -33,7 +33,7 @@ struct InputTestPresentationTests {
   }
 
   @Test
-  func controlsOutsideTheDrawnClustersAreListedAsAdditional() {
+  func controlsOutsideDrawnClustersAreListedAsAdditional() {
     var state = ControllerState.neutral
     state.hat = .north
     state.pressed = [

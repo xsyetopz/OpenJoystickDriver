@@ -123,16 +123,10 @@ struct BootloaderGuardTests {
   }
 
   @Test
-  func theControllerDetailSaysTheDeviceIsABootloader() {
-    let key = ProtocolBindingReason.bootloaderIdentity.explanationKey ?? ""
+  func controllerDetailSaysDeviceIsBootloader() {
+    let key = ProtocolBindingReason.bootloaderIdentity.explanationKey
     #expect(key == "ui.controllers.bootloaderIdentity")
     #expect(Localization().string(key) != key)
-  }
-
-  @Test
-  func onlyTheTwoBootloaderIdentitiesAreRefused() {
-    #expect(ControllerModelID(vendorID: 0x2DC8, productID: 0x310A).isBootloaderIdentity == false)
-    #expect(ControllerModelID(vendorID: 0x1234, productID: 0x3208).isBootloaderIdentity == false)
   }
 
   @Test(arguments: identities)
@@ -159,7 +153,7 @@ private struct CountingProbeReader: ControllerModeProbeReader {
   var reads: Int { get async { await count.value } }
 
   func readFeatureReport(
-    _ request: PhysicalHIDFeatureReadRequest
+    _: PhysicalHIDFeatureReadRequest
   ) async -> PhysicalHIDReportResult<Data> {
     await count.increment()
     return .unavailable

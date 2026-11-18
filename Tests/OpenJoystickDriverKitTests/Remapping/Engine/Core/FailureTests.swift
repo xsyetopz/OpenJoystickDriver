@@ -19,7 +19,7 @@ struct RemappingFailureTests {
   }
 
   @Test
-  func earlierNeutralOutputIsNotReleasedAfterALaterActionFails() async throws {
+  func earlierNeutralOutputIsNotReleasedAfterLaterActionFails() async throws {
     let sink = RemappingTestSink(failingCalls: [3])
     let engine = RemappingEventEngine(sink: sink)
     let profile = RemappingProfile(
@@ -65,7 +65,7 @@ struct RemappingFailureTests {
   }
 
   @Test
-  func recoveryRetriesOnlyTheExactRemainingOutput() async throws {
+  func recoveryRetriesOnlyExactRemainingOutput() async throws {
     let sink = RemappingTestSink(failingCalls: [4, 5])
     let engine = RemappingEventEngine(sink: sink)
 
@@ -84,7 +84,7 @@ struct RemappingFailureTests {
   }
 
   @Test
-  func terminalDrainRetriesOnlyTheExactRemainingOutput() async throws {
+  func terminalDrainRetriesOnlyExactRemainingOutput() async throws {
     let sink = RemappingTestSink(failingCalls: [4, 5])
     let barrier = RemappingEmissionBarrier()
     let engine = RemappingEventEngine(sink: sink, emissionBarrier: barrier)

@@ -114,6 +114,9 @@ extension ApplicationServiceServer {
     case .requestAccess:
       let value = try decode(LocalServiceRPCPermissionArguments.self)
       return try send(await requestAccess(value.requirement))
+    case .requestBluetoothAccess:
+      _ = try decode(LocalServiceRPCEmptyArguments.self)
+      return try send(requestBluetoothAccess())
     case .getControllerState:
       let value = try decode(LocalServiceRPCDeviceArguments.self)
       return try send(
@@ -225,6 +228,8 @@ extension ApplicationServiceServer {
           server: value.server
         )
       )
+    case .recalibrateController:
+      return try send(await recalibrateController(decode(ControllerRecalibrationArguments.self)))
     case .setControllerTuning:
       let value = try decode(LocalServiceRPCControllerTuningArguments.self)
       return try send(
@@ -241,6 +246,18 @@ extension ApplicationServiceServer {
     case .exchangeVirtualFeed:
       let value = try decode(LocalServiceRPCVirtualFeedExchangeArguments.self)
       return try send(virtualFeeds.exchange(token: value.token, frames: value.frames))
+    case .waitForVirtualFeedFeedback:
+      let value = try decode(LocalServiceRPCVirtualFeedWaitArguments.self)
+      let milliseconds = min(
+        max(0, value.timeoutMilliseconds),
+        LocalServiceRPCVirtualFeedWaitArguments.maximumTimeoutMilliseconds
+      )
+      return try send(
+        await virtualFeeds.waitForFeedback(
+          token: value.token,
+          timeout: TimeInterval(milliseconds) / 1000
+        )
+      )
     case .closeVirtualFeed:
       let value = try decode(LocalServiceRPCVirtualFeedCloseArguments.self)
       return try send(await virtualFeeds.close(token: value.token))
