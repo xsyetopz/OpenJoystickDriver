@@ -1291,9 +1291,13 @@
         },
         "virtual": {
           "type": "object",
-          "required": ["unavailable"],
+          "required": ["gameRumbleUnavailable", "unavailable"],
           "additionalProperties": false,
           "properties": {
+            "gameRumbleUnavailable": {
+              "type": "boolean",
+              "description": "True when the controller has rumble motors and its live virtual gamepad has no rumble report, so no game can rumble it."
+            },
             "override": {
               "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
             },
@@ -4723,9 +4727,13 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["id", "name", "productID", "unavailable", "vendorID"],
+            "required": ["gameRumbleUnavailable", "id", "name", "productID", "unavailable", "vendorID"],
             "additionalProperties": false,
             "properties": {
+              "gameRumbleUnavailable": {
+                "type": "boolean",
+                "description": "True when the controller has rumble motors and its live virtual gamepad has no rumble report, so no game can rumble it."
+              },
               "id": {
                 "type": "string"
               },

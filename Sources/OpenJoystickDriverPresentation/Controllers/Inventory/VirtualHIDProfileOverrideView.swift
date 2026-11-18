@@ -51,6 +51,10 @@
           Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)
         }
+        if let text = VirtualHIDProfileKinds.noGameRumbleText(for: device, level: interfaceLevel) {
+          Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
         if VirtualHIDProfileScopeChoice.offered(for: device).count > 1 {
           Picker(OJDLocalized.string("ui.controllers.virtual.scope"), selection: $scope) {
             ForEach(VirtualHIDProfileScopeChoice.offered(for: device), id: \.self) { choice in

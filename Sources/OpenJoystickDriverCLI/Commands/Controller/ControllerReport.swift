@@ -215,6 +215,9 @@ struct ControllerShowReport: Encodable, Equatable {
     let overrideScope: VirtualHIDProfileOverrideScope?
     /// Whether the controller has no virtual gamepad profile to publish.
     let unavailable: Bool
+    /// True when the controller has rumble motors and `profile` carries no rumble, so no game
+    /// can rumble it.
+    let gameRumbleUnavailable: Bool
   }
 
   /// How OJD serves the controller, as `ServingPolicy` decides it.
@@ -408,7 +411,8 @@ struct ControllerShowReport: Encodable, Equatable {
           source: device.servingDecision.selection?.source.reported,
           override: $0.override?.rawValue,
           overrideScope: $0.overrideScope,
-          unavailable: device.servingDecision.route == .outputDisabled(.noVirtualProfile)
+          unavailable: device.servingDecision.route == .outputDisabled(.noVirtualProfile),
+          gameRumbleUnavailable: device.personaWithoutGameRumble != nil
         )
       },
       publication: device.publication.map {

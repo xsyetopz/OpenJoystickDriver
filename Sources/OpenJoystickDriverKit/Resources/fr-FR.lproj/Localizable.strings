@@ -3125,6 +3125,8 @@
 "cli.virtual.set.profile" = "Le profil de la manette virtuelle.";
 /* Note printed by 'ojd virtual export-mapping' for a profile that needs other SDL hints. %@ is the profile name in kebab case, which stays as written. SDL stays as written. */
 "cli.virtual.group.sdlHintsNote" = "Remarque : %@ ne fonctionne pas avec les indicateurs SDL par défaut.";
+/* Note printed by 'ojd virtual show', 'ojd virtual set', 'ojd controller show' and the app's virtual gamepad picker for a controller with rumble motors whose virtual gamepad has no rumble report. %1$@ is that virtual gamepad's name; %2$@ lists the names of those that carry rumble, separated by commas. */
+"cli.virtual.group.noGameRumbleNote" = "Remarque : les jeux ne peuvent pas faire vibrer cette manette via %1$@, qui n’a pas de rapport de vibration. La vibration fonctionne via %2$@.";
 /* One-line summary of 'ojd virtual show' in the command list and at the top of its help. */
 "cli.virtual.show.abstract" = "Afficher la manette virtuelle de chaque manette et les profils disponibles.";
 /* Value shown by 'ojd virtual show' for a controller without a virtual gamepad. */

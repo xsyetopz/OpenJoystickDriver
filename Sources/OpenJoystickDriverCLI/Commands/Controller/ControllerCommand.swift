@@ -442,6 +442,11 @@ struct ControllerShowCommand: AsyncParsableCommand {
           } ?? none
         )
       )
+      if virtual.gameRumbleUnavailable,
+        let profile = virtual.profile.flatMap({ VirtualHIDProfileID(rawValue: $0) })
+      {
+        rows.append(("", noGameRumbleNote(profile)))
+      }
     }
     if let publication = detail.publication {
       rows.append(

@@ -68,6 +68,9 @@ struct VirtualShowReport: Encodable, Equatable {
     let sdl: VirtualSDLReport?
     /// The W3C description of the live persona; absent with no persona.
     let w3c: VirtualW3CReport?
+    /// True when the controller has rumble motors and its live persona carries no rumble, so no
+    /// game can rumble it.
+    let gameRumbleUnavailable: Bool
 
     /// Creates the entry from the service's description of `device`.
     ///
@@ -87,6 +90,7 @@ struct VirtualShowReport: Encodable, Equatable {
       let mapping = try decision.selection?.profileID.gamepadMapping()
       sdl = mapping.map(VirtualSDLReport.init)
       w3c = mapping.map(VirtualW3CReport.init)
+      gameRumbleUnavailable = device.personaWithoutGameRumble != nil
     }
   }
 
@@ -180,6 +184,11 @@ struct VirtualShowCommand: AsyncParsableCommand {
       if let live = entry.profile, entry.sdl?.worksWithDefaultSDLHints == false {
         CLIOutput.stdout("\(id)  \(sdlHintsNote(live))")
       }
+      if entry.gameRumbleUnavailable,
+        let live = entry.profile.flatMap({ VirtualHIDProfileID(rawValue: $0) })
+      {
+        CLIOutput.stdout("\(id)  \(noGameRumbleNote(live))")
+      }
     }
     CLIOutput.stdout(
       CLILocalized.format(
@@ -267,6 +276,11 @@ private func printChange(
         CommandLineName.kebab(report.source.rawValue)
       )
     )
+    if device.physicalOutputCapabilities.supportsRumble, let live = result.live,
+      !live.carriesRumble
+    {
+      CLIOutput.stdout(noGameRumbleNote(live))
+    }
   }
 }
 

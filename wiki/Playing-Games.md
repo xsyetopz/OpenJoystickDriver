@@ -95,7 +95,7 @@ Rumble from a game reaches your controller. Lighting doesn't. Rumble in games is
 
 ### Rumble from Games
 
-The default and Game Controller kinds accept rumble. OJD turns a game's rumble into a short command for the controller and sends a stop when it ends. The Generic kind has no rumble. A controller without a motor drops that channel, and so do generic gamepads. OJD passes no lightbar commands.
+The default and Game Controller kinds accept rumble. OJD turns a game's rumble into a short command for the controller and sends a stop when it ends. The Generic kind has no rumble: when a controller with motors uses it, the virtual gamepad picker, `ojd virtual show`, `ojd virtual set` and `ojd controller show` say games cannot rumble it and name the kinds that can, and the `--json` output of `ojd virtual show` and `ojd controller show` has `gameRumbleUnavailable`. A controller without a motor drops that channel, and so do generic gamepads. OJD passes no lightbar commands.
 
 ### Rumble from Input Test
 

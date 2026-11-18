@@ -3125,6 +3125,8 @@
 "cli.virtual.set.profile" = "वर्चुअल गेमपैड प्रोफ़ाइल।";
 /* Note printed by 'ojd virtual export-mapping' for a profile that needs other SDL hints. %@ is the profile name in kebab case, which stays as written. SDL stays as written. */
 "cli.virtual.group.sdlHintsNote" = "नोट: %@ SDL के डिफ़ॉल्ट संकेतों (हिंट्स) के साथ काम नहीं करता।";
+/* Note printed by 'ojd virtual show', 'ojd virtual set', 'ojd controller show' and the app's virtual gamepad picker for a controller with rumble motors whose virtual gamepad has no rumble report. %1$@ is that virtual gamepad's name; %2$@ lists the names of those that carry rumble, separated by commas. */
+"cli.virtual.group.noGameRumbleNote" = "नोट: गेम %1$@ के ज़रिए इस कंट्रोलर में कंपन नहीं कर सकते, क्योंकि इसमें कंपन रिपोर्ट नहीं है। कंपन %2$@ के ज़रिए काम करता है।";
 /* One-line summary of 'ojd virtual show' in the command list and at the top of its help. */
 "cli.virtual.show.abstract" = "हर कंट्रोलर का वर्चुअल गेमपैड और वे प्रोफ़ाइल दिखाएँ जिन्हें आप चुन सकते हैं।";
 /* Value shown by 'ojd virtual show' for a controller without a virtual gamepad. */

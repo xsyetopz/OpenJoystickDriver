@@ -3125,6 +3125,8 @@
 "cli.virtual.set.profile" = "가상 게임패드 프로파일.";
 /* Note printed by 'ojd virtual export-mapping' for a profile that needs other SDL hints. %@ is the profile name in kebab case, which stays as written. SDL stays as written. */
 "cli.virtual.group.sdlHintsNote" = "참고: %@은(는) SDL의 기본 힌트로는 작동하지 않습니다.";
+/* Note printed by 'ojd virtual show', 'ojd virtual set', 'ojd controller show' and the app's virtual gamepad picker for a controller with rumble motors whose virtual gamepad has no rumble report. %1$@ is that virtual gamepad's name; %2$@ lists the names of those that carry rumble, separated by commas. */
+"cli.virtual.group.noGameRumbleNote" = "참고: %1$@에는 진동 보고서가 없으므로 게임에서 이 컨트롤러를 진동시킬 수 없습니다. 진동은 %2$@에서 작동합니다.";
 /* One-line summary of 'ojd virtual show' in the command list and at the top of its help. */
 "cli.virtual.show.abstract" = "각 컨트롤러의 가상 게임패드와 선택할 수 있는 프로파일을 표시합니다.";
 /* Value shown by 'ojd virtual show' for a controller without a virtual gamepad. */

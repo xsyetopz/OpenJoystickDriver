@@ -40,6 +40,17 @@ func sdlHintsNote(_ profile: String) -> String {
   CLILocalized.format("cli.virtual.group.sdlHintsNote", CommandLineName.kebab(profile))
 }
 
+/// The note for a controller with rumble motors that `profile` serves although it carries no
+/// rumble; it names `profile` and each persona that carries rumble as the command line does.
+func noGameRumbleNote(_ profile: VirtualHIDProfileID) -> String {
+  CLILocalized.format(
+    "cli.virtual.group.noGameRumbleNote",
+    profile.commandLineName,
+    VirtualHIDProfileID.allCases.filter(\.carriesRumble).map(\.commandLineName)
+      .joined(separator: ", ")
+  )
+}
+
 /// The `ojd virtual export-mapping` command: prints the SDL mapping or the W3C description of one
 /// persona or of every persona.
 struct VirtualExportMappingCommand: AsyncParsableCommand {
