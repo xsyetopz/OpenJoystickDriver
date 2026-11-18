@@ -1,24 +1,24 @@
 # Signing the App and XboxUSBDevice DEXT
 
-OpenJoystickDriver has two independently provisioned code items:
+Two code items, each provisioned separately:
 
 - host app: `com.openjoystickdriver`
-- DriverKit extension: `com.openjoystickdriver.XboxUSBDevice`, with the `XboxUSB` personality only
+- DriverKit extension: `com.openjoystickdriver.XboxUSBDevice` (XboxUSB personality only)
 
-Follow [Kevin Elliott's DEXT signing guide](https://developer.apple.com/forums/thread/809202). DriverKit entitlement values are customized provisioning data; do not infer, broaden, or repair a profile in source.
+Follow [Kevin Elliott's DEXT signing guide](https://developer.apple.com/forums/thread/809202). DriverKit entitlement values are customized provisioning data; never infer, broaden, or repair a profile in source.
 
 ## Entitlement Ownership
 
 The host app requires:
 
 - `com.apple.developer.system-extension.install = true`
-- `com.apple.developer.driverkit.userclient-access` in the host profile: a list of bundle IDs that includes `com.openjoystickdriver.XboxUSBDevice` and may name other bundle IDs, such as `com.openjoystickdriver.VirtualHIDDevice`; the authored `Host.entitlements` claims exactly `com.openjoystickdriver.XboxUSBDevice`, so the signed app claims only that DEXT
-- `com.apple.developer.hid.virtual.device = true`, because the app and service publish virtual gamepads through `IOHIDUserDevice`
+- `com.apple.developer.driverkit.userclient-access` in the host profile: a bundle ID list that includes the DEXT and may name others, such as `com.openjoystickdriver.VirtualHIDDevice`. `Host.entitlements` claims exactly the DEXT
+- `com.apple.developer.hid.virtual.device = true` (for `IOHIDUserDevice` gamepads)
 - its profile's application and team identifiers
 
-The host allowlist must never use `com.apple.developer.driverkit.allow-any-userclient-access`.
+Never put `com.apple.developer.driverkit.allow-any-userclient-access` in the host allowlist.
 
-The DEXT profile requires exactly `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb`. Development and Developer ID signing use the same Apple-issued restricted USB value:
+The DEXT profile requires exactly `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb`, with this restricted USB value for development and Developer ID:
 
 ```xml
 <key>com.apple.developer.driverkit.transport.usb</key>
@@ -33,58 +33,64 @@ The DEXT profile requires exactly `com.apple.developer.driverkit` and `com.apple
 </array>
 ```
 
-These are `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, and `045E:0B12`. The DEXT must not contain `com.apple.developer.hid.virtual.device` or the HID family, transport, and event-service entitlements; the build rejects a profile or signed DEXT that has one. Apple says `hid.virtual.device` must not be in a DEXT, so it belongs to the app profile only. The build also rejects a DEXT profile whose USB entitlement differs from the seven pairs. The team's `transport.usb` capability (VendorID and ProductID) is already assigned, so no new Apple request is needed: enable it on the `com.openjoystickdriver.XboxUSBDevice` App ID and regenerate the DriverKit profile.
+The pairs are `045E:02D1`, `02DD`, `02E3`, `02EA`, `0B00`, `0B0A`, `0B12`. The build rejects a DEXT profile with other USB entitlements, and a profile or signed DEXT holding the virtual-device entitlement (Apple: app profile only) or the HID family, transport, or event-service entitlements.
 
-Without a user-client grant for `com.openjoystickdriver.XboxUSBDevice`, a development build omits the DEXT. This covers a host development profile that has no `userclient-access` key, or one whose list names only other bundle IDs. The build signs the app without `userclient-access`, embeds no system extension, and skips activation. Nothing then appears under System Settings > General > Login Items & Extensions > Driver Extensions, and Xbox USB ownership is unavailable. The app still publishes virtual gamepads through `IOHIDUserDevice`. Release builds and Developer ID profiles still require a list that includes `com.openjoystickdriver.XboxUSBDevice`. Apple grants `userclient-access` per team and per DEXT bundle ID, so request it for `com.openjoystickdriver.XboxUSBDevice` ([Requesting entitlements for DriverKit development](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development)), then regenerate the host profiles. A host profile that grants it only for another bundle ID, such as the removed `com.openjoystickdriver.VirtualHIDDevice`, builds no DEXT.
+The team's `transport.usb` capability (VendorID and ProductID) is assigned; enable it on the DEXT App ID and regenerate the DriverKit profile.
 
-The canonical authored DEXT entitlement input is `Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements`.
+| Build | Host profile `userclient-access` | Result |
+| --- | --- | --- |
+| Development | missing, or names only other bundle IDs | The app is signed without it, no extension is embedded, nothing appears under System Settings > General > Login Items & Extensions > Driver Extensions, and Xbox USB ownership is unavailable. Virtual gamepads still work. |
+| Release, Developer ID | must include the DEXT | Apple grants it per team and DEXT bundle ID; [request it](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development), then regenerate the host profiles. Another bundle ID's grant builds no DEXT. |
+
+DEXT entitlement input: `Sources/DriverKitGenerator/Entitlements/XboxUSBDevice.entitlements`.
 
 ## Development Profiles
 
-Use Apple Development signing and separate profiles for the app and DEXT. Default local paths:
+Apple Development signing uses separate app and DEXT profiles. Default paths:
 
 ```text
 ~/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver.provisionprofile
 ~/Library/MobileDevice/Provisioning Profiles/OpenJoystickDriver_XboxUSBDevice.provisionprofile
 ```
 
-`signing configure` writes the paths of these profiles to `GUI_PROVISIONING_PROFILE` and `DEXT_PROVISIONING_PROFILE` in `.env.dev`, and the SHA-1 of the one Apple Development identity that both embed to `CODESIGN_IDENTITY`; that identity signs the app and the DEXT. The build passes the `Name` inside the DEXT profile to Xcode as the profile specifier. When several identities qualify, `signing configure --development-identity <sha1>` (or `--release-identity <sha1>` for Developer ID) picks one; otherwise it takes the lowest SHA-1.
+`signing configure` writes these paths to `GUI_PROVISIONING_PROFILE` and `DEXT_PROVISIONING_PROFILE` in `.env.dev`, and the SHA-1 of the Apple Development identity both profiles embed to `CODESIGN_IDENTITY` (signs app and DEXT).
 
-The host development profile's device list must include this Mac. Otherwise AMFI ignores `com.apple.developer.hid.virtual.device` and virtual `IOHIDUserDevice` creation fails. Regenerate the profile after adding the Mac, then `just signing-install-profiles`.
+The DEXT profile's `Name` is Xcode's profile specifier. `signing configure --development-identity <sha1>` (`--release-identity <sha1>` for Developer ID) picks among qualifying identities; default is the lowest SHA-1.
 
-Regenerate profiles after changing capabilities. Xcode may otherwise reuse a stale profile. The development DEXT profile's `transport.usb` must contain exactly the seven approved Microsoft pairs; a wildcard or a GameSir dictionary is a mismatch and the signing gate rejects it. The connected GameSir G7 SE (`3537:1010`) uses the app's direct IOUSBHost route and does not require a DriverKit grant.
+The host development profile's device list must include this Mac, or AMFI ignores the virtual-device entitlement and IOHIDUserDevice creation fails. After adding the Mac, regenerate the profile and run `just signing-install-profiles`. Regenerate after any capability change, or Xcode may reuse a stale profile.
 
-Normally, invoke the desired signed operation and follow its prompts:
+The signing gate rejects a wildcard or GameSir dictionary in a development DEXT profile. The GameSir G7 SE (`3537:1010`) uses the app's direct IOUSBHost route, with no DriverKit grant.
+
+It finds, installs, and configures profiles and matching Keychain identities, prompting as needed:
 
 ```bash
 just install-dev
 ```
 
-The command searches supported local profile locations, installs discovered profiles, configures matching Keychain identities, and resumes. Use these commands only when automatic repair reports an asset mismatch:
+Run these only after automatic repair reports an asset mismatch:
 
 ```bash
 just signing-audit
 just signing-configure
 ```
 
-A profile embeds every certificate it was generated for. `configure` chooses a Keychain identity (with its private key) whose SHA1 is embedded in both the host and the DriverKit profile of the same kind. When several qualify, `configure` prints the choice: the lowest SHA1. When none qualifies, it fails and lists each profile's embedded SHA1s next to the Keychain SHA1s; it never writes an identity that the Keychain cannot sign with. `signing profile-info` lists every embedded certificate, and `signing import-embedded` imports all of them.
+`configure` picks a Keychain identity with a private key whose SHA1 is embedded in both profiles of a kind (lowest SHA1 if several, printed). With none it fails, listing each profile's embedded SHA1s beside the Keychain SHA1s. It never writes an identity the Keychain cannot sign with. `signing profile-info` lists every embedded certificate; `signing import-embedded` imports them all.
 
 ## Developer ID / Distribution
 
-The Developer ID profiles are installed separately as `OpenJoystickDriver_DevID.provisionprofile` and `OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile`. GitHub Actions consumes the latter from `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64`; development profiles and Apple Development identities never enter the release job.
+Install Developer ID profiles as `OpenJoystickDriver_DevID.provisionprofile` and `OpenJoystickDriver_XboxUSBDevice_DevID.provisionprofile`; GitHub Actions reads the latter from `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64`. Development profiles and identities stay out of the release job.
 
-USB and PCI DEXT distribution export is the exception to Xcode's normal automatic flow. For every distribution environment:
+Xcode's automatic export skips USB and PCI DEXT distribution. Per environment:
 
-1. Build the final DEXT.
-2. Generate and download separate app and DEXT profiles for that environment.
-3. Rename the DEXT profile to `embedded.provisionprofile` and replace the profile inside the built DEXT.
-4. Re-sign the DEXT with the distribution identity, timestamp, hardened runtime, and the production canonical entitlement plist.
-5. Configure the app archive for manual signing with its separate app profile.
-6. Embed the already signed DEXT using the System Extensions copy phase.
-7. Archive and export for the same environment.
-8. Compare the signed entitlements of both code items with their decoded profiles exactly.
+1. Build the final DEXT; download separate app and DEXT profiles.
+2. Rename the DEXT profile to `embedded.provisionprofile` and replace the one inside the DEXT.
+3. Re-sign the DEXT with the distribution identity, timestamp, hardened runtime, and production canonical entitlement plist.
+4. Set the app archive to manual signing with its app profile.
+5. Embed the signed DEXT with the System Extensions copy phase.
+6. Archive and export.
+7. Compare both code items' signed entitlements with their decoded profiles.
 
-Representative DEXT signing command:
+DEXT signing command:
 
 ```bash
 codesign -s "Developer ID Application: ..." -f --timestamp -o runtime \
@@ -92,7 +98,7 @@ codesign -s "Developer ID Application: ..." -f --timestamp -o runtime \
   /path/to/com.openjoystickdriver.XboxUSBDevice.dext
 ```
 
-Do not change the provisioning profile to silence an entitlement mismatch. Kevin's guide notes that these failures normally mean the signing entitlement plist does not exactly match the selected profile. Inspect Organizer's distribution log and the archived signing configuration.
+Never change the profile to silence an entitlement mismatch; the signing plist usually differs from the profile. Inspect Organizer's distribution log and the archived signing configuration.
 
 ## Verification
 
@@ -105,4 +111,7 @@ codesign -d --entitlements - --xml "$extensions/com.openjoystickdriver.XboxUSBDe
 security cms -D -i /path/to/profile.provisionprofile
 ```
 
-Verify the DEXT's `transport.usb` has the seven Microsoft product IDs and no wildcard. Verify the host allowlist is exactly `com.openjoystickdriver.XboxUSBDevice` and the DEXT has no virtual-HID entitlement.
+## Further Reading
+
+- [Environment Files](environment.md)
+- [Tester Builds](tester-builds.md)

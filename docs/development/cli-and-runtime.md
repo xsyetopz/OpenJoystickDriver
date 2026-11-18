@@ -1,6 +1,6 @@
 # CLI and Application Runtime
 
-The signed application bundle provides the menu-bar and settings interface for the in-process controller runtime. When `argv[0]` is `ojd`, the same executable is the `ojd` command line for automation, advanced mappings, and diagnostics; under any other name it runs the app host. The app host does not shell out to the CLI. See [Architecture](architecture.md) for the shared contracts, local-RPC boundary, and process lifecycle.
+The signed app bundle provides the menu-bar and settings interface. As `ojd` (`argv[0]`) the executable is the CLI; under any other name it runs the app host, which never shells out to the CLI. Contracts, RPC boundary, lifecycle: [Architecture](architecture.md).
 
 | Capability | Shared owner |
 | --- | --- |
@@ -14,28 +14,43 @@ The signed application bundle provides the menu-bar and settings interface for t
 
 ## Application Host
 
-Launching `OpenJoystickDriver.app` starts `ApplicationServiceRuntime` once, then installs the AppKit status-item menu and reusable settings window facade. See [Architecture](architecture.md) for host identity, socket ownership, and login registration.
+Launching `OpenJoystickDriver.app` starts `ApplicationServiceRuntime` once, then installs the status-item menu and settings window. Host identity, sockets, login registration: [Architecture](architecture.md).
 
 ## CLI
 
-The installed executable, run as `ojd`, is the supported expert interface for automation, complete mapping operations, streaming input, and diagnostics. [Using the command line](../../wiki/Command-Line.md) documents its global options, output formats, and exit codes. The menu-bar/settings facade is the supported consumer interface for readiness, permissions, connected controllers, profiles, and ordinary remapping. A repository build run as `ojd` (for example through `ln -sf OpenJoystickDriver .build/debug/ojd`) uses the installed signed executable when available. The server still checks the user, signing identifier, and team identifier. If the repository sources are newer than the installed executable, the command stops and asks for a new install instead of running stale code.
+`ojd` covers automation, complete mapping operations, streaming input, and diagnostics. Options, output formats, exit codes: [Using the command line](../../wiki/Command-Line.md). The menu bar and settings window cover readiness, permissions, controllers, profiles, and ordinary remapping.
 
-Run `just install-fast-dev` after source changes. Set `OJD_RUN_REPOSITORY_CLI=1` only to run a local command that does not use the application service. An unsigned repository executable cannot connect to the running service. Repository development, build, validation, and release tasks use the separate maintainer command, `just`. Direct use of `OpenJoystickDriverHIDTool` is internal and supported only for focused hardware investigation. When the service holds a controller exclusively, `OpenJoystickDriverHIDTool --monitor` reads the reports from the service's packet log, as `ojd controller capture` does; a tool the service did not sign is refused there, and prints a hint to run `ojd controller capture` instead.
+A repository build run as `ojd` (for example `ln -sf OpenJoystickDriver .build/debug/ojd`) uses the installed signed executable when available; the server still checks user, signing identifier, and team identifier. If sources are newer than the installed executable, the command stops and asks for an install. Run `just install-fast-dev` after source changes. `OJD_RUN_REPOSITORY_CLI=1` runs a local command that skips the application service; an unsigned repository executable cannot connect to the running service.
+
+`OpenJoystickDriverHIDTool` is internal, for hardware investigation. When the service holds a controller exclusively, `OpenJoystickDriverHIDTool --monitor` reads the service's packet log like `ojd controller capture`. The service refuses a tool it did not sign, and the tool hints to run `ojd controller capture`.
 
 CLI command families:
 
 ```text
 ojd status
 ojd service start|stop|wait
-ojd controller list|show|watch|capture|rumble|light|player|suspend|resume|disconnect
+ojd controller list|show|watch|check|capture|rumble|light|player|speaker|suspend|resume|disconnect|calibrate|pair|unpair|claim|release|lookup
+ojd profile ...
+ojd binding ...
+ojd macro ...
 ojd virtual show|set|reset|feed|export-mapping|launch
+ojd record ...
+ojd mod ...
+ojd protocol ...
 ojd permission list|request
 ojd transport-extension status|activate|deactivate
 ojd setting list|get|set|reset|test-notification
-ojd log show|path
-ojd diagnose [--output PATH] [--soak SECONDS]
+ojd config ...
+ojd access status|enable|disable|list|grant|revoke|web
+ojd log show|path|export
+ojd diagnose [--output PATH] [--soak SECONDS] [--frames SECONDS]
 ojd update check
+ojd explain <code>
+ojd migrate
+ojd generate
 ```
+
+`ojd <command> --help` lists subcommands and options.
 
 ## Workflow Capability Matrix
 
@@ -46,46 +61,80 @@ ojd update check
 | `permission list/request` | Access area permission rows |
 | `transport-extension status/activate/deactivate` | Settings, Advanced pane, Xbox USB Driver |
 | `setting list/get/set` | Settings |
-| `log show/path` | Activity area, Log mode |
+| `log show/path/export` | Activity area, Log mode |
 | `diagnose --output` | Copy Support Report |
 | `update check` | Settings update check |
 | JSON/JSONL output, scripting, soak tests, catalog diagnostics, packaging, catalog generation, and DriverKit generation | Automation-only |
 
-`--timeout <seconds>` applies to bounded application-service calls. Controller commands take a `<controller>` operand: an ID from `ojd controller list`, or `VVVV:PPPP` (hexadecimal vendor and product ID). A `VVVV:PPPP` that matches two connected controllers is rejected, and the error lists them. Machine-readable output uses `--json` where supported. Stream commands use their documented JSONL mode.
+| Option or operand | Behavior |
+| --- | --- |
+| `--timeout <seconds>` | Bounds application-service calls |
+| `<controller>` | ID from `ojd controller list`, or `VVVV:PPPP` (hexadecimal vendor and product ID); a VVVV:PPPP matching two connected controllers is rejected, listing them |
+| `--json` | Machine-readable output where supported |
 
-Packet capture is opt-in. The service records a controller's raw packets only while a reader holds a five-second capture lease, which each packet-log read renews: opening Developer Tools or selecting a controller there, its Live capture, or `ojd controller capture`. When the lease lapses, recording stops and the captured packets are discarded. Service logs, `status`, and `controller list` note only whether a controller has a serial number, never its value.
+Packet capture is opt-in. The service records raw packets only while a reader holds a five-second capture lease, renewed by each packet-log read. Readers: Developer Tools (opening it or selecting a controller), its Live capture, `ojd controller capture`. Lapsed lease: recording stops, captured packets are discarded. Logs, `status`, and `controller list` show only whether a controller has a serial number, never its value.
 
-Keep raw packets, runtime soaking, catalog inspection, permission audits, and virtual-device self-tests in the CLI: their output is diagnostic, verbose, or unsuitable for an always-present consumer interface.
+CLI-only: raw packets, soak runs, catalog inspection, permission audits, virtual-device self-tests.
 
 ## Controller Sessions and Virtual HID Profiles
 
-`controller suspend` suspends a controller from OpenJoystickDriver without terminating its physical Bluetooth or USB link. Suspension neutralizes input and physical effects, removes OJD virtual output, and keeps the controller visible. It also closes every HID and USB handle OJD holds on the controller, so another process can open it. A suspended controller that the HID backend admits again, after sleep, a controller-record reload or an ownership re-evaluation, keeps those handles closed, and nothing but `controller resume` reopens them. `controller resume` opens those handles again (the session stays suspended when that fails), repeats required startup output and re-enables input; a physical reconnect creates a new active session. System sleep is not a physical disconnect: a controller suspended before sleep returns suspended after wake. A Bluetooth disconnect that reaches OJD before the sleep notification is a physical disconnect and ends the suspension.
+| Command | Effect |
+| --- | --- |
+| `controller suspend` | Releases the controller without ending its Bluetooth or USB link: neutralizes input and physical effects, removes OJD virtual output, keeps it visible, closes every HID and USB handle OJD holds |
+| `controller resume` | Only way to reopen handles (they stay closed even if the HID backend admits the controller again); repeats startup output, re-enables input. Failed resume: session stays suspended |
+| `controller disconnect` | Bluetooth only. Suspends, then asks macOS to close the connection within a bound. Failed close: session stays suspended. OJD never reconnects automatically; `controller resume` accepts the controller again |
 
-`controller disconnect` is Bluetooth-only. It neutralizes and suspends the selected OJD session before making a bounded request to macOS to close that physical connection. A failed or timed-out close leaves the session suspended so stale input cannot be republished; use `controller resume` only when you intentionally want OJD to accept it again. OJD never reconnects the controller automatically, and the command does not stop other controller sessions.
+Physical reconnect: active session. Suspended before sleep: returns suspended after wake, unless a Bluetooth disconnect reaches OJD before the sleep notification, which ends the suspension.
 
-`ojd controller show --json` reports `publication.state` as `Published`, `NotPublished` or `Failed`. `publication.reason` is present exactly when the state is `NotPublished` and is one of `OutputDisabled`, `SystemGamepad`, `NativeHIDPassThrough`, `UpstreamVirtualDevice`, `SessionSuspended`, `NoVirtualProfile`, `Suppressed`, `NoInputYet` or `HeldByAnotherClient`; `publication.failure` is the non-empty text of the failed send, present exactly when the state is `Failed`. `ApplicationServicePublicationStatus` builds only these combinations (`published`, `notPublished`, `failed`) and its decoder refuses any other. The extension-owned route publishes a persona like the virtual HID route, so a controller on it waits as `NoInputYet`.
+`ojd controller show --json` reports `publication.state`:
 
-Parsers that expose complete report observations also expose typed input health in status and support reports. DualShock 4 health uses the advancing device sensor timestamp rather than host packet arrival alone. Missing or non-advancing complete reports become stale after one second, neutralize OJD-published output, and wait for a fresh neutral report before recovery. A fresh held control is not guessed to be accidental. Native HID pass-through may still be visible directly to another app, so stale health remains a Needs attention condition even after OJD retires its own publication.
+| Field | Values |
+| --- | --- |
+| `publication.state` | Published, NotPublished, Failed |
+| `publication.reason` | Only when NotPublished: OutputDisabled, SystemGamepad, NativeHIDPassThrough, UpstreamVirtualDevice, SessionSuspended, NoVirtualProfile, Suppressed, NoInputYet, HeldByAnotherClient |
+| `publication.failure` | Only when Failed: non-empty text of the failed send |
 
-Each controller model (vendor/product) has a virtual HID profile: `SDLCompatible` (`045E:0B0C`, selected automatically when the controller's declared controls fit), `GameControllerCompatible` (`045E:0B13`, only by override) or `Generic`. Automatic selection runs unless the model has a stored override. `ojd virtual set <sdl-compatible|game-controller-compatible|generic> <controller>` stores an override for the selected controller's model; `ojd virtual reset <controller>` clears it, and `ojd virtual reset --all` clears every model's override (it cannot combine with a controller). `ojd virtual show [<controller>]` shows each controller's live profile and the choices. `ojd virtual export-mapping [<profile>] [--format sdl|w3c]` prints each profile's SDL mapping or W3C description, which `VirtualHIDProfileID.gamepadMapping()` derives from the profile's descriptor and report codec. `ojd virtual launch [--] <program> [<arguments>]` runs a program with `SDL_GAMECONTROLLERCONFIG` set by `SDLLaunchEnvironment.environment(adding:to:)` to the mapping line of each served profile (an existing value stays first); it fails with `E2013` when no controller has a live profile and with `E2033` when the program cannot start, and it exits with the program's status. `set` and `reset` print the resulting live profile line, then print a failure to stderr and exit 1 if the request did not fully take effect (for example `controllerNotFound`, `overrideRejectedByController`, or `activationFailed`).
+`ApplicationServicePublicationStatus` builds and decodes only these combinations. The extension-owned route waits as NoInputYet, like the virtual HID route.
 
-`ApplicationServiceVirtualHIDProfileStatus` reports each connected controller's selected profile, its source (`automatic`, `override`, or `automaticAfterRejecting`), its stored override, and whether no profile is available for its declared controls.
+Parsers with complete report observations expose typed input health in status and support reports. DualShock 4 health uses the advancing sensor timestamp. Missing or non-advancing reports go stale after one second, neutralize OJD output, and wait for a fresh neutral report. Stale health stays Needs attention (native HID pass-through may stay visible to another app).
+
+Each controller model (vendor/product) has a virtual HID profile, automatic unless the model has a stored override:
+
+| Profile | ID | Selection |
+| --- | --- | --- |
+| SDLCompatible | 045E:0B0C | Automatic when declared controls fit |
+| GameControllerCompatible | 045E:0B13 | Override only |
+| Generic | | Override or fallback |
+
+| Command | Effect |
+| --- | --- |
+| `ojd virtual reset <controller>` | Clears the override |
+| `ojd virtual reset --all` | Clears every override; cannot combine with a controller |
+| `ojd virtual show [<controller>]` | Shows each live profile and the choices |
+| `ojd virtual launch [--] <program> [<arguments>]` | Runs the program with `SDL_GAMECONTROLLERCONFIG` set by `SDLLaunchEnvironment.environment(adding:to:)` to each served profile's mapping line (existing value stays first). Exit: `E2013` no controller has a live profile, `E2033` program cannot start, otherwise the program's status |
+
+- `ojd virtual set <sdl-compatible|game-controller-compatible|generic> <controller>`: stores a model override; `--unit` applies it to one controller by unit ID.
+- `ojd virtual export-mapping [<profile>] [--format sdl|w3c]`: prints each profile's SDL mapping or W3C description from `VirtualHIDProfileID.gamepadMapping()`.
+
+`set` and `reset` print the live profile line. A request not fully taken effect (for example `controllerNotFound`, `overrideRejectedByController`, `activationFailed`) prints a failure to stderr and exits 1.
+
+`ApplicationServiceVirtualHIDProfileStatus` reports each controller's selected profile, source (automatic, override, automaticAfterRejecting), stored override, and whether no profile fits.
 
 ## Responsiveness
 
-The signed application host and CLI commands must not wait indefinitely for system tools, login registration, permission APIs, or live-runtime calls.
+Host and CLI never wait indefinitely on system tools, login registration, permission APIs, or runtime calls.
 
-- System commands use `BoundedProcessRunner` off the main actor.
-- Headless live-state calls use framed local RPC with connect, send, and receive deadlines.
-- Permission requests await the dedicated `PermissionManager` actor and never run a shell command or poll System Settings.
-- System-extension and signing checks return explicit timeout or failure states.
-- The host keeps its runtime on the main dispatch queue and exits through the runtime's retained signal handlers.
-
-A missing runtime or stalled system tool may error, but must not freeze host shutdown or any CLI invocation.
+| Area | Mechanism |
+| --- | --- |
+| System commands | `BoundedProcessRunner`, off the main actor |
+| Headless live-state calls | Framed local RPC with connect, send, receive deadlines |
+| Permission requests | Await the `PermissionManager` actor; no shell command or System Settings polling |
+| System-extension and signing checks | Explicit timeout or failure states |
+| Host | Main dispatch queue; exits through the runtime's retained signal handlers |
 
 ## Runtime Health
 
-Run every diagnostic check plus a bounded soak of the installed application process:
+Every diagnostic check plus a bounded soak of the installed app process:
 
 ```bash
 ojd diagnose \
@@ -95,16 +144,25 @@ ojd diagnose \
   --footprint-limit-mib 512
 ```
 
-`--soak` accepts 1 to 86400 seconds, `--interval-ms` 100 to 60000, and each limit 0 to 65536. Use `--json` for automation.
+| Option | Range |
+| --- | --- |
+| `--soak` | 1 to 86400 seconds |
+| `--interval-ms` | 100 to 60000 |
+| each limit | 0 to 65536 |
 
-The sampler records resident set size, physical footprint (including dirty and compressed allocator pages), linear RSS and footprint growth rates, average process CPU, file descriptor count and growth, thread count and growth, and any configured high-water limits.
+`--json` for automation. The sampler records resident set size and physical footprint (including dirty and compressed allocator pages) with linear growth rates, average CPU, file descriptor and thread counts with growth, and high-water limits.
 
-A window shorter than 60 seconds is `insufficientData` unless a configured high-water limit is exceeded. A stable run is evidence for the exercised workload, not proof that every path is leak-free.
+A window under 60 seconds is insufficientData unless a high-water limit is exceeded. A stable run is evidence for the exercised workload only. Collect evidence:
 
-To collect evidence:
+| Step | Action |
+| --- | --- |
+| 1 | Run against the signed installed build, not only `.build/debug` |
+| 2 | Confirm the sampled PID matches `ApplicationServiceManager.health()` |
+| 3 | Keep a controller active for the window |
+| 4 | Record the verdict and high-water limits |
+| 5 | Reinstall or restart the app after changing its binary |
 
-- Run the diagnostic against the signed installed build, not only `.build/debug`.
-- Confirm that the sampled PID matches `ApplicationServiceManager.health()`.
-- Keep a controller active for the requested window.
-- Record the verdict and high-water limits.
-- Reinstall or restart the application after changing its binary before collecting evidence.
+## Further Reading
+
+- [Architecture](architecture.md)
+- [Using the command line](../../wiki/Command-Line.md)

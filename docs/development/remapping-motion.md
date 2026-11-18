@@ -1,53 +1,76 @@
 # Remapping Motion Processing
 
-This page defines per-device motion processing, coordinate projections, tuning, activation, and layer overrides. Start with the [remapping overview](remapping.md).
+See the [remapping overview](remapping.md).
 
 ## Per-Device Motion Processing
 
-The remapping engine feeds motion samples into each `RemappingDeviceState`'s processor. It uses sample-relative nanoseconds for integration, independent of report delivery uptime, and retains the latest corrected gyro, fused orientation, gravity, linear acceleration, and interval. Duplicate/backward sequence indices and backward sample times do not advance state. A forward sequence with the same timestamp produces no second integration. Gaps above 100 ms, clock-basis or tick-unit changes, and calibration-provenance changes reset bias/orientation and establish a zero-duration baseline. Samples arrive in SI units and the canonical controller frame; the processor converts them once to its degrees-per-second, g, Y-up space (see [Remapping Calibration](remapping-calibration.md)). Numerically out-of-range readings clear estimates; the next valid sample also establishes a fresh baseline. This prevents interpolation across missing motion and prevents extreme finite values from entering bias arithmetic.
+Each RemappingDeviceState processor integrates samples in sample-relative nanoseconds, independent of delivery time, and keeps the latest corrected gyro, fused orientation, gravity, linear acceleration, and interval. Units: [Remapping Calibration](remapping-calibration.md).
 
-The processor uses the active profile's motion tuning. Controller release, profile replacement, and engine drain discard its containing device state. Tests exercise the real engine path for two identical models at different locations, release/reacquisition, duplicate/backward samples, gaps, provenance changes, and extreme-value recovery. Sony and Nintendo readings carry a session-local calibration revision. Installing changed coefficients or provenance advances it; identical accepted coefficients and rejected replies do not. A revision change resets processing estimates even when provenance is unchanged. Encoded readings require the revision; a reading without it fails to decode.
+- Duplicate or backward sequence indices, backward or repeated sample times do not advance state.
+- Gaps above 100 ms, clock-basis or tick-unit changes, and calibration-provenance changes reset bias and orientation and set a zero-duration baseline.
+- Out-of-range readings clear estimates. The next valid sample sets a fresh baseline.
 
-Live manual bias calibration is available through the authenticated application service and CLI:
+Controller release, profile replacement, and engine drain discard processor state. Sony and Nintendo readings carry a session-local calibration revision, advanced by changed coefficients or provenance (not by identical accepted coefficients or rejected replies). A revision change resets estimates. A reading without it fails to decode.
+
+The CLI and the authenticated application service run manual bias calibration:
 
 ```text
 ojd controller calibrate <controller> [start|pause|reset]
 ```
 
-`<controller>` is an ID from `ojd controller list` or a `VVVV:PPPP` model. Without an action, the command prints the calibration. With `--json`, each operation returns `controller`, `calibrated`, `collecting`, and `offsetDegreesPerSecond` (X/Y/Z). `start` requires an eligible remapping route with a valid motion baseline. Keep the controller stationary while collecting. `pause` stops manual collection and retains the estimated offset; automatic bias collection can continue if the profile enables it. `reset` clears motion estimates and waits for a fresh sample baseline. Disconnect, profile replacement, invalid samples, and clock/calibration discontinuities cancel manual collection. Calibration does not change factory coefficients or persist a user offset in the profile.
+`<controller>` is an ID from `ojd controller list` or a VVVV:PPPP model. Without an action, it prints the calibration. With `--json`, each operation returns `controller`, `calibrated`, `collecting`, and `offsetDegreesPerSecond` (X/Y/Z). Action `sticks` with `--step <rest|circle|triggers|gyro>` measures stick centres, ranges, trigger ends, and gyro, and stores them for the controller's model.
 
-The engine checks the captured mapping session before applying queued calibration commands. Regression coverage rejects a previous session's command after reconnect without clearing the replacement baseline and covers router queue races. CLI socket tests cover exact identity, status decoding, and JSON bias values.
+- start: needs an eligible remapping route with a valid motion baseline. Keep the controller still.
+- pause: stops manual collection, keeps the offset. Automatic collection can continue if the profile enables it.
+- reset: clears motion estimates and stored stick values, then waits for a fresh baseline.
 
-The controller input-test window has a Motion calibration panel. Refresh reads the selected controller's calibration state; Start calibration, Pause, and Reset use the same router commands. The panel shows collection state and X/Y/Z bias in degrees per second. It disables overlapping operations and ignores late results after selection changes. Disconnect and window close clear the selected calibration target. Closing the panel does not stop service-owned manual collection; use Pause to stop collecting. Native visual/VoiceOver verification and translations of the calibration strings remain pending.
+Disconnect, profile replacement, invalid samples, and clock or calibration discontinuities cancel collection. Calibration changes no factory coefficients and stores no profile offset. The engine rejects commands from an earlier mapping session.
+
+The input-test window's **Motion Calibration** panel has **Refresh**, **Start Calibration**, **Pause**, and **Reset**, using the same router commands. It shows collection state and X/Y/Z bias in degrees per second. Closing it does not stop collection. Not verified: native visual and VoiceOver checks and calibration translations.
 
 ### Gyro Coordinate Projections
 
-Processed motion exposes local, player, and world projection through the shared Codable `RemappingMotionSpace` contract. Local mode returns controller X pitch and Y yaw. Player mode keeps local pitch and combines Y/Z gyro around gravity, with a default yaw relaxation of 1.41 capped by the combined Y/Z rate. World mode projects gyro onto reference up for yaw and projects the controller pitch axis onto the gravity plane for pitch. Its default 0.125 side-reduction threshold suppresses unstable pitch near a sideways pose; exact side alignment returns zero pitch. Gravity is normalized, so its magnitude does not scale output.
+Codable RemappingMotionSpace offers three projections:
 
-Player/world formulas are adapted from the pinned MIT GamepadMotionHelpers reference. The full copyright and permission notice is retained in [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md). Binary distribution of that notice remains part of candidate packaging. Tests distinguish flat, sideways, and tilted poses, enforce the player yaw cap, and reject zero gravity or invalid tuning. The projection produces degrees/second; the native motion-action layer applies pointer sign, sensitivity, smoothing, and output mapping.
+- Local: controller X pitch and Y yaw.
+- Player: local pitch, with Y/Z gyro combined around gravity. Default yaw relaxation is 1.41, capped by the combined Y/Z rate.
+- World: yaw from gyro projected onto reference up. Pitch from the pitch axis projected onto the gravity plane. Default 0.125 side-reduction threshold suppresses unstable pitch near a sideways pose; exact side alignment returns zero.
+
+Projections yield degrees per second from normalized gravity. The native motion-action layer applies pointer sign, sensitivity, smoothing, and output mapping. Player and world formulas come from the pinned MIT GamepadMotionHelpers reference; [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) keeps its notice, and release packaging must ship it.
 
 ### Motion Tuning Contract and Transform
 
-`RemappingMotionTuning` is a shared Codable value with defaults for omitted fields and rejection of nonfinite/out-of-range values. It selects projection, independent pitch/yaw angular sensitivity (0–100), inversion, smoothing half-time (0–1000 ms), radial rate threshold (0–1000 degrees/second), automatic bias, player yaw relaxation, world side reduction, and gravity correction rate (0–100/s). The transform applies the radial threshold, time-based exponential smoothing, then sensitivity and inversion. The processor feeds the same tuning into bias, fusion, and projection and retains the tuned angular rates in its result. A configuration change resets processing/filter history.
+Codable RemappingMotionTuning defaults omitted fields and rejects nonfinite and out-of-range values. It sets projection, inversion, automatic bias, player yaw relaxation, world side reduction, and these ranges:
 
-Profiles persist non-default tuning under `motionTuning`; omitted tuning uses the schema defaults. The live engine passes the active profile's settings into the processor, and app/CLI profile reconstruction preserves them through metadata and binding edits. The CLI has no tuning options; `ojd profile edit` changes `motionTuning` in the profile document. The profile editor has a Motion tuning sheet with all fields, reset, and cancel. Numeric fields accept typed values and synchronize valid edits with sliders. Invalid text remains visible and prevents saving; decimal-comma input is supported for locales that use it. Changes use the validated draft and profile save flow. Labels have English source and first-pass translations in 68 locale catalogs. Amharic and Northern Sámi still use English motion labels pending translation. Remaining translations, native-language review, and native visual/accessibility proof are pending. Tests cover default/partial JSON, profile round trips, omitted tuning defaults, invalid decoding, editing preservation, live engine sensitivity/inversion, radial threshold, and identical smoothing after one 100 ms step or ten 10 ms steps. Gyro routing converts those angular rates to the configured destination.
+- pitch and yaw sensitivity: 0 to 100
+- smoothing half-time: 0 to 1000 ms
+- radial rate threshold: 0 to 1000 degrees/second
+- gravity correction rate: 0 to 100 per second
+
+The transform applies the radial threshold, time-based exponential smoothing, then sensitivity and inversion. The same tuning feeds bias, fusion, and projection. A change resets processing and filter history.
+
+Non-default tuning is stored under `motionTuning`, set with `ojd profile edit` or `ojd profile set`. The profile editor's **Motion Tuning** sheet blocks saving invalid text. Labels have draft translations. Not verified: which catalogs still use English motion labels, native-language review, native visual and accessibility checks.
 
 ### Gyro Output and Activation
 
-Profiles accept `gyroOutput`. Omitted settings keep output disabled. Modes are `Disabled`, `Mouse`, `LeftStick`, and `RightStick`. Stick modes require a virtual gamepad output policy; mouse mode requires system-input permission. Native profile edits preserve these settings. The Motion sheet edits output, scaling, activation, and motion tuning together. The CLI exposes `--gyro-output`, `--gyro-pointer-points-per-degree`, and `--gyro-full-stick-degrees-per-second`.
+Profiles accept `gyroOutput` (off if omitted). Modes: Disabled, Mouse, LeftStick, RightStick. Stick modes need a virtual gamepad output policy; Mouse needs system-input permission. Set `gyroOutput.mode`, `gyroOutput.pointerPointsPerDegree`, and `gyroOutput.fullStickDegreesPerSecond` the same way.
 
-Mouse output integrates accepted sample intervals into logical screen-point deltas. Stick output uses angular speed divided by the configured full-stick speed, clamps each axis, and participates in the gamepad contribution accumulator. A 100 ms sample timeout removes only the gyro contribution. Reset calibration removes the gyro stick contribution through the engine output transaction; delivery failure follows the normal fail-closed recovery path.
+Mouse output integrates sample intervals into screen-point deltas. Stick output divides angular speed by the full-stick speed, clamps each axis, and joins the gamepad contribution accumulator. A 100 ms sample timeout or reset calibration removes only the gyro contribution. Delivery failure follows fail-closed recovery.
 
-Activation modes are `Always`, `WhileHeld`, `WhileReleased`, and `Toggle`, configured with `--gyro-activation` and `--gyro-activation-source`. Sources may be buttons, D-pad directions, or axis directions. Continuous axes are rejected. Always-active mode has no activation source. Enabling starts with a fresh sample baseline; disabling immediately removes the gyro stick contribution. Activation controls retain their explicit bindings. Their original virtual contribution is suppressed by default when gyro output is enabled. Set `--gyro-consume-activation false` or turn off the native suppression toggle to pass through an otherwise unmapped activation control. An axis-direction activator reserves its parent virtual axis, consistent with ordinary axis-direction mappings.
+Activation modes: Always (no source), WhileHeld, WhileReleased, Toggle. Set `gyroOutput.activationMode` and `gyroOutput.activationSource`. A source is a button, D-pad direction, or axis direction; continuous axes are rejected.
 
-Focused tests cover sample timing, timeout aggregation, activation, calibration-reset delivery failure, CLI persistence, locale-aware numeric entry, and native draft preservation. Trackball and layer tuning overrides are implemented as described below. The gyro editor labels are present in all catalogs but await translation. Physical motion direction, rendered controls, keyboard navigation, and VoiceOver remain unverified.
+- Enabling starts with a fresh sample baseline. Disabling removes the gyro stick contribution at once.
+- While gyro output is on, OJD suppresses the control's original virtual contribution. To pass an unmapped activation control through, set `gyroOutput.consumesActivationSource` to false or turn off the native suppression toggle.
+- An axis-direction activator reserves its parent virtual axis.
 
-Trackball configuration is available through `--gyro-trackball-source <source>`, `--gyro-trackball-axes pitch|yaw|both`, `--gyro-trackball-decay <halvings/s>`, and `--gyro-trackball-consume true|false`. Set the source to `none` to remove trackball settings. Partial updates preserve existing fields; tuning without a source and removal combined with new tuning are rejected. Defaults select both axes, one velocity halving per second, and suppression of the source's original virtual contribution. Zero decay retains constant velocity.
+Not verified: physical motion direction, keyboard navigation, VoiceOver. Gyro editor labels need translation.
 
-While the source is held, selected axes use the last accepted angular velocity instead of new physical motion. Mouse travel uses the analytical decay integral; sticks use the current decayed velocity. Processing remains sample-driven, and gaps clear retained motion. This native algorithm uses the last velocity, not JSM's 125 ms sample average. The Motion sheet authors trackball enablement, control, axes, decay, and source consumption. Typed decimal values follow the current locale. Translation, native visual/accessibility review, and physical feel/direction validation remain pending.
+Trackball settings are under `gyroOutput.trackball` (`source`, `axes`, `decayHalvingsPerSecond`, `consumesSource`), set the same way. Defaults: both axes, one halving per second, source suppressed. Zero decay keeps velocity constant. Not verified: rules for partial updates and for removing the trackball.
+
+While the source is held, selected axes use the last accepted angular velocity, not live motion (JSM averages the last 125 ms). Mouse travel uses the analytical decay integral. Sticks use the decayed velocity. Gaps clear retained motion. Not verified: translation, native review, and physical feel.
 
 ### Layer Motion Overrides
 
-A layer may contain an optional `motionTuning` object. The most recently activated layer with an override supplies the complete tuning value; active layers without one leave the previous choice in effect. Releasing a held layer or toggling it off restores the earlier active override, or the profile tuning when no override remains. A tuning change immediately removes the gyro stick contribution and clears retained trackball motion, calibration collection, and the motion baseline. Output resumes only after a new baseline sample.
+A layer may hold a `motionTuning` object; the latest activated layer with one supplies the whole value. Releasing or toggling off a layer restores the earlier override, else the profile tuning. A tuning change removes the gyro stick contribution and clears retained trackball motion, calibration collection, and the motion baseline. Output resumes after a fresh baseline.
 
-The CLI has no motion tuning options. Author a layer override by editing the layer's motion tuning with `ojd profile edit <profile>`; remove it to restore inheritance. Each native layer row has a Motion tuning button. The shared tuning sheet offers Use profile tuning to remove the override. Native rendering, keyboard navigation, VoiceOver, and translation review remain pending.
+Edit a layer's tuning with `ojd profile edit <profile>` (no CLI tuning options); remove it to restore inheritance. Each native layer row has a **Motion Tuning** button; **Use Profile Tuning** in the sheet removes the override. Not verified: native rendering, keyboard navigation, VoiceOver, and translations.

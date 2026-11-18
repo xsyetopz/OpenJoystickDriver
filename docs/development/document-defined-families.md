@@ -1,49 +1,55 @@
-# Document-defined protocol families
+# Document-Defined Protocol Families
 
-Scope: how a protocol description document registers a family that the general layout driver runs, with no Swift change. Two built-in families run on it as well: `XboxXID` and `NintendoSwitchInputOnly`. The app bundles one documented family, `VendorFlydigi`.
+A protocol description document registers a family for the general layout driver with no Swift change; XboxXID and NintendoSwitchInputOnly use it too. The app bundles one documented family, VendorFlydigi.
 
-Paths under `Sources/OpenJoystickDriverKit/Protocol/` are shortened to `Protocol/`.
+## What a Family Is
 
-## What a family is
+- `PhysicalProtocolID` (ProtocolClassifier.swift) is a string value. Its 18 static members are the built-in families; `allCases` lists only them.
+- A documented family is a description whose `family` is not a built-in name, held by `DocumentedProtocolFamilies` (DocumentedProtocolFamilies.swift). `PhysicalProtocolID(rawValue:)` accepts the name; `isDocumented` is true.
+- The name is UpperCamelCase: `^[A-Z][A-Za-z0-9]*$`. controller.schema.json (`$defs.protocol.properties.family`) and report.schema.json (`rejectedCandidate.properties.protocolID`) state it; protocol-description.schema.json uses `$ref`.
 
-- `PhysicalProtocolID` (`Protocol/Classification/ProtocolClassifier.swift`) is a string value. The 18 built-in families are its static members, and `allCases` lists only them.
-- A documented family is a description document whose `family` is not a built-in name. `PhysicalProtocolID(rawValue:)` accepts its name while `DocumentedProtocolFamilies` holds the description (`Protocol/Classification/DocumentedProtocolFamilies.swift`), and `isDocumented` is true for it.
-- The family name is UpperCamelCase: `^[A-Z][A-Za-z0-9]*$`. `controller.schema.json` (`$defs.protocol.properties.family`) and `report.schema.json` (`rejectedCandidate.properties.protocolID`) state the same pattern, and `protocol-description.schema.json` follows the first by `$ref`.
+## What a Documented Description Must Set
 
-## What a documented description must set
+`ProtocolDescription.decode(_:fileName:)` refuses a documented description with:
 
-`ProtocolDescription.decode(_:fileName:)` refuses a documented description that:
+- a name that fails the pattern (E5002);
+- a file stem that differs from the family name (E5003);
+- the raw name of a built-in family, such as `XboxGIP.plist` (E5002);
+- no `displayName` or no `defaults.input.layouts` (E5002).
 
-- has a name that fails the pattern (E5002);
-- has a file stem that differs from the family name (E5003);
-- has the name of a built-in family, written as the raw name (`XboxGIP.plist`) (E5002);
-- sets no `displayName` (E5002), or sets no `defaults.input.layouts` (E5002).
+A built-in family's name is the localized `term.protocolFamily.<segment>` string; a documented family's comes from `displayName` (`PhysicalProtocolID.displayName(in:)`).
 
-A built-in description sets no `displayName`; its name is the localized `term.protocolFamily.<segment>` string. A documented family takes its display name from the document (`PhysicalProtocolID.displayName(in:)`).
+It has no `sessionKeys`, `presentSessionFields`, or parameters (built-in families own them). It declares endpoints, interface signatures, `recordSections`, `defaults.input.layouts`, a rumble template, and tuning defaults.
 
-A documented description has no `sessionKeys`, no `presentSessionFields` and no parameters, because those belong to the built-in families that read them (`generalSessionFields`, `sessionFields`, `readParameters`). It declares endpoints, interface signatures, `recordSections`, `defaults.input.layouts`, a rumble template and tuning defaults.
+## Where a Documented Family Is Loaded From
 
-## Where a documented family is loaded from
+`ControllerRecordSet.load(userDirectory:)` calls `DocumentedProtocolFamilies.load(besides:)` before any record. `read(_:package:)` reads, in order:
 
-`ControllerRecordSet.load(userDirectory:)` calls `DocumentedProtocolFamilies.load(besides:)` before it applies any record. It reads, through `DocumentedProtocolFamilies.read(_:package:)`:
+- the plist files of the user's `Protocols` folder, beside Controllers;
+- the `protocols` list of each installed mod package, in package-name order;
+- bundled `Resources/Protocols/` files whose stem is a family name (VendorFlydigi.plist); built-in files are kebab-case, so the two do not mix.
 
-- the `.plist` files of the user's `Protocols` folder, beside `Controllers`;
-- the `protocols` list of each installed mod package, from its `Protocols/` folder, in package-name order;
-- the bundled documented families, last: the `Resources/Protocols/` files whose stem is a family name (`VendorFlydigi.plist`), which `ControllerRecordSet.bundled` needs before any user folder is read. A built-in description's file name is kebab-case, so the two kinds do not mix.
+The first definition of a name wins; a later file is refused and listed in `ControllerRecordSet.userFiles` with its E5002 or E5003 reason. A user or package file replaces the bundled definition without a refusal: the bundled D7D7:0041 record binds VendorFlydigi, so a user `Protocols/VendorFlydigi.plist` changes how it decodes. `ModPackageStore.validate` runs `read` on each listed file.
 
-The first definition of a name wins, so a later file with that name is refused. The bundled definition is the exception: a user or package file of the same name replaces it, and no refusal is listed for the bundled file. The bundled `D7D7:0041` record binds `VendorFlydigi`, so a `Protocols/VendorFlydigi.plist` in the user's folder changes how that record decodes. A refused file is listed in `ControllerRecordSet.userFiles` with its E5002 or E5003 reason. `ModPackageStore.validate` runs `read` on each listed file and registers the package's families while it validates the package's Controller files.
+## Command Line
 
-## Command line
+| Command | Effect |
+| --- | --- |
+| `ojd protocol validate FILE` | runs read, prints the refusal |
+| `ojd protocol install FILE` | validates, writes `Protocols/FAMILY.plist` beside the user's Controllers folder, replacing a file of that name |
+| `ojd protocol list` | prints built-in and documented families with source BuiltIn, Bundled, User, or Package |
 
-`ojd protocol validate FILE` runs `DocumentedProtocolFamilies.read` and prints the E5002 or E5003 refusal. `ojd protocol install FILE` runs it, then writes the file bytes to `Protocols/FAMILY.plist` beside the user's `Controllers` folder and replaces a file of that name. `ojd protocol list` prints `PhysicalProtocolID.allCases` and `DocumentedProtocolFamilies.load(besides:).families` with their source: `BuiltIn`, `Bundled`, `User` or `Package`. `ProtocolStore.controllers` is the folder that tests replace.
+Tests replace the folder `ProtocolStore.controllers`.
 
-## Where a documented family is read
+## Where a Documented Family Is Read
 
-- `ProtocolClassifier.signatures` adds the interface signatures of every documented description.
-- `ProtocolDriverRegistry.makeUnobservedDriver` builds `ReportLayoutDriver(describedBy:)` for a documented family, as for the two built-in layout families.
-- `ProtocolDriverRegistry.acceptsInterfaceClass` and `PhysicalProtocolID.physicalPresentation` take the `default` branch: a documented family is not raw USB, and its glyph set is generic.
+| Symbol | Behavior |
+| --- | --- |
+| `ProtocolClassifier.signatures` | adds its interface signatures |
+| `ProtocolDriverRegistry.makeUnobservedDriver` | builds `ReportLayoutDriver(describedBy:)`, as for the two built-in layout families |
+| `acceptsInterfaceClass`, `physicalPresentation` | take the default branch: not raw USB, generic glyph set |
 
-## Closed places that remain
+## Closed Places That Remain
 
-- The 18 built-in families, one description file each in `Resources/Protocols/` and `Sources/OpenJoystickDriverKit/Resources/Protocols/`, and one `term.protocolFamily.<segment>` key per family in each `.lproj`.
-- Each driver of a built-in family names that family to read its own description.
+- The 18 built-in families: one description each in `Resources/Protocols/` and `Sources/OpenJoystickDriverKit/Resources/Protocols/`, and one `term.protocolFamily.<segment>` key each per .lproj folder.
+- Each built-in driver names its own family.

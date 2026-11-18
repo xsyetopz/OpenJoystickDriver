@@ -1,40 +1,56 @@
 # Reconcile a GitHub Release
 
-Use this procedure after the release commit and changelog are complete. The GitHub workflow creates the tag, signs and notarizes the app, uploads the DMG, and asks GitHub to generate release notes. Publication is a separate authorized action; do not infer permission to publish from this procedure.
+Run after the release commit and changelog are complete. The GitHub workflow tags, signs, notarizes, uploads the DMG, and generates release notes. Publishing needs separate authorization.
 
 ## Versions
 
-- The release version is SemVer 2.0.0 without build metadata. It lives in `CFBundleShortVersionString` of `Sources/OpenJoystickDriver/App/Info.plist` and in the tag, without a `v`. Set it with `just release-bump-version <part>` at the start of each cycle, before its first build: `major`, `minor`, or `patch` raises that number and drops the prerelease; `prerelease` raises `N` (`0.6.0-alpha.3` to `0.6.0-alpha.4`); `alpha`, `beta`, or `rc` moves to that stage's `.1`, after the next patch when the current version is a release; `release` drops the prerelease. `just release-bump-version <version>` sets an exact version. The build copies the version into the DriverKit extension and every bundle, so `Info.plist` is the only file to change. It needs no CHANGELOG heading.
-- The app and the DriverKit extension share one `CFBundleVersion`, derived from the commit count (`1.14.89` for 1489 commits). It orders builds and follows the kext version grammar that DriverKit requires. Local DEXT installs append a development stage (`1.14.89d2`) so a rebuild of the same commit replaces the active extension.
-- A tester build is published by this workflow as a pre-release. Its tag follows the release before it and precedes the release it leads to: `<prerelease tag>.tester.N` (`0.6.0-alpha.2.tester.1`) after a prerelease, or `X.Y.Z-tester.N` with `Z` of 1 or more after `X.Y.(Z-1)`. The workflow refuses a tester tag whose release before it is not a tag. `python3 -m Scripts.Release.bundle_version --tag-kind <tag>` and `--tester-base <tag>` print the kind and that release.
-- Provenance is SemVer build metadata, `+build.<number>.sha.<commit>`, with `.dirty` for an uncommitted tree. `--version`, the About panel, and tester build-info files show it. Build metadata never orders versions.
+The release version is SemVer 2.0.0 without build metadata, in `CFBundleShortVersionString` of `Sources/OpenJoystickDriver/App/Info.plist` and in the tag (no `v`).
+
+Run `just release-bump-version <part>` before a cycle's first build.
+
+| Part | Effect |
+| --- | --- |
+| `major`, `minor`, `patch` | raises that number, drops the prerelease |
+| `prerelease` | raises N (0.6.0-alpha.3 to 0.6.0-alpha.4) |
+| `alpha`, `beta`, `rc` | moves to that stage's .1, after the next patch when the current version is a release |
+| `release` | drops the prerelease |
+
+`just release-bump-version <version>` sets an exact version. The build copies it into every bundle and the extension, so `Info.plist` is the only file to change; no CHANGELOG heading needed.
+
+The app and extension share one `CFBundleVersion`, from the commit count (1.14.89 for 1489 commits), in the kext version grammar. Local DEXT installs append a development stage (1.14.89d2), so a rebuild of one commit replaces the active extension.
+
+A tester build is a pre-release.
+
+| Preceding release | Tester tag |
+| --- | --- |
+| A prerelease | `<prerelease tag>.tester.N` (0.6.0-alpha.2.tester.1) |
+| `X.Y.(Z-1)` | `X.Y.Z-tester.N`, Z of 1 or more |
+
+The workflow refuses a tester tag whose preceding release is not a tag. `python3 -m Scripts.Release.bundle_version --tag-kind <tag>` and `--tester-base <tag>` print the kind and the release.
+
+Provenance is build metadata, `+build.<number>.sha.<commit>`, with .dirty for an uncommitted tree. `--version`, the About panel, and tester build-info files show it; it never orders versions.
 
 ## Before Publication
 
-1. Check out the exact release commit and run `just verify`.
-2. Confirm `git status --short` is empty and run `git diff --check`.
-3. Generate or preview GitHub's release notes for the intended tag and previous tag.
-4. Reconcile closed or unmerged contributions that are integrated in the release but omitted by GitHub. Confirm each contribution in source, tests, the changelog, or recorded hardware evidence.
+1. Check out the release commit and run `just verify`.
+2. Confirm `git status --short` is empty; run `git diff --check`.
+3. Preview GitHub's release notes for the tag and the previous tag.
+4. Find contributions the release includes and GitHub omits; confirm each in source, tests, the changelog, or hardware evidence.
 
 ## Reconcile the Body
 
-Preserve GitHub's standard sections and order:
+Keep GitHub's section order: What's Changed (each credited item, author, link), New Contributors (only first-time credited accounts; check earlier releases), Full Changelog (previous release tag compared with this one).
 
-1. `What's Changed` lists each credited item, author, and hosted link.
-2. `New Contributors` lists only accounts making their first credited contribution. Check earlier releases before adding an account.
-3. `Full Changelog` compares the previous release tag with the new tag.
-
-Use a UTF-8 body file rather than shell interpolation. Read the hosted release back immediately after editing and compare every line with the intended body.
+Write the body to a UTF-8 file with no shell interpolation; after the edit, read the hosted release back and compare every line.
 
 ## Verify Before Closing Items
 
-Verify all of these against the hosted release:
+Hosted release:
 
-- the tag resolves to the intended commit;
-- the release is published, not a draft;
-- a prerelease tag is marked as a prerelease;
-- the expected DMG exists and its asset state is uploaded;
-- the complete body contains the contribution and contributor links;
-- the Full Changelog range starts at the previous release and ends at the new release.
+- The tag resolves to the release commit.
+- Published, not a draft; a prerelease tag is marked as a prerelease.
+- The DMG is uploaded.
+- The body has the contribution and contributor links.
+- Full Changelog runs from the previous release to this one.
 
-Only then post item-specific comments describing the implemented behavior and the remaining hardware procedure. Close issues or unmerged pull requests only when their audit classification says the published release is the closure gate. Leave hardware-confirmation items open.
+Comment on each item with the implemented behavior and remaining hardware procedure. Close an item only when its audit classification makes the published release the closure gate; leave hardware-confirmation items open.
