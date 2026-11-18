@@ -102,7 +102,10 @@ unset XCODE_SELECT_PATH
 IDENTITY="${CODESIGN_IDENTITY:--}"
 export GUI_PROJECT="$PROJECT_DIR/OpenJoystickDriver.xcodeproj"
 export GUI_SCHEME="OpenJoystickDriverApp"
-export GUI_DERIVED_DATA="$PROJECT_DIR/.build/xcode"
+# The app build has its own derived data: `just swift::xcode` builds `.build/xcode` for the active
+# architecture with a debug dylib, and Xcode keeps that dylib in a later build of the same
+# products, so the app would ship an arm64-only dylib beside its universal executable.
+export GUI_DERIVED_DATA="$PROJECT_DIR/.build/xcode-app"
 OJD_APP_INFO_PLIST="$PROJECT_DIR/Sources/OpenJoystickDriver/App/Info.plist"
 OJD_DEFAULT_BUNDLE_SHORT_VERSION="$(/usr/bin/plutil -extract CFBundleShortVersionString raw -o - "$OJD_APP_INFO_PLIST" 2>/dev/null)"
 if [[ ! "$OJD_DEFAULT_BUNDLE_SHORT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
