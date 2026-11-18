@@ -61,7 +61,7 @@ ojd update check
 
 Your [profiles](Glossary.md#terms) stay in place because they are stored outside the app.
 
-After an update, **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions** can list the old driver until the next restart. You do not need to remove it.
+After an update, **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions** can list the old driver until the next restart. You do not need to remove it. While macOS keeps it, **Settings** > **Advanced** > **Xbox USB Driver** says so, and `ojd transport-extension status` prints the same note.
 
 If **Input Monitoring** or **Accessibility** shows OJD as allowed but OJD reads no controller after an update, remove OJD from the list and add it again. In **System Settings** > **Privacy & Security**, select the entry, click the minus button, then click the plus button and choose **OpenJoystickDriver** in **Applications**.
 

@@ -48,6 +48,31 @@ struct TransportExtensionCommandTests {
   }
 
   @Test
+  func statusReportsReplacedVersionPendingAsJSONAndHumanNote() async throws {
+    // Arrange
+    let pending = ExtensionStatus(
+      bundle: .present,
+      registration: .active("record line"),
+      replacedVersionPending: true
+    )
+    let current = ExtensionStatus(bundle: .present, registration: .active("record line"))
+
+    // Act
+    let pendingJSON = try await status(["--json"], pending).json()
+    let currentJSON = try await status(["--json"], current).json()
+    let human = await status([], pending)
+
+    // Assert
+    #expect(pendingJSON["replacedVersionPending"] as? Bool == true)
+    #expect(currentJSON["replacedVersionPending"] as? Bool == false)
+    #expect(
+      human.standardOutput.contains(
+        CLILocalized.text("platform.macos.ui.setup.replacedPendingDetail")
+      )
+    )
+  }
+
+  @Test
   func statusOmitsDetailWhenThereIsNone() async throws {
     let result = await status(["--json"], ExtensionStatus(bundle: .missing, registration: .absent))
 

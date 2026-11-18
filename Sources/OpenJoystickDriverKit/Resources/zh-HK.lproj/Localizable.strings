@@ -5355,6 +5355,8 @@
 "ui.profiles.reloadUnavailable" = "無法重新載入已儲存的描述檔。你的編輯已保留。";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
 "ui.setup.uninstallRefused" = "Xbox USB 驅動程式仍已安裝。";
+/* Note in the Advanced settings while macOS keeps a replaced Xbox USB driver for a connected controller. */
+"platform.macos.ui.setup.replacedPendingDetail" = "在你重新連接控制器或重新啟動 Mac 之前，macOS 會保留被取代的驅動程式。";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "無法打開瀏覽器。";
 /* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */

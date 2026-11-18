@@ -346,7 +346,7 @@ ojd transport-extension activate
 ojd transport-extension deactivate
 ```
 
-- `transport-extension status`: Show whether the Xbox USB driver is in the app (`bundle`: `Present`, `Missing`, or `Invalid` with `--json`) and registered with macOS (`registration`: `Active`, `Inactive`, `Absent`, or `Unavailable`). It works when the service is stopped. It exits with code 1 when the registration is `Unavailable`.
+- `transport-extension status`: Show whether the Xbox USB driver is in the app (`bundle`: `Present`, `Missing`, or `Invalid` with `--json`) and registered with macOS (`registration`: `Active`, `Inactive`, `Absent`, or `Unavailable`). With `--json`, `replacedVersionPending` is `true` while macOS keeps a replaced version of the driver until the controller reconnects or the Mac restarts; the human output prints a note then. It works when the service is stopped. It exits with code 1 when the registration is `Unavailable`.
 - `transport-extension activate`: Ask macOS to activate the Xbox USB driver. macOS can ask you to approve it in System Settings. The command then reports that it awaits approval (`AwaitingApproval` with `--json`) and exits with code 0.
 - `transport-extension deactivate`: Ask macOS to deactivate the Xbox USB driver. Connected controllers return to macOS.
 

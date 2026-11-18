@@ -50,18 +50,23 @@ package struct ExtensionStatus: Sendable, Equatable {
   package let embedded: ExtensionVersionFacts?
   /// The version of the extension the system lists; nil when none is listed or it cannot be read.
   package let installed: ExtensionVersionFacts?
+  /// Whether the system still lists a replaced version that waits to uninstall on reboot; a
+  /// connected controller keeps that version until it reconnects or the Mac restarts.
+  package let replacedVersionPending: Bool
 
   /// Creates a status from its values.
   package init(
     bundle: ExtensionBundleState,
     registration: ExtensionRegistrationState,
     embedded: ExtensionVersionFacts? = nil,
-    installed: ExtensionVersionFacts? = nil
+    installed: ExtensionVersionFacts? = nil,
+    replacedVersionPending: Bool = false
   ) {
     self.bundle = bundle
     self.registration = registration
     self.embedded = embedded
     self.installed = installed
+    self.replacedVersionPending = replacedVersionPending
   }
 
   /// The `systemextensionsctl` record, the unexpected bundle identifier, or the reason the state is

@@ -1564,7 +1564,7 @@
     },
     "transportExtensionStatus": {
       "type": "object",
-      "required": ["apiVersion", "kind", "bundle", "registration"],
+      "required": ["apiVersion", "kind", "bundle", "registration", "replacedVersionPending"],
       "additionalProperties": false,
       "properties": {
         "apiVersion": {
@@ -1581,6 +1581,10 @@
         },
         "registration": {
           "enum": ["Active", "Inactive", "Absent", "Unavailable"]
+        },
+        "replacedVersionPending": {
+          "description": "Whether macOS keeps a replaced driver version until the controller reconnects or the Mac restarts.",
+          "type": "boolean"
         }
       }
     },

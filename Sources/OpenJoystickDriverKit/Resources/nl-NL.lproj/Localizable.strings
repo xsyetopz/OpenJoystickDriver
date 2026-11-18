@@ -5356,6 +5356,8 @@
 "ui.profiles.reloadUnavailable" = "Het opgeslagen profiel kon niet opnieuw worden geladen. Je wijzigingen blijven behouden.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
 "ui.setup.uninstallRefused" = "Het Xbox-USB-stuurprogramma is nog steeds geïnstalleerd.";
+/* Note in the Advanced settings while macOS keeps a replaced Xbox USB driver for a connected controller. */
+"platform.macos.ui.setup.replacedPendingDetail" = "macOS houdt het vervangen stuurprogramma aan tot je de controller opnieuw aansluit of de Mac herstart.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "De browser kon niet worden geopend.";
 /* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */

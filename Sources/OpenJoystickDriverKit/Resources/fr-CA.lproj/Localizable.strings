@@ -5356,6 +5356,8 @@
 "ui.profiles.reloadUnavailable" = "Le profil enregistré n’a pas pu être rechargé. Vos modifications sont conservées.";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
 "ui.setup.uninstallRefused" = "Le pilote USB Xbox est toujours installé.";
+/* Note in the Advanced settings while macOS keeps a replaced Xbox USB driver for a connected controller. */
+"platform.macos.ui.setup.replacedPendingDetail" = "macOS conserve le pilote remplacé jusqu’à ce que vous reconnectiez la manette ou redémarriez le Mac.";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "Le navigateur n’a pas pu être ouvert.";
 /* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */

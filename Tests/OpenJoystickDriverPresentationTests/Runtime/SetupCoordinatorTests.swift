@@ -31,6 +31,34 @@ struct SetupCoordinatorTests {
   }
 
   @Test
+  func viewModelReportsReplacedDriverPendingWhileActive() {
+    // Arrange
+    let status = ExtensionStatus(
+      bundle: .present,
+      registration: .active("current"),
+      embedded: Self.currentFacts,
+      installed: Self.currentFacts,
+      replacedVersionPending: true
+    )
+    let viewModel = RuntimeViewModel(
+      gateway: ApplicationServiceClientGateway(
+        client: ApplicationServiceClient(socketPath: "/nonexistent/ojd-test.sock")
+      ),
+      systemExtensionSetup: SystemExtensionSetupCoordinator(
+        client: FakeSetupClient(status: status)
+      ),
+      listenerState: ServiceListenerState()
+    )
+
+    // Act
+    viewModel.startSystemExtensionSetup()
+
+    // Assert
+    #expect(viewModel.systemExtensionSetupState == .active)
+    #expect(viewModel.replacedDriverPending)
+  }
+
+  @Test
   func launchForegroundAndRefreshSendNoActivationRequest() {
     let client = FakeSetupClient(status: Self.inactiveStatus, result: .awaitingApproval)
     let coordinator = SystemExtensionSetupCoordinator(client: client)

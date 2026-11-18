@@ -70,6 +70,9 @@ final class RuntimeViewModel: ObservableObject {
   /// Where the Xbox USB driver extension is.
   @Published
   private(set) var systemExtensionSetupState: SystemExtensionSetupState = .checking
+  /// Whether macOS still keeps a replaced driver, which ends when the controller reconnects or the
+  /// Mac restarts; each update of ``systemExtensionSetupState`` publishes it.
+  var replacedDriverPending: Bool { systemExtensionSetup.status.replacedVersionPending }
   /// Counts the changes of the set of connected controllers.
   @Published
   var controllerInventoryGeneration = 0

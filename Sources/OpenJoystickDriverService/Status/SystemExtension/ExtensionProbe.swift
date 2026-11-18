@@ -27,7 +27,8 @@ package enum ExtensionProbe {
         bundle: bundle,
         registration: registration(from: result),
         embedded: embedded,
-        installed: installedFacts(from: result.output)
+        installed: installedFacts(from: result.output),
+        replacedVersionPending: replacedVersionPending(in: result.output)
       )
     } catch {
       return ExtensionStatus(
@@ -104,6 +105,16 @@ package enum ExtensionProbe {
       shortVersion: short,
       buildVersion: build
     )
+  }
+
+  /// Returns whether `output` lists a version of the extension that waits to uninstall on reboot.
+  ///
+  /// macOS keeps a replaced driver for a connected device until the device reconnects or the Mac
+  /// restarts, and the SIP-protected store cannot be cleared sooner.
+  static func replacedVersionPending(in output: String) -> Bool {
+    output.components(separatedBy: .newlines).contains { line in
+      line.contains(extensionID) && line.localizedCaseInsensitiveContains("waiting to uninstall")
+    }
   }
 
   /// Accepts a SemVer short version or a kext-grammar build version.

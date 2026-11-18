@@ -30,6 +30,10 @@
             }.help(OJDLocalized.string("ui.help.uninstallDriver"))
           }
         }
+        if runtime.systemExtensionSetupState == .active, runtime.replacedDriverPending {
+          Text(OJDLocalized.string("platform.macos.ui.setup.replacedPendingDetail"))
+            .foregroundColor(.secondary).fixedSize(horizontal: false, vertical: true)
+        }
         if uninstallLeftActive, runtime.systemExtensionSetupState == .active {
           Text(OJDLocalized.string("ui.setup.uninstallRefused")).foregroundColor(
             Color(NSColor.systemRed)

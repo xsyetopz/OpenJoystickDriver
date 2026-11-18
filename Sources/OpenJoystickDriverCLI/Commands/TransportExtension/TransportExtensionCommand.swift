@@ -33,6 +33,9 @@ struct TransportExtensionStatusReport: Encodable, Equatable {
   let registration: StatusReport.Extension.Registration
   /// Extra text about the registration, when there is any.
   let detail: String?
+  /// Whether macOS still keeps a replaced version until the controller reconnects or the Mac
+  /// restarts.
+  let replacedVersionPending: Bool
 
   /// Creates the report from the extension status.
   init(_ status: ExtensionStatus) {
@@ -40,6 +43,7 @@ struct TransportExtensionStatusReport: Encodable, Equatable {
     bundle = summary.bundle
     registration = summary.registration
     detail = status.detail
+    replacedVersionPending = status.replacedVersionPending
   }
 }
 
@@ -90,6 +94,9 @@ struct TransportExtensionStatusCommand: AsyncParsableCommand {
         )
         if let detail = report.detail, report.registration != .unavailable {
           CLIOutput.stdout(detail)
+        }
+        if report.replacedVersionPending {
+          CLIOutput.stdout(CLILocalized.text("platform.macos.ui.setup.replacedPendingDetail"))
         }
       }
       if case .unavailable(let reason) = status.registration {

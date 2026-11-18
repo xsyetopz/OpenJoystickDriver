@@ -5355,6 +5355,8 @@
 "ui.profiles.reloadUnavailable" = "सहेजी गई प्रोफ़ाइल फिर से लोड नहीं हो सकी। आपके बदलाव बने रहेंगे।";
 /* Error in the Advanced settings when the request to uninstall the driver extension left it installed. */
 "ui.setup.uninstallRefused" = "Xbox USB ड्राइवर अभी भी इंस्टॉल है।";
+/* Note in the Advanced settings while macOS keeps a replaced Xbox USB driver for a connected controller. */
+"platform.macos.ui.setup.replacedPendingDetail" = "जब तक आप कंट्रोलर को फिर से कनेक्ट नहीं करते या Mac को रीस्टार्ट नहीं करते, macOS बदले गए ड्राइवर को बनाए रखता है।";
 /* Error in the guided check when the browser could not open the issue or validation form. */
 "ui.inputTest.guidedCheck.openFailed" = "ब्राउज़र नहीं खुल सका।";
 /* Tooltip of the Apply buttons for the lightbar color and the brightness in the Input Test window. */

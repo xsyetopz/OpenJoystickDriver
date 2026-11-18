@@ -4,7 +4,7 @@ OJD ships as a DMG because a package cannot do the steps that fail during a driv
 
 ## What Fails During an Update
 
-After an update of the Xbox USB driver while a matched controller is connected, macOS keeps the replaced driver until the controller reconnects or the Mac restarts. `systemextensionsctl list` then shows two lines for `com.openjoystickdriver.XboxUSBDevice`: the replaced version as `[terminated waiting to uninstall on reboot]`, often first, and the new one as `[activated enabled]`. `ExtensionProbe.installedFacts` reads the `[activated enabled]` line, so the repair banner leaves after one repair (`ProbeTests.readsInstalledVersionFromActiveLineWhenUpgradeLeavesOldLine`).
+After an update of the Xbox USB driver while a matched controller is connected, macOS keeps the replaced driver until the controller reconnects or the Mac restarts. `systemextensionsctl list` then shows two lines for `com.openjoystickdriver.XboxUSBDevice`: the replaced version as `[terminated waiting to uninstall on reboot]`, often first, and the new one as `[activated enabled]`. `ExtensionProbe.installedFacts` reads the `[activated enabled]` line, so the repair banner leaves after one repair (`ProbeTests.readsInstalledVersionFromActiveLineWhenUpgradeLeavesOldLine`). While the replaced line is listed, `ExtensionStatus.replacedVersionPending` is true, and Settings and `ojd transport-extension status` tell the user to reconnect the controller or restart the Mac.
 
 An Apple engineer states that an upgrade needs no deactivation of the old version, only a new activation request, and that "some devices will need to be disconnected and re-connected to start using the upgraded dext" ([Apple Developer Forums 677040](https://developer.apple.com/forums/thread/677040)).
 
