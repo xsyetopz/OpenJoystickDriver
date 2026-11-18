@@ -9,7 +9,10 @@ struct SystemSettingsPlaceTests {
   }
 
   @Test(arguments: [
-    (SystemSettingsPlace.loginItems, 14, "loginItems"),
+    (SystemSettingsPlace.inputMonitoring, 12, "preferencesInputMonitoring"),
+    (.accessibility, 12, "preferencesAccessibility"),
+    (.driverApproval, 12, "preferencesGeneral"),
+    (.loginItems, 14, "loginItems"),
     (.loginItems, 15, "loginItemsAndExtensions"),
     (.accessibility, 26, "accessibility"),
     (.accessibility, 27, "deviceControl"),
@@ -24,14 +27,30 @@ struct SystemSettingsPlaceTests {
     )
   }
 
+  @Test(arguments: [
+    (12, "systemPreferences"),
+    (13, "systemSettings"),
+    (27, "systemSettings"),
+  ])
+  func appKeyMatchesTheMacOSRelease(major: Int, name: String) {
+    #expect(
+      SystemSettingsPlace.appLocalizationKey(on: version(major))
+        == "platform.macos.term.settingsApp.\(name)"
+    )
+  }
+
   @Test
   func everyKeyIsInTheCatalog() {
     let localization = Localization()
     for place in SystemSettingsPlace.allCases {
-      for major in [13, 14, 15, 26, 27] {
+      for major in [12, 13, 14, 15, 26, 27] {
         let key = place.localizationKey(on: version(major))
         #expect(localization.string(key) != key)
       }
+    }
+    for major in [12, 13] {
+      let key = SystemSettingsPlace.appLocalizationKey(on: version(major))
+      #expect(localization.string(key) != key)
     }
   }
 }

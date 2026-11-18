@@ -169,6 +169,7 @@ func submitTransportExtension(
       CLIOutput.stderr(
         CLILocalized.format(
           "platform.macos.cli.transportExtension.group.approval",
+          CLILocalized.text(SystemSettingsPlace.appLocalizationKey()),
           CLILocalized.text(SystemSettingsPlace.driverApproval.localizationKey())
         )
       )

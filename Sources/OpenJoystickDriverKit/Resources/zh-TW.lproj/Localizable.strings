@@ -996,6 +996,16 @@
 "platform.macos.term.settingsPlace.securityApproval" = "隱私權與安全性";
 /* Path of the Driver Extensions pane in System Settings on macOS 15 and later, where the user allows the Xbox USB driver. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.driverExtensions" = "一般 > 登入項目與延伸功能 > 驅動程式延伸功能";
+/* Name of the System Settings app on macOS 13 and later, which fills messages that send the user there. It is written as macOS shows it. */
+"platform.macos.term.settingsApp.systemSettings" = "系統設定";
+/* Name of the System Preferences app on macOS 12, which fills messages that send the user there. It is written as macOS 12 shows it. */
+"platform.macos.term.settingsApp.systemPreferences" = "系統偏好設定";
+/* Path of the Input Monitoring list in System Preferences on macOS 12, shown in permission messages. It is written as macOS 12 shows it. */
+"platform.macos.term.settingsPlace.preferencesInputMonitoring" = "安全性與隱私權 > 隱私權 > 輸入監控";
+/* Path of the Accessibility list in System Preferences on macOS 12, shown in permission messages. It is written as macOS 12 shows it. */
+"platform.macos.term.settingsPlace.preferencesAccessibility" = "安全性與隱私權 > 隱私權 > 輔助使用";
+/* Path in System Preferences on macOS 12 where the user allows the Xbox USB driver. It is written as macOS 12 shows it. */
+"platform.macos.term.settingsPlace.preferencesGeneral" = "安全性與隱私權 > 一般";
 /* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
 "platform.macos.term.postEventAccess" = "Post Event 取用權限";
 /* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
@@ -2311,8 +2321,8 @@
 "cli.diagnose.group.virtualOverride" = "無法讀取已儲存的設定檔覆寫項目：%@";
 /* Error of the commands that need a macOS permission. %@ is the permission name. The command in quotes stays as written. */
 "cli.shared.error.permissionMissing" = "缺少 %@ 存取權限。請使用「ojd permission request」授權。";
-/* Error of 'ojd permission request' when a permission is missing after the request. %1$@ is the permission name and %2$@ is the path of the pane in System Settings. The command in quotes stays as written. */
-"platform.macos.cli.shared.error.permissionStillMissing" = "仍缺少 %1$@ 存取權限。請在「系統設定」> %2$@ 中允許 OpenJoystickDriver，然後再次執行「ojd permission request」。";
+/* Error of 'ojd permission request' when a permission is missing after the request. %1$@ is the permission name, %2$@ is the name of the System Settings app for the running macOS, and %3$@ is the path of the pane in it. The command in quotes stays as written. */
+"platform.macos.cli.shared.error.permissionStillMissing" = "仍缺少 %1$@ 存取權限。請在「%2$@」> %3$@ 中允許 OpenJoystickDriver，然後再次執行「ojd permission request」。";
 /* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. */
 "platform.macos.cli.transportExtension.group.abstract" = "顯示、啟用或停用 Xbox USB 驅動程式。";
 /* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. */
@@ -2321,8 +2331,8 @@
 "cli.transportExtension.activate.discussion" = "請執行 /Applications/OpenJoystickDriver.app 內的 ojd。等待核准時會以結束碼 0 結束。";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
 "cli.transportExtension.group.activated" = "延伸功能已啟用。";
-/* Message of 'ojd transport-extension' when macOS needs the user to approve the Xbox USB driver. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to the approval for the running macOS, such as General > Login Items & Extensions > Driver Extensions. */
-"platform.macos.cli.transportExtension.group.approval" = "此要求需要您的核准。請在「系統設定」> %@ 中允許。";
+/* Message of 'ojd transport-extension' when macOS needs the user to approve the Xbox USB driver. %1$@ is the name of the System Settings app for the running macOS, and %2$@ is the path to the approval in it, such as General > Login Items & Extensions > Driver Extensions. */
+"platform.macos.cli.transportExtension.group.approval" = "此要求需要您的核准。請在「%1$@」> %2$@ 中允許。";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
 "cli.transportExtension.group.bundleMissing" = "App 中不包含 %@.dext。請執行「just install-dev」，然後從 /Applications 重試。";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
