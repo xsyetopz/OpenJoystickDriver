@@ -117,7 +117,7 @@ struct AccessReadinessTests {
 
     #expect(
       denied.rows.first { $0.kind == .inputRead }?.actionTitleKey
-        == "platform.macos.ui.setup.openSystemSettings"
+        == SystemSettingsMessage.openSettings.localizationKey()
     )
     #expect(denied.rows.first { $0.kind == .inputInject }?.actionTitleKey == nil)
     #expect(

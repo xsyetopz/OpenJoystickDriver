@@ -35,10 +35,7 @@ enum AccessPermissionState: String, CaseIterable, Equatable, Sendable {
     switch self {
     case .granted, .notAsked, .checking: return nil
     case .denied:
-      return SystemSettingsPlace.appKey(
-        settings: "platform.macos.ui.access.permission.denied.message",
-        preferences: "platform.macos.ui.access.permission.denied.messageSystemPreferences"
-      )
+      return SystemSettingsMessage.permissionDenied.localizationKey()
     case .notNeeded: return "ui.access.permission.notNeeded.message"
     case .limited: return "ui.access.permission.limited.message"
     }

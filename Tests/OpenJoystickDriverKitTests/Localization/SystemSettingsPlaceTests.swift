@@ -32,7 +32,9 @@ struct SystemSettingsPlaceTests {
 
   @Test(arguments: [
     (12, "systemPreferences"),
-    (13, "systemSettings"),
+    (13, "systemSettingsMacOS13"),
+    (15, "systemSettingsMacOS13"),
+    (26, "systemSettingsMacOS26"),
     (27, "systemSettings"),
   ])
   func appKeyMatchesTheMacOSRelease(major: Int, name: String) {
@@ -42,30 +44,50 @@ struct SystemSettingsPlaceTests {
     )
   }
 
-  @Test(arguments: [(12, "preferences"), (13, "settings"), (27, "settings")])
-  func messageKeyMatchesTheSettingsApp(major: Int, expected: String) {
-    #expect(
-      SystemSettingsPlace.appKey(
-        settings: "settings",
-        preferences: "preferences",
-        on: version(major)
-      )
-        == expected
-    )
+  @Test(arguments: [
+    (SystemSettingsMessage.openSettings, 12, "openSystemPreferences"),
+    (.openSettings, 13, "openSystemSettingsMacOS13"),
+    (.openSettings, 15, "openSystemSettingsMacOS13"),
+    (.openSettings, 26, "openSystemSettingsMacOS26"),
+    (.openSettings, 27, "openSystemSettings"),
+    (.startAtLoginApproval, 12, "startAtLoginApprovalRequiredMacOS13"),
+  ])
+  func messageKeyMatchesTheMacOSRelease(
+    message: SystemSettingsMessage,
+    major: Int,
+    name: String
+  ) {
+    #expect(message.localizationKey(on: version(major)).hasSuffix(".\(name)"))
   }
 
   @Test
   func everyKeyIsInTheCatalog() {
     let localization = Localization()
-    for place in SystemSettingsPlace.allCases {
-      for major in [12, 13, 14, 15, 26, 27] {
+    for major in [12, 13, 14, 15, 26, 27] {
+      for place in SystemSettingsPlace.allCases {
         let key = place.localizationKey(on: version(major))
         #expect(localization.string(key) != key)
       }
-    }
-    for major in [12, 13] {
+      for message in SystemSettingsMessage.allCases {
+        let key = message.localizationKey(on: version(major))
+        #expect(localization.string(key) != key)
+      }
       let key = SystemSettingsPlace.appLocalizationKey(on: version(major))
       #expect(localization.string(key) != key)
     }
+  }
+
+  @Test(arguments: [
+    ("hi-IN", 15, "सिस्टम सेटिंग्ज़ खोलें"),
+    ("hi-IN", 26, "सिस्टम सेटिंग खोलें"),
+    ("pt-BR", 26, "Abrir Ajustes do Sistema"),
+    ("pt-BR", 27, "Abrir Ajustes"),
+  ])
+  func appNameIsSpelledAsTheReleaseShows(language: String, major: Int, expected: String) {
+    let localization = Localization(preferredLanguages: [language])
+    #expect(
+      localization.string(SystemSettingsMessage.openSettings.localizationKey(on: version(major)))
+        == expected
+    )
   }
 }

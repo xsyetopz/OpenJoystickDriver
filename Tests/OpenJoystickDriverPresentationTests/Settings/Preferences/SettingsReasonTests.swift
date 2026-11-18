@@ -66,7 +66,7 @@
       let denied = NotificationDeliveryPresentation(settings: .authorizationOnly(.denied))
       #expect(
         denied.status
-          == OJDLocalized.string("platform.macos.ui.settings.notifications.notificationsDenied")
+          == OJDLocalized.string(SystemSettingsMessage.notificationsDenied.localizationKey())
       )
       #expect(denied.needsAttention)
     }

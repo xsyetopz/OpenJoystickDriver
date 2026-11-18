@@ -231,7 +231,7 @@
           failControl(
             .loginItem,
             OJDLocalized.formatted(
-              "platform.macos.ui.settings.general.startAtLoginApprovalRequired",
+              SystemSettingsMessage.startAtLoginApproval.localizationKey(),
               OJDLocalized.string(SystemSettingsPlace.loginItems.localizationKey())
             )
           )
@@ -640,11 +640,7 @@
       errorMessage =
         errorDescription
         ?? OJDLocalized.string(
-          SystemSettingsPlace.appKey(
-            settings: "platform.macos.ui.settings.notifications.notificationsDenied",
-            preferences:
-              "platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences"
-          )
+          SystemSettingsMessage.notificationsDenied.localizationKey()
         )
     }
 

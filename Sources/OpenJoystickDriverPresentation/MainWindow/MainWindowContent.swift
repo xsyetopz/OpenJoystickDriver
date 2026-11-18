@@ -192,10 +192,7 @@
           Alert(
             title: Text(
               OJDLocalized.string(
-                SystemSettingsPlace.appKey(
-                  settings: "platform.macos.ui.setup.openSystemSettingsFailed",
-                  preferences: "platform.macos.ui.setup.openSystemPreferencesFailed"
-                )
+                SystemSettingsMessage.openSettingsFailed.localizationKey()
               )
             ),
             dismissButton: .default(Text(OJDLocalized.string("action.ok")))

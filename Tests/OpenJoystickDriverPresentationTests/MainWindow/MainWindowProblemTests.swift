@@ -167,7 +167,10 @@ struct MainWindowProblemTests {
   @Test
   func eachRequestOutcomeHasItsOwnTextAndButton() {
     let cases: [(SystemExtensionSetupState, String, MainWindowProblemAction?)] = [
-      (.needsApproval, "platform.macos.ui.setup.approvalDetail", .openDriverApproval),
+      (
+        .needsApproval, SystemSettingsMessage.driverApprovalDetail.localizationKey(),
+        .openDriverApproval
+      ),
       (.cancelled, "ui.setup.cancelledDetail", .repairDriver),
       (.timedOut, "ui.setup.timedOutDetail", .repairDriver),
       (.failed(Self.failure), "ui.setup.failedDetail", .repairDriver),

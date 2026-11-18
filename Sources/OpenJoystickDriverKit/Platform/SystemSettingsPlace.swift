@@ -15,24 +15,17 @@ package enum SystemSettingsPlace: Sendable, CaseIterable {
   case driverApproval
 
   /// The catalog key of the name that `version` gives the settings app: System Preferences on
-  /// macOS 12 and System Settings on macOS 13 and later.
+  /// macOS 12, and System Settings on macOS 13 and later, which some languages spell differently
+  /// on macOS 13 to 15, 26, and 27.
   package static func appLocalizationKey(
     on version: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
   ) -> String {
-    version.majorVersion < 13
-      ? "platform.macos.term.settingsApp.systemPreferences"
-      : "platform.macos.term.settingsApp.systemSettings"
-  }
-
-  /// The catalog key of the message that names the settings app `version` shows: `preferences`
-  /// names System Preferences on macOS 12, and `settings` names System Settings on macOS 13 and
-  /// later.
-  package static func appKey(
-    settings: String,
-    preferences: String,
-    on version: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
-  ) -> String {
-    version.majorVersion < 13 ? preferences : settings
+    switch version.majorVersion {
+    case ..<13: "platform.macos.term.settingsApp.systemPreferences"
+    case 13...15: "platform.macos.term.settingsApp.systemSettingsMacOS13"
+    case 16..<27: "platform.macos.term.settingsApp.systemSettingsMacOS26"
+    default: "platform.macos.term.settingsApp.systemSettings"
+    }
   }
 
   /// The catalog key of the path that `version` shows.

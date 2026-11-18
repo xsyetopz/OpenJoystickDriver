@@ -23,11 +23,7 @@
       switch settings.authorization {
       case .denied:
         return OJDLocalized.string(
-          SystemSettingsPlace.appKey(
-            settings: "platform.macos.ui.settings.notifications.notificationsDenied",
-            preferences:
-              "platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences"
-          )
+          SystemSettingsMessage.notificationsDenied.localizationKey()
         )
       case .notDetermined:
         return OJDLocalized.string("ui.settings.notifications.notificationPermissionRequired")
@@ -37,27 +33,15 @@
       switch (settings.alertStyle, settings.soundsEnabled) {
       case (.none, false):
         return OJDLocalized.string(
-          SystemSettingsPlace.appKey(
-            settings: "platform.macos.ui.settings.notifications.notificationBannersAndSoundOff",
-            preferences:
-              "platform.macos.ui.settings.notifications.bannersAndSoundOffSystemPreferences"
-          )
+          SystemSettingsMessage.bannersAndSoundOff.localizationKey()
         )
       case (.none, _):
         return OJDLocalized.string(
-          SystemSettingsPlace.appKey(
-            settings: "platform.macos.ui.settings.notifications.notificationBannersOffDetail",
-            preferences:
-              "platform.macos.ui.settings.notifications.bannersOffDetailSystemPreferences"
-          )
+          SystemSettingsMessage.bannersOff.localizationKey()
         )
       case (_, false):
         return OJDLocalized.string(
-          SystemSettingsPlace.appKey(
-            settings: "platform.macos.ui.settings.notifications.notificationSoundOffDetail",
-            preferences:
-              "platform.macos.ui.settings.notifications.notificationSoundOffDetailSystemPreferences"
-          )
+          SystemSettingsMessage.soundOff.localizationKey()
         )
       case (.banner, true), (.alert, true), (.unknown, _), (_, nil): return nil
       }

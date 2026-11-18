@@ -66,10 +66,7 @@
       case .unavailable: return "ui.setup.unavailableDetail"
       case .running: return "ui.setup.runningDetail"
       case .needsApproval:
-        return SystemSettingsPlace.appKey(
-          settings: "platform.macos.ui.setup.approvalDetail",
-          preferences: "platform.macos.ui.setup.approvalDetailSystemPreferences"
-        )
+        return SystemSettingsMessage.driverApprovalDetail.localizationKey()
       case .cancelled: return "ui.setup.cancelledDetail"
       case .timedOut: return "ui.setup.timedOutDetail"
       case .failed: return "ui.setup.failedDetail"

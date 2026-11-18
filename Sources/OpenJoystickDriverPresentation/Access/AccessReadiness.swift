@@ -65,10 +65,7 @@ struct AccessPermissionRow: Equatable, Identifiable {
     guard status.isMissing else { return nil }
     return needsRequest
       ? "action.request"
-      : SystemSettingsPlace.appKey(
-        settings: "platform.macos.ui.setup.openSystemSettings",
-        preferences: "platform.macos.ui.setup.openSystemPreferences"
-      )
+      : SystemSettingsMessage.openSettings.localizationKey()
   }
 }
 

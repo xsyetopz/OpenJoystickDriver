@@ -327,7 +327,7 @@ struct SettingSetCommand: AsyncParsableCommand {
     commandName: "set",
     abstract: CLILocalized.text("cli.setting.set.abstract"),
     discussion: CLILocalized.text(
-      "platform.macos.cli.setting.set.discussion"
+      SystemSettingsMessage.settingSetDiscussion.localizationKey()
     )
   )
 
@@ -396,7 +396,7 @@ struct SettingSetCommand: AsyncParsableCommand {
         throw CLIFailure(
           .systemRequestFailed,
           CLILocalized.format(
-            "platform.macos.cli.setting.set.notApplied",
+            SystemSettingsMessage.settingNotApplied.localizationKey(),
             setting.rawValue,
             CLILocalized.text(SystemSettingsPlace.loginItems.localizationKey()),
             setting.rawValue

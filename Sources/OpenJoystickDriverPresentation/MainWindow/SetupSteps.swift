@@ -61,10 +61,7 @@ enum SetupSteps {
           sentenceKey: "ui.setupSteps.bluetooth",
           buttonKey: bluetooth == .notAsked
             ? "action.request"
-            : SystemSettingsPlace.appKey(
-              settings: "platform.macos.ui.setup.openSystemSettings",
-              preferences: "platform.macos.ui.setup.openSystemPreferences"
-            )
+            : SystemSettingsMessage.openSettings.localizationKey()
         )
       )
     }
@@ -90,10 +87,7 @@ enum SetupSteps {
     }
     return settingsOpenFailed
       ? OJDLocalized.string(
-        SystemSettingsPlace.appKey(
-          settings: "platform.macos.ui.setup.openSystemSettingsFailed",
-          preferences: "platform.macos.ui.setup.openSystemPreferencesFailed"
-        )
+        SystemSettingsMessage.openSettingsFailed.localizationKey()
       ) : nil
   }
 

@@ -63,7 +63,7 @@ struct SetupStepsTests {
     #expect(asks.first?.buttonKey == "action.request")
     let (deniedPermissions, denied) = status(bluetooth: .denied)
     let opens = SetupSteps.open(permissionState: deniedPermissions, statusState: denied)
-    #expect(opens.first?.buttonKey == "platform.macos.ui.setup.openSystemSettings")
+    #expect(opens.first?.buttonKey == SystemSettingsMessage.openSettings.localizationKey())
   }
 
   @Test(arguments: [BluetoothAccessState.restricted, .unavailable])
@@ -106,7 +106,7 @@ struct SetupStepsTests {
     #expect(failure(.unavailable, .unavailable("offline")) == "offline")
     #expect(
       failure(settingsOpenFailed: true)
-        == OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")
+        == OJDLocalized.string(SystemSettingsMessage.openSettingsFailed.localizationKey())
     )
     #expect(SetupSteps.isRequesting(permissionState: .requesting, postEventAccessState: .loading))
     #expect(
