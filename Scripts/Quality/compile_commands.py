@@ -18,9 +18,14 @@ DEPLOYMENT_TARGET = "12.0"
 
 
 def run(arguments: list[str], root: Path) -> str:
-    return subprocess.run(
-        arguments, cwd=root, capture_output=True, text=True, check=True
-    ).stdout
+    try:
+        return subprocess.run(
+            arguments, cwd=root, capture_output=True, text=True, check=True
+        ).stdout
+    except subprocess.CalledProcessError as error:
+        # The output names the cause, such as a package xmake cannot find.
+        sys.stderr.write(error.stdout + error.stderr)
+        raise
 
 
 def language_flags(source: str, standard: str) -> list[str]:

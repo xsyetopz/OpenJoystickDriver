@@ -22,7 +22,6 @@ jobs:
         with:
           persist-credentials: false
       - run: brew install just
-      - run: just swift::setup
-      - run: just cpp::setup
+      - run: just setup
       - run: just cpp::verify
       - run: just swift::verify

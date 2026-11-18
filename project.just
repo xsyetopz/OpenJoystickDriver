@@ -231,6 +231,9 @@ project-verify: project-format-check project-lint project-test check-schemas che
 
 project-pre-commit: project-format-check project-lint
 
+# Tools/SDLGamepadProbe links SDL3, which xmake finds through pkg-config, for the C lint and check-tools.
 project-setup:
     if ! command -v ruff >/dev/null; then brew install ruff; fi
+    if ! command -v pkg-config >/dev/null; then brew install pkg-config; fi
+    if ! pkg-config --exists sdl3; then brew install sdl3; fi
     if ! command -v shellcheck >/dev/null; then brew install shellcheck; fi
