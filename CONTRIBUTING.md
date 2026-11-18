@@ -85,8 +85,12 @@ Copy the version from the build that ran, while it runs. A line without `+build.
 
 A human operator stands behind every issue, comment and pull request an agent writes, and reads it before it is posted. The operator posts it under their own account, and fills the hardware, macOS and "I tested this" fields. In the issue forms, the **AI tool** section records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand. The pull request template has the same section.
 
-- Keep the attribution your harness adds to commits and pull requests. If it adds none, end each commit message with a trailer that names the model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The operator stays the commit author.
-- Write plainly and briefly, in the words a user would use. Fill the fields and end there, without preamble, recap, extra headings, or emoji.
+- Attribution:
+  - Commit: the message ends with a trailer that names the model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The operator stays the commit author.
+  - Pull request, issue and comment: the body ends with a `---` line, then one line that names the tool and model and the operator who checked it, such as `Written with Claude Code (Claude Opus 5.5), checked by @xsyetopz.`
+  - Keep any attribution your harness adds.
+- Write plainly and briefly, in the words a user would use. Fill the fields and end there, without greetings, thanks, apologies, preamble, recap, extra headings, or emoji.
+- To fix an answer you posted, edit that message in place.
 - State what a command, the source, or the operator showed. Mark an item done next to the output that shows it.
 - Run the command, then write the claim. For a command that cannot run, write three things: the exact step that failed or was missing, the exact error or reason, and what you tried instead.
 - Run the compiled OJD code on the controller, and give its counts: packets received, snapshots decoded, and parse errors, with each control pressed and released. A replay of captured bytes through a separate script is a lead for that run.

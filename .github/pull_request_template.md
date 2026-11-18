@@ -81,5 +81,10 @@ For each command that could not run, write all three.
 - [ ] Generated controller records and generated DriverKit files changed only through their generators.
 - [ ] I updated the docs, the wiki pages, and the localization strings that this change affects.
 - [ ] I read the whole diff. I stand behind it.
-- [ ] If an AI tool helped, I described it in "AI Tool", and each commit keeps the attribution trailer.
+- [ ] If an AI tool helped, I described it in "AI Tool", each commit ends with its `Co-Authored-By:` trailer, and this description ends with the attribution line below.
 - [ ] Any third-party code comes from an MIT, BSD, zlib, CC0, or Apache-2.0 source, with its notice in `THIRD_PARTY_NOTICES.md`.
+
+<!-- If an AI tool wrote this description, keep the next two lines and fill them in. Rules: CONTRIBUTING.md#ai-agents. -->
+
+---
+Written with TOOL (MODEL), checked by @OPERATOR.
