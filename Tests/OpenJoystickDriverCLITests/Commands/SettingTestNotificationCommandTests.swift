@@ -82,20 +82,11 @@ struct SettingTestNotificationCommandTests {
     )
     let pickup = Self.seconds(TestNotificationDeadlines.pickupSeconds)
     let answer = Self.seconds(TestNotificationDeadlines.answerSeconds)
-    let reply = Self.seconds(
-      ServiceTimeouts.testNotification - TestNotificationDeadlines.pickupSeconds
-        - TestNotificationDeadlines.answerSeconds
-    )
     let total = Self.seconds(ServiceTimeouts.testNotification)
 
-    #expect(page.contains("no app taking it within \(pickup) seconds"))
-    #expect(page.contains("not reporting within \(answer) seconds"))
-    #expect(
-      page.contains(
-        "waits up to \(total) seconds for the service's answer, the \(pickup) and the \(answer) "
-          + "plus \(reply) for the reply"
-      )
-    )
+    #expect(page.contains("No app takes the announcement within \(pickup) seconds"))
+    #expect(page.contains("does not report within \(answer) seconds"))
+    #expect(page.contains("it waits up to \(total) seconds"))
   }
 
   @Test

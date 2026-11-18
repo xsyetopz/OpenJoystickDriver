@@ -6,25 +6,31 @@ import Testing
 @Suite
 @MainActor
 struct MainWindowAreaSwitchTests {
-  private func buttons(in view: NSView) -> Int {
+  private func spinners(in view: NSView) -> Int {
     view.subviews.reduce(0) { count, subview in
-      count + (subview is NSButton ? 1 : 0) + buttons(in: subview)
+      count + (subview is NSProgressIndicator ? 1 : 0) + spinners(in: subview)
     }
   }
 
-  /// At Simple, Activity shows a "Show All Controls" button and Controllers with no controller
-  /// shows only text, so a button left in the detail is Activity drawn under Controllers.
+  /// Controllers replaces Activity in the detail after a switch.
+  ///
+  /// The stub service never answers, so Controllers shows its loading spinner; Activity at Simple
+  /// shows only its placeholder. Activity left in the detail after a switch has no spinner.
   @Test
   func detailShowsAreaChosenAfterAnother() throws {
+    // Arrange
     let (controller, cleanup) = try MainWindowController.offScreen()
     defer { cleanup() }
     let detail = controller.splitViewController.splitViewItems[2].viewController.view
     controller.navigation.requestArea(.activity)
     RunLoop.main.run(until: .now.addingTimeInterval(0.3))
-    #expect(buttons(in: detail) > 0)
+    #expect(spinners(in: detail) == 0)
 
+    // Act
     controller.navigation.requestArea(.controllers)
     RunLoop.main.run(until: .now.addingTimeInterval(0.3))
-    #expect(buttons(in: detail) == 0)
+
+    // Assert
+    #expect(spinners(in: detail) > 0)
   }
 }

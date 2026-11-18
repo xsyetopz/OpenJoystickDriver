@@ -204,7 +204,6 @@ struct RawUSBModeTests {
     }
     let rejected: [(String, [String: Any])] = [
       ("report-layout without a layout", single("HIDReportLayout")),
-      ("layout under HIDDescriptor", single("HIDDescriptor", ["input": layout])),
       ("template under a family that does not encode it", single("SonySixaxis", session: rumble)),
       ("template under a raw-USB family", single("XboxGIP", session: rumble)),
     ]
@@ -212,6 +211,7 @@ struct RawUSBModeTests {
       #expect(Self.problem(document) != nil, Comment(rawValue: name))
     }
     #expect(Self.problem(single("HIDReportLayout", ["input": layout])) == nil)
+    #expect(Self.problem(single("HIDDescriptor", ["input": layout])) == nil)
     #expect(
       Self.problem(single("HIDReportLayout", ["input": layout], session: rumble)) == nil
     )

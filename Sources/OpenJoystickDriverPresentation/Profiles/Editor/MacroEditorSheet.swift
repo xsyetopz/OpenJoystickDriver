@@ -186,7 +186,7 @@
     private func destinationPicker(
       _ title: String,
       _ destination: RemappingDestination,
-      set: @escaping (RemappingDestination) -> Void
+      set: @escaping @MainActor @Sendable (RemappingDestination) -> Void
     ) -> some View {
       Picker(title, selection: Binding(get: { destination }, set: set)) {
         ForEach(stepDestinations(including: destination), id: \.destination) { option in
@@ -200,7 +200,7 @@
       _ title: String,
       _ value: Double,
       help: String,
-      set: @escaping (Double) -> Void
+      set: @escaping @MainActor @Sendable (Double) -> Void
     ) -> some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         HStack {
