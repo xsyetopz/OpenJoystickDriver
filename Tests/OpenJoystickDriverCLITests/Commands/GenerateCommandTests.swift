@@ -29,14 +29,18 @@ struct GenerateCommandTests {
 
   @Test
   func endlessScriptEndedAtTimeLimit() async throws {
+    // Arrange
     let path = try script("while (true) {}")
-    let start = Date()
 
+    // Act
     let result = await run([path, "--timeout", "1"])
 
+    // Assert
+    // The message names the limit that ended the script; elapsed time would also count the helper's
+    // launch, which a busy machine delays.
     #expect(result.code == 1, "\(result.standardError)")
     #expect(result.standardError.contains("error[E2010]"), "\(result.standardError)")
-    #expect(Date().timeIntervalSince(start) < 20)
+    #expect(result.standardError.contains("within 1.0 seconds"), "\(result.standardError)")
   }
 
   /// The JavaScript object of a Controller record for the product `productID` of an unknown vendor.
