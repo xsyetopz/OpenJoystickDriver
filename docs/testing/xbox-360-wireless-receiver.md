@@ -28,7 +28,20 @@ Validation needs no signing. These pairs are outside the production Apple USB en
 | 15 s | 14 packets, 13 snapshots, zero parse errors; B, Y, Start, Back |
 | Reconnection | Deliberate; notifications sent, decoding resumed |
 
-Not observed: stick clicks. Virtual-HID output unavailable: empty-slot publication, games, rumble, LEDs need a provisioned app test.
+Stick clicks are covered by the next capture. Empty-slot publication, games, rumble and LEDs need a provisioned app run, because that build had no virtual-HID output.
+
+## Direct USB Input Evidence (PR #54 Merge Commit)
+
+Source probe built from `9bade60d2` in an isolated Swift 6.3 compatibility copy, 045e:02a9.
+
+| Capture | Result |
+| --- | --- |
+| 60 s | 3,371 packets, 3,363 snapshots, zero parse errors |
+| Observed | Face buttons, shoulders, both stick clicks, every D-pad direction, full ranges of both sticks and triggers |
+| Second capture | Start, Back, Guide, disconnect and reconnect; terminated by hand, no final summary |
+| Input Test | Paired controller appeared and controls responded in the isolated, ad-hoc-signed app |
+
+Next run, on a provisioned build with the virtual HID entitlement: virtual output, games, rumble, LEDs and empty-slot virtual publication.
 
 ## Find and Validate the Receiver Record
 
@@ -63,7 +76,7 @@ Not observed: stick clicks. Virtual-HID output unavailable: empty-slot publicati
 
 ## Capture Receiver Slots
 
-One pipeline per slot: an interface with class triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four, each sending the presence inquiry at startup. On 045e:02a9 and 045e:0719, slot 0 is interface 0, endpoints 81/01. [Pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4, 6 (input endpoints 81, 83, 85, 87) on 045e:02a9; only interface 0 delivered input.
+One pipeline per slot: an interface with class triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four, each sending the presence inquiry at startup. A slot connects when it reports a controller present or sends a valid state report; the manager assigns its player indicator from a pool. On 045e:02a9 and 045e:0719, slot 0 is interface 0, endpoints 81/01. [Pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4, 6 (input endpoints 81, 83, 85, 87) on 045e:02a9; only interface 0 delivered input. Step 1 below records the other 045e:0719 slot interfaces.
 
 1. Plug in the receiver; record interface numbers:
 

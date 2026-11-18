@@ -108,7 +108,7 @@ extension XUSBDriverTests {
 
   @Test
   func testWirelessReceiverRejectsTruncatedAndNonInputPacketsWithoutConnecting() throws {
-    let report = Array(Receiver.padData(buttons: 1 << 12))
+    let report = Array(Receiver.capture02A9)
     for length in 0..<18 {
       let parser = XUSBDriver(isWirelessReceiver: true)
       #expect(try parser.parseReport(Data(report.prefix(length))) == nil)
@@ -124,7 +124,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverRealCaptureStateBytesDecode() throws {
+  func testWirelessReceiverAcceptsExactlyTheStateBytes() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
     let state = try #require(parser.parseReport(Data(Receiver.capture02A9.prefix(18)))?.state)
     #expect(state.leftStick.x == BipolarValue(260))

@@ -309,7 +309,8 @@ struct ReceiverSlotDiscoveryTests {
     await waitUntil("the paired controller activates output again") {
       dispatcher.activations == [slot, slot]
     }
-    #expect(await manager.suspendController(.model(slot.model)).state == .suspended)
+    let suspended = await manager.suspendController(.model(slot.model))
+    #expect(suspended.state == .suspended)
     await manager.stop()
   }
 
