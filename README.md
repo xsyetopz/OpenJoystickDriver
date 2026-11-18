@@ -23,7 +23,7 @@
 
 </div>
 
-![The Controllers window with a DualShock 3 served as a virtual gamepad](docs/screenshots/main-controllers.png)
+![The Controllers window with an 8BitDo controller served as a virtual gamepad](docs/screenshots/main-controllers.png)
 
 macOS reads a short list of game controllers and ignores the rest, such as the DualShock 3 above. OpenJoystickDriver (OJD) is a menu-bar app that reads those controllers over USB, Bluetooth or a 2.4 GHz dongle and gives games a virtual Xbox or generic gamepad. A controller macOS already handles is left to macOS. OJD runs in your user session with one DriverKit extension and no kernel extension, so SIP and AMFI stay on.
 
@@ -37,7 +37,7 @@ Requires macOS 12 or later, on Apple silicon or Intel.
 
 1. Download the `.dmg` from the [latest release][releases], drag **OpenJoystickDriver.app** into **Applications** and open it.
 2. Click the controller icon in the menu bar. If it shows **Grant Access**, allow OJD in **Input Monitoring** and **Accessibility**.
-3. Connect the controller, select it under **Controllers** and click **Open Input Test...** to watch each control respond live.
+3. Connect the controller, select it under **Controllers** and click **Open Input Test** to watch each control respond live.
 4. Start a game.
 
 An Xbox One or Series controller on USB also needs the driver extension, under **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**. Stuck? See [Troubleshooting][wiki-troubleshooting].
@@ -81,7 +81,7 @@ The wiki covers the rest: [Getting started][wiki-start], [Using the app][wiki-ap
 <summary>Screenshots</summary>
 
 ![The menu-bar menu](docs/screenshots/menu-bar-item.png)
-![The Library window with an installed controller record](docs/screenshots/main-library.png)
+![The Library window with the Installed and Built-in lists](docs/screenshots/main-library.png)
 ![The Activity window with the live log](docs/screenshots/main-activity.png)
 ![The General pane of Settings](docs/screenshots/settings-general.png)
 
