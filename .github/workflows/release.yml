@@ -65,7 +65,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          for dependency in just pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
+          for dependency in just markdownlint-cli2 pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
             brew list --versions "$dependency" >/dev/null 2>&1 || brew install "$dependency"
           done
           just schema-env
