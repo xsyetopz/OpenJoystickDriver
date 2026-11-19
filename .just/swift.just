@@ -31,10 +31,11 @@ format:
 format-check:
     just swift::files | xargs -0 -r {{ env }} swift format lint --strict --parallel
 
-# Build the package, its tests, and each shared Xcode scheme, without running them.
+# Build the package, its tests, and each shared Xcode scheme, without running them, and fail on any
+# warning they print.
 typecheck:
-    {{ env }} swift build --build-tests {{ test_triple }}
-    just swift::xcode build-for-testing
+    just swift::no-warnings {{ env }} swift build --build-tests {{ test_triple }}
+    just swift::no-warnings just swift::xcode build-for-testing
 
 # Run SwiftLint.
 lint:
@@ -80,6 +81,22 @@ clean-worktrees:
         fi
     done
 
+# Runs `command` and fails when it printed a warning. Warnings as errors leaves some diagnostics
+# warnings, such as a non-Sendable value passed to a `@preconcurrency` API. Only files that compile
+# print their warnings, so a clean build, as CI runs, checks every file.
+[private]
+no-warnings +command:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    log=$(mktemp)
+    trap 'rm -f "$log"' EXIT
+    {{ command }} 2>&1 | tee "$log"
+    if grep -q 'warning: ' "$log"; then
+        echo "error: the build printed warnings:" >&2
+        grep 'warning: ' "$log" | sort -u >&2
+        exit 1
+    fi
+
 [private]
 files:
     git ls-files -z --cached --others --exclude-standard -- '*.swift'
@@ -99,6 +116,6 @@ xcode action:
     for project in *.xcodeproj; do
         for scheme in "$project"/xcshareddata/xcschemes/*.xcscheme; do
             xcodebuild {{ action }} -quiet -project "$project" -scheme "$(basename "$scheme" .xcscheme)" \
-                -destination "platform=macOS" -derivedDataPath {{ derived }} {{ xcode_settings }}
+                -destination "platform=macOS,arch=$(uname -m)" -derivedDataPath {{ derived }} {{ xcode_settings }}
         done
     done
