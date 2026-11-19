@@ -1,16 +1,22 @@
 # Testing the Razer Wolverine V2
 
-For [issue #19][1] and USB device 5426:2601 (1532:0A29 hexadecimal).
+For [issue #19][1] and USB device 5426:2601 (1532:0A29 in hexadecimal).
 
-Bundled record: Linux xpad, patched with captured interface-0 endpoints `0x81`/`0x01`. Omitted proposed `shareButton` and `paddles` flags: no packet layout identifies them, and OJD has no paddle decoder.
+The bundled record comes from Linux's xpad, with the interface-0 endpoints `0x81`/`0x01` taken from a capture. It leaves out these suggested settings, because nothing proves they're needed:
 
-Also omitted: `SetConfiguration1BeforeClaim` (enumeration reports configuration 1 without showing OJD must select it) and a 200 ms post-handshake delay (no timing evidence). Not verified: GIP parser, Xbox One defaults, input mapping, reconnect, LED, rumble.
+| Left out | Why |
+| --- | --- |
+| `shareButton` and `paddles` flags | No packet shows where they are, and OJD has no paddle decoder |
+| `SetConfiguration1BeforeClaim` | The device reports configuration 1, but nothing shows OJD has to pick it |
+| A 200 ms wait after the handshake | No timing evidence |
 
-Validation needs no signing. The production Apple USB entitlement omits this pair, so the facade tries IOUSBHost; use an exact development DEXT only if ownership evidence requires it.
+Not checked: the GIP parser, the Xbox One defaults, the button layout, reconnecting, lights, and rumble.
+
+Checking the file needs no signing. Apple's production USB entitlement doesn't include this ID, so OJD tries IOUSBHost. Use an exact development DEXT only if the ownership report says you need one.
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/19
 
-## Validate the Bundled Record
+## Check the Bundled Record
 
 From the repository root:
 
@@ -28,7 +34,7 @@ RECORD_VALIDATION result=valid
 
 ## Run the Raw USB Probe
 
-1. Quit Steam, games, and controller tools; connect by USB.
+1. Quit Steam, games, and controller tools, and plug in with USB.
 2. Run:
 
    ```bash
@@ -37,23 +43,23 @@ RECORD_VALIDATION result=valid
      --seconds 45
    ```
 
-3. Check the controller stays powered, `RECORD_HANDSHAKE` succeeds, and `USB_RX` arrives on the captured endpoint.
-4. Test neutral, press every button, D-pad direction, trigger, stick axis and click, extra control.
-5. Reconnect; repeat the handshake and one control check.
+3. Check that the controller stays on, `RECORD_HANDSHAKE` succeeds, and `USB_RX` arrives on the captured endpoint.
+4. Check the rest position, then press every button, D-pad direction, trigger, stick direction and click, and any extra control.
+5. Unplug and plug back in. Do the handshake and one control check again.
 
-Interface unavailable: keep route and registry owner. No detach or cross-transport fallback.
+If the interface isn't available, keep the road OJD chose and the program that holds it. OJD never detaches the device or falls back to another kind of connection.
 
-## Check Physical Output With an Installed App
+## Check Lights and Rumble With an Installed App
 
-Check LED and rumble in an installed app per [physical output](../physical-output.md) (`ojd` is the [command-line tool](../../../wiki/Command-Line.md)):
+Check the light and rumble in an installed app, following [physical output](../physical-output.md) (`ojd` is the [command-line tool](../../../wiki/Command-Line.md)):
 
 ```bash
 ojd controller list
 ojd controller show 1532:0A29
 ```
 
-Run each step alone. Record the player-indicator result and, where planned, left, right, and trigger rumble. This alone proves no support.
+Run each step on its own. Write down the player-light result and, where the plan lists them, left, right, and trigger rumble. The plan alone doesn't prove support.
 
-Attach probe output (raw packets; inspect and redact) and output results to #19 with macOS version, Mac model, firmware (if known), OJD commit, USB route, and handshake, control, reconnect, indicator, and actuator results.
+Add the probe output (it holds raw packets, so read it and remove private parts) and the output results to #19, with your macOS version, Mac model, firmware (if you know it), OJD commit, USB road, and the handshake, control, reconnect, light, and motor results.
 
-Endpoint captures, validation, and plans prove no support. Record missing input, reconnect, indicator, output.
+Endpoint captures, file checks, and plans don't prove support. Write down any missing input, reconnect, light, or output.

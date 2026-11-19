@@ -1,29 +1,41 @@
 # Test Physical Output
 
-OJD builds manual test steps from a connected controller's reported output capabilities. The steps do not prove a hardware pass.
+Physical output is anything OJD makes the controller itself do, such as rumble, lights, and player numbers. Think of it as OJD talking back to the controller instead of only listening to it. OJD writes a list of test steps from what the connected controller says it can do. Following the steps by hand is a test; the list alone doesn't prove the hardware works.
 
-## Generate a Plan
+## Get the Test Steps
 
-List the controllers, then show one. Its Output checks section is the plan. `ojd` is the [command-line tool](../../wiki/Command-Line.md):
+List your controllers, then show one. Its Output checks section holds the steps. `ojd` is the [command-line tool](../../wiki/Command-Line.md):
 
 ```bash
 ojd controller list
 ojd controller show 3537:1010
 ```
 
-3537:1010 is a GameSir G7 SE. Replace it with your controller's hexadecimal vendor and product ID, or the session token (`E-…`) or port key (`U-…`) from `ojd controller list`. `VVVV:PPPP` suffices with one matching controller. With identical models connected, OJD rejects a `VVVV:PPPP` selector and the error lists them; use the session token or port key in `show` and every output command.
+3537:1010 is a GameSir G7 SE. Use your own controller instead. You can name it three ways:
 
-The session token lasts until the controller disconnects; the port key lasts while it stays on the same port. Record neither as hardware evidence.
+| Name | Looks like | Lasts |
+| --- | --- | --- |
+| Vendor and product ID, in hexadecimal | `VVVV:PPPP` | Always, but only works when one controller has that ID |
+| Session token, from `ojd controller list` | `E-…` | Until the controller disconnects |
+| Port key, from `ojd controller list` | `U-…` | While the controller stays on the same port |
 
-`rumble`, `player`, and `light` each send one output command; the app decides support. A controller lacking the capability fails with a "has no ..." message pointing at `ojd controller show`.
+With two of the same model plugged in, OJD refuses `VVVV:PPPP` and lists both. Use the session token or port key then, in `show` and in every output command. Don't write either one down as hardware evidence, because they change.
 
-`rumble` applies the channels the controller has. Each requested trigger motor it lacks (for example `--left-trigger` on a DualShock 4) draws a warning, then success; with none of the requested channels it fails. Main motors mirror onto Steam Controller trackpad haptics. The command returns when the app accepts it; the app stops the rumble when `--duration` ends. An all-zero request is a stop.
+`rumble`, `player`, and `light` each send one output command, and the app decides whether the controller can do it. A controller that can't fails with a "has no ..." message that points you to `ojd controller show`.
 
-`ojd controller show` prints the same steps. A redacted support report lists each device's output capabilities, not the steps.
+`rumble` uses only the motors the controller has:
 
-## Output Command Request
+- A trigger motor it lacks, such as `--left-trigger` on a DualShock 4, gives a warning and the rest still runs.
+- If it has none of the motors you asked for, the command fails.
+- On a Steam Controller, the main motors play on the trackpad haptics instead.
+- The command returns as soon as the app accepts it. The app stops the rumble when `--duration` ends.
+- A request with every value at zero means stop.
 
-The CLI and GUI send each output through the app's `sendControllerOutput` request, which selects one controller by session token, port key, or `VVVV:PPPP` and carries one command:
+`ojd controller show` prints the same steps. A redacted support report lists what each device can output, but not the steps.
+
+## What the Command Sends
+
+The CLI and the app's windows send each output through the app's `sendControllerOutput` request. It picks one controller by session token, port key, or `VVVV:PPPP`, and carries one command:
 
 ```json
 {
@@ -41,35 +53,35 @@ The CLI and GUI send each output through the app's `sendControllerOutput` reques
 
 | `type` | Fields |
 | --- | --- |
-| `set-rumble` | `intensities`: each channel 0...65535, missing channel off, unknown key fails the request. `duration`: `{"milliseconds": n}` with `n` in 0...5000 (other `n` fails the request), or `"held"` |
+| `set-rumble` | `intensities`: each channel 0...65535. A missing channel stays off; an unknown key fails the request. `duration`: `{"milliseconds": n}` with `n` from 0 to 5000 (any other `n` fails the request), or `"held"` |
 | `stop-rumble` | None |
-| `set-player-indicator` | `player` 0...4, 0 off |
+| `set-player-indicator` | `player` 0...4, where 0 is off |
 | `set-rgb` | `red`, `green`, `blue`, each 0...255 |
 | `set-light-brightness` | `brightness` 0...65535 |
 | `set-adaptive-trigger` | `trigger` (Left or Right); `effect`: `kind` (Off or Resistance), `startPosition`, `strength`, each 0...1 |
 
-The reply is a result, for example `{"outcome": "Delivered", "droppedRumbleChannels": ["leftHaptic", "rightHaptic"]}`:
+The answer is a result, for example `{"outcome": "Delivered", "droppedRumbleChannels": ["leftHaptic", "rightHaptic"]}`:
 
 | `outcome` | Meaning |
 | --- | --- |
-| Delivered, NotFound, NotReady, WriteFailed, Cancelled | As named |
-| `InvalidValue` | A value that decodes but is out of range, such as an adaptive-trigger position above 1 |
-| `UnsupportedCapability` | The controller lacks the capability, reported before any value is checked |
+| Delivered, NotFound, NotReady, WriteFailed, Cancelled | What the name says |
+| `InvalidValue` | The value reads fine but is too big or too small, such as an adaptive-trigger position above 1 |
+| `UnsupportedCapability` | The controller can't do this. OJD says so before it checks any value |
 
-Malformed JSON, an unknown `type`, or a component outside its integer range fails the request instead of returning a result.
+Broken JSON, an unknown `type`, or a number outside its allowed range fails the request with no result.
 
-`droppedRumbleChannels` lists requested channels the controller lacks and OJD did not drive. Because the CLI and GUI mirror main motors onto Steam Controller trackpad haptics, their requests list `leftHaptic` and `rightHaptic` as dropped on other controllers, and the main motors on a Steam Controller. A rumble command is `unsupportedCapability` only when the controller has no rumble channel.
+`droppedRumbleChannels` lists the motors you asked for that the controller lacks, so OJD skipped them. The CLI and the app always ask for the Steam Controller trackpad haptics too. So on other controllers they list `leftHaptic` and `rightHaptic` as dropped, and on a Steam Controller they list the main motors. A rumble command is `unsupportedCapability` only when the controller has no rumble motor at all.
 
-## Record Results
+## Write Down the Results
 
-Run one step at a time. Record pass or fail, model, connection type, and firmware version. If output misbehaves, stop and disconnect the controller. One passing step verifies no other actuator or lighting feature.
+Run one step at a time. For each, write down pass or fail, the model, how it's connected, and its firmware version. If something acts strange, stop and unplug the controller. A passing step only proves that one motor or light.
 
-For conventional rumble, use the interactive Just recipe. It runs each exposed four-channel position in fixed order, waits out each duration, and sends an all-zero stop between steps and on interrupt:
+For normal rumble, use this interactive Just recipe. It tries each of the four motor positions in a fixed order, waits for each one to finish, and sends a stop between steps and when you press Control-C:
 
 ```bash
 just diagnose-rumble-motors 13623 4112 160 500
 ```
 
-Example: decimal VID 13623, PID 4112, intensity 160, 500 ms; use your IDs, decimal or `0x` hexadecimal. Report each numbered result as left trigger, right trigger, left grip, right grip, none, or another exact observation. The recipe wraps `ojd controller rumble` and changes no documented support status.
+Here the vendor ID is 13623, the product ID is 4112 (both in decimal), the strength is 160, and each buzz lasts 500 ms. Use your own IDs, in decimal or `0x` hexadecimal. For each numbered step, say where you felt it: left trigger, right trigger, left grip, right grip, none, or exactly what else happened. The recipe runs `ojd controller rumble` for you and doesn't change any support status in the docs.
 
-The plan excludes serial values, HID locations, packet payloads, and filesystem paths. Review issue text and attachments before publishing. The command reports implemented capabilities, not a verification level. Accepted observations stay in the matching testing document and issue.
+The steps leave out serial numbers, HID locations, packet contents, and file paths. Still read your issue text and attachments before you post them. The command reports what OJD has built, not how well it's been tested. Accepted results go in the matching testing document and issue.

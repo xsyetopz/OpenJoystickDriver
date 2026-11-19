@@ -1,10 +1,10 @@
 # Test the Nacon Revolution X Pro
 
-USB device 12933:1588 (3285:0634 hexadecimal), for [issue #21](https://github.com/xsyetopz/OpenJoystickDriver/issues/21).
+USB device 12933:1588 (3285:0634 in hexadecimal), for [issue #21](https://github.com/xsyetopz/OpenJoystickDriver/issues/21).
 
-The unverified record selects `XboxGIP` on interface 0, interrupt IN `0x87`, OUT `0x07`. It disables the periodic host `0x03` packet, reported to destabilize native sessions. The issue's WebUSB result is not an OJD USBDriverKit result.
+The record isn't confirmed on hardware yet. It picks `XboxGIP` on interface 0, with interrupt IN `0x87` and OUT `0x07`. It turns off the `0x03` "are you there?" packet the Mac normally sends now and then, because a report said it made the controller drop out. The WebUSB result in the issue came from a browser, not from OJD's USBDriverKit road.
 
-## Validate the Bundled Record
+## Check the Bundled Record
 
 From the repository root:
 
@@ -22,9 +22,9 @@ RECORD_VALIDATION result=valid
 
 ## Run the Raw USB Probe
 
-The production Apple USB entitlement omits this VID/PID, so the facade tries IOUSBHost.
+Apple's production USB entitlement doesn't include this VID/PID, so OJD tries IOUSBHost.
 
-1. Quit games, Steam, and controller tools. Connect by USB.
+1. Quit games, Steam, and controller tools. Plug in with USB.
 2. Run:
 
    ```bash
@@ -33,24 +33,24 @@ The production Apple USB entitlement omits this VID/PID, so the facade tries IOU
      --seconds 45
    ```
 
-3. Check `RECORD_HANDSHAKE` succeeds, `USB_RX` stays active, no `USB_KEEPALIVE` prints.
-4. Press every button, D-pad direction, trigger, stick axis and click, and Guide.
-5. Idle past the four-second keep-alive cadence. It must stay available without a host `0x03`.
-6. Reconnect. Repeat the handshake and one control check.
+3. Check that `RECORD_HANDSHAKE` succeeds, `USB_RX` keeps arriving, and no `USB_KEEPALIVE` line prints.
+4. Press every button, D-pad direction, trigger, stick direction and click, and Guide.
+5. Leave it alone for longer than four seconds, the usual "are you there?" gap. It must stay connected without a `0x03` from the Mac.
+6. Unplug and plug back in. Do the handshake and one control check again.
 
-Interface unavailable: record the route and registry owner. Add no detach fallback or broader production DEXT; use a development DEXT only if ownership evidence requires it.
+If the interface isn't available, write down the road OJD chose and the program that holds it. Don't add a detach fallback or widen the production DEXT. Use a development DEXT only if the ownership report says you need one.
 
-Parser fixtures cover split, stacked, extended-length, and requested ACK frames. Physical runs must show a stable native USB session and controls reaching the virtual gamepad.
+Parser test files cover packets that are split, stacked, extra-long, or asking for an ACK. Real runs must show a steady USB connection and controls reaching the virtual gamepad.
 
-## Check Physical Output With an Installed App
+## Check Lights and Rumble With an Installed App
 
-Check LED and rumble in an installed app, planning per [physical output](physical-output.md) (`ojd` is the [command-line tool](../../wiki/Command-Line.md)):
+Check the light and rumble in an installed app, following [physical output](physical-output.md) (`ojd` is the [command-line tool](../../wiki/Command-Line.md)):
 
 ```bash
 ojd controller list
 ojd controller show 3285:0634
 ```
 
-Attach results to #21 with macOS version, Mac model, firmware (if known), OJD commit, USB route, ownership results, any transfer error.
+Add the results to #21 with your macOS version, Mac model, firmware (if you know it), OJD commit, USB road, ownership results, and any transfer error.
 
-Claim support after input, reconnect, and output pass on hardware.
+Call it supported only after input, reconnecting, and output pass on hardware.

@@ -1,21 +1,21 @@
 # Test Logitech F310 XInput Mapping
 
-[Issue #11][1], device 046d:c21d (1133:49693 decimal).
+[Issue #11][1], device 046d:c21d (1133:49693 in decimal).
 
-Linux Xbox 360 packet layout, observed endpoints `0x81`/`0x02`. Check labels in Input Test or with `ojd` ([command-line tool](../../wiki/Command-Line.md)):
+With its switch on X, the F310 speaks the same USB language as a wired Xbox 360 controller, the one Linux uses. Its endpoints were seen as `0x81` and `0x02`. Check the labels in Input Test, or with `ojd` ([command-line tool](../../wiki/Command-Line.md)):
 
 ```bash
 ojd controller watch 046D:C21D
 ```
 
-Claim support after the reporter confirms the full mapping. Validation needs no signing; raw input needs a development USBDriverKit build with an exact 046D:C21D personality (absent from the production USB entitlement).
+Call it supported only after the person who reported it confirms every control. Checking the file needs no signing. Reading raw input needs a development USBDriverKit build with an exact 046D:C21D personality, because Apple's production USB entitlement doesn't include this ID.
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/11
 
-## Validate and Capture
+## Check and Capture
 
-1. Set the F310 switch to X.
-2. Quit Steam and other tools.
+1. Set the F310's switch to X.
+2. Quit Steam and other controller tools.
 3. Run:
 
    ```bash
@@ -26,16 +26,16 @@ Claim support after the reporter confirms the full mapping. Validation needs no 
      Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.plist --seconds 45
    ```
 
-4. Press each: A, B, X, Y, LB, RB, Back, Start, Guide, both stick clicks, every D-pad direction, both triggers (rest to fully pressed), both sticks (full range).
-5. Check each `USB_RX` packet gives only its `EVENT`.
+4. Press each of these: A, B, X, Y, LB, RB, Back, Start, Guide, both stick clicks, every D-pad direction, both triggers (from rest to all the way down), and both sticks (all the way around).
+5. Check that each `USB_RX` packet gives only the `EVENT` for the control you pressed.
 
-Interface unavailable: capture `just diagnose-dext`. No detach fallback.
+If the interface isn't available, capture `just diagnose-dext`. OJD never detaches the device as a fallback.
 
-## Verify the App and Consumers
+## Check the App and Games
 
-1. In **Controllers**, select the F310, then click **Open Input Test**.
-2. Check LB, RB, and each active control match the physical input. No window: use `controller watch`.
+1. In **Controllers**, select the F310 and click **Open Input Test**.
+2. Check that LB, RB, and every other control match what you press. If the window won't open, use `controller watch`.
 
-Attach to #11: full record-probe output (raw packets; inspect), macOS version, Mac model, OJD commit, switch position, DEXT state, Input Test or CLI results.
+Add to #11: the full record-probe output (it holds raw packets, so read it first), macOS version, Mac model, OJD commit, switch position, extension state, and the Input Test or CLI results.
 
-Schema validation and fixtures do not replace this.
+Schema checks and test files don't replace this.

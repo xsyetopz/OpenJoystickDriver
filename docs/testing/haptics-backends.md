@@ -1,6 +1,6 @@
 # Probe macOS Haptics Backends
 
-Run one route at a time (backend inventory, GameController haptics, SDL output, direct rumble). Record physical behavior before changing identities:
+Haptics means rumble and other effects you feel in your hands. A game can send rumble down several roads, called backends. Test one road at a time, and write down what the controller physically does before you change the identity OJD shows to games:
 
 ```bash
 just diagnose-backends --seconds 5
@@ -9,48 +9,55 @@ just diagnose-sdl3 --seconds 5 --rumble
 just diagnose-rumble-motors 13623 4112
 ```
 
-The last example uses the GameSir G7 SE decimal VID/PID; substitute yours, decimal or `0x` hexadecimal. The script drives `ojd controller rumble` with a `VVVV:PPPP` selector, one `sendControllerOutput` command per step, and waits out each bounded rumble (the app ends it) before its explicit stop.
+| Recipe | Road it tests |
+| --- | --- |
+| `diagnose-backends` | Lists which backends can see the controller |
+| `diagnose-gamecontroller` | Apple's GameController haptics |
+| `diagnose-sdl3` | SDL output, the road many games use |
+| `diagnose-rumble-motors` | OJD's own rumble command, one motor at a time |
 
-The SDL route can exercise OJD's first-party Microsoft Xbox 360 Wired (045E:028E) with the Xbox 360 HIDAPI descriptor/report format, published through `IOHIDUserDevice` on every supported macOS. The probe changes identities with the installed OJD CLI, matching the running app's service protocol.
+The last line uses the GameSir G7 SE vendor and product IDs in decimal. Use your own, in decimal or `0x` hexadecimal. The script runs `ojd controller rumble` with a `VVVV:PPPP` selector and sends one `sendControllerOutput` command per step. Each rumble has a set length that the app ends; the script waits for that, then sends a stop.
 
-An isolated probe tested Apple's legacy Force Feedback API; OJD has no such route, so the observations below are evidence only. A nonzero HID output-report size is a raw-report candidate, not proof of either.
+The SDL road can test OJD's own Microsoft Xbox 360 Wired identity (045E:028E). It uses the Xbox 360 HIDAPI descriptor and report format, and OJD publishes it through `IOHIDUserDevice` on every macOS version OJD supports. The probe switches identities with the installed OJD CLI, so it speaks the same service protocol as the running app.
 
-Application rumble on a virtual gamepad reaches the physical controller as one command: a bounded set-rumble (main motors mirrored onto Steam Controller trackpad haptics) or a stop-rumble. A stop writes once; an active remapping rumble claim keeps running. Other consumer reports, such as a DualSense lightbar, drive no physical output.
+A separate test program tried Apple's old Force Feedback API. OJD has no road through it, so the results below are evidence only. If a HID output report has a size above zero, it might carry raw reports, but that alone proves nothing.
 
-The GameController diagnostic checks the public controller and haptics path. An `IOHIDUserDevice` creates no public `GCController.haptics` engine.
+When a game rumbles a virtual gamepad, the real controller gets one command: either a set-rumble with a time limit or a stop-rumble. On a Steam Controller the main motors play on the trackpad haptics. A stop is written once. If a remapping rule is holding the rumble on, that rumble keeps going. Other things a game sends, such as a DualSense lightbar color, don't change anything on the real controller.
 
-## GameSir G7 SE Observations
+The GameController check tests Apple's public controller and haptics road. A gamepad made with `IOHIDUserDevice` gets no public `GCController.haptics` engine.
 
-September 2, 2026: four physical GIP output channels isolated with:
+## GameSir G7 SE Results
+
+September 2, 2026: tested the four physical GIP output channels one at a time with:
 
 ```bash
 just diagnose-rumble-motors 0x3537 0x1010 200 750
 ```
 
-The GameSir G7 SE gave a one-to-one actuator map:
+Each channel moved exactly one motor:
 
-| Logical channel | Physical observation |
+| Channel | Motor that moved |
 | --- | --- |
 | `LowFrequency` | Left grip motor |
 | `HighFrequency` | Right grip motor |
 | `LeftTrigger` | Left trigger motor |
 | `RightTrigger` | Right trigger motor |
 
-Each step stopped all four channels before and after its bounded pulse. This verifies independent addressing of four motors through OJD's raw-USB GIP output, not that every virtual consumer supplies four values.
+Each step stopped all four channels before and after its short buzz. This proves OJD's raw-USB GIP output can drive each of the four motors on its own. It doesn't prove every game sends four values.
 
-August 25, 2026, GameSir G7 SE (3537:1010) on OJD's raw USB GIP transport:
+August 25, 2026, GameSir G7 SE (3537:1010) on OJD's raw USB GIP connection:
 
-| Route | Framework evidence | Physical observation |
+| Road | What the software showed | What the controller did |
 | --- | --- | --- |
-| SDL 1BAD:F901 baseline | The virtual descriptor exposes an output report, but a dedicated PCSX2 run produced no OJD virtual-output callback; the app logged virtual-gamepad creation only. Earlier output-report lines came from an Xbox 360 identity run | Input works. Normal rumble is missing; only a rare, faint pulse under a second, no SDL-to-OJD rumble path, possibly from another consumer. |
-| Apple Force Feedback/PID | `FFIsForceFeedback` returned `0x80000003`; no Force Feedback device opened | No rumble. With OJD quit, no controller HID service was exposed to test. |
-| Apple GameController | `apple-gamecontroller` selected, but `GCController.controllers()` returned none and no public haptics engine existed | LED stayed on; input was not available during the observation. No haptic pulse could be submitted. |
-| Exact ASTRO SDL HIDAPI Xbox 360 | The `sdl2-3` profile published 9886:0024 and exposed its eight-byte output report | Input and physical rumble worked. |
-| Microsoft Xbox One S Bluetooth revision 1 | Probe published 045E:02E0 with Bluetooth transport and the matching descriptor | LED and application discovery worked, but input did not; rumble was unavailable. |
-| Microsoft Xbox One S Bluetooth revision 2 | Probe published 045E:02FD with Bluetooth transport and the matching descriptor | LED and application discovery worked, but input did not; rumble was unavailable. |
-| Xbox One HID experiment | Probe and identity experiments published 045E:02EA / 045E:02FD Bluetooth-shaped HID tuples | LED and discovery sometimes worked, but usable input and rumble did not. Evidence only; OJD has no route for it. |
-| Controller LED | Reflects the physical GIP session, not a haptics backend | On while OJD owned the controller, off after OJD quit. |
+| SDL 1BAD:F901 baseline | The virtual descriptor has an output report, but a PCSX2 run made just for this never called OJD's virtual output. The app only logged that it made the virtual gamepad. The output-report lines in the log came from a separate Xbox 360 identity run | Input works. Normal rumble doesn't: only a rare, faint buzz under a second, with no SDL-to-OJD rumble road. Another program may have caused it. |
+| Apple Force Feedback/PID | `FFIsForceFeedback` returned `0x80000003`, and no Force Feedback device opened | No rumble. With OJD closed, macOS showed no controller HID service to test. |
+| Apple GameController | `apple-gamecontroller` was picked, but `GCController.controllers()` was empty and there was no public haptics engine | The light stayed on. Input didn't work during the test, so no buzz could be sent. |
+| Exact ASTRO SDL HIDAPI Xbox 360 | The `sdl2-3` profile published 9886:0024 with its eight-byte output report | Input and rumble both worked. |
+| Microsoft Xbox One S Bluetooth, revision 1 | Probe published 045E:02E0 with a Bluetooth connection and the matching descriptor | Light and app discovery worked. Input didn't, and rumble wasn't available. |
+| Microsoft Xbox One S Bluetooth, revision 2 | Probe published 045E:02FD with a Bluetooth connection and the matching descriptor | Light and app discovery worked. Input didn't, and rumble wasn't available. |
+| Xbox One HID experiment | Probe and identity tests published 045E:02EA and 045E:02FD HID identities shaped like Bluetooth ones | Light and discovery sometimes worked; usable input and rumble never did. Evidence only; OJD has no road for it. |
+| Controller light | Shows the GIP connection to the real controller, not a haptics backend | On while OJD held the controller, off after OJD closed. |
 
-Results apply to this controller, OS, consumer, and OJD build. Exact HIDAPI-compatible reports are the working cross-application path here; that does not show every application accepts the spoofed identity, or that PID and GameController haptics fail on every real controller.
+These results hold for this controller, this macOS, these games, and this OJD build. Here, the road that worked across programs was exact HIDAPI-compatible reports. That doesn't prove every program accepts a borrowed identity, or that PID and GameController haptics fail on every real controller.
 
-OJD cancels a superseded delayed stop before scheduling a replacement, so an earlier request cannot silence a later rumble after 250 milliseconds. Scheduling does not make an application emit reports for an identity lacking its output protocol. Evidence, not OJD identities: the `sdl2-3` identity with its ASTRO 9886:0024 probe, the input-only GameStop identity, the `x360-hid` selection, and the two failed Microsoft Bluetooth probe variants. OJD publishes only `SDLCompatible` or `Generic`.
+When a new rumble replaces an old one, OJD cancels the old one's scheduled stop first. So an older request can't cut off a newer rumble after 250 milliseconds. Good timing can't make a program send reports to an identity it doesn't know how to rumble. These were tests, not OJD identities: the `sdl2-3` identity with its ASTRO 9886:0024 probe, the input-only GameStop identity, the `x360-hid` choice, and the two failed Microsoft Bluetooth probes. OJD publishes only `SDLCompatible` or `Generic`.

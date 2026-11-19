@@ -1,59 +1,59 @@
 # Browser Gamepad API Manual Evidence
 
-Manual test site: ControllerTest.io (<https://controllertest.io/>).
+Web browsers read gamepads through the Gamepad API. This page records how each browser sees OJD's virtual gamepad. The test site for checks by hand is ControllerTest.io (<https://controllertest.io/>).
 
 ## Contents
 
 - [Automated Run](#automated-run)
-- [Clean-State Protocol](#clean-state-protocol)
-- [Generic HID Browser Contract](#generic-hid-browser-contract)
-- [Current Accepted Browser Evidence](#current-accepted-browser-evidence)
-- [Post-Reinstall 0.5.0-beta.4 Observations](#post-reinstall-050-beta4-observations)
-- [Exact 0.5.0-beta.3 Matrix](#exact-050-beta3-matrix)
-- [Evidence Boundary](#evidence-boundary)
+- [Start Clean Each Time](#start-clean-each-time)
+- [What Generic HID Promises Browsers](#what-generic-hid-promises-browsers)
+- [Accepted Browser Results](#accepted-browser-results)
+- [0.5.0-beta.4 Notes After a Reinstall](#050-beta4-notes-after-a-reinstall)
+- [0.5.0-beta.3 Table](#050-beta3-table)
+- [What Counts as Proof](#what-counts-as-proof)
 
 ## Automated Run
 
-`just diagnose-browsers [--as PERSONA] [--browsers firefox,chrome,safari]` opens a logging page in each browser in turn and feeds every control into one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result, and writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no Share slot; an engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, where the run expects it.
+`just diagnose-browsers [--as PERSONA] [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another, and presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it.
 
-## Clean-State Protocol
+## Start Clean Each Time
 
-Run every row independently.
+Browsers remember gamepads, so a leftover from the last test can spoil the next one. Run every row on its own.
 
-1. Record OJD commit/build, macOS version, publication backend, browser version, GameSir G7 SE firmware/physical mode, connection path, selected OJD identity.
-2. Stop the previous test; close all Gamepad API pages.
-3. Restart OJD. Confirm one physical device and one intended virtual backend in diagnostics.
-4. Select one identity; wait for its committed transition result.
-5. Open a fresh private browser window (or start a fresh Gamepad document lifecycle).
-6. Open ControllerTest.io; activate the controller as the browser gesture policy requires.
-7. Record slot/count, `id`, `mapping`, all buttons, axes, timestamps, connection events, actuator presence/result.
-8. Close the page; stop OJD output. Check no stale browser entries or callbacks remain.
-9. Repeat once after a deliberate identity switch. Classify a difference from the clean-start result as identity-transition contamination until lifecycle integrity holds.
+1. Write down the OJD commit or build, macOS version, publishing backend, browser version, GameSir G7 SE firmware and mode, how it's connected, and which OJD identity you picked.
+2. Stop the last test and close every Gamepad API page.
+3. Restart OJD. Check in diagnostics that there's one real device and one virtual backend, the one you meant.
+4. Pick one identity and wait until OJD reports the switch finished.
+5. Open a new private browser window (or otherwise start a fresh Gamepad page).
+6. Open ControllerTest.io, and press a button so the browser starts listening (browsers wait for a press).
+7. Write down the slot and count, `id`, `mapping`, every button and axis, timestamps, connect and disconnect events, and whether rumble exists and works.
+8. Close the page and stop OJD's output. Check that the browser kept no old entries or callbacks.
+9. Do it once more after switching identity on purpose. Until the switch is shown to leave nothing behind, treat any difference from the clean start as leftovers from the switch.
 
-OJD publishes virtual gamepads only through IOHIDUserDevice. Record the macOS version per run; untested versions are unverified.
+OJD makes virtual gamepads only through IOHIDUserDevice. Write down the macOS version for each run; versions nobody tested aren't confirmed.
 
-## Generic HID Browser Contract
+## What Generic HID Promises Browsers
 
-Generic HID publishes 1209:4A4F (allocated by pid.codes), product name `OpenJoystickDriver Generic HID Gamepad`, with a device-neutral, input-only HID Game Pad descriptor. The recorded 4F4A:4449 results below used the same input layout plus a vendor rumble output report. It impersonates no retail controller and does not guarantee `mapping: "standard"`. Frozen raw layout for this PID:
+Generic HID publishes 1209:4A4F (handed out by pid.codes), named `OpenJoystickDriver Generic HID Gamepad`. Its HID Game Pad descriptor belongs to no brand and only sends input. The 4F4A:4449 results further down used the same input layout plus a vendor rumble output report. It doesn't pretend to be any controller you can buy, and it doesn't promise `mapping: "standard"`. The layout for this PID never changes:
 
-- Axes 0-3: left X/Y, then right X/Y.
-- Axes 4-5: LT/RT on the positive half of signed axes, idle `0`, partial pressure kept, full pressure `1` after browser normalization.
-- Buttons B0-B5 and B8-B17: HID Button usages 1-6 and 9-18.
-- No B6/B7 trigger duplicates, no D-pad axis.
+- Axes 0 to 3: left X/Y, then right X/Y.
+- Axes 4 and 5: LT/RT on the positive half of signed axes. At rest `0`, partly pressed keeps its value, fully pressed is `1` after the browser scales it.
+- Buttons B0 to B5 and B8 to B17: HID Button usages 1 to 6 and 9 to 18.
+- No B6/B7 copies of the triggers, and no D-pad axis.
 
-A compatibility-breaking change to identity, descriptor, ordering, range, or name needs a different PID. Raw, lossless trigger axes are accepted even when a test site's standard trigger widgets stay empty. Record non-enumeration as an engine limitation; do not spoof a recognized controller.
+Any change that would break this (identity, descriptor, order, range, or name) needs a different PID. Raw trigger axes that lose nothing count as fine, even when a test site's standard trigger pictures stay empty. If a browser doesn't list the gamepad at all, write that down as a browser limit. Don't pose as a controller the browser knows.
 
-Browsers are unmodified. An engine contribution should apply this mapping only after recognizing 1209:4A4F:
+OJD doesn't change browsers. A patch to a browser engine should use this mapping only after it recognizes 1209:4A4F:
 
 | Engine | Change |
 | --- | --- |
-| Blink | Keep B0-B5/B8-B17; convert the positive halves of axes 4/5 to standard B6/B7; expose axes 0-3 |
-| Gecko | Remap its sequential raw-button array into the same standard button slots; convert the positive halves of axes 4/5 to B6/B7; expose axes 0-3 |
-| WebKit | Recognize the OJD VID/PID; map HID Button usages directly to the standard slots; adapt the positive trigger axes to B6/B7; expose axes 0-3 |
+| Blink | Keep B0 to B5 and B8 to B17; turn the positive halves of axes 4/5 into standard B6/B7; show axes 0 to 3 |
+| Gecko | Move its numbered raw buttons into the same standard button slots; turn the positive halves of axes 4/5 into B6/B7; show axes 0 to 3 |
+| WebKit | Recognize OJD's VID/PID; map HID Button usages straight to the standard slots; turn the positive trigger axes into B6/B7; show axes 0 to 3 |
 
-## Current Accepted Browser Evidence
+## Accepted Browser Results
 
-Blink's correct result for the published Xbox Series 045E:0B13 identity is the canonical report-layout oracle: descriptor, report bytes, button usages, sticks, triggers, hat, Guide, Share. Automatic selection publishes SDLCompatible (045E:0B0C) for every browser.
+Blink reads the published Xbox Series 045E:0B13 identity correctly, so it's the reference every report layout is measured against: descriptor, report bytes, button usages, sticks, triggers, hat, Guide, Share. OJD's automatic pick publishes SDLCompatible (045E:0B0C) for every browser.
 
 The maintainer tested a Razer Wolverine Tournament Edition (1532:0A15) and a GameSir pad on macOS 27:
 
@@ -62,7 +62,7 @@ The maintainer tested a Razer Wolverine Tournament Edition (1532:0A15) and a Gam
 | SDLCompatible reports on 045E:02FD | Listed as "Xbox Wireless Controller Extended Gamepad", no input (GameController binds that ID, not 0B0C) | Many controls mapped wrongly, no rumble | not recorded |
 | Generic | Not listed | Mapped wrongly; right stick at rest at -0.17 on axis 2 | Per contract (triggers on axes 4 and 5, no rumble), except Razer right stick at rest at -0.25 on axis 2 |
 
-GameControllerCompatible publishes the bit layout of a real 045E:0B13 over Bluetooth, read by SDL's HIDAPI driver and Firefox's XboxSeriesXRemapper. Guide is also on report 2, where GameController reads Home. With `just diagnose-browsers --as game-controller-compatible` on macOS 27:
+GameControllerCompatible publishes the same bit layout as a real 045E:0B13 over Bluetooth, which SDL's HIDAPI driver and Firefox's XboxSeriesXRemapper read. Guide is also on report 2, where GameController reads Home. With `just diagnose-browsers --as game-controller-compatible` on macOS 27:
 
 | Browser | Controls | Rumble |
 | --- | --- | --- |
@@ -70,7 +70,7 @@ GameControllerCompatible publishes the bit layout of a real 045E:0B13 over Bluet
 | Chrome 156 | every control but Guide; Share as B17 | `complete` |
 | Safari 27.0.1 | every control but Share | `complete` |
 
-Gecko with the published Xbox One S 045E:02E0 identity kept the matching axis/trigger order and emitted the D-pad through the hat only. Share stayed unavailable: Firefox's remapper does not expose B17.
+Gecko with the published Xbox One S 045E:02E0 identity kept the same axis and trigger order, and sent the D-pad only through the hat. Share never showed up, because Firefox's remapper doesn't offer B17.
 
 | Browser | Published identity | ID/mapping/counts | LT | RT | Issues/reconnect/switch |
 | --- | --- | --- | --- | --- | --- |
@@ -80,22 +80,22 @@ Gecko with the published Xbox One S 045E:02E0 identity kept the matching axis/tr
 | Blink | Generic HID with rumble report | 4F4A:4449; raw/non-standard; 18 buttons, 6 axes | axis 4 | axis 5 | Retest required on input-only 1209:4A4F |
 | Safari/WebKit | Generic HID | not enumerated | n/a | n/a | Record as WebKit non-enumeration, not an OJD report reorder |
 
-Retest each row in a fresh document after reconnect and after a profile override change. Engine classification uses bundle structure, not a browser allowlist; unknown or ambiguous fingerprints use the canonical row.
+Test each row again in a fresh page after a reconnect and after changing a profile override. OJD tells browser engines apart by how the app bundle is built, not by a list of browser names. An engine it can't identify for sure uses the reference row.
 
-## Post-Reinstall 0.5.0-beta.4 Observations
+## 0.5.0-beta.4 Notes After a Reinstall
 
-User-reported after a full development reinstall: GameSir G7 SE, Chrome 153, macOS 26.6.2, OJD 0.5.0-beta.4. Clean-state protocol not followed.
+A user reported these after a full development reinstall: GameSir G7 SE, Chrome 153, macOS 26.6.2, OJD 0.5.0-beta.4. They didn't follow the clean-start steps.
 
-- Generic HID enumerated with `mapping: n/a`: left stick on axes 0-1, right stick on axes 2-3, LT/RT as binary B6/B7, no trigger or D-pad axis, remaining controls on B0-B5 and B8-B17. The 1209:4A4F descriptor keeps those sticks and digital controls, puts LT/RT pressure on axes 4-5, and omits B6/B7. Needs the clean-state retest.
-- DualShock 4 and DualSense stick Y directions were correct.
-- Apple GameController and Sony system controls could be delayed, reserved, or omitted: View was delayed; Guide or Share did not always reach the page. The receiving application's GameController system-gesture policy controls this, not OJD's report. Blink uses [GameController.framework on macOS][1], and applications control gesture delivery through Apple's [`preferredSystemGestureState`][2].
+- Generic HID showed up with `mapping: n/a`: left stick on axes 0 and 1, right stick on axes 2 and 3, LT/RT as on/off B6/B7, no trigger or D-pad axis, and the other controls on B0 to B5 and B8 to B17. The 1209:4A4F descriptor keeps those sticks and on/off controls, puts LT/RT pressure on axes 4 and 5, and leaves out B6/B7. It needs the clean-start test again.
+- The DualShock 4 and DualSense stick Y directions were right.
+- Apple GameController and Sony system buttons could arrive late, be kept by macOS, or go missing: View arrived late, and Guide or Share didn't always reach the page. The app receiving them decides this through its GameController system-gesture setting, not OJD's report. Blink uses [GameController.framework on macOS][1], and applications control gesture delivery through Apple's [`preferredSystemGestureState`][2].
 
 [1]: https://chromium.googlesource.com/chromium/src/%2B/HEAD/device/gamepad/game_controller_data_fetcher_mac.mm
 [2]: https://developer.apple.com/documentation/gamecontroller/gccontrollerelement/preferredsystemgesturestate
 
-## Exact 0.5.0-beta.3 Matrix
+## 0.5.0-beta.3 Table
 
-These nine rows are user-reported, not verified. Repeat each from clean state, then after a deliberate identity switch. Keep browser name and version with each row.
+Users reported these nine rows, and nobody has confirmed them. Repeat each one from a clean start, then again after switching identity on purpose. Keep the browser name and version with each row.
 
 | Row | Engine | Virtual identity | User-reported beta.3 observation | Required manual disposition |
 | --- | --- | --- | --- | --- |
@@ -109,13 +109,13 @@ These nine rows are user-reported, not verified. Repeat each from clean state, t
 | 8 | Safari/WebKit | Apple GameController | Otherwise functional, but four system/stick-click bindings are inverted as in Blink | Check B8/B9/B10/B11 semantics and Guide behavior |
 | 9 | Firefox/Gecko | Apple GameController, Generic HID, X360 HID, SDL2/3 | No recognition for all four identities | Run each identity independently; separate OJD, Gecko, permission, and harness causes |
 
-Enumeration alone, rumble alone, or a contaminated post-switch result verifies no row. Label records "user-reported" until a clean-state observation exists.
+A gamepad that only shows up, only rumbles, or was tested with leftovers from a switch confirms no row. Label records "user-reported" until someone sees it from a clean start.
 
-The Apple GameController profile can expose Share to native apps as GCXboxGamepad.buttonShare while the browser Gamepad API omits it: separate results. OJD cannot change a browser's controller-gesture settings or standard-layout mapping.
+The Apple GameController profile can give Share to Mac apps as GCXboxGamepad.buttonShare while the browser's Gamepad API leaves it out. Those are separate results. OJD can't change a browser's controller-gesture settings or its standard layout.
 
-## Evidence Boundary
+## What Counts as Proof
 
-Only complete control input, release/neutral, reconnect, and actuator observations from the named browser, version, and publication backend close the matrix. No result establishes universal browser support.
+A row is only done when someone saw every control press, every control let go back to rest, a reconnect, and rumble, in the named browser, version, and publishing backend. No single result proves OJD works in every browser.
 
 ## Further Reading
 

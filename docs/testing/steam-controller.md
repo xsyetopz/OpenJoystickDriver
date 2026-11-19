@@ -1,20 +1,20 @@
 # Test Steam Controller Hardware
 
-Experimental; follows Linux `hid-steam.c` and SDL `SDL_hidapi_steam.c`. No path is verified on hardware.
+Support for the original Steam Controller is experimental. It follows Linux's `hid-steam.c` and SDL's `SDL_hidapi_steam.c`. Nobody has confirmed any kind of connection on hardware yet.
 
 | Path | IDs |
 | --- | --- |
 | Wired | 0x28de:0x1102; prototype IDs 0x1101 (CHELL), 0x1201 (HEADCRAB) |
 | Wireless receiver | 0x28de:0x1142 |
-| Bluetooth LE | 0x28de:0x1105, 0x1106, 0x1202 (HEADCRAB); from SDL only, not driven by Linux `hid-steam.c` |
+| Bluetooth LE | 0x28de:0x1105, 0x1106, 0x1202 (HEADCRAB); from SDL only; Linux `hid-steam.c` doesn't drive these |
 
-Quit Steam fully for the first pass; say so if you repeat with Steam open.
+Quit Steam completely for the first run. If you run it again with Steam open, say so.
 
-OJD discovery matches GamePad top-level collections and exact HID VID/PID identities from bundled records, including keyboard or mouse lizard-mode collections.
+On its own, the controller pretends to be a keyboard and mouse. People call that lizard mode. OJD finds HID devices that say they're a gamepad, plus exact VID/PID matches from its bundled records, including the keyboard and mouse parts of lizard mode.
 
 ## What to Send Back
 
-Fill the [Paste-Back Report Form](#paste-back-report-form). Add the commands run (full output of any that found no device or packets) and any terminal text the controller caused, such as escape sequences. Native listings and raw packets help even if OJD sees nothing.
+Fill in the [Paste-Back Report Form](#paste-back-report-form). Add the commands you ran (with the full output of any that found no device or packets), and any text the controller typed into Terminal, such as escape sequences. macOS listings and raw packets help even if OJD sees nothing.
 
 ## 1. macOS Native Checks
 
@@ -27,9 +27,9 @@ Fill the [Paste-Back Report Form](#paste-back-report-form). Add the commands run
    ioreg -r -c IOHIDDevice -l -w0
    ```
 
-3. Paste entries mentioning Valve, Steam, gamepad, keyboard, mouse, or `28de`. If none, unplug, rerun, paste the entries that disappeared.
-4. Wired: click in a plain Terminal window and press buttons or the d-pad.
-5. Paste printed escape sequences such as `^[[A` (lizard keyboard mode is active).
+3. Paste the entries that mention Valve, Steam, gamepad, keyboard, mouse, or `28de`. If there are none, unplug it, run the commands again, and paste the entries that disappeared.
+4. Wired only: click in a plain Terminal window and press buttons or the D-pad.
+5. Paste any escape sequences it types, such as `^[[A`. Those mean lizard keyboard mode is on.
 
 ## 2. OJD Device Listing
 
@@ -39,7 +39,7 @@ Fill the [Paste-Back Report Form](#paste-back-report-form). Add the commands run
    swift run OpenJoystickDriverHIDTool --list
    ```
 
-2. Paste every `VID:0x28de` line, or say none. Paste keyboard, mouse, or game controller lines present only while connected.
+2. Paste every `VID:0x28de` line, or say there are none. Also paste keyboard, mouse, or game controller lines that only show up while it's plugged in.
 
 ## 3. Wired Controller Capture
 
@@ -49,15 +49,15 @@ Fill the [Paste-Back Report Form](#paste-back-report-form). Add the commands run
    swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1102 --seconds 30
    ```
 
-2. On `Monitoring 0 device(s)`, keep the output; report whether **Controllers** lists the controller.
-3. Try the raw USB facade (direct IOUSBHost on an accessible interface):
+2. If it says `Monitoring 0 device(s)`, keep the output and report whether **Controllers** lists the controller.
+3. Try OJD's raw USB tool, which reads the interface directly through IOUSBHost when macOS allows it:
 
    ```bash
    swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x28de --pid 0x1102 --length 64 --seconds 20
    ```
 
-4. On exclusive ownership, keep the registry owner as evidence. A development DEXT experiment needs an exact Valve personality (these pairs are outside the production Apple USB entitlement). No silent detach or transport fallback.
-5. For `REPORT` or `USB_REPORT` lines, collect one neutral packet and one per action, one at a time, returning to neutral between captures:
+4. If another program holds the device for itself, write down which one the registry shows. A development DEXT test needs an exact Valve personality, because these IDs aren't in Apple's production USB entitlement. OJD never quietly detaches the device or switches to another kind of connection.
+5. If you get `REPORT` or `USB_REPORT` lines, collect one packet at rest and one for each action below. Do one action at a time and let go between captures:
 
    | Input | Action |
    | --- | --- |
@@ -65,11 +65,11 @@ Fill the [Paste-Back Report Form](#paste-back-report-form). Add the commands run
    | Left stick | Full left, right, up, down, then center |
    | Each trigger | Idle, half if possible, full |
    | Each pad | Touch, click, release if visible |
-   | Motion | At rest face up, then roll the right edge down and hold (settles the unverified gyro and accelerometer handedness) |
+   | Motion | At rest face up, then tip the right edge down and hold (this shows which way the gyro and accelerometer count, which nobody has checked) |
 
 ## 4. Wireless Receiver Capture
 
-Plug in only the receiver; controller off.
+Plug in only the receiver, with the controller off.
 
 ```bash
 swift run OpenJoystickDriverHIDTool --list
@@ -78,13 +78,13 @@ swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1142 --second
 
 During the 60 second run:
 
-1. Leave the controller off a few seconds.
-2. Turn it on; wait for connection.
+1. Leave the controller off for a few seconds.
+2. Turn it on and wait for it to connect.
 3. Press and release A once.
-4. Turn it off or disconnect it; wait 10 seconds.
-5. Turn it on without restarting the monitor.
+4. Turn it off or disconnect it, and wait 10 seconds.
+5. Turn it on again without restarting the monitor.
 
-Paste all `REPORT ... bytes=...` lines around connect and disconnect. Check for:
+Paste all `REPORT ... bytes=...` lines around connecting and disconnecting. Look for:
 
 | Event | Report |
 | --- | --- |
@@ -92,41 +92,41 @@ Paste all `REPORT ... bytes=...` lines around connect and disconnect. Check for:
 | Disconnected | Lifecycle report 0x03, payload 0x01 |
 | Already connected | Status fallback report 0x04 |
 
-Report whether **Controllers** lists the controller only after connect, clears it after disconnect, lists it again after reconnect.
+Report whether **Controllers** lists the controller only once it connects, drops it when it disconnects, and lists it again when it reconnects.
 
-## 5. Per-Interface Roles
+## 5. Which Interface Is the Controller
 
-OJD runs one controller per Steam interface whose HID report descriptor has a Feature item, as `hid-steam.c` does. Per `hid-steam.c`: wired exposes mouse 0, keyboard 1, gamepad 2; dongle exposes keyboard 0, slots 1-4. Not verified on macOS.
+A USB device can show up as several parts, called interfaces. OJD runs one controller for each Steam interface whose HID report descriptor has a Feature item, as `hid-steam.c` does. According to `hid-steam.c`, wired shows mouse 0, keyboard 1, and gamepad 2. The dongle shows keyboard 0 and controller slots 1 to 4. Nobody has checked this on macOS.
 
-1. For each path, run `ioreg -r -c IOHIDDevice -l -w0`. For every `28de` entry, paste the parent `IOUSBHostInterface` `bInterfaceNumber` and `ReportDescriptor` bytes. Say which descriptors contain a Feature item (prefix byte 0xB0-0xB3).
+1. For each path, run `ioreg -r -c IOHIDDevice -l -w0`. For every `28de` entry, paste the parent `IOUSBHostInterface` `bInterfaceNumber` and `ReportDescriptor` bytes. Say which descriptors contain a Feature item (prefix byte 0xB0 to 0xB3).
 2. Start OJD and run (`ojd` is the [command-line tool](../../wiki/Command-Line.md)):
 
    ```bash
    ojd controller list --json
    ```
 
-   Expect one entry with `protocol` `ValveSteamController` per Feature interface: wired `interfaceNumber` 2; dongle up to four entries, interfaces 1 to 4. `ojd controller show <ID> --json` gives each `interfaceNumber`. Paste the output and any interfaces `ojd status` lists as unbound.
-3. Dongle: pair controllers one at a time; record which interface's entry receives input. Power one off; only its entry reports disconnected.
+   Expect one entry with `protocol` `ValveSteamController` for each Feature interface: `interfaceNumber` 2 when wired, and up to four entries on interfaces 1 to 4 for the dongle. `ojd controller show <ID> --json` gives each `interfaceNumber`. Paste the output and any interfaces that `ojd status` lists as unbound.
+3. Dongle only: pair controllers one at a time, and write down which interface's entry gets input. Turn one off. Only its entry should report disconnected.
 
 ## 6. Bluetooth LE
 
-State arrives as 20-byte report 0x03 segments, joined into one packet as SDL `SteamControllerPacketAssembler` does. A packet carries only changed chunks; OJD keeps the last value of the rest. Settings also travel as report 0x03 segments. Startup selects wireless packet version 2, as SDL `ResetSteamController` does.
+Over Bluetooth LE, the controller's state comes in small pieces: 20-byte report 0x03 segments. OJD glues them into one packet the way SDL's `SteamControllerPacketAssembler` does. A packet only carries the pieces that changed, so OJD keeps the last value of the rest. Settings travel as report 0x03 segments too. At startup OJD picks wireless packet version 2, as SDL's `ResetSteamController` does.
 
-1. Pair the controller in System Settings > Bluetooth; hold Steam and Y while turning it on to start Bluetooth mode.
-2. Run `ioreg -r -c IOHIDDevice -l -w0`; paste the `28de` entry with `Transport` and `ReportDescriptor`.
+1. Pair the controller in System Settings > Bluetooth. To start Bluetooth mode, hold Steam and Y while you turn it on.
+2. Run `ioreg -r -c IOHIDDevice -l -w0`, and paste the `28de` entry with `Transport` and `ReportDescriptor`.
 3. Monitor the PID from `ioreg`:
 
    ```bash
    swift run OpenJoystickDriverHIDTool --monitor --vid 0x28de --pid 0x1106 --seconds 30
    ```
 
-4. Capture the section 3 actions; paste the `REPORT` lines. Say whether an action gives one report or several short ones.
-5. Start OJD. In **Controllers**, select the controller and click **Open Input Test**. Check it shows as Bluetooth LE and all inputs move.
-6. Hold one button and move one stick; the button stays pressed while only the stick changes.
+4. Capture the actions from section 3 and paste the `REPORT` lines. Say whether an action gives one report or several short ones.
+5. Start OJD. In **Controllers**, select the controller and click **Open Input Test**. Check that it shows as Bluetooth LE and all inputs move.
+6. Hold one button and move one stick. The button should stay pressed while only the stick changes.
 
 ## 7. Lizard Mode
 
-Linux disables the mouse and keyboard lizard mappings while the driver owns the controller, restoring them on close. OJD sends the same feature-report sequence.
+Linux turns off the lizard mouse and keyboard while its driver holds the controller, and turns them back on when it lets go. OJD sends the same feature reports.
 
 | When | Expect or record |
 | --- | --- |

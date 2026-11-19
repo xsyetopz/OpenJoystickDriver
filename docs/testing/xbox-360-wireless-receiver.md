@@ -1,6 +1,6 @@
 # Test an Xbox 360 Wireless Receiver
 
-[Issue #9][1]. Linux `xpad.c` lists three Microsoft receiver IDs, imported as unverified records.
+An Xbox 360 wireless receiver is a small USB box that lets up to four wireless Xbox 360 controllers talk to a computer. See [issue #9][1]. Linux's `xpad.c` lists three Microsoft receiver IDs, and OJD imported them as records that nobody has confirmed on hardware yet.
 
 | ID | Name |
 | --- | --- |
@@ -8,42 +8,42 @@
 | 045e:02a9 | Unofficial receiver identity |
 | 045e:0719 | Xbox 360 Wireless Receiver |
 
-The parser handles Linux's four-byte receiver envelope, presence, state, rumble, and ring-light commands. A state report is 18 bytes with envelope, inner type byte zero. Inner length byte: 13 in the captures of [issue #9][1] (045e:0719) and [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) (045e:02a9); only a wired pad is held to 14. Decoder tests replay those 29-byte packets. No hardware verifies virtual output, rumble, LEDs.
+The receiver wraps every message in a four-byte envelope, like a letter in an envelope. The parser reads Linux's envelope and the presence, state, rumble, and ring-light commands inside it. A state report is 18 bytes inside the envelope, and its inner type byte is zero. Its inner length byte was 13 in the captures from [issue #9][1] (045e:0719) and [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) (045e:02a9). Only a wired controller must say 14. Decoder tests replay those 29-byte packets. No hardware test has confirmed virtual output, rumble, or lights.
 
-Only connected controllers are listed and get output. A presence notification or valid state report connects a slot; a disconnect removes it.
+Only connected controllers are listed and get output. A presence message or a valid state report connects a slot, and a disconnect message removes it.
 
-Validation needs no signing. These pairs are outside the production Apple USB entitlement, so capture tries direct IOUSBHost; try a development DEXT only if ownership evidence shows direct access unavailable.
+Checking the file needs no signing. These IDs aren't in Apple's production USB entitlement, so capture tries IOUSBHost directly. Try a development DEXT only if the ownership report shows direct access isn't available.
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/9
 
-## Direct USB Input Evidence (Pull Request #54)
+## Direct USB Input Results (Pull Request #54)
 
-2026-10-25, Intel iMac20,1, macOS 26.7.1, 045e:02a9 on interface 0 (endpoints 81/01), patched `OpenJoystickDriverHIDTool --record-probe`, bundled record. No capture in the repository.
+2026-10-25, Intel iMac20,1, macOS 26.7.1, 045e:02a9 on interface 0 (endpoints 81/01), a patched `OpenJoystickDriverHIDTool --record-probe`, the bundled record. The capture isn't in the repository.
 
 | Capture | Result |
 | --- | --- |
 | 25 s | 903 packets, 890 snapshots, zero parse errors |
-| Axes | Both sticks reached the canonical full range, -32767...32767; both triggers 0...65535 |
+| Sticks and triggers | Both sticks reached the full range, -32767...32767; both triggers 0...65535 |
 | Buttons | Every D-pad direction, A, X, Guide, both shoulders |
 | 15 s | 14 packets, 13 snapshots, zero parse errors; B, Y, Start, Back |
-| Reconnection | Deliberate; notifications sent, decoding resumed |
+| Reconnecting | Done on purpose; messages were sent and reading started again |
 
-Stick clicks are covered by the next capture. Empty-slot publication, games, rumble and LEDs need a provisioned app run, because that build had no virtual-HID output.
+The next capture covers the stick clicks. That build had no virtual-HID output, so empty-slot publishing, games, rumble, and lights need a run with a provisioned app.
 
-## Direct USB Input Evidence (PR #54 Merge Commit)
+## Direct USB Input Results (PR #54 Merge Commit)
 
-Source probe built from `9bade60d2` in an isolated Swift 6.3 compatibility copy, 045e:02a9.
+A source probe built from `9bade60d2` in a separate Swift 6.3 compatibility copy, 045e:02a9.
 
 | Capture | Result |
 | --- | --- |
 | 60 s | 3,371 packets, 3,363 snapshots, zero parse errors |
-| Observed | Face buttons, shoulders, both stick clicks, every D-pad direction, full ranges of both sticks and triggers |
-| Second capture | Start, Back, Guide, disconnect and reconnect; terminated by hand, no final summary |
-| Input Test | Paired controller appeared and controls responded in the isolated, ad-hoc-signed app |
+| Seen | Face buttons, shoulders, both stick clicks, every D-pad direction, the full range of both sticks and triggers |
+| Second capture | Start, Back, Guide, disconnect and reconnect; stopped by hand, so no final summary |
+| Input Test | The paired controller showed up and its controls responded in the separate, ad-hoc-signed app |
 
-Next run, on a provisioned build with the virtual HID entitlement: virtual output, games, rumble, LEDs and empty-slot virtual publication.
+Next, on a provisioned build with the virtual HID entitlement: virtual output, games, rumble, lights, and virtual publishing of empty slots.
 
-## Find and Validate the Receiver Record
+## Find and Check the Receiver Record
 
 1. Find the PID in System Information or the OJD HID tool.
 2. Pick its file under `Sources/OpenJoystickDriverKit/Resources/Controllers/`. For 045e:0719:
@@ -53,32 +53,34 @@ Next run, on a provisioned build with the virtual HID entitlement: virtual outpu
      Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --validate-only
    ```
 
-## Capture Connection and Input
+## Capture Connecting and Input
 
-1. Quit Steam, games, other controller tools.
-2. Connect the receiver, pair one controller, run:
+1. Quit Steam, games, and other controller tools.
+2. Plug in the receiver, pair one controller, and run:
 
    ```bash
    just diagnose-record \
      Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --seconds 45
    ```
 
-3. Record:
-   - `USB_TX` presence inquiry `08 00 0F C0 00…` at startup.
-   - `CONTROLLER_CONNECTION state=connected` after pairing.
-   - `USB_TX` receiver-wrapped Player 1 ring-light packet.
-   - `USB_RX`, then correct `EVENT` lines for every control.
-   - `CONTROLLER_CONNECTION state=disconnected` after power-off.
-   - No stale held buttons after disconnect and reconnect.
+3. Look for, and write down:
+   - `USB_TX` with the "who's there?" message `08 00 0F C0 00…` at startup
+   - `CONTROLLER_CONNECTION state=connected` after pairing
+   - `USB_TX` with the Player 1 ring-light packet wrapped for the receiver
+   - `USB_RX`, then correct `EVENT` lines for every control
+   - `CONTROLLER_CONNECTION state=disconnected` after you turn the controller off
+   - no buttons stuck down after a disconnect and reconnect
 
-4. If the USB interface is unavailable, keep the route and registry owner; no detach or cross-transport fallback.
-5. Attach the output (raw packets: inspect first) to issue #9 with macOS version, Mac model, receiver VID/PID and branding, controller model, OJD commit, route, reconnect results, wrong or missing inputs.
+4. If the USB interface isn't available, keep the road OJD chose and the program that holds it. OJD never detaches the device or falls back to another kind of connection.
+5. Add the output to issue #9 (read raw packets first) with your macOS version, Mac model, receiver VID/PID and branding, controller model, OJD commit, road, reconnect results, and any wrong or missing inputs.
 
 ## Capture Receiver Slots
 
-One pipeline per slot: an interface with class triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four, each sending the presence inquiry at startup. A slot connects when it reports a controller present or sends a valid state report; the manager assigns its player indicator from a pool. On 045e:02a9 and 045e:0719, slot 0 is interface 0, endpoints 81/01. [Pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4, 6 (input endpoints 81, 83, 85, 87) on 045e:02a9; only interface 0 delivered input. Step 1 below records the other 045e:0719 slot interfaces.
+A slot is one of the receiver's four seats for a controller. OJD runs one pipeline per slot. A slot is an interface with class triple FF/5D/81 and one interrupt IN and one OUT endpoint. OJD takes them in interface order, at most four, and each one sends the "who's there?" message at startup. A slot connects when it reports a controller or sends a valid state report, and the manager gives it a player light from a shared pool.
 
-1. Plug in the receiver; record interface numbers:
+On 045e:02a9 and 045e:0719, slot 0 is interface 0, endpoints 81/01. [Pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4, 6 (input endpoints 81, 83, 85, 87) on 045e:02a9, but only interface 0 sent input. Step 1 below records the other 045e:0719 slot interfaces.
+
+1. Plug in the receiver and write down the interface numbers:
 
    ```bash
    ioreg -p IOUSB -l -w0
@@ -92,9 +94,9 @@ One pipeline per slot: an interface with class triple FF/5D/81 and one interrupt
    ojd controller list --json
    ```
 
-   Expect one entry with `protocol` `XboxXUSB:Receiver` per paired controller, none for an empty slot. `ojd controller show <ID> --json` gives each entry's `interfaceNumber` (`N`) for a FF/5D/81 interface. Paste it.
-3. Pair one controller at a time; record which entry gets input and which ring-light quadrant lights.
-4. Pair controllers on slot 0 and a later slot; restart OJD, receiver plugged in. No slot sends SET_CONFIGURATION (device is configured); every paired slot resumes input. If slot 0 alone reconnects mid-run (say, a transfer error), later slots keep input.
-5. Power off one controller: only its slot disconnects.
+   Expect one entry with `protocol` `XboxXUSB:Receiver` for each paired controller, and none for an empty slot. `ojd controller show <ID> --json` gives each entry's `interfaceNumber` (`N`) for a FF/5D/81 interface. Paste it.
+3. Pair one controller at a time. Write down which entry gets input and which quarter of the ring light turns on.
+4. Pair controllers on slot 0 and on a later slot, then restart OJD with the receiver still plugged in. No slot should send SET_CONFIGURATION, because the device is already set up, and every paired slot should get input again. If only slot 0 reconnects during a run (after a transfer error, say), the later slots keep their input.
+5. Turn off one controller. Only its slot should disconnect.
 
-Then verify both rumble motors and all four ring-light patterns. Hardware-verified needs presence, input, reconnect, rumble, LED checks passing.
+Then check both rumble motors and all four ring-light patterns. To count as hardware-verified, presence, input, reconnect, rumble, and light checks must all pass.

@@ -1,6 +1,6 @@
 # Wired Switch Input-Only Pads
 
-Licensed wired Switch pads often send one fixed HID input report and ignore Switch Pro subcommands. SDL lists them as `SwitchInputOnlyController`; the catalog imports them from SDL's `controller_list.h` as `NintendoSwitchInputOnly` records:
+Many licensed wired Switch pads are simple: they send one fixed HID input report and ignore the extra commands a Switch Pro Controller understands. SDL calls them `SwitchInputOnlyController`. OJD's catalog imports them from SDL's `controller_list.h` as `NintendoSwitchInputOnly` records:
 
 | Controller | VID:PID |
 | --- | --- |
@@ -23,31 +23,31 @@ Licensed wired Switch pads often send one fixed HID input report and ignore Swit
 | PowerA Nano Wired Controller | 20d6:a718 |
 | ZUIKI MasCon | 33dd:0001, 33dd:0002, 33dd:0003 |
 
-Names come from SDL's comments. No pad is hardware-checked.
+The names come from SDL's comments. Nobody has checked any of these pads on hardware.
 
 ## Report Layout
 
-No report ID. The driver reads the first 7 bytes (SDL's `SwitchInputOnlyControllerStatePacket_t`).
+The report has no ID byte. The driver reads the first 7 bytes (SDL's `SwitchInputOnlyControllerStatePacket_t`).
 
 | Offset | Contents |
 | --- | --- |
 | 0 | 0x01 Y, 0x02 B, 0x04 A, 0x08 X, 0x10 L, 0x20 R, 0x40 ZL, 0x80 ZR |
 | 1 | 0x01 Minus, 0x02 Plus, 0x04 left stick click, 0x08 right stick click, 0x10 Home, 0x20 Capture |
-| 2 | Hat: 0-7 clockwise from up; other values neutral |
-| 3, 4 | Left stick X, Y; unsigned, center 0x80, up and left low |
-| 5, 6 | Right stick X, Y; same encoding |
+| 2 | D-pad (hat): 0 to 7, going clockwise from up. Any other value means not pressed |
+| 3, 4 | Left stick X, Y. No sign, center 0x80, up and left are low |
+| 5, 6 | Right stick X, Y, read the same way |
 
-Face buttons map by position (B south, A east, Y west, X north). ZL, ZR digital.
+Face buttons map by where they sit (B bottom, A right, Y left, X top). ZL and ZR are on or off, with no in-between.
 
-## Unsupported
+## What Doesn't Work
 
-- Rumble, player lights, motion: no Switch output reports.
-- Taiko drum and MasCon lever: no dedicated controls; same bits as a pad.
+- Rumble, player lights, and motion: these pads don't take Switch output reports.
+- The Taiko drum and the MasCon lever have no controls of their own. They send the same bits as a normal pad.
 
-## Procedure
+## Steps
 
 1. Connect the pad over USB.
-2. Check the route (`ojd` is the [command-line tool](../../wiki/Command-Line.md); `<controller>` is a listed ID or `VVVV:PPPP`); `show` reports NintendoSwitchInputOnly.
+2. Check how OJD connected it (`ojd` is the [command-line tool](../../wiki/Command-Line.md); `<controller>` is a listed ID or `VVVV:PPPP`). `show` should report NintendoSwitchInputOnly.
 
    ```bash
    ojd controller list
@@ -60,6 +60,6 @@ Face buttons map by position (B south, A east, Y west, X north). ZL, ZR digital.
    ojd controller watch <controller>
    ```
 
-4. Push each stick fully right, then fully up: positive X, negative Y.
-5. Press every button, D-pad direction, Home, Capture; check each matches.
+4. Push each stick fully right, then fully up. Right should give a positive X, and up a negative Y.
+5. Press every button, every D-pad direction, Home, and Capture. Check that each one matches.
 6. Report in an issue with the pad's VID:PID.

@@ -1,10 +1,14 @@
 # Test the SCUF Envision Pro
 
-Wired Envision Pro: HID 2E95:434D, with hardware-recorded descriptor and element evidence for report 6 (issue 33). SCUF 2E95:0504 is a separate GIP identity.
+This page covers the wired Envision Pro, HID 2E95:434D. Its descriptor and its report 6 were recorded from real hardware (issue 33). SCUF 2E95:0504 is a different, GIP identity.
 
-Mapped: X/Y left stick, Z/Rz right stick, Rx/Ry triggers, buttons 1-10, hat. Unclaimed: buttons 11-19, physical output.
+What OJD maps and what it leaves alone:
 
-## Validate the Record and Parser
+| Mapped | Left alone |
+| --- | --- |
+| X/Y as the left stick, Z/Rz as the right stick, Rx/Ry as the triggers, buttons 1-10, the hat (D-pad) | Buttons 11-19, rumble and lights |
+
+## Check the Record and Parser
 
 ```bash
 just diagnose-record \
@@ -13,14 +17,14 @@ just diagnose-record \
 swift test --filter SCUFEnvisionParserTests
 ```
 
-Expect `RECORD_VALIDATION result=valid`. Tests cover report-ID filtering, axis layout, button limit, hat diagonals and neutral, other-controller fallback.
+Expect `RECORD_VALIDATION result=valid`. The tests check that OJD keeps only report 6, reads the stick and trigger layout, stops at button 10, reads the D-pad diagonals and its rest position, and that other Generic HID controllers still get the default layout.
 
-## Verify Hardware
+## Check on Hardware
 
-1. Connect by wire; capture identity and macOS version on the IOHID physical HID path.
-2. Check only report 6 changes normalized state.
-3. Move both sticks to every edge; press each trigger alone.
+1. Plug it in with a cable. Write down its identity and the macOS version on the IOHID physical HID road.
+2. Check that only report 6 changes what OJD reads.
+3. Push both sticks to every edge, and press each trigger by itself.
 4. Press buttons 1-10 and each D-pad direction.
-5. Check neutral, disconnect, reconnect.
+5. Check the rest position, unplugging, and plugging back in.
 
-Record buttons 11-19 unassigned. Not verified: paddles, side buttons, rumble, lighting, wireless, other identities.
+Write down that buttons 11-19 do nothing. Not checked: paddles, side buttons, rumble, lights, wireless, other identities.

@@ -1,5 +1,7 @@
 # NITHO MLT-KRMA-K Test Record
 
+The NITHO MLT-KRMA-K is one pad that pretends to be many: a slider on its back picks which controller it says it is. This page records what each slider position looked like to a Mac and to OJD.
+
 ## Contents
 
 - [Test Setup](#test-setup)
@@ -34,7 +36,7 @@ The back slider picks the mode:
 | S | Switch |
 | 2.4G | USB receiver |
 
-By cable the pad takes the identity of the slider position. The receiver reads the pad only on 2.4G: with the slider on M, X, S, or V3 and the receiver plugged in, the light flashed purple, cyan, green, or red and no input came. By cable the light flashes slowly while charging (as the manual says); input still arrives.
+By cable, the pad takes the identity of the slider position. The receiver only reads the pad on 2.4G. With the slider on M, X, S, or V3 and the receiver plugged in, the light flashed purple, cyan, green, or red, and no input came. By cable, the light flashes slowly while charging (as the manual says), and input still arrives.
 
 | Mode | VID:PID | Product string | OJD protocol | Tested |
 | --- | --- | --- | --- | --- |
@@ -54,7 +56,7 @@ By cable the pad takes the identity of the slider position. The receiver reads t
 
 ## M Mode over Bluetooth
 
-DUALSHOCK 4 report `0x11` (78 bytes), read by the built-in DUALSHOCK 4 record. macOS drives rumble and lighting.
+It sends DUALSHOCK 4 report `0x11` (78 bytes), which the built-in DUALSHOCK 4 record reads. macOS handles rumble and lights.
 
 | Byte | Contents |
 | --- | --- |
@@ -66,7 +68,7 @@ DUALSHOCK 4 report `0x11` (78 bytes), read by the built-in DUALSHOCK 4 record. m
 
 ## 2.4G Receiver
 
-macOS binds its Xbox 360 driver to the receiver. The HID descriptor has no hat, D-pad on buttons 12 to 15, Z and Rz as triggers, Y up positive; OJD's hid-descriptor protocol has a shape for it. macOS owns the output: a Game Controller haptics engine ran the left and right motor one at a time, and `ojd controller rumble` reports no motor. The 20-byte report is the pad's Xbox 360 report:
+macOS puts its own Xbox 360 driver on the receiver. The HID descriptor has no hat: the D-pad is buttons 12 to 15, Z and Rz are the triggers, and Y counts up as positive. OJD's hid-descriptor protocol has a shape for that. macOS holds the output: a Game Controller haptics engine ran the left and right motor one at a time, and `ojd controller rumble` reports no motor. The 20-byte report is the pad's Xbox 360 report:
 
 | Byte | Contents |
 | --- | --- |
@@ -77,7 +79,7 @@ macOS binds its Xbox 360 driver to the receiver. The HID descriptor has no hat, 
 
 ## V3 Mode over Bluetooth LE
 
-V3 is a Bluetooth LE multi-touch digitizer (HID page `0x0D`, usage `0x04`) for a phone app: each control taps a fixed place, each stick drags a contact from a fixed center. Light solid red. Report 1: 18 bytes: four 4-byte contact slots from byte 1, contact count in byte 17.
+In V3 mode the pad pretends to be fingers on a phone screen (a Bluetooth LE multi-touch digitizer, HID page `0x0D`, usage `0x04`) for a phone app. Each button taps a fixed spot, and each stick drags a finger from a fixed center. The light is solid red. Report 1 is 18 bytes: four 4-byte finger slots starting at byte 1, and the finger count in byte 17.
 
 | Slot byte | Contents |
 | --- | --- |
@@ -85,7 +87,7 @@ V3 is a Bluetooth LE multi-touch digitizer (HID page `0x0D`, usage `0x04`) for a
 | 1, 2 | X, 12 bits little-endian, 0 to 3500 |
 | 2, 3 | Y, the upper 4 bits of byte 2 then byte 3, 0 to 4095 |
 
-The 1949:0402 record's v3 mode matches the Bluetooth LE link and reads contacts via a touch layout. A contact starting within 150 of a stick center drags that stick until it lifts; full deflection is 800 from the left center, 280 from the right. Any other contact holds the nearest spot within 150. Spots from one press every 2 seconds:
+The 1949:0402 record's v3 mode matches the Bluetooth LE connection and reads the fingers through a touch layout. A finger that starts within 150 of a stick center drags that stick until it lifts. Full push is 800 from the left center and 280 from the right. Any other finger presses the nearest spot within 150. Spots measured from one press every 2 seconds:
 
 | Control | X, Y |
 | --- | --- |
@@ -105,7 +107,7 @@ The 1949:0402 record's v3 mode matches the Bluetooth LE link and reads contacts 
 | Left stick center | 875, 665; up is +X, right is +Y |
 | Right stick center | 1782, 3222; up is +X, right is +Y |
 
-Observed with `ojd controller watch`:
+What `ojd controller watch` showed:
 
 | Control | Behavior |
 | --- | --- |
@@ -115,11 +117,11 @@ Observed with `ojd controller watch`:
 | Right stick | a held push moves the contact about 280 from center, 21 at a time, and lifts it after about 0.6 s; the record gives it a travel of 280, so a swipe reads as full deflection until it lifts; a contact going further (a capture with circles) stays at full deflection |
 | Triggers | fully pulled or released |
 
-An Android app that moves the tap places breaks this map. The Manba One gamepad shares 1949:0402 over USB and runs the default HIDDescriptor mode.
+An Android app that moves the tap spots breaks this map. The Manba One gamepad also uses 1949:0402 over USB, and runs the default HIDDescriptor mode.
 
 ## M Mode by Cable
 
-With Bluetooth off and a USB cable in, the pad is 054C:05C4 Wireless Controller. It sends DUALSHOCK 4 USB report `0x01` (64 bytes) about once a millisecond, the [Bluetooth report](#m-mode-over-bluetooth) bytes one place earlier, read by the built-in DUALSHOCK 4 record. Frame counter (byte 7) and sensor timestamp (bytes 10, 11) stay zero, so OJD takes each report's arrival as liveness. `ojd controller watch` reported every control. M and M2 send no control. Pressing Home drops the pad off USB until replugged.
+With Bluetooth off and a USB cable in, the pad is 054C:05C4 Wireless Controller. It sends DUALSHOCK 4 USB report `0x01` (64 bytes) about once a millisecond, the [Bluetooth report](#m-mode-over-bluetooth) bytes one place earlier, read by the built-in DUALSHOCK 4 record. The frame counter (byte 7) and sensor timestamp (bytes 10, 11) stay zero, so OJD treats each report that arrives as a sign the pad is alive. `ojd controller watch` reported every control. M and M2 send nothing. Pressing Home drops the pad off USB until you replug it.
 
 ## V3 by Cable
 
@@ -133,33 +135,33 @@ Slider on V3, USB cable in: 2563:0526 Android GamePad. Report 7 (11 bytes) holds
 | 7 | View `0x04`, Menu `0x08`, Home `0x10`, L3 `0x20`, R3 `0x40` |
 | 8, 9 | RT (Accelerator) and LT (Brake), `0x00` to `0xFF` |
 
-SDL_GameControllerDB maps this ID's buttons 1, 4, 5 to A, X, Y with no Home, putting A on West, X on North, Y on South. The 2563:0526 record's nitho mode maps by label and matches manufacturer shanwan, product Android GamePad. M1 and M2 send nothing. Other pads on 2563:0526 run the default mode (SDL layout). The release is `0x0100`, as on the SDL line, so a ShanWan pad with the same strings reads its face buttons rotated.
+SDL_GameControllerDB maps this ID's buttons 1, 4, 5 to A, X, Y with no Home, which puts A on the left, X on top, and Y on the bottom. The 2563:0526 record's nitho mode maps by the printed labels, and matches manufacturer shanwan, product Android GamePad. M1 and M2 send nothing. Other pads on 2563:0526 run the default mode (SDL's layout). The release is `0x0100`, the same as on the SDL line, so a ShanWan pad with the same name strings reads its face buttons turned around.
 
 ## X by Cable
 
-Slider on X, USB cable in: once 054C:0268, blue light, Sixaxis USB report 1 (49 bytes). Manufacturer Sony Computer Entertainment (a DUALSHOCK 3 names Sony). Byte 3 holds the face buttons: A on Circle `0x20`, B on Cross `0x40`, X on Triangle `0x10`, Y on Square `0x80`, so the Sixaxis family read A as East, B as South, X as North, Y as West. The 054C:0268 patch has a nitho mode that matches the manufacturer and maps the four bits by label.
+Slider on X, USB cable in: once 054C:0268, blue light, Sixaxis USB report 1 (49 bytes). Manufacturer Sony Computer Entertainment (a DUALSHOCK 3 names Sony). Byte 3 holds the face buttons: A on Circle `0x20`, B on Cross `0x40`, X on Triangle `0x10`, Y on Square `0x80`. So the Sixaxis family read A as right, B as bottom, X as top, Y as left. The 054C:0268 patch has a nitho mode that matches the manufacturer and maps the four bits by label.
 
-The pad took this identity once (slider to X, cable in), not in the retest. V3 to X kept 2563:0526 with a green light. A replug on X, or S to X, gave 045E:028E Xbox360 For Windows with a cyan light. In a later run, M to X gave 2563:0526 and about 17 seconds later 045E:028E; just before the switch the pad sent a 0.35-second burst of LT and of LB with LT. Not verified: the nitho mode on the pad.
+The pad took this identity once (slider to X, cable in), and not when tested again. Moving from V3 to X kept 2563:0526 with a green light. A replug on X, or moving from S to X, gave 045E:028E Xbox360 For Windows with a cyan light. In a later run, M to X gave 2563:0526, then about 17 seconds later 045E:028E. Just before the switch the pad sent a 0.35-second burst of LT, and of LB with LT. Not checked: the nitho mode on the real pad.
 
-The cyan identity sends the same Xbox 360 report as the [2.4G receiver](#24g-receiver). `ojd controller watch` reported every control. Slider on 2.4G by cable: same identity and reading, triggers reaching 65535.
+The cyan identity sends the same Xbox 360 report as the [2.4G receiver](#24g-receiver). `ojd controller watch` reported every control. With the slider on 2.4G by cable: same identity and reading, with the triggers reaching 65535.
 
 ## BSP-G6S-HID over Bluetooth LE
 
-The pad pairs over Bluetooth LE as BSP-G6S-HID (1949:0402) with the slider on 2.4G and no receiver, or on V3 with X held while Home turns the pad on. Each time it uses a new address, so System Settings lists one more BSP-G6S-HID. Light: solid green on 2.4G, flashing yellow on V3. The descriptor is a standard gamepad. Report 3 is a 16-bit consumer key. Report 4 (11 bytes) holds X, Y, Z, Rz, a hat, 16 buttons, Accelerator, Brake. The 1949:0402 record runs its default HIDDescriptor mode, because v3 matches product BSP-G6S only. Home, M1, M2 send no report, also to a plain IOHID client with the OJD service stopped. An earlier session connected this identity with no input report.
+The pad pairs over Bluetooth LE as BSP-G6S-HID (1949:0402) with the slider on 2.4G and no receiver, or on V3 with X held while Home turns the pad on. It uses a new address each time, so System Settings lists one more BSP-G6S-HID every time. The light is solid green on 2.4G and flashing yellow on V3. The descriptor is a standard gamepad. Report 3 is a 16-bit media key. Report 4 (11 bytes) holds X, Y, Z, Rz, a hat, 16 buttons, Accelerator, and Brake. The 1949:0402 record runs its default HIDDescriptor mode, because v3 only matches the product name BSP-G6S. Home, M1, and M2 send no report, even to a plain IOHID program with the OJD service stopped. One earlier session connected this identity and got no input report.
 
 ## S Mode
 
-Slider on S: 057E:2009 Pro Controller, by cable and over Bluetooth Classic. OJD's Switch Pro protocol reads every control. LT and RT are on or off, as on a Pro Controller. Buttons map by position: A reads as East, B South, X North, Y West. Manufacturer `Nintendo Co., Ltd.`, serial `000000000001`, release `0x0200`: no mode match tells it from a Nintendo Pro Controller. Over Bluetooth the first connect sent no report. After the Mac slept, the pad reconnected only through **Connect** in System Settings; then every control read, Home included.
+Slider on S: 057E:2009 Pro Controller, by cable and over Bluetooth Classic. OJD's Switch Pro protocol reads every control. LT and RT are on or off, as on a Pro Controller. Buttons map by where they sit: A reads as right, B bottom, X top, Y left. Manufacturer `Nintendo Co., Ltd.`, serial `000000000001`, release `0x0200`: nothing OJD can match on tells it apart from a real Nintendo Pro Controller. Over Bluetooth, the first connection sent no report. After the Mac slept, the pad only reconnected through **Connect** in System Settings. Then every control read, Home included.
 
 ## X Mode over Bluetooth
 
-Bluetooth search lists Xbox Wireless Controller. **Connect** in System Settings failed with no message; `blueutil --pair` failed with a page timeout. Holding the pairing button in X paired it as BSP-G6S, solid red light: the [V3](#v3-mode-over-bluetooth-le) identity, read as V3.
+A Bluetooth search lists Xbox Wireless Controller. **Connect** in System Settings failed with no message, and `blueutil --pair` failed with a page timeout. Holding the pairing button in X paired it as BSP-G6S with a solid red light. That's the [V3](#v3-mode-over-bluetooth-le) identity, and OJD reads it as V3.
 
 ## M1, M2, and T
 
-M1 and M2 sent no input in any mode; the 2.4G capture shows no extra report bit. The manual calls them macro buttons: hold SELECT and press M1 or M2 to record up to 12 presses.
+M1 and M2 sent no input in any mode, and the 2.4G capture shows no extra report bit. The manual calls them macro buttons: hold SELECT and press M1 or M2 to record up to 12 presses.
 
-T (TURBO) sends the DUALSHOCK 4 touchpad click, byte 7 `0x02` of the USB report, in M mode by cable; `ojd controller watch` reports TouchpadClick. By cable on X, S, V3, 2.4G, and as BSP-G6S-HID over Bluetooth LE, three taps of T changed no report. The manual describes T as a setup key:
+T (TURBO) sends the DUALSHOCK 4 touchpad click, byte 7 `0x02` of the USB report, in M mode by cable, and `ojd controller watch` reports TouchpadClick. By cable on X, S, V3, and 2.4G, and as BSP-G6S-HID over Bluetooth LE, three taps of T changed no report. The manual describes T as a setup key:
 
 - A then T: turbo on for A.
 - T with left stick up or down: turbo rate.
