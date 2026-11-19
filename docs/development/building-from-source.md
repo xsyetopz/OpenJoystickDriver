@@ -47,6 +47,15 @@ just setup
 | install-fast-dev | Needs an install-dev first. Stops when `/Applications/OpenJoystickDriver.app` is missing. |
 | DriverKit change | A full install can need a restart. Use install-fast-dev while you work. |
 
+### Who May Run an Unsigned Build
+
+| Who runs the build | Rule |
+| --- | --- |
+| Only you, on your own Mac, with SIP or AMFI turned off by your own choice | An unsigned or ad-hoc build is fine for testing and development. Keep it on that Mac. |
+| Anyone else | Sign and notarize it. This covers releases and tester builds, whoever makes them. `package-tester` notarizes the tester DMG. |
+
+Turning off SIP or AMFI makes a Mac less safe, so these docs never ask for it and don't show how. `build-dev` and the install recipes still refuse to run without a signing identity, and no build ships the Xbox USB driver unsigned.
+
 See [Environment files](environment.md) and [Signing](signing.md) for setup, [Create a tester build](tester-builds.md) for tester DMGs, and [Release reconciliation](releases.md) for releases.
 
 ## Everyday Steps
