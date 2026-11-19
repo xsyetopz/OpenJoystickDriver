@@ -5,7 +5,7 @@ See how games and apps see your controller through OpenJoystickDriver (OJD), whi
 - **Who:** anyone who wants to play with a controller on a Mac.
 - **What:** how games see the controller, which games work, and what rumble does.
 - **Where:** any game or app that reads gamepads, such as Steam.
-- **Why:** many games only understand a few controller types; OJD shows them one they know.
+- **Why:** many games only understand a few controller types, so OJD shows them one they know.
 - **How:** connect the controller, then start the game; it sees a [virtual gamepad](Glossary.md#terms).
 
 ```mermaid
@@ -25,7 +25,7 @@ flowchart LR
 
 ## How Games See Your Controller
 
-Games don't read your real controller. OJD reads it and makes one [virtual gamepad](Glossary.md#terms) for each controller. Games read the virtual gamepad. It works like a stand-in: you move the controller, and the stand-in copies each move for the game.
+Games don't read your real controller. OJD reads it and makes one [virtual gamepad](Glossary.md#terms) for each controller, and games read that. It works like a stand-in: you move the controller, and the stand-in copies each move for the game.
 
 ```mermaid
 flowchart LR
@@ -82,7 +82,7 @@ To remove the override, choose **Automatic**. It applies to every connected cont
 
 Results come from the maintainer (macOS 27) and one tester (macOS 26.7.1, ZD Ultimate Legend). None is a guarantee. "Not verified" means no hardware result.
 
-Each game reads controllers in one way, called an interface. The interface decides whether the game sees the OJD virtual gamepad. OJD can't change how another app reads controllers.
+Each game reads controllers in one way, called an interface, and the interface decides whether the game sees the OJD virtual gamepad. OJD can't change how another app reads controllers.
 
 ### Results by Interface
 
