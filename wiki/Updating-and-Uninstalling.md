@@ -2,12 +2,7 @@
 
 Get a newer OpenJoystickDriver (OJD), or take it off your Mac completely.
 
-- **Who:** anyone who wants a newer OJD, or wants it gone.
-- **What:** how update checks work, how to install a newer version, and how to remove everything.
-- **When:** when OJD tells you a newer version is out, or whenever you choose.
-- **Where:** the [GitHub Releases page](https://github.com/xsyetopz/OpenJoystickDriver/releases), and **Settings** > **General**.
-- **Why:** a check only tells you about a version, and you install it yourself.
-- **How:** download the DMG and replace the app; to uninstall, follow the list below.
+OJD can tell you when a newer version is out, but you install it yourself: download the DMG from the [GitHub Releases page](https://github.com/xsyetopz/OpenJoystickDriver/releases) and replace the app. Update checks are in **Settings** > **General**.
 
 ```mermaid
 flowchart LR

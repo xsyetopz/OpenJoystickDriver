@@ -2,11 +2,7 @@
 
 The Input Test window shows live input from a controller and tests rumble and lighting.
 
-- **Who:** anyone checking that a controller works.
-- **What:** the Input Test window: live buttons, sticks, rumble, and lights.
-- **When:** after you connect a controller, change a record, or change a profile.
-- **Where:** **Controllers** area > **Open Input Test**, or **Test Input** in the menu-bar menu.
-- **How:** press each control and watch the matching one light up.
+Use it after you connect a controller or change a record or profile. Press each control and watch the matching one light up.
 
 ## Open the Input Test Window
 

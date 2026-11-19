@@ -5,11 +5,7 @@ A mod package is a folder of files that teaches OJD about a controller, like an 
 > [!IMPORTANT]
 > Apple signs the list of products that the [Xbox USB driver](Glossary.md#terms) claims. A mod package can't add a controller to that list.
 
-- **Who:** people who want to share controller support with others.
-- **What:** a mod package: a folder of records and profiles with a manifest.
-- **Where:** installed into `~/Library/Application Support/OpenJoystickDriver/Packages`.
-- **Why:** one command adds or removes it, and the signed app stays untouched.
-- **How:** write the manifest, then run `ojd mod validate` and `ojd mod install`.
+A mod package is a folder of records and profiles with a manifest, for sharing controller support with others. One command adds or removes it from `~/Library/Application Support/OpenJoystickDriver/Packages`, and the signed app stays untouched. Write the manifest, then run `ojd mod validate` and `ojd mod install`.
 
 ```mermaid
 flowchart LR

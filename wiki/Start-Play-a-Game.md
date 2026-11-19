@@ -2,13 +2,7 @@
 
 Install OpenJoystickDriver (OJD), connect a controller, and play.
 
-- **Who:** anyone with a controller that macOS doesn't support out of the box.
-- **What you get:** games see a [virtual gamepad](Glossary.md#terms), a pretend controller that OJD drives from your real one.
-- **Why:** many Mac games only understand a few controller kinds. The virtual gamepad is one of those kinds.
-- **Where:** the OJD app, then your game.
-- **When:** once per controller. On macOS 13 or later, OJD then starts when you log in.
-- **How:** install OJD, allow two permissions, then connect the controller.
-- **Time:** about five minutes.
+Many Mac games understand only a few controller kinds. OJD drives a [virtual gamepad](Glossary.md#terms), a pretend controller of one of those kinds, from your real one. You set this up once per controller. On macOS 13 or later, OJD then starts when you log in. It takes about five minutes.
 
 ```mermaid
 flowchart LR

@@ -2,12 +2,7 @@
 
 Look up the words OpenJoystickDriver uses. Each word means the same in the app, its menus, the command-line help, and this guide. **Replaces** lists older or casual words for the same thing. **Command line** shows the name the `ojd` tool uses.
 
-- **Who:** anyone who meets an unfamiliar word in the app or this guide.
-- **What:** one meaning per word, the same in the app, the menus, `ojd`, and the wiki.
-- **When:** when a word in the app, a message, or a page is unfamiliar.
-- **Where:** the **Terms** table below. Other pages link each word here.
-- **Why:** one word per idea, so the app and the guide never disagree.
-- **How:** find the word in the table; **Replaces** lists the older words for it.
+Other pages link each word to the **Terms** table below, so the app and the guide never disagree.
 
 ```mermaid
 flowchart LR

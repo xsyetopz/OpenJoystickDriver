@@ -2,11 +2,7 @@
 
 See how games and apps see your controller through OpenJoystickDriver (OJD), which ones work, and what to expect from rumble.
 
-- **Who:** anyone who wants to play with a controller on a Mac.
-- **What:** how games see the controller, which games work, and what rumble does.
-- **Where:** any game or app that reads gamepads, such as Steam.
-- **Why:** many games only understand a few controller types, so OJD shows them one they know.
-- **How:** connect the controller, then start the game; it sees a [virtual gamepad](Glossary.md#terms).
+Many games understand only a few controller types, so OJD shows them a [virtual gamepad](Glossary.md#terms) of a type they know. Connect the controller, then start any game or app that reads gamepads, such as Steam.
 
 ```mermaid
 flowchart LR

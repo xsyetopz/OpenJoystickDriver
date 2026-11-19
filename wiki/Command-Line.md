@@ -2,11 +2,7 @@
 
 `ojd` lets you control OpenJoystickDriver by typing commands in Terminal instead of clicking. It helps with checking what's wrong, scripts, and bug reports. The app does everything you need day to day, so skip this page if you don't use Terminal.
 
-- **Who:** anyone comfortable typing in Terminal.
-- **What:** `ojd`, which does what the app does by typed commands.
-- **When:** checking what's wrong, writing scripts, or making a bug report.
-- **Where:** Terminal, after you install the `ojd` command.
-- **How:** type `ojd status`, then try the commands below.
+After you install the `ojd` command, type `ojd status`, then try the commands below.
 
 ```mermaid
 flowchart LR

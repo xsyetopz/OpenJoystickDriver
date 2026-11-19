@@ -2,10 +2,6 @@
 
 Something is wrong? Start here. Each part says what you see, why it happens, and what to do.
 
-- **Who:** anyone whose controller, game, or app isn't behaving.
-- **What:** each problem with what you see, why, and what to do.
-- **How:** find what you see below, then follow the steps.
-
 ```mermaid
 flowchart LR
     p[Problem] -->|"not detected"| d[Check connection and permissions]

@@ -2,11 +2,7 @@
 
 Turn OpenJoystickDriver's source code into a working app on your own Mac, to get a fix before the next tester build.
 
-- **Who:** testers who need a fix before the next tester build.
-- **What:** turn the source code into a signed app on your own Mac.
-- **Where:** Terminal, in a copy of the repository, with Xcode tools installed.
-- **Why:** macOS only gives OJD its powers when Apple's permission slip signs it. Builds you share with others must be signed and notarized.
-- **How:** install your provisioning profiles, then run `just install-dev`.
+You need Terminal, a copy of the repository, and the Xcode tools. Install your provisioning profiles, then run `just install-dev`. macOS gives OJD its powers only when the build is signed, and builds you share with others must be signed and notarized.
 
 ## Build OpenJoystickDriver
 

@@ -2,12 +2,7 @@
 
 Which macOS permissions OpenJoystickDriver (OJD) asks for, why it needs each one, and how it keeps your Mac safe.
 
-- **Who:** anyone deciding whether to trust OJD with their Mac.
-- **What:** each permission OJD asks for, and why.
-- **When:** the first time you open OJD, and whenever macOS asks again.
-- **Where:** System Settings > Privacy & Security, or the **Access** area of the app.
-- **Why:** macOS blocks apps from reading controllers or showing them to games until you allow it.
-- **How:** click **Request...** next to each permission in the **Access** area.
+macOS asks the first time you open OJD, and again if a later build needs it. Allow each permission from the **Access** area of the app or from System Settings > Privacy & Security.
 
 ```mermaid
 flowchart LR
@@ -80,10 +75,7 @@ The app doesn't use the camera, the microphone, or Full Disk Access. The app use
 
 ### Grant Input Monitoring and Accessibility
 
-- **What:** two switches in macOS System Settings.
-- **Why:** with **Input Monitoring**, OJD can read your controller. With **Accessibility**, OJD can hand the controller to games. Without both, games see nothing.
-- **When:** once, after you install OJD. Again if a later build asks.
-- **Who:** you. macOS lets only you turn these on.
+With **Input Monitoring**, OJD can read your controller. With **Accessibility**, OJD can hand the controller to games. Without both, games see nothing. macOS lets only you turn these switches on, once after you install OJD and again if a later build asks.
 
 **Check first.** Open OJD and click **Access** in the sidebar. **Allowed** beside both means you're done.
 

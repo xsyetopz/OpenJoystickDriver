@@ -7,11 +7,7 @@ Automating means letting a small program do a job for you. For one action with n
 - the `ojd` command, which you type in Terminal or call from a script
 - the endpoint, a private door on your Mac (a local socket) where your own programs can listen to controller events as they happen
 
-- **Who:** anyone who writes scripts, Shortcuts, or AppleScript.
-- **What:** read controllers, switch profiles, and drive a virtual gamepad from your own program.
-- **When:** a job repeats, such as switching to a racing profile whenever a racing game opens.
-- **Where:** Terminal with `ojd`, the Shortcuts app, or the endpoint socket on your Mac.
-- **How:** start with Shortcuts for one action; use `ojd` or the endpoint for more.
+Automate a job that repeats, such as switching to a racing profile whenever a racing game opens. Start with Shortcuts for a single action, and move to `ojd` in Terminal or the endpoint when you need more.
 
 ```mermaid
 flowchart LR

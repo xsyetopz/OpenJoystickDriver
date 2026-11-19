@@ -2,10 +2,7 @@
 
 Install OJD on more than one Mac and copy your [profiles](Glossary.md#terms) and controller records between them.
 
-- **Who:** anyone with OJD on more than one Mac, such as a desktop and a laptop.
-- **What moves:** your profiles and records, saved as files you carry over.
-- **What doesn't move:** the macOS permissions. Each Mac asks again, because macOS keeps them per Mac.
-- **How:** export on the first Mac, copy the file over, and import it on the other.
+Your profiles and records move as files: export them on the first Mac, copy the file over, and import it on the other. The macOS permissions don't move, because macOS keeps them per Mac, so each Mac asks again.
 
 ```mermaid
 flowchart LR

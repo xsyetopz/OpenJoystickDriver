@@ -2,10 +2,7 @@
 
 Find your way around OpenJoystickDriver (OJD): the menu-bar menu, the app window, and Settings.
 
-- **Who:** anyone finding their way around OJD.
-- **What:** the menu-bar menu, the main window and its areas, and Settings.
-- **Where:** the OJD icon in the menu bar.
-- **How:** click the icon, then choose **Open OpenJoystickDriver**.
+Click the OJD icon in the menu bar, then choose **Open OpenJoystickDriver**.
 
 ```mermaid
 flowchart LR

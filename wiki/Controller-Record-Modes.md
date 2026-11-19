@@ -7,12 +7,7 @@ This page covers two things:
 - the session: what OJD sends to the controller when it starts, while it runs, and when it stops
 - alternative modes: how OJD picks the right mode by connection (link), by the keys a record has, or by asking the controller (probes)
 
-- **Who:** people writing a controller record for a pad with a mode switch.
-- **What:** the part of a record that describes each way a pad can act.
-- **When:** a controller changes its identity with a switch, a key combo, or the cable.
-- **Where:** in your record file under `~/Library/Application Support/OpenJoystickDriver/Controllers`.
-- **Why:** each mode sends different reports, so OJD needs to know which one is active.
-- **How:** describe each mode's session, then say how OJD picks between them.
+Some pads change identity with a switch, a key combination, or the cable, and each mode sends different reports. Describe each mode's session in your record, then say how OJD tells which mode is active.
 
 ```mermaid
 flowchart LR

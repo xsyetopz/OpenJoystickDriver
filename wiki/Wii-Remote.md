@@ -2,11 +2,7 @@
 
 Connect a Wii Remote to OpenJoystickDriver (OJD), and see what OJD reads from it and what OJD can make it do (lights, rumble, sound).
 
-- **Who:** anyone with a Wii Remote.
-- **What:** pairing, which buttons and sensors OJD reads, and lights, rumble, IR, and sound.
-- **Where:** macOS Bluetooth settings to pair, then the **Controllers** area.
-- **Why:** macOS pairs the remote, but games can't read it without OJD.
-- **How:** press 1 and 2 together while Bluetooth settings are open.
+macOS pairs the remote, but games can't read it without OJD. To pair, open Bluetooth settings and press 1 and 2 together. The remote then shows up in the **Controllers** area.
 
 ```mermaid
 flowchart LR

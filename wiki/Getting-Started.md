@@ -2,12 +2,7 @@
 
 Install OpenJoystickDriver, allow what it needs, connect a controller, and see it work.
 
-- **Who:** anyone using OpenJoystickDriver for the first time.
-- **What:** install the app, allow two permissions, connect a controller.
-- **When:** once, on each Mac.
-- **Where:** your Applications folder, then System Settings, then the menu bar.
-- **Why:** games see the controller only after OJD can read it and pass it on.
-- **How:** follow the numbered steps below; it takes about five minutes.
+You do this once on each Mac, and it takes about five minutes. Games see the controller only after OJD can read it and pass it on.
 
 ```mermaid
 flowchart LR

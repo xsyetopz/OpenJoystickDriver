@@ -4,10 +4,7 @@ Check whether your controller works with OpenJoystickDriver (OJD), and what to e
 
 Xbox and PlayStation names are trademarks of Microsoft and Sony. This project isn't affiliated with either company.
 
-- **Who:** anyone checking whether their controller works.
-- **What:** the list of supported controllers, plus clones and plain HID pads.
-- **When:** before you buy a controller, or when yours isn't detected.
-- **How:** find your model below; if it's missing, see [Support Ladder](Support-Ladder.md).
+Check here before you buy a controller, or when yours isn't detected. If your model is missing, see the [Support Ladder](Support-Ladder.md).
 
 ```mermaid
 flowchart LR

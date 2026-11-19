@@ -2,11 +2,7 @@
 
 An assignment makes a button or stick do something else, such as press a key on the keyboard. Combinations and layers let one [profile](Glossary.md#terms) do more with the same few buttons, the way Shift gives each letter key a second job.
 
-- **Who:** anyone who wants a button to do something different.
-- **What:** assignments, combinations, sequences, and layers inside a profile.
-- **Where:** the **Profiles** area of the app, or `ojd profile`.
-- **Why:** a few buttons can do many jobs.
-- **How:** pick a button, then pick what it does.
+Set them up in the **Profiles** area of the app or with `ojd profile`: pick a button, then pick what it does.
 
 ```mermaid
 flowchart LR

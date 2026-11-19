@@ -2,11 +2,7 @@
 
 These settings change what happens when you move a stick, squeeze a trigger, touch a touchpad, or tilt a controller that senses motion.
 
-- **Who:** anyone who wants more from sticks, triggers, touchpads, or motion.
-- **What:** stick modes, trigger stages, touch areas, pointer speed, and gyro aiming.
-- **Where:** sheets in the profile editor, in the **Profiles** area.
-- **Why:** a stick can move the pointer, and tilting the controller can aim.
-- **How:** open a profile, pick the sheet, change the setting, then save.
+For example, a stick can move the pointer, and tilting the controller can aim. Open a profile in the **Profiles** area, pick the sheet for the control, change the setting, then save.
 
 ```mermaid
 flowchart LR

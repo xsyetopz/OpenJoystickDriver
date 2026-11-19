@@ -2,10 +2,7 @@
 
 Open bugs and limits in OpenJoystickDriver (OJD). Each one says what you'll notice, why it happens, and what to do.
 
-- **Who:** anyone who hits a bug that isn't fixed yet.
-- **What:** each issue with what you notice, why it happens, and what to do.
-- **When:** before you report a bug.
-- **How:** find the symptom below, then try its workaround.
+Check here before you report a bug. Find the symptom below, then try its workaround.
 
 ```mermaid
 flowchart LR

@@ -2,12 +2,7 @@
 
 When something goes wrong, OpenJoystickDriver (OJD) shows an error code next to the message, such as `E2038`. The code is like a page number in a repair manual: look it up below to learn what happened and what to do.
 
-- **Who:** anyone who sees a code such as `E2038`.
-- **What:** a list of every code with what happened and what to do.
-- **When:** right after a message with a code appears.
-- **Where:** next to the message in the app, or in the output of `ojd`.
-- **Why:** the code stays the same in every language, so it always finds the right fix.
-- **How:** find the code below, then follow its fix.
+The code appears next to the message in the app and in `ojd` output. It's the same in every language, so it always leads to the right fix.
 
 ```mermaid
 flowchart LR

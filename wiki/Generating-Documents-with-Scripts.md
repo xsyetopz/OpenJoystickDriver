@@ -4,11 +4,7 @@ Use a script to make many similar documents, such as one record for each product
 
 `ojd generate` is the only part of OpenJoystickDriver (OJD) that runs a script. OJD never runs a script in a [mod package](Writing-Controller-Mods.md).
 
-- **Who:** people who write many similar records or profiles.
-- **What:** a JavaScript file that `ojd generate` turns into checked `.plist` files.
-- **When:** several models differ by only a few details.
-- **Why:** one script replaces many hand-copied files.
-- **How:** write the script, run `ojd generate`, then install the files it writes.
+When several controller models differ by only a few details, one JavaScript file can replace many hand-copied records or profiles. Write the script, run `ojd generate` to turn it into checked `.plist` files, then install the files it writes.
 
 ```mermaid
 flowchart LR

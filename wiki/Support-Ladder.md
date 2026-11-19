@@ -2,11 +2,7 @@
 
 Is your controller acting up in OpenJoystickDriver (OJD)? Climb this ladder one step at a time. Each step takes more work than the one before, so stop at the first one that works.
 
-- **Who:** anyone whose controller doesn't work right.
-- **What:** five steps, from doing nothing to changing the source.
-- **When:** before you write a record or report a bug.
-- **Why:** stopping early saves work.
-- **How:** try the steps in order.
+Do this before you write a record or report a bug. There are five steps, from doing nothing to changing the source.
 
 ```mermaid
 flowchart TD

@@ -2,12 +2,7 @@
 
 Found a bug? Tell the maintainer on the [issue tracker](https://github.com/xsyetopz/OpenJoystickDriver/issues). Give enough detail that they can make the same bug happen on their own Mac.
 
-- **Who:** anyone who found a bug.
-- **What:** what to put in a report so the maintainer can repeat the bug.
-- **When:** after you checked [Known Issues](Known-Issues.md) and [Troubleshooting](Troubleshooting.md).
-- **Where:** the [issue tracker](https://github.com/xsyetopz/OpenJoystickDriver/issues).
-- **Why:** a bug the maintainer can repeat is a bug they can fix.
-- **How:** write the steps, then attach a support report from `ojd diagnose`.
+First check [Known Issues](Known-Issues.md) and [Troubleshooting](Troubleshooting.md). Then write the steps that cause the bug and attach a support report from `ojd diagnose`.
 
 ```mermaid
 flowchart LR

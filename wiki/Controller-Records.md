@@ -2,12 +2,7 @@
 
 Use a controller record to teach OpenJoystickDriver (OJD) about a controller, or to change how it drives one. A record is a small file in your own folder. Write one when a controller doesn't work or one detail is wrong, such as a button, a drifting stick, or rumble. The [Support Ladder](Support-Ladder.md) starts with the least work. The sections from [Describe a Controller's Input Reports](#describe-a-controllers-input-reports) on are for advanced users who read report bytes.
 
-- **Who:** anyone whose controller doesn't work, or works with one detail wrong.
-- **What:** a small file that teaches OJD about one controller.
-- **When:** after the [Support Ladder](Support-Ladder.md) says a record is the next step.
-- **Where:** `~/Library/Application Support/OpenJoystickDriver/Controllers`.
-- **Why:** the record fixes a button, a drifting stick, or rumble without an app update.
-- **How:** draft one from a connected controller, edit it, then check and install it.
+Records live in `~/Library/Application Support/OpenJoystickDriver/Controllers`. To make one, draft it from a connected controller, edit it, then check and install it. It fixes the controller without an app update.
 
 ```mermaid
 flowchart LR

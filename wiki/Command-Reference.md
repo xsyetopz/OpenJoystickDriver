@@ -9,12 +9,7 @@ With `--json`, each command prints the object that [cli-output.schema.json](../R
 
 In synopsis lines, a word in capitals is a value you type. `VVVV:PPPP` is a controller model ID: the hexadecimal vendor and product numbers, such as `045E:02D1`. Square brackets mark an optional part. `A|B` means choose one. `...` means you can repeat the part.
 
-- **Who:** anyone looking up the exact spelling of an `ojd` command or option.
-- **What:** every command, its values, and its options.
-- **When:** after [Using the Command Line](Command-Line.md), when you know what you want to do.
-- **Where:** Terminal. Run `ojd COMMAND --help` to see a command's options there.
-- **Why:** one place lists each spelling, so a script uses the right one.
-- **How:** find the group (such as `controller` or `profile`), then the command.
+Each `ojd` command and option is listed here under its group, such as `controller` or `profile`, so a script can use the exact spelling. In Terminal, `ojd COMMAND --help` shows the same options. Read [Using the Command Line](Command-Line.md) first if `ojd` is new to you.
 
 ```mermaid
 flowchart LR

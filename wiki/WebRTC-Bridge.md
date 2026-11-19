@@ -4,11 +4,7 @@ Play a game on one Mac with a controller plugged into another Mac.
 
 Think of it as a long cable over your network. The bridge copies controller input from the first Mac to the second. WebRTC is the technology video calls use to send data straight from one computer to another. The game sees a [virtual gamepad](Glossary.md#terms). Rumble from the game goes back to the first Mac, where the bridge prints it. The controller does not rumble.
 
-- **Who:** anyone who wants to play on one Mac with a controller on another.
-- **What:** `ojd-webrtc-bridge`, a separate program that runs on both Macs.
-- **Where:** two Macs on one network, with OJD installed on both.
-- **Why:** the game Mac may be in another room.
-- **How:** build the bridge, create a token with `ojd access`, and run it on each Mac.
+Use it when the game Mac is in another room. Both Macs need OJD and the same network. Build `ojd-webrtc-bridge`, create a token with `ojd access`, and run the bridge on each Mac.
 
 ```mermaid
 sequenceDiagram

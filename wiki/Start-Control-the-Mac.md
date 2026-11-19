@@ -2,11 +2,7 @@
 
 Make controller buttons press keys, click, move the pointer, or scroll.
 
-- **Who:** anyone who wants to use a controller like a keyboard and mouse, from the couch or for an app with no controller support.
-- **What you make:** a [profile](Glossary.md#terms), a list that says "this button means that key".
-- **Why:** the Mac reacts as if you used the keyboard or mouse.
-- **Where:** the **Profiles** area of the app.
-- **How:** create a profile, then pick a key for each button.
+This helps from the couch, or in an app with no controller support. In the **Profiles** area, create a [profile](Glossary.md#terms), a list that says "this button means that key", then pick a key for each button.
 
 ```mermaid
 flowchart LR

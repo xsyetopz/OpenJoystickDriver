@@ -2,12 +2,7 @@
 
 A [profile](Glossary.md#terms) is your own button layout. Use one to change what your controller's buttons, sticks, triggers, touchpad, and motion sensors do.
 
-- **Who:** anyone who wants their own button layout.
-- **What:** a profile: a saved layout for one controller model.
-- **When:** a game or app needs different buttons, keys, or mouse moves.
-- **Where:** the **Profiles** area of the app, or `ojd profile`.
-- **Why:** you can make the A button press the space bar, or a stick move the mouse.
-- **How:** create a profile, assign buttons, then make it active.
+For example, the A button can press the space bar, or a stick can move the mouse. Create a profile in the **Profiles** area or with `ojd profile`, assign buttons, then make it active.
 
 ```mermaid
 flowchart LR

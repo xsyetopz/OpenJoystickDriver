@@ -4,10 +4,7 @@ OpenJoystickDriver (OJD) makes game controllers that your Mac doesn't support wo
 
 Think of OJD as an interpreter. Your controller speaks its own language. OJD listens and repeats each press through a [virtual gamepad](Glossary.md#terms), a pretend controller that every game understands. It can also turn presses into keys and clicks.
 
-- **Who:** anyone with a controller their Mac doesn't support.
-- **What:** a menu-bar app that makes the controller work in games and apps.
-- **Where:** start with [Start: Play a Game with a Controller](Start-Play-a-Game.md).
-- **How:** install OJD, allow two permissions, connect the controller.
+If your Mac doesn't support your controller, start with [Start: Play a Game with a Controller](Start-Play-a-Game.md): install OJD, allow two permissions, and connect the controller.
 
 ```mermaid
 flowchart LR

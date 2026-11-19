@@ -2,12 +2,7 @@
 
 Connect a controller, find its ID, and set up the [Xbox USB driver](Glossary.md#terms) for Xbox controllers.
 
-- **Who:** anyone plugging in or pairing a controller.
-- **What:** the three ways to connect, and how to find a controller's ID.
-- **When:** the first time you use a controller, or when it isn't detected.
-- **Where:** a USB port, macOS Bluetooth settings, or a wireless dongle; then the **Controllers** area.
-- **Why:** OJD can only read a controller macOS can see.
-- **How:** connect it, then check that it says **Working** in the **Controllers** area.
+Connect with a cable, Bluetooth, or a wireless dongle. OJD can read a controller only after macOS sees it, so check that it says **Working** in the **Controllers** area.
 
 ```mermaid
 flowchart LR
@@ -86,10 +81,7 @@ Apple must grant a special permission, `userclient-access`, before a build can i
 
 ### Approve the Driver
 
-- **What:** a switch for OJD's Xbox USB driver. macOS lists it as **XboxUSBDevice**.
-- **Why:** macOS runs no driver until you allow it, so a genuine Xbox controller on a cable isn't read.
-- **Who:** only genuine Xbox One and Xbox Series controllers on USB. Skip this for every other controller.
-- **When:** once, after you install OJD.
+Only genuine Xbox One and Xbox Series controllers on a USB cable need this step; skip it for every other controller. macOS runs OJD's Xbox USB driver, listed as **XboxUSBDevice**, only after you allow it once.
 
 1. Open the app window. Until you approve the driver, a banner shows **Xbox USB Driver** and **Open System Settings**. Click **Open System Settings**. Or choose Apple menu > **System Settings** yourself.
 2. Click **General**, then **Login Items & Extensions**.
