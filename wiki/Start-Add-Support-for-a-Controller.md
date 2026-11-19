@@ -4,7 +4,10 @@ Teach OJD a controller it does not know.
 
 - **Who:** anyone with a controller OJD doesn't know yet.
 - **What you make:** a controller record, a small file that works like a phrase book.
+- **Why:** without a record, OJD can't tell which button you pressed.
+- **When:** when the controller is missing from [Supported Controllers](Supported-Controllers.md).
 - **Where:** Terminal, with the controller connected.
+- **How:** let OJD watch you press each control, fix its guesses, then install the file.
 
 ## Before You Begin
 
