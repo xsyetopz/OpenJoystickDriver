@@ -1,12 +1,12 @@
 # Support Ladder
 
-Your controller doesn't work right in OpenJoystickDriver (OJD)? Climb this ladder one rung at a time. Each step is more work than the one before, so stop at the first one that works.
+Is your controller acting up in OpenJoystickDriver (OJD)? Climb this ladder one step at a time. Each step takes more work than the one before, so stop at the first one that works.
 
 - **Who:** anyone whose controller doesn't work right.
 - **What:** five steps, from doing nothing to changing the source.
 - **When:** before you write a record or report a bug.
-- **Why:** each step is more work, so stopping early saves time.
-- **How:** try each step in order and stop at the first that works.
+- **Why:** stopping early saves work.
+- **How:** try the steps in order.
 
 ```mermaid
 flowchart TD
@@ -30,11 +30,11 @@ flowchart TD
 
 Steps 1 to 3 need no build and no pull request.
 
-A record is a small file that tells OJD how a controller works: which bytes mean which button, how strong the rumble is, and so on. A patch is a smaller file that fixes one detail of a record OJD already has. Both are XML property lists (`.plist`), the same kind of file macOS uses for settings. `plutil -lint FILE.plist` checks one, and `plutil -convert json -o - FILE.plist` reads one as JSON. Each file declares `apiVersion` `openjoystickdriver/v1alpha3`.
+A record is a small file that tells OJD how a controller works, such as which bytes mean which button and how strong the rumble is. A patch is a smaller file that fixes one detail of a record OJD already has. Both are XML property lists (`.plist`), the kind of file macOS uses for settings. `plutil -lint FILE.plist` checks one, and `plutil -convert json -o - FILE.plist` reads one as JSON. Each file declares `apiVersion` `openjoystickdriver/v1alpha3`.
 
 ## Step 1: Nothing
 
-Many controllers work with no file at all. Most controllers describe themselves when you plug them in, a bit like a name badge with a list of their buttons (the HID report descriptor). Xbox controllers use a known Xbox way of talking instead (Xbox USB and GIP). OJD reads either one.
+Many controllers work with no file at all. Most describe themselves when you plug them in, like a name badge that lists their buttons (the HID report descriptor). Xbox controllers use the Xbox way of talking instead (Xbox USB and GIP). OJD reads both.
 
 1. Run `ojd controller list` to find the vendor and product numbers (VID:PID, such as `045E:02EA`).
 2. Run `ojd controller show VVVV:PPPP`. It shows the identity, handler, capabilities, and [virtual gamepad](Glossary.md#terms). For a device OJD doesn't handle, it shows the reason and next step.
@@ -46,7 +46,7 @@ Stop here if every control reads correctly. If the controller is [Handled by mac
 
 ## Step 2: A Patch
 
-Use a patch when OJD knows your controller but one detail is wrong, such as a stick deadzone (how far you push the stick before it counts). A `ControllerPatch` changes only the parts that differ from the record built into OJD, like a sticky note on a page. `selector` names the model, `patch` holds the changes, and `remove` lists key paths to delete. See [Controller records](Controller-Records.md#how-records-work).
+Use a patch when OJD knows your controller but one detail is wrong, such as a stick deadzone (how far you push the stick before it counts). A `ControllerPatch` changes only the parts that differ from the record built into OJD, like a sticky note on a page. `selector` names the model, `patch` holds the changes, and `remove` lists key paths to delete. See [Controller Records](Controller-Records.md#how-records-work).
 
 1. Run `ojd record draft VVVV:PPPP > 045e-02ea.patch.plist` and press every control for 10 seconds. For a model with a bundled record, the draft is a patch.
 2. Correct the file. This complete patch sets the stick deadzone of `045E:02EA`:
@@ -87,7 +87,7 @@ To undo it, run `ojd record remove 045E:02EA`.
 
 ## Step 3: A Record
 
-Use a record when OJD has never heard of your controller. A `Controller` file describes the whole model: its modes, its buttons and sticks, its rumble, and its tuning. For a model with a bundled record, write a patch instead.
+Use a record when OJD doesn't know your controller. A `Controller` file describes the whole model: its modes, its buttons and sticks, its rumble, and its tuning. For a model with a bundled record, write a patch instead.
 
 1. Run `ojd record draft VVVV:PPPP > 1209-0001.plist` for a connected controller. To start from its SDL_GameControllerDB line, run `ojd record draft VVVV:PPPP --from-sdl > 1209-0001.plist` instead.
 2. Correct the file. This record is the sample in [`docs/sdk/sample`](../docs/sdk/sample), with pid.codes test ID `1209:0001`:
@@ -272,19 +272,19 @@ To share a record, put it in a [mod package](Writing-Controller-Mods.md).
 
 ## Step 4: A Generator Script
 
-Use a generator script when several models are nearly the same, such as one maker's whole product line. Instead of copying a record many times, you write one small JavaScript file that prints all of them.
+Use a generator script when several models are nearly the same, such as one maker's whole product line. Instead of copying a record many times, write one small JavaScript file that prints them all.
 
-1. Write the script. [Generating documents with scripts](Generating-Documents-with-Scripts.md) shows one for three records.
+1. Write the script. [Generating Documents with Scripts](Generating-Documents-with-Scripts.md) shows one for three records.
 2. Print the documents with `ojd generate family.js`, or write them into a folder with `ojd generate family.js --output Controllers`.
 3. Validate and install each file as in step 3: `ojd record validate Controllers/VVVV-PPPP.plist`, then `ojd record install Controllers/VVVV-PPPP.plist`.
 
 ## Step 5: Source
 
-Change OJD's Swift code only when the controller talks in a way OJD can't speak yet, such as a secret handshake or encryption. First make sure a patch or record can't describe it. A fact about one model, such as which byte is the A button, belongs in a record, not in the code. See [CONTRIBUTING.md](../CONTRIBUTING.md) and [Reporting a bug](Reporting-a-Bug.md).
+Change OJD's Swift code only when the controller talks in a way OJD can't speak, such as a secret handshake or encryption. First check that a patch or record can't describe it. A fact about one model, such as which byte is the A button, belongs in a record, not in the code. See [CONTRIBUTING.md](../CONTRIBUTING.md) and [Reporting a Bug](Reporting-a-Bug.md).
 
 ## Further Reading
 
-- [Start: add support for a controller](Start-Add-Support-for-a-Controller.md)
-- [Controller records](Controller-Records.md)
-- [Writing controller mods](Writing-Controller-Mods.md)
-- [Command reference](Command-Reference.md)
+- [Start: Add Support for a Controller](Start-Add-Support-for-a-Controller.md)
+- [Controller Records](Controller-Records.md)
+- [Writing Controller Mods](Writing-Controller-Mods.md)
+- [Command Reference](Command-Reference.md)
