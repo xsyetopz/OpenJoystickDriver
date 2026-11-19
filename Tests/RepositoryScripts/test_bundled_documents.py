@@ -1,4 +1,4 @@
-"""Every bundled document is a property list in the canonical form that `DocumentCoder` writes."""
+"""Every bundled document is a property list in the standard form that `DocumentCoder` writes."""
 
 from __future__ import annotations
 

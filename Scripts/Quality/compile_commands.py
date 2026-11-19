@@ -1,4 +1,4 @@
-"""Writes compile_commands.json for clang-tidy and clangd, which SwiftPM does not emit.
+"""Writes compile_commands.json for clang-tidy and clangd, which SwiftPM does not write.
 
 The database holds one entry per C, C++, and Objective-C source of each SwiftPM Clang target,
 then the entries xmake writes for each tracked xmake project. A nested xmake.lua is skipped,

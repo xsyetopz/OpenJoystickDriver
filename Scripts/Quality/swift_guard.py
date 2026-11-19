@@ -2,8 +2,8 @@
 
 The package keeps Swift 6 mode, the upcoming features, strict memory safety, and warnings as
 errors on every target, and the Xcode project builds against Config/Base.xcconfig with the same
-flags. Tests use Swift Testing outside UI test targets, and a suppression covers one declaration
-rather than the rest of a file.
+flags. Tests use Swift Testing outside UI test targets, and a `swiftlint:disable` comment that
+turns a lint rule off covers one declaration, never the rest of a file.
 """
 
 from __future__ import annotations
