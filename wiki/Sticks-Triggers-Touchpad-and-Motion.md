@@ -1,6 +1,6 @@
 # Sticks, Triggers, Touchpad, and Motion
 
-These settings change what happens when you move a stick, squeeze a trigger, touch a touchpad, or tilt a controller that senses motion. For example, a stick can move the mouse pointer, or tilting the controller can aim in a game.
+These settings change what happens when you move a stick, squeeze a trigger, touch a touchpad, or tilt a controller that senses motion.
 
 - **Who:** anyone who wants more from sticks, triggers, touchpads, or motion.
 - **What:** stick modes, trigger stages, touch areas, pointer speed, and gyro aiming.
@@ -79,7 +79,7 @@ flowchart LR
 
 ## Set Trigger Stages
 
-A dual-stage trigger acts like two buttons in one: a light squeeze (soft stage) and a full squeeze (full stage). Each stage can do its own thing. For example, a light squeeze aims and a full squeeze fires.
+A dual-stage trigger acts like two buttons in one: a light squeeze (soft stage) and a full squeeze (full stage). Each stage can do its own job. For example, a light squeeze aims and a full squeeze fires.
 
 ```mermaid
 flowchart LR
@@ -107,7 +107,7 @@ Touch contact, grid, and swipe can also be assignment sources. See [Assigning bu
 
 ## Set Regions
 
-A region turns part of a stick, trigger, or touchpad into a pretend button. The button is pressed while the input is inside that part. For example, a ring near the stick's edge can press "run" when you push the stick all the way. Assign a region like any other button.
+A region turns part of a stick, trigger, or touchpad into a pretend button, pressed while the input is inside that part. For example, a ring near the stick's edge can press "run" when you push the stick all the way. Assign a region like any other button.
 
 ```mermaid
 flowchart LR
@@ -131,7 +131,7 @@ Rings and sectors of one stick cannot overlap, and neither can bands of one trig
 
 ## Set Pointer Speed
 
-Pointer speed lets a trigger or stick work like a gas pedal for the mouse pointer: the further you press, the faster (or slower) the pointer moves. Scrolling doesn't change.
+Pointer speed lets a trigger or stick work like a gas pedal for the mouse pointer: the further you press, the faster (or slower) it moves. Scrolling doesn't change.
 
 1. Click the pencil button (**Adjust Pointer Speed**) in the **Pointer Speed** group and turn on **Scale pointer speed**.
 2. Select the **Driver**, **Trigger** or **Stick Depth**, and the **Side**.
@@ -144,7 +144,7 @@ For the command line, see [Pointer speed fields](Profile-File-Reference.md#point
 
 ## Set Motion Tuning and Gyro Output
 
-A gyro is the motion sensor inside some controllers. It notices when you turn or tilt the controller. Motion tuning sets how strongly those turns count.
+A gyro is the motion sensor inside some controllers. It notices when you turn or tilt the controller, and motion tuning sets how strongly those turns count.
 
 1. Click the pencil button (**Adjust Motion Tuning**) in the **Motion Tuning** group.
 2. Select the **Coordinate space** and set the sensitivity and other values.
