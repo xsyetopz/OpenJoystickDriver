@@ -1,6 +1,6 @@
 # Using the Command Line
 
-`ojd` lets you control OpenJoystickDriver by typing commands in Terminal instead of clicking. It's handy for checking what's wrong, for scripts, and for bug reports. Everything you need day to day is also in the app, so you can skip this page if you don't use Terminal.
+`ojd` lets you control OpenJoystickDriver by typing commands in Terminal instead of clicking. It helps with checking what's wrong, scripts, and bug reports. The app does everything you need day to day, so skip this page if you don't use Terminal.
 
 - **Who:** anyone comfortable typing in Terminal.
 - **What:** `ojd`, which does what the app does by typed commands.
@@ -27,7 +27,7 @@ To install `ojd`:
 
 ![The Advanced pane of Settings. A red arrow points to Install Command-Line Tool, which lets you type ojd in Terminal after you enter your password](../docs/screenshots/steps/install-command-line-tool.png)
 
-The app puts a shortcut (a link) to itself at `/usr/local/bin/ojd`, where Terminal looks for commands. If a real file already sits there, the app leaves it alone. **Uninstall** in the same place removes the link.
+The app puts a link to itself at `/usr/local/bin/ojd`, where Terminal looks for commands. If a real file already sits there, the app leaves it alone. **Uninstall** in the same place removes the link.
 
 To make the link yourself, put it in a folder on your `PATH` (the list of folders Terminal searches). Writing to `/usr/local/bin` can need `sudo`.
 
