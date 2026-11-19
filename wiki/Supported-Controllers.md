@@ -133,7 +133,11 @@ The Ant Esports GP100 starts in XInput mode, where macOS sees no input. Hold **S
 
 OJD can read some gamepads that aren't in its catalog. HID (Human Interface Device) is the standard way a gamepad tells a computer what it has, like a menu that lists its buttons and sticks. That menu is called the report descriptor. OJD reads it and works out the rest.
 
-If no record fits, but the controller passes the checks below, OJD still serves it as a generic controller. `ojd controller show` says so. A record that keeps the pad with macOS, or an idle mode, stays as it is. OJD doesn't retry a failing known controller as a generic one.
+If no record fits, but the controller passes the checks below, OJD still serves it as a generic controller. `ojd controller show` says so, and the **Controllers** area of the app lists it like any other controller.
+
+![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, to the Opened by row, which is blurred for privacy, and to the Handled by switch](../docs/screenshots/steps/controllers-overview.png)
+
+A record that keeps the pad with macOS, or an idle mode, stays as it is. OJD doesn't retry a failing known controller as a generic one.
 
 ### What Works
 

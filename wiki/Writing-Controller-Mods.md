@@ -146,6 +146,10 @@ ojd mod remove NAME [--force] [--dry-run]
 - `mod list`: Lists installed packages with version, author, and files. An unused package shows its reason and code.
 - `mod remove`: Deletes only that package's folder. It asks first on a terminal, and needs `--force` otherwise. It exits with code 1 and E4006 when the package isn't installed. `--dry-run` deletes nothing.
 
+You can add and remove a package in the **Library** area of the app, too:
+
+![The Library area. A red arrow points to the toolbar buttons, and the box names them from left to right: add, check a file, test on a packet capture, and remove. A second arrow points to the Installed and Built-in lists](../docs/screenshots/steps/library-overview.png)
+
 To try the sample, run `ojd mod validate` and `ojd mod install` with the sample folder path, then `ojd mod list`, then `ojd mod remove ojd-sample`.
 
 [Error codes](Error-Codes.md) lists E4001 to E4007. Run `ojd explain E4004` to read a code.
