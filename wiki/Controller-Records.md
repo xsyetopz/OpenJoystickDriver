@@ -348,6 +348,10 @@ A raw-USB family can carry startup packets in its description (`XboxXUSB`, `Xbox
 
 One list holds one format. A mode that names `protocol.initialization` takes no raw-USB writes.
 
+### Raw-USB Configuration
+
+`usb.configuration` is optional. Without it, OJD sends SET_CONFIGURATION 1 before the claim only to a device that shows no interfaces and runs no configuration. `SetConfiguration1BeforeClaim` sends it to a device in any other configuration too. Either way, a device that already runs configuration 1 receives no request, because SET_CONFIGURATION ends every open interface of the device. Leave the key out unless a capture shows the device needs configuration 1 while it exposes interfaces.
+
 ## Tune Timings and the Stick Deadzone
 
 A record's `tuning` field changes a value the protocol driver otherwise sets. Name at least one value. A value you leave out keeps the family default from its protocol description (see [Family Defaults](#family-defaults-live-in-protocol-descriptions)).

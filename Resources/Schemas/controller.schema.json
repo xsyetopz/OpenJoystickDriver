@@ -451,6 +451,7 @@
       "additionalProperties": false,
       "properties": {
         "configuration": {
+          "description": "Selects USB configuration 1 before the claim; unset, only an unconfigured device gets the request.",
           "const": "SetConfiguration1BeforeClaim"
         },
         "endpoints": {
