@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Something is wrong? Start here. Each part below says what you see, why it happens, and what to do.
+Something is wrong? Start here. Each part says what you see, why it happens, and what to do.
 
 - **Who:** anyone whose controller, game, or app isn't behaving.
 - **What:** each problem with what you see, why, and what to do.
@@ -42,7 +42,7 @@ flowchart LR
 
 ### Check the Basics
 
-OpenJoystickDriver (OJD) needs to be running, and it needs your OK to read controllers.
+OpenJoystickDriver (OJD) must be running, and it needs your OK to read controllers.
 
 ![The Access area in OJD. A red arrow points to Access in the sidebar. A second arrow points to Allowed, and the box explains Input Monitoring and Accessibility](../docs/screenshots/steps/access-permissions.png)
 
@@ -54,10 +54,10 @@ OpenJoystickDriver (OJD) needs to be running, and it needs your OK to read contr
 
 ### Check the Controller ID
 
-Every way of plugging in has its own ID, like a phone number. The same controller over USB and over Bluetooth has two IDs, and a USB dongle has a third.
+Each way of connecting has its own ID, like a phone number. The same controller has one ID over USB and another over Bluetooth, and a USB dongle has a third.
 
 1. Find your controller's ID. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
-2. Look for that ID in [Supported Controllers](Supported-Controllers.md). If it isn't listed, OJD doesn't know that controller yet.
+2. Look for that ID in [Supported Controllers](Supported-Controllers.md). If it isn't listed, OJD doesn't know that controller.
 
 ### Special Cases
 
@@ -85,13 +85,13 @@ See [Using the Command Line](Command-Line.md). Still missing? See [Reporting a B
 
 ### Check OJD First
 
-First make sure OJD itself gets your button presses.
+First check that OJD gets your button presses.
 
 ![The Controllers area. A red arrow points to Working under the controller's name. A second arrow points to Open Input Test, which shows each press live](../docs/screenshots/steps/controller-working.png)
 
 1. Click **Open Input Test** for the controller. See [Testing a Controller](Testing-a-Controller.md).
 2. Press some buttons. Nothing lights up? Go to [If a Controller Isn't Detected](#if-a-controller-isnt-detected).
-3. Click **Access** in the sidebar. **Accessibility** must say **Allowed**. OJD needs it to hand games the [virtual gamepad](Glossary.md#terms), the pretend controller games actually read.
+3. Click **Access** in the sidebar. **Accessibility** must say **Allowed**. OJD needs it to hand games the [virtual gamepad](Glossary.md#terms), the pretend controller games read.
 
 ### Understand Why Apps Differ
 
@@ -100,11 +100,11 @@ Games listen in different "languages". OJD's virtual gamepad speaks one [kind](G
 - Apps built with SDL, such as Steam, understand the Xbox-style kind.
 - Apps built on Apple's Game Controller support, such as Safari and **System Settings**, understand only the Game Controller kind.
 
-So one app can see the controller while another misses it. Test results are in [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility). None of them is a promise.
+So one app can see the controller while another misses it. [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility) lists test results, and none is a promise.
 
 ### Try a Different Kind
 
-This shows whether the kind is the problem. If another kind fixes a game, please report it.
+This shows whether the kind causes the problem. If another kind fixes a game, please report it.
 
 ![The Virtual gamepad kind menu open in the Controllers area. Red arrows point to each choice, and the boxes say which games read it](../docs/screenshots/steps/virtual-gamepad-kind.png)
 
@@ -118,7 +118,7 @@ In one test, Steam with **Generic HID gamepad** was slow and jumpy.
 
 ### If a Button Does Nothing in Steam
 
-Steam keeps its own button map for each controller. If Steam's map is missing a button, Steam ignores it, even though OJD sends it. The maintainer saw this with the PS button of a DualShock 3.
+Steam keeps its own button map for each controller. If the map lacks a button, Steam ignores it even though OJD sends it. The maintainer saw this with the PS button of a DualShock 3.
 
 1. Run `ojd controller watch CONTROLLER --output` and press the button. If the button shows up in the output, OJD sends it.
 2. In Steam, open **Controller Layout** for the controller and choose **Setup Device Inputs**.
@@ -181,7 +181,7 @@ OJD keeps your good profiles and marks the broken one **Needs attention**.
 1. Click **Back Up & Reset Active Profiles...**.
 2. In the alert, click **Back Up & Reset**.
 
-Your profiles stay. Afterward, none of them is turned on, so turn on the ones you want again.
+Your profiles stay, but none is turned on afterward. Turn on the ones you want again.
 
 #### Find the Backup
 
