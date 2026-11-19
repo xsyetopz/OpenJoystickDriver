@@ -54,6 +54,37 @@ PICTURES: tuple[StepPicture, ...] = (
         masks=(Box(800, 835, 1886, 936),),
     ),
     StepPicture(
+        "virtual-gamepad-kind",
+        "main-popup.png",
+        (
+            Callout(
+                (1440, 956),
+                (20, 860),
+                "Automatic (start here)",
+                ("OJD picks the kind for this model.",),
+            ),
+            Callout(
+                (1440, 1004),
+                (20, 970),
+                "For Steam and SDL games",
+                ("Steam, SDL games, emulators.",),
+            ),
+            Callout(
+                (1440, 1051),
+                (20, 1080),
+                "Generic HID gamepad",
+                ("A plain gamepad. Games can't rumble it.",),
+            ),
+            Callout(
+                (1440, 1099),
+                (20, 1190),
+                "For Apple Game Controller games",
+                ("Safari and apps that use GameController.",),
+            ),
+        ),
+        masks=(Box(800, 320, 1886, 395),),
+    ),
+    StepPicture(
         "menu-bar-overview",
         "menu-status-item.png",
         (

@@ -48,6 +48,26 @@ class GuiCaptureTests(unittest.TestCase):
             with self.subTest(argv=argv), self.assertRaises(SystemExit):
                 capture.parse_args(argv)
 
+    def test_row_and_scroll_need_a_popup(self) -> None:
+        # Arrange
+        popup = ["--popup", "Generic HID gamepad (Generic)"]
+
+        # Act
+        args = capture.parse_args([*popup, "--row", "Pad, Working", "--scroll", "0.4"])
+
+        # Assert
+        self.assertEqual(
+            (args.popup, args.row, args.scroll), (popup[1], "Pad, Working", 0.4)
+        )
+        for argv in (
+            ["--all", "--row", "Pad, Working"],
+            ["--all", "--scroll", "0.4"],
+            [*popup, "--scroll", "1.5"],
+            [*popup, "--area", "Library"],
+        ):
+            with self.subTest(argv=argv), self.assertRaises(SystemExit):
+                capture.parse_args(argv)
+
     def test_missing_app_is_reported(self) -> None:
         with (
             patch.object(capture, "APP", capture.PROJECT_DIR / "absent.app"),

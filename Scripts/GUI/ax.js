@@ -224,13 +224,18 @@ function pressPath(start, ids) {
 	}
 }
 
-function sidebar(app) {
+// Column 0 is the sidebar; column 1 is the list of the selected area, such as the controllers.
+function columnRows(app, column) {
 	const split = children(find(app, "main"), "AXSplitGroup")[0];
-	const group = children(split, "AXGroup")[0];
+	const group = children(split, "AXGroup")[column];
 	const scroll = group && children(group, "AXScrollArea")[0];
 	const outline = scroll && children(scroll, "AXOutline")[0];
-	if (!outline) throw new Error("the main window has no sidebar outline");
+	if (!outline) throw new Error("the main window has no list in column " + column);
 	return items(outline, "AXRows");
+}
+
+function sidebar(app) {
+	return columnRows(app, 0);
 }
 
 function rowLabel(row) {
@@ -313,6 +318,20 @@ function run(argv) {
 			delay(SETTLE_SECONDS);
 			return "";
 		}
+		case "list-rows":
+			return columnRows(app, 1).map(rowLabel).join("\n");
+		case "select-row": {
+			// Two controllers of one model share a label; the optional count picks the nth (from 1).
+			const row = columnRows(app, 1).filter((candidate) => rowLabel(candidate) === argument)[
+				Number(rest[0] || 1) - 1
+			];
+			if (!row) throw new Error("no list row named " + argument);
+			const code = $.AXUIElementSetAttributeValue(row, "AXSelected", AX_TRUE);
+			if (code !== 0) throw new Error("selecting " + argument + " failed with AXError " + code);
+			waitFor(() => attribute(row, "AXSelected") === true, "list row " + argument + " did not become selected");
+			delay(SETTLE_SECONDS);
+			return "";
+		}
 		case "wait-main-window":
 			waitFor(() => windows(app).some(isMain), "main window did not appear");
 			return "";
@@ -389,6 +408,24 @@ function run(argv) {
 			if (!target) throw new Error("the focused window has no element labeled " + argument);
 			press(target);
 			delay(SETTLE_SECONDS);
+			return "";
+		}
+		case "scroll": {
+			// 0 is the top of the detail pane and 1 its bottom.
+			const bar = descendants(focusedWindow(app)).find((element) => shown(element, "AXRole") === "AXScrollBar");
+			if (!bar) throw new Error("the focused window has no scroll bar");
+			const code = $.AXUIElementSetAttributeValue(bar, "AXValue", $.NSNumber.numberWithDouble(Number(argument)));
+			if (code !== 0) throw new Error("scrolling to " + argument + " failed with AXError " + code);
+			delay(SETTLE_SECONDS);
+			return "";
+		}
+		case "open-popup": {
+			// A pop-up button shows its chosen item as its value, so the value names the button.
+			const popup = descendants(focusedWindow(app)).find(
+				(element) => shown(element, "AXRole") === "AXPopUpButton" && shown(element, "AXValue") === argument,
+			);
+			if (!popup) throw new Error("the focused window has no pop-up button showing " + argument);
+			press(popup);
 			return "";
 		}
 		case "press-escape": {

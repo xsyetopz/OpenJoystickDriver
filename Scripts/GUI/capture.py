@@ -80,6 +80,26 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="every sidebar area, settings pane and menu",
     )
+    choice.add_argument(
+        "--popup",
+        metavar="VALUE",
+        help=(
+            "the Controllers window with the pop-up button that shows VALUE open, "
+            "saved as main-popup.png"
+        ),
+    )
+    parser.add_argument(
+        "--row",
+        metavar="LABEL",
+        help="with --popup, the controller row to select first, such as 'Sony Sixaxis, Working'",
+    )
+    parser.add_argument(
+        "--scroll",
+        type=float,
+        default=0.0,
+        metavar="FRACTION",
+        help="with --popup, how far down to scroll the details, from 0 (top) to 1 (bottom)",
+    )
     parser.add_argument(
         "--ready-timeout",
         type=float,
@@ -101,6 +121,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         ),
     )
     args = parser.parse_args(argv)
+    if (args.row is not None or args.scroll) and args.popup is None:
+        parser.error("--row and --scroll work only with --popup")
+    if not 0 <= args.scroll <= 1:
+        parser.error("--scroll must be between 0 and 1")
     for option, value in (
         ("--ready-timeout", args.ready_timeout),
         ("--front-timeout", args.front_timeout),
@@ -492,6 +516,23 @@ def shoot_menu(
     close_menu(pid, clock, sleep)
 
 
+def shoot_popup(args: argparse.Namespace, pid: int, destination: Path) -> None:
+    gui("select-sidebar", "Controllers")
+    if args.row is not None:
+        gui("select-row", args.row)
+    window = bring_forward(pid, "main", args.front_timeout)
+    gui("scroll", str(args.scroll))
+    try:
+        gui("open-popup", args.popup)
+        wait_for_menu(pid, 1)
+        # screencapture -l draws the open menu with the window it belongs to.
+        capture_window(window, destination)
+        print(destination)
+    finally:
+        close_menu(pid)
+        gui("scroll", "0")
+
+
 def make_folder() -> Path:
     root = PROJECT_DIR / ".ojd-shots"
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -530,7 +571,7 @@ def capture(args: argparse.Namespace) -> int:
         else ()
     )
     menus = args.all or args.menus
-    if areas or panes:
+    if areas or panes or args.popup is not None:
         require_english_ui()
     main_was_open, settings_tab = read_state()
     folder = make_folder()
@@ -552,6 +593,8 @@ def capture(args: argparse.Namespace) -> int:
                 folder / f"settings-{pane.lower()}.png",
                 args.front_timeout,
             )
+        if args.popup is not None:
+            shoot_popup(args, pid, folder / "main-popup.png")
         if menus:
             for target in menu_targets(gui("menu-ids").split("\n")):
                 shoot_menu(pid, target, folder / f"{target.name}.png")
