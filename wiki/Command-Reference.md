@@ -1,6 +1,6 @@
 # Command Reference
 
-Every `ojd` command and option, like a dictionary. For a gentle start, read [Using the Command Line](Command-Line.md) first.
+Every `ojd` command and option, like a dictionary. For a gentle start, read [Using the Command Line](Command-Line.md).
 
 Every command also takes the global options, such as `--json`. See [Command line](Command-Line.md#global-options).
 Where a command has them, `-f` is short for `--force`, `-n` for `--dry-run`, `-a` for `--all`, `-o` for `--output`, and `-q` for `--quiet`.
@@ -218,8 +218,8 @@ ojd profile convert PROFILE --controller CONTROLLER [--name NAME]
   - `--template keyboard-navigation` binds the D-pad to the arrow keys, South to Return, and East to Escape.
   - `--template mouse-clicks` binds South, East, and North to the left, right, and middle mouse buttons.
   - A binding template skips each control that the model lacks and lists them.
-- `profile duplicate`: Copy a profile under a new name. The copy is inactive.
-- `profile rename`: Give a profile a new name of 1 to 80 characters.
+- `profile duplicate`: Copy a profile under another name. The copy is inactive.
+- `profile rename`: Give a profile a name of 1 to 80 characters.
 - `profile delete`: Delete a profile. An active profile stops applying. Asks first on a terminal.
 - `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope.
   - A profile with the virtual gamepad set to `mapped` can produce no output when it sends nothing to the gamepad, keyboard, pointer, or controller and sets no light color. Add `--allow-empty` to activate it.
@@ -282,7 +282,7 @@ A `macro` or `layer` name is matched without regard to case. A name the profile 
 
 - `binding list`: List a profile's bindings.
 - `binding set`: Bind a source to a target. A source has one binding, so this replaces the existing one and keeps its ID. Options:
-  - `--behavior`: When the target fires: `hold` (the default for a new binding), `toggle`, `tap-on-press`, `tap-on-release`, `pulse`, `press`, or `release`.
+  - `--behavior`: When the target fires: `hold` (the default for a binding you add), `toggle`, `tap-on-press`, `tap-on-release`, `pulse`, `press`, or `release`.
   - `--pulse-ms`: How long `pulse` holds the target, 1 to 5000 ms. The default is 100.
   - `--deadzone`, `--gain`, `--invert`, `--response-curve`, `--digital-threshold`: Tuning for axis sources.
     - Dead zone: 0 to 0.95, default 0.1.
