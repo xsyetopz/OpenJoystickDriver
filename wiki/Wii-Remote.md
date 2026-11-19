@@ -1,11 +1,11 @@
 # Wii Remote
 
-How to connect a Wii Remote to OpenJoystickDriver (OJD), which buttons and sensors OJD reads from it, and what OJD can make it do (lights, rumble, sound).
+Connect a Wii Remote to OpenJoystickDriver (OJD), and see what OJD reads from it and what OJD can make it do (lights, rumble, sound).
 
 - **Who:** anyone with a Wii Remote.
 - **What:** pairing, which buttons and sensors OJD reads, and lights, rumble, IR, and sound.
 - **Where:** macOS Bluetooth settings to pair, then the **Controllers** area.
-- **Why:** macOS can pair the remote but games can't read it without OJD.
+- **Why:** macOS pairs the remote, but games can't read it without OJD.
 - **How:** press 1 and 2 together while Bluetooth settings are open.
 
 ```mermaid
@@ -36,7 +36,7 @@ OJD has two Wii Remote records: `057E:0306` (product string `Nintendo RVL-CNT-01
 
 A record matches by product string. OJD doesn't drive the Wii Balance Board or the Wii U Pro Controller, which share an ID with a remote.
 
-No real-hardware test has confirmed these records, so they are Unverified. See [Supported Controllers](Supported-Controllers.md). Nothing on this page is verified on a real remote unless the text says so.
+No test on a real remote has confirmed these records, so they are Unverified. See [Supported Controllers](Supported-Controllers.md). Nothing on this page is verified on a real remote unless the text says so.
 
 ## Pair the Remote
 
@@ -107,7 +107,7 @@ Rumble is on or off. `ojd controller rumble CONTROLLER` runs it for a set time, 
 
 ## IR Pointer
 
-The remote has a small infrared (IR) camera in its tip. It sees the two glowing points of a sensor bar under your screen, and works out where you're pointing from them. The camera runs only while the active profile binds `PointerX` or `PointerY` as a source. Otherwise the remote reports buttons and the accelerometer (report mode `0x31`), and the camera stays off.
+The remote has a small infrared (IR) camera in its tip. It sees the two glowing points of a sensor bar under your screen and works out where you're pointing. The camera runs only while the active profile binds `PointerX` or `PointerY` as a source. Otherwise the remote reports buttons and the accelerometer (report mode `0x31`), and the camera stays off.
 
 When such a profile becomes active, OJD sets up the camera with seven register writes at least `irWriteIntervalMs` (50 ms) apart, then switches to report mode `0x37`. When no profile binds the pointer, OJD turns the camera off and the pointer returns to neutral.
 
@@ -159,12 +159,12 @@ The remote stays paired and reconnects when you press a button. You can also sel
 
 ## Turn the Remote Off
 
-OJD can't turn the remote off, because no public report does it. To close the connection, see [Disconnect the Remote](#disconnect-the-remote).
+OJD can't turn the remote off, because no public report does that. To close the connection, see [Disconnect the Remote](#disconnect-the-remote).
 
 ## Further Reading
 
-- [Connecting controllers](Connecting-Controllers.md)
-- [Supported controllers](Supported-Controllers.md)
-- [Known issues](Known-Issues.md)
-- [Controller records](Controller-Records.md)
-- [Bindings and actions](Bindings-and-Actions.md)
+- [Connecting Controllers](Connecting-Controllers.md)
+- [Supported Controllers](Supported-Controllers.md)
+- [Known Issues](Known-Issues.md)
+- [Controller Records](Controller-Records.md)
+- [Bindings and Actions](Bindings-and-Actions.md)
