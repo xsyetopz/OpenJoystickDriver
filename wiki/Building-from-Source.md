@@ -12,7 +12,7 @@ Turn OpenJoystickDriver's source code into a working app on your own Mac, to get
 
 Most people never need this page. `CHANGELOG.md` lists what each build contains.
 
-Building is harder than usual because OpenJoystickDriver (OJD) runs only when it's signed. macOS gives an app special powers, such as making a [virtual gamepad](Glossary.md#terms), only if Apple has issued a permission slip for them:
+OpenJoystickDriver (OJD) runs only when it's signed, which makes building harder than usual. macOS gives an app special powers, such as making a [virtual gamepad](Glossary.md#terms), only if Apple has issued a permission slip for them:
 
 - An **entitlement** is one special power, such as `com.apple.developer.hid.virtual.device` (make virtual gamepads).
 - A **provisioning profile** is the permission slip from Apple. It lists which entitlements an app may use, and on which Macs.
@@ -36,7 +36,7 @@ You need these items:
   - The app profile needs the `com.apple.developer.hid.virtual.device` entitlement. Its `com.apple.developer.driverkit.userclient-access` entitlement must name `com.openjoystickdriver.XboxUSBDevice`.
   - The Xbox USB driver profile needs `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` with Apple's exact seven VID:PID pairs, and no HID entitlement.
   - `just signing-install-profiles` copies the files under those names. `just signing-configure` writes their paths to `.env.dev`.
-- The `transport.usb` capability from Apple (permission to talk to USB devices directly). Enable it on the `com.openjoystickdriver.XboxUSBDevice` App ID, then download the Xbox USB driver profile again. The publisher's team already has it; your team must ask Apple for it.
+- The `transport.usb` capability from Apple (permission to talk to USB devices directly). Enable it on the `com.openjoystickdriver.XboxUSBDevice` App ID, then download the Xbox USB driver profile again. The publisher's team already has it. Your team must ask Apple for it.
 - Your Mac in the list of devices in each provisioning profile.
 
 ### Build and Install
@@ -110,7 +110,7 @@ flowchart TD
     B -->|Anyone else| D[Build must be signed<br/>and notarized]
 ```
 
-What the tools can do today:
+What the tools allow:
 
 - `swift build` makes an unsigned binary with no entitlements. Not verified: whether turning off SIP or AMFI lets that binary publish the [virtual gamepad](Glossary.md#terms).
 - No script builds an ad-hoc signed app. `just build-dev`, `just install-dev`, and `just install-fast-dev` need a real signing identity.
