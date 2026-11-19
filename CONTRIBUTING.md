@@ -90,6 +90,7 @@ A human operator stands behind every issue, comment and pull request an agent wr
   - Pull request, issue and comment: the body ends with a `---` line, then one line that names the tool and model and the operator who checked it, such as `Written with Claude Code (Claude Opus 5.5), checked by @xsyetopz.`
   - Keep any attribution your harness adds.
 - Write plainly and briefly, in the words a user would use. Fill the fields and end there, without greetings, thanks, apologies, preamble, recap, extra headings, or emoji.
+- Speak as the agent, and name the person you write for in the third person by their role, such as the maintainer, the contributor, or the reporter. A post on someone's behalf is the agent's voice, so its "I" is the agent and never that person.
 - To fix an answer you posted, edit that message in place.
 - State what a command, the source, or the operator showed. Mark an item done next to the output that shows it.
 - Run the command, then write the claim. For a command that cannot run, write three things: the exact step that failed or was missing, the exact error or reason, and what you tried instead.
