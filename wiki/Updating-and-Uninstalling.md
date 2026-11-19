@@ -71,7 +71,7 @@ ojd update check
 > [!IMPORTANT]
 > Open OJD from **Applications**, not from the DMG. macOS turns on the Xbox USB driver only for an app in **Applications**.
 
-Your [profiles](Glossary.md#terms) stay in place.
+Your [profiles](Glossary.md#terms), controller records, mod packages, and settings stay in place, because they live outside the app, in `~/Library/Application Support/OpenJoystickDriver/`. Replacing the app replaces everything inside it, including any change you built into your own copy. To keep a change such as "treat my controller as an Xbox controller" across updates, put it in a [controller record](Controller-Records.md) instead of the source code.
 
 After an update, **Driver Extensions** in **System Settings** can list the old driver until you restart. You don't need to remove it.
 
