@@ -38,7 +38,7 @@ enum GUICoverageMatrix {
     GUIField(
       command: ["controller", "show"],
       field: "serving.route",
-      place: "Controllers > controller detail > Serving route fact"
+      place: "Controllers > controller detail > Path to games fact"
     ),
     GUIField(
       command: ["controller", "show"],

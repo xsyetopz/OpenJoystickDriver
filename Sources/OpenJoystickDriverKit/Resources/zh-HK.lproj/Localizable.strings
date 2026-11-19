@@ -286,8 +286,8 @@
 "ui.controllers.server.ojd" = "OpenJoystickDriver";
 /* Progress text under the Handled by picker in the Controllers detail while the service applies the user's choice of who handles the controller. */
 "ui.controllers.server.updating" = "正在更改由誰來處理此控制器…";
-/* Label of the serving route fact in the Controllers detail. The route is the way the input reaches games. */
-"ui.controllers.serving.label" = "處理路徑";
+/* Label of the fact in the Controllers detail that says which way the controller's input takes to reach games. */
+"ui.controllers.serving.label" = "到遊戲的路徑";
 /* Value of the serving route in the Controllers area: macOS serves the controller and the driver passes the input through. */
 "platform.macos.ui.controllers.serving.nativePassThrough" = "macOS（直接傳遞）";
 /* Value of the serving route when OpenJoystickDriver serves a virtual gamepad. OpenJoystickDriver is the product name. */
@@ -2808,7 +2808,7 @@
 /* Row label in the output of 'ojd controller show'. The component that handles the controller follows, with where that choice comes from. */
 "cli.controller.show.labelServer" = "處理方";
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
-"cli.controller.show.labelServing" = "處理路徑";
+"cli.controller.show.labelServing" = "到遊戲的路徑";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "虛擬遊戲控制器";
 /* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
@@ -2837,8 +2837,8 @@
 "cli.controller.show.labelUnit" = "單元 ID";
 /* Row label in the output of 'ojd controller show'. The virtual gamepad kind follows, with where it was chosen in parentheses. */
 "cli.controller.show.labelVirtual" = "虛擬遊戲控制器類型";
-/* Row label in the output of 'ojd controller show'. The state of the virtual gamepad publication follows, with the reason in parentheses. */
-"cli.controller.show.labelPublication" = "發布狀態";
+/* Label of the fact that says whether games see the controller as a virtual gamepad, in the controller detail and 'ojd controller show'. */
+"cli.controller.show.labelPublication" = "遊戲可見";
 /* Row label in the output of 'ojd controller show', present when the system owns the output. The explanation that the system sends rumble and light commands follows. */
 "cli.controller.show.labelOutputOwner" = "輸出由誰負責";
 /* Value of the Output owner row of 'ojd controller show'. Rumble and Lighting are the labels of two other rows and are written as in this catalog. */
@@ -4966,10 +4966,10 @@
 "ui.controllers.fileSaved" = "已儲存 %@。";
 /* Line under the scope popup. %@ is the scope of the override that is active. */
 "ui.controllers.virtual.currentScope" = "目前覆寫的範圍：%@";
-/* Value of the publication fact: the virtual gamepad of the controller is published. */
-"ui.controllers.publication.published" = "已發佈";
-/* Value of the publication fact: the controller has no published virtual gamepad. */
-"ui.controllers.publication.notPublished" = "未發佈";
+/* Value of the Shown to games fact: games see the controller's virtual gamepad. */
+"ui.controllers.publication.published" = "是";
+/* Value of the Shown to games fact: games don't see a virtual gamepad for the controller. */
+"ui.controllers.publication.notPublished" = "否";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "失敗";
 /* Value of the input health fact: the session has read no input report yet. */
@@ -5119,8 +5119,8 @@
 "status.controllerOwner.unnamed" = "由其他 App 佔用。該控制器正被直接讀取。釋放後 OpenJoystickDriver 會接管它。";
 /* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
 "status.controllerAlsoListedBySystem" = "系統還會把該控制器列為第二個沒有輸入的控制器。在遊戲中，請選擇 OpenJoystickDriver 發布的虛擬遊戲控制器。";
-/* Label in the controller detail for who holds the USB interface of the controller exclusively. */
-"ui.controllers.exclusiveOwner" = "獨佔存取";
+/* Label in the controller detail for which app can use the controller right now. */
+"ui.controllers.exclusiveOwner" = "誰可以使用";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "也由系統列出";
 /* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
@@ -5393,8 +5393,8 @@
 "ui.controllers.holders" = "開啟者";
 /* One process in the Opened by row of the controller detail and of 'ojd controller show'. %1$@ is the process name and %2$@ the process ID. */
 "ui.controllers.holder" = "%1$@（處理程序 %2$@）";
-/* Says, in the controller detail and in the output of 'ojd controller show', that OpenJoystickDriver holds the controller open exclusively and that another app can open it once the user suspends the controller. OpenJoystickDriver is the product name. */
-"status.controllerExclusive" = "OpenJoystickDriver 正在獨佔此控制器。暫停後，其他 App 即可開啟它。";
+/* Says, in the controller detail and in the output of 'ojd controller show', that only OpenJoystickDriver can use the controller and that suspending it lets another app use it. OpenJoystickDriver is the product name. */
+"status.controllerExclusive" = "現在只有 OpenJoystickDriver 能使用此控制器。暫停它即可讓其他 App 使用。";
 /* Next step in the output of 'ojd controller show' while OpenJoystickDriver holds the controller exclusively. %@ is the session token of the controller. */
 "cli.controller.show.suspendHint" = "執行「ojd controller suspend %@」讓其他 App 開啟它。";
 /* Next step in the output of 'ojd controller show' while the controller is suspended. %@ is the session token of the controller. */

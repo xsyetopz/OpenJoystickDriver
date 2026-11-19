@@ -4,7 +4,7 @@ enum ControllerDetailRow: InterfaceRow {
   case header
   /// C06 (Simple part), C15: the active profile, the input health and the suspended session.
   case state
-  /// C06 (Advanced part): Publication, Serving route and Protocol.
+  /// C06 (Advanced part): Shown to games, Path to games, and Protocol.
   case servingFacts
   /// C06 (Advanced part), C16: the serial number.
   case serialNumber

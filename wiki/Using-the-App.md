@@ -93,11 +93,11 @@ Select a controller to see its details. If a controller is missing, see [If a Co
 
 ### Controller Details
 
-The details show the active profile, the programs that have the controller open, battery, charging state, and cable state. **All Controls** adds how OJD serves the controller to games, its protocol, and its serial number (click the eye button to show it).
+The details show the active profile, the programs that have the controller open, battery, charging state, and cable state. **All Controls** adds **Shown to games** (whether games see a virtual gamepad), **Path to games** (which way the input travels), its protocol, and its serial number (click the eye button to show it).
 
 Other rows appear when they apply:
 
-- **Exclusive access** means OJD keeps the controller to itself. Click **Suspend** to let another app use it.
+- **Who can use it** says when only OJD can use the controller. Click **Suspend** to let another app use it.
 - **Suspended** means OJD has let go of it. Click **Resume** to take it back.
 - **Community verified** lists each [mode](Glossary.md#terms) a tester confirmed, with a link to the report.
 
