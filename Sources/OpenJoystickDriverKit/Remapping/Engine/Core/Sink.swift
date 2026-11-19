@@ -284,7 +284,7 @@ public final class RemappingEmissionBarrier: @unchecked Sendable {
 /// A platform-independent system-input action produced by ``RemappingEventEngine``.
 ///
 /// Platform adapters translate these symbolic actions to the input-injection API of the operating
-/// system. Continuous amounts are normalized to `-1...1`.
+/// system. Continuous amounts are scaled to `-1...1`.
 public enum RemappingSystemInputAction: Equatable, Sendable {
   /// Presses a modifier key.
   case modifierDown(RemappingKeyModifier)

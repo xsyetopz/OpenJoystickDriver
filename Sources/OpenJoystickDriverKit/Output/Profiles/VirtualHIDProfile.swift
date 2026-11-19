@@ -41,7 +41,7 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
     return works
   }
 
-  /// Every normalized control this profile's layout can carry, which is what profile selection
+  /// Every standard control this profile's layout can carry, which is what profile selection
   /// checks a controller's required primary controls against.
   public var representableControls: Set<Control> {
     switch self {
@@ -66,7 +66,7 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
 }
 
 /// One exact virtual HID ABI: the published identity, the report descriptor, and the codec
-/// between the normalized model and that descriptor's reports.
+/// between the standard model and that descriptor's reports.
 public protocol VirtualHIDProfile: Sendable {
   /// The persona the profile publishes.
   var id: VirtualHIDProfileID { get }

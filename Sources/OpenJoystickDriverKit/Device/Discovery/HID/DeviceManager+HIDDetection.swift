@@ -300,7 +300,7 @@ extension DeviceManager {
           await pipeline.stop()
         }
       } else if Self.readmitsHIDPipeline(from: info.hidInputOwnership, to: ownership) {
-        // A fresh parser and normalized state prevent replaying controls held before access loss.
+        // A fresh parser and standard state prevent replaying controls held before access loss.
         if let physicalDevice = info.physicalDevice, let connectionID = info.hidConnectionID {
           if let stale = pipelines.removeValue(forKey: identifier) { await stale.stop() }
           await handleHIDDeviceConnected(

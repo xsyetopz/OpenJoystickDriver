@@ -2,8 +2,9 @@ import Foundation
 
 extension DevicePipeline {
 
-  /// Takes the snapshot of one parsed input, or nil for a frame that carried no input, normalizes
-  /// it, and sends it when output may see it and it differs from the last sent state.
+  /// Takes the snapshot of one parsed input, or nil for a frame that carried no input, puts it
+  /// in the standard form, and sends it when output may see it and it differs from the last
+  /// sent state.
   ///
   /// With `laterReportQueued`, an input that changes no button, hat, or touch frame is kept in
   /// `coalescedInput` for the later report instead.
@@ -134,7 +135,7 @@ extension DevicePipeline {
   /// Applies the normalization a driver leaves to the pipeline: the stored calibration, which also
   /// removes the gyro offset from each motion sample, then each
   /// trigger button the driver's protocol has no digital signal for, derived from its analog
-  /// trigger with hysteresis against the last normalized state.
+  /// trigger with hysteresis against the last standard state.
   func normalized(_ event: ControllerEvent) -> ControllerEvent {
     let stored = calibration()
     let state = TriggerButtonDerivation.applying(

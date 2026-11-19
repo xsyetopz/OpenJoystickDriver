@@ -1,6 +1,6 @@
 import Foundation
 
-/// Consumes normalized controller events and sends system and virtual gamepad actions.
+/// Consumes standard controller events and sends system and virtual gamepad actions.
 ///
 /// The caller owns profile selection and target-application policy, and supplies the active profile
 /// with each event. Gamepad destinations go through the injected virtual output sink. Time is

@@ -28,7 +28,7 @@ public enum VirtualHIDProfileSelector {
   /// buttons.
   ///
   /// System controls other than `view` and `menu`, and every extended control, stay in OJD's
-  /// normalized API and never force a persona.
+  /// standard API and never force a persona.
   public static let primaryControls: Set<Control> = Control.xboxLayout.union([
     .leftTrigger, .rightTrigger,
   ])

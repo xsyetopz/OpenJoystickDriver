@@ -73,13 +73,13 @@ public enum PhysicalAdaptiveTriggerEffectKind: String, Codable, CaseIterable, Ha
 
 /// A bounded DualSense-style trigger effect.
 ///
-/// Positions and strength are normalized to `0...1`.
+/// Positions and strength are scaled to `0...1`.
 public struct PhysicalAdaptiveTriggerEffect: Codable, Equatable, Hashable, Sendable {
   /// The kind of the effect.
   public let kind: PhysicalAdaptiveTriggerEffectKind
-  /// The normalized trigger position where the effect starts.
+  /// The scaled trigger position where the effect starts.
   public let startPosition: Double
-  /// The normalized strength of the effect.
+  /// The scaled strength of the effect.
   public let strength: Double
 
   /// Creates an effect; `validate()` checks the values.

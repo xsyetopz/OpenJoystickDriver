@@ -1,7 +1,7 @@
 import Foundation
 
 extension BipolarValue {
-  /// Quantizes a normalized `-1...1` value by truncation toward zero, the quantization the virtual
+  /// Quantizes a scaled `-1...1` value by truncation toward zero, the quantization the virtual
   /// output applies to the same value.
   ///
   /// Values outside the range clamp; non-finite is center.
@@ -18,7 +18,7 @@ extension BipolarValue {
 }
 
 extension UnipolarValue {
-  /// Quantizes a normalized `0...1` value by truncation toward zero.
+  /// Quantizes a scaled `0...1` value by truncation toward zero.
   ///
   /// Values outside the range clamp; a non-finite value is released.
   public init(normalized value: Float) {
@@ -52,7 +52,7 @@ public struct StickPosition: Hashable, Codable, Sendable {
     self.y = y
   }
 
-  /// Quantizes normalized `-1...1` axes.
+  /// Quantizes scaled `-1...1` axes.
   ///
   /// Y is positive down; a driver whose report grows upward negates it once, at parse.
   init(x: Float, y: Float) {
@@ -60,7 +60,7 @@ public struct StickPosition: Hashable, Codable, Sendable {
   }
 }
 
-/// The complete normalized state of one logical controller.
+/// The complete standard state of one logical controller.
 ///
 /// A driver decodes every accepted input report into a full snapshot: a control absent from
 /// `pressed` is released. Raw report bytes never appear here.

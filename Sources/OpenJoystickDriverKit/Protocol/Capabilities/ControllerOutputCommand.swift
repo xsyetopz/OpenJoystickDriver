@@ -108,7 +108,7 @@ public enum SpeakerOutput: Equatable, Hashable, Sendable {
   case stop
 }
 
-/// One normalized physical output command.
+/// One standard physical output command.
 public enum ControllerOutputCommand: Equatable, Hashable, Sendable {
   /// Drives the rumble channels at the given intensities for the given duration.
   case setRumble(RumbleIntensities, duration: RumbleDuration)

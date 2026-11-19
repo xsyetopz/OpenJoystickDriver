@@ -238,7 +238,7 @@ struct ControllerTouchGeometry {
   /// True when raw Y grows toward the top edge; normalization then flips it so top is 0.
   let rawYIncreasesUpward: Bool
 
-  /// The normalized contact for a raw position, with Y flipped when raw Y grows upward.
+  /// The scaled contact for a raw position, with Y flipped when raw Y grows upward.
   func contact(slot: UInt8, isActive: Bool, rawX: Int32, rawY: Int32) -> ControllerTouchContact {
     let y = Self.normalized(rawY, origin: originY, span: height)
     return ControllerTouchContact(

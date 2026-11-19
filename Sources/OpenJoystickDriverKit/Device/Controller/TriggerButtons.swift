@@ -36,7 +36,7 @@ enum TriggerButtonDerivation {
   }
 
   /// `state` with each derived trigger button set from its analog trigger; `previous` is the last
-  /// normalized state, whose derived button decides which threshold applies.
+  /// standard state, whose derived button decides which threshold applies.
   static func applying(
     to state: ControllerState,
     previous: ControllerState,

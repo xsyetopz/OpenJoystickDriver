@@ -3,7 +3,7 @@
 /// Real hardware may not have been tested.
 /// Motion means gyro and accelerometer samples in SI units on OJD's shared controller axes.
 public struct ControllerCapabilities: Codable, Hashable, Sendable {
-  /// The normalized controls the parser can send.
+  /// The standard controls the parser can send.
   public let controls: Set<Control>
   /// The triggers (`leftTrigger`, `rightTrigger`) whose press the protocol reports as its own
   /// digital signal.

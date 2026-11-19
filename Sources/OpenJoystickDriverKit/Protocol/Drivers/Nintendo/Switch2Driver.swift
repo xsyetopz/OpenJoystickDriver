@@ -447,7 +447,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
       (0x0040_0000, .leftTrigger), (0x0080_0000, .leftShoulder),
     ]
 
-  /// Reads the stick at `offset` and normalizes it with `calibration`; the vertical axis is
+  /// Reads the stick at `offset` and scales it with `calibration`; the vertical axis is
   /// inverted.
   private func stick(
     _ bytes: [UInt8],

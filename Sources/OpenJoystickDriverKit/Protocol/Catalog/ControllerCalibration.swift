@@ -3,7 +3,7 @@ import Foundation
 /// Stored stick centres, stick ranges, trigger ends, and gyro offset of one controller, applied to
 /// each input state and motion sample before profile mapping.
 ///
-/// Every value is in the normalized units of the state: a centre is `-1...1`, a stick range is the
+/// Every value is in the scaled units of the state: a centre is `-1...1`, a stick range is the
 /// deflection from the centre that reads as full, a trigger end is `0...1`, and a gyro offset is in
 /// radians per second. A key that is not set leaves its control as the controller reports it.
 public struct ControllerCalibration: Codable, Equatable, Sendable {

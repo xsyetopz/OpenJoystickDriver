@@ -55,9 +55,9 @@ struct HIDReportPacker: Sendable {
 
   /// The input fields of the report by usage.
   let fields: [HIDInputUsage: HIDField]
-  /// Maps normalized button bits to descriptor usages for profile-specific layouts.
+  /// Maps standard button bits to descriptor usages for profile-specific layouts.
   let buttonUsageMap: [Int: Int]
-  /// Maps normalized button bits to usages outside the Button page; wins over `buttonUsageMap`.
+  /// Maps standard button bits to usages outside the Button page; wins over `buttonUsageMap`.
   let digitalUsageMap: [Int: HIDInputUsage]
   /// Maps each axis role to the usage of the field that carries it.
   let axisUsageMap: [HIDAxisRole: HIDInputUsage]
@@ -186,8 +186,8 @@ struct HIDReportPacker: Sendable {
       return UInt32(max(minV, min(maxV, idx + minV)))
     }
 
-    // Buttons use stable OJD normalized bits; profiles may map them to different
-    // descriptor usages without changing the global normalized ordering.
+    // Buttons use stable OJD standard bits; profiles may map them to different
+    // descriptor usages without changing the global standard ordering.
     for bitIndex in 0..<32 {
       let usage =
         digitalUsageMap[bitIndex]

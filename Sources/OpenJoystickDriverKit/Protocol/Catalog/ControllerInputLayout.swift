@@ -149,7 +149,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
     public let control: Control
     /// The bits of the value and the raw range that scales to -1...1.
     public let field: ReportValueField
-    /// Whether the normalized value is negated.
+    /// Whether the scaled value is negated.
     public let isInverted: Bool
     /// A signed axis centered on 0 whose positive and negative sides share one divisor,
     /// `maximum`: the raw value divided by `maximum`, clamped, so the lowest value reads -1.

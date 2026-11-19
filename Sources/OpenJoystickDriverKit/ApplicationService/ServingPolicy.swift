@@ -49,7 +49,7 @@ public struct ServingInput: Equatable, Sendable {
   public var gameControllerSupported: Bool
   /// Whether virtual output is on.
   public var outputEnabled: Bool
-  /// The normalized controls the controller declares.
+  /// The standard controls the controller declares.
   public var controls: Set<Control>
   /// The persona the user chose for this controller, if any.
   public var override: VirtualHIDProfileID?
