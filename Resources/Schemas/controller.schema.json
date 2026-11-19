@@ -30,7 +30,7 @@
       "minLength": 1
     },
     "placeholderSerial": {
-      "description": "The serial number this model's firmware reports when it has none of its own; diagnosis flags a controller reporting it.",
+      "description": "The fake serial number this model reports when it has no real one; the diagnose command points out a controller with it.",
       "type": "string",
       "minLength": 1
     },
@@ -1426,7 +1426,7 @@
       }
     },
     "inputTouch": {
-      "description": "Touch contacts that drive the stick or the nearest spot within radius of where each first touches, until it lifts.",
+      "description": "Touch contacts that move the stick: each finger works from where it first touched, within the radius, until it lifts.",
       "type": "object",
       "additionalProperties": false,
       "required": ["contacts", "radius"],
@@ -1668,7 +1668,7 @@
       }
     },
     "controlTransfer": {
-      "description": "A vendor control transfer on the device, gated by a match on its strings and release number.",
+      "description": "A setup message in the maker's own format, sent only when the device's name strings and release number match.",
       "type": "object",
       "required": ["bmRequestType", "bRequest", "wValue", "wIndex", "wLength"],
       "additionalProperties": false,

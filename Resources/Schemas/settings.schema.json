@@ -99,7 +99,7 @@
       "default": false
     },
     "interfaceLevel": {
-      "description": "How much of the interface shows: the reduced Simple interface or the full Advanced one.",
+      "description": "How much of the app shows: Simple shows the common controls, Advanced (All Controls in the app) shows them all.",
       "enum": ["Simple", "Advanced"],
       "default": "Simple"
     },

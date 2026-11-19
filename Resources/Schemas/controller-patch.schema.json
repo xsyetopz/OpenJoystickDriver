@@ -73,7 +73,7 @@
       "additionalProperties": false,
       "properties": {
         "modes": {
-          "description": "Entries merge into the record's modes by id: a known id merges key by key, a new id adds a mode.",
+          "description": "Entries join the record's modes by id: a known id changes only the keys given, and a new id adds a mode.",
           "type": "array",
           "minItems": 1,
           "items": {

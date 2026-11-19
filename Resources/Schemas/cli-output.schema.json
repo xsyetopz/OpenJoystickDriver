@@ -704,7 +704,7 @@
                 }
               },
               "holdsExclusively": {
-                "description": "Whether OJD holds the controller exclusively, so another app can open it only after it is suspended.",
+                "description": "Whether OJD keeps the controller to itself, so another app can open it only after you suspend it in OJD.",
                 "type": "boolean"
               },
               "id": {
@@ -1300,7 +1300,7 @@
           "properties": {
             "gameRumbleUnavailable": {
               "type": "boolean",
-              "description": "True when the controller has rumble motors and its live virtual gamepad has no rumble report, so no game can rumble it."
+              "description": "True when the controller can rumble but its virtual gamepad can't pass rumble on, so no game can rumble it."
             },
             "override": {
               "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
@@ -3396,7 +3396,7 @@
       }
     },
     "sharedExclusiveOwner": {
-      "description": "A client that holds the controller open: the exclusive holder of its USB interface, or a process with a user client.",
+      "description": "A program that has the controller open: it keeps the USB interface to itself, or has a direct line (user client) to it.",
       "type": "object",
       "required": ["name"],
       "additionalProperties": false,
@@ -4740,7 +4740,7 @@
             "properties": {
               "gameRumbleUnavailable": {
                 "type": "boolean",
-                "description": "True when the controller has rumble motors and its live virtual gamepad has no rumble report, so no game can rumble it."
+                "description": "True when the controller can rumble but its virtual gamepad can't pass rumble on, so no game can rumble it."
               },
               "id": {
                 "type": "string"
