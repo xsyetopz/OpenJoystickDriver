@@ -51,7 +51,7 @@ struct ControllerFact: Equatable, Identifiable {
     case record
     /// Where the HID usage map comes from.
     case inputMapping
-    /// The controls the parser emits.
+    /// The controls the parser sends.
     case controls
     /// How the startup commands went.
     case startupStatus
@@ -69,7 +69,7 @@ struct ControllerFact: Equatable, Identifiable {
     case inputEndpoint
     /// The endpoint that takes output.
     case outputEndpoint
-    /// The client that holds the controller exclusively.
+    /// The client that holds the controller for itself.
     case exclusiveOwner
     /// Every process that holds the controller open.
     case holders
@@ -208,14 +208,14 @@ enum ControllerDetailFacts {
 
   /// Returns the technical facts, shown under Advanced: identifiers, the parser (the binding that
   /// parses the controller's input, in its `ojd` spelling, such as `xbox-xusb:receiver`),
-  /// ownership, the record, publication timing, and the controls the parser emits.
+  /// ownership, the record, publication timing, and the controls the parser sends.
   ///
   /// - Parameters:
   ///   - device: The controller.
   ///   - record: The controller model's effective record, if one matches.
   /// - Returns: The technical facts, shown under Advanced: identifiers, the parser (the binding
   ///   that parses the controller's input, in its `ojd` spelling, such as `xbox-xusb:receiver`),
-  ///   ownership, the record, publication timing, and the controls the parser emits.
+  ///   ownership, the record, publication timing, and the controls the parser sends.
   static func advanced(
     for device: ApplicationServiceDeviceDescription,
     record: ControllerRecord?

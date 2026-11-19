@@ -74,7 +74,7 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
 public struct SettingsStore: Sendable {
   /// The name of the user settings file.
   public static let fileName = "Settings.plist"
-  /// The sidecar file whose advisory lock serializes updates.
+  /// The side file whose lock lets one update run at a time.
   public static let lockFileName = "Settings.plist.lock"
   /// The location whose `Settings.plist` is read and written.
   public static let location = DataLocation.applicationData

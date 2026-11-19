@@ -1,10 +1,10 @@
 import Foundation
 
-/// Consumes normalized controller events and emits system and virtual gamepad actions.
+/// Consumes normalized controller events and sends system and virtual gamepad actions.
 ///
 /// The caller owns profile selection and target-application policy, and supplies the active profile
 /// with each event. Gamepad destinations go through the injected virtual output sink. Time is
-/// injected as monotonic uptime in nanoseconds, so turbo and continuous output can be tested
+/// injected as forward-only uptime in nanoseconds, so turbo and continuous output can be tested
 /// without sleeping.
 public actor RemappingEventEngine {
   /// Sink for keyboard and pointer actions.

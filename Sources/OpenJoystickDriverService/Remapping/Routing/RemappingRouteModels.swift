@@ -46,9 +46,9 @@ enum RemappingRouteSelection: Equatable, Sendable {
   case unavailable
 }
 
-/// Why a route does or does not emit, with the raw value that status output shows.
+/// Why a route does or does not send, with the raw value that status output shows.
 enum RemappingRouteEligibility: String, Equatable, Sendable {
-  /// The route may emit.
+  /// The route may send.
   case eligible
   /// The router suppresses output.
   case outputSuppressed = "output_suppressed"
@@ -70,7 +70,7 @@ struct RemappingRouteStatus: Equatable, Sendable {
   let identifier: LogicalControllerID
   /// The selected output.
   let selection: RemappingRouteSelection
-  /// Why the route does or does not emit.
+  /// Why the route does or does not send.
   let eligibility: RemappingRouteEligibility
   /// The ID of the active remapping profile, when there is one.
   let activeProfileID: UUID?
@@ -217,7 +217,7 @@ struct RemappingControllerRoute: Equatable, Sendable {
 
 /// An eligibility together with the environment it was computed in.
 struct RemappingEligibilitySnapshot: Equatable, Sendable {
-  /// Why the route does or does not emit.
+  /// Why the route does or does not send.
   let eligibility: RemappingRouteEligibility
   /// The bundle ID of the frontmost application, when it is known.
   let frontmostAppID: String?

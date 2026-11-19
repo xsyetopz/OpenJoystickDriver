@@ -18,7 +18,7 @@ public enum FrameStage: String, Codable, CaseIterable, Sendable {
   case deliveryEndpoint = "DeliveryEndpoint"
 }
 
-/// The time a frame reached `stage`, in nanoseconds of the monotonic uptime clock.
+/// The time a frame reached `stage`, in nanoseconds of the forward-only uptime clock.
 public struct FrameStageTime: Codable, Equatable, Sendable {
   /// The stage the frame reached.
   public let stage: FrameStage
@@ -105,7 +105,7 @@ public struct ApplicationServiceFrameTimingsPayload: Codable, Equatable, Sendabl
 ///
 /// It keeps the newest ``windowCapacity`` frames per controller in a fixed ring, so memory stays
 /// bounded and a new frame replaces the oldest in constant time. A frame enters the ring when it
-/// is dispatched; reports that never reach dispatch leave no entry.
+/// is sent on. Reports that are never sent on leave no entry.
 public final class FrameTimingRecorder: Sendable {
   /// The newest frames of the window that `ojd diagnose` lists with every stage stamp.
   public static let listedFrames = 8

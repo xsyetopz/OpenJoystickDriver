@@ -21,7 +21,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
   /// with a `control` scope but no mark is damaged.
   let controlGrantedAt: String?
 
-  /// The keys of the persisted grant.
+  /// The keys of the saved grant.
   private enum CodingKeys: String, CodingKey, CaseIterable {
     /// The keys of the name, the token hash, the origins, the scopes and the grant times.
     case name, tokenSHA256, origins, scopes, grantedAt, controlGrantedAt
@@ -162,7 +162,7 @@ package struct AccessWebSettings: Codable, Equatable, Sendable {
   /// Nil until the first enable, which saves the port the system picked unless one was given.
   var port: Int?
 
-  /// The keys of the persisted settings.
+  /// The keys of the saved settings.
   private enum CodingKeys: String, CodingKey, CaseIterable {
     /// The keys of the switch and the port.
     case enabled, port

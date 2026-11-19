@@ -3,7 +3,7 @@ extension RemappingEngineState {
   ///
   /// The sample updates tilt steering and the lean sources first. The gyro output then follows the
   /// profile's gyro output mode: the stick modes drive a virtual gamepad stick, and the mouse mode
-  /// emits a pointer movement. The gyro output is cleared while it is inactive, and on the first
+  /// sends a pointer movement. The gyro output is cleared while it is inactive, and on the first
   /// processed sample after the wait for a baseline.
   mutating func processMotion(
     _ sample: ControllerMotionSample,

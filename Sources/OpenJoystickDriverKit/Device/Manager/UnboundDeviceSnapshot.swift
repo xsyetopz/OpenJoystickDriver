@@ -16,7 +16,7 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   public let rejectedCandidates: [ProtocolBindingResult.RejectedCandidate]
   /// The interfaces observed for the device.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
-  /// The client that holds the device exclusively; nil unless the reason is
+  /// The client that holds the device for itself; nil unless the reason is
   /// ``ProtocolBindingReason/deviceInUse`` and the host named the holder.
   public let exclusiveOwner: USBExclusiveOwner?
 

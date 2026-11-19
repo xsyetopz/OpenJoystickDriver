@@ -2,11 +2,11 @@ import Foundation
 
 /// Output of one stick runtime step.
 struct RemappingStickRuntimeOutput: Equatable {
-  /// Pointer displacement to emit.
+  /// Pointer displacement to send.
   var pointerDelta = SIMD2<Double>.zero
-  /// Scroll displacement to emit, in lines.
+  /// Scroll displacement to send, in lines.
   var scrollLines = SIMD2<Double>.zero
-  /// Virtual gamepad axis values to emit.
+  /// Virtual gamepad axis values to send.
   var virtualAxes: [RemappingAxis: Double] = [:]
 
   /// Output with no movement.

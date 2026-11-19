@@ -85,7 +85,7 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
   /// Creates the driver for the USB or the Bluetooth variant.
   public init(isBluetooth: Bool = false) { self.isBluetooth = isBluetooth }
 
-  /// Clears the state of the session: neutral input.
+  /// Clears the state of the session: at-rest input.
   public func resetProtocolState() { state = .neutral }
 
   /// A Sixaxis lights no player LED until the host sets one.
@@ -210,7 +210,7 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
-  /// Button bytes 0–2 with each mask and the standard-label control it reports.
+  /// Button bytes 0 to 2 with each mask and the standard-label control it reports.
   private static func buttonTable(
     _ b0: UInt8,
     _ b1: UInt8,

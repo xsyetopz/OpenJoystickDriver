@@ -246,7 +246,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var virtualGamepad: RemappingVirtualGamepadPolicy = .passthrough
 
-  /// `--physical-input`: `shared` lets the profile emit input while the native physical input stays
+  /// `--physical-input`: `shared` lets the profile send input while the native physical input stays
   /// visible, and `exclusive` requires confirmed exclusive ownership of the controller.
   @Option(
     help: ArgumentHelp(

@@ -58,7 +58,7 @@ public struct VirtualControllerBackendStatus: Equatable, Sendable {
   }
 }
 
-/// Output backend contract for publishing normalized controller state to macOS consumers.
+/// The rules an output must follow to show the shared gamepad state to apps on the Mac.
 public protocol VirtualControllerBackend: OutputDispatcher {
   /// Which backend this is.
   var backendID: VirtualControllerBackendID { get }

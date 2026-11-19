@@ -39,7 +39,7 @@ extension ApplicationServiceServer {
     }
   }
 
-  /// Dispatches `request` to the handler of its method and encodes the result.
+  /// Sends `request` to the handler of its method and encodes the result.
   ///
   /// Remapping methods bound the argument and response sizes and report failures as
   /// ``ApplicationServiceRemappingRPCError``.

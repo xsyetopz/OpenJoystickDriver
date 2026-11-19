@@ -58,7 +58,7 @@ struct ControllerFirstPress: Encodable, Equatable {
   let direction: String?
 
   /// The first control pressed in `state` that `previous` did not hold, in `Control` order,
-  /// then the D-pad id for the hat when it leaves neutral; a diagonal names its vertical id.
+  /// then the D-pad id for the hat when it leaves centre; a diagonal names its vertical id.
   init?(previous: ControllerState, state: ControllerState) {
     if let pressed = Control.allCases.first(where: {
       state.pressed.contains($0) && !previous.pressed.contains($0)

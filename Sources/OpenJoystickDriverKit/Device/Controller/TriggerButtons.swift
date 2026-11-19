@@ -3,7 +3,7 @@ import Foundation
 /// The one trigger-press policy for protocols without a distinct digital trigger signal.
 ///
 /// A driver whose protocol reports a physical digital trigger lists that trigger in the
-/// `digitalTriggers` of its capabilities and emits `leftTrigger` or `rightTrigger` in `pressed`
+/// `digitalTriggers` of its capabilities and sends `leftTrigger` or `rightTrigger` in `pressed`
 /// from that signal. For any other trigger in `controls`, normalization derives the press from the
 /// canonical analog value: it presses at `pressThreshold` and, once pressed, releases only at or
 /// below `releaseThreshold`. The values reuse the remapping defaults for an axis acting as a

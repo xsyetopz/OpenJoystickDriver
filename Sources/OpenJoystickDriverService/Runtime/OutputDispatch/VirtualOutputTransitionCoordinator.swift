@@ -5,7 +5,7 @@ import OpenJoystickDriverKit
 enum VirtualOutputTransitionError: Error, Sendable {
   /// A stage of the transition did not finish in time.
   case stageTimedOut
-  /// The neutral feedback writes did not finish in time.
+  /// The at-rest feedback writes did not finish in time.
   case feedbackTimedOut
   /// Closing the candidate backend did not finish in time.
   case candidateCloseTimedOut
@@ -212,7 +212,7 @@ final class VirtualOutputFeedbackGate: Sendable {
     if shouldCancel { task.cancel() }
   }
 
-  /// Closes feedback admission, cancels in-flight feedback, and queues one neutral write per
+  /// Closes feedback admission, cancels in-flight feedback, and queues one at-rest write per
   /// controller.
   ///
   /// With `resumeWhenComplete` only `identifiers` are quiesced, and admission for each reopens

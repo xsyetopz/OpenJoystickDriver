@@ -65,7 +65,7 @@ public struct StickPosition: Hashable, Codable, Sendable {
 /// A driver decodes every accepted input report into a full snapshot: a control absent from
 /// `pressed` is released. Raw report bytes never appear here.
 public struct ControllerState: Equatable, Codable, Sendable {
-  /// The state with nothing pressed, a neutral hat, centered sticks and released triggers.
+  /// The state with nothing pressed, an at-rest hat, centered sticks and released triggers.
   public static let neutral = Self()
 
   /// Digital controls currently held.

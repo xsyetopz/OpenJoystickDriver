@@ -1,6 +1,6 @@
 import Foundation
 
-/// Serializes every write to one USB session so each write rechecks its handle in order.
+/// Sends writes to one USB session one at a time, and each write checks its handle again first.
 actor USBOutputWriteSerialQueue {
   /// The latest queued write, which the next write waits for.
   private var tail: Task<Void, Never>?
@@ -133,7 +133,7 @@ actor DevicePipeline {
   let calibration: @Sendable () -> ControllerCalibration
   /// When the input state last changed, for the idle disconnect.
   var idleInput: IdleInputTracker
-  /// The state last sent to the dispatcher, without connection; neutral once the dispatcher was
+  /// The state last sent to the dispatcher, without connection; at-rest once the dispatcher was
   /// told the controller stopped.
   var lastDispatchedState = ControllerState.neutral
   /// The newest input left undispatched because a later report already waited behind it.
@@ -171,7 +171,7 @@ actor DevicePipeline {
   /// neutralizes the output.
   var externalOutputAllowed: Bool
   /// Whether input held when the foreground gate lifted stays hidden until the controller returns
-  /// to neutral or changes it.
+  /// to rest or changes it.
   var waitingForExternalNeutral = false
   /// The number of USB I/O errors in a row; a successful read resets it.
   var consecutiveUSBIOErrors: Int = 0
@@ -234,7 +234,7 @@ actor DevicePipeline {
   /// The uptime in nanoseconds of the latest report that carried input, fresh or not;
   /// nil until the USB session read one.
   var lastObservedInputReportNanoseconds: UInt64?
-  /// Whether the output stays released after input was lost, until a fresh neutral report arrives;
+  /// Whether the output stays released after input was lost, until a fresh at-rest report arrives;
   /// a change posts a service status change.
   var awaitingNeutralAfterLivenessLoss = false {
     didSet {

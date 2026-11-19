@@ -39,7 +39,7 @@ extension DevicePipeline {
     driver.resetProtocolState()
   }
 
-  /// Resumes a suspended session with neutral input and restarted liveness monitoring, opens the
+  /// Resumes a suspended session with at-rest input and restarted liveness monitoring, opens the
   /// USB session again, then activates the output.
   ///
   /// - Returns: False when the pipeline is inactive or its session is not suspended.
@@ -70,8 +70,8 @@ extension DevicePipeline {
     currentWiiRemote = driver.wiiRemoteStatus
   }
 
-  /// Dispatches the exact neutral state, releasing every control, stick, trigger and touch at
-  /// once, unless it was the last state dispatched.
+  /// Sends the exact at-rest state, releasing every control, stick, trigger and touch at
+  /// once, unless it was the last state sent.
   func neutralizeOutput() async {
     guard lastDispatchedState != .neutral else { return }
     lastDispatchedState = .neutral
@@ -92,7 +92,7 @@ extension DevicePipeline {
   }
 
   /// Releases the output after the input reports went overdue, and keeps it released until a fresh
-  /// neutral report arrives.
+  /// at-rest report arrives.
   ///
   /// Does nothing while the pipeline already waits for that report.
   func retireOutputAfterLivenessLoss() async {
@@ -140,7 +140,7 @@ extension DevicePipeline {
     }
   }
 
-  /// Releases the logical controller: neutral output, then a stop for a connected one.
+  /// Releases the logical controller: at-rest output, then a stop for a connected one.
   func endInputConnection() async {
     currentInputState = .neutral
     foregroundMask = nil

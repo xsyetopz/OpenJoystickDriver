@@ -178,8 +178,8 @@ public struct ControllerInputLayout: Equatable, Sendable {
 
   /// One source of the hat; the first source that reads a direction wins.
   public enum HatSource: Equatable, Sendable {
-    /// Values 0–7 read north, then clockwise to north-west; any other value is neutral. With
-    /// `neutralUntilNonzero`, 0 also reads neutral until the field has been nonzero in the
+    /// Values 0 to 7 read north, then clockwise to north-west; any other value is at rest. With
+    /// `neutralUntilNonzero`, 0 also reads at rest until the field has been nonzero in the
     /// session, for a pad that sends 0 before its hat is live.
     case eightWay(ReportBitField, neutralUntilNonzero: Bool)
     /// One field per direction; opposing directions cancel.
@@ -189,11 +189,11 @@ public struct ControllerInputLayout: Equatable, Sendable {
       down: ReportBitField,
       left: ReportBitField
     )
-    /// The field, as a number, names a direction; a value the table lacks is neutral.
+    /// The field, as a number, names a direction; a value the table lacks is at rest.
     case table(ReportBitField, [Int: HatDirection])
   }
 
-  /// An analog value scaled to 0–1, a button that reads as fully pulled, or both.
+  /// An analog value scaled to 0 to 1, a button that reads as fully pulled, or both.
   public struct Trigger: Equatable, Sendable {
     /// The analog value; nil when the trigger has none.
     public let analog: ReportValueField?
@@ -588,7 +588,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
 }
 
 extension HatDirection {
-  /// The direction four D-pad flags hold; opposing directions cancel to neutral.
+  /// The direction four D-pad flags hold; opposing directions cancel to rest.
   init(up: Bool, right: Bool, down: Bool, left: Bool) {
     self =
       switch (up && !down, right && !left, down && !up, left && !right) {

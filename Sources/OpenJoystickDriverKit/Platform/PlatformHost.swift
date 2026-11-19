@@ -1,6 +1,6 @@
 package import Foundation
 
-/// The operating-system services the neutral command grammar reaches for.
+/// The operating-system services the shared command grammar reaches for.
 ///
 /// A host adapter module conforms to it and the executable installs the conformance before any
 /// command runs.

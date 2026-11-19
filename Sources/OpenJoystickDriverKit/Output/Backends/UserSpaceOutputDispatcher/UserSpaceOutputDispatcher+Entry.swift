@@ -31,7 +31,7 @@ extension UserSpaceOutputDispatcher {
 
     /// Closes the input state before the sender.
     ///
-    /// Both closes are idempotent, and the sender returns its one shared close task to every
+    /// Both closes are safe to repeat, and the sender returns its one shared close task to every
     /// caller.
     @discardableResult
     func beginClose() -> Task<Void, Never> {

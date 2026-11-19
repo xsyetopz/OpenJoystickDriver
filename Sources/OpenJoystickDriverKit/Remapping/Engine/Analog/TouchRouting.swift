@@ -204,7 +204,7 @@ extension RemappingEngineState {
     )
   }
 
-  /// Orders touch sources so that actions are emitted in a stable order.
+  /// Orders touch sources so that actions are sent in a stable order.
   private static func touchSourceLessThan(_ lhs: RemappingSource, _ rhs: RemappingSource) -> Bool {
     touchSourceSortKey(lhs) < touchSourceSortKey(rhs)
   }

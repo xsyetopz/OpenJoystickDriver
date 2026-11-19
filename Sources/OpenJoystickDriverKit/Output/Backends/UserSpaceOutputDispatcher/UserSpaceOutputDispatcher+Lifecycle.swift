@@ -55,7 +55,7 @@ extension UserSpaceOutputDispatcher {
   public var status: VirtualOutputBackendStatus { registryLock.withLock { _status } }
   /// Sets whether output is suppressed.
   ///
-  /// Suppressing sends one neutral report to each device whose state does not come from
+  /// Suppressing sends one at-rest report to each device whose state does not come from
   /// remapping.
   public func setOutputSuppressed(_ suppressed: Bool) async {
     let suppression: (entries: [Entry], shouldNeutralize: Bool) = registryLock.withLock {
@@ -190,7 +190,7 @@ extension UserSpaceOutputDispatcher {
 
   /// Builds the report of a remapped state and submits it.
   ///
-  /// The neutral state on a closed dispatcher closes it again.
+  /// The at-rest state on a closed dispatcher closes it again.
   ///
   /// - Throws: The error of ``deliver(input:from:remappedState:onPublished:)``.
   public func send(_ state: RemappingGamepadState, for identifier: LogicalControllerID) async throws

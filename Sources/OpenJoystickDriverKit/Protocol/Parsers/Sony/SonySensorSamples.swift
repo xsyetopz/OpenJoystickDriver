@@ -1,4 +1,4 @@
-/// Unwraps an ordered device counter to a monotonic sample time.
+/// Unwraps an ordered device counter to a forward-only sample time.
 ///
 /// A decrease denotes one wrap; a transport reset re-anchors. Multiple wraps during a report gap
 /// cannot be recovered from the wire counter alone. Sample time is the first counted report's

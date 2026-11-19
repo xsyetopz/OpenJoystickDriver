@@ -1,11 +1,10 @@
 package import CryptoKit
 import Foundation
 
-/// Revocable authority for power notifications delivered by one runtime start.
+/// A pass that lets sleep and wake notices reach the manager from one run.
 ///
-/// A caller must invalidate the session before stopping its manager. DeviceManager checks this
-/// token after the actor hop, so a queued notification from an earlier runtime cannot stop or
-/// restart a later manager lifecycle.
+/// Cancel the pass before stopping its manager. DeviceManager checks the pass when a notice
+/// arrives, so a late notice from an earlier run can't stop or restart a later one.
 public final class DeviceManagerSystemPowerEventSession: Sendable {
   /// Whether the session still holds authority; ``invalidate()`` clears it.
   private let active = Locked(true)

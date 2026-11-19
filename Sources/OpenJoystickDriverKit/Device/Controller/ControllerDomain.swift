@@ -59,7 +59,7 @@ public struct BipolarValue: Hashable, Codable, Sendable {
   }
 }
 
-/// Nanoseconds from one process-local monotonic clock.
+/// Nanoseconds from one clock that only moves forward and belongs to this process.
 public struct MonotonicTimestamp: Hashable, Comparable, Codable, Sendable {
   /// The nanosecond count of the clock.
   public let nanoseconds: UInt64
@@ -205,7 +205,7 @@ public enum Control: String, CaseIterable, Codable, Sendable {
   }
 }
 
-/// One of eight compass directions, or neutral (center) for a hat or D-pad.
+/// One of eight compass directions, or centre (at rest) for a hat or D-pad.
 public enum HatDirection: String, Codable, Sendable {
   /// The hat or D-pad is centered.
   case neutral = "Neutral"
@@ -228,7 +228,7 @@ public enum HatDirection: String, Codable, Sendable {
 }
 
 extension HatDirection {
-  /// The D-pad control the hat points at; a diagonal names its vertical id, and neutral the
+  /// The D-pad control the hat points at; a diagonal names its vertical id, and at rest the
   /// first D-pad id.
   public var dpadControl: Control {
     switch self {

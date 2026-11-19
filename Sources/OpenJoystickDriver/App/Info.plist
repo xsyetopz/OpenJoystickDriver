@@ -28,7 +28,7 @@
     <true/>
     <key>NSHumanReadableCopyright</key>
     <string>© 2026 Krystian J. MPL-2.0.</string>
-    <!-- Required when the app submits OSSystemExtensionRequest — shown in
+    <!-- Required when the app submits OSSystemExtensionRequest. Shown in
          System Settings -> Privacy & Security when user approves the extension. -->
     <key>NSInputMonitoringUsageDescription</key>
     <string>OpenJoystickDriver needs Input Monitoring to read physical controller reports.</string>

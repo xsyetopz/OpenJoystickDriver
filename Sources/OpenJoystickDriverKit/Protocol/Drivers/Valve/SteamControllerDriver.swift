@@ -76,7 +76,7 @@ public final class SteamControllerDriver: PhysicalProtocolDriver {
     isLogicalControllerConnected = !isWirelessReceiver
   }
 
-  /// Clears the state of the session: neutral input, motion time re-anchored and Bluetooth LE
+  /// Clears the state of the session: at-rest input, motion time re-anchored and Bluetooth LE
   /// framing dropped.
   public func resetProtocolState() {
     state = .neutral

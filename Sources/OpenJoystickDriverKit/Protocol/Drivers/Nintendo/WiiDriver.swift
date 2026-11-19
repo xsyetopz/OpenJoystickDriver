@@ -185,7 +185,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
 
   /// Ends the session (`SessionEndOnDisconnect`).
   ///
-  /// Input is neutral, and the reading, extension, calibration, exchanges, IR setup, rumble and
+  /// Input is at rest, and the reading, extension, calibration, exchanges, IR setup, rumble and
   /// pointer are dropped. The IR format and the pointer demand are settings and stay.
   public func resetProtocolState() {
     state = .neutral
@@ -332,7 +332,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   ///
   /// The remote drops its report mode after a status report, so the chosen mode goes out again
   /// (`ReportModeRestore`). Only a removed extension yields an event: the controls it drove return
-  /// to neutral.
+  /// to rest.
   private func parseStatus(_ bytes: [UInt8], at now: MonotonicTimestamp) -> ControllerEvent? {
     guard bytes.count >= 7 else { return nil }
     isBatteryLow = bytes[3] & Self.batteryLowBit != 0

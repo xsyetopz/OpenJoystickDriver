@@ -53,7 +53,7 @@ struct RemappingProfileLibraryCheckpoint: Sendable {
   let selections: File?
 }
 
-/// The persisted state of the library: the local profiles and the active selections.
+/// The saved state of the library: the local profiles and the active selections.
 struct RemappingProfileLibraryState: Equatable, Sendable {
   /// The local profiles.
   var profiles: [RemappingProfile] = []
@@ -61,7 +61,7 @@ struct RemappingProfileLibraryState: Equatable, Sendable {
   var activeProfiles: [RemappingPersistedActiveProfile] = []
 }
 
-/// The persisted active profile of one model and application scope.
+/// The saved active profile of one model and application scope.
 struct RemappingPersistedActiveProfile: Codable, Equatable, Sendable {
   /// The controller model.
   let model: RemappingProfileModel
@@ -81,7 +81,7 @@ struct RemappingPersistedActiveProfile: Codable, Equatable, Sendable {
     self.applicationScope = applicationScope
   }
 
-  /// The keys of the persisted selection.
+  /// The keys of the saved selection.
   private enum CodingKeys: String, CodingKey, CaseIterable {
     /// The key of the model.
     case model
@@ -130,7 +130,7 @@ struct RemappingProfileModel: Codable, Equatable, Hashable, Sendable {
     self.productID = productID
   }
 
-  /// The keys of the persisted model.
+  /// The keys of the saved model.
   private enum CodingKeys: String, CodingKey, CaseIterable {
     /// The key of the vendor ID.
     case vendorID

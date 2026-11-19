@@ -2,7 +2,7 @@ import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 
-/// Stable failures from the locally persisted remapping-profile library.
+/// Stable failures from the locally saved remapping-profile library.
 enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
   /// The profile file or the active profile list is damaged.
   case corruptLibrary

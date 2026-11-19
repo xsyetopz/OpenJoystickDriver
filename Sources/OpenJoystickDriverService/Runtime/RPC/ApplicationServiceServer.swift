@@ -27,7 +27,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let bluetoothAccess: BluetoothAccessControl?
   /// The key under which the port keys of connected controllers are computed.
   let installationKey: SymmetricKey
-  /// Serializes the remapping requests of the clients.
+  /// Runs the clients' remapping requests one at a time.
   let remappingRequests: RemappingRequestCoordinator
   /// Runs the steps of a virtual output transition one at a time.
   let virtualOutputTransitionCoordinator = VirtualOutputTransitionCoordinator()

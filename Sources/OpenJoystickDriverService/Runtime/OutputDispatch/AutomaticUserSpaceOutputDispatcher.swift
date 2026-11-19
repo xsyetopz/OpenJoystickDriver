@@ -270,7 +270,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
 
   /// Sends the remapped gamepad `state` of `identifier`.
   ///
-  /// A neutral state goes only to an existing backend and never creates one.
+  /// An at-rest state goes only to an existing backend and never creates one.
   ///
   /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when no backend can take the state, or
   ///   the failure of the backend, which also starts recovery of the publication.

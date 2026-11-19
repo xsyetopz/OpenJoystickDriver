@@ -6,7 +6,7 @@ import OpenJoystickDriverKit
 /// for `seconds`, and returns the process exit code; nil when the service does not serve that
 /// controller, so the caller keeps its own error.
 ///
-/// The service holds the device exclusively, so a second open fails; its packet log carries the
+/// The service holds the device for itself, so a second open fails; its packet log carries the
 /// same reports.
 func monitorThroughService(vendorID: UInt16, productID: UInt16, seconds: Int) -> Int32? {
   let result = Locked<Int32?>(nil)

@@ -55,7 +55,7 @@ extension USBTransportProvider {
 
 /// Why the configuration descriptor of a raw-USB device could not be read.
 public enum USBConfigurationReadFailure: Error, Equatable, Sendable, CustomStringConvertible {
-  /// The host refused the read: another owner holds the device exclusively
+  /// The host refused the read: another owner holds the device for itself
   /// (``USBTransportError/ownedByAnotherClient(owner:)``, such as Steam on macOS 27), or the host
   /// denies OJD access to it (``USBTransportError/accessDenied``).
   case refused

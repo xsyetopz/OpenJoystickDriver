@@ -18,7 +18,7 @@ struct UnservedControllerReport: Encodable, Equatable {
   let draftCommand: String?
   /// The command that captures the packets; absent unless the reason is `NoProtocolMatch`.
   let captureCommand: String?
-  /// The client that holds the device exclusively; absent unless the reason is `DeviceInUse` and
+  /// The client that holds the device for itself; absent unless the reason is `DeviceInUse` and
   /// the host named the holder.
   let owner: USBExclusiveOwner?
 

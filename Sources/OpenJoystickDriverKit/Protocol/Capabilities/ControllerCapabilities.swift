@@ -1,8 +1,9 @@
-/// Normalized controls and sample formats a parser can emit, not a claim of hardware validation.
+/// The controls and sample kinds a parser can send.
 ///
-/// Motion means gyroscope and accelerometer samples in SI units and the canonical controller frame.
+/// Real hardware may not have been tested.
+/// Motion means gyro and accelerometer samples in SI units on OJD's shared controller axes.
 public struct ControllerCapabilities: Codable, Hashable, Sendable {
-  /// The normalized controls the parser can emit.
+  /// The normalized controls the parser can send.
   public let controls: Set<Control>
   /// The triggers (`leftTrigger`, `rightTrigger`) whose press the protocol reports as its own
   /// digital signal.
@@ -13,7 +14,7 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
   ///
   /// Zero means touch decoding is unavailable.
   public let touchContactCount: UInt8
-  /// Whether the parser emits gyroscope and accelerometer samples.
+  /// Whether the parser sends gyroscope and accelerometer samples.
   public let motion: Bool
 
   /// Creates capabilities; `digitalTriggers` are added to `controls` and limited to the two
@@ -30,7 +31,7 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
     self.motion = motion
   }
 
-  /// Surface identities emitted by touch samples: one per trackpad, otherwise one primary pad.
+  /// Surface identities sent by touch samples: one per trackpad, otherwise one primary pad.
   public var touchSurfaces: [ControllerTouchSurface] {
     guard touchContactCount > 0 else { return [] }
     let trackpads = [
@@ -108,7 +109,7 @@ public struct ControllerCapabilityDelta: Equatable, Sendable {
 
   /// Declared controls this model does not have.
   public let absentControls: Set<Control>
-  /// Controls this model adds to its family defaults; the driver emits them only when selected.
+  /// Controls this model adds to its family defaults; the driver sends them only when selected.
   public let presentControls: Set<Control>
   /// The model has no rumble channel.
   public let rumbleAbsent: Bool

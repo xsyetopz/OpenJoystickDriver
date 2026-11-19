@@ -119,7 +119,7 @@ struct HIDUsageMap: Equatable, Sendable {
     /// Nil takes the element's logical minimum as north.
     let range: ClosedRange<Int>?
 
-    /// The hat direction of `element`; a value outside the eight direction values is neutral.
+    /// The hat direction of `element`; a value outside the eight direction values is at rest.
     func direction(of element: HIDElementValue) -> HatDirection {
       let position = element.integerValue - (range?.lowerBound ?? element.logicalMinimum)
       let directions: [HatDirection] = [

@@ -71,8 +71,8 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 ///              bit 5  BACK         bit 13 B
 ///              bit 6  L3           bit 14 X
 ///              bit 7  R3           bit 15 Y
-///   byte 4   : LT (0–255)
-///   byte 5   : RT (0–255)
+///   byte 4   : LT (0 to 255)
+///   byte 5   : RT (0 to 255)
 ///   bytes 6-7: Left stick X  (Int16 LE)
 ///   bytes 8-9: Left stick Y  (Int16 LE, positive = up)
 ///   bytes 10-11: Right stick X (Int16 LE)
@@ -166,7 +166,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     )
   }
 
-  /// Creates the driver for one Xbox 360 wireless receiver slot, or nil outside slots 0–3.
+  /// Creates the driver for one Xbox 360 wireless receiver slot, or nil outside slots 0 to 3.
   ///
   /// - Parameters:
   ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
@@ -241,7 +241,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   /// The manager assigns every wired pad and receiver slot its ring LED from one pool of free
   /// player slots, so two pads never both show player 1 (xpad numbers pads from one global `pad_nr`
   /// pool). A receiver slot asks for presence so a controller already paired before the interface
-  /// opened reports itself (xpad.c:1845–1864). Either device that rejects its write still starts:
+  /// opened reports itself (xpad.c:1845-1864). Either device that rejects its write still starts:
   /// xpad fails start only when it cannot submit the write (xpad.c:1473).
   public func startupWrites() -> [PhysicalOutputWrite] {
     presenceInquiryWrites
@@ -290,7 +290,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     return decodeState(Array(data.dropFirst(4)))
   }
 
-  /// The presence inquiry: the description's startup write for a receiver slot (xpad.c:1449–1469).
+  /// The presence inquiry: the description's startup write for a receiver slot (xpad.c:1449-1469).
   private var presenceInquiryWrites: [PhysicalOutputWrite] {
     PhysicalProtocolID.xboxXUSB.usbStartupWrites(
       recordWrites: recordStartup,

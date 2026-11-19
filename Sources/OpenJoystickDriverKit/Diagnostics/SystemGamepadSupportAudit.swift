@@ -112,8 +112,9 @@ public struct SystemGamepadSupportAudit: Codable, Sendable {
   public let warnings: [String]
 }
 
-/// Deserializes Apple's private mapping plists, extracting only selected
-/// redacted keys without treating the asset as a supported API.
+/// Reads Apple's private mapping plists and keeps a few chosen keys.
+///
+/// Private details are hidden. The file isn't a supported API, so nothing relies on it.
 public enum SystemGamepadSupportAuditor {
   /// The values collected for one vendor and product ID.
   private struct EntryAccumulator {

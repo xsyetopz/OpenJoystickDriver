@@ -34,7 +34,7 @@ public struct VirtualGamepadState: Sendable {
     rightTrigger > 0 ? rightTrigger : (rightTriggerPressed ? Int16.max : 0)
   }
 
-  /// Creates a state; every part is neutral unless given.
+  /// Creates a state; every part is at rest unless given.
   public init(
     buttons: UInt32 = 0,
     leftStickX: Int16 = 0,

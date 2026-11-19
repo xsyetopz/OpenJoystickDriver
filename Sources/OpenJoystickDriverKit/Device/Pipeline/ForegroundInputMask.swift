@@ -1,7 +1,7 @@
 /// Keeps input held across a lifted foreground gate invisible, per field, until that field changes.
 ///
 /// A field whose input still equals the value it had when the mask was taken shows the value last
-/// dispatched instead; once it differs it is revealed for the rest of the mask's life.
+/// sent instead; once it differs it is revealed for the rest of the mask's life.
 struct ForegroundInputMask {
   /// One part of the controller state that is revealed independently of the others.
   private enum Field: Hashable {

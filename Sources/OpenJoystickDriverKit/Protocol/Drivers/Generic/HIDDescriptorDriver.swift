@@ -87,7 +87,7 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
     }
   }
 
-  /// Clears the state of the session: neutral input.
+  /// Clears the state of the session: at-rest input.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off

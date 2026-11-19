@@ -197,7 +197,7 @@ struct StatusReport: Encodable, Equatable {
     let connection: String
     /// Why the device has no binding; absent for a device that passes through.
     let reason: String?
-    /// The client that holds the device exclusively; absent unless the reason is `DeviceInUse`
+    /// The client that holds the device for itself; absent unless the reason is `DeviceInUse`
     /// and the host named the holder.
     let owner: USBExclusiveOwner?
     /// The SDL_GameControllerDB line found for a HID pad that fails the descriptor contract; absent

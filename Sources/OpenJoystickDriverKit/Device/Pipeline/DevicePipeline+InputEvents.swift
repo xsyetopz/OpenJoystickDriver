@@ -3,7 +3,7 @@ import Foundation
 extension DevicePipeline {
 
   /// Takes the snapshot of one parsed input, or nil for a frame that carried no input, normalizes
-  /// it, and dispatches it when output may see it and it differs from the last dispatched state.
+  /// it, and sends it when output may see it and it differs from the last sent state.
   ///
   /// With `laterReportQueued`, an input that changes no button, hat, or touch frame is kept in
   /// `coalescedInput` for the later report instead.
@@ -118,7 +118,7 @@ extension DevicePipeline {
     (dispatcher as? any ObservedInputDemand)?.wantsObservedInput(from: identifier) == true
   }
 
-  /// Dispatches the input an earlier report left for a later one that published nothing, such as
+  /// Sends the input an earlier report left for a later one that published nothing, such as
   /// a last queued report that carried no input.
   func dispatchCoalescedInput() async {
     guard let pending = coalescedInput else { return }
@@ -157,7 +157,7 @@ extension DevicePipeline {
   func activateOutput() async { try? await produce(.activation(identifier)) }
 
   /// Stamps the link and power state, the one source `ControllerState.connection` reads, and
-  /// dispatches.
+  /// sends.
   func dispatch(_ event: ControllerEvent) async {
     var state = event.state
     state.connection = currentConnectionState()

@@ -129,7 +129,7 @@ public final class DualSenseDriver: PhysicalProtocolDriver {
     if model?.usesAlternateReportUnprobed == true { useAlternateReport() }
   }
 
-  /// Clears the state of the session: neutral input, motion time re-anchored and dongle presence
+  /// Clears the state of the session: at-rest input, motion time re-anchored and dongle presence
   /// forgotten.
   ///
   /// The probe result describes the device, so it survives.

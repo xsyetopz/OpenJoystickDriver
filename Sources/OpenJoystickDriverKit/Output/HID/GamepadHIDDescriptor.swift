@@ -6,18 +6,18 @@ import Foundation
 /// Do not assume consumers will apply device-specific parsing based on VID/PID.
 ///
 /// Report layout (14 bytes total):
-///   Bytes 0–1: Button usages 1–6 and 9–18
-///   Bytes 2–3: Left Stick X  (Int16 LE, –32767...32767) — Usage: X  (0x30)
-///   Bytes 4–5: Left Stick Y  (Int16 LE, –32767...32767) — Usage: Y  (0x31)
-///   Bytes 6–7: Right Stick X (Int16 LE, –32767...32767) — Usage: Z  (0x32)
-///   Bytes 8–9: Right Stick Y (Int16 LE, –32767...32767) — Usage: Rx (0x33)
-///   Bytes 10–11: Left Trigger  (Int16 LE, 0...32767) — Usage: Ry (0x34)
-///   Bytes 12–13: Right Trigger (Int16 LE, 0...32767) — Usage: Rz (0x35)
+///   Bytes 0 to 1: Button usages 1 to 6 and 9 to 18
+///   Bytes 2 to 3: Left Stick X  (Int16 LE, -32767...32767), usage X  (0x30)
+///   Bytes 4 to 5: Left Stick Y  (Int16 LE, -32767...32767), usage Y  (0x31)
+///   Bytes 6 to 7: Right Stick X (Int16 LE, -32767...32767), usage Z  (0x32)
+///   Bytes 8 to 9: Right Stick Y (Int16 LE, -32767...32767), usage Rx (0x33)
+///   Bytes 10 to 11: Left Trigger  (Int16 LE, 0...32767), usage Ry (0x34)
+///   Bytes 12 to 13: Right Trigger (Int16 LE, 0...32767), usage Rz (0x35)
 ///
 /// Button usages in standard gamepad order (``OJDGenericGamepadFormat`` maps ``ButtonBit`` onto
 /// them): 1 A, 2 B, 3 X, 4 Y, 5 LB, 6 RB, 9 Back/View, 10 Start/Menu, 11 L3, 12 R3, 13 D-pad up,
 /// 14 D-pad down, 15 D-pad left, 16 D-pad right, 17 Guide, 18 Share. A host that numbers the
-/// buttons in usage order sees indices 0–15, so the matching SDL mapping is:
+/// buttons in usage order sees indices 0 to 15, so the matching SDL mapping is:
 /// a:b0, b:b1, x:b2, y:b3, leftshoulder:b4, rightshoulder:b5, back:b6, start:b7,
 /// leftstick:b8, rightstick:b9, dpup:b10, dpdown:b11, dpleft:b12, dpright:b13, guide:b14,
 /// misc1:b15, leftx:a0, lefty:a1, rightx:a2, righty:a3, lefttrigger:+a4, righttrigger:+a5
@@ -47,7 +47,7 @@ public enum GamepadHIDDescriptor {
     // Collection: Physical
     0xA1, 0x00,
 
-    // --- Button usages 1–6 and 9–18; omit Blink trigger slots B6/B7 ---
+    // --- Button usages 1 to 6 and 9 to 18; omit Blink trigger slots B6/B7 ---
     0x05, 0x09,  // Usage Page: Button
     0x19, 0x01,  // Usage Minimum: 1
     0x29, 0x06,  // Usage Maximum: 6
@@ -92,7 +92,7 @@ public enum GamepadHIDDescriptor {
 
   /// Normalized D-pad directions shared by virtual report formats.
   public enum Hat: UInt8, Sendable {
-    /// Null / neutral — no direction pressed. Value below Logical Minimum,
+    /// At rest: no direction pressed. Value below Logical Minimum,
     /// which the HID system interprets as the null state.
     case neutral = 0
     /// Up.
@@ -157,7 +157,7 @@ public enum GamepadHIDDescriptor {
 
   // MARK: - D-pad button bitmask helper
 
-  /// Returns the button bitmask bits for D-pad directions (bits 11–14 ).
+  /// Returns the button bitmask bits for D-pad directions (bits 11 to 14 ).
   ///
   /// Used alongside the hat switch for dual encoding.
   public static func dpadButtonBits(for hat: Hat) -> UInt32 {

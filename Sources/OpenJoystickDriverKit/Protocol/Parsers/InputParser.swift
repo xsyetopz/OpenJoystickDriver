@@ -19,7 +19,7 @@ public enum ControllerInputHealthState: String, Codable, Sendable {
   case healthy = "Healthy"
   /// Reports have stopped arriving or advancing.
   case stale = "Stale"
-  /// The controls must return to neutral first.
+  /// The controls must return to rest first.
   case waitingForNeutral = "WaitingForNeutral"
 }
 

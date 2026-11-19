@@ -19,7 +19,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   public let rejectedCandidates: [ProtocolBindingResult.RejectedCandidate]
   /// Class facts of the interfaces observed when the device was rejected.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
-  /// The client that holds the device exclusively; nil unless ``reason`` is
+  /// The client that holds the device for itself; nil unless ``reason`` is
   /// ``ProtocolBindingReason/deviceInUse`` and the host named the holder.
   public let exclusiveOwner: USBExclusiveOwner?
 

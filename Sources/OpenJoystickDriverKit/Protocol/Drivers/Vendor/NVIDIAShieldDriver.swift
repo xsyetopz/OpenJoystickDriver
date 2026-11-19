@@ -71,7 +71,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
       ) : nil
   }
 
-  /// Clears the state and the latest rumble, so the next report starts from neutral.
+  /// Clears the state and the latest rumble, so the next report starts from rest.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off
@@ -181,7 +181,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
     next.rightTrigger = UnipolarValue(normalized: Float(word(triggers + 2)) / shieldTriggerMax)
   }
 
-  /// 0 = up, increasing clockwise to 7 = up-left; anything else is neutral.
+  /// 0 = up, increasing clockwise to 7 = up-left; anything else is at rest.
   private static func direction(for hat: UInt8) -> HatDirection {
     switch hat {
     case 0: return .north

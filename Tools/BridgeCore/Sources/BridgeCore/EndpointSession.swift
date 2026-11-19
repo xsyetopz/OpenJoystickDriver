@@ -37,7 +37,7 @@ public final class EndpointSession: @unchecked Sendable {
   private let descriptor: Int32
   /// The bytes read from the socket that `readLine` has not returned as a line.
   private var buffer = Data()
-  /// Serializes `send`, so two threads never interleave the bytes of two lines.
+  /// Lets one `send` run at a time, so two threads never mix the bytes of two lines.
   private let writeLock = NSLock()
 
   /// Wraps a connected socket; `connect` runs the handshake on it.
@@ -124,7 +124,7 @@ public final class EndpointSession: @unchecked Sendable {
 
   /// Writes one JSON object with sorted keys, followed by a newline.
   ///
-  /// A lock serializes the writes, so any thread may call it.
+  /// A lock lets one write run at a time, so any thread may call it.
   ///
   /// - Throws: ``BridgeError/socket(_:)`` when the write fails, or the encoding error of the line.
   public func send(_ line: Line) throws {

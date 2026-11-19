@@ -72,7 +72,7 @@ extension Control {
 }
 
 extension HatDirection {
-  /// The D-pad controls the hat points at, two for a diagonal and none for neutral.
+  /// The D-pad controls the hat points at, two for a diagonal and none at rest.
   var dpadControls: Set<Control> {
     switch self {
     case .neutral: []

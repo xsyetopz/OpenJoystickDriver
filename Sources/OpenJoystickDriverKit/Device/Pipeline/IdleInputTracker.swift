@@ -1,6 +1,6 @@
 import Foundation
 
-/// When a controller's input state last changed, on a monotonic clock the caller supplies.
+/// When a controller's input state last changed, on a forward-only clock the caller supplies.
 ///
 /// A report that repeats the state before it does not count as a change.
 struct IdleInputTracker: Sendable {

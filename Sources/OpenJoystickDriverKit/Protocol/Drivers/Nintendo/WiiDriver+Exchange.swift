@@ -156,7 +156,7 @@ extension WiiDriver {
     }
   }
 
-  /// Returns the controls an extension drove to neutral and ends its handshake.
+  /// Returns the controls an extension drove to rest and ends its handshake.
   func dropExtension(at now: MonotonicTimestamp) {
     extensionKind = nil
     extensionCenters = [:]

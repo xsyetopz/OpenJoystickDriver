@@ -53,7 +53,7 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
     hatSourceIsLive = Self.idleHatSources(of: layouts)
   }
 
-  /// Clears the state of the session: neutral input, no rumble, no live hat source and no contact.
+  /// Clears the state of the session: at-rest input, no rumble, no live hat source and no contact.
   public func resetProtocolState() {
     state = .neutral
     touchRoles = [:]
@@ -206,7 +206,7 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
     }
   }
 
-  /// The first source's direction that is not neutral.
+  /// The first source's direction that is not at rest.
   ///
   /// Every 8-way source is read, so each one's live flag tracks the whole session.
   private func hat(

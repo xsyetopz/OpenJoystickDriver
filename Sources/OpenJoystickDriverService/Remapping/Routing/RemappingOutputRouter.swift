@@ -126,7 +126,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     await reconcileTickerWithEngine()
   }
 
-  /// Dispatches `event` and drops any failure, which the route status keeps.
+  /// Sends `event` and drops any failure, which the route status keeps.
   func dispatch(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID
@@ -147,7 +147,7 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     try await dispatchCausally(.input(event), from: identifier, onPublished: onPublished)
   }
 
-  /// Dispatches the activation of `identifier` and drops any failure, which the route status keeps.
+  /// Sends the activation of `identifier` and drops any failure, which the route status keeps.
   func activateOutput(for identifier: LogicalControllerID) async {
     do { try await dispatchCausally(.activation, from: identifier) } catch {
       // As for dispatch: the typed route status retains the failure.

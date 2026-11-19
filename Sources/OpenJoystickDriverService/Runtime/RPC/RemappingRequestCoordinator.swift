@@ -6,7 +6,7 @@ typealias RemappingRequestResult<Value: Sendable> = Result<
   Value, ApplicationServiceRemappingRPCError
 >
 
-/// Serializes profile mutations, route refreshes, and the snapshot returned to RPC clients.
+/// Runs one at a time: profile changes, road refreshes, and the snapshot returned to RPC clients.
 actor RemappingRequestCoordinator {
   /// Runs before a mutation response is accepted, so tests can observe the point.
   typealias MutationResponseAcceptanceHook =

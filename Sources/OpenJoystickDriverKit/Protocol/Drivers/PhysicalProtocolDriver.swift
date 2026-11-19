@@ -304,7 +304,7 @@ extension PhysicalProtocolID {
 /// same reason: each encoder defaults to nil (unsupported), so a driver that implements one must
 /// also state the capability that lets output reach it.
 public protocol PhysicalProtocolDriver: AnyObject {
-  /// Immutable normalized controls and sample formats this driver can emit.
+  /// Immutable normalized controls and sample formats this driver can send.
   var capabilities: ControllerCapabilities { get }
 
   /// Liveness, presence gating, and USB and HID lifecycle timing for the pipeline session.

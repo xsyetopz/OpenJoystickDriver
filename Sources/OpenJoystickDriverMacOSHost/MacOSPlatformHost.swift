@@ -4,7 +4,7 @@ import OpenJoystickDriverMacOSPlatform
 import OpenJoystickDriverService
 import OpenJoystickDriverUSB
 
-/// The macOS host adapter: the system-extension, USB, and application services the neutral command
+/// The macOS host adapter: the system-extension, USB, and application services the shared command
 /// grammar reaches through `PlatformHost`.
 package struct MacOSPlatformHost: PlatformHost {
   /// Creates the host.

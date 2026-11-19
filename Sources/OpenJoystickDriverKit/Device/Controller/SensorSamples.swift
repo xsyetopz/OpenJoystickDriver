@@ -59,10 +59,10 @@ public struct ControllerSampleTimestamp: Sendable, Equatable, Codable {
   }
 }
 
-/// One IMU sample in SI units and the canonical controller frame.
+/// One motion sensor reading in SI units, on OJD's shared controller axes.
 ///
-/// The frame is right-handed: +X to the controller's right, +Y away from the player along the face,
-/// +Z upward through the face. Each producer documents and tests its raw-to-canonical transform.
+/// The axes are right-handed: +X to the controller's right, +Y away from the player along the face,
+/// +Z up out of the face. Each driver documents and tests how it turns raw counts into these axes.
 public struct ControllerMotionSample: Sendable, Equatable, Codable {
   /// The time of the sample.
   public let timestamp: ControllerSampleTimestamp

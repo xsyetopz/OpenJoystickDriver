@@ -1,7 +1,7 @@
-/// Stable identity constants of the virtual HID devices that OJD creates.
+/// Fixed name tags for the virtual gamepads OJD makes.
 ///
-/// They tell OJD's devices from real controllers with the same VID/PID, and they avoid the
-/// `LocationID=0/1` guess of some HID consumers.
+/// Like a name badge, they tell OJD's gamepads apart from real controllers with the same VID/PID,
+/// so apps reading them don't have to guess from `LocationID=0/1`.
 public enum VirtualDeviceIdentityConstants {
   /// The `IOHIDUserDevice` LocationID namespace of the user-space devices.
   ///
@@ -10,10 +10,10 @@ public enum VirtualDeviceIdentityConstants {
   /// device identifier.
   public static let userSpaceLocationIDNamespace: UInt32 = 0x4F4A_0000  // "OJ" namespace
 }
-/// Defines the virtual HID device identity presented to the OS.
+/// What the virtual gamepad says it is when macOS asks.
 ///
-/// Physical input is normalized to the internal virtual-gamepad state; the
-/// profile controls the selected HID descriptor and consumer identity.
+/// Every real controller's input is first turned into one shared gamepad state. This profile
+/// then picks the report layout and the name that games and apps see.
 public struct VirtualDeviceProfile: Equatable, Sendable {
   /// The USB vendor ID.
   public let vendorID: UInt16

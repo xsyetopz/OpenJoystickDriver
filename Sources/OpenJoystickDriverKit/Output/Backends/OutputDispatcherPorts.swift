@@ -6,7 +6,7 @@ public protocol VirtualOutputDispatching: OutputDispatcher {
   var status: VirtualOutputBackendStatus { get }
   /// Most recent app-originated rumble report summary, or `nil` before any rumble report.
   var lastRumbleStatus: String? { get }
-  /// Forces creation and neutral activation of every supplied virtual device.
+  /// Forces creation and at-rest activation of every supplied virtual device.
   func activate(for identifiers: [LogicalControllerID]) async throws
   /// Updates suppression and waits for any required output barrier.
   func setOutputSuppressed(_ suppressed: Bool) async
@@ -101,7 +101,7 @@ public protocol OutputDispatcher: OutputSink {
   /// after it resumes or reconnects.
   func activateOutput(for identifier: LogicalControllerID) async
 
-  /// Dispatches like ``dispatch(_:from:)`` while preserving publication failures for
+  /// Sends like ``dispatch(_:from:)`` while preserving publication failures for
   /// recovery coordinators, and calls `onPublished` right after the report reaches the virtual
   /// device. `onPublished` is not called when output is suppressed or the publish fails.
   func dispatchPublishing(
@@ -126,9 +126,9 @@ extension OutputDispatcher {
   }
 }
 
-/// OutputDispatcher that logs controller events to debug output.
+/// An output that only writes controller events to the debug log.
 ///
-/// Used for hardware validation and testing. Production output uses a transport adapter.
+/// Used for hardware checks and tests. Shipped builds send output through a connection adapter.
 public final class LoggingOutputDispatcher: OutputDispatcher, Sendable {
   // Suppression is ignored because this dispatcher is only for development.
   /// The diagnostic log, which receives the frames.

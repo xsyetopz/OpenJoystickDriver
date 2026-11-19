@@ -4,13 +4,13 @@ import Foundation
 public enum RemappingVirtualGamepadPolicy: String, Codable, CaseIterable, Hashable, Sendable {
   /// Synthesizes system input without creating a virtual gamepad.
   case disabled = "Disabled"
-  /// Emits only destinations explicitly assigned by the profile.
+  /// Sends only destinations explicitly assigned by the profile.
   case mapped = "Mapped"
   /// Also forwards controls that the active mapping does not consume.
   case passthrough = "Passthrough"
 }
 
-/// Physical ownership required before the profile may emit input.
+/// Physical ownership required before the profile may send input.
 public enum RemappingPhysicalInputPolicy: String, Codable, CaseIterable, Hashable, Sendable {
   /// Allows system-input mappings while native physical input remains visible.
   case shared = "Shared"
@@ -18,7 +18,7 @@ public enum RemappingPhysicalInputPolicy: String, Codable, CaseIterable, Hashabl
   case exclusive = "Exclusive"
 }
 
-/// Declares output routing and physical isolation independently of individual bindings.
+/// Says where output goes and whether the real controller is hidden, apart from any one binding.
 public struct RemappingOutputPolicy: Codable, Equatable, Hashable, Sendable {
   /// Virtual gamepad contribution of controls that have no mapping.
   public let virtualGamepad: RemappingVirtualGamepadPolicy
@@ -74,7 +74,7 @@ extension RemappingProfile {
     return !containsDestination(where: \.isVirtualGamepad)
   }
 
-  /// Whether the profile emits nothing.
+  /// Whether the profile sends nothing.
   ///
   /// Nothing means no virtual gamepad, system-input, or physical output, and no light color.
   /// Activating such a profile leaves the controller inert.

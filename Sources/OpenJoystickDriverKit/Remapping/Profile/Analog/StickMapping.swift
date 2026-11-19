@@ -25,7 +25,7 @@ public enum RemappingStickMode: String, Codable, CaseIterable, Hashable, Sendabl
   /// The pointer sits on a ring of ``RemappingStickMapping/pointerRadiusPoints`` in the stick
   /// direction.
   case pointerRing = "PointerRing"
-  /// Rotating the stick along the rim emits scroll lines.
+  /// Rotating the stick along the rim sends scroll lines.
   case scrollWheel = "ScrollWheel"
   /// Rotating the stick along the rim accumulates a virtual steering wheel on a virtual gamepad
   /// axis.
@@ -87,7 +87,7 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
   public let flickHysteresis: Double
   /// Pointer displacement from the activation anchor, in logical screen points.
   public let pointerRadiusPoints: Double
-  /// Angular stick travel that emits one logical scroll line, in degrees.
+  /// Angular stick travel that sends one logical scroll line, in degrees.
   public let scrollDegreesPerLine: Double
   /// Axis that scroll lines go to.
   public let scrollAxis: RemappingStickScrollAxis

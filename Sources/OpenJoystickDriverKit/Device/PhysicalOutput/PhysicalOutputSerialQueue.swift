@@ -24,9 +24,9 @@ extension PhysicalOutputQueueOperation {
   fileprivate init() { issuedByQueue = () }
 }
 
-/// Serializes one controller interface's output: each operation (a user command's encode and its
-/// whole plan, one lifecycle write list, or one startup feature read) runs alone, in submission
-/// order.
+/// Lines up one controller interface's output like a queue at a counter: each operation (a user
+/// command's encode and its whole plan, one lifecycle write list, or one startup feature read) runs
+/// alone, in submission order.
 actor PhysicalHIDOutputSerialQueue {
   /// The queue and the sequence of the operation that runs in the current task.
   private struct RunningOperation: Sendable {

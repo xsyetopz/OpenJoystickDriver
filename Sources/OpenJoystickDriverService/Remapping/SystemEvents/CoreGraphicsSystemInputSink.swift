@@ -281,7 +281,7 @@ public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unche
   /// The lines that a full scroll action scrolls.
   static let scrollLinesPerAction = 8.0
 
-  /// The lock that serializes `send(_:)`.
+  /// The lock that lets one `send(_:)` run at a time.
   let lock = NSLock()
   /// The post-event access that `send(_:)` checks.
   let access: CoreGraphicsPostEventAccess

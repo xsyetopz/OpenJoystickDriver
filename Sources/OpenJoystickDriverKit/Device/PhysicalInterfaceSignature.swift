@@ -191,11 +191,11 @@ public struct HIDLayoutSummary: Equatable, Sendable {
   }
 }
 
-/// The immutable facts available for one interface and alternate setting.
+/// The fixed facts known about one USB interface and alternate setting.
 ///
-/// `hostTransport` describes the observed host-facing link. `physicalTransport` is the
-/// controller-side link and stays nil unless evidence identifies it. `usbRoute` preserves the
-/// access path OJD uses; ``DeviceAccessBackend/init(route:)`` names its access backend.
+/// `hostTransport` is the link the Mac sees. `physicalTransport` is the controller's own link, and
+/// stays nil unless something proves it. `usbRoute` keeps the road OJD uses to reach it;
+/// ``DeviceAccessBackend/init(route:)`` names its access backend.
 public struct PhysicalInterfaceSignature: Equatable, Sendable {
   /// The interface number (`bInterfaceNumber`).
   public let interfaceNumber: UInt8?

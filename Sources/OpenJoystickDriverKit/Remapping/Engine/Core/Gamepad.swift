@@ -57,7 +57,7 @@ struct RemappingGamepadAccumulator: Sendable {
 
   /// Sets the contribution of an owner and returns the aggregate when it changed.
   ///
-  /// A neutral contribution removes the owner. Returns `nil` when the aggregate did not change.
+  /// An at-rest contribution removes the owner. Returns `nil` when the aggregate did not change.
   mutating func update(
     _ contribution: RemappingGamepadState,
     for bindingID: UUID

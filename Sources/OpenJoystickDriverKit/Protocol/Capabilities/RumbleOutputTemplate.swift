@@ -22,11 +22,11 @@ public struct ControllerTemplateReport: Hashable, Sendable {
 
 /// How a template writes one motor's intensity into its bytes.
 public enum RumbleMotorEncoding: String, CaseIterable, Sendable {
-  /// One byte, the intensity as 0–255.
+  /// One byte, the intensity as 0 to 255.
   case uInt8 = "UInt8"
-  /// Two bytes, the intensity as 0–65535, high byte first.
+  /// Two bytes, the intensity as 0 to 65535, high byte first.
   case uInt16BigEndian = "UInt16BigEndian"
-  /// Two bytes, the intensity as 0–65535, low byte first.
+  /// Two bytes, the intensity as 0 to 65535, low byte first.
   case uInt16LittleEndian = "UInt16LittleEndian"
   /// Four bytes of Switch HD rumble at the default 160/320 Hz frequencies.
   case switchHDRumble = "SwitchHDRumble"

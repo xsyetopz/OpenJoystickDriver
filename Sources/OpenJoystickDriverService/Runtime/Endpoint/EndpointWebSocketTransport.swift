@@ -39,7 +39,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
 
   /// The connected socket.
   private let descriptor: Int32
-  /// The lock that serializes writes.
+  /// The lock that lets one write run at a time.
   private let writeLock = NSLock()
   /// Whether the close frame was sent.
   private var closeSent = false

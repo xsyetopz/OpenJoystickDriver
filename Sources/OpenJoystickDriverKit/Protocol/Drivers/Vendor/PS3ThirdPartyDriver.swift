@@ -25,8 +25,8 @@ private let ps3ThirdPartyProbeMarker: UInt8 = 0x26
 /// `HIDReportLayout` family instead, which ``ReportLayoutDriver`` decodes.
 ///
 /// Raw reports of 19 or more bytes carry face and shoulder bits and digital triggers in byte 0,
-/// system buttons in byte 1, a hat in the low nibble of byte 2, sticks in bytes 3–6, per-button
-/// pressure in bytes 7–16 and analog triggers in bytes 17–18. The 18-byte format (Logitech
+/// system buttons in byte 1, a hat in the low nibble of byte 2, sticks in bytes 3 to 6, per-button
+/// pressure in bytes 7 to 16 and analog triggers in bytes 17 to 18. The 18-byte format (Logitech
 /// ChillStream) drops the digital triggers and Guide, moves the hat to the high nibble of byte 1
 /// and shifts the rest down by one byte. A button counts as pressed from its digital bit or from
 /// bit 7 of its pressure byte. SDL decodes the hat only when its byte changes from the previous
@@ -119,7 +119,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     decodesRawReports = false
   }
 
-  /// Clears the state of the session: neutral input and no rumble.
+  /// Clears the state of the session: at-rest input and no rumble.
   ///
   /// The probe result describes the device, so it survives.
   public func resetProtocolState() {

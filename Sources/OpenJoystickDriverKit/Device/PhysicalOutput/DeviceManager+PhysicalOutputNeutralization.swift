@@ -2,11 +2,11 @@ import Foundation
 
 extension DeviceManager {
 
-  /// Sets every physical output of the controller to its neutral value and drops its claims.
+  /// Sets every physical output of the controller to its at-rest value and drops its claims.
   ///
   /// A pending rumble stop is cancelled first. The rumble stops if the controller supports it, and
   /// each supported player indicator, color, brightness and adaptive trigger returns to its
-  /// neutral value in a stable channel order. With `detachedInfo`, the writes go to a detached HID
+  /// at-rest value in a stable channel order. With `detachedInfo`, the writes go to a detached HID
   /// connection that this manager still owns.
   func neutralizePhysicalOutputs(
     for identifier: LogicalControllerID,

@@ -18,7 +18,7 @@ public enum DataLocation: String, CaseIterable, Sendable {
   case home
 }
 
-/// The single port through which every store resolves where it persists files.
+/// The single port through which every store resolves where it saves files.
 ///
 /// Stores receive a `DataDirectory` by injection and never build platform paths themselves.
 public protocol DataDirectory: Sendable {

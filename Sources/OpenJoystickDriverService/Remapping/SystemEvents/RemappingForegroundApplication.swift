@@ -11,7 +11,7 @@ protocol RemappingForegroundApplicationProviding: Sendable {
 // in `deinit`, so no other thread touches it. The bundle identifier is behind `Locked`.
 /// Tracks the foreground application from workspace activation notifications.
 ///
-/// Remapping routing reads the frontmost application for every dispatched input batch, so the
+/// Remapping routing reads the frontmost application for every sent input batch, so the
 /// tracker keeps it in memory instead of querying `NSWorkspace` each time.
 final class WorkspaceRemappingForegroundApplication: RemappingForegroundApplicationProviding,
   @unchecked Sendable
@@ -59,10 +59,10 @@ protocol RemappingPostEventAccessProviding: Sendable {
 
 extension CoreGraphicsPostEventAccess: RemappingPostEventAccessProviding {}
 
-/// Decides whether a route may emit, from the application scope, the frontmost application and the
+/// Decides whether a route may send, from the application scope, the frontmost application and the
 /// post-event access.
 enum RemappingForegroundPolicy {
-  /// Returns why a route emits or not.
+  /// Returns why a route sends or not.
   ///
   /// Suppressed output wins, then missing post-event access when the profile needs it, then the
   /// application scope.

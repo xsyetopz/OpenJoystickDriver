@@ -118,7 +118,7 @@ public final class DualShock4Driver: PhysicalProtocolDriver {
     ).withDefaults(of: .sonyDualShock4)
   }
 
-  /// Clears the state of the session: neutral input, motion time re-anchored and adapter presence
+  /// Clears the state of the session: at-rest input, motion time re-anchored and adapter presence
   /// forgotten.
   public func resetProtocolState() {
     state = .neutral

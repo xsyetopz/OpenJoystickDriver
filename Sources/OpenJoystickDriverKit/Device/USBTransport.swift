@@ -329,7 +329,7 @@ public protocol USBTransportProvider: Sendable {
   /// Every open interface of the device ends, and the device returns as a new attachment.
   func resetDevice(_ device: USBTransportDevice) async throws
 
-  /// The process or driver that holds the device exclusively, as the host reports it, or nil when
+  /// The process or driver that holds the device for itself, as the host reports it, or nil when
   /// the host reports no exclusive owner.
   ///
   /// - Throws: ``USBTransportError/notSupported`` when the provider cannot observe owners.

@@ -60,7 +60,7 @@ public struct ConnectedDeviceSnapshot: Sendable {
   public let recordAccessRoute: ControllerAccessRoute
   /// The record's timing and deadzone values as applied to this controller.
   public let tuning: ControllerTuning
-  /// Normalized controls and sample formats the active parser emits for this record.
+  /// Normalized controls and sample formats the active parser sends for this record.
   public let capabilities: ControllerCapabilities
   /// The link and latest power state of the controller.
   public let connectionState: ControllerConnectionState?

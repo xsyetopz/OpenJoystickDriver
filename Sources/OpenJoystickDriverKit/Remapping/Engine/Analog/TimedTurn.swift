@@ -4,7 +4,7 @@ import Foundation
 struct RemappingTimedTurn {
   /// Angle to reach, in degrees.
   private var target = 0.0
-  /// Angle already emitted, in degrees.
+  /// Angle already sent, in degrees.
   private var emitted = 0.0
   /// Uptime at which the trajectory started, in nanoseconds.
   private var started: UInt64 = 0
@@ -13,7 +13,7 @@ struct RemappingTimedTurn {
   /// Latest uptime seen, in nanoseconds.
   private var lastUptime: UInt64 = 0
 
-  /// Whether part of the trajectory is still to be emitted.
+  /// Whether part of the trajectory is still to be sent.
   var isActive: Bool { target != emitted }
 
   /// Drops the trajectory.

@@ -93,7 +93,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     self.subcommands = described
   }
 
-  /// Clears the state of the session: neutral input and motion time re-anchored.
+  /// Clears the state of the session: at-rest input and motion time re-anchored.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off
@@ -369,8 +369,8 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     return max(-1, min(1, centered))
   }
 
-  /// The hat direction of four D-pad flags; opposing directions cancel to neutral only through the
-  /// neutral case.
+  /// The hat direction of four D-pad flags; opposing directions cancel to rest only through the
+  /// at-rest case.
   private func mapDpad(up: Bool, right: Bool, down: Bool, left: Bool) -> HatDirection {
     switch (up, right, down, left) {
     case (true, false, false, false): return .north

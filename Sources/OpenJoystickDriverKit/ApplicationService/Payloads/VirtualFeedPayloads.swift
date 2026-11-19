@@ -3,7 +3,7 @@ public import Foundation
 /// One input frame for a virtual feed: the pressed buttons and d-pad directions, the axis values,
 /// and how long the frame lasts at least.
 ///
-/// Missing controls are neutral.
+/// Missing controls are at rest.
 ///
 /// JSON: `{"buttons":["South"],"dpad":["DpadUp"],"axes":{"LeftStickX":0.5},"holdMilliseconds":50}`,
 /// with the names of ``Control``, ``RemappingDpadDirection``, and ``RemappingAxis`` but the pointer
@@ -25,7 +25,7 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
   /// ``VirtualFeedExchangeResult/minimumFrameMilliseconds``; nil shows it until the next frame.
   public let holdMilliseconds: Int?
 
-  /// Creates a frame from its values; missing controls are neutral.
+  /// Creates a frame from its values; missing controls are at rest.
   public init(
     buttons: Set<Control> = [],
     dpad: Set<RemappingDpadDirection> = [],

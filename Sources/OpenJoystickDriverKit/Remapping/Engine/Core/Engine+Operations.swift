@@ -59,7 +59,7 @@ extension RemappingEventEngine {
     }
   }
 
-  /// Forgets the baseline of a stopped source, so its next snapshot is diffed against neutral.
+  /// Forgets the baseline of a stopped source, so its next snapshot is diffed against rest.
   public func endSource(_ source: LogicalControllerID) async {
     await acquireOperation()
     defer { finishOperation() }
@@ -213,15 +213,16 @@ extension RemappingEventEngine {
     return status
   }
 
-  /// Returns the earliest monotonic deadline required by scheduled output, or `nil` when none is.
+  /// Returns the earliest forward-only deadline required by scheduled output, or `nil` when none
+  /// is.
   ///
   /// Turbo deadlines are exact phase boundaries. Continuous destinations use the caller-owned
   /// cadence because their platform scaling and delivery rate are adapter policy. Arithmetic
   /// saturates at `UInt64.max`.
   /// - Parameters:
-  ///   - uptimeNanoseconds: The current monotonic uptime in nanoseconds.
+  ///   - uptimeNanoseconds: The current forward-only uptime in nanoseconds.
   ///   - continuousIntervalNanoseconds: Interval between ticks of continuous output.
-  /// - Returns: The earliest deadline in monotonic nanoseconds, or `nil` when no output is
+  /// - Returns: The earliest deadline in forward-only nanoseconds, or `nil` when no output is
   ///   scheduled.
   public func nextScheduledTick(
     after uptimeNanoseconds: UInt64,
@@ -317,7 +318,7 @@ extension RemappingEventEngine {
 
   /// Retries uncertain releases after a sink or permission failure.
   ///
-  /// The engine remains faulted if any release fails and cannot emit new presses until recovery
+  /// The engine remains faulted if any release fails and cannot send new presses until recovery
   /// completes.
   /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed, and
   ///   ``RemappingEventEngineError/sinkUnavailable`` when a release fails.

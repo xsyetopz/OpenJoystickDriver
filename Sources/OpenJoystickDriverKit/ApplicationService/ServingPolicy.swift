@@ -10,7 +10,7 @@ public enum OutputDisabledReason: String, Codable, CaseIterable, Equatable, Send
 
 /// The one way OJD serves a controller.
 ///
-/// Exactly one route holds for each controller.
+/// Each controller takes exactly one of these roads.
 public enum ServingRoute: Equatable, Sendable {
   /// The system serves the controller and OJD publishes nothing. The allowance is what OJD may
   /// still drive on the physical controller: the motors and lighting the system leaves undone.
@@ -116,7 +116,8 @@ public struct ServingInput: Equatable, Sendable {
   }
 }
 
-/// The policy's answer: the route, and the persona selection behind it when the route publishes.
+/// The policy's answer: the road, plus the persona it picked when that road shows a virtual
+/// gamepad.
 public struct ServingDecision: Equatable, Sendable {
   /// How OJD serves the controller.
   public let route: ServingRoute

@@ -42,7 +42,7 @@ public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {
   }
 }
 
-/// One conservative inner-payload bound shared by profiles, persistence, and remapping RPC.
+/// One size cap for profile data, shared by profiles, saved files, and remapping messages.
 public enum RemappingPayloadLimits {
   /// Largest encoded profile or payload, in bytes.
   public static let maximumEncodedBytes = 4 * 1_024 * 1_024

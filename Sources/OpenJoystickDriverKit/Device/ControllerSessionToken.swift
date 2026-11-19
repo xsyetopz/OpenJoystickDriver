@@ -4,7 +4,7 @@ import Foundation
 ///
 /// A session token is `E-` and 16 base64url characters of random bytes. It says nothing about the
 /// controller's model, serial number or port, and a reconnect gets a different token even on the
-/// same port. Tokens are not persisted.
+/// same port. Tokens are not saved.
 public struct ControllerSessionToken: Hashable, Sendable {
   /// The prefix of every session token.
   static let prefix = "E-"

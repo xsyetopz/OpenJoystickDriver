@@ -63,7 +63,7 @@ public struct ApplicationServiceRemappingProfileIssueArguments: Codable, Sendabl
   public init(issueID: UUID) { self.issueID = issueID }
 }
 
-/// A problem of the persisted remapping profiles that the snapshot reports.
+/// A problem of the saved remapping profiles that the snapshot reports.
 public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Sendable, Identifiable {
   /// The kind of a profile issue.
   public enum Kind: String, Codable, Sendable {
@@ -375,7 +375,7 @@ extension Sequence where Element == ApplicationServiceRemappingActiveProfilePayl
   }
 }
 
-/// Which output path routes a controller's input.
+/// Which road a controller's input takes to become output.
 public enum ApplicationServiceRemappingRouteSelection: String, Codable, Sendable {
   /// The remapping engine produces the output.
   case remapping
@@ -385,11 +385,11 @@ public enum ApplicationServiceRemappingRouteSelection: String, Codable, Sendable
   case virtualGamepad = "virtual-gamepad"
 }
 
-/// Whether the route of a controller can produce remapped output now, and if not, why.
+/// Whether a controller's road can make remapped output right now, and if not, why.
 public enum ApplicationServiceRemappingRouteEligibility: String, Codable, Sendable {
-  /// The route can produce output.
+  /// The road can make output.
   case eligible
-  /// Output is suppressed.
+  /// Output is paused.
   case outputSuppressed = "output_suppressed"
   /// macOS has not granted the permission to post input events.
   case postEventAccessNotAuthorized = "post_event_access_not_authorized"
@@ -397,13 +397,13 @@ public enum ApplicationServiceRemappingRouteEligibility: String, Codable, Sendab
   case targetApplicationNotFrontmost = "target_application_not_frontmost"
   /// OJD does not hold the physical input exclusively.
   case physicalInputNotExclusive = "physical_input_not_exclusive"
-  /// The route is unavailable.
+  /// The road is closed.
   case unavailable
-  /// The virtual gamepad's output is suppressed.
+  /// The virtual gamepad's output is paused.
   case virtualOutputSuppressed = "virtual_output_suppressed"
 }
 
-/// A failure of the remapping engine that the route payload carries.
+/// A remapping engine failure, sent along with the road's details.
 public struct ApplicationServiceRemappingFailurePayload: Codable, Equatable, Sendable {
   /// The failure's code.
   public let code: ApplicationServiceRemappingRPCError.Code
@@ -525,7 +525,7 @@ public struct ApplicationServiceRemappingPackageProfile: Codable, Equatable, Sen
 }
 
 /// The state of remapping that the service reports: the profiles, the active profile of each model,
-/// the routes, the Joy-Con pairs and the profile issues.
+/// each controller's road, the Joy-Con pairs and the profile issues.
 public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Sendable {
   /// Every profile in the library.
   public let profiles: [RemappingProfile]

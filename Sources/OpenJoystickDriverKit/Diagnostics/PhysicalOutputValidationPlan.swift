@@ -1,6 +1,8 @@
 import Foundation
 
-/// Redacted, capability-driven manual validation instructions for physical controller output.
+/// Step-by-step checks a person runs to test a controller's rumble and lights.
+///
+/// The steps follow what the controller supports. Private details are hidden.
 public struct PhysicalOutputValidationPlan: Equatable, Sendable {
   /// One `ojd controller` command to run and what the tester should see.
   public struct Step: Equatable, Sendable, Identifiable {

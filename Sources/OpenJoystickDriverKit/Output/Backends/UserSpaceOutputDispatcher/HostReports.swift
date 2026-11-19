@@ -2,7 +2,8 @@ import Foundation
 
 /// Request contract for a virtual device's synchronous report callbacks.
 package final class UserSpaceHostReportHandler: Sendable {
-  /// Serializes consuming a request with enqueueing it, so publication follows callback order.
+  /// Makes taking a request and queueing it happen as one step, so replies go out in callback
+  /// order.
   private let lock = NSLock()
   /// The controller the device belongs to.
   private let identifier: LogicalControllerID

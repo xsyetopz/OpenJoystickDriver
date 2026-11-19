@@ -75,7 +75,7 @@ public final class SteamTritonDriver: PhysicalProtocolDriver {
     ).withKeepAlive(of: .valveSteamTriton)
   }
 
-  /// Clears the state and the motion clock, so the next report starts from neutral.
+  /// Clears the state and the motion clock, so the next report starts from rest.
   public func resetProtocolState() {
     state = .neutral
     imuClock?.reset()

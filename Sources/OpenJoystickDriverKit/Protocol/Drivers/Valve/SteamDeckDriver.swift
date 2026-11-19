@@ -50,7 +50,7 @@ public final class SteamDeckDriver: PhysicalProtocolDriver {
   /// The Deck's controller is built in, so it has no logical connection state.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  /// Clears the state and the motion samples, so the next report starts from neutral.
+  /// Clears the state and the motion samples, so the next report starts from rest.
   public func resetProtocolState() {
     state = .neutral
     motionSamples.reset()

@@ -1,4 +1,4 @@
-/// The discovery route that owns a connected controller's pipeline.
+/// How OJD found a connected controller, which also decides who reads it.
 public enum DeviceDiscoverySource: String, Codable, Sendable {
   /// The controller is reached through IOKit HID.
   case hid = "HID"

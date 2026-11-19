@@ -372,7 +372,7 @@ extension DevicePipeline {
   }
 
   /// Sets the foreground gate: closing it neutralizes the output, and opening it hides input held
-  /// at that moment until the controller returns to neutral or changes it.
+  /// at that moment until the controller returns to rest or changes it.
   func setExternalOutputAllowed(_ allowed: Bool) async {
     let changed = externalOutputAllowed != allowed
     guard changed else { return }

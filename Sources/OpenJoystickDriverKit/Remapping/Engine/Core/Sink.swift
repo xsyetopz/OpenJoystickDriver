@@ -23,8 +23,8 @@ public enum RemappingTransactionAdmission: Sendable {
 
 /// Keeps one already-admitted output operation visible to transaction and shutdown drains.
 ///
-/// Finishing is idempotent. The lease also finishes on deinitialization, so cancellation and thrown
-/// errors cannot strand admission closed forever.
+/// Finishing is safe to repeat. The lease also finishes on deinitialization, so cancellation and
+/// thrown errors cannot strand admission closed forever.
 public final class RemappingEmissionLease: Sendable {
   /// Permit that the lease covers.
   public let permit: RemappingEmissionPermit
@@ -331,7 +331,7 @@ public protocol RemappingSystemInputSink: AnyObject, Sendable {
   func send(_ action: RemappingSystemInputAction) throws
 }
 
-/// Errors of remapping dispatch and fail-closed recovery.
+/// Errors from sending remapped output, and from letting go of everything after a failure.
 public enum RemappingEventEngineError: Error, Equatable, LocalizedError, Sendable {
   /// The engine is suspended until sink recovery succeeds.
   case faulted

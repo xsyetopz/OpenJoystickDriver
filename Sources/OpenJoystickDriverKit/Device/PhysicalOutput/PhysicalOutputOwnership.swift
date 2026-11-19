@@ -38,7 +38,7 @@ extension RemappingPhysicalOutput {
     }
   }
 
-  /// Whether this output is the neutral one: zero rumble or brightness intensity, an off player
+  /// Whether this output is the at-rest one: zero rumble or brightness intensity, an off player
   /// indicator, black, or an off adaptive trigger.
   var isNeutral: Bool {
     switch self {
@@ -124,7 +124,7 @@ struct PhysicalOutputOwnership {
   /// Adds one command's manual claims under one sequence and returns it, for `commitManual` or
   /// `withdrawManual` once the command's write finishes.
   ///
-  /// A neutral claim lets mapping claims show through, except a color, where black is a real
+  /// An at-rest claim lets mapping claims show through, except a color, where black is a real
   /// claim.
   @discardableResult
   mutating func setManual(
@@ -228,7 +228,7 @@ struct PhysicalOutputOwnership {
   /// The output that wins on `channel` of `identifier`, or nil when nothing claims it.
   ///
   /// A color preview wins first, then the newest manual claim, which counts only when it is not
-  /// neutral unless the channel is the color, then the newest mapping claim, then the profile
+  /// at-rest unless the channel is the color, then the newest mapping claim, then the profile
   /// color.
   func effectiveOutput(
     for channel: PhysicalOutputChannel,

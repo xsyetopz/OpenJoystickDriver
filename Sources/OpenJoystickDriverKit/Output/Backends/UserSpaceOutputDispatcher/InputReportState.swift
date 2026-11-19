@@ -27,7 +27,7 @@ final class UserSpaceInputReportState: Sendable {
   /// Whether the state comes from remapping.
   var isRemapped: Bool { current.withLock { $0.remapped } }
 
-  /// Creates the state for `format`, at the neutral gamepad state.
+  /// Creates the state for `format`, at the at-rest gamepad state.
   init(format: any VirtualGamepadReportFormat) {
     self.format = format
     let neutral = VirtualGamepadState()
@@ -79,7 +79,7 @@ final class UserSpaceInputReportState: Sendable {
     }
   }
 
-  /// Returns the state to neutral, forgets the delivered report and returns the neutral input
+  /// Returns the state to rest, forgets the delivered report and returns the at-rest input
   /// report.
   func reset() -> [UInt8] {
     current.withLock { current in

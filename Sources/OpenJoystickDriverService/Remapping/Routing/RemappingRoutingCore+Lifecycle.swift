@@ -51,7 +51,7 @@ extension RemappingRoutingCore {
   }
 
   /// Forgets the engine baselines of sources the route stopped feeding to the engine, so input
-  /// that changed meanwhile is diffed against neutral when feeding resumes.
+  /// that changed meanwhile is diffed against rest when feeding resumes.
   func endSources(_ sources: some Sequence<LogicalControllerID>) async {
     for source in sources { await engine.endSource(source) }
   }

@@ -1,4 +1,4 @@
-/// The route by which OJD reaches one controller, decided by its record.
+/// The road OJD takes to reach one controller, as its record decides.
 public enum ControllerAccessRoute: String, Codable, CaseIterable, Sendable {
   /// OJD's signed USB extension claims the controller.
   case extensionOwned

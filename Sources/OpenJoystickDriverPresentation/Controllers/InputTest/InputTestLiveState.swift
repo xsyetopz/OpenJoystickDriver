@@ -13,12 +13,12 @@
 
     /// Creates the state on `snapshot`.
     ///
-    /// - Parameter snapshot: The input to start with; neutral by default.
+    /// - Parameter snapshot: The input to start with; at rest by default.
     init(snapshot: ControllerState = .neutral) {
       self.snapshot = snapshot
     }
 
-    /// Sets the input to neutral.
+    /// Sets the input to rest.
     func reset() {
       update(.neutral)
     }

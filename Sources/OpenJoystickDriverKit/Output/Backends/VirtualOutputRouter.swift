@@ -1,6 +1,6 @@
 import Foundation
 
-/// Routes normalized controller input exclusively to the active virtual HID device.
+/// Sends the shared gamepad state to the one virtual gamepad that is in use, and nowhere else.
 public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
   RemappingGamepadOutputControlling, @unchecked Sendable
 {
@@ -50,7 +50,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
 
   /// Sends a remapped state to the backend.
   ///
-  /// While remapping output is suppressed, only the neutral state reaches the backend.
+  /// While remapping output is suppressed, only the at-rest state reaches the backend.
   ///
   /// - Throws: `RemappingEventEngineError.sinkUnavailable` when the backend takes no remapped
   ///   state, or the error of the backend.

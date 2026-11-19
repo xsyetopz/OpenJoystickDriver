@@ -54,7 +54,7 @@ struct Switch2AxisCalibration: Equatable {
   /// The raw value at the stick's minimum.
   var min: UInt16 = 0
 
-  /// SDL `MapJoystickAxis`: scales by the side's range around neutral, or maps `0...4096` to
+  /// SDL `MapJoystickAxis`: scales by the side's range around the rest point, or maps `0...4096` to
   /// `-1...1` without calibration.
   func normalize(_ raw: UInt16) -> Float {
     guard neutral != 0, min != 0, max != 0 else { return Float(raw) / 2048 - 1 }
@@ -70,7 +70,7 @@ struct Switch2StickCalibration: Equatable {
   /// The calibration of the vertical axis.
   var y = Switch2AxisCalibration()
 
-  /// SDL `ParseStickCalibration`: three packed 12-bit pairs, neutral then max then min.
+  /// SDL `ParseStickCalibration`: three packed 12-bit pairs, rest then max then min.
   init?(_ bytes: ArraySlice<UInt8>) {
     guard bytes.count >= 9 else { return nil }
     let values = Array(bytes.prefix(9))
@@ -158,7 +158,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     )
   }
 
-  /// Clears the state, so the next report starts from neutral.
+  /// Clears the state, so the next report starts from rest.
   public func resetProtocolState() { state = .neutral }
 
   /// The controls of the layout, with digital triggers.
