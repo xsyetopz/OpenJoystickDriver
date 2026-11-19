@@ -2,12 +2,12 @@
 
 Play a game on one Mac with a controller plugged into another Mac.
 
-Think of it as a long cable over your network. The bridge copies controller input from the first Mac to the second. WebRTC is the same technology video calls use to send data straight from one computer to another. The game sees a [virtual gamepad](Glossary.md#terms). Rumble from the game goes back to the first Mac, where the bridge prints it. It does not make the controller rumble.
+Think of it as a long cable over your network. The bridge copies controller input from the first Mac to the second. WebRTC is the technology video calls use to send data straight from one computer to another. The game sees a [virtual gamepad](Glossary.md#terms). Rumble from the game goes back to the first Mac, where the bridge prints it. The controller does not rumble.
 
 - **Who:** anyone who wants to play on one Mac with a controller on another.
 - **What:** `ojd-webrtc-bridge`, a separate program that runs on both Macs.
 - **Where:** two Macs on one network, with OJD installed on both.
-- **Why:** the game Mac may be in another room, like a long cable over your network.
+- **Why:** the game Mac may be in another room.
 - **How:** build the bridge, create a token with `ojd access`, and run it on each Mac.
 
 ```mermaid
@@ -48,7 +48,7 @@ Each Mac runs one bridge with one role.
 
 ## Connect Two Macs
 
-The bridges find each other through two lines of text, an offer and an answer, like swapping phone numbers. Copy each line to the other Mac yourself, by a channel you trust, such as a message to yourself. Anyone with both lines can try to join.
+The bridges find each other through two lines of text, an offer and an answer, like swapping phone numbers. Copy each line to the other Mac yourself over a channel you trust, such as a message to yourself. Anyone with both lines can try to join.
 
 ```mermaid
 sequenceDiagram
@@ -96,13 +96,13 @@ peer's from stdin. The player offers by default and the host answers.
 
 ## If the Bridge Does Not Work
 
-- `E1002`: the token is wrong or lacks the scope of the role. Create it again with the right `--scope`, as in [Connect Two Macs](#connect-two-macs). See [Error codes](Error-Codes.md).
+- `E1002`: the token is wrong or lacks the scope of the role. Create it again with the right `--scope`, as in [Connect Two Macs](#connect-two-macs). See [Error Codes](Error-Codes.md).
 - Socket not found: run `ojd access status` and pass the path with `--socket`.
 - Macs do not connect: check that both are on one network, or give each bridge a STUN server with `--ice-server`.
 
 ## Further Reading
 
-- [WebRTC bridge reference](../docs/sdk/webrtc-bridge.md)
-- [Command reference](Command-Reference.md)
-- [Permissions and security](Permissions-and-Security.md)
+- [WebRTC Bridge Reference](../docs/sdk/webrtc-bridge.md)
+- [Command Reference](Command-Reference.md)
+- [Permissions and Security](Permissions-and-Security.md)
 - [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
