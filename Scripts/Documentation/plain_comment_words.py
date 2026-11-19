@@ -1,7 +1,9 @@
-"""Swap jargon for everyday words in Swift doc comments.
+"""Swap jargon for everyday words in code comments.
 
-Only `///` comment prose changes. Code, inline code in backticks, and DocC symbol links stay as
-they are, because they name real identifiers. Each swap keeps the meaning in every context the
+Only comment prose changes: Swift `//` and `///` lines and Python `#` lines. Code, inline
+code in backticks, and DocC symbol links stay as they are, because they name real identifiers.
+A fixed term split over two lines, such as "canonical equivalence", needs both words on one
+line, because each line is rewritten alone. Each swap keeps the meaning in every context the
 repository uses it in; words whose meaning depends on context stay for a person to rewrite.
 
 Usage: python3 Scripts/Documentation/plain_comment_words.py [--check] <path>...
@@ -41,9 +43,27 @@ SWAPS: list[tuple[str, str]] = [
     (r"\bmonotonic\b", "forward-only"),
     (r"\bidempotent\b", "safe to repeat"),
     (r"\bholds the (device|controller) exclusively\b", r"holds the \1 for itself"),
+    # Unicode "canonical equivalence" is a fixed term.
+    (r"\bcanonical\b(?! equivalence)", "standard"),
+    (r"\bCanonical\b(?! equivalence)", "Standard"),
+    (r"\b([Aa]|[Ee]ach|[Oo]ne|[Ee]very) suppression\b", r"\1 pause"),
+    (r"\b(on|off)( each)? suppression\b", r"\1\2 pause"),
+    (r"\bsuppression\b", "pausing"),
+    (r"\bSuppression\b", "Pausing"),
+    (r"\bsuppressed\b", "paused"),
+    (r"\bSuppressed\b", "Paused"),
+    (r"\bsuppresses\b", "pauses"),
+    (r"\bsuppressing\b", "pausing"),
+    (r"\bSuppressing\b", "Pausing"),
+    (r"\bsuppress\b", "pause"),
+    (r"\b([Aa]|[Ee]ach|[Oo]ne|[Ee]very) payload\b", r"\1 block of data"),
+    (r"\bpayloads\b", "data"),
+    (r"\bpayload\b", "data"),
+    (r"\bPayloads?\b", "Data"),
 ]
 
-DOC = re.compile(r"^(\s*///)(.*)$")
+SWIFT_COMMENT = re.compile(r"^(\s*//+)(.*)$")
+PYTHON_COMMENT = re.compile(r"^(\s*#(?![!]))(?!.*\b(?:noqa|type:|pragma)\b)(.*)$")
 
 
 def swap_prose(text: str) -> str:
@@ -55,11 +75,11 @@ def swap_prose(text: str) -> str:
     return "".join(parts)
 
 
-def rewrite(source: str) -> str:
-    """Return the source with every doc comment line rewritten."""
+def rewrite(source: str, pattern: re.Pattern[str] = SWIFT_COMMENT) -> str:
+    """Return the source with every comment line that `pattern` matches rewritten."""
     lines = source.split("\n")
     for number, line in enumerate(lines):
-        match = DOC.match(line)
+        match = pattern.match(line)
         if match:
             lines[number] = match.group(1) + swap_prose(match.group(2))
     return "\n".join(lines)
@@ -75,12 +95,16 @@ def main() -> int:
     files = [
         p
         for root in args.paths
-        for p in ([root] if root.is_file() else root.rglob("*.swift"))
+        for p in (
+            [root] if root.is_file() else [*root.rglob("*.swift"), *root.rglob("*.py")]
+        )
     ]
     changed = 0
     for path in files:
         before = path.read_text()
-        after = rewrite(before)
+        after = rewrite(
+            before, PYTHON_COMMENT if path.suffix == ".py" else SWIFT_COMMENT
+        )
         if after != before:
             changed += 1
             if args.check:
