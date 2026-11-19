@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 from Scripts.GUI import annotate
@@ -99,7 +100,12 @@ class PictureListTests(unittest.TestCase):
     def test_each_callout_title_starts_with_its_step_number_or_none_does(self) -> None:
         for picture in PICTURES:
             numbered = [c.title[0].isdigit() for c in picture.callouts]
-            self.assertIn(set(numbered), ({True}, {False}), picture.name)
+            self.assertIn(set(numbered), (set(), {True}, {False}), picture.name)
+
+    def test_a_picture_without_callouts_hides_something(self) -> None:
+        for picture in PICTURES:
+            if not picture.callouts:
+                self.assertTrue(picture.masks, picture.name)
 
 
 @unittest.skipUnless(importlib.util.find_spec("PIL"), "Pillow is not installed")
@@ -124,6 +130,31 @@ class RenderTests(unittest.TestCase):
         # Assert
         self.assertEqual(image.size, (800, 600))
         self.assertEqual(image.getpixel((40, 320))[:3], annotate.RED[:3])
+
+    def test_a_plain_picture_saves_into_its_own_folder(self) -> None:
+        from PIL import Image
+
+        # Arrange
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            Image.new("RGBA", (400, 300), (40, 40, 40, 255)).save(root / "main.png")
+            plain = StepPicture(
+                "main", "main.png", (), masks=(Box(10, 10, 100, 50),), folder=""
+            )
+            original = annotate.SCREENSHOTS_DIR
+            annotate.SCREENSHOTS_DIR = root / "out"
+            try:
+                with unittest.mock.patch(
+                    "Scripts.GUI.step_pictures.PICTURES", (plain,)
+                ):
+                    # Act
+                    code = annotate.main([str(root)])
+            finally:
+                annotate.SCREENSHOTS_DIR = original
+
+            # Assert
+            self.assertEqual(code, 0)
+            self.assertTrue((root / "out" / "main.png").is_file())
 
 
 if __name__ == "__main__":

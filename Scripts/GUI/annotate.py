@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from PIL import Image as PILImage
 
 PROJECT_DIR = Path(__file__).resolve().parents[2]
-STEPS_DIR = PROJECT_DIR / "docs" / "screenshots" / "steps"
+SCREENSHOTS_DIR = PROJECT_DIR / "docs" / "screenshots"
 FONT_FILE = "/System/Library/Fonts/Helvetica.ttc"
 FONT_REGULAR = 0
 FONT_BOLD = 1
@@ -80,13 +80,18 @@ class Callout:
 
 @dataclass(frozen=True)
 class StepPicture:
-    """One annotated picture: `docs/screenshots/steps/<name>.png`."""
+    """One picture: `docs/screenshots/<folder>/<name>.png`.
+
+    A picture with masks and no callouts is a plain capture with private parts blurred; it
+    sets `folder` to `""` to replace a capture in `docs/screenshots` itself.
+    """
 
     name: str
     source: str
     callouts: tuple[Callout, ...]
     masks: tuple[Box, ...] = ()
     crop: Box | None = None
+    folder: str = "steps"
 
 
 def label_box(callout: Callout, measure: Measure) -> Box:
@@ -234,8 +239,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=STEPS_DIR,
-        help="folder for the annotated pictures (default docs/screenshots/steps)",
+        help="one folder for every picture (default: each picture's own folder under docs/screenshots)",
     )
     return parser.parse_args(argv)
 
@@ -257,7 +261,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     if unknown:
         print(f"error: no picture named {', '.join(sorted(unknown))}", file=sys.stderr)
         return 2
-    args.output.mkdir(parents=True, exist_ok=True)
     failed = 0
     for picture in chosen:
         source = args.captures / picture.source
@@ -271,7 +274,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"error: {error}", file=sys.stderr)
             failed += 1
             continue
-        destination = args.output / f"{picture.name}.png"
+        folder = args.output or SCREENSHOTS_DIR / picture.folder
+        folder.mkdir(parents=True, exist_ok=True)
+        destination = folder / f"{picture.name}.png"
         image.save(destination, optimize=True)
         print(destination)
     return 1 if failed else 0
