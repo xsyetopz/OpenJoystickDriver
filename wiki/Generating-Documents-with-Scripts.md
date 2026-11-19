@@ -1,6 +1,6 @@
 # Generating Documents with Scripts
 
-Use a script to make many similar documents, such as one record for each product of a controller family. Write a JavaScript file that returns controller records, patches, [profiles](Glossary.md#terms), or [virtual gamepads](Glossary.md#terms). `ojd generate` checks the result and writes property list files. For one controller, a [record or a patch](Support-Ladder.md) is simpler.
+Use a script to make many similar documents, such as one record for each product in a controller family. Write a JavaScript file that returns controller records, patches, [profiles](Glossary.md#terms), or [virtual gamepads](Glossary.md#terms). `ojd generate` checks the result and writes property list files. For one controller, a [record or a patch](Support-Ladder.md) is simpler.
 
 `ojd generate` is the only part of OpenJoystickDriver (OJD) that runs a script. OJD never runs a script in a [mod package](Writing-Controller-Mods.md).
 
@@ -31,7 +31,7 @@ Define a function `generate` with no argument. It returns one document or a list
 
 If one document fails, the command writes none.
 
-The script runs in a sealed box: it can't read files, use the network, start programs, or set timers. It can only build documents and hand them back. A call to `fetch` fails with a reference error. A type annotation is a syntax error. The command reports a syntax error or exception with its message and line number.
+The script runs in a sealed box. It can't read files, use the network, start programs, or set timers. It can only build documents and hand them back. A call to `fetch` fails with a reference error. A type annotation is a syntax error. The command reports a syntax error or exception with its message and line number.
 
 A whole number becomes an `<integer>`. A fractional number becomes a `<real>`. A hexadecimal literal such as `0x1209` is a whole number.
 
@@ -85,11 +85,11 @@ function generate() {
    ojd generate pads.js --output Controllers
    ```
 
-The command writes one file for each document, named as OJD names that kind of file, such as `1209-0001.plist`. It creates a missing folder.
+The command writes one file per document, named the way OJD names that kind of file, such as `1209-0001.plist`. It creates the folder if it is missing.
 
-An existing file with equal content is reported as unchanged. A file with other content stops the command, which names the file and writes nothing. Pass `--replace` to overwrite it.
+An existing file with the same content is reported as unchanged. A file with different content stops the command, which names the file and writes nothing. Pass `--replace` to overwrite it.
 
-Two documents that need the same file name are an error, and the command writes none.
+If two documents need the same file name, the command reports an error and writes none.
 
 ## Set the Time Limit
 
@@ -97,6 +97,6 @@ The script runs in a helper process with a 5 second limit. Use `--timeout SECOND
 
 ## Further Reading
 
-- [Command reference](Command-Reference.md#generate)
-- [Controller records](Controller-Records.md)
-- [Writing controller mods](Writing-Controller-Mods.md)
+- [Command Reference](Command-Reference.md#generate)
+- [Controller Records](Controller-Records.md)
+- [Writing Controller Mods](Writing-Controller-Mods.md)
