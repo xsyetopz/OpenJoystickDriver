@@ -3,10 +3,10 @@
 Get a newer OpenJoystickDriver (OJD), or take it off your Mac completely.
 
 - **Who:** anyone who wants a newer OJD, or wants it gone.
-- **What:** how update checks work, how to install a new version, and how to remove everything.
-- **When:** when OJD tells you a new version is out, or whenever you choose.
+- **What:** how update checks work, how to install a newer version, and how to remove everything.
+- **When:** when OJD tells you a newer version is out, or whenever you choose.
 - **Where:** the [GitHub Releases page](https://github.com/xsyetopz/OpenJoystickDriver/releases), and **Settings** > **General**.
-- **Why:** a check only tells you about a version; you install it yourself.
+- **Why:** a check only tells you about a version, and you install it yourself.
 - **How:** download the DMG and replace the app; to uninstall, follow the list below.
 
 ```mermaid
@@ -37,7 +37,7 @@ flowchart LR
 
 OJD checks for updates only when you ask. If you turn on **Check for updates automatically** in the **General** pane of **Settings**, it also checks once at each launch and once when you turn the setting on. A check never downloads or installs anything.
 
-A check looks at the version numbers OJD publishes on GitHub and tells you the highest one. It skips prereleases (early test versions) unless you ask for them. So if you run a prerelease, a check finds nothing. To include them, turn on **Include prerelease updates** in **Settings**, or add `--prerelease` to `ojd update check`.
+A check looks at the version numbers OJD publishes on GitHub and tells you the highest one. It skips prereleases (early test versions) unless you ask for them, so if you run a prerelease, a check finds nothing. To include them, turn on **Include prerelease updates** in **Settings**, or add `--prerelease` to `ojd update check`.
 
 **View Update** opens the version's page in your browser. You install it yourself.
 
@@ -80,7 +80,7 @@ Your [profiles](Glossary.md#terms) stay in place.
 
 After an update, **Driver Extensions** in **System Settings** can list the old driver until you restart. You don't need to remove it.
 
-Sometimes macOS forgets that the new copy is the same app. You see this when **Input Monitoring** or **Accessibility** says OJD is allowed, but OJD reads no controller. Remove OJD from the list and add it again:
+Sometimes macOS forgets that the updated copy is the same app. You see this when **Input Monitoring** or **Accessibility** says OJD is allowed, but OJD reads no controller. Remove OJD from the list and add it again:
 
 1. Choose Apple menu > **System Settings**, then click **Privacy & Security**.
    ![Privacy & Security in System Settings. Red arrows point to Device Control and Data Access and to Input Monitoring](../docs/screenshots/steps/macos-privacy-list.png)
@@ -118,7 +118,7 @@ For an unreleased fix, wait for a tester build or build the branch yourself. See
 
 ## Uninstall
 
-Dragging the app to the Trash isn't enough. It leaves behind a login item, privacy entries, the [Xbox USB driver](Glossary.md#terms), and your data files. Follow the steps in order, because the first steps need the app.
+Dragging the app to the Trash leaves behind a login item, privacy entries, the [Xbox USB driver](Glossary.md#terms), and your data files. Follow the steps in order, because the first steps need the app.
 
 ### Remove the App
 
