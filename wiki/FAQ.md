@@ -4,6 +4,9 @@ Short answers to common questions about OpenJoystickDriver (OJD).
 
 - **Who:** anyone with a quick question.
 - **What:** short answers, each linking to the full page.
+- **When:** before you read a long page, or when you are stuck on one thing.
+- **Where:** this page; the links lead to the rest of the wiki.
+- **Why:** most questions need one or two sentences, not a whole page.
 - **How:** find your question under its topic below.
 
 ```mermaid

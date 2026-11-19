@@ -6,7 +6,9 @@ OpenJoystickDriver (OJD) stores each [profile](Glossary.md#terms) in its own XML
 
 - **Who:** people who edit profile files by hand or from scripts.
 - **What:** every field in a profile file, its values, and its limits.
+- **When:** when the app has no control for what you want, or a script writes profiles.
 - **Where:** `~/Library/Application Support/OpenJoystickDriver/Profiles`.
+- **Why:** a wrong field stops the profile from loading, so each one needs an exact meaning.
 - **How:** edit the file, then run `ojd profile validate` before you use it.
 
 ```mermaid

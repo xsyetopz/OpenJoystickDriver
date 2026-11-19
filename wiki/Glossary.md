@@ -4,6 +4,9 @@ Look up the words OpenJoystickDriver uses. Each word means the same thing in the
 
 - **Who:** anyone who meets an unfamiliar word in the app or this guide.
 - **What:** one meaning per word, the same in the app, the menus, `ojd`, and the wiki.
+- **When:** whenever a word in the app, a message, or a page is new to you.
+- **Where:** the **Terms** table below. Other pages link each word here.
+- **Why:** one word per idea, so the app and the guide never disagree.
 - **How:** find the word in the table; **Replaces** lists the older words for it.
 
 ```mermaid
