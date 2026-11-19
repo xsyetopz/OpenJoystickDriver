@@ -291,4 +291,82 @@ PICTURES: tuple[StepPicture, ...] = (
             ),
         ),
     ),
+    StepPicture(
+        "profile-combinations",
+        "main-profiles-combinations.png",
+        (
+            Callout(
+                (1000, 512),
+                (370, 840),
+                "Chord: press together",
+                ("Hold both shoulder buttons", "and the Mac gets Command-Tab."),
+            ),
+            Callout(
+                (1300, 745),
+                (1000, 880),
+                "Sequence: press in order",
+                ("Down, Down, then Triangle", "within 1000 ms runs a macro."),
+            ),
+            Callout(
+                (1853, 650),
+                (1180, 1060),
+                "+ adds one more",
+                ("Each list has its own + button.",),
+            ),
+        ),
+    ),
+    StepPicture(
+        "profile-layers",
+        "main-profiles-layers.png",
+        (
+            Callout(
+                (960, 495),
+                (370, 800),
+                "A layer named Media",
+                ("While you hold the left trigger,", "the buttons below take over."),
+            ),
+            Callout(
+                (1250, 654),
+                (950, 1000),
+                "What a button does in the layer",
+                ("Here, Up turns the volume up.",),
+            ),
+            Callout(
+                (1710, 457),
+                (1250, 790),
+                "+ adds an assignment",
+                ("It works only in this layer.",),
+            ),
+            Callout(
+                (1840, 392),
+                (1000, 345),
+                "+ adds a layer",
+                (),
+            ),
+        ),
+    ),
+    StepPicture(
+        "profile-macros",
+        "main-profiles-macros.png",
+        (
+            Callout(
+                (900, 510),
+                (370, 700),
+                "A macro: steps in a row",
+                ("Copy and Paste presses Command-C,", "waits, then presses Command-V."),
+            ),
+            Callout(
+                (1781, 488),
+                (1150, 900),
+                "The pencil edits its steps",
+                ("Repeat and stop rules live there too.",),
+            ),
+            Callout(
+                (1840, 392),
+                (1000, 345),
+                "+ adds a macro",
+                (),
+            ),
+        ),
+    ),
 )

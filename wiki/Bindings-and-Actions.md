@@ -108,7 +108,9 @@ Both need a button source and a non-continuous destination. Multi-tap delays the
 
 A macro is a recipe: press this, wait, press that. A profile holds up to 16 macros of 32 steps. Untested on real hardware.
 
-1. Open **Macros** and click **Add macro**.
+![Macros section: arrows mark a macro row, its pencil, and the + button](../docs/screenshots/steps/profile-macros.png)
+
+1. Open **Macros** and click **+**.
 2. Enter a unique **Macro name** (1 to 40 characters).
 3. Use **Add Step**: **Tap**, **Press**, **Release**, **Chord** (keys held for the **Hold time**), or **Wait** (0 to 5000 ms).
 4. Set **Repeat** (**Fixed Number of Times**, 1 to 500, or **While Held**) and **When pressed again while running** (**Ignore** or **Restart**).
@@ -189,6 +191,8 @@ For App Exposé, set a keyboard shortcut in **System Settings**, then assign a *
 
 A chord is controls pressed together (a piano chord). A sequence is controls pressed in order (a fighting-game combo). A layer is a second set of assignments (like Shift), active while you hold an activator or after one press. Chords and sequences can't use axes or continuous destinations. A chord's control set must be unique.
 
+![Combinations section: arrows mark a chord, a sequence, and the + button](../docs/screenshots/steps/profile-combinations.png)
+
 ```mermaid
 flowchart TD
     subgraph Chord
@@ -204,7 +208,7 @@ flowchart TD
 
 ### Add a Chord or Sequence
 
-1. Open **Combinations**. Click **Add Chord** (in **Chords**) or **Add Sequence** (in **Sequences**).
+1. Open **Combinations**. Click **+** next to **Chords** or **Sequences**.
 2. Chord: select a control, then **Add Control** for at least one more. Sequence: add at least two controls in press order.
 3. Chord: select a **Chord mode** (**Modifier** or **Simultaneous**) and the **Press window** (default 50 ms, 1 to 1000 ms). Sequence: set the **Completion window** (200 to 10000 ms).
 4. Select a **Destination**, confirm the sheet, then click **Save**.
@@ -213,11 +217,13 @@ A chord fires while all its controls are down. Command line: change `chords` or 
 
 ### Add a Layer
 
-1. Open **Layers** and click **Add Layer**.
+![Layers section: arrows mark the layer, one of its assignments, and both + buttons](../docs/screenshots/steps/profile-layers.png)
+
+1. Open **Layers** and click the top **+**.
 2. Enter a **Layer name** (1 to 40 characters).
 3. Select the **Activator** (a button or D-pad direction, not also an assignment) and the **Activation**: **Hold** or **Toggle**.
 4. Confirm the sheet, then click **Save**.
-5. In the layer, click **Add Assignment** for assignments that work while it is active.
+5. Click the **+** in the layer's row for assignments that work only while it is active.
 
 Command line: change `layers` with `ojd profile edit PROFILE`. For **Motion Tuning**, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
 
