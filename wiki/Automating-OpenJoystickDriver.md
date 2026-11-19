@@ -105,6 +105,10 @@ ojd --no-input controller watch --all --json | jq -c 'select(.type != "MODIFIED"
 
 A long-running program can read controller events from the endpoint, a local socket, instead of running `ojd controller watch` repeatedly. The endpoint is off by default and serves only programs you grant.
 
+You can do the first two steps below in the **Access** area of the app, too:
+
+![The Access area. Red arrows point to the Grant a Program and Create a Token buttons, to Allowed on a permission row, to the Local endpoint and WebSocket switches, and to the Port field](../docs/screenshots/steps/access-overview.png)
+
 1. Turn on the endpoint: `ojd access enable`.
 2. Grant your program: `ojd access grant /Applications/Reader.app`. To find the ID of a refused program, run `ojd access list`.
 3. Read the socket path: `ojd --json access status | jq -r .socketPath`. The socket is in your user's temporary folder and exists only while the endpoint is on.

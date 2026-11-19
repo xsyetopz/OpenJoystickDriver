@@ -162,6 +162,40 @@ PICTURES: tuple[StepPicture, ...] = (
         ),
     ),
     StepPicture(
+        "access-overview",
+        "main-access.png",
+        (
+            Callout(
+                (1800, 70),
+                (1000, 90),
+                "Grant a Program... or Create a Token...",
+                ("Let in one signed app, or make a", "password for a script."),
+            ),
+            Callout(
+                (1690, 336),
+                (1000, 300),
+                "Allowed: macOS said yes",
+                ("Each row says what OJD uses it for.",),
+            ),
+            Callout(
+                (1760, 563),
+                (380, 800),
+                "Two doors for your programs",
+                (
+                    "Local endpoint: programs on this Mac.",
+                    "WebSocket: web pages with a token.",
+                    "Both stay off until you turn them on.",
+                ),
+            ),
+            Callout(
+                (1700, 735),
+                (1150, 830),
+                "Port",
+                ("Automatic: the system picks", "a free port."),
+            ),
+        ),
+    ),
+    StepPicture(
         "settings-interface",
         "settings-general.png",
         (

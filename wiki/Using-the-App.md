@@ -147,7 +147,7 @@ See [Controller Records](Controller-Records.md) and [Writing Controller Mods](Wr
 
 ## Access Area
 
-![The Access area with the permission rows and the local endpoint switches](../docs/screenshots/main-access.png)
+![The Access area. Red arrows point to the Grant a Program and Create a Token buttons, to Allowed on a permission row, to the Local endpoint and WebSocket switches, and to the Port field](../docs/screenshots/steps/access-overview.png)
 
 The **Access** area shows what OJD and other programs may do.
 
