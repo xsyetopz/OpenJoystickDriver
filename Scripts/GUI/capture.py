@@ -19,6 +19,8 @@ PROCESS = "OpenJoystickDriver"
 BUNDLE_ID = "com.openjoystickdriver"
 AREAS = ("Controllers", "Profiles", "Library", "Access", "Activity")
 SETTINGS_PANES = ("General", "Notifications", "Advanced")
+PROFILE_SECTIONS = ("Assignments", "Combinations", "Layers", "Macros", "Controller")
+PROFILE_SECTION_POPUP = "Profile editor section"
 BOUNDS_TOLERANCE = 2.0
 SCREEN_CHROME_LAYERS = (20, 24, 2147483630)
 ACCESSIBILITY_GRANTED = "0"
@@ -86,6 +88,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help=(
             "the Controllers window with the pop-up button that shows VALUE open, "
             "saved as main-popup.png"
+        ),
+    )
+    choice.add_argument(
+        "--profile-section",
+        choices=PROFILE_SECTIONS,
+        help=(
+            "the Profiles window with this profile editor section shown, "
+            "saved as main-profiles-<section>.png"
         ),
     )
     parser.add_argument(
@@ -533,6 +543,18 @@ def shoot_popup(args: argparse.Namespace, pid: int, destination: Path) -> None:
         gui("scroll", "0")
 
 
+def shoot_profile_section(
+    section: str, pid: int, destination: Path, timeout: float
+) -> None:
+    gui("select-sidebar", "Profiles")
+    bring_forward(pid, "main", timeout)
+    gui("choose-popup", PROFILE_SECTION_POPUP, section)
+    try:
+        shoot(pid, "main", destination, timeout)
+    finally:
+        gui("choose-popup", PROFILE_SECTION_POPUP, PROFILE_SECTIONS[0])
+
+
 def make_folder() -> Path:
     root = PROJECT_DIR / ".ojd-shots"
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -571,7 +593,7 @@ def capture(args: argparse.Namespace) -> int:
         else ()
     )
     menus = args.all or args.menus
-    if areas or panes or args.popup is not None:
+    if areas or panes or args.popup is not None or args.profile_section:
         require_english_ui()
     main_was_open, settings_tab = read_state()
     folder = make_folder()
@@ -595,6 +617,13 @@ def capture(args: argparse.Namespace) -> int:
             )
         if args.popup is not None:
             shoot_popup(args, pid, folder / "main-popup.png")
+        if args.profile_section:
+            shoot_profile_section(
+                args.profile_section,
+                pid,
+                folder / f"main-profiles-{args.profile_section.lower()}.png",
+                args.front_timeout,
+            )
         if menus:
             for target in menu_targets(gui("menu-ids").split("\n")):
                 shoot_menu(pid, target, folder / f"{target.name}.png")

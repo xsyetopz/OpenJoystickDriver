@@ -173,7 +173,7 @@ diagnose-rumble-motors vid pid intensity="160" duration_ms="500":
 repair-stale-dext:
     python3 -m Scripts.Diagnostics.dext.repair
 
-# Capture the installed app's windows into .ojd-shots; pass --area, --settings-pane, --popup or --all.
+# Capture the installed app's windows into .ojd-shots; pass --area, --settings-pane, --popup, --profile-section or --all.
 # Quoted arguments such as --popup "Generic HID gamepad (Generic)" reach the script whole.
 [positional-arguments]
 shots-capture *args:

@@ -48,6 +48,15 @@ class GuiCaptureTests(unittest.TestCase):
             with self.subTest(argv=argv), self.assertRaises(SystemExit):
                 capture.parse_args(argv)
 
+    def test_profile_section_names_an_editor_section(self) -> None:
+        # Act
+        args = capture.parse_args(["--profile-section", "Controller"])
+
+        # Assert
+        self.assertEqual(args.profile_section, "Controller")
+        with self.assertRaises(SystemExit):
+            capture.parse_args(["--profile-section", "Sticks"])
+
     def test_row_and_scroll_need_a_popup(self) -> None:
         # Arrange
         popup = ["--popup", "Generic HID gamepad (Generic)"]

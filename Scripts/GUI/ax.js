@@ -428,6 +428,24 @@ function run(argv) {
 			press(popup);
 			return "";
 		}
+		case "choose-popup": {
+			// Picks an item in the pop-up button named or showing the argument, such as an editor section.
+			const popup = descendants(focusedWindow(app)).find(
+				(element) =>
+					shown(element, "AXRole") === "AXPopUpButton" &&
+					(shown(element, "AXDescription") === argument || shown(element, "AXValue") === argument),
+			);
+			if (!popup) throw new Error("the focused window has no pop-up button named or showing " + argument);
+			press(popup);
+			delay(SETTLE_SECONDS);
+			const item = descendants(popup).find(
+				(element) => shown(element, "AXRole") === "AXMenuItem" && shown(element, "AXTitle") === rest[0],
+			);
+			if (!item) throw new Error("the pop-up button showing " + argument + " has no item " + rest[0]);
+			press(item);
+			delay(SETTLE_SECONDS);
+			return "";
+		}
 		case "press-escape": {
 			// The JXA bridge owns the returned event and frees it: CFRelease on it crashes osascript.
 			for (const down of [true, false]) {
