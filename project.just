@@ -81,6 +81,10 @@ check-whitespace:
     git diff --check
     git diff --check "$(git merge-base HEAD origin/main 2>/dev/null || git hash-object -t tree /dev/null)" HEAD
 
+# Swap jargon for everyday words in Swift doc comments; --check lists the files it would change.
+docs-plain-words *args:
+    python3 Scripts/Documentation/plain_comment_words.py {{ args }}
+
 # Convert wiki/ into GitHub wiki pages in an empty folder.
 wiki-build output *args:
     python3 -m Scripts.Documentation.wiki.build {{ output }} {{ args }}
