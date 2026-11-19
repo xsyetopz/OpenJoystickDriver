@@ -10,6 +10,13 @@ from Scripts.GUI.annotate import Box, Callout, StepPicture
 
 PICTURES: tuple[StepPicture, ...] = (
     StepPicture(
+        "main-controllers",
+        "main-controllers.png",
+        (),
+        masks=(Box(800, 835, 1886, 936),),
+        folder="",
+    ),
+    StepPicture(
         "controllers-overview",
         "main-controllers.png",
         (
@@ -26,7 +33,7 @@ PICTURES: tuple[StepPicture, ...] = (
                 ("Press each button and watch it light up.",),
             ),
             Callout(
-                (390, 860),
+                (390, 717),
                 (30, 960),
                 "Needs a step from you",
                 ("Do what the text above it says.",),
@@ -36,6 +43,12 @@ PICTURES: tuple[StepPicture, ...] = (
                 (1150, 842),
                 "Opened by: apps using it now",
                 ("Blurred here for privacy.",),
+            ),
+            Callout(
+                (1330, 1212),
+                (30, 1130),
+                "Handled by: who reads it",
+                ("macOS, or OJD with a virtual gamepad.",),
             ),
         ),
         masks=(Box(800, 835, 1886, 936),),

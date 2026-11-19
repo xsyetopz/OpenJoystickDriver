@@ -23,7 +23,7 @@
 
 </div>
 
-![The Controllers window with an 8BitDo controller served as a virtual gamepad](docs/screenshots/main-controllers.png)
+![The Controllers window with four controllers. The selected PlayStation 3 controller works and is handled by macOS](docs/screenshots/main-controllers.png)
 
 macOS reads a short list of game controllers and ignores the rest, such as the DualShock 3 above. OpenJoystickDriver (OJD) is a menu-bar app that reads those controllers over USB, Bluetooth or a 2.4 GHz dongle and gives games a virtual Xbox or generic gamepad. A controller macOS already handles is left to macOS. OJD runs in your user session with one DriverKit extension and no kernel extension, so SIP and AMFI stay on.
 

@@ -87,7 +87,7 @@ These menus are specific to OJD:
 
 ## Controllers Area
 
-![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, and to the Opened by row, which is blurred for privacy](../docs/screenshots/steps/controllers-overview.png)
+![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, to the Opened by row, which is blurred for privacy, and to the Handled by switch](../docs/screenshots/steps/controllers-overview.png)
 
 Select a controller to see its details. If a controller is missing, see [If a Controller Isn't Detected](Troubleshooting.md#if-a-controller-isnt-detected).
 

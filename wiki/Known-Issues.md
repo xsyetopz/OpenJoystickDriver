@@ -77,7 +77,7 @@ flowchart LR
 - the **Controllers** list and the controller's details in the app
 - `ojd controller show VVVV:PPPP`
 
-![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, and to the Opened by row, which is blurred for privacy](../docs/screenshots/steps/controllers-overview.png)
+![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, to the Opened by row, which is blurred for privacy, and to the Handled by switch](../docs/screenshots/steps/controllers-overview.png)
 
 **What to do:** quit that app. OJD takes the controller back as soon as the app lets go.
 
