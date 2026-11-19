@@ -50,7 +50,7 @@ enum RemappingRouteSelection: Equatable, Sendable {
 enum RemappingRouteEligibility: String, Equatable, Sendable {
   /// The route may send.
   case eligible
-  /// The router suppresses output.
+  /// The router pauses output.
   case outputSuppressed = "output_suppressed"
   /// The profile needs post-event access, which is not authorized.
   case postEventAccessNotAuthorized = "post_event_access_not_authorized"
@@ -60,7 +60,7 @@ enum RemappingRouteEligibility: String, Equatable, Sendable {
   case physicalInputNotExclusive = "physical_input_not_exclusive"
   /// The route has no output.
   case unavailable
-  /// The virtual output is suppressed.
+  /// The virtual output is paused.
   case virtualOutputSuppressed = "virtual_output_suppressed"
 }
 
@@ -88,7 +88,7 @@ struct RemappingRouteStatus: Equatable, Sendable {
 
 /// The router-wide output controls.
 struct RemappingRoutingControls: Equatable, Sendable {
-  /// Whether the router suppresses all remapping output.
+  /// Whether the router pauses all remapping output.
   let outputSuppressed: Bool
   /// The number of changes to the controls.
   let revision: UInt64

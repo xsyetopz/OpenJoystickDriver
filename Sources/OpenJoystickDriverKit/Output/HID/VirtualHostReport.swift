@@ -16,7 +16,7 @@ package enum VirtualHostReportError: Error, Equatable, Sendable {
   case unsupported
   /// The length or header does not match the report ID.
   case malformed
-  /// The payload is larger than the report the format declares.
+  /// The data is larger than the report the format declares.
   case tooLarge
   /// The dispatcher is closed.
   case closed

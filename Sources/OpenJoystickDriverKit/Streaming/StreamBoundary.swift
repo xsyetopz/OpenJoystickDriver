@@ -1,6 +1,6 @@
 public import Foundation
 
-/// One canonical frame on the streaming boundary.
+/// One standard frame on the streaming boundary.
 ///
 /// A frame is a value, not a transport: it carries no socket, no HID handle, and no platform
 /// type. The same three shapes travel the boundary wherever a source and a sink meet.
@@ -84,7 +84,7 @@ public enum StreamBoundaryError: Error, Equatable, Sendable {
   case rejected(OutputDestination, String)
 }
 
-/// A producer of canonical frames: a physical controller, an endpoint feed, a virtual feed.
+/// A producer of standard frames: a physical controller, an endpoint feed, a virtual feed.
 ///
 /// A source delivers every frame to its ``sink`` through ``produce(_:onDelivered:)``; it never
 /// reaches around the sink. Sources are compiled in, and OJD loads no code at run time. The
@@ -99,7 +99,7 @@ public protocol InputSource: AnyObject, Sendable {
 extension InputSource {
   /// Sends one frame to ``sink``. `onDelivered` runs once the frame reached the sink's
   /// destination, which is where the pipeline stamps a delivery stage; it does not run for a frame
-  /// the sink suppresses or fails to deliver.
+  /// the sink pauses or fails to deliver.
   @preconcurrency
   public func produce(
     _ frame: StreamFrame,
@@ -109,7 +109,7 @@ extension InputSource {
   }
 }
 
-/// A consumer of canonical frames or output commands: a virtual device, an endpoint subscription,
+/// A consumer of standard frames or output commands: a virtual device, an endpoint subscription,
 /// a physical controller's output.
 ///
 /// A sink takes only the shapes it supports and throws ``StreamBoundaryError/unsupported(_:)`` for
@@ -119,7 +119,7 @@ public protocol OutputSink: AnyObject, Sendable {
   var destination: OutputDestination { get }
 
   /// Consumes one frame. `onDelivered` runs once the frame reached the destination, and not for a
-  /// frame the sink suppresses or fails to deliver.
+  /// frame the sink pauses or fails to deliver.
   @preconcurrency
   func consume(
     _ frame: StreamFrame,

@@ -45,7 +45,7 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
-  /// Whether output is suppressed.
+  /// Whether output is paused.
   public var suppressOutput: Bool {
     get { registryLock.withLock { _suppressOutput } }
     set { registryLock.withLock { _suppressOutput = newValue } }
@@ -53,9 +53,9 @@ extension UserSpaceOutputDispatcher {
 
   /// The status of the backend.
   public var status: VirtualOutputBackendStatus { registryLock.withLock { _status } }
-  /// Sets whether output is suppressed.
+  /// Sets whether output is paused.
   ///
-  /// Suppressing sends one at-rest report to each device whose state does not come from
+  /// Pausing sends one at-rest report to each device whose state does not come from
   /// remapping.
   public func setOutputSuppressed(_ suppressed: Bool) async {
     let suppression: (entries: [Entry], shouldNeutralize: Bool) = registryLock.withLock {
@@ -71,7 +71,7 @@ extension UserSpaceOutputDispatcher {
       }.value()
     }
   }
-  /// Sets whether output from remapping is suppressed, and lets the queued reports settle.
+  /// Sets whether output from remapping is paused, and lets the queued reports settle.
   public func setRemappingOutputSuppressed(_ suppressed: Bool) async {
     let senders = registryLock.withLock {
       remappingOutputSuppressed = suppressed
@@ -202,7 +202,7 @@ extension UserSpaceOutputDispatcher {
     try await deliver(input: nil, from: identifier, remappedState: state)
   }
 
-  /// Whether the output of remapping (`remapped`) or of the controller itself is suppressed.
+  /// Whether the output of remapping (`remapped`) or of the controller itself is paused.
   internal func isOutputSuppressed(remapped: Bool) -> Bool {
     registryLock.withLock { remapped ? remappingOutputSuppressed : _suppressOutput }
   }

@@ -77,12 +77,12 @@ struct NintendoMotionCalibration {
   }
 
   /// Switch Pro and Joy-Con transform: raw counts, then the SPI factory (or nominal) offset and
-  /// scale per axis, then SI, then the raw axes into the canonical frame: Pro and left Joy-Con (x,
+  /// scale per axis, then SI, then the raw axes into the standard frame: Pro and left Joy-Con (x,
   /// y, z) → (-y, x, z); right Joy-Con (x, y, z) → (y, x, -z).
   ///
   /// Source: SDL `SendSensorUpdate` in `src/joystick/hidapi/SDL_hidapi_switch.c` at SDL `1ce4c5bc`
   /// maps raw (x, y, z) to its sensor frame (X right, Y up, Z toward the player) as (-y, z, -x),
-  /// negating X and Y again for the right Joy-Con. The canonical frame takes SDL's +Z (toward the
+  /// negating X and Y again for the right Joy-Con. The standard frame takes SDL's +Z (toward the
   /// player) as -Y and SDL's +Y (up) as +Z. SDL's sideways single-Joy-Con swap is not applied
   /// because OJD has no horizontal Joy-Con layout.
   func sample(
@@ -105,7 +105,7 @@ struct NintendoMotionCalibration {
     )
   }
 
-  /// The canonical-frame vector of calibrated axis `values` for `layout`.
+  /// The standard-frame vector of calibrated axis `values` for `layout`.
   private func canonical(
     _ values: [Double],
     layout: NintendoControllerLayout

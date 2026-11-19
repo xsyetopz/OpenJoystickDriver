@@ -262,7 +262,7 @@ final class RuntimeViewModel: ObservableObject {
         authoritativePermissionSummary = permissions
       } else {
         // A newer permission request owns the visible permission state. Until its response
-        // arrives, show unknown instead of the payload's value.
+        // arrives, show unknown instead of the data's value.
         permissions =
           authoritativePermissionSummary
           ?? RuntimePermissionSummary(inputRead: .unknown, inputInject: .unknown)

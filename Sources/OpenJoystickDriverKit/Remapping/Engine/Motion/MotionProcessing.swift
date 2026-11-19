@@ -13,7 +13,7 @@ struct RemappingMotionReading {
 extension RemappingMotionReading {
   /// Converts a controller sample to the engine frame.
   ///
-  /// It inverts the producers' SI conversion and maps canonical (x, y, z) to engine (x, z, -y).
+  /// It inverts the producers' SI conversion and maps standard (x, y, z) to engine (x, z, -y).
   init(_ sample: ControllerMotionSample) {
     let radians = ControllerMotionUnits.radiansPerDegree
     let gravity = ControllerMotionUnits.standardGravity

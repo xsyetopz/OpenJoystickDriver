@@ -7,11 +7,11 @@ import Foundation
 public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, Sendable {
   /// The descriptor bytes.
   public let descriptor: [UInt8]
-  /// The payload size of the input report.
+  /// The data size of the input report.
   public let inputReportPayloadSize: Int
   /// The ID of the input report; nil when the descriptor has no report IDs.
   public let inputReportID: UInt8?
-  /// The payload size of the output report; nil when the descriptor declares none.
+  /// The data size of the output report; nil when the descriptor declares none.
   public let outputReportPayloadSize: Int?
   /// The ID of the output report; nil when the descriptor declares none.
   public let outputReportID: UInt8?

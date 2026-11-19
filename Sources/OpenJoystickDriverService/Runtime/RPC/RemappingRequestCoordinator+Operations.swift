@@ -209,10 +209,10 @@ extension RemappingRequestCoordinator {
 
   /// Builds the snapshot of the library and the router.
   ///
-  /// When `validateResponse` is set, the payload must fit the response limits.
+  /// When `validateResponse` is set, the data must fit the response limits.
   ///
   /// - Throws: ``RemappingProfileLibraryError/corruptLibrary`` when an active profile is missing,
-  ///   or ``ApplicationServiceRemappingRPCError`` when the payload does not fit.
+  ///   or ``ApplicationServiceRemappingRPCError`` when the data does not fit.
   private func makeSnapshot(
     validateResponse: Bool = true
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {
@@ -369,7 +369,7 @@ extension RemappingRequestCoordinator {
     models.sorted { ($0.vendorID, $0.productID) < ($1.vendorID, $1.productID) }
   }
 
-  /// Returns the payload of a Joy-Con pair, or nil when its profile has no pair settings or a
+  /// Returns the data of a Joy-Con pair, or nil when its profile has no pair settings or a
   /// member has no session token.
   private static func joyConPairPayload(
     _ session: RemappingJoyConPairSession,
@@ -388,7 +388,7 @@ extension RemappingRequestCoordinator {
     )
   }
 
-  /// Returns the payload of a route for the controller session `sessionToken`.
+  /// Returns the data of a route for the controller session `sessionToken`.
   private static func routePayload(
     _ status: RemappingRouteStatus,
     sessionToken: ControllerSessionToken

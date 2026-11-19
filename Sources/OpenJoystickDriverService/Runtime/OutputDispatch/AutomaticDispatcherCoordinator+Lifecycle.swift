@@ -3,9 +3,9 @@ import OpenJoystickDriverKit
 
 extension AutomaticDispatcherCoordinator {
 
-  /// Applies the current suppression value, retiring every backend when it is on.
+  /// Applies the current pausing value, retiring every backend when it is on.
   ///
-  /// Turning suppression off publishes again for each controller that has a session and a context.
+  /// Turning pausing off publishes again for each controller that has a session and a context.
   func synchronizeSuppression(_ currentValue: @Sendable () -> Bool) async {
     guard !closed else { return }
     let wasSuppressed = suppressed
@@ -178,7 +178,7 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
-  /// Applies the current remapping suppression value to every installed backend that supports it.
+  /// Applies the current remapping pausing value to every installed backend that supports it.
   func synchronizeRemappingSuppression(_ currentValue: @Sendable () -> Bool) async {
     guard !closed else { return }
     remappingSuppressed = currentValue()

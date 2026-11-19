@@ -1,7 +1,7 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// Words for the values of the access payloads.
+/// Words for the values of the access data.
 enum AccessPresentation {
   /// A client's program or folder path, with the home folder written as `~`.
   static func location(_ path: String) -> String { HomeFolder.redacting(path) }

@@ -91,7 +91,7 @@ extension DeviceManager {
     }
   }
 
-  /// Enables or suppresses application-facing virtual output for every active pipeline.
+  /// Enables or pauses application-facing virtual output for every active pipeline.
   public func setExternalOutputAllowed(_ allowed: Bool) async {
     guard externalOutputAllowed != allowed else { return }
     externalOutputAllowed = allowed

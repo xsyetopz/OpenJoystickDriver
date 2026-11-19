@@ -173,7 +173,7 @@ extension DevicePipeline {
         at: uptimeNanoseconds()
       )
     }
-    // A failed or suppressed publish stamps nothing; the pipeline still ignores the failure.
+    // A failed or paused publish stamps nothing; the pipeline still ignores the failure.
     try? await produce(
       .controller(
         ControllerEvent(

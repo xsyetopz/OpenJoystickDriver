@@ -70,7 +70,7 @@ public struct ControllerMotionSample: Sendable, Equatable, Codable {
   ///
   /// A controller lying face up at rest reads about +9.81 on Z.
   public let acceleration: ControllerMotionVector
-  /// Radians per second about each canonical axis, positive by the right-hand rule.
+  /// Radians per second about each standard axis, positive by the right-hand rule.
   public let angularVelocity: ControllerMotionVector
   /// How the sample's scale was calibrated.
   public let calibrationSource: ControllerMotionCalibrationSource
@@ -95,7 +95,7 @@ public struct ControllerMotionSample: Sendable, Equatable, Codable {
   }
 
   /// Scales factory-calibrated degrees per second and standard gravities, already permuted into
-  /// the canonical axes, to SI.
+  /// the standard axes, to SI.
   init?(
     timestamp: ControllerSampleTimestamp,
     canonicalDegreesPerSecond gyro: ControllerMotionVector,

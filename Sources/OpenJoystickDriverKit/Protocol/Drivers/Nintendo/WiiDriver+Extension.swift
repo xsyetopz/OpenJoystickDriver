@@ -46,7 +46,7 @@ extension WiiDriver {
   /// The remote's accelerometer reading in metres per second squared and the Motion Plus gyro in
   /// radians per second, zero without a gyro frame.
   ///
-  /// The axes keep the remote's own order until a hardware capture maps them to the canonical
+  /// The axes keep the remote's own order until a hardware capture maps them to the standard
   /// frame. Empty before the calibration is read.
   func motionSamples(at now: MonotonicTimestamp) -> [ControllerMotionSample] {
     guard let raw = acceleration, let calibration = accelerometerCalibration else { return [] }

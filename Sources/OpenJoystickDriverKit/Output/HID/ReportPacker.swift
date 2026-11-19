@@ -50,7 +50,7 @@ struct HIDReportPacker: Sendable {
 
   /// The report ID; 0 for an unnumbered report.
   let reportID: UInt8
-  /// The payload size, without the report ID byte.
+  /// The data size, without the report ID byte.
   let payloadSizeBytes: Int
 
   /// The input fields of the report by usage.
@@ -66,7 +66,7 @@ struct HIDReportPacker: Sendable {
 
   /// Chooses the report with the most gamepad-like fields and builds a packer for it.
   ///
-  /// The score counts buttons, axes, a hat switch and the payload size. Returns nil when the
+  /// The score counts buttons, axes, a hat switch and the data size. Returns nil when the
   /// descriptor declares no input field.
   static func bestEffortGamepadPacker(
     from parsed: HIDParsedDescriptor,
@@ -171,9 +171,9 @@ struct HIDReportPacker: Sendable {
       let hasNull = field.flags.hasNullState
       if hat == .neutral {
         if hasNull {
-          // Many hats use "8" as neutral for 0..7.
+          // Many hats use "8" as at-rest for 0..7.
           if minV == 0, maxV == 7 { return UInt32(maxV + 1) }
-          // Or "0" as neutral for 1..8 (below min).
+          // Or "0" as at-rest for 1..8 (below min).
           if minV == 1, maxV == 8 { return 0 }
         }
         return UInt32(minV)

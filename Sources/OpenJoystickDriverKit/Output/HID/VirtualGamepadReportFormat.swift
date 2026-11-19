@@ -67,13 +67,13 @@ public protocol VirtualGamepadReportFormat: Sendable {
   /// HID report descriptor bytes.
   var descriptor: [UInt8] { get }
 
-  /// Size of one input report *payload* (does not include the optional Report ID byte).
+  /// Size of one input report *data* (does not include the optional Report ID byte).
   var inputReportPayloadSize: Int { get }
 
   /// HID Report ID used for the input report, or nil if the descriptor does not use report IDs.
   var inputReportID: UInt8? { get }
 
-  /// Size of one output report payload, or nil when the descriptor does not accept output reports.
+  /// Size of one output report data, or nil when the descriptor does not accept output reports.
   var outputReportPayloadSize: Int? { get }
 
   /// HID Report ID used for the output report, or nil if the descriptor does not use report IDs.

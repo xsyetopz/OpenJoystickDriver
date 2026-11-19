@@ -8,13 +8,13 @@ import Foundation
 /// `src/joystick/hidapi/SDL_hidapijoystick.c` `HIDAPI_AddDevice`).
 /// The published device reports `Virtual` or `USB`, so SDL parses every report as a GIP packet
 /// (`SDL_hidapi_xboxone.c` `HIDAPI_DriverXboxOne_UpdateDevice`): the report ID is the GIP command,
-/// then options, sequence and a one-byte length, then the payload. Each report here is exactly
+/// then options, sequence and a one-byte length, then the data. Each report here is exactly
 /// such a packet.
 ///
 /// Reports:
-/// - `0x20` (input): GIP input, options `0x00`, length 14, the 14-byte state payload.
+/// - `0x20` (input): GIP input, options `0x00`, length 14, the 14-byte state data.
 /// - `0x07` (input): GIP virtual key, options `0x20` (internal), length 2: bit 0 of the first
-///   payload byte is Guide, which SDL reads from no other report.
+///   data byte is Guide, which SDL reads from no other report.
 /// - `0x09` (output): GIP rumble, options `0x00`, length 9: sub-command `0x00`, activation mask,
 ///   left trigger, right trigger, left motor, right motor, duration, delay, repeat.
 public enum XboxOneGIPHIDDescriptor {
@@ -29,9 +29,9 @@ public enum XboxOneGIPHIDDescriptor {
   static let inputOptions: UInt8 = 0x00
   /// GIP options of the virtual key packet: the internal bit.
   static let guideOptions: UInt8 = 0x20
-  /// The input packet's payload length, in the packet's one-byte length field.
+  /// The input packet's data length, in the packet's one-byte length field.
   static let inputPayloadLength: UInt8 = 14
-  /// The virtual key packet's payload length: the Guide byte and the key code.
+  /// The virtual key packet's data length: the Guide byte and the key code.
   static let guidePayloadLength: UInt8 = 2
   /// The key code that follows the Guide byte in a virtual key packet.
   static let guideKeyCode: UInt8 = 0x5B
@@ -40,7 +40,7 @@ public enum XboxOneGIPHIDDescriptor {
   /// SDL reads the sequence only to acknowledge or chunk packets, and neither option is set.
   static let sequence: UInt8 = 0x00
 
-  /// Report 0x20 is the command, 3 more header bytes and the 14-byte state payload.
+  /// Report 0x20 is the command, 3 more header bytes and the 14-byte state data.
   static let inputReportSize = 18
 
   /// Output report 0x09 is 12 bytes after its ID: options, sequence, length, sub-command and the
@@ -108,7 +108,7 @@ public enum XboxOneGIPHIDDescriptor {
 
 /// The Xbox One GIP report layout of the 045E:0B0C `SDLCompatible` persona.
 ///
-/// The d-pad is four bits of the state payload, not a hat. The payload has no Share field, so this
+/// The d-pad is four bits of the state data, not a hat. The data has no Share field, so this
 /// persona carries neither Capture nor the touchpad click, microphone, paddles, auxiliaries or
 /// touch controls. Sticks are signed 16-bit values; SDL reads both Y axes inverted, so the report
 /// carries the bitwise complement of the state's Y.

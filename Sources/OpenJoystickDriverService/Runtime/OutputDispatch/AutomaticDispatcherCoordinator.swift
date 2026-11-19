@@ -1,7 +1,7 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// Owns installation requests until activation, retirement, and suppression have completed.
+/// Owns installation requests until activation, retirement, and pausing have completed.
 actor AutomaticDispatcherCoordinator {
 
   /// The publication state of each controller.
@@ -12,11 +12,11 @@ actor AutomaticDispatcherCoordinator {
   var closeFinished = false
   /// The callers of ``close()`` that wait for it to finish.
   var closeWaiters: [CheckedContinuation<Void, Never>] = []
-  /// Whether remapping output is suppressed on the installed backends.
+  /// Whether remapping output is paused on the installed backends.
   var remappingSuppressed = false
-  /// Whether all virtual output is suppressed.
+  /// Whether all virtual output is paused.
   var suppressed = false
-  /// Advances on each suppression change, so a change that arrives mid-update is applied again.
+  /// Advances on each pause change, so a change that arrives mid-update is applied again.
   var suppressionRevision: UInt64 = 0
   /// The wait before a failed publication is retried, in nanoseconds.
   let recoveryDelayNanoseconds: UInt64

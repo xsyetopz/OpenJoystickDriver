@@ -48,7 +48,7 @@
       reportEditingState()
     }
 
-    /// The actions of the editor's menu: Restore Default Input while the draft suppresses all
+    /// The actions of the editor's menu: Restore Default Input while the draft pauses all
     /// controller input, Remove All Assignments while it has any assignment, Clear Inputs, and
     /// Deactivate All while the profile is active and is not a Joy-Con pair.
     var menuActions: [ProfileEditorMenuAction] {

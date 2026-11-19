@@ -192,7 +192,7 @@ extension ControllerOutputCommand: Codable {
     case effect
   }
 
-  /// Decodes the command named by `type`; an unknown `type` or a missing or invalid payload key is
+  /// Decodes the command named by `type`; an unknown `type` or a missing or invalid data key is
   /// rejected.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -225,7 +225,7 @@ extension ControllerOutputCommand: Codable {
     }
   }
 
-  /// Encodes the `type` and the payload keys of the command.
+  /// Encodes the `type` and the data keys of the command.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     switch self {

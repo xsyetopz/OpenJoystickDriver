@@ -12,7 +12,7 @@ extension ControllerRecordDocument {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["vibrationCharacteristic"])
       let uuid = try container.decode(String.self, for: "vibrationCharacteristic")
-      // `uuidString` is the uppercase canonical form, so equality checks the exact format.
+      // `uuidString` is the uppercase standard form, so equality checks the exact format.
       guard UUID(uuidString: uuid)?.uuidString == uuid else {
         throw DecodingError.dataCorrupted(
           .init(

@@ -151,6 +151,6 @@ public struct RemappingTriggerMapping: Codable, Equatable, Hashable, Sendable {
 
 /// Error for an invalid trigger mapping.
 public enum RemappingTriggerMappingError: Error, Equatable, Sendable {
-  /// A field is not finite, is out of range or breaks the threshold order; the payload names it.
+  /// A field is not finite, is out of range or breaks the threshold order; the data names it.
   case invalidField(String)
 }

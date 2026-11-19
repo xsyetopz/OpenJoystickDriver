@@ -266,7 +266,7 @@
     }
 
     /// The header: the profile's name, the details and activation buttons, the actions menu, the
-    /// conflict banner and the warning about suppressed input.
+    /// conflict banner and the warning about paused input.
     var editorHeader: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         HStack(alignment: .center, spacing: OJDSpacing.medium) {

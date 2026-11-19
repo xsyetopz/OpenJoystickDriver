@@ -3,7 +3,7 @@ import Foundation
 /// The redacted, structured record of one binding decision for diagnostics and support reports.
 ///
 /// It carries observed interface class facts and the classifier's typed outcome only. It never
-/// carries a serial number, input state, packet payload, or source provenance. The bound protocol
+/// carries a serial number, input state, packet data, or source provenance. The bound protocol
 /// and variant and the applied parameters are reported beside it by the controller description.
 public struct ProtocolBindingResult: Codable, Equatable, Sendable {
   /// Whether the device bound to a protocol.

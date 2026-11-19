@@ -1,6 +1,6 @@
 import Foundation
 
-/// Payload byte (after the USB report ID) whose bit 2 is set while Sony's wireless adapter has no
+/// Data byte (after the USB report ID) whose bit 2 is set while Sony's wireless adapter has no
 /// pad connected; SDL `HIDAPI_DriverPS4_IsPacketValid` reads it as `data[31] & 0x04`.
 let ds4AdapterStatusOffset = 30
 /// The bit of the adapter status byte that is set while the adapter has no pad connected.

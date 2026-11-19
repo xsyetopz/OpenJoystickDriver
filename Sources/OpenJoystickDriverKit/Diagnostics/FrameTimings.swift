@@ -82,7 +82,7 @@ public struct ControllerFrameTimings: Codable, Equatable, Sendable {
   }
 }
 
-/// Arguments of `getFrameTimings`: the seconds of the uptime clock the payload covers, counted
+/// Arguments of `getFrameTimings`: the seconds of the uptime clock the data covers, counted
 /// back from the moment the service answers; nil covers the whole ring.
 public struct LocalServiceRPCFrameTimingsArguments: Codable, Equatable, Sendable {
   /// The seconds to cover; nil covers the whole ring.
@@ -97,7 +97,7 @@ public struct ApplicationServiceFrameTimingsPayload: Codable, Equatable, Sendabl
   /// The timings of each connected controller.
   public let controllers: [ControllerFrameTimings]
 
-  /// Creates a payload from the timings of the controllers.
+  /// Creates a block of data from the timings of the controllers.
   public init(controllers: [ControllerFrameTimings]) { self.controllers = controllers }
 }
 

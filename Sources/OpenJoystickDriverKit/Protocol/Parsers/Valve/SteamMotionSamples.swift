@@ -3,7 +3,7 @@
 ///
 /// Sample time is the first sample's receipt time plus the clamped receipt time elapsed since.
 struct SteamMotionSamples {
-  /// Where a state packet carries its IMU vectors and how its gyro maps to the canonical frame.
+  /// Where a state packet carries its IMU vectors and how its gyro maps to the standard frame.
   enum Layout {
     /// `ValveControllerStatePacket_t`: accel at 28, gyro at 34, gyro Y reflected.
     case steamController
@@ -14,7 +14,7 @@ struct SteamMotionSamples {
     var accelOffset: Int { self == .steamController ? 28 : 24 }
     /// The byte offset of the gyro vector, six bytes after the accelerometer's.
     var gyroOffset: Int { accelOffset + 6 }
-    /// Whether the canonical gyro Y is the negated raw Y.
+    /// Whether the standard gyro Y is the negated raw Y.
     var reflectsGyroY: Bool { self == .steamController }
   }
 
@@ -73,7 +73,7 @@ struct SteamMotionSamples {
   /// Source: SDL `HIDAPI_DriverSteam_UpdateDevice` in `src/joystick/hidapi/SDL_hidapi_steam.c` at
   /// SDL `1ce4c5bc` scales gyro by 2000 °/s and accel by 2 g per 32768 counts and maps them into
   /// its sensor frame (X right, Y up, Z toward the player) as gyro (x, z, y) and accel (x, z, -y).
-  /// The canonical frame takes SDL's +Z (toward the player) as -Y and SDL's +Y (up) as +Z. Linux
+  /// The standard frame takes SDL's +Z (toward the player) as -Y and SDL's +Y (up) as +Z. Linux
   /// `hid-steam.c` `steam_controller_imu_mappings` (used by `steam_do_sensors_event`) at Linux
   /// `fd179f8a` maps the same bytes the same way: accel rows `ABS_X` +28, `ABS_Z` -30, `ABS_Y` +32,
   /// i.e. (x, z, -y); gyro rows `ABS_RX` +34, `ABS_RZ` +36, `ABS_RY` +38, i.e. (x, z, y). Both
@@ -83,7 +83,7 @@ struct SteamMotionSamples {
   /// per °/s (`STEAM_GYRO_RES_PER_DPS`) where SDL uses 16.384; the SDL scale is kept.
   ///
   /// The Steam Deck packet puts accel at 24 and gyro at 30 with the same scales, and SDL
-  /// `HIDAPI_DriverSteamDeck_HandleState` maps both gyro and accel as (x, z, -y), so the canonical
+  /// `HIDAPI_DriverSteamDeck_HandleState` maps both gyro and accel as (x, z, -y), so the standard
   /// frame equals the raw axes for both.
   static func sample(
     timestamp: ControllerSampleTimestamp,

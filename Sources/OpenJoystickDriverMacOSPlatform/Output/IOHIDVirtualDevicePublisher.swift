@@ -119,7 +119,7 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
     return properties
   }
 
-  /// Returns the size of the report buffer, one byte more than the payload when the report has an
+  /// Returns the size of the report buffer, one byte more than the data when the report has an
   /// ID.
   static func reportBufferSize(payloadSize: Int, reportID: UInt8?) -> Int {
     reportID == nil ? payloadSize : payloadSize + 1

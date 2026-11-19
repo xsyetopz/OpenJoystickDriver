@@ -426,6 +426,6 @@ public protocol RemappingSpeechOutput: AnyObject, Sendable {
 
 /// Separates remapping admission from the virtual output passthrough gate of a shared backend.
 public protocol RemappingGamepadOutputControlling: AnyObject, Sendable {
-  /// Sets whether remapping output is suppressed.
+  /// Sets whether remapping output is paused.
   func setRemappingOutputSuppressed(_ suppressed: Bool) async
 }

@@ -210,7 +210,7 @@ extension VirtualHIDProfile {
 
 /// The adapter from a profile's contract to the report format it wraps.
 private enum ReportFormatCodec {
-  /// Canonical state through the dispatcher's mapping, without its stick dead zone, which is
+  /// Standard state through the dispatcher's mapping, without its stick dead zone, which is
   /// output policy rather than part of the ABI.
   static func virtualState(for state: ControllerState) -> VirtualGamepadState {
     var virtual = VirtualGamepadState()

@@ -27,7 +27,7 @@ private struct GIPFrame {
   let options: UInt8
   /// The sequence number.
   let sequence: UInt8
-  /// The payload after the header.
+  /// The data after the header.
   let payload: Data
   /// A fragment's extra header field: the message's total length in the first fragment, the
   /// fragment's offset in a later one ([MS-GIPUSB] 3.1.5.2).
@@ -96,7 +96,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
   ///     `usbStartupWrites` is empty.
   ///   - usbStartupWrites: The record's startup packets; they replace `startupPackets`.
   ///   - keepAlivePolicy: Whether to send the keep-alive.
-  ///   - shareButtonFromEnd: Where the Share button sits, counted back from the payload end; nil
+  ///   - shareButtonFromEnd: Where the Share button sits, counted back from the data end; nil
   ///     when the model has none.
   ///   - allowsPhysicalOutput: Whether rumble output is allowed.
   ///   - tuning: The effective tuning of the record; the description's defaults when nil.
@@ -401,7 +401,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     ]
   }
 
-  /// Folds a main input payload into `next`; false when the payload is too short.
+  /// Folds a main input data into `next`; false when the data is too short.
   private func decodeMainInput(payload: Data, into next: inout ControllerState) -> Bool {
     guard payload.count >= 14 else {
       print("[GIPDriver] Main input payload too short: " + "\(payload.count)")
@@ -432,7 +432,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
   /// record names no Share.
   ///
   /// Linux xpad reads `data[len - 18]` of the packet, or `data[len - 26]` with `MAP_SHARE_OFFSET`;
-  /// the 4-byte GIP header leaves the same offset from the payload end.
+  /// the 4-byte GIP header leaves the same offset from the data end.
   private func shareByte(in bytes: [UInt8]) -> UInt8? {
     guard let shareButtonFromEnd else { return nil }
     let index = bytes.count - shareButtonFromEnd

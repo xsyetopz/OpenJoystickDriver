@@ -38,14 +38,14 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
   var tickerSnapshotRevision: UInt64 = 0
   /// The uptime in nanoseconds of the pending tick.
   var tickerDeadline: UInt64?
-  /// Whether a profile transaction keeps the virtual output suppressed.
+  /// Whether a profile transaction keeps the virtual output paused.
   var profileTransactionGateActive = false
   /// The shutdown in progress, with its ID.
   var shutdownAttempt: (id: UUID, task: Task<Void, any Error>)?
   /// Whether the shutdown finished.
   var terminalCleanupComplete = false
 
-  /// Whether all remapping output is suppressed; setting it publishes the controls.
+  /// Whether all remapping output is paused; setting it publishes the controls.
   var suppressOutput: Bool {
     get { lock.withLock { controls.outputSuppressed } }
     set { _ = updateControls(outputSuppressed: newValue) }

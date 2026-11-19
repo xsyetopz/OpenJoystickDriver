@@ -65,7 +65,7 @@ extension DeviceManager {
       let followed = Self.inputReportsFollowedByLaterReport(in: batch)
       for (index, event) in batch.enumerated() {
         guard hidDetectionSessionID == sessionID, !Task.isCancelled else { return }
-        // Teardown sends neutral and shutdown reports through this still-open session, then
+        // Teardown sends at-rest and shutdown reports through this still-open session, then
         // cancels the task; returning here instead would close the session under those writes.
         guard !isStopping else { continue }
         switch event {

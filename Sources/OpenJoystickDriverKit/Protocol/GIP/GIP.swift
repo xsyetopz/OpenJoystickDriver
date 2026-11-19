@@ -110,7 +110,7 @@ public enum GIPAuthState: UInt8, Sendable, CustomStringConvertible {
   /// The host's answer to ``devComplete``.
   case hostComplete = 0x27
 
-  /// The payload size of a host-to-device message in bytes; nil for a device-to-host state.
+  /// The data size of a host-to-device message in bytes; nil for a device-to-host state.
   public var expectedPayloadSize: Int? {
     switch self {
     case .hostInit: 40

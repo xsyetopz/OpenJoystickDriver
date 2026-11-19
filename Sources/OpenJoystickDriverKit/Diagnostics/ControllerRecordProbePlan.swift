@@ -1,6 +1,6 @@
 public import Foundation
 
-/// A validated raw-USB test plan loaded from a canonical controller record.
+/// A validated raw-USB test plan loaded from a standard controller record.
 ///
 /// The plan uses the runtime's profile construction and driver factory, so a probed
 /// record behaves exactly as the runtime would drive it.

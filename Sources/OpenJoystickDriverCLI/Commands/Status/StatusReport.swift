@@ -232,7 +232,7 @@ struct StatusReport: Encodable, Equatable {
   /// Read from the files, so present while the service is stopped.
   let skippedVirtualDevices: [SkippedRecord]
 
-  /// Creates the report from the service payload, which is nil while the service is stopped, and
+  /// Creates the report from the service data, which is nil while the service is stopped, and
   /// from the states that `ojd` reads without the service.
   init(
     payload: ApplicationServiceStatusPayload?,

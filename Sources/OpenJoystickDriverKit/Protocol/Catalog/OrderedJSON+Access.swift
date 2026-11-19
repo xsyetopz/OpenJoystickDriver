@@ -49,7 +49,7 @@ extension OrderedJSON {
     self = try Self(foundation: DocumentCoder.read(data, file: file))
   }
 
-  /// The value as a canonical document.
+  /// The value as a standard document.
   ///
   /// A number written as an integer is an `integer` and any other number a `real`. `null` has no
   /// property list form and is refused.

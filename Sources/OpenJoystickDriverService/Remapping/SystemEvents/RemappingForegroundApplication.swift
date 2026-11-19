@@ -64,7 +64,7 @@ extension CoreGraphicsPostEventAccess: RemappingPostEventAccessProviding {}
 enum RemappingForegroundPolicy {
   /// Returns why a route sends or not.
   ///
-  /// Suppressed output wins, then missing post-event access when the profile needs it, then the
+  /// Paused output wins, then missing post-event access when the profile needs it, then the
   /// application scope.
   static func eligibility(
     for scope: RemappingApplicationScope,

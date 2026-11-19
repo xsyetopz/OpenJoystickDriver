@@ -20,7 +20,7 @@ actor RemappingRequestCoordinator {
   let connectedControllers: @Sendable () async -> [ConnectedController]
   /// The access to posting system input events.
   let postEventAccess: CoreGraphicsPostEventAccess
-  /// The largest response payload, in bytes.
+  /// The largest response data, in bytes.
   let maximumResponseBytes: Int
   /// The largest transport frame of a response, in bytes.
   let maximumTransportFrameBytes: Int

@@ -103,7 +103,7 @@ struct ControlNames {
     .rightStickY: .init(sdl: "righty", w3cButton: nil, w3cAxis: 3),
   ]
 
-  /// SDL's canonical field order in a mapping string.
+  /// SDL's standard field order in a mapping string.
   static let sdlFieldOrder = [
     "a", "b", "x", "y", "back", "guide", "start", "leftstick", "rightstick", "leftshoulder",
     "rightshoulder", "dpup", "dpdown", "dpleft", "dpright", "misc1", "paddle1", "paddle2",
@@ -259,7 +259,7 @@ extension VirtualHIDProfileID {
   /// Simulation usages SDL's IOKit backend counts as axes: Rudder, Throttle, Accelerator, Brake.
   private static let sdlSimulationAxisUsages: Set<Int> = [0xBA, 0xBB, 0xC4, 0xC5]
 
-  /// Each report's payload by report ID: the first byte when the descriptor numbers its
+  /// Each report's data by report ID: the first byte when the descriptor numbers its
   /// reports, else 0.
   private static func reportsByID(_ reports: [[UInt8]], numbered: Bool) -> [UInt8: [UInt8]] {
     Dictionary(
@@ -267,7 +267,7 @@ extension VirtualHIDProfileID {
     ) { first, _ in first }
   }
 
-  /// The little-endian value of `field` in the payload of its report; 0 when no report has its
+  /// The little-endian value of `field` in the data of its report; 0 when no report has its
   /// ID.
   private static func value(of field: HIDField, in reports: [UInt8: [UInt8]]) -> Int {
     let payload = reports[field.reportID] ?? []

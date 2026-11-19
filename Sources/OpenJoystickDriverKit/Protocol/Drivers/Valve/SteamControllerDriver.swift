@@ -4,7 +4,7 @@ import Foundation
 let steamControllerReportPrefix0: UInt8 = 0x01
 /// The second byte of a raw event.
 let steamControllerReportPrefix1: UInt8 = 0x00
-/// The message type of a controller state payload.
+/// The message type of a controller state data.
 let steamControllerStateMessageID: UInt8 = 0x01
 /// The message type of a wireless status message.
 let steamControllerWirelessMessageID: UInt8 = 0x03
@@ -26,7 +26,7 @@ let steamControllerSetSettingsValuesCommand: UInt8 = 0x87
 let steamControllerGetWirelessStateCommand: UInt8 = 0xB4
 /// The command byte of the haptic pulse feature report.
 let steamControllerHapticPulseCommand: UInt8 = 0x8F
-/// The payload length of the haptic pulse command.
+/// The data length of the haptic pulse command.
 let steamControllerHapticPulsePayloadLength: UInt8 = 8
 /// The settings id of the user LED brightness.
 let steamControllerUserLEDBrightnessSetting: UInt8 = 45
@@ -39,7 +39,7 @@ let steamControllerHeldPulseMilliseconds = 65
 /// LE.
 ///
 /// Linux `hid-steam.c` receives 64-byte raw events prefixed with `0x01, 0x00`. Message type `0x01`
-/// carries a 60-byte controller state payload with button bytes at offsets 8-10, analog triggers at
+/// carries a 60-byte controller state data with button bytes at offsets 8-10, analog triggers at
 /// 11-12, left stick/left pad axes at 16-19, and right pad axes at 20-23. The description's
 /// activation and deactivation feature reports run when OJD starts and stops consuming the
 /// controller. Over Bluetooth LE the same messages travel in report-`0x03` segments

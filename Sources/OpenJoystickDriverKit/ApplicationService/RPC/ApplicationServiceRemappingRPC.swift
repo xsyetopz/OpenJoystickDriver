@@ -6,7 +6,7 @@ public import Foundation
 public enum ApplicationServiceRemappingRPC {
   /// The largest framed message of the local transport, in bytes.
   public static let maximumTransportFrameBytes = 8 * 1_024 * 1_024
-  /// The largest encoded remapping payload, in bytes.
+  /// The largest encoded remapping data, in bytes.
   public static let maximumPayloadBytes = RemappingPayloadLimits.maximumEncodedBytes
   /// The largest encoded remapping argument, in bytes; equal to ``maximumPayloadBytes``.
   public static let maximumArgumentBytes = maximumPayloadBytes
@@ -286,7 +286,7 @@ public struct ApplicationServiceJoyConPairPayload: Codable, Equatable, Sendable 
   /// The Joy-Con whose gyro the pair's profile uses.
   public let gyroSelection: RemappingJoyConGyroSelection
 
-  /// Creates a pair payload from its values.
+  /// Creates a pair data from its values.
   public init(
     sessionID: UUID,
     left: ControllerSessionToken,
@@ -333,7 +333,7 @@ public struct ApplicationServiceRemappingActiveProfilePayload: Codable, Equatabl
   /// The apps in which the profile is active.
   public let applicationScope: RemappingApplicationScope
 
-  /// Creates an active-profile payload from its values.
+  /// Creates an active-profile data from its values.
   public init(
     vendorID: UInt16,
     productID: UInt16,
@@ -410,7 +410,7 @@ public struct ApplicationServiceRemappingFailurePayload: Codable, Equatable, Sen
   /// A human-readable description of the failure.
   public let message: String
 
-  /// Creates a failure payload from its values.
+  /// Creates a failure data from its values.
   public init(code: ApplicationServiceRemappingRPCError.Code, message: String) {
     self.code = code
     self.message = message
@@ -442,7 +442,7 @@ public struct ApplicationServiceRemappingRoutePayload: Codable, Equatable, Senda
   /// The failure that makes the route unavailable; nil when there is none.
   public let failure: ApplicationServiceRemappingFailurePayload?
 
-  /// Creates a route payload from its values.
+  /// Creates a route data from its values.
   public init(
     vendorID: UInt16,
     productID: UInt16,

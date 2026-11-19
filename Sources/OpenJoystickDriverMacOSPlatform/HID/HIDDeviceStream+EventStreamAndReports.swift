@@ -82,7 +82,7 @@ extension HIDDeviceStream {
     unsafe IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)
     IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), Self.runLoopMode.rawValue)
     // Admit the devices already present in case matching callbacks do not report them.
-    // Admission is idempotent per device and service.
+    // Admission is safe to repeat per device and service.
     let present = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> ?? []
     for device in present {
       if let failure = handleDeviceAdded(device, failingOnAccessDenial: true) {

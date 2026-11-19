@@ -39,9 +39,9 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   internal var lifecycleGenerations: [LogicalControllerID: UInt64] = [:]
   /// The shutdown that `close()` started; later closes share it.
   internal var shutdownTask: Task<Void, Never>?
-  /// Whether output is suppressed.
+  /// Whether output is paused.
   internal var _suppressOutput = false
-  /// Whether output from remapping is suppressed.
+  /// Whether output from remapping is paused.
   internal var remappingOutputSuppressed = false
   /// Written only under `registryLock`; a change sets `statusChangePending`, and
   /// ``withRegistry(_:)`` announces it after the lock is released.

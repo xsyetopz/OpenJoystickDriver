@@ -8,13 +8,13 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
   private let lock = NSLock()
   /// The backend that receives the output; nil when none is set.
   private var backend: (any OutputDispatcher)?
-  /// Whether output is suppressed; the router passes the value to the backend.
+  /// Whether output is paused; the router passes the value to the backend.
   private var _suppressOutput = false
-  /// Whether remapping output is suppressed; the router passes the value to the backend before it
+  /// Whether remapping output is paused; the router passes the value to the backend before it
   /// sends.
   private var remappingOutputSuppressed = false
 
-  /// Whether output is suppressed; the router passes the value to the backend.
+  /// Whether output is paused; the router passes the value to the backend.
   public var suppressOutput: Bool {
     get { lock.withLock { _suppressOutput } }
     set {
@@ -28,7 +28,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
   /// Creates a router with no backend.
   public init() {}
 
-  /// Sets the backend and passes the current suppression to it; nil removes the backend.
+  /// Sets the backend and passes the current pausing to it; nil removes the backend.
   public func setBackend(_ newBackend: (any OutputDispatcher)?) {
     lock.withLock {
       backend = newBackend
@@ -36,7 +36,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
     }
   }
 
-  /// Sets whether output from remapping is suppressed, and passes the value to a backend that
+  /// Sets whether output from remapping is paused, and passes the value to a backend that
   /// controls it.
   public func setRemappingOutputSuppressed(_ suppressed: Bool) async {
     let target = lock.withLock {
@@ -50,7 +50,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
 
   /// Sends a remapped state to the backend.
   ///
-  /// While remapping output is suppressed, only the at-rest state reaches the backend.
+  /// While remapping output is paused, only the at-rest state reaches the backend.
   ///
   /// - Throws: `RemappingEventEngineError.sinkUnavailable` when the backend takes no remapped
   ///   state, or the error of the backend.
@@ -66,7 +66,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
     try await sink.send(state, for: identifier)
   }
 
-  /// Passes a controller event to the backend; nothing happens while output is suppressed.
+  /// Passes a controller event to the backend; nothing happens while output is paused.
   public func dispatch(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID
@@ -76,7 +76,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
   }
 
   /// Passes a controller event to the backend and reports its publication; nothing happens while
-  /// output is suppressed.
+  /// output is paused.
   ///
   /// - Throws: The error of the backend.
   @preconcurrency
@@ -93,7 +93,7 @@ public final class VirtualOutputRouter: OutputDispatcher, RemappingGamepadSink,
     )
   }
 
-  /// Activates output for `identifier` on the backend; nothing happens while output is suppressed.
+  /// Activates output for `identifier` on the backend; nothing happens while output is paused.
   public func activateOutput(for identifier: LogicalControllerID) async {
     let target = lock.withLock { _suppressOutput ? nil : backend }
     await target?.activateOutput(for: identifier)

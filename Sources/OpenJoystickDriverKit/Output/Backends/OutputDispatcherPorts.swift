@@ -8,7 +8,7 @@ public protocol VirtualOutputDispatching: OutputDispatcher {
   var lastRumbleStatus: String? { get }
   /// Forces creation and at-rest activation of every supplied virtual device.
   func activate(for identifiers: [LogicalControllerID]) async throws
-  /// Updates suppression and waits for any required output barrier.
+  /// Updates pausing and waits for any required output barrier.
   func setOutputSuppressed(_ suppressed: Bool) async
   /// Drains and tears down user-space virtual HID devices owned by this output.
   func close() async
@@ -77,7 +77,7 @@ public protocol PointerInputDemand: AnyObject, Sendable {
 /// Production adapters live in their owning transport targets; the kit provides
 /// ``LoggingOutputDispatcher`` for diagnostics.
 public protocol OutputDispatcher: OutputSink {
-  /// When `true`, all report/event output is suppressed (e.g. during developer
+  /// When `true`, all report/event output is paused (e.g. during developer
   /// packet capture). Implementations should invalidate any cached state on change.
   var suppressOutput: Bool { get set }
   /// Sets ``suppressOutput``.
@@ -103,7 +103,7 @@ public protocol OutputDispatcher: OutputSink {
 
   /// Sends like ``dispatch(_:from:)`` while preserving publication failures for
   /// recovery coordinators, and calls `onPublished` right after the report reaches the virtual
-  /// device. `onPublished` is not called when output is suppressed or the publish fails.
+  /// device. `onPublished` is not called when output is paused or the publish fails.
   func dispatchPublishing(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID,
@@ -130,13 +130,13 @@ extension OutputDispatcher {
 ///
 /// Used for hardware checks and tests. Shipped builds send output through a connection adapter.
 public final class LoggingOutputDispatcher: OutputDispatcher, Sendable {
-  // Suppression is ignored because this dispatcher is only for development.
+  // Pausing is ignored because this dispatcher is only for development.
   /// The diagnostic log, which receives the frames.
   public var destination: OutputDestination { .diagnosticLog }
 
   /// Accepted but ignored; this dispatcher always logs.
   private let storedSuppression = Locked(false)
-  /// Whether output is suppressed; the dispatcher ignores it and always logs.
+  /// Whether output is paused; the dispatcher ignores it and always logs.
   public var suppressOutput: Bool {
     get { storedSuppression.withLock { $0 } }
     set { storedSuppression.withLock { $0 = newValue } }

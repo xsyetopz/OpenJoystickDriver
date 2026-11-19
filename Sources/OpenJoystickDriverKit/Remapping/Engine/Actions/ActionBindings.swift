@@ -49,7 +49,7 @@ extension RemappingEngineState {
 
   /// Applies one source change to one action and returns the output actions.
   ///
-  /// A suppressed action does nothing. Other behaviors follow ``RemappingBindingBehavior``. A hold
+  /// A paused action does nothing. Other behaviors follow ``RemappingBindingBehavior``. A hold
   /// action with a long hold or multi-tap goes through the activation tracker. A hold action with
   /// turbo starts or stops its repeat.
   mutating func processAction(

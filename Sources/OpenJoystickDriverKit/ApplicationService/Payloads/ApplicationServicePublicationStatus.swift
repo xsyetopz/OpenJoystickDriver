@@ -25,7 +25,7 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
     case sessionSuspended = "SessionSuspended"
     /// No persona can represent the controller's primary controls.
     case noVirtualProfile = "NoVirtualProfile"
-    /// Remapping suppresses the virtual device.
+    /// Remapping pauses the virtual device.
     case suppressed = "Suppressed"
     /// The controller has sent no input yet.
     case noInputYet = "NoInputYet"
@@ -131,7 +131,7 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
     case lastCompletedNanoseconds
   }
 
-  /// Refuses a payload whose `reason` or `failure` does not match its `state`, and an empty
+  /// Refuses a block of data whose `reason` or `failure` does not match its `state`, and an empty
   /// `failure`.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

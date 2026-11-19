@@ -5,10 +5,10 @@ extension UserSpaceOutputDispatcher {
   /// Builds the report of a controller state and submits it to the device of `identifier`.
   ///
   /// A remapped state replaces `input` as the source. The at-rest remapped state reaches a device
-  /// that exists even when output is suppressed, and it never creates a device. `onPublished` runs
+  /// that exists even when output is paused, and it never creates a device. `onPublished` runs
   /// after the report reaches the device.
   ///
-  /// - Throws: `CancellationError` when the dispatcher is closed or when output is suppressed for a
+  /// - Throws: `CancellationError` when the dispatcher is closed or when output is paused for a
   ///   remapped state that is not at rest, or the error of creating the device or sending the
   ///   report; the last two also set the status to an error.
   internal func deliver(

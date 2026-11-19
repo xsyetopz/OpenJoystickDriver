@@ -434,7 +434,7 @@ extension HIDDeviceStream {
     )
   }
 
-  /// Parsers expect numbered reports to start with their report ID; IOKit may deliver the payload
+  /// Parsers expect numbered reports to start with their report ID; IOKit may deliver the data
   /// without it.
   static func framedInputReport(reportID: UInt8, bytes: [UInt8]) -> [UInt8] {
     guard reportID != 0, bytes.first != reportID else { return bytes }

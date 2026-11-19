@@ -44,7 +44,7 @@ extension RemappingRoutingCore {
     connectedIdentifiers.sorted()
   }
 
-  /// The eligibility of a virtual-gamepad route: suppressed when output is suppressed, eligible
+  /// The eligibility of a virtual-gamepad route: paused when output is paused, eligible
   /// otherwise.
   var virtualGamepadEligibility: RemappingRouteEligibility {
     controls.outputSuppressed ? .virtualOutputSuppressed : .eligible

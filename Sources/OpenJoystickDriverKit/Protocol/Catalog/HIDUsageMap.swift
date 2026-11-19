@@ -2,7 +2,7 @@ import Foundation
 
 /// What a HID usage drives: the typed form of a record's `input.hidUsageMap`.
 ///
-/// A map names each usage it reads by page and usage ID and binds it to a canonical control as a
+/// A map names each usage it reads by page and usage ID and binds it to a standard control as a
 /// button, an axis, one half of an axis or a hat switch. ``HIDDescriptorDriver`` folds IOKit's
 /// decoded element values through it; a usage the map does not name is ignored.
 struct HIDUsageMap: Equatable, Sendable {

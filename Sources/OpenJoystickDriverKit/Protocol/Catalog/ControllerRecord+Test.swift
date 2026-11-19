@@ -82,7 +82,7 @@ extension ControllerRecord {
     var bytes: [UInt8] { PacketLogEntry.bytes(hex: hex) }
   }
 
-  /// The payloads of the received packets in the JSON-lines capture `data`, in file order.
+  /// The data of the received packets in the JSON-lines capture `data`, in file order.
   /// - Throws: ``ControllerRecordTestError/capture(line:problem:)`` when the text is not UTF-8, a
   ///   line is not a capture entry, or an entry's length differs from its hex.
   private static func receivedReports(in data: Data) throws -> [[UInt8]] {

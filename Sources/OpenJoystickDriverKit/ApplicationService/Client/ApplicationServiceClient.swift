@@ -10,7 +10,7 @@ public enum ApplicationServiceClientError: Error, LocalizedError, Sendable {
   case notConnected
   /// The service did not reply before the call's deadline.
   case timeout
-  /// The reply does not decode as the payload the call expects.
+  /// The reply does not decode as the data the call expects.
   case invalidResponse
 
   /// The description of the error for the user.
@@ -28,7 +28,7 @@ public enum ApplicationServiceClientError: Error, LocalizedError, Sendable {
 /// The service accepts a connection only from a process with the same signing identifier and
 /// team ID as the service, so only OpenJoystickDriver's own signed executables can connect.
 /// Other programs use the `ojd` command and its `--json` output instead.
-/// The methods and payloads can change in any release.
+/// The methods and data can change in any release.
 public final class ApplicationServiceClient: @unchecked Sendable {
   /// Guards `connected` and `unansweredProbes`.
   let stateLock = NSLock()

@@ -17,7 +17,7 @@ public enum GameControllerProbeConfiguration {
 
 /// A user-reviewable, machine-readable snapshot for controller support requests.
 ///
-/// Raw serial values, filesystem paths, packet payloads, HID location IDs, and
+/// Raw serial values, filesystem paths, packet data, HID location IDs, and
 /// free-form DriverKit discovery text are not represented.
 public struct SupportReport: Codable, Sendable {
   /// The CloudEvents `type` of a support report.
@@ -34,7 +34,7 @@ public struct SupportReport: Codable, Sendable {
     public let includesRawSerialNumbers: Bool
     /// Whether the report holds filesystem paths.
     public let includesFilesystemPaths: Bool
-    /// Whether the report holds packet payloads.
+    /// Whether the report holds packet data.
     public let includesPacketPayloads: Bool
     /// Whether the report holds HID location IDs.
     public let includesHIDLocationIDs: Bool

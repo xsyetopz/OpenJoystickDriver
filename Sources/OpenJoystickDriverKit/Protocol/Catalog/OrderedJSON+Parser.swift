@@ -94,8 +94,8 @@ extension OrderedJSON {
     mutating func object() throws -> OrderedJSON {
       position += 1
       var members: [Member] = []
-      // The first spelling of each name, found by the name as Swift compares it (canonical
-      // equivalence) and told from a later spelling by its Unicode scalars.
+      // The first spelling of each name, found by the name as Swift compares it
+      // (canonical equivalence) and told from a later spelling by its Unicode scalars.
       var names: [String: String] = [:]
       skipSpace()
       if peek("}") {

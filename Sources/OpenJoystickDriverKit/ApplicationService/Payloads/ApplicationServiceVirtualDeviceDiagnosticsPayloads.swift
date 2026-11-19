@@ -66,7 +66,7 @@ public struct ApplicationServiceVirtualDeviceDiagnosticsPayload: Codable, Sendab
   /// The HID gamepads that IOKit lists.
   public let hidGamepads: [ApplicationServiceHIDGamepadSnapshot]
 
-  /// Creates the payload from its values.
+  /// Creates the data from its values.
   public init(
     userSpaceVirtualDeviceEnabled: Bool,
     userSpaceVirtualDeviceStatus: VirtualOutputBackendStatus,

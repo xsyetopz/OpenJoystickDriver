@@ -1,7 +1,7 @@
 public import OpenJoystickDriverKit
 public import SwifterKit
 
-/// Canonical configuration for OJD's restricted USBDriverKit extension.
+/// Standard configuration for OJD's restricted USBDriverKit extension.
 ///
 /// The external bundle identifier is retained because Apple granted it for the
 /// exclusive Microsoft GIP ownership case. It does not define the scope of the

@@ -248,7 +248,7 @@ final class VirtualOutputFeedbackGate: Sendable {
 
     // A canceled HID/USB write is not required to cooperate with Swift task cancellation. Once
     // admission advances to a new generation, quarantine those writes instead of waiting for
-    // their completion. Queue one neutral write per controller behind any late operation and
+    // their completion. Queue one at-rest write per controller behind any late operation and
     // bound only how long this transition waits for the neutralization attempt.
     do {
       try await withVirtualOutputTimeout(timeout, clock: clock, error: .feedbackTimedOut) {
@@ -260,7 +260,7 @@ final class VirtualOutputFeedbackGate: Sendable {
         }
       }
     } catch {
-      // The queued neutral writes remain owned by their transport workers. Their late completion
+      // The queued at-rest writes remain owned by their transport workers. Their late completion
       // cannot re-open feedback admission or mutate the virtual output publication.
     }
     if resumeWhenComplete {

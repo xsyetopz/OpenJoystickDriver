@@ -27,7 +27,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
 
   /// The result of reading one frame.
   private enum Frame {
-    /// A frame with its final flag, opcode and unmasked payload.
+    /// A frame with its final flag, opcode and unmasked data.
     case frame(final: Bool, opcode: UInt8, payload: Data)
     /// The peer closed the stream.
     case end
@@ -109,7 +109,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
 
   // MARK: - Private
 
-  /// Reads one client frame and unmasks its payload.
+  /// Reads one client frame and unmasks its data.
   private func readFrame() -> Frame {
     guard fill(2) else { return .end }
     let first = buffer[buffer.startIndex]

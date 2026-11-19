@@ -33,7 +33,7 @@ extension DualSenseDriver {
     )
   }
 
-  /// The byte offsets of the fields in the input payload that follows the report header.
+  /// The byte offsets of the fields in the input data that follows the report header.
   private enum ReportOffset {
     /// The left stick X.
     static let leftStickX = 0
@@ -156,7 +156,7 @@ extension DualSenseDriver {
     UnipolarValue(normalized: raw == 0 && button ? 1 : Float(raw) / dualSenseTriggerMax)
   }
 
-  /// Payload byte, mask and PlayStation-label control of each button; Edge buttons only on Edge.
+  /// Data byte, mask and PlayStation-label control of each button; Edge buttons only on Edge.
   private var buttonTable: [(Int, UInt8, Control)] {
     let base: [(Int, UInt8, Control)] = [
       (ReportOffset.buttons0, 0x10, .west), (ReportOffset.buttons0, 0x20, .south),
@@ -296,7 +296,7 @@ extension DualSenseDriver {
     }
   }
 
-  /// The input payload of `data` without its report header and Bluetooth trailer; empty when the
+  /// The input data of `data` without its report header and Bluetooth trailer; empty when the
   /// report is not a DualSense input report.
   ///
   /// Sets the connection mode to the report's transport.

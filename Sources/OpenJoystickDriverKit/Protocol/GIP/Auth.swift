@@ -2,7 +2,7 @@ import Foundation
 
 /// Answers the GIP authentication sub-protocol (command 0x06) of a controller.
 ///
-/// Each answer has the right framing and a zero-filled payload. The handler tracks the device
+/// Each answer has the right framing and a zero-filled data. The handler tracks the device
 /// power state as authentication progresses.
 final class GIPAuthHandler {
   /// The power state of the device, driven by the auth messages it sent.
@@ -19,7 +19,7 @@ final class GIPAuthHandler {
   ///
   /// The first message moves the device state from start to enroll, and a complete or status
   /// message moves it from enroll to full power. The sub-header is checked first.
-  /// - Returns: The packet to send, or nil when the payload is too short, is not from the device,
+  /// - Returns: The packet to send, or nil when the data is too short, is not from the device,
   ///   names an unknown state, or needs no answer.
   func handleAuthMessage(payload: Data, sequencer: inout GIPSequencer) -> [UInt8]? {
     guard payload.count >= 6 else {
@@ -65,8 +65,8 @@ final class GIPAuthHandler {
     return packet
   }
 
-  /// The auth payload of the host's answer in `state`: the type, version, state, a zero byte, the
-  /// big-endian payload size, and a zero-filled body.
+  /// The auth data of the host's answer in `state`: the type, version, state, a zero byte, the
+  /// big-endian data size, and a zero-filled body.
   ///
   /// Empty when `state` is not a host state.
   func buildAuthResponse(state: GIPAuthState) -> [UInt8] {
@@ -81,7 +81,7 @@ final class GIPAuthHandler {
 
   /// Wraps `payload` in a command 0x06 packet.
   ///
-  /// A payload over 127 bytes uses a two-byte length with the high bit set on the first byte.
+  /// A block of data over 127 bytes uses a two-byte length with the high bit set on the first byte.
   private func authPacket(payload: [UInt8], sequencer: inout GIPSequencer) -> [UInt8] {
     let seq = sequencer.next(for: GIPCommand.authenticate, options: GIPOption.internal)
     var packet: [UInt8] = [GIPCommand.authenticate, GIPOption.internal, seq]

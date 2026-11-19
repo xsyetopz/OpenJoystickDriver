@@ -24,7 +24,7 @@ public struct PacketLogEntry: Codable, Sendable {
   public let timestamp: TimeInterval
   /// Transfer direction of the packet.
   public let direction: PacketLogDirection
-  /// Packet payload as a hex-encoded string (e.g. `"05 20 00 01 00"`).
+  /// Packet data as a hex-encoded string (e.g. `"05 20 00 01 00"`).
   public let hex: String
   /// Number of bytes in the packet.
   public let length: Int

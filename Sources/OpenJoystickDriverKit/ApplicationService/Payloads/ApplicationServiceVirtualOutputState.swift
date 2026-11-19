@@ -20,7 +20,7 @@ public struct ApplicationServiceVirtualOutputState: Codable, Equatable, Sendable
   /// The right trigger value, including a full press from a digital trigger.
   public let rightTrigger: Int16
 
-  /// Creates the payload from the virtual gamepad's `state`.
+  /// Creates the data from the virtual gamepad's `state`.
   public init(_ state: VirtualGamepadState) {
     buttons = state.buttons
     hat = Self.directions[Int(state.hat.rawValue)]

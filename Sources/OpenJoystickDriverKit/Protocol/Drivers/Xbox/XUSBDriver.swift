@@ -60,7 +60,7 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 /// Input report layout (20 bytes, interrupt IN, EP 0x81):
 /// ```
 ///   byte 0   : report type (0x00 = input; ignore others)
-///   byte 1   : payload length (0x14 = 20)
+///   byte 1   : data length (0x14 = 20)
 ///   bytes 2-3: button bitmask (UInt16 LE), matching Linux xpad
 ///              xbox360_process_packet: byte2 | (byte3 << 8)
 ///              bit 0  DPAD_UP      bit 8  LB

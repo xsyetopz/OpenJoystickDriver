@@ -54,7 +54,7 @@ struct DualSenseFeatures: OptionSet {
 /// It is handled as SDL's `HIDAPI_DriverPS5` handles non-Sony vendor IDs.
 ///
 /// SDL reads capability report `0x03`. A valid reply lists the controller's features and
-/// switches it to SDL's alternate input report, which moves the touch contacts to payload bytes
+/// switches it to SDL's alternate input report, which moves the touch contacts to data bytes
 /// 31 and 35 and carries a 16-bit microsecond sensor timestamp at 27. A controller that does not
 /// answer keeps the standard report with no sensors, touchpad or output, except the Razer models
 /// SDL names, which never answer and whose records name their features in parameters. Output is

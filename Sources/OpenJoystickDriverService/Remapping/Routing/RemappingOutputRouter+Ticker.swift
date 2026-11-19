@@ -159,7 +159,7 @@ extension RemappingOutputRouter {
     }
   }
 
-  /// Sets whether a profile transaction keeps the virtual output suppressed.
+  /// Sets whether a profile transaction keeps the virtual output paused.
   func setProfileTransactionGateActive(_ active: Bool) async {
     let snapshot = lock.withLock { () -> RemappingRoutingControls in
       profileTransactionGateActive = active
@@ -168,9 +168,9 @@ extension RemappingOutputRouter {
     await updateOutputSuppression(controls: snapshot)
   }
 
-  /// Tells the virtual output and the remapping output control whether they are suppressed.
+  /// Tells the virtual output and the remapping output control whether they are paused.
   ///
-  /// Output is suppressed when `snapshot` suppresses it or a profile transaction holds the gate.
+  /// Output is paused when `snapshot` pauses it or a profile transaction holds the gate.
   func updateOutputSuppression(controls snapshot: RemappingRoutingControls) async {
     let transactionSuppressed = lock.withLock { profileTransactionGateActive }
     await virtualOutput.setOutputSuppressed(snapshot.outputSuppressed || transactionSuppressed)

@@ -149,7 +149,7 @@ private func formatJSON(_ paths: [String]) throws {
   }
 }
 
-/// Writes each of `paths`, a JSON file, as a canonical property list beside it.
+/// Writes each of `paths`, a JSON file, as a standard property list beside it.
 ///
 /// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
 private func toPlist(_ paths: [String]) throws {
@@ -165,7 +165,7 @@ private func toPlist(_ paths: [String]) throws {
   }
 }
 
-/// Rewrites each of `paths`, an XML property list, in the canonical form.
+/// Rewrites each of `paths`, an XML property list, in the standard form.
 ///
 /// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
 private func formatPlist(_ paths: [String]) throws {

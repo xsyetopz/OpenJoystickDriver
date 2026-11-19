@@ -243,7 +243,7 @@ extension RemappingEngineState {
   /// Does nothing when the source is already in that state. Chords that end with a release settle
   /// first, and due held-back presses are replayed. The gyro activation and layer activators are
   /// handled next; a layer activator ends the processing. Other sources run their actions, unless a
-  /// chord or a held-back press suppresses them. The press then enters the sequence history, and
+  /// chord or a held-back press pauses them. The press then enters the sequence history, and
   /// chords and sequences are evaluated.
   mutating func setSource(
     _ source: RemappingSource,

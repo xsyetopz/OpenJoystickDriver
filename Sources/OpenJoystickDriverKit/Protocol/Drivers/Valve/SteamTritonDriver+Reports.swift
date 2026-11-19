@@ -180,7 +180,7 @@ extension SteamTritonDriver {
 
   /// SDL's sensor frame is (x, z, -y) of the raw axes: X right, Y up, Z toward the player.
   ///
-  /// The canonical frame takes SDL's +Z as -Y and SDL's +Y as +Z, so it equals the raw axes. SDL
+  /// The standard frame takes SDL's +Z as -Y and SDL's +Y as +Z, so it equals the raw axes. SDL
   /// scales 2000 °/s and 2 g per 32768 counts and skips a sample whose timestamp repeats.
   private func motionSample(
     _ bytes: [UInt8],

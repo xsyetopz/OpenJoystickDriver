@@ -82,7 +82,7 @@ struct HIDInputFlags: Sendable {
 struct HIDField: Sendable {
   /// The report ID of the field; 0 for an unnumbered report.
   let reportID: UInt8
-  /// The offset of the field's first bit in the report payload.
+  /// The offset of the field's first bit in the report data.
   let bitOffset: Int
   /// The size of the field in bits.
   let bitSize: Int
@@ -131,7 +131,7 @@ struct HIDParsedDescriptor: Sendable {
   let fields: [HIDField]
   /// Non-constant Array input items across all report IDs.
   let arrays: [HIDArrayField]
-  /// Input payload size (excluding the report ID byte) for each report ID.
+  /// Input data size (excluding the report ID byte) for each report ID.
   let payloadSizeBytesByReportID: [UInt8: Int]
   /// Usages of top-level Application collections, in descriptor order.
   ///
@@ -355,7 +355,7 @@ enum HIDReportDescriptorParser {
     }
     guard collectionDepth == 0 else { return nil }
 
-    // Compute payload size per report ID.
+    // Compute data size per report ID.
     var payloadSize: [UInt8: Int] = [:]
     for (rid, bits) in bitOffsetByReportID { payloadSize[rid] = (bits + 7) / 8 }
     return HIDParsedDescriptor(

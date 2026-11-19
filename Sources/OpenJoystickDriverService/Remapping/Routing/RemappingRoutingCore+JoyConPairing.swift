@@ -175,7 +175,7 @@ extension RemappingRoutingCore {
 
   /// Returns the eligibility of the pair `session`.
   ///
-  /// The profile's application scope, the post-event access and the output suppression decide it
+  /// The profile's application scope, the post-event access and the output pausing decide it
   /// first. A profile that needs exclusive input also needs both members to be exclusive.
   private func joyConPairEligibility(
     _ session: RemappingJoyConPairSession,

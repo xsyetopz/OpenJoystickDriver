@@ -17,7 +17,7 @@ extension DualShock4Driver {
     PhysicalProtocolID.sonyDualShock4.describedControls
   }
 
-  /// The byte offsets of the fields in the input payload that follows the report header.
+  /// The byte offsets of the fields in the input data that follows the report header.
   enum ReportOffset {
     /// The left stick X.
     static let leftStickX: Int = 0
@@ -121,7 +121,7 @@ extension DualShock4Driver {
     )
   }
 
-  /// Payload byte, mask and PlayStation-label control of each button.
+  /// Data byte, mask and PlayStation-label control of each button.
   private static let buttonTable: [(Int, UInt8, Control)] = [
     (4, 0x10, .west), (4, 0x20, .south), (4, 0x40, .east), (4, 0x80, .north),
     (5, 0x01, .leftShoulder), (5, 0x02, .rightShoulder), (5, 0x04, .leftTrigger),
@@ -211,7 +211,7 @@ extension DualShock4Driver {
     }
   }
 
-  /// The input payload of `data` without its report header and Bluetooth trailer, and the transport
+  /// The input data of `data` without its report header and Bluetooth trailer, and the transport
   /// and report format it implies.
   /// - Throws: ``DualShock4DriverError/invalidReportFraming`` for an unknown framing, and
   ///   ``DualShock4DriverError/invalidBluetoothCRC`` when a Bluetooth report fails its CRC.

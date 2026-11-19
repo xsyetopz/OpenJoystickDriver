@@ -40,9 +40,9 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   let coordinator = AutomaticDispatcherCoordinator()
   /// Guards the mutable state below.
   private let stateLock = NSLock()
-  /// Whether all virtual output is suppressed.
+  /// Whether all virtual output is paused.
   private var suppressedOutput = false
-  /// Whether remapping output is suppressed on the backends.
+  /// Whether remapping output is paused on the backends.
   private var remappingSuppressedOutput = false
   /// The profile that each installed backend publishes, for ``status``.
   private var diagnosticTargets: [LogicalControllerID: VirtualHIDProfileID] = [:]
@@ -150,7 +150,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     }
   }
 
-  /// Whether all virtual output is suppressed.
+  /// Whether all virtual output is paused.
   var suppressOutput: Bool {
     get { stateLock.withLock { suppressedOutput } }
     set { stateLock.withLock { suppressedOutput = newValue } }
@@ -201,13 +201,13 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
-  /// Sets whether all virtual output is suppressed and applies it to the backends.
+  /// Sets whether all virtual output is paused and applies it to the backends.
   func setOutputSuppressed(_ suppressed: Bool) async {
     suppressOutput = suppressed
     await coordinator.synchronizeSuppression { self.suppressOutput }
   }
 
-  /// Sets whether remapping output is suppressed and applies it to the backends.
+  /// Sets whether remapping output is paused and applies it to the backends.
   func setRemappingOutputSuppressed(_ suppressed: Bool) async {
     stateLock.withLock { remappingSuppressedOutput = suppressed }
     await coordinator.synchronizeRemappingSuppression {
@@ -486,7 +486,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// activated, the live backend and its selection stay and the error is rethrown. The cost of
   /// that order: for a moment both virtual devices exist with the same serial number and
   /// LocationID, and consumers may see a second pad. A controller with no live backend (during
-  /// suppression, recovery, or before activation) publishes the selection when it next installs.
+  /// pausing, recovery, or before activation) publishes the selection when it next installs.
   func retarget(controller identifier: LogicalControllerID) async throws {
     let generation = cacheGeneration(for: identifier)
     guard let description = await cachedDescription(for: identifier),

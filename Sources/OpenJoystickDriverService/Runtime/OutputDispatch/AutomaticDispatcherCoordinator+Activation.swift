@@ -34,7 +34,7 @@ extension AutomaticDispatcherCoordinator {
 
   /// The publication state of one controller.
   struct Entry {
-    /// Physical-session state survives temporary publication suppression.
+    /// Physical-session state survives temporary publication pausing.
     var sessionGeneration: UInt64 = 0
     /// Whether the physical session is live.
     var physicalSessionActive = true
@@ -42,7 +42,7 @@ extension AutomaticDispatcherCoordinator {
     var publicationGeneration: UInt64 = 0
     /// The profile that the installed backend publishes.
     var target: VirtualHIDProfileID?
-    /// How to publish again after a failure or a suppression.
+    /// How to publish again after a failure or a pause.
     var context: PublicationContext?
     /// The backend that publishes.
     var installed: AutomaticBackendSlot?
@@ -178,7 +178,7 @@ extension AutomaticDispatcherCoordinator {
   ///
   /// A live backend that already publishes `target` is left unchanged unless `rebuildsLiveTarget`
   /// is set, as when only the persona identity changed, which is fixed when the device is created.
-  /// Without a live backend, as during suppression or recovery, the publication context adopts
+  /// Without a live backend, as during pausing or recovery, the publication context adopts
   /// `target`, so the next installation publishes it.
   ///
   /// - Throws: The build or activation failure, or `CancellationError` when the controller
@@ -219,7 +219,7 @@ extension AutomaticDispatcherCoordinator {
 
   /// Returns a lease on the backend that publishes `target`, installing or replacing it as needed.
   ///
-  /// Nil when the coordinator is closed or suppressed, the session ended, another client holds the
+  /// Nil when the coordinator is closed or paused, the session ended, another client holds the
   /// controller, or the controller is not eligible. A caller that finds a request for the same
   /// target in flight waits for it.
   ///
@@ -410,7 +410,7 @@ extension AutomaticDispatcherCoordinator {
     await lease.release()
   }
 
-  /// Activates `candidate` and applies the current suppression, repeating when it changed
+  /// Activates `candidate` and applies the current pausing, repeating when it changed
   /// meanwhile.
   private func activateAndSynchronize(
     _ candidate: AutomaticBackendSlot,

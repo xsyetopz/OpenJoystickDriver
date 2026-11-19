@@ -2,7 +2,7 @@ import Foundation
 
 /// State of the user-space virtual output backend as the service reports it.
 ///
-/// `wireValue` is the only formatter and `init(wireValue:)` the only parser; payloads encode the
+/// `wireValue` is the only formatter and `init(wireValue:)` the only parser; data encode the
 /// status as that single string.
 public enum VirtualOutputBackendStatus: Sendable, Equatable, Codable {
   /// No backend is live.
@@ -17,7 +17,7 @@ public enum VirtualOutputBackendStatus: Sendable, Equatable, Codable {
   /// The start of the wire value of the error status.
   private static let errorPrefix = "error:"
 
-  /// The one string that carries the status in payloads: `off`, the backend's own text, or `error:`
+  /// The one string that carries the status in data: `off`, the backend's own text, or `error:`
   /// and a message.
   public var wireValue: String {
     switch self {

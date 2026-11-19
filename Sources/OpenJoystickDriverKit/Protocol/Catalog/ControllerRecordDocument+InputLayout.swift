@@ -273,7 +273,7 @@ extension ControllerRecordDocument {
       }
     }
 
-    /// Reads `values`, a map from a canonical decimal value to a direction name.
+    /// Reads `values`, a map from a standard decimal value to a direction name.
     private static func directions(
       in container: KeyedDecodingContainer<DocumentKey>,
       codingPath: [any CodingKey]

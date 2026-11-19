@@ -50,10 +50,10 @@ public struct ApplicationSettingsPayload: Codable, Equatable, Sendable {
   /// Every setting with its value.
   public let settings: [ApplicationSettingValue]
 
-  /// Creates the payload from `settings`.
+  /// Creates the data from `settings`.
   public init(settings: [ApplicationSettingValue]) { self.settings = settings }
 
-  /// The value of `key`; nil when the payload does not list it.
+  /// The value of `key`; nil when the data does not list it.
   public func value(of key: ApplicationSettingKey) -> Bool? {
     settings.first { $0.key == key }?.value
   }

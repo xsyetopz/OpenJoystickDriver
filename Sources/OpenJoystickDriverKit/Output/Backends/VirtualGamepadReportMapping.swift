@@ -1,6 +1,6 @@
 import Foundation
 
-/// The mapping from canonical and remapped controller state to the virtual gamepad state, shared
+/// The mapping from standard and remapped controller state to the virtual gamepad state, shared
 /// by the user-space dispatcher and the `VirtualHIDProfile` encoders.
 enum VirtualGamepadReportMapping {
   /// The deadzone treatment of a controller's sticks.
@@ -45,7 +45,7 @@ enum VirtualGamepadReportMapping {
 
   /// Replaces every input field of `state` with `input`.
   ///
-  /// This is the one canonical-state mapping; the dispatcher and the `VirtualHIDProfile` encoders
+  /// This is the one standard-state mapping; the dispatcher and the `VirtualHIDProfile` encoders
   /// share it.
   static func apply(
     _ input: ControllerState,
@@ -62,7 +62,7 @@ enum VirtualGamepadReportMapping {
     state.hat = hat
     state.leftTriggerPressed = input.pressed.contains(.leftTrigger)
     state.rightTriggerPressed = input.pressed.contains(.rightTrigger)
-    // The report's Y and the canonical state's Y both point down.
+    // The report's Y and the standard state's Y both point down.
     (state.leftStickX, state.leftStickY) = Self.stickValues(
       input.leftStick.x,
       input.leftStick.y,

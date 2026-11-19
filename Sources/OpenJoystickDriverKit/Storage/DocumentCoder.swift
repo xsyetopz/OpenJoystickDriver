@@ -83,14 +83,14 @@ public enum DocumentCoder {
     return try decoder.decode(type, from: data)
   }
 
-  /// `value` as a canonical document.
+  /// `value` as a standard document.
   public static func encode<T: Encodable>(_ value: T) throws -> Data {
     let encoder = PropertyListEncoder()
     encoder.outputFormat = .xml
     return try encoder.encode(value)
   }
 
-  /// A Foundation tree as a canonical document.
+  /// A Foundation tree as a standard document.
   public static func write(_ tree: Any) throws -> Data {
     try PropertyListSerialization.data(fromPropertyList: tree, format: .xml, options: 0)
   }

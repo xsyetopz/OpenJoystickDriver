@@ -239,6 +239,6 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
 
 /// Error for an invalid stick mapping.
 public enum RemappingStickMappingError: Error, Equatable, Sendable {
-  /// A field is not finite or is out of range; the payload names it.
+  /// A field is not finite or is out of range; the data names it.
   case invalidField(String)
 }

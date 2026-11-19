@@ -148,13 +148,13 @@ struct SonyMotionCalibration {
   }
 
   /// DS4 and DualSense transform: raw counts, then factory (or nominal 1/16 °/s, 1/8192 g)
-  /// calibration per axis, then SI, then raw (x, y, z) → canonical (x, -z, y).
+  /// calibration per axis, then SI, then raw (x, y, z) → standard (x, -z, y).
   ///
   /// SDL passes the calibrated raw axes straight through as its sensor frame (X right, Y up, Z
   /// toward the player; `include/SDL3/SDL_sensor.h`): `HIDAPI_DriverPS4_HandleStatePacket` in
   /// `src/joystick/hidapi/SDL_hidapi_ps4.c` and `HIDAPI_DriverPS5_HandleStatePacketCommon` in
   /// `SDL_hidapi_ps5.c` at SDL `1ce4c5bc`. Linux `hid-playstation.c` `dualshock4_parse_report` and
-  /// `dualsense_parse_report` likewise keep the wire axis order. The canonical frame takes SDL's +Z
+  /// `dualsense_parse_report` likewise keep the wire axis order. The standard frame takes SDL's +Z
   /// (toward the player) as -Y and SDL's +Y (up) as +Z.
   func sample(
     timestamp: ControllerSampleTimestamp,

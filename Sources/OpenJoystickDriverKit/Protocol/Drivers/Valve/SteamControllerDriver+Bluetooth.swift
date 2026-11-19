@@ -5,7 +5,7 @@ import Foundation
 /// `UpdateBLESteamControllerState`) and `steam/controller_structs.h`.
 ///
 /// Input and feature reports travel as report `0x03` in 20-byte segments: the report ID, a header
-/// byte (`0x80` data, `0x40` last, segment number in the low 3 bits), and 18 payload bytes.
+/// byte (`0x80` data, `0x40` last, segment number in the low 3 bits), and 18 data bytes.
 /// Reassembled packets are either the wired `0x0001`-versioned layout or the chunked state packet,
 /// which the driver rewrites into the 64-byte wired state report its wired decoder reads.
 enum SteamBluetooth {
@@ -13,7 +13,7 @@ enum SteamBluetooth {
   static let reportID: UInt8 = 0x03
   /// The length of a segment in bytes.
   static let segmentLength = 20
-  /// The payload bytes in a segment.
+  /// The data bytes in a segment.
   static let segmentPayloadLength = 18
   /// The header bit that marks a data segment.
   static let dataFlag: UInt8 = 0x80
@@ -39,7 +39,7 @@ enum SteamBluetooth {
 
 /// Reassembles report-`0x03` segments into one packet, as SDL's packet assembler does.
 struct SteamBluetoothAssembler {
-  /// The payload bytes of the segments received so far.
+  /// The data bytes of the segments received so far.
   private var buffer: [UInt8] = []
   /// The number of the next segment.
   private var expectedSegment: UInt8 = 0
