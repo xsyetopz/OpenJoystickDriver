@@ -304,8 +304,7 @@ public enum ControllerCheckIssue {
   /// The `connection` options of both issue forms, which a prefilled value must equal.
   private static let usbCable = "USB cable"
   private static let bluetooth = "Bluetooth"
-  private static let usbReceiver =
-    "USB receiver (a wireless dongle; write its name in Controller name and maker)"
+  private static let usbReceiver = "USB receiver (wireless dongle)"
 
   /// The issue form of a controller problem, with the short fields of `check` filled.
   public static func supportURL(for check: ControllerCheck) -> URL {

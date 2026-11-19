@@ -1,14 +1,14 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Known issues
+  - name: Known Issues
     url: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Known-Issues
     about: Read the current bugs and limits, each with a workaround. Check here first.
   - name: Troubleshooting
     url: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Troubleshooting
     about: Find fixes for a controller that is not detected, a game that does not see it, and crashes.
-  - name: Reporting a bug
+  - name: Reporting a Bug
     url: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Reporting-a-Bug
     about: Make a support report, copy logs, and capture packets.
-  - name: Security vulnerability
+  - name: Security Vulnerability
     url: https://github.com/xsyetopz/OpenJoystickDriver/security/advisories/new
     about: Report it privately. Do not open a public issue. Read SECURITY.md.

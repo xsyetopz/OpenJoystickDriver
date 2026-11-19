@@ -86,11 +86,12 @@ Copy the version from the build that ran, while it runs. A line without `+build.
 
 ## AI Agents
 
-A human operator stands behind every issue, comment, commit and pull request an agent writes, and answers for it as their own work: the operator understands it, can defend it in review, fills the hardware, macOS and test fields, and alone approves or signs off. The operator reads a post before it goes out or tells the agent to post it on their behalf; either way, the agent reads the whole post first and checks each claim against the output it rests on. The **AI tool** section of the issue forms and the pull request template records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand.
+A human operator stands behind every issue, comment, commit and pull request an agent writes, and answers for it as their own work: the operator understands it, can defend it in review, fills the hardware, macOS and test fields, and alone approves or signs off. The operator reads a post before it goes out or tells the agent to post it on their behalf; either way, the agent reads the whole post first and checks each claim against the output it rests on. The **AI Assistance** section of the issue forms and the pull request template records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand.
 
 - Attribution follows the Linux kernel's `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]` tag. `AGENT_NAME` is the AI tool, `MODEL_VERSION` is the exact model, and the optional tools are specialized analysis tools, never basic ones such as git, Swift or just. Example: `Assisted-by: Claude Code:claude-opus-5-5`.
   - Commit: the message ends with the `Assisted-by:` trailer. The operator stays the commit author.
-  - Pull request, issue and comment: the body ends with a `---` line, then the `Assisted-by:` line.
+  - Pull request and comment: the body ends with a `---` line, then the `Assisted-by:` line.
+  - Issue: the form's **Assisted-by** field holds `AGENT_NAME:MODEL_VERSION`.
   - Spelling, grammar, formatting and mechanical renames need no tag.
 - Voice: plain and brief, in the words a user would use, without greetings, thanks, apologies, preamble, recap, extra headings, or emoji. The agent speaks as itself and names the person it writes for in the third person by role, such as the maintainer, the contributor, or the reporter; its "I" is never that person.
 - Data-mining comes first. Before the agent drafts a Bug Report or Controller Support issue, it runs each command it can on the operator's Mac, then asks the operator item by item for the rest of the [Issues and Pull Requests](#issues-and-pull-requests) list: every mode and connection with its VID:PID, the firmware, captures from Windows or Linux, and what others found about the controller. It asks again when an answer is vague or has no output behind it.
