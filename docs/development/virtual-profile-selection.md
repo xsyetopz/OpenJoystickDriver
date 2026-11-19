@@ -1,6 +1,15 @@
 # Virtual Profile Selection: What GameController and SDL3 Read
 
-Two questions: does one virtual gamepad profile exist that both GameController.framework and SDL read, and what would choosing the profile by the app in front take? Measurements only.
+Games read controllers in two main ways on a Mac: Apple's GameController.framework and SDL. Think of them as two readers who only understand certain handwriting. OJD can write its virtual gamepad in several hands (profiles). This page asks two things: is there one hand both readers understand, and what would it take to switch hands to suit the app in front? Everything here was measured.
+
+```mermaid
+flowchart LR
+    p["Your controller"] -->|"presses"| o["OJD"]
+    o -->|"publishes as a profile"| v["Virtual gamepad"]
+    v -->|"Xbox Bluetooth layout only"| gc["GameController games"]
+    v -->|"045E:0B0C over GIP only"| sdl["SDL games (HIDAPI)"]
+    v -->|"Bluetooth layout, with SDL_JOYSTICK_HIDAPI=0"| sdl2["SDL games (GameController backend)"]
+```
 
 Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with installed app `0.6.0-alpha.2+build.1.27.48.sha.448cfab83661.dirty`, SDL 3.4.20, and an 8BitDo Ultimate 2C Wireless (`2DC8:301B`) over Bluetooth LE.
 
@@ -10,10 +19,10 @@ Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with installed app `0
 | --- | --- |
 | One profile both GameController and SDL's HIDAPI drivers read | None found. GameController reads input only from the Xbox Bluetooth report layout. SDL's HIDAPI drivers read input only from 045E:0B0C over the Xbox One GIP layout. |
 | A profile both read, with a condition | 045E:0B13 (GameControllerCompatible) or 045E:0B20 over the Bluetooth layout, with `SDL_JOYSTICK_HIDAPI=0`. SDL then reads the pad through its GameController backend. `ojd virtual launch --sdl-gamecontroller-backend` sets this up (see `wiki/Playing-Games.md`). |
-| Home (Guide) | Reached OJD; neither probe reported it in any run. Both ran in the background. Unresolved. |
-| Replacing the published gamepad | SDL sees a remove within 36 ms, then an add 2.0 s later with a different instance ID. GameController sees connect or disconnect within 76 ms. See [What a running game observes when OJD replaces the gamepad](#what-a-running-game-observes-when-ojd-replaces-the-gamepad). |
+| Home (Guide) | Reached OJD, but neither probe reported it in any run. Both ran in the background. Still open. |
+| Swapping the published gamepad | SDL sees it removed within 36 ms, then added 2.0 s later with a different instance ID. GameController sees connect or disconnect within 76 ms. See [What a running game observes when OJD replaces the gamepad](#what-a-running-game-observes-when-ojd-replaces-the-gamepad). |
 
-## Method
+## How We Measured
 
 Logs: `docs/development/virtual-profile-selection/`, named `.txt` because the repository ignores `*.log` (`.gitignore:186`).
 
@@ -21,17 +30,17 @@ Logs: `docs/development/virtual-profile-selection/`, named `.txt` because the re
 | --- | --- |
 | `run.sh <profile> <tag> <probe...>` | Publishes a bundled profile with `ojd virtual feed --as <profile>`, feeding `frames.jsonl`. The probe starts 1.5 s later. The log ends with `# probe exit:` and `# feed exit:`; feed output goes to `<profile>.<tag>.feed.txt`. No controller was connected. |
 | `candidate.sh <name> <persona> <vid> <pid> <version> <productName> <seconds> [parallel] [tags...]` | Publishes the 2C's virtual gamepad under another identity via the user file `~/Library/Application Support/OpenJoystickDriver/VirtualDevices/2dc8-301b.plist` (match, persona, identity; format in `wiki/Controller-Records.md`). The service keeps the persona's report layout and swaps in the identity (`Sources/OpenJoystickDriverKit/Output/Profiles/VirtualDeviceProfile.swift:51-65`). `candidate.sh --clear` removes the file. Each log starts with `ojd virtual show`. |
-| `just diagnose-gamecontroller --seconds N` | GameController probe (`Sources/OpenJoystickDriverGameControllerProbe/main.swift`). Lists HID gamepads (`GCController.supportsHIDDevice`) and `GCController`s; prints a `button:` line per button change and a `direction:` line per d-pad or stick change. The closing evidence line has `live_input=true` once input arrived. |
-| `just diagnose-sdl3 --seconds N --wait-devices 5` | SDL3 probe (`Tools/SDLGamepadProbe/main.m`). Prints `GAMEPAD_BUTTON`, `GAMEPAD_AXIS`, `GAMEPAD_ADDED`, `GAMEPAD_REMOVED`; nothing for a joystick without a gamepad mapping. HIDAPI ran default (unset), `SDL_JOYSTICK_HIDAPI=1`, `SDL_JOYSTICK_HIDAPI=0`. |
-| `ojd controller watch 2DC8:301B --output --duration N` | Shows what OJD received from the 2C and sent (`out buttons=0x…`), proving a press reached OJD when a probe saw nothing. |
+| `just diagnose-gamecontroller --seconds N` | GameController probe (`Sources/OpenJoystickDriverGameControllerProbe/main.swift`). Lists HID gamepads (`GCController.supportsHIDDevice`) and `GCController`s. Prints a `button:` line for each button change and a `direction:` line for each d-pad or stick change. The last line has `live_input=true` once input arrived. |
+| `just diagnose-sdl3 --seconds N --wait-devices 5` | SDL3 probe (`Tools/SDLGamepadProbe/main.m`). Prints `GAMEPAD_BUTTON`, `GAMEPAD_AXIS`, `GAMEPAD_ADDED`, `GAMEPAD_REMOVED`, and nothing for a joystick without a gamepad mapping. HIDAPI ran three ways: default (unset), `SDL_JOYSTICK_HIDAPI=1`, and `SDL_JOYSTICK_HIDAPI=0`. |
+| `ojd controller watch 2DC8:301B --output --duration N` | Shows what OJD got from the 2C and sent on (`out buttons=0x…`), which proves a press reached OJD even when a probe saw nothing. |
 
 `ojd virtual feed` publishes only bundled identities: `makeVirtualFeedDevice` in `Sources/OpenJoystickDriverService/Runtime/ApplicationServiceRuntime+UserSpaceDispatcherFactory.swift` applies no user identity. Candidates use the 2C as input, and the maintainer pressed each control.
 
-`frames.jsonl` has a 6 s neutral lead-in, then each control held 700 ms with 300 ms neutral between. Order: South, East, West, North, LeftShoulder, RightShoulder, LeftTrigger and RightTrigger as buttons, LeftStickClick, RightStickClick, Start, Back, Guide, DpadUp/Down/Left/Right, then LeftStickX, LeftStickY, RightStickX, RightStickY, LeftTrigger, RightTrigger as axes at 1.0.
+`frames.jsonl` starts with 6 s at rest, then holds each control for 700 ms with 300 ms at rest between. Order: South, East, West, North, LeftShoulder, RightShoulder, LeftTrigger and RightTrigger as buttons, LeftStickClick, RightStickClick, Start, Back, Guide, DpadUp/Down/Left/Right, then LeftStickX, LeftStickY, RightStickX, RightStickY, LeftTrigger, RightTrigger as axes at 1.0.
 
 SDL buttons: 0 South, 1 East, 2 West, 3 North, 4 Back, 5 Guide, 6 Start, 7 left stick, 8 right stick, 9 left shoulder, 10 right shoulder, 11 to 14 d-pad up, down, left, right. Axes: 0 to 3 left X, left Y, right X, right Y; 4 left trigger; 5 right trigger.
 
-Button names follow `docs/testing/8bitdo-ultimate-2c.md`: View (small, left of center) reaches games as Back, Menu (right of center) as Start, Home (round, center) as Guide. Ignore the stray 045E:028E pad (`GamePad-1` or `GamePad-2`) in most GameController logs; no run published it.
+Button names follow `docs/testing/8bitdo-ultimate-2c.md`: View (small, left of center) reaches games as Back, Menu (right of center) as Start, Home (round, center) as Guide. Ignore the stray 045E:028E pad (`GamePad-1` or `GamePad-2`) in most GameController logs. No run published it.
 
 ## Bundled Profiles
 
@@ -61,17 +70,11 @@ Every other cell reads nothing:
 
 - sdl-compatible: GameController has no controller, and SDL `HIDAPI=0` finds no joystick.
 - game-controller-compatible: SDL default and `HIDAPI=1` list the gamepad but print no event.
-- generic: no consumer prints an event. The SDL probe prints no raw joystick events, so it does not show whether the raw buttons of the generic joystick change. The generic profile has an SDL mapping only when `ojd virtual launch` or `ojd virtual export-mapping` supplies one (see `wiki/Command-Reference.md`). These runs did not use either.
-
-Every other cell reads nothing:
-
-- sdl-compatible: GameController has no controller; SDL `HIDAPI=0` finds no joystick.
-- game-controller-compatible: SDL default and `HIDAPI=1` list the gamepad but print no event.
-- generic: no consumer prints an event. The SDL probe prints no raw joystick events, so raw changes are unshown. Generic has an SDL mapping only from `ojd virtual launch` or `ojd virtual export-mapping` (see `wiki/Command-Reference.md`); these runs used neither.
+- generic: no app reading it prints an event. The SDL probe prints no raw joystick events, so it can't show whether the generic joystick's raw buttons change. Generic only has an SDL mapping when `ojd virtual launch` or `ojd virtual export-mapping` supplies one (see `wiki/Command-Reference.md`). These runs used neither.
 
 ## Candidate Identities
 
-Each candidate publishes the 2C's virtual gamepad with another Microsoft identity over one of three layouts (identity version 0). Logs: `candidates/<name>.<tag>.txt`. Enumeration runs had no input; press runs used parallel with the maintainer pressing each control.
+Each candidate publishes the 2C's virtual gamepad with another Microsoft identity over one of three layouts (identity version 0). Logs: `candidates/<name>.<tag>.txt`. Listing runs had no input. Press runs used `parallel`, with the maintainer pressing each control.
 
 Layouts: GIP is SDLCompatible's Xbox One layout over USB transport. BT is GameControllerCompatible's Xbox Series layout over Bluetooth transport. Generic is the OJD generic layout.
 
@@ -97,16 +100,16 @@ Press runs:
 
 | Run | Finding |
 | --- | --- |
-| N1 | `N1-0b13-over-generic.press3.ojd-watch.txt` shows 88 `buttons=` lines and `out buttons=0x1` and others: presses reached OJD and were sent. The two earlier tries (`N1-0b13-over-generic.press.*`) read 0 events but prove nothing; the maintainer was not told which button to press first. |
+| N1 | `N1-0b13-over-generic.press3.ojd-watch.txt` shows 88 `buttons=` lines and `out buttons=0x1` and others: presses reached OJD and were sent. The two earlier tries (`N1-0b13-over-generic.press.*`) read 0 events but prove nothing, because the maintainer wasn't told which button to press first. |
 | B2 | GameController printed Button A, B, X, Y, Left and Right Shoulder, Left and Right Trigger (analog), both Thumbstick Buttons, Button Menu, Button Options, Direction Pad, Left Thumbstick, Right Thumbstick. SDL `HIDAPI=0` printed buttons 0 to 4, 6 to 14, axes 0 to 5. The first run started listening after A, B, X, Y, and LB were pressed; press2 covers them. |
 | B2 View, Menu | `B2-0b20-over-bt.view-menu.*`: View reaches OJD as Back (`out buttons=0x200`), then Button Options, then SDL button 4. Menu reaches OJD as Start (`0x100`), then Button Menu, then SDL button 6. |
-| B2 Home | `B2-0b20-over-bt.press.ojd-watch.txt` shows `buttons=[Guide]` and `out buttons=0x400`; GameController printed no Button Home and SDL no button 5. The probe says Home reaches only the frontmost app (`Sources/OpenJoystickDriverGameControllerProbe/main.swift:217-221`), and it ran in the background. `OpenJoystickDriverGameControllerViewer` was not used; still open. |
+| B2 Home | `B2-0b20-over-bt.press.ojd-watch.txt` shows `buttons=[Guide]` and `out buttons=0x400`; GameController printed no Button Home and SDL no button 5. The probe says Home reaches only the frontmost app (`Sources/OpenJoystickDriverGameControllerProbe/main.swift:217-221`), and it ran in the background. `OpenJoystickDriverGameControllerViewer` wasn't used, so this is still open. |
 
 ## Choosing the Profile by the App in Front (9.14)
 
 ### How the Service Learns the Frontmost App
 
-Per-app remapping tracks it: `WorkspaceRemappingForegroundApplication` observes `NSWorkspace.didActivateApplicationNotification` and reads the bundle identifier (`Sources/OpenJoystickDriverService/Remapping/SystemEvents/RemappingForegroundApplication.swift:16-39`), created at `Sources/OpenJoystickDriverService/Runtime/ApplicationServiceRuntime.swift:71`. A per-app profile choice can read it.
+Per-app remapping already tracks it: `WorkspaceRemappingForegroundApplication` listens for `NSWorkspace.didActivateApplicationNotification` and reads the bundle identifier (`Sources/OpenJoystickDriverService/Remapping/SystemEvents/RemappingForegroundApplication.swift:16-39`), created at `Sources/OpenJoystickDriverService/Runtime/ApplicationServiceRuntime.swift:71`. A per-app profile choice can read it.
 
 ### How to Tell a GameController App From an SDL App
 
@@ -119,9 +122,11 @@ Per-app remapping tracks it: `WorkspaceRemappingForegroundApplication` observes 
 | Melvor2 (Godot) | yes | none |
 | OpenJoystickDriver | yes | none |
 
-DuckStation's and PCSX2's libSDL3.0.dylib links GameController.framework itself (`apps/scan.txt`, "SDL3 links GameController"), so a GameController link does not mark a GameController-only app. Test for a bundled `libSDL*` file, or a static SDL by symbol, first. Browsers and Steam showed neither link in their main executable; they may load GameController through a framework (inferred, not checked), so a link scan can miss them. A user-set app list is the reliable fallback (inferred).
+DuckStation's and PCSX2's libSDL3.0.dylib links GameController.framework itself (`apps/scan.txt`, "SDL3 links GameController"), so a GameController link doesn't prove an app uses only GameController. Look for a bundled `libSDL*` file, or a built-in SDL by symbol, first. Browsers and Steam showed neither link in their main program. They may load GameController through a framework (inferred, not checked), so a link scan can miss them. A list of apps the user sets is the dependable backup (inferred).
 
 ### What a Running Game Observes When OJD Replaces the Gamepad
+
+Swapping profiles is like unplugging one pad and plugging in another. The game sees the old one leave and, about two seconds later, a stranger arrive.
 
 Logs: `replace/run1.*`, `replace/run2.*`. The 2C was published as SDLCompatible. At 12 s `ojd virtual set game-controller-compatible 2DC8:301B` switched it to 0B13 over BT; at 27 s `ojd virtual reset 2DC8:301B` switched it back.
 
@@ -138,13 +143,13 @@ Logs: `replace/run1.*`, `replace/run2.*`. The 2C was published as SDLCompatible.
 
 What a game sees:
 
-- SDL gives each published gamepad a different instance ID (which=1, then 3, then 4). A game that opens gamepads only at startup loses the pad at the first replacement, as the probe does.
-- The pad is missing from SDL for about 2 s per replacement.
+- SDL gives each published gamepad a different instance ID (which=1, then 3, then 4). A game that only opens gamepads at startup loses the pad at the first swap, as the probe does.
+- The pad is missing from SDL for about 2 s each swap.
 - After the switch to 0B13, SDL with HIDAPI drivers adds a gamepad that reads no input (see Bundled Profiles).
 
 ### What the User's Override Means Then
 
-Inferred, not measured. The override is a per-model choice that beats automatic selection (see `wiki/Playing-Games.md`); a per-app choice would be one more automatic step. The override pins the kind for the model and turns per-app choice off. Each switch costs the game about 2 s without a pad and a fresh SDL instance, so switch only when the front app changes. While a user `VirtualDevices` file holds an identity, `ojd virtual reset` refuses with E2006, so an identity file pins the kind too.
+Inferred, not measured. The override is a choice per controller model that beats automatic picking (see `wiki/Playing-Games.md`). A per-app choice would be one more automatic step. The override fixes the kind for that model and turns per-app choice off. Each switch costs the game about 2 s without a pad and a fresh SDL instance, so only switch when the front app changes. While a user `VirtualDevices` file holds an identity, `ojd virtual reset` refuses with E2006, so an identity file pins the kind too.
 
 ## Not Measured
 

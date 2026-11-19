@@ -2,7 +2,7 @@
 
 For maintainers. Testers use [Test a tester build](../testing/tester-builds.md).
 
-This guide builds a DMG of an unpublished build: it signs, notarizes, and staples the app, and installs and publishes nothing.
+These steps make a DMG of a build that isn't published, so a tester can try it. The DMG gets Apple's signature and notarization stamp, like a sealed envelope. The steps install nothing and publish nothing.
 
 ## Requirements
 
@@ -34,13 +34,13 @@ just release-notarize-store-credentials
 
 ## 2. Check the Environment
 
-Audit the signing assets:
+Check the signing files:
 
 ```bash
 just signing-audit
 ```
 
-The package command stops on a dirty worktree, so commit or remove changes first.
+The package command stops if the worktree has uncommitted changes, so commit or remove them first.
 
 ## 3. Create the DMG
 
@@ -81,4 +81,4 @@ Send the DMG unchanged with the [tester instructions](../testing/tester-builds.m
 | Notarization fails. | Read the submission log with `just release-notarize-log <id>`. |
 | Gatekeeper or stapling fails. | Do not send the DMG. Fix signing, then create a tester build again. |
 
-Never bypass signing checks or change the app after notarization: the resource seal breaks.
+Never skip the signing checks, and never change the app after notarization. Any change breaks the seal, and macOS stops trusting the app.

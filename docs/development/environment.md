@@ -1,32 +1,40 @@
 # Environment Files
 
-Repository scripts load one optional local file from the project root:
+An env file is a short list of `KEY=value` lines that tells the build scripts which signing identity and profiles to use, like a sticky note on your desk that only you can see. Repository scripts load one optional local file from the project root:
+
+```mermaid
+flowchart LR
+    sel["OJD_ENV"] -->|"dev, or unset"| dev[".env.dev"]
+    sel -->|"release"| rel[".env.release"]
+    dev -->|"signing keys"| build["Build and install scripts"]
+    rel -->|"signing and notarizing keys"| pkg["Release and package scripts"]
+```
 
 - `.env.dev`: development commands (default).
 - `.env.release`: release, notarization, and packaging commands.
 
-`OJD_ENV` selects `dev` or `release`; other values fail at once. Scripts load no generic `.env` or `Scripts/.env*` file. Signed build and package routes create or repair it from discovered Apple assets.
+`OJD_ENV` picks `dev` or `release`, and any other value fails at once. Scripts never load a plain `.env` or a `Scripts/.env*` file. Signed build and package commands create or fix the file from the Apple signing files they find on your Mac.
 
-Never source identities, profiles, Team IDs, or credentials from examples; read [Signing assets](signing.md) first. Development needs two development profiles and an Apple Development identity; Developer ID assets are optional.
+Never copy identities, profiles, Team IDs, or passwords from examples. Read [Signing assets](signing.md) first. Development needs two development profiles and an Apple Development identity. Developer ID files are optional.
 
-Unsigned `swift build` and `just driverkit-check` load no env file. Signed local installs repair `.env.dev` first. Notarization keys belong only in `.env.release`. The signing configurator updates only signing keys. Never commit either.
+Unsigned `swift build` and `just driverkit-check` load no env file. Signed local installs fix `.env.dev` first. Notarization keys go only in `.env.release`. The signing setup tool only changes signing keys. Never commit either file.
 
 ## GitHub Actions Secrets
 
 `.github/workflows/release.yml` names the secrets. The single-app release uses `DEVELOPER_ID_APPLICATION_CERT_BASE64`, `CERTIFICATE_SECRET`, `KEYCHAIN_SECRET`, `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64`, `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64`, `NOTARIZE_APPLE_ID`, and `NOTARIZE_PASSWORD`.
 
-CI needs no local `.env`. Local equivalents:
+CI needs no local `.env`. What to use on your own Mac instead:
 
 - certificate and profile secrets: Keychain identities plus the Developer ID profiles `signing configure` reads (`signing ci-release-setup` on the runner);
 - `NOTARIZE_APPLE_ID` and `NOTARIZE_PASSWORD`: the same keys in `.env.release`, or `NOTARIZE_KEYCHAIN_PROFILE` after storing credentials in Keychain.
 
 Never copy the CI-only `*_BASE64`, `CERTIFICATE_SECRET`, or `KEYCHAIN_SECRET` keys into `.env.dev` or `.env.release`.
 
-The GUI profile must authorize the host app's `com.apple.developer.driverkit.userclient-access` allowlist, exactly `com.openjoystickdriver.XboxUSBDevice`. The DriverKit profile (`DEXT_PROVISIONING_PROFILE`) authorizes the system extension; the build passes its `Name` to Xcode as the specifier. The build rejects an allow-any user-client entitlement in either artifact. A development GUI profile without the grant builds the app without the DEXT. See [Signing](signing.md).
+The GUI profile must allow the host app's `com.apple.developer.driverkit.userclient-access` list, which holds exactly `com.openjoystickdriver.XboxUSBDevice`. The DriverKit profile (`DEXT_PROVISIONING_PROFILE`) allows the system extension, and the build passes its `Name` to Xcode as the specifier. The build refuses a user-client entitlement that allows anything, in either file. A development GUI profile without the grant builds the app without the DEXT. See [Signing](signing.md).
 
 ## Environment Variables
 
-The repository reads no variable outside this table. Env files hold only these keys: `CODESIGN_IDENTITY`, `DEVELOPMENT_TEAM`, `GUI_PROVISIONING_PROFILE`, `DEXT_PROVISIONING_PROFILE`, `OJD_USE_LOCAL_SWIFTERKIT`, plus `NOTARIZE_*` in `.env.release`. `Scripts/Platform/env_file.py` reads them and exits 2 on any other key or a line that is not `KEY=value`, naming the file, line, and allowed keys.
+The repository reads no variable outside this table. Env files hold only these keys: `CODESIGN_IDENTITY`, `DEVELOPMENT_TEAM`, `GUI_PROVISIONING_PROFILE`, `DEXT_PROVISIONING_PROFILE`, `OJD_USE_LOCAL_SWIFTERKIT`, plus `NOTARIZE_*` in `.env.release`. `Scripts/Platform/env_file.py` reads them. On any other key, or a line that isn't `KEY=value`, it exits 2 and names the file, the line, and the allowed keys.
 
 | Name | Set by | Read by | Status | Reason |
 | --- | --- | --- | --- | --- |
@@ -79,7 +87,7 @@ The repository reads no variable outside this table. Env files hold only these k
 | `OJD_REGENERATE_REPORT_FIXTURE` | contributor | `SupportReportBindingTests.swift` | removed | The support report fixture is the equivalence snapshot Tests/EquivalenceSnapshots/support-report-binding.json, which `just snapshots-write` rewrites and `snapshots check` diffs. |
 | `OJD_ENV_FILE` | environment.sh | notarize.sh | removed | notarize.sh sources environment.sh, so it is a shell variable, not an exported one. |
 
-Not environment inputs: shell variables local to one script (`IDENTITY`, `OJD_HOST_USERCLIENT`, `OJD_APP_INFO_PLIST`, `OJD_DEFAULT_BUNDLE_SHORT_VERSION`, `OJD_APP_CLI`, `OJD_ENV_FILE`) and test fixture parameters (`OJD_ARGUMENT`, `OJD_LAUNCH_TEST`).
+Not read from the environment: shell variables local to one script (`IDENTITY`, `OJD_HOST_USERCLIENT`, `OJD_APP_INFO_PLIST`, `OJD_DEFAULT_BUNDLE_SHORT_VERSION`, `OJD_APP_CLI`, `OJD_ENV_FILE`) and test fixture parameters (`OJD_ARGUMENT`, `OJD_LAUNCH_TEST`).
 
 Count names by status:
 
@@ -93,7 +101,7 @@ Output: `kept 53`, `removed 27` (`SDL_JOYSTICK_*` counts as one name).
 
 ## Swift Toolchain
 
-Every Swift command runs the selected Xcode's `swift`; one compiler writes `.build`. `Scripts/Platform/environment.sh` puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH` and exits 2 unless `swift --version` reports the release in `.swift-version` or newer (a missing patch number counts as `.0`). swift.org toolchains from 6.0.1 build runtime libraries for macOS 13, so linking the macOS 12 floor against them warns; Xcode's links against the SDK. `just typecheck` and `just test` treat warnings as errors. The CI Toolchain step prints the selected `swift`.
+Every Swift command runs the chosen Xcode's `swift`, so one compiler writes `.build`. `Scripts/Platform/environment.sh` puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH`. It exits 2 unless `swift --version` reports the release in `.swift-version` or newer (a missing patch number counts as `.0`). swift.org toolchains from 6.0.1 build their runtime libraries for macOS 13, so linking OJD's macOS 12 minimum against them gives a warning. Xcode's toolchain links against the SDK instead. `just typecheck` and `just test` treat warnings as errors. The CI Toolchain step prints the selected `swift`.
 
 ## Further Reading
 

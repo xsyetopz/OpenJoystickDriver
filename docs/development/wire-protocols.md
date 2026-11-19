@@ -1,6 +1,15 @@
 # Wire Protocols
 
-OJD sorts physical pads by host wire protocol. XInput, DirectInput, SDL, and `GCController` only consume a virtual HID device.
+A wire protocol is the language a controller speaks on its cable or radio. OJD sorts real pads by that language, a bit like a translator who first asks which language you speak. Games never hear these languages: XInput, DirectInput, SDL, and `GCController` only read the virtual HID device OJD makes.
+
+```mermaid
+flowchart LR
+    x["XID, XUSB, GIP pads"] -->|"raw USB through IOUSBHost"| d["OJD driver for that family"]
+    h["HID pads: Sony, Nintendo, Steam, others"] -->|"IOHIDManager"| d
+    d -->|"one control state"| s["VirtualHIDProfileSelector"]
+    s -->|"picks one profile"| v["Virtual HID gamepad"]
+    v -->|"read by"| g["Games: SDL, GameController"]
+```
 
 | Family | Official name | USB identity | Linux | Windows | macOS 12+ without SIP |
 | --- | --- | --- | --- | --- | --- |
@@ -9,29 +18,29 @@ OJD sorts physical pads by host wire protocol. XInput, DirectInput, SDL, and `GC
 | GIP | [MS-GIPUSB](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-gipusb/e7c90904-5e21-426e-b9ad-d82adeee0dbc) | `FF/47/D0` | `XTYPE_XBOXONE` | `xboxgip.sys` | IOUSBHost, or entitled DEXT for Apple-approved Microsoft pairs; virtual HID |
 | HID | USB/Bluetooth HID | class `03` | `hid-sony`, `hid-playstation`, `hid-nintendo`, `hid-steam`, Generic | `hidclass.sys` | `IOHIDManager` / `IOHIDDevice`; virtual HID |
 
-Xbox One S 1708+ Bluetooth is HID, not USB GIP. DualShock 1/2 used the PlayStation controller-port serial bus.
+Xbox One S 1708+ over Bluetooth speaks HID, and only its USB side speaks GIP. DualShock 1/2 used the PlayStation's own controller-port serial bus.
 
 Every family publishes through `VirtualHIDProfileSelector`, which picks one virtual profile per controller.
 
-- `SDLCompatible`: `045E:0B0C`, the Xbox Adaptive Controller ID over Xbox One GIP reports. Chosen when the primary controls fit.
-- `Generic`: `1209:4A4F`, input-only. Chosen otherwise, or by a per-model Advanced override. An override the controller cannot satisfy falls back to automatic.
+- `SDLCompatible`: `045E:0B0C`, the Xbox Adaptive Controller ID over Xbox One GIP reports. Picked when the main controls fit.
+- `Generic`: `1209:4A4F`, input only. Picked otherwise, or by an Advanced override for that model. An override the controller can't meet falls back to automatic.
 - `GameControllerCompatible`: chosen only by override (see [Xbox Fallback Identities](xbox-identities.md)).
 
-`just catalog-regenerate --write` builds controller records from pinned Linux and SDL sources plus authored controllers and patches. Apple GameController MobileAsset is diagnostic only.
+`just catalog-regenerate --write` builds controller records from pinned Linux and SDL sources, plus controllers and patches written by hand. Apple's GameController MobileAsset is only used for diagnosis.
 
-Event reports and host-protocol replies share one ordered sender per device. Its queue holds `tuning.frameQueueCapacity` entries (64 default, newest frame wins). The native send deadline is two seconds. Suppression neutralizes published input. Closing rejects queued work and drains the current send.
+Event reports and replies to the Mac share one sender per device, which keeps them in order. Its queue holds `tuning.frameQueueCapacity` entries (64 by default, and the newest frame wins). A send gets two seconds to finish. When virtual output is switched off for a while (suppressed), the published input goes to rest. Closing refuses queued work and lets the current send finish.
 
-SetReport buffers follow IOKit/HIDAPI framing. Numbered reports carry the report ID at byte zero. Unnumbered reports hold data only. Framing is never guessed from contents. GetReport returns a complete report bounded by the caller's positive capacity. Unsupported type/ID combinations and malformed requests fail with native IOKit errors.
+SetReport buffers follow IOKit/HIDAPI framing. Numbered reports carry the report ID at byte zero. Unnumbered reports hold only data. OJD never guesses the framing from the contents. GetReport returns a whole report that fits the space the caller gave (which must be above zero). Type and ID pairs it doesn't support, and broken requests, fail with IOKit's own errors.
 
-GetReport answers only the input report the virtual format declares. SetReport decodes one output report: the Xbox One rumble report of `SDLCompatible` (ID `03`, eight payload bytes). Any other type or ID is unsupported, and a wrong payload size is malformed. No virtual session answers Sony or Nintendo feature reports or commands. Report IDs are hexadecimal.
+GetReport answers only the input report the virtual format declares. SetReport decodes one output report: the Xbox One rumble report of `SDLCompatible` (ID `03`, eight payload bytes). Any other type or ID isn't supported, and a wrong payload size counts as broken. No virtual session answers Sony or Nintendo feature reports or commands. Report IDs are hexadecimal.
 
-PCSX2 2.8.2 (SDL 3.4.12) and DuckStation (SDL 3.4.16) map every `SDLCompatible` control as an Xbox pad with default hints (`worksWithDefaultSDLHints: true`). For `Generic` they report "No generic bindings were generated for device 'SDL-0'". It needs the SDL mapping that `ojd virtual export-mapping` prints. Not verified: Steam, SDL axis directions, TCC reopen, physical output.
+PCSX2 2.8.2 (SDL 3.4.12) and DuckStation (SDL 3.4.16) map every `SDLCompatible` control as an Xbox pad with default hints (`worksWithDefaultSDLHints: true`). For `Generic` they report "No generic bindings were generated for device 'SDL-0'". It needs the SDL mapping that `ojd virtual export-mapping` prints. Not checked yet: Steam, SDL axis directions, reopening after a privacy (TCC) prompt, and output to the real pad.
 
 Build with SwiftPM. You don't need Xcode.app, and SIP stays on.
 
 ## Protocol Coverage
 
-Each family has a description in `Resources/Protocols/` (endpoints, variants, controls, tuning keys, record sections, session writes, rumble templates) and a driver (input decoding, state-following output). `ProtocolParserCoverageTests` fails when a family has no parser suite.
+Each family has two halves. Its description in `Resources/Protocols/` is the fixed data: endpoints, variants, controls, tuning keys, record sections, session writes, and rumble templates. Its driver is the code that reads input and builds output that depends on what's happening. `ProtocolParserCoverageTests` fails when a family has no parser test suite.
 
 | Family | Described | Stays coded, and why | Parser test suite |
 | --- | --- | --- | --- |
@@ -58,7 +67,7 @@ Each family has a description in `Resources/Protocols/` (endpoints, variants, co
 
 ## Coded Behavior
 
-A driver keeps only behavior that follows driver or rumble state. Fixed bytes and timings live in the descriptions.
+A driver only keeps behavior that depends on what the driver or rumble is doing right now. Fixed bytes and timings live in the descriptions, like a recipe card kept apart from the cook.
 
 - Switch 2 rumble keep-alive (`Switch2Driver.keepAliveWrites()`): each tick re-sends the rumble report while a motor runs, then a few stop packets. The bytes differ every tick (rolling sequence number, current amplitudes). The description gives the period (`defaults.session.keepAlive.intervalMilliseconds`, 12) and no writes.
 - Xbox 360 receiver presence and power-off (`XUSBDriver.decode(_:)`, `powerOffWrites()`). The startup write asks for presence once.

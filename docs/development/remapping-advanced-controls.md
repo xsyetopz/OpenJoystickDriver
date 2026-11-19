@@ -1,75 +1,90 @@
 # Advanced Remapping Controls
 
-See the [remapping overview](remapping.md).
+Ways to make a stick, a trigger, or a tilt of the controller do something richer than "press a key". See the [remapping overview](remapping.md).
 
 ## Angular Stick Modes
 
-Native `stickMappings` entries select the left or right stick.
+These modes let a stick turn the camera like a mouse would. Entries in `stickMappings` pick the left or right stick.
 
-- Aim integrates radial stick strength into angular travel at `aimDegreesPerSecond`. It stops at center and caps delayed integration at 100 ms per update. `pointerPointsPerDegree` converts travel to logical screen points.
-- Flick starts a timed turn when the stick crosses the radial threshold, then follows rotation around the rim. `FlickOnly` omits rim rotation. `RotateOnly` omits the initial turn.
-- The initial angle is clockwise from forward. Rim rotation follows the shortest angular difference across the rear seam.
-- A centered stick finishes its pending flick through the shared scheduler. Disconnects and profile replacement cancel pending travel.
+| Mode | What it does |
+| --- | --- |
+| Aim | The further you push, the faster you turn, at up to `aimDegreesPerSecond`. It stops when the stick is centred, and counts at most 100 ms of a late update. `pointerPointsPerDegree` turns degrees into screen points. |
+| Flick | Push past the threshold and the view snaps toward that direction over a set time. Then sliding the stick around the edge keeps turning. `FlickOnly` skips the edge turning. `RotateOnly` skips the first snap. |
 
-The CLI has no stick options. Edit `stickMappings` with `ojd profile edit <profile>`, or export, change, and import the profile. Validation requires:
+- The first angle counts clockwise from straight ahead. Turning around the edge always takes the shorter way across the back.
+- When the stick returns to centre, any unfinished flick finishes through the shared timer. Unplugging or swapping the profile cancels the rest of the turn.
 
-- inner and outer radial deadzones that sum to less than one
-- flick hysteresis smaller than the threshold
+The command-line tool has no stick options. Edit `stickMappings` with `ojd profile edit <profile>`, or export the profile, change it, and import it. The checks require:
 
-A mapped stick suppresses its original virtual axes. Explicit axis bindings still run. Angular modes need system-input access. The **Stick Modes** sheet edits both sticks and validates both drafts before applying. **Reset** turns off the selected mapping. Not validated: layout, keyboard navigation, VoiceOver, translations, and physical feel.
+- the inner and outer deadzones (the "ignore" rings near the centre and edge) to add up to less than one
+- the flick hysteresis (how far back you must come before it counts as let go) to be smaller than the threshold
+
+A mapped stick hides its normal virtual axes. Bindings you set on a single axis still run. Angular modes need permission to send system input. The **Stick Modes** sheet edits both sticks and checks both before saving. **Reset** turns off the selected mapping. Not checked yet: layout, keyboard navigation, VoiceOver, translations, and how it feels in the hand.
 
 ### Area, Ring, Scroll, and Steering Stick Modes
 
-`stickMappings` also supports `PointerArea`, `PointerRing`, `ScrollWheel`, and `Steering`. All apply the shared radial deadzones, response exponent, and axis inversion first.
+`stickMappings` also supports `PointerArea`, `PointerRing`, `ScrollWheel`, and `Steering`. Each one first applies the shared deadzones, the response curve, and axis flipping.
 
-- `PointerArea` anchors at the current pointer and offsets it by the stick vector times `pointerRadiusPoints`. `PointerRing` uses the stick angle and the same radius. Centering returns to the anchor.
-- `ScrollWheel` converts the shortest angular movement between deflected samples to scroll lines with `scrollDegreesPerLine`. `scrollAxis` selects horizontal or vertical. `rotationDirection` sets the positive rotation. Fractional lines carry until a high-resolution scroll event can emit them.
-- `Steering` accumulates angular travel into a bounded wheel angle. `steeringDegreesAtFullScale` maps it to the virtual left or right stick X axis. Below full deflection, `steeringReturnDegreesPerSecond` unwinds toward neutral on monotonic time, capped at 100 ms per step.
+| Mode | What it does |
+| --- | --- |
+| `PointerArea` | Remembers where the pointer is, then moves it by the stick's push times `pointerRadiusPoints`. Letting go returns the pointer to where it started. |
+| `PointerRing` | Like `PointerArea`, but only the stick's angle counts, so the pointer sits on a circle of that radius. |
+| `ScrollWheel` | Spinning the stick around scrolls, like a scroll wheel. Every `scrollDegreesPerLine` of turning is one line. `scrollAxis` picks across or up and down, and `rotationDirection` picks which way is positive. Part-lines are saved until a fine-grained scroll event can send them. |
+| `Steering` | Spinning the stick turns a steering wheel with a limit. `steeringDegreesAtFullScale` maps the wheel to the virtual left or right stick X axis. When the stick isn't pushed all the way, the wheel turns back toward centre at `steeringReturnDegreesPerSecond`, at most 100 ms per step. |
 
-Steering owns one independent virtual-axis contribution. Replacement, disconnect, permission loss, suspension, shutdown, or failed delivery removes it.
+Steering adds its own push to the virtual axis, kept apart from anything else. Swapping the profile, unplugging, losing permission, pausing, shutting down, or a failed send removes it.
 
-Stick mappings suppress their virtual axes unless `passthrough` is true. Pointer and scroll modes need post-event access. Steering needs mapped virtual output. Edit with `ojd profile edit` or the **Stick Modes** sheet.
+Stick mappings hide their virtual axes unless `passthrough` is true. Pointer and scroll modes need permission to post events. Steering needs mapped virtual output. Edit with `ojd profile edit` or the **Stick Modes** sheet.
 
 ### Motion Lean and Steering
 
-A calibrated motion sample yields signed controller lean from its acceleration vector. Optional `motionTuning.lean` sets a digital threshold of 1 to 89 degrees and a smaller release hysteresis. It supplies `motion:lean:left` and `motion:lean:right` sources to bindings, chords, sequences, and layers. Optional `motionTuning.steering` maps lean outside `deadzoneDegrees` to one virtual stick X axis, reaching full scale at `fullScaleDegrees`, with `responseExponent` and optional inversion. It owns an independent virtual contribution.
+Tilting the controller left or right (lean) can act as a button, or as a steering wheel. A calibrated motion sample gives a lean angle with a sign, worked out from which way gravity pulls.
 
-Lean and steering need a calibrated physical reading. These events clear digital and virtual ownership:
+- Optional `motionTuning.lean` sets an on/off threshold of 1 to 89 degrees, and a smaller release margin. It gives `motion:lean:left` and `motion:lean:right` sources for bindings, chords, sequences, and layers.
+- Optional `motionTuning.steering` maps lean beyond `deadzoneDegrees` to one virtual stick X axis. It reaches full push at `fullScaleDegrees`, with `responseExponent` and optional flipping. Its push is kept apart from anything else on that axis.
 
-- an invalid or missing reading, a clock or calibration discontinuity, or a 100 ms sample timeout
-- profile or layer replacement, calibration reset, disconnect, suspension, shutdown, or output failure
+Lean and steering need a calibrated reading from the controller. These let go of every button and axis they hold:
 
-A change of effective layer tuning needs a fresh baseline. Steering needs mapped virtual output. Lean-only bindings do not. Set these fields with `ojd profile edit` or the **Motion Tuning** sheet.
+- a bad or missing reading, a jump in the clock or calibration, or 100 ms with no sample
+- swapping the profile or layer, resetting calibration, unplugging, pausing, shutting down, or an output failure
+
+When the layer tuning in use changes, motion waits for a fresh starting point. Steering needs mapped virtual output. Bindings that only use lean don't. Set these fields with `ojd profile edit` or the **Motion Tuning** sheet.
 
 ### Dual-Stage Triggers
 
-`triggerMappings` configures each physical trigger once and exposes `trigger:left:soft`, `trigger:left:full`, `trigger:right:soft`, and `trigger:right:full` sources. `softThreshold` must be below `fullThreshold`. `hysteresis` is subtracted on release and must be below the soft threshold. Release transitions run before press transitions.
+One trigger can act as two buttons: a light pull (soft) and a full pull (full), like a camera's half-press to focus. `triggerMappings` sets up each trigger once and gives `trigger:left:soft`, `trigger:left:full`, `trigger:right:soft`, and `trigger:right:full` sources.
 
-Interaction modes:
+- `softThreshold` must be below `fullThreshold`.
+- `hysteresis` is taken off when letting go, and must be below the soft threshold.
+- Let-go changes run before press changes.
 
-- `Simultaneous`: soft stays active when full activates.
-- `Exclusive`: full releases and replaces soft.
-- `PreferFull`: soft waits for `skipWindowMs`. A quick full pull selects full only. A late full pull is ignored until release.
-- `PreferFullCombined`: same, but a full pull after committed soft joins it.
-- `ResponsivePreferFull`: soft emits at once, a quick full replaces it, and a late full is ignored.
-- `ResponsivePreferFullCombined`: immediate soft, quick replacement, and late combination.
+How soft and full work together:
 
-Buffered stages use the shared monotonic scheduler. Release, profile replacement, disconnect, permission loss, suspension, shutdown, and delivery failure cancel pending deadlines. A configured trigger suppresses its analog virtual axis unless `passthrough` is true.
+| Mode | Behavior |
+| --- | --- |
+| `Simultaneous` | Soft stays on when full turns on. |
+| `Exclusive` | Full turns soft off and takes its place. |
+| `PreferFull` | Soft waits `skipWindowMs`. A quick full pull gives only full. A late full pull is ignored until you let go. |
+| `PreferFullCombined` | Same, but a full pull after soft has started adds full to it. |
+| `ResponsivePreferFull` | Soft fires at once, a quick full replaces it, and a late full is ignored. |
+| `ResponsivePreferFullCombined` | Soft fires at once, a quick full replaces it, and a late full adds to it. |
 
-`ojd profile edit` and the **Trigger Stages** sheet change one trigger at a time. The CLI has no `--trigger-*` options. Not validated: translations, layout, keyboard traversal, VoiceOver, physical feel, and real trigger thresholds.
+Waiting stages use the shared timer. Letting go, swapping the profile, unplugging, losing permission, pausing, shutting down, and a failed send cancel anything still waiting. A set-up trigger hides its analog virtual axis unless `passthrough` is true.
 
-### Mapping-Owned Physical Output
+`ojd profile edit` and the **Trigger Stages** sheet change one trigger at a time. The command-line tool has no `--trigger-*` options. Not checked yet: translations, layout, keyboard navigation, VoiceOver, how it feels, and thresholds on real triggers.
 
-A discrete destination can own one source-controller output channel while its action is active: `Rumble`, `PlayerIndicator`, `Color`, `Brightness`, or `AdaptiveTrigger`. Each claim is scoped to the exact runtime `LogicalControllerID`. Unsupported motors, lights, or trigger sides fail delivery. Validation accepts physical destinations without virtual output and rejects non-finite or out-of-range values, continuous sources, and turbo.
+### Mappings That Drive the Controller's Own Rumble and Lights
 
-Channels arbitrate independently.
+While its action is on, a button-like mapping can take over one output of the controller it came from: `Rumble`, `PlayerIndicator`, `Color`, `Brightness`, or `AdaptiveTrigger`. Each claim belongs to that exact running controller (`LogicalControllerID`). Motors, lights, or trigger sides the controller lacks fail to send. The checks accept these outputs without any virtual output. They refuse values that aren't finite or are out of range, sliding sources, and turbo.
 
-- The most recent mapping claim wins. Releasing it restores the previous claim.
-- Input Test output is a higher-priority manual override. Timed rumble restores mapping output when it expires. An off player indicator, black color, or zero brightness releases the matching override.
-- Disconnect, permission loss, replacement, suspension, failed delivery, and shutdown remove ownership. The service then tries to send a neutral report.
-- Successful delivery means the transport accepted the report, not that the actuator responded.
+Each output decides on its own who wins:
 
-CLI targets:
+- The newest mapping claim wins. Releasing it brings back the one before.
+- Input Test output beats mappings, as a manual override. Timed rumble hands back to the mapping when it ends. Turning the player light off, setting black, or brightness zero ends that override.
+- Unplugging, losing permission, swapping, pausing, a failed send, and shutting down remove the claim. The service then tries to send an at-rest report.
+- A successful send means the connection took the report, not that the motor or light reacted.
+
+Command-line targets:
 
 - `physical:rumble:<motor>:<0...1>`
 - `physical:player:<0...4>`
@@ -77,19 +92,19 @@ CLI targets:
 - `physical:brightness:<0...1>`
 - `physical:adaptive:<left|right>:off|resistance:<start-position>:<strength>`
 
-The native picker has bounded presets and keeps imported values outside that list. DualSense USB and Bluetooth reports support off and resistance, with side-specific validity flags, a start position of 0 to 9, and a strength of 0 to 8. Bluetooth reports carry the output CRC. Hardware gates: rumble, lighting, adaptive triggers, report timing, and coexistence with vendor software.
+The app's picker offers a set list of presets, and keeps imported values that aren't on the list. DualSense USB and Bluetooth reports support off and resistance, with a valid flag for each side, a start position of 0 to 9, and a strength of 0 to 8. Bluetooth reports carry the output CRC. Still waiting on hardware: rumble, lights, adaptive triggers, report timing, and running alongside the maker's own software.
 
-### Authoring and Accessibility Coverage
+### Editing and Accessibility
 
-Profile create, update, import, and export share one profile value and one complete-profile validation path. The native editor uses `RuntimeProfileDraft` as its only mutation boundary. Imported values missing from a preset menu stay selectable. Labels and CLI help have English fallback entries in every shipped locale. External gates: translated wording, layout at every text size, keyboard-only workflow, and VoiceOver order.
+Creating, updating, importing, and exporting a profile all use the same profile value and the same full-profile check. The app's editor changes a profile only through `RuntimeProfileDraft`. Imported values missing from a preset menu can still be picked. Labels and command-line help have English backup text in every shipped language. Checked outside the code: translated wording, layout at every text size, using only the keyboard, and VoiceOver order.
 
-## Integration and Release Evidence
+## Tests and What They Don't Prove
 
-Constructed integration tests run 256 exact-identity controller sessions through mixed keyboard, virtual-gamepad, mouse, timed, combination, and physical destinations, and verify that state and reference counts drain. A 10,000 input-cycle stress case bounds sequence history, chord presses, pulse deadlines, and turbo state. A 10,000-update case verifies that repeated physical-output updates replace one owner claim. They do not show real-time guarantees, latency, or consumer recognition.
+Tests built from made-up input run 256 controller sessions, each with an exact identity, through a mix of keyboard, virtual gamepad, mouse, timed, combination, and controller-output mappings. They check that all state and reference counts empty out afterward. A 10,000-input stress case keeps sequence history, chord presses, pulse timers, and turbo state from growing. A 10,000-update case checks that repeated controller-output updates replace one claim. These tests can't show real-time speed, delay, or whether games recognize the gamepad.
 
-The software release gate is listed in `AGENTS.md`. Milestone state: [remapping status](remapping.md#status). These stay external gates and are never inferred from constructed reports:
+The software release checks are listed in `AGENTS.md`. Progress so far: [remapping status](remapping.md#status). These are checked outside the code, and never assumed from made-up reports:
 
-- signed-runtime behavior and USB and Bluetooth delivery
-- physical isolation, motion and touch feel, haptics, and adaptive triggers
-- visual and accessibility quality, and translation review
-- consumer recognition and end-to-end latency
+- how the signed app behaves, and USB and Bluetooth delivery
+- real controllers kept apart, how motion and touch feel, haptics, and adaptive triggers
+- how it looks, accessibility, and translation review
+- whether games recognize it, and the full delay from press to game

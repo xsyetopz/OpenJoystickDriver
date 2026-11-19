@@ -1,76 +1,99 @@
 # Remapping Motion Processing
 
-See the [remapping overview](remapping.md).
+How OJD turns a controller's motion sensor (the gyro, which feels turning, and the accelerometer, which feels gravity and pushes) into mouse or stick movement. See the [remapping overview](remapping.md).
+
+```mermaid
+flowchart LR
+    s["Motion sensor"] -->|"samples with timestamps"| p["Motion processor"]
+    p -->|"turn speed, which way is down"| j["Projection: Local, Player, or World"]
+    j -->|"degrees per second"| t["Tuning: threshold, smoothing, sensitivity"]
+    t -->|"screen points"| m["Mouse"]
+    t -->|"stick push"| k["Left or right stick"]
+```
 
 ## Per-Device Motion Processing
 
-Each RemappingDeviceState processor integrates samples in sample-relative nanoseconds, independent of delivery time, and keeps the latest corrected gyro, fused orientation, gravity, linear acceleration, and interval. Units: [Remapping Calibration](remapping-calibration.md).
+Each RemappingDeviceState has its own processor. It adds up samples using the time stamped on each sample (in nanoseconds), not the time the sample happened to arrive. It keeps the latest corrected gyro, the estimated orientation, gravity, the movement with gravity taken out (linear acceleration), and the time between samples. Units: [Remapping Calibration](remapping-calibration.md).
 
-- Duplicate or backward sequence indices, backward or repeated sample times do not advance state.
-- Gaps above 100 ms, clock-basis or tick-unit changes, and calibration-provenance changes reset bias and orientation and set a zero-duration baseline.
-- Out-of-range readings clear estimates. The next valid sample sets a fresh baseline.
+| What happens | What the processor does |
+| --- | --- |
+| A sequence number repeats or goes backward, or a sample time repeats or goes backward | Ignores it |
+| A gap longer than 100 ms, a change of clock or tick unit, or calibration from a different source | Resets bias and orientation, and starts timing again from zero |
+| A reading out of range | Clears its estimates; the next good sample starts fresh |
 
-Controller release, profile replacement, and engine drain discard processor state. Sony and Nintendo readings carry a session-local calibration revision, advanced by changed coefficients or provenance (not by identical accepted coefficients or rejected replies). A revision change resets estimates. A reading without it fails to decode.
+Releasing the controller, swapping the profile, or the engine shutting down throws the processor state away. Sony and Nintendo readings carry a calibration revision number that lasts for one session. It goes up when the coefficients or their source change. It stays the same when identical coefficients arrive again or a reply is refused. A new revision resets the estimates. A reading without a revision fails to decode.
 
-The CLI and the authenticated application service run manual bias calibration:
+## Calibrating the Gyro by Hand
+
+A gyro at rest should read zero, but most read a little off. That small error is the bias, and calibration measures it. The command-line tool and the app's checked service both run it:
 
 ```text
 ojd controller calibrate <controller> [start|pause|reset]
 ```
 
-`<controller>` is an ID from `ojd controller list` or a VVVV:PPPP model. Without an action, it prints the calibration. With `--json`, each operation returns `controller`, `calibrated`, `collecting`, and `offsetDegreesPerSecond` (X/Y/Z). Action `sticks` with `--step <rest|circle|triggers|gyro>` measures stick centres, ranges, trigger ends, and gyro, and stores them for the controller's model.
+`<controller>` is an ID from `ojd controller list` or a VVVV:PPPP model. With no action, it prints the calibration. With `--json`, each action returns `controller`, `calibrated`, `collecting`, and `offsetDegreesPerSecond` (X/Y/Z). The action `sticks` with `--step <rest|circle|triggers|gyro>` measures stick centres, ranges, trigger ends, and the gyro, and saves them for that controller model.
 
-- start: needs an eligible remapping route with a valid motion baseline. Keep the controller still.
-- pause: stops manual collection, keeps the offset. Automatic collection can continue if the profile enables it.
-- reset: clears motion estimates and stored stick values, then waits for a fresh baseline.
+| Action | What it does |
+| --- | --- |
+| start | Needs a remapping road that allows it and a good motion starting point. Keep the controller still. |
+| pause | Stops collecting by hand and keeps the offset. Automatic collection can go on if the profile turns it on. |
+| reset | Clears motion estimates and saved stick values, then waits for a fresh starting point. |
 
-Disconnect, profile replacement, invalid samples, and clock or calibration discontinuities cancel collection. Calibration changes no factory coefficients and stores no profile offset. The engine rejects commands from an earlier mapping session.
+Unplugging, swapping the profile, bad samples, and jumps in the clock or calibration cancel collecting. Calibration never changes the factory coefficients and never saves an offset into a profile. The engine refuses commands from an older mapping session.
 
-The input-test window's **Motion Calibration** panel has **Refresh**, **Start Calibration**, **Pause**, and **Reset**, using the same router commands. It shows collection state and X/Y/Z bias in degrees per second. Closing it does not stop collection. Not verified: native visual and VoiceOver checks and calibration translations.
+The input-test window's **Motion Calibration** panel has **Refresh**, **Start Calibration**, **Pause**, and **Reset**. They send the same commands. The panel shows whether it's collecting, and the X/Y/Z bias in degrees per second. Closing the panel doesn't stop collecting. Not checked yet: how it looks in the app, VoiceOver, and the calibration translations.
 
-### Gyro Coordinate Projections
+### Which Way Is "Turning"
 
-Codable RemappingMotionSpace offers three projections:
+Turning a controller can mean different things depending on how you hold it. Codable RemappingMotionSpace offers three ways to read it:
 
-- Local: controller X pitch and Y yaw.
-- Player: local pitch, with Y/Z gyro combined around gravity. Default yaw relaxation is 1.41, capped by the combined Y/Z rate.
-- World: yaw from gyro projected onto reference up. Pitch from the pitch axis projected onto the gravity plane. Default 0.125 side-reduction threshold suppresses unstable pitch near a sideways pose; exact side alignment returns zero.
+| Projection | What it means |
+| --- | --- |
+| Local | The controller's own axes: X is pitch (nodding), Y is yaw (shaking your head). |
+| Player | Local pitch, with the Y and Z gyro mixed around the direction of gravity, so yaw feels the same however you tilt the pad. Default yaw relaxation is 1.41, never more than the combined Y/Z rate. |
+| World | Yaw is the gyro measured around "up". Pitch is the pitch axis measured flat against gravity. Near a sideways pose pitch gets shaky, so a default 0.125 side-reduction threshold quiets it, and an exactly sideways pose gives zero. |
 
-Projections yield degrees per second from normalized gravity. The native motion-action layer applies pointer sign, sensitivity, smoothing, and output mapping. Player and world formulas come from the pinned MIT GamepadMotionHelpers reference; [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) keeps its notice, and release packaging must ship it.
+Each projection gives degrees per second, using gravity scaled to length 1. The motion-action layer in the app then applies the pointer direction, sensitivity, smoothing, and output mapping. The Player and World formulas come from the pinned MIT GamepadMotionHelpers reference. [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) keeps its notice, and release packages must include it.
 
-### Motion Tuning Contract and Transform
+### Motion Tuning Settings
 
-Codable RemappingMotionTuning defaults omitted fields and rejects nonfinite and out-of-range values. It sets projection, inversion, automatic bias, player yaw relaxation, world side reduction, and these ranges:
+Codable RemappingMotionTuning fills in defaults for missing fields, and refuses values that aren't finite numbers or are out of range. It sets the projection, inversion, automatic bias, Player yaw relaxation, World side reduction, and these ranges:
 
-- pitch and yaw sensitivity: 0 to 100
-- smoothing half-time: 0 to 1000 ms
-- radial rate threshold: 0 to 1000 degrees/second
-- gravity correction rate: 0 to 100 per second
+| Setting | Range |
+| --- | --- |
+| Pitch and yaw sensitivity | 0 to 100 |
+| Smoothing half-time | 0 to 1000 ms |
+| Radial rate threshold (ignore slow turns below this) | 0 to 1000 degrees/second |
+| Gravity correction rate | 0 to 100 per second |
 
-The transform applies the radial threshold, time-based exponential smoothing, then sensitivity and inversion. The same tuning feeds bias, fusion, and projection. A change resets processing and filter history.
+The steps run in this order: the threshold, then smoothing over time, then sensitivity and inversion. The same tuning feeds bias, orientation, and projection. Changing it resets processing and the smoothing history.
 
-Non-default tuning is stored under `motionTuning`, set with `ojd profile edit` or `ojd profile set`. The profile editor's **Motion Tuning** sheet blocks saving invalid text. Labels have draft translations. Not verified: which catalogs still use English motion labels, native-language review, native visual and accessibility checks.
+Tuning that differs from the defaults is saved under `motionTuning`, set with `ojd profile edit` or `ojd profile set`. The profile editor's **Motion Tuning** sheet won't save text that isn't valid. The labels have draft translations. Not checked yet: which languages still show English motion labels, review by native speakers, and how it looks and works with accessibility tools.
 
-### Gyro Output and Activation
+### Gyro Output and Turning It On
 
-Profiles accept `gyroOutput` (off if omitted). Modes: Disabled, Mouse, LeftStick, RightStick. Stick modes need a virtual gamepad output policy; Mouse needs system-input permission. Set `gyroOutput.mode`, `gyroOutput.pointerPointsPerDegree`, and `gyroOutput.fullStickDegreesPerSecond` the same way.
+Profiles accept `gyroOutput` (off if missing). Modes: Disabled, Mouse, LeftStick, RightStick. Stick modes need a virtual gamepad output setting. Mouse needs permission to send system input. Set `gyroOutput.mode`, `gyroOutput.pointerPointsPerDegree`, and `gyroOutput.fullStickDegreesPerSecond` the same way.
 
-Mouse output integrates sample intervals into screen-point deltas. Stick output divides angular speed by the full-stick speed, clamps each axis, and joins the gamepad contribution accumulator. A 100 ms sample timeout or reset calibration removes only the gyro contribution. Delivery failure follows fail-closed recovery.
+- **Mouse:** adds up the time between samples into how many screen points to move.
+- **Stick:** divides the turning speed by the full-stick speed, caps each axis, and adds the result to whatever else is pushing that stick.
+- If no sample arrives for 100 ms, or calibration resets, only the gyro's part of the stick is removed. If sending fails, OJD lets go of everything (fail-closed).
 
-Activation modes: Always (no source), WhileHeld, WhileReleased, Toggle. Set `gyroOutput.activationMode` and `gyroOutput.activationSource`. A source is a button, D-pad direction, or axis direction; continuous axes are rejected.
+How the gyro is switched on: Always (no button), WhileHeld, WhileReleased, Toggle. Set `gyroOutput.activationMode` and `gyroOutput.activationSource`. The source is a button, a D-pad direction, or one direction of an axis. A whole axis that slides smoothly is refused.
 
-- Enabling starts with a fresh sample baseline. Disabling removes the gyro stick contribution at once.
-- While gyro output is on, OJD suppresses the control's original virtual contribution. To pass an unmapped activation control through, set `gyroOutput.consumesActivationSource` to false or turn off the native suppression toggle.
-- An axis-direction activator reserves its parent virtual axis.
+- Switching on starts from a fresh sample. Switching off removes the gyro's stick push at once.
+- While gyro output is on, OJD hides what the activation control would normally do on the virtual gamepad. To let an unmapped activation control through, set `gyroOutput.consumesActivationSource` to false, or turn off the matching toggle in the app.
+- Using an axis direction as the switch reserves that whole virtual axis.
 
-Not verified: physical motion direction, keyboard navigation, VoiceOver. Gyro editor labels need translation.
+Not checked yet: which way real motion moves things, keyboard navigation, VoiceOver. The gyro editor labels need translating.
 
-Trackball settings are under `gyroOutput.trackball` (`source`, `axes`, `decayHalvingsPerSecond`, `consumesSource`), set the same way. Defaults: both axes, one halving per second, source suppressed. Zero decay keeps velocity constant. Not verified: rules for partial updates and for removing the trackball.
+### Trackball
 
-While the source is held, selected axes use the last accepted angular velocity, not live motion (JSM averages the last 125 ms). Mouse travel uses the analytical decay integral. Sticks use the decayed velocity. Gaps clear retained motion. Not verified: translation, native review, and physical feel.
+Trackball mode works like flicking a trackball: let go of the switch and the movement keeps rolling, slowing down over time. Settings live under `gyroOutput.trackball` (`source`, `axes`, `decayHalvingsPerSecond`, `consumesSource`), set the same way. Defaults: both axes, speed halves once per second, the source is hidden from the virtual gamepad. A decay of zero keeps the speed constant. Not checked yet: rules for changing only part of the settings, and for removing the trackball.
 
-### Layer Motion Overrides
+While the source is held, the chosen axes use the last accepted turning speed, not live motion (JSM averages the last 125 ms instead). Mouse travel uses the exact sum of the slowing curve. Sticks use the slowed speed. Gaps clear the stored motion. Not checked yet: translation, native review, and how it feels in the hand.
 
-A layer may hold a `motionTuning` object; the latest activated layer with one supplies the whole value. Releasing or toggling off a layer restores the earlier override, else the profile tuning. A tuning change removes the gyro stick contribution and clears retained trackball motion, calibration collection, and the motion baseline. Output resumes after a fresh baseline.
+### Motion Settings per Layer
 
-Edit a layer's tuning with `ojd profile edit <profile>` (no CLI tuning options); remove it to restore inheritance. Each native layer row has a **Motion Tuning** button; **Use Profile Tuning** in the sheet removes the override. Not verified: native rendering, keyboard navigation, VoiceOver, and translations.
+A layer can hold its own `motionTuning`. The most recently switched-on layer that has one supplies the whole value. Releasing or switching off that layer brings back the one before, or else the profile's tuning. A tuning change removes the gyro stick push and clears stored trackball motion, calibration collecting, and the motion starting point. Output comes back after a fresh starting point.
+
+Edit a layer's tuning with `ojd profile edit <profile>` (there are no command-line tuning options). Remove it to fall back to the profile's tuning. Each layer row in the app has a **Motion Tuning** button, and **Use Profile Tuning** in the sheet removes the layer's own tuning. Not checked yet: how it looks in the app, keyboard navigation, VoiceOver, and translations.

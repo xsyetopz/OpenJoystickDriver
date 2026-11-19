@@ -1,34 +1,49 @@
 # Source Topology
 
-Target dependencies enforce the layering; capability directories split each target. Generated DriverKit output is never source.
+A map of the source folders. The code is split into layers, like floors in a building: a lower floor never reaches up to a higher one, and the build refuses code that tries. Inside each target, folders group code by what it does. Generated DriverKit output is never source.
+
+```mermaid
+flowchart BT
+    kit["Kit: controller logic, no macOS-only code"]
+    plat["MacOSPlatform: talks to macOS"] -->|"uses"| kit
+    usb["USB: raw USB access"] -->|"uses"| kit
+    svc["Service: the running engine"] -->|"uses"| plat
+    svc -->|"uses"| usb
+    cli["CLI: ojd commands"] -->|"uses"| kit
+    ui["Presentation: windows and menus"] -->|"uses"| kit
+    host["MacOSHost: plugs macOS in"] -->|"uses"| svc
+    host -->|"uses"| ui
+    app["OpenJoystickDriver app"] -->|"starts"| host
+    app -->|"starts"| cli
+```
 
 ## Targets
 
-| Target | Owns |
+| Target | What it holds |
 | --- | --- |
-| OpenJoystickDriverKit | controller domain, HID/USB ports, parsers, profiles, policy, shared RPC contracts |
+| OpenJoystickDriverKit | controller logic, HID/USB ports, parsers, profiles, policy, shared RPC contracts |
 | OpenJoystickDriverMacOSPlatform | macOS implementations of Kit ports: IOKit HID access and streams, the `IOHIDUserDevice` virtual-device publisher, GameController synthetic HID, access control, login-item registration, code signing identity, physical report descriptors |
 | OpenJoystickDriverUSB | IOUSBHost/USBDriverKit facade and restricted DEXT configuration |
 | OpenJoystickDriverService | runtime RPC server, output dispatch, remapping library/routing/system events, status, diagnostics |
-| OpenJoystickDriverCLI | command grammar and command implementations; neutral, reaches macOS through `PlatformHost` |
+| OpenJoystickDriverCLI | command words and what each command does. Has no macOS-only code, and reaches macOS through `PlatformHost` |
 | OpenJoystickDriverPresentation | AppKit lifecycle and SwiftUI user flows |
 | OpenJoystickDriverMacOSHost | macOS host adapter: `MacOSPlatformHost` conformance and the headless application host |
 | OpenJoystickDriver | executable: main, host installation, App Intents, bundle resources |
-| DriverKitGenerator | build-time generated native-project entry point |
+| DriverKitGenerator | entry point that writes the DriverKit project at build time |
 | OJDRepositoryTool | development executable that checks controller records, protocol descriptions, profiles and virtual devices, applies built-in patches and rewrites property lists in canonical form (`format-plist`); not shipped |
-| OpenJoystickDriverHIDTool | internal hardware investigation executable |
-| OpenJoystickDriverGameControllerProbe | isolated GameController visibility probe |
+| OpenJoystickDriverHIDTool | internal tool for poking at hardware |
+| OpenJoystickDriverGameControllerProbe | small separate tool that checks whether GameController sees a pad |
 | OpenJoystickDriverGameControllerViewer | window that shows every GameController input element of each connected controller and prints each change as a JSON line, to test GameController input by hand; not shipped |
 
-OJDRepositoryTool ships in neither the app nor `ojd`, depends only on Kit, and needs no localization. Per problem it prints a JSON line `{code, file, message}`; exit 1 on any problem, 64 for a refused call. Calls:
+OJDRepositoryTool ships in neither the app nor `ojd`, depends only on Kit, and needs no localization. For each problem it prints one JSON line `{code, file, message}`. It exits with 1 when it finds any problem, and 64 when the call itself is wrong. Calls:
 
 - `swift run OJDRepositoryTool validate controllers|descriptions <directory>`
 - `validate profiles|virtual-devices <path>...`
 - `apply-patches --controllers <directory> --patches <directory> --out <directory>`
 
-## Dependency Graph
+## Who May Use Whom
 
-`Package.swift` declares these dependencies; the compiler rejects other imports.
+`Package.swift` lists these links, and the compiler refuses any other import.
 
 ```text
 Kit
@@ -46,13 +61,13 @@ GameControllerProbe       -> Kit, MacOSPlatform
 GameControllerViewer
 ```
 
-- Presentation reaches the runtime through `ApplicationServiceGateway` (implemented by `ApplicationServiceClientGateway` over the Kit RPC client) and injected closures; it never imports Service, CLI, or USB.
-- Kit declares `PlatformHost` and the `PlatformHosts` registry. The executable installs `MacOSPlatformHost` (OpenJoystickDriverMacOSHost) at launch. The CLI calls `PlatformHosts.current` for extension status, activation, USB scanning, entitlement checks, access state, code signing identities, report descriptors, and login-item registration; without a host a command stops on a precondition.
+- Presentation reaches the runtime through `ApplicationServiceGateway` (implemented by `ApplicationServiceClientGateway` over the Kit RPC client) and functions passed in from outside. It never imports Service, CLI, or USB.
+- Kit declares `PlatformHost` and the `PlatformHosts` registry. The executable installs `MacOSPlatformHost` (OpenJoystickDriverMacOSHost) at launch. The CLI calls `PlatformHosts.current` for extension status, activation, USB scanning, entitlement checks, access state, code signing identities, report descriptors, and login-item registration. Without a host, a command stops with a failed precondition.
 - Kit declares the other host ports: `AccessControlSystem`, `ApplicationServiceRegistration`, `HIDAccessBackend`, `VirtualHIDDevicePublisher` with `VirtualDeviceBackend`, and `Switch2BluetoothLEWriter`. OpenJoystickDriverMacOSPlatform implements the IOKit, Security, ServiceManagement, and IOHIDUserDevice ones. The composition roots, `ApplicationServiceRuntime`, `MacOSPlatformHost`, and the two investigation executables, pass them in. Kit imports no macOS-only framework.
 - Only OpenJoystickDriverUSB, DriverKitGenerator, and their tests import SwifterKit. Kit owns stable Sendable transport values and protocols; USBDriverKit, IOUSBHost, and SwifterKit lifetimes stay in USB.
 - The executable's headless host owns one `ApplicationServiceRuntime`, which starts the authenticated RPC server. Both live in Service.
 
-## Directory Owners
+## What Each Folder Holds
 
 ```text
 Sources/OpenJoystickDriverKit/
@@ -121,9 +136,9 @@ Sources/OpenJoystickDriver/
   platform/macos/      PlatformHostInstallation.swift and the App Intents (compiled into the app target for discovery)
 ```
 
-Neutral targets (no macOS device, security, or application framework): `Sources/OpenJoystickDriverKit`, `Sources/OpenJoystickDriverCLI`, and the executable's files outside `Sources/OpenJoystickDriver/platform`.
+Targets with no macOS-only code (no macOS device, security, or app framework): `Sources/OpenJoystickDriverKit`, `Sources/OpenJoystickDriverCLI`, and the executable's files outside `Sources/OpenJoystickDriver/platform`.
 
-| Neutral target | May import |
+| Target with no macOS-only code | May import |
 | --- | --- |
 | Kit | CryptoKit, Darwin, Dispatch, Foundation (Apple platforms only) |
 | CLI | ArgumentParser, Darwin, Dispatch, Foundation, Glibc, Kit |
@@ -131,26 +146,26 @@ Neutral targets (no macOS device, security, or application framework): `Sources/
 
 ## Tests
 
-Tests mirror source for Kit, MacOSPlatform, USB, Service, CLI, and Presentation: `Sources/<Target>/A/B/File.swift` is tested in `Tests/<Target>Tests/A/B/`. Shared fixtures: `Tests/OpenJoystickDriverTestSupport/` (fake `PlatformHost`, access, registration, and HID backend fakes) and `Tests/ProtocolPacketFixtures/`. `Tests/ParserCompatibilityHarness/` backs `just test-parsers-macos14`. Write behavior tests, not source-text substring tests.
+Tests copy the source layout for Kit, MacOSPlatform, USB, Service, CLI, and Presentation: `Sources/<Target>/A/B/File.swift` is tested in `Tests/<Target>Tests/A/B/`. Shared fixtures: `Tests/OpenJoystickDriverTestSupport/` (fake `PlatformHost`, access, registration, and HID backend fakes) and `Tests/ProtocolPacketFixtures/`. `Tests/ParserCompatibilityHarness/` backs `just test-parsers-macos14`. Tests check what the code does. They don't search the source text for strings.
 
 ## Naming and Limits
 
-Extension files are `Type+Concern.swift` with a noun-phrase concern such as `+Queries`, `+Parsing`, or `+Lifecycle`. Delete empty stubs.
+Extension files are named `Type+Concern.swift`, where the concern is a noun such as `+Queries`, `+Parsing`, or `+Lifecycle`. Delete empty stubs.
 
-SwiftLint `file_length` fails a Swift file over 500 lines under Sources and Tools, or 1000 under Tests (`Tests/.swiftlint.yml`); comment-only and blank lines do not count.
+SwiftLint `file_length` fails a Swift file over 500 lines under Sources and Tools, or 1000 under Tests (`Tests/.swiftlint.yml`); comment-only and blank lines don't count.
 
 ## Rules
 
-- Give each capability one owner; keep no aliases, forwarding files, or old entry points.
+- Each job has one home. No second names, files that only pass calls along, or old entry points.
 - Keep Kit independent of SwifterKit and of app, runtime, and platform composition.
 - IOUSBHost and DriverKit adaptation live in USB; parsing lives in Kit.
-- Use IOKit HID (`IOHIDManager`, `IOHIDDevice`, `IOHIDUserDevice`) in OpenJoystickDriverMacOSPlatform on every supported macOS. HID has no OS-version branch; the package does not link CoreHID.
-- Never edit or commit `.build/driverkit/generated/`. Validate with `just driverkit-check`. `just driverkit-generate [path]` writes only into a missing folder (default `.build/driverkit/generated/`); delete it to regenerate.
+- Use IOKit HID (`IOHIDManager`, `IOHIDDevice`, `IOHIDUserDevice`) in OpenJoystickDriverMacOSPlatform on every supported macOS. HID code is the same on every macOS version, and the package doesn't link CoreHID.
+- Never edit or commit `.build/driverkit/generated/`. Check it with `just driverkit-check`. `just driverkit-generate [path]` writes only into a missing folder (default `.build/driverkit/generated/`); delete it to regenerate.
 
-## Rejected Alternatives
+## Ideas We Turned Down
 
-- Directories only: layering went unchecked and a Status to CLI dependency appeared. Targets make the compiler reject such imports.
-- More services or processes: nothing needs independent deployment or scaling; the app hosts one runtime.
+- Folders only, without targets: nothing checked the layers, and Status ended up depending on CLI. Targets make the compiler refuse imports like that.
+- More services or processes: no part needs to ship or grow on its own, so the app runs one engine.
 
 ## Further Reading
 

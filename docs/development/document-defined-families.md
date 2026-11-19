@@ -1,6 +1,6 @@
 # Document-Defined Protocol Families
 
-A protocol description document registers a family for the general layout driver with no Swift change; XboxXID and NintendoSwitchInputOnly use it too. The app bundles one documented family, VendorFlydigi.
+A protocol family is a group of controllers that speak the same language. Usually a family needs Swift code. A protocol description document lets you add a family with only a settings file, which a shared general-purpose driver (the general layout driver) reads; XboxXID and NintendoSwitchInputOnly use it too. The app bundles one documented family, VendorFlydigi.
 
 ## What a Family Is
 
@@ -25,21 +25,21 @@ It has no `sessionKeys`, `presentSessionFields`, or parameters (built-in familie
 
 `ControllerRecordSet.load(userDirectory:)` calls `DocumentedProtocolFamilies.load(besides:)` before any record. `read(_:package:)` reads, in order:
 
-- the plist files of the user's `Protocols` folder, beside Controllers;
+- the plist files in the user's `Protocols` folder, next to Controllers;
 - the `protocols` list of each installed mod package, in package-name order;
 - bundled `Resources/Protocols/` files whose stem is a family name (VendorFlydigi.plist); built-in files are kebab-case, so the two do not mix.
 
-The first definition of a name wins; a later file is refused and listed in `ControllerRecordSet.userFiles` with its E5002 or E5003 reason. A user or package file replaces the bundled definition without a refusal: the bundled D7D7:0041 record binds VendorFlydigi, so a user `Protocols/VendorFlydigi.plist` changes how it decodes. `ModPackageStore.validate` runs `read` on each listed file.
+The first file to define a name wins. A later file is refused and listed in `ControllerRecordSet.userFiles` with its E5002 or E5003 reason. A user or package file replaces the bundled definition without a refusal: the bundled D7D7:0041 record binds VendorFlydigi, so a user `Protocols/VendorFlydigi.plist` changes how it decodes. `ModPackageStore.validate` runs `read` on each listed file.
 
 ## Command Line
 
 | Command | Effect |
 | --- | --- |
-| `ojd protocol validate FILE` | runs read, prints the refusal |
-| `ojd protocol install FILE` | validates, writes `Protocols/FAMILY.plist` beside the user's Controllers folder, replacing a file of that name |
+| `ojd protocol validate FILE` | runs read, and prints why it refuses the file |
+| `ojd protocol install FILE` | checks it, then writes `Protocols/FAMILY.plist` next to the user's Controllers folder, replacing a file with that name |
 | `ojd protocol list` | prints built-in and documented families with source BuiltIn, Bundled, User, or Package |
 
-Tests replace the folder `ProtocolStore.controllers`.
+Tests swap in their own folder for `ProtocolStore.controllers`.
 
 ## Where a Documented Family Is Read
 
@@ -47,9 +47,9 @@ Tests replace the folder `ProtocolStore.controllers`.
 | --- | --- |
 | `ProtocolClassifier.signatures` | adds its interface signatures |
 | `ProtocolDriverRegistry.makeUnobservedDriver` | builds `ReportLayoutDriver(describedBy:)`, as for the two built-in layout families |
-| `acceptsInterfaceClass`, `physicalPresentation` | take the default branch: not raw USB, generic glyph set |
+| `acceptsInterfaceClass`, `physicalPresentation` | use the default: not raw USB, and the generic button pictures |
 
-## Closed Places That Remain
+## What Still Needs Swift Code
 
 - The 18 built-in families: one description each in `Resources/Protocols/` and `Sources/OpenJoystickDriverKit/Resources/Protocols/`, and one `term.protocolFamily.<segment>` key each per .lproj folder.
 - Each built-in driver names its own family.

@@ -1,27 +1,31 @@
 # Architecture
 
-OpenJoystickDriver ships one application bundle, one persistent host process, and one generated DriverKit system extension, `com.openjoystickdriver.XboxUSBDevice`, with one personality, XboxUSB.
+How OpenJoystickDriver's parts fit together. Picture a post office: letters (controller reports) come in through different doors, get read and sorted, and go out again in one standard envelope (a virtual gamepad) that every game can open. OJD has three pieces:
 
-The app owns controller semantics, virtual output, authenticated local commands, and the menu and settings UI, and opens most accessible raw USB interfaces directly. XboxUSB owns only devices under OJD's Apple-issued USB transport entitlement.
+- one app (the application bundle)
+- one long-running background process inside it (the host), which reads controllers and makes virtual gamepads
+- one small driver, a DriverKit system extension called `com.openjoystickdriver.XboxUSBDevice`. It has one personality (the list of devices it claims), XboxUSB. A build step generates its code.
+
+The app knows what each controller's buttons mean, makes the virtual output, answers local commands from programs it has checked, draws the menu and settings windows, and opens most raw USB connections it's allowed to. XboxUSB only handles devices covered by the USB permission Apple gave OJD (its USB transport entitlement).
 
 ```mermaid
 flowchart LR
-  A[HID controller] --> B[HID access wrapper]
-  C[Accessible raw USB controller] --> E[OpenJoystickDriverUSB wrapper]
-  D[Entitled exclusive USB controller] --> K[XboxUSBDevice.dext XboxUSB]
-  K --> E
-  B --> F[DeviceManager]
-  E --> F
-  F --> C1[ProtocolClassifier and ProtocolDriverRegistry]
-  C1 --> G[Parser and normalizer]
-  G --> H[Mapping and output policy]
-  H --> I[Virtual HID wrapper]
-  I --> J[Consumer applications]
+  A[HID controller] -->|reports| B[HID access wrapper]
+  C[Raw USB controller the app may open] -->|reports| E[OpenJoystickDriverUSB wrapper]
+  D[USB controller only the driver may open] -->|reports| K[XboxUSBDevice.dext XboxUSB]
+  K -->|passes on| E
+  B -->|device found| F[DeviceManager]
+  E -->|device found| F
+  F -->|which language?| C1[ProtocolClassifier and ProtocolDriverRegistry]
+  C1 -->|right driver| G[Parser and normalizer]
+  G -->|one control state| H[Mapping and output policy]
+  H -->|what to send| I[Virtual HID wrapper]
+  I -->|virtual gamepad| J[Games and other apps]
 ```
 
 ## Controller Ownership and Concurrency
 
-`DeviceManager` is the inventory actor. It alone owns physical discovery and exact-device selection, and creates, replaces, and stops one `DevicePipeline` actor per protocol role ([Composite devices and roles](#composite-devices-and-roles)). The pipeline owns its protocol driver, normalized state, transport coordination, and tasks.
+`DeviceManager` is the stock-keeper (an actor, which handles one job at a time). Only it finds real devices and picks the exact one, and it creates, replaces, and stops one `DevicePipeline` actor per protocol role ([Composite devices and roles](#composite-devices-and-roles)). Each pipeline is a small assembly line that owns its protocol driver, the cleaned-up controller state, its connection, and its tasks.
 
 ```mermaid
 flowchart LR
@@ -37,16 +41,16 @@ flowchart LR
   J --> K[SwiftUI or AppKit presentation]
 ```
 
-- HID and USB adapters own platform handles and copy callback and transfer data.
-- Decoding and controller state changes run only on the pipeline actor, never on `@MainActor`.
-- `PhysicalProtocolDriver` is not `Sendable`; it moves once into its session.
-- USB startup, keep-alive, and physical output are parser-produced value plans that the transport session runs. Decoding objects do no device I/O.
-- Replacement and shutdown cancel and await session tasks first. A platform open without a session cannot block shutdown: its late result sees the inactive generation and closes unpublished.
-- @MainActor owns only application, window, menu, panel, and observable presentation state.
+- HID and USB adapters hold the macOS handles and copy the data macOS hands them.
+- Reading reports and changing controller state only happen on the pipeline actor, never on `@MainActor` (the thread that draws the screen).
+- `PhysicalProtocolDriver` isn't `Sendable`. It moves into its session once and stays there.
+- USB startup, keep-alive, and output to the real pad are plans the parser writes down and the transport session carries out. The code that reads reports never talks to the device itself.
+- Replacing or shutting down cancels the session's tasks and waits for them first. A device that opens late can't hold up shutdown: its result sees it belongs to a finished run and closes without being published.
+- @MainActor only owns the app, its windows, menu, panels, and what's on screen.
 
 ### Developer Diagnostics Lifetime
 
-Diagnostics observe service-owned sessions and open no second reader. One replaceable operation owns the controller snapshot and packet-capture request; replace, refresh, stop, and close cancel and await it first. A result publishes only for the current generation and session token.
+Diagnostics watch the sessions the service already runs, and never open a second reader. One operation at a time owns the controller snapshot and packet-capture request. Replacing, refreshing, stopping, or closing cancels it and waits for it first. A result only shows up if it belongs to the current run and session token.
 
 ```mermaid
 flowchart LR
@@ -59,15 +63,15 @@ flowchart LR
   G -->|yes| H[MainActor observable snapshot]
   G -->|no| I[Discard stale result]
   H --> J[SwiftUI facts and virtualized AppKit table]
-  K[Switch refresh stop or close] --> L[Cancel and await predecessor]
+  K[Switch refresh stop or close] --> L[Cancel and wait for the one before]
   L --> F
 ```
 
-Packet differencing, classification, and bulk formatting stay off @MainActor, which publishes bounded, derived snapshots. Raw capture is authoritative for copy and export.
+Comparing packets, sorting them, and formatting lots of text all stay off @MainActor, which only shows small, finished snapshots. Copy and export always use the raw capture, which is the source of truth.
 
 ## Source and Sink Boundary
 
-Two platform-free protocols in `Streaming/` carry input. An `InputSource` has an `origin` and a `sink`, and sends each canonical `StreamFrame` with `produce(_:onDelivered:)`. An `OutputSink` has a `destination`, consumes frames or output commands, and refuses other shapes with `StreamBoundaryError.unsupported`. `onDelivered` runs when the frame reaches the destination, where delivery stamps are taken. All paths are compiled in.
+Two protocols in `Streaming/` carry input, and neither uses any macOS-only code. Think of a tap and a sink. An `InputSource` (the tap) has an `origin` and a `sink`, and sends each standard `StreamFrame` with `produce(_:onDelivered:)`. An `OutputSink` has a `destination`, takes frames or output commands, and refuses anything else with `StreamBoundaryError.unsupported`. `onDelivered` runs when the frame arrives, and that's when delivery times are stamped. Every path below is always built in.
 
 | Path | Source (`origin`) | Sink (`destination`) |
 | --- | --- | --- |
@@ -80,11 +84,11 @@ Two platform-free protocols in `Streaming/` carry input. An `InputSource` has an
 | Physical output commands | the service's output requests | DeviceManager (physicalOutput) |
 | Mapped physical output | `RemappingPhysicalOutputBridge` | DeviceManager (physicalOutput), through `MappingOutputClaim`, `MappingOutputRelease` and `ProfileColorClaim` |
 
-The registry delivers host output commands to a feed's return sink in order, one task at a time, held until the client has its `FeedSession` line.
+The registry hands the Mac's output commands to a feed's return sink in order, one task at a time, and holds them until the program has its `FeedSession` line.
 
 ## Classification and Binding
 
-`ProtocolClassifier` (`OpenJoystickDriverKit/Protocol/Classification/`) selects one protocol from observed `PhysicalDevice` facts, with no I/O. Precedence:
+`ProtocolClassifier` (`OpenJoystickDriverKit/Protocol/Classification/`) picks one protocol from what it saw about the `PhysicalDevice`, without talking to the device. It tries these in order:
 
 1. The exact catalog row for the VID/PID, whose family must match the access path (raw USB or HID).
 2. An interface class/subclass/protocol signature pinned to Linux `xpad.c` (XID `58/42/00`, XUSB wired and receiver, GIP on interface 0).
@@ -93,19 +97,19 @@ The registry delivers host output commands to a feed's return sink in order, one
 
 A catalog row naming `HIDReportLayout` carries a `ControllerInputLayout`, from which `ReportLayoutDriver` decodes the raw report. No signature selects that family.
 
-A validation failure never falls to a lower level, and no device gets a generic HID parser. The result is `.bound(ProtocolBinding)`, `.unsupported(reason)`, or `.conflict(reason, candidates:)`. `ProtocolBindingReason` has exactly twelve IDs: NoProtocolMatch, AmbiguousProtocolMatch, InterfaceContractMismatch, DescriptorContractMismatch, UnsupportedProtocolVariant, UnsupportedTransportVariant, VirtualProfileUnavailable, DeviceInUse, ConfigurationUnreadable, BootloaderIdentity, NoModeMatched, NoControllerLinked.
+If a check fails, OJD doesn't drop down to the next rule, and no device gets a one-size-fits-all HID parser. The result is `.bound(ProtocolBinding)`, `.unsupported(reason)`, or `.conflict(reason, candidates:)`. `ProtocolBindingReason` has exactly twelve IDs: NoProtocolMatch, AmbiguousProtocolMatch, InterfaceContractMismatch, DescriptorContractMismatch, UnsupportedProtocolVariant, UnsupportedTransportVariant, VirtualProfileUnavailable, DeviceInUse, ConfigurationUnreadable, BootloaderIdentity, NoModeMatched, NoControllerLinked.
 
-Each ID has a sentence (`ui.controllers.<id>`) and next step (`ui.controllers.<id>.nextStep`) in every language. `idle: NoControllerLinked` gives NoControllerLinked; `idle: Bootloader` gives BootloaderIdentity. NoModeMatched covers a record with no `default` or selected mode, a probe with no route, or a probe with no usable reply.
+Each ID has a sentence (`ui.controllers.<id>`) and a next step (`ui.controllers.<id>.nextStep`) in every language. `idle: NoControllerLinked` gives NoControllerLinked; `idle: Bootloader` gives BootloaderIdentity. NoModeMatched covers a record with no `default` or selected mode, a probe with no route, or a probe with no usable reply.
 
-A `ProtocolBindingID` is `family[:variant]`, such as `XboxXUSB:Receiver`. The variant is required exactly when the family declares variants. Records store one only when the transport cannot decide it.
+A `ProtocolBindingID` is `family[:variant]`, such as `XboxXUSB:Receiver`. The variant is needed exactly when the family has variants. Records only store one when the connection type can't decide it.
 
 `ProtocolDriverRegistry` builds `PhysicalProtocolDriver` values from one exhaustive switch over `PhysicalProtocolID`:
 
 - `runtimeProfile(for:)` returns the binding's catalog record, or the family defaults for a signature binding (GIP sets configuration 1 before the claim).
 - `makeDriver(for:identifier:claimed:)` is the only runtime factory. A raw-USB binding passes its claimed facts, whose interface contract must hold before a driver exists. HID bindings pass none; classification checked their descriptor contract.
-- `makeUnobservedDriver` serves only profile capabilities and record rendering. Unbound devices get no driver.
+- `makeUnobservedDriver` is only used to list profile capabilities and draw records. Devices that weren't matched get no driver.
 
-A driver's `DriverSessionPlan` fixes its report liveness timeout and whether output waits for a receiver presence connect.
+A driver's `DriverSessionPlan` sets how long a silent device counts as alive, and whether output waits until a receiver says a pad is there.
 
 ```mermaid
 flowchart LR
@@ -120,7 +124,7 @@ flowchart LR
   F -->|native| I[Observe-only pipeline]
 ```
 
-Native gamepads are observed and remapped:
+Gamepads macOS already supports (native ones) are watched and remapped, never taken over:
 
 - A device is native when `GCController.supportsHIDDevice` is true and its record states `server: System`, or states no `server` and GameController lists a controller for it (`HIDDeviceStream.nativePassThrough(supportsHIDDevice:listing:statedServer:)`). The stream matches a listed controller by `vendorName` equal to the HID `Product` string.
 - A device counts as native for 1 s after it arrives. Then the stream reads `GCController.controllers()`, and OJD seizes and serves a device GameController does not list. A `server: OJD` record is seized at once. Its `systemListsGameController` follows the same listing, so the second-controller warning appears only when macOS lists a controller for it.
@@ -130,17 +134,17 @@ Native gamepads are observed and remapped:
 - Its `physicalOwnership` is `SystemGamepad`, so `ServingPolicy` decides `nativePassThrough` for every intent and OJD never publishes a virtual gamepad for it.
 - Remapping profiles run on its input; a profile needing exclusive input or a virtual gamepad is ineligible. While no route selects the controller, its pipeline parses reports but dispatches nothing (`ObservedInputDemand`). Element values go only to a driver whose `DriverSessionPlan.parsesHIDElementValues` is set.
 - A user-requested wireless disconnect still applies. macOS keeps every other HID interface at its location: OJD never seizes it, tears down any pipeline bound there, releases its claim, and routes none of its input. Such an interface that connects after the native one, and a native device no driver binds, go under `passThroughDevices`; one rejected earlier stays under `unboundDevices`.
-- Location 0 identifies no controller and is never shared.
+- Location 0 doesn't name any controller and is never shared.
 
 `unboundDevices` in the service payload records backend, reason, interface summaries, and rejected candidates. Each bound controller carries its binding result: rule, matched predicates, and catalog record ID. Support reports include both. `status` prints them under `Unbound devices` and `Left to macOS`, and `status --json` carries both arrays. OJD keeps its input claim on a rejected HID connection only while a bound pipeline shares its controller or routing location; otherwise macOS keeps the device.
 
-Under the Automatic intent, `AutomaticUserSpaceOutputDispatcher` publishes one virtual profile per eligible controller, which `VirtualHIDProfileSelector` chooses from the declared controls alone: SDLCompatible (`045E:0B0C`) when it can carry every primary control, otherwise Generic. Both carry every primary control, so Automatic selects SDLCompatible. GameControllerCompatible (`045E:0B13`) is published only on an override.
+In Automatic mode, `AutomaticUserSpaceOutputDispatcher` publishes one virtual profile for each controller that qualifies, which `VirtualHIDProfileSelector` chooses from the declared controls alone: SDLCompatible (`045E:0B0C`) when it can carry every primary control, otherwise Generic. Both carry every primary control, so Automatic selects SDLCompatible. GameControllerCompatible (`045E:0B13`) is published only on an override.
 
 The catalog comes from Linux `xpad.c`, SDL `controller_list.h`, and SDL_GameControllerDB, pinned in `ControllerSources.lock.json`, plus authored overrides; see [xpad import](xpad-import.md). A HID pad with no record whose descriptor passes the contract is matched by SDL GUID against the database's Mac lines. The registry computes the GUID and passes the converted `HIDUsageMap` to `HIDDescriptorDriver`, keeping the classifier pure. The binding result carries an `inputMapping` fact: Record, SDLGameControllerDB, StandardHIDUsageMap, or None.
 
 ## Composite Devices and Roles
 
-One physical device can expose several protocol roles, each with its own pipeline and logical controller. Only the Xbox 360 wireless receiver (raw USB) and Steam Controller (HID) declare more than one.
+One real device can play several roles, like one wireless receiver holding four pads. Each role gets its own pipeline and logical controller. Only the Xbox 360 wireless receiver (raw USB) and the Steam Controller (HID) have more than one.
 
 ### Identity
 
@@ -152,7 +156,7 @@ One physical device can expose several protocol roles, each with its own pipelin
 
 `DeviceManager.isSamePhysicalController` treats two keys from different services as one controller when they share a ControllerHardwareIdentity and a serial number or location. A raw-USB admission conflicts when its exact key already runs or the same controller runs through another service. Roles of one service never conflict.
 
-OJD never migrates stored files in place. A file keeps working as written, or OJD skips it, reports it, and leaves the bytes unchanged. User records are named `vvvv-pppp.plist` after `vendorID` and `productID`. A record with an unsupported `apiVersion` is dropped (`ControllerRecordSetTests.aStoredFileKeepsWorkingOrIsDroppedUnchanged`).
+OJD never rewrites stored files in place. A file either keeps working as written, or OJD skips it, says so, and leaves its bytes alone. User records are named `vvvv-pppp.plist` after `vendorID` and `productID`. A record with an unsupported `apiVersion` is dropped (`ControllerRecordSetTests.aStoredFileKeepsWorkingOrIsDroppedUnchanged`).
 
 ### Raw-USB Roles
 
@@ -170,9 +174,9 @@ flowchart LR
   S0 & S1 & S2 & S3 --> P[One DevicePipeline each]
 ```
 
-- Admission is atomic per service. `startUSBRoles` starts roles in order; a conflict, driver failure, or lost generation stops every started role and returns `.retry`, so the next poll admits the service whole.
+- A service is let in all at once or not at all. `startUSBRoles` starts roles in order. A conflict, a driver failure, or a finished run stops every role already started and returns `.retry`, so the next check lets the whole service in.
 - Detach removes every role of the service in one pass (`removeUSBRole`, also used by rollback).
-- Only slot 0 keeps `needsSetConfiguration`. `IOUSBHostTransportProvider` also skips SET_CONFIGURATION when the current configuration equals the requested one (`USBTransportOpenOptions.setsConfiguration(current:)`), because it terminates every open interface. A slot 0 reopen leaves slots 1 to 3 running. GIP rows that set configuration 1 follow the same rule.
+- Only slot 0 keeps `needsSetConfiguration`. `IOUSBHostTransportProvider` also skips SET_CONFIGURATION when the current configuration equals the requested one (`USBTransportOpenOptions.setsConfiguration(current:)`), because doing so closes every open interface. A slot 0 reopen leaves slots 1 to 3 running. GIP rows that set configuration 1 follow the same rule.
 
 ### HID Roles
 
@@ -182,15 +186,15 @@ Input from a role connection routes to that connection's key only (`hidPipelineK
 
 ### Assembly Hook
 
-A catalog row may name a `ControllerAssemblyPolicy` in `protocol.assembly` to combine roles into one logical controller. The vocabulary is empty: the schema enum is `[]` and the decoder rejects every name. `handleHIDDeviceConnected` reads `ProtocolDriverRegistry.assemblyPolicy(for:)` through an exhaustive switch, so the first policy must add its branch there. Until then one role is one logical controller.
+A catalog row may name a `ControllerAssemblyPolicy` in `protocol.assembly` to join roles into one logical controller. No names exist yet: the schema enum is `[]` and the decoder refuses every name. `handleHIDDeviceConnected` reads `ProtocolDriverRegistry.assemblyPolicy(for:)` through an exhaustive switch, so the first policy must add its branch there. Until then one role is one logical controller.
 
 ### Receiver Presence
 
-`XUSBDriver(slotOrdinal:)` builds one receiver slot (0 to 3; other values fail). Its startup write is the presence inquiry `08 00 0F C0 00…` (12 bytes, from `xpad.c`), which tolerates rejection. A presence notification or valid pad report connects the slot. Empty slots are unlisted and publish no output. On connect the manager assigns a player indicator. Each transport session resets presence.
+`XUSBDriver(slotOrdinal:)` builds one receiver slot (0 to 3; other values fail). Its startup write is the presence inquiry `08 00 0F C0 00…` (12 bytes, from `xpad.c`), which tolerates rejection. A presence message or a readable pad report connects the slot. Empty slots aren't listed and publish no output. On connect the manager assigns a player indicator. Each transport session resets presence.
 
 ## Platform Split
 
-Deployment floor: macOS 12 and DriverKit 21. HID uses IOKit on every supported macOS, so no HID path selects by OS version.
+Oldest supported: macOS 12 and DriverKit 21. HID uses IOKit on every supported macOS, so no HID code picks a path by macOS version.
 
 | Capability | macOS 12+ |
 | --- | --- |
@@ -204,37 +208,37 @@ Publishing is one such call with the profile's complete identity properties and 
 
 ## Switch 2 Bluetooth LE
 
-Switch 2 controllers over Bluetooth speak only GATT, invisible to IOHID. `Switch2BluetoothLECentral` (`OpenJoystickDriverService`) owns CoreBluetooth on one serial queue, connects to advertised Switch 2 products, and hands each ready link to `Switch2BluetoothLEHub` (`OpenJoystickDriverKit`, no CoreBluetooth import) through the `Switch2BluetoothLEWriter` protocol.
+Switch 2 controllers over Bluetooth only speak GATT, which IOHID can't see. `Switch2BluetoothLECentral` (`OpenJoystickDriverService`) owns CoreBluetooth on one serial queue, connects to advertised Switch 2 products, and hands each ready link to `Switch2BluetoothLEHub` (`OpenJoystickDriverKit`, no CoreBluetooth import) through the `Switch2BluetoothLEWriter` protocol.
 
-The hub gives each link a synthetic routing location from `0xB1E0_0000` upward. `BluetoothLECompositeHIDBackend` merges hub connections into the IOHID event stream and routes output by location.
+The hub gives each link a made-up routing location from `0xB1E0_0000` upward. `BluetoothLECompositeHIDBackend` merges hub connections into the IOHID event stream and routes output by location.
 
 `BluetoothLECompositeUSBTransportProvider` opens a hub location as a `Switch2BluetoothLECommandSession`: bulk OUT writes go to the command characteristic and bulk IN reads return reply notifications. Switch2Driver runs unchanged over both links, apart from its transport byte. The merged stream ends with the IOHID stream, so an IOHID access failure also stops the Bluetooth LE pipelines until detection restarts.
 
-Not verified: the synthetic location range is free of IOHID locations.
+Not checked yet: that IOHID never uses a location in that made-up range.
 
 ## USB Transport Boundary
 
-`OpenJoystickDriverKit` owns the `USBTransportProvider` and `USBTransportSession` ports plus all parsing and policy, and never imports SwifterKit. `OpenJoystickDriverUSB` is the app-side facade with one route-tagged API. Its direct backend opens accessible vendor-specific interfaces with IOUSBHost. Its USBDriverKit backend talks to the restricted DEXT.
+`OpenJoystickDriverKit` owns the `USBTransportProvider` and `USBTransportSession` ports plus all parsing and policy, and never imports SwifterKit. `OpenJoystickDriverUSB` is the app's front desk for USB, with one API that labels which road each call takes. Its direct backend opens accessible vendor-specific interfaces with IOUSBHost. Its USBDriverKit backend talks to the restricted DEXT.
 
-Routes follow ownership evidence:
+Which road a device takes depends on who's allowed to own it:
 
 | Case | Route |
 | --- | --- |
 | Service exposed by the DEXT | Stays on the DEXT |
 | Model under the production USB transport entitlement | Never falls back to direct app-side access |
 | Other raw USB controller | IOUSBHost, when macOS lets the app own its interface |
-| Failed open | Reported, not retried through another route |
+| Failed open | Reported, and never retried through another road |
 
 ### Descriptor Facts
 
 - `OpenJoystickDriverKit/Device/PhysicalInterfaceSignature.swift` holds `PhysicalDevice`, `PhysicalInterfaceSignature` (one per alternate setting), and optional `PhysicalEndpointSignature`.
 - Absent passive fields stay `nil`; a missing configuration descriptor is `interfaces == nil`.
 - Direct IOUSBHost has no `DeviceAccessBackend` value. An observed DEXT route maps to USBExtension.
-- `IOUSBHostPassiveUSBRegistrySource` reads `bcdDevice` ([Apple's key][1]) into `PhysicalDevice.deviceRelease` when it is an unsigned 16-bit value. Not verified: availability on any physical device.
+- `IOUSBHostPassiveUSBRegistrySource` reads `bcdDevice` ([Apple's key][1]) into `PhysicalDevice.deviceRelease` when it is an unsigned 16-bit value. Not checked yet on any real device.
 - Enumeration admits catalog rows that declare raw USB access. `TransportFacade` also admits an uncatalogued IOUSBHost device with a known Xbox signature (`ProtocolDriverRegistry.carriesProtocolSignature`). `resolveTransport` returns the catalog endpoint profile and an optional PhysicalDevice.
 - USBDriverKit keeps the configured profile plus a limited snapshot from its cached `DriverService`: `service.id`, VID/PID, product and serial properties, and the physical location when present. It marks host transport `.usb`, backend USBExtension, route `.usbExtension`; all other facts stay nil. `USBTransportDevice.locationID` stays a routing value and may use low service-ID bits.
 - `USBDiscovery` accepts a snapshot only when its `serviceAddress` matches the enumerated route and service, rechecked after the await. Detach removes a pipeline only if the current record has the same raw USB snapshot, so a HID takeover with the same identifier survives.
-- Observation needs a unique registry root with the exact `IORegistryEntryGetRegistryEntryID` service ID and matching VID/PID/location, with no location-only fallback. Not verified: live registry correspondence on hardware.
+- Observation needs a unique registry root with the exact `IORegistryEntryGetRegistryEntryID` service ID and matching VID/PID/location, with no location-only fallback. Not checked yet: that this matches the live registry on real hardware.
 
 ### Enumeration and Admission
 
@@ -254,17 +258,17 @@ The IORegistry publishes no endpoint descriptors, and an unconfigured device no 
 | Refusal with no reported or readable owner | ConfigurationUnreadable at once |
 | Any other failure | Read again next poll, at most `usbConfigurationReadAttempts` (5) in a row, then ConfigurationUnreadable |
 
-Both reasons wait for re-enumeration. The DriverKit route reports no interface facts: a catalog row claimed there runs on its record alone, and a signature binding fails closed. Family-default endpoints never replace an unreadable descriptor. The HIDTool record probe validates the same way.
+Both reasons wait until macOS lists the device again. The DriverKit road reports no interface facts, so a catalog row claimed there runs on its record alone, and a match by signature safely refuses. Family-default endpoints never replace an unreadable descriptor. The HIDTool record probe validates the same way.
 
 The GIP parser resends its startup sequence when the controller announces before its first input: on the first announce and every fourth after, at most eight times.
 
-Not verified: any live extension service, device, or hardware observation. The DEXT snapshot derives from synthetic and cached properties, and its entitlement does not cover the other catalog raw-USB identities. The access-route decision is open.
+Not checked yet: any live extension service, device, or hardware. The DEXT snapshot derives from synthetic and cached properties, and its entitlement does not cover the other catalog raw-USB identities. The access-route decision is open.
 
 ### Diagnostics and HID Facts
 
 - The USB diagnostic scanner keeps a route-only DEXT snapshot. A catalogued model stays unclassified until its predicates' facts are observed: interface number, alternate setting, class/subclass/protocol, and endpoints with address, direction, and transfer type (HID interfaces also need collection and element facts). A partial snapshot never becomes a negative `unsupported` result. A parsed configuration with no interfaces is `[]`, complete negative evidence.
 - HID `.connected` events carry immutable PhysicalDevice facts from IOHID: descriptor bytes and hash, usage pairs, report IDs, and maximum report sizes when exposed. The routing location stays separate from the optional physical location. `kIOHIDManufacturerKey` is kept as reported, never inferred from VID. Only explicit USB and Bluetooth Low Energy values give a typed host transport.
-- `DeviceInfo` keeps the snapshot through HID ownership reacquisition. A HID disconnect clears state only when its connection token and snapshot match the current connection. A full stop clears snapshots and cancels and awaits the permission watcher and HID detector before HID initialization. HID work revalidates pipeline, token, and snapshot after each await. Not verified: any physical HID send.
+- `DeviceInfo` keeps the snapshot through HID ownership reacquisition. A HID disconnect clears state only when its connection token and snapshot match the current connection. A full stop clears snapshots and cancels and awaits the permission watcher and HID detector before HID initialization. HID work revalidates pipeline, token, and snapshot after each await. Not checked yet: any send to a real HID device.
 - `DeviceAccessBackend` values: HID, RawUSB, USBExtension, GATT. `usesRawUSB` is true for RawUSB and USBExtension. A `HIDDeviceConnection` is GATT for a `gattPeripheral` address (Switch 2 over Bluetooth LE), otherwise HID.
 - A non-success `IOHIDManagerOpen` result arrives as `HIDDeviceEvent.accessFailure` with its `IOReturn`; cancellation is not an access failure. The manager clears HID pipelines and snapshots, awaits pending initialization, and removes only state matching what it captured first. The one-second permission watcher retries.
 
@@ -288,11 +292,11 @@ Not verified: any live extension service, device, or hardware observation. The D
 
 ## Process and Command Lifecycle
 
-The signed app starts the runtime, one status item, and one reusable settings window. Closing the window keeps controllers running. SIGTERM and SIGINT stop the runtime cleanly.
+The signed app starts the engine, one menu bar item, and one settings window it reuses. Closing the window keeps controllers running. SIGTERM and SIGINT stop the engine cleanly.
 
-Headless commands run the same executable and reach live state through the Unix-domain socket `/tmp/com.openjoystickdriver.<uid>.rpc` (mode `0600`). The server requires the same user, signing identifier, and team identifier. Frames and deadlines are bounded.
+Commands without a window run the same program and reach the running app through the Unix-domain socket `/tmp/com.openjoystickdriver.<uid>.rpc` (mode `0600`). The server only answers the same user with the same signing identifier and team identifier. Messages have a size limit and a time limit.
 
-Repository-built CLI commands forward to the installed signed executable when available, keeping `swift run` and `.build` commands inside the RPC authentication boundary. Forwarding stops when the installed executable is older than the sources.
+Commands built from this repository pass themselves on to the installed signed app when there is one, so `swift run` and `.build` commands still pass the socket's identity check. This stops when the installed app is older than the source code.
 
 ## Permissions
 
@@ -301,7 +305,7 @@ Repository-built CLI commands forward to the installed signed executable when av
 | Virtual HID creation | Input Monitoring and Accessibility, on every supported macOS |
 | Remapped keyboard, pointer, scroll events | CoreGraphics post-event access, separately |
 
-Not verified (an unsigned build cannot prove them): hardware access, signing, activation, permission behavior.
+Not checked yet (an unsigned build can't prove them): hardware access, signing, activation, and how permissions behave.
 
 ## Further Reading
 

@@ -1,24 +1,34 @@
 # InputConfig Preset Library: Import Measurement
 
-Measures whether an importer for InputConfig's library presets is worth writing. Unlabeled claims are observed (read in a file or printed by the script); the rest are marked Inferred or Not checked.
+InputConfig is another Mac app with 456 ready-made button layouts (presets) for games and apps. This page measures how many of them OJD could take in without losing anything, to decide whether an importer is worth writing. Think of moving house: some furniture fits the new rooms as-is, and some doesn't fit anywhere.
 
-## Source and Scope
+Claims with no label were seen directly (read in a file or printed by the script). The rest are marked Inferred (worked out, not seen) or Not checked.
 
-- Repository `https://github.com/ryleighnewman/InputConfig`, commit `958bdd97ceecb182004b3d7d8521761b5a7e7756` ("1.8 (34)"), read in an outside clone, not run or built.
-- The library is a JSON array in the raw string `ExamplePresets.swift` (`static let libraryJSON`, decoded into `SmartPresetProfile` at line 2996). It holds 456 profiles, 456 distinct ids: 294 game, 125 app, 37 workflow. The 46 built-in presets (`static var ...: Preset`) are excluded.
+```mermaid
+flowchart LR
+    lib["456 InputConfig presets"] -->|"every binding and setting has an OJD match"| ok["117 import without loss"]
+    lib -->|"at least one thing has no OJD match"| bl["339 blocked"]
+    bl -->|"most common: a modifier key alone"| m["217"]
+    bl -->|"next: launch an app on start"| a["136"]
+```
+
+## What Was Read
+
+- Repository `https://github.com/ryleighnewman/InputConfig`, commit `958bdd97ceecb182004b3d7d8521761b5a7e7756` ("1.8 (34)"), read in a separate clone, not run or built.
+- The library is a JSON array in the raw string `ExamplePresets.swift` (`static let libraryJSON`, decoded into `SmartPresetProfile` at line 2996). It holds 456 profiles, 456 distinct ids: 294 game, 125 app, 37 workflow. The 46 built-in presets (`static var ...: Preset`) are left out.
 - `LICENSE` at the repository root is MIT, "Copyright (c) 2026 Ryleigh Newman". No `NOTICE` file, no separate license for the preset data.
 
 ## The Library Preset Format
 
 Profile fields: `id`, `category`, `displayName`, `subtitle`, `appPath`, `launchURL`, `light` (r, g, b), `confineCursor`, `autoRecenter`, `hideCursor`, `bindings`, `tips`, and in one profile `drive`. Binding fields (`SmartPresetProfile.Binding`): `input`, `outputs`, `note`, and optional `hold`/`holdMs`, `double`/`doubleMs`, `with`, `toggle`, `turbo`, `repeatCount`/`repeatMs`, `deadzone`, `outer`, `curve`, `variable`, `ramp`, `rumble`, `speak`, `needs`.
 
-- Inputs are controller-independent GameController indexes: `btn 0..13`, `axi 0..5` with a sign, `hat 0 U|D|L|R`. Per the file header: buttons 0 to 3 face, 4 and 5 shoulders, 8 Options/Share, 9 Menu/Start, 10 Home, 11 and 12 stick clicks, 13 touchpad; axes 0 to 3 sticks, 4 and 5 triggers.
-- Outputs are text tokens; keys are USB HID usage codes (`key 4` is A, `key 227` is Left Command). Used: `key`, `mbt` (0, 1, 2 = left, right, middle), `mou <axis> <sign> <speed>`, `whe <axis> <sign> <speed>`, `whs <axis> <sign>`, one `sys dct`.
-- Other `OutputType` values (MIDI, `txt`, `app`, `avl`, `lit`, `cpf`) do not occur.
+- Inputs are GameController numbers that are the same for every controller: `btn 0..13`, `axi 0..5` with a sign, `hat 0 U|D|L|R`. Per the file header: buttons 0 to 3 face, 4 and 5 shoulders, 8 Options/Share, 9 Menu/Start, 10 Home, 11 and 12 stick clicks, 13 touchpad; axes 0 to 3 sticks, 4 and 5 triggers.
+- Outputs are short text codes. Keys are USB HID usage codes (`key 4` is A, `key 227` is Left Command). Used: `key`, `mbt` (0, 1, 2 = left, right, middle), `mou <axis> <sign> <speed>`, `whe <axis> <sign> <speed>`, `whs <axis> <sign>`, one `sys dct`.
+- Other `OutputType` values (MIDI, `txt`, `app`, `avl`, `lit`, `cpf`) don't appear.
 
 ## How One Preset Maps to an OJD Profile
 
-The OJD shape is `Resources/Schemas/profile.schema.json` (`v1alpha3`). A profile names a `device`; the library names none, so one preset becomes one profile per controller model. Inferred: an importer must ask for a model and handle sources it lacks (`btn 13`, `btn 10`).
+The OJD shape is `Resources/Schemas/profile.schema.json` (`v1alpha3`). An OJD profile names a `device`, but the library names none, so one preset becomes one profile per controller model. Inferred: an importer must ask which model, and handle buttons the model lacks (`btn 13`, `btn 10`).
 
 | Library field | OJD field | Result |
 | --- | --- | --- |
@@ -26,7 +36,7 @@ The OJD shape is `Resources/Schemas/profile.schema.json` (`v1alpha3`). A profile
 | (generated) | `id`, `apiVersion`, `kind`, `device` | importer supplies |
 | `btn 0..3` | Button South, East, West, North | maps |
 | `btn 4`, `5` | LeftShoulder, RightShoulder | maps |
-| `btn 6`, `7` | LeftTrigger, RightTrigger as buttons | maps (does not occur in the library) |
+| `btn 6`, `7` | LeftTrigger, RightTrigger as buttons | maps (doesn't appear in the library) |
 | `btn 8`, `9`, `10` | Back, Start, Guide | maps |
 | `btn 11`, `12`, `13` | LeftStickClick, RightStickClick, TouchpadClick | maps |
 | `axi 0..3 +/-` | AxisDirection on LeftStickX/Y, RightStickX/Y, Positive/Negative | maps; see the Y direction note |
@@ -58,16 +68,16 @@ Notes on the table:
 
 - `Destination.swift` and the schema give Keyboard a required `key` from a list without modifier keys. A lone modifier, such as sprint on Left Shift, has no destination.
 - In the Minecraft rows, `axi 1 -` is "Walk forward" (`key 26`), so the library takes negative as up. `wiki/Controller-Records.md` lists W3C as "negative is left or up" and Apple GameController as "positive up". Not checked: which the engine reads for LeftStickY. An importer needs it for `axi 1` and `axi 3` rows.
-- Inferred: speed 6 to 28 in `mou` and `whe` has no OJD unit; counts treat it as mapped. Lossless speed needs measuring (360 presets with `mou`, 130 with `whe`).
-- Inferred: `hold` and `double` (two presets) map by type and range; timing was not compared.
+- Inferred: speed 6 to 28 in `mou` and `whe` has no matching OJD unit, and the counts treat it as mapped. Matching speed exactly needs measuring (360 presets with `mou`, 130 with `whe`).
+- Inferred: `hold` and `double` (two presets) map by type and range. Nobody compared the timing.
 
-## Counting Rule
+## How Things Were Counted
 
-- A blocker is a binding, modifier, or setting the table marks as having no OJD equivalent. No blocker means lossless.
-- A feature counts once per preset, so counts exceed the blocked total. Brackets: presets blocked only by that feature.
-- Descriptive text (subtitle, tips, note, category) is not counted; counted, 0 of 456 are lossless.
+- A blocker is a binding, modifier, or setting the table marks as having no OJD match. A preset with no blocker imports without loss (lossless).
+- A feature counts once per preset, so the counts add up to more than the blocked total. Numbers in brackets: presets blocked only by that feature.
+- Description text (subtitle, tips, note, category) isn't counted. If it were, 0 of 456 would be lossless.
 - Totals: all rules, and bindings only (`confineCursor`, `appPath`, `launchURL`, `drive` ignored).
-- Not blockers: calibration (speed, Y direction), per-model choices (device, absent sources).
+- Not blockers: things to tune (speed, Y direction) and choices made per model (device, missing buttons).
 - The script counts unused row fields (`turbo`, `deadzone`, `with`, and the others) as blockers.
 
 ## Result
@@ -109,10 +119,10 @@ presets with subtitle, tips, or notes (text OJD has no field for): 456
 
 Reading the totals:
 
-- 117 presets map without loss; 339 have a blocker (modifier-only blocks 217, wheel step 38).
-- Of 8513 rows, 8062 (94.7%) map; 451 do not (380 modifier-only, 70 wheel step, 1 dictation).
-- With preset settings dropped, 218 map; the other 101 are blocked only by `confineCursor`, `appPath`, `launchURL`, or `drive`.
-- `appPath` is the largest sole blocker (84). Its scope part is solvable by reading the named app's bundle identifier; launch on activation is not.
+- 117 presets map without loss, and 339 have a blocker (modifier-only blocks 217, wheel step 38).
+- Of 8513 rows, 8062 (94.7%) map, and 451 don't (380 modifier-only, 70 wheel step, 1 dictation).
+- With preset settings dropped, 218 map. The other 101 are blocked only by `confineCursor`, `appPath`, `launchURL`, or `drive`.
+- `appPath` is the largest sole blocker (84). Its scope part can be solved by reading the named app's bundle identifier. Launching the app when the preset starts can't.
 
 ## What the MIT Notice Requires
 
@@ -145,14 +155,14 @@ SOFTWARE.
 This reading is not legal advice.
 
 - Condition: "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software." The notice is the copyright line, the permission text, and the warranty disclaimer.
-- Inferred: an importer bundling the presets or converted profiles must carry the notice, as `THIRD_PARTY_NOTICES.md` does per third party. Converted profiles need it beside them (data folder, About text).
-- MIT permits sublicensing. OJD's MPL-2.0 covers OJD's files; the MIT notice and disclaimer stay with InputConfig portions. Inferred: converted profiles stay under MIT.
-- An importer reading user-exported presets and shipping no data needs no notice, but the library is a compiled Swift string with no export file. Inferred: only a bundled conversion is practical, so the notice applies.
+- Inferred: an importer that ships the presets or converted profiles must include the notice, as `THIRD_PARTY_NOTICES.md` does per third party. Converted profiles need it beside them (data folder, About text).
+- MIT allows sublicensing. OJD's MPL-2.0 covers OJD's own files, and the MIT notice and disclaimer stay with the InputConfig parts. Inferred: converted profiles stay under MIT.
+- An importer reading user-exported presets and shipping no data needs no notice, but the library is a compiled Swift string with no export file. Inferred: only shipping a converted copy is practical, so the notice applies.
 - MIT gives no rights to game and app names or trademarks in the presets. Not checked beyond the license text.
 - OJD copies nothing from InputConfig and has no notice for it. A bundled importer must change `THIRD_PARTY_NOTICES.md` in the same commit.
 
-## Verdict
+## Answer
 
-- Inferred: a lossless import covers 117 of 456 presets (26%); preset settings block most of the rest.
+- Inferred: an import without loss covers 117 of 456 presets (26%). Preset settings block most of the rest.
 - Inferred: two missing OJD features block most: a keyboard destination for a lone modifier (217 presets), and a profile-level app launch or a way to drop it (136 with `appPath`).
 - Not measured: the 46 built-in presets, `mou` and `whe` speed, Y direction, `hold` and `double` timing.

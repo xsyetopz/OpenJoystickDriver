@@ -1,8 +1,15 @@
 # Scripting Surfaces
 
-What the App Intents, the `ojd` command line, and the local endpoint expose, and what a mod author cannot do.
+Programs and people can control OJD in three ways: Shortcuts (through App Intents), the `ojd` command line, and the local endpoint. This page lists what each one can do, and what a mod author can't do. Think of three doors into the same house: each door opens onto different rooms.
 
-Method: source and `wiki/Automating-OpenJoystickDriver.md` on branch `feat/0.6.0-alpha.3`, read without a build or run. `Intents/` is `Sources/OpenJoystickDriver/platform/macos/Intents/`. `CLI/` is `Sources/OpenJoystickDriverCLI/`.
+```mermaid
+flowchart LR
+    sc["Shortcuts app"] -->|"12 actions, App Intents"| app["OJD app and service"]
+    cli["ojd command line"] -->|"21 command groups over a private socket"| app
+    ep["Your program"] -->|"JSON lines, needs a grant and token"| app
+```
+
+How this was found: reading the source and `wiki/Automating-OpenJoystickDriver.md` on branch `feat/0.6.0-alpha.3`, without building or running anything. `Intents/` is `Sources/OpenJoystickDriver/platform/macos/Intents/`. `CLI/` is `Sources/OpenJoystickDriverCLI/`.
 
 ## App Intents
 
@@ -34,7 +41,7 @@ The wiki lists actions that ran through `shortcuts run` ("Use Shortcuts" in the 
 
 ## The `ojd` Command Line
 
-`ojd` is an ArgumentParser root command (`CLI/Root/OJDCommand.swift:8`) with 21 top-level subcommands (`:16-26`). The table lists each group, its subcommands, and the `commandName:` lines.
+`ojd` is a top-level ArgumentParser command (`CLI/Root/OJDCommand.swift:8`) with 21 top-level subcommands (`:16-26`). The table lists each group, its subcommands, and the `commandName:` lines.
 
 | Group | Subcommands | file:line |
 | ------- | ------------- | ------------- |
@@ -64,11 +71,11 @@ The wiki lists actions that ran through `shortcuts run` ("Use Shortcuts" in the 
 
 Scripts read JSON with `--json` and skip prompts with `--no-input` (`wiki/Automating-OpenJoystickDriver.md:25-35`).
 
-`ojd generate <SCRIPT>` runs a `.js` generator in a helper process with no file or network access, checks the documents it returns, and writes each as a property list in `--output` (`ojd generate --help`). The helper does not run in the service.
+`ojd generate <SCRIPT>` runs a `.js` generator in a separate helper process with no file or network access, checks the documents it returns, and writes each as a property list in `--output` (`ojd generate --help`). The helper doesn't run inside the service.
 
 ## The Local Endpoint
 
-The endpoint is a local socket. A WebSocket on `127.0.0.1` is enabled separately (`wiki/Automating-OpenJoystickDriver.md:61-63`, `:138-141`). It is off by default and serves only granted programs (`:63`). A line is a JSON object of at most 64 KiB (`:69`).
+The endpoint is a local socket. A WebSocket on `127.0.0.1` is turned on separately (`wiki/Automating-OpenJoystickDriver.md:61-63`, `:138-141`). It's off until you turn it on, and only answers programs you allowed (`:63`). A line is a JSON object of at most 64 KiB (`:69`).
 
 ### Lines a Client Sends
 
@@ -112,23 +119,23 @@ The endpoint is a local socket. A WebSocket on `127.0.0.1` is enabled separately
 | Connections | wiki/Automating-OpenJoystickDriver.md:193 | 8 on the socket, 8 on the WebSocket |
 | Handshake time | wiki/Automating-OpenJoystickDriver.md:74 | `Hello` within 5 seconds |
 
-## What a Mod Author Cannot Do Through Any Surface
+## What a Mod Author Can't Do Through Any Door
 
-1. Run author code in the service. The endpoint and intents take no code. `ojd` runs only the `ojd generate` script, in a helper process.
+1. Run their own code inside the service. The endpoint and intents take no code. `ojd` runs only the `ojd generate` script, in a helper process.
 2. Add a protocol family through the endpoint or intents. Only `ojd protocol install` takes a protocol description (see `docs/development/document-defined-families.md`). `ojd record install` takes a controller record.
 3. Change a binding or macro through the endpoint. It takes only `Hello`, `Subscription`, `FeedRequest`, `ProfileRequest`, `ModList`, `OutputRequest`, `Frame`, `KeepAlive`, and `Drain` (`EndpointMessages.swift:23-31`, `EndpointServer+Feed.swift:98`).
 4. Change a binding or macro through the intents. They read controllers and battery, return a version, activate a profile or set one value, manage mod packages, and drive rumble, player number, and light.
-5. Validate a mod package through the intents or endpoint. Only `ojd mod validate` validates a folder without installing it. An intent install runs the validation `ojd mod install` runs.
+5. Check a mod package through the intents or endpoint. Only `ojd mod validate` checks a folder without installing it. Installing through an intent runs the same checks as `ojd mod install`.
 6. Drive the speaker through the endpoint or intents. Only `ojd controller speaker` does (`CLI/Commands/Controller/ControllerSpeakerCommands.swift:69`).
-7. Receive an event inside the service. No surface takes a handler the service runs.
+7. Receive an event inside the service. No door takes a handler for the service to run.
 8. Subscribe to a stream beyond `Controllers`, `Profiles`, and `Mods` (`EndpointServer+Handshake.swift:82`), such as logs, bindings, or macros.
-9. Use the endpoint without a user grant. The program needs `ojd access grant` first, and a token with origins cannot hold `Control` (`AccessTokenGrant.swift:202`).
-10. Choose a virtual gamepad persona the service does not publish (see "Tried Against the Installed Build").
+9. Use the endpoint without a user grant. The program needs `ojd access grant` first, and a token with origins can't hold `Control` (`AccessTokenGrant.swift:202`).
+10. Choose a virtual gamepad persona the service doesn't offer (see "Tried Against the Installed Build").
 11. Call an intent without Shortcuts. The wiki points to `shortcuts run` and `shortcuts://` links (`wiki/Automating-OpenJoystickDriver.md:320-321`).
 
 ## Tried Against the Installed Build
 
-These ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token holding `Read` and `Control`. The endpoint was off, with no grant or token, before and after. The scripts used a scratch profile and mod package, then removed both. No controller was connected.
+These ran against `/Applications/OpenJoystickDriver.app`, build `8456f9de8665`, through the socket with a token holding `Read` and `Control`. The endpoint was off, with no grant or token, before and after. The scripts used a throwaway profile and mod package, then removed both. No controller was connected.
 
 | Surface | Result |
 | --- | --- |

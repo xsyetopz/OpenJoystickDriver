@@ -2,6 +2,14 @@
 
 Each window, sheet, menu, and control of the app, read on 2026-11-11 from the installed 0.6.0-alpha.2 (build 1.21.99) on macOS 27.2 and from this branch's source.
 
+Think of it as a home inspection. Every room (window), cupboard (sheet), and switch (control) gets a row with its size, where its code lives, a picture, and anything that looked wrong. Each control also gets a level, which decides who sees it.
+
+```mermaid
+flowchart LR
+    s["Simple: everyone"] -->|"turn on Advanced"| a["Advanced: tuning, identities, records"]
+    a -->|"turn on the developer switch"| d["Developer: packets, raw reports"]
+```
+
 ## Interface Level of Each Control
 
 Each control in sections 1 to 7 has a Level and a Level basis.

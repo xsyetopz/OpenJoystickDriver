@@ -1,6 +1,15 @@
 # Terminology Survey
 
-Counts of the terms the app, the command line, and the wiki use for each concept below. The maintainer chose `wiki/Glossary.md` terms from them.
+One idea often ends up with several names, like "sofa", "couch", and "settee". This page counts how often the app, the command line, and the wiki use each name for the ideas below. The maintainer picked the `wiki/Glossary.md` words from these counts.
+
+```mermaid
+flowchart LR
+    s["App strings"] -->|"one value per line"| sc["Survey script"]
+    h["ojd --help pages"] -->|"one help line per line"| sc
+    w["Wiki pages"] -->|"every line"| sc
+    sc -->|"lines that match each word"| t["Counts table"]
+    t -->|"maintainer picks one word per idea"| g["Glossary"]
+```
 
 ## How the Counts Are Made
 
@@ -11,25 +20,25 @@ swift build --product OpenJoystickDriver
 Scripts/Quality/terminology_survey.sh [WORKDIR]   # default WORKDIR .build/terminology
 ```
 
-The script writes three tab-separated input files to `WORKDIR` and counts each term in each. A second run prints the same table (`cmp`). Each `ojd ... --help` call takes about 9 s, so 112 pages take minutes.
+The script writes three tab-separated input files to `WORKDIR` and counts each term in each. Running it twice prints the same table (`cmp`). Each `ojd ... --help` call takes about 9 s, so 112 pages take several minutes.
 
 | Source | Input file | Built by | Counted lines |
 | --- | --- | --- | --- |
 | Strings | `strings.tsv` | `find Sources -path '*/en-US.lproj/*' \( -name '*.strings' -o -name '*.stringsdict' \)`; for `.strings`, the value of each `"key" = "value";` line, for `.stringsdict`, each `<string>` line (2619 lines) | one value |
-| Help | `help.tsv` | `OJD_RUN_REPOSITORY_CLI=1 .build/debug/ojd [sub...] --help`, recursing through each `SUBCOMMANDS:` entry: 112 pages, 2137 lines | one help line |
+| Help | `help.tsv` | `OJD_RUN_REPOSITORY_CLI=1 .build/debug/ojd [sub...] --help`, following each `SUBCOMMANDS:` entry down: 112 pages, 2137 lines | one help line |
 | Wiki | `wiki.tsv` | every line of `wiki/*.md`, including `AGENTS.md`, `_Sidebar.md`, `_Footer.md`, code blocks and tables (5521 lines) | one line, plus the number of pages in parentheses |
 
 Reading the numbers:
 
 - Only `OpenJoystickDriverKit` has an `en-US.lproj`, holding every GUI and CLI string (`LOCALIZATION.md`).
-- A count is the number of lines matching the regex, ignoring case; a line with two matches counts once. The script searches values, help text, and wiki text, not keys.
-- Terms overlap: "profile" includes "remapping profile", "driver (any)" includes "Xbox USB driver", and "persona" sits under concepts 2 and 3. Counts are not shares.
+- A count is the number of lines that match the pattern, ignoring case. A line with two matches counts once. The script searches values, help text, and wiki text, not keys.
+- Terms overlap: "profile" includes "remapping profile", "driver (any)" includes "Xbox USB driver", and "persona" sits under concepts 2 and 3. So the counts aren't shares of a whole.
 - Help text comes mostly from `cli.*` and `platform.macos.cli.*` values, so help lines often repeat a string.
 - `Strings` includes `.stringsdict` plurals: "Xbox USB driver" has 12 here, 7 in `.strings` alone.
-- Wiki figures include command examples; `SDLCompatible` and `GameControllerCompatible` count identifiers in code.
-- Example columns show the first two matching lines: `Localizable.strings:N` or `Localizable.stringsdict:N` in `Sources/OpenJoystickDriverKit/Resources/en-US.lproj/`, the help page command, `Page.md:N` in `wiki/`; `-` is no match.
+- Wiki numbers include command examples. `SDLCompatible` and `GameControllerCompatible` count names in code.
+- Example columns show the first two matching lines: `Localizable.strings:N` or `Localizable.stringsdict:N` in `Sources/OpenJoystickDriverKit/Resources/en-US.lproj/`, the help page command, `Page.md:N` in `wiki/`. `-` means no match.
 
-To count one term by hand after a run, change the regex:
+To count one term by hand after a run, change the pattern:
 
 ```sh
 perl -ne 'chomp; my ($l,$t)=split /\t/,$_,2; print "$l\n" if $t =~ /\bpersonas?\b/i' .build/terminology/strings.tsv | wc -l
@@ -84,9 +93,9 @@ perl -ne 'chomp; my ($l,$t)=split /\t/,$_,2; print "$l\n" if $t =~ /\bpersonas?\
 | 7 What the controller's own switch selects | protocol | 29 | 17 | 66 (14) | Localizable.strings:166, Localizable.strings:170 | ojd, ojd protocol | Automating-OpenJoystickDriver.md:31, Command-Line.md:95 |
 | 7 What the controller's own switch selects | switch | 7 | 0 | 42 (13) | Localizable.strings:740, Localizable.strings:1012 | - | Automating-OpenJoystickDriver.md:166, Bindings-and-Actions.md:9 |
 
-## Regexes
+## Search Patterns
 
-Perl patterns; `\b` is a word boundary.
+Perl patterns. `\b` marks the edge of a word.
 
 ```text
 profile                          \bprofiles?\b
@@ -136,14 +145,14 @@ switch                           \bswitch(es)?\b
 
 ## Concepts With More Than One Term in Use
 
-A term is in use when a source counts it above zero as a name of the concept. The general words "driver", "native", "kind", "switch", and "owner" do not count.
+A term is in use when a source counts it above zero as a name for the idea. The general words "driver", "native", "kind", "switch", and "owner" don't count.
 
-- 1 Profile: "profile" only. "mapping" and "preset" were searched as rivals; whether "mapping" names the same concept is the maintainer's reading.
+- 1 Profile: "profile" only. "mapping" and "preset" were searched as possible other names. Whether "mapping" means the same thing is the maintainer's call.
 - 2 Virtual gamepad: five terms in strings: "virtual gamepad", "persona", "virtual HID", "virtual device", "virtual controller". The wiki adds 46 "virtual controller" lines. The help uses "virtual gamepad" and one "virtual device".
-- 3 Virtual gamepad kind: "persona", `SDLCompatible`, `GameControllerCompatible`, "SDL-compatible", "Generic". The proposed labels "For Steam and SDL games" and "For Apple Game Controller games" occur nowhere.
-- 4 Who reads the controller: "Served by", "Left to macOS", "macOS (native)", "OpenJoystickDriver (virtual)". "Handled by" occurs nowhere; the help has no "Served by".
+- 3 Virtual gamepad kind: "persona", `SDLCompatible`, `GameControllerCompatible`, "SDL-compatible", "Generic". The proposed labels "For Steam and SDL games" and "For Apple Game Controller games" appear nowhere.
+- 4 Who reads the controller: "Served by", "Left to macOS", "macOS (native)", "OpenJoystickDriver (virtual)". "Handled by" appears nowhere, and the help has no "Served by".
 - 5 DriverKit extension: "Xbox USB driver", "Driver Extension", "system extension", "transport extension" (also a command name), "DriverKit", "dext".
 - 6 How a controller reaches the Mac: "connection", "transport", "Wireless Link".
-- 7 What the controller's own switch selects: "mode" and "protocol". "protocol" needs a read of the lines to tell its meaning.
+- 7 What the controller's own switch selects: "mode" and "protocol". You have to read the "protocol" lines to tell which meaning each one has.
 
 Counted on 2026-11-12 at commit `791b9d34a`.

@@ -1,5 +1,7 @@
 # Remapping
 
+Remapping means changing what a button or stick does. Press A on the controller and a game can see B, a key on the keyboard, or a mouse click instead.
+
 Pages:
 
 - [Input samples](remapping-input-samples.md)
@@ -9,58 +11,72 @@ Pages:
 
 ## Design
 
-Input flows through normalization and remapping to virtual gamepad, keyboard, pointer, or scroll output, or both. OJD owns the session: no JSM process, interpreter, SDL dependency, or third-party state-injection endpoint.
+Input from the controller is first cleaned up into a standard shape, then remapped. The result goes to a virtual gamepad, the keyboard, the pointer, scrolling, or a mix. OJD runs all of it itself, with no JSM process, script interpreter, SDL, or outside program that pushes state in.
 
-| Capability | Existing foundation | Extension |
+| Area | What exists | Where it grows |
 | --- | --- | --- |
-| Output | Exclusive virtual-gamepad or system-event | Mixed output, per-control consumption/passthrough |
-| Bindings | Long hold, multi-tap, turbo, sequences | Toggles, pulses, explicit release, multi-action |
-| Combinations | Simultaneous chords, layers | Timed and modifier chords, buffered consumption, overrides |
-| Physical input | Buttons, D-pad, sticks, triggers | Timestamped motion, touch contacts, extra buttons |
-| Motion | No normalized motion event | Calibration, fusion, coordinate spaces, gyro output |
-| Stick and trigger processing | Deadzone, gain, inversion, curves, threshold | Aim, flick, hybrid, area/ring, scroll, steering, lean, dual-stage triggers |
-| Touch | Touchpad click button | Touch/click, grids, pointer, sticks, swipes |
-| Multiple controllers | Runtime device identity | Paired Joy-Con sessions, gyro selection |
-| Physical output | Protocol-owned rumble, indicators | Mapping actions, channel ownership, adaptive triggers |
-| Authoring | Shared profiles, authenticated RPC, CLI, editor | Native UI and CLI for all |
+| Output | Only the virtual gamepad, or only system events | Both at once; each control is used up or also passed through |
+| Bindings | Long hold, multi-tap, turbo, sequences | Toggles, pulses, explicit release, several actions per button |
+| Combinations | Buttons pressed together (chords), layers | Timed and modifier chords, held-back presses, overrides |
+| Physical input | Buttons, D-pad, sticks, triggers | Motion with timestamps, touch points, extra buttons |
+| Motion | No standard motion event | Calibration, sensor fusion, coordinate spaces, gyro output |
+| Sticks and triggers | Deadzone, gain, flip, curves, threshold | Aim, flick, hybrid, area and ring, scroll, steering, lean, two-stage triggers |
+| Touch | Touchpad click as a button | Touch and click, grids, pointer, sticks, swipes |
+| Several controllers | A per-session device identity | Joy-Con pairs, choosing which gyro to use |
+| Physical output | Rumble and lights run by each protocol | Mapping actions, who owns which motor, adaptive triggers |
+| Editing | Shared profiles, signed-in RPC, CLI, editor | The app and the CLI can edit everything |
 
-Mapped controls replace their virtual contribution unless passthrough is set. Profile and layer transitions, disconnect, permission loss, suspension, and shutdown release owned output and cancel scheduled actions and pending presses. A failed mapping restores no consumed input.
+A mapped control stops sending its normal virtual input, unless you turn on passthrough. OJD lets go of every output it holds, and cancels scheduled actions and waiting presses, when any of these happens:
 
-Filtering virtual reports does not hide the controller from other applications. Isolation-dependent profiles need exclusive ownership; failing to get it is reported apart from permission and publication failures. The IOKit HID backend opens and closes each device with `kIOHIDOptionsTypeSeizeDevice`.
+- the profile or layer changes
+- the controller disconnects
+- a permission is lost
+- the session is paused or shut down
+
+If a mapping fails, the input it used up doesn't come back.
+
+Hiding parts of the virtual reports doesn't hide the controller from other apps. A profile that depends on hiding needs exclusive ownership. When OJD can't get it, it says so in a message of its own, apart from permission and publishing errors. The IOKit HID backend opens and closes each device with `kIOHIDOptionsTypeSeizeDevice`.
 
 ## Status
 
-Implemented, with constructed tests. Not validated:
+Built, with tests on made-up input. Not yet checked:
 
-- signed-runtime controller and virtual-device behavior
-- physical isolation, motion, touch, haptics, lighting, adaptive triggers over USB and Bluetooth
-- native visual, keyboard-only, VoiceOver, localization review
-- consumer recognition, end-to-end latency
+- real controllers and virtual devices with a signed build
+- physical hiding, motion, touch, haptics, lights, and adaptive triggers over USB and Bluetooth
+- a review of the look, keyboard-only use, VoiceOver, and translations
+- whether games recognize it, and the full delay from button to game
 
-## Native Action Collections
+## Several Actions per Button
 
-Profiles must declare `apiVersion: openjoystickdriver/v1alpha3`; the decoder rejects any other value first. An assignment has a primary destination and an ordered `additionalActions` array; each action has a UUID, destination, behavior, and optional turbo, long-hold, multi-tap, or pulse settings. Action IDs are unique across the profile and count toward the 512-item mapping limit. Continuous actions use the assignment's axis tuning. Permissions cover every action, inactive layers included.
+Profiles must declare `apiVersion: openjoystickdriver/v1alpha3`. The reader refuses any other value before it reads anything else. An assignment has one main destination and an ordered `additionalActions` list. Each action has:
 
-`ojd binding set --actions-json <JSON-array>` replaces the collection (omit to keep, `[]` removes all). Edit layer bindings with `ojd profile edit <profile>`.
+- a UUID
+- a destination
+- a behavior
+- optional turbo, long-hold, multi-tap, or pulse settings
+
+Action IDs must be unique across the profile, and they count toward the 512-item mapping limit. Actions that send a range of values, such as a stick, use the assignment's axis tuning. Permissions apply to every action, including actions in layers that aren't active.
+
+`ojd binding set --actions-json <JSON-array>` replaces the list. Leave it out to keep the list, or pass `[]` to remove all actions. Edit layer bindings with `ojd profile edit <profile>`.
 
 Behaviors:
 
-- Hold: follows the physical press.
-- Toggle: switches owned output.
-- TapOnPress, TapOnRelease: press/release pair on that edge. A release tap needs a matching press; losing assignment ownership cancels it.
-- Pulse: presses for `pulseDurationMs` (1...5000 ms, default 100); release does not shorten it.
-- Press: holds until Release or cleanup.
-- Release: releases the controller's matching held destinations and cancels their pulse and turbo timers.
+- Hold: follows your finger. Down while you press, up when you let go.
+- Toggle: the first press turns the output on, the next turns it off.
+- TapOnPress, TapOnRelease: sends a quick press and release when you press, or when you let go. A release tap needs a matching press first, and losing control of the assignment cancels it.
+- Pulse: holds for `pulseDurationMs` (1 to 5000 ms, default 100). Letting go early doesn't cut it short.
+- Press: holds until a Release action or cleanup.
+- Release: lets go of this controller's held destinations that match it, and cancels their pulse and turbo timers.
 
-Collections dispatch in profile order with separate timers. Shared keyboard and modifier outputs are reference counted.
+Actions run in profile order, each with its own timer. When two actions hold the same key or modifier, OJD counts them and lets go only when both are done.
 
 ## Reference Sources
 
 Reference: [JoyShockMapper at bb69784488937e0a5e21988b966eccd9f04d504e][1] and the contributor's `JoyShockMapper-macos.zip`, SHA-256 `5f56191598774fa907f1b22aacc85bf46967a6159ed1b1933de258c2d816fb33`.
 
-The archive adapts only platform and build code; button, stick, motion, and SDL input code is unchanged. Its virtual-gamepad and device-whitelisting factories return null. Its builds are not OJD hardware evidence.
+The archive changes only platform and build code. The button, stick, motion, and SDL input code is the same as upstream. Its virtual-gamepad and device-whitelist factories return null. Its builds don't count as OJD hardware evidence.
 
-The port pins [GamepadMotionHelpers at 39b578aacf34c3a1c584d8f7f194adc776f88055][2]. Adapted code keeps its notices, crediting Julian "Jibb" Smart and Nicolas Lessard. Upstream reports behind regression tests:
+The port pins [GamepadMotionHelpers at 39b578aacf34c3a1c584d8f7f194adc776f88055][2]. Code taken from it keeps its notices, crediting Julian "Jibb" Smart and Nicolas Lessard. Upstream reports that OJD tests guard against:
 
 - [Simultaneous presses #157](https://github.com/Electronicks/JoyShockMapper/issues/157).
 - [Held output after stick-mode change #89](https://github.com/Electronicks/JoyShockMapper/issues/89).
@@ -73,17 +89,22 @@ The port pins [GamepadMotionHelpers at 39b578aacf34c3a1c584d8f7f194adc776f88055]
 
 ## Chord Timing
 
-Chords take `mode: "Simultaneous"` and `windowMs` 1 to 1000 (default 50): all presses must fall within that inclusive window, and a repeated press replaces its timestamp. An omitted mode selects Modifier: held sources, no deadline. Edit chords with `ojd profile edit <profile>` or the combination sheet; invalid timing is rejected.
+A chord is two or more buttons that do something together, like a piano chord. There are two kinds:
 
-While a modifier chord is effective, its sources' assignments, additional actions, and passthrough stay suppressed. A completed chord consumes its presses and any dependent sequence completion. Releasing a constituent retires the chord without replay.
+- `mode: "Simultaneous"`: every button must go down within `windowMs` of the others (1 to 1000, default 50, edges included). Pressing one button again resets its time.
+- Modifier, when `mode` is left out: hold the buttons in any order, with no time limit.
 
-Simultaneous chords buffer presses until resolution:
+Edit chords with `ojd profile edit <profile>` or the combination sheet. OJD refuses timing that's out of range.
 
-- A match consumes the presses. A timeout replays a held action once; early release replays press and release.
-- Passthrough replay uses the virtual-state aggregator.
-- A completed smaller chord waits while a higher-priority overlapping chord can still complete (higher source count wins, then profile order).
-- Releasing a smaller chord commits it before its release; releasing a larger one activates no smaller one. Disjoint chords can stay active together.
+While a modifier chord is held, the buttons in it don't do their own jobs: their assignments, extra actions, and passthrough all stay quiet. A finished chord uses up its presses, and any sequence that depends on them. Letting go of one of its buttons ends the chord without replaying anything.
 
-Each controller session has a nondecreasing clock: backward timestamps clamp to the latest evaluated time, so turbo never reverses and pulses never shorten.
+A Simultaneous chord holds presses back until it knows the answer:
 
-Sequence history records buffered presses in input order and matches the first-to-last interval. A completed sequence depending on unresolved presses is held apart from later input and commits once when they replay; chord consumption or a layer transition cancels it. History is bounded by the longest sequence plus pending chord presses.
+- On a match, the presses are used up. On a timeout, a held action plays once; an early release plays its press and release.
+- Passthrough replays go through the virtual-state aggregator.
+- If a smaller chord is complete but a bigger chord that shares buttons could still finish, the smaller one waits. The chord with more buttons wins, then the one earlier in the profile.
+- Letting go of a smaller chord runs it before its release. Letting go of a bigger chord never starts a smaller one. Chords that share no buttons can be active together.
+
+Each controller session has a clock that never runs backward. A time stamp from the past is moved up to the latest time OJD has seen, so turbo never goes backward and pulses never get shorter.
+
+Sequence history saves held-back presses in the order you pressed them, and matches on the time from the first press to the last. If a finished sequence depends on presses OJD hasn't decided yet, OJD keeps it apart from newer input and runs it once when those presses replay. A chord using up those presses, or a layer change, cancels it. History holds at most the longest sequence plus the waiting chord presses.
