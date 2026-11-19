@@ -5,7 +5,7 @@ Turn OpenJoystickDriver's source code into a working app on your own Mac, to get
 - **Who:** testers who need a fix before the next tester build.
 - **What:** turn the source code into a signed app on your own Mac.
 - **Where:** Terminal, in a copy of the repository, with Xcode tools installed.
-- **Why:** macOS only gives OJD its powers when Apple's permission slip signs it.
+- **Why:** macOS only gives OJD its powers when Apple's permission slip signs it. Builds you share with others must be signed and notarized.
 - **How:** install your provisioning profiles, then run `just install-dev`.
 
 ## Build OpenJoystickDriver
@@ -94,7 +94,27 @@ Only these USB product IDs use the Xbox USB driver: `045E:02D1`, `045E:02DD`, `0
 
 ### Security Settings
 
-Keep SIP and AMFI on for every build. Never turn them off.
+SIP and AMFI are two safety locks in macOS. SIP (System Integrity Protection) guards the system files. AMFI (Apple Mobile File Integrity) checks each app's signature before it runs.
+
+> **Warning:** Turning off SIP or AMFI makes your Mac less safe. OJD never asks you to, and this wiki does not show how. Keep both on and use `just install-dev`, unless you already turned them off on your own Mac by your own choice.
+
+Who runs the build decides how it must be signed:
+
+- **Your own Mac, for testing and development:** if you turned off SIP or AMFI on your own Mac, by your own choice, you may build and run your own unsigned or ad-hoc signed build there. (An ad-hoc signature is a homemade one that no one at Apple vouches for.) Never hand that build to anyone else.
+- **Anyone else's Mac:** every build made for other people must be signed and notarized. This covers production releases and tester builds, whether the maintainer or anyone else makes them. (Notarized means Apple scanned the app and approved it.) The `just package-tester` recipe notarizes the tester DMG.
+
+```mermaid
+flowchart TD
+    A[You want to build OJD] --> B{Who will run the build?}
+    B -->|Only you, on your own Mac<br/>with SIP or AMFI off by your choice| C[Own unsigned or ad-hoc build<br/>is OK for testing]
+    B -->|Anyone else| D[Build must be signed<br/>and notarized]
+```
+
+What the tools can do today:
+
+- `swift build` makes an unsigned binary with no entitlements. Not verified: whether turning off SIP or AMFI lets that binary publish the [virtual gamepad](Glossary.md#terms).
+- No script builds an ad-hoc signed app. `just build-dev`, `just install-dev`, and `just install-fast-dev` need a real signing identity.
+- `just build-dext` refuses ad-hoc signing for the Xbox USB driver. An unsigned or ad-hoc build therefore has no Xbox USB driver.
 
 ## Further Reading
 
