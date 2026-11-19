@@ -33,13 +33,13 @@ flowchart LR
 
    ![The Controllers area. A red arrow points to Working under the controller's name. A second arrow points to Open Input Test, which shows each press live](../docs/screenshots/steps/controller-working.png)
 8. Press buttons and move the sticks. If nothing shows, see [Controller Is Not Detected](Troubleshooting.md#if-a-controller-isnt-detected).
-9. Start the game. The game reads the virtual gamepad that OJD makes, as if it were your controller.
+9. Start the game. It reads the virtual gamepad as if it were your controller.
 
 To check from Terminal, run `ojd status` and `ojd controller list`. See [Command Line](Command-Line.md#run-a-command).
 
 ## If the Game Shows No Input
 
-Steam and SDL games work with the default [virtual gamepad kind](Glossary.md#terms). Apps that read controllers through Apple's own Game Controller support, such as Safari, need another kind. Pick it in the **Controllers** area:
+Steam and SDL games work with the default [virtual gamepad kind](Glossary.md#terms). Apps that use Apple's own Game Controller support, such as Safari, need another kind. Pick it in the **Controllers** area:
 
 ![The Virtual gamepad kind menu open in the Controllers area. Red arrows point to each choice, and the boxes say which games read it](../docs/screenshots/steps/virtual-gamepad-kind.png)
 
@@ -48,7 +48,7 @@ Or use Terminal:
 1. Run `ojd controller list` and copy your controller's ID.
 2. Run `ojd virtual set game-controller-compatible CONTROLLER`.
 
-To undo it, run `ojd virtual reset CONTROLLER`. Some games read neither kind. See [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
+To undo it, run `ojd virtual reset CONTROLLER`. Some games read neither. See [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
 
 ## Further Reading
 
