@@ -80,7 +80,12 @@ Sources: the maintainer (macOS 27) and one tester (macOS 26.7.1, ZD Ultimate Leg
 | SDL | RPCS3 | Not verified |
 | IOHIDManager or SDL2 | Super Meat Boy, Cuphead, LEGO Marvel's Avengers, older Unity or Feral ports | Does not work |
 
-With the Generic kind, OpenEmu works (the default kind maps its buttons wrongly). Steam needs **Begin Setup**: skip the Guide step, because it opens Big Picture mode. One tester saw it erratic.
+Two apps work better with the Generic kind:
+
+| App | Result with the Generic kind |
+| --- | --- |
+| OpenEmu | Works. The default kind maps buttons wrongly. |
+| Steam | Needs **Begin Setup**. Skip the Guide step, because it opens Big Picture mode. One tester saw it erratic. |
 
 ### Start an App with the SDL Mapping
 

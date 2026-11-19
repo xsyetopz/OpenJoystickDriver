@@ -72,11 +72,13 @@ ojd --generate-completion-script zsh > ~/.zfunc/_ojd
 
 ## Exit Codes
 
-- `0`: Success.
-- `1`: The command failed.
-- `64`: Usage error, such as an unknown option or invalid value.
-- `69`: The service is not running. Run `ojd service start`.
-- `77`: A macOS permission is missing.
-- `127`: A repository build of `ojd` could not hand off to the installed app.
-- `130`: Control-C.
-- `143`: SIGTERM.
+| Code | Meaning |
+| --- | --- |
+| 0 | Success. |
+| 1 | The command failed. |
+| 64 | Usage error: an unknown command or option, or an invalid value. |
+| 69 | The service is not running. Start it with `ojd service start`. |
+| 77 | A macOS permission is missing. |
+| 127 | A repository build of `ojd` could not hand the command to the installed app. |
+| 130 | Interrupted with Control-C. |
+| 143 | Terminated with SIGTERM. |

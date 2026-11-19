@@ -23,7 +23,13 @@ flowchart LR
 
 Each [connection](Glossary.md#terms) has its own ID, so OJD sees separate controllers. One may work while another doesn't. See [Supported Controllers](Supported-Controllers.md).
 
-A dongle is its own device with its own ID. Some controllers change ID with mode. For a problem, give the dongle's ID in a [bug report](Reporting-a-Bug.md).
+| Connection | What OJD sees |
+| --- | --- |
+| USB | The controller, with the wired ID. |
+| Bluetooth | The controller, with the Bluetooth ID. |
+| 2.4 GHz dongle | The dongle, with its own ID. |
+
+Some controllers change ID with mode. For a problem, give the dongle's ID in a [bug report](Reporting-a-Bug.md).
 
 ### Connect Over Bluetooth
 

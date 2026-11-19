@@ -245,13 +245,20 @@ Games and latency with `ojd virtual feed` are not verified.
 
 The virtual gamepad has a fixed set of buttons. A control it does not carry does nothing, whether passed through or assigned to a gamepad output. This covers `generic` and `sdl-compatible`. `game-controller-compatible` is not verified here.
 
-- Carried by both: South, East, West, North, shoulders, Back, Start, stick clicks, Guide (in its own report for `sdl-compatible`), sticks, and triggers.
-- D-pad: a hat and 4 buttons in `generic`, a hat in `sdl-compatible`.
-- Capture: `generic` only.
-- Carried by neither: touchpad click, microphone, paddles, grips, auxiliary buttons, stick touch, trackpad touch, left trackpad click.
-- Right trackpad click: the right stick click on the classic Steam Controller, otherwise not carried. The Steam Deck and Steam Triton have their own right stick click.
-- `generic` has 16 buttons, all in use. Its layout is the contract for product ID `1209:4A4F`, so a seventeenth button needs another ID.
-- `sdl-compatible` sends the Xbox One USB packets that the SDL HIDAPI driver reads: an 18-byte input report with no Capture field, and Guide in a second report. Its D-pad buttons stay clear, because the D-pad is the hat.
+| Control | `generic` | `sdl-compatible` |
+| --- | --- | --- |
+| South, East, West, North | Carried | Carried |
+| Left and right shoulder | Carried | Carried |
+| Back, Start | Carried | Carried |
+| Left and right stick click | Carried | Carried |
+| Guide | Carried | Carried, in its own report |
+| D-pad | Carried as a hat and as 4 buttons | Carried as a hat |
+| Sticks and triggers | Carried | Carried |
+| Capture | Carried | Not carried |
+| Touchpad click, microphone | Not carried | Not carried |
+| Paddles, grips, and auxiliary buttons | Not carried | Not carried |
+| Stick touch, trackpad touch, left trackpad click | Not carried | Not carried |
+| Right trackpad click | Right stick click on the classic Steam Controller, otherwise not carried | Right stick click on the classic Steam Controller, otherwise not carried |
 
 ## Use AppleScript or JavaScript for Automation
 
@@ -280,10 +287,20 @@ Run them with `osascript FILE` or `osascript -l JavaScript FILE`. Sample output 
 
 On macOS 13 or later, the Shortcuts app lists these actions, so you can control OJD with no code. They run in the app and do not use `ojd`.
 
-- Get Controllers, Get Battery Level (a controller, returns percent), Get OpenJoystickDriver Version.
-- Activate Profile, Deactivate Profile, Set Profile Value (profile, key, value).
-- List Mod Packages, Install Mod Package (a folder, and whether to replace a package of the same name), Remove Mod Package (a name).
-- Rumble Controller (controller, intensity 0 to 255, duration in seconds), Set Player Indicator (controller, 0 to 4), Set Controller Light (controller, color, brightness).
+| Action | Takes | Returns |
+| --- | --- | --- |
+| Get Controllers | Nothing | Connected controllers, each with name and model |
+| Get Battery Level | A controller | Battery charge in percent |
+| Activate Profile | A profile | The profile |
+| Deactivate Profile | A profile | The profile |
+| Set Profile Value | A profile, key, and value | The changed profile |
+| Get OpenJoystickDriver Version | Nothing | Installed app version |
+| List Mod Packages | Nothing | Installed mod package names |
+| Install Mod Package | A folder, and whether to replace a package of the same name | Installed package name |
+| Remove Mod Package | A package name | Removed package name |
+| Rumble Controller | A controller, intensity (0 to 255), duration in seconds | Nothing |
+| Set Player Indicator | A controller and player number (0 to 4) | Nothing |
+| Set Controller Light | A controller, color, and brightness | Nothing |
 
 A shortcut stores the controller in the forms of [Name a Controller](#name-a-controller). A single controller stores its unit ID, or its list ID when it has none. A model entry, such as `Any connected 2DC8:310A`, stores `VVVV:PPPP` and finds that model on any port. If two connected controllers share a model, the action fails and lists them.
 

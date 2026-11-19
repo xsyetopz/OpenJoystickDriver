@@ -95,9 +95,15 @@ The Trash alone leaves the login item, privacy entries, [Xbox USB driver](Glossa
 
 ### Files That Stay on Your Mac
 
-- Profiles, backups (`.backup-` files are recovery copies), and your controller records (`Controllers/`): `~/Library/Application Support/OpenJoystickDriver/`
-- Logs: `~/Library/Logs/OpenJoystickDriver/`
-- Settings (`com.openjoystickdriver`) and **Privacy & Security** entries
+| Item | Location |
+| --- | --- |
+| Profiles and profile backups | `~/Library/Application Support/OpenJoystickDriver/` |
+| Your controller records | `~/Library/Application Support/OpenJoystickDriver/Controllers/` |
+| Logs | `~/Library/Logs/OpenJoystickDriver/` |
+| Settings | Preferences domain `com.openjoystickdriver` |
+| Privacy entries | **System Settings** > **Privacy & Security** |
+
+Files whose names contain `.backup-` are recovery copies.
 
 ### Remove the Data
 
