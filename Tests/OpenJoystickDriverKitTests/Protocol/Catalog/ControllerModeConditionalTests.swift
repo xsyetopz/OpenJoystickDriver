@@ -65,17 +65,17 @@ struct ControllerModeConditionalTests {
     )
   }
 
+  /// `server` fits a record with a raw-USB mode, where it governs only the `HIDDescriptor`
+  /// fallback of a HID device the record fits no interface of.
   @Test
-  func serverNeedsEveryModeHID() {
-    Self.expectRejected(
-      Self.record(
-        default: Self.hid,
-        second: Self.gip,
-        match: Self.usbMatch,
-        fields: ["server": "OJD"]
-      ),
-      "server applies only to HID controllers"
+  func serverFitsMixedHIDAndRawUSBModes() {
+    let record = Self.record(
+      default: Self.hid,
+      second: Self.gip,
+      match: Self.usbMatch,
+      fields: ["server": "OJD"]
     )
+    #expect(Self.problem(record) == nil)
   }
 
   @Test

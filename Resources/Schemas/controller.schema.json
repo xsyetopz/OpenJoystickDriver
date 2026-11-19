@@ -1615,6 +1615,7 @@
       }
     },
     "server": {
+      "description": "Who serves the controller; on a raw-USB record, only a HID device the record fits no interface of.",
       "enum": ["System", "OJD"]
     },
     "modeEndpoint": {

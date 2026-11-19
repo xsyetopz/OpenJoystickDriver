@@ -1631,34 +1631,6 @@
       }
     },
     {
-      "name": "server needs every mode hid",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "SonySixaxis"
-            }
-          },
-          {
-            "id": "second",
-            "protocol": {
-              "family": "XboxGIP"
-            },
-            "match": {
-              "link": "USB"
-            }
-          }
-        ],
-        "server": "OJD"
-      }
-    },
-    {
       "name": "session follows the protocol of its own mode",
       "code": "E5007",
       "document": {
@@ -5530,65 +5502,6 @@
           }
         ],
         "server": "native"
-      }
-    },
-    {
-      "name": "rejects invalid ownership and session: GIP ownership",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "XboxGIP"
-            }
-          }
-        ],
-        "server": "OJD"
-      }
-    },
-    {
-      "name": "rejects invalid ownership and session: XUSB ownership",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "XboxXUSB",
-              "variant": "Wired"
-            }
-          }
-        ],
-        "server": "System"
-      }
-    },
-    {
-      "name": "rejects invalid ownership and session: GameSir USB ownership",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "VendorGameSir",
-              "variant": "USB"
-            }
-          }
-        ],
-        "server": "OJD"
       }
     },
     {

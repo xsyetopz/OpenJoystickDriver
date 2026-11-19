@@ -188,4 +188,19 @@ extension ProtocolClassifierTests {
         == .unsupported(.noModeMatched)
     )
   }
+
+  /// A raw-USB record leaves a HID device it fits no interface of to macOS until a claim states
+  /// `server: OJD`; then the stream seizes it for the `HIDDescriptor` fallback.
+  @Test
+  func claimedRawUSBRecordHandsUnfitHIDDeviceToOJD() throws {
+    let device = PhysicalDevice(vendorID: 0x1234, productID: 0xAC02, interfaces: [padInterface(0)])
+    for (server, served) in [(nil, false), ("System", false), ("OJD", true)] {
+      let catalog = try fitCatalog(server: server, family: "XboxGIP", interface: nil)
+      #expect(catalog.servesOverHID(device) == served, "\(server ?? "none")")
+    }
+    let claimed = try fitCatalog(server: "OJD", family: "XboxGIP", interface: nil)
+    let binding = try bound(ProtocolClassifier.classify(device, backend: .hid, catalog: claimed))
+    #expect(binding.protocolID == .hidDescriptor)
+    #expect(binding.inputMapping?.unfitRecordID == "1234-ac02")
+  }
 }

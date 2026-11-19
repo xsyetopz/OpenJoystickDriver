@@ -103,6 +103,9 @@ extension DeviceManager {
     guard let pipeline = pipelines[id], let info = deviceInfos[id] else { return nil }
     guard await pipeline.hasConnectedController(), pipelines[id] === pipeline else { return nil }
     let record = protocolDriverRegistry.runtimeProfile(for: info.binding)
+    // A descriptor fallback binds no record, yet the unfit record's `server` still says who serves.
+    let serverRecord =
+      info.binding.unfitRecordID == nil ? record : protocolDriverRegistry.record(for: id.model)
     // A raw-USB pipeline runs on the profile resolved from the device's descriptor.
     let transportProfile =
       info.usbTransportDevice != nil ? pipeline.transportProfile : record?.transportProfile
@@ -146,7 +149,7 @@ extension DeviceManager {
       preferredBackends: record?.preferredBackends.map(\.rawValue) ?? [],
       physicalOutputCapabilities: await pipeline.physicalOutputCapabilities(),
       physicalOutputOwner: pipeline.macOSOwnedOutput == nil ? .ojd : .system,
-      recordServer: record.flatMap { $0.statesServer ? $0.server : nil }
+      recordServer: serverRecord.flatMap { $0.statesServer ? $0.server : nil }
         ?? info.physicalDevice?.detectedServer ?? .system,
       recordAccessRoute: record?.accessRoute ?? .system,
       tuning: record?.tuning ?? .none,

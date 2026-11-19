@@ -94,15 +94,15 @@ A controller is [Handled by macOS](Glossary.md#terms) when the Game Controller f
 - `System`: macOS drives the controller when it can.
 - `OJD`: OJD opens the controller exclusively and drives it, even when macOS supports it.
 
-A raw-USB family, such as `XboxGIP`, has no `server` field, because macOS can't handle those controllers. A changed value applies to a connected controller when the service reloads records. No unplug is needed.
+A raw-USB family, such as `XboxGIP`, reaches the controller through raw USB, which macOS can't handle, so `server` there applies only to a HID device the record fits none of the interfaces of. OJD serves such a device through the `HIDDescriptor` fallback when `server` is `OJD`, and leaves it to macOS otherwise. A changed value applies to a connected controller when the service reloads records. No unplug is needed.
 
 `ojd controller claim CONTROLLER` sets `OJD`. `ojd controller release CONTROLLER` sets `System`.
 
 - Each command writes your record for the model, as a `ControllerPatch` when you have none and a bundled or package record exists.
 - A value equal to the bundled or package `server` removes `server` from your patch instead. An empty file is deleted.
-- E2023: a raw-USB family, a controller macOS can't handle, or a model with no record. For the last, start with `ojd record draft`.
+- E2023: a controller reached through raw USB, a controller macOS can't handle, or a model with no record. For the last, start with `ojd record draft`.
 
-`ojd controller show` names the choice, its layer, the route, and the [virtual gamepad kind](Glossary.md#terms). It shows `default` when no layer sets `server`. The **Handled by** picker in the app's controller detail makes the same choice. It appears for a controller macOS can handle or a record gives to OJD, never for a raw-USB family.
+`ojd controller show` names the choice, its layer, the route, and the [virtual gamepad kind](Glossary.md#terms). It shows `default` when no layer sets `server`. The **Handled by** picker in the app's controller detail makes the same choice. It appears for a controller macOS can handle or a record gives to OJD, never for a controller reached through raw USB.
 
 ## Describe a Controller's Input Reports
 

@@ -19,22 +19,27 @@ struct ControllerClaimCommandTests {
     deinit { try? FileManager.default.removeItem(at: root) }
   }
 
-  /// A connected `SonyDualShock4` model, a HID family; `native` makes macOS serve it.
+  /// A connected `SonyDualShock4` model, a HID family; `native` makes macOS serve it, and
+  /// `accessRoute` is the route its binding reaches it through.
   private static func device(
     vendorID: UInt16 = 0x2C22,
     productID: UInt16 = 0x2000,
-    native: Bool
+    native: Bool,
+    accessRoute: ControllerAccessRoute = .system
   ) throws -> ApplicationServiceDeviceDescription {
     let fixture = ApplicationServiceDeviceDescription.fixture(
       id: "pad-1",
       vendorID: vendorID,
       productID: productID
     )
-    guard native else { return fixture }
+    guard native || accessRoute != .system else { return fixture }
     var object = try #require(
       try JSONSerialization.jsonObject(with: JSONEncoder().encode(fixture)) as? [String: Any]
     )
-    object["physicalOwnership"] = ControllerOwnershipObservation.systemGamepad.rawValue
+    if native {
+      object["physicalOwnership"] = ControllerOwnershipObservation.systemGamepad.rawValue
+    }
+    object["recordAccessRoute"] = accessRoute.rawValue
     return try JSONDecoder().decode(
       ApplicationServiceDeviceDescription.self,
       from: JSONSerialization.data(withJSONObject: object)
@@ -172,7 +177,12 @@ struct ControllerClaimCommandTests {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "release", token("pad-1")],
-      device: Self.device(vendorID: 0x366C, productID: 0x0005, native: true),
+      device: Self.device(
+        vendorID: 0x366C,
+        productID: 0x0005,
+        native: true,
+        accessRoute: .rawAccess
+      ),
       in: directory
     )
     #expect(result.code == 1)
@@ -211,12 +221,34 @@ struct ControllerClaimCommandTests {
     let directory = Directory()
     let result = try await Self.run(
       ["controller", "claim", token("pad-1"), "--json"],
-      device: Self.device(vendorID: 0x366C, productID: 0x0005, native: true),
+      device: Self.device(
+        vendorID: 0x366C,
+        productID: 0x0005,
+        native: true,
+        accessRoute: .rawAccess
+      ),
       in: directory
     )
     #expect(result.code == 1)
     #expect(result.standardError.contains("E2023"))
     #expect(!FileManager.default.fileExists(atPath: directory.controllers.path))
+  }
+
+  /// A HID pad its raw-USB record fits no interface of, such as the Cosmic Byte Ares (045E:028E),
+  /// reaches OJD through the system HID stack, so its claim is written.
+  @Test
+  func claimWritesRawUSBModelServedOverHID() async throws {
+    let directory = Directory()
+    let result = try await Self.run(
+      ["controller", "claim", token("pad-1")],
+      device: Self.device(vendorID: 0x366C, productID: 0x0005, native: true),
+      in: directory
+    )
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(
+      ControllerRecordSet.load(userDirectory: directory.controllers)
+        .records[ControllerModelID(vendorID: 0x366C, productID: 0x0005)]?.statedServer == .ojd
+    )
   }
 
   @Test

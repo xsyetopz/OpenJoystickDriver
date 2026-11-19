@@ -55,16 +55,25 @@ package struct DeviceCatalog: Sendable {
   }
 
   /// Whether OJD decides to serve a HID device: its record reaches the controller through the
-  /// system HID stack, or no record exists and the classifier binds it.
+  /// system HID stack, or the classifier binds it.
   ///
   /// A model whose record reaches the controller through raw USB or the extension is served by
-  /// that route, so its HID object belongs to the system. A device with no record that the
-  /// classifier refuses is not served.
+  /// that route, so its HID object belongs to the system. The exception is a raw-USB record that
+  /// fits none of the device's interfaces and states `server: OJD`, which a claim writes: the
+  /// classifier serves that device through the `HIDDescriptor` fallback. A device the classifier
+  /// refuses is not served.
   package func servesOverHID(_ device: PhysicalDevice) -> Bool {
     if let vendorID = device.vendorID, let productID = device.productID,
       let record = record(for: ControllerModelID(vendorID: vendorID, productID: productID))
     {
-      return record.accessRoute == .system
+      if record.accessRoute == .system { return true }
+      guard record.statesServer, record.server == .ojd,
+        ProtocolClassifier.recordFitsNoInterface(
+          record,
+          interfaces: device.interfaces ?? [],
+          backend: .hid
+        )
+      else { return false }
     }
     guard case .bound = ProtocolClassifier.classify(device, backend: .hid, catalog: self) else {
       return false

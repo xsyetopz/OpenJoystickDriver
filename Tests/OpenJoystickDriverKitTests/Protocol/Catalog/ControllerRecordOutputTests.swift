@@ -57,19 +57,18 @@ struct ControllerRecordOutputTests {
     }
   }
 
-  /// macOS cannot serve a raw-USB family, so the record has no ownership to choose.
+  /// A raw-USB record states `server` for a HID device it fits no interface of.
   @Test(
     arguments: [
       #"{"family": "XboxGIP"}"#, #"{"family": "XboxXUSB", "variant": "Wired"}"#,
       #"{"family": "VendorGameSir", "variant": "USB"}"#,
     ]
   )
-  func rejectsOwnershipOnRawUSBFamilies(protocolInfo: String) {
-    #expect(throws: DecodingError.self) {
-      try decode(
-        "\"modes\": [{\"id\": \"default\", \"protocol\": \(protocolInfo)}], \"server\": \"OJD\""
-      )
-    }
+  func acceptsOwnershipOnRawUSBFamilies(protocolInfo: String) throws {
+    let record = try decode(
+      "\"modes\": [{\"id\": \"default\", \"protocol\": \(protocolInfo)}], \"server\": \"OJD\""
+    )
+    #expect(record.server == .ojd)
   }
 
   @Test(arguments: PhysicalProtocolID.allCases.filter { !$0.encodesRumbleTemplate })

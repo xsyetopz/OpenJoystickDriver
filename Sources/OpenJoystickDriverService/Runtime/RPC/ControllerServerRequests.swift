@@ -11,15 +11,17 @@ extension ApplicationServiceServer {
     productID: Int,
     server: ControllerServer
   ) async -> ControllerServerResult {
-    let servableBySystem = await connectedDevices().contains {
+    let connected = await connectedDevices().filter {
       $0.vendorID == vendorID && $0.productID == productID
-        && ($0.physicalOwnership == .systemGamepad || $0.gameControllerSupported)
     }
     let result = Self.setControllerServer(
       vendorID: vendorID,
       productID: productID,
       server: server,
-      servableBySystem: servableBySystem
+      servableBySystem: connected.contains {
+        $0.physicalOwnership == .systemGamepad || $0.gameControllerSupported
+      },
+      accessRoute: connected.first?.recordAccessRoute
     )
     if result.failure == nil { NotificationCenter.postServiceStatusChanged(from: self) }
     return result
@@ -27,15 +29,18 @@ extension ApplicationServiceServer {
 
   /// Writes `server` to the model's user record in `directory`.
   ///
-  /// A model whose record reaches it through raw USB or the extension, or that macOS can not serve
-  /// natively, is refused; the extension claims a model Apple's driver holds only through an
-  /// activation request, never through this record. A model whose record already gives it to OJD
-  /// counts as native, because OJD seized a controller macOS would serve.
+  /// A model reached through raw USB or the extension, or that macOS can not serve natively, is
+  /// refused; the extension claims a model Apple's driver holds only through an activation
+  /// request, never through this record. `accessRoute` is the route of a connected controller of
+  /// the model, which is the system HID stack when its raw-USB record fits none of its interfaces;
+  /// nil reads the route from the record. A model whose record already gives it to OJD counts as
+  /// native, because OJD seized a controller macOS would serve.
   static func setControllerServer(
     vendorID: Int,
     productID: Int,
     server: ControllerServer,
     servableBySystem: Bool,
+    accessRoute: ControllerAccessRoute? = nil,
     directory: URL = ControllerRecordSet.userDirectory
   ) -> ControllerServerResult {
     let records = ControllerRecordSet.load(userDirectory: directory)
@@ -59,7 +64,9 @@ extension ApplicationServiceServer {
     let model = ControllerModelID(vendorID: vendor, productID: product)
     let record = records.records[model]
     let previous = record?.server ?? .system
-    if let record, record.accessRoute != .system { return refused(.rawUSB, previous) }
+    if (accessRoute ?? record?.accessRoute ?? .system) != .system {
+      return refused(.rawUSB, previous)
+    }
     guard servableBySystem || previous == .ojd else { return refused(.notNative, previous) }
     let change: ControllerRecordWriter.Change
     do {

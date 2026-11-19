@@ -23,6 +23,7 @@ struct ControllerServerRequestsTests {
     _ model: (vendorID: Int, productID: Int),
     to server: ControllerServer,
     native: Bool,
+    accessRoute: ControllerAccessRoute? = nil,
     in directory: URL
   ) -> ControllerServerResult {
     ApplicationServiceServer.setControllerServer(
@@ -30,6 +31,7 @@ struct ControllerServerRequestsTests {
       productID: model.productID,
       server: server,
       servableBySystem: native,
+      accessRoute: accessRoute,
       directory: directory
     )
   }
@@ -99,6 +101,26 @@ struct ControllerServerRequestsTests {
       #expect(result.failure == .rawUSB)
       #expect(result.file == nil)
       #expect(!FileManager.default.fileExists(atPath: directory.path))
+    }
+  }
+
+  /// A connected controller the raw-USB record fits no interface of runs over the system HID
+  /// stack, so its claim is written.
+  @Test
+  func rawUSBModelOnSystemRouteIsClaimed() throws {
+    try Self.withDirectory { directory in
+      let result = Self.set(
+        Self.bundledGIP,
+        to: .ojd,
+        native: true,
+        accessRoute: .system,
+        in: directory
+      )
+      #expect(result.failure == nil, "\(result.detail ?? "")")
+      #expect(
+        ControllerRecordSet.load(userDirectory: directory)
+          .records[ControllerModelID(vendorID: 0x366C, productID: 0x0005)]?.statedServer == .ojd
+      )
     }
   }
 

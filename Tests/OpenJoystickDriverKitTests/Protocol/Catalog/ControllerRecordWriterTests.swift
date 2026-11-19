@@ -154,20 +154,16 @@ struct ControllerRecordWriterTests {
     }
   }
 
+  /// A raw-USB record takes `server` for a HID device it fits no interface of, as a claim of the
+  /// Cosmic Byte Ares (045E:028E) writes.
   @Test
-  func rawUSBModelIsRefused() throws {
+  func rawUSBModelTakesServer() throws {
     try Self.withDirectory { directory, _ in
-      do {
-        _ = try Self.change(Self.bundledGIP, to: .ojd, in: directory)
-        Issue.record("a raw-USB model was accepted")
-      } catch {
-        guard case .invalidResult(let problem) = error as? ControllerRecordWriter.Failure
-        else {
-          Issue.record("unexpected failure \(error)")
-          return
-        }
-        #expect(problem.contains("server"))
-      }
+      let change = try Self.change(Self.bundledGIP, to: .ojd, in: directory)
+      try ControllerRecordWriter.write(change)
+      let loaded = ControllerRecordSet.load(userDirectory: directory)
+      #expect(loaded.problems.isEmpty)
+      #expect(loaded.records[Self.bundledGIP]?.statedServer == .ojd)
     }
   }
 

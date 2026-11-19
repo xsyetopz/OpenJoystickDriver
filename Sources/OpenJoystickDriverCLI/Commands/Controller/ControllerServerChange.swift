@@ -50,7 +50,7 @@ enum ControllerServerChange {
       try checkSupported(
         device,
         server: records.records[model]?.server ?? .system,
-        accessRoute: records.records[model]?.accessRoute ?? .system
+        accessRoute: device.recordAccessRoute
       )
       let change = try change(model, to: server, records: records, device: device)
       if !dryRun { try write(change) }
