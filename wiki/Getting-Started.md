@@ -26,11 +26,11 @@ flowchart LR
 
 ## About OpenJoystickDriver
 
-OpenJoystickDriver (OJD) is a menu-bar app that makes game controllers work with Mac games. Think of it as a translator. Your controller speaks one language, and many games only understand another. OJD reads the controller over USB, Bluetooth, or a 2.4 GHz wireless dongle. It then shows it to games as a [virtual gamepad](Glossary.md#terms) that they understand.
+OpenJoystickDriver (OJD) is a menu-bar app that makes game controllers work with Mac games. Think of it as a translator. Your controller speaks one language, and many games only understand another. OJD reads the controller over USB, Bluetooth, or a 2.4 GHz wireless dongle and shows it to games as a [virtual gamepad](Glossary.md#terms) they understand.
 
 A [profile](Glossary.md#terms) can also make controller buttons press keys, click the mouse, move the pointer, or scroll. See [Remapping Profiles](Remapping-Profiles.md).
 
-OJD is one app. You don't turn off any Mac security to use it: it needs no kernel extension and no change to System Integrity Protection or Apple Mobile File Integrity. Xbox One and Xbox Series controllers on a USB cable can use the [Xbox USB driver](Glossary.md#terms). See [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
+You don't turn off any Mac security to use OJD. It needs no kernel extension and no change to System Integrity Protection or Apple Mobile File Integrity. Xbox One and Xbox Series controllers on a USB cable can use the [Xbox USB driver](Glossary.md#terms). See [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
 
 > [!NOTE]
 > OJD is alpha software. Some controllers are untested on real hardware, and some games don't read the virtual gamepad. See [Supported Controllers](Supported-Controllers.md) and [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
@@ -49,7 +49,7 @@ You need a Mac with macOS 12 (Monterey) or later and a controller from [Supporte
 
 ### Find the Menu-Bar Icon
 
-OJD has no Dock icon and opens no window by default. Click the controller icon in the menu bar, then choose **Open OpenJoystickDriver**. The icon turns into a warning triangle when something needs attention.
+OJD has no Dock icon and opens no window at first. Click the controller icon in the menu bar, then choose **Open OpenJoystickDriver**. The icon turns into a warning triangle when something needs attention.
 
 ![The controller icon in the menu bar. A red arrow points to it, and the box says to click it to see your controllers](../docs/screenshots/steps/menu-bar-icon.png)
 
@@ -65,11 +65,9 @@ To stop this, turn off **Start at login** in **Settings**, or run `ojd setting s
 
 ## Quickstart
 
-This takes about five minutes.
-
 ### Allow the Permissions OJD Needs
 
-OJD needs two macOS permissions. **Input Monitoring** lets it read your controller. **Accessibility** lets it pass the controller on to games. On macOS 27, Accessibility is called **Device Control and Data Access**.
+OJD needs two macOS permissions. **Input Monitoring** lets it read your controller, and **Accessibility** lets it pass the controller on to games. On macOS 27, Accessibility is called **Device Control and Data Access**.
 
 1. Click the menu-bar icon and choose **Open OpenJoystickDriver**.
 2. On **Finish Setting Up**, click **Request...** next to each permission.
@@ -98,7 +96,7 @@ Connect your controller by USB cable, Bluetooth, or dongle. Its name appears in 
 
 ### Play a Game
 
-Start the game. The game reads the virtual gamepad as if it were your controller. If the Input Test shows nothing, see [Controller Is Not Detected](Troubleshooting.md#if-a-controller-isnt-detected). If the game shows no input, see [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
+Start the game. It reads the virtual gamepad as if it were your controller. If the Input Test shows nothing, see [Controller Is Not Detected](Troubleshooting.md#if-a-controller-isnt-detected). If the game shows no input, see [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
 
 ## Further Reading
 
