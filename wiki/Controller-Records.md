@@ -1,12 +1,12 @@
 # Adding or Changing a Controller Record
 
-Use a controller record to teach OpenJoystickDriver (OJD) about a controller, or to change how it drives one. A record is a small file in your own folder. Write one when a controller doesn't work or one detail is wrong, such as a button, a drifting stick, or rumble. The [Support ladder](Support-Ladder.md) starts with the least work. The sections from [Describe a Controller's Input Reports](#describe-a-controllers-input-reports) on are for advanced users who read report bytes.
+Use a controller record to teach OpenJoystickDriver (OJD) about a controller, or to change how it drives one. A record is a small file in your own folder. Write one when a controller doesn't work or one detail is wrong, such as a button, a drifting stick, or rumble. The [Support Ladder](Support-Ladder.md) starts with the least work. The sections from [Describe a Controller's Input Reports](#describe-a-controllers-input-reports) on are for advanced users who read report bytes.
 
 - **Who:** anyone whose controller doesn't work, or works with one detail wrong.
 - **What:** a small file that teaches OJD about one controller.
-- **When:** after the [Support ladder](Support-Ladder.md) says a record is the next step.
+- **When:** after the [Support Ladder](Support-Ladder.md) says a record is the next step.
 - **Where:** `~/Library/Application Support/OpenJoystickDriver/Controllers`.
-- **Why:** the record fixes a button, a drifting stick, or rumble without a new app version.
+- **Why:** the record fixes a button, a drifting stick, or rumble without an app update.
 - **How:** draft one from a connected controller, edit it, then check and install it.
 
 ```mermaid
@@ -42,7 +42,7 @@ flowchart LR
 
 ## How Records Work
 
-A controller record is a recipe card for one model. It tells OJD which bytes mean which button, and how to say hello to the controller. It names the protocol family, the language the controller and the Mac speak. The model's ID is its vendor and product numbers (VID:PID), such as `045E:028E`.
+A controller record is a recipe card for one model. It tells OJD which bytes mean which button and how to say hello to the controller. It names the protocol family, the language the controller and the Mac speak. The model's ID is its vendor and product numbers (VID:PID), such as `045E:028E`.
 
 ```mermaid
 flowchart LR
@@ -64,7 +64,7 @@ The **Library** area in the app lists the records you installed and the built-in
 
 ![The Library area. A red arrow points to the toolbar buttons, and the box names them from left to right: add, check a file, test on a packet capture, and remove. A second arrow points to the Installed and Built-in lists](../docs/screenshots/steps/library-overview.png)
 
-Every reader gives one verdict: the app, `ojd record validate` and `install`, `ojd config`, `ojd diagnose record`, and mod packages.
+Every reader gives the same verdict: the app, `ojd record validate` and `install`, `ojd config`, `ojd diagnose record`, and mod packages.
 
 - E5007: the file is not plain UTF-8 (a byte order mark or UTF-16 included), is not one property list dictionary, names a key twice in one dictionary, or nests deeper than 64 levels.
 - E5010: the file is not an XML property list (a binary property list or JSON included), or holds a `date` or `data` value.
