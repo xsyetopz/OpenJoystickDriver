@@ -1,6 +1,22 @@
 # Profile File Reference
 
-This page lists the location, fields, values, and limits of a profile file. OpenJoystickDriver (OJD) stores each [profile](Glossary.md#terms) in its own XML property list.
+This page is for people who edit profile files by hand or write scripts. It lists where a profile file lives, what each field means, which values it takes, and its limits. Most people make profiles in the app and never need this page.
+
+OpenJoystickDriver (OJD) stores each [profile](Glossary.md#terms) in its own XML property list (`.plist`), a text file format macOS uses for settings.
+
+- **Who:** people who edit profile files by hand or from scripts.
+- **What:** every field in a profile file, its values, and its limits.
+- **Where:** `~/Library/Application Support/OpenJoystickDriver/Profiles`.
+- **How:** edit the file, then run `ojd profile validate` before you use it.
+
+```mermaid
+flowchart LR
+    App[App or ojd] -->|saves| F[profile .plist]
+    You[You, by hand] -->|edit| F
+    F -->|ojd profile validate| V{Valid?}
+    V -->|yes| U[OJD uses it]
+    V -->|no| E[Error names the field]
+```
 
 ## Contents
 
@@ -31,7 +47,7 @@ Profiles and the active profile selections are in this folder:
   ActiveProfiles.plist
 ```
 
-Each file is named after the profile `id` in uppercase. OJD writes files with mode `0600` in folders with mode `0700`, replacing each in one atomic write. OJD applies a file change while it runs. See [Importing and exporting profiles](Remapping-Profiles.md#importing-and-exporting-profiles).
+Each file is named after the profile `id` in uppercase. OJD makes each file readable only by you (mode `0600`, in folders with mode `0700`). It replaces a file in one step (an atomic write), so a crash never leaves half a file behind. OJD applies a file change while it runs. See [Importing and exporting profiles](Remapping-Profiles.md#importing-and-exporting-profiles).
 
 ## Damaged Files
 

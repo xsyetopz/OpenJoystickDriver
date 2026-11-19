@@ -4,6 +4,20 @@ Use a script to make many similar documents, such as one record for each product
 
 `ojd generate` is the only part of OpenJoystickDriver (OJD) that runs a script. OJD never runs a script in a [mod package](Writing-Controller-Mods.md).
 
+- **Who:** people who write many similar records or profiles.
+- **What:** a JavaScript file that `ojd generate` turns into checked `.plist` files.
+- **When:** several models differ by only a few details.
+- **Why:** one script replaces many hand-copied files.
+- **How:** write the script, run `ojd generate`, then install the files it writes.
+
+```mermaid
+flowchart LR
+    J[family.js<br/>your script] --> G[ojd generate]
+    G -->|checks every document| C{All valid?}
+    C -->|yes| F[.plist files]
+    C -->|no| E[Error with key path, nothing written]
+```
+
 ## The Generate Function
 
 Define a function `generate` with no argument. It returns one document or a list. A document is an object with the keys of its property list. Its `kind` is one of `Controller`, `ControllerPatch`, `Profile`, or `VirtualDevice`.
@@ -17,7 +31,7 @@ Define a function `generate` with no argument. It returns one document or a list
 
 If one document fails, the command writes none.
 
-The script runs in a bare JavaScript context with no file, network, process, or timer API. A call to `fetch` fails with a reference error. A type annotation is a syntax error. The command reports a syntax error or exception with its message and line number.
+The script runs in a sealed box: it can't read files, use the network, start programs, or set timers. It can only build documents and hand them back. A call to `fetch` fails with a reference error. A type annotation is a syntax error. The command reports a syntax error or exception with its message and line number.
 
 A whole number becomes an `<integer>`. A fractional number becomes a `<real>`. A hexadecimal literal such as `0x1209` is a whole number.
 

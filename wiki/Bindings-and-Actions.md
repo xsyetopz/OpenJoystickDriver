@@ -1,6 +1,20 @@
 # Bindings and Actions
 
-Use assignments to make a control of your controller do something else. Use combinations and layers to let one [profile](Glossary.md#terms) do more with the same controls.
+An assignment makes a button or stick do something else, such as press a key on the keyboard. Combinations and layers let one [profile](Glossary.md#terms) do more with the same few buttons, like the Shift key gives each letter key a second job.
+
+- **Who:** anyone who wants a button to do something new.
+- **What:** assignments, combinations, sequences, and layers inside a profile.
+- **Where:** the **Profiles** area of the app, or `ojd profile`.
+- **Why:** a few buttons can do many jobs, like Shift gives each key a second job.
+- **How:** pick a button, then pick what it does.
+
+```mermaid
+flowchart LR
+    b[Button press] -->|"looked up in your profile"| p[Assignment]
+    p -->|"key, click, or scroll"| m[Mac]
+    p -->|"different button"| g[Virtual gamepad]
+    l[Held layer button] -.->|"swaps the whole layout"| p
+```
 
 ## Contents
 
@@ -13,7 +27,12 @@ Use assignments to make a control of your controller do something else. Use comb
 
 ## Assigning Buttons and Actions
 
-An assignment connects one control to one destination, such as a keyboard key, a mouse button, or a [virtual gamepad](Glossary.md#terms) button. A control can have only one assignment in a profile.
+An assignment is a wire from one control (the source) to one destination (what happens), such as a keyboard key, a mouse button, or a [virtual gamepad](Glossary.md#terms) button. A control can have only one assignment in a profile.
+
+```mermaid
+flowchart LR
+    S[Source<br/>a button, stick, or trigger] -->|assignment| D[Destination<br/>key, mouse, pointer, or virtual gamepad button]
+```
 
 ### Before You Begin
 
@@ -96,7 +115,7 @@ To remove an assignment, run `ojd binding clear PROFILE SOURCE`. To list them, r
 
 ### Set a Behavior
 
-The behavior decides how a press turns into output.
+The behavior decides what one press does. For example, **Hold** works like a doorbell (on while pressed), and **Toggle** works like a light switch (press once for on, again for off).
 
 Click **Behavior...** on the assignment row, select a behavior, then click **Apply** and **Save**.
 
@@ -116,7 +135,7 @@ Behaviors are untested on real hardware.
 
 These options need the **Hold** behavior. Turbo cannot combine with the other two.
 
-- **Turbo** repeats the destination while you hold the control. Set the **Repeat rate** (1 to 60 Hz) and **Duty cycle** (0.05 to 0.95). You can add a delay (0 to 2500 ms) and a repeat cap (1 to 500). It works with keyboard, mouse button, and gamepad destinations.
+- **Turbo** presses the destination again and again while you hold the control. Set the **Repeat rate** (1 to 60 presses per second) and **Duty cycle** (0.05 to 0.95, the share of each repeat the button stays down). You can add a delay (0 to 2500 ms) and a repeat cap (1 to 500). It works with keyboard, mouse button, and gamepad destinations.
 - **Long hold** sends a second destination after the **Hold duration** (100 to 5000 ms).
 - **Multi tap** sends a destination for 2 to 5 taps, each within the **Tap window** (50 to 1000 ms) of the last release. Each count has its own destination.
 
@@ -128,7 +147,7 @@ The **Note (optional)** field of the behavior sheet takes up to 200 characters a
 
 ### Macros
 
-A macro is a named list of steps. A profile holds up to 16 macros of up to 32 steps. Macros are untested on real hardware.
+A macro is a named list of steps that OJD plays back for you, like a recipe: press this, wait, press that. A profile holds up to 16 macros of up to 32 steps. Macros are untested on real hardware.
 
 1. Open the **Macros** section and click **Add macro**.
 2. Enter a **Macro name** (1 to 40 characters, unique in the profile).
@@ -170,7 +189,7 @@ Only axis sources take these settings. For the command line, see [Command refere
 
 ### Region Sources
 
-A region source is on while a stick, trigger, or touch is inside a range.
+A region source is a pretend button. It is on while a stick, trigger, or touch is inside a range you pick.
 
 ```text
 SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
@@ -229,11 +248,24 @@ The app offers note 60 and controller 1, both on channel 1. For other numbers, e
 
 ### Concepts
 
-- A chord is two or more controls pressed together. It sends one destination.
-- A sequence is two or more controls pressed in order. It sends one destination.
-- A layer is a second set of assignments. It is active while you hold an activator control, or after you press it once.
+- A chord is two or more controls pressed together, like playing a chord on a piano. It sends one destination.
+- A sequence is two or more controls pressed in order, like a fighting-game combo. It sends one destination.
+- A layer is a second set of assignments, like the Shift key on a keyboard. It is active while you hold an activator control, or after you press it once.
 
 Chords and sequences cannot use axes or continuous destinations. A chord's control set must be unique in the profile.
+
+```mermaid
+flowchart TD
+    subgraph Chord
+        A1[Hold A] --- B1[Hold B] --> R1[one destination]
+    end
+    subgraph Sequence
+        A2[Press Down] --> B2[then Right] --> C2[then A] --> R2[one destination]
+    end
+    subgraph Layer
+        L[Hold the activator] --> X[Every button uses its second assignment]
+    end
+```
 
 ### Before You Begin
 

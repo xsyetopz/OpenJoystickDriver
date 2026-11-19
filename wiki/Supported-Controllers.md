@@ -4,6 +4,18 @@ Find out whether your controller works with OpenJoystickDriver (OJD), and what t
 
 Xbox and PlayStation names are trademarks of Microsoft and Sony. This project isn't affiliated with either company.
 
+- **Who:** anyone checking whether their controller works.
+- **What:** the list of supported controllers, plus clones and plain HID pads.
+- **When:** before you buy a controller, or when yours isn't detected.
+- **How:** find your model below; if it's missing, see [Support Ladder](Support-Ladder.md).
+
+```mermaid
+flowchart LR
+    pad[Your controller] -->|"listed below"| ok[Works]
+    pad -->|"clone of a listed pad"| maybe[Check its ID first]
+    pad -->|"not listed"| ladder[Support Ladder]
+```
+
 ## Contents
 
 - [Supported Controllers](#supported-controllers-1)
@@ -13,11 +25,21 @@ Xbox and PlayStation names are trademarks of Microsoft and Sony. This project is
 
 ## Supported Controllers
 
-Each controller sits in one of three tiers. The tier shows how much real-hardware testing backs it. The app shows no tier.
+Each controller sits in one of three tiers, like grades on a report card. The tier tells you how sure anyone is that it works, because someone tried it on a real controller. The app doesn't show the tier; only this page does.
 
 - Official: the maintainer owns and tests it.
 - Community-verified: a tester used it on real hardware and it worked.
 - Unverified: nobody has confirmed it.
+
+```mermaid
+flowchart TD
+    Q{Is your controller in a table below?}
+    Q -->|Official or Community-verified| W[Expect it to work on the tested connection]
+    Q -->|Unverified| T[Try it, then test it in Input Test]
+    Q -->|Not listed| L[Try it anyway: many controllers describe themselves]
+    T --> R[Tell us the result in a bug report]
+    L --> R
+```
 
 A test covers only the connection the tester used. Another connection may not work. See [Connection types](Connecting-Controllers.md#connection-types).
 
@@ -57,7 +79,7 @@ Test records: [8BitDo Ultimate 2C](../docs/testing/8bitdo-ultimate-2c.md), [Xbox
 
 ### Unverified
 
-The built-in catalog holds 714 controller records. A controller the tables above don't list is unverified. It may work, work in part, or not work. That doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
+OJD has a built-in list of controllers. Its catalog holds 714 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work. That doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
 
 ### Flydigi Records
 
@@ -94,7 +116,7 @@ Tell the maintainer which connection you used and what worked. See [Reporting a 
 
 ## Clone and Fake Controllers
 
-Some controllers look like a Sony or Microsoft controller but use a different chip and ID. OJD tells controllers apart by ID, not by shape or box. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
+Some controllers look like a Sony or Microsoft controller but have a different chip and ID inside. OJD tells controllers apart by ID, the way a mail carrier goes by the address, whatever the house looks like. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
 
 Clones often send data in another format, so the original's driver may misread them. Don't report a clone under the original's name.
 
@@ -109,9 +131,9 @@ The Ant Esports GP100 starts in XInput mode, where macOS sees no input. Hold **S
 
 ## Generic HID Controllers
 
-OJD can read some gamepads that aren't in its catalog. HID (Human Interface Device) is the standard way a gamepad describes its buttons and sticks to a computer. OJD reads that description, the report descriptor.
+OJD can read some gamepads that aren't in its catalog. HID (Human Interface Device) is the standard way a gamepad tells a computer what it has, like a menu that lists its buttons and sticks. That menu is called the report descriptor. OJD reads it and works out the rest.
 
-If no mode of a record fits but one interface passes the checks below, OJD serves the controller as one with no record. `ojd controller show` says so. A record that keeps the pad with macOS, or an idle mode, stays as it is. OJD doesn't retry a failing known controller as a generic one.
+If no record fits, but the controller passes the checks below, OJD still serves it as a generic controller. `ojd controller show` says so. A record that keeps the pad with macOS, or an idle mode, stays as it is. OJD doesn't retry a failing known controller as a generic one.
 
 ### What Works
 
@@ -139,7 +161,7 @@ See [Using the Command Line](Command-Line.md). A controller with odd axes needs 
 
 ### Mapping Source
 
-A controller with no record gets its mapping from the Mac lines of [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB). `ojd controller show` then reads "mapped from SDL_GameControllerDB" with the GUID and the match tier, best first:
+A mapping says which of the controller's buttons is "A", which is "B", and so on. A controller with no record gets its mapping from the Mac lines of [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB). `ojd controller show` then reads "mapped from SDL_GameControllerDB" with the GUID and the match tier, best first:
 
 1. `ExactGUID`: version and name hash match.
 2. `GUIDWithoutNameCRC`: version matches, and the line has no name hash.

@@ -2,6 +2,21 @@
 
 Use a controller record to teach OpenJoystickDriver (OJD) about a controller, or to change how it drives one. A record is a small file in your own folder. Write one when a controller doesn't work or one detail is wrong, such as a button, a drifting stick, or rumble. The [Support ladder](Support-Ladder.md) starts with the least work. The sections from [Describe a Controller's Input Reports](#describe-a-controllers-input-reports) on are for advanced users who read report bytes.
 
+- **Who:** anyone whose controller doesn't work, or works with one detail wrong.
+- **What:** a small file that teaches OJD about one controller.
+- **When:** after the [Support ladder](Support-Ladder.md) says a record is the next step.
+- **Where:** `~/Library/Application Support/OpenJoystickDriver/Controllers`.
+- **Why:** the record fixes a button, a drifting stick, or rumble without a new app version.
+- **How:** draft one from a connected controller, edit it, then check and install it.
+
+```mermaid
+flowchart LR
+    pad[Your controller] -->|"draft from the connected pad"| rec[Record file]
+    rec -->|"edit buttons, sticks, rumble"| rec
+    rec -->|"check, then install"| ojd[OJD]
+    ojd -->|"reads the pad the new way"| vg[Virtual gamepad]
+```
+
 ## Contents
 
 - [How Records Work](#how-records-work)
@@ -27,7 +42,14 @@ Use a controller record to teach OpenJoystickDriver (OJD) about a controller, or
 
 ## How Records Work
 
-A controller record tells OJD how to drive one model. It names the protocol family, the language the controller and the Mac speak. The model's ID is its vendor and product numbers (VID:PID), such as `045E:028E`.
+A controller record is a recipe card for one model. It tells OJD which bytes mean which button, and how to say hello to the controller. It names the protocol family, the language the controller and the Mac speak. The model's ID is its vendor and product numbers (VID:PID), such as `045E:028E`.
+
+```mermaid
+flowchart LR
+    B[Bundled record<br/>inside the app] --> M[What OJD uses]
+    P[Your patch<br/>VVVV-PPPP.patch.plist] -->|changes a few keys| M
+    Y[Your record<br/>VVVV-PPPP.plist] -->|for a model with no bundled record| M
+```
 
 The app holds a bundled record for each supported model. Your records are XML property lists in `~/Library/Application Support/OpenJoystickDriver/Controllers`. Name each file after its model in lowercase hexadecimal, such as `045e-028e.plist`.
 
@@ -37,6 +59,10 @@ A file in that folder is one of two kinds:
 
 - `Controller`: a complete record for a model with no bundled record. Name it `VVVV-PPPP.plist`.
 - `ControllerPatch`: changes for a model with a record. Name it `VVVV-PPPP.patch.plist`. Its `selector` names the model by `vendorID` and `productID`. Its `patch` holds the changes.
+
+The **Library** area in the app lists the records you installed and the built-in ones:
+
+![The Library area. A red arrow points to the toolbar buttons, and the box names them from left to right: add, check a file, test on a packet capture, and remove. A second arrow points to the Installed and Built-in lists](../docs/screenshots/steps/library-overview.png)
 
 Every reader gives one verdict: the app, `ojd record validate` and `install`, `ojd config`, `ojd diagnose record`, and mod packages.
 

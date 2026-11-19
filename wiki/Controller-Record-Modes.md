@@ -1,6 +1,26 @@
 # Controller Record Modes
 
-A mode is one way a controller record drives a model. Use this page to describe a mode's session and to offer alternative modes chosen by link, keys, and probes.
+Many controllers can act in more than one way, like a flip switch on the back that turns them into an Xbox pad or a PlayStation pad. A mode is the part of a [controller record](Controller-Records.md) that tells OJD how to handle one of those ways.
+
+This page covers two things:
+
+- the session: what OJD sends to the controller when it starts, while it runs, and when it stops
+- alternative modes: how OJD picks the right mode, by connection (link), by which keys a record has, or by asking the controller (probes)
+
+- **Who:** people writing a controller record for a pad with a mode switch.
+- **What:** the part of a record that describes each way a pad can act.
+- **When:** a controller changes its identity with a switch, a key combo, or the cable.
+- **Where:** in your record file under `~/Library/Application Support/OpenJoystickDriver/Controllers`.
+- **Why:** each mode sends different reports, so OJD needs to know which one is active.
+- **How:** describe each mode's session, then say how OJD picks between them.
+
+```mermaid
+flowchart LR
+    pad[Controller] -->|"switch set to X"| mx[Mode X]
+    pad -->|"switch set to P"| mp[Mode P]
+    mx -->|"record says how to read it"| ojd[OJD]
+    mp -->|"record says how to read it"| ojd
+```
 
 ## Contents
 
@@ -10,7 +30,15 @@ A mode is one way a controller record drives a model. Use this page to describe 
 
 ## Describe a Mode's Session
 
-A mode's `session` lists the steps OJD runs around a controller session. A description's `defaults.session` and a record's modes share these keys. A mode runs exactly the steps its own `session` names, and no mode inherits another's. A `session` names at least one key.
+A mode's `session` lists the steps OJD runs around a controller session, like a pilot's checklist for takeoff, flight, and landing. A description's `defaults.session` and a record's modes share these keys. A mode runs exactly the steps its own `session` names, and no mode inherits another's. A `session` names at least one key.
+
+```mermaid
+flowchart LR
+    C[control<br/>raw USB setup messages] --> S[startup<br/>fixed reports]
+    S --> W[settleMilliseconds<br/>wait]
+    W --> R[Running<br/>input, rumble, keepAlive]
+    R --> X[shutdown<br/>goodbye packets]
+```
 
 - `startup`: 1 to 16 writes of one format. See [Send Fixed Reports at Startup](Controller-Records.md#send-fixed-reports-at-startup).
 - `rumble`: the rumble template. See [Add Rumble to a Controller](Controller-Records.md#add-rumble-to-a-controller).
@@ -59,6 +87,15 @@ A HID mode takes only `startup` and `rumble`. Write bytes as uppercase hex pairs
 ## Offer Alternative Modes Chosen by Link, Keys, and Probes
 
 Use modes when one VID:PID runs more than one protocol (XInput, DInput, Switch mode) or needs different handling over USB and Bluetooth. Every record has a `modes` list, and a controller's protocol is the `protocol` of one mode. The mode with id `default` has no `match` and runs when no other mode matches. A record may have no `default`. Then every mode has a `match`, which suits a VID:PID that several models share and a product string tells apart.
+
+```mermaid
+flowchart TD
+    P[Controller connects] --> M{Does a mode's match fit?}
+    M -->|yes| U[Use that mode]
+    M -->|no| D{Is there a default mode?}
+    D -->|yes| UD[Use default]
+    D -->|no| N[No mode matched]
+```
 
 ```xml
 <key>modes</key>

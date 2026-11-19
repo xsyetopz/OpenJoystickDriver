@@ -1,6 +1,20 @@
 # Sticks, Triggers, Touchpad, and Motion
 
-Use these settings to change how a stick, trigger, touch surface, or motion sensor of your controller produces output.
+These settings change what happens when you move a stick, squeeze a trigger, touch a touchpad, or tilt a controller that senses motion. For example, a stick can move the mouse pointer, or tilting the controller can aim in a game.
+
+- **Who:** anyone who wants more from sticks, triggers, touchpads, or motion.
+- **What:** stick modes, trigger stages, touch areas, pointer speed, and gyro aiming.
+- **Where:** sheets in the profile editor, in the **Profiles** area.
+- **Why:** a stick can move the pointer, and tilting the controller can aim.
+- **How:** open a profile, pick the sheet, change the setting, then save.
+
+```mermaid
+flowchart LR
+    s[Stick] -->|"stick mode"| p[Pointer or camera]
+    t[Trigger] -->|"light pull, full pull"| b[Two buttons]
+    tp[Touchpad] -->|"areas and swipes"| b
+    g[Tilt the controller] -->|"gyro output"| p
+```
 
 ## Contents
 
@@ -20,7 +34,7 @@ Use these settings to change how a stick, trigger, touch surface, or motion sens
 
 - Create a [profile](Glossary.md#terms). See [Creating a profile](Remapping-Profiles.md#creating-a-profile).
 - Set **Interface** to **All Controls** in **Settings** > **General**, or choose **View** > **All Controls**.
-- Open the **Controller** section of the profile. Each group has an **Adjust...** button. A group that shows **Not supported by this controller or protocol.** has no input to adjust.
+- Open the **Controller** section of the profile. Each group has an **Adjust...** button. A group that shows **This controller can't do this.** has no input to adjust.
 - Pointer and scroll modes need Accessibility access. See [Permissions](Permissions-and-Security.md).
 
 A profile has one mapping per stick, trigger, and touch surface. These settings are untested on real hardware.
@@ -43,11 +57,33 @@ A profile has one mapping per stick, trigger, and touch surface. These settings 
 | **Scroll Wheel** | Rotating the stick scrolls. |
 | **Steering Wheel** | Rotating the stick drives a virtual steering axis. |
 
-These settings apply to every mode: inner and outer deadzone, response exponent, axis inversion, **Keep physical stick passthrough**, and **Positive rotation**. For the ranges and defaults, see [Profile file reference](Profile-File-Reference.md#analog-touch-and-motion-fields).
+These settings apply to every mode:
+
+The diagram follows one push of the stick from the center to the edge:
+
+```mermaid
+flowchart LR
+    C[Center] --> I[Inner deadzone<br/>nothing happens]
+    I --> M[Middle<br/>output grows, shaped by the exponent]
+    M --> O[Outer deadzone<br/>counts as fully pushed]
+```
+
+- **Inner deadzone**: a small middle area where the stick does nothing, so a stick that rests slightly off center doesn't drift.
+- **Outer deadzone**: an edge area that already counts as fully pushed.
+- **Response exponent**: how fast the output grows as you push further. Higher values give finer control near the center.
+- **Axis inversion**: flips up and down, or left and right.
+- **Keep physical stick passthrough**: the game still gets the stick as a stick, too.
+- **Positive rotation**: which way of turning counts as forward. For the ranges and defaults, see [Profile file reference](Profile-File-Reference.md#analog-touch-and-motion-fields).
 
 ## Set Trigger Stages
 
-A dual-stage trigger has a soft stage and a full stage. Each stage can have its own destination.
+A dual-stage trigger acts like two buttons in one: a light squeeze (soft stage) and a full squeeze (full stage). Each stage can do its own thing. For example, a light squeeze aims and a full squeeze fires.
+
+```mermaid
+flowchart LR
+    R[Trigger at rest] -->|pass the soft threshold| S[Soft stage: aim]
+    S -->|pass the full threshold| F[Full stage: fire]
+```
 
 1. Click **Adjust...** in the **Trigger Stages** group and select a trigger.
 2. Turn on **Enable dual-stage trigger**.
@@ -69,7 +105,14 @@ Touch contact, grid, and swipe can also be assignment sources. See [Assigning bu
 
 ## Set Regions
 
-A region is a source that is on while a stick, trigger, or touch is in part of its range. Assign it like a button.
+A region turns part of a stick, trigger, or touchpad into a pretend button. The button is pressed while the input is inside that part. For example, a ring near the stick's edge can press "run" when you push the stick all the way. Assign a region like any other button.
+
+```mermaid
+flowchart LR
+    P[Stick pushed to the edge] --> Q{Inside the ring?}
+    Q -->|yes| B[Region button pressed: run]
+    Q -->|no| N[Region button released]
+```
 
 1. Click **Adjust...** in the **Regions** group.
 2. Select a **Region type**: **Stick Ring**, **Trigger Band**, or **Touch Area**.
@@ -86,7 +129,7 @@ Rings and sectors of one stick cannot overlap, and neither can bands of one trig
 
 ## Set Pointer Speed
 
-Pointer speed scales all pointer movement by the value of a trigger or stick. Scrolling does not change.
+Pointer speed lets a trigger or stick work like a gas pedal for the mouse pointer: the further you press, the faster (or slower) the pointer moves. Scrolling doesn't change.
 
 1. Click **Adjust...** in the **Pointer Speed** group and turn on **Scale pointer speed**.
 2. Select the **Driver**, **Trigger** or **Stick Depth**, and the **Side**.
@@ -99,13 +142,15 @@ For the command line, see [Pointer speed fields](Profile-File-Reference.md#point
 
 ## Set Motion Tuning and Gyro Output
 
+A gyro is the motion sensor inside some controllers. It notices when you turn or tilt the controller. Motion tuning sets how strongly those turns count.
+
 1. Click **Adjust...** in the **Motion Tuning** group.
 2. Select the **Coordinate space** and set the sensitivity and other values.
 3. Click **Save**. In a layer, **Use Profile Tuning** restores the profile values.
 
 **Gyro output** sends motion to **Mouse Pointer**, **Left Stick**, or **Right Stick**. It is **Disabled** by default. The activation is **Always Active**, **While Held**, **While Released**, or **Toggle on Press**. Any activation but **Always Active** needs an **Activation control**.
 
-A gyro trackball keeps motion going after you hold a control. Motion needs a controller with motion sensors. For the ranges, see [Profile file reference](Profile-File-Reference.md#analog-touch-and-motion-fields).
+A gyro trackball keeps the pointer gliding after you hold a control, like a ball you flicked that keeps rolling. Motion needs a controller with motion sensors. For the ranges, see [Profile file reference](Profile-File-Reference.md#analog-touch-and-motion-fields).
 
 ## Create a Gyro to Stick Profile
 

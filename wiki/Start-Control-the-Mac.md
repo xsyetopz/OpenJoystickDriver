@@ -2,15 +2,29 @@
 
 Make controller buttons press keys, click, move the pointer, or scroll.
 
+- **Who:** anyone who wants to use a controller like a keyboard and mouse, from the couch or for an app with no controller support.
+- **What you make:** a [profile](Glossary.md#terms), a list that says "this button means that key".
+- **Why:** the Mac then reacts to the controller as if you used the keyboard or mouse.
+- **Where:** the **Profiles** area of the app.
+- **How:** create a profile, then pick a key for each button.
+
+```mermaid
+flowchart LR
+    A[You press a button] --> B[OJD looks it up in your profile]
+    B -->|button south means Space| C[The Mac gets Space]
+```
+
 ## Before You Begin
 
 Install OJD and connect the controller. See [Start: Play a Game with a Controller](Start-Play-a-Game.md). Allow **Accessibility** by clicking **Permission Missing: Accessibility** in the menu-bar menu.
 
 ## Make a Profile in the App
 
-A [profile](Glossary.md#terms) holds what each control does.
+A profile holds what each control does.
 
 1. Click **Profiles**, then **New Profile**.
+
+   ![The Profiles area with no profiles. A red arrow points to New Profile. The box says a profile is your own button layout](../docs/screenshots/steps/new-profile.png)
 2. Enter a **Profile name**, choose your **Controller** and **Target**, and choose a **Template** such as **Empty**.
 3. Click **Create**, select the profile, and click **Add Assignment**.
 4. Click **Listen for Control** and press a button.
@@ -18,6 +32,10 @@ A [profile](Glossary.md#terms) holds what each control does.
 6. Click **Add Assignment**, then **Save**, then **Set Active**.
 
 Press the button. The Mac reacts as if you pressed the key.
+
+The toolbar above the profile list has the other tools:
+
+![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, check a file, and a menu to copy, change model, save to file, or delete](../docs/screenshots/steps/profiles-toolbar.png)
 
 ## Make a Profile in Terminal
 

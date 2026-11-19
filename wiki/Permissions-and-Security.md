@@ -1,6 +1,20 @@
 # Permissions and Security
 
-See which macOS permissions OpenJoystickDriver asks for, why, and how the app protects your Mac.
+Which macOS permissions OpenJoystickDriver (OJD) asks for, why it needs each one, and how it keeps your Mac safe.
+
+- **Who:** anyone deciding whether to trust OJD with their Mac.
+- **What:** each permission OJD asks for, and why.
+- **When:** the first time you open OJD, and whenever macOS asks again.
+- **Where:** System Settings > Privacy & Security, or the **Access** area of the app.
+- **Why:** macOS blocks apps from reading controllers or showing them to games until you allow it.
+- **How:** click **Request...** next to each permission in the **Access** area.
+
+```mermaid
+flowchart LR
+    ojd[OJD] -->|"Input Monitoring: read the controller"| mac[macOS]
+    ojd -->|"Accessibility: show the controller to games"| mac
+    mac -->|"you click Allow"| ok[Permission given]
+```
 
 ## Contents
 
@@ -10,18 +24,18 @@ See which macOS permissions OpenJoystickDriver asks for, why, and how the app pr
 
 ## Security Model
 
-OpenJoystickDriver works with System Integrity Protection (SIP) and Apple Mobile File Integrity (AMFI) turned on.
+macOS has built-in locks that stop apps from changing the system: System Integrity Protection (SIP) and Apple Mobile File Integrity (AMFI). OJD works with both locks on.
 
 > [!WARNING]
-> Never turn off SIP or AMFI for OpenJoystickDriver. No feature needs it.
+> Never turn off SIP or AMFI for OJD. No feature needs it. A guide that tells you to is wrong.
 
 ### Signing
 
-Apple notarized the release app, and the maintainer signed it. Tester builds use a Developer ID signature and are also notarized.
+A signature is like a sealed envelope: it proves who made the app and that nobody changed it. The maintainer signs the release app, and Apple checks it for malware ("notarizes" it). Tester builds are signed with a Developer ID and notarized too.
 
 ### Xbox USB Driver
 
-The [Xbox USB driver](Glossary.md#terms) reads Xbox One and Xbox Series controllers that you connect with a USB cable. It runs outside the macOS kernel, and macOS asks for your approval first. No other controller uses it. The app shows the [virtual gamepad](Glossary.md#terms) to games. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
+The [Xbox USB driver](Glossary.md#terms) reads Xbox One and Xbox Series controllers that you connect with a USB cable. It runs outside the core of macOS (the kernel), so a problem in the driver stays out of the system's core. macOS asks for your approval before it runs. No other controller uses it. The driver only reads the controller; the app hands the [virtual gamepad](Glossary.md#terms) to games. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
 
 ### Data on Your Mac
 
@@ -29,23 +43,23 @@ The [Xbox USB driver](Glossary.md#terms) reads Xbox One and Xbox Series controll
 - Logs are in `~/Library/Logs/OpenJoystickDriver/`.
 - Settings are in the `com.openjoystickdriver` preferences domain.
 
-The only network request is the update check. It contacts GitHub when you click **Check Now**, and at launch if **Check for updates automatically** is on (off by default). The app sends no controller data and doesn't update itself.
+OJD talks to the internet for one thing only: the update check. It contacts GitHub when you click **Check Now**, and at launch if **Check for updates automatically** is on (off by default). The app sends no controller data and doesn't update itself.
 
 ### Endpoint Access
 
-The endpoint lets other programs on your Mac read controller input through a local socket. It's off until you click **Turn On** in the **Access** area or run `ojd access enable`. A program needs a grant for each kind of access it uses (`read` or `control`).
+The endpoint is a private door that lets other programs on your Mac, such as a stream overlay, read your controllers. Nothing outside your Mac can reach it. It's closed until you click **Turn On** in the **Access** area or run `ojd access enable`. Each program also needs its own pass (a grant) for each kind of access: `read` to watch the controller, or `control` to press buttons on a virtual gamepad, which games treat as your own presses.
 
-A grant names the program's signature, by team ID or as Apple. Programs with an ad-hoc or no signature are refused. `ojd access list` shows programs refused in the last 24 hours.
+A grant is tied to the program's signature (its developer's team ID, or Apple). That way another program can't pretend to be it. Programs with a homemade (ad-hoc) signature or none at all are refused. `ojd access list` shows programs refused in the last 24 hours.
 
-`ojd access web enable` adds a WebSocket on `127.0.0.1` for overlay pages. Pages use a token from `ojd access grant --token` and can't use `control`. See [access](Command-Reference.md#access).
+Web pages, such as a browser overlay, use a second door: `ojd access web enable` opens a WebSocket on `127.0.0.1` (your own Mac only). A page needs a token, a password from `ojd access grant --token`, and can only read, never `control`. See [access](Command-Reference.md#access).
 
 ### Support Report
 
-**Help** > **Copy Support Report** copies a JSON report to the clipboard. The app doesn't save it. It holds service status, virtual gamepad details, permission state, the build version, and your devices' product names. It leaves out serial numbers, file paths, packet data, and location IDs. Read it before you share it.
+**Help** > **Copy Support Report** copies a report about your setup to the clipboard, ready to paste into a bug report. The app doesn't save it anywhere. It holds service status, virtual gamepad details, permission state, the build version, and your devices' product names. It leaves out serial numbers, file paths, packet data, and location IDs. Read it before you share it.
 
 ## Permissions
 
-OpenJoystickDriver asks for a permission only when you ask it to. It requests nothing at launch. A request begins when you do one of these:
+OJD never pops up a permission request by surprise. It asks nothing at launch, only when you do one of these:
 
 - Click **Request...** or **Open System Settings** in the **Access** area.
 - Click **Grant Access** in the **Permission needed** banner.
@@ -96,7 +110,7 @@ The app doesn't use the camera, the microphone, or Full Disk Access. The app use
 
 ### If OpenJoystickDriver Isn't in the List
 
-macOS remembers its answer for each OJD build. An answer stored for an earlier build can make macOS refuse with no prompt and no list entry.
+macOS remembers its answer for each OJD build. An old answer for an earlier build can make macOS say no silently: no prompt, and no entry in the list.
 
 **Add it by hand:** click **+** under the list, choose **OpenJoystickDriver** in **Applications**, and click **Open**. Then turn on its switch.
 
@@ -125,7 +139,7 @@ Only genuine Xbox One and Xbox Series controllers on a USB cable need it. The ap
 
 ### Details for Advanced Users
 
-The app holds every permission below. The `ojd` command posts no events.
+This part is for people who want the technical names. The app holds every permission below. The `ojd` command never sends keyboard or mouse events.
 
 | Action | Permission it needs | Process that calls the API |
 | --- | --- | --- |

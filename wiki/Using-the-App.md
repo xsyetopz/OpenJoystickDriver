@@ -2,6 +2,18 @@
 
 Find your way around OpenJoystickDriver (OJD): the menu-bar menu, the app window, and Settings.
 
+- **Who:** anyone finding their way around OJD.
+- **What:** the menu-bar menu, the main window and its areas, and Settings.
+- **Where:** the OJD icon in the menu bar.
+- **How:** click the icon, then choose **Open OpenJoystickDriver**.
+
+```mermaid
+flowchart LR
+    icon[Menu-bar icon] -->|"Open OpenJoystickDriver"| win[Main window]
+    win -->|"sidebar"| areas[Controllers, Profiles, Library, Access, Activity]
+    icon -->|"Settings..."| set[Settings window]
+```
+
 ## Contents
 
 - [Menu-Bar Item](#menu-bar-item)
@@ -16,7 +28,7 @@ Find your way around OpenJoystickDriver (OJD): the menu-bar menu, the app window
 
 ## Menu-Bar Item
 
-![The menu-bar item menu with one controller row, Open OpenJoystickDriver, Settings, and Quit](../docs/screenshots/menu-bar-item.png)
+![The menu-bar menu with four controller rows. A red arrow points to the arrow at the end of a row, and the box says to point at it to pick a profile, pause the controller, or test it. A second arrow points to Quit OpenJoystickDriver, and the box says games lose their virtual gamepads](../docs/screenshots/steps/menu-bar-overview.png)
 
 Click the controller icon in the menu bar to see your controllers, choose a [profile](Glossary.md#terms), or open the app. A warning triangle means something needs attention.
 
@@ -75,7 +87,7 @@ These menus are specific to OJD:
 
 ## Controllers Area
 
-![The Controllers area with an 8BitDo controller selected and its details. The Opened by row is blurred](../docs/screenshots/main-controllers.png)
+![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, and to the Opened by row, which is blurred for privacy](../docs/screenshots/steps/controllers-overview.png)
 
 Select a controller to see its details. If a controller is missing, see [If a Controller Isn't Detected](Troubleshooting.md#if-a-controller-isnt-detected).
 
@@ -116,15 +128,17 @@ The **Advanced** section (needs the **All Controls** interface) shows the contro
 
 ## Profiles Area
 
+![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, check a file, and a menu to copy, change model, save to file, or delete](../docs/screenshots/steps/profiles-toolbar.png)
+
 Select a profile to edit it. See [Profiles](Remapping-Profiles.md).
 
 ## Library Area
 
-![The Library area with the Installed and Built-in lists](../docs/screenshots/main-library.png)
+![The Library area. A red arrow points to the toolbar buttons, and the box names them from left to right: add, check a file, test on a packet capture, and remove. A second arrow points to the Installed and Built-in lists](../docs/screenshots/steps/library-overview.png)
 
 The **Library** area (needs the **All Controls** interface) lists installed controller records and mods. A record tells OJD how to read a controller. A mod is a folder of records and profiles.
 
-- Click **Install** to add a record or mod. Click **Validate...** first to check it.
+- Click **Install** to add a record or mod. Click **Check...** first to look it over.
 - Click **Remove** to delete an item.
 - Click **Test Record...** to play a packet capture through a record.
 - Type in **Search** to filter by ID or protocol family.
@@ -154,7 +168,7 @@ See [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md).
 
 ## Activity Area
 
-![The Activity area showing the log with the newest line at the top](../docs/screenshots/main-activity.png)
+![The Activity area with the log blurred for privacy. A red arrow points to the Log and Diagnostics switch. A second arrow points to the Copy, Save, and Show in Finder buttons, which share the log in a bug report](../docs/screenshots/steps/activity-overview.png)
 
 The **Activity** area (needs the **All Controls** interface) has two views:
 
@@ -169,7 +183,7 @@ Choose **OpenJoystickDriver** > **Settings...** or press Command-Comma (,). The 
 
 ### General
 
-![The General pane of the Settings window](../docs/screenshots/settings-general.png)
+![The General pane of Settings. A red arrow points to Interface, and the box says All Controls shows every tool and Simple hides the advanced ones](../docs/screenshots/steps/settings-interface.png)
 
 - **Start at login** opens OJD in the menu bar when you log in. If macOS asks for approval, allow OpenJoystickDriver under **System Settings** > **General** > **Login Items & Extensions**.
 - **Show in menu bar** and **Show in Dock** choose where the icon appears.

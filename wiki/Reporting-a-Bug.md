@@ -1,6 +1,20 @@
 # Reporting a Bug
 
-Send reports to the [issue tracker](https://github.com/xsyetopz/OpenJoystickDriver/issues) so the maintainer can reproduce the problem.
+Found a bug? Tell the maintainer on the [issue tracker](https://github.com/xsyetopz/OpenJoystickDriver/issues). The goal is to let them make the same bug happen on their own Mac. A bug they can repeat is a bug they can fix.
+
+- **Who:** anyone who found a bug.
+- **What:** what to put in a report so the maintainer can repeat the bug.
+- **When:** after you checked [Known Issues](Known-Issues.md) and [Troubleshooting](Troubleshooting.md).
+- **Where:** the [issue tracker](https://github.com/xsyetopz/OpenJoystickDriver/issues).
+- **Why:** a bug the maintainer can repeat is a bug they can fix.
+- **How:** write the steps, then attach a support report from `ojd diagnose`.
+
+```mermaid
+flowchart LR
+    bug[Bug] -->|"steps to repeat it"| issue[Issue]
+    rep["ojd diagnose"] -->|"support report"| issue
+    issue -->|"maintainer repeats it"| fix[Fix]
+```
 
 ## What To Include
 
@@ -24,9 +38,9 @@ Or choose **Help** > **Copy Support Report**.
 
 ![The Help menu. A red arrow points to Copy Support Report, which copies facts about your setup without serial numbers or paths](../docs/screenshots/steps/copy-support-report.png)
 
-The report leaves out serial numbers, file paths, and packet contents. It includes your controllers' product names. Read it before you share it.
+The report is a list of facts about your Mac, OJD, and your controllers. It leaves out serial numbers, file paths, and packet contents. It does include your controllers' product names. Read it before you share it.
 
-For a stutter or latency report, run the command right after the stutter. The report then holds frame timings.
+Controller stutters or lags? Run the command right after it happens. The report then holds timings of the last moments.
 
 ## Run a Guided Check
 
@@ -38,7 +52,11 @@ If every control responded, **Validate** offers the result as a community valida
 
 ## Get the Logs
 
-Open **Activity** and choose **Log**, or choose **Help** > **Activity Log**. Or run:
+The log is OJD's diary: one line for each thing it did. Open **Activity** and choose **Log**, or choose **Help** > **Activity Log**.
+
+![The Activity area with the log blurred for privacy. A red arrow points to the Log and Diagnostics switch. A second arrow points to the Copy, Save, and Show in Finder buttons, which share the log in a bug report](../docs/screenshots/steps/activity-overview.png)
+
+Or run:
 
 ```shell
 ojd log show --lines 200
@@ -48,7 +66,7 @@ Logs may contain device names and paths. Read them before you share them.
 
 ## Capture Packets
 
-For a controller that works wrongly or not at all, attach a packet capture. Run this while you press each control, and say in what order:
+A controller talks to the Mac in small messages called packets. A packet capture is a recording of them, like a voice memo of the controller. For a controller that works wrongly or not at all, attach one. Run this while you press each control, and write down the order you pressed them in:
 
 ```shell
 ojd controller capture <controller> --duration 10 --json > capture.jsonl
@@ -58,7 +76,13 @@ Attach the file. Check it before you share it.
 
 ## Gather Data From Other Systems
 
-The maintainer has a few controllers. For the rest, your data is the only data. A controller that works on Windows or Linux shows there what macOS hides: its descriptors, its startup packets, and the driver that serves it. Attach each file you can make, and say which mode or switch setting the controller was in.
+The maintainer owns only a few controllers. For every other model, your files are all they have. Windows and Linux show things macOS hides:
+
+- the controller's descriptors, a built-in list that says what buttons and sticks it has
+- the first packets it sends after you plug it in
+- which driver runs it
+
+Attach each file you can make, and say which mode or switch setting the controller was in.
 
 On macOS:
 

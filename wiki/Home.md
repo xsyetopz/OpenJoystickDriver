@@ -2,6 +2,37 @@
 
 OpenJoystickDriver (OJD) makes game controllers that your Mac doesn't support work. For quick answers, read the [FAQ](FAQ.md).
 
+Think of OJD as an interpreter. Your controller speaks its own language. OJD listens and repeats each press through a [virtual gamepad](Glossary.md#terms), a pretend controller that every game understands. It can also turn presses into keys and clicks.
+
+- **Who:** anyone with a controller their Mac doesn't support.
+- **What:** a menu-bar app that makes the controller work in games and apps.
+- **Where:** start with [Start: Play a Game with a Controller](Start-Play-a-Game.md).
+- **How:** install OJD, allow two permissions, connect the controller.
+
+```mermaid
+flowchart LR
+    A[Your controller] --> B[OJD]
+    B --> C[Virtual gamepad]
+    C --> D[Games]
+    B --> E[Keys, clicks, and pointer]
+    E --> F[Any Mac app]
+```
+
+The main window shows each controller and what it's doing:
+
+![The Controllers area. Red arrows point to the controller list, to Open Input Test, to a status that needs a step from you, and to the Opened by row, which is blurred for privacy](../docs/screenshots/steps/controllers-overview.png)
+
+## Which Page Do I Need?
+
+```mermaid
+flowchart TD
+    Q{What do you want?}
+    Q -->|Play a game| P[Start: Play a Game]
+    Q -->|Use it as keyboard and mouse| M[Start: Control the Mac]
+    Q -->|It isn't working| T[Troubleshooting]
+    Q -->|OJD doesn't know my controller| S[Start: Add Support]
+```
+
 ## Start Here
 
 - [Play a Game with a Controller](Start-Play-a-Game.md): Install, connect, and play.
@@ -50,7 +81,7 @@ OpenJoystickDriver (OJD) makes game controllers that your Mac doesn't support wo
 
 - [Using the Command Line](Command-Line.md): Control OJD from Terminal.
 - [Command Reference](Command-Reference.md): Look up every `ojd` command.
-- [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md): Script `ojd` and drive a [virtual gamepad](Glossary.md#terms).
+- [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md): Script `ojd` and drive a virtual gamepad.
 - [WebRTC Bridge](WebRTC-Bridge.md): Use a controller connected to another Mac.
 - [Support Ladder](Support-Ladder.md): Find the smallest step that makes a controller work.
 - [Controller Records](Controller-Records.md): Add or change how OJD drives a controller.

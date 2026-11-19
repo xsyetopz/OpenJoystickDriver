@@ -1,6 +1,6 @@
 # Command Reference
 
-Look up every `ojd` command and option here.
+Every `ojd` command and option, like a dictionary. For a gentle start, read [Using the Command Line](Command-Line.md) first.
 
 Every command also takes the global options, such as `--json`. See [Command line](Command-Line.md#global-options).
 Where a command has them, `-f` is short for `--force`, `-n` for `--dry-run`, `-a` for `--all`, `-o` for `--output`, and `-q` for `--quiet`.
@@ -8,6 +8,18 @@ Where a command has them, `-f` is short for `--force`, `-n` for `--dry-run`, `-a
 With `--json`, each command prints the object that [cli-output.schema.json](../Resources/Schemas/cli-output.schema.json) describes. This page names a key only where it carries a rule.
 
 In synopsis lines, a word in capitals is a value you type. `VVVV:PPPP` is a controller model ID: the hexadecimal vendor and product numbers, such as `045E:02D1`. Square brackets mark an optional part. `A|B` means choose one. `...` means you can repeat the part.
+
+- **Who:** anyone looking up the exact spelling of an `ojd` command or option.
+- **What:** every command, its values, and its options.
+- **How:** find the group (such as `controller` or `profile`), then the command.
+
+```mermaid
+flowchart LR
+    O[ojd] --> G[group<br/>controller, profile, record...]
+    G --> C[command<br/>list, show, set...]
+    C --> A[VALUES you type]
+    C --> F[--options]
+```
 
 ## Contents
 

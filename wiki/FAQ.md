@@ -2,6 +2,17 @@
 
 Short answers to common questions about OpenJoystickDriver (OJD).
 
+- **Who:** anyone with a quick question.
+- **What:** short answers, each linking to the full page.
+- **How:** find your question under its topic below.
+
+```mermaid
+flowchart LR
+    q[Your question] -->|"pick a topic"| t[Setting up, controllers, games, data, help]
+    t -->|"short answer"| a[Answer]
+    a -->|"more detail"| p[Full wiki page]
+```
+
 ## Contents
 
 - [About OpenJoystickDriver](#about-openjoystickdriver)
@@ -36,6 +47,8 @@ No. OJD is alpha software. Some controllers are untested on real hardware, and s
 
 In the menu bar. Click the controller icon and choose **Open OpenJoystickDriver**. To add a Dock icon, turn on **Show in Dock** in **Settings**. See [Find the Menu-Bar Icon](Getting-Started.md#find-the-menu-bar-icon).
 
+![The controller icon in the menu bar. A red arrow points to it, and the box says to click it to see your controllers](../docs/screenshots/steps/menu-bar-icon.png)
+
 ### Why Does OJD Ask for Input Monitoring and Accessibility?
 
 **Input Monitoring** lets OJD read your controller. **Accessibility** lets it run the virtual gamepad and send keys and pointer movements. See [Permissions](Permissions-and-Security.md#permissions).
@@ -52,9 +65,11 @@ Click **+** under the list, choose **OpenJoystickDriver** in **Applications**, a
 
 Open OJD and click **Access** in the sidebar. Each permission says **Allowed**.
 
+![The Access area in OJD. A red arrow points to Access in the sidebar. A second arrow points to Allowed, and the box explains Input Monitoring and Accessibility](../docs/screenshots/steps/access-permissions.png)
+
 ### Do I Need to Turn Off SIP or AMFI?
 
-No. OJD installs no kernel extension and needs neither turned off.
+No. SIP (System Integrity Protection) and AMFI (Apple Mobile File Integrity) are safety locks built into macOS. OJD installs no kernel extension, so you keep both turned on.
 
 ### Does OJD Start When I Log In?
 
@@ -86,9 +101,13 @@ Put it in pairing mode. Choose Apple menu > **System Settings** > **Bluetooth**,
 
 Select it in **Controllers** and click **Open Input Test**. See [Testing a Controller](Testing-a-Controller.md).
 
+![The controller's submenu in the menu bar. A red arrow points to Test Input, which opens a window that shows each press live](../docs/screenshots/steps/test-input.png)
+
 ### What Does Working Mean?
 
 **Working** under a controller's name means OJD reads it and games can use it. Any other word comes with a line that says what to do next.
+
+![The Controllers area. A red arrow points to Working under the controller's name. A second arrow points to Open Input Test, which shows each press live](../docs/screenshots/steps/controller-working.png)
 
 ### Can I Use Several Controllers at Once?
 
@@ -100,7 +119,7 @@ macOS already supports it, so OJD shows no virtual gamepad and games read it thr
 
 ### Why Does My Clone Controller Act Differently?
 
-A clone can send different data than the original, so OJD may work with it fully, partly, or not at all. See [Clone and Fake Controllers](Supported-Controllers.md#clone-and-fake-controllers).
+A clone can look like the original but send different data inside. So OJD may work with it fully, partly, or not at all. See [Clone and Fake Controllers](Supported-Controllers.md#clone-and-fake-controllers).
 
 ### Can I Add a Controller That Isn't Supported?
 
@@ -110,11 +129,11 @@ Yes, with a mod: a folder that adds or changes a [controller record](Controller-
 
 ### Why Does My Controller Work in One App but Not Another?
 
-Steam and many games read the default Xbox-style virtual gamepad. Safari and some Mac games read a different kind. See [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
+Apps listen for different kinds of gamepad. Steam and many games read the default Xbox-style virtual gamepad. Safari and some Mac games only read a different kind. See [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
 
 ### What Is the Virtual Gamepad Kind?
 
-The [virtual gamepad kind](Glossary.md#terms) is what games think your controller is. Keep **Automatic** unless a game shows no input. Pick **For Steam and SDL games** for Steam, SDL games, and emulators. Pick **For Apple Game Controller games** for Safari and Mac games that use Apple's controller support. See [Virtual Gamepad Kind](Using-the-App.md#virtual-gamepad-kind).
+The [virtual gamepad kind](Glossary.md#terms) is the kind of controller games think you have. Keep **Automatic** unless a game shows no input. Pick **For Steam and SDL games** for Steam, emulators, and games built with SDL (a common toolkit for reading controllers). Pick **For Apple Game Controller games** for Safari and Mac games that use Apple's controller support. See [Virtual Gamepad Kind](Using-the-App.md#virtual-gamepad-kind).
 
 ### Does OJD Work with Steam?
 

@@ -1,10 +1,30 @@
 # Building From Source
 
-Build OpenJoystickDriver yourself to get a fix before the next tester build.
+Turn OpenJoystickDriver's source code into a working app on your own Mac, to get a fix before the next tester build.
+
+- **Who:** testers who need a fix before the next tester build.
+- **What:** turn the source code into a signed app on your own Mac.
+- **Where:** Terminal, in a copy of the repository, with Xcode tools installed.
+- **Why:** macOS only gives OJD its powers when Apple's permission slip signs it.
+- **How:** install your provisioning profiles, then run `just install-dev`.
 
 ## Build OpenJoystickDriver
 
-Most users don't need to build. `CHANGELOG.md` lists what each build contains. OpenJoystickDriver (OJD) runs only as a signed build.
+Most people never need this page. `CHANGELOG.md` lists what each build contains.
+
+Building is harder than usual because OpenJoystickDriver (OJD) runs only when it's signed. macOS gives an app special powers, such as making a [virtual gamepad](Glossary.md#terms), only if Apple has issued a permission slip for them:
+
+- An **entitlement** is one special power, such as `com.apple.developer.hid.virtual.device` (make virtual gamepads).
+- A **provisioning profile** is the permission slip from Apple. It lists which entitlements an app may use, and on which Macs.
+
+```mermaid
+flowchart LR
+    A[Apple Developer team] -->|issues| P[Provisioning profile<br/>the permission slip]
+    P -->|lists| E[Entitlements<br/>special powers]
+    P -->|lists| M[Your Mac]
+    E --> B[just install-dev signs the app]
+    B --> O[OJD runs on your Mac]
+```
 
 ### Before You Begin
 
@@ -16,7 +36,7 @@ You need these items:
   - The app profile needs the `com.apple.developer.hid.virtual.device` entitlement. Its `com.apple.developer.driverkit.userclient-access` entitlement must name `com.openjoystickdriver.XboxUSBDevice`.
   - The Xbox USB driver profile needs `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` with Apple's exact seven VID:PID pairs, and no HID entitlement.
   - `just signing-install-profiles` copies the files under those names. `just signing-configure` writes their paths to `.env.dev`.
-- The `transport.usb` capability from Apple. Enable it on the `com.openjoystickdriver.XboxUSBDevice` App ID, then download the Xbox USB driver profile again. The publisher team already has it.
+- The `transport.usb` capability from Apple (permission to talk to USB devices directly). Enable it on the `com.openjoystickdriver.XboxUSBDevice` App ID, then download the Xbox USB driver profile again. The publisher's team already has it; your team must ask Apple for it.
 - Your Mac in the list of devices in each provisioning profile.
 
 ### Build and Install

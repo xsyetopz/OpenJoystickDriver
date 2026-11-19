@@ -1,28 +1,54 @@
 # Glossary
 
-Each term means one thing in the app, its menus, the command-line help, and this guide. **Replaces** lists older or informal words for the same thing. **Command line** shows what the `ojd` tool calls it.
+Look up the words OpenJoystickDriver uses. Each word means the same thing in the app, its menus, the command-line help, and this guide. **Replaces** lists older or casual words for the same thing. **Command line** shows the name the `ojd` tool uses.
+
+- **Who:** anyone who meets an unfamiliar word in the app or this guide.
+- **What:** one meaning per word, the same in the app, the menus, `ojd`, and the wiki.
+- **How:** find the word in the table; **Replaces** lists the older words for it.
+
+```mermaid
+flowchart LR
+    w[Unfamiliar word] -->|"look it up"| t[Terms table]
+    t -->|"plain meaning"| m[Meaning]
+    t -->|"command-line name"| c[ojd name]
+```
 
 ## Terms
 
 | Term | Definition | Replaces | Command line |
 | --- | --- | --- | --- |
-| profile | A set of bindings that changes what the controls of a controller do. | "remapping profile" | `ojd profile` |
-| virtual gamepad | The gamepad that OpenJoystickDriver shows to games in place of the physical controller. | "virtual device", "virtual controller", "Virtual HID profile", "persona" | `ojd virtual`, the `persona` key of a virtual gamepad file |
-| virtual gamepad kind | The form of the virtual gamepad, chosen by what reads it: "For Steam and SDL games", "For Apple Game Controller games", or "Generic HID gamepad". | "persona", "profile" for this choice, the raw identifiers in Simple | `SDLCompatible`, `GameControllerCompatible`, `Generic` |
-| Handled by macOS | macOS reads the physical controller, and OpenJoystickDriver shows no virtual gamepad for it. | "Served by", "Left to macOS", "macOS (native)" | `server` `system` (`System` in JSON), `ojd controller release` |
-| Handled by OpenJoystickDriver | OpenJoystickDriver reads the physical controller and shows a virtual gamepad to games. | "Served by", "OpenJoystickDriver (virtual)" | `server` `ojd` (`OJD` in JSON), `ojd controller claim` |
-| Xbox USB driver | The driver that OpenJoystickDriver installs in macOS to read Xbox controllers over USB. | "driver extension", "system extension", "transport extension", "USB extension", "DriverKit", "dext" | `ojd transport-extension` |
-| connection | How a controller reaches the Mac: cable, receiver, or Bluetooth. | "transport", "Wireless Link" | `connection` |
-| mode | The setting that a switch or button combination on the controller selects, such as XInput or DInput. | "protocol" where it names this setting | `modes` in a controller record |
+| profile | A list of rules that changes what each button, stick, or trigger does. For example, a profile can make the A button press the Space bar. | "remapping profile" | `ojd profile` |
+| virtual gamepad | A pretend gamepad that OpenJoystickDriver makes in software. Games see it instead of your real controller, like a stand-in actor that copies every move. | "virtual device", "virtual controller", "Virtual HID profile", "persona" | `ojd virtual`, the `persona` key of a virtual gamepad file |
+| virtual gamepad kind | Which kind of gamepad the stand-in pretends to be. Pick the one your game reads best: "For Steam and SDL games", "For Apple Game Controller games", or "Generic HID gamepad". | "persona", "profile" for this choice, the raw identifiers in Simple | `SDLCompatible`, `GameControllerCompatible`, `Generic` |
+| Handled by macOS | macOS reads the controller by itself. OpenJoystickDriver stays out of the way and makes no virtual gamepad for it. | "Served by", "Left to macOS", "macOS (native)" | `server` `system` (`System` in JSON), `ojd controller release` |
+| Handled by OpenJoystickDriver | OpenJoystickDriver reads the controller and passes its input to games through a virtual gamepad. | "Served by", "OpenJoystickDriver (virtual)" | `server` `ojd` (`OJD` in JSON), `ojd controller claim` |
+| Xbox USB driver | A small add-on that OpenJoystickDriver installs in macOS so it can read Xbox controllers plugged in by USB cable. | "driver extension", "system extension", "transport extension", "USB extension", "DriverKit", "dext" | `ojd transport-extension` |
+| connection | How the controller reaches the Mac: a cable, a wireless receiver, or Bluetooth. | "transport", "Wireless Link" | `connection` |
+| mode | A setting you pick on the controller itself, with a switch or a button combination, such as XInput or DInput. Some controllers act like a different controller in each mode. | "protocol" where it names this setting | `modes` in a controller record |
+
+How the main terms fit together:
+
+```mermaid
+flowchart LR
+    C[Controller] --> Q{Handled by}
+    Q -->|macOS| M[macOS reads it, no virtual gamepad]
+    Q -->|OpenJoystickDriver| O[OJD reads it]
+    O --> V[Virtual gamepad of one kind] --> G[Games]
+    O --> P[Profile: keys, clicks, pointer] --> A[Any app]
+```
+
+Where you pick the virtual gamepad kind in the app:
+
+![The Virtual gamepad kind menu open in the Controllers area. Red arrows point to each choice, and the boxes say which games read it](../docs/screenshots/steps/virtual-gamepad-kind.png)
 
 ## Rules
 
-- The command line keeps every command, flag, schema value, and error code. The entry of a term names the value it stands for, so a script gets the same output.
-- In All Controls, the app shows the command line value beside the term. In Simple, it shows the term alone. See [Using the app](Using-the-App.md).
-- An error message that names a key of a file writes the key as the file spells it, such as `persona`.
-- Text that names a place in System Settings writes the name as macOS shows it, such as "Driver Extensions".
-- "Protocol" keeps its meaning as the language that a controller and the Mac speak, as in `ojd protocol`.
-- Each language translates a term one way. See [LOCALIZATION.md](../LOCALIZATION.md).
+- The command line keeps every command, flag, schema value, and error code as it is, so scripts get the same output. Each term's row names the value it stands for.
+- In All Controls, the app shows the command-line value next to the term. In Simple, it shows only the term. See [Using the app](Using-the-App.md).
+- An error message about a file writes the file's key exactly as the file spells it, such as `persona`.
+- A place in System Settings keeps the name macOS shows, such as "Driver Extensions".
+- "Protocol" means the language a controller and the Mac speak to each other, as in `ojd protocol`.
+- Each language translates a term one way only. See [LOCALIZATION.md](../LOCALIZATION.md).
 
 ## Further Reading
 

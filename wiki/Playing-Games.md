@@ -2,6 +2,20 @@
 
 See how games and apps see your controller through OpenJoystickDriver (OJD), which ones work, and what to expect from rumble.
 
+- **Who:** anyone who wants to play with a controller on a Mac.
+- **What:** how games see the controller, which games work, and what rumble does.
+- **Where:** any game or app that reads gamepads, such as Steam.
+- **Why:** many games only understand a few controller types; OJD shows them one they know.
+- **How:** connect the controller, then start the game; it sees a [virtual gamepad](Glossary.md#terms).
+
+```mermaid
+flowchart LR
+    pad[Your controller] -->|"OJD reads it"| ojd[OJD]
+    ojd -->|"copies each press"| vg[Virtual gamepad]
+    vg -->|"looks like a pad it knows"| game[Game]
+    game -.->|"rumble"| ojd
+```
+
 ## Contents
 
 - [How Games See Your Controller](#how-games-see-your-controller)
@@ -11,7 +25,15 @@ See how games and apps see your controller through OpenJoystickDriver (OJD), whi
 
 ## How Games See Your Controller
 
-Games don't read your physical controller. OJD reads it and publishes one [virtual gamepad](Glossary.md#terms) for each one. Games read the virtual gamepad.
+Games don't read your real controller. OJD reads it and makes one [virtual gamepad](Glossary.md#terms) for each controller. Games read the virtual gamepad. It works like a stand-in: you move the controller, and the stand-in copies each move for the game.
+
+```mermaid
+flowchart LR
+    C[Real controller] --> O[OJD]
+    O --> V[Virtual gamepad]
+    V -->|Default kind| S[Steam, SDL games, emulators]
+    V -->|Game Controller kind| A[Apps that use Apple's GameController framework, such as Safari]
+```
 
 ### Virtual Gamepad Kinds
 
@@ -23,11 +45,15 @@ Each virtual gamepad has one of three [kinds](Glossary.md#terms).
 | Game Controller | Xbox Wireless Controller, Bluetooth | `045E:0B13` | Yes |
 | Generic | OpenJoystickDriver Generic HID Gamepad, USB | `1209:4A4F` | No |
 
-The default kind approximates an Xbox controller. SDL games, Steam, and emulators read it as an Xbox pad. Apple's GameController framework, which Safari and some Mac games use, doesn't see it.
+The default kind acts like an Xbox controller. SDL games, Steam, and emulators read it as an Xbox pad. Apple's GameController framework is the part of macOS that Safari and some Mac games use to read controllers. It doesn't see the default kind.
 
-The Game Controller kind suits apps that use Apple's GameController framework. OJD never picks it. To choose it, run `ojd virtual set game-controller-compatible CONTROLLER`. SDL games and Steam read no input from it. To make another SDL game read it, start the game with `ojd virtual launch --sdl-gamecontroller-backend PROGRAM`.
+The Game Controller kind suits apps that use Apple's GameController framework. OJD never picks it for you. To choose it, run `ojd virtual set game-controller-compatible CONTROLLER`. SDL games and Steam read no input from it. To make another SDL game read it, start the game with `ojd virtual launch --sdl-gamecontroller-backend PROGRAM`.
 
-The Generic kind is a plain HID gamepad with 16 buttons and no hat. The D-pad uses four of the buttons.
+The Generic kind is a plain HID gamepad with 16 buttons. HID is the standard way keyboards, mice, and gamepads talk to a computer. It has no hat switch, the control that reports the D-pad as one direction, so the D-pad uses four of the buttons.
+
+You can see and change the kind in the **Controllers** area:
+
+![The Virtual gamepad kind menu open in the Controllers area. Red arrows point to each choice, and the boxes say which games read it](../docs/screenshots/steps/virtual-gamepad-kind.png)
 
 ### Automatic Selection
 
@@ -56,7 +82,7 @@ To remove the override, choose **Automatic**. It applies to every connected cont
 
 Results come from the maintainer (macOS 27) and one tester (macOS 26.7.1, ZD Ultimate Legend). None is a guarantee. "Not verified" means no hardware result.
 
-Each game reads controllers through an interface, and the interface decides whether the game sees the OJD virtual gamepad. OJD can't add support to another app.
+Each game reads controllers in one way, called an interface. The interface decides whether the game sees the OJD virtual gamepad. OJD can't change how another app reads controllers.
 
 ### Results by Interface
 
@@ -95,7 +121,11 @@ Rumble from a game reaches your controller. Lighting doesn't. Rumble in games is
 
 ### Rumble from Games
 
-The default and Game Controller kinds accept rumble. OJD turns a game's rumble into a short command for the controller and sends a stop when it ends. The Generic kind has no rumble: when a controller with motors uses it, the virtual gamepad picker, `ojd virtual show`, `ojd virtual set` and `ojd controller show` say games cannot rumble it and name the kinds that can, and the `--json` output of `ojd virtual show` and `ojd controller show` has `gameRumbleUnavailable`. A controller without a motor drops that channel, and so do generic gamepads. OJD passes no lightbar commands.
+The default and Game Controller kinds accept rumble. OJD turns a game's rumble into a short command for the controller. When the rumble ends, OJD sends a stop.
+
+The Generic kind has no rumble. When a controller with motors uses it, OJD tells you so. The virtual gamepad picker, `ojd virtual show`, `ojd virtual set`, and `ojd controller show` say games can't rumble it and name the kinds that can. The `--json` output of `ojd virtual show` and `ojd controller show` has `gameRumbleUnavailable`.
+
+A controller without a motor ignores rumble, and so do generic gamepads. OJD passes no lightbar commands.
 
 ### Rumble from Input Test
 
@@ -103,7 +133,7 @@ Input Test has its own **Rumble** and **Lighting** groups. They talk to the cont
 
 ### Identical Controllers
 
-Two controllers with the same ID each get their own virtual gamepad, with its own serial number and LocationID, so a game's rumble reaches only the controller it was sent to.
+Two controllers with the same ID each get their own virtual gamepad. Each virtual gamepad has its own serial number and LocationID (the address macOS uses to tell devices apart). So a game's rumble reaches only the controller it was sent to.
 
 ## Further Reading
 

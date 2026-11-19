@@ -2,7 +2,27 @@
 
 Write scripts, Shortcuts, and AppleScript that read your controllers, change [profiles](Glossary.md#terms), and drive a [virtual gamepad](Glossary.md#terms).
 
-For one action with no code, see [Use Shortcuts](#use-shortcuts). The other sections cover the `ojd` command and the endpoint, a local socket where programs read controller events.
+Automating means letting a small program do a job for you, such as switching to your racing profile whenever a racing game opens.
+
+For one action with no code, see [Use Shortcuts](#use-shortcuts). The other sections cover two ways in:
+
+- the `ojd` command, which you type in Terminal or call from a script
+- the endpoint, a private door on your Mac (a local socket) where your own programs can listen to controller events as they happen
+
+- **Who:** anyone who writes scripts, Shortcuts, or AppleScript.
+- **What:** read controllers, switch profiles, and drive a virtual gamepad from your own program.
+- **When:** a job repeats, such as switching to a racing profile whenever a racing game opens.
+- **Where:** Terminal with `ojd`, the Shortcuts app, or the endpoint socket on your Mac.
+- **How:** start with Shortcuts for one action; use `ojd` or the endpoint for more.
+
+```mermaid
+flowchart LR
+    Y[Your script, Shortcut, or AppleScript] -->|runs| O[ojd command]
+    Y -->|connects with a token| E[Endpoint socket]
+    O --> S[OJD service]
+    E --> S
+    S --> C[Controllers, profiles, virtual gamepads]
+```
 
 ## Contents
 
@@ -26,7 +46,7 @@ The `ApplicationServiceClient` in the Swift package `OpenJoystickDriverKit` work
 
 ## Write a Script
 
-A good script starts the service, asks for no input, and checks every exit code.
+A good script starts the service, never stops to ask you a question, and checks every exit code. An exit code is a number a command leaves behind when it ends: 0 means it worked, and any other number names what went wrong.
 
 1. Start the service and wait until it accepts requests: `ojd service start`.
 2. Add `--no-input` to each command, so it fails instead of asking, and `--json` where you read output.
@@ -41,7 +61,7 @@ ojd --no-input --json controller list | jq -r '.items[] | [.id, .name, .unit // 
 
 ## Read JSON Output
 
-With `--json`, `ojd` prints stable data. OJD never translates keys and values. A streaming command, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
+With `--json`, `ojd` prints JSON, a text format programs read easily. The keys and values stay the same between releases and are never translated, so your script keeps working in any language. A streaming command, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
 
 Each object has `apiVersion` (`openjoystickdriver/v1alpha3`) and `kind`, the singular UpperCamelCase name of the output. `ojd controller show` prints `Controller`, or `UnservedController` for a device OJD does not handle. `ojd status` prints `SystemStatus`.
 

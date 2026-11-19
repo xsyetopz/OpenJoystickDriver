@@ -1,6 +1,20 @@
 # Wii Remote
 
-Connect a Wii Remote to OpenJoystickDriver (OJD) and see what OJD reads from and sets on it.
+How to connect a Wii Remote to OpenJoystickDriver (OJD), which buttons and sensors OJD reads from it, and what OJD can make it do (lights, rumble, sound).
+
+- **Who:** anyone with a Wii Remote.
+- **What:** pairing, which buttons and sensors OJD reads, and lights, rumble, IR, and sound.
+- **Where:** macOS Bluetooth settings to pair, then the **Controllers** area.
+- **Why:** macOS can pair the remote but games can't read it without OJD.
+- **How:** press 1 and 2 together while Bluetooth settings are open.
+
+```mermaid
+flowchart LR
+    wr[Wii Remote] -->|"press 1 and 2"| bt[macOS Bluetooth]
+    bt -->|"paired"| ojd[OJD]
+    ojd -->|"buttons, motion, IR"| vg[Virtual gamepad]
+    ojd -.->|"lights, rumble, sound"| wr
+```
 
 ## Contents
 
@@ -28,9 +42,18 @@ No real-hardware test has confirmed these records, so they are Unverified. See [
 
 macOS pairs the remote over Bluetooth. OJD reads it once macOS lists it as connected.
 
+```mermaid
+flowchart LR
+    A[Press 1 and 2, or SYNC] --> B[macOS Bluetooth pairs it]
+    B --> C[OJD reads it]
+    C --> D[Virtual gamepad for games]
+```
+
 1. Choose Apple menu > **System Settings**, then click **Bluetooth**.
 2. Press the 1 and 2 buttons together, or press the red SYNC button in the battery compartment.
 3. Select the remote when it appears.
+
+![Bluetooth in System Settings. Red arrows point to Bluetooth in the sidebar and to a controller under Nearby Devices](../docs/screenshots/steps/macos-bluetooth.png)
 
 Which method works on which macOS version is untested. If pairing fails, see [Known Issues](Known-Issues.md#a-wii-remote-may-not-pair-with-macos).
 
@@ -53,7 +76,7 @@ Each connection starts a session. OJD reads the remote's status and acceleromete
 | Home | `Guide` |
 | D-pad | `DpadUp`, `DpadDown`, `DpadLeft`, `DpadRight` |
 
-The accelerometer reaches OJD as motion samples. Only the Motion Plus extension adds a gyroscope. OJD shows the battery level as a percentage.
+The accelerometer is a sensor that feels tilting and shaking. It reaches OJD as motion samples. Only the Motion Plus extension adds a gyroscope. OJD shows the battery level as a percentage.
 
 ## Extensions
 
@@ -84,7 +107,7 @@ Rumble is on or off. `ojd controller rumble CONTROLLER` runs it for a set time, 
 
 ## IR Pointer
 
-The remote has an IR camera that sees the two points of a sensor bar. The camera runs only while the active profile binds `PointerX` or `PointerY` as a source. Otherwise the remote reports buttons and the accelerometer (report mode `0x31`), and the camera stays off.
+The remote has a small infrared (IR) camera in its tip. It sees the two glowing points of a sensor bar under your screen, and works out where you're pointing from them. The camera runs only while the active profile binds `PointerX` or `PointerY` as a source. Otherwise the remote reports buttons and the accelerometer (report mode `0x31`), and the camera stays off.
 
 When such a profile becomes active, OJD sets up the camera with seven register writes at least `irWriteIntervalMs` (50 ms) apart, then switches to report mode `0x37`. When no profile binds the pointer, OJD turns the camera off and the pointer returns to neutral.
 

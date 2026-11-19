@@ -2,7 +2,27 @@
 
 Play a game on one Mac with a controller plugged into another Mac.
 
-The bridge copies controller input from the first Mac to the second. The game sees a [virtual gamepad](Glossary.md#terms). Rumble from the game goes back to the first Mac, where the bridge prints it. It does not make the controller rumble.
+Think of it as a long cable over your network. The bridge copies controller input from the first Mac to the second. WebRTC is the same technology video calls use to send data straight from one computer to another. The game sees a [virtual gamepad](Glossary.md#terms). Rumble from the game goes back to the first Mac, where the bridge prints it. It does not make the controller rumble.
+
+- **Who:** anyone who wants to play on one Mac with a controller on another.
+- **What:** `ojd-webrtc-bridge`, a separate program that runs on both Macs.
+- **Where:** two Macs on one network, with OJD installed on both.
+- **Why:** the game Mac may be in another room, like a long cable over your network.
+- **How:** build the bridge, create a token with `ojd access`, and run it on each Mac.
+
+```mermaid
+sequenceDiagram
+    participant C as Controller
+    participant P as Player Mac (bridge, role player)
+    participant H as Host Mac (bridge, role host)
+    participant G as Game
+    C->>P: button presses
+    P->>H: input over WebRTC
+    H->>G: virtual gamepad
+    G-->>H: rumble command
+    H-->>P: rumble command
+    Note over P: prints it, controller stays still
+```
 
 The bridge is a separate program, `ojd-webrtc-bridge`, that you build and run in Terminal on both Macs. The app, the service, and `ojd` have no WebRTC code. The bridge can do only what you allow with `ojd access`.
 
@@ -28,7 +48,19 @@ Each Mac runs one bridge with one role.
 
 ## Connect Two Macs
 
-The bridges find each other through two lines of text, an offer and an answer. Copy each line to the other Mac yourself, by a channel you trust. Anyone with both lines can try to join.
+The bridges find each other through two lines of text, an offer and an answer, like swapping phone numbers. Copy each line to the other Mac yourself, by a channel you trust, such as a message to yourself. Anyone with both lines can try to join.
+
+```mermaid
+sequenceDiagram
+    participant P as Player Mac
+    participant You
+    participant H as Host Mac
+    P->>You: prints the offer line
+    You->>H: paste the offer
+    H->>You: prints the answer line
+    You->>P: paste the answer
+    P-->H: link opens
+```
 
 1. On each Mac, turn on the endpoint: `ojd access enable`.
 2. On the player Mac, create a token that lets the bridge read your controller: `ojd access grant --token bridge --scope read`. The command prints the token once. Keep it.

@@ -1,9 +1,22 @@
 # Writing Controller Mods
 
-Use a mod package to share controller support. Anyone can install the folder with one command and remove it again.
+A mod package is a folder of files that teaches OJD about a controller, like an add-on pack for a game. You make it once, share it, and anyone can install it with one command and remove it again. It changes nothing inside the signed app.
 
 > [!IMPORTANT]
 > Apple signs the list of products that the [Xbox USB driver](Glossary.md#terms) claims. A mod package can't add a controller to that list.
+
+- **Who:** people who want to share controller support with others.
+- **What:** a mod package: a folder of records and profiles with a manifest.
+- **Where:** installed into `~/Library/Application Support/OpenJoystickDriver/Packages`.
+- **Why:** anyone can add or remove it with one command, and the signed app stays untouched.
+- **How:** write the manifest, then run `ojd mod validate` and `ojd mod install`.
+
+```mermaid
+flowchart LR
+    f[Folder with manifest] -->|"ojd mod validate"| ok[Checked]
+    ok -->|"ojd mod install"| pk[Packages folder]
+    pk -->|"service picks it up"| ojd[OJD]
+```
 
 ## Contents
 
@@ -16,7 +29,7 @@ Use a mod package to share controller support. Anyone can install the folder wit
 
 ## Package Layout
 
-A package adds files to the layers that OpenJoystickDriver (OJD) already reads. It holds no code. A record for a raw-USB controller works only when macOS lets OJD open the device.
+A package adds files to the ones OpenJoystickDriver (OJD) already reads. It holds only settings files, never programs, so it can't run anything on your Mac. A record for a raw-USB controller works only when macOS lets OJD open the device.
 
 A package is a folder with a `mod.plist` manifest and up to four subfolders:
 
@@ -100,6 +113,14 @@ OJD skips a package whose `requires` leaves out the running version. `ojd mod li
 ## Precedence and Clashes
 
 A package is a read-only layer between the bundled catalog and your own files. A package `Controller` file is for a model with no bundled record. A package `ControllerPatch` changes a bundled or packaged record. Your files win over a package for the same model, and your `ControllerPatch` wins over the package record and package patches.
+
+Think of three stacked sheets of tracing paper. OJD reads from the bottom up, and the top sheet wins where they overlap:
+
+```mermaid
+flowchart BT
+    B[Bundled catalog, inside the app] --> P[Mod packages, read-only]
+    P --> Y[Your own files: they win]
+```
 
 - `ojd mod install` and `ojd mod validate` refuse a package whose controller, patch, or virtual gamepad covers a model that your files or another package hold. They also refuse a protocol description with a file name already held, and a profile with an ID or name already held. The code is E4004. `--force` does not override it.
 - A clash can appear after install, such as when you add a record later. Your file wins. Among packages, the first by name wins. `ojd record list` names each ignored package record and the reason. OJD doesn't report an ignored package profile. `ojd status` and `ojd diagnose` list each ignored virtual gamepad file.

@@ -2,6 +2,21 @@
 
 Connect a controller, find its ID, and set up the [Xbox USB driver](Glossary.md#terms) for Xbox controllers.
 
+- **Who:** anyone plugging in or pairing a controller.
+- **What:** the three ways to connect, and how to find a controller's ID.
+- **When:** the first time you use a controller, or when it isn't detected.
+- **Where:** a USB port, macOS Bluetooth settings, or a wireless dongle; then the **Controllers** area.
+- **Why:** OJD can only read a controller macOS can see.
+- **How:** connect it, then check that it says **Working** in the **Controllers** area.
+
+```mermaid
+flowchart LR
+    c[Controller] -->|"USB cable"| mac[Mac]
+    c -->|"Bluetooth"| mac
+    c -->|"2.4 GHz dongle"| mac
+    mac -->|"OJD reads it"| ojd[Controllers area: Working]
+```
+
 ## Contents
 
 - [Connection Types](#connection-types)
@@ -33,7 +48,7 @@ OJD never reconnects a Bluetooth controller by itself. To disconnect one, select
 
 ## Finding Your Controller ID
 
-A controller's ID is its vendor and product number, such as `045E:02D1`. Bug reports need it. Each connection has its own ID.
+A controller's ID is two numbers, like the make and model of a car. The first number names the maker (vendor ID), and the second names the model (product ID), such as `045E:02D1`. Bug reports need it. Each connection has its own ID.
 
 ### Read the ID of a USB Controller
 
@@ -65,9 +80,9 @@ ojd controller show CONTROLLER
 
 ## Xbox USB Driver
 
-The [Xbox USB driver](Glossary.md#terms) is a driver that OJD installs in macOS. It reads genuine Xbox One and Xbox Series controllers connected by USB. Other controllers don't need it. The app, not the driver, publishes the [virtual gamepad](Glossary.md#terms).
+The [Xbox USB driver](Glossary.md#terms) is a driver that OJD installs in macOS. It reads genuine Xbox One and Xbox Series controllers connected by USB. Other controllers don't need it. The driver only reads the controller. The app makes the [virtual gamepad](Glossary.md#terms).
 
-A build without Apple's `userclient-access` permission has no driver, and **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build Options and Limits](Building-from-Source.md).
+Apple must grant a special permission, `userclient-access`, before a build can include the driver. A build without it has no driver, and **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build Options and Limits](Building-from-Source.md).
 
 ### Approve the Driver
 

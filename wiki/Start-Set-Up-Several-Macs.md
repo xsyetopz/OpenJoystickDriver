@@ -2,6 +2,17 @@
 
 Install OJD on more than one Mac and copy your [profiles](Glossary.md#terms) and controller records between them.
 
+- **Who:** anyone with OJD on more than one Mac, such as a desktop and a laptop.
+- **What moves:** your profiles and records, saved as files you carry over.
+- **What doesn't move:** the macOS permissions. Each Mac asks for them again, because macOS keeps those per Mac.
+- **How:** export on the first Mac, copy the file over, and import it on the other.
+
+```mermaid
+flowchart LR
+    A[First Mac] -->|ojd profile export| F[(profile file)]
+    F -->|ojd profile import| B[Other Mac]
+```
+
 ## Check the License
 
 OJD is open source under the [Mozilla Public License 2.0](https://www.mozilla.org/MPL/2.0/). It sets no limit on how many Macs you install on and allows commercial use. If you give copies to others, their source stays available under the same license. Do not remove license notices. The full text is in `LICENSE` at the repository root.
@@ -20,8 +31,12 @@ See [Permissions](Permissions-and-Security.md#permissions).
 
 1. Install OJD as in [Start: Play a Game with a Controller](Start-Play-a-Game.md).
 2. Allow **Input Monitoring** and **Accessibility** (**Device Control and Data Access** on macOS 27). See [Grant Input Monitoring and Accessibility](Permissions-and-Security.md#grant-input-monitoring-and-accessibility).
+
+   ![Privacy & Security in System Settings. Red arrows point to Device Control and Data Access and to Input Monitoring](../docs/screenshots/steps/macos-privacy-list.png)
 3. In the **Access** area, click **Restart OpenJoystickDriver** if it appears.
 4. For an Xbox controller on USB, approve the Xbox USB driver. See [Xbox USB Driver](Connecting-Controllers.md#xbox-usb-driver).
+
+   ![The Extensions section. Red arrows point to By Category and to the (i) button beside Driver Extensions, which lists XboxUSBDevice](../docs/screenshots/steps/macos-driver-extensions.png)
 5. Run `ojd status` in Terminal.
 
 ## Copy Your Setup

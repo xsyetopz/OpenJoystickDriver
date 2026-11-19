@@ -2,6 +2,12 @@
 
 The Input Test window shows live input from a controller and tests rumble and lighting.
 
+- **Who:** anyone checking that a controller works.
+- **What:** the Input Test window: live buttons, sticks, rumble, and lights.
+- **When:** after you connect a controller, change a record, or change a profile.
+- **Where:** **Controllers** area > **Open Input Test**, or **Test Input** in the menu-bar menu.
+- **How:** press each control and watch the matching one light up.
+
 ## Open the Input Test Window
 
 Click **Controllers** in the sidebar, select a controller, and click **Open Input Test**.
@@ -20,7 +26,7 @@ The header shows the status, the connection, the protocol, and the controller's 
 
 ## Guided Check
 
-While input is active, **Guided Check** asks for each control, one at a time. A step ends when the control leaves rest, when another control moves first, or when you click **Skip**. Release a control you hold at the start of a step before it counts. Closing the window or changing the controller stops the check.
+While input is active, **Guided Check** asks you to use each control, one at a time. A step ends when you move the control from where it rests, when another control moves first, or when you click **Skip**. If you hold a control when a step starts, let go of it first, or it doesn't count. Closing the window or changing the controller stops the check.
 
 At the end, a sheet lists what each control did:
 
@@ -41,7 +47,7 @@ Sticks, D-pad, buttons, and triggers show their state. Button names follow the [
 
 ### Motion Calibration
 
-This group appears for controllers with a gyroscope. Keep the controller still while OJD measures its resting offset. Use **Start Calibration**, **Pause**, and **Reset**. Collection continues after you close the window. It needs an enabled [profile](Glossary.md#terms) for the controller. It is untested whether the calibration survives a restart of OJD.
+This group appears for controllers with a gyroscope (a motion sensor that feels turning). Even a still gyroscope reports a little turning, like a scale that shows 2 grams with nothing on it. Keep the controller still while OJD measures that error, called the resting offset. Use **Start Calibration**, **Pause**, and **Reset**. Collection continues after you close the window. It needs an enabled [profile](Glossary.md#terms) for the controller. It is untested whether the calibration survives a restart of OJD.
 
 ### Recalibrate
 
@@ -52,7 +58,7 @@ Use **Recalibrate** when a stick drifts or never reaches full range. Each step r
 - **Measure Triggers**: press each trigger all the way in.
 - **Measure Gyro**: keep the controller still. A controller without a gyroscope skips this.
 
-OJD stores the values in the record for the controller's model and applies them before profile mapping. **Reset** removes them. `ojd controller calibrate CONTROLLER sticks` does the same in Terminal.
+OJD stores the values in the record for the controller's model. It corrects each reading with them before a profile changes what the control does. **Reset** removes them. `ojd controller calibrate CONTROLLER sticks` does the same in Terminal.
 
 ### Rumble
 

@@ -1,6 +1,20 @@
 # Profiles
 
-Use [profiles](Glossary.md#terms) to change what the buttons, sticks, triggers, touchpad, and motion sensors of your controller do.
+A [profile](Glossary.md#terms) is your own button layout. Use one to change what the buttons, sticks, triggers, touchpad, and motion sensors of your controller do. For example, make the A button press the space bar, or make the stick move the mouse.
+
+- **Who:** anyone who wants their own button layout.
+- **What:** a profile: a saved layout for one controller model.
+- **When:** a game or app needs different buttons, keys, or mouse moves.
+- **Where:** the **Profiles** area of the app, or `ojd profile`.
+- **Why:** you can make the A button press the space bar, or a stick move the mouse.
+- **How:** create a profile, assign buttons, then make it active.
+
+```mermaid
+flowchart LR
+    pad[Controller] -->|"press A"| prof[Active profile]
+    prof -->|"A means space bar"| kb[Keyboard key]
+    prof -->|"stick means mouse"| mouse[Pointer]
+```
 
 ## Contents
 
@@ -11,43 +25,50 @@ Use [profiles](Glossary.md#terms) to change what the buttons, sticks, triggers, 
 
 ## About Profiles
 
-A profile is a saved set of rules for one controller model. A rule can make a button press a key, move the pointer, or scroll.
+Think of a profile as a cheat sheet you hand to OpenJoystickDriver (OJD): "when I press this, do that". Each profile is for one controller model. A rule can make a button press a key, move the pointer, or scroll.
 
 ### What a Profile Contains
 
-Each profile has a name, a controller model, and an application scope. For the controller ID, see [Finding your controller ID](Connecting-Controllers.md). A profile can also hold assignments, chords, sequences, layers, stick, trigger, touch, and motion settings, an output policy, and a lighting color. It applies to every connected controller of its model.
+Every profile has:
+
+- a name
+- a controller model (see [Finding your controller ID](Connecting-Controllers.md))
+- a scope: which apps it works in
+
+It can also hold button rules, button combos (chords), button sequences, layers, stick, trigger, touch, and motion settings, an output policy, and a light color. It works for every connected controller of its model.
 
 ### Scope
 
-**All Applications** works in every app. **One Application** works only while an app you list is in front.
+The scope says where the profile works. **All Applications** works everywhere. **One Application** works only while an app you picked is the one in front.
 
 ### The Active Profile
 
-A profile does nothing until you activate it. One model can have one active profile for each scope. OpenJoystickDriver (OJD) picks the profile for a controller in this order:
+A profile does nothing until you turn it on (activate it). One model can have one active profile for each scope. When several could apply, OJD picks in this order:
 
 1. The most recently activated profile whose scope matches the front app.
 2. The most recently activated global profile.
 3. The most recently activated profile for the model, even if its app is not in front.
 
-If none is active, OJD passes the controller through to the [virtual gamepad](Glossary.md#terms).
+If none is active, OJD passes the controller straight through to the [virtual gamepad](Glossary.md#terms), unchanged.
 
 A button can change the active profile. See [Switch profiles, set layers, and pause](Bindings-and-Actions.md#switch-profiles-set-layers-and-pause).
 
 To see the active profile, select the controller in **Controllers** and read **Active profile**. **Selected by app** names the front app when rule 1 chose it. OJD reads the front app when a controller connects and when you change a profile. Whether it re-checks when you switch apps is untested.
 
-> [!WARNING]
-> Do not activate a second global profile for a model that already has one. Two active global profiles for one model crash the app at every launch. See [Known issues](Known-Issues.md).
-
 ### Output Policy
 
-The output policy decides how a profile sends its results. Its pickers show only in the **All Controls** interface.
+The output policy decides where the profile's results go: to a virtual gamepad, to the keyboard and mouse, or both. Its pickers show only in the **All Controls** interface.
 
 | Setting | Values | Meaning |
 | --- | --- | --- |
 | Virtual gamepad | **Disabled**, **Mapped Controls Only**, **Include Unmapped Controls** | Whether OJD publishes a virtual gamepad |
-| **Require exclusive physical input** | Off, On | Whether OJD takes exclusive ownership of the physical input |
+| **Hide controller from other apps** | Off, On | Whether OJD keeps the real controller to itself, so other apps can't read it |
 
-**Disabled** sends keyboard and pointer events only. **Mapped Controls Only** sends only the destinations you assigned. **Include Unmapped Controls** also forwards the rest. Virtual gamepad output needs exclusive physical input. A profile you create starts with **Include Unmapped Controls** and no assignments, unless you pick a template.
+- **Disabled**: no virtual gamepad. Only keyboard and mouse events go out.
+- **Mapped Controls Only**: the virtual gamepad gets only the controls you set rules for.
+- **Include Unmapped Controls**: the virtual gamepad also gets every control you left alone.
+
+Virtual gamepad output needs exclusive physical input, which means OJD keeps the real controller to itself so other apps read only the virtual gamepad. A new profile starts with **Include Unmapped Controls** and no rules, unless you pick a template.
 
 Keyboard and pointer output needs Accessibility access. See [Permissions](Permissions-and-Security.md).
 
@@ -56,6 +77,8 @@ Keyboard and pointer output needs Accessibility access. See [Permissions](Permis
 ### Before You Begin
 
 Connect the controller the profile is for, then click **Profiles** in the sidebar.
+
+![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, check a file, and a menu to copy, change model, save to file, or delete](../docs/screenshots/steps/profiles-toolbar.png)
 
 ### Create a Profile In the App
 
@@ -134,7 +157,7 @@ To return to pass-through, choose **Restore Default Input**. On the command line
 
 ## Importing and Exporting Profiles
 
-Export a profile to keep, share, or move it. Import loads one from a file.
+Exporting saves a profile as a file, so you can keep a copy, share it, or move it to another Mac. Importing does the reverse.
 
 ### Export a Profile
 
@@ -159,7 +182,7 @@ On the command line:
 ojd profile import FILE.plist
 ```
 
-OJD checks the file first and rejects one with unknown keys, out-of-range values, or a size above 4 MiB.
+OJD checks the file first. It refuses a file with settings it doesn't know, numbers that are too big or too small, or a size above 4 MiB.
 
 ### What Happens On Import
 

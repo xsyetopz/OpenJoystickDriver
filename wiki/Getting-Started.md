@@ -2,6 +2,21 @@
 
 Install OpenJoystickDriver, allow what it needs, connect a controller, and see it work.
 
+- **Who:** anyone using OpenJoystickDriver for the first time.
+- **What:** install the app, allow two permissions, connect a controller.
+- **When:** once, on each Mac.
+- **Where:** your Applications folder, then System Settings, then the menu bar.
+- **Why:** games see the controller only after OJD can read it and pass it on.
+- **How:** follow the numbered steps below; it takes about five minutes.
+
+```mermaid
+flowchart LR
+    dmg[Disk image] -->|"drag to Applications"| app[OJD app]
+    app -->|"allow Input Monitoring and Accessibility"| perm[Permissions]
+    perm -->|"connect a controller"| work[Working]
+    work -->|"virtual gamepad"| game[Game]
+```
+
 ## Contents
 
 - [About OpenJoystickDriver](#about-openjoystickdriver)
@@ -11,11 +26,11 @@ Install OpenJoystickDriver, allow what it needs, connect a controller, and see i
 
 ## About OpenJoystickDriver
 
-OpenJoystickDriver (OJD) is a menu-bar app that makes game controllers work with Mac games. It reads your controller over USB, Bluetooth, or a 2.4 GHz wireless dongle. It then shows the controller to games as a [virtual gamepad](Glossary.md#terms).
+OpenJoystickDriver (OJD) is a menu-bar app that makes game controllers work with Mac games. Think of it as a translator. Your controller speaks one language, and many games only understand another. OJD reads the controller over USB, Bluetooth, or a 2.4 GHz wireless dongle. It then shows it to games as a [virtual gamepad](Glossary.md#terms) that they understand.
 
 A [profile](Glossary.md#terms) can also make controller buttons press keys, click the mouse, move the pointer, or scroll. See [Remapping Profiles](Remapping-Profiles.md).
 
-OJD is one app. It needs no kernel extension and no change to System Integrity Protection or Apple Mobile File Integrity. Xbox One and Xbox Series controllers on USB can use the [Xbox USB driver](Glossary.md#terms). See [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
+OJD is one app. You don't turn off any Mac security to use it: it needs no kernel extension and no change to System Integrity Protection or Apple Mobile File Integrity. Xbox One and Xbox Series controllers on a USB cable can use the [Xbox USB driver](Glossary.md#terms). See [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
 
 > [!NOTE]
 > OJD is alpha software. Some controllers are untested on real hardware, and some games don't read the virtual gamepad. See [Supported Controllers](Supported-Controllers.md) and [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
@@ -54,7 +69,7 @@ This takes about five minutes.
 
 ### Allow the Permissions OJD Needs
 
-OJD needs two macOS permissions. **Input Monitoring** lets it read your controller. **Accessibility** lets it hand the controller to games. On macOS 27, Accessibility is called **Device Control and Data Access**.
+OJD needs two macOS permissions. **Input Monitoring** lets it read your controller. **Accessibility** lets it pass the controller on to games. On macOS 27, Accessibility is called **Device Control and Data Access**.
 
 1. Click the menu-bar icon and choose **Open OpenJoystickDriver**.
 2. On **Finish Setting Up**, click **Request...** next to each permission.
@@ -83,7 +98,7 @@ Connect your controller by USB cable, Bluetooth, or dongle. Its name appears in 
 
 ### Play a Game
 
-Start the game. It reads the virtual gamepad. If the Input Test shows nothing, see [Controller Is Not Detected](Troubleshooting.md#if-a-controller-isnt-detected). If the game shows no input, see [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
+Start the game. The game reads the virtual gamepad as if it were your controller. If the Input Test shows nothing, see [Controller Is Not Detected](Troubleshooting.md#if-a-controller-isnt-detected). If the game shows no input, see [Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller).
 
 ## Further Reading
 

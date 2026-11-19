@@ -1,6 +1,18 @@
 # Error Codes
 
-These are the error codes of OpenJoystickDriver (OJD).
+When something goes wrong, OpenJoystickDriver (OJD) shows an error code next to the message, such as `E2038`. The code is like a page number in a repair manual: look it up below to learn what happened and what to do.
+
+- **Who:** anyone who sees a code such as `E2038`.
+- **What:** a list of every code with what happened and what to do.
+- **Where:** next to the message in the app, or in the output of `ojd`.
+- **How:** find the code below, then follow its fix.
+
+```mermaid
+flowchart LR
+    err[Message with E2038] -->|"look up the number"| page[This page]
+    page -->|"what happened"| why[Cause]
+    page -->|"what to do"| fix[Fix]
+```
 
 ## How Codes Work
 
@@ -12,7 +24,14 @@ A code is `E` and four digits. The first digit gives the area:
 - `E4xxx`: mod packages.
 - `E5xxx`: documents, such as a profile, a controller record, or a mod manifest.
 
-A code keeps its meaning. The English message can change, so check the code. To look one up offline, run `ojd explain E####`.
+A code always means the same thing. The words of the message can change between versions, so search for the code, not the words. To look one up offline, run `ojd explain E####`.
+
+```mermaid
+flowchart LR
+    E[E2038] --> D[First digit 2: the command line]
+    E --> N[038: which problem]
+    E --> X[ojd explain E2038]
+```
 
 ## Codes
 
