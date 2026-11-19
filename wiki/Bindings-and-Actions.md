@@ -1,11 +1,11 @@
 # Bindings and Actions
 
-An assignment makes a button or stick do something else, such as press a key on the keyboard. Combinations and layers let one [profile](Glossary.md#terms) do more with the same few buttons, like the Shift key gives each letter key a second job.
+An assignment makes a button or stick do something else, such as press a key on the keyboard. Combinations and layers let one [profile](Glossary.md#terms) do more with the same few buttons, the way Shift gives each letter key a second job.
 
-- **Who:** anyone who wants a button to do something new.
+- **Who:** anyone who wants a button to do something different.
 - **What:** assignments, combinations, sequences, and layers inside a profile.
 - **Where:** the **Profiles** area of the app, or `ojd profile`.
-- **Why:** a few buttons can do many jobs, like Shift gives each key a second job.
+- **Why:** a few buttons can do many jobs.
 - **How:** pick a button, then pick what it does.
 
 ```mermaid
@@ -63,7 +63,7 @@ flowchart LR
 
 A gamepad destination needs the virtual gamepad turned on in the profile. Paddles, grips, and function buttons cannot be gamepad outputs. See [What the virtual gamepad carries](Automating-OpenJoystickDriver.md#what-the-virtual-gamepad-carries) and [About profiles](Remapping-Profiles.md#about-profiles).
 
-### Add an Assignment In the App
+### Add an Assignment in the App
 
 ![The profile editor in the Profiles area. Red arrows point to Set Active, the Profile editor section menu, the + button that adds an assignment, the Controller control and Destination of one assignment, its Behavior button, and the Save button](../docs/screenshots/steps/profile-editor.png)
 
@@ -117,7 +117,7 @@ To remove an assignment, run `ojd binding clear PROFILE SOURCE`. To list them, r
 
 ### Set a Behavior
 
-The behavior decides what one press does. For example, **Hold** works like a doorbell (on while pressed), and **Toggle** works like a light switch (press once for on, again for off).
+The behavior decides what one press does. **Hold** works like a doorbell (on while pressed), and **Toggle** works like a light switch (press once for on, again for off).
 
 Click **Behavior...** on the assignment row, select a behavior, then click **Apply** and **Save**.
 
@@ -149,7 +149,7 @@ The **Note (optional)** field of the behavior sheet takes up to 200 characters a
 
 ### Macros
 
-A macro is a named list of steps that OJD plays back for you, like a recipe: press this, wait, press that. A profile holds up to 16 macros of up to 32 steps. Macros are untested on real hardware.
+A macro is a named list of steps that OJD plays back, like a recipe: press this, wait, press that. A profile holds up to 16 macros of up to 32 steps. Macros are untested on real hardware.
 
 1. Open the **Macros** section and click **Add macro**.
 2. Enter a **Macro name** (1 to 40 characters, unique in the profile).
@@ -201,13 +201,13 @@ SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
 
 `INNER-OUTER` are stick deflections from 0 to 1 after the dead zone. On a stick, `FROM-TO` are degrees clockwise from up. On a trigger, they are pulls from 0 to 1. Touch values are fractions of the surface. For example, `ojd binding set "My controller" stick-region:left:0.8-1 key:key-a` presses A while the left stick is pushed past 0.8. Regions of one stick must not overlap. In the app, use **Regions** in the **Controller** section. See [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md#set-regions).
 
-### Restore Or Clear Assignments
+### Restore or Clear Assignments
 
 To remove every assignment or return to pass-through, see [Clear All Assignments](Remapping-Profiles.md#clear-all-assignments).
 
 ## Switch Profiles, Set Layers, and Pause
 
-Three destinations change what OJD does instead of sending input. Each fires on press. They are untested on real hardware.
+Three destinations change what OJD does instead of sending input, and each fires on press. They are untested on real hardware.
 
 - **Next profile** and **Previous profile** activate the neighbor of the active profile among profiles for the same controller model and scope. The order is by name and wraps. A named profile must be for the same model.
 - **Turn layer on**, **Turn layer off**, and **Toggle layer** set a layer of the same profile.
