@@ -1,6 +1,6 @@
 # Profiles
 
-A [profile](Glossary.md#terms) is your own button layout. Use one to change what the buttons, sticks, triggers, touchpad, and motion sensors of your controller do. For example, make the A button press the space bar, or make the stick move the mouse.
+A [profile](Glossary.md#terms) is your own button layout. Use one to change what your controller's buttons, sticks, triggers, touchpad, and motion sensors do.
 
 - **Who:** anyone who wants their own button layout.
 - **What:** a profile: a saved layout for one controller model.
@@ -68,7 +68,7 @@ The output policy decides where the profile's results go: to a virtual gamepad, 
 - **Mapped Controls Only**: the virtual gamepad gets only the controls you set rules for.
 - **Include Unmapped Controls**: the virtual gamepad also gets every control you left alone.
 
-Virtual gamepad output needs exclusive physical input, which means OJD keeps the real controller to itself so other apps read only the virtual gamepad. A new profile starts with **Include Unmapped Controls** and no rules, unless you pick a template.
+Virtual gamepad output needs exclusive physical input, which means OJD keeps the real controller to itself so other apps read only the virtual gamepad. A profile starts with **Include Unmapped Controls** and no rules, unless you pick a template.
 
 Keyboard and pointer output needs Accessibility access. See [Permissions](Permissions-and-Security.md).
 
@@ -80,7 +80,7 @@ Connect the controller the profile is for, then click **Profiles** in the sideba
 
 ![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, check a file, and a menu to copy, change model, save to file, or delete](../docs/screenshots/steps/profiles-toolbar.png)
 
-### Create a Profile In the App
+### Create a Profile in the App
 
 1. In the toolbar, click **New Profile**. With no profiles yet, the button also appears in the middle of the window.
 
@@ -112,7 +112,7 @@ If the profile produces no output, the app asks **Activate profile with no contr
 
 To deactivate the profile, click **Deactivate**. **Deactivate All** in the **Profile Actions** menu deactivates every profile for the controller.
 
-The command line equivalents are:
+The command-line equivalents are:
 
 ```shell
 ojd profile activate "My controller"
@@ -157,7 +157,7 @@ To return to pass-through, choose **Restore Default Input**. On the command line
 
 ## Importing and Exporting Profiles
 
-Exporting saves a profile as a file, so you can keep a copy, share it, or move it to another Mac. Importing does the reverse.
+Exporting saves a profile as a file, so you can keep a copy, share it, or move it to another Mac. Importing loads such a file.
 
 ### Export a Profile
 
@@ -184,7 +184,7 @@ ojd profile import FILE.plist
 
 OJD checks the file first. It refuses a file with settings it doesn't know, numbers that are too big or too small, or a size above 4 MiB.
 
-### What Happens On Import
+### What Happens on Import
 
 - A profile with the same ID is replaced.
 - A profile with an unknown ID is added.
