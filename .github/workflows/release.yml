@@ -65,9 +65,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          for dependency in just markdownlint-cli2 pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
+          for dependency in just markdownlint-cli2 swift-format; do
             brew list --versions "$dependency" >/dev/null 2>&1 || brew install "$dependency"
           done
+          # just setup installs each tool the checks in just verify run, such as LLVM's clang-format.
+          just setup
           just schema-env
           echo "$PWD/.build/schema-validator/bin" >> "$GITHUB_PATH"
 
