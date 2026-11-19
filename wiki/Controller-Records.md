@@ -139,6 +139,13 @@ Use this section when a controller sends input reports that its HID descriptor d
 - A report that is no frame of its family reaches the layout that selects it. A report no layout selects belongs to the family driver.
 - On a `HIDDescriptor` record, a layout selects raw reports and the usage map decodes the rest.
 
+```mermaid
+flowchart LR
+    R[Report from the controller] --> Q{Does a layout select it?}
+    Q -->|yes| L[Layout reads the controls it names]
+    Q -->|no| F[Family driver, or the usage map on HIDDescriptor]
+```
+
 The bundled `XboxXID`, `NintendoSwitchInputOnly`, and `VendorFlydigi` descriptions declare their own layout (`defaults.input` in `Resources/Protocols`). A record layout overrides it.
 
 ```xml
@@ -381,6 +388,13 @@ One list holds one format. A mode that names `protocol.initialization` takes no 
 ## Tune Timings and the Stick Deadzone
 
 A record's `tuning` field changes a value the protocol driver otherwise sets. Name at least one value. A value you leave out keeps the family default from its protocol description (see [Family Defaults](#family-defaults-live-in-protocol-descriptions)).
+
+```mermaid
+flowchart LR
+    V[One timing or deadzone value] --> Q{Named in the record's tuning?}
+    Q -->|yes| T[OJD uses the record's value]
+    Q -->|no| D[OJD uses the family default]
+```
 
 ```xml
 <key>tuning</key>

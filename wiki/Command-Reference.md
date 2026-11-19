@@ -179,6 +179,13 @@ Show the unit ID, identity, ownership, capabilities, effective record, and virtu
 
 Create, change, activate, and move profiles. Every `profile` command needs the service running. See [Creating a profile](Remapping-Profiles.md).
 
+```mermaid
+flowchart LR
+    C[profile create or import] -->|change it| E[binding set, profile set, profile edit]
+    E -->|turn it on| A[profile activate]
+    A -->|move to another Mac| X[profile export]
+```
+
 ```text
 ojd profile list
 ojd profile show PROFILE
@@ -365,6 +372,13 @@ ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
 ## record
 
 Draft, list, check, install, or remove controller records. Only `record draft` needs the service. See [Adding or changing a controller record](Controller-Records.md).
+
+```mermaid
+flowchart LR
+    D[record draft] -->|fix the file| V[record validate]
+    V -->|passes| I[record install]
+    I -->|check it| T[record test or Input Test]
+```
 
 ```text
 ojd record draft CONTROLLER [--duration SECONDS | --from-sdl]

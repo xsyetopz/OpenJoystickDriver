@@ -115,6 +115,17 @@ You can do the first two steps below in the **Access** area of the app, too:
 
 Each line is one JSON object of at most 64 KiB. Each line except a watch line has `apiVersion` and a `kind`.
 
+```mermaid
+sequenceDiagram
+    participant E as OJD endpoint
+    participant P as Your program
+    E->>P: Challenge (a nonce)
+    P->>E: Hello (scopes, plus a proof if it uses a token)
+    E->>P: Welcome, or Status Failure and close
+    P->>E: Subscription (stream Controllers)
+    E->>P: ADDED, MODIFIED, DELETED lines
+```
+
 1. The endpoint sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"…"}`. A granted program can ignore it. A [token](#use-a-token) client signs it.
 2. Within 5 seconds, the program sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"]}`.
 3. The endpoint answers with a `Welcome` (`version` and granted `scopes`), or with a `Status` of `Failure` and closes the connection.
@@ -153,6 +164,14 @@ To run this example, grant `/usr/bin/python3`, which gives every Python script t
 ### Use a Token
 
 A program you can't grant by signature, such as a script, can use a token, which works like a password. The program signs the challenge to prove it has the token and never sends it.
+
+```mermaid
+flowchart LR
+    T[Token, shown once] -->|SHA-256| K[Key]
+    N[Challenge nonce, origin, port] --> H[HMAC-SHA256]
+    K --> H
+    H -->|proof in the Hello| E[Endpoint checks it]
+```
 
 1. Create the token: `ojd access grant --token reader`. The command prints it once. The service keeps only its SHA-256 hash.
 2. Join four lines, each ending with a newline: `OpenJoystickDriver endpoint hello 1`, the challenge `nonce`, the origin of the page, and the WebSocket port. On the socket, the origin and port lines are empty.
@@ -334,6 +353,13 @@ To limit a profile to one controller, set `device.unit` to its unit ID. To choos
 ## Drive a Virtual Gamepad
 
 `ojd virtual feed --as PROFILE` publishes a virtual gamepad. It reads one JSON object per line from standard input. Each line is the whole gamepad state, and a control it does not name is neutral. `--as` takes a [virtual gamepad kind](Glossary.md#terms): `sdl-compatible`, `generic`, or `game-controller-compatible`.
+
+```mermaid
+flowchart LR
+    S[Your script] -->|one JSON line per state| F[ojd virtual feed]
+    F -->|publishes| V[Virtual gamepad]
+    V -->|looks like a real controller| G[Games]
+```
 
 ```shell
 {
