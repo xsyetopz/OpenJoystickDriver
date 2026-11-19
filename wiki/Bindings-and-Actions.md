@@ -65,6 +65,8 @@ A gamepad destination needs the virtual gamepad turned on in the profile. Paddle
 
 ### Add an Assignment In the App
 
+![The profile editor in the Profiles area. Red arrows point to Set Active, the Profile editor section menu, the + button that adds an assignment, the Controller control and Destination of one assignment, its Behavior button, and the Save button](../docs/screenshots/steps/profile-editor.png)
+
 1. Open the profile's **Assignments** section and click **Add Assignment**.
 2. Select a control in the **Controller control** list, or click **Listen for Control** and press it.
 3. Select a **Destination**.

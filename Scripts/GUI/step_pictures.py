@@ -196,6 +196,54 @@ PICTURES: tuple[StepPicture, ...] = (
         ),
     ),
     StepPicture(
+        "profile-editor",
+        "main-profiles.png",
+        (
+            Callout(
+                (1430, 175),
+                (370, 235),
+                "Set Active",
+                ("Turns the profile on", "for its controller model."),
+            ),
+            Callout(
+                (1400, 300),
+                (760, 335),
+                "Profile editor section",
+                ("Assignments, Combinations,", "Layers, Macros, Controller."),
+            ),
+            Callout(
+                (1840, 392),
+                (1230, 335),
+                "+ adds an assignment",
+                ("One rule: press this, get that.",),
+            ),
+            Callout(
+                (1000, 568),
+                (1150, 480),
+                "Controller control: what you press",
+                ("Here, A / Cross.",),
+            ),
+            Callout(
+                (865, 665),
+                (1150, 615),
+                "Destination: what the Mac gets",
+                ("Here, the Return key.",),
+            ),
+            Callout(
+                (978, 734),
+                (1150, 750),
+                "Behavior...: how a press acts",
+                ("Hold, Toggle, and more.",),
+            ),
+            Callout(
+                (1832, 1214),
+                (1150, 1080),
+                "Save keeps your changes",
+                ("Saved means nothing is waiting.",),
+            ),
+        ),
+    ),
+    StepPicture(
         "settings-interface",
         "settings-general.png",
         (
