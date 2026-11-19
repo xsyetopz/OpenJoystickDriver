@@ -4,7 +4,7 @@ Make controller buttons press keys, click, move the pointer, or scroll.
 
 - **Who:** anyone who wants to use a controller like a keyboard and mouse, from the couch or for an app with no controller support.
 - **What you make:** a [profile](Glossary.md#terms), a list that says "this button means that key".
-- **Why:** the Mac then reacts to the controller as if you used the keyboard or mouse.
+- **Why:** the Mac reacts as if you used the keyboard or mouse.
 - **Where:** the **Profiles** area of the app.
 - **How:** create a profile, then pick a key for each button.
 
@@ -31,9 +31,9 @@ A profile holds what each control does.
 5. Choose a **Destination**. For a key, click **Capture Key** and press it.
 6. Click **Add Assignment**, then **Save**, then **Set Active**.
 
-Press the button. The Mac reacts as if you pressed the key.
+Press the button. The Mac acts as if you pressed the key.
 
-The toolbar above the profile list has the other tools:
+The toolbar above the profile list holds the other tools:
 
 ![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, check a file, and a menu to copy, change model, save to file, or delete](../docs/screenshots/steps/profiles-toolbar.png)
 
