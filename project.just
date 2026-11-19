@@ -177,6 +177,10 @@ repair-stale-dext:
 shots-capture *args:
     python3 -m Scripts.GUI.capture {{ args }}
 
+# Draw the wiki step callouts and privacy masks on one .ojd-shots folder; pass --only NAME for one picture.
+shots-annotate captures *args:
+    python3 -m Scripts.GUI.annotate {{ captures }} {{ args }}
+
 # Build a private notarized Developer ID tester DMG without installing or publishing it.
 package-tester:
     {{ release }} {{ env }} python3 -m Scripts.Release.package_tester tester
