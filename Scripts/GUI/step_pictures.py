@@ -244,6 +244,24 @@ PICTURES: tuple[StepPicture, ...] = (
         ),
     ),
     StepPicture(
+        "profile-controller-section",
+        "main-profiles-controller.png",
+        (
+            Callout(
+                (1400, 300),
+                (380, 290),
+                "Choose Controller here",
+                ("It holds the stick, trigger,", "touch, and motion settings."),
+            ),
+            Callout(
+                (1838, 960),
+                (1060, 1000),
+                "The pencil opens a group",
+                ("Stick Modes, Trigger Stages, and more.", "Scroll down for the rest."),
+            ),
+        ),
+    ),
+    StepPicture(
         "settings-interface",
         "settings-general.png",
         (

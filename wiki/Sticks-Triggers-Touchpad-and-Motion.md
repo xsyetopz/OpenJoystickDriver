@@ -34,14 +34,16 @@ flowchart LR
 
 - Create a [profile](Glossary.md#terms). See [Creating a profile](Remapping-Profiles.md#creating-a-profile).
 - Set **Interface** to **All Controls** in **Settings** > **General**, or choose **View** > **All Controls**.
-- Open the **Controller** section of the profile. Each group has an **Adjust...** button. A group that shows **This controller can't do this.** has no input to adjust.
+- Open the **Controller** section of the profile. Each group has a pencil button that opens its settings. A group that shows **This controller can't do this.** has no input to adjust.
 - Pointer and scroll modes need Accessibility access. See [Permissions](Permissions-and-Security.md).
+
+![The Controller section of a profile. One red arrow points to Controller in the Profile editor section menu. A second arrow points to the pencil button of the Stick Modes group, which opens its settings](../docs/screenshots/steps/profile-controller-section.png)
 
 A profile has one mapping per stick, trigger, and touch surface. These settings are untested on real hardware.
 
 ## Set a Stick Mode
 
-1. Click **Adjust...** in the **Stick Modes** group and select a stick.
+1. Click the pencil button (**Adjust Stick Modes**) in the **Stick Modes** group and select a stick.
 2. Turn on **Enable pointer output**.
 3. Select a **Stick mode** and change its settings.
 4. Click **Save**.
@@ -85,7 +87,7 @@ flowchart LR
     S -->|pass the full threshold| F[Full stage: fire]
 ```
 
-1. Click **Adjust...** in the **Trigger Stages** group and select a trigger.
+1. Click the pencil button (**Adjust Trigger Stages**) in the **Trigger Stages** group and select a trigger.
 2. Turn on **Enable dual-stage trigger**.
 3. Select a **Stage interaction** and set the thresholds. The soft threshold must be below the full threshold.
 4. Click **Save**.
@@ -95,7 +97,7 @@ The **Stage interaction** menu decides how the two stages combine, for example *
 
 ## Set Touch Mapping
 
-1. Click **Adjust...** in the **Touch Mappings** group and select a **Surface**.
+1. Click the pencil button (**Adjust Touch Mappings**) in the **Touch Mappings** group and select a **Surface**.
 2. Turn on **Enable continuous touch output**.
 3. Select a **Touch mode**: **Pointer**, **Left Stick**, or **Right Stick**.
 4. Set the sensitivity, radius, or deadzone.
@@ -114,7 +116,7 @@ flowchart LR
     Q -->|no| N[Region button released]
 ```
 
-1. Click **Adjust...** in the **Regions** group.
+1. Click the pencil button (**Adjust Regions**) in the **Regions** group.
 2. Select a **Region type**: **Stick Ring**, **Trigger Band**, or **Touch Area**.
 3. Select the **Input**, set the numbers, and select a **Destination**.
 4. Click **Add Assignment**, then **Save**.
@@ -131,7 +133,7 @@ Rings and sectors of one stick cannot overlap, and neither can bands of one trig
 
 Pointer speed lets a trigger or stick work like a gas pedal for the mouse pointer: the further you press, the faster (or slower) the pointer moves. Scrolling doesn't change.
 
-1. Click **Adjust...** in the **Pointer Speed** group and turn on **Scale pointer speed**.
+1. Click the pencil button (**Adjust Pointer Speed**) in the **Pointer Speed** group and turn on **Scale pointer speed**.
 2. Select the **Driver**, **Trigger** or **Stick Depth**, and the **Side**.
 3. Set **Scale at 0** and **Scale at 1**, and select a **Response curve**.
 4. Click **Save**.
@@ -144,7 +146,7 @@ For the command line, see [Pointer speed fields](Profile-File-Reference.md#point
 
 A gyro is the motion sensor inside some controllers. It notices when you turn or tilt the controller. Motion tuning sets how strongly those turns count.
 
-1. Click **Adjust...** in the **Motion Tuning** group.
+1. Click the pencil button (**Adjust Motion Tuning**) in the **Motion Tuning** group.
 2. Select the **Coordinate space** and set the sensitivity and other values.
 3. Click **Save**. In a layer, **Use Profile Tuning** restores the profile values.
 
