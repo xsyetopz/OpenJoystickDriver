@@ -2,9 +2,7 @@
 
 Write scripts, Shortcuts, and AppleScript that read your controllers, change [profiles](Glossary.md#terms), and drive a [virtual gamepad](Glossary.md#terms).
 
-Automating means letting a small program do a job for you, such as switching to your racing profile whenever a racing game opens.
-
-For one action with no code, see [Use Shortcuts](#use-shortcuts). The other sections cover two ways in:
+Automating means letting a small program do a job for you. For one action with no code, see [Use Shortcuts](#use-shortcuts). The other sections cover two ways in:
 
 - the `ojd` command, which you type in Terminal or call from a script
 - the endpoint, a private door on your Mac (a local socket) where your own programs can listen to controller events as they happen
@@ -46,7 +44,7 @@ The `ApplicationServiceClient` in the Swift package `OpenJoystickDriverKit` work
 
 ## Write a Script
 
-A good script starts the service, never stops to ask you a question, and checks every exit code. An exit code is a number a command leaves behind when it ends: 0 means it worked, and any other number names what went wrong.
+A good script starts the service, never stops to ask a question, and checks every exit code. An exit code is a number a command leaves behind when it ends: 0 means it worked, and any other number names what went wrong.
 
 1. Start the service and wait until it accepts requests: `ojd service start`.
 2. Add `--no-input` to each command, so it fails instead of asking, and `--json` where you read output.
@@ -61,7 +59,7 @@ ojd --no-input --json controller list | jq -r '.items[] | [.id, .name, .unit // 
 
 ## Read JSON Output
 
-With `--json`, `ojd` prints JSON, a text format programs read easily. The keys and values stay the same between releases and are never translated, so your script keeps working in any language. A streaming command, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
+With `--json`, `ojd` prints JSON, a text format programs read easily. The keys and values stay the same between releases and are never translated, so your script works in any language. A streaming command, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
 
 Each object has `apiVersion` (`openjoystickdriver/v1alpha3`) and `kind`, the singular UpperCamelCase name of the output. `ojd controller show` prints `Controller`, or `UnservedController` for a device OJD does not handle. `ojd status` prints `SystemStatus`.
 
@@ -159,7 +157,7 @@ with socket.socket(socket.AF_UNIX) as endpoint:
             print(event["type"], event["object"]["id"])
 ```
 
-To run this example, grant `/usr/bin/python3`, which gives every Python script the access. For regular use, grant a signed app of your own.
+To run this example, grant `/usr/bin/python3`. That gives every Python script the access. For regular use, grant a signed app of your own.
 
 ### Use a Token
 
@@ -260,7 +258,7 @@ endpoint.onmessage = async (message) => {
 
 The WebSocket accepts a page only from an origin you granted a token for. A page from another origin, such as `http://127.0.0.1:8080`, signs its own origin and the WebSocket port. It refuses pages opened from a file (origin `null`) and the address `localhost`. Use `127.0.0.1`.
 
-If another program uses the port, `ojd access web enable` fails, or `ojd access status` shows the WebSocket as on but not listening. Choose another port with `ojd access web enable --port PORT` and grant tokens for the new origin.
+If another program uses the port, `ojd access web enable` fails, or `ojd access status` shows the WebSocket as on but not listening. Choose another port with `ojd access web enable --port PORT` and grant tokens for that origin.
 
 An error line is a `Status` of `Failure` with a `code` from `E1001` to `E1011`. See [Error codes](Error-Codes.md). With `E1009` to `E1011`, `details.supportedAPIVersions` lists the accepted `apiVersion` values.
 
@@ -334,7 +332,7 @@ These messages ran through the socket against build `8456f9de8665`, with a token
 
 ## Change Profiles
 
-A profile is an XML property list. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. In a script, change a profile with the commands below rather than by hand, and read one with `plutil -convert json -o - FILE.plist`.
+A profile is an XML property list. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. In a script, use the commands below to change a profile, and read one with `plutil -convert json -o - FILE.plist`.
 
 - `ojd profile get PROFILE KEY` prints one value. `ojd profile set PROFILE KEY VALUE` changes one. `KEY` is a path of key names and array indexes joined by dots.
 - `ojd profile export PROFILE` prints the whole file. `ojd profile import FILE` adds a file or replaces the profile with the same ID. Use `-` as `FILE` to read standard input.
