@@ -1,6 +1,6 @@
 # Supported Controllers
 
-Find out whether your controller works with OpenJoystickDriver (OJD), and what to expect from a clone or a controller that OJD doesn't list.
+Check whether your controller works with OpenJoystickDriver (OJD), and what to expect from a clone or an unlisted controller.
 
 Xbox and PlayStation names are trademarks of Microsoft and Sony. This project isn't affiliated with either company.
 
@@ -25,7 +25,7 @@ flowchart LR
 
 ## Supported Controllers
 
-Each controller sits in one of three tiers, like grades on a report card. The tier tells you how sure anyone is that it works, because someone tried it on a real controller. The app doesn't show the tier; only this page does.
+Each controller sits in one of three tiers, like grades on a report card. The tier tells you how sure anyone is that it works. The app doesn't show the tier. Only this page does.
 
 - Official: the maintainer owns and tests it.
 - Community-verified: a tester used it on real hardware and it worked.
@@ -41,7 +41,7 @@ flowchart TD
     L --> R
 ```
 
-A test covers only the connection the tester used. Another connection may not work. See [Connection types](Connecting-Controllers.md#connection-types).
+A test covers only the connection the tester used. Other connections may not work. See [Connection Types](Connecting-Controllers.md#connection-types).
 
 ### Official
 
@@ -79,7 +79,7 @@ Test records: [8BitDo Ultimate 2C](../docs/testing/8bitdo-ultimate-2c.md), [Xbox
 
 ### Unverified
 
-OJD has a built-in list of controllers. Its catalog holds 714 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work. That doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
+OJD has a built-in catalog of 714 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work, and that doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
 
 ### Flydigi Records
 
@@ -116,9 +116,9 @@ Tell the maintainer which connection you used and what worked. See [Reporting a 
 
 ## Clone and Fake Controllers
 
-Some controllers look like a Sony or Microsoft controller but have a different chip and ID inside. OJD tells controllers apart by ID, the way a mail carrier goes by the address, whatever the house looks like. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
+Some controllers look like a Sony or Microsoft controller but have a different chip and ID inside. OJD tells controllers apart by ID, the way a mail carrier goes by the address and ignores how the house looks. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
 
-Clones often send data in another format, so the original's driver may misread them. Don't report a clone under the original's name.
+Clones often send data in another format, so the original's driver may misread them. Report a clone under its own name.
 
 ### Known Clones
 
