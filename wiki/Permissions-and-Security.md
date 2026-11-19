@@ -31,11 +31,11 @@ macOS has built-in locks that stop apps from changing the system: System Integri
 
 ### Signing
 
-A signature is like a sealed envelope: it proves who made the app and that nobody changed it. The maintainer signs the release app, and Apple checks it for malware ("notarizes" it). Tester builds are signed with a Developer ID and notarized too.
+A signature works like a sealed envelope: it proves who made the app and that nobody changed it. The maintainer signs the release app, and Apple checks it for malware ("notarizes" it). Tester builds are signed with a Developer ID and notarized too.
 
 ### Xbox USB Driver
 
-The [Xbox USB driver](Glossary.md#terms) reads Xbox One and Xbox Series controllers that you connect with a USB cable. It runs outside the core of macOS (the kernel), so a problem in the driver stays out of the system's core. macOS asks for your approval before it runs. No other controller uses it. The driver only reads the controller; the app hands the [virtual gamepad](Glossary.md#terms) to games. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
+The [Xbox USB driver](Glossary.md#terms) reads Xbox One and Xbox Series controllers that you connect with a USB cable. It runs outside the core of macOS (the kernel), so a driver problem stays out of the core. macOS asks for your approval before it runs. No other controller uses it. The driver only reads the controller, and the app hands the [virtual gamepad](Glossary.md#terms) to games. See [Approve the Driver](Connecting-Controllers.md#approve-the-driver).
 
 ### Data on Your Mac
 
@@ -49,7 +49,7 @@ OJD talks to the internet for one thing only: the update check. It contacts GitH
 
 The endpoint is a private door that lets other programs on your Mac, such as a stream overlay, read your controllers. Nothing outside your Mac can reach it. It's closed until you click **Turn On** in the **Access** area or run `ojd access enable`. Each program also needs its own pass (a grant) for each kind of access: `read` to watch the controller, or `control` to press buttons on a virtual gamepad, which games treat as your own presses.
 
-A grant is tied to the program's signature (its developer's team ID, or Apple). That way another program can't pretend to be it. Programs with a homemade (ad-hoc) signature or none at all are refused. `ojd access list` shows programs refused in the last 24 hours.
+A grant is tied to the program's signature (its developer's team ID, or Apple), so another program can't pretend to be it. Programs with a homemade (ad-hoc) signature or none at all are refused. `ojd access list` shows programs refused in the last 24 hours.
 
 Web pages, such as a browser overlay, use a second door: `ojd access web enable` opens a WebSocket on `127.0.0.1` (your own Mac only). A page needs a token, a password from `ojd access grant --token`, and can only read, never `control`. See [access](Command-Reference.md#access).
 
@@ -59,7 +59,7 @@ Web pages, such as a browser overlay, use a second door: `ojd access web enable`
 
 ## Permissions
 
-OJD never pops up a permission request by surprise. It asks nothing at launch, only when you do one of these:
+OJD asks for nothing at launch. It asks only when you do one of these:
 
 - Click **Request...** or **Open System Settings** in the **Access** area.
 - Click **Grant Access** in the **Permission needed** banner.
@@ -82,8 +82,8 @@ The app doesn't use the camera, the microphone, or Full Disk Access. The app use
 
 - **What:** two switches in macOS System Settings.
 - **Why:** with **Input Monitoring**, OJD can read your controller. With **Accessibility**, OJD can hand the controller to games. Without both, games see nothing.
-- **When:** once, after you install OJD. Again if a new build asks.
-- **Who:** you. macOS lets only you turn these on. OJD can't do it for you.
+- **When:** once, after you install OJD. Again if a later build asks.
+- **Who:** you. macOS lets only you turn these on.
 
 **Check first.** Open OJD and click **Access** in the sidebar. **Allowed** beside both means you're done.
 
@@ -139,7 +139,7 @@ Only genuine Xbox One and Xbox Series controllers on a USB cable need it. The ap
 
 ### Details for Advanced Users
 
-This part is for people who want the technical names. The app holds every permission below. The `ojd` command never sends keyboard or mouse events.
+This part gives the technical names. The app holds every permission below. The `ojd` command never sends keyboard or mouse events.
 
 | Action | Permission it needs | Process that calls the API |
 | --- | --- | --- |
