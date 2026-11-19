@@ -179,27 +179,27 @@
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "कोई कंट्रोलर कनेक्ट नहीं है";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch" = "OJD को इस कंट्रोलर के लिए कोई समर्थित प्रोटोकॉल नहीं मिला।";
+"ui.controllers.noProtocolMatch" = "OJD अभी नहीं जानता कि इस कंट्रोलर से कैसे बात करे।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि इसके लिए समर्थन जोड़ा जा सके।";
+"ui.controllers.noProtocolMatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि OJD इससे बात करना सीख सके।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch" = "इस कंट्रोलर से एक से अधिक समर्थित प्रोटोकॉल मेल खाते हैं, इसलिए OJD एक नहीं चुन सकता।";
+"ui.controllers.ambiguousProtocolMatch" = "यह कंट्रोलर OJD के जाने हुए एक से ज़्यादा प्रोटोकॉल से मेल खाता है, इसलिए OJD कोई एक नहीं चुन सकता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch.nextStep" = "सपोर्ट रिपोर्ट भेजें, ताकि तय किया जा सके कि यह कौन-सा प्रोटोकॉल उपयोग करता है।";
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "सपोर्ट रिपोर्ट भेजें, ताकि OJD जान सके कि यह कंट्रोलर कौन-सा प्रोटोकॉल इस्तेमाल करता है।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch" = "इस कंट्रोलर के USB इंटरफ़ेस उसके प्रोटोकॉल की आवश्यकताएँ पूरी नहीं करते, इसलिए OJD इसे नहीं संभालता।";
+"ui.controllers.interfaceContractMismatch" = "इस कंट्रोलर के USB कनेक्शन वैसे नहीं हैं जैसे OJD उम्मीद करता है, इसलिए OJD इसे छोड़ देता है।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि इसका समर्थन सुधारा जा सके।";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch" = "इस कंट्रोलर का HID डिस्क्रिप्टर उसके प्रोटोकॉल की आवश्यकताएँ पूरी नहीं करता, इसलिए OJD इसे नहीं संभालता।";
+"ui.controllers.interfaceContractMismatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि OJD इसे संभालने का तरीका ठीक कर सके।";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
+"ui.controllers.descriptorContractMismatch" = "यह कंट्रोलर अपने बटन और स्टिक ऐसे ढंग से बताता है जिसकी OJD उम्मीद नहीं करता, इसलिए OJD इसे छोड़ देता है।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि इसका समर्थन सुधारा जा सके।";
+"ui.controllers.descriptorContractMismatch.nextStep" = "कंट्रोलर के ID के साथ सपोर्ट रिपोर्ट भेजें, ताकि OJD इसे संभालने का तरीका ठीक कर सके।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant" = "इस कंट्रोलर का प्रोटोकॉल वह वेरिएंट लागू नहीं करता जो OJD ने इसके लिए चुना है।";
+"ui.controllers.unsupportedProtocolVariant" = "OJD ने इस कंट्रोलर के प्रोटोकॉल का ऐसा संस्करण चुना है जिसे वह अभी नहीं बोल सकता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant.nextStep" = "सपोर्ट रिपोर्ट भेजें, ताकि इसके लिए कोई समर्थित वेरिएंट तय किया जा सके।";
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "सपोर्ट रिपोर्ट भेजें, ताकि OJD ऐसा संस्करण चुन सके जिसे वह बोल सकता है।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedTransportVariant" = "इस कंट्रोलर का प्रोटोकॉल उसके कनेक्ट होने के तरीके का समर्थन नहीं करता।";
+"ui.controllers.unsupportedTransportVariant" = "OJD इस कनेक्शन से इस कंट्रोलर से बात नहीं कर सकता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "कंट्रोलर को किसी और तरीके से कनेक्ट करें, जैसे केबल से, या सपोर्ट रिपोर्ट भेजें।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -299,7 +299,7 @@
 /* Message when the user changes the server or the stick deadzone of a controller that no controller record describes. */
 "ui.controllers.server.noRecord" = "कोई कंट्रोलर रिकॉर्ड इस कंट्रोलर का वर्णन नहीं करता, इसलिए बदलने के लिए कुछ नहीं है।";
 /* Message when the user changes the server or the stick deadzone of a controller whose record is not valid, or would not be valid with the change. */
-"ui.controllers.server.invalidRecord" = "कंट्रोलर रिकॉर्ड मान्य नहीं है। कुछ नहीं बदला।";
+"ui.controllers.server.invalidRecord" = "कंट्रोलर रिकॉर्ड में समस्या है। कुछ नहीं बदला।";
 /* Message when the app cannot save the controller record changed by a server or stick deadzone change. */
 "ui.controllers.server.persistenceFailed" = "कंट्रोलर रिकॉर्ड सहेजा नहीं जा सका। कुछ नहीं बदला।";
 /* Label of the stepper in the controller detail that sets the stick deadzone of the controller's model. The deadzone is the part of the travel near the center that is ignored. */
@@ -339,13 +339,13 @@
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "%@ में कोई गति नहीं मापी गई, इसलिए उनके सहेजे गए मान बने रहते हैं।";
 /* Result after the gyro step of a controller that reports no motion. */
-"ui.controllers.recalibrate.gyroSkipped" = "यह कंट्रोलर मोशन की रिपोर्ट नहीं करता, इसलिए जाइरो चरण छोड़ दिया गया।";
+"ui.controllers.recalibrate.gyroSkipped" = "यह कंट्रोलर मोशन डेटा नहीं भेजता, इसलिए OJD ने जाइरो चरण छोड़ दिया।";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "सहेजा गया स्टिक और ट्रिगर कैलिब्रेशन हटा दिया गया।";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
 "ui.controllers.recalibrate.resetDoneGyro" = "सहेजा गया स्टिक और ट्रिगर कैलिब्रेशन और जाइरो ऑफ़सेट हटा दिया गया।";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
-"ui.controllers.invalidRequest" = "अनुरोध में विक्रेता या उत्पाद ID सीमा से बाहर है। कुछ नहीं बदला।";
+"ui.controllers.invalidRequest" = "वेंडर या प्रोडक्ट ID सीमा से बाहर है। कुछ नहीं बदला।";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "उन्नत";
 /* Heading of the virtual gamepad kind section in the Controllers detail. */
@@ -659,7 +659,7 @@
 /* Title of the sheet that edits the details of a profile. */
 "ui.profiles.details" = "प्रोफ़ाइल विवरण";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
-"ui.profiles.notSupportedByController" = "यह कंट्रोलर या प्रोटोकॉल इसका समर्थन नहीं करता है।";
+"ui.profiles.notSupportedByController" = "यह कंट्रोलर ऐसा नहीं कर सकता।";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "प्रोफ़ाइल एक्सपोर्ट करें";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -667,7 +667,7 @@
 /* Label of the field in the behavior sheet that sets how long a control must be held. The value is in milliseconds. */
 "ui.profiles.holdDuration" = "दबाए रखने की अवधि";
 /* Hint under the vendor ID and product ID fields. 0x marks a hexadecimal number and stays as written. */
-"ui.profiles.identifierHint" = "दशमलव या 0x से शुरू होने वाले हेक्साडेसिमल पहचानकर्ता का उपयोग करें।";
+"ui.profiles.identifierHint" = "कोई संख्या लिखें, जैसे 1133, या 0x से शुरू होने वाली हेक्स संख्या, जैसे 0x046D।";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "प्रोफ़ाइल इंपोर्ट करें";
 /* Toolbar button in the Profiles area that checks a profile file without importing it. */
@@ -675,11 +675,11 @@
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "मान्य प्रोफ़ाइल";
 /* Title of the alert when the checked profile file is not valid. */
-"ui.profiles.invalidTitle" = "अमान्य प्रोफ़ाइल";
+"ui.profiles.invalidTitle" = "प्रोफ़ाइल का उपयोग नहीं किया जा सकता";
 /* Message of the alert when the checked profile file is valid. %1$@ is the profile name, %2$@ is the controller model and %3$@ is the app scope. */
 "ui.profiles.validMessage" = "%1$@ (%2$@). इन पर लागू: %3$@.";
 /* Error in the profile details sheet when the vendor ID or product ID is not a 16-bit number. */
-"ui.profiles.invalidIdentifiers" = "वैध 16-बिट विक्रेता और उत्पाद पहचानकर्ता दर्ज करें।";
+"ui.profiles.invalidIdentifiers" = "0 से 65535, या 0x0000 से 0xFFFF तक की विक्रेता आईडी और उत्पाद आईडी डालें।";
 /* Placeholder of the name field in the layer sheet. */
 "ui.profiles.layerName" = "परत का नाम";
 /* Heading of the layers section in the profile editor. */
@@ -1429,7 +1429,7 @@
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB ड्राइवर";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
-"ui.setup.invalidDetail" = "एम्बेड किया गया Xbox USB ड्राइवर अमान्य है। इस ऐप को फिर से इंस्टॉल करके इसे ठीक करें।";
+"ui.setup.invalidDetail" = "इस ऐप के अंदर का Xbox USB ड्राइवर खराब है। ठीक करने के लिए ऐप फिर से इंस्टॉल करें।";
 /* Detail line of the problem banner when the app has no driver extension. The user reinstalls the signed app. */
 "ui.setup.missingDetail" = "इस ऐप में Xbox USB ड्राइवर नहीं है। हस्ताक्षरित ऐप फिर इंस्टॉल करें।";
 /* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 27 and later, where the settings app is System Settings. */
@@ -1559,7 +1559,7 @@
 /* Option of the virtual output popup: the virtual gamepad also carries the controls that the profile does not map. */
 "ui.profiles.virtualPassthrough" = "बिना रीमैप किए नियंत्रण शामिल करें";
 /* Title of the switch in the profile editor that makes the profile need exclusive access to the physical controller. */
-"ui.profiles.exclusiveInput" = "भौतिक इनपुट तक विशेष पहुँच आवश्यक करें";
+"ui.profiles.exclusiveInput" = "कंट्रोलर को दूसरे ऐप्स से छिपाएँ";
 /* VoiceOver label of the group of profile action buttons in the profile editor. */
 "ui.profiles.actions" = "प्रोफ़ाइल कार्रवाइयाँ";
 /* VoiceOver label of the picker that switches the section of the profile editor. */
@@ -3666,7 +3666,7 @@
 /* Button of the open panel in which the user picks a record file or a mod folder. It confirms the choice. */
 "ui.library.choose" = "चुनें";
 /* Toolbar button in the Library area that checks a record file or mod folder without installing it. Keep the three dots. */
-"ui.library.validate" = "मान्य करें…";
+"ui.library.validate" = "जाँचें…";
 /* Confirm button of the alert that installs a record or a mod. */
 "ui.library.install" = "इंस्टॉल करें";
 /* Confirm button of the alert that replaces an installed record or mod. */
@@ -3686,7 +3686,7 @@
 /* Notice after a record check passed. %1$@ is the file name and %2$@ is the controller model. */
 "ui.library.record.valid" = "%1$@, %2$@ के लिए मान्य रिकॉर्ड है।";
 /* Error when a record is not valid. %@ is the reason. */
-"ui.library.record.invalid" = "रिकॉर्ड मान्य नहीं है: %@";
+"ui.library.record.invalid" = "रिकॉर्ड में समस्या है: %@";
 /* Line in the records list for a record file that the app skipped. %@ is the reason. */
 "ui.library.record.skipped" = "छोड़ा गया: %@";
 /* Error when no installed record matches a controller model. %@ is the controller model. */
@@ -3840,7 +3840,7 @@
 /* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.inputRead.purpose" = "आपके कंट्रोलर पढ़ता है।";
 /* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
-"ui.access.permission.inputInject.purpose" = "आपके कंट्रोलर गेम में प्रकाशित करता है।";
+"ui.access.permission.inputInject.purpose" = "आपके कंट्रोलर गेम को दिखाता है।";
 /* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.postEvent.purpose" = "आपकी प्रोफ़ाइलों द्वारा मैप किए गए कीबोर्ड और पॉइंटर इवेंट भेजता है।";
 /* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
@@ -3876,7 +3876,7 @@
 /* Error shown when the chosen program has no signature. %@ is the path of the program. */
 "ui.access.grant.unsigned" = "%@ साइन नहीं है, इसलिए उसे ऐक्सेस नहीं दिया जा सकता।";
 /* Error shown when the chosen program has an ad-hoc signature. %@ is the identifier of the program. Any local process can claim such an identity. */
-"ui.access.grant.adHoc" = "%@ प्रमाणपत्र से साइन नहीं है, इसलिए कोई भी स्थानीय प्रोसेस उसकी पहचान का दावा कर सकती है। उसे ऐक्सेस नहीं दिया जा सकता।";
+"ui.access.grant.adHoc" = "%@ पर डेवलपर का हस्ताक्षर नहीं है, इसलिए कोई दूसरा प्रोग्राम उसका रूप धर सकता है। OJD उसे ऐक्सेस नहीं दे सकता।";
 /* Title of the alert that grants access to a program. %@ is the identifier of the program. */
 "ui.access.grant.title" = "%@ को ऐक्सेस दें?";
 /* Question of the alert that grants access. %1$@ is the identifier of the program, %2$@ is the description of its signer and %3$@ is the list of scopes. */
@@ -4949,7 +4949,7 @@
 /* Title of the sheet that drafts a controller record. */
 "ui.controllers.draftRecord.title" = "कंट्रोलर रिकॉर्ड का मसौदा बनाएँ";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.controllers.draftRecord.noLayout" = "%@ के HID रिपोर्ट डिस्क्रिप्टर से कोई कंट्रोल नहीं पढ़ा जा सका, और उसका शामिल रिकॉर्ड पहले से उसका परिवार बताता है।";
+"ui.controllers.draftRecord.noLayout" = "%@ ने ऐसा कोई कंट्रोल नहीं बताया जिसे OJD पढ़ सके, और इसका बिल्ट-इन रिकॉर्ड पहले से इसका फ़ैमिली बताता है।";
 /* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
 "ui.controllers.draftRecordFromSDL" = "SDL से रिकॉर्ड का मसौदा बनाएँ…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
@@ -4979,7 +4979,7 @@
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "अपडेट नहीं हो रहा";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "न्यूट्रल की प्रतीक्षा…";
+"ui.controllers.inputHealth.waitingForNeutral" = "आपके छोड़ने की प्रतीक्षा…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "सेटिंग्स फ़ाइल %@ क्षतिग्रस्त है। इसे ठीक करें, या `ojd setting reset` से इसे ट्रैश में भेजें।";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -5031,9 +5031,9 @@
 /* Reason shown with a failed publication. %@ is the reason the last send failed. */
 "ui.controllers.publication.failedSend" = "पिछला भेजना विफल रहा: %@";
 /* Reason of failing input health: the controller sends no reports. */
-"ui.controllers.inputHealth.reason.missingReports" = "कोई रिपोर्ट नहीं आ रही";
+"ui.controllers.inputHealth.reason.missingReports" = "कंट्रोलर कुछ नहीं भेज रहा";
 /* Reason of failing input health: the reports arrive but their content does not change. */
-"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "रिपोर्ट आगे नहीं बढ़ रही";
+"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "इनपुट बदलना बंद हो गया";
 /* Reason of failing input health: the controller sends no input until its home button is pressed, which is the PS button on a PlayStation controller. PS stays as written. */
 "ui.controllers.inputHealth.reason.guideNotPressed" = "PS या होम बटन दबाएँ";
 /* Input health state with its failure reason, for example "Stale (No reports arriving)". %1$@ is the state and %2$@ the reason. */

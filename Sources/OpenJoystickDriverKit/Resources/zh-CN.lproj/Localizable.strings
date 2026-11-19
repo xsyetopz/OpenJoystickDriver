@@ -179,27 +179,27 @@
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "未连接控制器";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch" = "OJD 未找到适用于此控制器的受支持协议。";
+"ui.controllers.noProtocolMatch" = "OJD 还不知道如何与此控制器通信。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch.nextStep" = "请附上控制器的 ID 发送支持报告，以便为其添加支持。";
+"ui.controllers.noProtocolMatch.nextStep" = "请附上控制器的 ID 发送支持报告，以便 OJD 学会与它通信。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch" = "有多个受支持的协议与此控制器相符，OJD 无法选择其中一个。";
+"ui.controllers.ambiguousProtocolMatch" = "此控制器符合 OJD 已知的多个协议，因此 OJD 无法选择其中一个。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch.nextStep" = "请发送支持报告，以便指定其使用的协议。";
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "请发送支持报告，以便 OJD 知道此控制器使用哪个协议。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch" = "此控制器的 USB 接口不满足其协议的要求，因此 OJD 不为其提供服务。";
+"ui.controllers.interfaceContractMismatch" = "此控制器的 USB 连接与 OJD 预期的不同，因此 OJD 不处理它。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch.nextStep" = "请附上控制器的 ID 发送支持报告，以便修正对它的支持。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch" = "此控制器的 HID 描述符不满足其协议的要求，因此 OJD 不为其提供服务。";
+"ui.controllers.interfaceContractMismatch.nextStep" = "请附上控制器的 ID 发送支持报告，以便 OJD 修正处理它的方式。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
+"ui.controllers.descriptorContractMismatch" = "此控制器描述按钮和摇杆的方式与 OJD 预期的不同，因此 OJD 不处理它。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch.nextStep" = "请附上控制器的 ID 发送支持报告，以便修正对它的支持。";
+"ui.controllers.descriptorContractMismatch.nextStep" = "请附上控制器的 ID 发送支持报告，以便 OJD 修正处理它的方式。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant" = "此控制器的协议未实现 OJD 为其选择的变体。";
+"ui.controllers.unsupportedProtocolVariant" = "OJD 为此控制器选择了一个它还无法使用的协议版本。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant.nextStep" = "请发送支持报告，以便为其指定受支持的变体。";
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "请发送支持报告，以便 OJD 选择它能使用的版本。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedTransportVariant" = "此控制器的协议不支持其当前的连接方式。";
+"ui.controllers.unsupportedTransportVariant" = "OJD 无法通过此连接方式与此控制器通信。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "请改用其他方式（例如连接线缆）连接控制器，或发送支持报告。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -299,7 +299,7 @@
 /* Message when the user changes the server or the stick deadzone of a controller that no controller record describes. */
 "ui.controllers.server.noRecord" = "没有描述此控制器的控制器记录，因此没有可更改的内容。";
 /* Message when the user changes the server or the stick deadzone of a controller whose record is not valid, or would not be valid with the change. */
-"ui.controllers.server.invalidRecord" = "控制器记录无效。未做任何更改。";
+"ui.controllers.server.invalidRecord" = "控制器记录有问题。未做任何更改。";
 /* Message when the app cannot save the controller record changed by a server or stick deadzone change. */
 "ui.controllers.server.persistenceFailed" = "无法存储控制器记录。未做任何更改。";
 /* Label of the stepper in the controller detail that sets the stick deadzone of the controller's model. The deadzone is the part of the travel near the center that is ignored. */
@@ -339,13 +339,13 @@
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "未测到%@的移动，因此保留其已保存的值。";
 /* Result after the gyro step of a controller that reports no motion. */
-"ui.controllers.recalibrate.gyroSkipped" = "此手柄不报告体感，因此已跳过陀螺仪步骤。";
+"ui.controllers.recalibrate.gyroSkipped" = "此控制器不发送体感数据，因此 OJD 跳过了陀螺仪步骤。";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "已移除保存的摇杆和扳机校准。";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
 "ui.controllers.recalibrate.resetDoneGyro" = "已移除保存的摇杆和扳机校准以及陀螺仪偏移。";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
-"ui.controllers.invalidRequest" = "请求中的供应商 ID 或产品 ID 超出范围。未做任何更改。";
+"ui.controllers.invalidRequest" = "供应商 ID 或产品 ID 超出范围。未做任何更改。";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "高级";
 /* Heading of the virtual gamepad kind section in the Controllers detail. */
@@ -659,7 +659,7 @@
 /* Title of the sheet that edits the details of a profile. */
 "ui.profiles.details" = "配置文件详情";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
-"ui.profiles.notSupportedByController" = "此控制器或协议不支持。";
+"ui.profiles.notSupportedByController" = "此控制器无法执行此操作。";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "导出配置文件";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -667,19 +667,19 @@
 /* Label of the field in the behavior sheet that sets how long a control must be held. The value is in milliseconds. */
 "ui.profiles.holdDuration" = "按住时长";
 /* Hint under the vendor ID and product ID fields. 0x marks a hexadecimal number and stays as written. */
-"ui.profiles.identifierHint" = "使用十进制或以 0x 开头的十六进制标识符。";
+"ui.profiles.identifierHint" = "输入一个数字，例如 1133，或以 0x 开头的十六进制数，例如 0x046D。";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "导入配置文件";
 /* Toolbar button in the Profiles area that checks a profile file without importing it. */
-"ui.profiles.validateFile" = "验证配置文件";
+"ui.profiles.validateFile" = "检查配置文件";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "有效的配置文件";
 /* Title of the alert when the checked profile file is not valid. */
-"ui.profiles.invalidTitle" = "无效的配置文件";
+"ui.profiles.invalidTitle" = "无法使用配置文件";
 /* Message of the alert when the checked profile file is valid. %1$@ is the profile name, %2$@ is the controller model and %3$@ is the app scope. */
 "ui.profiles.validMessage" = "%1$@（%2$@）。适用于：%3$@";
 /* Error in the profile details sheet when the vendor ID or product ID is not a 16-bit number. */
-"ui.profiles.invalidIdentifiers" = "请输入有效的 16 位供应商和产品标识符。";
+"ui.profiles.invalidIdentifiers" = "输入 0 到 65535 或 0x0000 到 0xFFFF 之间的供应商 ID 和产品 ID。";
 /* Placeholder of the name field in the layer sheet. */
 "ui.profiles.layerName" = "层名称";
 /* Heading of the layers section in the profile editor. */
@@ -1429,7 +1429,7 @@
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB 驱动程序";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
-"ui.setup.invalidDetail" = "内嵌的 Xbox USB 驱动程序无效。请重新安装此 App 以修复。";
+"ui.setup.invalidDetail" = "此 App 内的 Xbox USB 驱动程序已损坏。请重新安装 App 进行修复。";
 /* Detail line of the problem banner when the app has no driver extension. The user reinstalls the signed app. */
 "ui.setup.missingDetail" = "此 App 不包含 Xbox USB 驱动程序。请重新安装已签名的 App。";
 /* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 27 and later, where the settings app is System Settings. */
@@ -1559,7 +1559,7 @@
 /* Option of the virtual output popup: the virtual gamepad also carries the controls that the profile does not map. */
 "ui.profiles.virtualPassthrough" = "包含未重新映射的控件";
 /* Title of the switch in the profile editor that makes the profile need exclusive access to the physical controller. */
-"ui.profiles.exclusiveInput" = "要求独占访问物理输入";
+"ui.profiles.exclusiveInput" = "对其他 App 隐藏控制器";
 /* VoiceOver label of the group of profile action buttons in the profile editor. */
 "ui.profiles.actions" = "配置文件操作";
 /* VoiceOver label of the picker that switches the section of the profile editor. */
@@ -3666,7 +3666,7 @@
 /* Button of the open panel in which the user picks a record file or a mod folder. It confirms the choice. */
 "ui.library.choose" = "选取";
 /* Toolbar button in the Library area that checks a record file or mod folder without installing it. Keep the three dots. */
-"ui.library.validate" = "验证…";
+"ui.library.validate" = "检查…";
 /* Confirm button of the alert that installs a record or a mod. */
 "ui.library.install" = "安装";
 /* Confirm button of the alert that replaces an installed record or mod. */
@@ -3686,7 +3686,7 @@
 /* Notice after a record check passed. %1$@ is the file name and %2$@ is the controller model. */
 "ui.library.record.valid" = "%1$@ 是适用于 %2$@ 的有效记录。";
 /* Error when a record is not valid. %@ is the reason. */
-"ui.library.record.invalid" = "记录无效：%@";
+"ui.library.record.invalid" = "记录有问题：%@";
 /* Line in the records list for a record file that the app skipped. %@ is the reason. */
 "ui.library.record.skipped" = "已跳过：%@";
 /* Error when no installed record matches a controller model. %@ is the controller model. */
@@ -3840,7 +3840,7 @@
 /* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.inputRead.purpose" = "读取你的控制器。";
 /* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
-"ui.access.permission.inputInject.purpose" = "将你的控制器发布到游戏。";
+"ui.access.permission.inputInject.purpose" = "让游戏能看到你的控制器。";
 /* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.postEvent.purpose" = "发送你的配置文件所映射的键盘与指针事件。";
 /* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
@@ -3876,7 +3876,7 @@
 /* Error shown when the chosen program has no signature. %@ is the path of the program. */
 "ui.access.grant.unsigned" = "%@ 未签名，因此无法授予其访问权限。";
 /* Error shown when the chosen program has an ad-hoc signature. %@ is the identifier of the program. Any local process can claim such an identity. */
-"ui.access.grant.adHoc" = "%@ 未使用证书签名，因此任何本地进程都可以冒用它的身份。无法授予其访问权限。";
+"ui.access.grant.adHoc" = "%@ 没有开发者签名，因此其他程序可以冒充它。OJD 无法授予其访问权限。";
 /* Title of the alert that grants access to a program. %@ is the identifier of the program. */
 "ui.access.grant.title" = "要授予 %@ 访问权限吗？";
 /* Question of the alert that grants access. %1$@ is the identifier of the program, %2$@ is the description of its signer and %3$@ is the list of scopes. */
@@ -4949,7 +4949,7 @@
 /* Title of the sheet that drafts a controller record. */
 "ui.controllers.draftRecord.title" = "起草控制器记录";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.controllers.draftRecord.noLayout" = "无法从 %@ 的 HID 报告描述符中读取任何控件，且其内置记录已指明其系列。";
+"ui.controllers.draftRecord.noLayout" = "%@ 没有描述任何 OJD 能读取的控件，其内置记录已注明所属系列。";
 /* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
 "ui.controllers.draftRecordFromSDL" = "从 SDL 起草记录…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
@@ -4979,7 +4979,7 @@
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "无更新";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "等待回中…";
+"ui.controllers.inputHealth.waitingForNeutral" = "正在等待你松开…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "设置文件 %@ 已损坏。请修复它，或用 `ojd setting reset` 将其移到废纸篓。";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -5031,9 +5031,9 @@
 /* Reason shown with a failed publication. %@ is the reason the last send failed. */
 "ui.controllers.publication.failedSend" = "最近一次发送失败：%@";
 /* Reason of failing input health: the controller sends no reports. */
-"ui.controllers.inputHealth.reason.missingReports" = "没有收到报告";
+"ui.controllers.inputHealth.reason.missingReports" = "控制器没有发送任何内容";
 /* Reason of failing input health: the reports arrive but their content does not change. */
-"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "报告没有更新";
+"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "输入已停止变化";
 /* Reason of failing input health: the controller sends no input until its home button is pressed, which is the PS button on a PlayStation controller. PS stays as written. */
 "ui.controllers.inputHealth.reason.guideNotPressed" = "按下 PS 按钮或主页按钮";
 /* Input health state with its failure reason, for example "Stale (No reports arriving)". %1$@ is the state and %2$@ the reason. */

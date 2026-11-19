@@ -179,27 +179,27 @@
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "Ningún mando conectado";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch" = "OJD no encontró ningún protocolo compatible para este mando.";
+"ui.controllers.noProtocolMatch" = "OJD aún no sabe comunicarse con este mando.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch.nextStep" = "Envía un informe de soporte con el ID del mando para que se pueda añadir compatibilidad.";
+"ui.controllers.noProtocolMatch.nextStep" = "Envía un informe de soporte con el ID del mando para que OJD aprenda a comunicarse con él.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch" = "Más de un protocolo compatible encaja con este mando, así que OJD no puede elegir uno.";
+"ui.controllers.ambiguousProtocolMatch" = "Este mando encaja con más de un protocolo que OJD conoce, así que OJD no puede elegir uno.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch.nextStep" = "Envía un informe de soporte para poder indicar qué protocolo usa.";
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "Envía un informe de soporte para que OJD sepa qué protocolo usa este mando.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch" = "Las interfaces USB de este mando no cumplen lo que exige su protocolo, así que OJD no lo atiende.";
+"ui.controllers.interfaceContractMismatch" = "Las conexiones USB de este mando no son las que OJD espera, así que OJD no lo toca.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch.nextStep" = "Envía un informe de soporte con el ID del mando para que se pueda corregir su compatibilidad.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch" = "El descriptor HID de este mando no cumple lo que exige su protocolo, así que OJD no lo atiende.";
+"ui.controllers.interfaceContractMismatch.nextStep" = "Envía un informe de soporte con el ID del mando para que OJD corrija cómo lo maneja.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
+"ui.controllers.descriptorContractMismatch" = "Este mando describe sus botones y palancas de una forma que OJD no espera, así que OJD no lo toca.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch.nextStep" = "Envía un informe de soporte con el ID del mando para que se pueda corregir su compatibilidad.";
+"ui.controllers.descriptorContractMismatch.nextStep" = "Envía un informe de soporte con el ID del mando para que OJD corrija cómo lo maneja.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant" = "El protocolo de este mando no implementa la variante que OJD eligió para él.";
+"ui.controllers.unsupportedProtocolVariant" = "OJD eligió una versión del protocolo de este mando que aún no sabe usar.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant.nextStep" = "Envía un informe de soporte para poder asignarle una variante compatible.";
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "Envía un informe de soporte para que OJD elija una versión que sepa usar.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedTransportVariant" = "El protocolo de este mando no admite la forma en que está conectado.";
+"ui.controllers.unsupportedTransportVariant" = "OJD no puede comunicarse con este mando por esta conexión.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "Conecta el mando de otra forma, por ejemplo con un cable, o envía un informe de soporte.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -299,7 +299,7 @@
 /* Message when the user changes the server or the stick deadzone of a controller that no controller record describes. */
 "ui.controllers.server.noRecord" = "Ningún registro de mando describe este mando, así que no hay nada que cambiar.";
 /* Message when the user changes the server or the stick deadzone of a controller whose record is not valid, or would not be valid with the change. */
-"ui.controllers.server.invalidRecord" = "El registro del mando no es válido. No se ha cambiado nada.";
+"ui.controllers.server.invalidRecord" = "El registro del mando tiene un problema. No se ha cambiado nada.";
 /* Message when the app cannot save the controller record changed by a server or stick deadzone change. */
 "ui.controllers.server.persistenceFailed" = "No se ha podido guardar el registro del mando. No se ha cambiado nada.";
 /* Label of the stepper in the controller detail that sets the stick deadzone of the controller's model. The deadzone is the part of the travel near the center that is ignored. */
@@ -339,13 +339,13 @@
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "No se midió movimiento en %@, así que se conservan sus valores guardados.";
 /* Result after the gyro step of a controller that reports no motion. */
-"ui.controllers.recalibrate.gyroSkipped" = "Este mando no informa del movimiento, así que se omitió el paso del giroscopio.";
+"ui.controllers.recalibrate.gyroSkipped" = "Este mando no envía datos de movimiento, así que OJD omitió el paso del giroscopio.";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "Se quitó la calibración guardada de las palancas y los gatillos.";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
 "ui.controllers.recalibrate.resetDoneGyro" = "Se quitó la calibración guardada de las palancas y los gatillos y el desfase del giroscopio.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
-"ui.controllers.invalidRequest" = "La solicitud indica un ID de fabricante o de producto fuera de rango. No se ha cambiado nada.";
+"ui.controllers.invalidRequest" = "El ID de fabricante o de producto está fuera de rango. No se ha cambiado nada.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "Avanzado";
 /* Heading of the virtual gamepad kind section in the Controllers detail. */
@@ -659,7 +659,7 @@
 /* Title of the sheet that edits the details of a profile. */
 "ui.profiles.details" = "Detalles del perfil";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
-"ui.profiles.notSupportedByController" = "No es compatible con este mando o protocolo.";
+"ui.profiles.notSupportedByController" = "Este mando no puede hacer esto.";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "Exportar perfil";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -667,19 +667,19 @@
 /* Label of the field in the behavior sheet that sets how long a control must be held. The value is in milliseconds. */
 "ui.profiles.holdDuration" = "Duración de retención";
 /* Hint under the vendor ID and product ID fields. 0x marks a hexadecimal number and stays as written. */
-"ui.profiles.identifierHint" = "Usa identificadores decimales o hexadecimales con prefijo 0x.";
+"ui.profiles.identifierHint" = "Escribe un número, como 1133, o un número hexadecimal que empiece por 0x, como 0x046D.";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "Importar perfil";
 /* Toolbar button in the Profiles area that checks a profile file without importing it. */
-"ui.profiles.validateFile" = "Validar archivo de perfil";
+"ui.profiles.validateFile" = "Comprobar archivo de perfil";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "Perfil válido";
 /* Title of the alert when the checked profile file is not valid. */
-"ui.profiles.invalidTitle" = "Perfil no válido";
+"ui.profiles.invalidTitle" = "No se puede usar el perfil";
 /* Message of the alert when the checked profile file is valid. %1$@ is the profile name, %2$@ is the controller model and %3$@ is the app scope. */
 "ui.profiles.validMessage" = "%1$@ (%2$@). Se aplica a: %3$@.";
 /* Error in the profile details sheet when the vendor ID or product ID is not a 16-bit number. */
-"ui.profiles.invalidIdentifiers" = "Introduce identificadores de fabricante y de producto válidos de 16 bits.";
+"ui.profiles.invalidIdentifiers" = "Introduce el ID del fabricante y el ID del producto, de 0 a 65535 o de 0x0000 a 0xFFFF.";
 /* Placeholder of the name field in the layer sheet. */
 "ui.profiles.layerName" = "Nombre de la capa";
 /* Heading of the layers section in the profile editor. */
@@ -1429,7 +1429,7 @@
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Controlador USB de Xbox";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
-"ui.setup.invalidDetail" = "El controlador USB de Xbox integrado no es válido. Reinstala esta app para repararlo.";
+"ui.setup.invalidDetail" = "El controlador USB de Xbox de esta app está dañado. Vuelve a instalar la app para arreglarlo.";
 /* Detail line of the problem banner when the app has no driver extension. The user reinstalls the signed app. */
 "ui.setup.missingDetail" = "Esta app no contiene el controlador USB de Xbox. Reinstala la app firmada.";
 /* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 27 and later, where the settings app is System Settings. */
@@ -1559,7 +1559,7 @@
 /* Option of the virtual output popup: the virtual gamepad also carries the controls that the profile does not map. */
 "ui.profiles.virtualPassthrough" = "Incluir controles sin reasignar";
 /* Title of the switch in the profile editor that makes the profile need exclusive access to the physical controller. */
-"ui.profiles.exclusiveInput" = "Exigir acceso exclusivo a la entrada física";
+"ui.profiles.exclusiveInput" = "Ocultar el mando a otras apps";
 /* VoiceOver label of the group of profile action buttons in the profile editor. */
 "ui.profiles.actions" = "Acciones del perfil";
 /* VoiceOver label of the picker that switches the section of the profile editor. */
@@ -4250,7 +4250,7 @@
 /* Button of the open panel in which the user picks a record file or a mod folder. It confirms the choice. */
 "ui.library.choose" = "Elegir";
 /* Toolbar button in the Library area that checks a record file or mod folder without installing it. Keep the three dots. */
-"ui.library.validate" = "Validar…";
+"ui.library.validate" = "Comprobar…";
 /* Confirm button of the alert that installs a record or a mod. */
 "ui.library.install" = "Instalar";
 /* Confirm button of the alert that replaces an installed record or mod. */
@@ -4270,7 +4270,7 @@
 /* Notice after a record check passed. %1$@ is the file name and %2$@ is the controller model. */
 "ui.library.record.valid" = "%1$@ es un registro válido para %2$@.";
 /* Error when a record is not valid. %@ is the reason. */
-"ui.library.record.invalid" = "El registro no es válido: %@";
+"ui.library.record.invalid" = "El registro tiene un problema: %@";
 /* Line in the records list for a record file that the app skipped. %@ is the reason. */
 "ui.library.record.skipped" = "Omitido: %@";
 /* Error when no installed record matches a controller model. %@ is the controller model. */
@@ -4424,7 +4424,7 @@
 /* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.inputRead.purpose" = "Lee tus mandos.";
 /* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
-"ui.access.permission.inputInject.purpose" = "Publica tus mandos en los juegos.";
+"ui.access.permission.inputInject.purpose" = "Muestra tus mandos a los juegos.";
 /* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.postEvent.purpose" = "Envía los eventos de teclado y puntero que asignan tus perfiles.";
 /* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
@@ -4460,7 +4460,7 @@
 /* Error shown when the chosen program has no signature. %@ is the path of the program. */
 "ui.access.grant.unsigned" = "%@ no está firmado, así que no se le puede conceder acceso.";
 /* Error shown when the chosen program has an ad-hoc signature. %@ is the identifier of the program. Any local process can claim such an identity. */
-"ui.access.grant.adHoc" = "%@ no está firmado con un certificado, así que cualquier proceso local podría hacerse pasar por él. No se le puede conceder acceso.";
+"ui.access.grant.adHoc" = "%@ no tiene firma de desarrollador, así que otro programa podría hacerse pasar por él. OJD no puede concederle acceso.";
 /* Title of the alert that grants access to a program. %@ is the identifier of the program. */
 "ui.access.grant.title" = "¿Conceder acceso a %@?";
 /* Question of the alert that grants access. %1$@ is the identifier of the program, %2$@ is the description of its signer and %3$@ is the list of scopes. */
@@ -4950,7 +4950,7 @@
 /* Title of the sheet that drafts a controller record. */
 "ui.controllers.draftRecord.title" = "Crear el borrador de un registro de mando";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.controllers.draftRecord.noLayout" = "No se pudo leer ningún control de %@ a partir de su descriptor de informes HID, y su registro incluido ya indica su familia.";
+"ui.controllers.draftRecord.noLayout" = "%@ no describe ningún control que OJD pueda leer, y su registro integrado ya indica su familia.";
 /* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
 "ui.controllers.draftRecordFromSDL" = "Borrador de registro desde SDL…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
@@ -4980,7 +4980,7 @@
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "Sin actualizar";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "Esperando posición neutra…";
+"ui.controllers.inputHealth.waitingForNeutral" = "Esperando a que sueltes los controles…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "El archivo de ajustes %@ está dañado. Corrígelo o muévelo a la Papelera con `ojd setting reset`.";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -5032,9 +5032,9 @@
 /* Reason shown with a failed publication. %@ is the reason the last send failed. */
 "ui.controllers.publication.failedSend" = "Falló el último envío: %@";
 /* Reason of failing input health: the controller sends no reports. */
-"ui.controllers.inputHealth.reason.missingReports" = "No llegan informes";
+"ui.controllers.inputHealth.reason.missingReports" = "El mando no envía nada";
 /* Reason of failing input health: the reports arrive but their content does not change. */
-"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "Los informes no avanzan";
+"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "La entrada dejó de cambiar";
 /* Reason of failing input health: the controller sends no input until its home button is pressed, which is the PS button on a PlayStation controller. PS stays as written. */
 "ui.controllers.inputHealth.reason.guideNotPressed" = "Pulsa el botón PS o de inicio";
 /* Input health state with its failure reason, for example "Stale (No reports arriving)". %1$@ is the state and %2$@ the reason. */

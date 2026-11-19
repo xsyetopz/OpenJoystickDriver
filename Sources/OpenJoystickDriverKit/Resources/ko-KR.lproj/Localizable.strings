@@ -179,27 +179,27 @@
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "연결된 컨트롤러 없음";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch" = "OJD가 이 컨트롤러에 맞는 지원 프로토콜을 찾지 못했습니다.";
+"ui.controllers.noProtocolMatch" = "OJD는 아직 이 컨트롤러와 통신하는 방법을 모릅니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noProtocolMatch.nextStep" = "컨트롤러 ID와 함께 지원 리포트를 보내 주세요. 지원을 추가할 수 있습니다.";
+"ui.controllers.noProtocolMatch.nextStep" = "컨트롤러 ID와 함께 지원 리포트를 보내 주세요. OJD가 통신 방법을 배울 수 있습니다.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch" = "이 컨트롤러에 맞는 지원 프로토콜이 둘 이상이어서 OJD가 하나를 고를 수 없습니다.";
+"ui.controllers.ambiguousProtocolMatch" = "이 컨트롤러는 OJD가 아는 여러 프로토콜에 맞아서 OJD가 하나를 고를 수 없습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch.nextStep" = "지원 리포트를 보내 주세요. 사용하는 프로토콜을 지정할 수 있습니다.";
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "지원 리포트를 보내 주세요. 이 컨트롤러가 어떤 프로토콜을 쓰는지 OJD가 알 수 있습니다.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch" = "이 컨트롤러의 USB 인터페이스가 프로토콜의 요구 사항을 충족하지 않아 OJD가 처리하지 않습니다.";
+"ui.controllers.interfaceContractMismatch" = "이 컨트롤러의 USB 연결이 OJD가 예상한 것과 달라서 OJD가 이 컨트롤러를 건드리지 않습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.interfaceContractMismatch.nextStep" = "컨트롤러 ID와 함께 지원 리포트를 보내 주세요. 지원을 바로잡을 수 있습니다.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch" = "이 컨트롤러의 HID 디스크립터가 프로토콜의 요구 사항을 충족하지 않아 OJD가 처리하지 않습니다.";
+"ui.controllers.interfaceContractMismatch.nextStep" = "컨트롤러 ID와 함께 지원 리포트를 보내 주세요. OJD가 이 컨트롤러를 다루는 방식을 고칠 수 있습니다.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
+"ui.controllers.descriptorContractMismatch" = "이 컨트롤러는 버튼과 스틱을 OJD가 예상하지 않은 방식으로 알려서 OJD가 이 컨트롤러를 건드리지 않습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch.nextStep" = "컨트롤러 ID와 함께 지원 리포트를 보내 주세요. 지원을 바로잡을 수 있습니다.";
+"ui.controllers.descriptorContractMismatch.nextStep" = "컨트롤러 ID와 함께 지원 리포트를 보내 주세요. OJD가 이 컨트롤러를 다루는 방식을 고칠 수 있습니다.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant" = "이 컨트롤러의 프로토콜은 OJD가 선택한 변형을 구현하지 않습니다.";
+"ui.controllers.unsupportedProtocolVariant" = "OJD가 아직 다룰 수 없는 버전의 프로토콜을 이 컨트롤러에 골랐습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedProtocolVariant.nextStep" = "지원 리포트를 보내 주세요. 지원되는 변형을 지정할 수 있습니다.";
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "지원 리포트를 보내 주세요. OJD가 다룰 수 있는 버전을 고를 수 있습니다.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.unsupportedTransportVariant" = "이 컨트롤러의 프로토콜은 현재 연결 방식을 지원하지 않습니다.";
+"ui.controllers.unsupportedTransportVariant" = "OJD는 이 연결 방식으로는 이 컨트롤러와 통신할 수 없습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "케이블 등 다른 방법으로 컨트롤러를 연결하거나 지원 리포트를 보내 주세요.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -299,7 +299,7 @@
 /* Message when the user changes the server or the stick deadzone of a controller that no controller record describes. */
 "ui.controllers.server.noRecord" = "이 컨트롤러를 설명하는 컨트롤러 레코드가 없으므로 변경할 항목이 없습니다.";
 /* Message when the user changes the server or the stick deadzone of a controller whose record is not valid, or would not be valid with the change. */
-"ui.controllers.server.invalidRecord" = "컨트롤러 레코드가 유효하지 않습니다. 변경된 항목이 없습니다.";
+"ui.controllers.server.invalidRecord" = "컨트롤러 레코드에 문제가 있습니다. 아무것도 변경되지 않았습니다.";
 /* Message when the app cannot save the controller record changed by a server or stick deadzone change. */
 "ui.controllers.server.persistenceFailed" = "컨트롤러 레코드를 저장할 수 없습니다. 변경된 항목이 없습니다.";
 /* Label of the stepper in the controller detail that sets the stick deadzone of the controller's model. The deadzone is the part of the travel near the center that is ignored. */
@@ -339,13 +339,13 @@
 /* Result after a recalibration step when some controls did not move enough to measure. %@ is the list of control names, such as Left stick. */
 "ui.controllers.recalibrate.unmoved" = "%@의 움직임이 측정되지 않아 저장된 값을 유지합니다.";
 /* Result after the gyro step of a controller that reports no motion. */
-"ui.controllers.recalibrate.gyroSkipped" = "이 컨트롤러는 모션을 보고하지 않으므로 자이로 단계를 건너뛰었습니다.";
+"ui.controllers.recalibrate.gyroSkipped" = "이 컨트롤러는 모션 데이터를 보내지 않으므로 OJD가 자이로 단계를 건너뛰었습니다.";
 /* Result after Reset removed the stored stick and trigger calibration of a controller. */
 "ui.controllers.recalibrate.resetDone" = "저장된 스틱과 트리거 보정을 제거했습니다.";
 /* Result after Reset removed the stored stick and trigger calibration and the gyro offset of a controller. */
 "ui.controllers.recalibrate.resetDoneGyro" = "저장된 스틱과 트리거 보정과 자이로 오프셋을 제거했습니다.";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
-"ui.controllers.invalidRequest" = "요청한 공급업체 ID 또는 제품 ID가 범위를 벗어났습니다. 변경된 항목이 없습니다.";
+"ui.controllers.invalidRequest" = "공급업체 또는 제품 ID가 범위를 벗어났습니다. 아무것도 변경되지 않았습니다.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "고급";
 /* Heading of the virtual gamepad kind section in the Controllers detail. */
@@ -659,7 +659,7 @@
 /* Title of the sheet that edits the details of a profile. */
 "ui.profiles.details" = "프로파일 세부 사항";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
-"ui.profiles.notSupportedByController" = "이 컨트롤러 또는 프로토콜에서 지원하지 않습니다.";
+"ui.profiles.notSupportedByController" = "이 컨트롤러에서는 이 작업을 할 수 없습니다.";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "프로파일 내보내기";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -667,19 +667,19 @@
 /* Label of the field in the behavior sheet that sets how long a control must be held. The value is in milliseconds. */
 "ui.profiles.holdDuration" = "누르고 있는 시간";
 /* Hint under the vendor ID and product ID fields. 0x marks a hexadecimal number and stays as written. */
-"ui.profiles.identifierHint" = "10진수 또는 0x로 시작하는 16진수 식별자를 사용하세요.";
+"ui.profiles.identifierHint" = "1133 같은 숫자나 0x046D처럼 0x로 시작하는 16진수를 입력하십시오.";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "프로파일 가져오기";
 /* Toolbar button in the Profiles area that checks a profile file without importing it. */
-"ui.profiles.validateFile" = "프로파일 파일 검증";
+"ui.profiles.validateFile" = "프로파일 파일 확인";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "유효한 프로파일";
 /* Title of the alert when the checked profile file is not valid. */
-"ui.profiles.invalidTitle" = "유효하지 않은 프로파일";
+"ui.profiles.invalidTitle" = "프로파일을 사용할 수 없음";
 /* Message of the alert when the checked profile file is valid. %1$@ is the profile name, %2$@ is the controller model and %3$@ is the app scope. */
 "ui.profiles.validMessage" = "%1$@(%2$@). 적용 대상: %3$@.";
 /* Error in the profile details sheet when the vendor ID or product ID is not a 16-bit number. */
-"ui.profiles.invalidIdentifiers" = "유효한 16비트 공급업체 ID와 제품 ID를 입력하세요.";
+"ui.profiles.invalidIdentifiers" = "0~65535 또는 0x0000~0xFFFF 사이의 공급업체 ID와 제품 ID를 입력하십시오.";
 /* Placeholder of the name field in the layer sheet. */
 "ui.profiles.layerName" = "레이어 이름";
 /* Heading of the layers section in the profile editor. */
@@ -1429,7 +1429,7 @@
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB 드라이버";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
-"ui.setup.invalidDetail" = "내장된 Xbox USB 드라이버가 유효하지 않습니다. 이 앱을 다시 설치하여 복구하세요.";
+"ui.setup.invalidDetail" = "이 앱 안의 Xbox USB 드라이버가 손상되었습니다. 앱을 다시 설치하여 해결하십시오.";
 /* Detail line of the problem banner when the app has no driver extension. The user reinstalls the signed app. */
 "ui.setup.missingDetail" = "이 앱에 Xbox USB 드라이버가 포함되어 있지 않습니다. 서명된 앱을 다시 설치하세요.";
 /* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 27 and later, where the settings app is System Settings. */
@@ -1559,7 +1559,7 @@
 /* Option of the virtual output popup: the virtual gamepad also carries the controls that the profile does not map. */
 "ui.profiles.virtualPassthrough" = "매핑되지 않은 컨트롤 포함";
 /* Title of the switch in the profile editor that makes the profile need exclusive access to the physical controller. */
-"ui.profiles.exclusiveInput" = "물리적 입력에 대한 독점 접근 요구";
+"ui.profiles.exclusiveInput" = "다른 앱에서 컨트롤러 숨기기";
 /* VoiceOver label of the group of profile action buttons in the profile editor. */
 "ui.profiles.actions" = "프로파일 동작";
 /* VoiceOver label of the picker that switches the section of the profile editor. */
@@ -3666,7 +3666,7 @@
 /* Button of the open panel in which the user picks a record file or a mod folder. It confirms the choice. */
 "ui.library.choose" = "선택";
 /* Toolbar button in the Library area that checks a record file or mod folder without installing it. Keep the three dots. */
-"ui.library.validate" = "검증…";
+"ui.library.validate" = "확인…";
 /* Confirm button of the alert that installs a record or a mod. */
 "ui.library.install" = "설치";
 /* Confirm button of the alert that replaces an installed record or mod. */
@@ -3686,7 +3686,7 @@
 /* Notice after a record check passed. %1$@ is the file name and %2$@ is the controller model. */
 "ui.library.record.valid" = "%1$@은(는) %2$@에 대한 올바른 레코드입니다.";
 /* Error when a record is not valid. %@ is the reason. */
-"ui.library.record.invalid" = "레코드가 올바르지 않습니다: %@";
+"ui.library.record.invalid" = "레코드에 문제가 있음: %@";
 /* Line in the records list for a record file that the app skipped. %@ is the reason. */
 "ui.library.record.skipped" = "건너뜀: %@";
 /* Error when no installed record matches a controller model. %@ is the controller model. */
@@ -3840,7 +3840,7 @@
 /* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.inputRead.purpose" = "컨트롤러를 읽습니다.";
 /* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
-"ui.access.permission.inputInject.purpose" = "컨트롤러를 게임에 게시합니다.";
+"ui.access.permission.inputInject.purpose" = "컨트롤러를 게임에 보여 줍니다.";
 /* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
 "ui.access.permission.postEvent.purpose" = "프로파일이 매핑한 키보드 및 포인터 이벤트를 보냅니다.";
 /* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
@@ -3876,7 +3876,7 @@
 /* Error shown when the chosen program has no signature. %@ is the path of the program. */
 "ui.access.grant.unsigned" = "%@은(는) 서명되지 않았으므로 접근을 허용할 수 없습니다.";
 /* Error shown when the chosen program has an ad-hoc signature. %@ is the identifier of the program. Any local process can claim such an identity. */
-"ui.access.grant.adHoc" = "%@은(는) 인증서로 서명되지 않았으므로 어떤 로컬 프로세스든 그 신원을 사칭할 수 있습니다. 접근을 허용할 수 없습니다.";
+"ui.access.grant.adHoc" = "%@에는 개발자 서명이 없어 다른 프로그램이 이를 사칭할 수 있습니다. OJD는 접근을 허용할 수 없습니다.";
 /* Title of the alert that grants access to a program. %@ is the identifier of the program. */
 "ui.access.grant.title" = "%@에 접근을 허용하시겠습니까?";
 /* Question of the alert that grants access. %1$@ is the identifier of the program, %2$@ is the description of its signer and %3$@ is the list of scopes. */
@@ -4949,7 +4949,7 @@
 /* Title of the sheet that drafts a controller record. */
 "ui.controllers.draftRecord.title" = "컨트롤러 레코드 초안 작성";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.controllers.draftRecord.noLayout" = "%@의 HID 리포트 디스크립터에서 읽을 수 있는 컨트롤이 없고, 내장 레코드가 이미 패밀리를 지정하고 있습니다.";
+"ui.controllers.draftRecord.noLayout" = "%@에서 OJD가 읽을 수 있는 컨트롤을 알려 주지 않으며, 내장 레코드에 이미 제품군이 지정되어 있습니다.";
 /* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
 "ui.controllers.draftRecordFromSDL" = "SDL에서 레코드 초안…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
@@ -4979,7 +4979,7 @@
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "업데이트 없음";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "중립 위치 대기 중…";
+"ui.controllers.inputHealth.waitingForNeutral" = "손을 뗄 때까지 기다리는 중…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "설정 파일 %@이(가) 손상되었습니다. 수정하거나 `ojd setting reset`을 실행해 휴지통으로 이동하세요.";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -5031,9 +5031,9 @@
 /* Reason shown with a failed publication. %@ is the reason the last send failed. */
 "ui.controllers.publication.failedSend" = "마지막 전송 실패: %@";
 /* Reason of failing input health: the controller sends no reports. */
-"ui.controllers.inputHealth.reason.missingReports" = "수신되는 리포트 없음";
+"ui.controllers.inputHealth.reason.missingReports" = "컨트롤러가 아무것도 보내지 않음";
 /* Reason of failing input health: the reports arrive but their content does not change. */
-"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "리포트가 갱신되지 않음";
+"ui.controllers.inputHealth.reason.freshnessNotAdvancing" = "입력 변화가 멈춤";
 /* Reason of failing input health: the controller sends no input until its home button is pressed, which is the PS button on a PlayStation controller. PS stays as written. */
 "ui.controllers.inputHealth.reason.guideNotPressed" = "PS 또는 홈 버튼을 누르십시오";
 /* Input health state with its failure reason, for example "Stale (No reports arriving)". %1$@ is the state and %2$@ the reason. */
