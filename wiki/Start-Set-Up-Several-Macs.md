@@ -4,7 +4,7 @@ Install OJD on more than one Mac and copy your [profiles](Glossary.md#terms) and
 
 - **Who:** anyone with OJD on more than one Mac, such as a desktop and a laptop.
 - **What moves:** your profiles and records, saved as files you carry over.
-- **What doesn't move:** the macOS permissions. Each Mac asks for them again, because macOS keeps those per Mac.
+- **What doesn't move:** the macOS permissions. Each Mac asks again, because macOS keeps them per Mac.
 - **How:** export on the first Mac, copy the file over, and import it on the other.
 
 ```mermaid
@@ -15,11 +15,11 @@ flowchart LR
 
 ## Check the License
 
-OJD is open source under the [Mozilla Public License 2.0](https://www.mozilla.org/MPL/2.0/). It sets no limit on how many Macs you install on and allows commercial use. If you give copies to others, their source stays available under the same license. Do not remove license notices. The full text is in `LICENSE` at the repository root.
+OJD is open source under the [Mozilla Public License 2.0](https://www.mozilla.org/MPL/2.0/). It sets no limit on how many Macs you install on and allows commercial use. If you give copies to others, their source stays available under the same license. Keep the license notices. The full text is in `LICENSE` at the repository root.
 
 ## Know What macOS Asks
 
-Each Mac asks for its own approvals. Apple documents these:
+Each Mac asks for its own approvals. Apple explains each one:
 
 - [Allow a system extension](https://support.apple.com/en-us/120363), for the [Xbox USB driver](Glossary.md#terms).
 - [Allow input monitoring](https://support.apple.com/guide/mac-help/control-access-to-input-monitoring-on-mac-mchl4cedafb6/mac).
