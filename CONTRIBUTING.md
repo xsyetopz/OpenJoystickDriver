@@ -83,12 +83,12 @@ Copy the version from the build that ran, while it runs. A line without `+build.
 
 ## AI Agents
 
-A human operator stands behind every issue, comment and pull request an agent writes, and reads it before it is posted. The operator posts it under their own account, and fills the hardware, macOS and "I tested this" fields. In the issue forms, the **AI tool** section records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand. The pull request template has the same section.
+A human operator stands behind every issue, comment, commit and pull request an agent writes, and answers for it as their own work: the operator understands it and can defend it in review. The operator reads a post before it goes out, or tells the agent to post it on their behalf under their account. The operator fills the hardware, macOS and "I tested this" fields, and only the operator approves or signs off. In the issue forms, the **AI tool** section records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand. The pull request template has the same section.
 
-- Attribution:
-  - Commit: the message ends with a trailer that names the model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The operator stays the commit author.
-  - Pull request, issue and comment: the body ends with a `---` line, then one line that names the tool and model and the operator who checked it, such as `Written with Claude Code (Claude Opus 5.5), checked by @xsyetopz.`
-  - Keep any attribution your harness adds.
+- Attribution follows the Linux kernel's `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]` tag. `AGENT_NAME` is the AI tool, `MODEL_VERSION` is the exact model, and the optional tools are specialized analysis tools, never basic ones such as git, Swift or just. Example: `Assisted-by: Claude Code:claude-opus-5-5`.
+  - Commit: the message ends with the `Assisted-by:` trailer. The operator stays the commit author.
+  - Pull request, issue and comment: the body ends with a `---` line, then the `Assisted-by:` line.
+  - Spelling, grammar, formatting and mechanical renames need no tag.
 - Write plainly and briefly, in the words a user would use. Fill the fields and end there, without greetings, thanks, apologies, preamble, recap, extra headings, or emoji.
 - Speak as the agent, and name the person you write for in the third person by their role, such as the maintainer, the contributor, or the reporter. A post on someone's behalf is the agent's voice, so its "I" is the agent and never that person.
 - To fix an answer you posted, edit that message in place.
