@@ -1,10 +1,10 @@
 # Known Issues
 
-Bugs and limits in OpenJoystickDriver (OJD) that nobody has fixed yet. Each one says what you'll notice, why it happens, and what you can do.
+Open bugs and limits in OpenJoystickDriver (OJD). Each one says what you'll notice, why it happens, and what to do.
 
 - **Who:** anyone who hits a bug that isn't fixed yet.
 - **What:** each issue with what you notice, why it happens, and what to do.
-- **When:** before you report a bug, check here first.
+- **When:** before you report a bug.
 - **How:** find the symptom below, then try its workaround.
 
 ```mermaid
@@ -17,7 +17,7 @@ flowchart LR
 
 ## Two Controllers With One USB Serial Number
 
-**What you notice:** two identical pads seem to swap places, or one looks like a new controller when you use another USB port.
+**What you notice:** two identical pads seem to swap places, or one looks like a different controller when you use another USB port.
 
 **Why:** a serial number is meant to be unique, like a name tag. Some pads all wear the same tag, such as ID `057E:2009` with serial `000000000001`. OJD still gives each pad its own [virtual gamepad](Glossary.md#terms). The first pad to connect keeps the plain name tag. The second pad's tag adds its USB port.
 
@@ -69,7 +69,7 @@ flowchart LR
 
 **What you notice:** the controller shows **Used by** and an app name, or "another program is using this controller". `ojd controller list` leaves it out.
 
-**Why:** Steam, GOG Galaxy, Chrome, and other apps can grab a USB controller so that nobody else can use it. While they hold it, OJD can't. This isn't an error.
+**Why:** Steam, GOG Galaxy, Chrome, and other apps can grab a USB controller so nobody else can use it. While they hold it, OJD can't. That isn't an error.
 
 **Where you see it:**
 
