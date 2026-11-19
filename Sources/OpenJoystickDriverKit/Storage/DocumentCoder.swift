@@ -75,7 +75,7 @@ public enum DocumentCoder {
     _ type: T.Type,
     from data: Data,
     file: String,
-    userInfo: [CodingUserInfoKey: Any] = [:]
+    userInfo: [CodingUserInfoKey: any Sendable] = [:]
   ) throws -> T {
     _ = try read(data, file: file)
     let decoder = PropertyListDecoder()
