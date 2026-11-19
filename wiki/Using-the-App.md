@@ -35,7 +35,7 @@ Click the controller icon in the menu bar to see your controllers, choose a [pro
 The menu shows, from top to bottom:
 
 - A row for each problem. Click **OpenJoystickDriver cannot reach its service** to start the service again. Click **Permission Missing: Accessibility** or **Permission Missing: Input Monitoring** to open the **Access** area.
-- A row for each connected controller, with its battery level, active profile, and **Paused** when they apply. With no controller, the menu shows **No Controller Connected**. This is not a problem.
+- A row for each connected controller, with its battery level, active profile, and **Paused** when they apply. With no controller, the menu shows **No Controller Connected**, which is normal.
 - **Open OpenJoystickDriver**, **Settings...**, and **Quit OpenJoystickDriver**.
 
 Each controller row has a submenu:
@@ -66,7 +66,7 @@ The sidebar has five areas. Press Command-1 through Command-5 to switch.
 | **Access** | Check permissions and let other programs read your controllers. |
 | **Activity** | Read the log, run checks, and look up error codes. |
 
-A banner below the toolbar appears when something stops OJD from working. Click its button to fix it: **Try Again**, **Open System Settings**, **Repair Xbox USB Driver**, or **Grant Access**. For the [Xbox USB driver](Glossary.md#terms), the banner names the controller. **Live updates unavailable** goes away by itself.
+A banner below the toolbar appears when something stops OJD from working. Click its button to fix the problem: **Try Again**, **Open System Settings**, **Repair Xbox USB Driver**, or **Grant Access**. For the [Xbox USB driver](Glossary.md#terms), the banner names the controller. **Live updates unavailable** goes away by itself.
 
 ### Simple and All Controls
 
@@ -74,7 +74,7 @@ OJD starts in **Simple**, which shows what most people need. **All Controls** ad
 
 ### Menus
 
-These menus are specific to OJD:
+These menus are specific to OJD.
 
 | Menu | Commands |
 | --- | --- |
@@ -109,7 +109,7 @@ For some controllers, the **Handled by** menu (needs the **All Controls** interf
 
 ### Virtual Gamepad Kind
 
-**Virtual gamepad kind** sets what games think your controller is. OJD hands games a pretend controller, the [virtual gamepad](Glossary.md#terms). Games read different kinds, so pick the kind your game reads. The menu appears for a controller that macOS does not handle, with the **All Controls** interface.
+**Virtual gamepad kind** sets what games think your controller is. OJD hands games a pretend controller, the [virtual gamepad](Glossary.md#terms), and games read different kinds, so pick the kind your game reads. The menu appears for a controller that macOS does not handle, with the **All Controls** interface.
 
 ![The Virtual gamepad kind menu open in the Controllers area. Red arrows point to each choice, and the boxes say which games read it](../docs/screenshots/steps/virtual-gamepad-kind.png)
 
