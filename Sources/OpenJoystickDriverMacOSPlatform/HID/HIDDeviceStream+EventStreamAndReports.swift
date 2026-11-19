@@ -57,6 +57,13 @@ extension HIDDeviceStream {
 
   // MARK: - Callback registration
 
+  /// The main run loop mode set the HID manager is scheduled in.
+  ///
+  /// While a menu or another modal loop tracks events, the main run loop leaves the default mode,
+  /// so a default-mode manager would deliver no input and each controller with an input liveness
+  /// timeout would read as stale.
+  static var runLoopMode: CFRunLoopMode { .commonModes }
+
   /// Registers IOKit callbacks for device matching and removal on the main run loop, then admits
   /// the devices already present.
   ///
@@ -73,7 +80,7 @@ extension HIDDeviceStream {
     let context = unsafe Unmanaged.passUnretained(self).toOpaque()
     unsafe IOHIDManagerRegisterDeviceMatchingCallback(manager, Self.matchingCallback, context)
     unsafe IOHIDManagerRegisterDeviceRemovalCallback(manager, Self.removalCallback, context)
-    IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+    IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), Self.runLoopMode.rawValue)
     // Admit the devices already present in case matching callbacks do not report them.
     // Admission is idempotent per device and service.
     let present = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> ?? []
@@ -105,7 +112,7 @@ extension HIDDeviceStream {
       IOHIDManagerUnscheduleFromRunLoop(
         manager,
         CFRunLoopGetMain(),
-        CFRunLoopMode.defaultMode.rawValue
+        Self.runLoopMode.rawValue
       )
       self.manager = nil
     }
