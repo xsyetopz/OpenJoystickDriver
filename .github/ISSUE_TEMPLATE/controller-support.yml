@@ -13,6 +13,8 @@ body:
 
         **An AI tool can draft Part 2.** You read each draft, correct it, and confirm it. Part 2 holds real output from your Mac.
 
+        **An AI tool asks you for each missing item** and does not file the issue until every required field holds real output. Open the issue once you have that data.
+
         **Part 3 records the AI tool.** Skip Part 3 if you used no AI tool.
 
         **Each claim comes with its proof:** pasted command output, a file, a log excerpt, or a screenshot. Run the command, then write the claim. For a command that cannot run, fill in "Commands you could not run".
