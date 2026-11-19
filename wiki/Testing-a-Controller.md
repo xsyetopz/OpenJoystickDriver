@@ -22,7 +22,7 @@ Closing the window stops reading input and any running output test.
 
 ## Read the Status
 
-The header shows the status, the connection, the protocol, and the controller's ID. The status is **Ready**, **Starting...**, **Input active**, **Input interrupted**, **Controller disconnected**, **Input Monitoring permission required**, **Input unavailable**, or **Failed**. For the permission status, see [Permissions](Permissions-and-Security.md#permissions).
+The header shows the status, connection, protocol, and controller ID. The status is **Ready**, **Starting...**, **Input active**, **Input interrupted**, **Controller disconnected**, **Input Monitoring permission required**, **Input unavailable**, or **Failed**. For the permission status, see [Permissions](Permissions-and-Security.md#permissions).
 
 ## Guided Check
 
@@ -47,7 +47,7 @@ Sticks, D-pad, buttons, and triggers show their state. Button names follow the [
 
 ### Motion Calibration
 
-This group appears for controllers with a gyroscope (a motion sensor that feels turning). Even a still gyroscope reports a little turning, like a scale that shows 2 grams with nothing on it. Keep the controller still while OJD measures that error, called the resting offset. Use **Start Calibration**, **Pause**, and **Reset**. Collection continues after you close the window. It needs an enabled [profile](Glossary.md#terms) for the controller. It is untested whether the calibration survives a restart of OJD.
+This group appears for controllers with a gyroscope (a motion sensor that feels turning). Even a still gyroscope reports a little turning, like a scale that shows 2 grams with nothing on it. Keep the controller still while OJD measures that error, called the resting offset. Use **Start Calibration**, **Pause**, and **Reset**. Collection continues after you close the window and needs an enabled [profile](Glossary.md#terms) for the controller. Whether the calibration survives an OJD restart is untested.
 
 ### Recalibrate
 
@@ -58,7 +58,7 @@ Use **Recalibrate** when a stick drifts or never reaches full range. Each step r
 - **Measure Triggers**: press each trigger all the way in.
 - **Measure Gyro**: keep the controller still. A controller without a gyroscope skips this.
 
-OJD stores the values in the record for the controller's model. It corrects each reading with them before a profile changes what the control does. **Reset** removes them. `ojd controller calibrate CONTROLLER sticks` does the same in Terminal.
+OJD stores the values in the record for the controller's model. It applies them to each reading before a profile changes what the control does. **Reset** removes them. `ojd controller calibrate CONTROLLER sticks` does the same in Terminal.
 
 ### Rumble
 
