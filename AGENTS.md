@@ -10,6 +10,7 @@
 - Fix the cause of each lint, type, or guard error in the code, and keep the shared lint and format configs as they are.
 - Put project recipes in `project.just`. A recipe there named `project-<task>`, such as `project-verify` or `project-test`, runs after the languages' `<task>` in `.just/`, so a project extends `just verify` there.
 - Write commit messages as Conventional Commits; the commit-msg hook checks them.
+- Commit each finished slice of work as soon as its narrowest check passes: one concern per commit, such as one doc page, one batch of strings, or one fix with its test, so `git revert` undoes it alone and `git diff` shows only the slice in progress. Stage paths by name with `git add <path>`, never `git add -A`, so another task's files stay out. Commit locally only; push or publish after the user confirms.
 - When a recipe reports a missing tool, run `just setup`, which installs the pinned ones. Install any it can't, such as `just`, swiftly, or Xcode, with the system's package manager, then rerun the recipe. Tell the user what you installed, and keep the check instead of skipping it.
 - Write tests with Swift Testing: `import Testing`, `@Test`, `#expect`, and `#require`. XCTest is only for `*UITests` targets, which need `XCUIApplication`; `just guard` reports XCTest anywhere else.
 - Keep the settings loop at the end of `Package.swift`. It turns on Swift 6 mode, the upcoming features, strict memory safety, and warnings as errors for each target, and `just guard` checks that each target keeps them.
