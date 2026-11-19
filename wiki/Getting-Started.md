@@ -10,6 +10,19 @@ flowchart LR
     work -->|"virtual gamepad"| game[Game]
 ```
 
+## Contents
+
+- [About OpenJoystickDriver](#about-openjoystickdriver)
+- [Installing OpenJoystickDriver](#installing-openjoystickdriver)
+  - [Find the Menu-Bar Icon](#find-the-menu-bar-icon)
+  - [Allow the Login Item](#allow-the-login-item)
+- [Quickstart](#quickstart)
+  - [Allow the Permissions OJD Needs](#allow-the-permissions-ojd-needs)
+  - [Connect a Controller](#connect-a-controller)
+  - [See the Controller Work](#see-the-controller-work)
+  - [Play a Game](#play-a-game)
+- [Further Reading](#further-reading)
+
 ## About OpenJoystickDriver
 
 OpenJoystickDriver (OJD) is a menu-bar app, like a translator. Your controller speaks one language and many Mac games speak another. OJD reads the controller over USB, Bluetooth, or a 2.4 GHz dongle and shows games a [virtual gamepad](Glossary.md#terms).
