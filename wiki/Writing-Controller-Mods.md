@@ -1,6 +1,6 @@
 # Writing Controller Mods
 
-A mod package is a folder of files that teaches OJD about a controller, like an add-on pack for a game. You make it once, share it, and anyone can install it with one command and remove it again. It changes nothing inside the signed app.
+A mod package is a folder of files that teaches OJD about a controller, like an add-on pack for a game. You make it once and share it. Anyone can install it with one command and remove it again. It changes nothing inside the signed app.
 
 > [!IMPORTANT]
 > Apple signs the list of products that the [Xbox USB driver](Glossary.md#terms) claims. A mod package can't add a controller to that list.
@@ -8,7 +8,7 @@ A mod package is a folder of files that teaches OJD about a controller, like an 
 - **Who:** people who want to share controller support with others.
 - **What:** a mod package: a folder of records and profiles with a manifest.
 - **Where:** installed into `~/Library/Application Support/OpenJoystickDriver/Packages`.
-- **Why:** anyone can add or remove it with one command, and the signed app stays untouched.
+- **Why:** one command adds or removes it, and the signed app stays untouched.
 - **How:** write the manifest, then run `ojd mod validate` and `ojd mod install`.
 
 ```mermaid
@@ -106,13 +106,13 @@ OJD refuses any file, folder, or link outside the layout. It skips hidden and `.
 
 An included list must name a file, and at least one list must be included. OJD refuses a `mod.plist` with any other key, such as `records` or `personas`, with E4001. It refuses a `Controller` file under `patches` or a `ControllerPatch` file under `controllers` with E4003.
 
-OJD refuses a package when a file is in a subfolder but not the manifest, or the reverse. Each listed file must be valid for its kind.
+OJD refuses a package when a file is in a subfolder but missing from the manifest, or listed in the manifest but missing from the subfolder. Each listed file must be valid for its kind.
 
 OJD skips a package whose `requires` leaves out the running version. `ojd mod list` shows E4002. A development build has no SemVer version. It uses every package, but `ojd mod validate` and `ojd mod install` refuse every package on it.
 
 ## Precedence and Clashes
 
-A package is a read-only layer between the bundled catalog and your own files. A package `Controller` file is for a model with no bundled record. A package `ControllerPatch` changes a bundled or packaged record. Your files win over a package for the same model, and your `ControllerPatch` wins over the package record and package patches.
+A package is a read-only layer between the bundled catalog and your own files. A package `Controller` file is for a model with no bundled record. A package `ControllerPatch` changes a bundled or packaged record. For the same model, your files win over a package, and your `ControllerPatch` wins over the package record and package patches.
 
 Think of three stacked sheets of tracing paper. OJD reads from the bottom up, and the top sheet wins where they overlap:
 
@@ -152,11 +152,11 @@ You can add and remove a package in the **Library** area of the app, too:
 
 To try the sample, run `ojd mod validate` and `ojd mod install` with the sample folder path, then `ojd mod list`, then `ojd mod remove ojd-sample`.
 
-[Error codes](Error-Codes.md) lists E4001 to E4007. Run `ojd explain E4004` to read a code.
+[Error Codes](Error-Codes.md) lists E4001 to E4007. Run `ojd explain E4004` to read a code.
 
 ## Further Reading
 
-- [Controller records](Controller-Records.md)
-- [Profile file reference](Profile-File-Reference.md)
-- [Command reference](Command-Reference.md#mod)
-- [Error codes](Error-Codes.md)
+- [Controller Records](Controller-Records.md)
+- [Profile File Reference](Profile-File-Reference.md)
+- [Command Reference](Command-Reference.md#mod)
+- [Error Codes](Error-Codes.md)
