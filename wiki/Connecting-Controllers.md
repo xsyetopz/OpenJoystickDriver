@@ -26,7 +26,7 @@ flowchart LR
 
 ## Connection Types
 
-A controller can reach your Mac by USB, Bluetooth, or a 2.4 GHz dongle. OJD treats each [connection](Glossary.md#terms) as a separate controller, because each has its own ID. A controller that works over one connection may not work over another. See [Supported Controllers](Supported-Controllers.md).
+A controller can reach your Mac by USB, Bluetooth, or a 2.4 GHz dongle. Each [connection](Glossary.md#terms) has its own ID, so OJD treats each as a separate controller. A controller that works over one connection may not work over another. See [Supported Controllers](Supported-Controllers.md).
 
 | Connection | What OJD sees |
 | --- | --- |
@@ -34,7 +34,7 @@ A controller can reach your Mac by USB, Bluetooth, or a 2.4 GHz dongle. OJD trea
 | Bluetooth | The controller, with the Bluetooth ID. |
 | 2.4 GHz dongle | The dongle, with its own ID. |
 
-Some controllers change ID when you change mode. A dongle is a separate device, so when you report a problem, give the dongle's ID. See [Reporting a Bug](Reporting-a-Bug.md).
+Some controllers change ID when you change mode. A dongle is its own device, so give the dongle's ID when you report a problem. See [Reporting a Bug](Reporting-a-Bug.md).
 
 ### Connect Over Bluetooth
 
@@ -44,11 +44,11 @@ Some controllers change ID when you change mode. A dongle is a separate device, 
 
    ![Bluetooth in System Settings. Red arrows point to Bluetooth in the sidebar and to a controller under Nearby Devices](../docs/screenshots/steps/macos-bluetooth.png)
 
-OJD never reconnects a Bluetooth controller by itself. To disconnect one, select it in **Controllers** and click **Disconnect Bluetooth Connection**. Then reconnect it by hand. For the Wii Remote, see [Wii Remote](Wii-Remote.md).
+OJD never reconnects a Bluetooth controller by itself. To disconnect one, select it in **Controllers** and click **Disconnect Bluetooth Connection**, then reconnect it by hand. For the Wii Remote, see [Wii Remote](Wii-Remote.md).
 
 ## Finding Your Controller ID
 
-A controller's ID is two numbers, like the make and model of a car. The first number names the maker (vendor ID), and the second names the model (product ID), such as `045E:02D1`. Bug reports need it. Each connection has its own ID.
+A controller's ID is two numbers, like the make and model of a car. The first names the maker (vendor ID) and the second names the model (product ID), such as `045E:02D1`. Bug reports need it. Each connection has its own ID.
 
 ### Read the ID of a USB Controller
 
@@ -80,14 +80,14 @@ ojd controller show CONTROLLER
 
 ## Xbox USB Driver
 
-The [Xbox USB driver](Glossary.md#terms) is a driver that OJD installs in macOS. It reads genuine Xbox One and Xbox Series controllers connected by USB. Other controllers don't need it. The driver only reads the controller. The app makes the [virtual gamepad](Glossary.md#terms).
+The [Xbox USB driver](Glossary.md#terms) is a driver that OJD installs in macOS. It reads genuine Xbox One and Xbox Series controllers connected by USB. Other controllers don't need it. The driver only reads the controller, and the app makes the [virtual gamepad](Glossary.md#terms).
 
 Apple must grant a special permission, `userclient-access`, before a build can include the driver. A build without it has no driver, and **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build Options and Limits](Building-from-Source.md).
 
 ### Approve the Driver
 
 - **What:** a switch for OJD's Xbox USB driver. macOS lists it as **XboxUSBDevice**.
-- **Why:** macOS runs no driver until you allow it. Without it, a genuine Xbox controller on a cable isn't read.
+- **Why:** macOS runs no driver until you allow it, so a genuine Xbox controller on a cable isn't read.
 - **Who:** only genuine Xbox One and Xbox Series controllers on USB. Skip this for every other controller.
 - **When:** once, after you install OJD.
 
