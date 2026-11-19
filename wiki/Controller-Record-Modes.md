@@ -1,11 +1,11 @@
 # Controller Record Modes
 
-Many controllers can act in more than one way, like a flip switch on the back that turns them into an Xbox pad or a PlayStation pad. A mode is the part of a [controller record](Controller-Records.md) that tells OJD how to handle one of those ways.
+Many controllers can act in more than one way, like a switch on the back that turns them into an Xbox pad or a PlayStation pad. A mode is the part of a [controller record](Controller-Records.md) that tells OJD how to handle one of those ways.
 
 This page covers two things:
 
 - the session: what OJD sends to the controller when it starts, while it runs, and when it stops
-- alternative modes: how OJD picks the right mode, by connection (link), by which keys a record has, or by asking the controller (probes)
+- alternative modes: how OJD picks the right mode by connection (link), by the keys a record has, or by asking the controller (probes)
 
 - **Who:** people writing a controller record for a pad with a mode switch.
 - **What:** the part of a record that describes each way a pad can act.
@@ -196,7 +196,7 @@ macOS reports a radio dongle as a USB device, so the `ProprietaryRadioReceiver` 
 
 Only the raw USB scanner reports endpoint sets. The IOKit registry publishes only the interface's `bNumEndpoints`. A HID mode that names `endpoints` could never be selected, so the schema, the decoder, and the Python validator refuse it. Only a raw-USB mode may name `endpoints`.
 
-The DualShock 3 record has the `bluetooth` mode above. It sends feature report `0xF4` (`42 03 00 00`) when the controller connects over Bluetooth Classic, as Linux `hid-sony.c` does. Its other mode probes feature report `0xEF` and is a candidate discriminator only. It runs the same protocol as the default mode, and the record doesn't say which unit is genuine. The `length` of 49 is the size of a Sixaxis input report, chosen, not taken from a DualShock 3 reply.
+The DualShock 3 record has the `bluetooth` mode above. It sends feature report `0xF4` (`42 03 00 00`) when the controller connects over Bluetooth Classic, as Linux `hid-sony.c` does. Its other mode probes feature report `0xEF` and is a candidate discriminator only. It runs the same protocol as the default mode, and the record doesn't say which unit is genuine. The `length` of 49 is the size of a Sixaxis input report. It was chosen, and not taken from a DualShock 3 reply.
 
 Pairing is not part of the record. Pair a DualShock 3 with the Mac before a Bluetooth link exists, with macOS or a pairing tool. Not verified: pairing a real DualShock 3 is an open hardware check, so these docs list no pairing steps.
 
