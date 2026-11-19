@@ -118,7 +118,7 @@ Tell the maintainer which connection you used and what worked. See [Reporting a 
 
 Some controllers look like a Sony or Microsoft controller but have a different chip and ID inside. OJD tells controllers apart by ID, the way a mail carrier goes by the address and ignores how the house looks. See [Finding Your Controller ID](Connecting-Controllers.md#finding-your-controller-id).
 
-Clones often send data in another format, so the original's driver may misread them. Report a clone under its own name.
+Clones often send data in another format, so the original's driver may misread them. When you report a clone, say it is a clone, even if it uses the original's name.
 
 ### Known Clones
 
