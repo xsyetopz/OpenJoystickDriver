@@ -82,7 +82,7 @@ The wiki covers the rest: [Getting started][wiki-start], [Using the app][wiki-ap
 
 ![The menu-bar menu](docs/screenshots/menu-bar-item.png)
 ![The Library window with the Installed and Built-in lists](docs/screenshots/main-library.png)
-![The Activity window with the live log](docs/screenshots/main-activity.png)
+![The Activity window with its log blurred for privacy, and red arrows to the Log and Diagnostics switch and the share buttons](docs/screenshots/steps/activity-overview.png)
 ![The General pane of Settings](docs/screenshots/settings-general.png)
 
 </details>

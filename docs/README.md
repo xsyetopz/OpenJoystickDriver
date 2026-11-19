@@ -13,36 +13,45 @@ These pages are for contributors and maintainers. To use the app, read the [user
 
 For contributors who build, sign, or change the app. Start with [Architecture](development/architecture.md).
 
-- [Apple Controller Ownership and Transport Evidence](development/apple-controller-ownership.md)
-- [Architecture](development/architecture.md)
-- [Building From Source](development/building-from-source.md)
-- [CLI and Application Runtime](development/cli-and-runtime.md)
-- [Compatibility Source Notes](development/compatibility-sources.md)
-- [Document-Defined Protocol Families](development/document-defined-families.md)
-- [Environment Files](development/environment.md)
-- [Experimental Controller Status](development/experimental-controllers.md)
-- [Implementation Status](development/implementation-status.md)
-- [InputConfig Preset Library: Import Measurement](development/inputconfig-presets.md)
-- [Installer Format: DMG or Package](development/installer-format.md)
-- [Interface Audit: 0.6.0-alpha.2](development/interface-audit.md)
-- [Public Endpoint Design](development/public-endpoint-design.md)
-- [Menu-Bar and Settings UI Architecture](development/menu-bar-settings-architecture.md)
-- [Reconcile a GitHub Release](development/releases.md)
-- [Remapping](development/remapping.md)
+```mermaid
+flowchart TD
+    Q{What do you want to do?}
+    Q -->|Understand the parts| A[Architecture, then Source Topology]
+    Q -->|Build and test| B[Building From Source]
+    Q -->|Add a controller| C[Wire Protocols, then Document-Defined Families]
+    Q -->|Ship a version| D[Signing, then Releases]
+```
+
+- [Who Owns a USB Controller: macOS or OJD](development/apple-controller-ownership.md): Who gets a plugged-in controller, macOS or OJD, and how OJD reads it.
+- [Architecture](development/architecture.md): How the app, the service, and the Xbox USB driver fit together.
+- [Building From Source](development/building-from-source.md): Build and test OJD with `just`.
+- [CLI and Application Runtime](development/cli-and-runtime.md): How one program is both the app and the `ojd` command.
+- [Compatibility Source Notes](development/compatibility-sources.md): Which outside projects OJD learns controller facts from.
+- [Document-Defined Protocol Families](development/document-defined-families.md): Add a controller family with a settings file and no Swift code.
+- [Environment Files](development/environment.md): The optional local settings file the scripts read.
+- [Experimental Controller Status](development/experimental-controllers.md): Controllers with code but no full test on real hardware.
+- [Implementation Status](development/implementation-status.md): What OJD has built so far.
+- [InputConfig Preset Library: Import Measurement](development/inputconfig-presets.md): Whether an importer for InputConfig presets is worth writing.
+- [Installer Format: DMG or Package](development/installer-format.md): Why OJD ships as a disk image and not an installer package.
+- [Interface Audit: 0.6.0-alpha.2](development/interface-audit.md): Every window, menu, and control of one release, checked one by one.
+- [Public Endpoint Design](development/public-endpoint-design.md): Why the endpoint, the private door for other programs, works the way it does.
+- [Menu-Bar and Settings UI Architecture](development/menu-bar-settings-architecture.md): How the menu-bar and Settings code is split up.
+- [Check and Fix a GitHub Release](development/releases.md): Publish a new version.
+- [Remapping](development/remapping.md): How profiles change what each control does.
 - [Advanced Remapping Controls](development/remapping-advanced-controls.md)
 - [Remapping Calibration](development/remapping-calibration.md)
 - [Remapping Input Samples](development/remapping-input-samples.md)
 - [Remapping Motion Processing](development/remapping-motion.md)
-- [Scripting Surfaces](development/scripting-surfaces.md)
-- [Signing the App and XboxUSBDevice DEXT](development/signing.md)
-- [Source Topology](development/source-topology.md)
-- [Terminology Survey](development/terminology-survey.md)
-- [Create a Local Tester Build](development/tester-builds.md)
-- [USB DriverKit Entitlement Candidates](development/usb-entitlement-candidates.md)
-- [Virtual Profile Selection: What GameController and SDL3 Read](development/virtual-profile-selection.md)
-- [Wire Protocols](development/wire-protocols.md)
-- [Xbox Fallback Identities](development/xbox-identities.md)
-- [Import Controller Identities From Linux xpad](development/xpad-import.md)
+- [Scripting Surfaces](development/scripting-surfaces.md): What Shortcuts, `ojd`, and the endpoint can each do.
+- [Signing the App and XboxUSBDevice DEXT](development/signing.md): Sign the app and the Xbox USB driver.
+- [Source Topology](development/source-topology.md): A map of the source folders and their layers.
+- [Terminology Survey](development/terminology-survey.md): Counts of the words the app and the wiki use for each idea.
+- [Create a Local Tester Build](development/tester-builds.md): Make a build for testers.
+- [USB DriverKit Entitlement Candidates](development/usb-entitlement-candidates.md): Controllers OJD could ask Apple to let its driver claim.
+- [Virtual Profile Selection: What GameController and SDL3 Read](development/virtual-profile-selection.md): Which virtual gamepad both Apple's framework and SDL read.
+- [Wire Protocols](development/wire-protocols.md): The languages controllers speak on the cable or radio.
+- [Xbox Fallback Identities](development/xbox-identities.md): How the virtual gamepad safely pretends to be an Xbox controller.
+- [Import Controller Identities From Linux xpad](development/xpad-import.md): Copy controller IDs from Linux xpad and SDL with a script.
 
 ## SDK
 
