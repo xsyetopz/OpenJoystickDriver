@@ -133,7 +133,7 @@
   }
 
   /// The row of one assignment: pickers for its source and destination, and the Adjust,
-  /// Behavior and Remove buttons.
+  /// Behavior and Remove buttons, on one line where the width allows.
   private struct AssignmentRow: View {
     /// The assignment.
     let binding: RemappingBinding
@@ -154,125 +154,147 @@
     let onBehavior: (RemappingBinding) -> Void
     /// Called after an edit changed the draft.
     let onEditingStateChanged: () -> Void
-    /// Whether the source and destination pickers sit side by side or one above the other.
+    /// On macOS 12, whether the row takes one line or two.
     let layout: ProfileAssignmentRowLayout
 
-    /// The source, the destination and their fields of one assignment.
+    /// One line per assignment: control, arrow, destination, then the buttons.
+    ///
+    /// The section header names the group, and each picker carries its name as a tooltip and an
+    /// accessible name, so the row needs no captions.
     var body: some View {
-      VStack(alignment: .leading, spacing: OJDSpacing.small) {
-        if layout == .inline {
-          HStack(alignment: .top, spacing: OJDSpacing.medium) {
-            sourceField
-            OJDSystemSymbol(name: "arrow.right", fallback: "->").foregroundColor(
-              Color(NSColor.secondaryLabelColor)
-            ).padding(.top, 25).accessibilityHidden(true)
-            destinationField
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
+        // Two lines when one does not fit the width. `ViewThatFits` needs macOS 13, so macOS 12
+        // takes the line count from the editor width.
+        if #available(macOS 13, *) {
+          ViewThatFits(in: .horizontal) {
+            singleLine
+            twoLines
           }
+        } else if layout == .inline {
+          singleLine
         } else {
-          sourceField
-          destinationField
+          twoLines
         }
-
-        if let remark = binding.remark {
-          Text(remark).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
-        }
-        HStack(spacing: OJDSpacing.small) {
-          if binding.axisTuning != nil {
-            Button(OJDLocalized.string("action.adjust")) {
-              onAdjust(binding)
-            }.ojdAccessibilityLabel(
-              OJDLocalized.formatted(
-                "ui.capture.adjust",
-                RuntimePresentation.sourceLabel(binding.source)
-              )
-            ).ojdInterfaceRow(ProfilesRow.axisAdjustment).help(
-              OJDLocalized.string("ui.profiles.adjustHelp")
-            )
-          }
-          Button(OJDLocalized.string("ui.profiles.behavior")) {
-            onBehavior(binding)
-          }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
-          Spacer(minLength: 0)
-          Button(
-            action: { onRemove(binding.id) },
-            label: {
-              OJDSystemSymbol(name: "minus.circle", fallback: "−").accessibilityHidden(true)
-                .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
-            }
-          ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
-            OJDLocalized.string("action.removeAssignment")
-          ).help(OJDLocalized.string("ui.profiles.removeAssignmentHelp"))
-        }
-      }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
-        .vertical,
-        7
-      ).accessibilityElement(children: .contain)
-        .ojdAccessibilityLabel(OJDLocalized.string("term.assignment"))
-        .ojdAccessibilityValue(assignmentAccessibilityValue)
-    }
-
-    /// The picker of the controller control.
-    private var sourceField: some View {
-      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
-        Text(OJDLocalized.string("ui.capture.controllerControl")).font(
-          .caption
-        ).foregroundColor(Color(NSColor.secondaryLabelColor))
-        Picker("", selection: sourceBinding) {
-          ForEach(
-            SourceOption.options(including: binding.source, capabilities: capabilities),
-            id: \.source
-          ) { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
-        }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
-          OJDLocalized.string("ui.capture.controllerControl")
-        ).help(OJDLocalized.string("ui.capture.controlHelp")).ojdAccessibilityValue(
-          RuntimePresentation.sourceLabel(binding.source)
-        )
-      }.frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    /// The picker of the destination, with the fields of a physical output and a note when the
-    /// controller lacks the source or the destination.
-    private var destinationField: some View {
-      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
-        Text(OJDLocalized.string("term.destination")).font(.caption)
-          .foregroundColor(Color(NSColor.secondaryLabelColor))
-        Picker("", selection: destinationBinding) {
-          ForEach(
-            DestinationOption.options(
-              for: binding.source,
-              including: binding.destination,
-              capabilities: capabilities,
-              macros: draft.profile.macros,
-              layers: draft.profile.layers
-            ),
-            id: \.destination
-          ) { option in
-            KeyboardDestinationLabel(destination: option.destination, macros: draft.profile.macros)
-              .tag(option.destination)
-              .disabled(!option.isSupported)
-          }
-        }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
-          OJDLocalized.string("term.destination")
-        ).help(OJDLocalized.string("ui.capture.destinationHelp")).ojdAccessibilityValue(
-          RuntimePresentation.destinationLabel(
-            binding.destination,
-            macros: draft.profile.macros,
-            layers: draft.profile.layers
-          )
-        )
         PhysicalOutputDestinationFields(destination: destinationBinding).disabled(
           !ProfileCapabilityPolicy.supports(binding.destination, capabilities: capabilities)
         )
         if !ProfileCapabilityPolicy.supports(binding.source, capabilities: capabilities)
           || !ProfileCapabilityPolicy.supports(binding.destination, capabilities: capabilities)
         {
-          Text(
-            OJDLocalized.string(
-              "ui.profiles.notSupportedByController"
-            )
-          ).font(.body).foregroundColor(Color(NSColor.systemOrange))
+          Text(OJDLocalized.string("ui.profiles.notSupportedByController")).font(.body)
+            .foregroundColor(Color(NSColor.systemOrange))
         }
-      }.frame(maxWidth: .infinity, alignment: .leading)
+        if let remark = binding.remark {
+          Text(remark).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
+      }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
+        .vertical,
+        2
+      ).accessibilityElement(children: .contain)
+        .ojdAccessibilityLabel(OJDLocalized.string("term.assignment"))
+        .ojdAccessibilityValue(assignmentAccessibilityValue)
+    }
+
+    /// The pickers and the buttons on one line.
+    private var singleLine: some View {
+      HStack(spacing: OJDSpacing.small) {
+        pickers
+        Spacer(minLength: OJDSpacing.small)
+        buttons
+      }
+    }
+
+    /// The pickers on one line and the buttons on the next.
+    private var twoLines: some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
+        pickers
+        HStack(spacing: OJDSpacing.small) {
+          Spacer(minLength: 0)
+          buttons
+        }
+      }
+    }
+
+    /// The control picker, an arrow, and the destination picker.
+    private var pickers: some View {
+      HStack(spacing: OJDSpacing.small) {
+        sourcePicker
+        OJDSystemSymbol(name: "arrow.right", fallback: "->").foregroundColor(
+          Color(NSColor.secondaryLabelColor)
+        ).accessibilityHidden(true)
+        destinationPicker
+      }
+    }
+
+    /// The Adjust, Behavior and Remove buttons.
+    @ViewBuilder
+    private var buttons: some View {
+      if binding.axisTuning != nil {
+        Button(OJDLocalized.string("action.adjust")) {
+          onAdjust(binding)
+        }.ojdAccessibilityLabel(
+          OJDLocalized.formatted(
+            "ui.capture.adjust",
+            RuntimePresentation.sourceLabel(binding.source)
+          )
+        ).ojdInterfaceRow(ProfilesRow.axisAdjustment).help(
+          OJDLocalized.string("ui.profiles.adjustHelp")
+        )
+      }
+      Button(OJDLocalized.string("ui.profiles.behavior")) {
+        onBehavior(binding)
+      }.help(OJDLocalized.string("ui.profiles.behaviorHelp"))
+      Button(
+        action: { onRemove(binding.id) },
+        label: {
+          OJDSystemSymbol(name: "minus.circle", fallback: "−").accessibilityHidden(true)
+            .frame(minWidth: 28, minHeight: 28).contentShape(Rectangle())
+        }
+      ).buttonStyle(BorderlessButtonStyle()).ojdAccessibilityLabel(
+        OJDLocalized.string("action.removeAssignment")
+      ).help(OJDLocalized.string("ui.profiles.removeAssignmentHelp"))
+    }
+
+    /// The picker of the controller control.
+    private var sourcePicker: some View {
+      Picker("", selection: sourceBinding) {
+        ForEach(
+          SourceOption.options(including: binding.source, capabilities: capabilities),
+          id: \.source
+        ) { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
+      }.labelsHidden().fixedSize().ojdAccessibilityLabel(
+        OJDLocalized.string("ui.capture.controllerControl")
+      ).help(OJDLocalized.string("ui.capture.controlHelp")).ojdAccessibilityValue(
+        RuntimePresentation.sourceLabel(binding.source)
+      )
+    }
+
+    /// The picker of the destination.
+    private var destinationPicker: some View {
+      Picker("", selection: destinationBinding) {
+        ForEach(
+          DestinationOption.options(
+            for: binding.source,
+            including: binding.destination,
+            capabilities: capabilities,
+            macros: draft.profile.macros,
+            layers: draft.profile.layers
+          ),
+          id: \.destination
+        ) { option in
+          KeyboardDestinationLabel(destination: option.destination, macros: draft.profile.macros)
+            .tag(option.destination)
+            .disabled(!option.isSupported)
+        }
+      }.labelsHidden().fixedSize().ojdAccessibilityLabel(
+        OJDLocalized.string("term.destination")
+      ).help(OJDLocalized.string("ui.capture.destinationHelp")).ojdAccessibilityValue(
+        RuntimePresentation.destinationLabel(
+          binding.destination,
+          macros: draft.profile.macros,
+          layers: draft.profile.layers
+        )
+      )
     }
 
     /// The assignment as VoiceOver reads it; an assignment with axis tuning reads with its own
