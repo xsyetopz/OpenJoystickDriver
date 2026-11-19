@@ -25,6 +25,10 @@ flowchart LR
 | Xbox USB driver | A small add-on that OpenJoystickDriver installs in macOS so it can read Xbox controllers plugged in by USB cable. | "driver extension", "system extension", "transport extension", "USB extension", "DriverKit", "dext" | `ojd transport-extension` |
 | connection | How the controller reaches the Mac: a cable, a wireless receiver, or Bluetooth. | "transport", "Wireless Link" | `connection` |
 | mode | A setting you pick on the controller itself, with a switch or a button combination, such as XInput or DInput. Some controllers act like a different controller in each mode. | "protocol" where it names this setting | `modes` in a controller record |
+| endpoint | A private door on your Mac where your own programs can connect to OpenJoystickDriver to hear controller events or drive a virtual gamepad. It's off until you turn it on in Access. | | `ojd access enable` |
+| socket | The door's address inside your Mac: a file path that only programs on this Mac can open. It exists only while the endpoint is on. | | `socketPath` in `ojd --json access status` |
+| token | A named password you make in Access and give to one program or web page. OpenJoystickDriver shows it once, so copy it right away. Revoke it to lock that program out again. | | `ojd access grant --token NAME` |
+| scope | What a token lets a program do: **Read** hears controller events, **Control** drives a virtual gamepad. A token for a web page can't have Control. | | `--scope read`, `--scope control` |
 
 How the main terms fit together:
 
