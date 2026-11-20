@@ -160,7 +160,9 @@
             if let key = row.actionTitleKey {
               Button(OJDLocalized.string(key)) { requestPermission(row.kind) }
                 .ojdAccessibilityLabel(
-                  OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
+                  row.needsRequest
+                    ? OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
+                    : OJDLocalized.string(key)
                 )
                 .ojdAccessibilityValue(row.status.value)
                 .help(OJDLocalized.string("ui.help.requestPermission"))
