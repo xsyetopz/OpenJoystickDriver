@@ -74,7 +74,12 @@
         [preferences] shortcut in
         do { try hotKey.register(shortcut) } catch { preferences.pauseShortcutRefused() }
       }
-      if SettingsFileStartup.opensMainWindowAtLaunch(settingsError: preferences.settingsFileError) {
+      if SettingsFileStartup.opensMainWindowAtLaunch(
+        settingsError: preferences.settingsFileError,
+        launchedAsLoginItem: SettingsFileStartup.isLoginItemLaunch(
+          NSAppleEventManager.shared().currentAppleEvent
+        )
+      ) {
         mainWindow?.showMainWindow(area: nil)
       }
       Task { @MainActor in self.offerSettingsRecovery() }

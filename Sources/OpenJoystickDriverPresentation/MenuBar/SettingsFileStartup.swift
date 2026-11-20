@@ -24,11 +24,36 @@
       showInMenuBar || settingsError != nil
     }
 
-    /// A file that turns both the menu bar item and the Dock icon off leaves the user no way in
-    /// but the item that the error keeps, so the main window opens at launch.
-    static func opensMainWindowAtLaunch(settingsError: SettingsStoreError?) -> Bool {
+    /// Whether the main window opens at launch.
+    ///
+    /// A launch the user asked for, from Finder, the Dock, `open`, or the Quit & Reopen button of
+    /// Privacy & Security, opens the window, so the relaunched app shows that it runs. A launch at
+    /// login stays in the menu bar, unless the file turns both the menu bar item and the Dock icon
+    /// off and leaves the user no way in but the item that the error keeps.
+    ///
+    /// - Parameters:
+    ///   - settingsError: The error of the settings file, or nil when it can be used.
+    ///   - launchedAsLoginItem: Whether the system launched the app as a login item.
+    /// - Returns: Whether the main window opens.
+    static func opensMainWindowAtLaunch(
+      settingsError: SettingsStoreError?,
+      launchedAsLoginItem: Bool
+    ) -> Bool {
       if case .storedNoVisibleEntryPoint = settingsError { return true }
-      return false
+      return !launchedAsLoginItem
+    }
+
+    /// Whether `event`, the Apple event that launched the app, marks a launch at login.
+    ///
+    /// Login items receive an Open Application event whose property data is
+    /// `keyAELaunchedAsLogInItem`.
+    ///
+    /// - Parameter event: The current Apple event at launch, or nil when none.
+    /// - Returns: Whether the event marks a launch at login.
+    static func isLoginItemLaunch(_ event: NSAppleEventDescriptor?) -> Bool {
+      guard let event, event.eventID == kAEOpenApplication else { return false }
+      return event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue
+        == keyAELaunchedAsLogInItem
     }
   }
 

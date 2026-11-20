@@ -119,6 +119,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- **Quit & Reopen** in Privacy & Security reopens the main window. Before, the relaunched app showed only its menu bar item, so it looked as if it had not reopened. A launch from Finder, the Dock or `open` opens the main window too; a launch at login stays in the menu bar.
 - A controller that OJD publishes as a virtual gamepad no longer makes the app read the whole service status again for every input report. Before, each report moved the virtual gamepad's last-send times and the service announced a status change, so the app used about half a CPU core while a pad was connected (#74). The service announces a change to those times alone at most once a second, and announces publication, failure, recovery, ownership and session changes at once.
 - Closing the main window stops the live readings of its views. Before, the window only hid, so a controller's detail kept reading the controller and the virtual gamepad from the service ten times a second, and the app kept redrawing views nobody could see. The calibration rows, the region sheet and the pointer speed sheet read only while part of the window is on screen, and the calibration rows redraw only when a value changes.
 - An input report from a controller macOS serves goes through the controller's output queue only when it causes a write to the controller, and the check for the first-input player light no longer waits on the controller's pipeline.

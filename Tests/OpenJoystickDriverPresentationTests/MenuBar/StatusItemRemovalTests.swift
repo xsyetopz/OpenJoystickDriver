@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
@@ -67,12 +68,47 @@ struct StatusItemRemovalTests {
   @Test
   func fileTurnsBothOffOpensMainWindowAtLaunch() {
     let both = SettingsStoreError.storedNoVisibleEntryPoint(file: "/tmp/Settings.plist")
-    #expect(SettingsFileStartup.opensMainWindowAtLaunch(settingsError: both))
-    #expect(!SettingsFileStartup.opensMainWindowAtLaunch(settingsError: nil))
+    #expect(
+      SettingsFileStartup.opensMainWindowAtLaunch(settingsError: both, launchedAsLoginItem: true)
+    )
+    #expect(
+      !SettingsFileStartup.opensMainWindowAtLaunch(settingsError: nil, launchedAsLoginItem: true)
+    )
     #expect(
       !SettingsFileStartup.opensMainWindowAtLaunch(
-        settingsError: .damaged(file: "/tmp/Settings.plist")
+        settingsError: .damaged(file: "/tmp/Settings.plist"),
+        launchedAsLoginItem: true
       )
     )
+  }
+
+  /// A launch the user asked for, such as Quit & Reopen in Privacy & Security, opens the window.
+  @Test
+  func userLaunchOpensMainWindow() {
+    #expect(
+      SettingsFileStartup.opensMainWindowAtLaunch(settingsError: nil, launchedAsLoginItem: false)
+    )
+  }
+
+  /// Only an Open Application event with the login item property data marks a launch at login.
+  @Test
+  func loginItemLaunchIsReadFromOpenApplicationEvent() {
+    func openApplication(propertyData: NSAppleEventDescriptor?) -> NSAppleEventDescriptor {
+      let event = NSAppleEventDescriptor(
+        eventClass: kCoreEventClass,
+        eventID: kAEOpenApplication,
+        targetDescriptor: nil,
+        returnID: AEReturnID(kAutoGenerateReturnID),
+        transactionID: AETransactionID(kAnyTransactionID)
+      )
+      if let propertyData { event.setParam(propertyData, forKeyword: keyAEPropData) }
+      return event
+    }
+    let login = openApplication(
+      propertyData: NSAppleEventDescriptor(enumCode: keyAELaunchedAsLogInItem)
+    )
+    #expect(SettingsFileStartup.isLoginItemLaunch(login))
+    #expect(!SettingsFileStartup.isLoginItemLaunch(openApplication(propertyData: nil)))
+    #expect(!SettingsFileStartup.isLoginItemLaunch(nil))
   }
 }
