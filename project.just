@@ -179,6 +179,11 @@ repair-stale-dext:
 shots-capture *args:
     python3 -m Scripts.GUI.capture "$@"
 
+# Draw one ojd command and its real output as a Terminal window, such as: just shots-terminal ojd-status status
+[positional-arguments]
+shots-terminal name *args:
+    python3 -m Scripts.GUI.terminal "$@"
+
 # Draw the wiki step callouts and privacy masks on one .ojd-shots folder; pass --only NAME for one picture.
 shots-annotate captures *args:
     python3 -m Scripts.GUI.annotate {{ captures }} {{ args }}
