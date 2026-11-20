@@ -213,15 +213,10 @@ extension GameSirDriver {
     sessionReady = true
     updateBattery(percentage: bytes[36], charging: bytes[35] & 1 != 0)
     var next = state
-    let face = bytes[5]
-    let meta = bytes[6]
-    for (byte, mask, control) in [
-      (face, 0x10, Control.west), (face, 0x20, .south), (face, 0x40, .east),
-      (face, 0x80, .north), (meta, 0x01, .leftShoulder), (meta, 0x02, .rightShoulder),
-      (meta, 0x10, .back), (meta, 0x20, .start), (meta, 0x40, .leftStickClick),
-      (meta, 0x80, .rightStickClick),
-    ] as [(UInt8, UInt8, Control)] { next.set(control, pressed: byte & mask != 0) }
-    next.hat = Self.dpadDirection(face & 0x0F)
+    for (offset, mask, control) in Self.enhancedButtons {
+      next.set(control, pressed: bytes[offset] & mask != 0)
+    }
+    next.hat = Self.dpadDirection(bytes[5] & 0x0F)
     next.leftStick = StickPosition(x: Self.axis(bytes[1]), y: -Self.axis(bytes[2]))
     next.rightStick = StickPosition(x: Self.axis(bytes[3]), y: -Self.axis(bytes[4]))
     next.leftTrigger = UnipolarValue(normalized: Float(bytes[8]) / 255)
@@ -248,13 +243,32 @@ extension GameSirDriver {
     includesInnerGrips: Bool,
     in state: inout ControllerState
   ) {
-    var table: [(UInt8, Control)] = [
-      (0x01, .guide), (0x02, .capture), (0x08, .leftPaddle1), (0x10, .rightPaddle1),
-      (0x20, .auxiliary1),
-    ]
-    if includesInnerGrips { table += [(0x40, .leftPaddle2), (0x80, .rightPaddle2)] }
-    for (mask, control) in table { state.set(control, pressed: value & mask != 0) }
+    for (mask, control) in Self.extraButtons { state.set(control, pressed: value & mask != 0) }
+    guard includesInnerGrips else { return }
+    for (mask, control) in Self.innerGripButtons {
+      state.set(control, pressed: value & mask != 0)
+    }
   }
+
+  /// The face and meta buttons of an enhanced report: byte offset, bit mask and control.
+  ///
+  /// The table is built once instead of for each report.
+  private static let enhancedButtons: [(offset: Int, mask: UInt8, control: Control)] = [
+    (5, 0x10, .west), (5, 0x20, .south), (5, 0x40, .east), (5, 0x80, .north),
+    (6, 0x01, .leftShoulder), (6, 0x02, .rightShoulder), (6, 0x10, .back), (6, 0x20, .start),
+    (6, 0x40, .leftStickClick), (6, 0x80, .rightStickClick),
+  ]
+
+  /// The bits of the extra button byte every controller sends.
+  private static let extraButtons: [(mask: UInt8, control: Control)] = [
+    (0x01, .guide), (0x02, .capture), (0x08, .leftPaddle1), (0x10, .rightPaddle1),
+    (0x20, .auxiliary1),
+  ]
+
+  /// The inner grip bits of the extra button byte.
+  private static let innerGripButtons: [(mask: UInt8, control: Control)] = [
+    (0x40, .leftPaddle2), (0x80, .rightPaddle2),
+  ]
 
   /// A wired G7 packet with the next sequence number, padded to the report length.
   private func g7Packet(command: UInt8, payload: [UInt8]) -> [UInt8] {
