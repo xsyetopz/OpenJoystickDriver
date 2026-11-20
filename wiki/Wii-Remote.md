@@ -105,9 +105,9 @@ Rumble is on or off. `ojd controller rumble CONTROLLER` runs it for a set time, 
 
 The remote has a small infrared (IR) camera in its tip. It sees the two glowing points of a sensor bar under your screen and works out where you're pointing. The camera runs only while the active profile binds `PointerX` or `PointerY` as a source. Otherwise the remote reports buttons and the accelerometer (report mode `0x31`), and the camera stays off.
 
-When such a profile becomes active, OJD sets up the camera with seven register writes at least `irWriteIntervalMs` (50 ms) apart, then switches to report mode `0x37`. When no profile binds the pointer, OJD turns the camera off and the pointer returns to neutral.
+When such a profile becomes active, OJD sets up the camera with seven register writes. The writes are at least `irWriteIntervalMs` (50 ms) apart. Then OJD switches to report mode `0x37`. When no profile binds the pointer, OJD turns the camera off and the pointer returns to neutral.
 
-The pointer is the midpoint of the two largest IR points (up to four, on a 1024 by 768 grid), turned by the remote's roll and mirrored. `PointerX` and `PointerY` run from -1 to 1, with Y positive down. `PointerTracking` is on while two points are visible. With fewer, the pointer keeps its last values.
+The camera sees up to four IR points on a 1024 by 768 grid. The pointer sits halfway between the two largest, turned by the remote's roll and mirrored. `PointerX` and `PointerY` run from -1 to 1, with Y positive down. `PointerTracking` is on while two points are visible. With fewer, the pointer keeps its last values.
 
 The pointer has no smoothing and no screen calibration. As a mouse source, its distance from center sets the speed. OJD rejects a pointer binding to a `gamepad:axis:` target, because [virtual gamepads](Glossary.md#terms) have no pointer controls.
 
