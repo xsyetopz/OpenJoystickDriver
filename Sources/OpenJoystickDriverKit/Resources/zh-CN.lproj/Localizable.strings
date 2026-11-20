@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "输入";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "内半径 (0...1)";
+"ui.profiles.region.innerRadius" = "内边缘（0...1）";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "外半径 (0...1)";
+"ui.profiles.region.outerRadius" = "外边缘（0...1）";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "扇区起点（自上方起的角度；留空为整环）";
+"ui.profiles.region.fromDegrees" = "起始角度（从上方起的度数；留空为整圈）";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "扇区终点（自上方起的角度）";
+"ui.profiles.region.toDegrees" = "结束角度（从上方起的度数）";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "区间起点 (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "启用指针输出";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "响应指数";
+"ui.profiles.stick.exponent" = "曲线强度";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "快速甩动和旋转";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "仅甩动";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "甩动释放迟滞";
+"ui.profiles.stick.hysteresis" = "甩动释放余量";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "内死区";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "摇杆";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "甩动触发阈值";
+"ui.profiles.stick.threshold" = "甩动起始距离";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "摇杆模式";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "逆时针方向";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "保留实体摇杆直通";
+"ui.profiles.stick.passthrough" = "同时发送实体摇杆";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "扳机阶段";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "启用双阶段扳机";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "阶段交互";
+"ui.profiles.trigger.mode" = "阶段组合方式";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "轻压阈值（0...1）";
+"ui.profiles.trigger.softThreshold" = "轻按位置（0...1）";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "全压阈值（0...1）";
+"ui.profiles.trigger.fullThreshold" = "按到底位置（0...1）";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "释放迟滞";
+"ui.profiles.trigger.hysteresis" = "释放余量";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "快速下压时间窗口（毫秒）";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "保留模拟扳机直通";
+"ui.profiles.trigger.passthrough" = "同时发送实体扳机";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "轻压与全压同时触发";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

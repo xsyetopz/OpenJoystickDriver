@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "Girdi";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "İç yarıçap (0...1)";
+"ui.profiles.region.innerRadius" = "İç Kenar (0...1)";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "Dış yarıçap (0...1)";
+"ui.profiles.region.outerRadius" = "Dış Kenar (0...1)";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "Dilim başlangıcı (yukarıdan derece; tam halka için boş)";
+"ui.profiles.region.fromDegrees" = "Başlangıç Açısı (yukarıdan derece; tam halka için boş)";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "Dilim sonu (yukarıdan derece)";
+"ui.profiles.region.toDegrees" = "Bitiş Açısı (yukarıdan derece)";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "Aralık başlangıcı (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "İşaretçi Çıkışını Etkinleştir";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "Tepki Üssü";
+"ui.profiles.stick.exponent" = "Eğri Gücü";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "Fırlat ve Döndür";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "Yalnızca Fırlat";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "Fırlatma Bırakma Histerezisi";
+"ui.profiles.stick.hysteresis" = "Fırlatma Bırakma Payı";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "İç Ölü Bölge";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "Çubuk";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "Fırlatma Devreye Girme Eşiği";
+"ui.profiles.stick.threshold" = "Fırlatma Başlama Mesafesi";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "Çubuk Modları";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "Saat Yönünün Tersine";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "Fiziksel Çubuk Geçişini Koru";
+"ui.profiles.stick.passthrough" = "Gerçek Çubuğu da Gönder";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "Tetik Aşamaları";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "Çift Aşamalı Tetiği Etkinleştir";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "Aşama Etkileşimi";
+"ui.profiles.trigger.mode" = "Aşamalar Nasıl Birleşir";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "Hafif Çekiş Eşiği (0...1)";
+"ui.profiles.trigger.softThreshold" = "Hafif Çekme Noktası (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "Tam Çekiş Eşiği (0...1)";
+"ui.profiles.trigger.fullThreshold" = "Tam Çekme Noktası (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "Bırakma Histerezisi";
+"ui.profiles.trigger.hysteresis" = "Bırakma Payı";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "Hızlı Çekiş Penceresi (ms)";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "Analog Tetik Geçişini Koru";
+"ui.profiles.trigger.passthrough" = "Gerçek Tetiği de Gönder";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "Hafif ve Tam Birlikte";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

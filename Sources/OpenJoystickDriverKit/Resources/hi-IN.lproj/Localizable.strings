@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "इनपुट";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "भीतरी त्रिज्या (0...1)";
+"ui.profiles.region.innerRadius" = "भीतरी किनारा (0...1)";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "बाहरी त्रिज्या (0...1)";
+"ui.profiles.region.outerRadius" = "बाहरी किनारा (0...1)";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "सेक्टर की शुरुआत (ऊपर से डिग्री में; पूरी रिंग के लिए खाली छोड़ें)";
+"ui.profiles.region.fromDegrees" = "शुरुआती कोण (ऊपर से डिग्री; पूरे घेरे के लिए खाली)";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "सेक्टर का अंत (ऊपर से डिग्री में)";
+"ui.profiles.region.toDegrees" = "अंतिम कोण (ऊपर से डिग्री)";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "बैंड की शुरुआत (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "पॉइंटर आउटपुट सक्षम करें";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "प्रतिक्रिया एक्सपोनेंट";
+"ui.profiles.stick.exponent" = "वक्र की ताकत";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "फ्लिक और रोटेट";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "केवल फ्लिक";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "फ्लिक रिलीज़ हिस्टेरिसिस";
+"ui.profiles.stick.hysteresis" = "फ़्लिक छोड़ने की गुंजाइश";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "आंतरिक डेडज़ोन";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "स्टिक";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "फ्लिक सक्रियण सीमा";
+"ui.profiles.stick.threshold" = "फ़्लिक शुरू होने की दूरी";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "स्टिक मोड";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "घड़ी के विपरीत दिशा में";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "भौतिक स्टिक का पासथ्रू बनाए रखें";
+"ui.profiles.stick.passthrough" = "असली स्टिक भी भेजें";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "ट्रिगर चरण";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "दो-चरण ट्रिगर सक्षम करें";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "चरणों का पारस्परिक व्यवहार";
+"ui.profiles.trigger.mode" = "चरण कैसे मिलते हैं";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "हल्का दबाने की सीमा (0...1)";
+"ui.profiles.trigger.softThreshold" = "हल्का दबाव बिंदु (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "पूरा दबाने की सीमा (0...1)";
+"ui.profiles.trigger.fullThreshold" = "पूरा दबाव बिंदु (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "रिलीज़ हिस्टेरिसिस";
+"ui.profiles.trigger.hysteresis" = "छोड़ने की गुंजाइश";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "त्वरित दबाव विंडो (ms)";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "एनालॉग ट्रिगर पासथ्रू बनाए रखें";
+"ui.profiles.trigger.passthrough" = "असली ट्रिगर भी भेजें";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "हल्का और पूरा साथ-साथ";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

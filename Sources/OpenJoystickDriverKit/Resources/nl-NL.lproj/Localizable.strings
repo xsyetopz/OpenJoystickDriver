@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "Invoer";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "Binnenste straal (0...1)";
+"ui.profiles.region.innerRadius" = "Binnenrand (0...1)";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "Buitenste straal (0...1)";
+"ui.profiles.region.outerRadius" = "Buitenrand (0...1)";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "Begin van de sector (graden vanaf boven; leeg voor een volledige ring)";
+"ui.profiles.region.fromDegrees" = "Beginhoek (graden vanaf boven; leeg voor een volle ring)";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "Einde van de sector (graden vanaf boven)";
+"ui.profiles.region.toDegrees" = "Eindhoek (graden vanaf boven)";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "Begin van het bereik (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "Aanwijzeruitvoer inschakelen";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "Reactie-exponent";
+"ui.profiles.stick.exponent" = "Curvesterkte";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "Flick en draaien";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "Alleen flick";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "Hysterese bij loslaten van flick";
+"ui.profiles.stick.hysteresis" = "Loslaatmarge voor flick";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "Binnenste dode zone";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "Stick";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "Drempel voor flick-activering";
+"ui.profiles.stick.threshold" = "Startafstand voor flick";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "Stickmodi";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "Tegen de klok in";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "Geef fysieke stick door";
+"ui.profiles.stick.passthrough" = "Echte stick ook sturen";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "Triggerfasen";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "Schakel tweetraps-trigger in";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "Interactie tussen trapjes";
+"ui.profiles.trigger.mode" = "Hoe fasen samenwerken";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "Drempel voor lichte trek (0...1)";
+"ui.profiles.trigger.softThreshold" = "Punt voor licht indrukken (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "Volledige trekdrempel (0...1)";
+"ui.profiles.trigger.fullThreshold" = "Punt voor volledig indrukken (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "Hysterese bij loslaten";
+"ui.profiles.trigger.hysteresis" = "Loslaatmarge";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "Venster voor snelle trek (ms)";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "Geef analoge trigger door";
+"ui.profiles.trigger.passthrough" = "Echte trigger ook sturen";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "Licht en vol samen";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

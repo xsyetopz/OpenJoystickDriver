@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "อินพุต";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "รัศมีด้านใน (0...1)";
+"ui.profiles.region.innerRadius" = "ขอบใน (0...1)";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "รัศมีด้านนอก (0...1)";
+"ui.profiles.region.outerRadius" = "ขอบนอก (0...1)";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "จุดเริ่มของเซกเตอร์ (องศาจากด้านบน เว้นว่างสำหรับวงแหวนเต็ม)";
+"ui.profiles.region.fromDegrees" = "มุมเริ่ม (องศาจากด้านบน; เว้นว่างสำหรับวงเต็ม)";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "จุดสิ้นสุดของเซกเตอร์ (องศาจากด้านบน)";
+"ui.profiles.region.toDegrees" = "มุมสิ้นสุด (องศาจากด้านบน)";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "จุดเริ่มของช่วง (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "เปิดใช้งานเอาต์พุตตัวชี้";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "เลขชี้กำลังการตอบสนอง";
+"ui.profiles.stick.exponent" = "ความแรงของเส้นโค้ง";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "ฟลิกและหมุน";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "ฟลิกเท่านั้น";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "ฮิสเทอรีซิสการปล่อยฟลิก";
+"ui.profiles.stick.hysteresis" = "ระยะปล่อยฟลิก";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "เดดโซนด้านใน";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "สติ๊ก";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "เกณฑ์การเริ่มฟลิก";
+"ui.profiles.stick.threshold" = "ระยะเริ่มฟลิก";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "โหมดสติ๊ก";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "ทวนเข็มนาฬิกา";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "คงการส่งผ่านสติ๊กจริง";
+"ui.profiles.stick.passthrough" = "ส่งสติกจริงด้วย";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "ขั้นของทริกเกอร์";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "เปิดใช้งานทริกเกอร์สองขั้น";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "ปฏิสัมพันธ์ระหว่างขั้น";
+"ui.profiles.trigger.mode" = "วิธีรวมขั้น";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "เกณฑ์ดึงเบา (0...1)";
+"ui.profiles.trigger.softThreshold" = "จุดกดเบา (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "เกณฑ์ดึงสุด (0...1)";
+"ui.profiles.trigger.fullThreshold" = "จุดกดสุด (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "ฮิสเทอรีซิสการปล่อย";
+"ui.profiles.trigger.hysteresis" = "ระยะปล่อย";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "ช่วงเวลาดึงเร็ว (ms)";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "คงการส่งผ่านทริกเกอร์แอนะล็อก";
+"ui.profiles.trigger.passthrough" = "ส่งทริกเกอร์จริงด้วย";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "ดึงเบาและดึงสุดพร้อมกัน";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

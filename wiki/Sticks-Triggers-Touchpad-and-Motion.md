@@ -41,7 +41,7 @@ flowchart LR
 2. Turn on **Enable pointer output**.
 3. Select a **Stick mode** and change its settings, then click **Save**.
 
-![Arrows mark the stick picker, Enable pointer output, Stick mode, the deadzones, passthrough, and Save on the Stick Modes sheet](../docs/screenshots/steps/stick-modes-sheet.png)
+![Arrows mark the stick picker, Enable pointer output, Stick mode, the deadzones, Also send the real stick, and Save on the Stick Modes sheet](../docs/screenshots/steps/stick-modes-sheet.png)
 
 | Stick mode | Result |
 | --- | --- |
@@ -58,11 +58,11 @@ Every mode has these (one push):
 ```mermaid
 flowchart LR
     C[Center] --> I[Inner deadzone<br/>nothing happens]
-    I --> M[Middle<br/>output grows, shaped by the exponent]
+    I --> M[Middle<br/>output grows, shaped by the curve strength]
     M --> O[Outer deadzone<br/>counts as fully pushed]
 ```
 
-- **Response exponent**: higher is finer near center.
+- **Curve strength**: higher is finer near center.
 - **Positive rotation**: which turn counts as forward.
 
 Ranges: [Profile file reference](Profile-File-Reference.md#analog-touch-and-motion-fields).
@@ -73,16 +73,16 @@ A dual-stage trigger is two buttons in one.
 
 ```mermaid
 flowchart LR
-    R[Trigger at rest] -->|pass the soft threshold| S[Soft stage: aim]
-    S -->|pass the full threshold| F[Full stage: fire]
+    R[Trigger at rest] -->|pass the soft pull point| S[Soft stage: aim]
+    S -->|pass the full pull point| F[Full stage: fire]
 ```
 
 1. Click the pencil (**Adjust Trigger Stages**) and select a trigger.
 2. Turn on **Enable dual-stage trigger**.
-3. Select a **Stage interaction** (such as **Soft and Full Together** or **Full Replaces Soft**) and set thresholds. Soft must be below full.
+3. Choose **How stages combine** (such as **Soft and Full Together** or **Full Replaces Soft**), then set the **Soft pull point** and **Full pull point**. Soft must be below full.
 4. Save, then assign both stages in **Assignments**.
 
-![Arrows mark the trigger picker, Enable dual-stage trigger, Stage interaction, the thresholds, and passthrough on the Trigger Stages sheet](../docs/screenshots/steps/trigger-stages-sheet.png)
+![Arrows mark the trigger picker, Enable dual-stage trigger, How stages combine, the pull points, and Also send the real trigger on the Trigger Stages sheet](../docs/screenshots/steps/trigger-stages-sheet.png)
 
 ## Set Touch Mapping
 

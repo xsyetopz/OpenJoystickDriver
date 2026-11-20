@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "Entrée";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "Rayon intérieur (0...1)";
+"ui.profiles.region.innerRadius" = "Bord intérieur (0...1)";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "Rayon extérieur (0...1)";
+"ui.profiles.region.outerRadius" = "Bord extérieur (0...1)";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "Début du secteur (degrés depuis le haut ; vide pour un anneau complet)";
+"ui.profiles.region.fromDegrees" = "Angle de début (degrés depuis le haut ; vide pour un anneau complet)";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "Fin du secteur (degrés depuis le haut)";
+"ui.profiles.region.toDegrees" = "Angle de fin (degrés depuis le haut)";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "Début de la plage (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "Activer la sortie du pointeur";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "Exposant de réponse";
+"ui.profiles.stick.exponent" = "Force de la courbe";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "Flick et rotation";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "Flick uniquement";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "Hystérésis de relâchement du flick";
+"ui.profiles.stick.hysteresis" = "Marge de relâchement du flick";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "Zone morte interne";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "Stick";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "Seuil de déclenchement du flick";
+"ui.profiles.stick.threshold" = "Distance de départ du flick";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "Modes du stick";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "Sens antihoraire";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "Conserver la transmission du stick physique";
+"ui.profiles.stick.passthrough" = "Envoyer aussi le vrai joystick";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "Niveaux de la gâchette";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "Activer la gâchette à deux niveaux";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "Interaction des niveaux";
+"ui.profiles.trigger.mode" = "Combinaison des paliers";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "Seuil de course légère (0...1)";
+"ui.profiles.trigger.softThreshold" = "Point de pression légère (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "Seuil de course complète (0...1)";
+"ui.profiles.trigger.fullThreshold" = "Point de pression complète (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "Hystérésis de relâchement";
+"ui.profiles.trigger.hysteresis" = "Marge de relâchement";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "Fenêtre de course rapide (ms)";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "Conserver la transmission de la gâchette analogique";
+"ui.profiles.trigger.passthrough" = "Envoyer aussi la vraie gâchette";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "Légère et complète ensemble";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

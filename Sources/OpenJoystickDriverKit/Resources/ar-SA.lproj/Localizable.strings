@@ -889,13 +889,13 @@
 /* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
 "ui.profiles.region.input" = "الإدخال";
 /* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.innerRadius" = "نصف القطر الداخلي (0...1)";
+"ui.profiles.region.innerRadius" = "الحافة الداخلية (0...1)";
 /* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
-"ui.profiles.region.outerRadius" = "نصف القطر الخارجي (0...1)";
+"ui.profiles.region.outerRadius" = "الحافة الخارجية (0...1)";
 /* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
-"ui.profiles.region.fromDegrees" = "بداية القطاع (بالدرجات من الأعلى؛ فارغ لحلقة كاملة)";
+"ui.profiles.region.fromDegrees" = "زاوية البداية (درجات من الأعلى؛ فارغة لحلقة كاملة)";
 /* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
-"ui.profiles.region.toDegrees" = "نهاية القطاع (بالدرجات من الأعلى)";
+"ui.profiles.region.toDegrees" = "زاوية النهاية (درجات من الأعلى)";
 /* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
 "ui.profiles.region.from" = "بداية النطاق (0...1)";
 /* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
@@ -1755,7 +1755,7 @@
 /* Title of the switch in the stick sheet that turns on pointer output for the stick. */
 "ui.profiles.stick.enabled" = "تمكين إخراج المؤشر";
 /* Label of the field in the stick sheet that sets the exponent of the response curve. Higher values make small movements finer. */
-"ui.profiles.stick.exponent" = "أس الاستجابة";
+"ui.profiles.stick.exponent" = "قوة المنحنى";
 /* Option of the stick mode popup: a quick push flicks the view, and a turn of the stick rotates it. */
 "ui.profiles.stick.flick" = "حركة سريعة ودوران";
 /* Label of the field in the stick sheet that sets how long a flick takes. The value is in milliseconds. */
@@ -1763,7 +1763,7 @@
 /* Option of the stick mode popup: the stick only flicks. */
 "ui.profiles.stick.flickOnly" = "الحركة السريعة فقط";
 /* Label of the field in the stick sheet that sets how far the stick must return before a flick can fire again. */
-"ui.profiles.stick.hysteresis" = "هستريسيس إفلات الحركة السريعة";
+"ui.profiles.stick.hysteresis" = "هامش إنهاء الحركة السريعة";
 /* Label of the field in the stick sheet that sets the inner deadzone. The inner deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.stick.innerDeadzone" = "المنطقة الميتة الداخلية";
 /* Title of the switch in the stick sheet that reverses the horizontal axis. */
@@ -1781,7 +1781,7 @@
 /* Label of the popup in the stick sheet that picks the stick. */
 "ui.profiles.stick.source" = "العصا";
 /* Label of the field in the stick sheet that sets how far the stick must move before a flick starts. */
-"ui.profiles.stick.threshold" = "عتبة بدء الحركة السريعة";
+"ui.profiles.stick.threshold" = "مسافة بدء الحركة السريعة";
 /* Title of the sheet that sets the stick modes of a profile. */
 "ui.profiles.stick.title" = "أوضاع العصا";
 /* Name of a trigger stage as a control. %1$@ is the trigger, for example Left, and %2$@ is the stage of the pull, soft or full. */
@@ -1825,7 +1825,7 @@
 /* Option of the rotation popup: turning the stick counterclockwise. */
 "ui.profiles.stick.counterclockwise" = "في الاتجاه المعاكس للساعة";
 /* Title of the switch in the stick sheet that keeps sending the physical stick to the virtual gamepad as well. */
-"ui.profiles.stick.passthrough" = "إبقاء تمرير العصا الفعلية";
+"ui.profiles.stick.passthrough" = "إرسال العصا الحقيقية أيضًا";
 /* Title of the sheet that sets the stages of a trigger. A dual-stage trigger has a soft pull and a full pull. */
 "ui.profiles.trigger.title" = "مراحل الزناد";
 /* Label of the popup in the trigger sheet that picks the trigger. */
@@ -1837,17 +1837,17 @@
 /* Title of the switch in the trigger sheet that turns on the two stages of the trigger. */
 "ui.profiles.trigger.enabled" = "تمكين الزناد ثنائي المرحلة";
 /* Label of the popup in the trigger sheet that picks how the soft pull and the full pull work together. */
-"ui.profiles.trigger.mode" = "تفاعل المراحل";
+"ui.profiles.trigger.mode" = "كيف تتجمع المراحل";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the soft pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.softThreshold" = "عتبة السحب الخفيف (0...1)";
+"ui.profiles.trigger.softThreshold" = "نقطة الضغط الخفيف (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must move for the full pull. The value is a number from 0 to 1. */
-"ui.profiles.trigger.fullThreshold" = "عتبة السحب الكامل (0...1)";
+"ui.profiles.trigger.fullThreshold" = "نقطة الضغط الكامل (0...1)";
 /* Label of the field in the trigger sheet that sets how far the trigger must go back before a stage is released. */
-"ui.profiles.trigger.hysteresis" = "هستريسيس الإفلات";
+"ui.profiles.trigger.hysteresis" = "هامش الإنهاء";
 /* Label of the field in the trigger sheet that sets the time within which a fast pull skips the soft stage. The value is in milliseconds. */
 "ui.profiles.trigger.skipWindow" = "نافذة السحب السريع (مللي ثانية)";
 /* Title of the switch in the trigger sheet that keeps sending the analog trigger to the virtual gamepad as well. */
-"ui.profiles.trigger.passthrough" = "إبقاء تمرير الزناد التناظري";
+"ui.profiles.trigger.passthrough" = "إرسال الزناد الحقيقي أيضًا";
 /* Option of the stage interaction popup: the soft stage and the full stage are both active at the same time. */
 "ui.profiles.trigger.simultaneous" = "الخفيف والكامل معًا";
 /* Option of the stage interaction popup: the full stage replaces the soft stage. */

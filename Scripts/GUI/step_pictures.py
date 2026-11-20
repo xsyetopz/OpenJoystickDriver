@@ -374,7 +374,7 @@ PICTURES: tuple[StepPicture, ...] = (
         "main-profiles-stick-modes.png",
         (
             Callout(
-                (620, 240),
+                (706, 216),
                 (10, 110),
                 "Pick a stick",
                 ("Each stick has its own.",),
@@ -386,7 +386,7 @@ PICTURES: tuple[StepPicture, ...] = (
                 ("The stick moves the pointer.",),
             ),
             Callout(
-                (690, 377),
+                (836, 401),
                 (10, 400),
                 "Stick mode",
                 ("Aim, Flick, Scroll Wheel...",),
@@ -400,8 +400,8 @@ PICTURES: tuple[StepPicture, ...] = (
             Callout(
                 (556, 1116),
                 (10, 1000),
-                "Passthrough",
-                ("Games still get the stick.",),
+                "Also send the real stick",
+                ("Games get the stick too.",),
             ),
             Callout(
                 (1350, 1206),
@@ -416,7 +416,7 @@ PICTURES: tuple[StepPicture, ...] = (
         "main-profiles-trigger-stages.png",
         (
             Callout(
-                (645, 240),
+                (745, 216),
                 (10, 110),
                 "Pick a trigger",
                 ("Each trigger has its own.",),
@@ -428,22 +428,22 @@ PICTURES: tuple[StepPicture, ...] = (
                 ("One trigger, two buttons.",),
             ),
             Callout(
-                (1240, 377),
+                (1318, 377),
                 (1460, 250),
-                "How the stages mix",
+                "How stages combine",
                 ("Both, or full replaces soft.",),
             ),
             Callout(
                 (1300, 545),
                 (1460, 470),
-                "How far to pull",
+                "Pull points",
                 ("Soft must be below full.",),
             ),
             Callout(
                 (556, 778),
                 (10, 820),
-                "Passthrough",
-                ("Games still get the pull.",),
+                "Also send the real trigger",
+                ("Games get the pull too.",),
             ),
         ),
     ),
@@ -458,13 +458,13 @@ PICTURES: tuple[StepPicture, ...] = (
                 ("Stick ring, trigger band,", "or touch area."),
             ),
             Callout(
-                (618, 320),
+                (730, 296),
                 (10, 250),
                 "Which input",
                 ("Here, the left stick.",),
             ),
             Callout(
-                (548, 490),
+                (536, 470),
                 (10, 420),
                 "Ring size, 0 to 1",
                 ("0.8 to 1 is near the rim.",),
