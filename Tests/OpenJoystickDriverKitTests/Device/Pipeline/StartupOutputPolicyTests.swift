@@ -18,6 +18,21 @@ struct USBStartupOutputPolicyTests {
   }
 
   @Test
+  func readingTheDueIndicatorLeavesItDueUntilTaken() {
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x054C, productID: 0x0268),
+      transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
+      driver: SixaxisDriver(),
+      dispatcher: LoggingOutputDispatcher(),
+      startupPlayerIndicator: .player1
+    )
+    #expect(pipeline.isStartupPlayerIndicatorDue)
+    #expect(pipeline.isStartupPlayerIndicatorDue)
+    #expect(pipeline.takeStartupPlayerIndicatorDue())
+    #expect(!pipeline.isStartupPlayerIndicatorDue)
+  }
+
+  @Test
   func defersVirtualOutputUntilPhysicalUSBSessionOpens() async {
     let identifier = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
     let provider = ScriptedUSBTransportProvider(failuresBeforeSuccess: .max)

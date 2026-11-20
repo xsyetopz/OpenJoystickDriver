@@ -117,6 +117,11 @@ extension DevicePipeline {
     return connectionWrites
   }
 
+  /// Whether the startup player indicator is due, without taking it.
+  nonisolated var isStartupPlayerIndicatorDue: Bool {
+    startupPlayerIndicatorPending.withLock { $0 }
+  }
+
   /// Whether the startup player indicator is due, true once.
   ///
   /// The caller asks after an input report, because a USB Sixaxis ignores the LED report until it

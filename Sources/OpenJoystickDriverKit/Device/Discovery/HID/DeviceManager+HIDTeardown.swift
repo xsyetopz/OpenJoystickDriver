@@ -218,12 +218,15 @@ extension DeviceManager {
       case .hid = info.discoverySource,
       let physicalDevice = info.physicalDevice, let boundConnectionID = info.hidConnectionID
     else { return }
+    let connectionWrites = await pipeline.feedHIDData(data, laterReportQueued: laterReportQueued)
+    // Most reports ask for no write and no indicator; they skip the connection check, which
+    // compares the whole device record for each report.
+    guard !connectionWrites.isEmpty || pipeline.isStartupPlayerIndicatorDue else { return }
     let connection = HIDDeviceConnection(
       connectionID: boundConnectionID,
       physicalDevice: physicalDevice,
       routingAddress: address
     )
-    let connectionWrites = await pipeline.feedHIDData(data, laterReportQueued: laterReportQueued)
     guard pipelines[key] === pipeline,
       isCurrentHIDStartupConnection(pipeline, connection: connection)
     else { return }
