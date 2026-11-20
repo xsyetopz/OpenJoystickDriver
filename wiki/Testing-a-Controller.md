@@ -16,6 +16,8 @@ You can also choose **Controller** > **Test Input**, or **Test Input** in the co
 
 Closing the window stops reading input and any running output test.
 
+![The Input Test window. Red arrows point to Input active, Guided Check, the control buttons, a stick's dot, the Rumble group, and Recalibrate](../docs/screenshots/steps/input-test-window.png)
+
 ## Read the Status
 
 The header shows the status, connection, protocol, and controller ID. The status is **Ready**, **Starting...**, **Input active**, **Input interrupted**, **Controller disconnected**, **Input Monitoring permission required**, **Input unavailable**, or **Failed**. For the permission status, see [Permissions](Permissions-and-Security.md#permissions).

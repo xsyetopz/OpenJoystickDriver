@@ -519,4 +519,46 @@ PICTURES: tuple[StepPicture, ...] = (
             ),
         ),
     ),
+    StepPicture(
+        "input-test-window",
+        "input-test.png",
+        (
+            Callout(
+                (240, 190),
+                (600, 10),
+                "Input active",
+                ("OJD reads this controller.",),
+            ),
+            Callout(
+                (436, 290),
+                (560, 240),
+                "Guided Check",
+                ("Asks for each control in turn.",),
+            ),
+            Callout(
+                (1048, 610),
+                (700, 760),
+                "Press every control",
+                ("Each one lights up.",),
+            ),
+            Callout(
+                (1165, 856),
+                (700, 880),
+                "Move the sticks",
+                ("The blue dot follows.",),
+            ),
+            Callout(
+                (740, 1232),
+                (900, 1100),
+                "Rumble",
+                ("Shakes the controller.", "This one has no motor."),
+            ),
+            Callout(
+                (370, 1344),
+                (1330, 1290),
+                "Recalibrate",
+                ("Fixes a drifting stick.",),
+            ),
+        ),
+    ),
 )

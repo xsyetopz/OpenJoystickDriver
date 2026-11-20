@@ -105,7 +105,9 @@ The Generic kind has no rumble. When a controller with motors uses it, the picke
 
 Controllers without a motor ignore rumble. OJD sends no lightbar commands.
 
-Input Test's **Rumble** and **Lighting** groups talk to the controller directly. See [Testing a Controller](Testing-a-Controller.md).
+Input Test's **Rumble** and **Lighting** groups talk to the controller directly. Without rumble, the **Rumble** group says so. Without lighting, the **Lighting** group is missing. See [Testing a Controller](Testing-a-Controller.md).
+
+![The Input Test window. Red arrows point to Input active, Guided Check, the control buttons, a stick's dot, the Rumble group, which says this controller has no rumble, and Recalibrate](../docs/screenshots/steps/input-test-window.png)
 
 ## Further Reading
 
