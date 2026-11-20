@@ -2,6 +2,9 @@ set_project("SDLGamepadProbe")
 set_languages("c11")
 set_toolchains("clang")
 set_warnings("error")
+-- The probe runs on every macOS the app supports, so it shares the app's floor.
+add_mxflags("-mmacosx-version-min=13.0")
+add_ldflags("-mmacosx-version-min=13.0")
 
 target("SDLGamepadProbe")
   set_kind("binary")

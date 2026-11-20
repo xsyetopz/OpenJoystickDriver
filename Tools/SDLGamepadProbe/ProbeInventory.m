@@ -37,11 +37,7 @@ static SDL_JoystickID *enumerate_joysticks(int *joy_count) {
     return SDL_GetJoysticks(joy_count);
 }
 
-void OJDProbePrewarmGameController(void) {
-    if (@available(macOS 11.3, *)) {
-        GCController.shouldMonitorBackgroundEvents = YES;
-    }
-}
+void OJDProbePrewarmGameController(void) { GCController.shouldMonitorBackgroundEvents = YES; }
 
 SDL_JoystickID *OJDProbeWaitForJoysticks(int wait_seconds, int *joy_count) {
     SDL_JoystickID *joy_ids = enumerate_joysticks(joy_count);
