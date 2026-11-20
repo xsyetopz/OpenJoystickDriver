@@ -48,7 +48,7 @@ The player light stays dark in HID mode 1082. OJD doesn't write to pads that mac
 - Interface 1 of 1082: 214-byte descriptor, keyboard (report 3), consumer (2), mouse (9), vendor collection on page 0xFFF0 (input 0x10 and 0x12, output 0x0F, 63 bytes each). Opening it sent one keyboard report, usage 0x46 (`Print Screen`).
 - Output report 5 (the interface 0 LED bytes) didn't change the LED.
 - The G7 Pro message format doesn't work. g7ctl sends report 0x0F: a heartbeat `0f 00 seq 02 f2 00` every 0.316 s, and device-info questions `01 09` and `01 0b`. Both interfaces took it without answering, even after the `gamesirapp` handshake sent as HID report ID 0 on interface 0. The pad didn't reconnect as anything else. A SET_REPORT control transfer to interface 1 stalls.
-- Writing the raw 8-byte handshake on endpoint 0x02 needs the interface, and macOS won't take it away from Apple's HID driver (0xE00002C9), even with OJD closed.
+- Writing the raw 8-byte handshake on endpoint 0x02 needs the interface. macOS won't take it away from Apple's HID driver (0xE00002C9), even with OJD closed.
 - No effect: Xbox+Share (3 s), Xbox+M (3 s, then replug), M+Y, and a hardware reset on a borrowed computer. Plugging in while holding View+Xbox+Menu makes the LED blink white fast, and the pad shows up as 3537:1010 with one HID interface:
   - input report 1: 64 bytes, about 250 times a second
   - output report 5: 31 bytes
@@ -107,7 +107,7 @@ Scenario 1 (no GameSir app, 44 s of USBPcap): 3537:10A0, `bcdDevice 0x0664`, two
 - Interface 0: Xbox 360 wired, FF/5D/01; 0x82 IN, 0x02 OUT, 32-byte packets, 1 ms.
 - Interface 1: HID; 0x84 IN, 0x04 OUT, 64 bytes, 214-byte report descriptor.
 
-Input: 20-byte XUSB (`00 14 …`), and the triggers reach 255. The controls showed the 15 standard XUSB button bits, and bytes 14 to 19 stayed zero. One extra key showed up only on interface 1 (`03 0c 00 46 00 00 00 00 00`, then zero); nobody wrote down which key it was. Nothing was sent OUT to 0x02.
+Input: 20-byte XUSB (`00 14 …`), and the triggers reach 255. The controls showed the 15 standard XUSB button bits, and bytes 14 to 19 stayed zero. One extra key showed up only on interface 1 (`03 0c 00 46 00 00 00 00 00`, then zero). Nobody wrote down which key it was. Nothing was sent OUT to 0x02.
 
 You can't capture with Nexus running, because Nexus disconnects the pad while USBPcap is watching. Reading the Nexus 2.5.8 program itself stands in for the capture.
 
