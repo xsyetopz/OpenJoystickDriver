@@ -51,6 +51,45 @@ func pollUSBEnumeration(from provider: any USBTransportProvider) async -> USBEnu
   } catch { return .failed(.provider(String(reflecting: error))) }
 }
 
+/// A listing of the USB provider that a later poll may reuse.
+struct USBEnumerationListing {
+  /// The listed devices.
+  var devices: [USBTransportDevice]
+  /// The provider's change count, read before the listing.
+  var changeCount: UInt64
+  /// The uptime of the listing, in nanoseconds.
+  var listedAt: UInt64
+}
+
+/// Returns the devices of `last` when that listing still holds, and else lists the provider's
+/// devices and records the listing in `last`.
+///
+/// A listing holds while the provider reports no change since it, `tracker` acknowledges exactly
+/// its devices, and it is younger than `maxAgeNanoseconds`. Listing reads every USB device's
+/// registry properties, which a controller-free poll twice a second spent on nothing; the age
+/// bound still catches a change the provider does not report, such as an edited record.
+func pollUSBEnumeration(
+  from provider: any USBTransportProvider,
+  tracker: USBEnumerationTracker,
+  last: inout USBEnumerationListing?,
+  now: UInt64,
+  maxAgeNanoseconds: UInt64 = usbEnumerationMaxAgeNanoseconds
+) async -> USBEnumerationPoll {
+  let changeCount = await provider.enumerationChangeCount
+  if let listing = last, let changeCount, listing.changeCount == changeCount,
+    now &- listing.listedAt < maxAgeNanoseconds, tracker.agrees(with: listing.devices)
+  {
+    return .available(listing.devices)
+  }
+  let poll = await pollUSBEnumeration(from: provider)
+  if case .available(let devices) = poll, let changeCount {
+    last = USBEnumerationListing(devices: devices, changeCount: changeCount, listedAt: now)
+  } else {
+    last = nil
+  }
+  return poll
+}
+
 /// Tracks the raw-USB services that detection has acknowledged and turns polls into attach and
 /// detach events.
 struct USBEnumerationTracker {
@@ -65,6 +104,13 @@ struct USBEnumerationTracker {
   /// Forgets a device's acknowledgement without a detach, so the next poll attaches it again.
   mutating func unacknowledge(_ device: USBTransportDevice) {
     acknowledgedDevices.removeValue(forKey: device.serviceAddress)
+  }
+
+  /// Whether the acknowledged services are exactly `devices`, so that a poll of them yields no
+  /// event.
+  func agrees(with devices: [USBTransportDevice]) -> Bool {
+    devices.count == acknowledgedDevices.count
+      && devices.allSatisfy { acknowledgedDevices[$0.serviceAddress] == $0 }
   }
 
   /// The attach and detach events that `poll` shows against the acknowledged devices.
@@ -124,12 +170,21 @@ extension DeviceManager {
 
     var enumeration = USBEnumerationTracker()
     var serviceToIdentifiers: [ControllerConnectionAddress: [LogicalControllerID]] = [:]
+    var listing: USBEnumerationListing?
 
     while isCurrentUSBDetection(generation) {
-      await reloadPendingRecords(in: &enumeration, serviceToIdentifiers: &serviceToIdentifiers)
+      // Reloaded records can change which devices the provider lists.
+      if await reloadPendingRecords(in: &enumeration, serviceToIdentifiers: &serviceToIdentifiers) {
+        listing = nil
+      }
       resumeRecordReloadWaiters()
       guard isCurrentUSBDetection(generation) else { return }
-      let poll = await pollUSBEnumeration(from: provider)
+      let poll = await pollUSBEnumeration(
+        from: provider,
+        tracker: enumeration,
+        last: &listing,
+        now: DispatchTime.now().uptimeNanoseconds
+      )
       guard isCurrentUSBDetection(generation) else { return }
       let events = enumeration.events(for: poll)
       for event in events {
@@ -175,15 +230,16 @@ extension DeviceManager {
   }
 
   /// Removes each acknowledged service of a model in `pendingRecordReloads` and leaves it
-  /// unacknowledged, so the poll that follows admits it with the current records.
+  /// unacknowledged, so the poll that follows admits it with the current records, and tells
+  /// whether any model was pending.
   ///
   /// The model's HID connections are admitted again in between, so each route is chosen again. A
   /// removal keeps the user's suspension.
   private func reloadPendingRecords(
     in enumeration: inout USBEnumerationTracker,
     serviceToIdentifiers: inout [ControllerConnectionAddress: [LogicalControllerID]]
-  ) async {
-    guard !pendingRecordReloads.isEmpty else { return }
+  ) async -> Bool {
+    guard !pendingRecordReloads.isEmpty else { return false }
     let changed = pendingRecordReloads
     pendingRecordReloads = []
     let devices = enumeration.acknowledgedDevices.values.filter {
@@ -198,6 +254,7 @@ extension DeviceManager {
       enumeration.unacknowledge(device)
     }
     await readmitHIDConnections(changing: changed)
+    return true
   }
 
   /// Resumes every ``reloadControllerRecords(changing:)`` call that waits for raw-USB detection.

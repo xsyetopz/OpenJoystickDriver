@@ -22,6 +22,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   private let requiredDriverKitModels: Set<ControllerModelID>
   /// Reads the passive USB observation of a raw USB device.
   private let ioUSBHostObservation: @Sendable (USBTransportDevice) throws -> PhysicalDevice?
+  /// The watch of the services the providers list; nil when the facade cannot observe them.
+  private let enumerationWatch: USBEnumerationWatch?
   /// The signature decision per registry service ID, kept while the service stays enumerated.
   private var signatureAdmissions: [UInt64: Bool] = [:]
   /// Reads the passive USB observation of a raw USB device for one configuration value.
@@ -43,6 +45,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     requiredDriverKitModels = Self.driverKitRequiredModels
     ioUSBHostObservation = { try PassiveUSBDescriptorProbe.physicalDeviceObservation(for: $0) }
     ioUSBHostConfigurationObservation = Self.readConfigurationObservation
+    enumerationWatch = .shared
   }
 
   /// Creates the facade over the given providers, models and observation readers.
@@ -64,6 +67,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     self.requiredDriverKitModels = requiredDriverKitModels
     self.ioUSBHostObservation = ioUSBHostObservation
     self.ioUSBHostConfigurationObservation = ioUSBHostConfigurationObservation
+    enumerationWatch = nil
   }
 
   /// Reads the cached configuration descriptor `configurationValue` of `device` into an
@@ -85,6 +89,10 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
       configurationDescriptor: descriptor
     )
   }
+
+  /// The publications and terminations of USB devices and extension services seen so far; nil
+  /// for a facade over injected providers.
+  public var enumerationChangeCount: UInt64? { enumerationWatch?.changeCount }
 
   /// Lists the devices that OJD serves, from both providers, in vendor, product, location, route
   /// and service order.

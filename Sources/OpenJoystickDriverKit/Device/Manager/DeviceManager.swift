@@ -41,6 +41,9 @@ func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UI
 
 /// The wait between two polls of the USB transport provider by raw-USB detection, 500 ms.
 let usbDetectionPollNanoseconds: UInt64 = 500_000_000
+/// The age at which raw-USB detection lists the USB provider's devices again although the provider
+/// reports no change, 5 s.
+let usbEnumerationMaxAgeNanoseconds: UInt64 = 5_000_000_000
 /// The wait between two checks of the host's access state by the permission watch, 1 s.
 let devicePermissionWatchNanoseconds: UInt64 = 1_000_000_000
 /// The nanoseconds in one millisecond, for turning a rumble duration into a sleep.

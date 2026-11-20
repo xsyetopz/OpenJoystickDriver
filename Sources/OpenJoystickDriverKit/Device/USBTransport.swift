@@ -290,6 +290,12 @@ public struct USBTransportResolution: Equatable, Sendable {
 public protocol USBTransportProvider: Sendable {
   /// Enumerates the raw USB services that this provider can see.
   func devices() async throws -> [USBTransportDevice]
+  /// A count that grows each time a service ``devices()`` lists may have appeared or gone, or nil
+  /// when the provider cannot observe that, so that each detection poll lists the devices.
+  ///
+  /// The count is read before a listing, so a change during the listing makes the next poll list
+  /// again.
+  var enumerationChangeCount: UInt64? { get async }
   /// Opens `device` with `options` and returns the session.
   func open(
     _ device: USBTransportDevice,
@@ -352,6 +358,9 @@ public protocol USBTransportProvider: Sendable {
 }
 
 extension USBTransportProvider {
+  /// Nil: a provider observes no enumeration changes unless it says so.
+  public var enumerationChangeCount: UInt64? { nil }
+
   /// Opens the device at an IOKit location through ``open(_:options:)``.
   ///
   /// - Throws: ``USBTransportError/notFound`` for any other address, which has no USB device.

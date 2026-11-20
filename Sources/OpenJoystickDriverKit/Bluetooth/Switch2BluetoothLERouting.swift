@@ -185,6 +185,14 @@ final class BluetoothLECompositeUSBTransportProvider: USBTransportProvider {
   /// The devices of the base provider; none without one.
   func devices() async throws -> [USBTransportDevice] { try await base?.devices() ?? [] }
 
+  /// The change count of the base provider; with no base provider the listing never changes.
+  var enumerationChangeCount: UInt64? {
+    get async {
+      guard let base else { return 0 }
+      return await base.enumerationChangeCount
+    }
+  }
+
   /// Opens `device` through the base provider.
   ///
   /// - Throws: ``USBTransportError/notFound`` without a base provider, or the error of the base
