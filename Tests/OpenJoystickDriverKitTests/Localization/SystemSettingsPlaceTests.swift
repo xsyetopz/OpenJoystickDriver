@@ -9,10 +9,7 @@ struct SystemSettingsPlaceTests {
   }
 
   @Test(arguments: [
-    (SystemSettingsPlace.inputMonitoring, 12, "preferencesInputMonitoring"),
-    (.accessibility, 12, "preferencesAccessibility"),
-    (.driverApproval, 12, "preferencesGeneral"),
-    (.loginItems, 14, "loginItems"),
+    (SystemSettingsPlace.loginItems, 14, "loginItems"),
     (.loginItems, 15, "loginItemsAndExtensions"),
     (.accessibility, 26, "accessibility"),
     (.accessibility, 27, "deviceControl"),
@@ -31,7 +28,6 @@ struct SystemSettingsPlaceTests {
   }
 
   @Test(arguments: [
-    (12, "systemPreferences"),
     (13, "systemSettingsMacOS13"),
     (15, "systemSettingsMacOS13"),
     (26, "systemSettingsMacOS26"),
@@ -45,12 +41,11 @@ struct SystemSettingsPlaceTests {
   }
 
   @Test(arguments: [
-    (SystemSettingsMessage.openSettings, 12, "openSystemPreferences"),
-    (.openSettings, 13, "openSystemSettingsMacOS13"),
+    (SystemSettingsMessage.openSettings, 13, "openSystemSettingsMacOS13"),
     (.openSettings, 15, "openSystemSettingsMacOS13"),
     (.openSettings, 26, "openSystemSettingsMacOS26"),
     (.openSettings, 27, "openSystemSettings"),
-    (.startAtLoginApproval, 12, "startAtLoginApprovalRequiredMacOS13"),
+    (.startAtLoginApproval, 13, "startAtLoginApprovalRequiredMacOS13"),
   ])
   func messageKeyMatchesTheMacOSRelease(
     message: SystemSettingsMessage,
@@ -63,7 +58,7 @@ struct SystemSettingsPlaceTests {
   @Test
   func everyKeyIsInTheCatalog() {
     let localization = Localization()
-    for major in [12, 13, 14, 15, 26, 27] {
+    for major in [13, 14, 15, 26, 27] {
       for place in SystemSettingsPlace.allCases {
         let key = place.localizationKey(on: version(major))
         #expect(localization.string(key) != key)

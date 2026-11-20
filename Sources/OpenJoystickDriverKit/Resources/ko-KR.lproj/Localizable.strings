@@ -102,8 +102,6 @@
 "platform.macos.ui.settings.notifications.notificationBannersAndSoundOffMacOS26" = "시스템 설정에서 배너와 사운드가 꺼져 있습니다.";
 /* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Settings is the name of the macOS app. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationBannersAndSoundOffMacOS13" = "시스템 설정에서 배너와 사운드가 꺼져 있습니다.";
-/* Note in the Notifications pane of the settings window when macOS has turned off both banners and sounds for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.settings.notifications.bannersAndSoundOffSystemPreferences" = "시스템 환경설정에서 배너와 사운드가 꺼져 있습니다.";
 /* Value of the notification row in the Access area when macOS has turned off banners for the app. */
 "ui.settings.notifications.notificationBannersOff" = "배너 끔";
 /* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. It is shown on macOS 27 and later, where the settings app is System Settings. */
@@ -112,8 +110,6 @@
 "platform.macos.ui.settings.notifications.notificationBannersOffDetailMacOS26" = "시스템 설정에서 알림 배너가 꺼져 있습니다.";
 /* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Settings is the name of the macOS app. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationBannersOffDetailMacOS13" = "시스템 설정에서 알림 배너가 꺼져 있습니다.";
-/* Note in the Notifications pane of the settings window when macOS has turned off banners for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.settings.notifications.bannersOffDetailSystemPreferences" = "시스템 환경설정에서 알림 배너가 꺼져 있습니다.";
 /* Status text in the Notifications pane of the settings window when the user has not allowed notifications in macOS. */
 "ui.settings.notifications.notificationPermissionRequired" = "알림을 전달하려면 먼저 권한이 필요합니다.";
 /* Value of the notification row in the Access area when macOS has turned off sounds for the app. */
@@ -124,8 +120,6 @@
 "platform.macos.ui.settings.notifications.notificationSoundOffDetailMacOS26" = "시스템 설정에서 알림 사운드가 꺼져 있습니다.";
 /* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Settings is the name of the macOS app. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationSoundOffDetailMacOS13" = "시스템 설정에서 알림 사운드가 꺼져 있습니다.";
-/* Note in the Notifications pane of the settings window when macOS has turned off sounds for the app. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.settings.notifications.notificationSoundOffDetailSystemPreferences" = "시스템 환경설정에서 알림 사운드가 꺼져 있습니다.";
 /* Title of the switch in the Notifications pane of the settings window that plays a sound with a notification. */
 "ui.settings.notifications.notificationSounds" = "사운드 재생";
 /* Name of the notification permission in the Access area. */
@@ -136,8 +130,6 @@
 "platform.macos.ui.settings.notifications.notificationsDeniedMacOS26" = "시스템 설정에서 OpenJoystickDriver 알림이 꺼져 있습니다.";
 /* Error shown when the user turns on notifications in the app while macOS denies them. System Settings is the name of the macOS app. OpenJoystickDriver is the product name. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.settings.notifications.notificationsDeniedMacOS13" = "시스템 설정에서 OpenJoystickDriver 알림이 꺼져 있습니다.";
-/* Error shown when the user turns on notifications in the app while macOS denies them. System Preferences is the name of the macOS app. OpenJoystickDriver is the product name. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences" = "시스템 환경설정에서 OpenJoystickDriver 알림이 꺼져 있습니다.";
 /* Button in the Notifications pane of the settings window that opens the notification settings of macOS. */
 "ui.settings.general.openNotificationSettings" = "알림 설정 열기";
 /* Button in a pane of the settings window that opens System Settings, the macOS app. */
@@ -1040,14 +1032,6 @@
 "platform.macos.term.settingsApp.systemSettingsMacOS26" = "시스템 설정";
 /* Name of the System Settings app, which fills messages that send the user there. It is written as macOS shows it. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.term.settingsApp.systemSettingsMacOS13" = "시스템 설정";
-/* Name of the System Preferences app on macOS 12, which fills messages that send the user there. It is written as macOS 12 shows it. */
-"platform.macos.term.settingsApp.systemPreferences" = "시스템 환경설정";
-/* Path of the Input Monitoring list in System Preferences on macOS 12, shown in permission messages. It is written as macOS 12 shows it. */
-"platform.macos.term.settingsPlace.preferencesInputMonitoring" = "보안 및 개인 정보 보호 > 개인 정보 보호 > 입력 모니터링";
-/* Path of the Accessibility list in System Preferences on macOS 12, shown in permission messages. It is written as macOS 12 shows it. */
-"platform.macos.term.settingsPlace.preferencesAccessibility" = "보안 및 개인 정보 보호 > 개인 정보 보호 > 손쉬운 사용";
-/* Path in System Preferences on macOS 12 where the user allows the Xbox USB driver. It is written as macOS 12 shows it. */
-"platform.macos.term.settingsPlace.preferencesGeneral" = "보안 및 개인 정보 보호 > 일반";
 /* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
 "platform.macos.term.postEventAccess" = "Post Event 접근";
 /* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
@@ -1430,8 +1414,6 @@
 "platform.macos.ui.setup.approvalDetailMacOS26" = "지원되는 Microsoft USB 컨트롤러를 사용하려면 시스템 설정에서 드라이버를 승인하세요.";
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.setup.approvalDetailMacOS13" = "지원되는 Microsoft USB 컨트롤러를 사용하려면 시스템 설정에서 드라이버를 승인하세요.";
-/* Detail line of the problem banner when the driver extension waits for approval. System Preferences is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.setup.approvalDetailSystemPreferences" = "지원되는 Microsoft USB 컨트롤러를 사용하려면 시스템 환경설정에서 드라이버를 승인하세요.";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB 드라이버";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1444,16 +1426,12 @@
 "platform.macos.ui.setup.openSystemSettingsMacOS26" = "시스템 설정 열기";
 /* Button that opens the System Settings app on the pane where the user can allow the permission or the extension. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.setup.openSystemSettingsMacOS13" = "시스템 설정 열기";
-/* Button that opens the System Preferences app on the pane where the user can allow the permission or the extension. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.setup.openSystemPreferences" = "시스템 환경설정 열기";
 /* Title of the alert shown when the System Settings app could not be opened. It is shown on macOS 27 and later, where the settings app is System Settings. */
 "platform.macos.ui.setup.openSystemSettingsFailed" = "시스템 설정을 열 수 없습니다.";
 /* Title of the alert shown when the System Settings app could not be opened. It is shown on macOS 26, where the settings app is System Settings. */
 "platform.macos.ui.setup.openSystemSettingsFailedMacOS26" = "시스템 설정을 열 수 없습니다.";
 /* Title of the alert shown when the System Settings app could not be opened. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.setup.openSystemSettingsFailedMacOS13" = "시스템 설정을 열 수 없습니다.";
-/* Title of the alert shown when the System Preferences app could not be opened. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.setup.openSystemPreferencesFailed" = "시스템 환경설정을 열 수 없습니다.";
 /* Detail line of the problem banner when the driver extension needs activation or replacement. The app repairs it when the user presses the repair button. OpenJoystickDriver is the product name. */
 "ui.setup.repairDetail" = "OpenJoystickDriver는 개발자 도구 없이 Xbox USB 드라이버를 복구합니다.";
 /* Message of the confirmation alert that removes the driver extension from the settings window. */
@@ -2393,8 +2371,6 @@
 "platform.macos.cli.transportExtension.activate.abstractMacOS26" = "macOS에 확장 프로그램 활성화를 요청합니다. 시스템 설정에서 승인이 필요할 수 있습니다.";
 /* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.cli.transportExtension.activate.abstractMacOS13" = "macOS에 확장 프로그램 활성화를 요청합니다. 시스템 설정에서 승인이 필요할 수 있습니다.";
-/* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Preferences is the name of the macOS app. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.cli.transportExtension.activate.abstractSystemPreferences" = "macOS에 확장 프로그램 활성화를 요청합니다. 시스템 환경설정에서 승인이 필요할 수 있습니다.";
 /* Long description in the help of 'ojd transport-extension activate'. The ojd program and the path stay as written. */
 "cli.transportExtension.activate.discussion" = "/Applications/OpenJoystickDriver.app 안의 ojd를 실행하세요. 승인을 기다리는 경우 종료 코드 0으로 끝납니다.";
 /* Message printed after 'ojd transport-extension activate' when the driver extension is active. */
@@ -2433,8 +2409,6 @@
 "platform.macos.cli.transportExtension.group.timeoutMacOS26" = "macOS가 제때 요청을 완료하지 못했습니다. 시스템 설정에 승인 요청이 표시되어 있는지 확인한 다음 ‘ojd transport-extension status’를 실행하세요.";
 /* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Settings is the name of the macOS app. The command in quotes stays as written. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.cli.transportExtension.group.timeoutMacOS13" = "macOS가 제때 요청을 완료하지 못했습니다. 시스템 설정에 승인 요청이 표시되어 있는지 확인한 다음 ‘ojd transport-extension status’를 실행하세요.";
-/* Error of 'ojd transport-extension' when macOS does not finish the request in time. System Preferences is the name of the macOS app. The command in quotes stays as written. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.cli.transportExtension.group.timeoutSystemPreferences" = "macOS가 제때 요청을 완료하지 못했습니다. 시스템 환경설정에 승인 요청이 표시되어 있는지 확인한 다음 ‘ojd transport-extension status’를 실행하세요.";
 /* One-line summary of 'ojd log' in the command list and at the top of its help. */
 "cli.log.group.abstract" = "서비스 로그를 표시하거나 로그 위치를 출력합니다.";
 /* One-line summary of 'ojd log path' in the command list and at the top of its help. The command line after 'Open it with:' stays as written, including the backslashes before the quotes. */
@@ -2661,8 +2635,6 @@
 "platform.macos.cli.controller.disconnect.discussionMacOS26" = "클래식 Bluetooth 연결을 닫습니다. 컨트롤러는 페어링된 상태로 남으며 다시 켜면 재연결됩니다. Bluetooth가 확인할 때까지 최소 6초 기다립니다. 서비스는 Bluetooth Low Energy 컨트롤러의 연결을 끊을 수 없습니다. 컨트롤러를 끄거나 시스템 설정 > Bluetooth에서 연결을 끊으세요.";
 /* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.cli.controller.disconnect.discussionMacOS13" = "클래식 Bluetooth 연결을 닫습니다. 컨트롤러는 페어링된 상태로 남으며 다시 켜면 재연결됩니다. Bluetooth가 확인할 때까지 최소 6초 기다립니다. 서비스는 Bluetooth Low Energy 컨트롤러의 연결을 끊을 수 없습니다. 컨트롤러를 끄거나 시스템 설정 > Bluetooth에서 연결을 끊으세요.";
-/* Long description in the help of 'ojd controller disconnect'. It explains that classic Bluetooth controllers stay paired and that the wait is at least 6 seconds. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.cli.controller.disconnect.discussionSystemPreferences" = "클래식 Bluetooth 연결을 닫습니다. 컨트롤러는 페어링된 상태로 남으며 다시 켜면 재연결됩니다. Bluetooth가 확인할 때까지 최소 6초 기다립니다. 서비스는 Bluetooth Low Energy 컨트롤러의 연결을 끊을 수 없습니다. 컨트롤러를 끄거나 시스템 환경설정 > Bluetooth에서 연결을 끊으세요.";
 /* Message printed after 'ojd controller disconnect' disconnected the controller. %@ is the controller name. */
 "cli.controller.disconnect.done" = "%@ 연결을 끊었습니다.";
 /* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Settings and Bluetooth are macOS names. It is shown on macOS 27 and later, where the settings app is System Settings. */
@@ -2671,8 +2643,6 @@
 "platform.macos.cli.controller.disconnect.bluetoothLeMacOS26" = "%@ 컨트롤러는 Bluetooth Low Energy로 연결되어 있어 서비스에서 연결을 끊을 수 없습니다. 컨트롤러를 끄거나 시스템 설정 > Bluetooth에서 연결을 끊으세요.";
 /* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Settings and Bluetooth are macOS names. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.cli.controller.disconnect.bluetoothLeMacOS13" = "%@ 컨트롤러는 Bluetooth Low Energy로 연결되어 있어 서비스에서 연결을 끊을 수 없습니다. 컨트롤러를 끄거나 시스템 설정 > Bluetooth에서 연결을 끊으세요.";
-/* Error of 'ojd controller disconnect' for a Bluetooth Low Energy controller. %@ is the controller name. System Preferences and Bluetooth are macOS names. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.cli.controller.disconnect.bluetoothLeSystemPreferences" = "%@ 컨트롤러는 Bluetooth Low Energy로 연결되어 있어 서비스에서 연결을 끊을 수 없습니다. 컨트롤러를 끄거나 시스템 환경설정 > Bluetooth에서 연결을 끊으세요.";
 /* Error of 'ojd controller disconnect' when the Bluetooth disconnect fails. %1$@ names the step that failed and %2$@ is the system's reason, which can end with an error code. */
 "cli.controller.disconnect.failed" = "%1$@ 연결을 끊는 중 Bluetooth 연결 해제에 실패했습니다: %2$@.";
 /* Error of 'ojd controller disconnect' for a controller on a wire. %@ is the controller name. */
@@ -3835,8 +3805,6 @@
 "platform.macos.ui.access.permission.denied.messageMacOS26" = "macOS가 이 권한을 거부했거나 상태를 읽을 수 없습니다. 시스템 설정에서 허용하세요.";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.access.permission.denied.messageMacOS13" = "macOS가 이 권한을 거부했거나 상태를 읽을 수 없습니다. 시스템 설정에서 허용하세요.";
-/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.access.permission.denied.messageSystemPreferences" = "macOS가 이 권한을 거부했거나 상태를 읽을 수 없습니다. 시스템 환경설정에서 허용하세요.";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "활성 프로파일은 이 권한을 사용하지 않습니다.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
@@ -5337,8 +5305,6 @@
 "ui.profiles.virtualOutputResetsExclusive" = "가상 게임패드는 항상 입력을 독점하므로 물리적 입력에 대한 독점 접근을 껐습니다.";
 /* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
 "ui.profiles.exclusiveInputUnavailable" = "가상 게임패드는 항상 입력을 독점하므로 가상 게임패드를 선택하지 않았을 때만 사용할 수 있습니다.";
-/* Note below the Start at login switch in Settings > General when this macOS version has no login item. */
-"platform.macos.ui.settings.general.startAtLoginUnavailable" = "로그인 시 시작하려면 macOS 13 이상이 필요합니다.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "연결됨 또는 확인 필요";
 /* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
@@ -5621,8 +5587,6 @@
 "platform.macos.ui.help.openDriverApprovalMacOS26" = "시스템 설정에서 Xbox USB 드라이버 승인";
 /* Tooltip of the banner button that opens System Settings, the macOS settings app, to approve the driver extension. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.help.openDriverApprovalMacOS13" = "시스템 설정에서 Xbox USB 드라이버 승인";
-/* Tooltip of the banner button that opens System Preferences, the macOS settings app, to approve the driver extension. It is shown on macOS 12, where the settings app is System Preferences. */
-"platform.macos.ui.help.openDriverApprovalSystemPreferences" = "시스템 환경설정에서 Xbox USB 드라이버 승인";
 /* Tooltip of the banner button that repairs the driver extension. */
 "ui.help.repairDriver" = "Xbox USB 드라이버 복구";
 /* Tooltip of the banner button that opens the Access area and requests the missing permissions. */

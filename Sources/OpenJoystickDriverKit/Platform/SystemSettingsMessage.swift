@@ -3,9 +3,9 @@ package import Foundation
 /// A message that names the macOS settings app, which resolves to the catalog key of the name the
 /// running macOS shows.
 ///
-/// macOS 12 calls the app System Preferences. Some languages spell System Settings differently
-/// across releases, such as Hindi on macOS 13 to 15 and Brazilian Portuguese on macOS 27, so each
-/// message has one key for macOS 13 to 15, one for macOS 26, and one for macOS 27 and later.
+/// Some languages spell System Settings differently across releases, such as Hindi on macOS 13 to
+/// 15 and Brazilian Portuguese on macOS 27, so each message has one key for macOS 13 to 15, one
+/// for macOS 26, and one for macOS 27 and later.
 package enum SystemSettingsMessage: Sendable, CaseIterable {
   /// The note that macOS has turned off both banners and sounds for the app.
   case bannersAndSoundOff
@@ -41,16 +41,12 @@ package enum SystemSettingsMessage: Sendable, CaseIterable {
   case openDriverApprovalHelp
 
   /// The catalog key of the message for the settings app that `version` shows.
-  ///
-  /// A message about the login item has no macOS 12 key, because SMAppService needs macOS 13, so
-  /// it resolves to the macOS 13 key.
   package func localizationKey(
     on version: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
   ) -> String {
     let variants = keys
     switch version.majorVersion {
-    case ..<13: return variants.preferences ?? variants.macOS13
-    case 13...15: return variants.macOS13
+    case ...15: return variants.macOS13
     case 16..<27: return variants.macOS26
     default: return variants.current
     }
@@ -60,7 +56,6 @@ package enum SystemSettingsMessage: Sendable, CaseIterable {
     let current: String
     let macOS26: String
     let macOS13: String
-    let preferences: String?
   }
 
   private var keys: Keys {
@@ -69,114 +64,97 @@ package enum SystemSettingsMessage: Sendable, CaseIterable {
       Keys(
         current: "platform.macos.ui.settings.notifications.notificationBannersAndSoundOff",
         macOS26: "platform.macos.ui.settings.notifications.notificationBannersAndSoundOffMacOS26",
-        macOS13: "platform.macos.ui.settings.notifications.notificationBannersAndSoundOffMacOS13",
-        preferences: "platform.macos.ui.settings.notifications.bannersAndSoundOffSystemPreferences"
+        macOS13: "platform.macos.ui.settings.notifications.notificationBannersAndSoundOffMacOS13"
       )
     case .bannersOff:
       Keys(
         current: "platform.macos.ui.settings.notifications.notificationBannersOffDetail",
         macOS26: "platform.macos.ui.settings.notifications.notificationBannersOffDetailMacOS26",
-        macOS13: "platform.macos.ui.settings.notifications.notificationBannersOffDetailMacOS13",
-        preferences: "platform.macos.ui.settings.notifications.bannersOffDetailSystemPreferences"
+        macOS13: "platform.macos.ui.settings.notifications.notificationBannersOffDetailMacOS13"
       )
     case .soundOff:
       Keys(
         current: "platform.macos.ui.settings.notifications.notificationSoundOffDetail",
         macOS26: "platform.macos.ui.settings.notifications.notificationSoundOffDetailMacOS26",
-        macOS13: "platform.macos.ui.settings.notifications.notificationSoundOffDetailMacOS13",
-        preferences:
-          "platform.macos.ui.settings.notifications.notificationSoundOffDetailSystemPreferences"
+        macOS13: "platform.macos.ui.settings.notifications.notificationSoundOffDetailMacOS13"
       )
     case .notificationsDenied:
       Keys(
         current: "platform.macos.ui.settings.notifications.notificationsDenied",
         macOS26: "platform.macos.ui.settings.notifications.notificationsDeniedMacOS26",
-        macOS13: "platform.macos.ui.settings.notifications.notificationsDeniedMacOS13",
-        preferences: "platform.macos.ui.settings.notifications.notificationsDeniedSystemPreferences"
+        macOS13: "platform.macos.ui.settings.notifications.notificationsDeniedMacOS13"
       )
     case .startAtLoginApproval:
       Keys(
         current: "platform.macos.ui.settings.general.startAtLoginApprovalRequired",
         macOS26: "platform.macos.ui.settings.general.startAtLoginApprovalRequiredMacOS26",
-        macOS13: "platform.macos.ui.settings.general.startAtLoginApprovalRequiredMacOS13",
-        preferences: nil
+        macOS13: "platform.macos.ui.settings.general.startAtLoginApprovalRequiredMacOS13"
       )
     case .driverApprovalDetail:
       Keys(
         current: "platform.macos.ui.setup.approvalDetail",
         macOS26: "platform.macos.ui.setup.approvalDetailMacOS26",
-        macOS13: "platform.macos.ui.setup.approvalDetailMacOS13",
-        preferences: "platform.macos.ui.setup.approvalDetailSystemPreferences"
+        macOS13: "platform.macos.ui.setup.approvalDetailMacOS13"
       )
     case .openSettings:
       Keys(
         current: "platform.macos.ui.setup.openSystemSettings",
         macOS26: "platform.macos.ui.setup.openSystemSettingsMacOS26",
-        macOS13: "platform.macos.ui.setup.openSystemSettingsMacOS13",
-        preferences: "platform.macos.ui.setup.openSystemPreferences"
+        macOS13: "platform.macos.ui.setup.openSystemSettingsMacOS13"
       )
     case .openSettingsFailed:
       Keys(
         current: "platform.macos.ui.setup.openSystemSettingsFailed",
         macOS26: "platform.macos.ui.setup.openSystemSettingsFailedMacOS26",
-        macOS13: "platform.macos.ui.setup.openSystemSettingsFailedMacOS13",
-        preferences: "platform.macos.ui.setup.openSystemPreferencesFailed"
+        macOS13: "platform.macos.ui.setup.openSystemSettingsFailedMacOS13"
       )
     case .activateAbstract:
       Keys(
         current: "platform.macos.cli.transportExtension.activate.abstract",
         macOS26: "platform.macos.cli.transportExtension.activate.abstractMacOS26",
-        macOS13: "platform.macos.cli.transportExtension.activate.abstractMacOS13",
-        preferences: "platform.macos.cli.transportExtension.activate.abstractSystemPreferences"
+        macOS13: "platform.macos.cli.transportExtension.activate.abstractMacOS13"
       )
     case .extensionTimeout:
       Keys(
         current: "platform.macos.cli.transportExtension.group.timeout",
         macOS26: "platform.macos.cli.transportExtension.group.timeoutMacOS26",
-        macOS13: "platform.macos.cli.transportExtension.group.timeoutMacOS13",
-        preferences: "platform.macos.cli.transportExtension.group.timeoutSystemPreferences"
+        macOS13: "platform.macos.cli.transportExtension.group.timeoutMacOS13"
       )
     case .settingSetDiscussion:
       Keys(
         current: "platform.macos.cli.setting.set.discussion",
         macOS26: "platform.macos.cli.setting.set.discussionMacOS26",
-        macOS13: "platform.macos.cli.setting.set.discussionMacOS13",
-        preferences: nil
+        macOS13: "platform.macos.cli.setting.set.discussionMacOS13"
       )
     case .settingNotApplied:
       Keys(
         current: "platform.macos.cli.setting.set.notApplied",
         macOS26: "platform.macos.cli.setting.set.notAppliedMacOS26",
-        macOS13: "platform.macos.cli.setting.set.notAppliedMacOS13",
-        preferences: nil
+        macOS13: "platform.macos.cli.setting.set.notAppliedMacOS13"
       )
     case .disconnectDiscussion:
       Keys(
         current: "platform.macos.cli.controller.disconnect.discussion",
         macOS26: "platform.macos.cli.controller.disconnect.discussionMacOS26",
-        macOS13: "platform.macos.cli.controller.disconnect.discussionMacOS13",
-        preferences: "platform.macos.cli.controller.disconnect.discussionSystemPreferences"
+        macOS13: "platform.macos.cli.controller.disconnect.discussionMacOS13"
       )
     case .disconnectBluetoothLE:
       Keys(
         current: "platform.macos.cli.controller.disconnect.bluetoothLe",
         macOS26: "platform.macos.cli.controller.disconnect.bluetoothLeMacOS26",
-        macOS13: "platform.macos.cli.controller.disconnect.bluetoothLeMacOS13",
-        preferences: "platform.macos.cli.controller.disconnect.bluetoothLeSystemPreferences"
+        macOS13: "platform.macos.cli.controller.disconnect.bluetoothLeMacOS13"
       )
     case .permissionDenied:
       Keys(
         current: "platform.macos.ui.access.permission.denied.message",
         macOS26: "platform.macos.ui.access.permission.denied.messageMacOS26",
-        macOS13: "platform.macos.ui.access.permission.denied.messageMacOS13",
-        preferences: "platform.macos.ui.access.permission.denied.messageSystemPreferences"
+        macOS13: "platform.macos.ui.access.permission.denied.messageMacOS13"
       )
     case .openDriverApprovalHelp:
       Keys(
         current: "platform.macos.ui.help.openDriverApproval",
         macOS26: "platform.macos.ui.help.openDriverApprovalMacOS26",
-        macOS13: "platform.macos.ui.help.openDriverApprovalMacOS13",
-        preferences: "platform.macos.ui.help.openDriverApprovalSystemPreferences"
+        macOS13: "platform.macos.ui.help.openDriverApprovalMacOS13"
       )
     }
   }
