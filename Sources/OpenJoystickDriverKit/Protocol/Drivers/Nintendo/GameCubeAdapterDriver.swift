@@ -93,6 +93,8 @@ public final class GameCubeAdapterRumbleBank: Sendable {
 /// are the digital triggers. The axes scale like SDL's: each starts with a range of 88 around the
 /// center (triggers from 40) and widens to the extremes it sees, and the stick Y axes are inverted.
 public final class GameCubeAdapterDriver: PhysicalProtocolDriver {
+  /// The number of controller ports on the adapter.
+  static let portCount = gameCubePortCount
 
   /// The masks of the first button byte.
   private enum FirstButtonMask {

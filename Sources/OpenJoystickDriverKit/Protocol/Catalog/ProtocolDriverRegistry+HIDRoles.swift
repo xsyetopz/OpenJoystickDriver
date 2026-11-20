@@ -9,6 +9,9 @@ enum HIDConnectionRole: Equatable {
   case interface(UInt8)
   /// The connection belongs to a family that declares HID roles but is not one of them.
   case notRole
+  /// The connection is an adapter that serves this many controller ports, each its own logical
+  /// controller keyed with its port.
+  case ports(Int)
 }
 
 extension ProtocolDriverRegistry {
@@ -35,7 +38,15 @@ extension ProtocolDriverRegistry {
   /// `HIDAPI_DriverSteamTriton_IsSupportedDevice` accept every Bluetooth interface. The Triton
   /// (`ValveSteamTriton`) dongles carry controllers on interfaces 2 to 5 only (SDL
   /// `SDL_hidapi_steam_triton.c`).
+  ///
+  /// The Wii U GameCube adapter (`NintendoGameCubeAdapter`) is one HID interface whose input report
+  /// carries four ports (Dolphin `GCAdapter.cpp`), so its connection plays four port roles.
   func hidConnectionRole(of device: PhysicalDevice) -> HIDConnectionRole {
+    if let model = device.model,
+      record(for: model)?.physicalProtocolID == .nintendoGameCubeAdapter
+    {
+      return .ports(GameCubeAdapterDriver.portCount)
+    }
     guard let record = hidRoleRecord(of: device) else { return .location }
     guard let interface = device.interfaces?.first, device.interfaces?.count == 1,
       let descriptor = interface.hidLayout?.reportDescriptor,

@@ -131,15 +131,18 @@ public final class ProtocolDriverRegistry: Sendable {
   /// the configuration descriptor of every IOUSBHost device, that happens only on the DriverKit
   /// route, which reports no interface facts. An interface-signature binding fails closed there.
   ///
-  /// `slotOrdinal` is the role's index in ``roleProfiles(for:resolution:)``; only an Xbox 360
-  /// receiver reads it, and only to reject a slot past the fourth. `reportDescriptor` is the bound
-  /// HID interface's report descriptor; only `HIDDescriptor` reads it, to choose its layout.
+  /// `slotOrdinal` is the role's index in ``roleProfiles(for:resolution:)``, or the port of a HID
+  /// adapter; an Xbox 360 receiver reads it only to reject a slot past the fourth, and the GameCube
+  /// adapter reads its port's bytes. `reportDescriptor` is the bound HID interface's report
+  /// descriptor; only `HIDDescriptor` reads it, to choose its layout. `adapterRumbleBank` is the
+  /// rumble state the ports of one GameCube adapter share.
   func makeDriver(
     for binding: ProtocolBinding,
     model: ControllerModelID,
     claimed: USBTransportResolution?,
     slotOrdinal: Int = 0,
-    reportDescriptor: Data? = nil
+    reportDescriptor: Data? = nil,
+    adapterRumbleBank: GameCubeAdapterRumbleBank? = nil
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     guard let record = runtimeProfile(for: binding) else {
       guard binding.protocolID == .hidDescriptor else { return .failure(.noProtocolMatch) }
@@ -171,7 +174,8 @@ public final class ProtocolDriverRegistry: Sendable {
       model: model,
       transportProfile: transportProfile,
       slotOrdinal: slotOrdinal,
-      reportDescriptor: reportDescriptor
+      reportDescriptor: reportDescriptor,
+      adapterRumbleBank: adapterRumbleBank
     )
   }
 
@@ -189,7 +193,8 @@ public final class ProtocolDriverRegistry: Sendable {
     model: ControllerModelID,
     transportProfile: DeviceTransportProfile,
     slotOrdinal: Int = 0,
-    reportDescriptor: Data? = nil
+    reportDescriptor: Data? = nil,
+    adapterRumbleBank: GameCubeAdapterRumbleBank? = nil
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     let family = makeFamilyDriver(
       protocolID: protocolID,
@@ -198,7 +203,8 @@ public final class ProtocolDriverRegistry: Sendable {
       model: model,
       transportProfile: transportProfile,
       slotOrdinal: slotOrdinal,
-      reportDescriptor: reportDescriptor
+      reportDescriptor: reportDescriptor,
+      adapterRumbleBank: adapterRumbleBank
     )
     guard case .success(let driver) = family, let layouts = record.inputLayouts,
       protocolID != .hidReportLayout
@@ -213,7 +219,8 @@ public final class ProtocolDriverRegistry: Sendable {
     model: ControllerModelID,
     transportProfile: DeviceTransportProfile,
     slotOrdinal: Int,
-    reportDescriptor: Data?
+    reportDescriptor: Data?,
+    adapterRumbleBank: GameCubeAdapterRumbleBank?
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     if !protocolID.variants.isEmpty {
       guard let variant, protocolID.variants.contains(variant) else {
@@ -360,7 +367,12 @@ public final class ProtocolDriverRegistry: Sendable {
       )
     case .nintendoWii: return .success(WiiDriver(tuning: tuning))
     case .nintendoGameCubeAdapter:
-      guard let port = GameCubeAdapterDriver(port: slotOrdinal) else {
+      guard
+        let port = GameCubeAdapterDriver(
+          port: slotOrdinal,
+          rumbleBank: adapterRumbleBank ?? GameCubeAdapterRumbleBank()
+        )
+      else {
         return .failure(.interfaceContractMismatch)
       }
       return .success(port)

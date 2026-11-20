@@ -68,6 +68,7 @@ extension LogicalControllerID: CustomStringConvertible {
     let serial = hardware.serialNumber == nil ? "" : " serial=present"
     let loc = (address?.locationID).map { " loc=\($0)" } ?? ""
     let interface = address?.interfaceNumber.map { " if=\($0)" } ?? ""
-    return "LogicalControllerID(VID:\(vid) PID:\(pid)\(serial)\(loc)\(interface))"
+    let port = address?.adapterPort.map { " port=\($0)" } ?? ""
+    return "LogicalControllerID(VID:\(vid) PID:\(pid)\(serial)\(loc)\(interface)\(port))"
   }
 }

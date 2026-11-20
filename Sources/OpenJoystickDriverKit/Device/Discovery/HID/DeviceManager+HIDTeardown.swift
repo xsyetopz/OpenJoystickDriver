@@ -177,28 +177,45 @@ extension DeviceManager {
     )
   }
 
-  /// Feeds one HID element value to the pipeline that the input of `connectionID` routes to.
+  /// Feeds one HID element value to the pipelines that the input of `connectionID` routes to.
   func routeHIDElementValue(
     address: ControllerConnectionAddress,
     connectionID: UUID,
     value: HIDElementValue
   ) async {
-    guard let key = hidPipelineKey(forInputFrom: connectionID, address: address),
-      let pipeline = pipelines[key]
-    else { return }
-    await pipeline.feedHIDElementValue(value)
+    for key in hidPipelineKeys(forInputFrom: connectionID, address: address) {
+      await pipelines[key]?.feedHIDElementValue(value)
+    }
   }
 
-  /// Feeds one input report to its pipeline; `laterReportQueued` tells that a later report of
-  /// the same connection already waits behind it.
+  /// Feeds one input report to each pipeline it routes to: one controller, or every port of an
+  /// adapter; `laterReportQueued` tells that a later report of the same connection already waits
+  /// behind it.
   func routeHIDInputReport(
     address: ControllerConnectionAddress,
     connectionID: UUID,
     data: Data,
     laterReportQueued: Bool = false
   ) async {
-    guard let key = hidPipelineKey(forInputFrom: connectionID, address: address),
-      let pipeline = pipelines[key], let info = deviceInfos[key], case .hid = info.discoverySource,
+    for key in hidPipelineKeys(forInputFrom: connectionID, address: address) {
+      await routeHIDInputReport(
+        to: key,
+        address: address,
+        data: data,
+        laterReportQueued: laterReportQueued
+      )
+    }
+  }
+
+  /// Feeds one input report to the pipeline of `key`.
+  private func routeHIDInputReport(
+    to key: LogicalControllerID,
+    address: ControllerConnectionAddress,
+    data: Data,
+    laterReportQueued: Bool
+  ) async {
+    guard let pipeline = pipelines[key], let info = deviceInfos[key],
+      case .hid = info.discoverySource,
       let physicalDevice = info.physicalDevice, let boundConnectionID = info.hidConnectionID
     else { return }
     let connection = HIDDeviceConnection(

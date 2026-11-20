@@ -47,6 +47,17 @@ extension DeviceManager {
     }
     let role = protocolDriverRegistry.hidConnectionRole(of: physicalDevice)
     guard let identifier = hidIdentifier(for: connection, role: role) else { return }
+    // An adapter's ports are keyed by location and port, so one without a location cannot tell
+    // them apart and fails closed.
+    if case .ports = role, routingAddress.locationID == nil {
+      await rejectHIDDevice(
+        connection,
+        identifier: identifier,
+        reason: .interfaceContractMismatch,
+        rejectedCandidates: []
+      )
+      return
+    }
     // macOS serves a native controller: OJD binds only its native interface, observe-only, and
     // leaves every other HID interface at its location to macOS.
     if physicalDevice.nativePassThrough {
@@ -75,7 +86,42 @@ extension DeviceManager {
       )
       return
     }
+    guard case .ports(let count) = role else {
+      await admitHIDController(identifier, connection: connection, ownership: ownership, role: role)
+      return
+    }
+    // One rumble report drives every port's motor, so the ports share one bank.
+    let rumbleBank = GameCubeAdapterRumbleBank()
+    for port in 0..<count {
+      guard isCurrentHIDInitialization(connection),
+        let portIdentifier = hidIdentifier(for: connection, role: role, port: UInt8(port))
+      else { return }
+      await admitHIDController(
+        portIdentifier,
+        connection: connection,
+        ownership: ownership,
+        role: role,
+        port: port,
+        rumbleBank: rumbleBank
+      )
+    }
+  }
 
+  /// Binds and starts one logical controller of `connection`: the connection's own controller,
+  /// one HID role, or adapter port `port`, whose driver shares `rumbleBank` with its siblings.
+  private func admitHIDController(
+    _ identifier: LogicalControllerID,
+    connection: HIDDeviceConnection,
+    ownership: HIDInputOwnership,
+    role: HIDConnectionRole,
+    port: Int = 0,
+    rumbleBank: GameCubeAdapterRumbleBank? = nil
+  ) async {
+    let physicalDevice = connection.physicalDevice
+    let routingAddress = connection.routingAddress
+    guard let vendorID = physicalDevice.vendorID, let productID = physicalDevice.productID else {
+      return
+    }
     if let existingPipeline = pipelines[identifier] {
       guard let existingInfo = deviceInfos[identifier] else {
         await updateHIDOwnership(ownership, address: routingAddress)
@@ -161,7 +207,9 @@ extension DeviceManager {
         for: bound,
         model: identifier.model,
         claimed: nil,
-        reportDescriptor: reportDescriptor
+        slotOrdinal: port,
+        reportDescriptor: reportDescriptor,
+        adapterRumbleBank: rumbleBank
       ) {
       case .success(let resolved):
         binding = bound

@@ -45,13 +45,15 @@ extension DeviceManager {
     return keys.compactMap { hidInitializationTasks.removeValue(forKey: $0) }
   }
 
-  /// The logical-controller key of a HID connection: its routing address's controller, or one role
-  /// keyed with its location and interface number.
+  /// The logical-controller key of a HID connection: its routing address's controller, one role
+  /// keyed with its location and interface number, or adapter port `port` keyed with its location
+  /// and port.
   ///
   /// Nil without an observed vendor and product ID.
   func hidIdentifier(
     for connection: HIDDeviceConnection,
-    role: HIDConnectionRole
+    role: HIDConnectionRole,
+    port: UInt8? = nil
   ) -> LogicalControllerID? {
     let physicalDevice = connection.physicalDevice
     guard let vendorID = physicalDevice.vendorID, let productID = physicalDevice.productID else {
@@ -60,6 +62,9 @@ extension DeviceManager {
     var address = connection.routingAddress
     if case .interface(let number) = role, let locationID = address.locationID {
       address = .ioKit(locationID: locationID, interfaceNumber: number)
+    }
+    if case .ports = role, let port, let locationID = address.locationID {
+      address = .adapterPort(locationID: locationID, port: port)
     }
     return LogicalControllerID(
       hardware: ControllerHardwareIdentity(
@@ -70,24 +75,29 @@ extension DeviceManager {
     )
   }
 
-  /// The pipeline that input from one HID connection feeds.
+  /// The pipelines that input from one HID connection feeds.
   ///
   /// A protocol role receives only its own connection's input. Any other connection feeds its
-  /// location's controller, but never a role: a family's non-role interface carries no controller
-  /// input. Only a role's HID key carries an interface number.
+  /// location's controller, or every port of an adapter there, but never a role: a family's
+  /// non-role interface carries no controller input. Only a role's HID key carries an interface
+  /// number.
   ///
   /// Routing is per connection, but ownership is not: a location's seize, its release to another
   /// client and its reacquisition act on every interface there, so seizing or releasing one role's
-  /// interface affects its sibling roles too.
-  /// role's interface affects its sibling roles too.
-  func hidPipelineKey(
+  /// interface affects its sibling roles too, and suspending one adapter port closes the handles
+  /// of every port.
+  func hidPipelineKeys(
     forInputFrom connectionID: UUID,
     address: ControllerConnectionAddress
-  ) -> LogicalControllerID? {
+  ) -> [LogicalControllerID] {
     if let identifier = hidRoleConnections[connectionID] {
-      return deviceInfos[identifier]?.hidConnectionID == connectionID ? identifier : nil
+      return deviceInfos[identifier]?.hidConnectionID == connectionID ? [identifier] : []
     }
-    return pipelines.keys.first { $0.address == address }
+    if let location = pipelines.keys.first(where: { $0.address == address }) { return [location] }
+    return pipelines.keys.filter { key in
+      key.address?.adapterPort != nil && key.hidRoutingAddress == address
+    }
+    .sorted()
   }
 
   /// Whether a HID controller's output must target its exact connection.

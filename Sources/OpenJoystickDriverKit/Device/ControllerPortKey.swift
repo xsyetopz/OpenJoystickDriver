@@ -7,8 +7,9 @@ import Foundation
 ///
 /// A port key is `U-` and an HMAC under the installation key, which the service loads from its
 /// private file `PortKeyInstallation.key` in the application data directory (see
-/// ``PortKeyInstallationStore``). The HMAC covers `vid:pid:locationID:interface`, or
-/// `vid:pid:BLE:identifier` for a Bluetooth LE peripheral. It stays the same across reconnects and
+/// ``PortKeyInstallationStore``). The HMAC covers `vid:pid:locationID:interface`,
+/// `vid:pid:locationID:Pport` for an adapter port, or `vid:pid:BLE:identifier` for a Bluetooth LE
+/// peripheral. It stays the same across reconnects and
 /// service restarts while the controller uses the same port, or is the same peripheral, and changes
 /// when it moves to another port. It never includes the serial number. A controller reached through
 /// a raw USB service with no location ID has no port key.
@@ -37,6 +38,8 @@ public struct ControllerPortKey: Hashable, Sendable {
     case .ioKit(let locationID, let interfaceNumber):
       let interface = interfaceNumber.map { unsafe String(format: "%02X", $0) } ?? "-"
       slot = unsafe String(format: "%08X:%@", locationID, interface)
+    case .adapterPort(let locationID, let port):
+      slot = unsafe String(format: "%08X:P%u", locationID, UInt32(port))
     case .gattPeripheral(let identifier):
       slot = "BLE:\(identifier.uuidString)"
     case .usbService, nil:
