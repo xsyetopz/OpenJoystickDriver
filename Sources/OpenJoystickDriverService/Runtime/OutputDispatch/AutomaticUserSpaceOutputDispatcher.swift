@@ -44,12 +44,13 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   private var suppressedOutput = false
   /// Whether remapping output is paused on the backends.
   private var remappingSuppressedOutput = false
-  /// The profile that each installed backend publishes, for ``status``.
-  private var diagnosticTargets: [LogicalControllerID: VirtualHIDProfileID] = [:]
-  /// The publication diagnostic line of each controller, for ``status``.
-  private var publicationDiagnostics: [String] = []
-  /// The publication state of each controller.
-  private var publicationStatuses: [LogicalControllerID: ApplicationServicePublicationStatus] = [:]
+  /// The coordinator's publication state at the last synchronization, for ``status``.
+  private var publication = AutomaticPublicationSnapshot()
+  /// The shortest time between two announcements that only move the send timings, so status
+  /// observers see current timings without refreshing for every input report.
+  private let timingAnnouncementIntervalNanoseconds: UInt64
+  /// When the last change was announced, in uptime nanoseconds; nil before the first.
+  private var lastAnnouncementNanoseconds: UInt64?
   /// Per-controller descriptions whose declared controls are fixed for the controller's binding.
   private var descriptionCache: [LogicalControllerID: ApplicationServiceDeviceDescription] = [:]
   /// Bumped by `controllerDidStop` so a description lookup in flight at that point cannot
@@ -81,6 +82,8 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   ///   - identityProvider: Returns the custom persona identity of a controller.
   ///   - identityBuilder: Builds the backend for a profile with a custom identity; defaults to
   ///     `builder`, which ignores the identity.
+  ///   - timingAnnouncementIntervalNanoseconds: The shortest time between two announcements that
+  ///     only move the send timings.
   init(
     deviceManager: DeviceManager,
     ownershipProvider: (@Sendable (LogicalControllerID) async -> ControllerOwnershipObservation)? =
@@ -99,9 +102,11 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       (
         @Sendable (VirtualHIDProfileID, VirtualPersona.Identity) throws ->
           any VirtualOutputDispatching
-      )? = nil
+      )? = nil,
+    timingAnnouncementIntervalNanoseconds: UInt64 = 1_000_000_000
   ) {
     self.deviceManager = deviceManager
+    self.timingAnnouncementIntervalNanoseconds = timingAnnouncementIntervalNanoseconds
     self.ownershipProvider =
       ownershipProvider ?? { identifier in await deviceManager.ownershipObservation(for: identifier)
       }
@@ -217,11 +222,10 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// The targets and publication state of the backends, as a status line.
   var status: VirtualOutputBackendStatus {
     stateLock.withLock {
-      let targets = Set(diagnosticTargets.values.map(\.rawValue)).sorted()
+      let targets = Set(publication.targets.values.map(\.rawValue)).sorted()
       let suffix = targets.isEmpty ? "" : ", targets: \(targets.joined(separator: "; "))"
-      let diagnostics =
-        publicationDiagnostics.isEmpty
-        ? "" : ", publication: \(publicationDiagnostics.joined(separator: "; "))"
+      let lines = publication.diagnosticLines
+      let diagnostics = lines.isEmpty ? "" : ", publication: \(lines.joined(separator: "; "))"
       let unavailable =
         unavailableControllers.isEmpty ? "" : ", unavailable: \(unavailableControllers.count)"
       return .backend("automatic\(suffix)\(diagnostics)\(unavailable)")
@@ -257,7 +261,6 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       await synchronizeDiagnostics()
       throw error
     }
-    await synchronizeDiagnostics()
   }
 
   /// Activation marks the start of a controller session, so it also begins a physical
@@ -364,20 +367,25 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   }
 
   /// Copies the coordinator state into the status and posts a change when it differs.
+  ///
+  /// A change to the send timings alone is posted at most once per
+  /// `timingAnnouncementIntervalNanoseconds`: each input report moves them, and every post makes
+  /// the app read the whole status again.
   private func synchronizeDiagnostics() async {
-    let targets = await coordinator.installedTargets()
-    let publication = await coordinator.publicationDiagnostics()
-    let statuses = await coordinator.publicationStatuses()
-    let changed = stateLock.withLock { () -> Bool in
-      let changed =
-        diagnosticTargets != targets || publicationDiagnostics != publication
-        || publicationStatuses != statuses
-      diagnosticTargets = targets
-      publicationDiagnostics = publication
-      publicationStatuses = statuses
-      return changed
+    let snapshot = await coordinator.publicationSnapshot()
+    let now = DispatchTime.now().uptimeNanoseconds
+    let announce = stateLock.withLock { () -> Bool in
+      defer { publication = snapshot }
+      if publication == snapshot { return false }
+      if publication.hasSameMeaning(as: snapshot), let last = lastAnnouncementNanoseconds,
+        now &- last < timingAnnouncementIntervalNanoseconds
+      {
+        return false
+      }
+      lastAnnouncementNanoseconds = now
+      return true
     }
-    if changed { NotificationCenter.postServiceStatusChanged(from: self) }
+    if announce { NotificationCenter.postServiceStatusChanged(from: self) }
   }
 
   /// The controller's selected profile; nil when no virtual profile can represent its declared
@@ -465,7 +473,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   func publicationStatus(
     for identifier: LogicalControllerID
   ) -> ApplicationServicePublicationStatus? {
-    stateLock.withLock { publicationStatuses[identifier] }
+    stateLock.withLock { publication.statuses[identifier] }
   }
 
   /// The values the virtual gamepad of a controller last reported.

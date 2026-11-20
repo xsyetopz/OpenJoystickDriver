@@ -117,21 +117,39 @@ extension AutomaticDispatcherCoordinator {
 
   /// Returns one sorted status line per controller that has a target.
   func publicationDiagnostics() -> [String] {
+    publicationDiagnosticEntries().map(\.line).sorted()
+  }
+
+  /// Returns the targets, diagnostics and statuses together, so a delivery reads them in one hop.
+  func publicationSnapshot() -> AutomaticPublicationSnapshot {
+    AutomaticPublicationSnapshot(
+      targets: installedTargets(),
+      diagnostics: publicationDiagnosticEntries(),
+      statuses: publicationStatuses()
+    )
+  }
+
+  /// Returns the diagnostic of each controller that has a target, unsorted.
+  private func publicationDiagnosticEntries() -> [AutomaticPublicationDiagnostic] {
     entries.compactMap { identifier, entry in
       guard let target = entry.target ?? entry.context?.target else { return nil }
-      let attempted = entry.lastAttemptedSend.map(String.init) ?? "none"
-      let completed = entry.lastCompletedSend.map(String.init) ?? "none"
       // The entry outlives a stopped session so a later session gets newer generations.
       let result =
         !entry.physicalSessionActive
         ? "status=ended"
         : entry.lastFailure.map { "failure=\($0)" }
           ?? "status=\(entry.installed?.backend.status.wireValue ?? "none")"
-      return "controller=\(identifier), session=\(entry.sessionGeneration), "
-        + "publication=\(entry.publicationGeneration), target=\(target.rawValue), "
-        + "last-attempted=\(attempted), last-completed=\(completed), "
-        + "\(result), recovery=\(entry.recoveryState)"
-    }.sorted()
+      return AutomaticPublicationDiagnostic(
+        controller: identifier,
+        sessionGeneration: entry.sessionGeneration,
+        publicationGeneration: entry.publicationGeneration,
+        target: target,
+        result: result,
+        recoveryState: entry.recoveryState,
+        lastAttempted: entry.lastAttemptedSend,
+        lastCompleted: entry.lastCompletedSend
+      )
+    }
   }
 
   /// The installed backend of `identifier`; nil when it publishes no virtual gamepad.

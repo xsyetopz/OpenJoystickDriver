@@ -23,7 +23,13 @@ final class AutomaticBackendProbe: VirtualOutputDispatching, ControllerLifecycle
     if failsActivation { throw ActivationFailure() }
   }
 
+  private let dispatchLock = NSLock()
+  private var dispatchCount = 0
+  /// How many input events reached the probe.
+  var dispatched: Int { dispatchLock.withLock { dispatchCount } }
+
   func dispatch(_: ControllerEvent, from _: LogicalControllerID) {
+    dispatchLock.withLock { dispatchCount += 1 }
   }
   func activateOutput(for _: LogicalControllerID) {}
 
