@@ -53,8 +53,10 @@
             !problem.isActionEnabled
           ).help(OJDLocalized.string(action.helpKey))
         }
-      }.padding(.horizontal, 12).padding(.vertical, 8).accessibilityElement(children: .combine)
-        .ojdAccessibilityLabel(title).ojdAccessibilityValue(detail)
+      }.padding(.horizontal, 12).padding(.vertical, 8)
+        // `.contain` keeps the button a separate element named by its visible title; `.combine`
+        // would fold it into the row and give it the row's title as its name.
+        .accessibilityElement(children: .contain).ojdAccessibilityLabel(title)
     }
 
     /// Returns the service's own message for a service problem, else the localized detail.
