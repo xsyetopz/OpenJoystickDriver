@@ -227,15 +227,18 @@ extension DeviceManager {
     guard pipelines[key] === pipeline,
       isCurrentHIDStartupConnection(pipeline, connection: connection)
     else { return }
-    _ = await sendHIDWrites(
-      connectionWrites,
-      address: address,
-      identifier: key,
-      pipeline: pipeline,
-      startupConnection: connection
-    )
+    // Most reports produce no writes; those skip the output queue, which they would only wait on.
+    if !connectionWrites.isEmpty {
+      _ = await sendHIDWrites(
+        connectionWrites,
+        address: address,
+        identifier: key,
+        pipeline: pipeline,
+        startupConnection: connection
+      )
+    }
     // A controller OJD serves holds the slot it was admitted with; one macOS serves claims it here.
-    guard await pipeline.takeStartupPlayerIndicatorDue(), pipelines[key] === pipeline,
+    guard pipeline.takeStartupPlayerIndicatorDue(), pipelines[key] === pipeline,
       let indicator = pipeline.startupPlayerIndicator ?? claimStartupPlayerSlot(for: key)
     else { return }
     let result = await sendControllerOutput(.setPlayerIndicator(indicator), toConnected: key)

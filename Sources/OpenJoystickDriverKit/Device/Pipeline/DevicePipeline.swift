@@ -260,7 +260,10 @@ actor DevicePipeline {
   }
   /// Whether the startup player indicator still waits for the first input report: on a
   /// controller macOS serves, and on one whose plan has `hidPlayerIndicatorFollowsFirstInput`.
-  var startupPlayerIndicatorPending: Bool
+  ///
+  /// It is set once and cleared once, and the manager reads it after every input report, so it
+  /// sits behind a lock that the manager reads without waiting on the pipeline.
+  nonisolated let startupPlayerIndicatorPending: Locked<Bool>
   /// The player slot the manager assigned, written with the startup writes; nil sets none.
   let startupPlayerIndicator: PhysicalPlayerIndicator?
 
@@ -311,9 +314,10 @@ actor DevicePipeline {
     self.sessionState = sessionState
     let tunedPlan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
     self.plan = tunedPlan
-    self.startupPlayerIndicatorPending =
+    self.startupPlayerIndicatorPending = Locked(
       macOSOwnedOutput?.setsStartupPlayerIndicator == true
-      || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)
+        || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)
+    )
     self.inputConnectionActive = !tunedPlan.requiresInputConnectionBeforeOutput
     self.packetLog = PacketLogBuffer(
       maxEntries: maxPacketLogEntries,

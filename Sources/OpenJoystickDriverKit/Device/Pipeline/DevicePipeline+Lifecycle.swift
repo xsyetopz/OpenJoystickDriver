@@ -121,10 +121,11 @@ extension DevicePipeline {
   ///
   /// The caller asks after an input report, because a USB Sixaxis ignores the LED report until it
   /// streams input.
-  func takeStartupPlayerIndicatorDue() -> Bool {
-    guard startupPlayerIndicatorPending else { return false }
-    startupPlayerIndicatorPending = false
-    return true
+  nonisolated func takeStartupPlayerIndicatorDue() -> Bool {
+    startupPlayerIndicatorPending.withLock { pending in
+      defer { pending = false }
+      return pending
+    }
   }
 
   /// The driver's session plan with the bound record's tuning applied.
