@@ -56,7 +56,7 @@ ojd status
 
 The request listener is the part of the service that accepts requests. When it stops on a fatal error, the service keeps running and writes a record beside its socket: `<socket path>.failure.json`. The record names the writing process and its start time.
 
-- The service cannot be reached and the process in the record still runs: `ojd status` prints its report and fails with `E2034` (exit code 69). The `Request listener` row shows the code, its text, the error number, and the time. With `--json`, `service.listenerFailure` holds `code`, `errno`, `time`, `message`, and `current`. With `--plain`, the row is `listener-failure`.
+- The service can't be reached, but the process in the record still runs: `ojd status` prints its report, then fails with `E2034` (exit code 69). The `Request listener` row shows the code, its text, the error number, and the time. With `--json`, `service.listenerFailure` holds `code`, `errno`, `time`, `message`, and `current`. With `--plain`, the row is `listener-failure`.
 - The process in the record has ended: the report says that the last listener stopped, `current` is `false`, and the exit code is 0.
 - `ojd` cannot use the record (damaged, another version or kind, too large, or not your file): exit code 1 with `E2035`. `--json` adds `service.listenerFailureProblem` and `--plain` a `listener-failure-problem` row, with the file and the reason.
 
@@ -64,7 +64,15 @@ The app shows `E2034` at once with a **Restart Listener** action, and deletes th
 
 `ojd status` prints an Input mapping row for each HID controller and unbound device, as `controller show` does. `--plain` prints an `input-mapping` line after each.
 
-Keys that need the service are absent when it is stopped. `commandLineTool.state` is `Installed` (a link to this app's executable), `LinkedElsewhere`, `Broken` (target gone), `BlockedByFile` (a file or folder that is not a link, which the app never replaces), or `Missing`. Files in a `Personas` folder beside `VirtualDevices` are listed as skipped. Move them to `VirtualDevices`.
+Keys that need the service are absent when it is stopped. `commandLineTool.state` is one of:
+
+- `Installed`: a link to this app's executable.
+- `LinkedElsewhere`: a link to another file that exists, such as another copy of the app.
+- `Broken`: the link's target is gone.
+- `BlockedByFile`: a file or folder that isn't a link. The app never replaces it.
+- `Missing`: no link and no file.
+
+Files in a `Personas` folder beside `VirtualDevices` are listed as skipped. Move them to `VirtualDevices`.
 
 With `--plain`, the first field of each line is `service`, `extension`, `command-line-tool`, `permission`, `virtual-device`, `controller`, `unbound`, `pass-through`, `skipped-record`, `ignored-defaults`, or `skipped-virtual-device`.
 
@@ -105,36 +113,39 @@ When the controller does not deliver a result, the command prints no JSON, exits
 ### controller list
 
 - Each line shows the unit ID after the ID. With `--json`, `unit` holds it. With `--plain`, it follows the name.
-- With `--plain`, fields after the unit ID are `owned-by-another-client`, the process ID and name of the app that uses the controller directly, the battery level and charging state, and `also-listed-by-system`, each empty when unknown.
+- With `--plain`, these fields follow the unit ID, each empty when unknown: `owned-by-another-client`, the process ID and name of the app using the controller directly, the battery level, the charging state, and `also-listed-by-system`.
 - `also-listed-by-system` (`alsoListedBySystem` with `--json`) marks a controller that the system also lists as a second controller with no input. Pick the [virtual gamepad](Glossary.md#terms) of OpenJoystickDriver in games.
-- `waits-for-guide-press` (`waitsForGuidePress` with `--json`) marks a controller that sent no input since it connected and waits for its home button, such as the PS button of a DualShock 3 over USB. `controller show` gives the input failure reason `guide-not-pressed` (`GuideNotPressed`).
+- `waits-for-guide-press` (`waitsForGuidePress` with `--json`) marks a controller that has sent nothing since it connected. It waits for its home button, such as the PS button of a DualShock 3 over USB. `controller show` gives the input failure reason `guide-not-pressed` (`GuideNotPressed`).
 
 ### controller show
 
 Show the unit ID, identity, ownership, capabilities, effective record, and virtual gamepad of one controller.
 
-- Record: bundled or yours, with the file name. Records are read from disk when you run the command, so a controller that connected before a record change can keep the older one until it reconnects. With `--json`, `record` is absent when no record matches the model, as for a generic HID controller.
-- Ownership: `ownership.server` is `system` or `ojd`. `serverSource` is the layer that sets it (`Bundled`, `Package`, `User`), or `Default`. A controller that macOS cannot handle, such as one that OJD reads over raw USB, shows `ojd` with `Route`, because it is always [Handled by OpenJoystickDriver](Glossary.md#terms).
+- Record: bundled or yours, with the file name. The command reads records from disk when you run it. A controller that connected before a record changed can keep the older record until it reconnects. With `--json`, `record` is absent when no record matches the model, as for a generic HID controller.
+- Ownership: `ownership.server` is `system` or `ojd`. `serverSource` is the layer that sets it (`Bundled`, `Package`, `User`), or `Default`. A controller that macOS can't handle, such as one OJD reads over raw USB, shows `ojd` with `Route`. It is always [Handled by OpenJoystickDriver](Glossary.md#terms).
 - Opened by: every process that holds the controller's HID device or USB interfaces open, with its process ID. A Who can use it line appears while only OpenJoystickDriver can use the controller. The Next step line names `ojd controller suspend`, or `ojd controller resume` while suspended. With `--plain`, a `holder` line follows `ownership` for each holder, then `holds-exclusively`.
 - Input mapping: where a HID controller's mapping comes from: `record`, "mapped from SDL_GameControllerDB" (with match tier and GUID), or "standard HID usage map". A rejected database line adds its reason. The Unmapped controls row lists database fields OJD cannot express. See [Mapping source](Supported-Controllers.md#mapping-source).
 - Battery: the level, such as `73%`, or a range such as `0-9%` when the controller reports steps, and the charging state. `power` is absent when the service reports no power state. `--plain` prints a `power` line with the charging state, level, and `wiredPower`.
-- Wii Remote: Report mode (a hex byte such as `0x31`), Extension (the plugged extension, or the six ID bytes of an unknown one), and Motion Plus (off, calibrating, or ready). The app shows the same rows. `--plain` has `report-mode`, `extension`, `unknown-extension-id`, and `motion-plus` lines.
+- Wii Remote:
+  - Report mode: a hex byte such as `0x31`.
+  - Extension: the plugged-in extension, or the six ID bytes of an unknown one.
+  - Motion Plus: off, calibrating, or ready. The app shows the same rows. `--plain` has `report-mode`, `extension`, `unknown-extension-id`, and `motion-plus` lines.
 - The `protocol`, `controls`, `rumble-motors`, and `lighting` lines print lowercase kebab-case values, such as `xbox-gip` and `left-stick-x`. A binding with a variant adds `:` and the variant, such as `xbox-xusb:receiver`.
 - Shown to games: whether games see a virtual gamepad for the controller, and if not, why. For a controller that is [handled by macOS](Glossary.md#terms), the reason is `system-gamepad`. With `--json`, `publication.state` is `Published`, `NotPublished`, or `Failed`, and `reason` is one of `OutputDisabled`, `SystemGamepad`, `NativeHIDPassThrough`, `UpstreamVirtualDevice`, `SessionSuspended`, `NoVirtualProfile`, `Suppressed`, or `NoInputYet`.
 - Tuning: the record's tuning values as applied, such as `stickDeadzone=0.2`. Absent when the record sets none.
-- Output owner: with `--json`, `capabilities.outputOwner` is `system` (macOS handles the controller, so the rumble and lighting lists hold only what macOS leaves undone) or `ojd` (OJD drives all output). The human line appears only for `system`. The Output checks section lists commands that exercise each rumble motor and light.
-- A `VVVV:PPPP` of a connected device that OJD does not handle prints why, the next step, a Draft a record row with `ojd record draft VVVV:PPPP` (for a HID gamepad), and a Capture packets row (for `no-protocol-match`). A controller that OJD handles under the same VID:PID is shown instead. The capture command does not resolve such a device. The app's Controllers list shows the same and offers Draft Record for a HID gamepad.
+- Output owner: with `--json`, `capabilities.outputOwner` is `system` or `ojd`. `system` means macOS handles the controller, so the rumble and lighting lists hold only what macOS leaves undone. `ojd` means OJD drives all output. The human line appears only for `system`. The Output checks section lists commands that exercise each rumble motor and light.
+- For a connected `VVVV:PPPP` that OJD doesn't handle, it prints why and the next step. A HID gamepad also gets a Draft a record row with `ojd record draft VVVV:PPPP`. A `no-protocol-match` device gets a Capture packets row. A controller that OJD handles under the same VID:PID is shown instead. The capture command does not resolve such a device. The app's Controllers list shows the same and offers Draft Record for a HID gamepad.
 
 ### Other controller commands
 
-- `controller lookup`: Print the address that Lookup in the app opens: the [Supported Controllers](Supported-Controllers.md) page for a model with a record, or a GitHub issue search for its `VVVV:PPPP`. `CONTROLLER` may be the `VVVV:PPPP` of a model that is not connected, and the command then needs no service. With `--json`, the `ControllerLookup` object has `identity`, `hasRecord`, and `url`. `--plain` prints the identity and address.
+- `controller lookup`: Print the address that Lookup in the app opens. A model with a record gets the [Supported Controllers](Supported-Controllers.md) page. Any other gets a GitHub issue search for its `VVVV:PPPP`. `CONTROLLER` may be the `VVVV:PPPP` of a model that is not connected, and the command then needs no service. With `--json`, the `ControllerLookup` object has `identity`, `hasRecord`, and `url`. `--plain` prints the identity and address.
 - `controller watch`: Print the input state each time it changes, until Control-C. Stick Y points down.
   - `--duration` stops after that many seconds.
   - `--first-press` prints the first control pressed and exits. It fails when `--duration` passes first.
   - `--output` also prints what the virtual gamepad sends after remapping, on an `out` line (`out none` when none publishes the controller).
   - `--all` watches every controller, naming each by its `ojd controller list` ID. Other lines report each controller that connects or disconnects, starting with those already connected. With `--json`, each line has `type` (`ADDED`, `MODIFIED`, or `DELETED`) and `object`.
 - `controller check`: Ask for each control that the controller declares, one at a time, on standard error, and print one result per control.
-  - A step ends when the control leaves rest, when another control moves first (`OtherControl`, naming it), or when `--duration` seconds (15 by default) pass without a move (`Skipped`).
+  - A step ends in one of three ways: the control leaves rest; another control moves first (`OtherControl`, naming it); or `--duration` seconds (15 by default) pass with no move (`Skipped`).
   - A stick or trigger ends its step when it returns to rest. A control held when its step starts counts only after you release it.
   - `--validate`, after a check in which every control responded, prints the validation text and the address of the prefilled `controller-validation.yml` form. The text holds no serial number, unit ID, Bluetooth address, user name, or path. It opens the address only after you type `y`, never without a terminal. After any other result it prints a notice and offers nothing.
 - `controller capture`: Print the raw packets that the controller sends and receives, each with time, direction, length, and hex bytes. It runs until Control-C or `--duration` seconds. With `--json`, it prints one `RawReport` per line, with the direction `Rx` or `Tx`.
@@ -152,8 +163,8 @@ Show the unit ID, identity, ownership, capabilities, effective record, and virtu
   - Each sets `server` in your record for the model (`vvvv-pppp.plist` or `vvvv-pppp.patch.plist`) and keeps other fields. It creates a `ControllerPatch` file when you have none and a bundled or package record exists.
   - It needs the service running. The choice applies to every controller of the model, and the running service applies it without a replug.
   - Apple's driver holds three models: `045E:02EA`, `045E:0B00`, and `045E:0B12`. For these, `claim` sends the activation request of the Xbox USB driver, as `transport-extension activate` does, and writes no record. `release` fails for them.
-  - `--dry-run` (`-n`) writes nothing. It exits with code 1 and `E2023` when the controller uses raw USB, when macOS cannot handle the controller, or when the model has no record at all (`ojd record draft` starts one).
-  - `controller show` names the choice, its layer, the route, and the [virtual gamepad kind](Glossary.md#terms) that the serving policy decides, on the `serving-route` and `served-by` lines (`macos` for a model that Apple's driver holds).
+  - `--dry-run` (`-n`) writes nothing. It exits with code 1 and `E2023` when the controller uses raw USB or macOS can't handle it. It does the same when the model has no record at all; `ojd record draft` starts one.
+  - `controller show` prints the choice on its `serving-route` and `served-by` lines. They name its layer, the route, and the [virtual gamepad kind](Glossary.md#terms) the serving policy picks. A model that Apple's driver holds shows `macos`.
   - See [Choose who drives the controller](Controller-Records.md#choose-who-drives-the-controller).
 - `controller suspend`: Stop OpenJoystickDriver from driving the controller until you resume it. It closes its handles, so another program can open the controller.
 - `controller resume`: Let OpenJoystickDriver drive a suspended controller again.
@@ -165,7 +176,7 @@ Show the unit ID, identity, ownership, capabilities, effective record, and virtu
     - `circle`: Roll each stick around its full circle. Stores the stick ranges.
     - `triggers`: Press each trigger all the way in. Stores the trigger ends.
     - `gyro`: Keep the controller still. Stores the mean gyro reading as the offset in radians per second. A controller with no gyro skips it.
-  - The values go into your record of the model (it needs one; see [Controller records](Controller-Records.md)) as tuning keys beside `stickDeadzone`: `leftStickCenterX`, `leftStickCenterY`, `rightStickCenterX`, `rightStickCenterY`, `leftStickRange`, `rightStickRange`, `leftTriggerRest`, `leftTriggerFull`, `rightTriggerRest`, `rightTriggerFull`, `gyroOffsetX`, `gyroOffsetY`, and `gyroOffsetZ`. OJD applies them to input and motion samples before profile mapping. A control that does not move enough keeps its stored value, and the output names it.
+  - The values go into your record of the model as tuning keys beside `stickDeadzone`. The model needs a record; see [Controller records](Controller-Records.md). The keys are `leftStickCenterX`, `leftStickCenterY`, `rightStickCenterX`, `rightStickCenterY`, `leftStickRange`, `rightStickRange`, `leftTriggerRest`, `leftTriggerFull`, `rightTriggerRest`, `rightTriggerFull`, `gyroOffsetX`, `gyroOffsetY`, and `gyroOffsetZ`. OJD applies them to input and motion samples before profile mapping. A control that does not move enough keeps its stored value, and the output names it.
   - `reset` removes those keys and the motion calibration.
 - `controller pair`: Combine a left and a right Joy-Con into one controller that uses `PROFILE`, which must be a paired Joy-Con [profile](Glossary.md#terms). See [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md). Joy-Con pairing is untested on real hardware.
 - `controller unpair`: Separate a Joy-Con pair. `PAIR` is the session ID that `controller pair` prints, or the ID of either Joy-Con.
@@ -217,7 +228,7 @@ ojd profile convert PROFILE --controller CONTROLLER [--name NAME]
 - `profile rename`: Give a profile a name of 1 to 80 characters.
 - `profile delete`: Delete a profile. An active profile stops applying. Asks first on a terminal.
 - `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope.
-  - A profile with the virtual gamepad set to `mapped` can produce no output when it sends nothing to the gamepad, keyboard, pointer, or controller and sets no light color. Add `--allow-empty` to activate it.
+  - A profile with the virtual gamepad set to `mapped` can end up doing nothing. That happens when it sends nothing to the gamepad, keyboard, pointer, or controller, and sets no light color. Add `--allow-empty` to activate it.
   - A profile with `OpenApplication`, `OpenURL`, `RunShortcut`, or `TypeText` destinations fails until you add `--confirm-actions`. The error lists each action, with each URL in full.
   - When Post Event access is missing for the profile, the missing permission is printed on stderr.
 - `profile deactivate`: Stop applying a profile. The controller then sends its own input.
@@ -235,7 +246,7 @@ ojd profile convert PROFILE --controller CONTROLLER [--name NAME]
 - `profile convert`: Copy a profile for another controller model, inactive. The original does not change.
   - `--controller` is the target model as `VVVV:PPPP`, or the ID of a connected controller.
   - The copy applies to the whole model, so the unit of the original is dropped. It is named `NAME`, or the profile name followed by the model.
-  - It keeps each binding, chord, sequence, layer, and stick, trigger, and touch mapping whose source controls the target has, and prints one line per part it leaves out. It also leaves out gyro output, pointer speed, and Joy-Con pair settings that the target cannot take.
+  - It keeps each binding, chord, sequence, layer, and stick, trigger, and touch mapping whose source controls the target has. It prints one line for each part it leaves out. It also leaves out gyro output, pointer speed, and Joy-Con pair settings that the target cannot take.
 
 Errors: a file that is not a valid profile exits with code 1 and `E3008`. A file with a missing or unsupported `apiVersion` exits with code 1 and `E5001`. `import`, `validate`, `edit`, and `set` all give these.
 
@@ -285,7 +296,7 @@ A `macro` or `layer` name is matched without regard to case. A name the profile 
     - Response curve: `linear` (default), `ease-in`, `ease-out`, or `smooth-step`.
     - Digital threshold: the travel that counts as a press for button targets, default 0.5.
   - `--turbo-rate` and `--turbo-duty`: Repeat the target this many times a second while you hold the source. The duty is the part of each cycle that the target is held, above 0 and below 1. Turbo cannot be used with `--long-hold` or `--multi-tap`.
-  - `--turbo-delay MS` and `--turbo-max COUNT`: Wait MS (0 to 2500) after the first press before the first repeat, and stop after COUNT repeats (1 to 500) until you release the source. Both need `--turbo-rate` and `--turbo-duty`.
+  - `--turbo-delay MS` and `--turbo-max COUNT`: Wait MS (0 to 2500) after the first press before repeating. Stop after COUNT repeats (1 to 500), until you release the source. Both need `--turbo-rate` and `--turbo-duty`.
   - `--long-hold MS:TARGET`: Send another target when the source is held this long, such as `500:key:key-b`.
   - `--multi-tap COUNT:MS:TARGET`: Send another target when you tap the source COUNT times, such as `3:300:key:key-c`. COUNT is 2 to 5. Each press must come within MS (50 to 1000) of the last release. Repeat the option for more counts. The base target waits for the longest window, which `ojd binding list` shows as `tap-delay`.
   - `--actions-json`: More actions, as a JSON array in the form that `ojd profile export` writes.
@@ -293,7 +304,7 @@ A `macro` or `layer` name is matched without regard to case. A name the profile 
   - `--all` removes every binding, chord, sequence, and layer. Stick, trigger, touch, motion, and output settings stay.
   - `--all` asks first on a terminal. Otherwise it needs `--force`.
   - `--dry-run` (`-n`) prints what would change and changes nothing.
-  - When the result leaves an active profile on a connected controller with no inputs while OJD seizes the physical input, it warns on stderr, naming `ojd binding set` and `ojd profile deactivate`. The exit code is still 0.
+  - The result can leave an active profile on a connected controller with no inputs while OJD seizes the physical input. Then it warns on stderr and names `ojd binding set` and `ojd profile deactivate`. The exit code is still 0.
 
 ## macro
 
@@ -358,8 +369,8 @@ ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
   - Buttons, D-pad directions, and stick axes take the names of the `button:`, `dpad:`, and `axis:` binding sources. The triggers are the axes `LeftTrigger` and `RightTrigger`. A missing control is neutral.
   - Sticks run from -1 to 1 with Y down. Triggers run from 0 to 1.
   - Frames play in order, each for at least 8 ms. `holdMilliseconds` (0 to 60000) keeps one longer.
-  - A frame without `holdMilliseconds` that has the same buttons and D-pad as the last queued frame takes its place, so a fast stream of stick or trigger moves does not build a queue. A press or release always plays.
-  - Each rumble command that a game sends prints as one `RumbleCommand` object per line, with `type` `SetRumble` or `StopRumble`, as soon as the service receives it, also while no input arrives. Commands print in the order the game sent them.
+  - A frame without `holdMilliseconds` replaces the last queued frame when both have the same buttons and D-pad. So a fast stream of stick or trigger moves doesn't pile up. A press or release always plays.
+  - Each rumble command a game sends prints as one `RumbleCommand` object per line, with `type` `SetRumble` or `StopRumble`. It prints as soon as the service gets it, even while no input arrives. Commands print in the order the game sent them.
   - The service removes the gamepad when the input ends, on Control-C, or after 2 seconds with no update.
   - A line that is not a frame, such as one with an unknown key or a button listed twice, exits with code 64.
   - The service runs at most 4 feeds from this command. Endpoint clients have 4 more.
@@ -387,13 +398,16 @@ ojd record test VVVV:PPPP --packets CAPTURE --expect STATE
 
 `FILE` is a record file, or `-` for stdin. A command that asks first on a terminal needs `--force` otherwise.
 
-- `record draft`: Draft a record for a connected controller. It reads the HID report descriptor, captures input reports for `--duration` seconds (10 by default) while you press each control, and prints a record to start from.
+- `record draft`: Draft a record for a connected controller. It reads the HID report descriptor. Then it captures input reports for `--duration` seconds (10 by default) while you press each control. Last, it prints a record to start from.
   - The record is a `Controller` for a model without a bundled record, otherwise a `ControllerPatch`.
   - It maps the buttons, sticks, triggers, and hat that the descriptor states plainly, with the `HIDReportLayout` family. When nothing maps, it names `HIDDescriptor`. With a bundled record and nothing mapped, it exits with code 1.
   - It lists each report byte that changed during the capture on stderr, with its lowest and highest value (`--plain`: one line per byte).
   - A `VVVV:PPPP` of a connected controller that OJD does not handle captures nothing and drafts from the USB interfaces. A HID gamepad interface gets a `HIDDescriptor` mode (a patch when a bundled record holds the model). A device with only vendor-class interfaces gets one `HIDReportLayout` mode per interface signature, with a note that the `input` section is missing.
   - `E2012`: the controller is not connected.
-  - `--from-sdl` captures nothing. It converts the SDL_GameControllerDB line of the connected controller against its HID elements and prints a `Controller` record with the `HIDDescriptor` family and that `hidUsageMap`. It fails with `E2012` (exit 1) when the database has no line, with `E5008` and the reason (exit 1) when the line does not convert, and with `E2013` (exit 1) when the model has a bundled record, the controller cannot be read, or its descriptor fails the `HIDDescriptor` contract.
+  - `--from-sdl` captures nothing. It converts the SDL_GameControllerDB line of the connected controller against its HID elements and prints a `Controller` record with the `HIDDescriptor` family and that `hidUsageMap`. It exits 1 with one of these errors:
+    - `E2012`: the database has no line.
+    - `E5008` and the reason: the line doesn't convert.
+    - `E2013`: the model has a bundled record, the controller can't be read, or its descriptor fails the `HIDDescriptor` contract.
 - `record list`: List every controller record with its model, protocol family, layer (`Bundled`, `Package`, or `User` with `--json`), and file. On stderr it names each of your files that was skipped and each package record that is ignored, and why. `--bundled` lists the bundled records alone.
 - `record show`: Show the effective record of one model and the layer of each top-level field. It exits with code 1 when no record exists. The human output adds a Community verified line, with the validation issue address, for each mode that has a validation.
 - `record validate`: Check a record without installing it. It shows the kind (`Controller` or `ControllerPatch`), model, family, file name, and whether the Xbox USB driver can claim the controller. It exits with code 1 when the record is not valid.
@@ -403,7 +417,7 @@ ojd record test VVVV:PPPP --packets CAPTURE --expect STATE
   - `CAPTURE` is a file of the lines that `ojd controller capture --json` prints, one packet per line. Only received packets count.
   - `STATE` is a JSON file in the shape of one line of `ojd controller watch --json`. The `connection` field is not compared.
   - A match exits with code 0. A mismatch prints each differing field with its expected and parsed value and exits with code 1 and `E2022`.
-  - `E2011` (exit 1): the capture or state is not valid, no report carries input, the parser rejects a report, or the record has no device-free parser.
+  - `E2011` (exit 1): the capture or state isn't valid, or no report carries input. It also covers a parser that rejects a report and a record with no device-free parser.
   - A file that cannot be read exits with code 64.
 
 ## mod
@@ -417,7 +431,7 @@ ojd mod list
 ojd mod remove NAME [--force] [--dry-run]
 ```
 
-- `mod validate`: Check a package folder without installing it: the manifest, whether `requires` includes this version, the listed files, and clashes with your files and other packages. A refused package exits with code 1 and its `E4xxx` or `E5001` code.
+- `mod validate`: Check a package folder without installing it. It checks the manifest, whether `requires` includes this version, the listed files, and clashes with your files and other packages. A refused package exits with code 1 and its `E4xxx` or `E5001` code.
 - `mod install`: Check the package and install it to `Packages/NAME` in the OpenJoystickDriver folder. The running service applies it. A package of the same name is refused with `E4005` unless you pass `--force`. `--force` never overrides `requires`, a clash, or an invalid file. `--dry-run` (`-n`) writes nothing.
 - `mod list`: List each installed package with its version, author, and files. A package that OpenJoystickDriver does not use, such as one whose `requires` leaves out this version, shows the reason and its code.
 - `mod remove`: Delete one installed package. Asks first on a terminal, otherwise needs `--force`. `--dry-run` (`-n`) changes nothing. Not installed: code 1 and `E4006`.
@@ -518,10 +532,10 @@ The true or false keys, with their defaults:
 The keys below are not in `setting list`. For each, `get` prints the text, and with `--json` the `value` is that text. Invalid text fails with `E2003` and exit status 64 and changes nothing.
 
 - `interfaceLevel`: `Simple` (default) or `Advanced`. The **Interface** picker and the **View** menu call `Advanced` **All Controls**. `ojd migrate` writes `Advanced` into a `Settings.plist` that it converts from an earlier version.
-- `idleDisconnectMinutes`: minutes without input change after which the service disconnects a classic Bluetooth controller, as **Disconnect** in the menu does. A whole number from 1 to 480, or `off` (the fresh-install value). A Bluetooth Low Energy controller never disconnects, nor does one on a cable or a receiver, because macOS keeps a Bluetooth Low Energy link up when an app asks to close it. The service applies it within 30 seconds.
+- `idleDisconnectMinutes`: minutes without input change after which the service disconnects a classic Bluetooth controller, as **Disconnect** in the menu does. A whole number from 1 to 480, or `off` (the fresh-install value). A Bluetooth Low Energy controller never disconnects, because macOS keeps that link up when an app asks to close it. A controller on a cable or a receiver never disconnects either. The service applies it within 30 seconds.
 - `pauseShortcut`: the system-wide shortcut that pauses and resumes every controller. Modifiers and a key joined by `+`, such as `Control+Option+P`, or `none` (the fresh-install value). Modifiers are `Command`, `Control`, `Option`, and `Shift`. Use each once, and at least one that is not `Shift`. Keys are `A` to `Z`, `0` to `9`, `F1` to `F12`, or `Space`. Case does not matter. It works while another app is in front and needs no permission. When another app owns the combination, **Settings** shows an error.
 
-Settings live in `~/Library/Application Support/OpenJoystickDriver/Settings.plist`. A setting that the file leaves out takes its built-in default. `setting set` writes the file. A file with an unsupported `apiVersion` is refused with `E5001`. A damaged file is refused too, and so is one that turns off both `showInMenuBar` and `showInDock`, such as `{"showInMenuBar": false}` (because `showInDock` is off by default).
+Settings live in `~/Library/Application Support/OpenJoystickDriver/Settings.plist`. A setting that the file leaves out takes its built-in default. `setting set` writes the file. A file with an unsupported `apiVersion` is refused with `E5001`. It also refuses a damaged file, and one that turns off both `showInMenuBar` and `showInDock`. `{"showInMenuBar": false}` is one, because `showInDock` is off by default.
 
 - `setting get` prints `true` or `false` alone.
 - `setting reset` moves `Settings.plist` to the Trash, returning every setting to its default. It asks for confirmation unless you pass `--force`. It needs no service and changes nothing when there is no file. With `--json`, it prints a `Status` with `file` and `moved` in `details`.
@@ -546,17 +560,17 @@ ojd config unset KEY [--controller VVVV:PPPP]
 It works without the service, which adds only the profile rows.
 
 - Without `--controller`, it shows `Controllers/all.patch.plist` against the driver defaults. It marks each key with the protocol families whose drivers read it, such as `read by: SonyDualShock4, SonySixaxis` for `inputLivenessTimeoutMs`.
-- With the service running and a controller connected, a key in `all.patch.plist` that no connected controller reads prints one warning on stderr, and `--json` and `--plain` leave it out of stdout. When the service is stopped or no controller is connected, one note on stderr says the check was skipped.
-- With `--controller`, it shows the record for that model. Each value comes from `driver`, `global`, `bundled`, or `user`. When the service runs and a profile is active for the model, it adds one `profile` row per stick mapping, using the key name of `profile get`, such as `stickMappings.0.tuning.innerDeadzone`. A profile value calibrates that mapping and does not replace the record's `stickDeadzone`. See [Set a Default for Every Controller](Controller-Records.md#set-a-default-for-every-controller).
+- With the service running and a controller connected, a key in `all.patch.plist` that no connected controller reads prints one warning on stderr. `--json` and `--plain` leave it out of stdout. When the service is stopped or no controller is connected, one note on stderr says the check was skipped.
+- With `--controller`, it shows the record for that model. Each value comes from `driver`, `global`, `bundled`, or `user`. When the service runs and a profile is active for the model, it adds one `profile` row per stick mapping. The row uses the key name from `profile get`, such as `stickMappings.0.tuning.innerDeadzone`. A profile value calibrates that mapping and does not replace the record's `stickDeadzone`. See [Set a Default for Every Controller](Controller-Records.md#set-a-default-for-every-controller).
 - `--plain` prints `key`, `value`, and `layer` per line, plus the families joined by commas without `--controller`.
 
 ### config set and config unset
 
 They use the same Swift record writer as the app.
 
-- With `--controller`, `set` writes the key to your Controller file for that model, or else to the ControllerPatch file `vvvv-pppp.patch.plist`, which patches the bundled record or an installed package's record. Without it, `set` writes `Controllers/all.patch.plist`, which applies to every controller.
+- With `--controller`, `set` writes the key to your Controller file for that model. Without one, it writes to the ControllerPatch file `vvvv-pppp.patch.plist`, which patches the bundled record or an installed package's record. Without it, `set` writes `Controllers/all.patch.plist`, which applies to every controller.
 - `VALUE` must be valid as in a record. `stickDeadzone` is more than 0 and less than 1. An integer key takes a whole number.
-- A value the record refuses, a name that is not a tuning key, a key the model's driver does not read, or a model without a record prints an error and changes nothing.
+- It prints an error and changes nothing for a value the record refuses, a name that isn't a tuning key, a key the model's driver doesn't read, or a model without a record.
 - `unset` removes the key, and the `tuning` section with its last key, and a patch file left with no key. It refuses a key that your records do not set.
 - The service applies the change to connected controllers without a replug. `ojd config show` then prints the value in the `user` layer, or the `global` layer for `all.patch.plist`.
 
@@ -591,7 +605,7 @@ Where a command asks first, a script needs `--force`.
 - `access grant --token`: Create a token named `NAME` instead of granting a program.
   - The command prints the token once, and the service keeps only its hash. A client signs the service's challenge with it and never sends it.
   - Each `--origin`, such as `http://127.0.0.1:8080`, lets web pages from that origin use the token on the WebSocket.
-  - A token without `--origin` works on the socket, and on the WebSocket from a program that sends no `Origin` header, such as a sandboxed app.
+  - A token without `--origin` works on the socket. On the WebSocket, it works from a program that sends no `Origin` header, such as a sandboxed app.
 - `access revoke`: Remove the grant of a client or token. With `--scope`, it removes only those scopes. The endpoint closes each connection that loses a scope. With `--json`, it prints a `Status`.
 - `access web enable`: Turn on the WebSocket on `127.0.0.1`. It is independent of `access enable`. Asks first.
   - Without `--port`, it uses the saved port, or a free port the system picks the first time. `--port` names another port, 1024 to 65535. `--automatic` picks a free port even when one is saved and cannot be combined with `--port`. `access status` shows the port.
@@ -633,9 +647,9 @@ The checks are `service`, `transport-extension-bundle`, `transport-extension-reg
 - `controller-records` warns when one of your controller record files was skipped.
 - `input-mapping` warns with `E5008` for each connected controller whose SDL_GameControllerDB line was rejected, naming the reason. That controller keeps the standard HID usage map.
 - `switch-placeholder-serial` warns for each connected `057E:2009` controller that reports serial `000000000001`, the identity and serial of a Nintendo Switch Pro Controller. It is skipped when none is connected and does not change the driver that binds the controller.
-- `config-files` warns when your `Controllers/all.patch.plist` was ignored, one of your virtual gamepad files was skipped, or a `Personas` folder holds files that are not read.
+- `config-files` warns when OJD ignored your `Controllers/all.patch.plist` or skipped one of your virtual gamepad files. It also warns when a `Personas` folder holds files OJD doesn't read.
 - `hid-input-drops` warns when the system dropped input reports of a controller before the service read them, naming the controller and the count.
-- `service` fails with `E2034` (its text, the error number, and the time) when the service is unreachable and left a record that its request listener stopped. A record whose process has ended only warns that the last listener stopped. A record that cannot be used fails with `E2035`, with the file and the reason.
+- `service` fails with `E2034` when the service can't be reached and left a record that its request listener stopped. The record gives the text, the error number, and the time. A record whose process has ended only warns that the last listener stopped. A record that cannot be used fails with `E2035`, with the file and the reason.
 
 Options:
 
@@ -644,9 +658,9 @@ Options:
   - `--interval-ms MS`: Wait between samples, 100 to 60000. The default is 1000.
   - `--rss-limit-mib MIB`: Fail when the service's resident memory exceeds this, 0 to 65536. The default is 0 (no limit).
   - `--footprint-limit-mib MIB`: Fail when the service's physical memory footprint exceeds this, 0 to 65536. The default is 512. 0 turns the limit off.
-- `--frames SECONDS`: Summarize only the frames read in the last `SECONDS` seconds (1 to 15). It writes a line to the error output that tells you to keep the sticks moving, waits `SECONDS` seconds, then asks the service once for the frames read in the last `SECONDS` seconds of its uptime clock.
+- `--frames SECONDS`: Summarize only the frames read in the last `SECONDS` seconds (1 to 15). It prints a line to the error output telling you to keep the sticks moving, and waits `SECONDS` seconds. Then it asks the service once for the frames read in the last `SECONDS` seconds of its uptime clock.
   - Only `--frames` measures `read-to-read` and stalls. Without it, the summary covers the whole window of up to 15000 frames and has the stage gaps alone.
-  - A controller that reports only when an input changes, such as the Razer Wolverine V1 Tournament Edition, counts each pause as a stall, so keep the sticks moving.
+  - Some controllers report only when an input changes, such as the Razer Wolverine V1 Tournament Edition. Each pause counts as a stall for them, so keep the sticks moving.
 
 ### Frame Timings
 
@@ -656,9 +670,9 @@ Each connected controller lists the timing of its newest 8 frames (empty while t
 - `DeliveryEndpoint` goes on the newest frame when the endpoint polls. A frame replaced before the poll gets none.
 - `--output` writes the same frames and summary to `data.frameTimings` of the support report.
 
-Eight frames are too short to show a stutter, so the service also keeps the newest 15000 frames of each controller, and `ojd diagnose` summarizes them. To measure stutter, run `ojd diagnose --frames 10` and sweep the sticks while it waits.
+Eight frames are too few to show a stutter. So the service also keeps the newest 15000 frames of each controller, and `ojd diagnose` summarizes them. To measure stutter, run `ojd diagnose --frames 10` and sweep the sticks while it waits.
 
-The summary has the number of frames, the time from the first to the last `Read` stamp, and for each gap the samples, the median (`p50`), the 99th percentile (`p99`, nearest rank), and the maximum.
+The summary has the number of frames and the time from the first to the last `Read` stamp. For each gap, it has the samples, the median (`p50`), the 99th percentile (`p99`, nearest rank), and the maximum.
 
 - The gaps are `read-to-parse`, `parse-to-dispatch`, `dispatch-to-delivery-virtual-device`, and `dispatch-to-delivery-endpoint`. With `--frames`, `read-to-read` is the time between the `Read` stamps of two consecutive frames.
 - A stall is a read interval longer than 3 times the window's median read interval. The threshold follows the report rate: 24 ms at a steady 125 Hz, 3 ms at a steady 1000 Hz.
@@ -692,7 +706,7 @@ Explain an error code.
 ojd explain CODE
 ```
 
-`CODE` is an error code such as `E2004`, in any letter case. The command works offline. It prints the code, its area (endpoint, command line, or remapping), what it means, and the exit code of a command-line code or the wire value of a remapping code. An unknown code is a usage error. With `--json`, it prints an `ErrorExplanation` with `code`, `area`, `explanation`, and `exitCode` or `wire`.
+`CODE` is an error code such as `E2004`, in any letter case. The command works offline. It prints the code, its area (endpoint, command line, or remapping), and what it means. A command-line code also shows its exit code, and a remapping code its wire value. An unknown code is a usage error. With `--json`, it prints an `ErrorExplanation` with `code`, `area`, `explanation`, and `exitCode` or `wire`.
 
 ## migrate
 
@@ -712,7 +726,7 @@ The command scans the support folder (the root files, `ActiveProfiles`, `Profile
 | `Foreign` | Not an OpenJoystickDriver document. Unchanged. |
 
 - It converts `v1alpha1` and `v1alpha2` JSON documents of every kind, including the `mod.json` of an installed mod.
-- It writes the result beside the original as a `.plist`, checks it with the current reader, and keeps the original under `Migrated/` with its relative path, in the scanned folder.
+- It writes the result beside the original as a `.plist` and checks it with the current reader. It keeps the original under `Migrated/` in the scanned folder, at the same relative path.
 - A backup is never overwritten. When `Migrated/<path>` or the `.plist` exists, the file fails and stays unchanged.
 - A file that 0.5 wrote has no `apiVersion` and fails with "written by 0.5; re-create it".
 - `--dry-run` writes nothing.
@@ -726,7 +740,7 @@ Run a generator script and write the documents it returns.
 ojd generate SCRIPT [--output FOLDER] [--replace]
 ```
 
-The command runs the JavaScript file `SCRIPT` in a helper process, calls its `generate` function, and checks each returned document with the reader of that kind. When one document fails, it writes none and names the document, the key path, and the rule.
+The command runs the JavaScript file `SCRIPT` in a helper process and calls its `generate` function. It checks each returned document with the reader for its kind. When one document fails, it writes none and names the document, the key path, and the rule.
 
 - With `--output`, it writes one property list file per document into `FOLDER`, named as OJD names that kind of file. Without it, it prints the documents and writes no file.
 - A file that already holds the document is reported as unchanged. A file with other content stops the command. `--replace` overwrites it.
