@@ -17,11 +17,17 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   public typealias Handler = @Sendable (LocalServiceRPCRequest) async -> LocalServiceRPCResponse
 
   /// Decides whether a peer may call.
-  private let authentication: Authentication
+  let authentication: Authentication
   /// Answers each request.
-  private let handler: Handler
+  let handler: Handler
   /// The path of the Unix socket the server listens on.
   package let socketPath: String
+  /// Whether a client in this process that calls ``socketPath`` reaches the handler without the
+  /// socket while the server listens.
+  ///
+  /// The service that the app hosts sets it before `start()`, so the app's own calls cost no
+  /// connection or thread.
+  package var servesClientsInProcess = false
   /// Guards `listener`, `starting` and `stopRequested`.
   private let stateLock = NSLock()
   /// The sockets of the started server; nil while it is stopped.
@@ -158,6 +164,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
         listener = started
         starting = false
         clearListenerFailure()
+        registerInProcess()
       }
       BlockingWork.detachThread(name: "com.openjoystickdriver.rpc.accept") { [weak self] in
         self?.acceptConnections(started)
@@ -181,6 +188,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
         return
       }
       listener = nil
+      unregisterInProcess()
       // Closing the write end hangs up the read end, which wakes the accept loop to close the
       // rest. The socket file goes under the lock, so a later `start()` cannot lose its new file.
       Darwin.close(stopped.wakeWrite)
@@ -198,6 +206,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     stateLock.withLock {
       guard listener?.id == ended.id else { return false }
       listener = nil
+      unregisterInProcess()
       Darwin.close(ended.wakeWrite)
       unsafe unlink(socketPath)
       if let failure { recordListenerFailure(errno: failure) }

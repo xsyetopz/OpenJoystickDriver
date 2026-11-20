@@ -161,6 +161,9 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     }
     let state = listenerState
     server.listenerFailureChanged = { state.set($0) }
+    // The app's UI calls the service it hosts thousands of times an hour; in process, a call costs
+    // no socket, connection thread or peer lookup.
+    server.servesClientsInProcess = true
     try server.start()
     let streamDelivered: @Sendable (ControllerSessionToken, UInt64) async -> Void = {
       [weak self] token, nanoseconds in

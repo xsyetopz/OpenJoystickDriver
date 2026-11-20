@@ -28,4 +28,21 @@ public struct LocalSocketPeer: Sendable {
     guard pid > 0 else { return nil }
     return Self(processIdentifier: pid, auditToken: token)
   }
+
+  /// This process as a peer, read from its own audit token; nil when the token cannot be read.
+  ///
+  /// A server that answers a client in its own process without the socket authenticates this peer.
+  package static var currentProcess: Self? {
+    var token = audit_token_t()
+    var count = mach_msg_type_number_t(
+      MemoryLayout<audit_token_t>.size / MemoryLayout<integer_t>.size
+    )
+    let status = withUnsafeMutablePointer(to: &token) { pointer in
+      unsafe pointer.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+        unsafe task_info(mach_task_self_, task_flavor_t(TASK_AUDIT_TOKEN), $0, &count)
+      }
+    }
+    guard status == KERN_SUCCESS else { return nil }
+    return Self(processIdentifier: getpid(), auditToken: token)
+  }
 }

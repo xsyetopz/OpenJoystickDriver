@@ -74,6 +74,8 @@ extension LocalServiceRPCClient {
   /// Calls `method` with `arguments` on the server at `socketPath` and decodes the result as
   /// `Value`.
   ///
+  /// A server in this process that serves its clients in process answers without the socket.
+  ///
   /// - Throws: ``LocalServiceRPCError``, ``ApplicationServiceRemappingRPCError`` when the response
   ///   carries a remapping failure, and `CancellationError` when the task is cancelled.
   static func call<Arguments: Encodable & Sendable, Value: Decodable & Sendable>(
@@ -87,8 +89,40 @@ extension LocalServiceRPCClient {
     let requestData = try JSONEncoder().encode(
       LocalServiceRPCRequest(method: method, arguments: try JSONEncoder().encode(arguments))
     )
+    let responseData: Data
+    if let server = LocalServiceRPCServer.inProcessServer(socketPath: socketPath),
+      let data = try await server.respondInProcess(
+        to: requestData,
+        timeoutSeconds: timeoutSeconds
+      )
+    {
+      responseData = data
+    } else {
+      responseData = try await exchangeOverSocket(
+        requestData,
+        timeoutSeconds: timeoutSeconds,
+        socketPath: socketPath,
+        closedWithoutReply: closedWithoutReply
+      )
+    }
+    let response = try JSONDecoder().decode(LocalServiceRPCResponse.self, from: responseData)
+    if response.errorCode == .peerRejected { throw LocalServiceRPCError.peerRejected }
+    if let error = response.remappingError { throw error }
+    if let error = response.error { throw LocalServiceRPCError.remote(error) }
+    guard let result = response.result else { throw LocalServiceRPCError.invalidFrame }
+    return try JSONDecoder().decode(type, from: result)
+  }
+
+  /// Sends `requestData` over a new connection to `socketPath` on a queue of its own and returns
+  /// the response frame.
+  private static func exchangeOverSocket(
+    _ requestData: Data,
+    timeoutSeconds: TimeInterval,
+    socketPath: String,
+    closedWithoutReply: LocalServiceRPCClosedWithoutReply
+  ) async throws -> Data {
     let state = CallState()
-    let responseData = try await withTaskCancellationHandler {
+    return try await withTaskCancellationHandler {
       try await BlockingWork.run(label: "com.openjoystickdriver.rpc.call") {
         try exchange(
           requestData,
@@ -101,12 +135,6 @@ extension LocalServiceRPCClient {
     } onCancel: {
       state.cancel()
     }
-    let response = try JSONDecoder().decode(LocalServiceRPCResponse.self, from: responseData)
-    if response.errorCode == .peerRejected { throw LocalServiceRPCError.peerRejected }
-    if let error = response.remappingError { throw error }
-    if let error = response.error { throw LocalServiceRPCError.remote(error) }
-    guard let result = response.result else { throw LocalServiceRPCError.invalidFrame }
-    return try JSONDecoder().decode(type, from: result)
   }
 
   /// Sends one request frame and reads its response frame, blocking the calling thread.
