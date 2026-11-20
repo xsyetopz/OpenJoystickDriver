@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import io
 import unittest
 import unittest.mock
@@ -8,6 +9,7 @@ from contextlib import redirect_stderr
 from Scripts.GUI import terminal
 
 
+@unittest.skipUnless(importlib.util.find_spec("PIL"), "Pillow is not installed")
 class RenderTests(unittest.TestCase):
     def test_a_longer_line_widens_the_window(self) -> None:
         # Arrange
