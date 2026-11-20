@@ -151,9 +151,9 @@ extension DevicePipeline {
     print("[DevicePipeline] Input controller disconnected: \(identifier)")
   }
 
-  /// Appends `bytes` to the packet log in `direction`.
-  func appendToPacketLog(bytes: [UInt8], direction: PacketLogDirection) {
-    packetLog.append(bytes: bytes, direction: direction)
+  /// Appends `bytes` to the packet log in `direction`; `bytes` is read only while a capture runs.
+  func appendToPacketLog(bytes: @autoclosure () -> [UInt8], direction: PacketLogDirection) {
+    packetLog.append(bytes: bytes(), direction: direction)
   }
 
   /// Performs one driver-produced write on the USB session.

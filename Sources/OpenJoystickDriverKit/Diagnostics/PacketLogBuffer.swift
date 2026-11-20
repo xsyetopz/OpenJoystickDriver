@@ -99,10 +99,18 @@ final class PacketLogBuffer: Sendable {
 
   /// Stores a packet while the capture lease holds; once the lease has lapsed it drops the stored
   /// packets instead.
+  ///
+  /// The bytes and the timestamp are read only while a capture runs: every input report passes
+  /// here, and nearly all of them arrive with no capture.
+  ///
+  /// - Parameters:
+  ///   - bytes: The packet, read only while a capture runs.
+  ///   - direction: Whether the packet arrived or left.
+  ///   - timestamp: When the packet passed; the current time when nil.
   func append(
-    bytes: [UInt8],
+    bytes: @autoclosure () -> [UInt8],
     direction: PacketLogDirection,
-    timestamp: TimeInterval = Date().timeIntervalSince1970
+    timestamp: TimeInterval? = nil
   ) {
     guard maxEntries > 0 else { return }
     let now = uptimeNanoseconds()
@@ -112,9 +120,9 @@ final class PacketLogBuffer: Sendable {
         return
       }
       ring.bufferedPackets[ring.nextWriteIndex] = BufferedPacket(
-        timestamp: timestamp,
+        timestamp: timestamp ?? Date().timeIntervalSince1970,
         direction: direction,
-        bytes: bytes
+        bytes: bytes()
       )
       ring.nextWriteIndex = (ring.nextWriteIndex + 1) % maxEntries
       ring.entryCount = min(ring.entryCount + 1, maxEntries)
