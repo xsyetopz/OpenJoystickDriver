@@ -145,6 +145,18 @@ struct FrameTimingsTests {
   }
 
   @Test
+  func everyLaterStampKeepsItsOrderAndTime() {
+    let recorder = FrameTimingRecorder()
+    recorder.parsed(for: identifier, read: 1, parse: 2)
+    _ = recorder.dispatched(for: identifier, at: 3)
+    for time in UInt64(4)...7 { recorder.endpointDelivered(for: identifier, at: time) }
+
+    let stages = recorder.frames(for: identifier).first?.stages
+    #expect(stages?.map(\.nanoseconds) == [1, 2, 3, 4, 5, 6, 7])
+    #expect(stages?.dropFirst(3).allSatisfy { $0.stage == .deliveryEndpoint } == true)
+  }
+
+  @Test
   func ringKeepsOnlyNewestFrames() {
     let recorder = FrameTimingRecorder()
     for index in 0..<(FrameTimingRecorder.listedFrames + 3) {

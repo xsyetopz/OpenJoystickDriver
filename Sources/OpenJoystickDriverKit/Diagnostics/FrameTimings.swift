@@ -128,6 +128,47 @@ public final class FrameTimingRecorder: Sendable {
     let parse: UInt64
   }
 
+  /// One frame in the ring, held without a heap allocation until a third delivery stamp: the
+  /// ring takes a frame for every report, up to 1000 a second per controller.
+  private struct Slot {
+    /// The frame's sequence.
+    let sequence: UInt64
+    /// The `Read` stamp.
+    let read: UInt64
+    /// The `Parse` stamp.
+    let parse: UInt64
+    /// The `Dispatch` stamp.
+    let dispatch: UInt64
+    /// The first two stages added after dispatch, in the order they were added.
+    var added: (FrameStageTime?, FrameStageTime?) = (nil, nil)
+    /// Any later stages added after dispatch, in the order they were added.
+    var addedLater: [FrameStageTime] = []
+
+    /// Adds `stage` after the stages the frame already reached.
+    mutating func append(_ stage: FrameStageTime) {
+      if added.0 == nil {
+        added.0 = stage
+      } else if added.1 == nil {
+        added.1 = stage
+      } else {
+        addedLater.append(stage)
+      }
+    }
+
+    /// The frame with its stages in the order it reached them.
+    var timing: FrameTiming {
+      let reached = [
+        FrameStageTime(stage: .read, nanoseconds: read),
+        FrameStageTime(stage: .parse, nanoseconds: parse),
+        FrameStageTime(stage: .dispatch, nanoseconds: dispatch),
+      ]
+      return FrameTiming(
+        sequence: sequence,
+        stages: reached + [added.0, added.1].compactMap { $0 } + addedLater
+      )
+    }
+  }
+
   /// The frame ring of one controller.
   private struct Track {
     /// The newest parsed report, which the next dispatch turns into a frame; nil when none waits.
@@ -136,7 +177,7 @@ public final class FrameTimingRecorder: Sendable {
     var nextSequence: UInt64 = 0
     /// The frame of sequence `n` sits in slot `n % windowCapacity` until the frame
     /// `windowCapacity` sequences later takes the slot.
-    var slots = [FrameTiming?](repeating: nil, count: FrameTimingRecorder.windowCapacity)
+    var slots = [Slot?](repeating: nil, count: FrameTimingRecorder.windowCapacity)
 
     /// The sequence of the newest frame; nil before the first frame.
     var newestSequence: UInt64? { nextSequence > 0 ? nextSequence - 1 : nil }
@@ -151,13 +192,11 @@ public final class FrameTimingRecorder: Sendable {
       self.pending = nil
       let sequence = nextSequence
       nextSequence += 1
-      slots[slot(of: sequence)] = FrameTiming(
+      slots[slot(of: sequence)] = Slot(
         sequence: sequence,
-        stages: [
-          FrameStageTime(stage: .read, nanoseconds: pending.read),
-          FrameStageTime(stage: .parse, nanoseconds: pending.parse),
-          FrameStageTime(stage: .dispatch, nanoseconds: nanoseconds),
-        ]
+        read: pending.read,
+        parse: pending.parse,
+        dispatch: nanoseconds
       )
       return sequence
     }
@@ -165,17 +204,14 @@ public final class FrameTimingRecorder: Sendable {
     /// Adds `stage` to the frame `sequence`, unless the ring already replaced it.
     mutating func append(_ stage: FrameStage, at nanoseconds: UInt64, toSequence sequence: UInt64) {
       let index = slot(of: sequence)
-      guard let frame = slots[index], frame.sequence == sequence else { return }
-      slots[index] = FrameTiming(
-        sequence: sequence,
-        stages: frame.stages + [FrameStageTime(stage: stage, nanoseconds: nanoseconds)]
-      )
+      guard slots[index]?.sequence == sequence else { return }
+      slots[index]?.append(FrameStageTime(stage: stage, nanoseconds: nanoseconds))
     }
 
     /// The newest `limit` frames, oldest first.
     func newest(_ limit: Int) -> [FrameTiming] {
       let first = nextSequence - min(nextSequence, UInt64(limit))
-      return (first..<nextSequence).compactMap { slots[slot(of: $0)] }
+      return (first..<nextSequence).compactMap { slots[slot(of: $0)]?.timing }
     }
   }
 
