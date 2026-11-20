@@ -1654,13 +1654,13 @@
 /* Label of the slider in the motion sheet that sets how strongly turning left and right moves the output. Yaw is the turn around the vertical axis. */
 "ui.profiles.motion.yawSensitivity" = "ヨー感度";
 /* Label of the slider in the motion sheet that sets the half-time of the smoothing filter. The value is in milliseconds. */
-"ui.profiles.motion.smoothingHalfTimeMs" = "平滑化の半減時間（ms）";
+"ui.profiles.motion.smoothingHalfTimeMs" = "スムージング（ms）";
 /* Label of the slider in the motion sheet that sets the turn rate below which motion is ignored. The value is in degrees per second. */
-"ui.profiles.motion.thresholdDegreesPerSecond" = "角速度のしきい値（度/秒）";
+"ui.profiles.motion.thresholdDegreesPerSecond" = "カウントする最も遅い回転（度/秒）";
 /* Label of the slider in the motion sheet that sets how fast the player space follows the turn of the player. */
-"ui.profiles.motion.yawRelaxation" = "プレイヤー空間のヨー許容度";
+"ui.profiles.motion.yawRelaxation" = "回転への追従速度";
 /* Label of the slider in the motion sheet that sets how much sideways motion is reduced in world space. */
-"ui.profiles.motion.sideReductionThreshold" = "ワールド空間の横向き減衰";
+"ui.profiles.motion.sideReductionThreshold" = "横方向の動きの軽減";
 /* Label of the slider in the motion sheet that sets how fast the estimate of gravity is corrected. The unit is per second. */
 "ui.profiles.motion.gravityCorrectionRate" = "重力補正レート（1/秒）";
 /* Title of the switch in the motion sheet that reverses the pitch direction. */
@@ -1863,9 +1863,9 @@
 /* Title of the switch in the motion sheet that turns on lean sources. A lean source is a control that is active while the controller is tilted to one side. */
 "ui.profiles.motion.leanEnabled" = "傾きソースを有効にする";
 /* Label of the slider in the motion sheet that sets the tilt at which a lean starts. The value is in degrees. */
-"ui.profiles.motion.leanThresholdDegrees" = "傾きのしきい値（度）";
+"ui.profiles.motion.leanThresholdDegrees" = "傾きの開始角度（度）";
 /* Label of the slider in the motion sheet that sets how far the tilt must go back before a lean ends. The value is in degrees. */
-"ui.profiles.motion.leanHysteresisDegrees" = "傾き解除のヒステリシス（度）";
+"ui.profiles.motion.leanHysteresisDegrees" = "傾きの解除余裕（度）";
 /* Title of the switch in the motion sheet that turns on steering by tilting the controller. */
 "ui.profiles.motion.steeringEnabled" = "モーションステアリングを有効にする";
 /* Label of the popup in the motion sheet that picks the axis of the virtual gamepad that the steering moves. */
@@ -1879,7 +1879,7 @@
 /* Label of the slider in the motion sheet that sets the tilt that counts as full steering. The value is in degrees. */
 "ui.profiles.motion.steeringFullScaleDegrees" = "最大ステアリング角（度）";
 /* Label of the slider in the motion sheet that sets the exponent of the steering response curve. */
-"ui.profiles.motion.steeringResponseExponent" = "ステアリング応答の指数";
+"ui.profiles.motion.steeringResponseExponent" = "ステアリングカーブ";
 /* Title of the switch in the motion sheet that reverses the steering direction. */
 "ui.profiles.motion.steeringInverted" = "ステアリングを反転";
 

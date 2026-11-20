@@ -1654,13 +1654,13 @@
 /* Label of the slider in the motion sheet that sets how strongly turning left and right moves the output. Yaw is the turn around the vertical axis. */
 "ui.profiles.motion.yawSensitivity" = "Giergevoeligheid";
 /* Label of the slider in the motion sheet that sets the half-time of the smoothing filter. The value is in milliseconds. */
-"ui.profiles.motion.smoothingHalfTimeMs" = "Halveringstijd van afvlakking (ms)";
+"ui.profiles.motion.smoothingHalfTimeMs" = "Afvlakking (ms)";
 /* Label of the slider in the motion sheet that sets the turn rate below which motion is ignored. The value is in degrees per second. */
-"ui.profiles.motion.thresholdDegreesPerSecond" = "Drempel voor hoeksnelheid (graden/s)";
+"ui.profiles.motion.thresholdDegreesPerSecond" = "Langzaamste getelde draai (graden/s)";
 /* Label of the slider in the motion sheet that sets how fast the player space follows the turn of the player. */
-"ui.profiles.motion.yawRelaxation" = "Giertolerantie in spelerruimte";
+"ui.profiles.motion.yawRelaxation" = "Volgsnelheid bij draaien";
 /* Label of the slider in the motion sheet that sets how much sideways motion is reduced in world space. */
-"ui.profiles.motion.sideReductionThreshold" = "Zijdelingse demping in wereldruimte";
+"ui.profiles.motion.sideReductionThreshold" = "Vermindering van zijwaartse beweging";
 /* Label of the slider in the motion sheet that sets how fast the estimate of gravity is corrected. The unit is per second. */
 "ui.profiles.motion.gravityCorrectionRate" = "Correctiesnelheid voor zwaartekracht (1/s)";
 /* Title of the switch in the motion sheet that reverses the pitch direction. */
@@ -1863,9 +1863,9 @@
 /* Title of the switch in the motion sheet that turns on lean sources. A lean source is a control that is active while the controller is tilted to one side. */
 "ui.profiles.motion.leanEnabled" = "Schakel kantelbronnen in";
 /* Label of the slider in the motion sheet that sets the tilt at which a lean starts. The value is in degrees. */
-"ui.profiles.motion.leanThresholdDegrees" = "Kantelrempel (graden)";
+"ui.profiles.motion.leanThresholdDegrees" = "Beginhoek van kantelen (graden)";
 /* Label of the slider in the motion sheet that sets how far the tilt must go back before a lean ends. The value is in degrees. */
-"ui.profiles.motion.leanHysteresisDegrees" = "Hysterese bij loslaten van kanteling (graden)";
+"ui.profiles.motion.leanHysteresisDegrees" = "Loslaatmarge van kantelen (graden)";
 /* Title of the switch in the motion sheet that turns on steering by tilting the controller. */
 "ui.profiles.motion.steeringEnabled" = "Bewegingssturing mogelijk maken";
 /* Label of the popup in the motion sheet that picks the axis of the virtual gamepad that the steering moves. */
@@ -1879,7 +1879,7 @@
 /* Label of the slider in the motion sheet that sets the tilt that counts as full steering. The value is in degrees. */
 "ui.profiles.motion.steeringFullScaleDegrees" = "Volledige stuurhoek (graden)";
 /* Label of the slider in the motion sheet that sets the exponent of the steering response curve. */
-"ui.profiles.motion.steeringResponseExponent" = "Responsexponent voor sturen";
+"ui.profiles.motion.steeringResponseExponent" = "Stuurcurve";
 /* Title of the switch in the motion sheet that reverses the steering direction. */
 "ui.profiles.motion.steeringInverted" = "Keer sturen om";
 

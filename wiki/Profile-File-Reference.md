@@ -207,7 +207,7 @@ Edit these with `ojd profile edit PROFILE` or `ojd profile set`, such as `ojd pr
 - `stickMappings`: modes `Aim` (default), `Flick`, `FlickOnly`, `RotateOnly`, `PointerArea`, `PointerRing`, `ScrollWheel`, `Steering`. Aim speed 0 to 10000 degrees/s (360). Pointer radius 1 to 10000 points (128). Inner and outer deadzone 0 to 0.95 each, sum below 1 (0.1 and 0). Response exponent 0.1 to 10 (1).
 - `triggerMappings`: interaction `Simultaneous`, `Exclusive`, `PreferFull`, `PreferFullCombined`, `ResponsivePreferFull`, or `ResponsivePreferFullCombined`. Soft threshold 0.01 to 0.95 (0.1), full threshold 0.05 to 1 (0.95), quick-pull window 1 to 1000 ms (150).
 - `touchMappings`: pointer points per surface 1 to 5000 (1000), stick radius 0.01 to 1 (0.25), deadzone 0 to 0.95 (0.1). Swipe minimum distance default 0.2. Region hysteresis 0 to 0.25 (0.05).
-- `motionTuning`: space `Local`, `Player` (default), or `World`. Pitch and yaw sensitivity 0 to 100 (1). Smoothing half-time 0 to 1000 ms (0). Rate threshold 0 to 1000 degrees/s (0). Stillness calibration is on by default.
+- `motionTuning`: space `Local`, `Player` (default), or `World`. Pitch and yaw sensitivity 0 to 100 (1). Smoothing 0 to 1000 ms (0). Slowest counted turn 0 to 1000 degrees/s (0). Stillness calibration is on by default.
 - `gyroOutput`: `Disabled` (default), `Mouse`, `LeftStick`, or `RightStick`. Trackball velocity halvings per second is 0 to 1000.
 
 ## Pointer Speed Fields

@@ -1654,13 +1654,13 @@
 /* Label of the slider in the motion sheet that sets how strongly turning left and right moves the output. Yaw is the turn around the vertical axis. */
 "ui.profiles.motion.yawSensitivity" = "यॉ संवेदनशीलता";
 /* Label of the slider in the motion sheet that sets the half-time of the smoothing filter. The value is in milliseconds. */
-"ui.profiles.motion.smoothingHalfTimeMs" = "स्मूथिंग का अर्धकाल (मिलीसेकंड)";
+"ui.profiles.motion.smoothingHalfTimeMs" = "स्मूथिंग (मिलीसेकंड)";
 /* Label of the slider in the motion sheet that sets the turn rate below which motion is ignored. The value is in degrees per second. */
-"ui.profiles.motion.thresholdDegreesPerSecond" = "कोणीय गति की सीमा (डिग्री/सेकंड)";
+"ui.profiles.motion.thresholdDegreesPerSecond" = "गिना जाने वाला सबसे धीमा घुमाव (डिग्री/सेकंड)";
 /* Label of the slider in the motion sheet that sets how fast the player space follows the turn of the player. */
-"ui.profiles.motion.yawRelaxation" = "प्लेयर स्पेस में यॉ ढील";
+"ui.profiles.motion.yawRelaxation" = "घुमाव के पीछे चलने की गति";
 /* Label of the slider in the motion sheet that sets how much sideways motion is reduced in world space. */
-"ui.profiles.motion.sideReductionThreshold" = "वर्ल्ड स्पेस में पार्श्व कमी";
+"ui.profiles.motion.sideReductionThreshold" = "बगल की गति में कमी";
 /* Label of the slider in the motion sheet that sets how fast the estimate of gravity is corrected. The unit is per second. */
 "ui.profiles.motion.gravityCorrectionRate" = "गुरुत्व सुधार दर (1/सेकंड)";
 /* Title of the switch in the motion sheet that reverses the pitch direction. */
@@ -1863,9 +1863,9 @@
 /* Title of the switch in the motion sheet that turns on lean sources. A lean source is a control that is active while the controller is tilted to one side. */
 "ui.profiles.motion.leanEnabled" = "झुकाव स्रोत सक्षम करें";
 /* Label of the slider in the motion sheet that sets the tilt at which a lean starts. The value is in degrees. */
-"ui.profiles.motion.leanThresholdDegrees" = "झुकाव सीमा (डिग्री)";
+"ui.profiles.motion.leanThresholdDegrees" = "झुकाव शुरू होने का कोण (डिग्री)";
 /* Label of the slider in the motion sheet that sets how far the tilt must go back before a lean ends. The value is in degrees. */
-"ui.profiles.motion.leanHysteresisDegrees" = "झुकाव रिलीज़ हिस्टेरिसिस (डिग्री)";
+"ui.profiles.motion.leanHysteresisDegrees" = "झुकाव छोड़ने की गुंजाइश (डिग्री)";
 /* Title of the switch in the motion sheet that turns on steering by tilting the controller. */
 "ui.profiles.motion.steeringEnabled" = "गति स्टीयरिंग सक्षम करें";
 /* Label of the popup in the motion sheet that picks the axis of the virtual gamepad that the steering moves. */
@@ -1879,7 +1879,7 @@
 /* Label of the slider in the motion sheet that sets the tilt that counts as full steering. The value is in degrees. */
 "ui.profiles.motion.steeringFullScaleDegrees" = "पूर्ण स्टीयरिंग कोण (डिग्री)";
 /* Label of the slider in the motion sheet that sets the exponent of the steering response curve. */
-"ui.profiles.motion.steeringResponseExponent" = "स्टीयरिंग प्रतिक्रिया एक्सपोनेंट";
+"ui.profiles.motion.steeringResponseExponent" = "स्टीयरिंग वक्र";
 /* Title of the switch in the motion sheet that reverses the steering direction. */
 "ui.profiles.motion.steeringInverted" = "स्टीयरिंग उलटें";
 
