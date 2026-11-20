@@ -21,6 +21,14 @@ AREAS = ("Controllers", "Profiles", "Library", "Access", "Activity")
 SETTINGS_PANES = ("General", "Notifications", "Advanced")
 PROFILE_SECTIONS = ("Assignments", "Combinations", "Layers", "Macros", "Controller")
 PROFILE_SECTION_POPUP = "Profile editor section"
+PROFILE_SHEETS = (
+    "Motion Tuning",
+    "Stick Modes",
+    "Trigger Stages",
+    "Touch Mappings",
+    "Regions",
+    "Pointer Speed",
+)
 BOUNDS_TOLERANCE = 2.0
 SCREEN_CHROME_LAYERS = (20, 24, 2147483630)
 ACCESSIBILITY_GRANTED = "0"
@@ -98,6 +106,24 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "saved as main-profiles-<section>.png"
         ),
     )
+    choice.add_argument(
+        "--profile-sheet",
+        choices=PROFILE_SHEETS,
+        help=(
+            "the Profiles window with the sheet of this Controller section group open, "
+            "saved as main-profiles-<group>.png; the sheet is cancelled afterward"
+        ),
+    )
+    parser.add_argument(
+        "--check",
+        action="append",
+        default=[],
+        metavar="LABEL",
+        help=(
+            "with --profile-sheet, a control to press in the sheet before the capture, "
+            "such as 'Enable pointer output'; repeat for more"
+        ),
+    )
     parser.add_argument(
         "--row",
         metavar="LABEL",
@@ -133,6 +159,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if (args.row is not None or args.scroll) and args.popup is None:
         parser.error("--row and --scroll work only with --popup")
+    if args.check and args.profile_sheet is None:
+        parser.error("--check works only with --profile-sheet")
     if not 0 <= args.scroll <= 1:
         parser.error("--scroll must be between 0 and 1")
     for option, value in (
@@ -555,6 +583,29 @@ def shoot_profile_section(
         gui("choose-popup", PROFILE_SECTION_POPUP, PROFILE_SECTIONS[0])
 
 
+def shoot_profile_sheet(
+    sheet: str, checks: list[str], pid: int, destination: Path, timeout: float
+) -> None:
+    gui("select-sidebar", "Profiles")
+    gui("choose-popup", PROFILE_SECTION_POPUP, "Controller")
+    try:
+        # The open sheet is a window of its own over the main window, so the main
+        # window is checked for other windows before the sheet opens.
+        window = bring_forward(pid, "main", timeout)
+        gui("press-label", f"Adjust {sheet}")
+        try:
+            for label in checks:
+                gui("press-label", label)
+            # screencapture -l draws an open sheet with the window it belongs to.
+            capture_window(window, destination)
+            print(destination)
+        finally:
+            # Cancel drops the pressed controls, so the profile stays as it was.
+            gui("press-label", "Cancel")
+    finally:
+        gui("choose-popup", PROFILE_SECTION_POPUP, PROFILE_SECTIONS[0])
+
+
 def make_folder() -> Path:
     root = PROJECT_DIR / ".ojd-shots"
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -593,7 +644,13 @@ def capture(args: argparse.Namespace) -> int:
         else ()
     )
     menus = args.all or args.menus
-    if areas or panes or args.popup is not None or args.profile_section:
+    if (
+        areas
+        or panes
+        or args.popup is not None
+        or args.profile_section
+        or args.profile_sheet
+    ):
         require_english_ui()
     main_was_open, settings_tab = read_state()
     folder = make_folder()
@@ -622,6 +679,15 @@ def capture(args: argparse.Namespace) -> int:
                 args.profile_section,
                 pid,
                 folder / f"main-profiles-{args.profile_section.lower()}.png",
+                args.front_timeout,
+            )
+        if args.profile_sheet:
+            slug = args.profile_sheet.lower().replace(" ", "-")
+            shoot_profile_sheet(
+                args.profile_sheet,
+                args.check,
+                pid,
+                folder / f"main-profiles-{slug}.png",
                 args.front_timeout,
             )
         if menus:

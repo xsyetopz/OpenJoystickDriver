@@ -57,6 +57,23 @@ class GuiCaptureTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             capture.parse_args(["--profile-section", "Sticks"])
 
+    def test_profile_sheet_names_a_controller_group(self) -> None:
+        # Act
+        args = capture.parse_args(
+            ["--profile-sheet", "Stick Modes", "--check", "Enable pointer output"]
+        )
+
+        # Assert
+        self.assertEqual(
+            (args.profile_sheet, args.check), ("Stick Modes", ["Enable pointer output"])
+        )
+        for argv in (
+            ["--profile-sheet", "Sticks"],
+            ["--profile-section", "Controller", "--check", "Enable pointer output"],
+        ):
+            with self.subTest(argv=argv), self.assertRaises(SystemExit):
+                capture.parse_args(argv)
+
     def test_row_and_scroll_need_a_popup(self) -> None:
         # Arrange
         popup = ["--popup", "Generic HID gamepad (Generic)"]
