@@ -9,6 +9,14 @@ package protocol VirtualDeviceBackend: AnyObject, Sendable {
   ///
   /// - Throws: The backend's error when the host cannot take the report.
   func send(_ report: [UInt8]) async throws
+  /// Starts sending one input report and calls `completion` once with the outcome, without
+  /// waiting for the send.
+  ///
+  /// - Returns: A closure that asks the send to stop; a send may ignore it.
+  func startSend(
+    _ report: [UInt8],
+    completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+  ) -> @Sendable () -> Void
   /// Takes the device away from the host.
   func close()
   /// Returns once the native device is gone. Backends without async teardown return at once.
@@ -18,6 +26,21 @@ package protocol VirtualDeviceBackend: AnyObject, Sendable {
 extension VirtualDeviceBackend {
   /// Yields once and returns, for a backend with no async teardown.
   package func waitUntilClosed() async { await Task.yield() }
+
+  /// Runs ``send(_:)`` in an unstructured task, so a send that ignores cancellation never holds
+  /// the caller; the returned closure cancels that task.
+  package func startSend(
+    _ report: [UInt8],
+    completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+  ) -> @Sendable () -> Void {
+    let task = Task.detached { [self] in
+      do {
+        try await send(report)
+        completion(.success(()))
+      } catch { completion(.failure(error)) }
+    }
+    return { task.cancel() }
+  }
 }
 
 /// Creates the native virtual HID device for one controller.

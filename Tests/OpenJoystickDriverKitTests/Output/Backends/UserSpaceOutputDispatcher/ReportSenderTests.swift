@@ -129,6 +129,34 @@ private final class NonCooperativeReportBackend: VirtualDeviceBackend,
   func closeCount() -> Int { lock.withLock { closes } }
 }
 
+/// A backend that sends on its own serial queue, like the native one, and counts async sends.
+private final class QueueSendBackend: VirtualDeviceBackend, @unchecked Sendable {
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
+
+  private let queue = DispatchQueue(label: "test.report.send")
+  private let lock = NSLock()
+  private var reports: [[UInt8]] = []
+  private var asyncSends = 0
+
+  func send(_: [UInt8]) { lock.withLock { asyncSends += 1 } }
+
+  func startSend(
+    _ report: [UInt8],
+    completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+  ) -> @Sendable () -> Void {
+    queue.async { [self] in
+      lock.withLock { reports.append(report) }
+      completion(.success(()))
+    }
+    return {}
+  }
+
+  func close() {}
+  func snapshot() -> (reports: [[UInt8]], asyncSends: Int) {
+    lock.withLock { (reports, asyncSends) }
+  }
+}
+
 /// A backend whose native teardown finishes only when its gate opens.
 private final class SlowTeardownBackend: VirtualDeviceBackend,
   @unchecked Sendable
@@ -430,6 +458,20 @@ struct ReportSenderTests {
     #expect(backend.closeCount() == 1)
 
     await backend.gate.release()
+    await sender.beginClose().value
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func backendThatStartsItsOwnSendDeliversInOrderWithoutAsyncSend() async throws {
+    let backend = QueueSendBackend()
+    let sender = UserSpaceReportSender()
+    sender.attach(backend)
+
+    try await sender.submit { [[1], [2]] }.value()
+    try await sender.submit { [[3]] }.value()
+
+    #expect(backend.snapshot().reports == [[1], [2], [3]])
+    #expect(backend.snapshot().asyncSends == 0)
     await sender.beginClose().value
   }
 

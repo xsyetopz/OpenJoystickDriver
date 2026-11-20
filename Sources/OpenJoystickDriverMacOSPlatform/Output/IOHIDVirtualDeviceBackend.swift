@@ -119,6 +119,18 @@ final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable
     try await BlockingWork.run(on: sendQueue) { [self] in try sendNow(report) }
   }
 
+  /// Queues the blocking native report call on the send queue and reports its outcome there.
+  ///
+  /// The IOKit call cannot be interrupted, so the returned closure does nothing; the sender's
+  /// deadline closes the device instead.
+  func startSend(
+    _ report: [UInt8],
+    completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+  ) -> @Sendable () -> Void {
+    sendQueue.async { [self] in completion(Result { try sendNow(report) }) }
+    return {}
+  }
+
   /// Sends `report` as an input report; blocks until IOKit accepts it.
   ///
   /// - Throws: ``CancellationError`` when the device is closed, and ``IOKitReportError`` when IOKit

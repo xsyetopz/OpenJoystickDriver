@@ -74,10 +74,10 @@ final class UserSpaceReportSender: Sendable {
 
   /// Races one native send against its deadline and resumes the waiting publisher exactly once.
   ///
-  /// The send runs in an unstructured task and the deadline on the sender's watchdog, not in a
-  /// task group, because a group awaits every child: a native send that ignores cancellation would
-  /// hold the worker past the deadline. Cancelling the waiting publisher (closing) must also not
-  /// cut the deadline short, so the send can still drain until then.
+  /// The backend starts the send without the worker awaiting it, and the deadline runs on the
+  /// sender's watchdog, not in a task group, because a group awaits every child: a native send that
+  /// ignores cancellation would hold the worker past the deadline. Cancelling the waiting publisher
+  /// (closing) must also not cut the deadline short, so the send can still drain until then.
   private final class NativeSendOperation: Sendable {
     /// The progress of the send.
     private struct State: Sendable {
@@ -85,8 +85,8 @@ final class UserSpaceReportSender: Sendable {
       var completed = false
       /// Whether the waiting publisher was cancelled.
       var cancellationRequested = false
-      /// The task that runs the native send.
-      var sendTask: Task<Void, Never>?
+      /// Asks the native send to stop.
+      var cancelSend: (@Sendable () -> Void)?
       /// The send's number at the watchdog.
       var watch: UInt64?
       /// The waiting publisher.
@@ -119,30 +119,25 @@ final class UserSpaceReportSender: Sendable {
           self?.finish(.failure(Failure.sendTimedOut))
         }
       }
-      let send = Task.detached { [weak self] in
-        do {
-          try await backend.send(report)
-          self?.finish(.success(()))
-        } catch { self?.finish(.failure(error)) }
-      }
+      let cancelSend = backend.startSend(report) { [weak self] result in self?.finish(result) }
       let didComplete = state.withLock { state -> Bool in
-        state.sendTask = send
+        state.cancelSend = cancelSend
         state.watch = watch
         return state.completed
       }
       if didComplete {
-        send.cancel()
+        cancelSend()
         watchdog.end(watch)
       }
     }
 
     /// Cancels the native send; the deadline then ends the wait with a cancellation.
     func cancel() {
-      let sendTask = state.withLock { state -> Task<Void, Never>? in
+      let cancelSend = state.withLock { state -> (@Sendable () -> Void)? in
         state.cancellationRequested = true
-        return state.sendTask
+        return state.cancelSend
       }
-      sendTask?.cancel()
+      cancelSend?()
     }
 
     /// Whether the waiting publisher was cancelled.
