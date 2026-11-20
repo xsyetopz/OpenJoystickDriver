@@ -369,4 +369,118 @@ PICTURES: tuple[StepPicture, ...] = (
             ),
         ),
     ),
+    StepPicture(
+        "stick-modes-sheet",
+        "main-profiles-stick-modes.png",
+        (
+            Callout(
+                (620, 240),
+                (10, 110),
+                "Pick a stick",
+                ("Each stick has its own.",),
+            ),
+            Callout(
+                (556, 313),
+                (10, 250),
+                "Turn this on first",
+                ("The stick moves the pointer.",),
+            ),
+            Callout(
+                (690, 377),
+                (10, 400),
+                "Stick mode",
+                ("Aim, Flick, Scroll Wheel...",),
+            ),
+            Callout(
+                (1300, 560),
+                (1460, 420),
+                "Deadzones",
+                ("Inner: ignore small wiggles.", "Outer: the rim counts as full."),
+            ),
+            Callout(
+                (556, 1116),
+                (10, 1000),
+                "Passthrough",
+                ("Games still get the stick.",),
+            ),
+            Callout(
+                (1350, 1206),
+                (1460, 1040),
+                "Save keeps it",
+                ("Cancel throws it away.",),
+            ),
+        ),
+    ),
+    StepPicture(
+        "trigger-stages-sheet",
+        "main-profiles-trigger-stages.png",
+        (
+            Callout(
+                (645, 240),
+                (10, 110),
+                "Pick a trigger",
+                ("Each trigger has its own.",),
+            ),
+            Callout(
+                (556, 313),
+                (10, 250),
+                "Turn this on first",
+                ("One trigger, two buttons.",),
+            ),
+            Callout(
+                (1240, 377),
+                (1460, 250),
+                "How the stages mix",
+                ("Both, or full replaces soft.",),
+            ),
+            Callout(
+                (1300, 545),
+                (1460, 470),
+                "How far to pull",
+                ("Soft must be below full.",),
+            ),
+            Callout(
+                (556, 778),
+                (10, 820),
+                "Passthrough",
+                ("Games still get the pull.",),
+            ),
+        ),
+    ),
+    StepPicture(
+        "regions-sheet",
+        "main-profiles-regions.png",
+        (
+            Callout(
+                (1314, 240),
+                (1460, 330),
+                "Pick the kind",
+                ("Stick ring, trigger band,", "or touch area."),
+            ),
+            Callout(
+                (618, 320),
+                (10, 250),
+                "Which input",
+                ("Here, the left stick.",),
+            ),
+            Callout(
+                (548, 490),
+                (10, 420),
+                "Ring size, 0 to 1",
+                ("0.8 to 1 is near the rim.",),
+            ),
+            Callout(
+                (800, 1130),
+                (10, 1000),
+                "Live position",
+                ("Move the stick, watch the dot.",),
+            ),
+            Callout(
+                (1290, 1288),
+                (1460, 1100),
+                "Add Assignment",
+                ("Saves the ring as a button.",),
+            ),
+        ),
+    ),
 )

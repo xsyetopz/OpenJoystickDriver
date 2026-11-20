@@ -39,7 +39,9 @@ flowchart LR
 
 1. Click the pencil (**Adjust Stick Modes**), select a stick.
 2. Turn on **Enable pointer output**.
-3. Select a **Stick mode** and change its settings.
+3. Select a **Stick mode** and change its settings, then click **Save**.
+
+![Arrows mark the stick picker, Enable pointer output, Stick mode, the deadzones, passthrough, and Save on the Stick Modes sheet](../docs/screenshots/steps/stick-modes-sheet.png)
 
 | Stick mode | Result |
 | --- | --- |
@@ -60,10 +62,7 @@ flowchart LR
     M --> O[Outer deadzone<br/>counts as fully pushed]
 ```
 
-- **Inner deadzone** and **Outer deadzone**: see the diagram.
 - **Response exponent**: higher is finer near center.
-- **Axis inversion**: flips an axis.
-- **Keep physical stick passthrough**: the game also gets the stick.
 - **Positive rotation**: which turn counts as forward.
 
 Ranges: [Profile file reference](Profile-File-Reference.md#analog-touch-and-motion-fields).
@@ -83,7 +82,7 @@ flowchart LR
 3. Select a **Stage interaction** (such as **Soft and Full Together** or **Full Replaces Soft**) and set thresholds. Soft must be below full.
 4. Save, then assign both stages in **Assignments**.
 
-**Keep analog trigger passthrough** keeps the analog trigger in passthrough.
+![Arrows mark the trigger picker, Enable dual-stage trigger, Stage interaction, the thresholds, and passthrough on the Trigger Stages sheet](../docs/screenshots/steps/trigger-stages-sheet.png)
 
 ## Set Touch Mapping
 
@@ -110,7 +109,7 @@ flowchart LR
 3. Select the **Input**, set the numbers, and select a **Destination**.
 4. Click **Add Assignment**.
 
-**Live position** shows the current position.
+![Arrows mark Region type, Input, the radius fields, Live position, and Add Assignment on the Regions sheet](../docs/screenshots/steps/regions-sheet.png)
 
 - **Stick Ring**: inner and outer radius, 0 to 1 after the dead zone. Optional sector in degrees clockwise from up (empty: whole ring).
 - **Trigger Band**: start and end pull, 0 to 1. Can't combine with dual-stage mappings.
