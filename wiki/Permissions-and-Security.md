@@ -36,7 +36,7 @@ The [Xbox USB driver](Glossary.md#terms) runs outside the kernel (the core of ma
 - Logs: `~/Library/Logs/OpenJoystickDriver/`
 - Settings: `com.openjoystickdriver` preferences domain
 
-OJD uses the internet only to check GitHub for updates, when you click **Check Now** or, if **Check for updates automatically** is on (off by default), at launch. It sends no controller data.
+OJD uses the internet only to check GitHub for updates. It checks when you click **Check Now**, and at launch if **Check for updates automatically** is on. That setting is off by default. It sends no controller data.
 
 ### Endpoint Access
 
@@ -49,7 +49,7 @@ The endpoint is a private door for other programs on your Mac, such as a stream 
 
 ### Support Report
 
-**Help** > **Copy Support Report** copies a report to the clipboard and saves nothing. It holds service status, virtual gamepad details, permission state, build version, and device product names, but no serial numbers, file paths, packet data, or location IDs. Read it before sharing.
+**Help** > **Copy Support Report** copies a report to the clipboard and saves nothing. It holds service status, virtual gamepad details, permission state, build version, and device product names. It holds no serial numbers, file paths, packet data, or location IDs. Read it before sharing.
 
 ## Permissions
 
