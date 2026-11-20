@@ -300,24 +300,34 @@ public final class GameCubeAdapterDriver: PhysicalProtocolDriver {
     }
   }
 
+  /// The face buttons of a port's first button byte, built once for every report.
+  private static let firstByteButtons: [(mask: UInt8, control: Control)] = [
+    (FirstButtonMask.a, .south), (FirstButtonMask.x, .east), (FirstButtonMask.b, .west),
+    (FirstButtonMask.y, .north),
+  ]
+
+  /// The buttons of a port's second button byte, built once for every report.
+  private static let secondByteButtons: [(mask: UInt8, control: Control)] = [
+    (SecondButtonMask.start, .start), (SecondButtonMask.z, .rightShoulder),
+    (SecondButtonMask.leftClick, .leftTrigger), (SecondButtonMask.rightClick, .rightTrigger),
+  ]
+
   /// Applies one port's nine bytes to `next`.
   private func apply(_ slot: [UInt8], to next: inout ControllerState) {
     let first = slot[1]
     let second = slot[2]
-    for (mask, control) in [
-      (FirstButtonMask.a, Control.south), (FirstButtonMask.x, .east), (FirstButtonMask.b, .west),
-      (FirstButtonMask.y, .north),
-    ] { next.set(control, pressed: first & mask != 0) }
+    for (mask, control) in Self.firstByteButtons {
+      next.set(control, pressed: first & mask != 0)
+    }
     next.hat = HatDirection(
       up: first & FirstButtonMask.up != 0,
       right: first & FirstButtonMask.right != 0,
       down: first & FirstButtonMask.down != 0,
       left: first & FirstButtonMask.left != 0
     )
-    for (mask, control) in [
-      (SecondButtonMask.start, Control.start), (SecondButtonMask.z, .rightShoulder),
-      (SecondButtonMask.leftClick, .leftTrigger), (SecondButtonMask.rightClick, .rightTrigger),
-    ] { next.set(control, pressed: second & mask != 0) }
+    for (mask, control) in Self.secondByteButtons {
+      next.set(control, pressed: second & mask != 0)
+    }
     func stick(_ offset: Int, axis: Int, inverted: Bool) -> Float {
       let value = ranges.fraction(slot[offset], axis: axis) * 2 - 1
       return inverted ? -value : value

@@ -247,21 +247,27 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     into next: inout ControllerState
   ) {
     let pressure = layout.pressureOffset
-    for (mask, offset, control) in [
-      (UInt8(0x01), Pressure.west, Control.west), (0x02, Pressure.south, .south),
-      (0x04, Pressure.east, .east), (0x08, Pressure.north, .north),
-      (0x10, Pressure.leftShoulder, .leftShoulder), (0x20, Pressure.rightShoulder, .rightShoulder),
-    ] {
+    for (mask, offset, control) in Self.pressureButtons {
       let pressed =
         digital & mask != 0 || bytes[pressure + offset] & ps3ThirdPartyPressedThreshold != 0
       next.set(control, pressed: pressed)
     }
-    var system: [(UInt8, Control)] = [
-      (0x01, .back), (0x02, .start), (0x04, .leftStickClick), (0x08, .rightStickClick),
-    ]
-    if layout == .standard { system.append((0x10, .guide)) }
-    for (mask, control) in system { next.set(control, pressed: bytes[1] & mask != 0) }
+    for (mask, control) in Self.systemButtons { next.set(control, pressed: bytes[1] & mask != 0) }
+    if layout == .standard { next.set(.guide, pressed: bytes[1] & 0x10 != 0) }
   }
+
+  /// The face buttons and shoulders: digital bit, pressure byte offset and control, built once
+  /// for every report.
+  private static let pressureButtons: [(mask: UInt8, offset: Int, control: Control)] = [
+    (0x01, Pressure.west, .west), (0x02, Pressure.south, .south),
+    (0x04, Pressure.east, .east), (0x08, Pressure.north, .north),
+    (0x10, Pressure.leftShoulder, .leftShoulder), (0x20, Pressure.rightShoulder, .rightShoulder),
+  ]
+
+  /// The system buttons both layouts report, built once for every report.
+  private static let systemButtons: [(mask: UInt8, control: Control)] = [
+    (0x01, .back), (0x02, .start), (0x04, .leftStickClick), (0x08, .rightStickClick),
+  ]
 
   /// The hat nibble, or the D-pad pressure bytes when the nibble is centered or untrusted.
   private func hat(_ bytes: [UInt8], layout: Layout) -> HatDirection {

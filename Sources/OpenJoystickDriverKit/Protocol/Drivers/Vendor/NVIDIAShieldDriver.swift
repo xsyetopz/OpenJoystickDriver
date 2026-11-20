@@ -155,13 +155,16 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
 
   /// Applies the face buttons, shoulders and stick clicks of `byte` to `next`.
   private static func applyFaceAndShoulders(_ byte: UInt8, to next: inout ControllerState) {
-    for (mask, control) in [
-      (FaceMask.south, Control.south), (FaceMask.east, .east), (FaceMask.west, .west),
-      (FaceMask.north, .north), (FaceMask.leftShoulder, .leftShoulder),
-      (FaceMask.rightShoulder, .rightShoulder), (FaceMask.leftStick, .leftStickClick),
-      (FaceMask.rightStick, .rightStickClick),
-    ] { next.set(control, pressed: byte & mask != 0) }
+    for (mask, control) in faceAndShoulderButtons { next.set(control, pressed: byte & mask != 0) }
   }
+
+  /// The face button, shoulder and stick click bits, built once for every report.
+  private static let faceAndShoulderButtons: [(mask: UInt8, control: Control)] = [
+    (FaceMask.south, .south), (FaceMask.east, .east), (FaceMask.west, .west),
+    (FaceMask.north, .north), (FaceMask.leftShoulder, .leftShoulder),
+    (FaceMask.rightShoulder, .rightShoulder), (FaceMask.leftStick, .leftStickClick),
+    (FaceMask.rightStick, .rightStickClick),
+  ]
 
   /// Four stick words from `sticks` (LX, LY, RX, RY) and two trigger words from `triggers`, all
   /// little-endian 16-bit; sticks center on 0x8000 with Y positive down, triggers rest at 0.
