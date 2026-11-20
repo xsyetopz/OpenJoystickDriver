@@ -126,7 +126,7 @@ expected = {
     "CFBundleIdentifier": bundle_id,
     "CFBundleExecutable": product_name,
     "CFBundleName": product_name,
-    "OSMinimumDriverKitVersion": "21.0",
+    "OSMinimumDriverKitVersion": "22.0",
 }
 for key, value in expected.items():
     if info.get(key) != value:
