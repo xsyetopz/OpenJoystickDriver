@@ -8,7 +8,7 @@ extension DeviceManager {
     // A start requested during system sleep runs when the system wakes.
     guard !isSystemSleeping else { return }
     let startGeneration = lifecycleGeneration
-    let state = await permissionManager.checkAccess().inputRead
+    let state = await permissionManager.currentInputReadState()
     guard !isStopping, lifecycleGeneration == startGeneration else { return }
     switch state {
     case .unknown, .denied:
@@ -46,7 +46,7 @@ extension DeviceManager {
     permissionWatchTask = Task { [weak self] in
       guard let self else { return }
       while !Task.isCancelled {
-        let currentState = await permissionManager.checkAccess().inputRead
+        let currentState = await permissionManager.currentInputReadState()
         await ensureHIDDetectionState(for: currentState)
         await retryHIDInputClaims()
         try? await Task.sleep(nanoseconds: devicePermissionWatchNanoseconds)

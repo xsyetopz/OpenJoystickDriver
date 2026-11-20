@@ -84,6 +84,16 @@ public actor PermissionManager {
     )
   }
 
+  /// The state of Input Monitoring: the polled state while polling runs and has an answer,
+  /// otherwise a read of that one permission.
+  ///
+  /// Each read blocks about 16 ms on the system's privacy services, so a once-a-second watch takes
+  /// the poll's answer instead of reading the permission a second time.
+  public func currentInputReadState() -> AccessState {
+    if pollingTask != nil, inputReadState != .unknown { return inputReadState }
+    return system.inputReadAccessState()
+  }
+
   /// Reads both permissions, records them and announces a change.
   @discardableResult
   public func refreshAccessState() -> Snapshot {
