@@ -143,7 +143,7 @@ A web page, such as a stream overlay, can read the endpoint through a WebSocket.
 1. Run `ojd access web enable`. It listens on `127.0.0.1`. The system picks a free port the first time. Choose one with `--port`. `ojd access status` shows it.
 2. Grant a token for the page origin: `ojd access grant --token overlay --origin http://127.0.0.1:PORT`.
 3. Put the page in the `Overlays` folder that `ojd access status` shows. It is served at `http://127.0.0.1:PORT/`, and a folder serves its `index.html`.
-4. The page connects to `ws://127.0.0.1:PORT/endpoint`, sends the same messages as one JSON object per text message, and signs the challenge with its [token](#use-a-token), its origin, and the port.
+4. The page connects to `ws://127.0.0.1:PORT/endpoint`. It sends the same messages, one JSON object per text message. It signs the challenge with its [token](#use-a-token), its origin, and the port.
 
 Only an origin you granted a token for gets in. Pages opened from a file (origin `null`) and the address `localhost` are refused. Use `127.0.0.1`.
 
@@ -174,7 +174,7 @@ A `control` program can press buttons on a virtual gamepad, as [`ojd virtual fee
 
 Closing the connection removes the gamepad and drops unplayed frames. To end cleanly, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drain"}` after the last frame and stay connected until `Drained` arrives. A `Drain` before the `FeedSession` gets `E1010`.
 
-After the last frame plays, 2 seconds with no line closes the connection with `E1008` and removes the gamepad, so a stalled client holds no button. Send any line within 2 seconds to keep it. The endpoint runs at most 4 virtual gamepads and answers another `feed` with `E1007`. It also sends `E1008` if the gamepad does not start or the service stops it.
+If no line arrives for 2 seconds after the last frame plays, OJD closes the connection with `E1008` and removes the gamepad. So a stalled client can't leave a button held down. Send any line within 2 seconds to keep it. The endpoint runs at most 4 virtual gamepads and answers another `feed` with `E1007`. It also sends `E1008` if the gamepad does not start or the service stops it.
 
 The [reference client](../Scripts/SDK/reference_client.py) uses only the Python standard library. It presses South for 100 ms and prints rumble commands. Set `OJD_TOKEN` to the token that `ojd access grant` printed, then run `python3 reference_client.py feed` (or `watch`). Games and latency through the endpoint are not verified.
 
@@ -308,7 +308,7 @@ A shortcut stores the controller in the forms of [Name a Controller](#name-a-con
 
 Shortcuts does not refresh an open list, so reopen it after you connect a controller. With no controller connected, a shortcut asks for one in a window, even from `shortcuts run`. Get Battery Level fails when the controller reports no level, and returns the lowest value of a range such as `30-39%`. To use no fixed controller, start with Get Controllers and Get Item from List (First Item), and pass that item.
 
-Run a shortcut from another program with the `shortcuts` command or a `shortcuts://` link, such as Raycast (`shortcuts run "Low Battery Check"`) or a Stream Deck Open action (`shortcuts://run-shortcut?name=Low%20Battery%20Check`). No command runs an action by name, only a shortcut you built. For Install Mod Package, pass the folder as a `file://` URL. A plain path fails with "Invalid URL". This runs shortcuts you build, each with one action taking the Shortcut Input:
+Other programs can run a shortcut with the `shortcuts` command or a `shortcuts://` link. Examples: Raycast (`shortcuts run "Low Battery Check"`) or a Stream Deck Open action (`shortcuts://run-shortcut?name=Low%20Battery%20Check`). No command runs an action by name, only a shortcut you built. For Install Mod Package, pass the folder as a `file://` URL. A plain path fails with "Invalid URL". This runs shortcuts you build, each with one action taking the Shortcut Input:
 
 ```sh
 printf '%s' "file://$PWD/docs/sdk/sample/" > folder.txt
