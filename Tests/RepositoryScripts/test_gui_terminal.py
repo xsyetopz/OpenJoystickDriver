@@ -35,6 +35,17 @@ class RenderTests(unittest.TestCase):
         line = sum(font.getmetrics()) + terminal.LINE_GAP
         self.assertEqual(three.height - one.height, 2 * line)
 
+    def test_a_line_past_the_terminal_width_wraps_onto_a_new_row(self) -> None:
+        # Arrange
+        fits = terminal.render("ojd status", ["x" * terminal.MAX_COLUMNS])
+
+        # Act
+        wraps = terminal.render("ojd status", ["x" * (terminal.MAX_COLUMNS + 1)])
+
+        # Assert
+        self.assertEqual(wraps.width, fits.width)
+        self.assertGreater(wraps.height, fits.height)
+
 
 class RunTests(unittest.TestCase):
     def test_ojd_runs_with_color_off(self) -> None:

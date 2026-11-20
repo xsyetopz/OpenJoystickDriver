@@ -29,6 +29,8 @@ MARGIN = 28
 LINE_GAP = 8
 RADIUS = 20
 MIN_COLUMNS = 60
+# Terminal wraps a longer line at the window edge; 100 columns keeps the picture readable.
+MAX_COLUMNS = 100
 LIGHTS = ((255, 95, 87), (254, 188, 46), (40, 200, 64))
 LIGHT_RADIUS = 12
 LIGHT_SPACING = 40
@@ -58,7 +60,11 @@ def render(command: str, lines: Sequence[str]):
 
     font = ImageFont.truetype(FONT_FILE, FONT_SIZE)
     title_font = ImageFont.truetype(TITLE_FONT_FILE, TITLE_SIZE)
-    text = [PROMPT + command, *lines]
+    text = [
+        line[start : start + MAX_COLUMNS]
+        for line in [PROMPT + command, *lines]
+        for start in range(0, max(1, len(line)), MAX_COLUMNS)
+    ]
     advance = font.getlength("M")
     columns = max(MIN_COLUMNS, *(len(line) for line in text))
     line_height = sum(font.getmetrics()) + LINE_GAP
