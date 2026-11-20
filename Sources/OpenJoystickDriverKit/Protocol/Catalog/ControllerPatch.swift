@@ -156,7 +156,7 @@ public struct ControllerPatch: Equatable, Sendable {
           code: .invalidControllerRecord,
           key: "error.E5007.patch.patchModeEntries",
           "patch.modes entries must hold an id and only id, protocol, match, interface, session,"
-            + " or idle"
+            + " idle, server, or input"
         )
       }
       patchMembers = members
@@ -286,7 +286,7 @@ public struct ControllerPatch: Equatable, Sendable {
     guard let members = mode.members, let id = mode["id"]?.string else { return false }
     return isModeID(id)
       && Set(members.map(\.key)).isSubset(of: [
-        "id", "protocol", "match", "interface", "session", "idle", "input",
+        "id", "protocol", "match", "interface", "session", "idle", "server", "input",
       ])
   }
 

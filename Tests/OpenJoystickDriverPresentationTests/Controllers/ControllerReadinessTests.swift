@@ -39,7 +39,8 @@ struct ControllerReadinessTests {
       .descriptorContractMismatch, .unsupportedProtocolVariant, .unsupportedTransportVariant,
       .virtualProfileUnavailable, .noModeMatched:
       #expect(state == .notSupported)
-    case .deviceInUse, .configurationUnreadable, .bootloaderIdentity, .noControllerLinked:
+    case .deviceInUse, .configurationUnreadable, .bootloaderIdentity, .noControllerLinked,
+      .awaitsReenumeration:
       #expect(state == .needsStep(.otherStep))
     }
   }

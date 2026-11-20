@@ -10372,6 +10372,159 @@
           }
         ]
       }
+    },
+    {
+      "name": "rejects a server on the default mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 4660,
+        "productID": 43981,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "server": "OJD"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a server on a mode with probes",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 4660,
+        "productID": 43981,
+        "modes": [
+          {
+            "id": "switching",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Pad",
+              "probes": [
+                {
+                  "report": 1,
+                  "length": 8,
+                  "expect": "Answers"
+                }
+              ]
+            },
+            "server": "OJD"
+          },
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an AwaitsReenumeration mode without a server",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 4660,
+        "productID": 43981,
+        "modes": [
+          {
+            "id": "switching",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "bcdDevice": {
+                "min": 32,
+                "max": 32
+              }
+            },
+            "idle": "AwaitsReenumeration"
+          },
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an AwaitsReenumeration mode served by the system",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 4660,
+        "productID": 43981,
+        "modes": [
+          {
+            "id": "switching",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "bcdDevice": {
+                "min": 32,
+                "max": 32
+              }
+            },
+            "idle": "AwaitsReenumeration",
+            "server": "System"
+          },
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an unknown mode server",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 4660,
+        "productID": 43981,
+        "modes": [
+          {
+            "id": "switching",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "bcdDevice": {
+                "min": 32,
+                "max": 32
+              }
+            },
+            "server": "Mac"
+          },
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ]
+      }
     }
   ]
 }

@@ -97,9 +97,9 @@ The registry hands the Mac's output commands to a feed's return sink in order, o
 
 A catalog row naming `HIDReportLayout` carries a `ControllerInputLayout`, from which `ReportLayoutDriver` decodes the raw report. No signature selects that family.
 
-If a check fails, OJD doesn't drop down to the next rule, and no device gets a one-size-fits-all HID parser. The result is `.bound(ProtocolBinding)`, `.unsupported(reason)`, or `.conflict(reason, candidates:)`. `ProtocolBindingReason` has exactly twelve IDs: NoProtocolMatch, AmbiguousProtocolMatch, InterfaceContractMismatch, DescriptorContractMismatch, UnsupportedProtocolVariant, UnsupportedTransportVariant, VirtualProfileUnavailable, DeviceInUse, ConfigurationUnreadable, BootloaderIdentity, NoModeMatched, NoControllerLinked.
+If a check fails, OJD doesn't drop down to the next rule, and no device gets a one-size-fits-all HID parser. The result is `.bound(ProtocolBinding)`, `.unsupported(reason)`, or `.conflict(reason, candidates:)`. `ProtocolBindingReason` has exactly thirteen IDs: NoProtocolMatch, AmbiguousProtocolMatch, InterfaceContractMismatch, DescriptorContractMismatch, UnsupportedProtocolVariant, UnsupportedTransportVariant, VirtualProfileUnavailable, DeviceInUse, ConfigurationUnreadable, BootloaderIdentity, NoModeMatched, NoControllerLinked, AwaitsReenumeration.
 
-Each ID has a sentence (`ui.controllers.<id>`) and a next step (`ui.controllers.<id>.nextStep`) in every language. `idle: NoControllerLinked` gives NoControllerLinked; `idle: Bootloader` gives BootloaderIdentity. NoModeMatched covers a record with no `default` or selected mode, a probe with no route, or a probe with no usable reply.
+Each ID has a sentence (`ui.controllers.<id>`) and a next step (`ui.controllers.<id>.nextStep`) in every language. `idle: NoControllerLinked` gives NoControllerLinked; `idle: Bootloader` gives BootloaderIdentity; `idle: AwaitsReenumeration` gives AwaitsReenumeration, and OJD keeps that device's HID claim so macOS doesn't greet it. NoModeMatched covers a record with no `default` or selected mode, a probe with no route, or a probe with no usable reply.
 
 A `ProtocolBindingID` is `family[:variant]`, such as `XboxXUSB:Receiver`. The variant is needed exactly when the family has variants. Records only store one when the connection type can't decide it.
 

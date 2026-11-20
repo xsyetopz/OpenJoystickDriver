@@ -872,7 +872,8 @@
         "ConfigurationUnreadable",
         "BootloaderIdentity",
         "NoModeMatched",
-        "NoControllerLinked"
+        "NoControllerLinked",
+        "AwaitsReenumeration"
       ]
     },
     "hidGamepad": {

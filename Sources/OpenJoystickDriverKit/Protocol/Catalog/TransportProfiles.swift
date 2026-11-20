@@ -307,9 +307,11 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public internal(set) var gipKeepAlivePolicy: GIPKeepAlivePolicy
   /// The assembly policy the row names; nil runs each protocol role as its own controller.
   public internal(set) var assemblyPolicy: ControllerAssemblyPolicy?
-  /// Who serves the controller when macOS also supports it.
-  public let server: ControllerServer
-  /// Whether the record or a patch states `server`, rather than leaving the default.
+  /// Who serves the controller when macOS also supports it; the selected mode's `server` when it
+  /// states one.
+  public internal(set) var server: ControllerServer
+  /// Whether the record, a patch or the selected mode states `server`, rather than leaving the
+  /// default.
   public internal(set) var statesServer = false
   /// The selected mode's session: startup, keep-alive, settle, shutdown, control transfers and
   /// rumble template.

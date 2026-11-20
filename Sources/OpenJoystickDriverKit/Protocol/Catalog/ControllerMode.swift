@@ -138,6 +138,9 @@ public enum ControllerIdleReason: String, Equatable, Sendable {
   case noControllerLinked = "NoControllerLinked"
   /// A controller in bootloader state, where a write risks a bad firmware image.
   case bootloader = "Bootloader"
+  /// A controller that changes its identity when nothing greets it; OJD holds it and sends nothing,
+  /// so it switches to the identity it serves.
+  case awaitsReenumeration = "AwaitsReenumeration"
 }
 
 /// One alternative mode of a controller model: the protocol it runs and the keys that must all hold
@@ -167,6 +170,8 @@ public struct ControllerMode: Equatable, Sendable {
   public let session: ControllerSession
   /// Why the mode serves nothing while it matches; nil for a mode that serves the device.
   public let idle: ControllerIdleReason?
+  /// Who serves the controller while this mode is selected; nil keeps the record's server.
+  public let server: ControllerServer?
   /// The input-report layouts this mode reads in place of the record's; nil reads the record's.
   public let inputLayouts: ControllerInputLayouts?
   /// The HID usage map this mode reads in place of the record's; nil reads the record's.
@@ -177,6 +182,12 @@ public struct ControllerMode: Equatable, Sendable {
 }
 
 extension DeviceRuntimeProfile {
+  /// Whether the record serves a receiver or dongle, whose link a mode's `link` key reads as
+  /// `ProprietaryRadioReceiver`.
+  var isReceiverRecord: Bool {
+    physicalProtocolVariant.map { [.receiver, .dongle].contains($0) } ?? false
+  }
+
   /// This profile running the named mode; the profile itself for nil, and nil for a mode the
   /// record does not have.
   func applying(modeID: String?) -> DeviceRuntimeProfile? {
@@ -192,6 +203,10 @@ extension DeviceRuntimeProfile {
     profile.interfaceRange = mode.interfaceRange ?? interfaceRange
     profile.session = mode.session
     profile.idleReason = mode.idle
+    if let server = mode.server {
+      profile.server = server
+      profile.statesServer = true
+    }
     if let layouts = mode.inputLayouts { profile.inputLayouts = layouts }
     if let usageMap = mode.hidUsageMap { profile.hidUsageMap = usageMap }
     profile.transportProfile = transportProfile.settling(
@@ -257,8 +272,7 @@ public enum ControllerModeSelector {
   ) async -> ControllerModeSelection {
     guard !profile.modes.isEmpty else { return .noModes }
     let fallback = profile.hasDefaultMode ? "the default mode is used" : "the device is unsupported"
-    let receiverRecord =
-      profile.physicalProtocolVariant.map { [.receiver, .dongle].contains($0) } ?? false
+    let receiverRecord = profile.isReceiverRecord
     // Two pads of one model differ in the log only by their location.
     let name =
       unsafe String(format: "%04X:%04X", model.vendorID, model.productID)

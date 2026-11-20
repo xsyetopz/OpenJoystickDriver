@@ -350,4 +350,30 @@ public struct PhysicalDevice: Equatable, Sendable {
     self.systemListsGameController = systemListsGameController
     self.gameControllerSupported = gameControllerSupported
   }
+
+  /// This device with `nativePassThrough` replaced, for a backend that decides who serves the
+  /// device from its observed facts.
+  public func passingThrough(_ nativePassThrough: Bool) -> Self {
+    Self(
+      serviceAddress: serviceAddress,
+      platformUniqueIdentifier: platformUniqueIdentifier,
+      vendorID: vendorID,
+      productID: productID,
+      deviceRelease: deviceRelease,
+      deviceClass: deviceClass,
+      deviceSubclass: deviceSubclass,
+      deviceProtocol: deviceProtocol,
+      configurationValue: configurationValue,
+      manufacturer: manufacturer,
+      productName: productName,
+      serialNumber: serialNumber,
+      transportProperty: transportProperty,
+      physicalLocationIdentifier: physicalLocationIdentifier,
+      stableParentDeviceIdentifier: stableParentDeviceIdentifier,
+      interfaces: interfaces,
+      nativePassThrough: nativePassThrough,
+      systemListsGameController: systemListsGameController,
+      gameControllerSupported: gameControllerSupported
+    )
+  }
 }

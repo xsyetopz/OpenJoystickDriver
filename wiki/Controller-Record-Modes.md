@@ -208,6 +208,8 @@ A raw-USB record can list alternative modes too. OJD chooses among them when it 
 
 Every mode follows its protocol's record rules for `input.layout`, `session.rumble`, `usb`, `server`, `route`, `heldByAppleDriver`, `tuning`, and `capabilities`. One exception: a `capabilities` delta needs only one mode's family description to declare it. A mode whose driver doesn't declare the delta ignores it.
 
+A mode other than `default` may state `server` when its match has no probes. It overrides the record's `server` while that mode runs. OJD decides who serves a HID device as it connects, before any probe runs, so it uses the first mode whose keys hold without probes. A mode with probes states no `server`, and the `default` mode uses the record's.
+
 At most one mode has the id `default`. A patch merges `modes` by `id`, so it names only the modes it changes or adds.
 
 macOS reports a radio dongle as a USB device. So the `ProprietaryRadioReceiver` link comes from the model's own record: a model whose default mode runs a `Receiver` or `Dongle` variant reports it. A mode keyed on that link then narrows down the receiver. No bundled record uses one product ID both through a dongle and over USB. The six receiver and dongle records (`045e:0291`, `045e:02a9`, `045e:0719`, `28de:1142`, `28de:1304`, `28de:1305`) each have one default mode.
@@ -234,6 +236,7 @@ Use `idle` for a device OJD knows but must leave alone. One example is a receive
 
 - `NoControllerLinked`: a receiver with no controller linked
 - `Bootloader`: a controller in its bootloader
+- `AwaitsReenumeration`: a pad that changes to another identity when nothing greets it. The mode states `server: OJD`. OJD holds the device's HID claim and sends nothing, so macOS doesn't greet it either.
 
 An idle mode has no `interface`, `session`, or `input`. A record whose modes are all idle has no `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `heldByAppleDriver`, `input`, or `tuning`. To add controls, replace `idle` with the `protocol` and `input` of a captured descriptor. A patch sets `idle` on a mode entry like any other key.
 

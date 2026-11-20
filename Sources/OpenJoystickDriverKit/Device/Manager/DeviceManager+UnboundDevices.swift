@@ -14,6 +14,9 @@ struct UnboundHIDClaim: Equatable {
   let identifier: LogicalControllerID
   /// The routing address of the connection, which the claim acts on.
   let routingAddress: ControllerConnectionAddress
+  /// Whether the claim stays held with no bound pipeline: the device waits, ungreeted, to change
+  /// identity, and a release would let macOS greet it.
+  var awaitsReenumeration = false
   /// Whether OJD released the claim, so macOS delivers the device's input.
   var isReleased = false
 }
@@ -109,7 +112,8 @@ extension DeviceManager {
 
   /// Records a rejected HID connection and reconciles OJD's claim on it.
   ///
-  /// A native controller no driver binds is left to macOS instead; OJD never claimed it.
+  /// A native controller no driver binds is left to macOS instead; OJD never claimed it. A device
+  /// whose mode awaits reenumeration keeps its claim, because macOS greeting it stops the switch.
   func rejectHIDDevice(
     _ connection: HIDDeviceConnection,
     identifier: LogicalControllerID,
@@ -138,14 +142,16 @@ extension DeviceManager {
     )
     unboundHIDClaims[connection.connectionID] = UnboundHIDClaim(
       identifier: identifier,
-      routingAddress: connection.routingAddress
+      routingAddress: connection.routingAddress,
+      awaitsReenumeration: reason == .awaitsReenumeration
     )
     await reconcileUnboundHIDClaims()
   }
 
   /// Holds OJD's claim on each rejected HID connection exactly while a bound pipeline shares its
-  /// physical controller or routing location, which keeps macOS from delivering duplicate input;
-  /// otherwise releases it so a device no driver owns stays with macOS.
+  /// physical controller or routing location, which keeps macOS from delivering duplicate input,
+  /// or while the device awaits reenumeration; otherwise releases it so a device no driver owns
+  /// stays with macOS.
   ///
   /// An observe-only pipeline never holds a claim, since macOS keeps every interface of a native
   /// controller. Pipelines come and go independently of the rejected connection, so this runs
@@ -159,10 +165,12 @@ extension DeviceManager {
       let claimingKeys = pipelines.filter { !$0.value.observesOnly }.keys
       for (connectionID, claim) in unboundHIDClaims {
         let identity = claim.identifier.hardware
-        let shared = claimingKeys.contains {
-          $0.hidRoutingAddress == claim.routingAddress
-            || identity.identifiesPhysicalDevice && $0.hardware == identity
-        }
+        let shared =
+          claim.awaitsReenumeration
+          || claimingKeys.contains {
+            $0.hidRoutingAddress == claim.routingAddress
+              || identity.identifiesPhysicalDevice && $0.hardware == identity
+          }
         guard shared == claim.isReleased else { continue }
         let result =
           shared

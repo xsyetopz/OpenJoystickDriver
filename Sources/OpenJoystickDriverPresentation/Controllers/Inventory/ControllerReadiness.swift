@@ -171,7 +171,8 @@ extension ControllerReadiness {
         .descriptorContractMismatch, .unsupportedProtocolVariant, .unsupportedTransportVariant,
         .virtualProfileUnavailable, .noModeMatched:
         return .notSupported
-      case .deviceInUse, .configurationUnreadable, .bootloaderIdentity, .noControllerLinked:
+      case .deviceInUse, .configurationUnreadable, .bootloaderIdentity, .noControllerLinked,
+        .awaitsReenumeration:
         return .needsStep(.otherStep)
       }
     case .served(let route):

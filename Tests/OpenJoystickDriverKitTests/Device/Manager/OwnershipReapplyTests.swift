@@ -10,6 +10,7 @@ import Testing
 @Suite(.timeLimit(.minutes(2)))
 struct OwnershipReapplyTests {
   private static let changedModel = ControllerModelID(vendorID: 0x3537, productID: 0x100B)
+  private static let changedDevice = PhysicalDevice(vendorID: 0x3537, productID: 0x100B)
 
   /// A record reload lets the HID backend admit a changed model again with its changed native flag,
   /// and `readmitHIDConnections` does not admit it a second time.
@@ -64,10 +65,10 @@ struct OwnershipReapplyTests {
   func ojdOwnedNativeModelDispatchesEachChangedReportWithoutRoute() async throws {
     let records = try Self.recordsOwningChangedModel()
     let catalog = DeviceCatalog(records: records)
-    #expect(catalog.statedServer(of: Self.changedModel) == .ojd)
+    #expect(catalog.statedServer(of: Self.changedDevice) == .ojd)
     // `HIDDeviceStream.nativePassThrough` for a model that GameController supports.
     let nativePassThrough =
-      catalog.statedServer(of: Self.changedModel) != .ojd
+      catalog.statedServer(of: Self.changedDevice) != .ojd
     let owned = try await Self.dispatchedReports(nativePassThrough: nativePassThrough)
     #expect(owned.observedGate == false)
     #expect(owned.dispatched == 2)

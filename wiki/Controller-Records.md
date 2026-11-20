@@ -117,6 +117,8 @@ A controller is [Handled by macOS](Glossary.md#terms) when the Game Controller f
 
 A raw-USB family, such as `XboxGIP`, reaches the controller through raw USB, which macOS can't handle, so `server` there applies only to a HID device the record fits none of the interfaces of. OJD serves such a device through the `HIDDescriptor` fallback when `server` is `OJD`, and leaves it to macOS otherwise. A changed value applies to a connected controller when the service reloads records. No unplug is needed.
 
+A mode may state its own `server`, which applies while that mode's keys hold. See [Record an Identity That Handles Nothing](Controller-Record-Modes.md#record-an-identity-that-handles-nothing) for a mode that holds a pad until it changes identity.
+
 `ojd controller claim CONTROLLER` sets `OJD`. `ojd controller release CONTROLLER` sets `System`.
 
 - Each command writes your record for the model, as a `ControllerPatch` when you have none and a bundled or package record exists.

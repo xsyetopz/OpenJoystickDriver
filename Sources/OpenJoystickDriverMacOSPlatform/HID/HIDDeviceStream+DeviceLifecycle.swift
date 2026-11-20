@@ -52,10 +52,20 @@ extension HIDDeviceStream {
     else { return nil }
     let supportsHIDDevice = GCController.supportsHIDDevice(device)
     let listing = gameControllerListings[deviceID] ?? .settling
+    // A mode's `server` reads the device's facts, so they are observed before it is decided.
+    let observed = physicalDeviceObservation(
+      for: device,
+      vendorID: model.vendorID,
+      productID: model.productID,
+      transportProperty: transport.isEmpty ? nil : transport,
+      nativePassThrough: false,
+      systemListsGameController: listing == .listed,
+      gameControllerSupported: supportsHIDDevice
+    )
     let nativePassThrough = Self.nativePassThrough(
       supportsHIDDevice: supportsHIDDevice,
       listing: listing,
-      statedServer: DeviceCatalog.current.withLock { $0.statedServer(of: model) }
+      statedServer: DeviceCatalog.current.withLock { $0.statedServer(of: observed) }
     )
     guard
       eventAdapter.add(
@@ -68,15 +78,7 @@ extension HIDDeviceStream {
         enumerationKey: "\(serial ?? "")|\(productName ?? "")"
       )
     else { return nil }
-    let physicalDevice = physicalDeviceObservation(
-      for: device,
-      vendorID: model.vendorID,
-      productID: model.productID,
-      transportProperty: transport.isEmpty ? nil : transport,
-      nativePassThrough: nativePassThrough,
-      systemListsGameController: listing == .listed,
-      gameControllerSupported: supportsHIDDevice
-    )
+    let physicalDevice = observed.passingThrough(nativePassThrough)
     // macOS keeps every interface of a native controller, so a sibling is never seized either.
     let wantsSeize = Self.seizesInput(
       device: physicalDevice,
@@ -189,7 +191,7 @@ extension HIDDeviceStream {
       models: models
     ) { deviceID, connection in
       let listing = gameControllerListings[deviceID] ?? .settling
-      guard let device = devicesByID[deviceID], let model = connection.physicalDevice.model else {
+      guard let device = devicesByID[deviceID], connection.physicalDevice.model != nil else {
         return Admission(
           nativePassThrough: connection.physicalDevice.nativePassThrough,
           systemListsGameController: connection.physicalDevice.systemListsGameController
@@ -199,7 +201,7 @@ extension HIDDeviceStream {
         nativePassThrough: Self.nativePassThrough(
           supportsHIDDevice: GCController.supportsHIDDevice(device),
           listing: listing,
-          statedServer: catalog.statedServer(of: model)
+          statedServer: catalog.statedServer(of: connection.physicalDevice)
         ),
         systemListsGameController: listing == .listed
       )

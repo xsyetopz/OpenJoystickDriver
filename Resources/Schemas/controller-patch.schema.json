@@ -99,6 +99,9 @@
               "idle": {
                 "$ref": "controller.schema.json#/$defs/mode/properties/idle"
               },
+              "server": {
+                "$ref": "controller.schema.json#/$defs/server"
+              },
               "input": {
                 "type": "object"
               }

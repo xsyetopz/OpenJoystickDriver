@@ -314,6 +314,9 @@ public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendabl
   /// The device's matching mode is idle with the reason `NoControllerLinked`, such as a receiver
   /// with no controller linked.
   case noControllerLinked = "NoControllerLinked"
+  /// The device's matching mode is idle with the reason `AwaitsReenumeration`: OJD holds it and
+  /// sends nothing until it changes identity.
+  case awaitsReenumeration = "AwaitsReenumeration"
 }
 
 extension ProtocolBindingReason {
@@ -446,6 +449,7 @@ enum ProtocolClassifier {
       switch record.idleReason {
       case .noControllerLinked?: return .unsupported(.noControllerLinked)
       case .bootloader?: return .unsupported(.bootloaderIdentity)
+      case .awaitsReenumeration?: return .unsupported(.awaitsReenumeration)
       case nil: break
       }
       if !record.hasDefaultMode, modeID == nil {

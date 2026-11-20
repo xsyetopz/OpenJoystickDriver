@@ -46,12 +46,19 @@ package struct DeviceCatalog: Sendable {
     profiles[model]?.applying(modeID: modeID)
   }
 
-  /// The `server` the record states, which overrides the stream's own test of whether macOS
-  /// serves the controller; nil when no record states one.
+  /// The `server` the record states for `device`, which overrides the stream's own test of
+  /// whether macOS serves the controller; nil when no record states one.
   ///
-  /// The stream reads it when a device is added.
-  package func statedServer(of model: ControllerModelID) -> ControllerServer? {
-    record(for: model).flatMap { $0.statesServer ? $0.server : nil }
+  /// The stream reads it when a device is added, before any probe can run, so the first mode
+  /// whose enumerated keys hold decides: its own `server`, else the record's. A mode with probes
+  /// states none, so the record's applies while its probes are unread.
+  package func statedServer(of device: PhysicalDevice) -> ControllerServer? {
+    guard let model = device.model, let record = record(for: model) else { return nil }
+    let recordServer = record.statesServer ? record.server : nil
+    let mode = record.modes.first {
+      $0.match.holds(for: device, receiverRecord: record.isReceiverRecord)
+    }
+    return mode?.server ?? recordServer
   }
 
   /// Whether OJD decides to serve a HID device: its record reaches the controller through the

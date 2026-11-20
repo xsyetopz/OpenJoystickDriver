@@ -169,8 +169,12 @@
           "$ref": "#/$defs/session"
         },
         "idle": {
-          "description": "The reason OJD serves nothing in this mode: no data is sent, no gamepad is published.",
-          "enum": ["NoControllerLinked", "Bootloader"]
+          "description": "Why OJD sends nothing and publishes no gamepad; AwaitsReenumeration holds a pad that changes identity when not greeted.",
+          "enum": ["NoControllerLinked", "Bootloader", "AwaitsReenumeration"]
+        },
+        "server": {
+          "description": "Who serves the controller in this mode, stated only by a mode without probes; the record's server otherwise.",
+          "$ref": "#/$defs/server"
         },
         "input": {
           "description": "The input this mode reads in place of the record's input.",
@@ -188,13 +192,47 @@
       "then": {
         "properties": {
           "match": false,
-          "input": false
+          "input": false,
+          "server": false
         }
       },
       "else": {
         "required": ["match"]
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "match": {
+                "required": ["probes"]
+              }
+            },
+            "required": ["match"]
+          },
+          "then": {
+            "properties": {
+              "server": false
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "idle": {
+                "const": "AwaitsReenumeration"
+              }
+            },
+            "required": ["idle"]
+          },
+          "then": {
+            "properties": {
+              "server": {
+                "const": "OJD"
+              }
+            },
+            "required": ["server"]
+          }
+        },
         {
           "if": {
             "required": ["idle"]

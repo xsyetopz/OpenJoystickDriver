@@ -19,20 +19,27 @@ extension ControllerRecordDocument {
     let session: ControllerSession
     /// Why the mode serves nothing while it matches; nil for a mode that serves the device.
     let idle: ControllerIdleReason?
+    /// Who serves the controller while this mode is selected; nil keeps the record's `server`.
+    let server: ControllerServer?
     /// The input this mode reads in place of the record's; nil reads the record's.
     let input: Input?
 
     /// Whether this is the `default` mode.
     var isDefault: Bool { id == Self.defaultID }
 
-    /// Decodes `id`, `protocol` and the optional `match`, `interface`, `session`, `idle` and
-    /// `input`; an unknown key, a malformed ID, a `default` mode with a match or an input, another
-    /// mode without a match, an unknown `idle` reason, an idle mode with an `interface`, a
-    /// `session` or an input, or an input with `descriptorShapes` is rejected.
+    /// Decodes `id`, `protocol` and the optional `match`, `interface`, `session`, `idle`, `server`
+    /// and `input`; an unknown key, a malformed ID, a `default` mode with a match, an input or a
+    /// server, another mode without a match, an unknown `idle` reason, an idle mode with an
+    /// `interface`, a `session` or an input, a server on a mode with probes, an
+    /// `AwaitsReenumeration` mode without `server: OJD`, or an input with `descriptorShapes` is
+    /// rejected.
+    ///
+    /// The HID stream decides who serves a device before any probe can run, so only a mode chosen
+    /// by its enumerated keys states a server.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(
-        allowed: ["id", "protocol", "match", "interface", "session", "idle", "input"]
+        allowed: ["id", "protocol", "match", "interface", "session", "idle", "server", "input"]
       )
       let identifier = try container.decode(String.self, for: "id")
       guard Self.isValidID(identifier) else {
@@ -52,7 +59,11 @@ extension ControllerRecordDocument {
       }
       if let name = try container.decodeOptional(String.self, for: "idle") {
         guard let reason = ControllerIdleReason(rawValue: name) else {
-          throw Self.invalid("idle", "idle is NoControllerLinked or Bootloader", decoder)
+          throw Self.invalid(
+            "idle",
+            "idle is NoControllerLinked, Bootloader or AwaitsReenumeration",
+            decoder
+          )
         }
         guard !container.contains(DocumentKey("interface")),
           !container.contains(DocumentKey("session")), !container.contains(DocumentKey("input"))
@@ -66,6 +77,24 @@ extension ControllerRecordDocument {
         idle = reason
       } else {
         idle = nil
+      }
+      server = try Self.server(container, decoder)
+      if server != nil, isDefaultMode {
+        throw Self.invalid("server", "the default mode uses the record's server", decoder)
+      }
+      if server != nil, modeMatch?.probes.isEmpty == false {
+        throw Self.invalid(
+          "server",
+          "a mode with probes uses the record's server; the server is chosen before probes run",
+          decoder
+        )
+      }
+      if idle == .awaitsReenumeration, server != .ojd {
+        throw Self.invalid(
+          "server",
+          "an AwaitsReenumeration mode states server OJD, so OJD holds the device",
+          decoder
+        )
       }
       self.id = identifier
       self.match = modeMatch
@@ -92,6 +121,18 @@ extension ControllerRecordDocument {
       .dataCorrupted(
         .init(codingPath: decoder.codingPath + [DocumentKey(key)], debugDescription: message)
       )
+    }
+
+    /// Reads an optional `server`; a name other than System or OJD is rejected.
+    private static func server(
+      _ container: KeyedDecodingContainer<DocumentKey>,
+      _ decoder: any Decoder
+    ) throws -> ControllerServer? {
+      guard let name = try container.decodeOptional(String.self, for: "server") else { return nil }
+      guard let stated = ControllerServer(rawValue: name) else {
+        throw Self.invalid("server", "server is System or OJD", decoder)
+      }
+      return stated
     }
 
     /// Lowercase ASCII words joined by single hyphens, the first starting with a letter.
@@ -121,6 +162,7 @@ extension ControllerRecordDocument {
         interfaceRange: interfaceRange,
         session: session,
         idle: idle,
+        server: server,
         inputLayouts: input?.layouts,
         hidUsageMap: input?.usageMap
       )
