@@ -26,6 +26,7 @@ extension EquivalenceSnapshotCatalogTests {
     case .vendorGameSir: "vendor-game-sir"
     case .vendorNVIDIAShield: "vendor-nvidia-shield"
     case .nintendoWii: "nintendo-wii"
+    case .nintendoGameCubeAdapter: "nintendo-game-cube-adapter"
     default: id.commandLineName
     }
   }

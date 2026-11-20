@@ -17,7 +17,7 @@ public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIter
     .hidDescriptor, .hidReportLayout, .xboxXID, .xboxXUSB, .xboxGIP, .sonySixaxis, .sonyDualShock4,
     .sonyDualSense, .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly,
     .valveSteamController, .valveSteamTriton, .valveSteamDeck, .vendorPS3ThirdParty, .vendorGameSir,
-    .vendorNVIDIAShield, .nintendoWii,
+    .vendorNVIDIAShield, .nintendoWii, .nintendoGameCubeAdapter,
   ]
 
   /// The family named `rawValue`: a built-in one, or one a loaded description document names.
@@ -92,6 +92,9 @@ public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIter
   public static let vendorNVIDIAShield = Self(builtIn: "VendorNVIDIAShield")
   /// The Nintendo Wii Remote (and Wii U Pro Controller) over Bluetooth Classic HID.
   public static let nintendoWii = Self(builtIn: "NintendoWii")
+  /// The Nintendo Wii U GameCube Controller Adapter: one HID device whose input report carries four
+  /// controller ports.
+  public static let nintendoGameCubeAdapter = Self(builtIn: "NintendoGameCubeAdapter")
 
   /// The family-specific `defaults.session` fields this family's driver reads.
   ///

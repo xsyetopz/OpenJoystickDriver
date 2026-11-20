@@ -1081,6 +1081,16 @@ tuning -
 driver none
 parameters=
 
+## 057E:0337
+protocol=nintendo-game-cube-adapter variant=- ownership=macos
+transport in=129 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [DpadDown,DpadLeft,DpadRight,DpadUp,East,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[low-frequency,high-frequency] binary=[low-frequency,high-frequency] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=500 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+startup[0] hid-output id=19 13
+parameters=
+
 ## 057E:2006
 protocol=nintendo-switch1 variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0

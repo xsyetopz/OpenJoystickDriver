@@ -359,6 +359,11 @@ public final class ProtocolDriverRegistry: Sendable {
         )
       )
     case .nintendoWii: return .success(WiiDriver(tuning: tuning))
+    case .nintendoGameCubeAdapter:
+      guard let port = GameCubeAdapterDriver(port: slotOrdinal) else {
+        return .failure(.interfaceContractMismatch)
+      }
+      return .success(port)
     case .vendorNVIDIAShield:
       return .success(
         NVIDIAShieldDriver(

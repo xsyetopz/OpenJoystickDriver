@@ -29,6 +29,7 @@ extension PS3ThirdPartyDriverTests: ParserSuite {}
 extension GameSirDriverTests: ParserSuite {}
 extension NVIDIAShieldDriverTests: ParserSuite {}
 extension WiiDriverTests: ParserSuite {}
+extension GameCubeAdapterDriverTests: ParserSuite {}
 
 /// Every built-in or bundled documented family has a parser suite that declares the family it
 /// covers, and no two suites claim the same family, so a new family cannot ship without a parser
@@ -42,7 +43,7 @@ struct ProtocolParserCoverageTests {
       Switch2DriverTests.self, SwitchInputOnlyParserTests.self, SteamControllerDriverTests.self,
       SteamTritonDriverTests.self, SteamDeckDriverTests.self, FlydigiParserTests.self,
       PS3ThirdPartyDriverTests.self, GameSirDriverTests.self, NVIDIAShieldDriverTests.self,
-      WiiDriverTests.self,
+      WiiDriverTests.self, GameCubeAdapterDriverTests.self,
     ]
   }
 
