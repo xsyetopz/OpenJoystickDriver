@@ -26,7 +26,7 @@ just catalog-regenerate --write
 just check-profiles
 ```
 
-The generator downloads each locked source, checks its SHA-256, reads the full xpad device and startup tables and the supported HID registration tables, applies local overrides, and writes records to fixed VID/PID paths.
+The generator downloads each locked source and checks its SHA-256. It reads the full xpad device and startup tables and the supported HID registration tables. Then it applies local overrides and writes records to fixed VID/PID paths.
 
 ## How Linux Rows Become Records
 
@@ -51,7 +51,10 @@ Records leave out endpoints and startup steps that the protocol already uses by 
 
 `mdqinc/SDL_GameControllerDB` is the third pinned upstream. The `sdlGameControllerDB` entry of `ControllerSources.lock.json` names the repository, the commit, and the SHA-256 of `gamecontrollerdb.txt` and its license. `regenerate` checks the download and writes `Sources/OpenJoystickDriverKit/Resources/SDLGameControllerDB/sdl-gamecontrollerdb.txt`, which starts with the upstream zlib license and a line naming the pin. Never edit it by hand.
 
-The generator keeps lines whose `platform` is `Mac OS X` and counts the rest. It drops a line whose vendor and product appear in the pinned `controller_list.h` rows (SDL's HIDAPI drivers read those pads with another report format, so the `b#`, `a#` and `h#.#` indexes differ) or in a catalog record (a pad with a record never looks at the database). A line it can't read makes generation fail. `regenerate` prints the counts: kept, other platform, unparsable, skipped controller list, skipped catalog record, duplicate GUIDs. Kit matches a line to the pad's list of inputs when it connects. see [architecture](architecture.md).
+The generator keeps lines whose `platform` is `Mac OS X` and counts the rest. It drops a line whose vendor and product appear in either place:
+
+- the pinned `controller_list.h` rows. SDL's HIDAPI drivers read those pads with another report format, so the `b#`, `a#` and `h#.#` indexes differ.
+- a catalog record. A pad with a record never looks at the database. A line it can't read makes generation fail. `regenerate` prints the counts: kept, other platform, unparsable, skipped controller list, skipped catalog record, duplicate GUIDs. Kit matches a line to the pad's list of inputs when it connects. see [architecture](architecture.md).
 
 ## SDL Controller List
 
@@ -72,7 +75,7 @@ SDL's `src/joystick/controller_list.h` is the second pinned upstream (currently 
 | SwitchInputOnlyController | NintendoSwitchInputOnly |
 | SteamControllerTriton | ValveSteamTriton, variant from `STEAM_VARIANTS` |
 
-One SDL Steam type covers wired pads, dongles and Bluetooth LE links, so the variant comes from `STEAM_VARIANTS` in `Scripts/Catalog/generate_controller_catalog.py`, which follows the per-row comments in `controller_list.h` and `IsProteusDongle` in `SDL_hidapi_steam_triton.c`. A Steam row missing from that list makes generation fail. In `sdl.plist` `steamVariants`, `28DE:1101` is the legacy Steam Controller (CHELL). Bluetooth LE rows (`1105`, `1106`, `1202`, `1303`) store `bluetooth-le`, dongles (`1142`, `1304`, `1305`) store `dongle`, the rest `wired`.
+One SDL Steam type covers wired pads, dongles and Bluetooth LE links. So the variant comes from `STEAM_VARIANTS` in `Scripts/Catalog/generate_controller_catalog.py`. That table follows the per-row comments in `controller_list.h` and `IsProteusDongle` in `SDL_hidapi_steam_triton.c`. A Steam row missing from that list makes generation fail. In `sdl.plist` `steamVariants`, `28DE:1101` is the legacy Steam Controller (CHELL). Bluetooth LE rows (`1105`, `1106`, `1202`, `1303`) store `bluetooth-le`, dongles (`1142`, `1304`, `1305`) store `dongle`, the rest `wired`.
 
 | Product ID | Identity |
 | --- | --- |
@@ -112,7 +115,7 @@ Every other unmapped type (mobile touch, unknown) is skipped with a per-type cou
 
 Linux rows and hand-written add overrides win. An SDL identity already present with the same family is a duplicate. With a different family, it's a conflict. Both are skipped and counted, and so is an identity SDL lists under two types that aren't both Xbox USB types. Identities are decided after grouping, so the order of rows never changes the output.
 
-Typed rows that don't use the protocol of a variant OJD has built are skipped by a rule or by `SDL_EXCLUSIONS` in `generate_controller_catalog.py`. A listed identity must still appear with its expected type, be missing from the catalog, and not be covered by a rule, so moving the lock to a newer version forces someone to review it. Generation also fails on any Microsoft (`045e`) `XBoxOneController` row that is neither in the catalog nor listed, so no Bluetooth or driver identity reaches the USB-only GIP driver without a review.
+Typed rows that don't use the protocol of a variant OJD has built are skipped by a rule or by `SDL_EXCLUSIONS` in `generate_controller_catalog.py`. A listed identity must still appear with its expected type, be missing from the catalog, and have no rule that covers it. So moving the lock to a newer version forces someone to review it. Generation also fails on any Microsoft (`045e`) `XBoxOneController` row that is neither in the catalog nor listed. So no Bluetooth or driver identity reaches the USB-only GIP driver without a review.
 
 | Bucket | Rows |
 | --- | --- |
@@ -120,7 +123,10 @@ Typed rows that don't use the protocol of a variant OJD has built are skipped by
 | `windows-driver-identity` | `045e:02a1`, `045e:02ff`: identities of the Windows XUSB and XBOXGIP drivers |
 | Vendor ID `0x0000` | Skipped |
 
-`0e6f:0186` (PDP Afterglow Wireless) and `0f0d:00f6` (HORI Wireless Switch Pad) get a NintendoSwitch1 record with the `usbProtocol` parameter `ChargingOnly`: their USB link only charges the pad, so the driver only takes the Bluetooth Classic link. Added to the catalog from their SDL types: the DualShock 4 USB wireless adapter `054c:0ba0` and the STRIKEPAD PS4 grip add-on `054c:05c5` (SonyDualShock4), the Access Controller `054c:0e5f` (SonyDualSense).
+`0e6f:0186` (PDP Afterglow Wireless) and `0f0d:00f6` (HORI Wireless Switch Pad) get a NintendoSwitch1 record with the `usbProtocol` parameter `ChargingOnly`. Their USB link only charges the pad, so the driver takes only the Bluetooth Classic link. These came into the catalog from their SDL types:
+
+- SonyDualShock4: the DualShock 4 USB wireless adapter `054c:0ba0` and the STRIKEPAD PS4 grip add-on `054c:05c5`
+- SonyDualSense: the Access Controller `054c:0e5f`
 
 Third-party DualShock 4 rows that get in keep the typical motion scale. Like SDL, OJD only uses the factory calibration report for Sony's vendor ID. `0079:181b` (Venom Arcade Stick), which SDL marks as possibly a PS3-protocol pad, gets in as SonyDualShock4, as listed.
 
@@ -138,7 +144,7 @@ Override inputs:
 Resources/Controllers/<vid>/<vid>-<pid>.plist
 ```
 
-A `Controller` file gives a full record that the pinned source lacks. A `ControllerPatch` file in `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.plist` merges a patch into an existing imported record. `OJDRepositoryTool apply-patches` applies patches under Swift's merge rules (a number keeps the text of the file that writes it, and a patch file below the vendor folder is refused). `OJDRepositoryTool validate records` checks every record, including its stored variant. The generator refuses:
+A `Controller` file gives a full record that the pinned source lacks. A `ControllerPatch` file in `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.plist` merges a patch into an existing imported record. `OJDRepositoryTool apply-patches` applies patches under Swift's merge rules. A number keeps the text of the file that writes it, and a patch file below the vendor folder is refused. `OJDRepositoryTool validate records` checks every record, including its stored variant. The generator refuses:
 
 | Refused |
 | --- |
