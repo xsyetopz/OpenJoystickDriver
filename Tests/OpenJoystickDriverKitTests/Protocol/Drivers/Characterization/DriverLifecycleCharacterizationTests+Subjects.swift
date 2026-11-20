@@ -239,9 +239,18 @@ extension DriverLifecycleCharacterizationTests {
     protocolID: .nintendoSwitchInputOnly,
     variant: .bluetoothClassic
   )
+  /// The Wii U GameCube adapter's port 0, readied by a report `0x21` with a wired pad and the
+  /// rumble cable in that port (Dolphin `GCAdapter.cpp`: status `0x14` at byte 1).
+  static let gameCubeAdapter = Subject(
+    model: model(0x057E, 0x0337),
+    host: .usb,
+    protocolID: .nintendoGameCubeAdapter,
+    variant: nil,
+    readyingInput: [Data([0x21, 0x14] + [UInt8](repeating: 0, count: 35))]
+  )
   static let sweepSubjects = [
     tritonWired, tritonDongle, tritonBluetoothLE, steamDeck, steamBluetoothLE, switch2USB,
-    switch2BluetoothLE, inputOnlyUSB, inputOnlyBluetooth,
+    switch2BluetoothLE, inputOnlyUSB, inputOnlyBluetooth, gameCubeAdapter,
   ]
 
   static let subjects = [

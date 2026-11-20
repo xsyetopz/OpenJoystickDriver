@@ -1017,6 +1017,7 @@ struct ProtocolDescriptionTests {
       .valveSteamDeck: ([], false), .vendorPS3ThirdParty: ([], false),
       .vendorGameSir: ([.usb, .enhancedHID], true),
       .vendorNVIDIAShield: ([], false), .nintendoWii: ([.bluetoothClassic], false),
+      .nintendoGameCubeAdapter: ([], false),
     ]
     #expect(Set(expected.keys) == Set(PhysicalProtocolID.allCases))
     for (protocolID, facts) in expected {
