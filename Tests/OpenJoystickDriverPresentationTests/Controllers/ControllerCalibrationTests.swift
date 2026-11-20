@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
@@ -72,6 +73,36 @@ struct ControllerCalibrationTests {
     await model.refresh(device: Self.device(), deadZone: 0.2, gateway: gateway)
     #expect(model.rows.count == ControllerCalibrationRow.Control.allCases.count)
     #expect(model.rows.first?.tuned == 0)
+  }
+
+  @Test
+  func refreshWithUnchangedValuesPublishesNothing() async {
+    let gateway = GatewayStub(inputState: Self.input)
+    await gateway.setVirtualOutput(Self.output)
+    let model = ControllerCalibrationModel()
+    await model.refresh(device: Self.device(), deadZone: 0.2, gateway: gateway)
+    var changes = 0
+    let observation = model.objectWillChange.sink { changes += 1 }
+    defer { observation.cancel() }
+
+    await model.refresh(device: Self.device(), deadZone: 0.2, gateway: gateway)
+
+    #expect(changes == 0)
+  }
+
+  @Test
+  func windowVisibilityPublishesOnlyChanges() {
+    let visibility = WindowVisibility(isVisible: true)
+    var changes = 0
+    let observation = visibility.objectWillChange.sink { changes += 1 }
+    defer { observation.cancel() }
+
+    visibility.update(true)
+    visibility.update(false)
+    visibility.update(false)
+
+    #expect(changes == 1)
+    #expect(!visibility.isVisible)
   }
 
   @Test

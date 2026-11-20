@@ -11,7 +11,8 @@ final class ControllerCalibrationModel: ObservableObject {
 
   /// Reads the input and the virtual gamepad values of `device` once.
   ///
-  /// A failed read keeps the rows of the last one.
+  /// A failed read keeps the rows of the last one, and a read with the same rows publishes nothing,
+  /// so a controller at rest does not redraw the view.
   ///
   /// - Parameters:
   ///   - device: The controller.
@@ -27,10 +28,11 @@ final class ControllerCalibrationModel: ObservableObject {
       async let input = gateway.controllerState(for: selector)
       async let output = gateway.virtualOutputState(for: selector)
       let (nextInput, nextOutput) = try await (input, output)
-      rows =
+      let next =
         nextInput.map {
           ControllerCalibrationRows.rows(input: $0, output: nextOutput, deadZone: deadZone)
         } ?? []
+      if next != rows { rows = next }
     } catch { return }
   }
 

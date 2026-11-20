@@ -38,7 +38,7 @@
             selector: .session(device.sessionToken)
           )
         }
-      }.task(id: device.sessionToken.rawValue) {
+      }.ojdTaskWhileVisible(id: device.sessionToken.rawValue) {
         await model.run(device: device, deadZone: { setting.value }, gateway: viewModel.gateway)
       }
     }

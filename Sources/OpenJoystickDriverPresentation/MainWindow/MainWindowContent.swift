@@ -88,6 +88,9 @@
     /// The Settings preferences, which hold the interface level.
     @ObservedObject
     var preferences: SettingsPreferencesModel
+    /// Whether the window is on screen, which gates the views' live readings.
+    @ObservedObject
+    var visibility: WindowVisibility
 
     /// The list half of the selected area, rebuilt when the area changes.
     var body: some View {
@@ -95,6 +98,7 @@
         .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
         .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
         .environment(\.ojdPreferences, preferences)
+        .environment(\.ojdWindowVisible, visibility.isVisible)
     }
 
     /// The list half of the selected area.
@@ -139,6 +143,9 @@
     /// The Settings preferences, which hold the interface level.
     @ObservedObject
     var preferences: SettingsPreferencesModel
+    /// Whether the window is on screen, which gates the views' live readings.
+    @ObservedObject
+    var visibility: WindowVisibility
     /// Whether opening System Settings for the driver extension approval failed, which shows an
     /// alert.
     @State
@@ -171,6 +178,7 @@
             .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
             .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
             .environment(\.ojdPreferences, preferences)
+            .environment(\.ojdWindowVisible, visibility.isVisible)
         }
       }.onChange(of: openSetupSteps) { steps in
         navigation.updateSetupSteps(loaded: runtime.loadState == .available, openSteps: steps.count)

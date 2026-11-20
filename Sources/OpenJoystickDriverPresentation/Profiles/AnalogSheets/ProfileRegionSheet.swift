@@ -73,7 +73,7 @@
           )
           .disabled(keyboardDestinationCleared)
         }
-      }.ojdSheet(.regular).frame(height: 640).task { await poll() }
+      }.ojdSheet(.regular).frame(height: 640).ojdTaskWhileVisible { await poll() }
     }
 
     /// The source of the draft, or the first stick ring while a number cannot be read.

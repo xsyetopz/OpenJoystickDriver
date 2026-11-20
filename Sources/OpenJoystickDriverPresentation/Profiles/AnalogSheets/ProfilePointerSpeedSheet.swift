@@ -79,7 +79,7 @@
             OJDLocalized.string("ui.help.save")
           )
         }
-      }.ojdSheet(.compact).task {
+      }.ojdSheet(.compact).ojdTaskWhileVisible {
         while !Task.isCancelled {
           do {
             state = try await liveState()

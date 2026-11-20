@@ -19,6 +19,8 @@
     let screens: MainWindowScreens
     /// Reports to the app whether the window is visible.
     private let visibilityChanged: @MainActor (Bool) -> Void
+    /// Whether any part of the window is on screen, which gates the views' live readings.
+    let visibility = WindowVisibility()
     /// The split view that holds the sidebar, the list column and the detail column.
     let splitViewController = NSSplitViewController()
     /// The content list column, collapsed for an area without a list.
@@ -126,7 +128,8 @@
             runtime: runtime,
             profiles: screens.profiles,
             screens: screens,
-            preferences: preferences
+            preferences: preferences,
+            visibility: visibility
           )
         )
       )
@@ -141,7 +144,8 @@
             runtime: runtime,
             profiles: screens.profiles,
             screens: screens,
-            preferences: preferences
+            preferences: preferences,
+            visibility: visibility
           )
         )
       )
@@ -339,6 +343,7 @@
       WindowFramePolicy.clamp(window, minimumSize: window.minSize)
       visibilityChanged(true)
       AppForeground.show(window)
+      visibility.update(window.occlusionState.contains(.visible))
       updateLogFollowing(area: navigation.selectedArea)
     }
 
@@ -347,6 +352,7 @@
       sender.orderOut(nil)
       updateLogFollowing(area: navigation.selectedArea)
       visibilityChanged(false)
+      visibility.update(false)
       return false
     }
 
@@ -379,6 +385,12 @@
       isEnforcingMinimumSize = true
       window.setFrame(fittedFrame, display: true)
       isEnforcingMinimumSize = false
+    }
+
+    /// Pauses the views' live readings while no part of the window is on screen.
+    func windowDidChangeOcclusionState(_: Notification) {
+      guard let window else { return }
+      visibility.update(window.isVisible && window.occlusionState.contains(.visible))
     }
 
     /// Stops following the logs while the window is miniaturized.
