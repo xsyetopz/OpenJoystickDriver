@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: يجب أن تكون بايتات المحركات والعدّاد في قالب الاهتزاز متمايزة وأن تلي معرّف التقرير داخل التقرير. الإصلاح: امنح كل محرك والعدّاد بايتًا خاصًا بعد معرّف التقرير.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: يجب أن تكون فترة إعادة إرسال الاهتزاز 1...60000 مللي ثانية. الإصلاح: اضبط resendIntervalMilliseconds على 1...60000 أو احذفه.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: لا يجوز لقالب مؤشر اللاعب أن يكتب تقرير إدخال. الإصلاح: اضبط report على تقرير إخراج أو تقرير ميزة.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: يجب أن يكون طول تقرير HID لمؤشر اللاعب من 1...64 بايت. الإصلاح: اجعل طول التقرير من 1...64 بايت.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: يجب أن يقع بايت قالب مؤشر اللاعب بعد معرّف التقرير داخل التقرير، وتحتاج كل خانة إلى قيمة. الإصلاح: اضبط byte على موضع بعد معرّف التقرير، وأعطِ كلًّا من off وplayer1 وplayer2 وplayer3 وplayer4 قيمة.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: قالب مؤشر اللاعب هو تقرير HID، لذا لا يجوز لوضع raw-USB أن يذكره. الإصلاح: احذف القالب من وضع raw-USB، أو استخدم وضع HID.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: تتطلب قوالب مؤشر اللاعب برنامج تشغيل يرمّزها. الإصلاح: احذف قالب مؤشر اللاعب أو استخدم عائلة يرمّزه برنامج تشغيلها.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "لا يمكن لسطر SDL_GameControllerDB الخاص بوحدة تحكم أن يشغّلها. تذكر الرسالة السبب. اكتب سجل وحدة تحكم لها باستخدام ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

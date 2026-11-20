@@ -10105,6 +10105,273 @@
           }
         ]
       }
+    },
+    {
+      "name": "rejects a player-indicator template on a mode whose driver does not encode it",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 0,
+                  "length": 1
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 8
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a raw-USB mode",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "XboxGIP"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 0,
+                  "length": 1
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 8
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a HIDDescriptor mode: a byte outside the report",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 0,
+                  "length": 1
+                },
+                "byte": 1,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 8
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a HIDDescriptor mode: a byte on the report ID",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 3,
+                  "length": 2
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 8
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a HIDDescriptor mode: an input report",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Input",
+                  "id": 0,
+                  "length": 1
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 8
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a HIDDescriptor mode: a missing slot value",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 0,
+                  "length": 1
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a HIDDescriptor mode: a value above 255",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 0,
+                  "length": 1
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 256
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a player-indicator template on a HIDDescriptor mode: a zero-length report",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 273,
+        "productID": 5152,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "playerIndicator": {
+                "report": {
+                  "kind": "Output",
+                  "id": 0,
+                  "length": 0
+                },
+                "byte": 0,
+                "off": 0,
+                "player1": 1,
+                "player2": 2,
+                "player3": 4,
+                "player4": 8
+              }
+            }
+          }
+        ]
+      }
     }
   ]
 }

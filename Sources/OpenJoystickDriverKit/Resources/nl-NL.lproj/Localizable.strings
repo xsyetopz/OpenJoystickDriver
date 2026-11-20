@@ -4238,6 +4238,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: de motor- en tellerbytes van een trilsjabloon moeten verschillend zijn en na de rapport-ID binnen het rapport liggen. Oplossing: geef elke motor en de teller een eigen byte na de rapport-ID.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: een hersturinterval voor trillen moet 1...60000 ms zijn. Oplossing: stel resendIntervalMilliseconds in op 1...60000, of laat het weg.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: een spelerindicatorsjabloon mag geen invoerrapport schrijven. Oplossing: stel report in op een uitvoer- of featurerapport.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: een HID-rapport voor de spelerindicator moet 1...64 bytes lang zijn. Oplossing: geef het rapport een lengte van 1...64 bytes.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: de byte van een spelerindicatorsjabloon moet in het rapport na de rapport-ID liggen, en elke plek heeft een waarde nodig. Oplossing: zet byte op een positie na de rapport-ID en geef off, player1, player2, player3 en player4 elk een waarde.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: een spelerindicatorsjabloon is een HID-rapport, dus een raw-USB-modus kan er geen noemen. Oplossing: verwijder het sjabloon uit de raw-USB-modus, of gebruik een HID-modus.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: spelerindicatorsjablonen vereisen een stuurprogramma dat ze codeert. Oplossing: verwijder het spelerindicatorsjabloon, of gebruik een familie waarvan het stuurprogramma het codeert.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "De SDL_GameControllerDB-regel van een controller kan hem niet aansturen. Het bericht noemt de reden. Schrijf met ojd record draft een controllerrecord voor de controller.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

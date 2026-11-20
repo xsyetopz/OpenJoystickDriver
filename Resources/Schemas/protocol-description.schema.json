@@ -55,7 +55,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "enum": ["input", "rumble", "hidUsageMap", "bluetoothLE", "keepAlive"]
+        "enum": ["input", "rumble", "playerIndicator", "hidUsageMap", "bluetoothLE", "keepAlive"]
       },
       "description": "The record sections the driver reads."
     },

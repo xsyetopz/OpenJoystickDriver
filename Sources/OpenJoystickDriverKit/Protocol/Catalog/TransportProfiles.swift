@@ -318,6 +318,10 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public internal(set) var session: ControllerSession
   /// The rumble report, for a driver that encodes rumble from it.
   public var rumbleTemplate: RumbleOutputTemplate? { session.rumbleTemplate }
+  /// The player-indicator report, for a driver that encodes the player LEDs from it.
+  public var playerIndicatorTemplate: PlayerIndicatorOutputTemplate? {
+    session.playerIndicatorTemplate
+  }
   /// Fixed startup reports, in order; OJD sends them only to a controller it owns.
   public var startupWrites: [RecordStartupWrite] { session.startupWrites }
   /// Raw-USB startup packets; empty runs the family description's.

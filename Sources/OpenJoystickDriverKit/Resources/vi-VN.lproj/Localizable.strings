@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: các byte động cơ và bộ đếm của một mẫu rung phải khác nhau và nằm sau ID báo cáo trong báo cáo. Cách sửa: cho mỗi động cơ và bộ đếm một byte riêng sau ID báo cáo.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: khoảng gửi lại của rung phải là 1...60000 ms. Cách sửa: đặt resendIntervalMilliseconds thành 1...60000, hoặc bỏ qua.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: một mẫu chỉ báo người chơi không được ghi báo cáo đầu vào. Cách sửa: đặt report thành báo cáo đầu ra hoặc báo cáo tính năng.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: một báo cáo HID của chỉ báo người chơi phải dài 1...64 byte. Cách sửa: đặt độ dài báo cáo là 1...64 byte.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: byte của mẫu chỉ báo người chơi phải nằm sau ID báo cáo trong báo cáo, và mỗi vị trí cần một giá trị. Cách sửa: đặt byte thành vị trí sau ID báo cáo, và cho off, player1, player2, player3 và player4 mỗi mục một giá trị.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: mẫu chỉ báo người chơi là một báo cáo HID, nên chế độ raw-USB không thể nêu mẫu này. Cách sửa: bỏ mẫu khỏi chế độ raw-USB, hoặc dùng chế độ HID.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: mẫu chỉ báo người chơi cần một trình điều khiển mã hóa chúng. Cách sửa: bỏ mẫu chỉ báo người chơi, hoặc dùng họ có trình điều khiển mã hóa nó.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Dòng SDL_GameControllerDB của một bộ điều khiển không thể điều khiển nó. Thông báo nêu lý do. Hãy viết bản ghi bộ điều khiển cho nó bằng ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

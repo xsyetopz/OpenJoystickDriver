@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: ไบต์มอเตอร์และตัวนับของเทมเพลตการสั่นต้องไม่ซ้ำกันและอยู่หลัง ID รายงานภายในรายงาน วิธีแก้: กำหนดไบต์ของตัวเองให้มอเตอร์แต่ละตัวและตัวนับหลัง ID รายงาน";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: ช่วงเวลาส่งซ้ำของการสั่นต้องเป็น 1...60000 ms วิธีแก้: ตั้ง resendIntervalMilliseconds เป็น 1...60000 หรือเว้นไว้";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: เทมเพลตไฟแสดงผู้เล่นเขียนรายงานอินพุตไม่ได้ วิธีแก้: ตั้ง report เป็นรายงานเอาต์พุตหรือรายงานฟีเจอร์";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: รายงาน HID ของไฟแสดงผู้เล่นต้องยาว 1...64 ไบต์ วิธีแก้: กำหนดความยาวของรายงานเป็น 1...64 ไบต์";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: ไบต์ของเทมเพลตไฟแสดงผู้เล่นต้องอยู่หลัง ID รายงานภายในรายงาน และทุกช่องต้องมีค่า วิธีแก้: ตั้ง byte เป็นตำแหน่งหลัง ID รายงาน และกำหนดค่าให้ off, player1, player2, player3 และ player4 อย่างละค่า";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: เทมเพลตไฟแสดงผู้เล่นเป็นรายงาน HID โหมด raw-USB จึงระบุไม่ได้ วิธีแก้: ลบเทมเพลตออกจากโหมด raw-USB หรือใช้โหมด HID";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: เทมเพลตไฟแสดงผู้เล่นต้องใช้ไดรเวอร์ที่เข้ารหัสได้ วิธีแก้: ลบเทมเพลตไฟแสดงผู้เล่น หรือใช้กลุ่มที่ไดรเวอร์เข้ารหัสได้";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "บรรทัด SDL_GameControllerDB ของคอนโทรลเลอร์ใช้ควบคุมคอนโทรลเลอร์นั้นไม่ได้ ข้อความระบุสาเหตุไว้ เขียนระเบียนคอนโทรลเลอร์ให้ด้วย ojd record draft";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

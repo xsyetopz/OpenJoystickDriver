@@ -38,6 +38,9 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   /// The rumble template the record declares; nil for a record with no rumble write shown on
   /// hardware.
   private let rumbleTemplate: RumbleOutputTemplate?
+  /// The player-indicator template the record declares; nil for a record with no player-LED write
+  /// shown on hardware.
+  private let playerIndicatorTemplate: PlayerIndicatorOutputTemplate?
   /// The rumble of the latest rumble command, which a resend repeats.
   private var lastRumble = RumbleIntensities.off
 
@@ -55,15 +58,18 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   /// `docs/descriptors/xb1s_linux.md`, `xbxs.md`, and `incompat/gamesir_g7_se.md`), and the
   /// descriptor that the macOS Xbox 360 driver publishes, with buttons 12-15 and no hat switch,
   /// gets its D-pad buttons and Y-up sticks. Otherwise the description's standard map applies.
-  /// `rumbleTemplate` is the record's rumble report.
+  /// `rumbleTemplate` is the record's rumble report and `playerIndicatorTemplate` its player-LED
+  /// report.
   init(
     model: ControllerModelID,
     reportDescriptor: Data? = nil,
     usageMap: HIDUsageMap?,
-    rumbleTemplate: RumbleOutputTemplate? = nil
+    rumbleTemplate: RumbleOutputTemplate? = nil,
+    playerIndicatorTemplate: PlayerIndicatorOutputTemplate? = nil
   ) {
     self.model = model
     self.rumbleTemplate = rumbleTemplate
+    self.playerIndicatorTemplate = playerIndicatorTemplate
     let fields =
       reportDescriptor.flatMap { HIDReportDescriptorParser.parse(descriptor: Array($0))?.fields }
       ?? []
@@ -101,10 +107,13 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(parsesHIDElementValues: true).withRumbleResend(of: rumbleTemplate)
   }
-  /// The rumble motors of the template, or none without one: the driver has no lighting or
-  /// adaptive triggers.
+  /// The rumble motors and the player indicator of the record's templates, or none without them:
+  /// the driver has no other lighting and no adaptive triggers.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
-    rumbleTemplate?.outputCapabilities ?? .none
+    PhysicalControllerOutputCapabilities(
+      rumbleMotors: rumbleTemplate?.outputCapabilities.rumbleMotors ?? [],
+      lightingFeatures: playerIndicatorTemplate?.outputCapabilities.lightingFeatures ?? []
+    )
   }
 
   /// The last rumble again while a motor runs, when the template names a resend interval.
@@ -114,11 +123,15 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
     return [rumbleTemplate.write(intensities)]
   }
 
-  /// Encodes a rumble command through the rumble template; any other command, or any command
-  /// without a template, is unsupported.
+  /// Encodes a rumble command through the rumble template and a player-indicator command through
+  /// the player-indicator template; any other command, or any command without its template, is
+  /// unsupported.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
+    if case .setPlayerIndicator = command, let playerIndicatorTemplate {
+      return try playerIndicatorTemplate.encode(command)
+    }
     guard let rumbleTemplate else { throw .unsupportedCapability(command.capability) }
     let plan = try rumbleTemplate.encode(command) { rumbleTemplate.write($0) }
     lastRumble = command.rumbleIntensities

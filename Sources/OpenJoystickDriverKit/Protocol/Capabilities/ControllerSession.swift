@@ -1,5 +1,6 @@
 /// The steps one mode runs around a controller session: vendor control transfers, startup writes, a
-/// post-handshake settle, keep-alive packets, shutdown packets, and the rumble report template.
+/// post-handshake settle, keep-alive packets, shutdown packets, the rumble report template, and the
+/// player-indicator report template.
 ///
 /// A mode names every step it runs; a step it does not name does not run.
 public struct ControllerSession: Equatable, Sendable {
@@ -17,6 +18,8 @@ public struct ControllerSession: Equatable, Sendable {
   public let controlTransfers: [VendorControlTransfer]
   /// The rumble report, for a driver that encodes rumble from it.
   public let rumbleTemplate: RumbleOutputTemplate?
+  /// The player-indicator report, for a driver that encodes the player LEDs from it.
+  public let playerIndicatorTemplate: PlayerIndicatorOutputTemplate?
 
   /// A session that runs nothing.
   public static let none = Self()
@@ -29,7 +32,8 @@ public struct ControllerSession: Equatable, Sendable {
     settleMilliseconds: Int? = nil,
     shutdownWrites: [USBStartupWrite] = [],
     controlTransfers: [VendorControlTransfer] = [],
-    rumbleTemplate: RumbleOutputTemplate? = nil
+    rumbleTemplate: RumbleOutputTemplate? = nil,
+    playerIndicatorTemplate: PlayerIndicatorOutputTemplate? = nil
   ) {
     self.startupWrites = startupWrites
     self.usbStartupWrites = usbStartupWrites
@@ -38,6 +42,7 @@ public struct ControllerSession: Equatable, Sendable {
     self.shutdownWrites = shutdownWrites
     self.controlTransfers = controlTransfers
     self.rumbleTemplate = rumbleTemplate
+    self.playerIndicatorTemplate = playerIndicatorTemplate
   }
 
   /// The accepted values of `settleMilliseconds`.

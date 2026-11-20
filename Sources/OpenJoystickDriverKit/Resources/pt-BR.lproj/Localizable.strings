@@ -4238,6 +4238,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: os bytes de motor e de contador de um modelo de vibração devem ser distintos e vir após o ID do relatório dentro do relatório. Correção: dê a cada motor e ao contador o seu próprio byte após o ID do relatório.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: um intervalo de reenvio de vibração deve ser de 1...60000 ms. Correção: defina resendIntervalMilliseconds como 1...60000, ou omita-o.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: um modelo de indicador de jogadores não pode gravar um relatório de entrada. Correção: defina report como um relatório de saída ou de recurso.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: um relatório HID do indicador de jogadores deve ter 1...64 bytes. Correção: dê ao relatório um comprimento de 1...64 bytes.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: o byte de um modelo de indicador de jogadores deve vir depois do ID do relatório, dentro do relatório, e cada posição precisa de um valor. Correção: defina byte como uma posição depois do ID do relatório e dê um valor a off, player1, player2, player3 e player4.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: um modelo de indicador de jogadores é um relatório HID, então um modo raw-USB não pode nomeá-lo. Correção: remova o modelo do modo raw-USB, ou use um modo HID.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: modelos de indicador de jogadores exigem um driver que os codifique. Correção: remova o modelo de indicador de jogadores, ou use uma família cujo driver o codifique.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "A linha do SDL_GameControllerDB de um controle não consegue acioná-lo. A mensagem indica o motivo. Escreva um registro de controle para ele com ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

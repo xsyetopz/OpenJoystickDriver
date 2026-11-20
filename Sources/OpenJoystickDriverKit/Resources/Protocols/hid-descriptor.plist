@@ -940,6 +940,7 @@
 	<key>recordSections</key>
 	<array>
 		<string>hidUsageMap</string>
+		<string>playerIndicator</string>
 		<string>rumble</string>
 	</array>
 	<key>tuningKeys</key>

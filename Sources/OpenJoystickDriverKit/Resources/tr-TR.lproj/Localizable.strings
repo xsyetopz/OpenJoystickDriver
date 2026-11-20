@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: bir titreşim şablonunun motor ve sayaç baytları birbirinden farklı olmalı ve rapor içinde rapor kimliğinden sonra gelmelidir. Düzeltme: her motora ve sayaca rapor kimliğinden sonra kendi baytını verin.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: bir titreşim yeniden gönderme aralığı 1...60000 ms olmalıdır. Düzeltme: resendIntervalMilliseconds’ı 1...60000 yapın ya da çıkarın.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: bir oyuncu göstergesi şablonu giriş raporu yazamaz. Düzeltme: report’u bir çıkış veya özellik raporuna ayarlayın.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: bir oyuncu göstergesi HID raporu 1...64 bayt uzunluğunda olmalıdır. Düzeltme: rapora 1...64 bayt uzunluk verin.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: bir oyuncu göstergesi şablonunun baytı, rapor içinde rapor kimliğinden sonra gelmelidir ve her yuva bir değer ister. Düzeltme: byte’ı rapor kimliğinden sonraki bir konuma ayarlayın ve off, player1, player2, player3 ile player4’e birer değer verin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: bir oyuncu göstergesi şablonu bir HID raporudur, bu yüzden raw-USB modu bir şablon belirtemez. Düzeltme: şablonu raw-USB modundan kaldırın veya bir HID modu kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: oyuncu göstergesi şablonları, onları kodlayan bir sürücü gerektirir. Düzeltme: oyuncu göstergesi şablonunu kaldırın veya sürücüsü onu kodlayan bir aile kullanın.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Bir kontrolcünün SDL_GameControllerDB satırı onu sürmeye yetmez. İleti nedenini belirtir. ojd record draft ile kontrolcü için bir kontrolcü kaydı yazın.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

@@ -241,7 +241,8 @@ public final class ProtocolDriverRegistry: Sendable {
           model: model,
           reportDescriptor: reportDescriptor,
           usageMap: record.hidUsageMap,
-          rumbleTemplate: record.rumbleTemplate
+          rumbleTemplate: record.rumbleTemplate,
+          playerIndicatorTemplate: record.playerIndicatorTemplate
         )
       )
     case .hidReportLayout:

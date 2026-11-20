@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: 진동 템플릿의 모터와 카운터 바이트는 서로 달라야 하며 리포트 안에서 리포트 ID 뒤에 있어야 합니다. 해결: 각 모터와 카운터에 리포트 ID 뒤의 고유한 바이트를 지정하세요.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: 진동 재전송 간격은 1...60000 ms여야 합니다. 해결: resendIntervalMilliseconds를 1...60000으로 설정하거나 생략하세요.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: 플레이어 표시등 템플릿은 입력 리포트를 쓸 수 없습니다. 해결: report를 출력 리포트 또는 기능 리포트로 설정하세요.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: 플레이어 표시등용 HID 리포트는 길이가 1...64바이트여야 합니다. 해결: 리포트 길이를 1...64바이트로 설정하세요.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: 플레이어 표시등 템플릿의 바이트는 리포트 안에서 리포트 ID 뒤에 있어야 하며, 모든 슬롯에 값이 필요합니다. 해결: byte를 리포트 ID 뒤의 위치로 설정하고 off, player1, player2, player3, player4에 각각 값을 지정하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: 플레이어 표시등 템플릿은 HID 리포트이므로 raw-USB 모드에서는 지정할 수 없습니다. 해결: raw-USB 모드에서 템플릿을 삭제하거나 HID 모드를 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: 플레이어 표시등 템플릿에는 이를 인코딩하는 드라이버가 필요합니다. 해결: 플레이어 표시등 템플릿을 삭제하거나 드라이버가 이를 인코딩하는 패밀리를 사용하세요.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "컨트롤러의 SDL_GameControllerDB 줄로는 그 컨트롤러를 구동할 수 없습니다. 이유는 메시지에 나와 있습니다. ojd record draft로 해당 컨트롤러의 레코드를 작성하세요.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

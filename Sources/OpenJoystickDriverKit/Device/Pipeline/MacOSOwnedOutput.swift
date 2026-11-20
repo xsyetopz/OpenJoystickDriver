@@ -26,15 +26,22 @@ struct MacOSOwnedOutput: Equatable, Sendable {
     readsStartupFeatures: false
   )
 
-  /// The family default with the record's rumble template added.
+  /// The family default with the reports of the record's rumble and player-indicator templates
+  /// added.
+  ///
+  /// A player-indicator template also makes OJD set the controller's slot after its first input
+  /// report, as the macOS-served Sony families do.
   static func allowance(for protocolID: PhysicalProtocolID, record: DeviceRuntimeProfile?) -> Self {
     let family = protocolID.protocolDescription.macOSOwnedOutput
-    guard let report = record?.rumbleTemplate?.report else { return family }
+    let rumble = record?.rumbleTemplate?.report
+    let playerIndicator = record?.playerIndicatorTemplate?.report
+    guard rumble != nil || playerIndicator != nil else { return family }
     return Self(
-      lightingFeatures: family.lightingFeatures,
-      drivesRumble: true,
-      reports: family.reports.union([report]),
-      setsStartupPlayerIndicator: family.setsStartupPlayerIndicator,
+      lightingFeatures: playerIndicator == nil
+        ? family.lightingFeatures : family.lightingFeatures.union([.playerIndicator]),
+      drivesRumble: family.drivesRumble || rumble != nil,
+      reports: family.reports.union([rumble, playerIndicator].compactMap { $0 }),
+      setsStartupPlayerIndicator: family.setsStartupPlayerIndicator || playerIndicator != nil,
       readsStartupFeatures: family.readsStartupFeatures
     )
   }

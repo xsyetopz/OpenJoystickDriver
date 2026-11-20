@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@，session.rumble：震动模板的马达和计数器字节必须互不相同，并且位于报告内的报告 ID 之后。修复：在报告 ID 之后为每个马达和计数器指定各自的字节。";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@，session.rumble.resendIntervalMilliseconds：震动重发间隔必须为 1...60000 毫秒。修复：将 resendIntervalMilliseconds 设为 1...60000，或省略。";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@，session.playerIndicator.report.kind：玩家指示灯模板不能写入输入报告。修复：将 report 设为输出报告或功能报告。";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@，session.playerIndicator.report.length：玩家指示灯的 HID 报告必须为 1...64 字节。修复：将报告长度设为 1...64 字节。";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@，session.playerIndicator：玩家指示灯模板的字节必须位于报告内的报告 ID 之后，且每个槽位都需要一个值。修复：将 byte 设为报告 ID 之后的位置，并为 off、player1、player2、player3 和 player4 各设一个值。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@，session.playerIndicator：玩家指示灯模板是 HID 报告，因此 raw-USB 模式不能指定它。修复：从 raw-USB 模式中删除该模板，或改用 HID 模式。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@，session.playerIndicator：玩家指示灯模板需要对其编码的驱动程序。修复：删除玩家指示灯模板，或改用驱动程序能对其编码的系列。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "控制器的 SDL_GameControllerDB 行无法驱动该控制器。消息会指出原因。请用 ojd record draft 为它编写控制器记录。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

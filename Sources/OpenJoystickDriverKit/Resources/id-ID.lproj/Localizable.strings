@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: byte motor dan penghitung templat getar harus berbeda dan berada setelah ID laporan di dalam laporan. Perbaikan: beri setiap motor dan penghitung byte sendiri setelah ID laporan.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: interval kirim ulang getar harus 1...60000 ms. Perbaikan: atur resendIntervalMilliseconds ke 1...60000, atau hilangkan.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: templat indikator pemain tidak boleh menulis laporan masukan. Perbaikan: atur report ke laporan keluaran atau fitur.";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: laporan HID indikator pemain harus sepanjang 1...64 byte. Perbaikan: beri laporan panjang 1...64 byte.";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: byte templat indikator pemain harus berada setelah ID laporan di dalam laporan, dan setiap slot memerlukan nilai. Perbaikan: atur byte ke posisi setelah ID laporan, dan beri off, player1, player2, player3, dan player4 masing-masing sebuah nilai.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: templat indikator pemain adalah laporan HID, sehingga mode raw-USB tidak dapat menyebutkannya. Perbaikan: hapus templat dari mode raw-USB, atau gunakan mode HID.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: templat indikator pemain memerlukan driver yang mengodekannya. Perbaikan: hapus templat indikator pemain, atau gunakan keluarga yang drivernya mengodekannya.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Baris SDL_GameControllerDB untuk sebuah pengontrol tidak dapat menjalankannya. Pesan menyebut alasannya. Tulis catatan pengontrol untuknya dengan ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

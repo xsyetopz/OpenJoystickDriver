@@ -63,20 +63,6 @@ struct ProtocolDescription: Sendable {
     }
   }
 
-  /// A record section the family's driver reads.
-  enum RecordSection: String, Sendable {
-    /// The record's `input` byte layout.
-    case input
-    /// A rumble template.
-    case rumble
-    /// The record's `input.hidUsageMap`.
-    case hidUsageMap
-    /// The record's `bluetoothLE` section.
-    case bluetoothLE
-    /// The mode's `protocol.keepAlive`.
-    case keepAlive
-  }
-
   /// A rule on the parameters a record sets beyond each parameter's own type.
   struct ParameterRule: Equatable, Sendable {
     /// The kinds of rule.

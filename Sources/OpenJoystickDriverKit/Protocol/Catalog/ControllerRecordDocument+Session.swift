@@ -68,17 +68,19 @@ extension ControllerRecordDocument {
   }
 
   /// A mode's `session`: the one shape every mode uses for its initialization, keep-alive,
-  /// settle, shutdown, vendor control transfers and rumble template.
+  /// settle, shutdown, vendor control transfers, rumble template and player-indicator template.
   struct SessionDocument: Decodable {
     /// The decoded session.
     let session: ControllerSession
 
-    /// Decodes `startup`, `keepAlive`, `settleMilliseconds`, `shutdown`, `control` and `rumble`; an
-    /// unknown key, an empty section or a value outside its range is rejected.
+    /// Decodes `startup`, `keepAlive`, `settleMilliseconds`, `shutdown`, `control`, `rumble` and
+    /// `playerIndicator`; an unknown key, an empty section or a value outside its range is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
         "startup", "keepAlive", "settleMilliseconds", "shutdown", "control", "rumble",
+        "playerIndicator",
       ])
       guard !container.allKeys.isEmpty else {
         throw DecodingError.dataCorrupted(
@@ -121,7 +123,11 @@ extension ControllerRecordDocument {
         settleMilliseconds: settle,
         shutdownWrites: shutdown?.compactMap(\.usb) ?? [],
         controlTransfers: control?.map(\.transfer) ?? [],
-        rumbleTemplate: try container.decodeOptional(RumbleTemplate.self, for: "rumble")?.template
+        rumbleTemplate: try container.decodeOptional(RumbleTemplate.self, for: "rumble")?.template,
+        playerIndicatorTemplate: try container.decodeOptional(
+          PlayerIndicatorTemplate.self,
+          for: "playerIndicator"
+        )?.template
       )
     }
   }

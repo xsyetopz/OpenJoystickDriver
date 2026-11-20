@@ -12,6 +12,12 @@ public struct ControllerTemplateReport: Hashable, Sendable {
   /// The byte offsets a template may set: every byte after a nonzero report ID.
   var writableBytes: Range<Int> { (reportID == 0 ? 0 : 1)..<length }
 
+  /// The write of `bytes` as this report.
+  func write(_ bytes: [UInt8]) -> PhysicalOutputWrite {
+    let report = PhysicalHIDOutputReport(reportID: reportID, bytes: bytes)
+    return kind == .feature ? .hidFeature(report) : .hidOutput(report)
+  }
+
   /// Creates a report description from its kind, ID and length.
   init(kind: PhysicalHIDReportKind, reportID: UInt8, length: Int) {
     self.kind = kind
@@ -289,11 +295,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     guard let report else {
       preconditionFailure("a raw-USB rumble template is sent by its driver")
     }
-    let hidReport = PhysicalHIDOutputReport(
-      reportID: report.reportID,
-      bytes: reportBytes(intensities, counter: counter)
-    )
-    return report.kind == .feature ? .hidFeature(hidReport) : .hidOutput(hidReport)
+    return report.write(reportBytes(intensities, counter: counter))
   }
 }
 

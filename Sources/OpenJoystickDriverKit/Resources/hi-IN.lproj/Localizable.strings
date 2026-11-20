@@ -4828,6 +4828,16 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: रंबल टेम्पलेट की मोटर और काउंटर के बाइट अलग-अलग होने चाहिए और रिपोर्ट के भीतर रिपोर्ट ID के बाद आने चाहिए। समाधान: हर मोटर और काउंटर को रिपोर्ट ID के बाद अपना अलग बाइट दें।";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: रंबल पुनः भेजने का अंतराल 1...60000 ms होना चाहिए। समाधान: resendIntervalMilliseconds को 1...60000 रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
+"error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: प्लेयर इंडिकेटर टेम्पलेट इनपुट रिपोर्ट नहीं लिख सकता। समाधान: report को आउटपुट या फ़ीचर रिपोर्ट पर रखें।";
+/* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.playerIndicator.reportLength" = "%1$@, session.playerIndicator.report.length: प्लेयर इंडिकेटर की HID रिपोर्ट 1...64 बाइट लंबी होनी चाहिए। समाधान: रिपोर्ट की लंबाई 1...64 बाइट रखें।";
+/* Error E5007, shown when the player-indicator template of a record fails: the byte is not a writable byte of the report, or a slot has no value. %1$@ is the file. */
+"error.E5007.playerIndicator.byte" = "%1$@, session.playerIndicator: प्लेयर इंडिकेटर टेम्पलेट का बाइट रिपोर्ट के अंदर रिपोर्ट ID के बाद होना चाहिए, और हर स्लॉट को एक मान चाहिए। समाधान: byte को रिपोर्ट ID के बाद की स्थिति पर रखें, और off, player1, player2, player3 और player4 को एक-एक मान दें।";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a raw-USB mode. %1$@ is the file. */
+"error.E5007.playerIndicator.templateKind" = "%1$@, session.playerIndicator: प्लेयर इंडिकेटर टेम्पलेट एक HID रिपोर्ट है, इसलिए raw-USB मोड उसे नहीं बता सकता। समाधान: टेम्पलेट को raw-USB मोड से हटाएँ, या HID मोड इस्तेमाल करें।";
+/* Error E5007, shown when a record or protocol description breaks a rule: a player-indicator template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.playerIndicator.templateDriver" = "%1$@, session.playerIndicator: प्लेयर इंडिकेटर टेम्पलेट के लिए उन्हें एन्कोड करने वाला ड्राइवर चाहिए। समाधान: प्लेयर इंडिकेटर टेम्पलेट हटाएँ, या ऐसा परिवार इस्तेमाल करें जिसका ड्राइवर उसे एन्कोड करता है।";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "किसी कंट्रोलर की SDL_GameControllerDB पंक्ति उसे चला नहीं सकती। संदेश कारण बताता है। ojd record draft से उस कंट्रोलर के लिए कंट्रोलर रिकॉर्ड लिखें।";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

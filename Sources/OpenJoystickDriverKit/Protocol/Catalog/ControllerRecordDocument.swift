@@ -221,6 +221,43 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
+  /// The player-indicator template of a record: a HID `report`, the `byte` that carries the value
+  /// and one value per slot.
+  struct PlayerIndicatorTemplate: Decodable {
+    /// The decoded template.
+    let template: PlayerIndicatorOutputTemplate
+
+    /// Decodes `report`, `byte` and one value per slot; an unknown key, a missing or out-of-range
+    /// value, or a template that `PlayerIndicatorOutputTemplate` rejects is rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      let slots = PhysicalPlayerIndicator.allCases
+      try container.rejectUnknown(allowed: Set(["report", "byte"] + slots.map(\.recordKey)))
+      var values: [PhysicalPlayerIndicator: UInt8] = [:]
+      for slot in slots {
+        let value = try container.decode(Int.self, for: slot.recordKey)
+        guard let byte = UInt8(exactly: value) else {
+          throw DecodingError.dataCorrupted(
+            .init(
+              codingPath: decoder.codingPath + [DocumentKey(slot.recordKey)],
+              debugDescription: "a player-indicator value is 0...255"
+            )
+          )
+        }
+        values[slot] = byte
+      }
+      do {
+        template = try PlayerIndicatorOutputTemplate(
+          report: try container.decode(TemplateReport.self, for: "report").report,
+          byte: try container.decode(Int.self, for: "byte"),
+          values: values
+        )
+      } catch let problem as ControllerRecordProblem {
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
+      }
+    }
+  }
+
   /// A rumble template's report: a HID output or feature report, or a raw-USB packet of
   /// `length` bytes to the family's output endpoint.
   struct RumbleTarget: Decodable {

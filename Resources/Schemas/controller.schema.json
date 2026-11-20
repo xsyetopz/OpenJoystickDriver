@@ -703,6 +703,53 @@
         }
       }
     },
+    "playerIndicatorTemplate": {
+      "description": "A player-indicator report: its HID report, the value byte, and one value per slot.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report", "byte", "off", "player1", "player2", "player3", "player4"],
+      "properties": {
+        "report": {
+          "$ref": "#/$defs/playerIndicatorReport"
+        },
+        "byte": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "off": { "$ref": "#/$defs/playerIndicatorValue" },
+        "player1": { "$ref": "#/$defs/playerIndicatorValue" },
+        "player2": { "$ref": "#/$defs/playerIndicatorValue" },
+        "player3": { "$ref": "#/$defs/playerIndicatorValue" },
+        "player4": { "$ref": "#/$defs/playerIndicatorValue" }
+      }
+    },
+    "playerIndicatorReport": {
+      "description": "A player-indicator HID output or feature report.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "length"],
+      "properties": {
+        "kind": {
+          "enum": ["Output", "Feature"]
+        },
+        "id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        }
+      }
+    },
+    "playerIndicatorValue": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 255
+    },
     "templateUSBPacket": {
       "description": "A raw-USB packet to the family's output endpoint.",
       "type": "object",
@@ -1774,7 +1821,7 @@
       ]
     },
     "session": {
-      "description": "The steps one mode runs: startup, keep-alive, settle time, shutdown, control transfers, and rumble.",
+      "description": "The steps one mode runs: startup, keep-alive, settle time, shutdown, control transfers, rumble, and player indicator.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -1836,6 +1883,9 @@
         },
         "rumble": {
           "$ref": "#/$defs/rumbleTemplate"
+        },
+        "playerIndicator": {
+          "$ref": "#/$defs/playerIndicatorTemplate"
         }
       }
     },
