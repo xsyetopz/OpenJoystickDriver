@@ -7,9 +7,8 @@ package struct MainAppServiceRegistration: ApplicationServiceRegistration {
   /// Creates the registration.
   package init() {}
 
-  /// The state of the main app's login item, `notFound` before macOS 13.
+  /// The state of the main app's login item.
   package var status: ApplicationServiceRegistrationStatus {
-    guard #available(macOS 13.0, *) else { return .notFound }
     switch SMAppService.mainApp.status {
     case .notRegistered: return .notRegistered
     case .enabled: return .enabled
@@ -21,23 +20,15 @@ package struct MainAppServiceRegistration: ApplicationServiceRegistration {
 
   /// Registers the main app as a login item.
   ///
-  /// - Throws: ``ApplicationServiceManager/ManagerError/unsupportedOperatingSystem`` before macOS
-  ///   13, and the `SMAppService` error otherwise.
+  /// - Throws: The `SMAppService` error.
   package func register() throws {
-    guard #available(macOS 13.0, *) else {
-      throw ApplicationServiceManager.ManagerError.unsupportedOperatingSystem
-    }
     try SMAppService.mainApp.register()
   }
 
   /// Removes the main app's login item.
   ///
-  /// - Throws: ``ApplicationServiceManager/ManagerError/unsupportedOperatingSystem`` before macOS
-  ///   13, and the `SMAppService` error otherwise.
+  /// - Throws: The `SMAppService` error.
   package func unregister() throws {
-    guard #available(macOS 13.0, *) else {
-      throw ApplicationServiceManager.ManagerError.unsupportedOperatingSystem
-    }
     try SMAppService.mainApp.unregister()
   }
 }

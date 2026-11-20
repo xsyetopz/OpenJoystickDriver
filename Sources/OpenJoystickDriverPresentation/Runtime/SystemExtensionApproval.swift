@@ -13,8 +13,7 @@
     }
 
     /// macOS 15 and later list driver extensions under Login Items & Extensions; macOS 13 and 14
-    /// show the approval prompt in Privacy & Security, and macOS 12 in Security & Privacy >
-    /// General.
+    /// show the approval prompt in Privacy & Security.
     static var settingsURLs: [URL] {
       if #available(macOS 15, *) {
         guard

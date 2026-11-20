@@ -7,7 +7,7 @@
 
   /// The empty detail of a column: centered secondary text, as Mail shows for "No Message
   /// Selected". `ContentUnavailableView` on macOS 14 and later, the same layout built from text
-  /// on macOS 12 and 13.
+  /// on macOS 13.
   struct EmptyStateView: View {
     /// The SF Symbol above the title.
     let symbol: String

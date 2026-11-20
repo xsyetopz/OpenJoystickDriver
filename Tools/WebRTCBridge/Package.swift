@@ -4,7 +4,7 @@ import PackageDescription
 /// The `ojd-webrtc-bridge` tool, which joins two endpoints over a WebRTC data channel.
 let package = Package(
   name: "WebRTCBridge",
-  platforms: [.macOS(.v12)],
+  platforms: [.macOS(.v13)],
   products: [.executable(name: "ojd-webrtc-bridge", targets: ["WebRTCBridge"])],
   dependencies: [
     .package(path: "../BridgeCore"),

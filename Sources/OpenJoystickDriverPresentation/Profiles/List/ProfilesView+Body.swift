@@ -94,8 +94,8 @@
         }
         profileDetail.frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-      // Older macOS presents only the last of several sheets attached to one view (unverified on
-      // macOS 12), so each sheet hangs off its own sibling background view.
+      // SwiftUI presents only the last of several sheets attached to one view, so each sheet
+      // hangs off its own sibling background view.
       .background(
         EmptyView().sheet(isPresented: $screen.isCreatingProfile) {
           ProfileNameSheet(

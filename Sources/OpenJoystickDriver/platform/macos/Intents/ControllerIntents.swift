@@ -5,7 +5,6 @@
   import OpenJoystickDriverService
 
   /// The Shortcuts action that returns the connected controllers.
-  @available(macOS 13, *)
   struct GetControllersIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource(
@@ -31,7 +30,6 @@
   }
 
   /// The Shortcuts action that returns the battery charge of one controller in percent.
-  @available(macOS 13, *)
   struct GetBatteryLevelIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource(

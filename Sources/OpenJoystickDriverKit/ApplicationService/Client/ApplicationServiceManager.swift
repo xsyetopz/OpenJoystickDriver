@@ -28,20 +28,6 @@ public enum ApplicationServiceManager: Sendable {
   /// The label of the main app's login-item registration.
   public static let label = "com.openjoystickdriver"
 
-  /// The failures of registering the main app as a login item.
-  public enum ManagerError: LocalizedError, Sendable {
-    /// The running macOS is older than 13, which has no login-item registration.
-    case unsupportedOperatingSystem
-
-    /// The description of the error for the user.
-    public var errorDescription: String? {
-      switch self {
-      case .unsupportedOperatingSystem:
-        return "Launching the main app at login requires macOS 13 or later."
-      }
-    }
-  }
-
   /// The path of the main app's executable inside the bundle at `appBundleURL`.
   public static func applicationExecutableURL(in appBundleURL: URL) -> URL {
     appBundleURL.appendingPathComponent("Contents", isDirectory: true).appendingPathComponent(
@@ -50,15 +36,13 @@ public enum ApplicationServiceManager: Sendable {
     ).appendingPathComponent("OpenJoystickDriver", isDirectory: false)
   }
 
-  /// Whether the main app has a login-item registration in any state; false before macOS 13.
+  /// Whether the main app has a login-item registration in any state.
   public static var isInstalled: Bool {
-    guard #available(macOS 13.0, *) else { return false }
     return PlatformHosts.current.mainAppRegistration.status != .notRegistered
   }
 
   /// Whether macOS will open the main application at login; false while approval is pending.
   public static var isLaunchAtLoginEnabled: Bool {
-    guard #available(macOS 13.0, *) else { return false }
     return PlatformHosts.current.mainAppRegistration.status == .enabled
   }
 
@@ -85,21 +69,18 @@ public enum ApplicationServiceManager: Sendable {
   /// Registers the main app through `service` unless it is registered, and writes a line to
   /// `information`.
   ///
-  /// - Throws: ``ManagerError/unsupportedOperatingSystem`` before macOS 13, and the error of
-  ///   `service` when registration fails.
+  /// - Throws: The error of `service` when registration fails.
   static func registerMainApp(
     using service: any ApplicationServiceRegistration,
     information: FileHandle = .standardOutput
   ) throws {
-    guard #available(macOS 13.0, *) else { throw ManagerError.unsupportedOperatingSystem }
     if service.status == .notRegistered { try service.register() }
     log("[ApplicationServiceManager] Main app registered for login", to: information)
   }
 
   /// Removes the main app's login item and records in `settings` that launch at login is off.
   ///
-  /// - Throws: ``ManagerError/unsupportedOperatingSystem`` before macOS 13, and the error of the
-  ///   settings store or of the unregistration.
+  /// - Throws: The error of the settings store or of the unregistration.
   public static func uninstall(settings: SettingsStore = SettingsStore()) throws {
     try settings.set(.launchAtLogin, to: false)
     try unregisterMainApp(using: PlatformHosts.current.mainAppRegistration)
@@ -108,13 +89,11 @@ public enum ApplicationServiceManager: Sendable {
   /// Unregisters the main app through `service` when it is registered, and writes a line to
   /// `information`.
   ///
-  /// - Throws: ``ManagerError/unsupportedOperatingSystem`` before macOS 13, and the error of
-  ///   `service` when unregistration fails.
+  /// - Throws: The error of `service` when unregistration fails.
   static func unregisterMainApp(
     using service: any ApplicationServiceRegistration,
     information: FileHandle = .standardOutput
   ) throws {
-    guard #available(macOS 13.0, *) else { throw ManagerError.unsupportedOperatingSystem }
     if service.status != .notRegistered { try service.unregister() }
     log("[ApplicationServiceManager] Main app removed from login items", to: information)
   }

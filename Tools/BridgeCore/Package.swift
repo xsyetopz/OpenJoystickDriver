@@ -5,7 +5,7 @@ import PackageDescription
 /// that the root package's tests can drive them against a real `EndpointServer`.
 let package = Package(
   name: "BridgeCore",
-  platforms: [.macOS(.v12)],
+  platforms: [.macOS(.v13)],
   products: [.library(name: "BridgeCore", targets: ["BridgeCore"])],
   targets: [.target(name: "BridgeCore", swiftSettings: [.treatAllWarnings(as: .error)])],
   swiftLanguageModes: [.v5]

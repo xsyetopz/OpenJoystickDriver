@@ -114,8 +114,7 @@
     func openSystemSettings() {
       let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.openjoystickdriver.app"
       let notificationsPane = "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
-      if #available(macOS 13.0, *),
-        let url = URL(string: "\(notificationsPane)?id=\(bundleIdentifier)"),
+      if let url = URL(string: "\(notificationsPane)?id=\(bundleIdentifier)"),
         NSWorkspace.shared.open(url)
       {
         return

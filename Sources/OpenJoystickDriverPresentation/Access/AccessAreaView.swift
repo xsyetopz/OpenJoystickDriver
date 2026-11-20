@@ -273,16 +273,11 @@
     /// The port field without its tooltip.
     @ViewBuilder
     private var portFieldBody: some View {
-      if #available(macOS 13, *) {
-        TextField(
-          OJDLocalized.string("ui.access.web.port"),
-          text: $model.portText,
-          prompt: Text(model.portPlaceholder)
-        ).ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
-      } else {
-        TextField(model.portPlaceholder, text: $model.portText)
-          .ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
-      }
+      TextField(
+        OJDLocalized.string("ui.access.web.port"),
+        text: $model.portText,
+        prompt: Text(model.portPlaceholder)
+      ).ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port"))
     }
 
     /// Returns a button that copies the endpoint's socket path.

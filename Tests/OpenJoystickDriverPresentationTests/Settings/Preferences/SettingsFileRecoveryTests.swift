@@ -333,7 +333,6 @@ private final class RecoveryDeliverySpy: RuntimeNotificationDelivering {
 }
 
 private final class RecoveryLaunchAtLoginStub: LaunchAtLoginControlling {
-  let isAvailable = true
   let isEnabled = false
 
   func setEnabled(_: Bool) {}

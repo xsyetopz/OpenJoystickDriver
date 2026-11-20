@@ -87,7 +87,7 @@ enum ServiceReadiness: Equatable, Sendable, CaseIterable {
   static func currentRegistration(
     for status: RuntimeStatusState
   ) -> ApplicationServiceRegistrationStatus? {
-    guard case .unavailable = status, #available(macOS 13.0, *) else { return nil }
+    guard case .unavailable = status else { return nil }
     return PlatformHosts.current.mainAppRegistration.status
   }
 }

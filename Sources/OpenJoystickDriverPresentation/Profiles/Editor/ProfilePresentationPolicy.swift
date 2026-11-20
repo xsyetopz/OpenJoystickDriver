@@ -40,14 +40,6 @@
     case popUp
   }
 
-  /// How an assignment row lays out its pickers.
-  enum ProfileAssignmentRowLayout: Equatable {
-    /// The pickers sit side by side.
-    case inline
-    /// The pickers sit one above the other.
-    case stacked
-  }
-
   /// The sizes and orders of the profile editor.
   enum ProfilePresentationPolicy {
     /// The sections in the order the picker lists them.
@@ -56,8 +48,6 @@
     static let defaultSection = ProfileEditorSection.assignments
     /// The width below which the section picker is a pop-up menu.
     static let compactNavigationWidth: CGFloat = 620
-    /// The width below which the pickers of an assignment sit one above the other.
-    static let inlineAssignmentWidth: CGFloat = 680
 
     /// Returns the height of a sheet whose fields show only when its setting is enabled.
     ///
@@ -72,11 +62,6 @@
     /// Returns the section picker style for an editor of `width`.
     static func navigationStyle(for width: CGFloat) -> ProfileEditorNavigationStyle {
       width < compactNavigationWidth ? .popUp : .segmented
-    }
-
-    /// Returns the assignment row layout for an editor of `width`.
-    static func assignmentRowLayout(for width: CGFloat) -> ProfileAssignmentRowLayout {
-      width < inlineAssignmentWidth ? .stacked : .inline
     }
   }
 

@@ -6,7 +6,6 @@
 
   /// The Shortcuts action that runs the rumble motors of one controller, as `ojd controller
   /// rumble` does.
-  @available(macOS 13, *)
   struct RumbleControllerIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource("ui.shortcuts.action.rumble.title")
@@ -62,7 +61,6 @@
 
   /// The Shortcuts action that sets the player indicator of one controller, as `ojd controller
   /// player` does.
-  @available(macOS 13, *)
   struct SetPlayerIndicatorIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource("ui.shortcuts.action.player.title")
@@ -100,7 +98,6 @@
   }
 
   /// The Shortcuts action that sets the light of one controller, as `ojd controller light` does.
-  @available(macOS 13, *)
   struct SetControllerLightIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource("ui.shortcuts.action.light.title")

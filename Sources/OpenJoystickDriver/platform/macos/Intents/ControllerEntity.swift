@@ -5,7 +5,6 @@
   import OpenJoystickDriverService
 
   /// A connected controller that Shortcuts actions take and return.
-  @available(macOS 13, *)
   struct ControllerEntity: AppEntity {
     /// The name of the controller type in Shortcuts.
     static let typeDisplayRepresentation = TypeDisplayRepresentation(
@@ -46,7 +45,6 @@
   }
 
   /// Finds controllers for Shortcuts parameters by ID or by text.
-  @available(macOS 13, *)
   struct ControllerEntityQuery: EntityStringQuery {
     /// The automation service that lists the controllers.
     @Dependency

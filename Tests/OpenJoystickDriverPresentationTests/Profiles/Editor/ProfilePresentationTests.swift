@@ -22,12 +22,6 @@ struct ProfilePresentationTests {
   }
 
   @Test
-  func assignmentRowsStackOnlyBelowTheirReadableWidth() {
-    #expect(ProfilePresentationPolicy.assignmentRowLayout(for: 679) == .stacked)
-    #expect(ProfilePresentationPolicy.assignmentRowLayout(for: 680) == .inline)
-  }
-
-  @Test
   func optionalEditorsGrowOnlyWhenTheirFeatureIsEnabled() {
     #expect(
       ProfilePresentationPolicy.optionalEditorHeight(enabled: false, compact: 260, expanded: 600)

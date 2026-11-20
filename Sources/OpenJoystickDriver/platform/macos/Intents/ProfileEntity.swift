@@ -4,7 +4,6 @@
   import OpenJoystickDriverService
 
   /// A saved remapping profile that Shortcuts actions take and return.
-  @available(macOS 13, *)
   struct ProfileEntity: AppEntity {
     /// The name of the profile type in Shortcuts.
     static let typeDisplayRepresentation = TypeDisplayRepresentation(
@@ -42,7 +41,6 @@
   }
 
   /// Finds saved profiles for Shortcuts parameters.
-  @available(macOS 13, *)
   struct ProfileEntityQuery: EntityQuery {
     /// The automation service that lists the profiles.
     @Dependency

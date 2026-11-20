@@ -3,7 +3,6 @@
   import Foundation
 
   /// The Shortcuts action that returns the version of the installed app.
-  @available(macOS 13, *)
   struct AppVersionIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource(

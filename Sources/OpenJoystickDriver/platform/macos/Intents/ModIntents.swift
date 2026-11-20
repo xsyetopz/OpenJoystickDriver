@@ -5,7 +5,6 @@
 
   /// The Shortcuts action that returns the names of the installed mod packages, as
   /// `ojd mod list` lists them.
-  @available(macOS 13, *)
   struct ListModsIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource("ui.shortcuts.action.listMods.title")
@@ -21,7 +20,6 @@
   }
 
   /// The Shortcuts action that installs a mod package folder, as `ojd mod install` does.
-  @available(macOS 13, *)
   struct InstallModIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource("ui.shortcuts.action.installMod.title")
@@ -52,7 +50,6 @@
 
   /// The Shortcuts action that removes an installed mod package, as `ojd mod remove --force`
   /// does.
-  @available(macOS 13, *)
   struct RemoveModIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource("ui.shortcuts.action.removeMod.title")

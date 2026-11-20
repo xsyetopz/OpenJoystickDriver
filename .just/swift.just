@@ -8,12 +8,6 @@ set working-directory := ".."
 env := "Scripts/with-env.sh"
 derived := ".build/xcode"
 
-# With Xcode, SwiftPM builds the test targets for the testing frameworks' minimum macOS, so the tests
-# use Swift Testing's `.timeLimit`, which needs macOS 13. A swift.org toolchain without Xcode keeps
-# them at the macOS 12 floor, and its triple applies to every target, so the build there targets
-# macOS 13: the lowest that has `.timeLimit`, and below the macOS 14 deprecations warnings would fail.
-test_triple := `if [[ -x "${DEVELOPER_DIR:-$(xcode-select -p 2>/dev/null)}/usr/bin/xcodebuild" ]]; then :; else echo "--triple $(uname -m)-apple-macosx13.0"; fi`
-
 # The C++ interop compiler warns about its own module map once compilation caching is on, and
 # warnings fail the build, so Xcode builds the package targets uncached.
 xcode_settings := "COMPILATION_CACHE_ENABLE_CACHING=NO"
@@ -34,7 +28,7 @@ format-check:
 # Build the package, its tests, and each shared Xcode scheme, without running them, and fail on any
 # warning they print.
 typecheck:
-    just swift::no-warnings {{ env }} swift build --build-tests {{ test_triple }}
+    just swift::no-warnings {{ env }} swift build --build-tests
     just swift::no-warnings just swift::xcode build-for-testing
 
 # Run SwiftLint.
@@ -48,7 +42,7 @@ lint-fix:
 
 # Run the Swift Testing tests, then each shared Xcode scheme's tests.
 test:
-    {{ env }} swift test --parallel {{ test_triple }}
+    {{ env }} swift test --parallel
     just swift::xcode test
 
 # Report XCTest outside UI tests, file-wide suppressions, foreign tools, and manifest or Xcode

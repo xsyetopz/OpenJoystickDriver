@@ -5,8 +5,6 @@
 
   /// Reads and changes the login item that starts the app at login.
   protocol LaunchAtLoginControlling {
-    /// Whether this macOS version supports the login item.
-    var isAvailable: Bool { get }
     /// Whether the login item is on.
     var isEnabled: Bool { get }
     /// Turns the login item on or off.
@@ -22,12 +20,6 @@
 
     /// Creates the controller on a settings store.
     init(settings: SettingsStore = SettingsStore()) { self.settings = settings }
-
-    /// Whether the login item is supported, which is the case from macOS 13.
-    var isAvailable: Bool {
-      if #available(macOS 13.0, *) { return true }
-      return false
-    }
 
     /// Whether the login item is registered.
     var isEnabled: Bool { ApplicationServiceManager.isLaunchAtLoginEnabled }

@@ -20,7 +20,7 @@ let swifterKitDependency: Package.Dependency =
 let package = Package(
   name: "OpenJoystickDriver",
   defaultLocalization: "en-US",
-  platforms: [.macOS(.v12), .iOS(.v15)],
+  platforms: [.macOS(.v13), .iOS(.v15)],
   // OpenJoystickDriver.xcodeproj links the libraries that its app target imports.
   products: [
     .library(name: "OpenJoystickDriverKit", targets: ["OpenJoystickDriverKit"]),

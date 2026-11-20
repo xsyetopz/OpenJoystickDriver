@@ -14,7 +14,7 @@ import tempfile
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[2]
-DEPLOYMENT_TARGET = "12.0"
+DEPLOYMENT_TARGET = "13.0"
 
 
 def run(arguments: list[str], root: Path) -> str:

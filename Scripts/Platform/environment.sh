@@ -77,9 +77,7 @@ export OJD_HAS_XCODE
 # Xcode's default toolchain, which links against the SDK. Without Xcode it is a swift.org toolchain
 # (`just setup` installs it through swiftly): the Command Line Tools' own swift cannot build the
 # app, because their newest SDK declares `@State` as a macro whose plugin ships only with Xcode, and
-# their older SDK carries a standard library interface that strict memory safety rejects. The
-# swift.org toolchains from 6.0.1 on build their runtime for macOS 13, so linking the macOS 12
-# target against them warns.
+# their older SDK carries a standard library interface that strict memory safety rejects.
 if (( OJD_HAS_XCODE )); then
   export PATH="$XCODE_SELECT_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin:$PATH"
 else
@@ -96,7 +94,7 @@ _SWIFT_PINNED="$(tr -d '[:space:]' < "$PROJECT_DIR/.swift-version")"
 _SWIFT_FOUND="$("$SWIFT_PATH" --version 2>&1 |
   sed -nE 's/.*Swift version ([0-9]+\.[0-9]+(\.[0-9]+)?).*/\1/p' | head -n1)"
 [[ "$_SWIFT_FOUND" == *.*.* ]] || _SWIFT_FOUND="$_SWIFT_FOUND.0"
-# `.swift-version` names the oldest Swift that builds for the macOS 12 floor.
+# `.swift-version` names the oldest Swift that builds the package.
 [[ "$(printf '%s\n%s\n' "$_SWIFT_PINNED" "$_SWIFT_FOUND" | sort -V | head -n1)" == "$_SWIFT_PINNED" ]] ||
   die "$SWIFT_PATH is Swift $_SWIFT_FOUND; .swift-version needs $_SWIFT_PINNED or newer: select a newer Xcode with DEVELOPER_DIR"
 unset _SWIFT_PINNED _SWIFT_FOUND

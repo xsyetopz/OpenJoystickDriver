@@ -108,8 +108,6 @@
     let onBehavior: (RemappingBinding) -> Void
     /// Called after an edit changed the draft.
     let onEditingStateChanged: () -> Void
-    /// Whether the source and destination pickers sit side by side or one above the other.
-    let rowLayout: ProfileAssignmentRowLayout
 
     /// The assignments of the group in a section.
     var body: some View {
@@ -124,8 +122,7 @@
             onError: onError,
             onAdjust: onAdjust,
             onBehavior: onBehavior,
-            onEditingStateChanged: onEditingStateChanged,
-            layout: rowLayout
+            onEditingStateChanged: onEditingStateChanged
           )
         }
       }
@@ -154,8 +151,6 @@
     let onBehavior: (RemappingBinding) -> Void
     /// Called after an edit changed the draft.
     let onEditingStateChanged: () -> Void
-    /// On macOS 12, whether the row takes one line or two.
-    let layout: ProfileAssignmentRowLayout
 
     /// One line per assignment: control, arrow, destination, then the buttons.
     ///
@@ -163,16 +158,9 @@
     /// accessible name, so the row needs no captions.
     var body: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
-        // Two lines when one does not fit the width. `ViewThatFits` needs macOS 13, so macOS 12
-        // takes the line count from the editor width.
-        if #available(macOS 13, *) {
-          ViewThatFits(in: .horizontal) {
-            singleLine
-            twoLines
-          }
-        } else if layout == .inline {
+        // Two lines when one does not fit the width.
+        ViewThatFits(in: .horizontal) {
           singleLine
-        } else {
           twoLines
         }
         PhysicalOutputDestinationFields(destination: destinationBinding).disabled(

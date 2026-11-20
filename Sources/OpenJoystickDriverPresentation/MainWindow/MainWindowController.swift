@@ -438,7 +438,7 @@
       toolbar.autosavesConfiguration = false
       toolbar.displayMode = .iconOnly
       window.toolbar = toolbar
-      if #available(macOS 11.0, *) { window.toolbarStyle = .unified }
+      window.toolbarStyle = .unified
     }
 
     /// Collapses or shows the list column and updates the toolbar, log following, title and

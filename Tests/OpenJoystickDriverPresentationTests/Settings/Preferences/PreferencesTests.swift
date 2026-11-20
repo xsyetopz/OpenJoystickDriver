@@ -546,7 +546,6 @@ final class TestNotificationRequestStub: TestNotificationRequesting, @unchecked 
 }
 
 final class LaunchAtLoginStub: LaunchAtLoginControlling {
-  var isAvailable = true
   var isEnabled: Bool
   private(set) var setValues: [Bool] = []
   private let acceptsChanges: Bool

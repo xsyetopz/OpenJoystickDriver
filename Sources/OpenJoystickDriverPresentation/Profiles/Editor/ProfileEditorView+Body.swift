@@ -52,7 +52,7 @@
           Divider()
           sectionNavigation(width: proxy.size.width)
           Divider()
-          editorContent(width: proxy.size.width)
+          editorContent
           Divider()
           editorFooter
         }

@@ -118,9 +118,6 @@
     @Published
     private(set) var settingsFileError: SettingsStoreError?
 
-    /// Whether the login item is available on this macOS version.
-    let launchAtLoginIsAvailable: Bool
-
     /// Called when a read finds the settings file usable again after an error, so that the work
     /// skipped while the file could not be read can run.
     var settingsRecovered: (@MainActor () -> Void)?
@@ -164,7 +161,6 @@
       self.notificationAuthorizationController = notificationAuthorization
       self.updateChecker = updateChecker
       self.notificationDelivery = notificationDelivery
-      self.launchAtLoginIsAvailable = controller.isAvailable
       self.startAtLogin = controller.isEnabled
       self.notificationAuthorization = .checking
       self.notificationSystemSettings = .authorizationOnly(.checking)
@@ -406,12 +402,6 @@
     ///
     /// The two cannot both be off.
     var showInDockIsLocked: Bool { showInDock && !showInMenuBar }
-
-    /// Why Start at login cannot change, or nil while it can.
-    var startAtLoginUnavailableReason: String? {
-      launchAtLoginIsAvailable
-        ? nil : OJDLocalized.string("platform.macos.ui.settings.general.startAtLoginUnavailable")
-    }
 
     /// Turns automatic update checks on or off; turning them on checks at once, so the choice
     /// applies without a restart.

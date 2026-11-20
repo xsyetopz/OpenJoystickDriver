@@ -169,15 +169,10 @@
     /// The three buttons and the result of the latest of their actions.
     var body: some View {
       Group {
-        // One row; a column when the three titles do not fit the width. `ViewThatFits` needs
-        // macOS 13, so macOS 12 keeps the row.
-        if #available(macOS 13, *) {
-          ViewThatFits(in: .horizontal) {
-            HStack { actionButtons }
-            VStack(alignment: .leading) { actionButtons }
-          }
-        } else {
+        // One row; a column when the three titles do not fit the width.
+        ViewThatFits(in: .horizontal) {
           HStack { actionButtons }
+          VStack(alignment: .leading) { actionButtons }
         }
         if let notice = actions.notice, notice.source == .timedCapture {
           ControllerNoticeText(text: notice.text, isError: notice.isError)

@@ -8,23 +8,20 @@
   extension ProfileEditorView {
 
     /// The form that shows the selected section.
-    ///
-    /// - Parameter width: The width of the editor, which decides the layout of the assignment rows.
-    /// - Returns: The form.
-    func editorContent(width: CGFloat) -> some View {
+    var editorContent: some View {
       Form {
         HiddenChangeNotice(
           content: .changed(ProfilesRow.changedHiddenRows(in: draft.profile).count)
         )
-        sectionContent(assignmentLayout: ProfilePresentationPolicy.assignmentRowLayout(for: width))
+        sectionContent
       }.ojdGroupedForm().id(selectedSection)
     }
 
     /// The content of the selected section.
     @ViewBuilder
-    func sectionContent(assignmentLayout: ProfileAssignmentRowLayout) -> some View {
+    var sectionContent: some View {
       switch selectedSection {
-      case .assignments: assignmentsSection(rowLayout: assignmentLayout)
+      case .assignments: assignmentsSection
       case .combinations:
         ProfileCombinationsSection(
           profile: draft.profile,
@@ -62,7 +59,7 @@
     /// The Assignments section: the header with the add button, and the assignments by
     /// group.
     @ViewBuilder
-    func assignmentsSection(rowLayout: ProfileAssignmentRowLayout) -> some View {
+    var assignmentsSection: some View {
       Section(
         header: HStack(alignment: .firstTextBaseline) {
           Spacer()
@@ -94,8 +91,7 @@
             localError = nil
             saveError = nil
             reportEditingState()
-          },
-          rowLayout: rowLayout
+          }
         )
       }
     }

@@ -5,7 +5,6 @@
   import OpenJoystickDriverService
 
   /// The Shortcuts action that activates a remapping profile for its controller model.
-  @available(macOS 13, *)
   struct ActivateProfileIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource(
@@ -35,7 +34,6 @@
   }
 
   /// The Shortcuts action that deactivates a remapping profile.
-  @available(macOS 13, *)
   struct DeactivateProfileIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource(
@@ -65,7 +63,6 @@
   }
 
   /// The Shortcuts action that changes one value of a remapping profile, as `ojd profile set` does.
-  @available(macOS 13, *)
   struct SetProfileValueIntent: AppIntent {
     /// The name of the action in Shortcuts.
     static let title = LocalizedStringResource(

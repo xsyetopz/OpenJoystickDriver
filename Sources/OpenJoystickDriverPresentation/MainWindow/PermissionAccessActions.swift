@@ -94,21 +94,10 @@
       }
     }
 
-    /// Returns the Privacy & Security pane URLs for `pane`, the System Settings one first on macOS
-    /// 13 and later.
+    /// Returns the System Settings Privacy & Security pane URLs for `pane`.
     static func privacySettingsURLs(pane: String) -> [URL] {
-      var urls: [URL] = []
-      if #available(macOS 13.0, *) {
-        if let url = URL(
-          string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?\(pane)"
-        ) {
-          urls.append(url)
-        }
-      }
-      if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)") {
-        urls.append(url)
-      }
-      return urls
+      URL(string: "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?\(pane)")
+        .map { [$0] } ?? []
     }
 
     /// Opens Input Monitoring when it is not granted, else Accessibility.
@@ -132,12 +121,7 @@
     private static func openPrivacySettings(pane: String, viewModel: RuntimeViewModel) {
       let urls = privacySettingsURLs(pane: pane)
       for url in urls where NSWorkspace.shared.open(url) { return }
-      let fallbackPath: String
-      if #available(macOS 13.0, *) {
-        fallbackPath = "/System/Applications/System Settings.app"
-      } else {
-        fallbackPath = "/System/Library/PreferencePanes/Security.prefPane"
-      }
+      let fallbackPath = "/System/Applications/System Settings.app"
       viewModel.permissionSettingsOpenFailed =
         !NSWorkspace.shared.open(URL(fileURLWithPath: fallbackPath))
     }

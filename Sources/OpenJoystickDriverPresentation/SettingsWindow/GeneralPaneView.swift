@@ -21,9 +21,7 @@
             isOn: Binding(
               get: { preferences.startAtLogin },
               set: { preferences.setStartAtLogin($0) }
-            ),
-            isEnabled: preferences.launchAtLoginIsAvailable,
-            disabledReason: preferences.startAtLoginUnavailableReason
+            )
           ).ojdInterfaceRow(SettingsRow.startAtLogin)
           SettingsBesideError(preferences: preferences, origin: .loginItem)
           SettingsSwitchRow(

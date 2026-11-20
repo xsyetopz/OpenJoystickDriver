@@ -29,17 +29,6 @@
     }
 
     @Test
-    func startAtLoginGivesReasonWhileLoginItemUnavailable() {
-      let unavailable = LaunchAtLoginStub(isEnabled: false)
-      unavailable.isAvailable = false
-      #expect(
-        Self.model(launch: unavailable).startAtLoginUnavailableReason
-          == OJDLocalized.string("platform.macos.ui.settings.general.startAtLoginUnavailable")
-      )
-      #expect(Self.model().startAtLoginUnavailableReason == nil)
-    }
-
-    @Test
     func lockedSwitchShowsItsReasonAsRowText() {
       let row = SettingsSwitchRow(
         title: "Title",
