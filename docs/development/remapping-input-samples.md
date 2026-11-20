@@ -34,7 +34,7 @@ Each timestamp keeps the pad's raw counter, how many nanoseconds one tick lasts 
 
 ### Touch Contacts
 
-A touch contact (one finger) has a slot, an on/off flag, X and Y scaled to 0 to 65535, and optional `UnipolarValue` pressure (no driver reports it). A frame has a surface and a timestamp.
+A touch contact (one finger) has a slot, an on/off flag, and X and Y scaled to 0 to 65535. It can also carry `UnipolarValue` pressure, but no driver reports it. A frame has a surface and a timestamp.
 
 - The slot is the finger's place in the report. The pad's own finger-tracking counter isn't passed on.
 - 0 is the left or top edge, 65535 the right or bottom edge. Drivers state the raw start and size in `ControllerTouchGeometry`: DS4 1920x942, DualSense 1920x1080.
@@ -62,10 +62,10 @@ The connected-device payload shows the parser's `capabilities` (whether it has m
 
 ### Steam Controller Motion
 
-The parser converts the accelerometer and gyro from full-state messages (type 0x01) to SI units at the typical scale, following [SDL's Steam HID parser][3] and [Linux hid-steam][4]. Startup asks for raw output with motion mode 0x18. Shutdown puts the defaults back.
+The parser converts the accelerometer and gyro from full-state messages (type 0x01) to SI units at the typical scale. It follows [SDL's Steam HID parser][3] and [Linux hid-steam][4]. Startup asks for raw output with motion mode 0x18. Shutdown puts the defaults back.
 
 - Axis swaps follow SDL. The gyro and accelerometer swaps differ by a mirror. Which one is right-handed stays unknown until someone captures real hardware.
-- Sequence numbers are extra information only. Timestamps use when the Mac received the report: the first accepted motion report starts the session clock, and arrival times that go backward are held in place.
+- Sequence numbers are extra information only. Timestamps record when the Mac received the report. The first accepted motion report starts the session clock. An arrival time that goes backward is held in place.
 - A repeated sequence number sends no second sample. When the counter wraps, the next report is accepted.
 - The receiver connecting, disconnecting, or resetting the session restarts timing and duplicate tracking. Reports while disconnected don't move motion forward.
 - Bluetooth LE packets split into chunks aren't supported.
@@ -79,7 +79,7 @@ Not checked yet: accuracy on real pads, and whether wireless firmware sends it.
 
 Full-state packets send a left and a right touch surface, each with one finger in slot 0. Raw positions are signed 16-bit (start -32768, size 65536). X is `raw + 32768`. Raw Y grows upward, so Y is `65535 - (raw + 32768)`.
 
-The pads have no touch clock, so frames carry the report's motion sample time, and touch is only sent in reports that have a motion sample. Per the SDL code, the left pair of axes takes turns between the left pad and the stick.
+The pads have no touch clock, so frames carry the report's motion sample time. Touch is sent only in reports that have a motion sample. Per the SDL code, the left pair of axes takes turns between the left pad and the stick.
 
 - Pad packets keep the last stick value. Stick packets keep the last pad position.
 - When the stick stops, its push goes back to rest. Lifting a finger from a pad sends an "off" finger frame.
@@ -89,7 +89,11 @@ Not yet checked on real hardware.
 
 ### Touch Mappings
 
-Profiles name three surfaces: Primary, Left, and Right. Button-like sources are: a finger touching, a grid cell (1x1 up to 16x16), and a swipe up, down, left, or right of at least a set distance (on the 0 to 1 scale). Command-line forms:
+Profiles name three surfaces: Primary, Left, and Right. Button-like sources are:
+
+- a finger touching
+- a grid cell (1x1 up to 16x16)
+- a swipe up, down, left, or right of at least a set distance (on the 0 to 1 scale) Command-line forms:
 
 - `touch:<surface>:contact`
 - `touch:<surface>:grid:<columns>:<rows>:<zero-based-column>:<zero-based-row>`
@@ -109,7 +113,7 @@ How fingers are tracked:
 - A new finger, profile, or controller session resets the pointer and stick starting point.
 - An "off" frame lets go of touch and grid bindings, and returns the touch stick to rest.
 - A swipe fires once, when the main finger lifts.
-- Swapping the profile, unplugging, a paused permission, shutting down, and a failed send empty the engine and let go of every button and virtual push touch was holding.
+- These empty the engine and let go of every button and virtual push that touch was holding: swapping the profile, unplugging, a paused permission, shutting down, and a failed send.
 
 ### Steam Grips and Pad Clicks
 
