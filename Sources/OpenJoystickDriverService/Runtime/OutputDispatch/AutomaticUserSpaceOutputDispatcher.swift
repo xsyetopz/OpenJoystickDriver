@@ -166,10 +166,10 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// - Throws: `CancellationError` when the dispatcher is closed, or the failure of the build.
   func activate(controller identifier: LogicalControllerID) async throws {
     let generation = cacheGeneration(for: identifier)
+    let description = await descriptionProvider(identifier)
     try await coordinator.activateOne(
-
       identifier: identifier,
-      descriptions: await descriptionsProvider(),
+      descriptions: description.map { [identifier: $0] } ?? [:],
       isEligible: { [weak self] identifier, profile in
         await self?.isEligible(identifier, profile: profile) ?? false
       },
@@ -273,14 +273,18 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
 
   /// Sends the remapped gamepad `state` of `identifier`.
   ///
-  /// An at-rest state goes only to an existing backend and never creates one.
+  /// An at-rest state goes only to an existing backend and never creates one. Any other state
+  /// activates the controller first unless it already publishes.
   ///
   /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when no backend can take the state, or
   ///   the failure of the backend, which also starts recovery of the publication.
   func send(_ state: RemappingGamepadState, for identifier: LogicalControllerID) async throws {
     guard state == .neutral else {
-      try await activate(controller: identifier)
-
+      // A remapped stream sends a state per input report; activation reads the controller from
+      // the device manager, which only a controller with no backend needs.
+      if await coordinator.installedBackend(for: identifier) == nil {
+        try await activate(controller: identifier)
+      }
       try await deliver(.remapped(state), from: identifier)
       return
     }
