@@ -74,6 +74,36 @@ class GuiCaptureTests(unittest.TestCase):
             with self.subTest(argv=argv), self.assertRaises(SystemExit):
                 capture.parse_args(argv)
 
+    def test_input_test_names_a_controller_row(self) -> None:
+        # Act
+        args = capture.parse_args(["--input-test", "Nimbus, Working"])
+
+        # Assert
+        self.assertEqual(args.input_test, "Nimbus, Working")
+        with self.assertRaises(SystemExit):
+            capture.parse_args(["--input-test", "Nimbus, Working", "--area", "Library"])
+
+    def test_input_test_window_is_closed_after_a_failed_capture(self) -> None:
+        # Arrange
+        calls: list[tuple[str, ...]] = []
+
+        def fake_gui(*command: str) -> str:
+            calls.append(command)
+            return ""
+
+        # Act
+        with (
+            patch.object(capture, "gui", side_effect=fake_gui),
+            patch.object(capture, "bring_forward"),
+            patch.object(capture, "wait_for_window"),
+            patch.object(capture, "shoot", side_effect=capture.CaptureError("covered")),
+            self.assertRaises(capture.CaptureError),
+        ):
+            capture.shoot_input_test("Nimbus, Working", 1, Path("input-test.png"), 1.0)
+
+        # Assert
+        self.assertEqual(calls[-1], ("close-window", "input-test"))
+
     def test_row_and_scroll_need_a_popup(self) -> None:
         # Arrange
         popup = ["--popup", "Generic HID gamepad (Generic)"]

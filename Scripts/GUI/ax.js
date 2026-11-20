@@ -10,10 +10,10 @@
 //   select-sidebar <label>     selects that sidebar row
 //   wait-main-window           waits for the main window to appear
 //   open-settings <tab>        opens Settings from the app menu and selects the tab
-//   window-bounds main|settings   "x y width height"
-//   close-window main|settings    presses the close button
+//   window-bounds main|settings|input-test   "x y width height"
+//   close-window main|settings|input-test    presses the close button
 //   activate                   makes the app frontmost (AXFrontmost and NSRunningApplication)
-//   raise main|settings        activates the app and raises that window (AXRaise)
+//   raise main|settings|input-test   activates the app and raises that window (AXRaise)
 //   menu-ids                   AXIdentifier of each main menu bar item after the Apple menu, one
 //                              per line, in menu bar order
 //   open-menu <id> [item-id...]   activates the app, opens the main menu bar item with that
@@ -29,7 +29,8 @@
 // Menus are matched by AXIdentifier, which the app sets from its menu model ids, so the menu
 // commands work in every UI language.
 // The main window is the one with a split group (the sidebar). The Settings window is
-// the one without a sidebar whose toolbar holds all three tabs.
+// the one without a sidebar whose toolbar holds all three tabs. The Input Test window is the
+// one titled "Input Test — <controller>", which capture.py reads only with an English UI.
 ObjC.import("ApplicationServices");
 ObjC.import("CoreGraphics");
 ObjC.import("AppKit");
@@ -47,6 +48,7 @@ const KEY_ESCAPE = 53;
 // $.kCFBooleanTrue is a pointer to the constant, which AX rejects as a value (AXError -25201); a boxed NSNumber bool bridges to a CFBoolean.
 const AX_TRUE = $.NSNumber.numberWithBool(true);
 const SETTINGS_TABS = ["General", "Notifications", "Advanced"];
+const INPUT_TEST_TITLE = "Input Test — ";
 const POLL_STEPS = 50;
 const POLL_SECONDS = 0.1;
 const SETTLE_SECONDS = 0.5;
@@ -152,8 +154,15 @@ function isSettings(window) {
 	return SETTINGS_TABS.every((tab) => buttons.includes(tab));
 }
 
+function isInputTest(window) {
+	return !isMain(window) && String(attribute(window, "AXTitle") || "").startsWith(INPUT_TEST_TITLE);
+}
+
+const WINDOW_KINDS = { main: isMain, settings: isSettings, "input-test": isInputTest };
+
 function find(app, kind) {
-	const match = kind === "main" ? isMain : isSettings;
+	const match = WINDOW_KINDS[kind];
+	if (!match) throw new Error("unknown window kind " + kind);
 	const found = windows(app).find(match);
 	if (!found) throw new Error("no " + kind + " window is open");
 	return found;

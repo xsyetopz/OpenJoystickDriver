@@ -114,6 +114,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "saved as main-profiles-<group>.png; the sheet is cancelled afterward"
         ),
     )
+    choice.add_argument(
+        "--input-test",
+        metavar="ROW",
+        help=(
+            "the Input Test window of the controller row with this label, such as "
+            "'Nimbus, Working', saved as input-test.png; the window is closed afterward"
+        ),
+    )
     parser.add_argument(
         "--check",
         action="append",
@@ -606,6 +614,35 @@ def shoot_profile_sheet(
         gui("choose-popup", PROFILE_SECTION_POPUP, PROFILE_SECTIONS[0])
 
 
+def wait_for_window(
+    kind: str,
+    timeout: float,
+    clock: Callable[[], float] = time.monotonic,
+    sleep: Callable[[float], None] = time.sleep,
+) -> None:
+    deadline = clock() + timeout
+    while True:
+        try:
+            gui("window-bounds", kind)
+            return
+        except CaptureError:
+            if clock() >= deadline:
+                raise
+        sleep(min(FRONT_POLL_SECONDS, max(0.0, deadline - clock())))
+
+
+def shoot_input_test(row: str, pid: int, destination: Path, timeout: float) -> None:
+    gui("select-sidebar", "Controllers")
+    gui("select-row", row)
+    bring_forward(pid, "main", timeout)
+    gui("press-label", "Open Input Test")
+    try:
+        wait_for_window("input-test", timeout)
+        shoot(pid, "input-test", destination, timeout)
+    finally:
+        gui("close-window", "input-test")
+
+
 def make_folder() -> Path:
     root = PROJECT_DIR / ".ojd-shots"
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -650,6 +687,7 @@ def capture(args: argparse.Namespace) -> int:
         or args.popup is not None
         or args.profile_section
         or args.profile_sheet
+        or args.input_test is not None
     ):
         require_english_ui()
     main_was_open, settings_tab = read_state()
@@ -689,6 +727,10 @@ def capture(args: argparse.Namespace) -> int:
                 pid,
                 folder / f"main-profiles-{slug}.png",
                 args.front_timeout,
+            )
+        if args.input_test is not None:
+            shoot_input_test(
+                args.input_test, pid, folder / "input-test.png", args.front_timeout
             )
         if menus:
             for target in menu_targets(gui("menu-ids").split("\n")):
