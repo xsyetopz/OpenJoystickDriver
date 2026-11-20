@@ -46,6 +46,16 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(wraps.width, fits.width)
         self.assertGreater(wraps.height, fits.height)
 
+    def test_rows_add_empty_space_below_short_output(self) -> None:
+        # Arrange
+        plain = terminal.render("ojd controller list", ["one controller"])
+
+        # Act
+        roomy = terminal.render("ojd controller list", ["one controller"], rows=6)
+
+        # Assert
+        self.assertGreater(roomy.height, plain.height)
+
 
 class RunTests(unittest.TestCase):
     def test_ojd_runs_with_color_off(self) -> None:

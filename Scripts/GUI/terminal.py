@@ -55,7 +55,7 @@ def run_ojd(arguments: Sequence[str]) -> list[str]:
     return result.stdout.rstrip("\n").splitlines()
 
 
-def render(command: str, lines: Sequence[str]):
+def render(command: str, lines: Sequence[str], rows: int = 0):
     from PIL import Image, ImageDraw, ImageFont
 
     font = ImageFont.truetype(FONT_FILE, FONT_SIZE)
@@ -69,7 +69,7 @@ def render(command: str, lines: Sequence[str]):
     columns = max(MIN_COLUMNS, *(len(line) for line in text))
     line_height = sum(font.getmetrics()) + LINE_GAP
     width = math.ceil(columns * advance) + 2 * MARGIN
-    height = TITLE_BAR + 2 * MARGIN + line_height * len(text)
+    height = TITLE_BAR + 2 * MARGIN + line_height * max(rows, len(text))
     image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
     draw.rounded_rectangle(
@@ -108,6 +108,12 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
         prog="just shots-terminal",
         description="Draw one ojd command and its output as a Terminal window in a new .ojd-shots folder.",
     )
+    parser.add_argument(
+        "--rows",
+        type=int,
+        default=0,
+        help="the fewest text rows the window shows, leaving room for callouts",
+    )
     parser.add_argument("name", help="file name of the picture, without .png")
     parser.add_argument(
         "arguments", nargs=argparse.REMAINDER, help="the ojd arguments, such as status"
@@ -122,7 +128,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 64
     command = shlex.join(["ojd", *args.arguments])
     destination = make_folder() / f"{args.name}.png"
-    render(command, run_ojd(args.arguments)).save(destination)
+    render(command, run_ojd(args.arguments), args.rows).save(destination)
     print(destination)
     return 0
 
