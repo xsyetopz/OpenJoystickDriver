@@ -21,11 +21,14 @@ enum TriggerButtonDerivation {
     )
   )
 
+  /// One trigger side: the analog trigger and the button derived from it.
+  typealias Side = (
+    trigger: any KeyPath<ControllerState, UnipolarValue> & Sendable, button: Control
+  )
+
   /// The trigger sides `capabilities` leaves to derivation: a trigger with no declared digital
   /// signal.
-  static func derivedSides(
-    of capabilities: ControllerCapabilities
-  ) -> [(trigger: KeyPath<ControllerState, UnipolarValue>, button: Control)] {
+  static func derivedSides(of capabilities: ControllerCapabilities) -> [Side] {
     [
       (\ControllerState.leftTrigger, Control.leftTrigger),
       (\ControllerState.rightTrigger, Control.rightTrigger),
@@ -42,8 +45,19 @@ enum TriggerButtonDerivation {
     previous: ControllerState,
     capabilities: ControllerCapabilities
   ) -> ControllerState {
+    applying(to: state, previous: previous, sides: derivedSides(of: capabilities))
+  }
+
+  /// `state` with the button of each of `sides` set from its analog trigger, as
+  /// ``applying(to:previous:capabilities:)`` sets it; a caller that keeps the sides of fixed
+  /// capabilities skips deriving them for every report.
+  static func applying(
+    to state: ControllerState,
+    previous: ControllerState,
+    sides: [Side]
+  ) -> ControllerState {
     var next = state
-    for (trigger, button) in derivedSides(of: capabilities) {
+    for (trigger, button) in sides {
       next.set(
         button,
         pressed: isPressed(state[keyPath: trigger], wasPressed: previous.pressed.contains(button))

@@ -102,6 +102,21 @@ struct TriggerButtonDerivationTests {
     #expect(round == Self.digital)
   }
 
+  @Test
+  func pipelineKeepsTheDerivedSidesOfItsDriver() async {
+    func sides(of driver: sending any PhysicalProtocolDriver) async -> [Control] {
+      let pipeline = DevicePipeline(
+        identifier: LogicalControllerID(vendorID: 0x045E, productID: 0x028E),
+        transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
+        driver: driver,
+        dispatcher: OutputCharacterizationTests.PipelineOutput()
+      )
+      return await pipeline.derivedTriggerSides.map(\.button)
+    }
+    #expect(await sides(of: XUSBDriver()) == [.leftTrigger, .rightTrigger])
+    #expect(await sides(of: DualShock4Driver()).isEmpty)
+  }
+
   /// The pipeline derives the button with hysteresis against its last normalized state, and a
   /// resumed session starts that memory from neutral.
   @Test

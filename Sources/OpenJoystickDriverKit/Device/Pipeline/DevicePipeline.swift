@@ -83,6 +83,10 @@ actor DevicePipeline {
   let transport: Transport
   /// The protocol driver that parses the input and encodes the output.
   let driver: any PhysicalProtocolDriver
+  /// The trigger sides whose button the pipeline derives from the analog trigger.
+  ///
+  /// A driver's capabilities are immutable, so they are read once instead of for every report.
+  let derivedTriggerSides: [TriggerButtonDerivation.Side]
   /// The driver's session plan with the bound record's tuning applied.
   let plan: DriverSessionPlan
   /// The consumer of the controller's input events.
@@ -314,6 +318,7 @@ actor DevicePipeline {
     self.sessionState = sessionState
     let tunedPlan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
     self.plan = tunedPlan
+    self.derivedTriggerSides = TriggerButtonDerivation.derivedSides(of: self.driver.capabilities)
     self.startupPlayerIndicatorPending = Locked(
       macOSOwnedOutput?.setsStartupPlayerIndicator == true
         || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)

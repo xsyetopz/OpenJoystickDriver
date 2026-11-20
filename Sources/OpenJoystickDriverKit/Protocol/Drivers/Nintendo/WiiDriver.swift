@@ -92,7 +92,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   var isRumbling = false
   /// The IR format the driver asks for, nil for none; it outlives the session, whose setup runs
   /// it again.
-  var irFormat: ProtocolDescription.WiiRemote.BlockKind?
+  let irFormat: ProtocolDescription.WiiRemote.BlockKind?
   /// Whether the active profile binds a pointer axis, as the pipeline last reported; it outlives
   /// the session, so a reconnect turns the camera on again.
   var wantsPointer = false

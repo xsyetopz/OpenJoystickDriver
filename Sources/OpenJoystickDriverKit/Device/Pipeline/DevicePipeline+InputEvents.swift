@@ -141,7 +141,7 @@ extension DevicePipeline {
     let state = TriggerButtonDerivation.applying(
       to: stored.applying(to: event.state),
       previous: currentInputState,
-      capabilities: driver.capabilities
+      sides: derivedTriggerSides
     )
     let motion = event.motion.map(stored.applying)
     guard state != event.state || motion != event.motion else { return event }
