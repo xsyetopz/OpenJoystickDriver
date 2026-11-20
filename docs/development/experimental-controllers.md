@@ -98,6 +98,15 @@ Linux `xpad.c` knows the Nacon vendor and the Xbox One backup but not this PID. 
 
 The Linux xpad XUSB record for 413D:2104 stays. A patch from one owner's pad fixes the interrupt endpoints at 0x81/0x02, because rumble and player-light writes to the usual Xbox 360 OUT 0x01 fail with NotFound. Input on IN 0x81 works without the patch. OJD's automatic pick publishes SDLCompatible. See [issue #22](https://github.com/xsyetopz/OpenJoystickDriver/issues/22).
 
+The pad reports `bDeviceClass` 0, so the class sits on each interface. OJD finds the device by its `IOUSBHostDevice` service and finds XUSB by interface class 255 on interface 0. `TransportFacadeTests+CompositeDevice` checks both steps.
+
+Mapping status:
+
+- One owner's raw capture of IN 0x81 matched 16 of 16 controls. `ZDUltimateLegendRecordTests` replays those bytes.
+- One owner checked input, analog triggers, rumble on OUT 0x02 and play in a game. That was on 0.5.0-beta.3 with the endpoint patch, on macOS 26.6.2.
+- No owner has sent an Input Test page result for the bundled record.
+- One owner saw sticks and triggers swap after a replug. Nobody has repeated it, and that owner did not name the build.
+
 ## Xbox Adaptive Joystick
 
 OJD has no parser for it, and the product pages don't describe the packets. Before adding a record, capture the pad at rest, every button, the stick axes, the stick click, report IDs, and checksums ([packet request](../testing/xbox-adaptive-joystick.md)).
