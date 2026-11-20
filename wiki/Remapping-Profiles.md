@@ -81,7 +81,9 @@ It needs the running app and starts inactive. For `--app`, `--template`, and mor
 
 ### Activate a Profile
 
-Click **Set Active**.
+Click **Set Active**, or choose **Profile** > **Activate Profile** in the menu bar and click the profile.
+
+![Arrows mark Activate Profile in the Profile menu and a profile in its submenu](../docs/screenshots/steps/activate-profile-menu.png)
 
 With no output, the app asks **Activate profile with no controller input?**. To restore default input first, choose **Restore Default Input** in **Profile Actions**.
 
@@ -115,11 +117,13 @@ ojd profile deactivate "My controller"
 
 ## Importing and Exporting Profiles
 
-Export saves a file to keep, share, or move to another Mac.
+Export saves a file to keep, share, or move to another Mac. Both commands are in the **File** menu.
+
+![Arrows mark Import Profile and Export Profile in the File menu](../docs/screenshots/steps/import-export-menu.png)
 
 ### Export a Profile
 
-1. Select the profile, then click **Export Profile** (or File > **Export Profile...**).
+1. Select the profile, then click **Export Profile** in the toolbar or choose **File** > **Export Profile...**.
 2. Choose a folder and file name, then click **Save**.
 
 ```shell
@@ -128,7 +132,7 @@ ojd profile export PROFILE --output FILE.plist
 
 ### Import a Profile
 
-1. Click **Import Profile** (or File > **Import Profile...**).
+1. Choose **File** > **Import Profile...**, or click **Import Profile** in the toolbar.
 2. Select a file and click **Open**.
 
 ```shell

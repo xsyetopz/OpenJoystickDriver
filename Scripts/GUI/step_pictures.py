@@ -483,4 +483,40 @@ PICTURES: tuple[StepPicture, ...] = (
             ),
         ),
     ),
+    StepPicture(
+        "activate-profile-menu",
+        "menu-profile-activate-profile.png",
+        (
+            Callout(
+                (300, 168),
+                (10, 10),
+                "1. Profile > Activate Profile",
+                ("In the menu bar at the top.",),
+            ),
+            Callout(
+                (612, 210),
+                (500, 290),
+                "2. Click a profile",
+                ("It turns on.",),
+            ),
+        ),
+    ),
+    StepPicture(
+        "import-export-menu",
+        "menu-file.png",
+        (
+            Callout(
+                (170, 185),
+                (10, 10),
+                "Import Profile...",
+                ("Open a profile file.",),
+            ),
+            Callout(
+                (170, 657),
+                (10, 870),
+                "Export Profile...",
+                ("Save a copy to keep or share.",),
+            ),
+        ),
+    ),
 )
