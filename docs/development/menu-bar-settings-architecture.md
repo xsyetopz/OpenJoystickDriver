@@ -150,7 +150,7 @@ The adapter returns typed replies, turns connection failures into errors with fi
 
 | Topic | Rule |
 | --- | --- |
-| Oldest macOS | macOS 12. Newer APIs sit behind `#available` with an older fallback. Uses AppKit template images and SwiftUI compatibility modifiers |
+| Oldest macOS | macOS 13. Newer APIs sit behind `#available` with a macOS 13 fallback. Uses AppKit template images and SwiftUI compatibility modifiers |
 | Click targets | 28 points is best, 20 points is the smallest allowed |
 | Color and type | System colors and text styles. A state is shown with text plus an icon or shape, never color alone |
 | VoiceOver | Reads the full value when the text is cut off |

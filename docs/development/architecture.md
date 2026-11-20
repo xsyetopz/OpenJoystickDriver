@@ -198,9 +198,9 @@ A catalog row may name a `ControllerAssemblyPolicy` in `protocol.assembly` to jo
 
 ## Platform Split
 
-Oldest supported: macOS 12 and DriverKit 21. HID uses IOKit on every supported macOS, so no HID code picks a path by macOS version.
+Oldest supported: macOS 13 and DriverKit 22. HID uses IOKit on every supported macOS, so no HID code picks a path by macOS version.
 
-| Capability | macOS 12+ |
+| Capability | macOS 13+ |
 | --- | --- |
 | Physical HID discovery and reports | `IOHIDManager` / `IOHIDDevice` |
 | Consumer virtual HID | `IOHIDUserDevice` |

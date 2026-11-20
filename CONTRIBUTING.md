@@ -39,7 +39,7 @@ Capture a candidate with `just diagnose-record /tmp/controller-candidate.json --
 - GUI and CLI text: `LOCALIZATION.md`. Tests check codes, routes, identifiers, paths and structure, not help text, and do not read `.swift` source.
 - Decimal integers in stored documents (`.plist`) and in JSON messages. The one exception is raw bytes in a `session` (`bytes`, `data`, a probe's expected bytes): uppercase hex pairs separated by single spaces, such as `42 03 00 00`.
 - Keep the existing `print` diagnostics; add no logging stack. Parser errors stay local: log and skip.
-- Deployment floor: macOS 12; future iOS and iPadOS companion apps: 15.
+- Deployment floor: macOS 13 and DriverKit 22; future iOS and iPadOS companion apps: 15.
 - Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. DriverKit generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`; no manual DriverKit build or post-generation patch (`just driverkit-check`).
 - `com.openjoystickdriver.XboxUSBDevice` is the only DEXT, with one personality, `XboxUSB` (Microsoft GIP USB interfaces), and only the `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` entitlements. The host profile's `com.apple.developer.driverkit.userclient-access` list must include it, and `Host.entitlements` claims exactly it. Virtual gamepads use `IOHIDUserDevice`, which needs `com.apple.developer.hid.virtual.device` on the app profile, never in the DEXT.
 

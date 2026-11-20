@@ -101,7 +101,7 @@ Output: `kept 53`, `removed 27` (`SDL_JOYSTICK_*` counts as one name).
 
 ## Swift Toolchain
 
-Every Swift command runs the chosen Xcode's `swift`, so one compiler writes `.build`. `Scripts/Platform/environment.sh` puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH`. It exits 2 unless `swift --version` reports the release in `.swift-version` or newer (a missing patch number counts as `.0`). swift.org toolchains from 6.0.1 build their runtime libraries for macOS 13, so linking OJD's macOS 12 minimum against them gives a warning. Xcode's toolchain links against the SDK instead. `just typecheck` and `just test` treat warnings as errors. The CI Toolchain step prints the selected `swift`.
+Every Swift command runs the chosen Xcode's `swift`, so one compiler writes `.build`. `Scripts/Platform/environment.sh` puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH`. It exits 2 unless `swift --version` reports the release in `.swift-version` or newer (a missing patch number counts as `.0`). `just typecheck` and `just test` treat warnings as errors. The CI Toolchain step prints the selected `swift`.
 
 ## Further Reading
 

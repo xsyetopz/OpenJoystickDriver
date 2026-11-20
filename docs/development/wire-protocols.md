@@ -11,7 +11,7 @@ flowchart LR
     v -->|"read by"| g["Games: SDL, GameController"]
 ```
 
-| Family | Official name | USB identity | Linux | Windows | macOS 12+ without SIP |
+| Family | Official name | USB identity | Linux | Windows | macOS 13+ without SIP |
 | --- | --- | --- | --- | --- | --- |
 | XID | Xbox Input Device | class `'X'/'B'/0` | `xpad` `XTYPE_XBOX` | no inbox driver | IOUSBHost if the kernel leaves the interface; userspace XID parser; virtual HID |
 | XUSB | [MS-XUSBI](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-xusbi/c0beb1e6-054f-4e2c-b6c3-7b5dff1299a5) | `FF/5D/01` wired (Krypton), `FF/5D/81` wireless adapter (Argon) | `XTYPE_XBOX360` / `XTYPE_XBOX360W` | `XUSB22.sys` | IOUSBHost userspace; virtual HID |

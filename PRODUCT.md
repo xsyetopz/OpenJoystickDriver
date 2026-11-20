@@ -7,7 +7,7 @@
 macos
 
 Native macOS app (AppKit shell with SwiftUI content) plus a menu-bar status item. Deployment
-target macOS 12; the window uses the current macOS look where the running system provides it.
+target macOS 13; the window uses the current macOS look where the running system provides it.
 
 ## Users
 

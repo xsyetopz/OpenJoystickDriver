@@ -14,8 +14,8 @@ flowchart LR
 
 | Need | Detail |
 | --- | --- |
-| Xcode | Opened once, for the macOS SDK and `xcodebuild`. `Package.swift`: swift-tools-version:6.4.0, oldest macOS 12. CI: Xcode 27.0, xcode-27 runner. Without Xcode, see [Building Without Xcode](#building-without-xcode). |
-| Swift toolchain | With Xcode, use Xcode's, at least `.swift-version` (6.4.0, the oldest that builds for macOS 12). `Scripts/Platform/environment.sh` runs before every Swift command: it puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH` and stops when that `swift` is older. Without Xcode, use a swift.org toolchain that swiftly installs. From 6.0.1 its runtime libraries target macOS 13, so linking for macOS 12 prints linker warnings. |
+| Xcode | Opened once, for the macOS SDK and `xcodebuild`. `Package.swift`: swift-tools-version:6.4.0, oldest macOS 13. CI: Xcode 27.0, xcode-27 runner. Without Xcode, see [Building Without Xcode](#building-without-xcode). |
+| Swift toolchain | With Xcode, use Xcode's, at least `.swift-version` (6.4.0, the oldest that builds the package). `Scripts/Platform/environment.sh` runs before every Swift command: it puts `$DEVELOPER_DIR/Toolchains/XcodeDefault.xctoolchain/usr/bin` first on `PATH` and stops when that `swift` is older. Without Xcode, use a swift.org toolchain that swiftly installs. |
 | Homebrew | Install `just` first. `just setup` installs the pinned Swift toolchain (when swiftly is present), swiftlint, ruff, and shellcheck (when missing), and sets the Git hooks path. |
 | Python 3 | `just schema-env` sets up the Python tools that check schemas. |
 

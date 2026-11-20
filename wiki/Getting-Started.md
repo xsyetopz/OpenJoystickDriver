@@ -34,7 +34,7 @@ OJD needs no kernel extension, and you don't turn off any Mac security. For the 
 
 ## Installing OpenJoystickDriver
 
-You need macOS 12 (Monterey) or later and a [supported controller](Supported-Controllers.md).
+You need macOS 13 (Ventura) or later and a [supported controller](Supported-Controllers.md).
 
 1. Open the OpenJoystickDriver disk image.
 2. Drag **OpenJoystickDriver.app** onto **Applications**.
@@ -56,7 +56,7 @@ For a Dock icon, turn on **Show in Dock** in **Settings** > **General**. See [Se
 
 ### Allow the Login Item
 
-On macOS 13 or later, OJD starts at login. If macOS asks, turn on **OpenJoystickDriver** in Apple menu > **System Settings** > **General** > **Login Items & Extensions**. On macOS 12, open the app yourself.
+OJD starts at login. If macOS asks, turn on **OpenJoystickDriver** in Apple menu > **System Settings** > **General** > **Login Items & Extensions** (**Login Items** on macOS 13 and 14).
 
 To stop it, turn off **Start at login** in **Settings**, or run `ojd setting set launchAtLogin false`.
 

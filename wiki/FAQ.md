@@ -29,7 +29,7 @@ Yes. Open source (Mozilla Public License 2.0) on [GitHub](https://github.com/xsy
 
 ### Which Macs Does It Run On?
 
-Apple silicon or Intel, macOS 12 (Monterey) or later.
+Apple silicon or Intel, macOS 13 (Ventura) or later.
 
 ### Is It Finished?
 

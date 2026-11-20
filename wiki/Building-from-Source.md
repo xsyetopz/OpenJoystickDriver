@@ -82,7 +82,7 @@ You need these items:
 | Plain `swift build` binary | No entitlements. Not verified: OJD reads controllers but can't publish the [virtual gamepad](Glossary.md#terms). |
 | Xbox USB driver profile without the exact `transport.usb` entitlement | The build stops. |
 | Only the Command Line Tools, no Xcode | Install [swiftly](https://www.swift.org/install/macos/) before `just setup`. `just install-dev` builds the app without the Xbox USB driver, and Shortcuts lists none of its actions. |
-| Tester DMG | Signed and notarized by the maintainer. Runs on macOS 12 or later. Needs no Apple developer account. |
+| Tester DMG | Signed and notarized by the maintainer. Runs on macOS 13 or later. Needs no Apple developer account. |
 
 ### Which Controllers Need the Xbox USB Driver
 

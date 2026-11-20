@@ -33,7 +33,7 @@ macOS reads a short list of game controllers and ignores the rest, such as the D
 
 ## Quickstart
 
-Requires macOS 12 or later, on Apple silicon or Intel.
+Requires macOS 13 or later, on Apple silicon or Intel.
 
 1. Download the `.dmg` from the [latest release][releases], drag **OpenJoystickDriver.app** into **Applications** and open it.
 2. Click the controller icon in the menu bar. If it shows **Grant Access**, allow OJD in **Input Monitoring** and **Accessibility**.
