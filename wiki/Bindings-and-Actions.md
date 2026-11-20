@@ -6,7 +6,7 @@ An assignment makes a button or stick do something else, such as press a key. Se
 flowchart LR
     b[Button press] -->|"looked up in your profile"| p[Assignment]
     p -->|"key, click, or scroll"| m[Mac]
-    p -->|"different button"| g[Virtual gamepad]
+    p -->|"different button"| g[Gamepad for games]
     l[Held layer button] -.->|"swaps the whole layout"| p
 ```
 
@@ -43,7 +43,7 @@ An assignment is a wire from one control (the source) to one destination. A cont
 
 - **Keyboard key, mouse button, Type text**: need Accessibility access.
 - **Pointer movement, pointer position, scroll**: continuous. The axis sets speed, or places the cursor on the main display.
-- **Gamepad button, D-pad, or axis**: need virtual gamepad output on in the profile ([About profiles](Remapping-Profiles.md#about-profiles)). Paddles, grips, and function buttons can't be outputs: [What the virtual gamepad carries](Automating-OpenJoystickDriver.md#what-the-virtual-gamepad-carries).
+- **Gamepad button, D-pad, or axis**: need [virtual gamepad](Glossary.md#terms) output on in the profile ([About profiles](Remapping-Profiles.md#about-profiles)). Paddles, grips, and function buttons can't be outputs: [What the virtual gamepad carries](Automating-OpenJoystickDriver.md#what-the-virtual-gamepad-carries).
 - **Physical output** (rumble, player indicator, color, brightness, adaptive trigger): supported controllers.
 - **Button only** (no axis source; fires on press): [Macros](#macros), [profile switch, layer, pause](#switch-profiles-set-layers-and-pause), [system actions](#system-actions) (including Open application, Open URL, Run Shortcut), Type text, [Spoken Phrases](#spoken-phrases).
 - **MIDI note or control change**: see [MIDI output](#midi-output).

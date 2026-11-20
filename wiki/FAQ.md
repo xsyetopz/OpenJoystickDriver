@@ -111,7 +111,7 @@ Yes, with a mod: a folder that adds or changes a [controller record](Controller-
 
 Apps listen for different gamepad kinds. Steam reads the default Xbox-style one. Safari and some Mac games read another ([Game Does Not See the Controller](Troubleshooting.md#game-does-not-see-the-controller)).
 
-### What Is the Virtual Gamepad Kind?
+### What Is the Gamepad Kind?
 
 The [kind](Glossary.md#terms) is the controller games think you have. Keep **Automatic** unless a game sees nothing.
 
@@ -120,7 +120,7 @@ The [kind](Glossary.md#terms) is the controller games think you have. Keep **Aut
 | **For Steam and SDL games** | Steam, emulators, SDL games (SDL is a controller toolkit) |
 | **For Apple Game Controller games** | Safari and Mac games with Apple's controller support |
 
-See [Virtual Gamepad Kind](Using-the-App.md#virtual-gamepad-kind).
+See [the kind setting](Using-the-App.md#virtual-gamepad-kind).
 
 ### Does OJD Work with Steam?
 

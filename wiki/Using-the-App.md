@@ -58,7 +58,7 @@ Five areas in the sidebar. Command-1 through Command-5 switch.
 | **Access** | Check permissions and let other programs read your controllers. |
 | **Activity** | Read the log, run checks, and look up error codes. |
 
-A banner appears when something stops OJD. Click its button: **Try Again**, **Open System Settings**, **Repair Xbox USB Driver**, or **Grant Access**. **Live updates unavailable** goes away by itself.
+A banner appears when something stops OJD, such as a missing permission or the [Xbox USB driver](Glossary.md#terms). Click its button: **Try Again**, **Open System Settings**, **Repair Xbox USB Driver**, or **Grant Access**. **Live updates unavailable** goes away by itself.
 
 ### Simple and All Controls
 

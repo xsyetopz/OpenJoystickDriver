@@ -27,7 +27,7 @@ flowchart LR
 
 OpenJoystickDriver (OJD) is a menu-bar app, like a translator. Your controller speaks one language and many Mac games speak another. OJD reads the controller over USB, Bluetooth, or a 2.4 GHz dongle and shows games a [virtual gamepad](Glossary.md#terms).
 
-OJD needs no kernel extension, and you don't turn off any Mac security. For the Xbox USB driver, see [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
+OJD needs no kernel extension, and you don't turn off any Mac security. For the [Xbox USB driver](Glossary.md#terms), see [Connecting Controllers](Connecting-Controllers.md#xbox-usb-driver).
 
 > [!NOTE]
 > OJD is alpha software. Some controllers are untested, and some games ignore the virtual gamepad. See [Supported Controllers](Supported-Controllers.md) and [Game Compatibility](Playing-Games.md#game-and-app-compatibility).

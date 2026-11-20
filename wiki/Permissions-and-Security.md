@@ -43,7 +43,7 @@ OJD uses the internet only to check GitHub for updates, when you click **Check N
 The endpoint is a private door for other programs on your Mac, such as a stream overlay. Nothing outside your Mac can reach it.
 
 - It's closed until you click **Turn On** in **Access** or run `ojd access enable`.
-- Each program needs a grant: `read` to watch, or `control` to press buttons on a virtual gamepad.
+- Each program needs a grant: `read` to watch, or `control` to press buttons on a [virtual gamepad](Glossary.md#terms).
 - A grant is tied to the program's signature, so another program can't pretend to be it. Ad-hoc or unsigned programs are refused. `ojd access list` shows programs refused in the last 24 hours.
 - Web pages use `ojd access web enable`, a WebSocket on `127.0.0.1` (your Mac only). A page needs a token from `ojd access grant --token` and can only read. See [access](Command-Reference.md#access).
 
