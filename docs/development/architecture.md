@@ -128,10 +128,12 @@ Gamepads macOS already supports (native ones) are watched and remapped, never ta
 
 - A device is native when `GCController.supportsHIDDevice` is true and one of these holds (`HIDDeviceStream.nativePassThrough(supportsHIDDevice:listing:statedServer:)`):
   - its record states `server: System`
-  - its record states no `server`, and GameController lists a controller for it The stream matches a listed controller by `vendorName` equal to the HID `Product` string.
+  - its record states no `server`, and GameController lists a controller for it
+
+  The stream matches a listed controller by `vendorName` equal to the HID `Product` string.
 - A device counts as native for 1 s after it arrives. Then the stream reads `GCController.controllers()`, and OJD seizes and serves a device GameController does not list. A `server: OJD` record is seized at once. Its `systemListsGameController` follows the same listing, so the second-controller warning appears only when macOS lists a controller for it.
 - A native device is opened shared and never seized. It stays out of location ownership and disconnect coalescing. Otherwise it is classified and bound like any HID device.
-- Its pipeline carries a `MacOSOwnedOutput` allowance: the family default (`macOSOwnedOutput` in `Resources/Protocols/*.plist`) plus the record's `session.rumble` report. OJD sends no startup, feature, status, periodic, shutdown, or recovery report and reads no feature report unless the allowance says so (motion keeps nominal calibration). Write executors refuse any report the allowance does not name by kind, ID, and length.
+- Its pipeline carries a `MacOSOwnedOutput` allowance: the family default (`macOSOwnedOutput` in `Resources/Protocols/*.plist`) plus the reports of the record's `session.rumble` and `session.playerIndicator`. OJD sends no startup, feature, status, periodic, shutdown, or recovery report and reads no feature report unless the allowance says so (motion keeps nominal calibration). Write executors refuse any report the allowance does not name by kind, ID, and length.
 - Only the DualShock 3 / Sixaxis description sets a default, because macOS never sets its LED. It sends output report 0x01 with player 1 after the first input report and on player-indicator requests. On USB the Sixaxis sends no input until the host reads feature 0xF2, so OJD makes the driver's F2 and F5 reads at bind. The Ant Esports GP100 record adds vendor rumble report 0x02. No other record names a template.
 - Its `physicalOwnership` is `SystemGamepad`, so `ServingPolicy` decides `nativePassThrough` for every intent and OJD never publishes a virtual gamepad for it.
 - Remapping profiles run on its input; a profile needing exclusive input or a virtual gamepad is ineligible. While no route selects the controller, its pipeline parses reports but dispatches nothing (`ObservedInputDemand`). Element values go only to a driver whose `DriverSessionPlan.parsesHIDElementValues` is set.

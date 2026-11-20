@@ -322,6 +322,46 @@ Use this section to make a controller rumble. A `HIDReportLayout`, `HIDDescripto
 
 OJD sets byte 0 to the report ID when it isn't 0, writes each motor's intensity, and sends the other bytes as `bytes` gives them. Motor and counter bytes must not overlap, and each lies after the report ID and inside the report. OJD sends this report even when macOS drives the controller, because macOS doesn't drive these motors. Only a family that encodes rumble from a template takes `session.rumble`. A `HIDDescriptor` mode takes a HID template only (`Output` or `Feature`, never `USB`). A bundled record declares no such template until a write is felt on hardware.
 
+## Add Player Lights to a Controller
+
+macOS serves some controllers but never lights their player LEDs. A `HIDDescriptor` mode can name the LED report in `session.playerIndicator`. Then `ojd controller player` and the virtual gamepad's player slot light them:
+
+```xml
+<key>session</key>
+<dict>
+ <key>playerIndicator</key>
+ <dict>
+  <key>byte</key>
+  <integer>0</integer>
+  <key>off</key>
+  <integer>0</integer>
+  <key>player1</key>
+  <integer>1</integer>
+  <key>player2</key>
+  <integer>2</integer>
+  <key>player3</key>
+  <integer>4</integer>
+  <key>player4</key>
+  <integer>8</integer>
+  <key>report</key>
+  <dict>
+   <key>id</key>
+   <integer>0</integer>
+   <key>kind</key>
+   <string>Output</string>
+   <key>length</key>
+   <integer>1</integer>
+  </dict>
+ </dict>
+</dict>
+```
+
+- `report`: the target, as in `session.rumble`, but `length` is 1 to 64 bytes and a report ID of 0 adds no ID byte.
+- `byte`: the offset (0 to 63) of the byte that carries the slot value.
+- `off`, `player1`, `player2`, `player3`, `player4`: the value (0 to 255) written to `byte` for each slot. All five are required, so a controller whose LED bits differ from the listed order is fixed in the record.
+
+OJD sets byte 0 to the report ID when it isn't 0, writes the slot value at `byte`, and leaves every other byte 0. The report joins the `macOSOwnedOutput` allowance, so OJD sends it while macOS drives the controller, and sets the controller's slot after its first input report. Only a `HIDDescriptor` mode takes `session.playerIndicator`, and its report is a HID report (`Output` or `Feature`, never `USB`).
+
 ## Describe a Mode's Session
 
 A mode's `session` lists the steps OJD runs around a controller session. See [Describe a Mode's Session](Controller-Record-Modes.md#describe-a-modes-session).
@@ -464,7 +504,7 @@ A description must set `apiVersion` (`openjoystickdriver/v1alpha3`), `kind` (`Pr
 - `parameters`, `parameterRules`: the parameters a record may set, and rules beyond their types. A rule has a `rule` (`None`, `AtMostOne`, `ExactlyOne`, or `Requires`) and may list the `parameters` it covers and the `variants` it applies to. `None` takes no `parameters`. The others need them.
 - `writeTransports`: the transports an `activation` or `deactivation` write may name. Without it, none.
 - `tuningKeys`: the `tuning` keys a record may set for the family. `rawUSBTuningKeys` lists the keys of its raw-USB variants beyond `stickDeadzone`. It needs `rawUSB`. A description with `rawUSB: true` takes only `rawUSBTuningKeys`.
-- `macOSOwnedOutput`: output OJD still sends to a controller macOS handles, because macOS leaves it undone. Members are `lightingFeatures` (`PlayerIndicator`, `ProgrammableColor`, `ProgrammableBrightness`), `drivesRumble`, `reports`, `setsStartupPlayerIndicator`, and `readsStartupFeatures`. A Bluetooth DualShock 4 sends only the 10-byte input report until the host reads its calibration feature report, which macOS doesn't, so that description sets `readsStartupFeatures`. macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2. So the Sixaxis description lists the report, sets `drivesRumble`, `readsStartupFeatures`, and `setsStartupPlayerIndicator`, and lists the `PlayerIndicator` feature.
+- `macOSOwnedOutput`: output OJD still sends to a controller macOS handles, because macOS leaves it undone. The record's `session.rumble` and `session.playerIndicator` reports are added to `reports`, and a player-indicator report also adds the `PlayerIndicator` feature and `setsStartupPlayerIndicator`. Members are `lightingFeatures` (`PlayerIndicator`, `ProgrammableColor`, `ProgrammableBrightness`), `drivesRumble`, `reports`, `setsStartupPlayerIndicator`, and `readsStartupFeatures`. A Bluetooth DualShock 4 sends only the 10-byte input report until the host reads its calibration feature report, which macOS doesn't, so that description sets `readsStartupFeatures`. macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2. So the Sixaxis description lists the report, sets `drivesRumble`, `readsStartupFeatures`, and `setsStartupPlayerIndicator`, and lists the `PlayerIndicator` feature.
 - `inputStart`: what the user does before the controller sends input. `action` is `PressGuide`. `variants` limit it. A DualShock 3 over USB sends no input until you press its PS button, so the app and `ojd controller list` tell you to. OJD rejects an unknown action (E5002) and a variant the family doesn't list (E5004).
 - `controls`: the controls the driver reports. `base` (`Xbox`) names a base layout. `remove` and `add` change it. `digitalTriggers` lists triggers (`LeftTrigger`, `RightTrigger`) whose press the protocol reports as its own digital signal. `touchContactCount` (0 to 10) is the number of touch contacts. `motion` says whether the controller reports motion.
 - `recordCapabilities`: the control changes a record may declare, `present` (added controls) and `rumbleAbsent`.
