@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- The ZD O+ Excellence works over USB with no user files. Its Switch-mode identity `057E:2009` at bcdDevice `0x0020` is held with nothing sent, so it re-enumerates as `11C0:5505`, which has a bundled `XboxXUSB` wired record. Other `057E:2009` pads keep the Switch protocol.
 - A record mode chosen without probes may state `server`, which overrides the record's `server` while that mode runs. The `idle` reason `AwaitsReenumeration` names a pad that changes identity when nothing greets it: its mode states `server: OJD`, and OJD holds the HID claim and sends nothing. The Controllers page and `ojd` report the reason `AwaitsReenumeration`.
 - A `HIDDescriptor` record may hold `session.playerIndicator`, the HID report and per-slot values that light a controller's player LEDs while macOS serves it. The record for the Bluetooth SteelSeries Nimbus `0111:1420` names it, so `ojd controller player 0111:1420 1` sends the player-1 report instead of failing with `E2013`.
 - `just build-dev`, `just install-dev` and `just install-fast-dev` build the app without Xcode, with the Command Line Tools and the swift.org toolchain that swiftly installs, for editors such as VS Code. That build leaves out the Xbox USB driver and the Shortcuts actions, which need Xcode; a release build still needs Xcode.

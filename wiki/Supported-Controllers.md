@@ -62,6 +62,7 @@ The **Lookup** button in the details opens this page. For a controller with no r
 | Controller | ID | Connection tested | What works | Not tested |
 | --- | --- | --- | --- | --- |
 | 8BitDo Ultimate 2C Wireless | `2DC8:310A` | 2.4 GHz dongle, XInput mode | Buttons, sticks, D-pad, rumble | Not recorded |
+| ZD O+ Excellence | `11C0:5505` | USB, after it leaves `057E:2009` | Every control, rumble | Replug with no user patch |
 | ZD Ultimate Legend | `413D:2204` | 2.4 GHz dongle, XInput mode | Input, rumble, back buttons | Not recorded |
 | Xbox Nano Controller | `045E:0B4F` | Bluetooth LE | Buttons, sticks, triggers, D-pad. No Xbox or Share button | Rumble, Steam |
 | NITHO MLT-KRMA-K | `054C:05C4` | Bluetooth, M mode | Buttons, sticks, triggers, D-pad. M1 and M2 need a recorded macro | Rumble, light |
@@ -72,11 +73,11 @@ The **Lookup** button in the details opens this page. For a controller with no r
 | NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, V3 mode | Buttons, left stick, D-pad. Right stick is slow. RB, View, Menu, Home send nothing | Not recorded |
 | NITHO MLT-KRMA-K | `1949:0402` | Bluetooth LE, 2.4G mode | Buttons, sticks, triggers, D-pad. Home sends nothing | Not recorded |
 
-Test records: [8BitDo Ultimate 2C](../docs/testing/8bitdo-ultimate-2c.md), [Xbox Nano](../docs/testing/xbox-nano.md), and [NITHO MLT-KRMA-K](../docs/testing/nitho-mlt-krma-k.md). The 8BitDo Ultimate 2C has a different ID in each mode, and the Ultimate 2 and Ultimate 3-mode records are unverified. Both are in the [Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md). OJD never writes to a controller in bootloader mode.
+Test records: [8BitDo Ultimate 2C](../docs/testing/8bitdo-ultimate-2c.md), [Xbox Nano](../docs/testing/xbox-nano.md), [NITHO MLT-KRMA-K](../docs/testing/nitho-mlt-krma-k.md), and [ZD O+ Excellence](../docs/testing/zd-o-plus.md). The 8BitDo Ultimate 2C has a different ID in each mode, and the Ultimate 2 and Ultimate 3-mode records are unverified. Both are in the [Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md). OJD never writes to a controller in bootloader mode.
 
 ### Unverified
 
-OJD has a built-in catalog of 714 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work, and that doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
+OJD has a built-in catalog of 715 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work, and that doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
 
 ### Flydigi Records
 

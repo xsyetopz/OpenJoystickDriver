@@ -4361,6 +4361,15 @@ output rumble=[low-frequency,high-frequency] binary=[] lighting=[programmable-co
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=1000
 parameters=
 
+## 11C0:5505
+protocol=xbox-xusb variant=wired ownership=macos
+transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[low-frequency,high-frequency] binary=[] lighting=[player-indicator] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+parameters=
+
 ## 11C1:5600
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0

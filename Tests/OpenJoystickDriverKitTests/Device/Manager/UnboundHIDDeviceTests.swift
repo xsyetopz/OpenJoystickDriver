@@ -62,6 +62,32 @@ struct UnboundHIDDeviceTests {
     await manager.stop()
   }
 
+  // The ZD O+ Excellence answers 057E:2009 at bcdDevice 0x0020 and becomes 11C0:5505 when nothing
+  // greets it. Its bundled mode keeps the claim, so macOS doesn't greet it either.
+  @Test
+  func awaitingModeKeepsItsClaimAndSendsNothing() async {
+    let backend = ClaimRecordingHIDAccessBackend()
+    let manager = DeviceManager(
+      dispatcher: LoggingOutputDispatcher(),
+      installationKey: testPortKeyInstallationKey,
+      hidManager: HIDManager(backend: backend)
+    )
+    let connection = Self.connection(
+      vendorID: 0x057E,
+      productID: 0x2009,
+      locationID: 93,
+      deviceRelease: 0x0020,
+      interface: gamepadHIDInterface(host: .usb)
+    )
+
+    await manager.handleHIDEvent(.connected(connection: connection, ownership: .exclusive))
+
+    #expect(await manager.connectedDeviceDescriptions().isEmpty)
+    #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.awaitsReenumeration])
+    #expect(await backend.releasedLocations().isEmpty)
+    await manager.stop()
+  }
+
   @Test
   func rejectedHIDDeviceAtBoundPipelineLocationKeepsClaim() async throws {
     let backend = ClaimRecordingHIDAccessBackend()
@@ -193,12 +219,14 @@ struct UnboundHIDDeviceTests {
     productID: UInt16,
     locationID: UInt32,
     serialNumber: String? = nil,
+    deviceRelease: UInt16? = nil,
     interface: PhysicalInterfaceSignature = hostHIDInterface(.usb)
   ) -> HIDDeviceConnection {
     HIDDeviceConnection(
       physicalDevice: PhysicalDevice(
         vendorID: vendorID,
         productID: productID,
+        deviceRelease: deviceRelease,
         productName: "Test pad",
         serialNumber: serialNumber,
         transportProperty: "USB",

@@ -41,6 +41,21 @@ enum MigrationFixtures {
     """#
   )
 
+  /// The ZD O+ Excellence owner's `057e-2009.patch.json` from their support issue.
+  ///
+  /// It serves bcdDevice 0x0020 with `HIDDescriptor` so the pad re-enumerates as `11C0:5505`.
+  static let zdOPlusPatch = document(
+    alphaOne,
+    "ControllerPatch",
+    #"""
+    "selector": {"vendorID": 1406, "productID": 8201},
+    "patch": {"server": "OJD", "modes": [
+      {"id": "zd-o-plus", "match": {"bcdDevice": {"min": 32, "max": 32}},
+        "protocol": {"family": "HIDDescriptor"}},
+      {"id": "default", "protocol": {"family": "NintendoSwitch1"}}]}
+    """#
+  )
+
   /// A patch with bit-addressable fields to convert.
   static let patch = document(
     alphaOne,

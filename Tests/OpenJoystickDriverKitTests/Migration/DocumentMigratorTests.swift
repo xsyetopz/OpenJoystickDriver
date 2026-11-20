@@ -64,6 +64,26 @@ struct DocumentMigratorTests {
   }
 
   @Test
+  func zdOPlusPatchKeepsEveryKeyAndApiVersionChanges() throws {
+    try write(MigrationFixtures.zdOPlusPatch, "Controllers/057e-2009.patch.json")
+
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+
+    #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
+    let original = try OrderedJSON.parse(Data(MigrationFixtures.zdOPlusPatch.utf8))
+    let stored = try document("Controllers/057e-2009.patch.plist")
+    // A property list sorts its keys, so the comparison takes the original's key order.
+    let converted = try OrderedJSON(
+      foundation: JSONSerialization.jsonObject(with: stored.formattedData()),
+      order: original
+    )
+    #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
+    #expect(converted["selector"] == original["selector"])
+    #expect(converted["patch"] == original["patch"])
+    #expect(throws: Never.self) { try ControllerPatch.parse(stored) }
+  }
+
+  @Test
   func patchGetsBitAddressedLayouts() throws {
     try write(MigrationFixtures.patch, "Controllers/054c-0ce6.patch.json")
     #expect(

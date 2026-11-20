@@ -17,6 +17,29 @@
 				<string>NintendoSwitch1</string>
 			</dict>
 		</dict>
+		<dict>
+			<key>id</key>
+			<string>zd-o-plus</string>
+			<key>idle</key>
+			<string>AwaitsReenumeration</string>
+			<key>match</key>
+			<dict>
+				<key>bcdDevice</key>
+				<dict>
+					<key>max</key>
+					<integer>32</integer>
+					<key>min</key>
+					<integer>32</integer>
+				</dict>
+			</dict>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>HIDDescriptor</string>
+			</dict>
+			<key>server</key>
+			<string>OJD</string>
+		</dict>
 	</array>
 	<key>placeholderSerial</key>
 	<string>000000000001</string>

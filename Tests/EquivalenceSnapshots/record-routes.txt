@@ -1174,6 +1174,9 @@ raw-access
 ## 11C0:4001
 system ownership=macos
 
+## 11C0:5505
+raw-access
+
 ## 11C1:5600
 system ownership=macos
 
