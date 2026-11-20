@@ -68,6 +68,8 @@ With `--json`, `ojd` prints JSON whose keys and values stay the same between rel
 
 A `CONTROLLER` operand takes one of these:
 
+![Terminal output of ojd controller list. Red arrows point to the list ID, the unit ID, and the model's vendor and product numbers](../docs/screenshots/steps/controller-list.png)
+
 - Unit ID, `U-` and 16 characters: survives a reconnect or service restart on the same USB port, changes with another port. A Bluetooth LE unit ID comes from the identifier this Mac gave the controller. Scripts can store it.
 - `VVVV:PPPP`, the vendor and product numbers in hexadecimal: names a model. When two connected controllers share it, the command fails and lists them.
 - Listed ID, `E-` and 16 characters, from `ojd controller list`: lasts until the controller disconnects. Do not store it.

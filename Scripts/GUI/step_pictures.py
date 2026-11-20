@@ -562,6 +562,30 @@ PICTURES: tuple[StepPicture, ...] = (
         ),
     ),
     StepPicture(
+        "controller-list",
+        "controller-list.png",
+        (
+            Callout(
+                (165, 155),
+                (24, 230),
+                "List ID",
+                ("Ends at disconnect.",),
+            ),
+            Callout(
+                (480, 155),
+                (430, 250),
+                "Unit ID",
+                ("Same port, same ID.",),
+            ),
+            Callout(
+                (725, 155),
+                (780, 210),
+                "Model",
+                ("Vendor and", "product numbers."),
+            ),
+        ),
+    ),
+    StepPicture(
         "ojd-status",
         "ojd-status.png",
         (
