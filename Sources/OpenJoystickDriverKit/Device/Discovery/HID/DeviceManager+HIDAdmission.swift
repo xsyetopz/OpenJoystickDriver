@@ -375,7 +375,10 @@ extension DeviceManager {
   /// task is not cancelled, and no other connection holds its initialization key.
   func isCurrentHIDInitialization(_ connection: HIDDeviceConnection) -> Bool {
     guard !Task.isCancelled, !isStopping else { return false }
-    guard let initialization = hidInitializationTasks[hidInitializationKey(for: connection)] else {
+    // Every input report asks; with no initialization pending, the key's catalog lookup is skipped.
+    guard !hidInitializationTasks.isEmpty,
+      let initialization = hidInitializationTasks[hidInitializationKey(for: connection)]
+    else {
       return true
     }
     return initialization.connection.connectionID == connection.connectionID

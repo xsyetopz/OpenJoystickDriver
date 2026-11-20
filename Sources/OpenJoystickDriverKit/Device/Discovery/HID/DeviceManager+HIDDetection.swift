@@ -100,6 +100,8 @@ extension DeviceManager {
   /// The indices of the input reports in `batch` that a later report of the same connection
   /// follows, with no other event between them.
   static func inputReportsFollowedByLaterReport(in batch: [HIDDeviceEvent]) -> Set<Int> {
+    // Most batches hold one event, which nothing follows, so a report skips two set allocations.
+    guard batch.count > 1 else { return [] }
     struct Source: Hashable {
       let address: ControllerConnectionAddress
       let connectionID: UUID
