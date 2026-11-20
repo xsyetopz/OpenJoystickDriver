@@ -98,11 +98,11 @@ OJD refuses any file, folder, or link outside the layout. It skips hidden and `.
 - `requires`: The OJD versions the package runs on. `minimum` is the first version. `below` is the first version too high (optional). Prereleases follow SemVer order.
 - `controllers`, `patches`: The `Controller` and `ControllerPatch` files in `Controllers/`.
 - `profiles`, `virtualDevices`: The files in `Profiles/` and `VirtualDevices/`.
-- `protocols`: The files in `Protocols/`. OJD refuses a file with E5002 or E5003 when its family is built in, its file name is not its family name, or it sets no display name or no `defaults.input.layouts`.
+- `protocols`: The files in `Protocols/`. OJD refuses a file with E5002 or E5003 when its family is built in or its file name isn't its family name. It also refuses one that sets no display name or no `defaults.input.layouts`.
 
 An included list must name a file, and at least one list must be included. OJD refuses a `mod.plist` with any other key, such as `records` or `personas`, with E4001. It refuses a `Controller` file under `patches` or a `ControllerPatch` file under `controllers` with E4003.
 
-OJD refuses a package when a file is in a subfolder but missing from the manifest, or listed in the manifest but missing from the subfolder. Each listed file must be valid for its kind.
+Every file in a subfolder must be in the manifest, and every file in the manifest must be in its subfolder. Otherwise OJD refuses the package. Each listed file must be valid for its kind.
 
 OJD skips a package whose `requires` leaves out the running version. `ojd mod list` shows E4002. A development build has no SemVer version. It uses every package, but `ojd mod validate` and `ojd mod install` refuse every package on it.
 
@@ -146,7 +146,7 @@ You can add and remove a package in the **Library** area of the app, too:
 
 ![The Library area. A red arrow points to the toolbar buttons, and the box names them from left to right: add, check a file, test on a packet capture, and remove. A second arrow points to the Installed and Built-in lists](../docs/screenshots/steps/library-overview.png)
 
-To try the sample, run `ojd mod validate` and `ojd mod install` with the sample folder path, then `ojd mod list`, then `ojd mod remove ojd-sample`.
+To try the sample, run `ojd mod validate` and `ojd mod install` with the sample folder path. Then run `ojd mod list`, and `ojd mod remove ojd-sample` to clean up.
 
 [Error Codes](Error-Codes.md) lists E4001 to E4007. Run `ojd explain E4004` to read a code.
 
