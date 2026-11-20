@@ -290,6 +290,29 @@ extension UserSpaceOutputDispatcherLifecycleTests {
   }
 
   @Test
+  func sendAfterFailureClearsErrorAndLaterSendsReuseTheDevice() async throws {
+    let created = LockedBackends()
+    let dispatcher = UserSpaceOutputDispatcher { _ in
+      let backend = UserSpaceDispatcherTestBackend(failsSend: created.snapshot().isEmpty)
+      created.append(backend)
+      return backend
+    }
+    let identifier = LogicalControllerID(vendorID: 1, productID: 2)
+    let pressed = RemappingGamepadState(buttons: [.south])
+    _ = try? await dispatcher.send(pressed, for: identifier)
+    guard case .error = dispatcher.status else {
+      Issue.record("status after a failed send: \(dispatcher.status)")
+      return
+    }
+
+    for _ in 0..<3 { try await dispatcher.send(pressed, for: identifier) }
+
+    #expect(dispatcher.status == .backend("on (devices=1)"))
+    #expect(created.snapshot().count == 2)
+    await dispatcher.close()
+  }
+
+  @Test
   func activationCreatesAndNeutralizesEveryController() async throws {
     let created = LockedBackends()
     let dispatcher = UserSpaceOutputDispatcher { _ in

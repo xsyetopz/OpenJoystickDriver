@@ -70,7 +70,12 @@ extension UserSpaceOutputDispatcher {
         return primary + activeEntry.inputReportState.claimChangedAuxiliaryReports()
       }.value()
       onPublished()
-      withRegistry { recomputeStatusLocked() }
+      // Every change to the entries recomputes the status, so a backend status is current; only
+      // an earlier error needs clearing after a send that succeeded.
+      withRegistry {
+        if case .backend = _status { return }
+        recomputeStatusLocked()
+      }
     } catch UserSpaceReportSender.Failure.superseded {
       // A newer frame in the queue carries the complete state, so the device stays open.
       return
@@ -94,11 +99,19 @@ extension UserSpaceOutputDispatcher {
   ///   `CreationError.createFailed` when the retry policy still waits, or the error of creating the
   ///   device.
   internal func entry(for identifier: LogicalControllerID) async throws -> Entry {
-    let result: (task: Task<Entry, any Error>, generation: UInt64) = try registryLock.withLock {
+    enum Lookup {
+      case existing(Entry)
+      case creating(task: Task<Entry, any Error>, generation: UInt64)
+    }
+    // A device that exists returns at once: every report takes this path, and a task per report
+    // would cost an allocation and a scheduling hop.
+    let lookup: Lookup = try registryLock.withLock {
       guard lifecycle.isOpen else { throw CancellationError() }
+      if let entry = entries[identifier] { return .existing(entry) }
       let generation = lifecycleGenerations[identifier, default: 0]
-      if let entry = entries[identifier] { return (Task { entry }, generation) }
-      if let task = creationTasks[identifier] { return (task, generation) }
+      if let task = creationTasks[identifier] {
+        return .creating(task: task, generation: generation)
+      }
 
       let now = DispatchTime.now().uptimeNanoseconds
       let retryPolicy = creationRetryPolicies[identifier] ?? UserSpaceDeviceCreationRetryPolicy()
@@ -107,9 +120,16 @@ extension UserSpaceOutputDispatcher {
       let identity = identities.reserve(identifier, holder: identityHolder)
       let task = Task { try await self.createEntry(for: identifier, identity: identity) }
       creationTasks[identifier] = task
-      return (task, generation)
+      return .creating(task: task, generation: generation)
     }
-    let (task, generation) = result
+    let task: Task<Entry, any Error>
+    let generation: UInt64
+    switch lookup {
+    case .existing(let entry): return entry
+    case .creating(let creation, let creationGeneration):
+      task = creation
+      generation = creationGeneration
+    }
 
     do {
       let entry = try await task.value
