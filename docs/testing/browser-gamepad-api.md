@@ -14,13 +14,18 @@ Web browsers read gamepads through the Gamepad API. This page records how each b
 
 ## Automated Run
 
-`just diagnose-browsers [--as PERSONA] [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another, and presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it.
+`just diagnose-browsers [--as PERSONA] [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another. In each, it presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it.
 
 ## Start Clean Each Time
 
 Browsers remember gamepads, so a leftover from the last test can spoil the next one. Run every row on its own.
 
-1. Write down the OJD commit or build, macOS version, publishing backend, browser version, GameSir G7 SE firmware and mode, how it's connected, and which OJD identity you picked.
+1. Write down:
+   - the OJD commit or build
+   - the macOS version and the publishing backend
+   - the browser version
+   - the GameSir G7 SE firmware, mode, and how it's connected
+   - which OJD identity you picked
 2. Stop the last test and close every Gamepad API page.
 3. Restart OJD. Check in diagnostics that there's one real device and one virtual backend, the one you meant.
 4. Pick one identity and wait until OJD reports the switch finished.
@@ -53,7 +58,7 @@ OJD doesn't change browsers. A patch to a browser engine should use this mapping
 
 ## Accepted Browser Results
 
-Blink reads the published Xbox Series 045E:0B13 identity correctly, so it's the reference every report layout is measured against: descriptor, report bytes, button usages, sticks, triggers, hat, Guide, Share. OJD's automatic pick publishes SDLCompatible (045E:0B0C) for every browser.
+Blink reads the published Xbox Series 045E:0B13 identity correctly. So it's the reference for every report layout: descriptor, report bytes, button usages, sticks, triggers, hat, Guide, Share. OJD's automatic pick publishes SDLCompatible (045E:0B0C) for every browser.
 
 The maintainer tested a Razer Wolverine Tournament Edition (1532:0A15) and a GameSir pad on macOS 27:
 
@@ -88,7 +93,7 @@ A user reported these after a full development reinstall: GameSir G7 SE, Chrome 
 
 - Generic HID showed up with `mapping: n/a`: left stick on axes 0 and 1, right stick on axes 2 and 3, LT/RT as on/off B6/B7, no trigger or D-pad axis, and the other controls on B0 to B5 and B8 to B17. The 1209:4A4F descriptor keeps those sticks and on/off controls, puts LT/RT pressure on axes 4 and 5, and leaves out B6/B7. It needs the clean-start test again.
 - The DualShock 4 and DualSense stick Y directions were right.
-- Apple GameController and Sony system buttons could arrive late, be kept by macOS, or go missing: View arrived late, and Guide or Share didn't always reach the page. The app receiving them decides this through its GameController system-gesture setting, not OJD's report. Blink uses [GameController.framework on macOS][1], and applications control gesture delivery through Apple's [`preferredSystemGestureState`][2].
+- Apple GameController and Sony system buttons could arrive late, be kept by macOS, or go missing. View arrived late. Guide or Share didn't always reach the page. The app receiving them decides this through its GameController system-gesture setting, not OJD's report. Blink uses [GameController.framework on macOS][1], and applications control gesture delivery through Apple's [`preferredSystemGestureState`][2].
 
 [1]: https://chromium.googlesource.com/chromium/src/%2B/HEAD/device/gamepad/game_controller_data_fetcher_mac.mm
 [2]: https://developer.apple.com/documentation/gamecontroller/gccontrollerelement/preferredsystemgesturestate
@@ -115,7 +120,7 @@ The Apple GameController profile can give Share to Mac apps as GCXboxGamepad.but
 
 ## What Counts as Proof
 
-A row is only done when someone saw every control press, every control let go back to rest, a reconnect, and rumble, in the named browser, version, and publishing backend. No single result proves OJD works in every browser.
+A row is done only when someone saw all of these in the named browser, version, and publishing backend: every control press, every control back at rest, a reconnect, and rumble. No single result proves OJD works in every browser.
 
 ## Further Reading
 
