@@ -67,6 +67,12 @@ struct AccessPermissionRow: Equatable, Identifiable {
       ? "action.request"
       : SystemSettingsMessage.openSettings.localizationKey()
   }
+
+  /// The localization key of the button's tooltip, which says whether it asks or opens System
+  /// Settings.
+  var actionHelpKey: String {
+    needsRequest ? "ui.help.requestPermission" : "platform.macos.ui.help.grantInSystemSettings"
+  }
 }
 
 /// The macOS permissions the app and its service need, as the Access area shows them.

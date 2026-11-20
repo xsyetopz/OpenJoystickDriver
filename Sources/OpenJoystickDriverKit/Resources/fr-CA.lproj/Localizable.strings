@@ -5562,6 +5562,8 @@
 "ui.help.revoke" = "Retirer l'accès et fermer les connexions ouvertes";
 /* Tooltip of the button on a permission row in the Access area that asks for the permission. */
 "ui.help.requestPermission" = "Demander au système d'accorder cette autorisation";
+/* Tooltip of the button on a permission row in the Access area that opens System Settings for the permission. */
+"platform.macos.ui.help.grantInSystemSettings" = "Ouvrir Réglages système pour accorder cette autorisation";
 /* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
 "ui.help.chooseAutomaticPort" = "Laisser le système choisir un port libre pour le WebSocket";
 /* Tooltip of the button and context menu item in the Access area that copy the socket path. */

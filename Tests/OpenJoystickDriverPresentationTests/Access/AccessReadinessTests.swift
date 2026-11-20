@@ -125,6 +125,26 @@ struct AccessReadinessTests {
     )
   }
 
+  @Test
+  func buttonTooltipSaysWhetherItAsksOrOpensSystemSettings() {
+    // Arrange
+    let denied = readiness(
+      permissions: .available(RuntimePermissionSummary(inputRead: .denied, inputInject: .granted))
+    )
+    let notRequested = readiness(permissions: .unavailable, notification: .notDetermined)
+
+    // Act
+    let openKey = denied.rows.first { $0.kind == .inputRead }?.actionHelpKey
+    let askKey = notRequested.rows.first { $0.kind == .notification }?.actionHelpKey
+
+    // Assert
+    #expect(openKey == "platform.macos.ui.help.grantInSystemSettings")
+    #expect(askKey == "ui.help.requestPermission")
+    for key in [openKey, askKey].compactMap(\.self) {
+      #expect(OJDLocalized.string(key) != key)
+    }
+  }
+
   private func status(
     postEvent: RemappingPostEventAccessState?,
     requiresPostEvent: Bool?,

@@ -5561,6 +5561,8 @@
 "ui.help.revoke" = "撤銷存取權並關閉已開啟的連線";
 /* Tooltip of the button on a permission row in the Access area that asks for the permission. */
 "ui.help.requestPermission" = "要求系統授予此權限";
+/* Tooltip of the button on a permission row in the Access area that opens System Settings for the permission. */
+"platform.macos.ui.help.grantInSystemSettings" = "打開系統設定以授予此權限";
 /* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
 "ui.help.chooseAutomaticPort" = "讓系統為 WebSocket 選擇閒置連接埠";
 /* Tooltip of the button and context menu item in the Access area that copy the socket path. */

@@ -165,7 +165,7 @@
                     : OJDLocalized.string(key)
                 )
                 .ojdAccessibilityValue(row.status.value)
-                .help(OJDLocalized.string("ui.help.requestPermission"))
+                .help(OJDLocalized.string(row.actionHelpKey))
             }
           }
           if let key = state.messageKey {

@@ -5561,6 +5561,8 @@
 "ui.help.revoke" = "접근 권한을 없애고 열린 연결을 닫기";
 /* Tooltip of the button on a permission row in the Access area that asks for the permission. */
 "ui.help.requestPermission" = "이 권한을 허용해 달라고 시스템에 요청";
+/* Tooltip of the button on a permission row in the Access area that opens System Settings for the permission. */
+"platform.macos.ui.help.grantInSystemSettings" = "시스템 설정을 열어 이 권한을 허용";
 /* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
 "ui.help.chooseAutomaticPort" = "WebSocket용 빈 포트를 시스템이 고르게 하기";
 /* Tooltip of the button and context menu item in the Access area that copy the socket path. */

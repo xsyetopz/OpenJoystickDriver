@@ -5561,6 +5561,8 @@
 "ui.help.revoke" = "Thu hồi quyền truy cập và đóng các kết nối đang mở";
 /* Tooltip of the button on a permission row in the Access area that asks for the permission. */
 "ui.help.requestPermission" = "Yêu cầu hệ thống cấp quyền này";
+/* Tooltip of the button on a permission row in the Access area that opens System Settings for the permission. */
+"platform.macos.ui.help.grantInSystemSettings" = "Mở Cài đặt hệ thống để cấp quyền này";
 /* Tooltip of the button in the Access area that clears the WebSocket port so the system picks a free one. */
 "ui.help.chooseAutomaticPort" = "Để hệ thống chọn một cổng trống cho WebSocket";
 /* Tooltip of the button and context menu item in the Access area that copy the socket path. */
