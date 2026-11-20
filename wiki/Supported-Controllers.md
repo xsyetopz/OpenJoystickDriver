@@ -77,7 +77,9 @@ Test records: [8BitDo Ultimate 2C](../docs/testing/8bitdo-ultimate-2c.md), [Xbox
 
 ### Unverified
 
-OJD has a built-in catalog of 715 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work, and that doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
+OJD has a built-in catalog of 717 controller records. A record is a recipe card that tells OJD how one controller speaks. A controller the tables above don't list is unverified. It may work, work in part, or not work, and that doesn't mean it is broken or fake. The Wii Remote is unverified too. See [Wii Remote](Wii-Remote.md).
+
+The Wii U GameCube adapter, `057E:0337`, is unverified. OJD shows one controller for each of its four ports, with rumble when the gray cable is plugged in. See the [GameCube adapter test record](../docs/testing/gamecube-adapter.md).
 
 ### Flydigi Records
 
