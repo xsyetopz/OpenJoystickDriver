@@ -12,7 +12,7 @@ flowchart LR
 
 ## Turning Sensor Counts Into Real Units
 
-`ControllerMotionSample` carries only SI units: `acceleration` in m/s² and `angularVelocity` in rad/s. Both use one shared set of axes: right-handed, +X to the right, +Y away from the player along the face, +Z up out of the face. Raw counts never leave the drivers. Each sample says where its calibration came from (provenance) and which revision it is. Vectors that aren't finite numbers are refused.
+`ControllerMotionSample` carries only SI units: `acceleration` in m/s² and `angularVelocity` in rad/s. Both use one shared, right-handed set of axes. +X points right. +Y points away from the player along the face. +Z points up out of the face. Raw counts never leave the drivers. Each sample says where its calibration came from (provenance) and which revision it is. Vectors that aren't finite numbers are refused.
 
 Each driver does three steps, in order:
 
@@ -22,9 +22,9 @@ Each driver does three steps, in order:
 
 The swaps come from the [SDL sensor axes](https://wiki.libsdl.org/SDL3/SDL_SensorType) (X right, Y up, Z toward the player). In OJD's shared axes those read as (x, -z, y). `MotionFrameTests` pins every axis and sign.
 
-The engine converts each sample once, at `RemappingMotionReading`, to degrees per second and g in the [GamepadMotion input axes][1] (X right, Y up, Z toward the player). Tuning, pointer scales, and calibration offsets all use those axes. A controller lying flat measures acceleration of about +Y.
+The engine converts each sample once, at `RemappingMotionReading`. It turns it into degrees per second and g, in the [GamepadMotion input axes][1] (X right, Y up, Z toward the player). Tuning, pointer scales, and calibration offsets all use those axes. A controller lying flat measures acceleration of about +Y.
 
-DualSense and Edge send typical readings right away: gyro ADC / 16 degrees per second and acceleration ADC / 8192 g, marked `nominalDeviceScale`. At startup OJD asks for feature report `0x05` (41 bytes). The parser takes the factory calibration in one go, and only after checking the ID, the length, all six axes, and the Bluetooth CRC32 with feature seed `0xA3`.
+DualSense and Edge send typical readings right away: gyro ADC / 16 degrees per second and acceleration ADC / 8192 g, marked `nominalDeviceScale`. At startup OJD asks for feature report `0x05` (41 bytes). The parser takes the factory calibration in one go. First it checks the ID, the length, all six axes, and the Bluetooth CRC32 with feature seed `0xA3`.
 
 - Gyro: subtract the bias, then scale by the reported speed sum divided by the range between the end points.
 - Acceleration: subtract the middle of the end points, then scale by 2 / the range.
@@ -67,9 +67,12 @@ Layout and conversion follow the pinned SDL DS4 code. Lengths and CRC framing fo
 
 ### Nintendo Factory Calibration
 
-Switch Pro and Joy-Con startup adds a request to read the pad's memory chip (SPI flash read subcommand `0x10`): 24 bytes at `0x6020`. The parser takes a reply only when report `0x21` says the request worked, has the matching subcommand, the exact address and length, and the whole block of numbers. Blank memory, ranges that aren't positive, and broken replies leave the last snapshot alone. A good reply sets all six axes at once.
+Switch Pro and Joy-Con startup adds a request to read the pad's memory chip (SPI flash read subcommand `0x10`): 24 bytes at `0x6020`. The parser takes a reply only when report `0x21` says the request worked. The reply also needs the matching subcommand, the exact address and length, and the whole block of numbers. Blank memory, ranges that aren't positive, and broken replies leave the last snapshot alone. A good reply sets all six axes at once.
 
-SDL's Switch code gives the gyro as `(raw - gyroOffset) * 936 / (gyroSensitivity - gyroOffset)` degrees per second and the accelerometer as `raw * 4 / (accelSensitivity - accelOffset)` g. Both then use the typical axis swaps. Factory samples are marked deviceFactory.
+SDL's Switch code computes:
+
+- gyro: `(raw - gyroOffset) * 936 / (gyroSensitivity - gyroOffset)` degrees per second
+- accelerometer: `raw * 4 / (accelSensitivity - accelOffset)` g Both then use the typical axis swaps. Factory samples are marked deviceFactory.
 
 Startup also asks for 20 bytes from `0x8026`. If that user block starts with the little-endian marker `0xA1B2`, it replaces the offsets and keeps the factory sensitivity, marked factoryWithUserOffsets.
 
@@ -81,7 +84,7 @@ Startup also asks for 20 bytes from `0x8026`. If that user block starts with the
 ### How Long Startup Reads Stay Valid
 
 - Startup plans run on the actor of the pipeline in use.
-- Before each delayed startup send or calibration read, OJD checks again that the original pipeline is still running, the manager is the same, and nothing else has taken the device. Cancelling ends the wait loop.
+- Before each delayed startup send or calibration read, OJD checks three things again. The original pipeline still runs, the manager is the same, and nothing else has taken the device. Cancelling ends the wait loop.
 - Calls already on their way rely on the HID backend's own checks. Timing on real pads isn't confirmed.
 - Bluetooth Switch Pro startup skips the USB handshake commands. Bluetooth DS4 feature reads include report `0x05`.
 
@@ -116,12 +119,16 @@ These numbers differ from the GamepadMotionHelpers estimator. Its pinned code de
 
 ### Working Out Which Way the Controller Faces
 
-`RemappingMotionFusion` adds up the gyro's turning into a quaternion (a compact way to store a 3D rotation) that maps the controller's axes to a reference where Y is up.
+`RemappingMotionFusion` adds up the gyro's turning into a quaternion, a compact way to store a 3D rotation. The quaternion maps the controller's axes to a reference where Y is up.
 
 - The first accelerometer reading sets the starting pose, whether the pad is flat, on its side, or upside down.
-- Gravity slowly corrects tilt drift, at a rate of 2 per second, but only while total acceleration is between 0.8 and 1.2 g (so the pad isn't being shaken).
+- Gravity slowly corrects tilt drift, at a rate of 2 per second. It does so only while total acceleration is between 0.8 and 1.2 g, so the pad isn't being shaken.
 - Gravity is the reference "down" seen from the controller. Linear acceleration is measured acceleration plus gravity. Heading (which way you face) is only relative, and can drift.
 - In free fall a pose that's already set keeps going without gravity correction. A free-fall sample before any pose is set gives no result.
-- Refused without changing the pose: numbers that aren't finite, a gyro axis above 1,000,000 degrees/second, an acceleration axis above 1,000 g, and gaps outside 0 to 100 ms.
+- Refused without changing the pose:
+  - numbers that aren't finite
+  - a gyro axis above 1,000,000 degrees/second
+  - an acceleration axis above 1,000 g
+  - gaps outside 0 to 100 ms
 
 The filter isn't a number-for-number copy of GamepadMotionHelpers. Timestamps, bias, tuning, and actions: [Remapping Motion](remapping-motion.md).
