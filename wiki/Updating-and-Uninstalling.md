@@ -53,7 +53,7 @@ OJD checks when you ask, and at launch if **Check for updates automatically** is
 > [!IMPORTANT]
 > Open OJD from **Applications**, not the DMG. macOS turns on the Xbox USB driver only for an app in **Applications**.
 
-Your [profiles](Glossary.md#terms), controller records, mod packages, and settings stay in place, because they live outside the app, in `~/Library/Application Support/OpenJoystickDriver/`. Replacing the app replaces everything inside it, including any change you built into your own copy. To keep a change such as "treat my controller as an Xbox controller" across updates, put it in a [controller record](Controller-Records.md) instead of the source code.
+Your [profiles](Glossary.md#terms), controller records, mod packages, and settings stay in place, because they live outside the app, in `~/Library/Application Support/OpenJoystickDriver/`. Replacing the app replaces everything inside it, including any change you built into your own copy. Want a change such as "treat my controller as an Xbox controller" to survive updates? Put it in a [controller record](Controller-Records.md), not in the source code.
 
 **Driver Extensions** may list the old driver until you restart. Leave it.
 
@@ -89,7 +89,7 @@ The Trash alone leaves the login item, privacy entries, [Xbox USB driver](Glossa
 ### Remove the App
 
 1. In **Settings** > **General**, turn off **Start at login**, or run `ojd setting set launchAtLogin false`.
-2. If you approved the Xbox USB driver (its commands work only on the copy in `/Applications`), click **Uninstall** under **Xbox USB Driver** in **Settings** > **Advanced**, or run `ojd transport-extension deactivate`.
+2. If you approved the Xbox USB driver, remove it. Click **Uninstall** under **Xbox USB Driver** in **Settings** > **Advanced**, or run `ojd transport-extension deactivate`. Both work only on the copy in `/Applications`.
 3. Choose **Quit OpenJoystickDriver** from the menu bar icon.
 4. Drag **OpenJoystickDriver** from **Applications** to the Trash.
 
