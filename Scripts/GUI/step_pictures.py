@@ -561,4 +561,28 @@ PICTURES: tuple[StepPicture, ...] = (
             ),
         ),
     ),
+    StepPicture(
+        "ojd-status",
+        "ojd-status.png",
+        (
+            Callout(
+                (700, 140),
+                (1000, 90),
+                "The service runs",
+                ("OJD is working.",),
+            ),
+            Callout(
+                (445, 262),
+                (1000, 215),
+                "Permissions",
+                ("granted means macOS allows it.",),
+            ),
+            Callout(
+                (820, 455),
+                (1000, 355),
+                "Your controller",
+                ("Its ID, name, and connection.",),
+            ),
+        ),
+    ),
 )

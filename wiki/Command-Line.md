@@ -41,6 +41,8 @@ ojd status
 - `ojd service start` and `ojd service stop`: Start or stop the background service. Nothing else starts it.
 - `ojd explain E2004`: Explains an [error code](Error-Codes.md).
 
+![Terminal output of ojd status. Red arrows point to the running service, a granted permission, and the connected controller's ID, name, and connection](../docs/screenshots/steps/ojd-status.png)
+
 ## Global Options
 
 These work on every command, before or after its name.
