@@ -46,6 +46,9 @@ raw-access
 ## 0079:18D4
 raw-access
 
+## 0111:1420
+system ownership=macos
+
 ## 0351:1000
 raw-access
 
