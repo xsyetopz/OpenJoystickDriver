@@ -99,6 +99,9 @@ actor DevicePipeline {
   let observesOnly: Bool
   /// For an observe-only pipeline, the consumer that says whether anyone uses its input.
   let observedInputDemand: (any ObservedInputDemand)?
+  /// The dispatcher as the consumer that says whether a profile binds a pointer axis, cast once
+  /// instead of for every report; nil for a dispatcher that binds none.
+  let pointerInputDemand: (any PointerInputDemand)?
   /// The provider that opens the USB sessions of the pipeline; nil when it has none.
   let usbTransportProvider: (any USBTransportProvider)?
   /// The USB endpoints, interface number and post-handshake settle delay of the route.
@@ -303,6 +306,7 @@ actor DevicePipeline {
     self.startupPlayerIndicator = startupPlayerIndicator
     self.observedInputDemand =
       macOSOwnedOutput == nil ? nil : dispatcher as? any ObservedInputDemand
+    self.pointerInputDemand = dispatcher as? any PointerInputDemand
     self.usbTransportProvider = usbTransportProvider
     self.transportProfile = transportProfile
     self.usbRecoveryPolicy = usbRecoveryPolicy

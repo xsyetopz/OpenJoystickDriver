@@ -100,7 +100,7 @@ extension DevicePipeline {
     appendToPacketLog(bytes: Array(data), direction: .received)
     var connectionWrites: [PhysicalOutputWrite] = []
     driver.setPointerInputWanted(
-      (dispatcher as? any PointerInputDemand)?.wantsPointerInput(from: identifier) == true
+      pointerInputDemand?.wantsPointerInput(from: identifier) == true
     )
     do {
       let receivedAt = uptimeNanoseconds()
