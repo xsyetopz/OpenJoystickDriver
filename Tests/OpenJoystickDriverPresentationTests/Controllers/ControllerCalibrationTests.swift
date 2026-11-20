@@ -106,6 +106,50 @@ struct ControllerCalibrationTests {
   }
 
   @Test
+  func pollSlowsWhileValuesRestAndSpeedsUpOnChange() {
+    let fastest: UInt64 = 100
+    let slowest: UInt64 = 500
+    func next(_ current: UInt64, changed: Bool) -> UInt64 {
+      ControllerCalibrationModel.nextInterval(
+        after: current,
+        changed: changed,
+        fastest: fastest,
+        slowest: slowest
+      )
+    }
+    #expect(next(100, changed: false) == 200)
+    #expect(next(200, changed: false) == 400)
+    #expect(next(400, changed: false) == 500)
+    #expect(next(500, changed: false) == 500)
+    #expect(next(500, changed: true) == 100)
+    #expect(next(UInt64.max, changed: false) == 500)
+  }
+
+  @Test
+  func runWaitsLongerWhileControllerRests() async {
+    let gateway = GatewayStub(inputState: Self.input)
+    await gateway.setVirtualOutput(Self.output)
+    let model = ControllerCalibrationModel()
+    let waits = Locked<[UInt64]>([])
+    let deadZone: @MainActor () -> Double? = { 0.2 }
+    await model.run(
+      device: Self.device(),
+      deadZone: deadZone,
+      gateway: gateway,
+      fastest: 100,
+      slowest: 500
+    ) { interval in
+      let count = waits.withLock { waits in
+        waits.append(interval)
+        return waits.count
+      }
+      if count == 4 { throw CancellationError() }
+    }
+    #expect(waits.withLock { $0 } == [100, 200, 400, 500])
+    #expect(model.rows.count == ControllerCalibrationRow.Control.allCases.count)
+  }
+
+  @Test
   func refreshShowsNoRowsWithoutInput() async {
     let gateway = GatewayStub(inputState: nil)
     let model = ControllerCalibrationModel()

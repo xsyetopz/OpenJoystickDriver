@@ -67,6 +67,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- The calibration rows of a controller's detail read the controller ten times a second only while its values move. While the values rest, each unchanged read doubles the wait, up to half a second, so an open window costs the service far fewer reads on slower Macs (#74).
 - `./Scripts/ojd shots capture` captures each window alone with `screencapture -l`, over transparency, so the desktop and other apps never reach an image. `--menus` captures the front menu window alone, the submenu the target names or the only menu.
 - Each controller row of the menu bar item shows the controller's name, its battery level, the profile in force (with the app that selected it) and `Paused` for a paused controller, and the menu refreshes when another app comes to the front. The driver extension banner names the controllers that need the extension.
 - The `E5001` message for an unsupported `apiVersion` ends with "run `ojd migrate` to convert", after the file, the version found and the supported version.
