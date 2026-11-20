@@ -12,6 +12,9 @@ protocol CoreGraphicsPostEventAccessProbing: Sendable {
 
 /// The probe that calls CoreGraphics.
 private struct PlatformPostEventAccessProbe: CoreGraphicsPostEventAccessProbing {
+  /// The CoreGraphics probe behind one cache that every platform access in the process shares.
+  static let shared = CachedPostEventAccessProbe(source: Self())
+
   /// Tells whether post-event access is granted.
   func preflight() -> Bool { CGPreflightPostEventAccess() }
 
@@ -28,8 +31,8 @@ public struct CoreGraphicsPostEventAccess: Sendable {
   /// The probe of the permission.
   private let probe: any CoreGraphicsPostEventAccessProbing
 
-  /// Creates the access with the CoreGraphics probe.
-  public init() { probe = PlatformPostEventAccessProbe() }
+  /// Creates the access with the CoreGraphics probe, whose answer is cached for about a second.
+  public init() { probe = PlatformPostEventAccessProbe.shared }
 
   /// Creates the access with `probe`.
   init(probe: any CoreGraphicsPostEventAccessProbing) { self.probe = probe }
