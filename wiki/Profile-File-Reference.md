@@ -48,7 +48,7 @@ Each file is named after the profile `id` in uppercase. OJD makes each file read
 
 ## Damaged Files
 
-OJD skips a profile file that it cannot read, that fails validation, or whose name does not match its `id`, and drops an active selection that names it. Other profiles stay available. If OJD cannot read `ActiveProfiles.plist`, no profile is active.
+OJD skips a profile file it can't read, one that fails validation, and one whose name doesn't match its `id`. It also drops an active selection that names a skipped file. Other profiles stay available. If OJD cannot read `ActiveProfiles.plist`, no profile is active.
 
 OJD reports each damaged file in Settings and in `ojd profile list`. You cannot create, change, or activate profiles until each is resolved. Removing a file, or resetting `ActiveProfiles.plist` to an empty list, first saves a backup named `<file>.backup-<time>-<UUID>` beside it.
 
@@ -57,7 +57,7 @@ OJD reports each damaged file in Settings and in `ojd profile list`. You cannot 
 `ojd profile` commands report these codes.
 
 - `E5001`: `apiVersion` is missing or unsupported.
-- `E3008`: the file is too large, is not an XML property list, or fails to decode or validate, such as a wrong `kind` or an unknown field.
+- `E3008`: the file is too large or isn't an XML property list. It also covers a file that fails to decode or validate, such as one with a wrong `kind` or an unknown field.
 - `E3006`: another profile uses the name.
 - `E3005`: the file name does not match the profile `id`, or a selection cannot be used.
 
@@ -189,7 +189,7 @@ Beyond the schema, OJD requires these rules and refuses a profile with `E3008` t
 - A touch grid has `column` below `columns` and `row` below `rows`. A touch area has `x` plus `width` and `y` plus `height` of at most 1.
 - A stick region has `innerRadius` below `outerRadius` and `fromDegrees` different from `toDegrees`; it runs clockwise from up, past 0 when `toDegrees` is lower. Regions of one stick do not overlap.
 - A trigger band has `from` below `to`. Bands of one trigger do not overlap, and a trigger with a `triggerMappings` entry has no bands.
-- A profile name has at most 80 characters, and a layer name at most 40, with no space at either end and no control character. The schema counts code points and OJD counts characters, so a name with combining marks can pass OJD and fail the schema.
+- A profile name has at most 80 characters. A layer name has at most 40. Neither has a space at either end or a control character. The schema counts code points and OJD counts characters, so a name with combining marks can pass OJD and fail the schema.
 - A `remark` is a note of 1 to 200 characters, counted and trimmed like a name. An empty `remark` is refused; omit the key instead.
 
 `Keyboard` `modifiers` are a set: OJD merges repeats and writes them sorted.
@@ -225,9 +225,20 @@ ojd profile set Racing pointerSpeed '{"driver":{"type":"Trigger","side":"Left"},
 A macro has `id`, `name`, `steps`, `repeat`, `whileRunning`, and `interruptOnRelease`, and no other key. A `Macro` destination runs it by `id`.
 
 - `repeat` is 1 to 500, or `WhileHeld`. `whileRunning` is `Ignore` or `Restart`. `interruptOnRelease` is `true` or `false`.
-- A step has `type` `Tap`, `Press`, or `Release` with a `destination` `D`; `Chord` with `destinations` (an array of `D`) and `holdMs`; or `Wait` with `durationMs`. `holdMs` and `durationMs` are 0 to 5000. `D` is a keyboard, mouse button, gamepad button, or D-pad destination. OJD rejects `Macro`, `MidiNote`, and `MidiControlChange` in a step.
+- A step's `type` is one of:
+  - `Tap`, `Press`, or `Release`, with a `destination` `D`
+  - `Chord`, with `destinations` (an array of `D`) and `holdMs`
+  - `Wait`, with `durationMs`
+- `holdMs` and `durationMs` are 0 to 5000. `D` is a keyboard, mouse button, gamepad button, or D-pad destination. OJD rejects `Macro`, `MidiNote`, and `MidiControlChange` in a step.
 
-OJD rejects a macro name that repeats another without regard to case, a `Macro` ID not in `macros`, a pass over 30 seconds (waits plus chord holds), and a counted macro over 5 minutes. Macros are untested on real hardware.
+OJD rejects:
+
+- a macro name that repeats another, ignoring case
+- a `Macro` ID that isn't in `macros`
+- one pass longer than 30 seconds (waits plus chord holds)
+- a counted macro longer than 5 minutes
+
+Macros are untested on real hardware.
 
 ## Limits
 
