@@ -10,11 +10,11 @@ Support for the original Steam Controller is experimental. It follows Linux's `h
 
 Quit Steam completely for the first run. If you run it again with Steam open, say so.
 
-On its own, the controller pretends to be a keyboard and mouse. People call that lizard mode. OJD finds HID devices that say they're a gamepad, plus exact VID/PID matches from its bundled records, including the keyboard and mouse parts of lizard mode.
+On its own, the controller pretends to be a keyboard and mouse. People call that lizard mode. OJD finds HID devices that say they're a gamepad. It also finds exact VID/PID matches from its bundled records, including the keyboard and mouse parts of lizard mode.
 
 ## What to Send Back
 
-Fill in the [Paste-Back Report Form](#paste-back-report-form). Add the commands you ran (with the full output of any that found no device or packets), and any text the controller typed into Terminal, such as escape sequences. macOS listings and raw packets help even if OJD sees nothing.
+Fill in the [Paste-Back Report Form](#paste-back-report-form). Add the commands you ran. Include the full output of any that found no device or packets. Add any text the controller typed into Terminal, such as escape sequences. macOS listings and raw packets help even if OJD sees nothing.
 
 ## 1. macOS Native Checks
 
