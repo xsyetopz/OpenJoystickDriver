@@ -21,11 +21,17 @@ This pad is like a person with several ID cards: each mode shows the Mac a diffe
 
 ## Results
 
-Each of the three `ordered-controls` captures presses A, B, X, Y, LB, RB, left trigger, right trigger, Back, Start, Guide, left stick click, right stick click, D-pad up, down, left, right, left stick, right stick. The 310A and 301C captures have no OJD decode.
+Each of the three `ordered-controls` captures presses these, in order: A, B, X, Y, LB, RB, left trigger, right trigger, Back, Start, Guide, left stick click, right stick click, D-pad up, down, left, right, left stick, right stick. The 310A and 301C captures have no OJD decode.
 
 ### Receiver as 2DC8:310A
 
-Source: `2c-receiver-310a/ordered-controls-100s.txt`. A report is 20 bytes: `00 14`, buttons (bytes 2 and 3), triggers (4 and 5), four signed 16-bit sticks (6 to 13), and `10 1C 30 64 00 10` in every report.
+Source: `2c-receiver-310a/ordered-controls-100s.txt`. A report is 20 bytes:
+
+- `00 14`
+- buttons (bytes 2 and 3)
+- triggers (4 and 5)
+- four signed 16-bit sticks (6 to 13)
+- `10 1C 30 64 00 10`, the same in every report
 
 | Control | Raw (bytes that change) | OJD decode |
 | --- | --- | --- |
@@ -53,7 +59,7 @@ The tail of `ordered-controls-100s.txt` agrees: byte 2 = `20`, `10` and byte 3 =
 
 ### Cable
 
-Source: `2c-cable/mode-attempts.txt`. By cable the pad shows up as 2DC8:310A after X + Home, after B + Home, and after moving it off the receiver in DInput mode. The layout is the same, except the last six bytes read `1A 1B 30 6D 00 00` or `11 1B 30 6D 00 00` instead of `10 1C 30 64 00 10`. In `2c-cable/310a-rear-unassigned-45s.txt` the first reports carry byte 3 = `40` (X still held from X + Home). After that A (`10`) and B (`20`) report, and the rear buttons send nothing.
+Source: `2c-cable/mode-attempts.txt`. By cable the pad shows up as 2DC8:310A in three cases: after X + Home, after B + Home, and after moving it off the receiver in DInput mode. The layout is the same. Only the last six bytes differ: `1A 1B 30 6D 00 00` or `11 1B 30 6D 00 00` instead of `10 1C 30 64 00 10`. In `2c-cable/310a-rear-unassigned-45s.txt` the first reports carry byte 3 = `40` (X still held from X + Home). After that A (`10`) and B (`20`) report, and the rear buttons send nothing.
 
 Rumble: `2c-receiver-310a/rumble-6s.txt` shows two writes, `00 08 00 00 C8 00 00 00` and 1.5 s later `00 08 00 00 00 00 00 00`. Nobody wrote down whether a motor ran. On release build 1.28.99, `ojd controller rumble` exits 0 by receiver and by cable, and the maintainer felt both (`2c-procedure/modes.txt`).
 
@@ -81,9 +87,14 @@ Rear buttons:
 | `2c-receiver-301c/rear-l4-assigned-60s.txt` | L4 assigned | no report sets byte 1 bit 2 (`04`) or bit 5 (`20`); presses: byte 2 = `04`, byte 1 = `01` |
 | `2c-receiver-301c/ordered-controls-150s.txt` | presses after the sticks (28 s to 39 s) | byte 2 = `04`, byte 1 = `01`, byte 2 = `08` only; no byte 1 bit 2 or 5 |
 
-Rumble: `2c-receiver-301c/rumble-writes.txt` lists eight `IOHIDDeviceSetReport` writes (report 1 with `C8`, `64` and `FF` payloads, each followed by zeros; report 5 `64 64 00 00` then zeros) and six more: report 1 in the SDL, XInput, and all-`FF` layouts, and the 63-byte vendor report `0x81`, each with and without the report ID first. All return `result=0`, but no rumble was felt. (`result=0` only means macOS took the write.)
+Rumble: `2c-receiver-301c/rumble-writes.txt` lists eight `IOHIDDeviceSetReport` writes:
 
-The receiver's one interface has an interrupt OUT endpoint, `0x05`, 64 bytes. With macOS's HID driver taken off through deviceCapture (as root), six patterns (including report 1, report 5 in SDL's rumble layout, and report `0x81`) went out in full, and no rumble was felt. SDL's `SDL_hidapi_8bitdo.c` gives the Ultimate 2C no rumble support. The 301C record declares no rumble.
+- report 1 with `C8`, `64` and `FF` payloads, each followed by zeros
+- report 5 `64 64 00 00`, then zeros
+
+It lists six more, each with and without the report ID first: report 1 in the SDL, XInput, and all-`FF` layouts, and the 63-byte vendor report `0x81`. All return `result=0`, but no rumble was felt. (`result=0` only means macOS took the write.)
+
+The receiver's one interface has an interrupt OUT endpoint, `0x05`, 64 bytes. Next, macOS's HID driver was taken off through deviceCapture (as root). Six patterns went out in full, including report 1, report 5 in SDL's rumble layout, and report `0x81`. No rumble was felt. SDL's `SDL_hidapi_8bitdo.c` gives the Ultimate 2C no rumble support. The 301C record declares no rumble.
 
 ### Bluetooth LE as 2DC8:301B
 
@@ -105,7 +116,7 @@ Battery: byte 10 reads `00` in every report, so the pad sends no charge level he
 
 Rear buttons: at the end of the capture, one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5). The maintainer says those were L4 and R4. `ojd-watch-120s.txt` (0.6.0-alpha.2) decodes neither bit. The record maps them as LeftPaddle1 and RightPaddle1.
 
-Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer felt one buzz when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`). With a user patch that adds a rumble template for output report 5, OJD's write fails with the same `kIOReturnNotFound` (`2c-bluetooth-301b/rumble-writes.txt`). The record declares no rumble over Bluetooth LE.
+Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte. While macOS serves the pad, all eight writes return `e00002f0` (`kIOReturnNotFound`). The maintainer felt one buzz when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`). With a user patch that adds a rumble template for output report 5, OJD's write fails with the same `kIOReturnNotFound` (`2c-bluetooth-301b/rumble-writes.txt`). The record declares no rumble over Bluetooth LE.
 
 ### Release Build, Every Mode
 
@@ -135,7 +146,7 @@ In the 8-bit stick modes (301B, 301C), the sticks rest at `(-128,-128)`. The pad
 
 ## Why Bluetooth Needs a Record
 
-Without a record, OJD's generic mapping reads the Bluetooth GamePad descriptor wrong: the right stick moves LT/RT, the triggers rest half pressed, and buttons land in the wrong places. Why:
+Without a record, OJD's generic mapping reads the Bluetooth GamePad descriptor wrong. The right stick moves LT/RT, the triggers rest half pressed, and buttons land in the wrong places. Why:
 
 - The right stick is on `Z`/`Rz`, but the generic mapping expects `Rx`/`Ry`.
 - The analog triggers sit on the Simulation page `0x02`, like car pedals: Accelerator is RT, Brake is LT.
@@ -157,15 +168,21 @@ The record reads it through HIDDescriptor with the GameSir G7 SE layout:
 | 14 | L3 |
 | 15 | R3 |
 
-Usages 3 and 6 are the rear buttons. The 301B and 301C records map usage 3 to LeftPaddle1 (L4) and usage 6 to RightPaddle1 (R4), which are the bits the captures show while the buttons are unassigned. Once you assign a rear button, the pad sends the assigned button's bit. Usages 9 and 10 (triggers as on/off bits) and `Rx`/`Ry` (51, 52) map to nothing.
+Usages 3 and 6 are the rear buttons. The 301B and 301C records map usage 3 to LeftPaddle1 (L4) and usage 6 to RightPaddle1 (R4). Those are the bits the captures show while the buttons are unassigned. Once you assign a rear button, the pad sends the assigned button's bit. Usages 9 and 10 (triggers as on/off bits) and `Rx`/`Ry` (51, 52) map to nothing.
 
-301C and 301D use this table and stick. 301D maps no rear button, because nobody has a capture of it. The receiver's 301C descriptor puts button usage n on bit n - 1 of bytes 1 and 2, `X`, `Y`, `Z`, `Rz` on bytes 4 to 7, Accelerator on byte 8, Brake on byte 9; every control in the 301C capture lands on its usage here. As 310A, the rear buttons send no bit of their own, so OJD only sees them when they're assigned to another button on the pad.
+301C and 301D use this table and stick. 301D maps no rear button, because nobody has a capture of it. The receiver's 301C descriptor lays out the report like this:
+
+- button usage n on bit n - 1 of bytes 1 and 2
+- `X`, `Y`, `Z`, `Rz` on bytes 4 to 7
+- Accelerator on byte 8, Brake on byte 9
+
+Every control in the 301C capture lands on its usage here. As 310A, the rear buttons send no bit of their own, so OJD only sees them when they're assigned to another button on the pad.
 
 ## Bootloader Identities
 
-2DC8:3208 and 2DC8:5750 are what 8BitDo pads call themselves in bootloader mode, the state where they wait for new firmware. Sending anything then could leave broken firmware, so OJD sends nothing at all: no descriptor read past what macOS does, no startup step, question, keep-alive, rumble, light, or setting.
+2DC8:3208 and 2DC8:5750 are what 8BitDo pads call themselves in bootloader mode, the state where they wait for new firmware. Sending anything then could break the firmware, so OJD sends nothing at all. It reads no descriptor beyond what macOS reads, and sends no startup step, question, keep-alive, rumble, light, or setting.
 
-Each has a bundled record with default mode `idle: Bootloader`. OJD's sorter gives the reason BootloaderIdentity for leaving it alone before it looks at any interface, even if a signature or descriptor would otherwise match a protocol. OJD refuses a user or package file that adds or patches either one. The log has one `left unbound` line with the VID:PID and the reason. The controller detail reads "This controller is in bootloader mode. OJD sends it no data." `ojd diagnose record` refuses a record file for either before opening the device.
+Each has a bundled record with default mode `idle: Bootloader`. OJD's sorter leaves it alone with the reason BootloaderIdentity before it looks at any interface. That holds even if a signature or descriptor would match a protocol. OJD refuses a user or package file that adds or patches either one. The log has one `left unbound` line with the VID:PID and the reason. The controller detail reads "This controller is in bootloader mode. OJD sends it no data." `ojd diagnose record` refuses a record file for either before opening the device.
 
 Tests:
 
