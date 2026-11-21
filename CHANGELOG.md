@@ -122,6 +122,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- On the Xbox USB driver extension route, OJD sends SET_CONFIGURATION only when the controller isn't already in the configuration its record asks for, as the raw USB route does. Before, it sent the request on every open, which tore down the interface the extension had just opened, such as on the Xbox One `045E:02D1`, whose patch asks for configuration 1. No one has tested it on hardware yet (#68).
 - VoiceOver names the button of a main window problem by its visible title, such as **Grant Access**. Before, the banner row folded the button into itself, so the button took the row's title, such as "Permission needed".
 - VoiceOver names an Access row's **Open System Settings** button by that title. Before, it read "Request Input Monitoring Access" for a permission macOS had denied, while the button opened System Settings.
 - **Quit & Reopen** in Privacy & Security reopens the main window. Before, the relaunched app showed only its menu bar item, so it looked as if it had not reopened. A launch from Finder, the Dock or `open` opens the main window too; a launch at login stays in the menu bar.

@@ -18,6 +18,8 @@ struct USBDriverKitParentDevice: Sendable, Hashable {
   var manufacturer: String?
   /// The `bcdDevice` release number, when the registry has one.
   var deviceRelease: UInt16?
+  /// The live `kUSBCurrentConfiguration` value, when the registry has one.
+  var currentConfiguration: UInt8?
 }
 
 /// Host adapter for services owned by OJD's restricted USBDriverKit extension.
@@ -115,7 +117,10 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
       let context = await DriverContext(runtime: runtime)
       let session = USBDriverKitTransportSession(context: context) { await runtime.close() }
       do {
-        if let configuration = options.configurationValue {
+        if let configuration = Self.configurationToSet(
+          options: options,
+          parent: parentDevice(device.serviceID)
+        ) {
           try await session.controlTransfer(
             USBControlTransferRequest(
               kind: .standard,
@@ -144,6 +149,19 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
         )
       )
     }
+  }
+
+  /// The configuration `open` sends SET_CONFIGURATION for, or nil when it sends none.
+  ///
+  /// SET_CONFIGURATION terminates the device's open interfaces, including the one the extension
+  /// service runs on, so a device already in the requested configuration receives none, as on the
+  /// raw route. A parent the registry can't read still receives it.
+  static func configurationToSet(
+    options: USBTransportOpenOptions,
+    parent: USBDriverKitParentDevice?
+  ) -> UInt8? {
+    guard options.setsConfiguration(current: parent?.currentConfiguration) else { return nil }
+    return options.configurationValue
   }
 
   /// The device a DEXT service drives, identified by the parent `IOUSBHostDevice` first and the
@@ -246,7 +264,9 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
       productName: string(["USB Product Name", "Product Name"]),
       serialNumber: string(["USB Serial Number", "Serial Number"]),
       manufacturer: string(["USB Vendor Name", "Vendor Name"]),
-      deviceRelease: (value("bcdDevice") as? UInt64).flatMap(UInt16.init(exactly:))
+      deviceRelease: (value("bcdDevice") as? UInt64).flatMap(UInt16.init(exactly:)),
+      currentConfiguration: (value("kUSBCurrentConfiguration") as? UInt64)
+        .flatMap(UInt8.init(exactly:))
     )
   }
 
