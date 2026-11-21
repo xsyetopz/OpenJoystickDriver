@@ -73,6 +73,19 @@ class ReportTests(unittest.TestCase):
         raw = [line for line in text.splitlines() if line.startswith("| old | ")]
         self.assertEqual(len(raw), 10)
 
+    def test_round_counts_only_with_input_throughout(self) -> None:
+        second = 1_000_000_000
+
+        steady = perf.steady(perf.Window(8_000, 14_500_000_000, 40_000_000), 15)
+        late = perf.steady(perf.Window(3_000, 6 * second, 40_000_000), 15)
+        rested = perf.steady(perf.Window(6_000, 15 * second, 2 * second), 15)
+        empty = perf.steady(perf.Window(0, 0, 0), 15)
+
+        self.assertIsNone(steady)
+        self.assertEqual(late, "input spanned 6.0 of 15 s")
+        self.assertEqual(rested, "input rested 2.0 s")
+        self.assertEqual(empty, "0 frames in 15 s")
+
 
 if __name__ == "__main__":
     unittest.main()

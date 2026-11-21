@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from string import Template
-from typing import Any
+from typing import Any, NamedTuple
 
 PROJECT_DIR = Path(__file__).resolve().parents[2]
 OUTPUT_ROOT = PROJECT_DIR / ".build" / "perf"
@@ -35,6 +35,10 @@ MAX_ROUND_SECONDS = 15
 # A round starts once the controller reports this many frames in one second.
 START_FRAMES = 20
 WAIT_SECONDS = 300
+# A round counts only while input never rests: idle CPU spread over fewer frames would inflate
+# the cost per frame. Its frames span all but this much of the round, with no longer pause.
+ROUND_SLACK_NS = 1_000_000_000
+MAX_PAUSE_NS = 500_000_000
 SIGNIFICANCE = 0.05
 CONFIDENCE = 0.95
 
@@ -125,8 +129,16 @@ def find_pid(name: str) -> int:
     return pids[0]
 
 
-def controller_frames(seconds: int, controller: str) -> int:
-    """Frames that controllers whose name contains `controller` read in `seconds`."""
+class Window(NamedTuple):
+    """What the matching controllers read in one `ojd diagnose --frames` window."""
+
+    frames: int
+    span_ns: int
+    longest_pause_ns: int
+
+
+def controller_window(seconds: int, controller: str) -> Window:
+    """Frames, span and longest pause of controllers whose name contains `controller`."""
     out = subprocess.run(
         ["ojd", "--json", "diagnose", "--frames", str(seconds)],
         capture_output=True,
@@ -136,10 +148,30 @@ def controller_frames(seconds: int, controller: str) -> int:
     try:
         timings = json.loads(out.stdout).get("timings", [])
     except json.JSONDecodeError:
-        return 0
-    return sum(
-        t["summary"]["frames"] for t in timings if controller in t.get("name", "")
+        return Window(0, 0, 0)
+    summaries = [t["summary"] for t in timings if controller in t.get("name", "")]
+    pauses = [
+        g["maxNanoseconds"]
+        for s in summaries
+        for g in s.get("gaps", [])
+        if g["gap"] == "ReadToRead"
+    ]
+    return Window(
+        frames=sum(s["frames"] for s in summaries),
+        span_ns=min((s["spanNanoseconds"] for s in summaries), default=0),
+        longest_pause_ns=max(pauses, default=0),
     )
+
+
+def steady(window: Window, seconds: int) -> str | None:
+    """Why `window` does not show input for its whole round, or None when it does."""
+    if window.frames < START_FRAMES * seconds:
+        return f"{window.frames} frames in {seconds} s"
+    if window.span_ns < seconds * 1_000_000_000 - ROUND_SLACK_NS:
+        return f"input spanned {window.span_ns / 1e9:.1f} of {seconds} s"
+    if window.longest_pause_ns > MAX_PAUSE_NS:
+        return f"input rested {window.longest_pause_ns / 1e9:.1f} s"
+    return None
 
 
 def environment(controller: str) -> dict[str, str]:
@@ -156,7 +188,8 @@ def environment(controller: str) -> dict[str, str]:
     build = info.get("CFBundleVersion", "?")
     return {
         "app": f"{version} ({build})",
-        "commit": run("git", "-C", str(PROJECT_DIR), "rev-parse", "--short", "HEAD"),
+        # The installed build, not this checkout, is what the rounds measure.
+        "commit": str(info.get("OJDSourceCommit", "?"))[:9],
         "macOS": f"{platform.mac_ver()[0]} ({run('sw_vers', '-buildVersion')})",
         "chip": run("sysctl", "-n", "machdep.cpu.brand_string"),
         "controller": controller,
@@ -169,20 +202,28 @@ def measure(args: argparse.Namespace) -> None:
     out = OUTPUT_ROOT / f"{args.label}.jsonl"
     out.parent.mkdir(parents=True, exist_ok=True)
     env = environment(args.controller)
-    for index in range(1, args.runs + 1):
+    index = 1
+    deadline = time.monotonic() + WAIT_SECONDS
+    while index <= args.runs:
         print(
             f"run {index}/{args.runs}: move the sticks of '{args.controller}'...",
             flush=True,
         )
-        deadline = time.monotonic() + WAIT_SECONDS
-        while controller_frames(1, args.controller) < START_FRAMES:
+        while controller_window(1, args.controller).frames < START_FRAMES:
             if time.monotonic() > deadline:
-                raise SystemExit("error: no controller input within the wait limit")
+                raise SystemExit(
+                    "error: no steady controller input within the wait limit"
+                )
         user0, system0, wakeups0 = process_usage(pid)
         start = time.monotonic_ns()
-        frames = controller_frames(seconds, args.controller)
+        window = controller_window(seconds, args.controller)
         wall_ms = (time.monotonic_ns() - start) / 1e6
         user1, system1, wakeups1 = process_usage(pid)
+        frames = window.frames
+        if reason := steady(window, seconds):
+            print(f"  discarded: {reason}; repeating the round", flush=True)
+            continue
+        deadline = time.monotonic() + WAIT_SECONDS
         run = {
             "label": args.label,
             "note": args.note,
@@ -198,11 +239,12 @@ def measure(args: argparse.Namespace) -> None:
         }
         with out.open("a") as file:
             file.write(json.dumps(run) + "\n")
-        per_frame = METRICS[0].value(run) if frames else float("nan")
         print(
-            f"  frames={frames} wall={wall_ms:.0f} ms cpu/frame={per_frame:.1f} µs",
+            f"  frames={frames} wall={wall_ms:.0f} ms "
+            f"cpu/frame={METRICS[0].value(run):.1f} µs",
             flush=True,
         )
+        index += 1
     print(f"wrote {out}")
 
 

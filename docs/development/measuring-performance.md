@@ -23,6 +23,12 @@ The input path costs CPU on every controller frame, so a change to it is judged 
 
 Each round appends one JSON line to `.build/perf/<label>.jsonl`. The line holds the frame count, wall time, user and system CPU time, idle wakeups from `proc_pid_rusage`, and the app version, commit, macOS version, chip, and controller.
 
+A round counts only when the sticks move for all of it. While input rests, the app still uses CPU, and that cost spread over fewer frames would inflate the cost per frame. The tool discards and repeats a round when:
+
+- the controller read fewer than 20 frames a second on average
+- its frames span less than the round minus 1 s
+- two frames are more than 0.5 s apart
+
 Keep the input the same across the run sets you compare: same controller, connection, stick motion, and window state.
 
 ## Compare Two Run Sets
