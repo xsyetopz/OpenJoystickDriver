@@ -56,8 +56,9 @@ The command:
 2. Builds and embeds the DriverKit extension.
 3. Checks versions, signatures, entitlements, notarization, stapling, and Gatekeeper.
 4. Creates and checks the DMG.
+5. Signs the DMG with the Developer ID identity, notarizes and staples it, and checks it with Gatekeeper, so the download opens without a warning.
 
-Notarization takes minutes for a repeat submission and hours for a first.
+Each notarization takes minutes for a repeat submission and hours for a first.
 
 The DMG is in:
 

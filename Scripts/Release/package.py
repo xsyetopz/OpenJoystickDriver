@@ -18,6 +18,7 @@ from .package_common import (
     require_clean_source,
     run,
     safe_version,
+    sign_dmg,
     verify_bundle_versions,
 )
 
@@ -139,8 +140,7 @@ def main(argv: list[str]) -> int:
         cleanup_workdirs((staging, rw_dmg, mount_dir), mount_dir)
         identity = os.environ.get("CODESIGN_IDENTITY", "-")
         if identity not in {"", "-"}:
-            run(["/usr/bin/codesign", "--sign", identity, "--timestamp", str(artifact)])
-            run(["/usr/bin/codesign", "--verify", "--verbose=2", str(artifact)])
+            sign_dmg(artifact, identity)
         else:
             print(
                 "WARNING: CODESIGN_IDENTITY not set; skipping DMG codesign.",

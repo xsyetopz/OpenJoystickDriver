@@ -158,6 +158,11 @@ def make_dmg(staging_dir: Path, volume_name: str, artifact: Path) -> None:
     )
 
 
+def sign_dmg(artifact: Path, identity: str) -> None:
+    run(["/usr/bin/codesign", "--sign", identity, "--timestamp", str(artifact)])
+    run(["/usr/bin/codesign", "--verify", "--verbose=2", str(artifact)])
+
+
 def release_environment() -> dict[str, str]:
     environment = os.environ.copy()
     environment["OJD_ENV"] = "release"

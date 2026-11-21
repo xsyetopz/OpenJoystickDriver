@@ -42,16 +42,24 @@ fi
 APP="/Applications/OpenJoystickDriver.app"
 ZIP_PATH="$PROJECT_DIR/.build/OpenJoystickDriver-notarize.zip"
 if [[ "$subcmd" == "submit" && $# -gt 0 ]]; then
-  [[ $# -eq 2 ]] || die "submit takes no arguments, or the app and the archive: submit <app> <zip>"
-  APP="$1"
-  ZIP_PATH="$2"
+  if [[ $# -eq 1 && "$1" == *.dmg ]]; then
+    # notarytool takes a disk image as it is, and the ticket staples to the image.
+    APP="$1"
+    ZIP_PATH=""
+  else
+    [[ $# -eq 2 ]] || die "submit takes no arguments, a disk image (submit <dmg>), or the app and the archive (submit <app> <zip>)"
+    APP="$1"
+    ZIP_PATH="$2"
+  fi
 fi
 
 readonly TIMEOUT_MINUTES=180
 readonly POLL_INTERVAL=30
 readonly MAX_RETRIES=5
 
-if [[ ! -d "$APP" ]]; then
+if [[ -z "$ZIP_PATH" && ! -f "$APP" ]]; then
+  die "Disk image not found at $APP"
+elif [[ -n "$ZIP_PATH" && ! -d "$APP" ]]; then
   echo "ERROR: App not found at $APP"
   echo "Run: just install-release"
   exit 1
@@ -97,12 +105,16 @@ if [[ "$subcmd" != "submit" ]]; then
   die "Unknown notarize subcommand: $subcmd"
 fi
 
-echo "Creating zip for notarization..."
-ditto -c -k --keepParent "$APP" "$ZIP_PATH"
-echo "  Zip: $ZIP_PATH ($(du -h "$ZIP_PATH" | cut -f1))"
+SUBMISSION="$APP"
+if [[ -n "$ZIP_PATH" ]]; then
+  echo "Creating zip for notarization..."
+  ditto -c -k --keepParent "$APP" "$ZIP_PATH"
+  echo "  Zip: $ZIP_PATH ($(du -h "$ZIP_PATH" | cut -f1))"
+  SUBMISSION="$ZIP_PATH"
+fi
 
 echo "Submitting to Apple for notarization..."
-SUBMIT_OUTPUT=$(xcrun notarytool submit "$ZIP_PATH" \
+SUBMIT_OUTPUT=$(xcrun notarytool submit "$SUBMISSION" \
   "${AUTH_ARGS[@]}" 2>&1)
 
 echo "$SUBMIT_OUTPUT"
@@ -116,7 +128,7 @@ fi
 
 echo "  Submission ID: $SUBMISSION_ID"
 
-rm -f "$ZIP_PATH"
+[[ -z "$ZIP_PATH" ]] || rm -f "$ZIP_PATH"
 
 DEADLINE=$(( $(date +%s) + TIMEOUT_MINUTES * 60 ))
 CONSECUTIVE_FAILURES=0

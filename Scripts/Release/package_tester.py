@@ -22,6 +22,7 @@ from .package_common import (
     require_clean_source,
     run,
     safe_version,
+    sign_dmg,
     verify_bundle_versions,
 )
 
@@ -176,6 +177,8 @@ def main(argv: list[str]) -> int:
         (staging / "Applications").symlink_to("/Applications")
         build_info = staging / "OpenJoystickDriver-TESTER-BUILD.txt"
         signing_identity = os.environ.get("CODESIGN_IDENTITY", "-")
+        if signing_identity in {"", "-"}:
+            die("package tester requires CODESIGN_IDENTITY to sign the DMG")
         metadata = tester_metadata(artifact.name, version, build_version)
         build_info.write_text(f"""OpenJoystickDriver local tester artifact
 
@@ -193,8 +196,9 @@ gatekeeper: {metadata["gatekeeper"]}
 recipient_source_checkout_required: no
 
 This artifact contains the Developer ID-signed OpenJoystickDriver.app and its
-embedded {dext_path.name}. It is notarized and stapled
-for private testing with System Integrity Protection enabled.
+embedded {dext_path.name}. The app and the disk image are each
+notarized and stapled for private testing with System Integrity Protection
+enabled.
 Apple Development artifacts are not supported as arbitrary community tester
 distribution and are not produced by this command.
 """)
@@ -202,6 +206,31 @@ distribution and are not produced by this command.
         make_dmg(staging, "OpenJoystickDriver Tester", artifact)
         cleanup_workdirs((staging, mount_dir, rw_dmg), mount_dir)
         run(["/usr/bin/hdiutil", "verify", str(artifact)])
+        print("\n=== Sign, notarize, and staple tester DMG ===")
+        sign_dmg(artifact, signing_identity)
+        run(
+            [
+                "/usr/bin/env",
+                "bash",
+                str(SCRIPT_DIR / "notarize.sh"),
+                "submit",
+                str(artifact),
+            ],
+            env=env,
+        )
+        run(["/usr/bin/xcrun", "stapler", "validate", str(artifact)])
+        run(
+            [
+                "/usr/sbin/spctl",
+                "--assess",
+                "--type",
+                "open",
+                "--context",
+                "context:primary-signature",
+                "--verbose=4",
+                str(artifact),
+            ]
+        )
         completed = True
     except CommandFailure as error:
         return error.returncode

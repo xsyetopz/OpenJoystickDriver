@@ -78,6 +78,9 @@ def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
             "current_commit_bundle_version": lambda _: "1.0.42",
             "command_output": lambda _: "aaaaaaaaaaaa",
             "release_environment": lambda: os.environ.copy(),
+            "sign_dmg": lambda artifact, identity: events.append(
+                f"sign {artifact.suffix} {identity}"
+            ),
             "verify_bundle_versions": lambda _, dext, *__: verified_dexts.append(
                 dext.parent.name
             ),
@@ -98,14 +101,16 @@ def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
                 dext.mkdir(parents=True)
             elif command[0] == "/usr/bin/ditto":
                 shutil.copytree(command[1], command[2])
+            elif "notarize.sh" in " ".join(command) and command[-2] == "submit":
+                events.append(f"notarize {Path(command[-1]).suffix}")
             elif "notarize.sh" in " ".join(command):
                 events.append("notarize")
                 assert command[-3] == "submit"
                 Path(command[-1]).write_text("temporary upload")
             elif command[:3] == ["/usr/bin/xcrun", "stapler", "validate"]:
-                events.append("stapler")
+                events.append(f"stapler {Path(command[-1]).suffix}")
             elif command[0] == "/usr/sbin/spctl":
-                events.append("gatekeeper")
+                events.append(f"gatekeeper {command[3]}")
             elif command[:2] == ["/usr/bin/hdiutil", "verify"] and fail_after_dmg:
                 raise package_tester.CommandFailure(19)
 
@@ -124,6 +129,7 @@ def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
             package_tester.make_dmg = fake_make_dmg
             os.environ.clear()
             os.environ["OJD_ENV"] = "release"
+            os.environ["CODESIGN_IDENTITY"] = "Developer ID Application: Test"
             result = package_tester.main(["tester"])
         finally:
             os.environ.clear()
@@ -140,7 +146,16 @@ def validate_tester_packaging_flow(*, fail_after_dmg: bool) -> None:
             assert len(artifacts) == 1
             assert verified_dexts == [dext_name]
             assert f"embedded {dext_name}." in captured_build_info
-            assert events == ["notarize", "stapler", "gatekeeper", "dmg"]
+            assert events == [
+                "notarize",
+                "stapler .app",
+                "gatekeeper execute",
+                "dmg",
+                "sign .dmg Developer ID Application: Test",
+                "notarize .dmg",
+                "stapler .dmg",
+                "gatekeeper open",
+            ]
             assert artifacts[0].name == (
                 "OpenJoystickDriver-0.5.0-beta.4-tester-1.0.42-aaaaaaaaaaaa-macOS.dmg"
             )
