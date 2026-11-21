@@ -68,6 +68,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- When the app in `/Applications` opens with an older Xbox USB driver approved, it asks macOS to replace the driver, with no click. **Repair Xbox USB Driver** stays for a first activation and for a retry after a failed replacement. Before, the older driver kept running until the user clicked **Repair Xbox USB Driver**.
 - **BREAKING:** the minimum system is macOS 13 (was 12) and DriverKit 22 (was 21), on Apple silicon and Intel. Start at login is always available, the macOS 12 layouts and System Preferences names are gone, and the `ManagerError.unsupportedOperatingSystem` error of `ApplicationServiceManager` is removed.
 - The app's own requests to the service it hosts no longer go through the RPC socket; they reach the service in process. Before, each request opened a connection, started two threads and looked up its own process. The CLI and other processes still use the socket, with the same authentication, timeouts and cancellation (#74).
 - The calibration rows of a controller's detail read the controller ten times a second only while its values move. While the values rest, each unchanged read doubles the wait, up to half a second, so an open window costs the service far fewer reads on slower Macs (#74).
