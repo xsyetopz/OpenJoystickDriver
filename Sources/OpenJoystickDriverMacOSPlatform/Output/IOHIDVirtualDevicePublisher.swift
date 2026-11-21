@@ -115,6 +115,9 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
         reportID: format.outputReportID
       )
     }
+    if let featureSize = format.featureReports.values.map(\.count).max() {
+      properties[kIOHIDMaxFeatureReportSizeKey as String] = featureSize
+    }
     properties[kIOHIDLocationIDKey as String] = Int64(identity.locationID)
     return properties
   }

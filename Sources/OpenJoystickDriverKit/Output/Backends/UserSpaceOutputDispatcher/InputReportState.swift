@@ -105,13 +105,18 @@ final class UserSpaceInputReportState: Sendable {
     return try ConsumerOutputCodec.decode(request, in: format)
   }
 
-  /// The current input report a host requests, bounded to `maxSize` and including its ID when the
-  /// format declares one; the format answers no other report.
+  /// The report a host requests, bounded to `maxSize`.
+  ///
+  /// It is the current input report, including its ID when the format declares one, or one of the
+  /// format's feature reports. The format answers no other report.
   func hostReport(type: VirtualHostReportType, reportID: UInt32, maxSize: Int) throws -> [UInt8] {
     try current.withLock { current in
       guard !current.closed else { throw VirtualHostReportError.closed }
       guard maxSize > 0, let identifier = UInt8(exactly: reportID) else {
         throw VirtualHostReportError.malformed
+      }
+      if type == .feature, let report = format.featureReports[identifier] {
+        return Array(report.prefix(maxSize))
       }
       guard type == .input, identifier == format.inputReportID ?? 0 else {
         throw VirtualHostReportError.unsupported

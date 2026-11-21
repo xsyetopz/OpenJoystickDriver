@@ -264,6 +264,10 @@ struct IOHIDVirtualDevicePublisherTests {
     } else {
       #expect(properties[kIOHIDMaxOutputReportSizeKey as String] == nil)
     }
+    #expect(
+      properties[kIOHIDMaxFeatureReportSizeKey as String] as? Int
+        == format.featureReports.values.map(\.count).max()
+    )
     #expect(properties[kIOHIDReportDescriptorKey as String] as? Data == Data(format.descriptor))
   }
 

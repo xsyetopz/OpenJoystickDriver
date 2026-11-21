@@ -88,11 +88,16 @@ public protocol VirtualGamepadReportFormat: Sendable {
   /// state the primary report does not (for example a Guide button declared as a separate
   /// report). Delivery sends each one when its bytes change.
   func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]]
+
+  /// The feature reports a host can read, by report ID, each beginning with its Report ID byte.
+  var featureReports: [UInt8: [UInt8]] { get }
 }
 
 extension VirtualGamepadReportFormat {
   /// The default builds no auxiliary report.
   public func buildAuxiliaryInputReports(from _: VirtualGamepadState) -> [[UInt8]] { [] }
+  /// The default declares no feature report.
+  public var featureReports: [UInt8: [UInt8]] { [:] }
   /// The default declares no output report.
   public var outputReportPayloadSize: Int? { nil }
   /// The default declares no output report ID.
