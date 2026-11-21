@@ -47,8 +47,8 @@ OJD checks when you ask, and at launch if **Check for updates automatically** is
 1. Quit OJD.
 2. Open the DMG, drag **OpenJoystickDriver** to **Applications**, click **Replace**.
 3. Open OJD from **Applications**.
-4. OJD replaces the old Xbox USB driver when it opens. If it still shows **Repair Xbox USB Driver**, click it.
-5. Replug each USB controller that uses the [Xbox USB driver](Glossary.md#terms). Otherwise macOS can keep the old driver.
+4. OJD replaces the old [Xbox USB driver](Glossary.md#terms) when it opens. If it still shows **Repair Xbox USB Driver**, click it.
+5. Replug each USB controller that uses the Xbox USB driver. Otherwise macOS can keep the old driver.
 
 > [!IMPORTANT]
 > Open OJD from **Applications**, not the DMG. macOS turns on the Xbox USB driver only for an app in **Applications**.
