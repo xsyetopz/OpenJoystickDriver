@@ -10,7 +10,7 @@ struct IOKitReportError: Error, Sendable {
 }
 
 /// One `IOHIDUserDevice`: created unpublished, then published by ``activate(hostReports:)``.
-final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable {
+final class IOHIDVirtualDeviceBackend: BlockingVirtualDeviceBackend, @unchecked Sendable {
   /// The user device, until it closes.
   private var device: IOHIDUserDevice?
   /// The queue that delivers the device's events.
@@ -130,6 +130,12 @@ final class IOHIDVirtualDeviceBackend: VirtualDeviceBackend, @unchecked Sendable
     sendQueue.async { [self] in completion(Result { try sendNow(report) }) }
     return {}
   }
+
+  /// Sends `report` on the caller's thread; the report sender calls it on its own queue.
+  ///
+  /// - Throws: ``CancellationError`` when the device is closed, and ``IOKitReportError`` when IOKit
+  ///   refuses the report.
+  func sendBlocking(_ report: [UInt8]) throws { try sendNow(report) }
 
   /// Sends `report` as an input report; blocks until IOKit accepts it.
   ///

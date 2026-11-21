@@ -23,6 +23,17 @@ package protocol VirtualDeviceBackend: AnyObject, Sendable {
   func waitUntilClosed() async
 }
 
+/// A virtual device whose native send blocks the calling thread until the host takes the report.
+///
+/// The report sender calls ``sendBlocking(_:)`` on its own serial queue instead of
+/// ``VirtualDeviceBackend/startSend(_:completion:)``, so a report costs no extra thread wake.
+package protocol BlockingVirtualDeviceBackend: VirtualDeviceBackend {
+  /// Sends one input report and returns once the host took it.
+  ///
+  /// - Throws: The backend's error when the host cannot take the report.
+  func sendBlocking(_ report: [UInt8]) throws
+}
+
 extension VirtualDeviceBackend {
   /// Yields once and returns, for a backend with no async teardown.
   package func waitUntilClosed() async { await Task.yield() }

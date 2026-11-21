@@ -157,6 +157,46 @@ private final class QueueSendBackend: VirtualDeviceBackend, @unchecked Sendable 
   }
 }
 
+/// A backend whose native send blocks its thread, like `IOHIDUserDevice`; it counts every send
+/// that took another path.
+private final class BlockingReportBackend: BlockingVirtualDeviceBackend, @unchecked Sendable {
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
+
+  private let lock = NSLock()
+  private let hold: DispatchSemaphore?
+  private var reports: [[UInt8]] = []
+  private var otherSends = 0
+  private var entered = false
+  private var closes = 0
+
+  /// A backend whose sends block until ``release()`` when `holds` is true.
+  init(holds: Bool = false) { hold = holds ? DispatchSemaphore(value: 0) : nil }
+
+  func sendBlocking(_ report: [UInt8]) {
+    lock.withLock { entered = true }
+    hold?.wait()
+    lock.withLock { reports.append(report) }
+  }
+
+  func send(_: [UInt8]) { lock.withLock { otherSends += 1 } }
+
+  func startSend(
+    _: [UInt8],
+    completion: @escaping @Sendable (Result<Void, any Error>) -> Void
+  ) -> @Sendable () -> Void {
+    lock.withLock { otherSends += 1 }
+    DispatchQueue.global().async { completion(.success(())) }
+    return {}
+  }
+
+  func close() { lock.withLock { closes += 1 } }
+  func release() { hold?.signal() }
+  func waitForEntry() async { await waitUntil("a send is blocked") { lock.withLock { entered } } }
+  func snapshot() -> (reports: [[UInt8]], otherSends: Int, closes: Int) {
+    lock.withLock { (reports, otherSends, closes) }
+  }
+}
+
 /// A backend whose native teardown finishes only when its gate opens.
 private final class SlowTeardownBackend: VirtualDeviceBackend,
   @unchecked Sendable
@@ -473,6 +513,40 @@ struct ReportSenderTests {
     #expect(backend.snapshot().reports == [[1], [2], [3]])
     #expect(backend.snapshot().asyncSends == 0)
     await sender.beginClose().value
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func blockingBackendDeliversInOrderThroughItsBlockingSend() async throws {
+    let backend = BlockingReportBackend()
+    let sender = UserSpaceReportSender()
+    sender.attach(backend)
+
+    try await sender.submit { [[1], [2]] }.value()
+    try await sender.submit { [[3]] }.value()
+
+    #expect(backend.snapshot().reports == [[1], [2], [3]])
+    #expect(backend.snapshot().otherSends == 0)
+    await sender.beginClose().value
+  }
+
+  @Test(.timeLimit(.minutes(1)))
+  func blockedNativeSendTimesOutAtDeadlineAndCloseCompletesWhileItBlocks() async {
+    let backend = BlockingReportBackend(holds: true)
+    let timer = ManualDeadlineTimer()
+    let sender = UserSpaceReportSender(deadlineTimer: timer.timer)
+    sender.attach(backend)
+
+    let receipt = sender.submit { [[1]] }
+    let queued = sender.submit { [[2]] }
+    await backend.waitForEntry()
+    await timer.waitUntilScheduled()
+    timer.fireAll()
+
+    await #expect(throws: UserSpaceReportSender.Failure.sendTimedOut) { try await receipt.value() }
+    #expect(backend.snapshot().closes == 1)
+    await sender.beginClose().value
+    await #expect(throws: CancellationError.self) { try await queued.value() }
+    backend.release()
   }
 
   @Test(.timeLimit(.minutes(1)))
