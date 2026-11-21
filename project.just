@@ -254,9 +254,12 @@ project-setup:
     if ! command -v shellcheck >/dev/null; then brew install shellcheck; fi
 
 # Measure the installed app's CPU cost per controller frame into .build/perf/<label>.jsonl.
+# Quoted arguments such as --note "window closed" reach the script whole.
+[positional-arguments]
 perf-measure label *args:
-    python3 -m Scripts.Diagnostics.perf measure {{ label }} {{ args }}
+    python3 -m Scripts.Diagnostics.perf measure "$@"
 
 # Compare two measured run sets as a GitHub Markdown benchmark report.
+[positional-arguments]
 perf-report base candidate *args:
-    python3 -m Scripts.Diagnostics.perf report {{ base }} {{ candidate }} {{ args }}
+    python3 -m Scripts.Diagnostics.perf report "$@"
