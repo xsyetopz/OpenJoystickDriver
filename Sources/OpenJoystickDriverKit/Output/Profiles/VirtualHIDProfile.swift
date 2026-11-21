@@ -176,8 +176,8 @@ struct XboxSeriesBluetoothHIDProfile: VirtualHIDProfile {
 ///
 /// The identity is the `InControlCompatible` `VirtualDevice` record's. The descriptor and input
 /// layout are `DualShock4USBHIDReportFormat`'s, which macOS publishes as a `GCDualShockGamepad`
-/// and which answers the DualShock 4 feature reports. The descriptor is hand-authored after the
-/// genuine layout, not a byte-exact copy of a capture.
+/// and which answers the DualShock 4 feature reports. The descriptor is the one a genuine
+/// controller reports over USB.
 struct DualShock4USBHIDProfile: VirtualHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.inControlCompatible

@@ -78,9 +78,9 @@ mapping=03000000091200004f4a000008040000,OpenJoystickDriver Generic HID Gamepad,
 unmapped=Auxiliary1,Auxiliary2,Auxiliary3,Auxiliary4,Auxiliary5,Auxiliary6,Auxiliary7,Auxiliary8,LeftPaddle1,LeftPaddle2,LeftStickTouch,LeftTrackpadClick,RightPaddle1,RightPaddle2,RightStickTouch,RightTrackpadClick,TouchpadClick
 
 ## InControlCompatible
-profile=InControlCompatible vendor=1356 product=2508 version=0 name=Wireless Controller
-guid=030000004c050000cc09000000000000
-report length=64 descriptorBytes=152
+profile=InControlCompatible vendor=1356 product=2508 version=256 name=Wireless Controller
+guid=030000004c050000cc09000000010000
+report length=64 descriptorBytes=507
 probe Back fields=[9:9] -> b8
 probe East fields=[9:3] -> b2
 probe Guide fields=[9:13] -> b12
@@ -102,7 +102,7 @@ probe DpadUp fields=[1:57] -> h0.1
 probe DpadRight fields=[1:57] -> h0.2
 probe DpadDown fields=[1:57] -> h0.4
 probe DpadLeft fields=[1:57] -> h0.8
-mapping=030000004c050000cc09000000000000,Wireless Controller,a:b1,b:b2,x:b0,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a5,lefttrigger:+a3,righttrigger:+a4,platform:Mac OS X,
+mapping=030000004c050000cc09000000010000,Wireless Controller,a:b1,b:b2,x:b0,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a5,lefttrigger:+a3,righttrigger:+a4,platform:Mac OS X,
 unmapped=
 
 ## SDLCompatible

@@ -15,7 +15,7 @@
 		<key>vendorID</key>
 		<integer>1356</integer>
 		<key>version</key>
-		<integer>0</integer>
+		<integer>256</integer>
 	</dict>
 	<key>kind</key>
 	<string>VirtualDevice</string>
