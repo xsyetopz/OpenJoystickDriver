@@ -102,8 +102,10 @@ extension VirtualOutputTransitionTests {
       ) == .setRumble(mirrored, duration: .milliseconds(50))
     )
     #expect(VirtualOutputFeedbackGate.physicalFeedback(for: .stopRumble) == .stopRumble)
+    // A DualShock 4 host's held rumble reaches the controller, bounded by the longest duration.
     #expect(
-      VirtualOutputFeedbackGate.physicalFeedback(for: .setRumble(rumble, duration: .held)) == nil
+      VirtualOutputFeedbackGate.physicalFeedback(for: .setRumble(rumble, duration: .held))
+        == .setRumble(mirrored, duration: .milliseconds(maxRumbleDurationMs))
     )
     #expect(VirtualOutputFeedbackGate.physicalFeedback(for: .setPlayerIndicator(.player1)) == nil)
     #expect(
@@ -111,6 +113,30 @@ extension VirtualOutputTransitionTests {
         for: .setRGB(ControllerColor(red: 1, green: 2, blue: 3))
       ) == nil
     )
+  }
+
+  @Test
+  func dualShock4RumbleReportReachesPhysicalController() throws {
+    // Report 5 with the motor flag: right (weak) motor 0x40, left (strong) motor 0x80.
+    var report = [UInt8](repeating: 0, count: 32)
+    report[0] = 0x05
+    report[1] = 0x01
+    report[4] = 0x40
+    report[5] = 0x80
+    let profile = VirtualHIDProfileID.inControlCompatible.makeProfile()
+
+    let consumer = try #require(
+      profile.consumerOutput(type: .output, reportID: 0x05, bytes: report)
+    )
+    let physical = VirtualOutputFeedbackGate.physicalFeedback(for: consumer)
+
+    guard case .setRumble(let intensities, let duration) = physical else {
+      Issue.record("expected set-rumble, got \(String(describing: physical))")
+      return
+    }
+    #expect(intensities.lowFrequency.byte == 0x80)
+    #expect(intensities.highFrequency.byte == 0x40)
+    #expect(duration == .milliseconds(maxRumbleDurationMs))
   }
 
   @Test

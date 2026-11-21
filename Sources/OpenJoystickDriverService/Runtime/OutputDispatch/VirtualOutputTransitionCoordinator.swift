@@ -173,14 +173,24 @@ final class VirtualOutputFeedbackGate: Sendable {
   /// The physical command for consumer feedback: a bounded set-rumble, with its main motors
   /// mirrored onto the Steam trackpad haptics, or stop-rumble.
   ///
-  /// Other consumer commands, such as a DualSense lightbar, and held rumble do not reach the
-  /// physical controller.
+  /// Held rumble, which a DualShock 4 output report requests, runs until the next command and at
+  /// most `maxRumbleDurationMs`, so a game that quits mid-rumble cannot leave the motors running.
+  /// Other consumer commands, such as a DualShock 4 lightbar color, do not reach the physical
+  /// controller.
   static func physicalFeedback(for command: ControllerOutputCommand) -> ControllerOutputCommand? {
     switch command {
-    case .setRumble(let intensities, .milliseconds(let durationMs)):
-      .setRumble(intensities.mirroringMainOntoHaptics(), duration: .milliseconds(durationMs))
+    case .setRumble(let intensities, let duration):
+      .setRumble(intensities.mirroringMainOntoHaptics(), duration: bounded(duration))
     case .stopRumble: .stopRumble
     default: nil
+    }
+  }
+
+  /// `duration` with held rumble replaced by the longest bounded duration.
+  private static func bounded(_ duration: RumbleDuration) -> RumbleDuration {
+    switch duration {
+    case .milliseconds: duration
+    case .held: .milliseconds(maxRumbleDurationMs)
     }
   }
 
