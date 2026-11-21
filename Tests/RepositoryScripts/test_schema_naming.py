@@ -313,7 +313,13 @@ FIELD_NAME_ENUMS: list[tuple[str, str, Any]] = [
         "/properties/parameters/propertyNames/enum",
         PROTOCOL_PARAMETERS,
     ),
-    ("controller-patch", "/then/properties/patch/propertyNames/const", RECORD),
+    ("controller-patch", "/allOf/0/then/properties/patch/propertyNames/const", RECORD),
+    ("controller-patch", "/allOf/1/then/properties/patch/propertyNames/const", RECORD),
+    (
+        "controller-patch",
+        "/allOf/1/then/properties/patch/properties/tuning/propertyNames/enum",
+        TUNING,
+    ),
     (
         "cli-output",
         "/$defs/sharedTuningKey/enum",
