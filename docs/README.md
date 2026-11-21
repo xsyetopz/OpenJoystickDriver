@@ -92,6 +92,7 @@ For testers who check a controller and for maintainers who judge compatibility c
 - [Test Razer Wolverine V3 Tournament Edition](testing/razer/v3-te.md)
 - [Testing the Razer Wolverine V2](testing/razer/wolverine-v2.md)
 - [Test the SCUF Envision Pro](testing/scuf-envision-pro.md)
+- [SteelSeries Nimbus Test Record](testing/steelseries-nimbus.md)
 - [SIXAXIS and DUALSHOCK 3](testing/sixaxis-vs-ds3.md)
 - [Third-Party PS3 Controllers](testing/ps3-third-party.md)
 - [Third-Party DualSense Controllers](testing/dualsense-third-party.md)

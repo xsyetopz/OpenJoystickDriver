@@ -94,7 +94,9 @@ These records come from published source code. See [Flydigi tester checks](../do
 
 ### SteelSeries Nimbus Record
 
-The SteelSeries Nimbus (USB, `1038:1420`) has an unverified record from published source code. It maps the buttons, D-pad, sticks, and triggers. macOS handles the Nimbus as its own game controller ([Handled by macOS](Glossary.md#terms)), and OJD only reads its input. OJD doesn't drive its player lights.
+The SteelSeries Nimbus (USB, `1038:1420`) has an unverified record from published source code. It maps the buttons, D-pad, sticks, and triggers. macOS handles the Nimbus as its own game controller ([Handled by macOS](Glossary.md#terms)), and OJD only reads its input. OJD doesn't drive its player lights over USB.
+
+Over Bluetooth (`0111:1420`), OJD sets its player lights while macOS handles it, for example with `ojd controller player 0111:1420 1`. The maintainer checked players 1 and 2 on hardware. See the [Nimbus test record](../docs/testing/steelseries-nimbus.md).
 
 ### Check Whether Your Controller Is in the Catalog
 
