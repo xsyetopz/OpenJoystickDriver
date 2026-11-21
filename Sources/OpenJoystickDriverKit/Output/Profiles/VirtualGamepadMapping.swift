@@ -8,7 +8,7 @@
 /// Brake, each ordered by usage and then by descriptor order, and the hat is `h0.<mask>`. A
 /// control the report cannot carry, or one SDL has no name for, is listed in ``unmapped``. An
 /// axis whose report value falls as the control rises is bound inverted (`aN~`); a trigger binds
-/// the positive half (`+aN`).
+/// the positive half (`+aN`), and binds its axis even when it also sets a button.
 public struct VirtualGamepadMapping: Equatable, Sendable {
   /// One control driven alone, and the descriptor fields its report changed.
   public struct Probe: Equatable, Sendable {
@@ -148,9 +148,14 @@ extension VirtualHIDProfileID {
       }
       let changedOffsets = Set(changed.map(\.offset))
       var binding: String?
-      if let index = buttons.firstIndex(where: changedOffsets.contains) {
+      let buttonIndex = buttons.firstIndex(where: changedOffsets.contains)
+      let axisIndex = axes.firstIndex(where: changedOffsets.contains)
+      // A trigger that also sets a digital bit, as the DualShock 4's L2 and R2 do, binds its axis
+      // so games read its pressure.
+      let prefersAxis = control == .leftTrigger || control == .rightTrigger
+      if let index = buttonIndex, !(prefersAxis && axisIndex != nil) {
         binding = "b\(index)"
-      } else if let index = axes.firstIndex(where: changedOffsets.contains) {
+      } else if let index = axisIndex {
         let axis = parsed.fields[axes[index]]
         let inverted =
           Self.signedValue(of: axis, in: reports) < Self.signedValue(of: axis, in: neutral)
