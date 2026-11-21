@@ -103,14 +103,13 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
-  /// Records that a send to the virtual gamepad of `controller` was attempted.
-  func recordPublicationAttempt(for controller: LogicalControllerID) {
-    entries[controller]?.lastAttemptedSend = DispatchTime.now().uptimeNanoseconds
-  }
-
   /// Records that a send for `controller` completed, which clears its failure and ends recovery.
+  ///
+  /// Writes only what changes, so a completion without a failure leaves ``revision`` unchanged.
   func recordPublicationCompletion(for controller: LogicalControllerID) {
-    entries[controller]?.lastCompletedSend = DispatchTime.now().uptimeNanoseconds
+    guard let entry = entries[controller],
+      entry.lastFailure != nil || entry.recoveryState != "idle"
+    else { return }
     entries[controller]?.lastFailure = nil
     entries[controller]?.recoveryState = "idle"
   }
@@ -120,12 +119,16 @@ extension AutomaticDispatcherCoordinator {
     publicationDiagnosticEntries().map(\.line).sorted()
   }
 
-  /// Returns the targets, diagnostics and statuses together, so a delivery reads them in one hop.
-  func publicationSnapshot() -> AutomaticPublicationSnapshot {
-    AutomaticPublicationSnapshot(
-      targets: installedTargets(),
-      diagnostics: publicationDiagnosticEntries(),
-      statuses: publicationStatuses()
+  /// Returns the targets, diagnostics and statuses together with the ``revision`` they reflect,
+  /// so a delivery reads them in one hop.
+  func publicationSnapshot() -> (snapshot: AutomaticPublicationSnapshot, revision: UInt64) {
+    (
+      AutomaticPublicationSnapshot(
+        targets: installedTargets(),
+        diagnostics: publicationDiagnosticEntries(),
+        statuses: publicationStatuses()
+      ),
+      revision
     )
   }
 
@@ -145,9 +148,7 @@ extension AutomaticDispatcherCoordinator {
         publicationGeneration: entry.publicationGeneration,
         target: target,
         result: result,
-        recoveryState: entry.recoveryState,
-        lastAttempted: entry.lastAttemptedSend,
-        lastCompleted: entry.lastCompletedSend
+        recoveryState: entry.recoveryState
       )
     }
   }
@@ -162,35 +163,25 @@ extension AutomaticDispatcherCoordinator {
     entries.reduce(into: [:]) { statuses, element in
       let entry = element.value
       guard let target = entry.target ?? entry.context?.target else { return }
-      let attempted = entry.lastAttemptedSend
-      let completed = entry.lastCompletedSend
       statuses[element.key] =
         if entry.heldByAnotherClient {
           .notPublished(
             .heldByAnotherClient,
-            target: target,
-            lastAttemptedNanoseconds: attempted,
-            lastCompletedNanoseconds: completed
+            target: target
           )
         } else if let failure = entry.lastFailure {
           .failed(
             failure,
-            target: target,
-            lastAttemptedNanoseconds: attempted,
-            lastCompletedNanoseconds: completed
+            target: target
           )
         } else if entry.installed != nil {
           .published(
-            target: target,
-            lastAttemptedNanoseconds: attempted,
-            lastCompletedNanoseconds: completed
+            target: target
           )
         } else {
           .notPublished(
             suppressed ? .suppressed : .noInputYet,
-            target: target,
-            lastAttemptedNanoseconds: attempted,
-            lastCompletedNanoseconds: completed
+            target: target
           )
         }
     }

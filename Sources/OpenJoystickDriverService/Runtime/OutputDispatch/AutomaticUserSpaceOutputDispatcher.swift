@@ -46,6 +46,12 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   private var remappingSuppressedOutput = false
   /// The coordinator's publication state at the last synchronization, for ``status``.
   private var publication = AutomaticPublicationSnapshot()
+  /// The coordinator revision `publication` reflects; nil before the first synchronization.
+  private var publicationRevision: UInt64?
+  /// Each controller's send times, kept here because every delivered report moves them.
+  private var sendTimings: [LogicalControllerID: AutomaticSendTimings] = [:]
+  /// The pausing value the coordinator last applied; nil before the first.
+  private var appliedSuppression: Bool?
   /// The shortest time between two announcements that only move the send timings, so status
   /// observers see current timings without refreshing for every input report.
   private let timingAnnouncementIntervalNanoseconds: UInt64
@@ -209,7 +215,16 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// Sets whether all virtual output is paused and applies it to the backends.
   func setOutputSuppressed(_ suppressed: Bool) async {
     suppressOutput = suppressed
-    await coordinator.synchronizeSuppression { self.suppressOutput }
+    await synchronizeSuppression()
+  }
+
+  /// Applies the current pausing value to the coordinator and records it as applied.
+  private func synchronizeSuppression() async {
+    await coordinator.synchronizeSuppression {
+      let value = self.suppressOutput
+      self.stateLock.withLock { self.appliedSuppression = value }
+      return value
+    }
   }
 
   /// Sets whether remapping output is paused and applies it to the backends.
@@ -224,7 +239,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     stateLock.withLock {
       let targets = Set(publication.targets.values.map(\.rawValue)).sorted()
       let suffix = targets.isEmpty ? "" : ", targets: \(targets.joined(separator: "; "))"
-      let lines = publication.diagnosticLines
+      let lines = publication.diagnosticLines(timings: sendTimings)
       let diagnostics = lines.isEmpty ? "" : ", publication: \(lines.joined(separator: "; "))"
       let unavailable =
         unavailableControllers.isEmpty ? "" : ", unavailable: \(unavailableControllers.count)"
@@ -290,11 +305,12 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     }
     guard let lease = await coordinator.leaseForNeutralization(identifier) else { return }
     do {
-      await coordinator.recordPublicationAttempt(for: identifier)
+      recordSendAttempt(for: identifier)
       guard let sink = lease.backend as? any RemappingGamepadSink else {
         throw RemappingEventEngineError.sinkUnavailable
       }
       try await sink.send(state, for: identifier)
+      recordSendCompletion(for: identifier)
       await coordinator.recordPublicationCompletion(for: identifier)
     } catch {
       await lease.release()
@@ -317,11 +333,15 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     from identifier: LogicalControllerID,
     onPublished: @escaping @Sendable () -> Void = {}
   ) async throws {
-    await coordinator.synchronizeSuppression { self.suppressOutput }
+    // `suppressOutput` can be set without `setOutputSuppressed`, so a delivery applies a value
+    // the coordinator has not seen.
+    if stateLock.withLock({ appliedSuppression != suppressedOutput }) {
+      await synchronizeSuppression()
+    }
     let generation = cacheGeneration(for: identifier)
     guard let description = await cachedDescription(for: identifier),
       let profile = profile(for: identifier, description: description, generation: generation),
-      let lease = await coordinator.leaseForDispatch(
+      let grant = await coordinator.grantForDelivery(
         controller: identifier,
         profile: profile,
         isEligible: { [weak self] identifier, profile in
@@ -330,14 +350,16 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
         factory: factory(for: identifier)
       )
     else { throw RemappingEventEngineError.sinkUnavailable }
+    let lease = grant.lease
     do {
-      await coordinator.recordPublicationAttempt(for: identifier)
+      recordSendAttempt(for: identifier)
       try await delivery.publish(
         through: lease.backend,
         for: identifier,
         onPublished: onPublished
       )
-      await coordinator.recordPublicationCompletion(for: identifier)
+      recordSendCompletion(for: identifier)
+      if grant.clearsFailure { await coordinator.recordPublicationCompletion(for: identifier) }
     } catch {
       await lease.release()
       await coordinator.recoverPublication(for: identifier, failure: error)
@@ -345,7 +367,27 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       throw error
     }
     await lease.release()
-    await synchronizeDiagnostics()
+    // A cleared failure changed the coordinator after the grant read its revision.
+    await synchronizeDiagnostics(
+      knownRevision: grant.clearsFailure ? nil : grant.revision,
+      timingsMoved: true
+    )
+  }
+
+  /// Records that a send to the virtual gamepad of `identifier` was attempted.
+  private func recordSendAttempt(for identifier: LogicalControllerID) {
+    let now = DispatchTime.now().uptimeNanoseconds
+    stateLock.withLock {
+      sendTimings[identifier, default: AutomaticSendTimings()].lastAttempted = now
+    }
+  }
+
+  /// Records that a send to the virtual gamepad of `identifier` completed.
+  private func recordSendCompletion(for identifier: LogicalControllerID) {
+    let now = DispatchTime.now().uptimeNanoseconds
+    stateLock.withLock {
+      sendTimings[identifier, default: AutomaticSendTimings()].lastCompleted = now
+    }
   }
 
   /// Records whether another client holds the input of `identifier`.
@@ -372,20 +414,36 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
 
   /// Copies the coordinator state into the status and posts a change when it differs.
   ///
-  /// A change to the send timings alone is posted at most once per
-  /// `timingAnnouncementIntervalNanoseconds`: each input report moves them, and every post makes
-  /// the app read the whole status again.
-  private func synchronizeDiagnostics() async {
-    let snapshot = await coordinator.publicationSnapshot()
+  /// A delivery passes the coordinator `knownRevision` its grant read: while it equals the
+  /// revision of the last snapshot, nothing the snapshot holds can have changed, so the snapshot is
+  /// read again only once per `timingAnnouncementIntervalNanoseconds`, which also picks up a
+  /// change inside a backend's own status. A change to the send timings alone (`timingsMoved`) is
+  /// posted at most once per interval: each input report moves them, and every post makes the app
+  /// read the whole status again.
+  private func synchronizeDiagnostics(
+    knownRevision: UInt64? = nil,
+    timingsMoved: Bool = false
+  ) async {
     let now = DispatchTime.now().uptimeNanoseconds
-    let announce = stateLock.withLock { () -> Bool in
-      defer { publication = snapshot }
-      if publication == snapshot { return false }
-      if publication.hasSameMeaning(as: snapshot), let last = lastAnnouncementNanoseconds,
-        now &- last < timingAnnouncementIntervalNanoseconds
-      {
-        return false
+    let (current, intervalElapsed) = stateLock.withLock {
+      let elapsed =
+        lastAnnouncementNanoseconds.map { now &- $0 >= timingAnnouncementIntervalNanoseconds }
+        ?? true
+      return (knownRevision != nil && knownRevision == publicationRevision, elapsed)
+    }
+    var changed = false
+    if !current || intervalElapsed {
+      let (snapshot, revision) = await coordinator.publicationSnapshot()
+      changed = stateLock.withLock {
+        defer {
+          publication = snapshot
+          publicationRevision = revision
+        }
+        return publication != snapshot
       }
+    }
+    let announce = stateLock.withLock { () -> Bool in
+      guard changed || (timingsMoved && intervalElapsed) else { return false }
       lastAnnouncementNanoseconds = now
       return true
     }
@@ -477,7 +535,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   func publicationStatus(
     for identifier: LogicalControllerID
   ) -> ApplicationServicePublicationStatus? {
-    stateLock.withLock { publication.statuses[identifier] }
+    stateLock.withLock { publication.statuses[identifier]?.with(sendTimings[identifier]) }
   }
 
   /// The values the virtual gamepad of a controller last reported.

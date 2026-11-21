@@ -54,10 +54,6 @@ extension AutomaticDispatcherCoordinator {
     var pending: Pending?
     /// Every installation in flight, by request token.
     var tasks: [UUID: Pending] = [:]
-    /// When a send was last attempted, in uptime nanoseconds.
-    var lastAttemptedSend: UInt64?
-    /// When a send last completed, in uptime nanoseconds.
-    var lastCompletedSend: UInt64?
     /// The text of the last publication failure.
     var lastFailure: String?
     /// Where recovery stands: idle, retiring, waiting-for-retirement, retry-gated or recovering.
@@ -171,6 +167,40 @@ extension AutomaticDispatcherCoordinator {
     factory: @escaping Factory
   ) async -> AutomaticBackendLease? {
     try? await acquire(controller, target: profile, isEligible: isEligible, factory: factory)
+  }
+
+  /// A lease for one delivery, with what the delivery needs to skip later coordinator calls.
+  struct DeliveryGrant: Sendable {
+    /// The lease on the backend that publishes.
+    let lease: AutomaticBackendLease
+    /// The coordinator revision when the lease was granted.
+    let revision: UInt64
+    /// Whether the controller has a failure or a recovery to clear once a send completes.
+    let clearsFailure: Bool
+  }
+
+  /// Returns ``leaseForDispatch(controller:profile:isEligible:factory:)`` with the revision and
+  /// failure state read in the same call, so a steady delivery needs no other coordinator call.
+  func grantForDelivery(
+    controller: LogicalControllerID,
+    profile: VirtualHIDProfileID,
+    isEligible: @escaping Eligibility,
+    factory: @escaping Factory
+  ) async -> DeliveryGrant? {
+    guard
+      let lease = await leaseForDispatch(
+        controller: controller,
+        profile: profile,
+        isEligible: isEligible,
+        factory: factory
+      )
+    else { return nil }
+    let entry = entries[controller]
+    return DeliveryGrant(
+      lease: lease,
+      revision: revision,
+      clearsFailure: entry?.lastFailure != nil || entry?.recoveryState != "idle"
+    )
   }
 
   /// Replaces the controller's live backend with one for `target`, keeping the live backend

@@ -90,6 +90,31 @@ extension VirtualOutputTests {
   }
 
   @Test
+  func steadyInputLeavesCoordinatorStateUnchanged() async throws {
+    let identifier = LogicalControllerID(vendorID: 1, productID: 2)
+    let dispatcher = AutomaticUserSpaceOutputDispatcher(
+      deviceManager: DeviceManager(
+        dispatcher: LoggingOutputDispatcher(),
+        installationKey: testPortKeyInstallationKey
+      ),
+      ownershipProvider: { _ in .exclusiveRawUSB },
+      builder: { _ in AutomaticBackendProbe() },
+      descriptionsProvider: provider([identifier]),
+      timingAnnouncementIntervalNanoseconds: .max
+    )
+    try await dispatcher.activate(for: [identifier])
+    await dispatcher.dispatch(ControllerEvent([.press(.south)]), from: identifier)
+    let settled = await dispatcher.coordinator.revision
+
+    for _ in 0..<1_000 {
+      await dispatcher.dispatch(ControllerEvent([.press(.south)]), from: identifier)
+    }
+
+    #expect(await dispatcher.coordinator.revision == settled)
+    await dispatcher.close()
+  }
+
+  @Test
   func inputAnnouncesTimingChangesOncePerInterval() async throws {
     let identifier = LogicalControllerID(vendorID: 1, productID: 2)
     let dispatcher = AutomaticUserSpaceOutputDispatcher(
