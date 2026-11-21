@@ -5,17 +5,16 @@ import Testing
 struct DualShock4USBHIDReportFormatTests {
   private let format = DualShock4USBHIDReportFormat()
 
-  /// Report 1 at rest: sticks at `0x80`, hat null, no button, full battery on wired power, and
-  /// one touch packet with both fingers lifted.
+  /// Report 1 at rest, as a genuine controller sends it on USB with its motion fields zeroed:
+  /// sticks at `0x80`, hat null, no button, full battery on wired power, no touch packet, and every
+  /// contact of the three touch packets lifted.
   private static let neutral: [UInt8] = {
     var report = [UInt8](repeating: 0, count: 64)
     report[0] = 0x01
     report[1...4] = [0x80, 0x80, 0x80, 0x80]
     report[5] = 0x08
     report[30] = 0x1B
-    report[33] = 0x01
-    report[35] = 0x80
-    report[39] = 0x80
+    for contact in [35, 39, 44, 48, 53, 57] { report[contact] = 0x80 }
     return report
   }()
 
@@ -116,6 +115,15 @@ struct DualShock4USBHIDReportFormatTests {
       SonyMotionCalibration.dualShock4Factory(report, bluetooth: false, groupsGyroEndpoints: false)
         != nil
     )
+  }
+
+  /// Hardware and firmware versions sit where Linux's `hid-playstation` reads them.
+  @Test
+  func firmwareReportCarriesGenuineVersions() throws {
+    let report = try #require(format.featureReports[0xA3])
+    #expect(UInt16(report[35]) | UInt16(report[36]) << 8 == 0xB40C)
+    #expect(UInt16(report[41]) | UInt16(report[42]) << 8 == 0xA00A)
+    #expect(Array(report[1...11]) == Array("Sep 21 2018".utf8))
   }
 
   @Test
