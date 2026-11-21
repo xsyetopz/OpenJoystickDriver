@@ -136,7 +136,7 @@ struct VirtualLaunchCommandTests {
   func everyPersonaMappingFollowsValueThatIsAlreadySet() async throws {
     let service = try FakeService(devices: [
       Self.device("pad-1", .sdlCompatible), Self.device("pad-2", .generic),
-      Self.device("pad-3", .gameControllerCompatible),
+      Self.device("pad-3", .gameControllerCompatible), Self.device("pad-4", .inControlCompatible),
     ])
     var environment = Self.baseEnvironment
     environment[SDLLaunchEnvironment.variable] = "abc,Mine,a:b0"

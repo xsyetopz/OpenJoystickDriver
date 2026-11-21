@@ -32,7 +32,7 @@ struct VirtualDeviceMessageTests {
     #expect(
       Self.message(#""persona":"Nope""#)
         == "personas.plist, persona: The persona must be one of SDLCompatible, Generic, "
-        + "GameControllerCompatible. Fix: Set persona to one of them."
+        + "GameControllerCompatible, InControlCompatible. Fix: Set persona to one of them."
     )
   }
 
