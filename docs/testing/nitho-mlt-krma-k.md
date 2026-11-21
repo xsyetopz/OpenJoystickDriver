@@ -41,6 +41,7 @@ By cable, the pad takes the identity of the slider position. The receiver only r
 | Mode | VID:PID | Product string | OJD protocol | Tested |
 | --- | --- | --- | --- | --- |
 | M, Bluetooth | 054C:05C4 | DUALSHOCK 4 Wireless Controller | `sony-dual-shock4:bluetooth-classic` | Every control |
+| M, Bluetooth, another session | 054C:09CC | DUALSHOCK 4 Wireless Controller | `sony-dual-shock4:bluetooth-classic` | Input at rest, calibration, CRCs |
 | M by cable, Bluetooth off | 054C:05C4 | Wireless Controller | `sony-dual-shock4:usb` | Every control |
 | 2.4G receiver | 045E:028E | Xbox360 For Windows, vendor shanwan | hid-descriptor | Every control |
 | 2.4G by cable | 045E:028E | Xbox360 For Windows, vendor shanwan | hid-descriptor | Every control |
@@ -65,6 +66,20 @@ It sends DUALSHOCK 4 report `0x11` (78 bytes), which the built-in DUALSHOCK 4 re
 | 8 | L1 `0x01`, R1 `0x02`, L2 `0x04`, R2 `0x08`, View `0x10`, Menu `0x20`, L3 `0x40`, R3 `0x80` |
 | 9 | Home `0x01`; the upper bits count reports |
 | 10, 11 | L2 and R2, `0x00` to `0xFF` |
+
+To pair, hold Home in M until the light flashes purple quickly. A slow purple flash is the pad trying to reconnect to its last host, and a Bluetooth search doesn't list it.
+
+In one session the pad paired as 054C:09CC, the DUALSHOCK 4 v2 ID, version `0x0100`. Its report descriptor (442 bytes) matched a genuine DUALSHOCK 4 v2's Bluetooth descriptor byte for byte. Both pads were connected at once. OJD bound each one through `sony-dual-shock4:bluetooth-classic` and left them to macOS, and GameController listed two DUALSHOCK 4 Wireless Controllers. These reads tell the pad apart from the genuine one:
+
+| Read | NITHO, M over Bluetooth | Genuine DUALSHOCK 4 v2 over Bluetooth |
+| --- | --- | --- |
+| Feature `0xA3` build date | `Jul 11 2016` `12:33:38` | `Sep 21 2018` `04:50:51` |
+| Hardware, firmware version (`0xA3` bytes 35 and 41) | `0x6404`, `0x7009` | `0xB40C`, `0xA00A` |
+| Feature `0x05` calibration | No bias; gyro ±`0x227D`/`0x2224`, accelerometer ±`0x2000`; gyro endpoints in the USB order (plus, minus per axis) | Bias and endpoints vary per axis; gyro endpoints grouped (all plus, then all minus) |
+| Sensor timestamp (report `0x11` bytes 12, 13) | Stays `0` | Counts up |
+| Report `0x11` rate at rest | About 65 Hz | About 6.5 Hz |
+
+The CRC32 checks pass on both pads, for input report `0x11` and for feature report `0x05`. OJD reads report `0x05` with the gyro endpoints grouped. With no bias, the pad's USB-ordered endpoints still give each axis one plus and one minus endpoint, so the factory calibration installs with the right scale (`DS4CalibrationTests`).
 
 ## 2.4G Receiver
 
