@@ -6,7 +6,7 @@ Why OJD comes as a disk image (DMG) you drag to Applications, and not as an inst
 
 With a controller connected, macOS keeps the old Xbox USB driver until the controller reconnects or the Mac restarts. `systemextensionsctl list` shows two lines for `com.openjoystickdriver.XboxUSBDevice`. The old one reads `[terminated waiting to uninstall on reboot]`. The new one reads `[activated enabled]`.
 
-`ExtensionProbe.installedFacts` reads the `[activated enabled]` line, so the repair banner goes away after one repair. While the old line is listed, `ExtensionStatus.replacedVersionPending` is true, and Settings and `ojd transport-extension status` say to reconnect or restart.
+`ExtensionProbe.installedFacts` reads the `[activated enabled]` line, so the repair banner goes away after one replacement. While the old line is listed, `ExtensionStatus.replacedVersionPending` is true, and Settings and `ojd transport-extension status` say to reconnect or restart.
 
 Apple confirms "some devices will need to be disconnected and re-connected" ([Apple Developer Forums 677040](https://developer.apple.com/forums/thread/677040)).
 
@@ -16,7 +16,7 @@ Apple confirms "some devices will need to be disconnected and re-connected" ([Ap
 | --- | --- | --- |
 | Put exactly one copy in `/Applications` | Yes, with `BundleIsRelocatable` set to false in the component plist | The user drags the app; a second copy can stay elsewhere |
 | Quit the running app before the copy | Yes, in a `preinstall` script | The user quits it |
-| Turn on the driver | Apple advises against it: Quinn calls activation from a package script "something I actively recommend against" ([Apple Developer Forums 750923](https://developer.apple.com/forums/thread/750923)) | The app's **Repair Xbox USB Driver** sends the request |
+| Turn on the driver | Apple advises against it: Quinn calls activation from a package script "something I actively recommend against" ([Apple Developer Forums 750923](https://developer.apple.com/forums/thread/750923)) | The app replaces an approved older driver at launch; **Repair Xbox USB Driver** sends a first activation or a retry |
 | Remove the replaced driver | No: the system extension store is SIP-protected | No |
 | End the wait for a restart | No: it ends on reconnect or restart | No |
 | Keep privacy grants across a signing change | No | No |

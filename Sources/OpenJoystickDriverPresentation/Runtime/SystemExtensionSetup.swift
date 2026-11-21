@@ -31,6 +31,9 @@ enum SystemExtensionSetupState: Sendable, Equatable {
 
 /// Inspects, activates and deactivates the driver extension.
 package protocol SystemExtensionSetupClient: Sendable {
+  /// Whether macOS accepts system-extension requests from this copy of the app, which holds only
+  /// for a copy in `/Applications`.
+  var sendsRequests: Bool { get }
   /// Returns the status of the extension.
   func inspect() -> ExtensionStatus
   /// Asks macOS to activate the extension and returns how the request ended.
@@ -41,7 +44,8 @@ package protocol SystemExtensionSetupClient: Sendable {
 
 /// Works out the state of the driver extension and requests its activation and deactivation.
 ///
-/// Only ``repair()`` and ``uninstall()`` send a request to macOS; a read never does.
+/// Only ``repair()`` and ``uninstall()`` send a request to macOS; a read never does. The app calls
+/// ``repair()`` at launch when ``replacesAtLaunch`` holds, and for the user's click otherwise.
 @MainActor
 package final class SystemExtensionSetupCoordinator {
   /// Inspects, activates and deactivates the extension.
@@ -61,6 +65,16 @@ package final class SystemExtensionSetupCoordinator {
   func foreground() { inspect() }
   /// Reads the state again.
   func refresh() { inspect() }
+
+  /// Whether the app replaces the extension without a click: macOS lists an active extension of a
+  /// known version other than the embedded one, and accepts requests from this copy of the app.
+  ///
+  /// macOS replaces an extension the user approved with one from the same team without asking
+  /// again. A first activation needs the user's approval, so it waits for the click; so does an
+  /// active extension whose version cannot be read.
+  var replacesAtLaunch: Bool {
+    state == .replacementNeeded && status.installed != nil && client.sendsRequests
+  }
 
   /// Asks macOS to activate or replace the extension, for the user's click.
   ///

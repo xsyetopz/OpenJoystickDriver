@@ -31,7 +31,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func viewModelReportsReplacedDriverPendingWhileActive() {
+  func viewModelReportsReplacedDriverPendingWhileActive() async {
     // Arrange
     let status = ExtensionStatus(
       bundle: .present,
@@ -51,7 +51,7 @@ struct SetupCoordinatorTests {
     )
 
     // Act
-    viewModel.startSystemExtensionSetup()
+    await viewModel.startSystemExtensionSetup()
 
     // Assert
     #expect(viewModel.systemExtensionSetupState == .active)
@@ -72,17 +72,54 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func olderActiveExtensionWaitsForRepairClick() async {
+  func olderActiveExtensionIsReplacedAtLaunch() async {
     let client = FakeSetupClient(status: Self.olderActiveStatus)
-    let coordinator = SystemExtensionSetupCoordinator(client: client)
+    let viewModel = Self.viewModel(client)
 
-    coordinator.launch()
-    #expect(coordinator.state == .replacementNeeded)
-    #expect(client.requestCount == 0)
+    await viewModel.startSystemExtensionSetup()
+
+    #expect(viewModel.systemExtensionSetupState == .active)
+    #expect(client.requestCount == 1)
+  }
+
+  @Test
+  func failedLaunchReplacementLeavesRepairClick() async {
+    let failure = SystemExtensionRequestFailure(domain: "d", code: 1, text: "t")
+    let client = FakeSetupClient(
+      status: Self.olderActiveStatus,
+      results: [.failed(failure), .active]
+    )
+    let coordinator = SystemExtensionSetupCoordinator(client: client)
+    let viewModel = Self.viewModel(client, coordinator: coordinator)
+
+    await viewModel.startSystemExtensionSetup()
+    #expect(viewModel.systemExtensionSetupState == .failed(failure))
 
     await coordinator.repair()
     #expect(coordinator.state == .active)
-    #expect(client.requestCount == 1)
+    #expect(client.requestCount == 2)
+  }
+
+  @Test
+  func olderExtensionOutsideApplicationsWaitsForRepairClick() async {
+    let client = FakeSetupClient(status: Self.olderActiveStatus, sendsRequests: false)
+    let viewModel = Self.viewModel(client)
+
+    await viewModel.startSystemExtensionSetup()
+
+    #expect(viewModel.systemExtensionSetupState == .replacementNeeded)
+    #expect(client.requestCount == 0)
+  }
+
+  @Test
+  func firstActivationWaitsForRepairClick() async {
+    let client = FakeSetupClient(status: Self.inactiveStatus)
+    let viewModel = Self.viewModel(client)
+
+    await viewModel.startSystemExtensionSetup()
+
+    #expect(viewModel.systemExtensionSetupState == .needsActivation)
+    #expect(client.requestCount == 0)
   }
 
   @Test
@@ -113,7 +150,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func historicalIntegerBuildSendsNoRequestAtLaunch() {
+  func historicalIntegerBuildReadsSendNoRequest() {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -148,7 +185,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func unknownInstalledVersionNeedsReplacementClick() {
+  func unknownInstalledVersionNeedsReplacementClick() async {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -157,11 +194,11 @@ struct SetupCoordinatorTests {
         installed: nil
       )
     )
-    let coordinator = SystemExtensionSetupCoordinator(client: client)
+    let viewModel = Self.viewModel(client)
 
-    coordinator.launch()
+    await viewModel.startSystemExtensionSetup()
 
-    #expect(coordinator.state == .replacementNeeded)
+    #expect(viewModel.systemExtensionSetupState == .replacementNeeded)
     #expect(client.requestCount == 0)
   }
 
@@ -235,6 +272,19 @@ struct SetupCoordinatorTests {
     #expect(client.requestCount == 2)
   }
 
+  private static func viewModel(
+    _ client: FakeSetupClient,
+    coordinator: SystemExtensionSetupCoordinator? = nil
+  ) -> RuntimeViewModel {
+    RuntimeViewModel(
+      gateway: ApplicationServiceClientGateway(
+        client: ApplicationServiceClient(socketPath: "/nonexistent/ojd-test.sock")
+      ),
+      systemExtensionSetup: coordinator ?? SystemExtensionSetupCoordinator(client: client),
+      listenerState: ServiceListenerState()
+    )
+  }
+
   private static let activeStatus = ExtensionStatus(
     bundle: .present,
     registration: .active("active")
@@ -272,14 +322,17 @@ final class FakeSetupClient: @unchecked Sendable, SystemExtensionSetupClient {
   private(set) var requestCount = 0
   private(set) var deactivationRequestCount = 0
   let deactivationResult: SystemExtensionSetupRequestResult
+  let sendsRequests: Bool
 
   init(
     status: ExtensionStatus,
     result: SystemExtensionSetupRequestResult = .active,
     results: [SystemExtensionSetupRequestResult]? = nil,
-    deactivationResult: SystemExtensionSetupRequestResult = .inactive
+    deactivationResult: SystemExtensionSetupRequestResult = .inactive,
+    sendsRequests: Bool = true
   ) {
     self.status = status
+    self.sendsRequests = sendsRequests
     self.results = results ?? [result]
     self.deactivationResult = deactivationResult
   }

@@ -8,6 +8,10 @@ package final class DefaultSystemExtensionSetupClient: Sendable {
   /// Creates the client.
   package init() {}
 
+  /// Whether the running app is in `/Applications`, the only place macOS accepts system-extension
+  /// requests from.
+  package var sendsRequests: Bool { BuildIdentity.isInstalled(Bundle.main.bundleURL) }
+
   /// Returns the current state of the transport extension.
   package func inspect() -> ExtensionStatus { ExtensionProbe.currentStatus() }
 

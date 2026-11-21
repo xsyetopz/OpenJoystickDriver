@@ -191,9 +191,17 @@ final class RuntimeViewModel: ObservableObject {
     resumeDeferredRefreshes()
   }
 
-  /// Reads the state of the driver extension at launch; it sends no request.
-  func startSystemExtensionSetup() {
+  /// Reads the state of the driver extension at launch, and asks macOS to replace an older active
+  /// extension when ``SystemExtensionSetupCoordinator/replacesAtLaunch`` holds.
+  ///
+  /// A replacement that does not end active leaves its outcome in the state, so the banner offers
+  /// the repair click.
+  func startSystemExtensionSetup() async {
     systemExtensionSetup.launch()
+    systemExtensionSetupState = systemExtensionSetup.state
+    guard systemExtensionSetup.replacesAtLaunch else { return }
+    systemExtensionSetupState = .running
+    await systemExtensionSetup.repair()
     systemExtensionSetupState = systemExtensionSetup.state
   }
 

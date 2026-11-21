@@ -134,10 +134,10 @@ install_full() {
 
   echo ""
   echo "=== Step 5: Submit sysext activation ==="
-  # The app sends no activation request on its own. Wait briefly for a request
-  # that a user started in the app (sysextd rejects a second request for the
-  # same extension while the first is in progress, OSSystemExtensionErrorDomain 4),
-  # then submit one.
+  # At launch the app asks macOS to replace an older approved driver; a first
+  # activation waits for the user's click. Wait briefly for a request from the
+  # app (sysextd rejects a second request for the same extension while the
+  # first is in progress, OSSystemExtensionErrorDomain 4), then submit one.
   local REQUEST_WAIT=0
   until sysext_listed "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION" || (( REQUEST_WAIT >= 10 )); do
     sleep 1

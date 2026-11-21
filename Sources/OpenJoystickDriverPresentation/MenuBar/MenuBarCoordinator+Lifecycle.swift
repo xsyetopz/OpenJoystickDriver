@@ -32,7 +32,7 @@
     package func applicationDidFinishLaunching(_: Notification) {
       bundledNotificationCenter?.delegate = notificationPresenter
       refreshStatus()
-      Task { @MainActor in viewModel.startSystemExtensionSetup() }
+      Task { @MainActor in await viewModel.startSystemExtensionSetup() }
       preferences.settingsRecovered = { [weak self] in
         guard let self else { return }
         SettingsRecoveryFollowUp(
