@@ -1179,7 +1179,7 @@
               "enum": ["Published", "NotPublished", "Failed"]
             },
             "target": {
-              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
             }
           }
         },
@@ -1253,7 +1253,7 @@
             },
             "persona": {
               "description": "The persona that is published.",
-              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
             },
             "reason": {
               "description": "Why the route publishes nothing.",
@@ -1303,14 +1303,14 @@
               "description": "True when the controller can rumble but its virtual gamepad can't pass rumble on, so no game can rumble it."
             },
             "override": {
-              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
             },
             "overrideScope": {
               "enum": ["Unit", "Model"],
               "description": "Whether override is the controller's own choice or its model's."
             },
             "profile": {
-              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+              "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
             },
             "source": {
               "type": "string"
@@ -4115,10 +4115,10 @@
           "type": "string"
         },
         "live": {
-          "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+          "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
         },
         "requested": {
-          "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+          "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
         },
         "source": {
           "type": "string"
@@ -4660,7 +4660,7 @@
             "additionalProperties": false,
             "properties": {
               "profile": {
-                "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+                "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
               },
               "sdl": {
                 "$ref": "#/$defs/sharedVirtualSDL"
@@ -4749,7 +4749,7 @@
                 "type": "string"
               },
               "override": {
-                "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+                "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
               },
               "overrideScope": {
                 "enum": ["Unit", "Model"],
@@ -4761,7 +4761,7 @@
                 "maximum": 65535
               },
               "profile": {
-                "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+                "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
               },
               "sdl": {
                 "$ref": "#/$defs/sharedVirtualSDL",
@@ -4788,7 +4788,7 @@
         "profiles": {
           "type": "array",
           "items": {
-            "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
+            "enum": ["SDLCompatible", "Generic", "GameControllerCompatible", "InControlCompatible"]
           }
         }
       }

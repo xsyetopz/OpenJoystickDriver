@@ -243,7 +243,7 @@ extension VirtualDevice {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           key: "error.E5007.virtualDevice.labels",
-          "labels must be Xbox or Generic"
+          "labels must be Xbox, PlayStation or Generic"
         )
       }
       return labels

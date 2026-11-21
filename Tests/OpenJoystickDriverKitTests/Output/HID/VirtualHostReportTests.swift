@@ -46,6 +46,25 @@ struct VirtualHostReportTests {
   }
 
   @Test
+  func hostReportAnswersTheFeatureReportsTheFormatDeclares() throws {
+    let format = DualShock4USBHIDReportFormat()
+    let state = UserSpaceInputReportState(format: format)
+    let calibration = try #require(format.featureReports[0x02])
+    #expect(try state.hostReport(type: .feature, reportID: 0x02, maxSize: 64) == calibration)
+    #expect(
+      try state.hostReport(type: .feature, reportID: 0x02, maxSize: 4)
+        == Array(calibration.prefix(4))
+    )
+    #expect(throws: VirtualHostReportError.unsupported) {
+      try state.hostReport(type: .feature, reportID: 0x05, maxSize: 64)
+    }
+    #expect(throws: VirtualHostReportError.unsupported) {
+      try state.hostReport(type: .input, reportID: 0x02, maxSize: 64)
+    }
+    #expect(try state.hostReport(type: .input, reportID: 0x01, maxSize: 64).count == 64)
+  }
+
+  @Test
   func inputOnlyGenericFormatRejectsOutputWhileXboxDecodesItsReport() throws {
     let generic = UserSpaceInputReportState(format: OJDGenericGamepadFormat())
     for bytes: [UInt8] in [[8, 0, 127, 255, 0, 0, 0], [8, 0, 127, 255], [0x4F, 10, 20, 0, 0]] {

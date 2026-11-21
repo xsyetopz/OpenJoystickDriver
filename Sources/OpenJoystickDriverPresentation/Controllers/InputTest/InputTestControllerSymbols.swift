@@ -64,12 +64,14 @@
 
     /// Returns the set of the glyph family.
     ///
-    /// - Parameter glyphFamily: Whether the controller shows Xbox or generic glyphs.
+    /// The PlayStation family uses the generic set, whose titles name the PlayStation buttons.
+    ///
+    /// - Parameter glyphFamily: Whether the controller shows Xbox, PlayStation or generic glyphs.
     /// - Returns: The set of the glyph family.
     static func resolve(for glyphFamily: VirtualIdentityGlyphFamily) -> Self {
       switch glyphFamily {
       case .xbox: return xbox
-      case .generic: return generic
+      case .playStation, .generic: return generic
       }
     }
 

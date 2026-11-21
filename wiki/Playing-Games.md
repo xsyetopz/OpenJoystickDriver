@@ -33,10 +33,12 @@ Each virtual gamepad has one of three [kinds](Glossary.md#terms).
 | Default | Xbox Adaptive Controller, USB | `045E:0B0C` | Yes |
 | Game Controller | Xbox Wireless Controller | `045E:0B13` | Yes |
 | Generic | Generic HID Gamepad | `1209:4A4F` | No |
+| Older Unity games | DualShock 4 Wireless Controller, USB | `054C:09CC` | Yes |
 
 - Default: SDL games, Steam, and emulators see an Xbox pad. Apple's GameController framework (Safari, some Mac games) doesn't see it.
 - Game Controller: for apps that use that framework. OJD never picks it. Run `ojd virtual set game-controller-compatible CONTROLLER`. SDL games and Steam read no input from it. For another SDL game, run `ojd virtual launch --sdl-gamecontroller-backend PROGRAM`.
 - Generic: 16 buttons, no hat switch, so the D-pad uses four buttons.
+- Older Unity games: for games built on InControl, such as Hollow Knight, Hollow Knight: Silksong, and Katana ZERO, which rumble on macOS only a DualShock 4 over USB. OJD never picks it. Run `ojd virtual set in-control-compatible CONTROLLER`. Apple's GameController framework sees a DualShock 4, and SDL's PS4 driver matches its ID. Games show PlayStation button names. It carries no touchpad, touch, or motion.
 
 ![Virtual gamepad kind menu with arrows to each choice and the games that read it](../docs/screenshots/steps/virtual-gamepad-kind.png)
 

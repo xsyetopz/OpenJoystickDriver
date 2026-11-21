@@ -20,7 +20,8 @@
     "read": "read",
     "generate": "generate",
     "lookup": "lookup",
-    "raw-usb": "raw-usb"
+    "raw-usb": "raw-usb",
+    "InControlCompatible": "in-control-compatible"
   },
   "values": [
     "HIDDescriptor",
@@ -55,6 +56,7 @@
     "OJD",
     "OJDGenericGamepad",
     "SDLCompatible",
+    "InControlCompatible",
     "VirtualHID",
     "ExtensionOwnedUSB",
     "SystemHIDVisible",

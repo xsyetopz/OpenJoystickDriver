@@ -606,11 +606,12 @@ A `VirtualDevice` file in `~/Library/Application Support/OpenJoystickDriver/Virt
 Use this file when a game doesn't recognize a controller's virtual gamepad.
 
 - `match`: the model by VID:PID in decimal. It excludes `layout`, `transport`, and `worksWithDefaultSDLHints`. Add `unit` (a `U-` ID from `ojd controller show`) to match one controller. A unit file wins over a model file.
-- `persona`: `Generic`, `SDLCompatible`, or `GameControllerCompatible`. Automatic selection publishes `SDLCompatible` when the controller's main controls fit it, and `Generic` otherwise.
+- `persona`: `Generic`, `SDLCompatible`, `GameControllerCompatible`, or `InControlCompatible`. Automatic selection publishes `SDLCompatible` when the controller's main controls fit it, and `Generic` otherwise.
 - `SDLCompatible` publishes the Xbox Adaptive Controller identity (`045E:0B0C`) over Xbox One GIP reports. SDL's Xbox One driver reads them with the default hints. Apple's GameController framework doesn't bind them.
+- `InControlCompatible` publishes the DualShock 4 v2 identity (`054C:09CC`) over its USB reports. Apple's GameController framework binds it as a DualShock 4, so older Unity games that use InControl send rumble. SDL's PS4 driver matches its ID with the default hints.
 - `Generic` is the `1209:4A4F` identity (pid.codes). Those apps give it no gamepad mapping without OJD's SDL mapping.
 - `identity` (optional): `vendorID`, `productID`, `productName`, and `manufacturer` (all required in it), and an optional `version`. OJD publishes the virtual gamepad with that identity. The transport, report layout, and virtual LocationID stay those of the kind, and `version` defaults to the kind's.
-- `labels` (optional): the glyph family, `Xbox` or `Generic`.
+- `labels` (optional): the glyph family, `Xbox`, `PlayStation`, or `Generic`.
 
 The service watches the `VirtualDevices` folder. Adding, editing, or removing a file can change the `identity` or `persona` of a connected controller. OJD then recreates that controller's virtual gamepad, so you don't reconnect. Games see the first virtual gamepad disappear and a second appear. A change that leaves the controller's identity and kind the same, or concerns another controller, doesn't touch its virtual gamepad.
 

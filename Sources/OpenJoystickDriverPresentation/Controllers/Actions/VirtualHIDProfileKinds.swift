@@ -47,6 +47,7 @@ enum VirtualHIDProfileKinds {
     case .sdlCompatible: return "ui.virtualProfile.kind.sdlCompatible"
     case .gameControllerCompatible:
       return "platform.macos.ui.virtualProfile.kind.gameControllerCompatible"
+    case .inControlCompatible: return "platform.macos.ui.virtualProfile.kind.inControlCompatible"
     case .generic: return "ui.virtualProfile.kind.generic"
     }
   }

@@ -221,6 +221,61 @@ struct ConsumerOutputCodecTests {
     }
   }
 
+  /// The DualShock 4 USB output report: ID 5, the valid flags, two unused bytes, the right (weak)
+  /// and left (strong) motor `0...255`, then the lightbar color.
+  @Test
+  func dualShock4FormatDecodesMotorsHeldUntilTheNextReport() throws {
+    let ds4 = DualShock4USBHIDReportFormat()
+    let intensities = RumbleIntensities(
+      lowFrequency: .max,
+      highFrequency: UnipolarValue(unitInterval: 128.0 / 255.0),
+      leftTrigger: .min,
+      rightTrigger: .min
+    )
+    #expect(
+      try consumerOutput(5, Self.ds4Report(flags: 0x07, right: 0x80, left: 0xFF), in: ds4)
+        == .setRumble(intensities, duration: .held)
+    )
+    #expect(try consumerOutput(5, Self.ds4Report(flags: 0x01), in: ds4) == .stopRumble)
+  }
+
+  @Test
+  func dualShock4FormatDecodesLightbarWithoutMotorFlag() throws {
+    #expect(
+      try consumerOutput(
+        5,
+        Self.ds4Report(flags: 0x02, color: (0x10, 0x20, 0x30)),
+        in: DualShock4USBHIDReportFormat()
+      ) == .setRGB(ControllerColor(red: 0x10, green: 0x20, blue: 0x30))
+    )
+  }
+
+  @Test
+  func dualShock4FormatRejectsShortFlaglessAndForeignReports() {
+    let ds4 = DualShock4USBHIDReportFormat()
+    #expect(throws: VirtualHostReportError.malformed) {
+      try consumerOutput(5, [0x05, 0x01, 0x04, 0x00, 0x10], in: ds4)
+    }
+    #expect(throws: VirtualHostReportError.malformed) {
+      try consumerOutput(5, Self.ds4Report(flags: 0x04), in: ds4)
+    }
+    #expect(throws: VirtualHostReportError.unsupported) {
+      try consumerOutput(3, [0x03, 0x0F, 0, 0, 100, 50, 20, 0, 0], in: ds4)
+    }
+  }
+
+  /// A 32-byte DualShock 4 USB output report.
+  private static func ds4Report(
+    flags: UInt8,
+    right: UInt8 = 0,
+    left: UInt8 = 0,
+    color: (UInt8, UInt8, UInt8) = (0, 0, 0)
+  ) -> [UInt8] {
+    var report = [UInt8](repeating: 0, count: 32)
+    report[0...8] = [0x05, flags, 0x04, 0x00, right, left, color.0, color.1, color.2]
+    return report
+  }
+
   @Test
   func inputOnlyGenericFormatRejectsEveryOutputReport() {
     // An unnumbered vendor report (marker `0x4F`), the short Xbox 360 forms, and a numbered Xbox

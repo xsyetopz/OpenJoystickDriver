@@ -10,6 +10,7 @@ struct VirtualGamepadKindTitleTests {
   private static let phrases: [(VirtualHIDProfileID, String)] = [
     (.sdlCompatible, "For Steam and SDL games"),
     (.gameControllerCompatible, "For Apple Game Controller games"),
+    (.inControlCompatible, "For older Unity games"),
     (.generic, "Generic HID gamepad"),
   ]
 

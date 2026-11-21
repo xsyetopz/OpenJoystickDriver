@@ -7,7 +7,7 @@ OJD's virtual gamepad can dress up as an Xbox controller so games recognize it. 
 3. a live `GCController.supportsHIDDevice` answer, wherever GameController.framework matters
 4. a test on real hardware for any claim about GameController.framework
 
-OJD publishes three virtual HID profiles: SDLCompatible, GameControllerCompatible, and Generic. [CLI and Application Runtime](cli-and-runtime.md) explains how OJD picks one and how you can override it. OJD has no other virtual profile.
+OJD publishes four virtual HID profiles: SDLCompatible, GameControllerCompatible, Generic, and InControlCompatible, which poses as the DualShock 4 v2 (`054C:09CC`) over USB. [CLI and Application Runtime](cli-and-runtime.md) explains how OJD picks one and how you can override it. OJD has no other virtual profile.
 
 Linux's `xpad.c` tells Linux which real devices are which. It doesn't show that a virtual HID device on macOS can pass as one of them.
 
@@ -55,7 +55,7 @@ The audit reads the list on the current Mac, and the support report includes it.
 
 ## How OJD Picks One
 
-`VirtualHIDProfileSelector` saves nothing. It picks automatically unless the controller's model (vendor and product) has a saved override. It doesn't look at the protocol family or the front app. It picks SDLCompatible when that fits and Generic otherwise, and never picks GameControllerCompatible.
+`VirtualHIDProfileSelector` saves nothing. It picks automatically unless the controller's model (vendor and product) has a saved override. It doesn't look at the protocol family or the front app. It picks SDLCompatible when that fits and Generic otherwise, and never picks GameControllerCompatible or InControlCompatible.
 
 ## Before Swapping In a Real Capture
 

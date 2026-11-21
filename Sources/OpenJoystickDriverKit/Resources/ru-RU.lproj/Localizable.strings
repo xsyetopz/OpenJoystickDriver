@@ -350,6 +350,8 @@
 "ui.virtualProfile.kind.sdlCompatible" = "Для игр Steam и SDL";
 /* Option of the virtual gamepad kind popup in the Controllers detail: the kind that games that use Apple's Game Controller framework read. Apple and Game Controller stay as written. */
 "platform.macos.ui.virtualProfile.kind.gameControllerCompatible" = "Для игр Apple Game Controller";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the DualShock 4 kind that older Unity games that use the InControl library read and send rumble to. Unity stays as written. */
+"platform.macos.ui.virtualProfile.kind.inControlCompatible" = "Для старых игр на Unity";
 /* Option of the virtual gamepad kind popup in the Controllers detail: the plain gamepad that any HID reader accepts. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.virtualProfile.kind.generic" = "Универсальный геймпад HID";
 /* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
@@ -4599,8 +4601,8 @@
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout должно быть одним из %2$@. Исправление: задайте layout одно из этих значений.";
 /* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@, transport: transport должно быть USB или Bluetooth. Исправление: задайте transport значение USB или Bluetooth.";
-/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
-"error.E5007.virtualDevice.labels" = "%1$@, labels: labels должно быть Xbox или Generic. Исправление: задайте labels значение Xbox или Generic.";
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox, PlayStation or Generic. %1$@ is the file. */
+"error.E5007.virtualDevice.labels" = "%1$@, labels: labels должно быть Xbox, PlayStation или Generic. Исправление: задайте labels значение Xbox, PlayStation или Generic.";
 /* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
 "error.E5007.virtualDevice.matchExtras" = "%1$@, match: файл с match выбирает виртуальный геймпад, поэтому в нём не может быть layout, transport и worksWithDefaultSDLHints. Исправление: удалите layout, transport и worksWithDefaultSDLHints либо удалите match.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */

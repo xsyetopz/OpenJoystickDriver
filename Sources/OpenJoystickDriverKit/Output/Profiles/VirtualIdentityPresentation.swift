@@ -4,6 +4,8 @@ import Foundation
 public enum VirtualIdentityGlyphFamily: String, Codable, CaseIterable, Sendable {
   /// The Xbox glyphs.
   case xbox = "Xbox"
+  /// The PlayStation glyphs.
+  case playStation = "PlayStation"
   /// The generic controller glyphs.
   case generic = "Generic"
 }
@@ -33,9 +35,9 @@ public struct VirtualIdentityPresentation: Equatable, Hashable, Sendable {
   /// The generic presentation.
   public static let generic = Self(glyphFamily: .generic, controllerSymbolName: "gamecontroller")
 
-  /// The PlayStation symbol with the generic glyph family.
+  /// The PlayStation presentation.
   public static let playstation = Self(
-    glyphFamily: .generic,
+    glyphFamily: .playStation,
     controllerSymbolName: "logo.playstation"
   )
 
@@ -43,6 +45,7 @@ public struct VirtualIdentityPresentation: Equatable, Hashable, Sendable {
   public static func forProfile(_ profile: VirtualDeviceProfile) -> Self {
     switch profile.glyphFamily {
     case .xbox: .xbox
+    case .playStation: .playstation
     case .generic: .generic
     }
   }

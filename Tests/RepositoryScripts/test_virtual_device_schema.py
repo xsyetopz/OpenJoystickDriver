@@ -36,6 +36,8 @@ class VirtualDeviceSchemaTests(unittest.TestCase):
         for name in (
             "virtual-device.generic.plist",
             "virtual-device.sdl-compatible.plist",
+            "virtual-device.game-controller-compatible.plist",
+            "virtual-device.in-control-compatible.plist",
         ):
             with self.subTest(record=name):
                 self.validator.validate(load(name))

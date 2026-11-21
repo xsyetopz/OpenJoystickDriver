@@ -77,6 +77,34 @@ probe DpadLeft fields=[9:15] -> b12
 mapping=03000000091200004f4a000008040000,OpenJoystickDriver Generic HID Gamepad,a:b0,b:b1,x:b2,y:b3,back:b6,guide:b14,start:b7,leftstick:b8,rightstick:b9,leftshoulder:b4,rightshoulder:b5,dpup:b10,dpdown:b11,dpleft:b12,dpright:b13,misc1:b15,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:+a4,righttrigger:+a5,platform:Mac OS X,
 unmapped=Auxiliary1,Auxiliary2,Auxiliary3,Auxiliary4,Auxiliary5,Auxiliary6,Auxiliary7,Auxiliary8,LeftPaddle1,LeftPaddle2,LeftStickTouch,LeftTrackpadClick,RightPaddle1,RightPaddle2,RightStickTouch,RightTrackpadClick,TouchpadClick
 
+## InControlCompatible
+profile=InControlCompatible vendor=1356 product=2508 version=0 name=Wireless Controller
+guid=030000004c050000cc09000000000000
+report length=64 descriptorBytes=152
+probe Back fields=[9:9] -> b8
+probe East fields=[9:3] -> b2
+probe Guide fields=[9:13] -> b12
+probe LeftShoulder fields=[9:5] -> b4
+probe LeftStickClick fields=[9:11] -> b10
+probe North fields=[9:4] -> b3
+probe RightShoulder fields=[9:6] -> b5
+probe RightStickClick fields=[9:12] -> b11
+probe South fields=[9:2] -> b1
+probe Start fields=[9:10] -> b9
+probe West fields=[9:1] -> b0
+probe LeftStickX fields=[1:48] -> a0
+probe LeftStickY fields=[1:49] -> a1
+probe RightStickX fields=[1:50] -> a2
+probe RightStickY fields=[1:53] -> a5
+probe LeftTrigger fields=[9:7+1:51] -> a3
+probe RightTrigger fields=[9:8+1:52] -> a4
+probe DpadUp fields=[1:57] -> h0.1
+probe DpadRight fields=[1:57] -> h0.2
+probe DpadDown fields=[1:57] -> h0.4
+probe DpadLeft fields=[1:57] -> h0.8
+mapping=030000004c050000cc09000000000000,Wireless Controller,a:b1,b:b2,x:b0,y:b3,back:b8,guide:b12,start:b9,leftstick:b10,rightstick:b11,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a5,lefttrigger:+a3,righttrigger:+a4,platform:Mac OS X,
+unmapped=
+
 ## SDLCompatible
 profile=SDLCompatible vendor=1118 product=2828 version=0 name=Xbox Adaptive Controller
 guid=030000005e0400000c0b000000000000

@@ -2,8 +2,8 @@ import Foundation
 
 /// Identifier of one exact published virtual HID ABI.
 ///
-/// These are the only three personas OJD recognizes: `SDLCompatible`, `Generic` and
-/// `GameControllerCompatible`. Decoding any other raw value fails.
+/// These are the only four personas OJD recognizes: `SDLCompatible`, `Generic`,
+/// `GameControllerCompatible` and `InControlCompatible`. Decoding any other raw value fails.
 public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
   /// The Xbox One GIP persona, which SDL's Xbox One driver reads.
   case sdlCompatible = "SDLCompatible"
@@ -11,6 +11,8 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
   case generic = "Generic"
   /// The Xbox Series Bluetooth persona, which Apple's GameController framework reads.
   case gameControllerCompatible = "GameControllerCompatible"
+  /// The DualShock 4 USB persona, which older Unity games that use InControl send rumble to.
+  case inControlCompatible = "InControlCompatible"
 
   /// The id of the persona on the command line: the lowercase kebab-case form of its name.
   public var commandLineName: String { CommandLineName.kebab(rawValue) }
@@ -20,6 +22,7 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
     switch VirtualDevice.definition(of: self).layout {
     case .xboxOneGIP?: return XboxOneGIPHIDProfile()
     case .xboxSeriesBluetooth?: return XboxSeriesBluetoothHIDProfile()
+    case .dualShock4USB?: return DualShock4USBHIDProfile()
     case .ojdGenericGamepad?, nil: return OJDGenericHIDProfile()
     }
   }
@@ -50,6 +53,8 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
     case .sdlCompatible: return Control.xboxLayout
     // The Xbox Series Bluetooth report: the Xbox layout, Guide and Share.
     case .gameControllerCompatible: return Control.xboxLayout.union([.guide, .capture])
+    // The DualShock 4 report: the Xbox layout and the PS button. It carries no touchpad click.
+    case .inControlCompatible: return Control.xboxLayout.union([.guide])
     // The generic layout: the frozen 32 buttons, the hat and the six named axes. The report
     // carries only its first 16 buttons.
     case .generic:
@@ -144,6 +149,40 @@ struct XboxSeriesBluetoothHIDProfile: VirtualHIDProfile {
   let id = VirtualHIDProfileID.gameControllerCompatible
   /// The report format that supplies the descriptor and the reports.
   private let format = XboxSeriesBluetoothHIDReportFormat()
+
+  /// The identity of the persona.
+  var identity: VirtualDeviceProfile { id.identity }
+  /// The descriptor of the report format.
+  var descriptor: [UInt8] { format.descriptor }
+  /// The report format.
+  var reportFormat: any VirtualGamepadReportFormat { format }
+
+  /// The input report of `state` in the report format.
+  func inputReport(for state: ControllerState) -> [UInt8] {
+    ReportFormatCodec.inputReport(for: state, in: format)
+  }
+
+  /// Decodes an output report of the report format.
+  func consumerOutput(
+    type: VirtualHostReportType,
+    reportID: UInt32,
+    bytes: [UInt8]
+  ) -> ControllerOutputCommand? {
+    ReportFormatCodec.consumerOutput(type: type, reportID: reportID, bytes: bytes, in: format)
+  }
+}
+
+/// `InControlCompatible` over the DualShock 4 USB report layout.
+///
+/// The identity is the `InControlCompatible` `VirtualDevice` record's. The descriptor and input
+/// layout are `DualShock4USBHIDReportFormat`'s, which macOS publishes as a `GCDualShockGamepad`
+/// and which answers the DualShock 4 feature reports. The descriptor is hand-authored after the
+/// genuine layout, not a byte-exact copy of a capture.
+struct DualShock4USBHIDProfile: VirtualHIDProfile {
+  /// The persona the profile publishes.
+  let id = VirtualHIDProfileID.inControlCompatible
+  /// The report format that supplies the descriptor and the reports.
+  private let format = DualShock4USBHIDReportFormat()
 
   /// The identity of the persona.
   var identity: VirtualDeviceProfile { id.identity }

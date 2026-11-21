@@ -254,7 +254,7 @@ struct VirtualCommandTests {
       try #require((entry["sdl"] as? [String: Any])?["worksWithDefaultSDLHints"] as? Bool)
     }
     #expect(works == VirtualHIDProfileID.allCases.map(\.worksWithDefaultSDLHints))
-    #expect(works == [true, true, false])
+    #expect(works == [true, true, false, true])
   }
 
   @Test

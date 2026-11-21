@@ -47,7 +47,12 @@ WIKI_KEPT: dict[tuple[str, str], str] = {
 KIND_KEYS = re.compile(
     r"^(?:platform\.macos\.)?ui\.virtualProfile\.(?:title|kind\.(?!withIdentifier$))"
 )
-KIND_IDENTIFIERS = ("SDLCompatible", "GameControllerCompatible", "Generic")
+KIND_IDENTIFIERS = (
+    "SDLCompatible",
+    "GameControllerCompatible",
+    "InControlCompatible",
+    "Generic",
+)
 CONNECTION_TITLES = (
     "cli.controller.show.labelConnection",
     "ui.library.field.transport",

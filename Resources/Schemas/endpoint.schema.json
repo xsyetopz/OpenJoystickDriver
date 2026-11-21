@@ -617,7 +617,7 @@
       }
     },
     "persona": {
-      "enum": ["Generic", "SDLCompatible", "GameControllerCompatible"],
+      "enum": ["Generic", "SDLCompatible", "GameControllerCompatible", "InControlCompatible"],
       "description": "The persona id of the virtual gamepad."
     },
     "frame": {

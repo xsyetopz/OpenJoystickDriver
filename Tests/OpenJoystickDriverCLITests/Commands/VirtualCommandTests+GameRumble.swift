@@ -30,6 +30,7 @@ extension VirtualCommandTests {
     (VirtualHIDProfileID.generic, PhysicalControllerOutputCapabilities.dualMainRumble, true),
     (.generic, .none, false), (.sdlCompatible, .dualMainRumble, false),
     (.gameControllerCompatible, .dualMainRumble, false),
+    (.inControlCompatible, .dualMainRumble, false),
   ])
   func showStatesWhenGamesCannotRumbleController(
     profile: VirtualHIDProfileID,
@@ -57,7 +58,7 @@ extension VirtualCommandTests {
     let note = noGameRumbleNote(.generic)
 
     #expect(note.contains("generic"))
-    #expect(note.contains("sdl-compatible, game-controller-compatible"))
+    #expect(note.contains("sdl-compatible, game-controller-compatible, in-control-compatible"))
   }
 
   @Test(arguments: [(PhysicalControllerOutputCapabilities.dualMainRumble, true), (.none, false)])

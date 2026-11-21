@@ -168,7 +168,7 @@ A `control` program can press buttons on a virtual gamepad, as [`ojd virtual fee
 
 1. Run `ojd access grant --token driver --scope control`. Add `--scope read` for both. A token with `--origin` can't have `control`.
 2. Send a `Hello` with `"scopes":["Control"]`.
-3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The kinds are `Generic`, `SDLCompatible`, and `GameControllerCompatible`. An unknown one gets `E1003` with the accepted list.
+3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The kinds are `Generic`, `SDLCompatible`, `GameControllerCompatible`, and `InControlCompatible`. An unknown one gets `E1003` with the accepted list.
 4. After the `FeedSession` answer, send one `Frame` per line, with the keys and rules of an `ojd virtual feed` line. While 256 frames wait, the endpoint stops reading.
 5. Game rumble commands return as `RumbleCommand` lines.
 
@@ -209,7 +209,7 @@ To limit a profile to one controller, set `device.unit` to its unit ID. To pick 
 
 ## Drive a Virtual Gamepad
 
-`ojd virtual feed --as PROFILE` publishes a virtual gamepad and reads one JSON object per line from standard input. Each line is the whole state. A control it does not name is neutral. `--as` takes a [virtual gamepad kind](Glossary.md#terms): `sdl-compatible`, `generic`, or `game-controller-compatible`.
+`ojd virtual feed --as PROFILE` publishes a virtual gamepad and reads one JSON object per line from standard input. Each line is the whole state. A control it does not name is neutral. `--as` takes a [virtual gamepad kind](Glossary.md#terms): `sdl-compatible`, `generic`, `game-controller-compatible`, or `in-control-compatible`.
 
 ```mermaid
 flowchart LR
@@ -245,7 +245,7 @@ Games and latency with `ojd virtual feed` are not verified.
 
 ### What the Virtual Gamepad Carries
 
-The virtual gamepad has a fixed set of buttons. A control it does not carry does nothing, whether passed through or assigned to a gamepad output. This covers `generic` and `sdl-compatible`. `game-controller-compatible` is not verified here.
+The virtual gamepad has a fixed set of buttons. A control it does not carry does nothing, whether passed through or assigned to a gamepad output. This covers `generic` and `sdl-compatible`. `game-controller-compatible` and `in-control-compatible` are not verified here.
 
 | Control | `generic` | `sdl-compatible` |
 | --- | --- | --- |

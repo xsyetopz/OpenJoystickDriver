@@ -7,7 +7,7 @@ import Testing
 /// the device's IDs with `GCIOMatchVirtual` true.
 ///
 /// GameController reads no input from the GIP reports of `SDLCompatible`, so that persona must not
-/// be bound, and `GameControllerCompatible` must be.
+/// be bound, and `GameControllerCompatible` and `InControlCompatible` must be.
 struct GameControllerPersonalityMatchTests {
   private static let kext = URL(
     fileURLWithPath:
@@ -34,6 +34,7 @@ struct GameControllerPersonalityMatchTests {
   @Test(arguments: [
     (VirtualHIDProfileID.sdlCompatible, false),
     (VirtualHIDProfileID.gameControllerCompatible, true),
+    (VirtualHIDProfileID.inControlCompatible, true),
   ])
   func gameControllerBindsOnlyPersonaWhoseReportsItReads(
     _ profileID: VirtualHIDProfileID,

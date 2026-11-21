@@ -346,11 +346,11 @@ ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
 
 - `virtual show`: Show the virtual gamepad of each controller and the profiles you can choose. Name a controller to show only that one.
   - A controller with a live profile also carries its `sdl` and `w3c` mapping, as `virtual export-mapping` prints them.
-  - When the virtual gamepad kind does not work with the default SDL hints, the human output adds a note under the controller. `GameControllerCompatible` does not work with them. `SDLCompatible` and `Generic` do.
+  - When the virtual gamepad kind does not work with the default SDL hints, the human output adds a note under the controller. `GameControllerCompatible` does not work with them. `SDLCompatible`, `Generic`, and `InControlCompatible` do.
 - `virtual export-mapping`: Print how a game reads each virtual gamepad kind. Name a profile to print only that one.
   - `--format sdl` (default) prints one SDL mapping line per kind, as a valid SDL mapping file.
   - `--format w3c` prints the W3C Gamepad description: the button and axis indices of the standard layout and the virtual gamepad input that supplies each. A source is `bN` for a button, `aN` for an axis, and `h0.MASK` for a hat direction. The numbers follow SDL.
-  - A profile that does not work with the default hints gets a `#` comment line before its mapping, so the output stays valid. Bundled `SDLCompatible` (`045E:0B0C`) and `Generic` (`1209:4A4F`) work with them. `GameControllerCompatible` (`045E:0B13`) does not. `Generic` has a GUID with no CRC.
+  - A profile that does not work with the default hints gets a `#` comment line before its mapping, so the output stays valid. Bundled `SDLCompatible` (`045E:0B0C`) and `Generic` (`1209:4A4F`) work with them. `InControlCompatible` (`054C:09CC`) carries the ID that SDL's PS4 driver matches. `GameControllerCompatible` (`045E:0B13`) does not work with them. `Generic` has a GUID with no CRC.
 - `virtual launch`: Run a program with the SDL mapping of the connected virtual gamepads, so SDL in the program lists them.
   - It sets `SDL_GAMECONTROLLERCONFIG` to one line per virtual gamepad kind of the connected controllers. An existing value stays first.
   - With `--sdl-gamecontroller-backend`, it also sets `SDL_JOYSTICK_MFI=1`, `SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1`, `SDL_JOYSTICK_IOKIT=0`, and `SDL_JOYSTICK_HIDAPI=0`, replacing set values. SDL then reads controllers only through Apple's GameController framework. `SDL_JOYSTICK_HIDAPI=0` switches off every SDL HIDAPI driver, so no further HIDAPI variable is set. Without the option, no other variable changes.
@@ -359,7 +359,7 @@ ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
   - `ojd` exits with the program's exit code, or 128 plus the signal that ended it. Control-C or SIGTERM on `ojd` stops the program.
   - No connected controller with a virtual gamepad: exit code 1, `E2013`, nothing starts. A program that cannot be found or started: `E2033`.
   - A kind that does not work with the default SDL hints prints a note on standard error first, unless `--quiet` or `--sdl-gamecontroller-backend` is set.
-- `virtual set`: Choose the profile for the model of the controller: `sdl-compatible`, `game-controller-compatible`, or `generic`. With `--unit`, only for that controller, which needs a unit ID. Automatic selection never picks `game-controller-compatible`, so this command is the only way to publish it.
+- `virtual set`: Choose the profile for the model of the controller: `sdl-compatible`, `game-controller-compatible`, `generic`, or `in-control-compatible`. With `--unit`, only for that controller, which needs a unit ID. Automatic selection never picks `game-controller-compatible` or `in-control-compatible`, so this command is the only way to publish them.
 - `virtual reset`: Return the model of the controller to automatic selection. Asks first on a terminal, otherwise needs `--force`. `--dry-run` (`-n`) changes nothing.
   - `--unit` removes only that controller's own choice, so the choice for its model applies again. It cannot be used with `--all`.
   - `--all` returns every model, connected or not.

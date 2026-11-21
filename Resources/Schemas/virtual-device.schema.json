@@ -13,7 +13,7 @@
       "const": "VirtualDevice"
     },
     "persona": {
-      "enum": ["Generic", "SDLCompatible", "GameControllerCompatible"]
+      "enum": ["Generic", "SDLCompatible", "GameControllerCompatible", "InControlCompatible"]
     },
     "match": {
       "type": "object",
@@ -38,7 +38,7 @@
     },
     "layout": {
       "description": "The HID report layout the persona publishes.",
-      "enum": ["OJDGenericGamepad", "XboxOneGIP", "XboxSeriesBluetooth"]
+      "enum": ["OJDGenericGamepad", "XboxOneGIP", "XboxSeriesBluetooth", "DualShock4USB"]
     },
     "transport": {
       "description": "The transport the published device reports.",
@@ -46,7 +46,7 @@
     },
     "labels": {
       "description": "The control glyph family the published product shows.",
-      "enum": ["Xbox", "Generic"]
+      "enum": ["Xbox", "PlayStation", "Generic"]
     },
     "worksWithDefaultSDLHints": {
       "description": "Whether SDL recognizes the published device with its default hints.",

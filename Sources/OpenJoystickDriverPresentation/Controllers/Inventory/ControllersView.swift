@@ -398,7 +398,7 @@
     var controllerSymbolColor: Color {
       switch self {
       case .xbox: return Color(Self.xboxBrandColor)
-      case .generic: return Color(NSColor.secondaryLabelColor)
+      case .playStation, .generic: return Color(NSColor.secondaryLabelColor)
       }
     }
 

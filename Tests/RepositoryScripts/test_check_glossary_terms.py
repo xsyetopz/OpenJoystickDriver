@@ -169,7 +169,7 @@ class TermStringTests(unittest.TestCase):
             )
         )
         kind = {e.key: e.value for e in keys if guard.KIND_KEYS.match(e.key)}
-        self.assertEqual(len(kind), 4)
+        self.assertEqual(len(kind), 5)
         self.assertEqual(kind["ui.virtualProfile.title"], "Virtual gamepad kind")
         self.assertFalse(set(kind.values()) & set(guard.KIND_IDENTIFIERS))
         for value in kind.values():

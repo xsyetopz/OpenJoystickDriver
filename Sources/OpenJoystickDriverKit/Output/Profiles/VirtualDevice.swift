@@ -8,6 +8,8 @@ enum VirtualDeviceLayout: String, CaseIterable, Sendable {
   case xboxOneGIP = "XboxOneGIP"
   /// The Xbox Series Bluetooth layout, ``XboxSeriesBluetoothHIDReportFormat``.
   case xboxSeriesBluetooth = "XboxSeriesBluetooth"
+  /// The DualShock 4 USB layout, ``DualShock4USBHIDReportFormat``.
+  case dualShock4USB = "DualShock4USB"
 }
 
 /// One `VirtualDevice` document (`virtual-device.schema.json`): either the definition of a
@@ -117,6 +119,7 @@ extension VirtualHIDProfileID {
     case .generic: "virtual-device.generic"
     case .sdlCompatible: "virtual-device.sdl-compatible"
     case .gameControllerCompatible: "virtual-device.game-controller-compatible"
+    case .inControlCompatible: "virtual-device.in-control-compatible"
     }
   }
 }
