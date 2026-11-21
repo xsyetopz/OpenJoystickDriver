@@ -293,7 +293,8 @@ extension DeviceManager {
       usbTransportProvider: usbTransportProvider,
       externalOutputAllowed: false,
       frameTimings: frameTimings,
-      sessionState: suspendedControllerIdentities.contains(identifier) ? .suspended : .active
+      sessionState: suspendedControllerIdentities.contains(identifier) ? .suspended : .active,
+      unit: ControllerPortKey.of(identifier, installationKey: installationKey)
     )
     let requiresSuccessfulStartupOutput = await pipeline.requiresSuccessfulHIDStartupOutput()
     if !requiresSuccessfulStartupOutput {

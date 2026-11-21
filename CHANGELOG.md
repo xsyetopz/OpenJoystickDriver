@@ -123,6 +123,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- **Recalibrate** and `ojd controller calibrate CONTROLLER sticks` store the measured values for that one controller, in a unit patch `VVVV-PPPP-U-XXXXXXXXXXXXXXXX.patch.plist` whose `selector` adds the controller's port key as `unit`, so two controllers of the same model keep their own calibration. Over USB the values follow the port. **Reset** removes the unit's values and any stored for the model. Before, the values were stored for the model, so calibrating one controller moved the sticks of every other controller of that model.
 - On the Xbox USB driver extension route, OJD sends SET_CONFIGURATION only when the controller isn't already in the configuration its record asks for, as the raw USB route does. Before, it sent the request on every open, which tore down the interface the extension had just opened, such as on the Xbox One `045E:02D1`, whose patch asks for configuration 1. No one has tested it on hardware yet (#68).
 - VoiceOver names the button of a main window problem by its visible title, such as **Grant Access**. Before, the banner row folded the button into itself, so the button took the row's title, such as "Permission needed".
 - VoiceOver names an Access row's **Open System Settings** button by that title. Before, it read "Request Input Monitoring Access" for a permission macOS had denied, while the button opened System Settings.

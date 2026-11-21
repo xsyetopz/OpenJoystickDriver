@@ -5,10 +5,12 @@ import Foundation
 ///
 /// The layers apply in the order catalog record, built-in patch, package patch, user patch. Inside
 /// one layer the selectors apply in the order `all`, `vendorID` with `productID`, `model`, so the
-/// more specific selector wins. A patch applies its `remove` paths first and its `patch` second,
-/// and an array in `patch` replaces the array, except `modes`, whose entries merge by `id`. The
-/// patch body and the record it changes are ``OrderedJSON``, so a merged record keeps its file's
-/// member order and the text of its numbers.
+/// more specific selector wins. A `unit` patch merges into no record: it holds the calibration of
+/// one controller, which ``DeviceCatalog/calibration(of:unit:)`` lays over the model's. A patch
+/// applies its `remove` paths first and its `patch` second, and an array in `patch` replaces the
+/// array, except `modes`, whose entries merge by `id`. The patch body and the record it changes
+/// are ``OrderedJSON``, so a merged record keeps its file's member order and the text of its
+/// numbers.
 public struct ControllerPatch: Equatable, Sendable {
   /// Which records a patch applies to.
   public enum Selector: Equatable, Sendable, CustomStringConvertible {
@@ -18,13 +20,18 @@ public struct ControllerPatch: Equatable, Sendable {
     case identity(ControllerModelID)
     /// The record with this model id, `vvvv-pppp` in lowercase hex until records carry their own.
     case model(String)
+    /// One controller of the model, named by its port key. Such a patch may set only the
+    /// ``ControllerCalibration/keys`` under `tuning`, and removes nothing.
+    case unit(ControllerModelID, ControllerPortKey)
 
-    /// 0 for `all`, 1 for `vendorID` with `productID`, 2 for `model`: a higher rank applies later.
+    /// 0 for `all`, 1 for `vendorID` with `productID`, 2 for `model`, 3 for `unit`: a higher rank
+    /// applies later.
     public var rank: Int {
       switch self {
       case .all: 0
       case .identity: 1
       case .model: 2
+      case .unit: 3
       }
     }
 
@@ -34,6 +41,7 @@ public struct ControllerPatch: Equatable, Sendable {
       case .all: "all controllers"
       case .identity(let model): model.description
       case .model(let id): id
+      case .unit(let model, let unit): "\(model) unit \(unit)"
       }
     }
 
@@ -44,15 +52,20 @@ public struct ControllerPatch: Equatable, Sendable {
       case .identity(let model):
         unsafe String(format: "%04x-%04x.patch.plist", model.vendorID, model.productID)
       case .model(let id): "model-\(id).patch.plist"
+      case .unit(let model, let unit):
+        unsafe String(format: "%04x-%04x-", model.vendorID, model.productID)
+          + "\(unit).patch.plist"
       }
     }
 
-    /// Whether a patch with this selector applies to `model`.
+    /// Whether a patch with this selector merges into the record of `model`; a `unit` patch merges
+    /// into no record.
     public func selects(_ model: ControllerModelID) -> Bool {
       switch self {
       case .all: true
       case .identity(let identity): identity == model
       case .model(let id): id == ControllerPatch.modelID(of: model)
+      case .unit: false
       }
     }
   }
@@ -98,6 +111,11 @@ public struct ControllerPatch: Equatable, Sendable {
     case .identity(let model):
       selected = ["vendorID": Int(model.vendorID), "productID": Int(model.productID)]
     case .model(let id): selected = ["model": id]
+    case .unit(let model, let unit):
+      selected = [
+        "vendorID": Int(model.vendorID), "productID": Int(model.productID),
+        "unit": unit.rawValue,
+      ]
     }
     var document: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": kind, "selector": selected,
@@ -168,6 +186,19 @@ public struct ControllerPatch: Equatable, Sendable {
         "an all patch may set only tuning"
       )
     }
+    if case .unit = parsed {
+      let calibration = Set(ControllerCalibration.keys.map(\.rawValue))
+      guard document["remove"] == nil, Set(patchMembers.map(\.key)) == ["tuning"],
+        let tuning = document["patch"]?["tuning"]?.members, !tuning.isEmpty,
+        tuning.allSatisfy({ calibration.contains($0.key) })
+      else {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.patch.patchUnitOnlyCalibration",
+          "a unit patch may set only calibration keys under tuning, and may not remove keys"
+        )
+      }
+    }
     let removed = try document["remove"].map { try parseRemove($0, selector: parsed) } ?? []
     return Self(selector: parsed, body: .object(patchMembers), remove: removed)
   }
@@ -230,14 +261,14 @@ public struct ControllerPatch: Equatable, Sendable {
     return paths
   }
 
-  /// Reads a patch selector: `all`, a vendor ID with a product ID, or a model ID; any other shape
-  /// is rejected.
+  /// Reads a patch selector: `all`, a vendor ID with a product ID and an optional unit, or a model
+  /// ID; any other shape is rejected.
   private static func parseSelector(_ selector: OrderedJSON) throws -> Selector {
     guard let members = selector.members else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         key: "error.E5007.patch.selectorNotObject",
-        "selector must be all, model, or vendorID with productID"
+        "selector must be all, model, or vendorID with productID and an optional unit"
       )
     }
     switch Set(members.map(\.key)) {
@@ -250,7 +281,7 @@ public struct ControllerPatch: Equatable, Sendable {
         )
       }
       return .all
-    case ["vendorID", "productID"]:
+    case ["vendorID", "productID"], ["vendorID", "productID", "unit"]:
       guard let vendorID = selector["vendorID"]?.integer.flatMap(UInt16.init(exactly:)),
         vendorID >= 1,
         let productID = selector["productID"]?.integer.flatMap(UInt16.init(exactly:))
@@ -261,7 +292,16 @@ public struct ControllerPatch: Equatable, Sendable {
           "vendorID must be 1...65535 and productID 0...65535"
         )
       }
-      return .identity(ControllerModelID(vendorID: vendorID, productID: productID))
+      let model = ControllerModelID(vendorID: vendorID, productID: productID)
+      guard let unitValue = selector["unit"] else { return .identity(model) }
+      guard let text = unitValue.string, let unit = ControllerPortKey(rawValue: text) else {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.patch.selectorUnit",
+          "selector.unit must be U- and 16 base64url characters"
+        )
+      }
+      return .unit(model, unit)
     case ["model"]:
       guard let id = selector["model"]?.string, isModelID(id) else {
         throw ControllerRecordProblem(
@@ -275,7 +315,7 @@ public struct ControllerPatch: Equatable, Sendable {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         key: "error.E5007.patch.selectorShape",
-        "selector must be all, model, or vendorID with productID"
+        "selector must be all, model, or vendorID with productID and an optional unit"
       )
     }
   }

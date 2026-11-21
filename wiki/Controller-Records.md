@@ -103,7 +103,7 @@ A `remove` path names a property (`modes`, `name`, `placeholderSerial`, `usb`, `
 </plist>
 ```
 
-Several patches can apply to one model. The layers, weakest to strongest, are the bundled record, a bundled patch, a patch from an installed [mod package](Writing-Controller-Mods.md), and your patch. Inside a layer, `selector` `all` set to `true` applies first, then `vendorID` and `productID`, then `model` (a string such as `045E-028E`). Your `Controller` file replaces a package's for the same model. Your `ControllerPatch` applies over the package record. If you remove the package, OJD lists your patch as a problem and skips it.
+Several patches can apply to one model. The layers, weakest to strongest, are the bundled record, a bundled patch, a patch from an installed [mod package](Writing-Controller-Mods.md), and your patch. Inside a layer, `selector` `all` set to `true` applies first, then `vendorID` and `productID`, then `model` (a string such as `045E-028E`). A unit patch (see [Tune Timings and the Stick Deadzone](#tune-timings-and-the-stick-deadzone)) applies last, to one controller. Your `Controller` file replaces a package's for the same model. Your `ControllerPatch` applies over the package record. If you remove the package, OJD lists your patch as a problem and skips it.
 
 A raw-USB record works only when macOS lets OJD open the device. The [Xbox USB driver](Glossary.md#terms) claims only the Xbox models in its signed product list, and a record can't add one. `ojd record validate` says when this applies.
 
@@ -468,7 +468,7 @@ flowchart LR
 | `leftTriggerFull`, `rightTriggerFull` | 0.05 to 1 | every family | Where the trigger reads fully pressed. Above the matching `Rest` value. |
 | `gyroOffsetX`, `gyroOffsetY`, `gyroOffsetZ` | -1 to 1 | every family | Gyro offset about that axis, in radians per second. The stored offset reads as 0. |
 
-The last five rows hold one controller's calibration. **Recalibrate** in the Input Test window and `ojd controller calibrate CONTROLLER sticks` measure and store them in your record. See [Testing a controller](Testing-a-Controller.md#recalibrate).
+The last five rows hold one controller's calibration. **Recalibrate** in the Input Test window and `ojd controller calibrate CONTROLLER sticks` measure them and store them in a unit patch for that controller. A unit patch is a `ControllerPatch` named `VVVV-PPPP-U-XXXXXXXXXXXXXXXX.patch.plist`, whose `selector` adds `unit`, the controller's port key, to `vendorID` and `productID`. Its `patch` holds only these keys under `tuning`, and it has no `remove`. Its values apply over the model's to that one controller. Only your Controllers folder may hold a unit patch. See [Testing a controller](Testing-a-Controller.md#recalibrate).
 
 ### Set the Deadzone of a Stick That Rests Off Center
 

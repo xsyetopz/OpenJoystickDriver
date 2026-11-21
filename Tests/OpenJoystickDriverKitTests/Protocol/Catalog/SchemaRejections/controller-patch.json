@@ -388,6 +388,95 @@
           "idle"
         ]
       }
+    },
+    {
+      "name": "unit selector with a malformed port key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 2508,
+          "unit": "U-short"
+        },
+        "patch": {
+          "tuning": {
+            "leftStickCenterX": 0.1
+          }
+        }
+      }
+    },
+    {
+      "name": "unit patch that removes a key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 2508,
+          "unit": "U-AAAAAAAAAAAAAAAA"
+        },
+        "remove": [
+          "tuning.leftStickCenterX"
+        ]
+      }
+    },
+    {
+      "name": "unit patch of a tuning key outside calibration",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 2508,
+          "unit": "U-AAAAAAAAAAAAAAAA"
+        },
+        "patch": {
+          "tuning": {
+            "stickDeadzone": 0.1
+          }
+        }
+      }
+    },
+    {
+      "name": "unit patch of the server",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 2508,
+          "unit": "U-AAAAAAAAAAAAAAAA"
+        },
+        "patch": {
+          "server": "System"
+        }
+      }
+    },
+    {
+      "name": "unit patch with an empty tuning",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 2508,
+          "unit": "U-AAAAAAAAAAAAAAAA"
+        },
+        "patch": {
+          "tuning": {}
+        }
+      }
     }
   ]
 }

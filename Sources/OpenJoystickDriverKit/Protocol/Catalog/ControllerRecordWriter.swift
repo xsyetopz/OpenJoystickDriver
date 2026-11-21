@@ -1,7 +1,7 @@
 public import Foundation
 
 /// Sets or removes one value in the user's controller-record directory: the `server` of a model,
-/// or a `tuning` key of a model or of every controller.
+/// a `tuning` key of a model or of every controller, or a calibration key of one unit.
 ///
 /// An existing user file keeps every other key. A missing file becomes a ControllerPatch file
 /// when the bundled catalog or an installed package has the model, because a patch applies over
@@ -14,6 +14,9 @@ public enum ControllerRecordWriter {
     case model(ControllerModelID)
     /// Every controller: `all.patch.plist`.
     case allControllers
+    /// One controller of a model, named by its port key: its `unit` ControllerPatch file, which
+    /// holds only ``ControllerCalibration/keys``.
+    case unit(ControllerModelID, ControllerPortKey)
   }
 
   /// A change of one `tuning` key.
@@ -164,6 +167,8 @@ public enum ControllerRecordWriter {
       controllerFile = directory.appendingPathComponent(ControllerRecordSet.fileName(for: model))
     case .allControllers:
       selector = .all
+    case .unit(let model, let unit):
+      selector = .unit(model, unit)
     }
     let patchFile = directory.appendingPathComponent(selector.fileName)
     let packages = ControllerRecordSet.packageRecords(
@@ -175,7 +180,10 @@ public enum ControllerRecordWriter {
     let document: [String: Any]?
     if let existing {
       let upstream: ControllerRecord? =
-        if case .model(let model) = target { packages[model] } else { nil }
+        switch target {
+        case .model(let model): packages[model]
+        case .allControllers, .unit: nil
+        }
       document = try updated(
         existing,
         file: file,
@@ -184,7 +192,11 @@ public enum ControllerRecordWriter {
         edit: edit
       )
     } else {
-      if case .model(let model) = target, packages[model] == nil { throw .record(.noRecord(model)) }
+      switch target {
+      case .model(let model), .unit(let model, _):
+        if packages[model] == nil { throw .record(.noRecord(model)) }
+      case .allControllers: break
+      }
       var body: [String: Any] = [:]
       do { try edit(&body) } catch { throw .edit(error) }
       document = ControllerPatch.document(selector: selector, body: body)
@@ -202,7 +214,8 @@ public enum ControllerRecordWriter {
       )
     }
     let effective: ControllerRecord?
-    let tuning: [ControllerTuningValue]
+    var tuning: [ControllerTuningValue]
+    var unitValues: [ControllerTuning.Key: Double] = [:]
     switch target {
     case .model(let model):
       effective = records.records[model] ?? packages[model]
@@ -210,10 +223,16 @@ public enum ControllerRecordWriter {
     case .allControllers:
       effective = nil
       tuning = records.defaultTuningValues
+    case .unit(let model, let unit):
+      effective = records.records[model] ?? packages[model]
+      tuning = effective?.tuningValues ?? []
+      unitValues = records.unitCalibrations[unit]?.values ?? [:]
     }
     return Change(
       previousServer: effective?.profile.server ?? .system,
-      previousTuning: tuningKey.flatMap { key in tuning.first { $0.key == key }?.value },
+      previousTuning: tuningKey.flatMap { key in
+        unitValues[key] ?? tuning.first { $0.key == key }?.value
+      },
       file: file,
       created: existing == nil,
       data: data

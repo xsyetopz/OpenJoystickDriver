@@ -77,7 +77,9 @@ extension DeviceManager {
         transportProfile: role.resolution.profile,
         externalOutputAllowed: externalOutputAllowed,
         frameTimings: frameTimings,
-        sessionState: suspendedControllerIdentities.contains(role.identifier) ? .suspended : .active
+        sessionState: suspendedControllerIdentities.contains(role.identifier)
+          ? .suspended : .active,
+        unit: ControllerPortKey.of(role.identifier, installationKey: installationKey)
       )
       pipelines[role.identifier] = pipeline
       started.append((role.identifier, pipeline))

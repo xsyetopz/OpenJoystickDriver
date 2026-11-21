@@ -3392,7 +3392,7 @@
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "수집 중";
 /* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "동작을 생략하면 모션 보정을 출력합니다. start는 컨트롤러를 가만히 둔 동안 자이로 드리프트를 수집하고, pause는 수집을 멈춥니다. sticks는 스틱 중심, 스틱 범위, 트리거 끝점을 측정하여 컨트롤러 모델용으로 저장합니다. reset은 저장된 그 값들을 제거하고 모션 보정을 지웁니다. 모션 기울기와 조향 바인딩은 모션 보정을 사용합니다.";
+"cli.controller.calibrate.discussion" = "동작을 생략하면 모션 보정을 출력합니다. start는 컨트롤러를 가만히 둔 동안 자이로 드리프트를 수집하고, pause는 수집을 멈춥니다. sticks는 스틱 중심, 스틱 범위, 트리거 끝점을 측정하여 해당 컨트롤러 한 대용으로, 또는 USB로 사용하는 포트용으로 저장합니다. reset은 저장된 그 값들과 컨트롤러 모델용으로 저장된 값을 제거하고 모션 보정을 지웁니다. 모션 기울기와 조향 바인딩은 모션 보정을 사용합니다.";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@의 연결이 끊어졌습니다.";
 /* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
@@ -4670,6 +4670,8 @@
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: 각 항목에는 id가 있어야 하며 id, protocol, match, interface, session, idle, server, input만 사용할 수 있습니다. 해결: 각 항목에 id를 지정하고 다른 키는 삭제하세요.";
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
 "error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: all 패치는 tuning만 설정할 수 있습니다. 해결: 나머지 섹션은 컨트롤러 하나용 패치로 옮기세요.";
+/* Error E5007, shown when a patch file fails: a unit patch sets something other than calibration keys under tuning, or removes keys. %1$@ is the file. */
+"error.E5007.patch.patchUnitOnlyCalibration" = "%1$@, patch: unit 패치는 tuning 아래에 calibration 키만 설정할 수 있고 키를 제거할 수 없습니다. 해결: 나머지 키는 model용 패치로 옮기세요.";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
 "error.E5007.patch.removeNotList" = "%1$@, remove: remove는 점으로 구분한 키 경로의 비어 있지 않은 목록이어야 합니다. 해결: 제거할 키 경로를 나열하거나 remove를 삭제하세요.";
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
@@ -4681,15 +4683,17 @@
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeAllNotTuning" = "%1$@, remove: all 패치는 tuning 키만 제거할 수 있으며 %2$@은(는) 제거할 수 없습니다. 해결: 여기서는 tuning 키만 제거하거나 컨트롤러 하나용 패치를 쓰세요.";
 /* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
-"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector는 all, model 또는 productID와 vendorID여야 합니다. 해결: selector를 이 형식 중 하나의 딕셔너리로 쓰세요.";
+"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector는 all, model 또는 productID와 vendorID, 그리고 선택적 unit이어야 합니다. 해결: selector를 이 형식 중 하나의 딕셔너리로 쓰세요.";
 /* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
 "error.E5007.patch.selectorAllTrue" = "%1$@, selector.all: selector.all은 true여야 합니다. 해결: all을 true로 설정하거나 model 또는 productID와 vendorID를 쓰세요.";
 /* Error E5007, shown when a patch file fails: a selector ID is out of range. %1$@ is the file. */
 "error.E5007.patch.selectorIdRange" = "%1$@, selector.vendorID, selector.productID: vendorID는 1...65535, productID는 0...65535여야 합니다. 해결: 각각 범위 안의 정수로 설정하세요.";
 /* Error E5007, shown when a patch file fails: selector.model is not vvvv-pppp in lowercase hex. %1$@ is the file. */
 "error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model은 소문자 16진수 vvvv-pppp여야 합니다. 해결: 각 ID를 소문자 16진수 네 자리로 쓰세요.";
+/* Error E5007, shown when a patch file fails: selector.unit is not a unit ID. %1$@ is the file. */
+"error.E5007.patch.selectorUnit" = "%1$@, selector.unit: selector.unit은 U-와 base64url 문자 16개여야 합니다. 해결: ojd controller list가 보여 주는 unit ID를 복사하세요.";
 /* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
-"error.E5007.patch.selectorShape" = "%1$@, selector: selector는 all, model 또는 productID와 vendorID여야 합니다. 해결: 이 형식 중 하나의 멤버만 정확히 남기세요.";
+"error.E5007.patch.selectorShape" = "%1$@, selector: selector는 all, model 또는 productID와 vendorID, 그리고 선택적 unit이어야 합니다. 해결: 이 형식 중 하나의 멤버만 정확히 남기세요.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNameRecord" = "%1$@, file name: 파일 이름은 %2$@이어야 합니다. 해결: 파일 이름을 %2$@(으)로 바꾸거나 파일 안의 ID를 고치세요.";
 /* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
@@ -4704,6 +4708,8 @@
 "error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@은(는) 부트로더 식별자이므로 사용자 파일이나 패키지 파일로 추가하거나 패치할 수 없습니다. 해결: 파일을 삭제하세요. OJD는 부트로더 상태의 컨트롤러에 데이터를 보내지 않습니다.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: selector %2$@은(는) 알려진 컨트롤러와 일치하지 않습니다. 해결: 새 컨트롤러를 추가하려면 Controller 파일을 쓰거나 selector를 고치세요.";
+/* Error E5007, shown when a mod package holds a patch for one unit. %1$@ is the file. */
+"error.E5007.userFile.unitPatchNotUser" = "%1$@, selector.unit: unit 패치는 내 Controllers 폴더에서만 적용됩니다. 해결: 패키지에서 unit 패치를 제거하세요.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: 패치가 적용되는 레코드가 딕셔너리가 아닙니다. 해결: 패치가 적용되는 레코드 파일을 고치세요.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */

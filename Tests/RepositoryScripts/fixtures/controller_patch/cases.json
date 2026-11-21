@@ -2060,7 +2060,7 @@
           "server": "OJD"
         }
       },
-      "message": "selector must be all, model, or vendorID with productID",
+      "message": "selector must be all, model, or vendorID with productID and an optional unit",
       "code": "E5007"
     },
     {

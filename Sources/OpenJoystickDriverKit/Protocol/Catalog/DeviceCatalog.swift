@@ -15,6 +15,8 @@ package struct DeviceCatalog: Sendable {
   let rawUSBModels: [ControllerModelID]
   /// The models whose records run a HID protocol, in model order.
   let hidModels: [ControllerModelID]
+  /// The calibration values of each unit with a `unit` patch, laid over its model's.
+  private let unitCalibrations: [ControllerPortKey: ControllerCalibration]
 
   /// Creates a catalog from a record set, sorting each model into the raw-USB or HID list.
   init(records: ControllerRecordSet = .bundled) {
@@ -31,6 +33,7 @@ package struct DeviceCatalog: Sendable {
     documents = records.records.mapValues(\.document)
     rawUSBModels = rawUSB
     hidModels = hid
+    unitCalibrations = records.unitCalibrations
   }
 
   /// The exact catalog record for this model; there is no default record.
@@ -39,6 +42,21 @@ package struct DeviceCatalog: Sendable {
   /// The stored calibration of this model; none when it has no record.
   package func calibration(of model: ControllerModelID) -> ControllerCalibration {
     profiles[model]?.tuning.calibration ?? .none
+  }
+
+  /// The stored calibration of one unit of this model.
+  ///
+  /// The values of its `unit` patch lie over the model's; a nil unit, or one with no patch, has the
+  /// model's calibration.
+  package func calibration(
+    of model: ControllerModelID,
+    unit: ControllerPortKey?
+  )
+    -> ControllerCalibration
+  {
+    let base = calibration(of: model)
+    guard let unit, let values = unitCalibrations[unit]?.values else { return base }
+    return ControllerCalibration(values: base.values.merging(values) { $1 })
   }
 
   /// The exact catalog record running the named mode; nil when the record does not have it.

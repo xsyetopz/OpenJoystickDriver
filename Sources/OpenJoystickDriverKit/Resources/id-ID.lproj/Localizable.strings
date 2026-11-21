@@ -3392,7 +3392,7 @@
 /* State word in the calibration line of 'ojd controller calibrate'. It fills %2$@ of the status line. */
 "cli.controller.calibrate.collecting" = "mengumpulkan";
 /* Long description in the help of 'ojd controller calibrate'. start, pause, reset and sticks are values the user types and stay as written. Gyro drift is the constant rotation the motion sensor reports at rest. */
-"cli.controller.calibrate.discussion" = "Tanpa tindakan, mencetak kalibrasi gerakan. start mengumpulkan drift giroskop saat kontroler diam, dan pause menghentikan pengumpulan. sticks mengukur titik tengah stik, rentang stik, dan ujung pemicu, lalu menyimpannya untuk model kontroler. reset menghapus nilai tersimpan itu dan melupakan kalibrasi gerakan. Pengikatan kemiringan gerak dan kemudi memakai kalibrasi gerakan.";
+"cli.controller.calibrate.discussion" = "Tanpa tindakan, mencetak kalibrasi gerakan. start mengumpulkan drift giroskop saat kontroler diam, dan pause menghentikan pengumpulan. sticks mengukur titik tengah stik, rentang stik, dan ujung pemicu, lalu menyimpannya untuk satu kontroler itu, atau untuk port yang dipakainya lewat USB. reset menghapus nilai tersimpan itu dan nilai yang tersimpan untuk model kontroler, dan melupakan kalibrasi gerakan. Pengikatan kemiringan gerak dan kemudi memakai kalibrasi gerakan.";
 /* Error of 'ojd controller calibrate' when the controller disconnects during a step. %@ is the controller name. */
 "cli.controller.calibrate.gone" = "%@ tidak lagi terhubung.";
 /* Result line of the gyro step of 'ojd controller calibrate' for a controller that reports no motion. %@ is the controller name. */
@@ -4670,6 +4670,8 @@
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: setiap entri harus memuat id dan hanya id, protocol, match, interface, session, idle, server, atau input. Perbaikan: beri setiap entri id dan hapus kunci lainnya.";
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
 "error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: patch all hanya boleh mengatur tuning. Perbaikan: pindahkan bagian lain ke patch untuk satu pengontrol.";
+/* Error E5007, shown when a patch file fails: a unit patch sets something other than calibration keys under tuning, or removes keys. %1$@ is the file. */
+"error.E5007.patch.patchUnitOnlyCalibration" = "%1$@, patch: patch unit hanya boleh mengatur kunci calibration di bawah tuning, dan tidak boleh menghapus kunci. Perbaikan: pindahkan kunci lainnya ke patch untuk model.";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
 "error.E5007.patch.removeNotList" = "%1$@, remove: remove harus berupa daftar jalur kunci bertitik yang tidak kosong. Perbaikan: daftarkan jalur kunci yang dihapus, atau hapus remove.";
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
@@ -4681,15 +4683,17 @@
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeAllNotTuning" = "%1$@, remove: patch all hanya boleh menghapus kunci tuning, bukan %2$@. Perbaikan: hapus hanya kunci tuning di sini, atau gunakan patch untuk satu pengontrol.";
 /* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
-"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector harus all, model, atau vendorID dengan productID. Perbaikan: tulis selector sebagai kamus salah satu bentuk itu.";
+"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector harus all, model, atau vendorID dengan productID dan unit opsional. Perbaikan: tulis selector sebagai kamus salah satu bentuk itu.";
 /* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
 "error.E5007.patch.selectorAllTrue" = "%1$@, selector.all: selector.all harus true. Perbaikan: atur all ke true, atau gunakan model atau vendorID dengan productID.";
 /* Error E5007, shown when a patch file fails: a selector ID is out of range. %1$@ is the file. */
 "error.E5007.patch.selectorIdRange" = "%1$@, selector.vendorID, selector.productID: vendorID harus 1...65535 dan productID 0...65535. Perbaikan: atur masing-masing ke bilangan bulat dalam rentangnya.";
 /* Error E5007, shown when a patch file fails: selector.model is not vvvv-pppp in lowercase hex. %1$@ is the file. */
 "error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model harus vvvv-pppp dalam heksadesimal huruf kecil. Perbaikan: tulis setiap ID dengan empat digit heksadesimal huruf kecil.";
+/* Error E5007, shown when a patch file fails: selector.unit is not a unit ID. %1$@ is the file. */
+"error.E5007.patch.selectorUnit" = "%1$@, selector.unit: selector.unit harus berupa U- dan 16 karakter base64url. Perbaikan: salin ID unit yang ditampilkan ojd controller list.";
 /* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
-"error.E5007.patch.selectorShape" = "%1$@, selector: selector harus all, model, atau vendorID dengan productID. Perbaikan: pertahankan tepat anggota dari salah satu bentuk itu.";
+"error.E5007.patch.selectorShape" = "%1$@, selector: selector harus all, model, atau vendorID dengan productID dan unit opsional. Perbaikan: pertahankan tepat anggota dari salah satu bentuk itu.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNameRecord" = "%1$@, file name: nama file harus %2$@. Perbaikan: ganti nama file menjadi %2$@, atau perbaiki ID di dalamnya.";
 /* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
@@ -4704,6 +4708,8 @@
 "error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ adalah identitas bootloader, jadi tidak ada file pengguna atau paket yang dapat menambahkan atau mem-patch-nya. Perbaikan: hapus file; OJD tidak mengirim data ke pengontrol dalam status bootloader.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: selector %2$@ tidak cocok dengan pengontrol yang dikenal. Perbaikan: gunakan file Controller untuk menambah pengontrol baru, atau perbaiki selector.";
+/* Error E5007, shown when a mod package holds a patch for one unit. %1$@ is the file. */
+"error.E5007.userFile.unitPatchNotUser" = "%1$@, selector.unit: patch unit hanya berlaku dari folder Controllers Anda. Perbaikan: hapus patch unit dari paket.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: catatan yang dikenai patch bukan kamus. Perbaikan: perbaiki file catatan yang dikenai patch.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */

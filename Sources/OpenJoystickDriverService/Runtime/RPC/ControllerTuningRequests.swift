@@ -49,12 +49,41 @@ extension ApplicationServiceServer {
     guard let vendor = UInt16(exactly: vendorID), let product = UInt16(exactly: productID) else {
       return refused(.invalidRequest)
     }
+    return setControllerTuning(
+      .model(ControllerModelID(vendorID: vendor, productID: product)),
+      key: key,
+      value: value,
+      directory: directory
+    )
+  }
+
+  /// Writes `key` to the user record of `target` in `directory`.
+  static func setControllerTuning(
+    _ target: ControllerRecordWriter.Target,
+    key: ControllerTuning.Key,
+    value: Double?,
+    directory: URL = ControllerRecordSet.userDirectory
+  ) -> ControllerTuningResult {
+    func refused(
+      _ failure: ControllerTuningFailure,
+      detail: String? = nil
+    ) -> ControllerTuningResult {
+      ControllerTuningResult(
+        key: key,
+        value: value,
+        previous: nil,
+        file: nil,
+        created: false,
+        failure: failure,
+        detail: detail
+      )
+    }
     let edit: ControllerRecordWriter.TuningEdit = value.map { .set(key, $0) } ?? .remove(key)
     let change: ControllerRecordWriter.Change
     do {
       change = try ControllerRecordWriter.change(
         edit,
-        for: .model(ControllerModelID(vendorID: vendor, productID: product)),
+        for: target,
         records: ControllerRecordSet.load(userDirectory: directory),
         directory: directory
       )

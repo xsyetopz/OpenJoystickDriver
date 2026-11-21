@@ -102,6 +102,42 @@ struct ControllerRecalibrationRequestsTests {
   }
 
   @Test
+  func unitStepStoresInTheUnitPatchAndResetClearsTheModelToo() throws {
+    try Self.withDirectory { directory in
+      let unit = try #require(ControllerPortKey(rawValue: "U-AAAAAAAAAAAAAAAA"))
+      _ = Self.run(.rest, samples: [Self.state(left: (0.1, 0))], in: directory)
+      let result = ApplicationServiceServer.recalibrate(
+        .rest,
+        model: Self.model,
+        unit: unit,
+        samples: [Self.state(left: (0.3, 0))],
+        stored: .none,
+        directory: directory
+      )
+      #expect(result.failure == nil)
+      let records = ControllerRecordSet.load(userDirectory: directory)
+      let unitX = try #require(records.unitCalibrations[unit]?.values[.leftStickCenterX])
+      #expect(abs(unitX - 0.3) < 0.001)
+      let modelX = try #require(Self.tuning(in: directory)?.calibration.values[.leftStickCenterX])
+      #expect(abs(modelX - 0.1) < 0.001)
+
+      let reset = ApplicationServiceServer.recalibrate(
+        .reset,
+        model: Self.model,
+        unit: unit,
+        samples: [],
+        stored: .none,
+        directory: directory
+      )
+      #expect(reset.failure == nil)
+      #expect(reset.cleared.contains(.leftStickCenterX))
+      let after = ControllerRecordSet.load(userDirectory: directory)
+      #expect(after.unitCalibrations.isEmpty)
+      #expect(Self.tuning(in: directory)?.calibration.values.isEmpty ?? true)
+    }
+  }
+
+  @Test
   func modelWithoutRecordIsRefused() throws {
     try Self.withDirectory { directory in
       let result = ApplicationServiceServer.recalibrate(

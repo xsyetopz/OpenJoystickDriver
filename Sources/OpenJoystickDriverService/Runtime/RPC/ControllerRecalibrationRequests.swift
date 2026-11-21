@@ -8,9 +8,11 @@ extension ApplicationServiceServer {
 
   /// Runs the recalibration `arguments` names on the controller they name.
   ///
-  /// A step reads raw input for about two seconds and stores what it measured in the model's user
-  /// record; the gyro step stores the mean angular velocity and stores nothing for a controller
-  /// with no gyro. `reset` removes the stored values and clears the gyro bias estimate.
+  /// A step reads raw input for about two seconds and stores what it measured in the `unit` patch
+  /// of the controller's port key, or in the model's user record for a controller with no port
+  /// key; the gyro step stores the mean angular velocity and stores nothing for a controller with
+  /// no gyro. `reset` removes the unit's stored values and the model's, and clears the gyro bias
+  /// estimate.
   public func recalibrateController(
     _ arguments: ControllerRecalibrationArguments
   ) async -> ControllerRecalibrationResult {
@@ -42,34 +44,44 @@ extension ApplicationServiceServer {
       )
       if case .success = status { gyroOffsetCleared = true }
     }
+    let unit = ControllerPortKey.of(identifier, installationKey: installationKey)
     let result = Self.recalibrate(
       arguments.action,
       model: identifier.model,
+      unit: unit,
       samples: samples,
       gyro: gyro,
-      stored: DeviceCatalog.current.withLock { $0.calibration(of: identifier.model) },
+      stored: DeviceCatalog.current.withLock { $0.calibration(of: identifier.model, unit: unit) },
       gyroOffsetCleared: gyroOffsetCleared
     )
     if result.failure == nil { NotificationCenter.postServiceStatusChanged(from: self) }
     return result
   }
 
-  /// Writes what `action` measures from `samples` and `gyro`, or removes the stored values for
-  /// `reset`, in the user record of `model` in `directory`; `stored` gives the centres and rests a
-  /// later step measures from.
+  /// Writes what `action` measures from `samples` and `gyro` in the `unit` patch of `model` in
+  /// `directory`, or in the model's user record when `unit` is nil; `stored` gives the centres and
+  /// rests a later step measures from.
+  ///
+  /// `reset` removes the stored values of the unit and of the model, because a value the model
+  /// stores applies to every unit of it.
   static func recalibrate(
     _ action: ControllerRecalibrationAction,
     model: ControllerModelID,
+    unit: ControllerPortKey? = nil,
     samples: [ControllerState],
     gyro: [ControllerMotionVector] = [],
     stored: ControllerCalibration,
     gyroOffsetCleared: Bool = false,
     directory: URL = ControllerRecordSet.userDirectory
   ) -> ControllerRecalibrationResult {
-    func write(_ key: ControllerTuning.Key, _ value: Double?) -> ControllerTuningResult {
-      setControllerTuning(
-        vendorID: Int(model.vendorID),
-        productID: Int(model.productID),
+    func write(
+      _ key: ControllerTuning.Key,
+      _ value: Double?,
+      to target: ControllerRecordWriter.Target? = nil
+    ) -> ControllerTuningResult {
+      let unitTarget = unit.map { ControllerRecordWriter.Target.unit(model, $0) }
+      return setControllerTuning(
+        target ?? unitTarget ?? .model(model),
         key: key,
         value: value,
         directory: directory
@@ -91,13 +103,19 @@ extension ApplicationServiceServer {
     }
     guard let step = action.step else {
       var cleared: [ControllerTuning.Key] = []
+      let targets: [ControllerRecordWriter.Target] =
+        [.model(model)] + (unit.map { [.unit(model, $0)] } ?? [])
       for key in ControllerCalibration.keys.sorted(by: { $0.rawValue < $1.rawValue }) {
-        let result = write(key, nil)
-        switch result.failure {
-        case nil: cleared.append(key)
-        case .notSet: continue
-        default: return failed(result)
+        var removed = false
+        for target in targets {
+          let result = write(key, nil, to: target)
+          switch result.failure {
+          case nil: removed = true
+          case .notSet: continue
+          default: return failed(result)
+          }
         }
+        if removed { cleared.append(key) }
       }
       return ControllerRecalibrationResult(
         action: action,

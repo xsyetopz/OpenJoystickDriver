@@ -293,6 +293,7 @@ actor DevicePipeline {
     idleTimeoutNanoseconds _: UInt64 = 30_000_000_000,
     idleMonitorIntervalNanoseconds: UInt64 = defaultIdleMonitorIntervalNanoseconds,
     uptimeNanoseconds: @escaping @Sendable () -> UInt64 = { DispatchTime.now().uptimeNanoseconds },
+    unit: ControllerPortKey? = nil,
     calibration: (@Sendable () -> ControllerCalibration)? = nil
   ) {
     self.identifier = identifier
@@ -314,7 +315,7 @@ actor DevicePipeline {
     self.frameTimings = frameTimings
     self.calibration =
       calibration ?? {
-        DeviceCatalog.current.withLock { $0.calibration(of: identifier.model) }
+        DeviceCatalog.current.withLock { $0.calibration(of: identifier.model, unit: unit) }
       }
     self.uptimeNanoseconds = uptimeNanoseconds
     self.idleInput = IdleInputTracker(now: uptimeNanoseconds())

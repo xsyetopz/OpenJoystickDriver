@@ -18,7 +18,8 @@ extension ControllerRecordSet {
   /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
   /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it
   /// is the first patch of the user layer and is reported in ``defaults`` rather than in
-  /// ``userFiles``.
+  /// ``userFiles``. A `unit` patch in `directory` gives the calibration of its unit in
+  /// ``unitCalibrations``.
   public static func load(
     userDirectory directory: URL = userDirectory,
     localization: Localization = Localization()
@@ -84,7 +85,8 @@ extension ControllerRecordSet {
       records: records,
       userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + stale
         + packaged.files,
-      defaults: defaults
+      defaults: defaults,
+      unitCalibrations: applied.units
     )
   }
 
@@ -93,14 +95,19 @@ extension ControllerRecordSet {
   /// package name breaking a tie.
   ///
   /// A file that fails is skipped and reported in the returned files, which follow the order of
-  /// `entries`. `replaced` lists the models a user Controller file replaced.
+  /// `entries`. `replaced` lists the models a user Controller file replaced, and `units` the
+  /// calibration each `unit` patch of the user layer sets; a package holds no `unit` patch.
   static func applyLayer(
     _ entries: [ControllerLayerEntry],
     layer: ControllerRecordLayer,
     localization: Localization = Localization(),
     to records: inout [ControllerModelID: ControllerRecord]
-  ) -> (files: [ControllerRecordFile], replaced: [(ControllerModelID, URL)]) {
+  ) -> (
+    files: [ControllerRecordFile], replaced: [(ControllerModelID, URL)],
+    units: [ControllerPortKey: ControllerCalibration]
+  ) {
     var results: [URL: ControllerRecordFile] = [:]
+    var units: [ControllerPortKey: ControllerCalibration] = [:]
     var patches: [(entry: ControllerLayerEntry, patch: ControllerPatch)] = []
     var owners: [ControllerModelID: String] = [:]
     var replaced: [(ControllerModelID, URL)] = []
@@ -145,7 +152,17 @@ extension ControllerRecordSet {
               "the file name must be \(patch.selector.fileName)"
             )
           }
-          patches.append((entry, patch))
+          if case .unit(let model, let unit) = patch.selector {
+            units[unit] = try unitCalibration(patch, over: records[model], layer: layer)
+            results[entry.url] = ControllerRecordFile(
+              url: entry.url,
+              model: model,
+              operation: .patch,
+              problem: nil
+            )
+          } else {
+            patches.append((entry, patch))
+          }
         }
       } catch {
         results[entry.url] = ControllerRecordFile(
@@ -195,6 +212,7 @@ extension ControllerRecordSet {
         case .all: nil
         case .identity(let model): model
         case .model: targets.first
+        case .unit(let model, _): model
         }
       results[entry.url] = ControllerRecordFile(
         url: entry.url,
@@ -203,7 +221,42 @@ extension ControllerRecordSet {
         problem: failure
       )
     }
-    return (entries.compactMap { results[$0.url] }, replaced)
+    return (entries.compactMap { results[$0.url] }, replaced, units)
+  }
+
+  /// The calibration that the `unit` patch `patch` sets over `record`, the record of its model.
+  ///
+  /// The values are range-checked as the record's own `tuning`. A patch outside the user layer, or
+  /// for a model with no record, is refused.
+  static func unitCalibration(
+    _ patch: ControllerPatch,
+    over record: ControllerRecord?,
+    layer: ControllerRecordLayer
+  ) throws -> ControllerCalibration {
+    guard layer == .user else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.userFile.unitPatchNotUser",
+        "a unit patch applies only from your Controllers folder"
+      )
+    }
+    guard let record else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.userFile.unknownController",
+        arguments: [patch.selector.description],
+        "\(patch.selector.description) is not a known controller; use a Controller file"
+      )
+    }
+    var base = try ordered(record.document, file: "record")
+    for key in ControllerCalibration.keys {
+      base = ControllerPatchMerge.removing(["tuning", key.rawValue], from: base)
+    }
+    let merged = ControllerPatchMerge.mergeRecordPatch(base, patch.body)
+    let values = try decode(merged).document.tuning.calibration.values
+    return ControllerCalibration(
+      values: values.filter { key, _ in patch.body["tuning"]?[key.rawValue] != nil }
+    )
   }
 
   /// A file of a layer, read.
@@ -277,6 +330,11 @@ extension ControllerRecordSet {
     case .record(let record):
       return ValidatedControllerRecord(operation: .add, record: record, selector: nil)
     case .patch(let patch):
+      if case .unit(let model, _) = patch.selector {
+        let upstream = bundled.records[model] ?? packages[model]
+        _ = try unitCalibration(patch, over: upstream, layer: layer)
+        return ValidatedControllerRecord(operation: .patch, record: nil, selector: patch.selector)
+      }
       if patch.selector == .all {
         _ = try ControllerDefaults.validate(data, file: file?.lastPathComponent)
         return ValidatedControllerRecord(operation: .patch, record: nil, selector: .all)

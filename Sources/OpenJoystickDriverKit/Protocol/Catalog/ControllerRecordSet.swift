@@ -212,16 +212,22 @@ public struct ControllerRecordSet: Sendable {
   public let userFiles: [ControllerRecordFile]
   /// The user's `all` patch, applied to every record; none for the bundled catalog alone.
   public let defaults: ControllerDefaults?
+  /// The calibration of each unit that a user `unit` patch sets, which lies over the calibration
+  /// of the unit's model.
+  public let unitCalibrations: [ControllerPortKey: ControllerCalibration]
 
-  /// Creates a set from the effective records, the user files and the user's `all` patch.
+  /// Creates a set from the effective records, the user files, the user's `all` patch, and the
+  /// calibrations of the units.
   init(
     records: [ControllerModelID: ControllerRecord],
     userFiles: [ControllerRecordFile],
-    defaults: ControllerDefaults? = nil
+    defaults: ControllerDefaults? = nil,
+    unitCalibrations: [ControllerPortKey: ControllerCalibration] = [:]
   ) {
     self.records = records
     self.userFiles = userFiles
     self.defaults = defaults
+    self.unitCalibrations = unitCalibrations
   }
 
   /// The user files OJD skipped.

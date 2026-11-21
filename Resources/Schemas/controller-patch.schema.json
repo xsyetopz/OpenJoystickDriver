@@ -40,6 +40,11 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 65535
+            },
+            "unit": {
+              "type": "string",
+              "pattern": "^U-[A-Za-z0-9_-]{16}$",
+              "description": "The port key of one controller of the model; the patch then sets only its calibration."
             }
           }
         },
@@ -234,26 +239,74 @@
       }
     }
   },
-  "if": {
-    "properties": {
-      "selector": {
-        "required": ["all"]
-      }
-    }
-  },
-  "then": {
-    "properties": {
-      "patch": {
-        "required": ["tuning"],
-        "propertyNames": {
-          "const": "tuning"
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "selector": {
+            "required": ["all"]
+          }
         }
       },
-      "remove": {
-        "items": {
-          "pattern": "^tuning\\.[A-Za-z0-9]+$"
+      "then": {
+        "properties": {
+          "patch": {
+            "required": ["tuning"],
+            "propertyNames": {
+              "const": "tuning"
+            }
+          },
+          "remove": {
+            "items": {
+              "pattern": "^tuning\\.[A-Za-z0-9]+$"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "selector": {
+            "required": ["unit"]
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": ["remove"]
+        },
+        "properties": {
+          "patch": {
+            "required": ["tuning"],
+            "propertyNames": {
+              "const": "tuning"
+            },
+            "properties": {
+              "tuning": {
+                "minProperties": 1,
+                "propertyNames": {
+                  "enum": [
+                    "leftStickCenterX",
+                    "leftStickCenterY",
+                    "rightStickCenterX",
+                    "rightStickCenterY",
+                    "leftStickRange",
+                    "rightStickRange",
+                    "leftTriggerRest",
+                    "leftTriggerFull",
+                    "rightTriggerRest",
+                    "rightTriggerFull",
+                    "gyroOffsetX",
+                    "gyroOffsetY",
+                    "gyroOffsetZ"
+                  ]
+                }
+              }
+            }
+          }
         }
       }
     }
-  }
+  ]
 }
