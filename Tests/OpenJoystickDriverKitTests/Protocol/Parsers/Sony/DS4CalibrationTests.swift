@@ -58,6 +58,31 @@ struct DS4CalibrationTests {
     #expect(try motion(parser).calibrationSource == .nominalDeviceScale)
   }
 
+  /// The NITHO MLT-KRMA-K's Bluetooth report, as captured in M mode, lists its gyro endpoints in
+  /// the USB order around a zero bias, so each axis still reads one plus and one minus endpoint.
+  @Test
+  func cloneBluetoothReportWithUSBEndpointOrderInstalls() throws {
+    let parser = DualShock4Driver(prefersBluetooth: true)
+    let request = try #require(parser.startupFeatureReads().first)
+    let report: [UInt8] = [
+      0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x22, 0xDC, 0xDD, 0x7D, 0x22, 0xDC, 0xDD,
+      0x7D, 0x22, 0xDC, 0xDD, 0x1C, 0x02, 0x1C, 0x02, 0x00, 0x20, 0x00, 0xE0, 0x00, 0x20, 0x00,
+      0xE0, 0x00, 0x20, 0x00, 0xE0, 0x07, 0x00, 0xE2, 0x08, 0x1F, 0xE9,
+    ]
+    #expect(parser.consumeFeatureReply(Data(report), request: request))
+    let sample = try motion(parser)
+    // 0x021C + 0x021C °/s over 0x227D + 0x2224 counts; 0x2000 counts per g.
+    let gain = 1_080.0 / 17_569
+    #expect(sample.calibrationSource == .deviceFactory)
+    #expect(isClose(sample.angularVelocity, radiansPerSecond(36 * gain, -64 * gain, -10 * gain)))
+    #expect(
+      isClose(
+        sample.acceleration,
+        metresPerSecondSquared(8_292.0 / 8_192, -100.0 / 8_192, -8_092.0 / 8_192)
+      )
+    )
+  }
+
   @Test
   func thirdPartyControllerKeepsNominalScaleAfterValidFactoryReport() throws {
     let parser = DualShock4Driver(usesFactoryCalibration: false)
