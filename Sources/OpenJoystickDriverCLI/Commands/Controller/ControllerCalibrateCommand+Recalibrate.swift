@@ -95,7 +95,9 @@ extension ControllerCalibrateCommand {
           CLIOutput.stdout(Self.instruction(for: recalibration))
           try await Task.sleep(nanoseconds: Self.leadInNanoseconds)
         }
-        let result = try await ServiceConnection.request { client in
+        let result = try await ServiceConnection.request(
+          timeout: CLIContext.current.requestTimeout + recalibration.samplingSeconds
+        ) { client in
           try await client.recalibrateController(
             .session(device.sessionToken),
             action: recalibration

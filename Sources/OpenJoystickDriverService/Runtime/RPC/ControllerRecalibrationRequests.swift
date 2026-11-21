@@ -2,10 +2,6 @@ import Foundation
 public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
-  /// How long a step reads raw input, and the time between two reads.
-  private static let sampleCount = 40
-  private static let sampleIntervalNanoseconds: UInt64 = 50_000_000
-
   /// Runs the recalibration `arguments` names on the controller they name.
   ///
   /// A step reads raw input for about two seconds and stores what it measured in the `unit` patch
@@ -26,12 +22,12 @@ extension ApplicationServiceServer {
     var samples: [ControllerState] = []
     var gyro: [ControllerMotionVector] = []
     if arguments.action.step != nil {
-      for _ in 0..<Self.sampleCount {
+      for _ in 0..<ControllerRecalibrationAction.sampleCount {
         if let state = await deviceManager.rawControllerState(for: identifier) {
           samples.append(state)
         }
         if let rate = await deviceManager.rawAngularVelocity(for: identifier) { gyro.append(rate) }
-        try? await Task.sleep(nanoseconds: Self.sampleIntervalNanoseconds)
+        try? await Task.sleep(nanoseconds: ControllerRecalibrationAction.sampleIntervalNanoseconds)
       }
     }
     var gyroOffsetCleared = false

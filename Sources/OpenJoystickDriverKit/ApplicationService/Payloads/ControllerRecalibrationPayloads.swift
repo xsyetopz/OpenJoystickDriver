@@ -23,6 +23,18 @@ public enum ControllerRecalibrationAction: String, Codable, CaseIterable, Sendab
     }
   }
 
+  /// How many raw input reads a step takes.
+  public static let sampleCount = 40
+  /// The time between two raw input reads of a step, in nanoseconds.
+  public static let sampleIntervalNanoseconds: UInt64 = 50_000_000
+
+  /// How long the service reads raw input for this action, in seconds: about two for a step, and
+  /// zero for `reset`.
+  public var samplingSeconds: Double {
+    guard step != nil else { return 0 }
+    return Double(Self.sampleCount) * Double(Self.sampleIntervalNanoseconds) / 1_000_000_000
+  }
+
   /// The step this action measures; nil for `reset`.
   public var step: ControllerCalibration.Step? {
     switch self {

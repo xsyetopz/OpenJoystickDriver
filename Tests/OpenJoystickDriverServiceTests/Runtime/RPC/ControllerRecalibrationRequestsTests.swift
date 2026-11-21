@@ -190,4 +190,11 @@ struct ControllerRecalibrationRequestsTests {
       #expect(result.unmoved.isEmpty)
     }
   }
+
+  @Test
+  func aStepSamplesForTwoSecondsAndResetSamplesNothing() {
+    for action in ControllerRecalibrationAction.allCases {
+      #expect(action.samplingSeconds == (action == .reset ? 0 : 2))
+    }
+  }
 }
