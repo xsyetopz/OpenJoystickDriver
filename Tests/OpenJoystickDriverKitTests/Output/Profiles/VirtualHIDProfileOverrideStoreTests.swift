@@ -55,6 +55,23 @@ struct VirtualHIDProfileOverrideStoreTests {
   }
 
   @Test
+  func fileEditedOutsideTheStoreIsReadAgain() throws {
+    try withDirectory { directory in
+      let store = Store(directory: directory)
+      try write(persona(vendorID: 1, productID: 2), named: "0001-0002.plist", in: directory)
+      #expect(store.persona(vendorID: 1, productID: 2)?.descriptor == .generic)
+
+      try write(
+        persona(vendorID: 1, productID: 2, descriptor: "SDLCompatible"),
+        named: "0001-0002.plist",
+        in: directory
+      )
+
+      #expect(store.persona(vendorID: 1, productID: 2)?.descriptor == .sdlCompatible)
+    }
+  }
+
+  @Test
   func absentDirectoryHasNoPersonas() throws {
     try withDirectory { directory in
       let store = Store(directory: directory)

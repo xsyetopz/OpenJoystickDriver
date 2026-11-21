@@ -117,6 +117,23 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   private let directory: URL
   /// The installed packages, whose personas apply too.
   private let packages: ModPackageStore
+  // Every status read asks for the personas of each controller, and decoding a file costs far
+  // more than reading its attributes. A file keeps its decoded persona while its modification
+  // date and size hold, so an edit made outside OJD is still read on the next call.
+  /// The decoded persona of each file, with the attributes it was decoded at.
+  private let decoded = Locked<[URL: DecodedFile]>([:])
+
+  /// A decoded persona file and the attributes it had when it was read.
+  private struct DecodedFile {
+    /// The modification date of the file.
+    let modified: Date
+    /// The size of the file in bytes.
+    let size: Int
+    /// The model the file matches.
+    let model: Model
+    /// The persona the file selects.
+    let persona: VirtualPersona
+  }
 
   /// The store of `directory`, with the personas of the packages installed in the `Packages`
   /// folder beside it, or in `packagesDirectory`, under it. `runningVersion` is the OJD version
@@ -310,7 +327,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
       for file in package.manifest?.virtualDevices.sorted() ?? [] {
         let url = package.directory.appendingPathComponent("\(Self.directoryName)/\(file)")
         do {
-          let (model, persona) = try Self.parse(Data(contentsOf: url))
+          let (model, persona) = try decode(url)
           if let first = loaded.personas[model] {
             let owner = first.fromPackage ? "package file " : "user file "
             throw ControllerRecordProblem(
@@ -352,7 +369,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     var loaded = Loaded()
     for url in urls {
       do {
-        let (model, persona) = try Self.parse(Data(contentsOf: url))
+        let (model, persona) = try decode(url)
         if let first = loaded.personas[model] {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
@@ -376,6 +393,20 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
       loaded.files.append(VirtualPersonaFile(url: url, problem: DocumentMigrator.staleProblem))
     }
     return .success(loaded)
+  }
+
+  /// The model and persona of the file at `url`, decoded again only when the file changed.
+  private func decode(_ url: URL) throws -> (Model, VirtualPersona) {
+    let attributes = try url.resourceValues(forKeys: [.contentModificationDateKey, .fileSizeKey])
+    let modified = attributes.contentModificationDate ?? .distantPast
+    let size = attributes.fileSize ?? -1
+    if let file = decoded.withLock({ $0[url] }), file.modified == modified, file.size == size {
+      return (file.model, file.persona)
+    }
+    let (model, persona) = try Self.parse(Data(contentsOf: url))
+    let file = DecodedFile(modified: modified, size: size, model: model, persona: persona)
+    decoded.withLock { $0[url] = file }
+    return (model, persona)
   }
 
   /// Decodes one `virtual-device.schema.json` document that selects a persona.
