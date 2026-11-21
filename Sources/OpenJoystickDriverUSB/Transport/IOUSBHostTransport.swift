@@ -494,6 +494,13 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   // transfer is in flight.
   /// The number of transfers that are in flight.
   private var inFlightTransfers = 0
+  // Allocating an `ioData` buffer is a kernel call, as costly as the transfer itself, and an
+  // input endpoint is read once per report. A read takes a free buffer of its length here and
+  // returns it once the bytes are copied out; reads that overlap each take their own.
+  /// The free read buffers, by length.
+  private var readBuffers: [Int: [NSMutableData]] = [:]
+  /// The most free buffers kept for one length.
+  private static let readBufferLimit = 2
 
   /// Exclusive while the session is open, and unknown after it closes.
   var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
@@ -533,11 +540,27 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     beginTransfer()
     defer { endTransfer() }
     do {
-      let buffer = try interface.ioData(withCapacity: length)
+      let buffer = try readBuffer(length: length)
       let count = try await transfer(endpoint: endpoint, buffer: buffer, timeout: timeout)
       guard !isClosed else { throw USBTransportError.disconnected }
-      return unsafe Array(Data(bytes: buffer.bytes, count: min(count, buffer.length)))
+      let bytes = unsafe Array(
+        UnsafeRawBufferPointer(start: buffer.bytes, count: min(count, buffer.length))
+      )
+      recycle(buffer, length: length)
+      return bytes
     } catch { throw closeIfDisconnected(error) }
+  }
+
+  /// A free read buffer of `length` bytes, or a new one when none is free.
+  private func readBuffer(length: Int) throws -> NSMutableData {
+    if let buffer = readBuffers[length]?.popLast() { return buffer }
+    return try interface.ioData(withCapacity: length)
+  }
+
+  /// Keeps `buffer` for the next read of `length` bytes while the session is open.
+  private func recycle(_ buffer: NSMutableData, length: Int) {
+    guard !isClosed, readBuffers[length, default: []].count < Self.readBufferLimit else { return }
+    readBuffers[length, default: []].append(buffer)
   }
 
   /// Sends the control transfer `request` and returns the bytes it received.
@@ -582,6 +605,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     isClosed = true
     for box in pipes.values { try? box.pipe.__abort(with: .synchronous) }
     pipes.removeAll()
+    readBuffers.removeAll()
     destroyInterfaceIfIdle()
   }
 
