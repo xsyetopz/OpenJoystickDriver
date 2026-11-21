@@ -252,3 +252,11 @@ project-setup:
     if ! command -v pkg-config >/dev/null; then brew install pkg-config; fi
     if ! pkg-config --exists sdl3; then brew install sdl3; fi
     if ! command -v shellcheck >/dev/null; then brew install shellcheck; fi
+
+# Measure the installed app's CPU cost per controller frame into .build/perf/<label>.jsonl.
+perf-measure label *args:
+    python3 -m Scripts.Diagnostics.perf measure {{ label }} {{ args }}
+
+# Compare two measured run sets as a GitHub Markdown benchmark report.
+perf-report base candidate *args:
+    python3 -m Scripts.Diagnostics.perf report {{ base }} {{ candidate }} {{ args }}

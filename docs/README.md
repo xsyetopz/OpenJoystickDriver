@@ -35,6 +35,7 @@ flowchart TD
 - [Installer Format: DMG or Package](development/installer-format.md): Why OJD ships as a disk image and not an installer package.
 - [Interface Audit: 0.6.0-alpha.2](development/interface-audit.md): Every window, menu, and control of one release, checked one by one.
 - [Public Endpoint Design](development/public-endpoint-design.md): Why the endpoint, the private door for other programs, works the way it does.
+- [Measuring Input Performance](development/measuring-performance.md): Measure CPU time per controller frame and compare two builds.
 - [Menu-Bar and Settings UI Architecture](development/menu-bar-settings-architecture.md): How the menu-bar and Settings code is split up.
 - [Check and Fix a GitHub Release](development/releases.md): Publish a new version.
 - [Remapping](development/remapping.md): How profiles change what each control does.
