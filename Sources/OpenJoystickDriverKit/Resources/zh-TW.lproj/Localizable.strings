@@ -5167,7 +5167,7 @@
 "status.controllerOwner.unnamed" = "由其他 App 佔用。該控制器正被直接讀取。釋放後 OpenJoystickDriver 會接管它。";
 /* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
 "status.controllerAlsoListedBySystem" = "系統還會把該控制器列為第二個沒有輸入的控制器。在遊戲中，請選擇 OpenJoystickDriver 發布的虛擬遊戲控制器。";
-/* Label in the controller detail for which app can use the controller right now. */
+/* Label in the controller detail for which app can use the controller right now. When OpenJoystickDriver holds it, the row shows that name and the Suspend button. */
 "ui.controllers.exclusiveOwner" = "誰可以使用";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "也由系統列出";
@@ -5439,7 +5439,7 @@
 "ui.controllers.holders" = "開啟者";
 /* One process in the Opened by row of the controller detail and of 'ojd controller show'. %1$@ is the process name and %2$@ the process ID. */
 "ui.controllers.holder" = "%1$@（處理程序 %2$@）";
-/* Says, in the controller detail and in the output of 'ojd controller show', that only OpenJoystickDriver can use the controller and that suspending it lets another app use it. OpenJoystickDriver is the product name. */
+/* Says, in the output of 'ojd controller show', that only OpenJoystickDriver can use the controller and that suspending it lets another app use it. OpenJoystickDriver is the product name. */
 "status.controllerExclusive" = "現在只有 OpenJoystickDriver 能使用此控制器。暫停它即可讓其他 App 使用。";
 /* Next step in the output of 'ojd controller show' while OpenJoystickDriver holds the controller exclusively. %@ is the session token of the controller. */
 "cli.controller.show.suspendHint" = "請執行「ojd controller suspend %@」讓其他 App 開啟它。";

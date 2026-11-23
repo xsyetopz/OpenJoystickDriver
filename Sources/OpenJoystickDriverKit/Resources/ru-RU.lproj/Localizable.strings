@@ -5167,7 +5167,7 @@
 "status.controllerOwner.unnamed" = "Занят другим приложением. Контроллер читается напрямую. OpenJoystickDriver начнёт его обслуживать, как только он освободится.";
 /* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
 "status.controllerAlsoListedBySystem" = "Система также показывает этот контроллер как второй контроллер без ввода. В игре выберите виртуальный геймпад, который публикует OpenJoystickDriver.";
-/* Label in the controller detail for which app can use the controller right now. */
+/* Label in the controller detail for which app can use the controller right now. When OpenJoystickDriver holds it, the row shows that name and the Suspend button. */
 "ui.controllers.exclusiveOwner" = "Кто может использовать";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "Также показан системой";
@@ -5439,7 +5439,7 @@
 "ui.controllers.holders" = "Открыт процессами";
 /* One process in the Opened by row of the controller detail and of 'ojd controller show'. %1$@ is the process name and %2$@ the process ID. */
 "ui.controllers.holder" = "%1$@ (процесс %2$@)";
-/* Says, in the controller detail and in the output of 'ojd controller show', that only OpenJoystickDriver can use the controller and that suspending it lets another app use it. OpenJoystickDriver is the product name. */
+/* Says, in the output of 'ojd controller show', that only OpenJoystickDriver can use the controller and that suspending it lets another app use it. OpenJoystickDriver is the product name. */
 "status.controllerExclusive" = "Сейчас этот контроллер может использовать только OpenJoystickDriver. Приостановите его, чтобы им могло пользоваться другое приложение.";
 /* Next step in the output of 'ojd controller show' while OpenJoystickDriver holds the controller exclusively. %@ is the session token of the controller. */
 "cli.controller.show.suspendHint" = "Выполните «ojd controller suspend %@», чтобы другое приложение могло его открыть.";

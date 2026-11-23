@@ -30,8 +30,9 @@
             if device.holdsExclusively {
               OJDLabeledRow(OJDLocalized.string("ui.controllers.exclusiveOwner")) {
                 HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
-                  Text(OJDLocalized.string("status.controllerExclusive"))
-                    .fixedSize(horizontal: false, vertical: true)
+                  Text(OJDLocalized.string("term.app.name")).foregroundColor(
+                    Color(NSColor.secondaryLabelColor)
+                  )
                   Button(OJDLocalized.string("ui.menu.controller.suspend")) {
                     Task { @MainActor in await viewModel.suspendController(device) }
                   }.help(OJDLocalized.string("ui.help.suspend"))
