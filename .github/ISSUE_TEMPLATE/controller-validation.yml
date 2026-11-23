@@ -82,6 +82,21 @@ body:
         <paste the whole text>
     validations:
       required: true
+  - type: textarea
+    id: features
+    attributes:
+      label: Rumble, Lights, and Other Features
+      description: |
+        Guided Check covers controls only. Link the maker's feature list, then for each feature on it paste the output of its command and what the controller did: `ojd controller rumble` with each motor alone (`--left`, `--right`, `--left-trigger`, `--right-trigger`), `ojd controller player` and `ojd controller light`, `ojd controller capture --json` while you tilt it or touch the touchpad, `ojd controller speaker play`, and the battery line of `ojd controller show`. Write `Has none` beside each feature it lacks. A field that says pending or untested closes the issue.
+      render: text
+      placeholder: |
+        Feature list: <link>
+        $ ojd controller rumble 045e:028e --left 255 --duration 2
+        <paste the output>
+        Left grip: strong.
+        Lights: Has none.
+    validations:
+      required: true
   - type: checkboxes
     id: checks
     attributes:

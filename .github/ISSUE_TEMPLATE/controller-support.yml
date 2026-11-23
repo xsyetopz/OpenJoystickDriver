@@ -9,6 +9,8 @@ body:
         Test on a `main` build first ([Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch)).
         The maintainer owns few of the controllers people report, so this issue is the only source of their data. Open it once each required field holds real output from your Mac. Back each claim with pasted output, a file, a log excerpt, or a screenshot.
         An AI tool may draft fields, run commands, and gather intelligence; you confirm each value. Rules: [AI Agents](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#ai-agents).
+
+        **Test every feature the controller has.** If it vibrates, has lights, motion sensors, a touchpad, a speaker, or extra buttons, each one needs output from your own run. The maintainer closes the issue without review when a field says "pending", "untested", "TODO", or "later", or when the issue says the controller lacks a feature that the maker's feature list names.
   - type: markdown
     attributes:
       value: "## Controller"
@@ -77,6 +79,96 @@ body:
       label: Problem
       description: What works, what fails, and what should happen instead.
       placeholder: The controller is listed, but no button changes state. It should send input like other Xbox controllers.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Features
+        Answer from the maker's feature list, the box, or the manual, and from what the controller does on another system. A "No" that the maker's list contradicts closes the issue.
+  - type: input
+    id: feature-source
+    attributes:
+      label: Maker's Feature List
+      description: A link to the maker's product page or manual that lists the controller's features, or a photo of the box attached here.
+      placeholder: https://www.8bitdo.com/ultimate-2c-wireless-controller/
+    validations:
+      required: true
+  - type: dropdown
+    id: has-rumble
+    attributes:
+      label: Does It Vibrate in the Grips?
+      description: Motors in the handles that shake the controller in games.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-trigger-rumble
+    attributes:
+      label: Do the Triggers Vibrate on Their Own?
+      description: Separate motors behind the triggers, as on Xbox One and Xbox Series controllers.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-lights
+    attributes:
+      label: Does It Have Lights a Game or Computer Can Change?
+      description: Player number lights, a colored light bar or ring, or a light that changes with the mode. A light that only shows power or charging doesn't count; name it in the Lights field.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-motion
+    attributes:
+      label: Does It Sense Motion?
+      description: A gyroscope or accelerometer, which games use for aiming by tilting the controller.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-touch
+    attributes:
+      label: Does It Have a Touchpad or Touch Surface?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-audio
+    attributes:
+      label: Does It Have a Speaker, Microphone, or Headphone Jack?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-extra-buttons
+    attributes:
+      label: Does It Have Buttons Beyond an Xbox Controller's?
+      description: Rear paddles, M, C, or Z buttons, a share, screenshot, mute, or turbo button, or a second home button.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: dropdown
+    id: has-battery
+    attributes:
+      label: Does It Run on a Battery?
+      options:
+        - "Yes"
+        - "No"
     validations:
       required: true
   - type: markdown
@@ -160,36 +252,77 @@ body:
     id: input-evidence
     attributes:
       label: Input
-      description: "`ojd controller watch <controller> --duration 10` while you press the buttons, sticks, triggers, and D-pad in order. Name the controls you pressed, and any that did nothing."
+      description: "`ojd controller watch <controller> --duration 30` while you press every control in order: each button, including every extra button, the D-pad, both sticks in all four directions and pressed in, and both triggers. Name the controls you pressed, and any that did nothing."
       render: text
       placeholder: |
-        $ ojd controller watch 045e:028e --duration 10
+        $ ojd controller watch 045e:028e --duration 30
         <paste the output>
-        Pressed: A, B, X, Y, left stick up, left stick down.
+        Pressed: A, B, X, Y, LB, RB, LT, RT, View, Menu, Home, Share, P1, P2, D-pad, LS and RS in four directions and pressed in.
+        Did nothing: P1, P2.
     validations:
       required: true
   - type: textarea
     id: rumble-evidence
     attributes:
       label: Rumble
-      description: "`ojd controller rumble <controller> --left 255 --right 255 --duration 2`, and what each motor did."
+      description: |
+        For a controller that vibrates, run each motor on its own and say what you felt from each. For one that doesn't, write `No motors`.
+        - `ojd controller rumble <controller> --left 255 --duration 2`
+        - `ojd controller rumble <controller> --right 255 --duration 2`
+        - With trigger motors: `--left-trigger 255` and `--right-trigger 255`, each alone.
       render: text
       placeholder: |
-        $ ojd controller rumble 045e:028e --left 255 --right 255 --duration 2
+        $ ojd controller rumble 045e:028e --left 255 --duration 2
         <paste the output>
-        Left motor: strong. Right motor: none.
+        Left grip: strong.
+        $ ojd controller rumble 045e:028e --right 255 --duration 2
+        <paste the output>
+        Right grip: nothing.
     validations:
       required: true
   - type: textarea
     id: light-evidence
     attributes:
       label: Lights
-      description: "`ojd controller light <controller> --color FF8000`, and the color you saw."
+      description: |
+        For each light, run the command that drives it and say what you saw. Name any power or charging light too. For a controller with no light, write `No lights`.
+        - Player number lights: `ojd controller player <controller> 1`, then `2`, `3`, `4`, and `off`.
+        - Color light: `ojd controller light <controller> --color FF0000`, then `00FF00` and `0000FF`, then `--brightness 0`.
       render: text
       placeholder: |
-        $ ojd controller light 045e:028e --color FF8000
+        $ ojd controller player 045e:028e 2
         <paste the output>
-        The light stayed off.
+        Second player light on.
+        $ ojd controller light 045e:028e --color FF0000
+        <paste the output>
+        The light bar stayed blue.
+    validations:
+      required: true
+  - type: textarea
+    id: motion-touch-evidence
+    attributes:
+      label: Motion and Touch
+      description: |
+        For a controller that senses motion, `ojd controller capture <controller> --duration 10 --json > motion.jsonl` while you keep it still for 3 seconds, then tilt it forward, back, left, and right. For a touchpad, `--json > touch.jsonl` while you drag one finger left to right, then top to bottom, then press the pad. Attach each file and say what you did when. Write `No motion sensor` or `No touchpad` for what it lacks.
+      placeholder: |
+        motion.jsonl attached: still 0–3 s, forward 3–5 s, back 5–7 s, left 7–8 s, right 8–10 s.
+        No touchpad.
+    validations:
+      required: true
+  - type: textarea
+    id: audio-battery-evidence
+    attributes:
+      label: Speaker and Battery
+      description: |
+        For a speaker or headphone jack, `ojd controller speaker play <controller> <sound file>`, once more with headphones in the jack, and what you heard where. Paste the output even when the command fails. For a battery, the battery line of `ojd controller show <controller>` and the level the maker's app or another system shows. Write `No speaker or jack` or `No battery` for what it lacks.
+      render: text
+      placeholder: |
+        $ ojd controller speaker play 054c:09cc chime.wav
+        <paste the output>
+        Speaker: nothing. Headphones: nothing.
+        $ ojd controller show 054c:09cc
+        Battery: 70-79%, charging
+        Steam on Windows shows 75%.
     validations:
       required: true
   - type: textarea
@@ -306,6 +439,8 @@ body:
         - label: I searched [existing issues](https://github.com/xsyetopz/OpenJoystickDriver/issues?q=is%3Aissue) and [Supported Controllers](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers), and this issue covers one controller.
           required: true
         - label: I tried every mode and connection the maker lists, and each has a row with its VID:PID.
+          required: true
+        - label: I tested every feature the maker lists for this controller, and each one has output from my own run. No field says pending, untested, TODO, or later.
           required: true
         - label: Each value comes from my own Mac with this controller connected, and each claim has output, a file, a log excerpt, or a screenshot behind it.
           required: true
