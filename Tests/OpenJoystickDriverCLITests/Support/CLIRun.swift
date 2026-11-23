@@ -126,7 +126,9 @@ enum CLICommandTree {
     case ["controller", "speaker", "stop"]: ["045E:028E"]
     case ["virtual", "set"]: ["generic", "045E:028E"]
     case ["virtual", "feed"]: ["--as", "generic"]
-    case ["virtual", "launch"]: ["/usr/bin/true"]
+    case ["virtual", "launch"], ["virtual", "launch-setting", "show"],
+      ["virtual", "launch-setting", "set"], ["virtual", "launch-setting", "remove"]:
+      ["/usr/bin/true"]
     case ["record", "draft"], ["record", "show"], ["record", "remove"]: ["045E:028E"]
     case ["record", "test"]: ["045E:028E", "--packets", "-", "--expect", "-"]
     case ["record", "validate"], ["record", "install"], ["profile", "import"],
