@@ -68,17 +68,19 @@
             }
           }
         }
-        Section {
-          ForEach(record?.validations ?? [], id: \.issue) { validation in
-            OJDLabeledRow(OJDLocalized.string("ui.controllers.communityVerified")) {
-              Link(
-                OJDLocalized.formatted(
-                  "ui.controllers.communityVerifiedMode",
-                  validation.modeID,
-                  "#\(validation.issue)"
-                ),
-                destination: validation.issueURL
-              ).help(OJDLocalized.string("ui.help.communityLink"))
+        if let validations = record?.validations, !validations.isEmpty {
+          Section {
+            ForEach(validations, id: \.issue) { validation in
+              OJDLabeledRow(OJDLocalized.string("ui.controllers.communityVerified")) {
+                Link(
+                  OJDLocalized.formatted(
+                    "ui.controllers.communityVerifiedMode",
+                    validation.modeID,
+                    "#\(validation.issue)"
+                  ),
+                  destination: validation.issueURL
+                ).help(OJDLocalized.string("ui.help.communityLink"))
+              }
             }
           }
         }
