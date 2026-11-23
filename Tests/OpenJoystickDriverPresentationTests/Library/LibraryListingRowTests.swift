@@ -20,13 +20,19 @@ struct LibraryListingRowTests {
   }
 
   @Test
-  func rowCaptionFamilyAndLayer() {
-    #expect(item().subtitle == "Xbox (XID) · Built-in")
+  func bundledRowCaptionLeavesOutTheLayerTheScopeNames() {
+    #expect(item().subtitle == "Xbox (XID)")
+  }
+
+  @Test
+  func installedRowCaptionNamesItsLayer() {
+    let user = LibraryRecordItem(model: model, family: .xboxXID, layer: .user, file: nil)
+    #expect(user.subtitle == "Xbox (XID) · " + ControllerRecordLayer.user.libraryTitle)
   }
 
   @Test
   func claimedRecordEndsItsCaptionWithAppleSigned() {
-    #expect(item(signed: true).subtitle == "Xbox (XID) · Built-in · Apple-signed")
+    #expect(item(signed: true).subtitle == "Xbox (XID) · Apple-signed")
   }
 
   @Test

@@ -5840,8 +5840,10 @@
 /* Tooltip of the dismiss button of the library notice. */
 "ui.library.dismissHelp" = "यह सूचना छिपाएँ";
 
-/* Tooltip of the library scope picker. */
-"ui.library.scopeHelp" = "चुनें कि कार्रवाई किन आइटम पर लागू हो";
+/* Accessible name of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scope" = "दिखाएँ";
+/* Tooltip of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scopeHelp" = "आपके इंस्टॉल किए गए और अंतर्निहित रिकॉर्ड के बीच बदलें";
 
 /* Tooltip of the add key button of a macro chord step. */
 "ui.macros.addChordKeyHelp" = "इस चरण के साथ दबाई जाने वाली कुंजी जोड़ें";

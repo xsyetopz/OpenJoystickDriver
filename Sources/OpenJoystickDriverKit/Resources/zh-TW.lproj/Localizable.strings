@@ -5840,8 +5840,10 @@
 /* Tooltip of the dismiss button of the library notice. */
 "ui.library.dismissHelp" = "隱藏此通知";
 
-/* Tooltip of the library scope picker. */
-"ui.library.scopeHelp" = "選擇操作涵蓋的項目";
+/* Accessible name of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scope" = "顯示";
+/* Tooltip of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scopeHelp" = "在你安裝的記錄與內建記錄之間切換";
 
 /* Tooltip of the add key button of a macro chord step. */
 "ui.macros.addChordKeyHelp" = "加入與此步驟同時按下的按鍵";

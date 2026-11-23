@@ -45,7 +45,7 @@
     /// The scope picker above the record list.
     var body: some View {
       VStack(spacing: OJDSpacing.none) {
-        Picker(OJDLocalized.string("ui.library.records"), selection: $model.scope) {
+        Picker(OJDLocalized.string("ui.library.scope"), selection: $model.scope) {
           ForEach(LibraryScope.allCases) { scope in
             Text(OJDLocalized.string(scope.titleKey)).tag(scope)
           }
@@ -53,7 +53,7 @@
           .padding(.vertical, 12).ojdInterfaceRow(LibraryRow.scopeSwitch)
           .help(OJDLocalized.string("ui.library.scopeHelp"))
         List(selection: selection) {
-          Section(header: recordsHeader) {
+          Section(header: Text(OJDLocalized.string("ui.library.records"))) {
             if model.visibleRecords.isEmpty, isSearching || model.records.skipped.isEmpty {
               emptyLine(
                 isSearching ? "ui.library.search.noMatches" : "ui.library.records.empty.title"
@@ -86,16 +86,6 @@
     /// The selected row, which reads and sets the selection of ``model``.
     private var selection: Binding<LibrarySelection?> {
       Binding(get: { model.selection }, set: { model.selectAfterRender($0) })
-    }
-
-    /// The header of the records section; the Built-in scope shows only the number of records.
-    @ViewBuilder
-    private var recordsHeader: some View {
-      switch model.scope {
-      case .installed: Text(OJDLocalized.string("ui.library.records"))
-      case .builtIn:
-        Text(model.records.builtIn.count.formatted())
-      }
     }
 
     /// A secondary-colored line for an empty list, with the text of `key`.

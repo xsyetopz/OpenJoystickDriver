@@ -5840,8 +5840,10 @@
 /* Tooltip of the dismiss button of the library notice. */
 "ui.library.dismissHelp" = "أخفِ هذا الإشعار";
 
-/* Tooltip of the library scope picker. */
-"ui.library.scopeHelp" = "اختر العناصر التي يشملها الإجراء";
+/* Accessible name of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scope" = "عرض";
+/* Tooltip of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scopeHelp" = "التبديل بين السجلات التي ثبّتها والسجلات المضمّنة";
 
 /* Tooltip of the add key button of a macro chord step. */
 "ui.macros.addChordKeyHelp" = "أضف مفتاحًا يُضغط مع هذه الخطوة";

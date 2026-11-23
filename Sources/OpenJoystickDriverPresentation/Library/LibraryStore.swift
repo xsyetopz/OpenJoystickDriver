@@ -26,9 +26,11 @@ struct LibraryRecordItem: Equatable, Identifiable {
   var appleSigned = false
 
   /// The row's gray line: the family, the layer, and the Apple-signed text for a controller the
-  /// signed USB extension claims.
+  /// signed USB extension claims. A bundled record leaves out its layer, because only the Built-in
+  /// scope lists it and the scope switch already says Built-in.
   var subtitle: String {
-    var segments = [family.displayName, layer.libraryTitle]
+    var segments = [family.displayName]
+    if layer != .bundled { segments.append(layer.libraryTitle) }
     if appleSigned { segments.append(Self.appleSignedText) }
     return segments.dropFirst().reduce(segments[0]) {
       OJDLocalized.formatted("ui.library.record.detail", $0, $1)

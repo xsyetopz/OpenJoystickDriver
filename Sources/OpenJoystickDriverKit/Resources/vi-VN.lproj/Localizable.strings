@@ -5840,8 +5840,10 @@
 /* Tooltip of the dismiss button of the library notice. */
 "ui.library.dismissHelp" = "Ẩn thông báo này";
 
-/* Tooltip of the library scope picker. */
-"ui.library.scopeHelp" = "Chọn các mục mà thao tác áp dụng";
+/* Accessible name of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scope" = "Hiển thị";
+/* Tooltip of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scopeHelp" = "Chuyển giữa bản ghi bạn đã cài đặt và bản ghi tích hợp sẵn";
 
 /* Tooltip of the add key button of a macro chord step. */
 "ui.macros.addChordKeyHelp" = "Thêm một phím được nhấn cùng bước này";

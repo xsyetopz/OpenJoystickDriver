@@ -1,11 +1,14 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
 
 @MainActor
 struct LibraryListingTests {
+  init() { PlatformHosts.install(FakePlatformHost()) }
+
   private let userModel = ControllerModelID(vendorID: 0x1234, productID: 0x0001)
   private let builtInModel = ControllerModelID(vendorID: 0x045E, productID: 0x028E)
 

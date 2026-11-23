@@ -5840,8 +5840,10 @@
 /* Tooltip of the dismiss button of the library notice. */
 "ui.library.dismissHelp" = "Sembunyikan pemberitahuan ini";
 
-/* Tooltip of the library scope picker. */
-"ui.library.scopeHelp" = "Pilih item yang dicakup tindakan";
+/* Accessible name of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scope" = "Tampilkan";
+/* Tooltip of the switch above the Library list that shows the controller records the user installed or the ones that come with the app. */
+"ui.library.scopeHelp" = "Beralih antara catatan yang Anda instal dan catatan bawaan";
 
 /* Tooltip of the add key button of a macro chord step. */
 "ui.macros.addChordKeyHelp" = "Tambahkan tombol yang ditekan bersama langkah ini";
