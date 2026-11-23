@@ -5607,8 +5607,14 @@
 "ui.help.motionStart" = "स्थिर अवस्था का विचलन नापने के लिए जायरो के नमूने जुटाएँ";
 /* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
 "ui.help.playerIndicator" = "चुनें कि कंट्रोलर कौन सी प्लेयर लाइट दिखाए";
-/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
-"ui.help.readinessAction" = "इस कंट्रोलर को चलाने के लिए अगला चरण पूरा करें";
+/* Tooltip of the Open Access button at the top of the Controllers detail, for a controller that needs a permission. Access is the name of an area of the main window. */
+"ui.help.readiness.openAccess" = "अनुपलब्ध अनुमति देने के लिए एक्सेस खोलें";
+/* Tooltip of the Set Up Driver button at the top of the Controllers detail, for a controller that needs the Xbox USB driver approved, activated or repaired. */
+"ui.help.readiness.setUpDriver" = "इस कंट्रोलर के लिए Xbox USB ड्राइवर सेट अप करें";
+/* Tooltip of the Open Troubleshooting button at the top of the Controllers detail. It opens the Troubleshooting page of the wiki. */
+"ui.help.readiness.openTroubleshooting" = "समस्या निवारण पृष्ठ ब्राउज़र में खोलें";
+/* Tooltip of the See Supported Controllers button at the top of the Controllers detail. It opens the Supported Controllers page of the wiki. */
+"ui.help.readiness.openSupportedControllers" = "समर्थित कंट्रोलर पृष्ठ ब्राउज़र में खोलें";
 /* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
 "ui.help.recalibrate.circle" = "हर स्टिक को पूरा गोल घुमाते हुए स्टिक की सीमा नापें";
 /* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */

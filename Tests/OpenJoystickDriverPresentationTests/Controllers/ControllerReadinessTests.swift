@@ -91,9 +91,17 @@ struct ControllerReadinessTests {
       .notSupported,
     ]
     for state in states {
-      for key in [state.titleKey, state.messageKey, state.actionTitleKey] {
+      for key in [state.titleKey, state.messageKey, state.actionTitleKey, state.action.helpKey] {
         #expect(OJDLocalized.string(key) != key)
       }
     }
+  }
+
+  @Test
+  func eachActionHasItsOwnTooltip() {
+    let actions: [ControllerReadinessAction] = [
+      .openInputTest, .openAccess, .setUpDriver, .openTroubleshooting, .openSupportedControllers,
+    ]
+    #expect(Set(actions.map { OJDLocalized.string($0.helpKey) }).count == actions.count)
   }
 }

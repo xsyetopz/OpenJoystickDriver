@@ -56,7 +56,7 @@
         Spacer(minLength: 12)
         if showsAction {
           Button(OJDLocalized.string(readiness.actionTitleKey)) { perform(readiness.action) }
-            .disabled(!isActionEnabled).help(OJDLocalized.string("ui.help.readinessAction"))
+            .disabled(!isActionEnabled).help(OJDLocalized.string(readiness.action.helpKey))
         }
       }.accessibilityElement(children: .contain).ojdAccessibilityLabel(
         OJDLocalized.string(readiness.titleKey)

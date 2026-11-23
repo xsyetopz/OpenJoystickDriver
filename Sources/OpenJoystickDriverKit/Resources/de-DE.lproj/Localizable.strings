@@ -5608,8 +5608,14 @@
 "ui.help.motionStart" = "Gyro-Messwerte sammeln, um die Abweichung im Ruhezustand zu bestimmen";
 /* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
 "ui.help.playerIndicator" = "Auswählen, welche Spielerleuchte der Controller anzeigt";
-/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
-"ui.help.readinessAction" = "Den nächsten Schritt ausführen, damit dieser Controller funktioniert";
+/* Tooltip of the Open Access button at the top of the Controllers detail, for a controller that needs a permission. Access is the name of an area of the main window. */
+"ui.help.readiness.openAccess" = "Den Bereich „Zugriff“ öffnen, um die fehlende Berechtigung zu erteilen";
+/* Tooltip of the Set Up Driver button at the top of the Controllers detail, for a controller that needs the Xbox USB driver approved, activated or repaired. */
+"ui.help.readiness.setUpDriver" = "Den Xbox-USB-Treiber für diesen Controller einrichten";
+/* Tooltip of the Open Troubleshooting button at the top of the Controllers detail. It opens the Troubleshooting page of the wiki. */
+"ui.help.readiness.openTroubleshooting" = "Die Seite „Fehlerbehebung“ im Browser öffnen";
+/* Tooltip of the See Supported Controllers button at the top of the Controllers detail. It opens the Supported Controllers page of the wiki. */
+"ui.help.readiness.openSupportedControllers" = "Die Seite „Unterstützte Controller“ im Browser öffnen";
 /* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
 "ui.help.recalibrate.circle" = "Stick-Bereiche messen, während du jeden Stick im Kreis bewegst";
 /* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */

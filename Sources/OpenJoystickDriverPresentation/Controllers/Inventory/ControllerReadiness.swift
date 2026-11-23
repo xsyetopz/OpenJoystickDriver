@@ -87,6 +87,17 @@ enum ControllerReadinessAction: Equatable, Sendable {
   /// Opens the wiki page `Supported-Controllers`.
   case openSupportedControllers
 
+  /// The localization key of the button's tooltip, which says what this action does.
+  var helpKey: String {
+    switch self {
+    case .openInputTest: return "ui.help.menu.testInput"
+    case .openAccess: return "ui.help.readiness.openAccess"
+    case .setUpDriver: return "ui.help.readiness.setUpDriver"
+    case .openTroubleshooting: return "ui.help.readiness.openTroubleshooting"
+    case .openSupportedControllers: return "ui.help.readiness.openSupportedControllers"
+    }
+  }
+
   /// The wiki page that the action opens; nil for an action that opens none.
   var wikiPage: String? {
     switch self {

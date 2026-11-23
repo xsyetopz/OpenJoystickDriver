@@ -5607,8 +5607,14 @@
 "ui.help.motionStart" = "Duruştaki sapmayı ölçmek için jiroskop örnekleri topla";
 /* Tooltip of the segmented picker of the Input Test window that chooses the player light of the controller. */
 "ui.help.playerIndicator" = "Kontrolcünün hangi oyuncu ışığını göstereceğini seç";
-/* Tooltip of the one button at the top of the Controllers detail. Its title names the step, such as Open Access or Set Up Driver. */
-"ui.help.readinessAction" = "Bu kontrolcünün çalışması için sonraki adımı at";
+/* Tooltip of the Open Access button at the top of the Controllers detail, for a controller that needs a permission. Access is the name of an area of the main window. */
+"ui.help.readiness.openAccess" = "Eksik izni vermek için Erişim’i aç";
+/* Tooltip of the Set Up Driver button at the top of the Controllers detail, for a controller that needs the Xbox USB driver approved, activated or repaired. */
+"ui.help.readiness.setUpDriver" = "Bu kontrolcü için Xbox USB sürücüsünü kur";
+/* Tooltip of the Open Troubleshooting button at the top of the Controllers detail. It opens the Troubleshooting page of the wiki. */
+"ui.help.readiness.openTroubleshooting" = "Sorun Giderme sayfasını tarayıcıda aç";
+/* Tooltip of the See Supported Controllers button at the top of the Controllers detail. It opens the Supported Controllers page of the wiki. */
+"ui.help.readiness.openSupportedControllers" = "Desteklenen Kontrolcüler sayfasını tarayıcıda aç";
 /* Tooltip of the Measure Circle recalibration button. It reads the controller while each stick is rolled around. */
 "ui.help.recalibrate.circle" = "Her çubuğu tam daire çevirirken çubuk aralıklarını ölç";
 /* Tooltip of the Measure Gyro recalibration button. The offset is the value the gyro reports at rest. */
