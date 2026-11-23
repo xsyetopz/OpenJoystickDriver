@@ -220,6 +220,15 @@ This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c
 </plist>
 ```
 
+Before you edit the record, send the bytes by hand to learn which report the pad takes:
+
+```sh
+ojd controller send 0079:0006 "51 00 C8 00 C8 00 00"
+ojd controller send 0079:0006 "FA FE 00 00 00 00 00"
+```
+
+The first command starts the motors and the second stops them. `ojd controller send` writes each report once, with no patch installed.
+
 Pads sold under `0079:0006` differ inside: some have no motors, and some have a different report descriptor. Set `length` to the output report size your pad's descriptor gives. Then check the patch on the pad:
 
 1. Run `ojd record validate 0079-0006.patch.plist`, then `ojd record install 0079-0006.patch.plist`.

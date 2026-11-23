@@ -87,6 +87,7 @@ ojd controller watch CONTROLLER [--duration SECONDS] [--first-press] [--output]
 ojd controller watch --all [--duration SECONDS] [--output]
 ojd controller check CONTROLLER [--duration SECONDS] [--validate]
 ojd controller capture CONTROLLER [--duration SECONDS]
+ojd controller send CONTROLLER BYTES [--feature] [--report-id N] [--usb-endpoint N]
 ojd controller rumble CONTROLLER [--left N] [--right N] [--left-trigger N] [--right-trigger N] [--duration SECONDS]
 ojd controller light CONTROLLER [--color RRGGBB] [--brightness N]
 ojd controller player CONTROLLER 1|2|3|4|off
@@ -149,6 +150,12 @@ Show the unit ID, identity, ownership, capabilities, effective record, and virtu
   - A stick or trigger ends its step when it returns to rest. A control held when its step starts counts only after you release it.
   - `--validate`, after a check in which every control responded, prints the validation text and the address of the prefilled `controller-validation.yml` form. The text holds no serial number, unit ID, Bluetooth address, user name, or path. It opens the address only after you type `y`, never without a terminal. After any other result it prints a notice and offers nothing.
 - `controller capture`: Print the raw packets that the controller sends and receives, each with time, direction, length, and hex bytes. It runs until Control-C or `--duration` seconds. With `--json`, it prints one `RawReport` per line, with the direction `Rx` or `Tx`.
+- `controller send`: Write raw bytes to a controller, so a mod author can try a report without editing a record. `BYTES` are 1 to 64 hex pairs of the whole report, in one quoted argument or several.
+  - By default the bytes go out as a HID output report. `--feature` sends a HID feature report instead.
+  - `--report-id` (1 to 255) names a numbered report and must equal the first byte. Without it the report ID is 0.
+  - `--usb-endpoint` (0 to 255) sends a USB interrupt OUT packet with a 1000 ms timeout, and cannot be combined with `--feature` or `--report-id`. A controller that macOS owns refuses it.
+  - The write shares the output queue with the driver's own writes. A refused or failed write exits 1 with the controller error. With `--json`, the result is a `Success` status whose details hold `controller`, `destination`, `reportID` or `endpoint`, `bytes`, and `outcome`.
+  - Example: `ojd controller send 0079:0006 "51 00 C8 00 C8 00 00"`.
 - `controller rumble`: Run the rumble motors.
   - `--left`, `--right`, `--left-trigger`, and `--right-trigger` set each motor's intensity, 0 to 255. With none, both main motors run at 180. All 0 stops the motors.
   - `--duration` is in seconds, above 0 and at most 5. The default is 0.45.
