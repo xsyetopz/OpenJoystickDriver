@@ -58,7 +58,7 @@ For a Dock icon, turn on **Show in Dock** in **Settings** > **General**. See [Se
 
 OJD starts at login. If macOS asks, turn on **OpenJoystickDriver** in Apple menu > **System Settings** > **General** > **Login Items & Extensions** (**Login Items** on macOS 13 and 14).
 
-To stop it, turn off **Start at login** in **Settings**, or run `ojd setting set launchAtLogin false`.
+To stop it, turn off **Open at login** in **Settings**, or run `ojd setting set launchAtLogin false`.
 
 ## Quickstart
 

@@ -16,7 +16,7 @@
 
   /// The control of General or Notifications whose failure shows beside it.
   enum SettingsControlOrigin: Equatable {
-    /// The Start at login switch.
+    /// The Open at login switch.
     case loginItem
     /// The pause shortcut row.
     case pauseShortcut

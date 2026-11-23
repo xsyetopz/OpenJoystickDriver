@@ -88,7 +88,7 @@ The Trash alone leaves the login item, privacy entries, [Xbox USB driver](Glossa
 
 ### Remove the App
 
-1. In **Settings** > **General**, turn off **Start at login**, or run `ojd setting set launchAtLogin false`.
+1. In **Settings** > **General**, turn off **Open at login**, or run `ojd setting set launchAtLogin false`.
 2. If you approved the Xbox USB driver, remove it. Click **Uninstall** under **Xbox USB Driver** in **Settings** > **Advanced**, or run `ojd transport-extension deactivate`. Both work only on the copy in `/Applications`.
 3. Choose **Quit OpenJoystickDriver** from the menu bar icon.
 4. Drag **OpenJoystickDriver** from **Applications** to the Trash.

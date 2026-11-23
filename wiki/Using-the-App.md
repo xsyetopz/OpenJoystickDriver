@@ -159,7 +159,7 @@ Choose **OpenJoystickDriver** > **Settings...** or press Command-Comma (,). It h
 
 ![General pane with an arrow at Interface](../docs/screenshots/steps/settings-interface.png)
 
-- **Start at login**: see [Allow the Login Item](Getting-Started.md#allow-the-login-item).
+- **Open at login**: see [Allow the Login Item](Getting-Started.md#allow-the-login-item).
 - **Pause shortcut** (needs All Controls) pauses every controller from any app. Click **Record Shortcut**, then press a key with Control, Option, or Command.
 - **Disconnect idle Bluetooth controllers** (needs All Controls) disconnects one idle for 5 to 60 minutes. Off by default. It skips Bluetooth Low Energy, cable, and receiver controllers.
 - **Updates**: **Check Now** asks GitHub for a later version, and **Check for updates automatically** also checks at startup. OJD installs nothing. See [How Update Checks Work](Updating-and-Uninstalling.md#how-update-checks-work).

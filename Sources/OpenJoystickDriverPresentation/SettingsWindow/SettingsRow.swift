@@ -2,7 +2,7 @@
 enum SettingsRow: InterfaceRow {
   /// P01: the Interface pop-up, which shows at both levels so a user can switch back.
   case interfacePicker
-  /// P02: Start at login.
+  /// P02: Open at login.
   case startAtLogin
   /// P03: Show in menu bar.
   case showInMenuBar

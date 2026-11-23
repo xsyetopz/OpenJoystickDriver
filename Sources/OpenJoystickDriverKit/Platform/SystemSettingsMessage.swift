@@ -15,7 +15,7 @@ package enum SystemSettingsMessage: Sendable, CaseIterable {
   case soundOff
   /// The error that macOS denies notifications for the app.
   case notificationsDenied
-  /// The error that Start at login waits for approval.
+  /// The error that Open at login waits for approval.
   case startAtLoginApproval
   /// The detail line of the driver extension that waits for approval.
   case driverApprovalDetail

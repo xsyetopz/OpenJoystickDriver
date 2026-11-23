@@ -145,12 +145,12 @@
 /* VoiceOver label of the switch for notifications about a profile that is activated or switched. */
 "ui.settings.notifications.profileNotifications" = "設定檔已啟用或已切換";
 /* Title of the switch in the General pane of the settings window that opens the app when the user logs in. */
-"ui.settings.general.startAtLogin" = "登入時打開";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. It is shown on macOS 27 and later, where the settings app is System Settings. */
+"ui.settings.general.startAtLogin" = "在登入時打開";
+/* Error shown in the General pane of the settings window after the user turns on Open at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. It is shown on macOS 27 and later, where the settings app is System Settings. */
 "platform.macos.ui.settings.general.startAtLoginApprovalRequired" = "請在「系統設定」> %@ 中允許 OpenJoystickDriver。";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. It is shown on macOS 26, where the settings app is System Settings. */
+/* Error shown in the General pane of the settings window after the user turns on Open at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. It is shown on macOS 26, where the settings app is System Settings. */
 "platform.macos.ui.settings.general.startAtLoginApprovalRequiredMacOS26" = "請在「系統設定」> %@ 中允許 OpenJoystickDriver。";
-/* Error shown in the General pane of the settings window after the user turns on Start at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. It is shown on macOS 13 to 15, where the settings app is System Settings. */
+/* Error shown in the General pane of the settings window after the user turns on Open at login and macOS wants approval. System Settings is a name in macOS and is written as macOS shows it. %@ is the path to Login Items for the running macOS, such as General > Login Items. It is shown on macOS 13 to 15, where the settings app is System Settings. */
 "platform.macos.ui.settings.general.startAtLoginApprovalRequiredMacOS13" = "請在「系統設定」> %@ 中允許 OpenJoystickDriver。";
 /* Button in the Notifications pane of the settings window that sends a test notification. */
 "ui.settings.notifications.testNotification" = "傳送測試通知";
@@ -5785,7 +5785,7 @@
 "ui.help.checkUpdatesAutomatically" = "每次啟動 App 時尋找較新的版本";
 /* Tooltip of the switch in the General settings that includes prerelease updates. */
 "ui.help.prereleaseUpdates" = "檢查更新時包含預先發行版本";
-/* Tooltip of the Start at Login switch in the General settings. */
+/* Tooltip of the Open at login switch in the General settings. */
 "ui.help.startAtLogin" = "登入時開啟 App";
 /* Tooltip of the Show in Menu Bar switch in the General settings. */
 "ui.help.showInMenuBar" = "在選單列中顯示 App 狀態項目";

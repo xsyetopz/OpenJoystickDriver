@@ -63,7 +63,7 @@ No. They are macOS safety locks. Keep both on.
 
 ### Does OJD Start When I Log In?
 
-On macOS 13 or later. Turn off **Start at login** in **Settings** to stop it ([Allow the Login Item](Getting-Started.md#allow-the-login-item)).
+On macOS 13 or later. Turn off **Open at login** in **Settings** to stop it ([Allow the Login Item](Getting-Started.md#allow-the-login-item)).
 
 ### Do I Need the Xbox USB Driver?
 
