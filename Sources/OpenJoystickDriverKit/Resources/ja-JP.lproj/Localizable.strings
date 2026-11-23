@@ -170,57 +170,57 @@
 "ui.controllers.loadError" = "コントローラを読み込めませんでした";
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "コントローラ未接続";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch" = "OJD はまだこのコントローラと通信する方法を知りません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch.nextStep" = "コントローラの ID を添えてサポートレポートを送信してください。OJD が通信方法を覚えられます。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.ambiguousProtocolMatch" = "このコントローラは OJD が知っている複数のプロトコルに当てはまるため、OJD は 1 つを選べません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.ambiguousProtocolMatch.nextStep" = "サポートレポートを送信してください。このコントローラがどのプロトコルを使うかを OJD が覚えられます。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch" = "このコントローラの USB 接続が OJD の想定と違うため、OJD はこのコントローラを扱いません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch.nextStep" = "コントローラの ID を添えてサポートレポートを送信してください。OJD での扱い方を直せます。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
 "ui.controllers.descriptorContractMismatch" = "このコントローラはボタンとスティックを OJD の想定と違う形で伝えるため、OJD はこのコントローラを扱いません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.descriptorContractMismatch.nextStep" = "コントローラの ID を添えてサポートレポートを送信してください。OJD での扱い方を直せます。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedProtocolVariant" = "OJD は、まだ扱えないバージョンのプロトコルをこのコントローラに選びました。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedProtocolVariant.nextStep" = "サポートレポートを送信してください。OJD が扱えるバージョンを選べるようになります。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant" = "OJD は、この接続方法ではこのコントローラと通信できません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "ケーブルなど別の方法でコントローラを接続するか、サポートレポートを送信してください。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable" = "OJD にはこのコントローラ用の仮想ゲームパッド プロファイルがありません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "サポートレポートを送信してください。プロファイルを追加できます。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse" = "別のプログラムがこのコントローラを使用しています。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse.nextStep" = "そのプログラムを終了するか、コントローラを再接続してください。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.configurationUnreadable" = "このコントローラの USB 構成を読み取れませんでした。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.configurationUnreadable.nextStep" = "コントローラを再接続してください。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "このコントローラはブートローダ モードです。OJD はデータを送信しません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity.nextStep" = "コントローラをブートローダモードから戻し、再接続してください。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "このコントローラは ID を他のモデルと共有しており、対応モデルのどれにも一致しません。OJD はデータを送信しません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched.nextStep" = "コントローラのモデルを添えてサポートレポートを送信してください。照合できるようになります。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
 "ui.controllers.noControllerLinked" = "このレシーバーにはコントローラがリンクされていません。OJD はデータを送信しません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "コントローラを接続するか、コントローラの電源を入れてください。";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. OJD holds the device and sends it no data while it waits, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. OJD holds the device and sends it no data while it waits, and the text says so. OJD stays as written. */
 "ui.controllers.awaitsReenumeration" = "このコントローラは、何も応答しないとモードを切り替えます。OJD はこれを保持し、データを送信しません。";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. It tells the person what to do. OJD stays as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.awaitsReenumeration.nextStep" = "数秒待ってください。表示が残る場合は、取り外してからもう一度接続してください。";
 /* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
 "ui.controllers.wirelessReceiver" = "ワイヤレスレシーバー";
@@ -5403,8 +5403,6 @@
 "ui.controllers.readiness.needsStep.driver.message" = "このコントローラには、Xbox USB ドライバの設定が必要です。";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "ドライバを設定";
-/* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
-"ui.controllers.readiness.needsStep.other.message" = "このコントローラはまだ読み取れません。詳細に次の手順が表示されます。";
 /* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
 "ui.controllers.readiness.needsStep.other.action" = "トラブルシューティングを開く";
 /* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */

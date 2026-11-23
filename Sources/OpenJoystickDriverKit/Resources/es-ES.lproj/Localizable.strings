@@ -170,57 +170,57 @@
 "ui.controllers.loadError" = "No se han podido cargar los mandos";
 /* Title of the empty state in the Controllers area when no controller is connected. */
 "ui.controllers.emptyTitle" = "Ningún mando conectado";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch" = "OJD aún no sabe comunicarse con este mando.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noProtocolMatch.nextStep" = "Envía un informe de soporte con el ID del mando para que OJD aprenda a comunicarse con él.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.ambiguousProtocolMatch" = "Este mando encaja con más de un protocolo que OJD conoce, así que OJD no puede elegir uno.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.ambiguousProtocolMatch.nextStep" = "Envía un informe de soporte para que OJD sepa qué protocolo usa este mando.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch" = "Las conexiones USB de este mando no son las que OJD espera, así que OJD no lo toca.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch.nextStep" = "Envía un informe de soporte con el ID del mando para que OJD corrija cómo lo maneja.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor (the list of controls it reports) does not meet what its protocol requires. The next step has its own text. OJD stays as written. */
 "ui.controllers.descriptorContractMismatch" = "Este mando describe sus botones y palancas de una forma que OJD no espera, así que OJD no lo toca.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.descriptorContractMismatch.nextStep" = "Envía un informe de soporte con el ID del mando para que OJD corrija cómo lo maneja.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedProtocolVariant" = "OJD eligió una versión del protocolo de este mando que aún no sabe usar.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedProtocolVariant.nextStep" = "Envía un informe de soporte para que OJD elija una versión que sepa usar.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant" = "OJD no puede comunicarse con este mando por esta conexión.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "Conecta el mando de otra forma, por ejemplo con un cable, o envía un informe de soporte.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable" = "OJD no tiene ningún perfil de mando virtual para este mando.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "Envía un informe de soporte para poder añadirle un perfil.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse" = "Otro programa está usando este mando.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse.nextStep" = "Ciérralo o vuelve a conectar el mando.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.configurationUnreadable" = "No se pudo leer la configuración USB de este mando.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.configurationUnreadable.nextStep" = "Vuelve a conectar el mando.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "Este mando está en modo bootloader. OJD no le envía datos.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity.nextStep" = "Saca el mando del modo bootloader y vuelve a conectarlo.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "Este mando comparte su ID con otros modelos y no coincide con ninguno de los compatibles. OJD no le envía datos.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched.nextStep" = "Envía un informe de soporte con el modelo del mando para poder identificarlo.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
 "ui.controllers.noControllerLinked" = "Este receptor no tiene ningún mando vinculado. OJD no le envía datos.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "Conéctale un mando o enciende el mando.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. OJD holds the device and sends it no data while it waits, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers detail and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. OJD holds the device and sends it no data while it waits, and the text says so. OJD stays as written. */
 "ui.controllers.awaitsReenumeration" = "Este mando cambia de modo cuando nada le responde. OJD lo retiene y no le envía datos.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. It tells the person what to do. OJD stays as written. */
+/* Next step shown after the reason in the Controllers detail and in the output of 'ojd status' for a connected controller that changes to another mode when nothing on the Mac answers it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.awaitsReenumeration.nextStep" = "Espera unos segundos. Si sigue aquí, desconéctalo y vuelve a conectarlo.";
 /* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
 "ui.controllers.wirelessReceiver" = "Receptor inalámbrico";
@@ -5404,8 +5404,6 @@
 "ui.controllers.readiness.needsStep.driver.message" = "Este mando necesita que se configure el controlador USB de Xbox.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "Configurar controlador";
-/* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
-"ui.controllers.readiness.needsStep.other.message" = "Este mando aún no se puede leer. Sus detalles indican el siguiente paso.";
 /* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
 "ui.controllers.readiness.needsStep.other.action" = "Abrir solución de problemas";
 /* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */

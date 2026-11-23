@@ -38,6 +38,8 @@
     var isActionEnabled = true
     /// Whether the button shows; it hides while the problem banner offers the same fix.
     var showsAction = true
+    /// The sentence that replaces the state's own, such as an unserved device's reason and step.
+    var message: String?
     /// Runs what the button does.
     let perform: @MainActor (ControllerReadinessAction) -> Void
 
@@ -49,9 +51,10 @@
         ).font(.title2).frame(width: 28).accessibilityHidden(true)
         VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(OJDLocalized.string(readiness.titleKey)).font(.headline)
-          Text(OJDLocalized.string(readiness.messageKey)).font(.callout).foregroundColor(
-            Color(NSColor.secondaryLabelColor)
-          ).fixedSize(horizontal: false, vertical: true)
+          if let text = message ?? readiness.messageKey.map(OJDLocalized.string) {
+            Text(text).font(.callout).foregroundColor(Color(NSColor.secondaryLabelColor))
+              .fixedSize(horizontal: false, vertical: true)
+          }
         }
         Spacer(minLength: 12)
         if showsAction {

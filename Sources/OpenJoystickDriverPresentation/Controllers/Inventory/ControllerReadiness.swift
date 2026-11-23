@@ -40,13 +40,14 @@ enum ControllerReadiness: Equatable, Sendable {
     }
   }
 
-  /// The localization key of the one sentence that says what the state means.
-  var messageKey: String {
+  /// The localization key of the one sentence that says what the state means, or nil for the
+  /// controller's own next step, whose reason and step the detail shows in its place.
+  var messageKey: String? {
     switch self {
     case .working: return "ui.controllers.readiness.working.message"
     case .needsStep(.grantAccess): return "ui.controllers.readiness.needsStep.access.message"
     case .needsStep(.setUpDriver): return "ui.controllers.readiness.needsStep.driver.message"
-    case .needsStep(.otherStep): return "ui.controllers.readiness.needsStep.other.message"
+    case .needsStep(.otherStep): return nil
     case .notSupported: return "ui.controllers.readiness.notSupported.message"
     }
   }

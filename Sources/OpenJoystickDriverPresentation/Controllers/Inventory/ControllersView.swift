@@ -165,20 +165,11 @@
             Text("\(unserved.identity)  \(unserved.connection)").font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
             ).lineLimit(1)
-            Text(unserved.explanation).font(.caption).foregroundColor(
-              Color(NSColor.secondaryLabelColor)
-            )
-            Text(unserved.nextStep).font(.caption).foregroundColor(
-              Color(NSColor.secondaryLabelColor)
-            )
             ControllerReadinessMark(readiness: unserved.readiness)
           }.padding(.vertical, 4).tag(Self.unservedTag(unserved)).ojdAccessibilityLabel(
             unserved.title
           )
-          .ojdAccessibilityValue(
-            "\(OJDLocalized.string(unserved.readiness.titleKey)). "
-              + "\(unserved.explanation) \(unserved.nextStep)"
-          )
+          .ojdAccessibilityValue(OJDLocalized.string(unserved.readiness.titleKey))
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
         wirelessDisconnectAlert(for: request)

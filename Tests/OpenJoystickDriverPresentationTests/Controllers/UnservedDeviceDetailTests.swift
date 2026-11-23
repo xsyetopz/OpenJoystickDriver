@@ -66,6 +66,19 @@ struct UnservedDeviceDetailTests {
   }
 
   @Test
+  func receiverDetailNamesItsReasonAndNextStep() {
+    let receiver = RuntimeUnservedDevice(Self.unbound(.noControllerLinked, backend: .hid))
+
+    #expect(receiver.readiness == .needsStep(.otherStep))
+    #expect(receiver.readiness.messageKey == nil)
+    #expect(
+      receiver.message
+        == OJDLocalized.string("ui.controllers.noControllerLinked") + " "
+        + OJDLocalized.string("ui.controllers.noControllerLinked.nextStep")
+    )
+  }
+
+  @Test
   func draftOneRecordDraftBuilds() throws {
     let model = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
     let pad = PhysicalDevice(vendorID: 0x1234, productID: 0x5678, interfaces: [Self.gamepad])

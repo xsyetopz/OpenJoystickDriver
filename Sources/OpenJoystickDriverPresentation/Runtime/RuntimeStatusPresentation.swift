@@ -210,6 +210,9 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
   /// Whether the detail offers Draft Record: the device is a HID pad.
   let offersDraft: Bool
 
+  /// The reason and the next step, the sentence of the device's state in its detail.
+  var message: String { "\(explanation) \(nextStep)" }
+
   /// The identity and the connection, which together identify the entry.
   var id: String { "\(identity) \(connection)" }
 

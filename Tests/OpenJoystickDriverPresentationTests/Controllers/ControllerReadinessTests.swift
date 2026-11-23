@@ -91,7 +91,8 @@ struct ControllerReadinessTests {
       .notSupported,
     ]
     for state in states {
-      for key in [state.titleKey, state.messageKey, state.actionTitleKey, state.action.helpKey] {
+      let keys = [state.titleKey, state.messageKey, state.actionTitleKey, state.action.helpKey]
+      for key in keys.compactMap(\.self) {
         #expect(OJDLocalized.string(key) != key)
       }
     }
