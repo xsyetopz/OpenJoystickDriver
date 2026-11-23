@@ -26,13 +26,13 @@
           .accessibilityAddTraits(.isHeader)
         ForEach(steps) { step in
           HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
-            Text(OJDLocalized.string(step.sentenceKey)).fixedSize(
+            Text(step.sentence).fixedSize(
               horizontal: false,
               vertical: true
             )
             Spacer(minLength: OJDSpacing.medium)
             Button(OJDLocalized.string(step.buttonKey)) { perform(step) }
-              .disabled(isRequesting).help(OJDLocalized.string(step.sentenceKey))
+              .disabled(isRequesting).help(step.sentence)
           }
         }
         if isRequesting { ProgressView().controlSize(.small) }

@@ -990,9 +990,9 @@
 "term.profileName" = "Tên cấu hình";
 /* Name of the permission for keyboard and pointer output in the Access area. */
 "term.keyboardPointer" = "Bàn phím & con trỏ";
-/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics before macOS 27. It is written as macOS names it in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu, the diagnostics and the output of 'ojd status' and 'ojd permission' before macOS 27. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Trợ năng";
-/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu, the diagnostics and the output of 'ojd status' and 'ojd permission' on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
 "platform.macos.term.inputInjectMacOS27" = "Điều khiển thiết bị và truy cập dữ liệu";
 /* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.loginItems" = "Cài đặt chung > Mục Đăng nhập";
@@ -1036,7 +1036,7 @@
 "action.export" = "Xuất…";
 /* Result label of a failed check in the diagnostics list of the Activity area. */
 "status.failed" = "Thất bại";
-/* Name of the macOS Input Monitoring permission in the Access area. It is written as macOS names it in System Settings. */
+/* Name of the macOS Input Monitoring permission in the Access area and the output of 'ojd status' and 'ojd permission'. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputRead" = "Giám sát đầu vào";
 /* Value of a permission row in the Access area when the driver has not asked macOS for the permission yet. */
 "status.notRequested" = "Chưa yêu cầu";
@@ -2065,16 +2065,12 @@
 "cli.status.group.abstract" = "Hiển thị dịch vụ, phần mở rộng, quyền và các bộ điều khiển đã kết nối.";
 /* Long description in the help of 'ojd status'. It says that the command also works while the service is stopped. The exit status 0 stays as written. */
 "cli.status.group.discussion" = "Hoạt động cả khi dịch vụ đã dừng: báo dịch vụ đã dừng và thoát với mã 0.";
-/* Row label in the output of 'ojd status' for the Accessibility permission. It is written as macOS names it. */
-"platform.macos.cli.status.group.labelInputInject" = "Trợ năng";
 /* Row label in the output of 'ojd status'. The version of this command line tool follows. */
 "cli.status.group.labelCommandLineTool" = "Công cụ dòng lệnh";
 /* Heading in the output of 'ojd status' above the list of connected controllers. %lld is the number of controllers. */
 "cli.status.group.labelControllers" = "Bộ điều khiển (%lld)";
 /* Row label in the output of 'ojd status'. The state of the driver extension follows. */
 "cli.status.group.labelTransportExtension" = "Phần mở rộng";
-/* Row label in the output of 'ojd status' for the Input Monitoring permission. It is written as macOS names it. */
-"platform.macos.cli.status.group.labelInputRead" = "Giám sát đầu vào";
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "Lỗi ghi đè";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
@@ -2419,12 +2415,8 @@
 "cli.permission.list.discussion" = "Các trạng thái là granted, denied hoặc unknown. Khi dịch vụ đã dừng, trạng thái được đọc trong tiến trình này và một ghi chú trên stderr cho biết điều đó; mã thoát vẫn là 0.";
 /* Note that 'ojd permission list' prints on the error stream when the service is stopped. The command in quotes stays as written. */
 "cli.permission.list.localState" = "Dịch vụ chưa chạy, nên các trạng thái này do tiến trình này đọc. Hãy khởi động dịch vụ bằng “ojd service start” để xem trạng thái mà nó thấy.";
-/* Name of the Accessibility permission in the output of 'ojd permission list'. It is written as macOS names it. */
-"platform.macos.cli.permission.group.nameInputInject" = "Trợ năng";
 /* Name of the permission for the approval of the driver extension, in the output of 'ojd permission list' and 'ojd diagnose'. */
 "cli.permission.group.nameUsbTransport" = "Phê duyệt trình điều khiển Xbox USB";
-/* Name of the Input Monitoring permission in the output of 'ojd permission list'. It is written as macOS names it. */
-"platform.macos.cli.permission.group.nameInputRead" = "Giám sát đầu vào";
 /* Name of the permission to send keyboard and mouse events, in the output of 'ojd permission list' and 'ojd diagnose'. */
 "cli.permission.group.namePostEvent" = "Đầu ra bàn phím và chuột";
 /* Purpose column of the keyboard and mouse output permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -5427,12 +5419,12 @@
 "cli.setting.set.badIdleDisconnect" = "“%1$@” không phải là số phút. Dùng số nguyên từ %2$@ đến %3$@, hoặc off.";
 /* Heading of the setup steps that the main window shows when the app starts with a step still open. */
 "ui.setupSteps.title" = "Hoàn tất thiết lập";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.inputRead" = "Cho phép “Giám sát đầu vào” để OpenJoystickDriver đọc được tay cầm của bạn.";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.inputInject" = "Cho phép “Trợ năng” để OpenJoystickDriver đưa tay cầm vào các trò chơi của bạn.";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.postEvent" = "Cho phép “Trợ năng” để OpenJoystickDriver gửi được sự kiện bàn phím và con trỏ.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. %@ is the name of the Input Monitoring pane, as System Settings titles it. */
+"platform.macos.ui.setupSteps.inputRead" = "Cho phép “%@” để OpenJoystickDriver đọc được tay cầm của bạn.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. %@ is the name of the Accessibility pane, as System Settings titles it on the running macOS: Accessibility, or Device Control and Data Access from macOS 27. */
+"platform.macos.ui.setupSteps.inputInject" = "Cho phép “%@” để OpenJoystickDriver đưa tay cầm vào các trò chơi của bạn.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. %@ is the name of the Accessibility pane, as System Settings titles it on the running macOS: Accessibility, or Device Control and Data Access from macOS 27. */
+"platform.macos.ui.setupSteps.postEvent" = "Cho phép “%@” để OpenJoystickDriver gửi được sự kiện bàn phím và con trỏ.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "Cho phép Bluetooth để OpenJoystickDriver kết nối được tay cầm Switch 2.";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */

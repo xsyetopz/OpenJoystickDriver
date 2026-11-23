@@ -73,7 +73,7 @@ struct SetupStepsTests {
   }
 
   @Test
-  func everyStepHasItsOwnSentenceAndButtonInEnglish() {
+  func everyStepHasItsOwnSentenceAndButtonInEnglish() throws {
     let (permissions, state) = status(
       inputRead: .denied,
       inputInject: .denied,
@@ -83,8 +83,13 @@ struct SetupStepsTests {
     #expect(Set(steps.map(\.sentenceKey)).count == steps.count)
     for step in steps {
       #expect(OJDLocalized.string(step.sentenceKey) != step.sentenceKey)
+      #expect(!step.sentence.contains("%@"))
       #expect(OJDLocalized.string(step.buttonKey) != step.buttonKey)
     }
+    let inject = try #require(steps.first { $0.kind == .permission(.inputInject) })
+    #expect(
+      inject.sentence.contains(OJDLocalized.string(SystemSettingsPlace.accessibilityNameKey()))
+    )
   }
 
   @Test

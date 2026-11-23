@@ -990,9 +990,9 @@
 "term.profileName" = "프로파일 이름";
 /* Name of the permission for keyboard and pointer output in the Access area. */
 "term.keyboardPointer" = "키보드 및 포인터";
-/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics before macOS 27. It is written as macOS names it in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu, the diagnostics and the output of 'ojd status' and 'ojd permission' before macOS 27. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "손쉬운 사용";
-/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu, the diagnostics and the output of 'ojd status' and 'ojd permission' on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
 "platform.macos.term.inputInjectMacOS27" = "기기 제어 및 데이터 접근";
 /* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.loginItems" = "일반 > 로그인 항목";
@@ -1036,7 +1036,7 @@
 "action.export" = "내보내기…";
 /* Result label of a failed check in the diagnostics list of the Activity area. */
 "status.failed" = "실패";
-/* Name of the macOS Input Monitoring permission in the Access area. It is written as macOS names it in System Settings. */
+/* Name of the macOS Input Monitoring permission in the Access area and the output of 'ojd status' and 'ojd permission'. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputRead" = "입력 모니터링";
 /* Value of a permission row in the Access area when the driver has not asked macOS for the permission yet. */
 "status.notRequested" = "요청되지 않음";
@@ -2065,16 +2065,12 @@
 "cli.status.group.abstract" = "서비스, 확장 프로그램, 권한, 연결된 컨트롤러를 표시합니다.";
 /* Long description in the help of 'ojd status'. It says that the command also works while the service is stopped. The exit status 0 stays as written. */
 "cli.status.group.discussion" = "서비스가 중지된 상태에서도 작동하며, 서비스를 중지됨으로 보고하고 0으로 종료합니다.";
-/* Row label in the output of 'ojd status' for the Accessibility permission. It is written as macOS names it. */
-"platform.macos.cli.status.group.labelInputInject" = "손쉬운 사용";
 /* Row label in the output of 'ojd status'. The version of this command line tool follows. */
 "cli.status.group.labelCommandLineTool" = "명령줄 도구";
 /* Heading in the output of 'ojd status' above the list of connected controllers. %lld is the number of controllers. */
 "cli.status.group.labelControllers" = "컨트롤러 (%lld)";
 /* Row label in the output of 'ojd status'. The state of the driver extension follows. */
 "cli.status.group.labelTransportExtension" = "확장 프로그램";
-/* Row label in the output of 'ojd status' for the Input Monitoring permission. It is written as macOS names it. */
-"platform.macos.cli.status.group.labelInputRead" = "입력 모니터링";
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "재정의 오류";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
@@ -2419,12 +2415,8 @@
 "cli.permission.list.discussion" = "상태는 granted, denied, unknown 중 하나입니다. 서비스가 중지된 경우 이 프로세스에서 상태를 읽으며, 그 사실을 stderr에 알립니다. 종료 코드는 0으로 유지됩니다.";
 /* Note that 'ojd permission list' prints on the error stream when the service is stopped. The command in quotes stays as written. */
 "cli.permission.list.localState" = "서비스가 실행 중이 아니므로 이 프로세스에서 상태를 읽었습니다. 서비스가 보는 상태를 확인하려면 ‘ojd service start’로 서비스를 시작하세요.";
-/* Name of the Accessibility permission in the output of 'ojd permission list'. It is written as macOS names it. */
-"platform.macos.cli.permission.group.nameInputInject" = "손쉬운 사용";
 /* Name of the permission for the approval of the driver extension, in the output of 'ojd permission list' and 'ojd diagnose'. */
 "cli.permission.group.nameUsbTransport" = "Xbox USB 드라이버 승인";
-/* Name of the Input Monitoring permission in the output of 'ojd permission list'. It is written as macOS names it. */
-"platform.macos.cli.permission.group.nameInputRead" = "입력 모니터링";
 /* Name of the permission to send keyboard and mouse events, in the output of 'ojd permission list' and 'ojd diagnose'. */
 "cli.permission.group.namePostEvent" = "키보드 및 마우스 출력";
 /* Purpose column of the keyboard and mouse output permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -5427,12 +5419,12 @@
 "cli.setting.set.badIdleDisconnect" = "‘%1$@’은(는) 분 단위 숫자가 아닙니다. %2$@에서 %3$@ 사이의 정수 또는 off를 사용하세요.";
 /* Heading of the setup steps that the main window shows when the app starts with a step still open. */
 "ui.setupSteps.title" = "설정 마무리";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.inputRead" = "OpenJoystickDriver가 컨트롤러를 읽을 수 있도록 ‘입력 모니터링’을 허용하세요.";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.inputInject" = "OpenJoystickDriver가 컨트롤러를 게임에 게시할 수 있도록 ‘손쉬운 사용’을 허용하세요.";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.postEvent" = "OpenJoystickDriver가 키보드 및 포인터 이벤트를 보낼 수 있도록 ‘손쉬운 사용’을 허용하세요.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. %@ is the name of the Input Monitoring pane, as System Settings titles it. */
+"platform.macos.ui.setupSteps.inputRead" = "OpenJoystickDriver가 컨트롤러를 읽을 수 있도록 ‘%@’을 허용하세요.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. %@ is the name of the Accessibility pane, as System Settings titles it on the running macOS: Accessibility, or Device Control and Data Access from macOS 27. */
+"platform.macos.ui.setupSteps.inputInject" = "OpenJoystickDriver가 컨트롤러를 게임에 게시할 수 있도록 ‘%@’을 허용하세요.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. %@ is the name of the Accessibility pane, as System Settings titles it on the running macOS: Accessibility, or Device Control and Data Access from macOS 27. */
+"platform.macos.ui.setupSteps.postEvent" = "OpenJoystickDriver가 키보드 및 포인터 이벤트를 보낼 수 있도록 ‘%@’을 허용하세요.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "OpenJoystickDriver가 Switch 2 컨트롤러를 연결할 수 있도록 Bluetooth를 허용하세요.";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */

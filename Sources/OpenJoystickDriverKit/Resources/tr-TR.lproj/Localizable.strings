@@ -990,9 +990,9 @@
 "term.profileName" = "Profil Adı";
 /* Name of the permission for keyboard and pointer output in the Access area. */
 "term.keyboardPointer" = "Klavye ve İşaretçi";
-/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics before macOS 27. It is written as macOS names it in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu, the diagnostics and the output of 'ojd status' and 'ojd permission' before macOS 27. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Erişilebilirlik";
-/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu, the diagnostics and the output of 'ojd status' and 'ojd permission' on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
 "platform.macos.term.inputInjectMacOS27" = "Aygıt Denetimi ve Veri Erişimi";
 /* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.loginItems" = "Genel > Oturum Açma Öğeleri";
@@ -1036,7 +1036,7 @@
 "action.export" = "Dışa Aktar…";
 /* Result label of a failed check in the diagnostics list of the Activity area. */
 "status.failed" = "Başarısız";
-/* Name of the macOS Input Monitoring permission in the Access area. It is written as macOS names it in System Settings. */
+/* Name of the macOS Input Monitoring permission in the Access area and the output of 'ojd status' and 'ojd permission'. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputRead" = "Giriş İzleme";
 /* Value of a permission row in the Access area when the driver has not asked macOS for the permission yet. */
 "status.notRequested" = "İstenmedi";
@@ -2065,16 +2065,12 @@
 "cli.status.group.abstract" = "Servisi, eklentiyi, izinleri ve bağlı kontrolcüleri gösterir.";
 /* Long description in the help of 'ojd status'. It says that the command also works while the service is stopped. The exit status 0 stays as written. */
 "cli.status.group.discussion" = "Servis durdurulmuşken de çalışır: servisi durdurulmuş olarak bildirir ve 0 koduyla çıkar.";
-/* Row label in the output of 'ojd status' for the Accessibility permission. It is written as macOS names it. */
-"platform.macos.cli.status.group.labelInputInject" = "Erişilebilirlik";
 /* Row label in the output of 'ojd status'. The version of this command line tool follows. */
 "cli.status.group.labelCommandLineTool" = "Komut Satırı Aracı";
 /* Heading in the output of 'ojd status' above the list of connected controllers. %lld is the number of controllers. */
 "cli.status.group.labelControllers" = "Kontrolcüler (%lld)";
 /* Row label in the output of 'ojd status'. The state of the driver extension follows. */
 "cli.status.group.labelTransportExtension" = "Eklenti";
-/* Row label in the output of 'ojd status' for the Input Monitoring permission. It is written as macOS names it. */
-"platform.macos.cli.status.group.labelInputRead" = "Giriş İzleme";
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "Geçersiz Kılma Hatası";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
@@ -2419,12 +2415,8 @@
 "cli.permission.list.discussion" = "Durumlar granted, denied veya unknown olur. Servis durdurulmuşken durum bu işlemde okunur ve stderr’de bunu belirten bir not çıkar; çıkış kodu 0 kalır.";
 /* Note that 'ojd permission list' prints on the error stream when the service is stopped. The command in quotes stays as written. */
 "cli.permission.list.localState" = "Servis çalışmıyor, bu yüzden bu durumlar bu işlem tarafından okundu. Servisin gördüğü durum için “ojd service start” ile servisi başlatın.";
-/* Name of the Accessibility permission in the output of 'ojd permission list'. It is written as macOS names it. */
-"platform.macos.cli.permission.group.nameInputInject" = "Erişilebilirlik";
 /* Name of the permission for the approval of the driver extension, in the output of 'ojd permission list' and 'ojd diagnose'. */
 "cli.permission.group.nameUsbTransport" = "Xbox USB Sürücüsü Onayı";
-/* Name of the Input Monitoring permission in the output of 'ojd permission list'. It is written as macOS names it. */
-"platform.macos.cli.permission.group.nameInputRead" = "Giriş İzleme";
 /* Name of the permission to send keyboard and mouse events, in the output of 'ojd permission list' and 'ojd diagnose'. */
 "cli.permission.group.namePostEvent" = "Klavye ve fare çıkışı";
 /* Purpose column of the keyboard and mouse output permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -5427,12 +5419,12 @@
 "cli.setting.set.badIdleDisconnect" = "“%1$@” bir dakika sayısı değil. %2$@ ile %3$@ arasında bir tam sayı ya da off kullanın.";
 /* Heading of the setup steps that the main window shows when the app starts with a step still open. */
 "ui.setupSteps.title" = "Kurulumu tamamla";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.inputRead" = "OpenJoystickDriver’ın kontrolcülerinizi okuyabilmesi için “Giriş İzleme” iznini verin.";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.inputInject" = "OpenJoystickDriver’ın kontrolcüleri oyunlarınıza sunabilmesi için “Erişilebilirlik” iznini verin.";
-/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
-"platform.macos.ui.setupSteps.postEvent" = "OpenJoystickDriver’ın klavye ve işaretçi olayları gönderebilmesi için “Erişilebilirlik” iznini verin.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. %@ is the name of the Input Monitoring pane, as System Settings titles it. */
+"platform.macos.ui.setupSteps.inputRead" = "OpenJoystickDriver’ın kontrolcülerinizi okuyabilmesi için “%@” iznini verin.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. %@ is the name of the Accessibility pane, as System Settings titles it on the running macOS: Accessibility, or Device Control and Data Access from macOS 27. */
+"platform.macos.ui.setupSteps.inputInject" = "OpenJoystickDriver’ın kontrolcüleri oyunlarınıza sunabilmesi için “%@” iznini verin.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. %@ is the name of the Accessibility pane, as System Settings titles it on the running macOS: Accessibility, or Device Control and Data Access from macOS 27. */
+"platform.macos.ui.setupSteps.postEvent" = "OpenJoystickDriver’ın klavye ve işaretçi olayları gönderebilmesi için “%@” iznini verin.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "OpenJoystickDriver’ın Switch 2 kontrolcülerini bağlayabilmesi için Bluetooth iznini verin.";
 /* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */

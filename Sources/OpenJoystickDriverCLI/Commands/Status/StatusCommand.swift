@@ -217,13 +217,13 @@ struct StatusCommand: AsyncParsableCommand {
     if let permissions = report.permissions {
       rows.append(
         (
-          CLILocalized.text("platform.macos.cli.status.group.labelInputRead"),
+          CLILocalized.text("platform.macos.term.inputRead"),
           CommandLineName.kebab(permissions.inputRead.rawValue)
         )
       )
       rows.append(
         (
-          CLILocalized.text("platform.macos.cli.status.group.labelInputInject"),
+          CLILocalized.text(SystemSettingsPlace.accessibilityNameKey()),
           CommandLineName.kebab(permissions.inputInject.rawValue)
         )
       )

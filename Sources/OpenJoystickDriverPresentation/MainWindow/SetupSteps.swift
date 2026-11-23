@@ -19,6 +19,12 @@ struct SetupStep: Equatable, Identifiable {
   /// The localization key of the one button of the step.
   let buttonKey: String
 
+  /// The sentence of the step; a permission step's names the System Settings pane that holds it.
+  var sentence: String {
+    guard case .permission(let permission) = kind else { return OJDLocalized.string(sentenceKey) }
+    return OJDLocalized.formatted(sentenceKey, OJDLocalized.string(permission.paneNameKey))
+  }
+
   /// The identity of the step, which is its access.
   var id: String {
     switch kind {
@@ -136,4 +142,16 @@ struct SetupStepsGate: Equatable {
 
   /// Hides the steps for the rest of the run.
   mutating func dismiss() { dismissed = true }
+}
+
+extension AccessPermissionRow.Kind {
+  /// The localization key of the name of the System Settings pane that holds the permission, as
+  /// the running macOS titles it; Post Event is granted in the Accessibility pane.
+  fileprivate var paneNameKey: String {
+    switch self {
+    case .inputRead: return "platform.macos.term.inputRead"
+    case .inputInject, .postEvent: return SystemSettingsPlace.accessibilityNameKey()
+    case .notification: return "ui.settings.notifications.notifications"
+    }
+  }
 }

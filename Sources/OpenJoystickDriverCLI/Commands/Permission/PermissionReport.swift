@@ -39,8 +39,8 @@ enum PermissionID: String, CaseIterable, Sendable {
   /// The name in the user's language.
   var localizedName: String {
     switch self {
-    case .inputRead: CLILocalized.text("platform.macos.cli.permission.group.nameInputRead")
-    case .inputInject: CLILocalized.text("platform.macos.cli.permission.group.nameInputInject")
+    case .inputRead: CLILocalized.text("platform.macos.term.inputRead")
+    case .inputInject: CLILocalized.text(SystemSettingsPlace.accessibilityNameKey())
     case .usbTransport: CLILocalized.text("cli.permission.group.nameUsbTransport")
     case .postEvent: CLILocalized.text("cli.permission.group.namePostEvent")
     }
