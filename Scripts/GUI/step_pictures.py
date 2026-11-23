@@ -149,14 +149,14 @@ PICTURES: tuple[StepPicture, ...] = (
         "main-profiles.png",
         (
             Callout(
-                (1670, 88),
+                (1790, 88),
                 (1010, 170),
                 "Profile buttons, left to right",
                 (
                     "New profile for a controller",
                     "Import a profile file",
-                    "Check a file without importing it",
-                    "Copy, change model, save to file, delete",
+                    "Export the selected profile",
+                    "Delete the selected profile",
                 ),
             ),
         ),

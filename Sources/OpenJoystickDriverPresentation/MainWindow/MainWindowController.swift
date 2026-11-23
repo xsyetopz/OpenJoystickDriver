@@ -498,19 +498,23 @@
       perform(action)
     }
 
-    /// The toolbar actions that the selected area shows and that are enabled; the main menu enables
-    /// its commands for them.
+    /// The menu-run actions that the selected area offers and that are enabled; the main menu
+    /// enables its commands for them.
     var enabledToolbarActions: Set<MainWindowToolbarAction> {
-      Set(
-        shownToolbarActions(of: navigation.selectedArea).filter(isEnabled)
-      )
+      Set(shownCommandActions.filter(isEnabled))
     }
 
-    /// The toolbar actions that the selected area shows and that are disabled; the commands that
+    /// The menu-run actions that the selected area offers and that are disabled; the commands that
     /// work from any area wait for them.
     var disabledToolbarActions: Set<MainWindowToolbarAction> {
-      Set(
-        shownToolbarActions(of: navigation.selectedArea).filter { !isEnabled($0) }
+      Set(shownCommandActions.filter { !isEnabled($0) })
+    }
+
+    private var shownCommandActions: [MainWindowToolbarAction] {
+      navigation.selectedArea.commandActions(
+        activityMode: screens.activity.mode,
+        level: preferences.interfaceLevel,
+        developerToolsEnabled: preferences.developerToolsEnabled
       )
     }
 

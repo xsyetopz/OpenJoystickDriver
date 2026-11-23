@@ -46,9 +46,9 @@
 "action.removeAssignment" = "Удалить назначение";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
 "action.adjust" = "Настроить…";
-/* Toolbar button that creates a copy of the selected profile. */
+/* Profile menu item that creates a copy of the selected profile, and the title and confirm button of the Duplicate sheet. */
 "action.duplicate" = "Дублировать";
-/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+/* Profile menu item that converts the selected profile to another controller model, and the title and confirm button of the Convert sheet. */
 "action.convert" = "Преобразовать";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "Деактивировать";
@@ -654,7 +654,7 @@
 "ui.profiles.identifierHint" = "Введите число, например 1133, или шестнадцатеричное число с 0x в начале, например 0x046D.";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "Импортировать профиль";
-/* Toolbar button in the Profiles area that checks a profile file without importing it. */
+/* Profile menu item that checks a profile file without importing it, and the title of its Open panel. */
 "ui.profiles.validateFile" = "Проверить файл профиля";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "Допустимый профиль";
@@ -5677,11 +5677,11 @@
 "ui.help.requestMissingPermissions" = "Запросить недостающие разрешения в области «Доступ»";
 /* Tooltip of the Import Profile toolbar button. */
 "ui.help.importProfile" = "Добавить профиль из файла";
-/* Tooltip of the Validate Profile File toolbar button. */
+/* Tooltip of the Check Profile File item of the Profile menu. */
 "ui.help.validateProfileFile" = "Проверить файл профиля без импорта";
-/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+/* Tooltip of the Duplicate item of the Profile menu. */
 "ui.help.duplicateProfile" = "Создать копию выбранного профиля";
-/* Tooltip of the Convert toolbar button of the Profiles area. */
+/* Tooltip of the Convert item of the Profile menu. */
 "ui.help.convertProfile" = "Перевести выбранный профиль на другую модель контроллера";
 /* Tooltip of the Export Profile toolbar button. */
 "ui.help.exportProfile" = "Сохранить выбранный профиль в файл";

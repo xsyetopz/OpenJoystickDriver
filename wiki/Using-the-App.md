@@ -107,7 +107,7 @@ The **Advanced** section (needs All Controls) shows USB VID/PID, endpoints, **St
 
 ## Profiles Area
 
-![Profiles toolbar: create, import, check a file, more menu](../docs/screenshots/steps/profiles-toolbar.png)
+![Profiles toolbar: create, import, export, delete](../docs/screenshots/steps/profiles-toolbar.png)
 
 Select a profile to edit it: [Profiles](Remapping-Profiles.md).
 

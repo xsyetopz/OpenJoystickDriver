@@ -46,9 +46,9 @@
 "action.removeAssignment" = "असाइनमेंट हटाएँ";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
 "action.adjust" = "समायोजित करें…";
-/* Toolbar button that creates a copy of the selected profile. */
+/* Profile menu item that creates a copy of the selected profile, and the title and confirm button of the Duplicate sheet. */
 "action.duplicate" = "डुप्लिकेट करें";
-/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+/* Profile menu item that converts the selected profile to another controller model, and the title and confirm button of the Convert sheet. */
 "action.convert" = "रूपांतरित करें";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "निष्क्रिय करें";
@@ -654,7 +654,7 @@
 "ui.profiles.identifierHint" = "कोई संख्या लिखें, जैसे 1133, या 0x से शुरू होने वाली हेक्स संख्या, जैसे 0x046D।";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "प्रोफ़ाइल इंपोर्ट करें";
-/* Toolbar button in the Profiles area that checks a profile file without importing it. */
+/* Profile menu item that checks a profile file without importing it, and the title of its Open panel. */
 "ui.profiles.validateFile" = "प्रोफ़ाइल फ़ाइल जाँचें";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "मान्य प्रोफ़ाइल";
@@ -5677,11 +5677,11 @@
 "ui.help.requestMissingPermissions" = "पहुँच क्षेत्र में छूटी हुई अनुमतियाँ माँगें";
 /* Tooltip of the Import Profile toolbar button. */
 "ui.help.importProfile" = "फ़ाइल से प्रोफ़ाइल जोड़ें";
-/* Tooltip of the Validate Profile File toolbar button. */
+/* Tooltip of the Check Profile File item of the Profile menu. */
 "ui.help.validateProfileFile" = "प्रोफ़ाइल फ़ाइल को आयात किए बिना जाँचें";
-/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+/* Tooltip of the Duplicate item of the Profile menu. */
 "ui.help.duplicateProfile" = "चुनी हुई प्रोफ़ाइल की प्रतिलिपि बनाएँ";
-/* Tooltip of the Convert toolbar button of the Profiles area. */
+/* Tooltip of the Convert item of the Profile menu. */
 "ui.help.convertProfile" = "चुनी हुई प्रोफ़ाइल को दूसरे कंट्रोलर मॉडल में बदलें";
 /* Tooltip of the Export Profile toolbar button. */
 "ui.help.exportProfile" = "चुनी हुई प्रोफ़ाइल को फ़ाइल में सहेजें";

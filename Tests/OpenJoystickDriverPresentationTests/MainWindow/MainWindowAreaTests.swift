@@ -67,11 +67,25 @@ struct MainWindowAreaTests {
   }
 
   @Test
+  func profileMenuRunsTheActionsTheToolbarLeavesOut() {
+    let commands = MainWindowArea.profiles.commandActions(activityMode: .log)
+    #expect(
+      commands == [
+        .newProfile, .importProfile, .exportProfile, .deleteProfile, .duplicateProfile,
+        .convertProfile, .validateProfileFile,
+      ]
+    )
+    #expect(
+      MainWindowArea.library.commandActions(activityMode: .log)
+        == MainWindowArea.library.toolbarActions(activityMode: .log)
+    )
+  }
+
+  @Test
   func eachAreaShowsItsOwnActionsAfterFixedItems() {
     #expect(MainWindowArea.controllers.toolbarActions(activityMode: .log).isEmpty)
     let profileActions: [MainWindowToolbarAction] = [
-      .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
-      .exportProfile, .deleteProfile,
+      .newProfile, .importProfile, .exportProfile, .deleteProfile,
     ]
     #expect(MainWindowArea.profiles.toolbarActions(activityMode: .log) == profileActions)
     #expect(

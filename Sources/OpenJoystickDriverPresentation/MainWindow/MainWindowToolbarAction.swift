@@ -142,7 +142,7 @@ enum MainWindowToolbarAction: String, CaseIterable {
     }
   }
 
-  /// The area whose toolbar shows the action.
+  /// The area that offers the action, in its toolbar or its menu.
   var area: MainWindowArea {
     switch self {
     case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
@@ -216,11 +216,7 @@ extension MainWindowArea {
   func toolbarActions(activityMode: ActivityMode) -> [MainWindowToolbarAction] {
     switch self {
     case .controllers: return []
-    case .profiles:
-      return [
-        .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
-        .exportProfile, .deleteProfile,
-      ]
+    case .profiles: return [.newProfile, .importProfile, .exportProfile, .deleteProfile]
     case .library:
       return [
         .installLibraryItem, .validateLibraryItem, .testLibraryRecord, .removeLibraryItem,
@@ -236,6 +232,22 @@ extension MainWindowArea {
         ]
       case .diagnostics: return [.activityMode, .runDiagnostics]
       }
+    }
+  }
+
+  /// The actions of the area that the main menu runs: the toolbar actions, then the ones that only
+  /// the menu offers.
+  ///
+  /// Duplicate, Convert and Check Profile File stay in the Profile menu so the toolbar keeps to the
+  /// frequent commands, per the HIG's toolbar guidance.
+  func commandActions(activityMode: ActivityMode) -> [MainWindowToolbarAction] {
+    switch self {
+    case .profiles:
+      return toolbarActions(activityMode: activityMode) + [
+        .duplicateProfile, .convertProfile, .validateProfileFile,
+      ]
+    case .controllers, .library, .access, .activity:
+      return toolbarActions(activityMode: activityMode)
     }
   }
 

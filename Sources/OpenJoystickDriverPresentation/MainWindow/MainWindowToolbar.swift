@@ -29,6 +29,17 @@
         $0.interfaceRowLevel.isShown(at: level, developerToolsEnabled: developerToolsEnabled)
       }
     }
+
+    /// The menu-run actions of the area that show at `level`.
+    func commandActions(
+      activityMode: ActivityMode,
+      level: InterfaceLevel,
+      developerToolsEnabled: Bool
+    ) -> [MainWindowToolbarAction] {
+      commandActions(activityMode: activityMode).filter {
+        $0.interfaceRowLevel.isShown(at: level, developerToolsEnabled: developerToolsEnabled)
+      }
+    }
   }
 
   extension NSSearchToolbarItem {

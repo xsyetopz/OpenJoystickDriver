@@ -31,7 +31,7 @@ Press the button. The Mac acts as if you pressed the key.
 
 The toolbar above the profile list holds the other tools:
 
-![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, check a file, and a menu to copy, change model, save to file, or delete](../docs/screenshots/steps/profiles-toolbar.png)
+![The Profiles toolbar. A red arrow points to its buttons, and the box names them from left to right: new profile, import, export, and delete](../docs/screenshots/steps/profiles-toolbar.png)
 
 ## Make a Profile in Terminal
 

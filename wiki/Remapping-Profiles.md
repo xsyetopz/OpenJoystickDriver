@@ -54,7 +54,7 @@ Shown only in the **All Controls** interface.
 
 Connect the controller, then click **Profiles**.
 
-![Toolbar buttons: new profile, import, check a file, and a menu to copy, change model, save, or delete](../docs/screenshots/steps/profiles-toolbar.png)
+![Toolbar buttons: new profile, import, export, and delete](../docs/screenshots/steps/profiles-toolbar.png)
 
 ### Create a Profile in the App
 
@@ -104,7 +104,7 @@ ojd profile deactivate "My controller"
 | --- | --- | --- |
 | Save | Click **Save**. If another process changed the profile, click **Reload** or **Keep Editing**. | |
 | Rename, or change controller or scope | Click **Profile Details** (the pencil), change **Profile name**, **Vendor ID**, **Product ID**, or **Target**. For **One Application**, use **Add App**, **Other...**, or **Remove**. Click **Apply**, then **Save**. | `ojd profile rename PROFILE NEW-NAME` or `ojd profile edit PROFILE`. See [Profile file reference](Profile-File-Reference.md). |
-| Duplicate | Click **Duplicate** (copy: `NAME Copy`). | `ojd profile duplicate PROFILE NEW-NAME` |
+| Duplicate | Choose **Profile** > **Duplicate** (copy: `NAME Copy`). | `ojd profile duplicate PROFILE NEW-NAME` |
 | Delete | Click **Delete**, then confirm. | `ojd profile delete PROFILE` |
 
 ### Clear All Assignments

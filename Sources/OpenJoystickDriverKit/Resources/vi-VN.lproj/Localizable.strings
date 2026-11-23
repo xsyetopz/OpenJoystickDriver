@@ -46,9 +46,9 @@
 "action.removeAssignment" = "Xóa phép gán";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
 "action.adjust" = "Điều chỉnh…";
-/* Toolbar button that creates a copy of the selected profile. */
+/* Profile menu item that creates a copy of the selected profile, and the title and confirm button of the Duplicate sheet. */
 "action.duplicate" = "Nhân bản";
-/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+/* Profile menu item that converts the selected profile to another controller model, and the title and confirm button of the Convert sheet. */
 "action.convert" = "Chuyển đổi";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "Hủy kích hoạt";
@@ -654,7 +654,7 @@
 "ui.profiles.identifierHint" = "Nhập một số, như 1133, hoặc một số thập lục phân bắt đầu bằng 0x, như 0x046D.";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "Nhập cấu hình";
-/* Toolbar button in the Profiles area that checks a profile file without importing it. */
+/* Profile menu item that checks a profile file without importing it, and the title of its Open panel. */
 "ui.profiles.validateFile" = "Kiểm tra tệp cấu hình";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "Cấu hình hợp lệ";
@@ -5677,11 +5677,11 @@
 "ui.help.requestMissingPermissions" = "Yêu cầu các quyền còn thiếu trong khu vực Truy cập";
 /* Tooltip of the Import Profile toolbar button. */
 "ui.help.importProfile" = "Thêm hồ sơ từ một tệp";
-/* Tooltip of the Validate Profile File toolbar button. */
+/* Tooltip of the Check Profile File item of the Profile menu. */
 "ui.help.validateProfileFile" = "Kiểm tra tệp hồ sơ mà không nhập";
-/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+/* Tooltip of the Duplicate item of the Profile menu. */
 "ui.help.duplicateProfile" = "Tạo bản sao của hồ sơ đã chọn";
-/* Tooltip of the Convert toolbar button of the Profiles area. */
+/* Tooltip of the Convert item of the Profile menu. */
 "ui.help.convertProfile" = "Đổi hồ sơ đã chọn sang mẫu bộ điều khiển khác";
 /* Tooltip of the Export Profile toolbar button. */
 "ui.help.exportProfile" = "Lưu hồ sơ đã chọn vào một tệp";

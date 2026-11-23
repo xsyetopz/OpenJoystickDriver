@@ -46,9 +46,9 @@
 "action.removeAssignment" = "移除對應";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
 "action.adjust" = "調整…";
-/* Toolbar button that creates a copy of the selected profile. */
+/* Profile menu item that creates a copy of the selected profile, and the title and confirm button of the Duplicate sheet. */
 "action.duplicate" = "複製";
-/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+/* Profile menu item that converts the selected profile to another controller model, and the title and confirm button of the Convert sheet. */
 "action.convert" = "轉換";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "停用";
@@ -654,7 +654,7 @@
 "ui.profiles.identifierHint" = "輸入一個數字，例如 1133，或以 0x 開頭的十六進位數，例如 0x046D。";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "匯入設定檔";
-/* Toolbar button in the Profiles area that checks a profile file without importing it. */
+/* Profile menu item that checks a profile file without importing it, and the title of its Open panel. */
 "ui.profiles.validateFile" = "檢查設定檔";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "有效的設定檔";
@@ -5677,11 +5677,11 @@
 "ui.help.requestMissingPermissions" = "在「存取」區域要求缺少的權限";
 /* Tooltip of the Import Profile toolbar button. */
 "ui.help.importProfile" = "從檔案加入設定檔";
-/* Tooltip of the Validate Profile File toolbar button. */
+/* Tooltip of the Check Profile File item of the Profile menu. */
 "ui.help.validateProfileFile" = "檢查設定檔而不匯入";
-/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+/* Tooltip of the Duplicate item of the Profile menu. */
 "ui.help.duplicateProfile" = "建立所選設定檔的拷貝";
-/* Tooltip of the Convert toolbar button of the Profiles area. */
+/* Tooltip of the Convert item of the Profile menu. */
 "ui.help.convertProfile" = "將所選設定檔改為另一種控制器型號";
 /* Tooltip of the Export Profile toolbar button. */
 "ui.help.exportProfile" = "將所選設定檔儲存為檔案";

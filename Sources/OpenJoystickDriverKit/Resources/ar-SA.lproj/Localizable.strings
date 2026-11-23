@@ -46,9 +46,9 @@
 "action.removeAssignment" = "إزالة التعيين";
 /* Menu item of an assignment that opens the sheet to tune its analog values. Ends in an ellipsis because a sheet follows. */
 "action.adjust" = "ضبط…";
-/* Toolbar button that creates a copy of the selected profile. */
+/* Profile menu item that creates a copy of the selected profile, and the title and confirm button of the Duplicate sheet. */
 "action.duplicate" = "تكرار";
-/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+/* Profile menu item that converts the selected profile to another controller model, and the title and confirm button of the Convert sheet. */
 "action.convert" = "تحويل";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "إلغاء التنشيط";
@@ -654,7 +654,7 @@
 "ui.profiles.identifierHint" = "اكتب رقمًا، مثل 1133، أو رقمًا ست عشريًا يبدأ بـ 0x، مثل 0x046D.";
 /* Toolbar button in the Profiles area that imports a profile from a file. */
 "ui.profiles.import" = "استيراد ملف التعريف";
-/* Toolbar button in the Profiles area that checks a profile file without importing it. */
+/* Profile menu item that checks a profile file without importing it, and the title of its Open panel. */
 "ui.profiles.validateFile" = "فحص ملف التعريف";
 /* Title of the alert when the checked profile file is valid. */
 "ui.profiles.validTitle" = "ملف تعريف صالح";
@@ -5677,11 +5677,11 @@
 "ui.help.requestMissingPermissions" = "طلب الأذونات الناقصة في منطقة الوصول";
 /* Tooltip of the Import Profile toolbar button. */
 "ui.help.importProfile" = "إضافة ملف تعريف من ملف";
-/* Tooltip of the Validate Profile File toolbar button. */
+/* Tooltip of the Check Profile File item of the Profile menu. */
 "ui.help.validateProfileFile" = "فحص ملف تعريف دون استيراده";
-/* Tooltip of the Duplicate toolbar button of the Profiles area. */
+/* Tooltip of the Duplicate item of the Profile menu. */
 "ui.help.duplicateProfile" = "إنشاء نسخة من ملف التعريف المحدد";
-/* Tooltip of the Convert toolbar button of the Profiles area. */
+/* Tooltip of the Convert item of the Profile menu. */
 "ui.help.convertProfile" = "تغيير ملف التعريف المحدد إلى طراز وحدة تحكم آخر";
 /* Tooltip of the Export Profile toolbar button. */
 "ui.help.exportProfile" = "حفظ ملف التعريف المحدد في ملف";
