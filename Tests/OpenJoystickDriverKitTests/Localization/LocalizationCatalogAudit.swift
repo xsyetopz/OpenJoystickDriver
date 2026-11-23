@@ -34,7 +34,7 @@ enum LocalizationCatalogAudit {
 
   private static let spanishTerms: Set<String> = [
     "ui.developer.packetColumnBytes", "ui.inputTest.color", "term.key.control",
-    "ui.profiles.controlNumber",
+    "ui.activity.log.error", "ui.profiles.controlNumber",
     "ui.profiles.motion.local",
     "ui.profiles.physical.motor", "ui.profiles.stick.horizontal", "ui.profiles.stick.vertical",
     "ui.profiles.trackball.enabled", "ui.profiles.turbo",

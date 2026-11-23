@@ -54,6 +54,16 @@
       }
     }
 
+    /// The localization key of the accessible name of a warning or error line, or `nil` for an
+    /// information line, which needs no name before its text.
+    var accessibilityNameKey: String? {
+      switch self {
+      case .info: return nil
+      case .warning: return "ui.activity.log.warning"
+      case .error: return "ui.activity.log.error"
+      }
+    }
+
     /// The SF Symbol before the line, or `nil` for none.
     var symbolName: String? {
       switch self {

@@ -17,23 +17,27 @@
       content
     }
 
-    /// The line's text; a warning is orange with a triangle and an error red with an octagon.
+    /// The line's text; a warning is orange with a triangle and an error red with an octagon, and
+    /// each is named Warning or Error, with the text as its value.
     @ViewBuilder
     private func messageText(_ row: ActivityLogEntry) -> some View {
       let text = Text(row.text).font(.system(.body, design: .monospaced)).textSelection(.enabled)
       let severity = row.severity
-      if let tone = severity.tone, let symbolName = severity.symbolName {
+      if let tone = severity.tone, let symbolName = severity.symbolName,
+        let nameKey = severity.accessibilityNameKey
+      {
         HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
           Image(systemName: symbolName).accessibilityHidden(true)
           text
-        }.foregroundStyle(Color(tone.color)).accessibilityElement(children: .combine)
-          .ojdAccessibilityLabel(OJDLocalized.string("ui.console.errors") + ": " + row.text)
+        }.foregroundStyle(Color(tone.color)).accessibilityElement(children: .ignore)
+          .ojdAccessibilityLabel(OJDLocalized.string(nameKey)).ojdAccessibilityValue(row.text)
       } else {
         text
       }
     }
 
-    /// The load failure with a retry button, a note for no lines, or the table.
+    /// The load failure with a retry button, a note for no lines, or the table, whose one column
+    /// needs no header.
     @ViewBuilder
     private var content: some View {
       if let failure = model.loadFailure {
@@ -51,7 +55,19 @@
           TableColumn(OJDLocalized.string("ui.activity.column.message")) { row in
             messageText(row)
           }
-        }
+        }.ojdHiddenColumnHeaders()
+      }
+    }
+  }
+
+  extension View {
+    /// Hides a table's column headers where macOS offers it, from macOS 14; macOS 13 shows them.
+    @ViewBuilder
+    fileprivate func ojdHiddenColumnHeaders() -> some View {
+      if #available(macOS 14.0, *) {
+        tableColumnHeaders(.hidden)
+      } else {
+        self
       }
     }
   }

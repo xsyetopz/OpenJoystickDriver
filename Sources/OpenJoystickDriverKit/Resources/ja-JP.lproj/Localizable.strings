@@ -4886,6 +4886,10 @@
 "ui.activity.runChecks" = "チェックを実行";
 /* Column title of the Activity log table. The column holds the text of an entry. */
 "ui.activity.column.message" = "メッセージ";
+/* Accessible name of a warning line in the log of the Activity area; the line's text follows as its value. */
+"ui.activity.log.warning" = "警告";
+/* Accessible name of an error line in the log of the Activity area; the line's text follows as its value. */
+"ui.activity.log.error" = "エラー";
 /* Column title of the diagnostics table in the Activity area. The column names the check. */
 "ui.activity.column.check" = "チェック";
 /* Column title of the diagnostics table in the Activity area. The column holds the details of the result. */

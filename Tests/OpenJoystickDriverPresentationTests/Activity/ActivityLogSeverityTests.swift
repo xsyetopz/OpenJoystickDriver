@@ -43,4 +43,13 @@ struct ActivityLogSeverityTests {
     #expect(ActivityLogSeverity.warning.tone != ActivityLogSeverity.error.tone)
     #expect(ActivityLogSeverity.warning.symbolName != ActivityLogSeverity.error.symbolName)
   }
+
+  @Test
+  func eachMarkedLineIsNamedByItsOwnSeverity() {
+    #expect(ActivityLogSeverity.info.accessibilityNameKey == nil)
+    #expect(
+      ActivityLogSeverity.warning.accessibilityNameKey.map(OJDLocalized.string) == "Warning"
+    )
+    #expect(ActivityLogSeverity.error.accessibilityNameKey.map(OJDLocalized.string) == "Error")
+  }
 }
