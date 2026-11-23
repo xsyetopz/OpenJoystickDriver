@@ -12,9 +12,10 @@
     /// The state of the developer tools.
     @ObservedObject
     var model: DeveloperToolsViewModel
-    /// The Controller details section: the controller picker and Refresh.
+    /// The section of the controller picker and Refresh, with no heading because the picker's
+    /// label already names it Controller.
     var body: some View {
-      Section(OJDLocalized.string("ui.developer.controllerDetails")) {
+      Section {
         Picker(
           OJDLocalized.string("ui.developer.controller"),
           selection: Binding(
