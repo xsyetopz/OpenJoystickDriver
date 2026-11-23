@@ -102,7 +102,37 @@ enum CLIOutput {
       capture.append(text, toStandardError: handle === FileHandle.standardError)
       return
     }
-    handle.write(Data(text.utf8))
+    guard let failure = send(Data(text.utf8), to: handle) else { return }
+    stop(afterWriteFailure: failure)
+  }
+
+  /// Writes `data` to `handle` and returns the error number of a failed write, or nil.
+  ///
+  /// `FileHandle.write(_:)` raises an Objective-C exception on a failed write, which ends the
+  /// process with SIGTRAP and a crash report, as when stdout is closed or the reader of a pipe
+  /// quits; `write(contentsOf:)` throws instead.
+  static func send(_ data: Data, to handle: FileHandle) -> Int32? {
+    do {
+      try handle.write(contentsOf: data)
+      return nil
+    } catch {
+      let failure = error as NSError
+      let underlying = failure.userInfo[NSUnderlyingErrorKey] as? NSError
+      let errors = [failure] + [underlying].compactMap { $0 }
+      let posix = errors.first { $0.domain == NSPOSIXErrorDomain }
+      return posix.map { Int32($0.code) } ?? EIO
+    }
+  }
+
+  /// Ends `ojd` after its output failed with `errorNumber`: a pipe whose reader quit ends it by
+  /// SIGPIPE, as a shell expects of `ojd status | head`, and any other failure exits with
+  /// `EX_IOERR`.
+  private static func stop(afterWriteFailure errorNumber: Int32) -> Never {
+    if errorNumber == EPIPE {
+      signal(SIGPIPE, SIG_DFL)
+      raise(SIGPIPE)
+    }
+    exit(EX_IOERR)
   }
 }
 
