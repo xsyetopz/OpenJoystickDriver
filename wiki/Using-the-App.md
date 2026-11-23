@@ -74,7 +74,7 @@ A banner appears when something stops OJD, such as a missing permission or the [
 
 Select a controller to see its profile, programs using it, battery, charging, and cable state. Missing? See [If a Controller Isn't Detected](Troubleshooting.md#if-a-controller-isnt-detected).
 
-**All Controls** adds **Shown to games**, **Path to games**, the protocol, and the serial number (eye button). Other rows:
+**All Controls** adds **Shown to games**, **Path to games**, the protocol, and the serial number (eye button). A controller with a **Handled by** switch leaves out **Path to games**, and leaves out **Shown to games** while macOS handles it, because the switch says who handles it. Other rows:
 
 - **Who can use it**: only OJD can. **Suspend** lets another app use it.
 - **Suspended**: OJD let go. **Resume** takes it back.

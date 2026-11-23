@@ -126,11 +126,16 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("ui.controllers.paused.value"))
         )
       ] : []
-    let always = [
-      fact(.publication, "cli.controller.show.labelPublication", publication(device)),
-      fact(.serving, "ui.controllers.serving.label", .text(device.servingRouteLabel)),
-      fact(.serialNumber, "term.serialNumber", serialNumber(device)),
-    ]
+    // The Handled by picker already names who serves the controller, so its route and a "not
+    // shown because macOS serves it" publication would repeat the picker's selection.
+    let pickerShown = ServingPolicy.offersServerChoice(ServingInput(device))
+    let route =
+      pickerShown
+      ? [] : [fact(.serving, "ui.controllers.serving.label", .text(device.servingRouteLabel))]
+    let shown =
+      pickerShown && publicationRepeatsSystemServer(device.publication)
+      ? [] : [fact(.publication, "cli.controller.show.labelPublication", publication(device))]
+    let always = shown + route + [fact(.serialNumber, "term.serialNumber", serialNumber(device))]
     // A controller that another client holds runs no input session, so it has no input health.
     let input =
       device.hidInputOwnership == .ownedByAnotherClient
@@ -312,6 +317,17 @@ enum ControllerDetailFacts {
     return device.publication.map {
       .text(publicationText($0, omittingNoInputYet: inputRowSaysWaiting))
     } ?? .none
+  }
+
+  /// Returns whether the publication only says that macOS serves the controller itself.
+  ///
+  /// - Parameter publication: The publication status the service reported, if any.
+  /// - Returns: Whether the publication only says that macOS serves the controller itself.
+  static func publicationRepeatsSystemServer(
+    _ publication: ApplicationServicePublicationStatus?
+  ) -> Bool {
+    guard let publication, publication.state == .notPublished else { return false }
+    return publication.reason == .systemGamepad || publication.reason == .nativeHIDPassThrough
   }
 
   /// Returns the input health state, with its failure reason when it has one.
