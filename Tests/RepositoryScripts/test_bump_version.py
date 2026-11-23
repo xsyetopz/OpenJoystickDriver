@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import plistlib
 import tempfile
 import unittest
@@ -24,6 +25,13 @@ class BumpVersionTests(unittest.TestCase):
         (root / INFO_PLIST).write_bytes(
             plistlib.dumps({"CFBundleShortVersionString": "0.5.0-beta.4"})
         )
+        for manifest in bump_version.PLUGIN_MANIFESTS:
+            (root / manifest).parent.mkdir(parents=True)
+            (root / manifest).write_text(
+                json.dumps(
+                    {"name": "openjoystickdriver", "version": "0.5.0-beta.4"}, indent=2
+                )
+            )
         return root
 
     def run_bump(self, root: Path, version: str) -> int:
@@ -47,6 +55,22 @@ class BumpVersionTests(unittest.TestCase):
 
         self.assertEqual(self.run_bump(root, "0.5.0-beta.5"), 0)
         self.assertEqual(self.short_version(root), "0.5.0-beta.5")
+
+    def test_sets_each_agent_plugin_version(self) -> None:
+        root = self.make_root()
+
+        self.assertEqual(self.run_bump(root, "prerelease"), 0)
+        for manifest in bump_version.PLUGIN_MANIFESTS:
+            with self.subTest(manifest=str(manifest)):
+                document = json.loads((root / manifest).read_text())
+                self.assertEqual(document["version"], "0.5.0-beta.5")
+
+    def test_refuses_a_missing_agent_plugin_manifest(self) -> None:
+        root = self.make_root()
+        (root / bump_version.PLUGIN_MANIFESTS[0]).unlink()
+
+        self.assertEqual(self.run_bump(root, "0.5.0-beta.5"), 2)
+        self.assertEqual(self.short_version(root), "0.5.0-beta.4")
 
     def test_bumps_each_semver_part_from_the_current_version(self) -> None:
         cases = {

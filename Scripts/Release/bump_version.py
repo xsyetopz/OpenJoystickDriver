@@ -8,6 +8,12 @@ from typing import NoReturn
 from .bundle_version import RELEASE_TAG, release_version
 
 ROOT = Path(__file__).resolve().parents[2]
+# Agent plugin manifests carry the app version, so an installed plugin names the release it documents.
+PLUGIN_MANIFESTS = (
+    Path("plugins/claude/openjoystickdriver/.claude-plugin/plugin.json"),
+    Path("plugins/codex/openjoystickdriver/plugin.json"),
+)
+PLUGIN_VERSION = re.compile(r'("version": ")([^"]+)(")')
 
 
 def die(message: str) -> NoReturn:
@@ -83,21 +89,29 @@ def main(argv: list[str]) -> int:
         else argv[0]
     )
     release_version(version)
+    targets = [(app_info, app_pattern, "canonical app/package short version")]
+    for manifest in PLUGIN_MANIFESTS:
+        if not (ROOT / manifest).is_file():
+            die(f"Missing {ROOT / manifest}")
+        targets.append((ROOT / manifest, PLUGIN_VERSION, "agent plugin version"))
     try:
-        app_updated = replace_once(
-            app_info,
-            app_pattern,
-            rf"\g<1>{version}\g<3>",
-            "canonical app/package short version",
-        )
+        updates = [
+            (
+                path,
+                path.read_text(),
+                replace_once(path, pattern, rf"\g<1>{version}\g<3>", what),
+            )
+            for path, pattern, what in targets
+        ]
     except MissingReference as error:
         print(f"missing expected version reference: {error}", file=sys.stderr)
         return 1
 
-    if app_updated != app_original:
-        app_info.write_text(app_updated)
-        print(f"updated {app_info}")
-    else:
+    changed = [(path, text) for path, original, text in updates if text != original]
+    for path, text in changed:
+        path.write_text(text)
+        print(f"updated {path}")
+    if not changed:
         print("version references already up to date")
     print(f"Version set to {version}")
     return 0
