@@ -21,20 +21,26 @@ Goal: give a controller's mode a `session.rumble` template that moves its motors
 ## Procedure
 
 1. Read [references/rumble-template.md](references/rumble-template.md).
-2. Run `ojd record show VVVV:PPPP`. A record exists: write a patch (`writing-ojd-controller-patches`). No record: add the template to the user's record.
-3. Fill `session.rumble` in the mode:
+2. Hand-test the bytes before writing any file. Show the user the bytes and their source; continue only after the user agrees.
+   - Ask the user to run `ojd controller capture CONTROLLER` in a second terminal.
+   - Run `ojd controller send CONTROLLER "MOTOR REPORT"`, then one `send` per follow-up report. Each is the whole report in hex. A numbered report starts with its ID; add `--report-id N`. A feature report takes `--feature`.
+   - Run `send` again at once with the stop report, or the motor report with zero motor bytes. `send` never stops the motors.
+   - DragonRise `0079:0006`: `"51 00 C8 00 C8 00 00"`, `"FA FE 00 00 00 00 00"`, then `"F3 00 00 00 00 00 00"`.
+   - Ask the user what they felt. Keep the bytes that moved a motor.
+3. Run `ojd record show VVVV:PPPP`. A record exists: write a patch (`writing-ojd-controller-patches`). No record: add the template to the user's record.
+4. Fill `session.rumble` in the mode:
    - `report`: `kind`, `id`, `length` from the source.
    - `lowFrequency`: strong, left motor (`--left`). `highFrequency`: weak, right motor (`--right`). Trigger motors: `leftTrigger`, `rightTrigger`.
    - `bytes`: the fixed bytes, such as a command byte.
    - `followUp`: only if the pad needs a commit report after each motor report.
    - `stop`: only if a motor report of zeros does not stop the pad.
    - `resendIntervalMilliseconds`: only if the pad stops on its own after a timeout.
-4. Run `ojd record validate FILE`. Fix the key path of each E5007 message and repeat.
-5. Run `ojd record install FILE`. Ask the user to reconnect the pad if it was connected.
-6. Ask the user to run `ojd controller capture CONTROLLER` in a second terminal.
-7. Run `ojd controller rumble CONTROLLER --left 200 --right 200`.
-8. Check the capture: one `Tx` motor report, then one `Tx` per `followUp` report, then the `stop` report after the duration (0.45 seconds by default, `--duration` at most 5).
-9. Ask the user what they felt. Run `--left 200 --right 0`, then `--left 0 --right 200`, to match each motor to its byte.
+5. Run `ojd record validate FILE`. Fix the key path of each E5007 message and repeat.
+6. Run `ojd record install FILE`. Ask the user to reconnect the pad if it was connected.
+7. Ask the user to run `ojd controller capture CONTROLLER` in a second terminal.
+8. Run `ojd controller rumble CONTROLLER --left 200 --right 200`.
+9. Check the capture: one `Tx` motor report, then one `Tx` per `followUp` report, then the `stop` report after the duration (0.45 seconds by default, `--duration` at most 5).
+10. Ask the user what they felt. Run `--left 200 --right 0`, then `--left 0 --right 200`, to match each motor to its byte.
 
 ## Result Table
 

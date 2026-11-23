@@ -26,6 +26,20 @@ Rumble bytes need a source, never a guess: a vendor report that merely looks rig
 
 Cite the source of each byte. With no source, stop and ask the user for a capture.
 
+## Hand Test
+
+`ojd controller send` writes one whole report with no record change. Show the bytes and their source, and send only after the user agrees.
+
+```text
+- [ ] second terminal: ojd controller capture CONTROLLER
+- [ ] ojd controller send CONTROLLER "MOTOR REPORT"; then each follow-up report
+      numbered report: first byte is the ID, add --report-id N; feature report: --feature
+- [ ] send the stop report (or zeroed motor bytes) at once; send never stops motors
+- [ ] user reports what they felt; keep the working bytes for the template
+```
+
+DragonRise `0079:0006`: `"51 00 C8 00 C8 00 00"`, `"FA FE 00 00 00 00 00"`, then `"F3 00 00 00 00 00 00"`.
+
 ## Template
 
 Keys, limits, E5007 messages, and the DragonRise `0079:0006` worked example: [references/rumble-template.md](references/rumble-template.md).

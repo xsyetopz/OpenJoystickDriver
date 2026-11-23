@@ -22,6 +22,23 @@ Rumble bytes come from evidence, never a guess. In order of strength:
 
 Note for each fact where it came from. When no source gives the bytes, stop and ask the user for a capture.
 
+## Try the Bytes by Hand
+
+`ojd controller send` writes one report with no record change, so a candidate report is felt before any template exists. Show the user the bytes and their source, and send them only after the user agrees.
+
+1. In a second terminal: `ojd controller capture CONTROLLER`.
+2. Send the motor report, then each follow-up report, each as the whole report in hex. A numbered report starts with its ID; add `--report-id N` with that ID. Add `--feature` for a feature report.
+3. Send the stop report, or the motor report with zero motor bytes, right away: `ojd controller send` never stops the motors itself.
+4. Ask the user what they felt, and keep the bytes that worked for the template.
+
+For the DragonRise `0079:0006` in [references/rumble-template.md](references/rumble-template.md), motors, commit, and stop:
+
+```sh
+ojd controller send 0079:0006 "51 00 C8 00 C8 00 00"
+ojd controller send 0079:0006 "FA FE 00 00 00 00 00"
+ojd controller send 0079:0006 "F3 00 00 00 00 00 00"
+```
+
 ## Write the Template
 
 Add `session.rumble` to the mode, in a patch for a bundled model or in the user's own record. Every key and limit is in [references/rumble-template.md](references/rumble-template.md).
