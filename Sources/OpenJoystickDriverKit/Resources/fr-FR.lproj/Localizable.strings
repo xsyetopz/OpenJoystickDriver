@@ -4573,8 +4573,8 @@
 "a11y.access.tryAgain" = "Relire les réglages d’accès";
 /* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "Redémarrer l’app pour appliquer les nouvelles autorisations";
-/* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
-"a11y.access.webPort" = "Port du WebSocket ; laissez vide pour conserver le port enregistré. Le système ne choisit un port que si aucun n’est enregistré ou si Automatique est choisi";
+/* VoiceOver hint of the Port field in the Access area, read after its name Port. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
+"a11y.access.webPort" = "Laissez vide pour conserver le port enregistré. Le système ne choisit un port que si aucun n’est enregistré ou si Automatique est choisi.";
 /* VoiceOver label of the toolbar button that opens a file chooser to grant access to a program. */
 "a11y.access.grantProgram" = "Accorder l’accès à un programme que vous choisissez";
 /* VoiceOver label of the button in the list of refused clients that grants access to the client. %@ is the identifier of the client, which stays as written. */

@@ -3969,8 +3969,8 @@
 "a11y.access.tryAgain" = "접근 설정 다시 읽기";
 /* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "새 권한이 적용되도록 앱 재시작";
-/* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
-"a11y.access.webPort" = "WebSocket 포트. 저장된 포트를 유지하려면 비워 두세요. 시스템은 저장된 포트가 없거나 자동을 선택한 경우에만 포트를 선택합니다";
+/* VoiceOver hint of the Port field in the Access area, read after its name Port. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
+"a11y.access.webPort" = "저장된 포트를 유지하려면 비워 두세요. 시스템은 저장된 포트가 없거나 자동을 선택한 경우에만 포트를 선택합니다.";
 /* VoiceOver label of the toolbar button that opens a file chooser to grant access to a program. */
 "a11y.access.grantProgram" = "선택한 프로그램에 접근 허용";
 /* VoiceOver label of the button in the list of refused clients that grants access to the client. %@ is the identifier of the client, which stays as written. */

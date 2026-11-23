@@ -260,7 +260,7 @@
           }
           portField.labelsHidden().textFieldStyle(RoundedBorderTextFieldStyle())
             .multilineTextAlignment(.trailing).frame(width: 120)
-            .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.webPort"))
+            .accessibilityHint(Text(OJDLocalized.string("a11y.access.webPort")))
         }
       }
     }

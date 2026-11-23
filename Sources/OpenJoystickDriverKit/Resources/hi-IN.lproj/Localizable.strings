@@ -3969,8 +3969,8 @@
 "a11y.access.tryAgain" = "ऐक्सेस सेटिंग्स फिर से पढ़ें";
 /* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "नई अनुमतियाँ लागू करने के लिए ऐप फिर से शुरू करें";
-/* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
-"a11y.access.webPort" = "WebSocket पोर्ट; सहेजा गया पोर्ट रखने के लिए खाली छोड़ें। सिस्टम पोर्ट तभी चुनता है जब कोई पोर्ट सहेजा न गया हो या स्वचालित चुना गया हो";
+/* VoiceOver hint of the Port field in the Access area, read after its name Port. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
+"a11y.access.webPort" = "सहेजा गया पोर्ट रखने के लिए खाली छोड़ें। सिस्टम पोर्ट तभी चुनता है जब कोई पोर्ट सहेजा न गया हो या स्वचालित चुना गया हो।";
 /* VoiceOver label of the toolbar button that opens a file chooser to grant access to a program. */
 "a11y.access.grantProgram" = "आपके चुने प्रोग्राम को ऐक्सेस दें";
 /* VoiceOver label of the button in the list of refused clients that grants access to the client. %@ is the identifier of the client, which stays as written. */

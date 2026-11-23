@@ -3969,8 +3969,8 @@
 "a11y.access.tryAgain" = "قراءة إعدادات الوصول مرة أخرى";
 /* Tooltip of the button in the Access area that restarts the app so that newly granted permissions take effect. */
 "a11y.access.restart" = "إعادة تشغيل التطبيق لتسري الأذونات الجديدة";
-/* VoiceOver label of the WebSocket port field in the Access area. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
-"a11y.access.webPort" = "منفذ WebSocket؛ اتركه فارغًا للاحتفاظ بالمنفذ المحفوظ. يختار النظام منفذًا فقط عندما لا يوجد منفذ محفوظ أو عند اختيار تلقائي";
+/* VoiceOver hint of the Port field in the Access area, read after its name Port. An empty field keeps the saved port; the system chooses a port only when none is saved or Automatic is selected. */
+"a11y.access.webPort" = "اتركه فارغًا للاحتفاظ بالمنفذ المحفوظ. يختار النظام منفذًا فقط عندما لا يوجد منفذ محفوظ أو عند اختيار تلقائي.";
 /* VoiceOver label of the toolbar button that opens a file chooser to grant access to a program. */
 "a11y.access.grantProgram" = "منح الوصول لبرنامج تختاره";
 /* VoiceOver label of the button in the list of refused clients that grants access to the client. %@ is the identifier of the client, which stays as written. */
