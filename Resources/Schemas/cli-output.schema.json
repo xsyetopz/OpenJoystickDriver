@@ -4414,7 +4414,7 @@
           "else": {
             "required": ["target"]
           },
-          "description": "The state of the command-line tool link that the app installs.",
+          "description": "The command-line tool link the app installs, or, when it is missing, a link to the app in a PATH folder.",
           "type": "object",
           "required": ["path", "state"],
           "additionalProperties": false,

@@ -29,7 +29,7 @@ struct StatusCommand: AsyncParsableCommand {
   /// Reads the command-line tool link; tests point it at a folder they own.
   @TaskLocal
   static var linkProbe: @Sendable () -> CommandLineToolLinkStatus = {
-    CommandLineToolLinkStatus.probe()
+    CommandLineToolLinkStatus.locate()
   }
 
   /// The global options.

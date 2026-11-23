@@ -24,9 +24,11 @@ struct StatusCommandLinkTests {
     func remove() { try? FileManager.default.removeItem(at: url) }
   }
 
+  /// Runs `ojd status` reading `link`, then `searchPath` when nothing is at `link`.
   private func runStatus(
     _ arguments: [String],
     link: String,
+    searchPath: String = "",
     executable: String
   ) async -> CLIRun {
     let records = URL(fileURLWithPath: "/nonexistent-\(UUID().uuidString)")
@@ -37,8 +39,9 @@ struct StatusCommandLinkTests {
           operation: {
             await StatusCommand.$linkProbe.withValue(
               {
-                CommandLineToolLinkStatus.probe(
+                CommandLineToolLinkStatus.locate(
                   path: link,
+                  searchPath: searchPath,
                   executable: URL(fileURLWithPath: executable)
                 )
               },
@@ -137,6 +140,55 @@ struct StatusCommandLinkTests {
 
     #expect(report["state"] as? String == "Installed")
     #expect(report["target"] as? String == "OpenJoystickDriver")
+  }
+
+  @Test
+  func linkOnSearchPathIsInstalledWhenDefaultLinkIsMissing() async throws {
+    let folder = try Folder()
+    defer { folder.remove() }
+    let bin = folder.url.appendingPathComponent("bin", isDirectory: true)
+    try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+    let onPath = bin.appendingPathComponent("ojd").path
+    try FileManager.default.createSymbolicLink(atPath: onPath, withDestinationPath: folder.app)
+
+    let report = try tool(
+      await runStatus(
+        ["--json"],
+        link: folder.link,
+        searchPath: "/nonexistent-\(UUID().uuidString):\(bin.path)",
+        executable: folder.app
+      )
+    )
+
+    #expect(report["state"] as? String == "Installed")
+    #expect(report["path"] as? String == onPath)
+    #expect(report["target"] as? String == folder.app)
+  }
+
+  @Test
+  func linkOnSearchPathToAnotherFileLeavesDefaultMissing() async throws {
+    let folder = try Folder()
+    defer { folder.remove() }
+    let bin = folder.url.appendingPathComponent("bin", isDirectory: true)
+    try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+    let other = folder.url.appendingPathComponent("Other").path
+    try Data().write(to: URL(fileURLWithPath: other))
+    try FileManager.default.createSymbolicLink(
+      atPath: bin.appendingPathComponent("ojd").path,
+      withDestinationPath: other
+    )
+
+    let report = try tool(
+      await runStatus(
+        ["--json"],
+        link: folder.link,
+        searchPath: bin.path,
+        executable: folder.app
+      )
+    )
+
+    #expect(report["state"] as? String == "Missing")
+    #expect(report["path"] as? String == folder.link)
   }
 
   @Test

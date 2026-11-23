@@ -64,7 +64,7 @@ The app shows `E2034` at once with a **Restart Listener** action, and deletes th
 
 `ojd status` prints an Input mapping row for each HID controller and unbound device, as `controller show` does. `--plain` prints an `input-mapping` line after each.
 
-Keys that need the service are absent when it is stopped. `commandLineTool.state` is one of:
+Keys that need the service are absent when it is stopped. `commandLineTool.path` is `/usr/local/bin/ojd`, the link the app installs. When nothing is there, it is the first `ojd` link in a `PATH` folder, such as `/opt/homebrew/bin`, that points to this app's executable. `commandLineTool.state` is one of:
 
 - `Installed`: a link to this app's executable.
 - `LinkedElsewhere`: a link to another file that exists, such as another copy of the app.

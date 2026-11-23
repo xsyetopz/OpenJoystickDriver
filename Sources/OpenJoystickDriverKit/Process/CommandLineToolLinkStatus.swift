@@ -63,4 +63,31 @@ public struct CommandLineToolLinkStatus: Equatable, Sendable {
     let ours = linkURL.path == executable.resolvingSymlinksInPath().path
     return Self(state: ours ? .installed : .linkedElsewhere, path: path, target: destination)
   }
+
+  /// Reads `path`, and when nothing is there, the first `ojd` link in `searchPath` that points to
+  /// `executable`.
+  ///
+  /// A user or package manager can link `ojd` from another `PATH` folder, such as
+  /// `/opt/homebrew/bin`, on a Mac with no `/usr/local/bin`; that link runs this app as `ojd` too.
+  /// - Parameters:
+  ///   - path: The link the app installs.
+  ///   - searchPath: Colon-separated folders, as in the `PATH` environment variable.
+  ///   - executable: The app executable a link must point to.
+  /// - Returns: The installed link found on `searchPath`, or else the status of `path`.
+  public static func locate(
+    path: String = defaultPath,
+    searchPath: String = ProcessInfo.processInfo.environment["PATH"] ?? "",
+    executable: URL = currentExecutable
+  ) -> Self {
+    let status = probe(path: path, executable: executable)
+    guard status.state == .missing else { return status }
+    let name = URL(fileURLWithPath: path).lastPathComponent
+    for folder in searchPath.split(separator: ":") where !folder.isEmpty {
+      let candidate = URL(fileURLWithPath: String(folder)).appendingPathComponent(name).path
+      guard candidate != path else { continue }
+      let found = probe(path: candidate, executable: executable)
+      if found.state == .installed { return found }
+    }
+    return status
+  }
 }
