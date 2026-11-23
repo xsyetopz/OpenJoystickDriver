@@ -126,6 +126,10 @@ See [the kind setting](Using-the-App.md#virtual-gamepad-kind).
 
 Yes, with the default [kind](Glossary.md#terms). The maintainer saw every control and rumble work on macOS 27 ([details](Playing-Games.md#game-and-app-compatibility)).
 
+Steam and OJD can't both read a USB pad: whichever starts first holds it. Start OJD first and it keeps the pad while Steam runs. Start Steam first and `ojd status` lists the pad under unsupported devices as `device-in-use`, **Used by** `steam_osx`; OJD serves it again as soon as Steam quits. The maintainer saw both orders with a Razer Wolverine Tournament Edition and an 8BitDo Ultimate 2C on macOS 27. Whether turning off Steam Input stops Steam from taking the pad is untested. ([details](Known-Issues.md#another-app-reads-a-usb-controller-directly))
+
+To give one game its own SDL options, set a [launch setting](Playing-Games.md#launch-settings-per-app) and put `ojd virtual launch -- %command%` \1 Starting a game from Steam this way is untested.
+
 ### Does Rumble Work in Games?
 
 It should, with motors and the default gamepad, but it's untested on real hardware. Game lighting doesn't reach the controller ([details](Playing-Games.md#rumble-and-lighting)).

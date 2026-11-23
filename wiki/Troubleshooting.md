@@ -94,6 +94,8 @@ Steam ignores buttons missing from its own map, even if OJD sends them (seen wit
 
 To compare Steam's map with OJD's, run `ojd virtual export-mapping generic`.
 
+If Steam shows the controller as **Used by** Steam in `ojd status`, see [Another App Reads a USB Controller Directly](Known-Issues.md#another-app-reads-a-usb-controller-directly).
+
 ### Try a Different Controller Mode
 
 With a Switch Pro mode switch, macOS reads the controller itself and OJD adds no virtual gamepad. One tester saw RPCS3, a browser, and **System Settings** work this way. Other controllers are untried.

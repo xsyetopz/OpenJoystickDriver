@@ -8,6 +8,7 @@ OJD shows games a [virtual gamepad](Glossary.md#terms) they know. Connect the co
 
 - [How Games See Your Controller](#how-games-see-your-controller)
 - [Game and App Compatibility](#game-and-app-compatibility)
+- [Launch Settings per App](#launch-settings-per-app)
 - [Rumble and Lighting](#rumble-and-lighting)
 - [Further Reading](#further-reading)
 
@@ -91,7 +92,59 @@ Two apps work better with the Generic kind:
 
 ### Start an App with the SDL Mapping
 
-`ojd virtual launch PROGRAM` gives a program the SDL mapping of each virtual gamepad. Unverified on hardware. See [Command Reference](Command-Reference.md).
+`ojd virtual launch PROGRAM` gives a program the SDL mapping of each virtual gamepad. Unverified on hardware. See [Command Reference](Command-Reference.md). To keep options per app, see [Launch Settings per App](#launch-settings-per-app).
+
+### Launch Settings per App
+
+Launch settings are the environment variables and arguments OJD adds when it starts one app through `ojd virtual launch`. They save you from typing the same launch options for each SDL game. The maintainer checked the stored variables, the hints and the arguments with a test app started the way Steam starts a game; a game started from Steam is untested.
+
+**Key.** A setting belongs to one app. The key is the bundle identifier of the nearest enclosing `.app`. A program outside an `.app` is keyed by its absolute path. Choosing the `.app` and launching the program inside it, as Steam's `%command%` does, reach the same setting.
+
+**Fields.**
+
+- `sdlGameControllerBackend`: turns on the SDL GameController backend hints, as `--sdl-gamecontroller-backend` does.
+- `environment`: variables added to the app's environment. A name starts with a letter or an underscore and holds only letters, digits, and underscores. Any other name is refused.
+- `arguments`: arguments added after the ones you give on the command line.
+
+**Merge order.**
+
+1. The environment `ojd` runs with.
+2. The stored `environment` over it.
+3. The SDL mapping of each virtual gamepad, added after a stored `SDL_GAMECONTROLLERCONFIG`.
+4. The backend hints, when the setting or the command line asks for them.
+
+The `--sdl-gamecontroller-backend` option turns the hints on whatever the stored value is, and replaces a stored value of a hint. `--no-launch-settings` ignores the stored setting for one run.
+
+**Set up in the app.**
+
+1. Open **Controllers** and choose a controller that has a virtual gamepad.
+2. In **Launch settings for apps**, choose **Add App...** and pick the `.app`.
+3. Set the backend, the environment (one `NAME=VALUE` per line), and the arguments (one per line). Choose **Save**.
+4. Choose **Copy Steam Launch Option**.
+5. In Steam, open the game's **Properties** > **General** > **Launch Options** and paste the option.
+
+The option reads `"PATH-OF-OJD" virtual launch -- %command%`, with the full path of the `ojd` link that runs the app: `/usr/local/bin/ojd`, or a link in `/opt/homebrew/bin` or `~/.local/bin`. Steam starts a game with a short `PATH`, so the option names the link in full. **Edit...** changes a setting. **Remove** deletes it. The **Launch** button of the app applies the stored settings too.
+
+**Set up on the command line.**
+
+```text
+ojd virtual launch-setting set /Applications/Game.app --sdl-gamecontroller-backend --env SDL_VIDEODRIVER=cocoa --argument -windowed
+ojd virtual launch-setting show /Applications/Game.app
+ojd virtual launch-setting list
+ojd virtual launch-setting remove /Applications/Game.app
+```
+
+Then set the Steam launch option once, as above. See [Command Reference](Command-Reference.md#virtual).
+
+**Limits.**
+
+- Settings apply only through `ojd virtual launch`.
+- Each game needs the Steam launch option set once.
+- Settings are environment variables and arguments only.
+- An app opened from Finder, the Dock or Steam without the launch option gets no setting.
+- A changed setting applies at the next launch.
+
+**Steam and the pad.** Steam and OJD can't both read a USB pad: whichever starts first holds it. Start OJD first and it keeps the pad while Steam runs. Start Steam first and `ojd status` lists the pad under unsupported devices as `device-in-use`, **Used by** `steam_osx`; OJD serves it again as soon as Steam quits. The maintainer saw both orders with a Razer Wolverine Tournament Edition and an 8BitDo Ultimate 2C on macOS 27. Whether turning off Steam Input stops Steam from taking the pad is untested. See [Known Issues](Known-Issues.md#another-app-reads-a-usb-controller-directly) and [Does OJD Work with Steam?](FAQ.md#does-ojd-work-with-steam).
 
 ### Use Switch Pro Mode on One Controller
 

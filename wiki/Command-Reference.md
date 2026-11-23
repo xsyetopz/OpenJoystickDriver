@@ -348,7 +348,11 @@ ojd virtual set PROFILE CONTROLLER [--unit]
 ojd virtual reset [CONTROLLER] [--unit] [--all] [--force] [--dry-run]
 ojd virtual feed --as PROFILE
 ojd virtual export-mapping [PROFILE] [--format sdl|w3c]
-ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
+ojd virtual launch [--sdl-gamecontroller-backend] [--no-launch-settings] [--] PROGRAM [ARGUMENTS...]
+ojd virtual launch-setting list
+ojd virtual launch-setting show PROGRAM
+ojd virtual launch-setting set PROGRAM [--sdl-gamecontroller-backend|--no-sdl-gamecontroller-backend] [--env NAME=VALUE]... [--argument ARGUMENT]...
+ojd virtual launch-setting remove PROGRAM
 ```
 
 - `virtual show`: Show the virtual gamepad of each controller and the profiles you can choose. Name a controller to show only that one.
@@ -366,6 +370,13 @@ ojd virtual launch [--sdl-gamecontroller-backend] [--] PROGRAM [ARGUMENTS...]
   - `ojd` exits with the program's exit code, or 128 plus the signal that ended it. Control-C or SIGTERM on `ojd` stops the program.
   - No connected controller with a virtual gamepad: exit code 1, `E2013`, nothing starts. A program that cannot be found or started: `E2033`.
   - A kind that does not work with the default SDL hints prints a note on standard error first, unless `--quiet` or `--sdl-gamecontroller-backend` is set.
+  - The stored launch setting of `PROGRAM` applies first: its `environment` joins the variables of `ojd`, its backend flag can turn the hints on, and its `arguments` follow yours. `--sdl-gamecontroller-backend` turns the hints on whatever the stored value is. `--no-launch-settings` ignores the stored setting.
+- `virtual launch-setting`: Keep the environment and arguments `virtual launch` adds to one program. A setting is keyed by the bundle identifier of the nearest enclosing `.app`, or by the absolute path of a program outside an `.app`. See [Launch Settings per App](Playing-Games.md#launch-settings-per-app).
+  - `launch-setting list` prints every stored setting. `--json` prints `items`.
+  - `launch-setting show PROGRAM` prints one setting. `PROGRAM` is a path, a name that `PATH` finds, an `.app`, or the stored key of a program that no longer exists.
+  - `launch-setting set PROGRAM` stores the options it gets and keeps the others. `--env` and `--argument` repeat, and each replaces the stored list. A name that does not match `[A-Za-z_][A-Za-z0-9_]*`, or a value without `=`, exits with code 64 and stores nothing. `--argument` takes a value that starts with `-`.
+  - `launch-setting remove PROGRAM` deletes the setting. A program with no setting exits with code 1.
+  - `--json` and `--plain` work on all four. The settings live in `Settings.plist`, which the app edits too.
 - `virtual set`: Choose the profile for the model of the controller: `sdl-compatible`, `game-controller-compatible`, `generic`, or `in-control-compatible`. With `--unit`, only for that controller, which needs a unit ID. Automatic selection never picks `game-controller-compatible` or `in-control-compatible`, so this command is the only way to publish them.
 - `virtual reset`: Return the model of the controller to automatic selection. Asks first on a terminal, otherwise needs `--force`. `--dry-run` (`-n`) changes nothing.
   - `--unit` removes only that controller's own choice, so the choice for its model applies again. It cannot be used with `--all`.

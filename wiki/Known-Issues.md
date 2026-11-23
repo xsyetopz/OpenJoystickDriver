@@ -78,6 +78,8 @@ flowchart LR
 
 **What to do:** quit that app. OJD takes the controller back as soon as the app lets go.
 
+**Steam:** Steam and OJD can't both read a USB pad: whichever starts first holds it. Start OJD first and it keeps the pad while Steam runs. Start Steam first and `ojd status` lists the pad under unsupported devices as `device-in-use`, **Used by** `steam_osx`; OJD serves it again as soon as Steam quits. The maintainer saw both orders with a Razer Wolverine Tournament Edition and an 8BitDo Ultimate 2C on macOS 27. Whether turning off Steam Input stops Steam from taking the pad is untested. For per-game launch options, see [Launch Settings per App](Playing-Games.md#launch-settings-per-app).
+
 ## Some Apps Don't Read the Virtual Gamepad
 
 **What you notice:** the game ignores the controller even though OJD shows it working.
