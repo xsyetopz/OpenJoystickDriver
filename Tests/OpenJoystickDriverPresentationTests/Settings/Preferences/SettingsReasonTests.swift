@@ -29,7 +29,7 @@
     }
 
     @Test
-    func lockedSwitchShowsItsReasonAsRowText() {
+    func lockedSwitchGivesItsReasonAsTooltip() {
       let row = SettingsSwitchRow(
         title: "Title",
         help: "Help",
@@ -38,7 +38,7 @@
         isEnabled: false,
         disabledReason: "Reason"
       )
-      #expect(row.lockReason == "Reason")
+      #expect(row.tooltip == "Reason")
       #expect(
         SettingsSwitchRow(
           title: "Title",
@@ -46,7 +46,7 @@
           description: "Description",
           isOn: .constant(true),
           disabledReason: "Reason"
-        ).lockReason == nil
+        ).tooltip == "Help"
       )
     }
 
