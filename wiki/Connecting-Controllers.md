@@ -88,6 +88,8 @@ Only genuine Xbox One and Xbox Series controllers on USB need this. Allow **Xbox
 
    ![Arrows mark the OpenJoystickDriver switch and Done](../docs/screenshots/steps/macos-driver-switch.png)
 
+On macOS 13 and 14, **Open System Settings** opens **Privacy & Security** instead. Click **Allow** beside the message about OpenJoystickDriver.
+
 **Check:** the banner disappears, and **Settings** > **Advanced** shows **Installed** for **Xbox USB Driver**. To repair the driver, click **Repair Xbox USB Driver** in the banner.
 
 ![Advanced settings showing Xbox USB Driver Installed](../docs/screenshots/settings-advanced.png)

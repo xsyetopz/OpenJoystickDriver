@@ -67,7 +67,7 @@ On macOS 13 or later. Turn off **Open at login** in **Settings** to stop it ([Al
 
 ### Do I Need the Xbox USB Driver?
 
-Only for an Xbox One or Series controller on USB. Approve the [Xbox USB driver](Glossary.md#terms) once. In **System Settings** > **General** > **Login Items & Extensions**, scroll to **Extensions**, click **By Category**, click the **(i)** beside **Driver Extensions**, turn on **OpenJoystickDriver**, and click **Done**. [Pictures](Connecting-Controllers.md#approve-the-driver).
+Only for an Xbox One or Series controller on USB. Approve the [Xbox USB driver](Glossary.md#terms) once. In **System Settings** > **General** > **Login Items & Extensions**, scroll to **Extensions**, click **By Category**, click the **(i)** beside **Driver Extensions**, turn on **OpenJoystickDriver**, and click **Done**. On macOS 13 and 14, click **Allow** in **System Settings** > **Privacy & Security**. [Pictures](Connecting-Controllers.md#approve-the-driver).
 
 ### Do I Need Xcode?
 
