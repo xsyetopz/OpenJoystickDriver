@@ -96,7 +96,7 @@ extension UserSpaceOutputDispatcher {
       for identifier in unique {
         let entry = try await entry(for: identifier)
         guard lifecycle.isOpen else { throw CancellationError() }
-        try await entry.sender.submit { [entry] in [entry.inputReportState.currentReport()] }
+        try await entry.sender.submit { [entry] in [entry.inputReportState.currentStampedReport()] }
           .value()
 
       }
@@ -116,7 +116,8 @@ extension UserSpaceOutputDispatcher {
     do {
       let entry = try await entry(for: identifier)
       guard lifecycle.isOpen else { throw CancellationError() }
-      try await entry.sender.submit { [entry] in [entry.inputReportState.currentReport()] }.value()
+      try await entry.sender.submit { [entry] in [entry.inputReportState.currentStampedReport()] }
+        .value()
       withRegistry { recomputeStatusLocked() }
     } catch {
       await close()

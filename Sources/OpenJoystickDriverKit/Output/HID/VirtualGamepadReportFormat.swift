@@ -91,6 +91,19 @@ public protocol VirtualGamepadReportFormat: Sendable {
 
   /// The feature reports a host can read, by report ID, each beginning with its Report ID byte.
   var featureReports: [UInt8: [UInt8]] { get }
+
+  /// The interval at which a genuine controller of this format sends its input report while the
+  /// state holds still, or nil when the device sends a report only when the state changes.
+  var inputReportIntervalNanoseconds: UInt64? { get }
+
+  /// Writes the fields that change with every sent report, such as a report counter or a
+  /// timestamp, into `report`, a report that ``buildInputReport(from:)`` built.
+  ///
+  /// - Parameters:
+  ///   - report: The input report, beginning with its Report ID byte when the format has one.
+  ///   - sequence: The number of input reports the device sent before this one.
+  ///   - uptimeNanoseconds: The system uptime at which the report is sent.
+  func stampInputReport(_ report: inout [UInt8], sequence: UInt32, uptimeNanoseconds: UInt64)
 }
 
 extension VirtualGamepadReportFormat {
@@ -102,6 +115,10 @@ extension VirtualGamepadReportFormat {
   public var outputReportPayloadSize: Int? { nil }
   /// The default declares no output report ID.
   public var outputReportID: UInt8? { nil }
+  /// The default sends a report only when the state changes.
+  public var inputReportIntervalNanoseconds: UInt64? { nil }
+  /// The default report has no per-report field.
+  public func stampInputReport(_: inout [UInt8], sequence _: UInt32, uptimeNanoseconds _: UInt64) {}
 }
 
 /// Generic OJD HID GamePad format (matches ``GamepadHIDDescriptor``).

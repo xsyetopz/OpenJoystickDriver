@@ -14,6 +14,9 @@ extension UserSpaceOutputDispatcher {
     let sender: UserSpaceReportSender
     /// The state of the device's input report.
     let inputReportState: UserSpaceInputReportState
+    /// Resends the current input report while the state holds still, for a format that streams;
+    /// nil for a format that sends only changes.
+    private let streamTask: Task<Void, Never>?
 
     /// Creates an entry and attaches `backend` to a sender with a queue of `frameQueueCapacity`
     /// frames.
@@ -25,6 +28,31 @@ extension UserSpaceOutputDispatcher {
       sender = UserSpaceReportSender(queueCapacity: frameQueueCapacity)
       self.inputReportState = inputReportState
       sender.attach(backend)
+      streamTask = Self.stream(sender: sender, inputReportState: inputReportState)
+    }
+
+    /// Starts the task that resends the current report of a streaming format.
+    ///
+    /// A genuine DualShock 4 sends a report every 4 ms, and a raw HID reader, such as a Windows
+    /// game under Wine, may wait for that stream. The task wakes once per interval and submits a
+    /// frame only when no report went out within it and no other submission waits, so a moving
+    /// state adds no second report and a repeat never evicts a state change.
+    private static func stream(
+      sender: UserSpaceReportSender,
+      inputReportState: UserSpaceInputReportState
+    ) -> Task<Void, Never>? {
+      guard let interval = inputReportState.reportIntervalNanoseconds, interval > 0 else {
+        return nil
+      }
+      return Task.detached(priority: .userInitiated) { [weak sender, weak inputReportState] in
+        while !Task.isCancelled {
+          do { try await Task.sleep(nanoseconds: interval) } catch { return }
+          guard let sender, let inputReportState, !inputReportState.isClosed else { return }
+          _ = sender.submit(isFrame: true, onlyWhenIdle: true) {
+            inputReportState.dueRepeat().map { [$0] } ?? []
+          }
+        }
+      }
     }
 
     deinit { beginClose() }
@@ -35,6 +63,7 @@ extension UserSpaceOutputDispatcher {
     /// caller.
     @discardableResult
     func beginClose() -> Task<Void, Never> {
+      streamTask?.cancel()
       inputReportState.close()
       return sender.beginClose()
     }

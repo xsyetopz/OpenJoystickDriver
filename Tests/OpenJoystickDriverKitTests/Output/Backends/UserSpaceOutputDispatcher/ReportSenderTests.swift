@@ -337,6 +337,28 @@ struct ReportSenderTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
+  func idleOnlyFrameYieldsToAWaitingSubmission() async throws {
+    let gate = ReportSendGate()
+    let backend = OrderedReportBackend(gate: gate)
+    let sender = UserSpaceReportSender(queueCapacity: 1)
+    sender.attach(backend)
+    let blocking = sender.submit(isFrame: true) { [[0]] }
+    await gate.waitForEntry()
+    let waiting = sender.submit(isFrame: true) { [[1]] }
+
+    let repeatFrame = sender.submit(isFrame: true, onlyWhenIdle: true) { [[9]] }
+
+    await #expect(throws: UserSpaceReportSender.Failure.superseded) {
+      try await repeatFrame.value()
+    }
+    await gate.open()
+    try await blocking.value()
+    try await waiting.value()
+    #expect(backend.snapshot().reports == [[0], [1]])
+    await sender.beginClose().value
+  }
+
+  @Test(.timeLimit(.minutes(1)))
   func fullQueueNeverEvictsHostReplyAndFailsItWhenNoFrameCanYield() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)

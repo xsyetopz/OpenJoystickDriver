@@ -65,9 +65,10 @@ extension UserSpaceOutputDispatcher {
             )
           }
         }
-        let primary =
-          activeEntry.inputReportState.claimDelivery(of: primaryReport) ? [primaryReport] : []
-        return primary + activeEntry.inputReportState.claimChangedAuxiliaryReports()
+        // The dedup compares unstamped bytes, so a per-report counter never defeats it.
+        let state = activeEntry.inputReportState
+        let primary = state.claimDelivery(of: primaryReport) ? [state.stamped(primaryReport)] : []
+        return primary + state.claimChangedAuxiliaryReports()
       }.value()
       onPublished()
       // Every change to the entries recomputes the status, so a backend status is current; only

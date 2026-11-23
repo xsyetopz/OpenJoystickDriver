@@ -263,9 +263,12 @@ final class UserSpaceReportSender: Sendable {
   ///
   /// Enqueueing stays synchronous: the native set-report callback acknowledges ordered enqueueing
   /// and cannot await. Await `SubmissionReceipt.value()` for the publication outcome. A submission
-  /// with `isFrame` may be superseded by a newer one when the queue is full.
+  /// with `isFrame` may be superseded by a newer one when the queue is full. A submission with
+  /// `onlyWhenIdle` fails with ``Failure/superseded`` when another submission waits, so it never
+  /// evicts one.
   func submit(
     isFrame: Bool = false,
+    onlyWhenIdle: Bool = false,
     whileActive: @escaping @Sendable () -> Bool = { true },
     requireActive: Bool = false,
     _ reports: @escaping @Sendable () throws -> [[UInt8]]
@@ -281,6 +284,9 @@ final class UserSpaceReportSender: Sendable {
     let (result, superseded, start) = state.withLock {
       state -> (Result<Void, any Error>?, SubmissionReceipt?, Bool) in
       guard !state.closed else { return (.failure(CancellationError()), nil, false) }
+      guard !onlyWhenIdle || state.queue.isEmpty else {
+        return (.failure(Failure.superseded), nil, false)
+      }
       var superseded: SubmissionReceipt?
       if state.queue.count >= queueCapacity {
         guard let index = state.queue.firstIndex(where: \.isFrame) else {

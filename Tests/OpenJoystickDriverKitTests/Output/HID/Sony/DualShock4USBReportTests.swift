@@ -31,6 +31,19 @@ struct DualShock4USBHIDReportFormatTests {
   }
 
   @Test
+  func stampWritesCounterAndTimestampAndKeepsButtonBits() {
+    var report = report(buttonBit: .guide)
+
+    format.stampInputReport(&report, sequence: 0x45, uptimeNanoseconds: 1_000_000)
+
+    #expect(report[7] == 0x14 | 0x01)
+    // 1 ms is 187 units of 16/3 µs.
+    #expect(report[10] == 187)
+    #expect(report[11] == 0)
+    #expect(format.inputReportIntervalNanoseconds == 4_000_000)
+  }
+
+  @Test
   func everyDigitalControlSetsOnlyItsBit() {
     let controls: [(GamepadHIDDescriptor.ButtonBit, Int, UInt8)] = [
       (.x, 5, 0x18), (.a, 5, 0x28), (.b, 5, 0x48), (.y, 5, 0x88), (.leftBumper, 6, 0x01),

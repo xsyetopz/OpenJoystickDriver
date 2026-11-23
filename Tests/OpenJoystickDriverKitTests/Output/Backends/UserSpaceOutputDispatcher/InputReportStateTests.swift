@@ -24,6 +24,40 @@ struct UserSpaceInputReportStateTests {
   }
 
   @Test
+  func consecutiveStampedReportsAdvanceTheDualShock4Counter() {
+    let state = UserSpaceInputReportState(format: DualShock4USBHIDReportFormat())
+    let report = state.currentReport()
+
+    let first = state.stamped(report, uptimeNanoseconds: 0)
+    let second = state.stamped(report, uptimeNanoseconds: 4_000_000)
+
+    #expect(first[7] >> 2 == 0)
+    #expect(second[7] >> 2 == 1)
+    #expect(second[10] | second[11] != 0)
+    #expect(state.claimDelivery(of: report))
+  }
+
+  @Test
+  func dueRepeatWaitsOneIntervalAfterTheLastSentReport() {
+    let state = UserSpaceInputReportState(format: DualShock4USBHIDReportFormat())
+    _ = state.stamped(state.currentReport(), uptimeNanoseconds: 10_000_000)
+
+    let early = state.dueRepeat(uptimeNanoseconds: 13_000_000)
+    let due = state.dueRepeat(uptimeNanoseconds: 14_000_000)
+
+    #expect(early == nil)
+    #expect(due?[7] == 1 << 2)
+  }
+
+  @Test
+  func formatWithoutIntervalNeverRepeats() {
+    let state = UserSpaceInputReportState(format: XboxOneGIPHIDReportFormat())
+
+    #expect(state.dueRepeat(uptimeNanoseconds: 1_000_000_000) == nil)
+    #expect(state.stamped(state.currentReport()) == state.currentReport())
+  }
+
+  @Test
   func xboxOneGIPIdleReportMatchesInterruptGetReportLayout() {
     let format = XboxOneGIPHIDReportFormat()
     let report = UserSpaceInputReportState(format: format).currentReport()

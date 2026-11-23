@@ -17,6 +17,10 @@ final class UserSpaceInputReportState: Sendable {
     var deliveredAuxiliaryReports: [[UInt8]]
     /// Set once the published device closes; host report requests then fail.
     var closed = false
+    /// The number of primary input reports stamped for sending.
+    var sentCount: UInt32 = 0
+    /// The uptime at which the last primary input report was stamped; nil before the first.
+    var lastSentUptime: UInt64?
   }
 
   /// The report format of the device.
@@ -57,6 +61,12 @@ final class UserSpaceInputReportState: Sendable {
   /// The current input report.
   func currentReport() -> [UInt8] { current.withLock { $0.report } }
 
+  /// The current input report, stamped for sending.
+  func currentStampedReport() -> [UInt8] { stamped(currentReport()) }
+
+  /// The interval at which the format streams its input report while the state holds still.
+  var reportIntervalNanoseconds: UInt64? { format.inputReportIntervalNanoseconds }
+
   /// Records `report` for delivery and returns whether consumers do not hold it yet.
   func claimDelivery(of report: [UInt8]) -> Bool {
     current.withLock { current in
@@ -64,6 +74,37 @@ final class UserSpaceInputReportState: Sendable {
       current.deliveredReport = report
       return true
     }
+  }
+
+  /// `report`, a primary input report about to be sent, with the format's per-report fields.
+  func stamped(
+    _ report: [UInt8],
+    uptimeNanoseconds: UInt64 = DispatchTime.now().uptimeNanoseconds
+  ) -> [UInt8] {
+    current.withLock { current in
+      var stamped = report
+      format.stampInputReport(
+        &stamped,
+        sequence: current.sentCount,
+        uptimeNanoseconds: uptimeNanoseconds
+      )
+      current.sentCount &+= 1
+      current.lastSentUptime = uptimeNanoseconds
+      return stamped
+    }
+  }
+
+  /// The stamped current input report when the format streams its input report and no report was
+  /// sent within its interval; otherwise nil.
+  func dueRepeat(uptimeNanoseconds: UInt64 = DispatchTime.now().uptimeNanoseconds) -> [UInt8]? {
+    let report = current.withLock { current -> [UInt8]? in
+      guard !current.closed, let interval = format.inputReportIntervalNanoseconds else {
+        return nil
+      }
+      if let last = current.lastSentUptime, uptimeNanoseconds &- last < interval { return nil }
+      return current.report
+    }
+    return report.map { stamped($0, uptimeNanoseconds: uptimeNanoseconds) }
   }
 
   /// The auxiliary input reports whose bytes differ from those last returned here.

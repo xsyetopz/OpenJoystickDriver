@@ -166,6 +166,8 @@ public struct DualShock4USBHIDReportFormat: VirtualGamepadReportFormat {
     static let leftTrigger = 7
     /// The right trigger.
     static let rightTrigger = 8
+    /// The little-endian 16-bit timestamp, in units of 16/3 µs.
+    static let timestamp = 9
     /// The battery level and the wired-power bit.
     static let power = 29
     /// The contact bytes of the two fingers in each of the three touch packets; bit 7 set means
@@ -215,6 +217,25 @@ public struct DualShock4USBHIDReportFormat: VirtualGamepadReportFormat {
     // A genuine controller at rest reports no touch packet and every contact lifted.
     for offset in Offset.contacts { data[offset] = Self.contactLifted }
     return [DualShock4USBHIDDescriptor.inputReportID] + data
+  }
+
+  /// A genuine controller sends report 1 every 4 ms over USB, also while the state holds still.
+  public var inputReportIntervalNanoseconds: UInt64? { 4_000_000 }
+
+  /// Writes the 6-bit report counter and the 16-bit timestamp into report 1.
+  ///
+  /// The counter fills the upper six bits of the third button byte, and the timestamp counts
+  /// 16/3 µs units, as on a genuine controller. Raw HID readers, such as Wine's `winebus` passing
+  /// the controller to a Windows game, read both.
+  public func stampInputReport(_ report: inout [UInt8], sequence: UInt32, uptimeNanoseconds: UInt64)
+  {
+    // `report` begins with the report ID, so each data offset is one byte further.
+    guard report.count == inputReportPayloadSize + 1 else { return }
+    let counter = UInt8(truncatingIfNeeded: sequence & 0x3F) << 2
+    report[Offset.buttons2 + 1] = (report[Offset.buttons2 + 1] & 0x03) | counter
+    let ticks = UInt16(truncatingIfNeeded: uptimeNanoseconds / 1_000 * 3 / 16)
+    report[Offset.timestamp + 1] = UInt8(truncatingIfNeeded: ticks)
+    report[Offset.timestamp + 2] = UInt8(truncatingIfNeeded: ticks >> 8)
   }
 
   /// The `0...255` stick byte of a signed 16-bit axis, rest at `0x80`.
