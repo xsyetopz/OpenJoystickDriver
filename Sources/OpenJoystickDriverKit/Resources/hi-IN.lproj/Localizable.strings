@@ -3811,6 +3811,8 @@
 "ui.access.choose" = "चुनें";
 /* Label of the row in the Access area for the local endpoint. The local endpoint is the socket where programs on this Mac connect. */
 "ui.access.endpoint" = "स्थानीय एंडपॉइंट";
+/* Subtitle under the Local endpoint switch in the Access area, which says what turning it on allows. */
+"ui.access.endpoint.purpose" = "आपके द्वारा अनुमति दिए गए प्रोग्राम आपके कंट्रोलर पढ़ सकते हैं।";
 /* Help text of the endpoint switch. %@ is the path of the socket. */
 "ui.access.socket" = "सॉकेट: %@";
 /* Context menu item that copies the path of the socket. */
@@ -3823,6 +3825,8 @@
 "ui.access.enable.message" = "जिन प्रोग्राम को आप ऐक्सेस देते हैं वे फिर कंट्रोलर की स्थिति पढ़ सकते हैं और कंट्रोल स्कोप होने पर उसे बदल भी सकते हैं।";
 /* Label of the row in the Access area for the WebSocket endpoint, where web pages connect. */
 "ui.access.web" = "WebSocket";
+/* Subtitle under the WebSocket switch in the Access area, which says what turning it on allows. */
+"ui.access.web.purpose" = "टोकन वाले वेब पेज आपके कंट्रोलर पढ़ सकते हैं।";
 /* Value of the WebSocket row when it is on. %1$@ is the address of the endpoint and %2$@ is the address where pages are served. */
 "ui.access.web.on" = "%1$@ पर चालू, पेज %2$@ पर";
 /* Value of the WebSocket row when it is off. */

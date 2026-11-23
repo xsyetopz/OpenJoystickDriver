@@ -3811,6 +3811,8 @@
 "ui.access.choose" = "선택";
 /* Label of the row in the Access area for the local endpoint. The local endpoint is the socket where programs on this Mac connect. */
 "ui.access.endpoint" = "로컬 엔드포인트";
+/* Subtitle under the Local endpoint switch in the Access area, which says what turning it on allows. */
+"ui.access.endpoint.purpose" = "접근을 허용한 프로그램이 컨트롤러를 읽을 수 있게 합니다.";
 /* Help text of the endpoint switch. %@ is the path of the socket. */
 "ui.access.socket" = "소켓: %@";
 /* Context menu item that copies the path of the socket. */
@@ -3823,6 +3825,8 @@
 "ui.access.enable.message" = "접근을 허용한 프로그램은 컨트롤러 상태를 읽을 수 있으며, 제어 범위가 있으면 상태를 변경할 수도 있습니다.";
 /* Label of the row in the Access area for the WebSocket endpoint, where web pages connect. */
 "ui.access.web" = "WebSocket";
+/* Subtitle under the WebSocket switch in the Access area, which says what turning it on allows. */
+"ui.access.web.purpose" = "토큰이 있는 웹 페이지가 컨트롤러를 읽을 수 있게 합니다.";
 /* Value of the WebSocket row when it is on. %1$@ is the address of the endpoint and %2$@ is the address where pages are served. */
 "ui.access.web.on" = "%1$@에서 켬, 페이지 위치 %2$@";
 /* Value of the WebSocket row when it is off. */

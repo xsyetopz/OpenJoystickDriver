@@ -3811,6 +3811,8 @@
 "ui.access.choose" = "选取";
 /* Label of the row in the Access area for the local endpoint. The local endpoint is the socket where programs on this Mac connect. */
 "ui.access.endpoint" = "本地端点";
+/* Subtitle under the Local endpoint switch in the Access area, which says what turning it on allows. */
+"ui.access.endpoint.purpose" = "让你授予访问权限的程序读取你的控制器。";
 /* Help text of the endpoint switch. %@ is the path of the socket. */
 "ui.access.socket" = "套接字：%@";
 /* Context menu item that copies the path of the socket. */
@@ -3823,6 +3825,8 @@
 "ui.access.enable.message" = "你授予访问权限的程序随后可以读取控制器状态，若具有控制范围，还可以更改状态。";
 /* Label of the row in the Access area for the WebSocket endpoint, where web pages connect. */
 "ui.access.web" = "WebSocket";
+/* Subtitle under the WebSocket switch in the Access area, which says what turning it on allows. */
+"ui.access.web.purpose" = "让持有令牌的网页读取你的控制器。";
 /* Value of the WebSocket row when it is on. %1$@ is the address of the endpoint and %2$@ is the address where pages are served. */
 "ui.access.web.on" = "已开启，位于 %1$@，页面位于 %2$@";
 /* Value of the WebSocket row when it is off. */

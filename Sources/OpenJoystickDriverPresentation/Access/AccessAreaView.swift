@@ -213,7 +213,6 @@
     @ViewBuilder
     private func endpointToggles(_ status: AccessStatusPayload) -> some View {
       Toggle(
-        OJDLocalized.string("ui.access.endpoint"),
         isOn: Binding(
           get: { status.enabled },
           set: { isOn in
@@ -224,18 +223,19 @@
             }
           }
         )
-      ).disabled(model.busy).help(OJDLocalized.formatted("ui.access.socket", status.socketPath))
-        .contextMenu { copySocketPathButton(status) }
+      ) { switchLabel("ui.access.endpoint", "ui.access.endpoint.purpose") }
+      .disabled(model.busy).help(OJDLocalized.formatted("ui.access.socket", status.socketPath))
+      .contextMenu { copySocketPathButton(status) }
       if status.enabled { copySocketPathButton(status) }
       Toggle(
-        OJDLocalized.string("ui.access.web"),
         isOn: Binding(
           get: { status.web.enabled },
           set: { isOn in
             if isOn { model.requestEnableWeb() } else { Task { await model.disableWeb() } }
           }
         )
-      ).disabled(model.busy).help(
+      ) { switchLabel("ui.access.web", "ui.access.web.purpose") }
+      .disabled(model.busy).help(
         OJDLocalized.formatted(
           "ui.access.web.pages",
           AccessPresentation.location(status.web.pagesPath)
@@ -245,6 +245,15 @@
         Text(AccessPresentation.web(status.web)).font(.caption).foregroundColor(
           Color(NSColor.secondaryLabelColor)
         ).textSelection(.enabled)
+      }
+    }
+
+    /// Returns the name of an endpoint switch over the sentence that says what it allows.
+    private func switchLabel(_ titleKey: String, _ purposeKey: String) -> some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+        Text(OJDLocalized.string(titleKey))
+        Text(OJDLocalized.string(purposeKey)).font(.caption).foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
       }
     }
 

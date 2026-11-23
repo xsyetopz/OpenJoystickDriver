@@ -4415,6 +4415,8 @@
 "ui.access.choose" = "Elegir";
 /* Label of the row in the Access area for the local endpoint. The local endpoint is the socket where programs on this Mac connect. */
 "ui.access.endpoint" = "Punto de conexión local";
+/* Subtitle under the Local endpoint switch in the Access area, which says what turning it on allows. */
+"ui.access.endpoint.purpose" = "Permite que los programas a los que des acceso lean tus controles.";
 /* Help text of the endpoint switch. %@ is the path of the socket. */
 "ui.access.socket" = "Socket: %@";
 /* Context menu item that copies the path of the socket. */
@@ -4427,6 +4429,8 @@
 "ui.access.enable.message" = "Los programas a los que concedas acceso podrán leer el estado de los controles y, con el ámbito “Control”, cambiarlo.";
 /* Label of the row in the Access area for the WebSocket endpoint, where web pages connect. */
 "ui.access.web" = "WebSocket";
+/* Subtitle under the WebSocket switch in the Access area, which says what turning it on allows. */
+"ui.access.web.purpose" = "Permite que las páginas web con un token lean tus controles.";
 /* Value of the WebSocket row when it is on. %1$@ is the address of the endpoint and %2$@ is the address where pages are served. */
 "ui.access.web.on" = "Activado en %1$@, páginas en %2$@";
 /* Value of the WebSocket row when it is off. */

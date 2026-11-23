@@ -3811,6 +3811,8 @@
 "ui.access.choose" = "เลือก";
 /* Label of the row in the Access area for the local endpoint. The local endpoint is the socket where programs on this Mac connect. */
 "ui.access.endpoint" = "ปลายทางภายในเครื่อง";
+/* Subtitle under the Local endpoint switch in the Access area, which says what turning it on allows. */
+"ui.access.endpoint.purpose" = "ให้โปรแกรมที่คุณอนุญาตอ่านคอนโทรลเลอร์ของคุณ";
 /* Help text of the endpoint switch. %@ is the path of the socket. */
 "ui.access.socket" = "ซ็อกเก็ต: %@";
 /* Context menu item that copies the path of the socket. */
@@ -3823,6 +3825,8 @@
 "ui.access.enable.message" = "โปรแกรมที่คุณให้สิทธิ์การเข้าถึงจะอ่านสถานะคอนโทรลเลอร์ได้ และเปลี่ยนสถานะได้หากมีขอบเขตควบคุม";
 /* Label of the row in the Access area for the WebSocket endpoint, where web pages connect. */
 "ui.access.web" = "WebSocket";
+/* Subtitle under the WebSocket switch in the Access area, which says what turning it on allows. */
+"ui.access.web.purpose" = "ให้หน้าเว็บที่มีโทเค็นอ่านคอนโทรลเลอร์ของคุณ";
 /* Value of the WebSocket row when it is on. %1$@ is the address of the endpoint and %2$@ is the address where pages are served. */
 "ui.access.web.on" = "เปิดที่ %1$@ หน้าเว็บที่ %2$@";
 /* Value of the WebSocket row when it is off. */
