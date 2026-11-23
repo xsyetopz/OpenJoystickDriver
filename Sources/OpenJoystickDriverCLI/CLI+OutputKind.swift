@@ -99,6 +99,10 @@ extension CLI {
       (VirtualResetCommand.self, "VirtualGamepadChange"),
       (VirtualFeedCommand.self, "RumbleCommand"),
       (VirtualExportMappingCommand.self, "VirtualGamepadMapping"),
+      (VirtualLaunchSettingListCommand.self, "LaunchSettingList"),
+      (VirtualLaunchSettingShowCommand.self, "LaunchSetting"),
+      (VirtualLaunchSettingSetCommand.self, "LaunchSetting"),
+      (VirtualLaunchSettingRemoveCommand.self, "Status"),
     ]
     return Dictionary(uniqueKeysWithValues: table.map { (ObjectIdentifier($0.0), $0.1) })
   }()

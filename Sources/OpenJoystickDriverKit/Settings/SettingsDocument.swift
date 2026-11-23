@@ -63,6 +63,8 @@ public struct SettingsDocument: Equatable, Sendable {
   public var idleDisconnectMinutes: Int?
   /// The version whose changelog section the app showed last.
   public var lastShownChangelogVersion: String?
+  /// What OJD applies when it launches a program, by ``LaunchSettingKey``.
+  public var launchSettings: [String: LaunchSetting] = [:]
 
   /// Creates a layer that leaves every setting out.
   public init() {}
@@ -124,6 +126,7 @@ public struct SettingsDocument: Equatable, Sendable {
     if let version = upper.lastShownChangelogVersion {
       merged.lastShownChangelogVersion = version
     }
+    merged.launchSettings.merge(upper.launchSettings) { _, stored in stored }
     return merged
   }
 }
@@ -195,7 +198,7 @@ extension SettingsDocument: Codable {
     /// The header, the settings and their groups.
     case apiVersion, kind, launchAtLoginOptOut, showInMenuBar, showInDock, notify, updates,
       developerTools, interfaceLevel, pauseShortcut, idleDisconnectMinutes,
-      lastShownChangelogVersion
+      lastShownChangelogVersion, launchSettings
   }
 
   /// Decodes a settings layer; a key that the schema does not name is refused.
@@ -231,6 +234,15 @@ extension SettingsDocument: Codable {
       String.self,
       forKey: .lastShownChangelogVersion
     )
+    launchSettings =
+      try container.decodeIfPresent([String: LaunchSetting].self, forKey: .launchSettings) ?? [:]
+    if launchSettings.keys.contains("") {
+      throw DecodingError.dataCorruptedError(
+        forKey: .launchSettings,
+        in: container,
+        debugDescription: "empty launch setting key"
+      )
+    }
     if lastShownChangelogVersion?.isEmpty == true {
       throw DecodingError.dataCorruptedError(
         forKey: .lastShownChangelogVersion,
@@ -255,5 +267,6 @@ extension SettingsDocument: Codable {
     try container.encodeIfPresent(pauseShortcut, forKey: .pauseShortcut)
     try container.encodeIfPresent(idleDisconnectMinutes, forKey: .idleDisconnectMinutes)
     try container.encodeIfPresent(lastShownChangelogVersion, forKey: .lastShownChangelogVersion)
+    if !launchSettings.isEmpty { try container.encode(launchSettings, forKey: .launchSettings) }
   }
 }

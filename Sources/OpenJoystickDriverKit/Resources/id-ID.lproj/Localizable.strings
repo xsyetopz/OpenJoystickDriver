@@ -3101,6 +3101,40 @@
 "cli.virtual.launch.errorOutput" = "--json dan --plain tidak berlaku, karena program menulis ke keluaran standar.";
 /* Help text of the SDL backend flag of 'ojd virtual launch'. The SDL hint names and values stay as written. */
 "platform.macos.cli.virtual.launch.sdlGamecontrollerBackend" = "Juga menetapkan petunjuk SDL yang membuat SDL membaca pengontrol hanya melalui kerangka kerja GameController milik Apple: SDL_JOYSTICK_MFI=1, SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1, SDL_JOYSTICK_IOKIT=0, SDL_JOYSTICK_HIDAPI=0. Petunjuk ini hanya berlaku untuk program dan menggantikan nilai yang sudah ditetapkan.";
+/* Help text of the --no-launch-settings flag of 'ojd virtual launch'. The flag and command names in quotes stay as written. */
+"cli.virtual.launch.noLaunchSettings" = "Abaikan pengaturan peluncuran yang disimpan untuk program dengan “ojd virtual launch-setting”.";
+/* One-line summary of 'ojd virtual launch-setting' in the command list and at the top of its help. The command in quotes stays as written. */
+"cli.virtual.launchSetting.group.abstract" = "Mencantumkan, menampilkan, menetapkan, dan menghapus apa yang diterapkan “ojd virtual launch” pada sebuah program.";
+/* Long description in the help of 'ojd virtual launch-setting'. SDL is a game controller library, .app is the app bundle extension, and the command and option in quotes stay as written. */
+"cli.virtual.launchSetting.group.discussion" = "Pengaturan peluncuran berisi backend SDL GameController, variabel lingkungan tambahan, dan argumen tambahan untuk satu program. Pengaturan ini disimpan dengan ID bundel app yang memuat program, atau dengan jalur absolut program di luar app, sehingga .app dan program di dalamnya mencapai pengaturan yang sama. “ojd virtual launch” menerapkannya, dan --sdl-gamecontroller-backend mengaktifkan backend apa pun nilai yang tersimpan.";
+/* Error when an --env value is not NAME=VALUE. %@ is the text the user gave. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.group.errorAssignment" = "“%@” bukan NAME=VALUE. Tulis setiap variabel sebagai NAME=VALUE.";
+/* Error when no launch setting is stored for a program. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.group.errorMissing" = "Tidak ada pengaturan peluncuran yang disimpan untuk %@.";
+/* Error when an environment variable name is not valid. %@ is the name the user gave. */
+"cli.virtual.launchSetting.group.errorName" = "“%@” bukan nama variabel yang valid. Nama diawali huruf atau garis bawah dan hanya berisi huruf, angka, dan garis bawah.";
+/* Help text of the program argument of the 'ojd virtual launch-setting' commands. .app stays as written. */
+"cli.virtual.launchSetting.group.program" = "Program, sebuah .app atau berkas yang dapat dijalankan, atau kunci pengaturan yang tersimpan.";
+/* One-line summary of 'ojd virtual launch-setting list'. */
+"cli.virtual.launchSetting.list.abstract" = "Mencantumkan pengaturan peluncuran yang tersimpan.";
+/* Message of 'ojd virtual launch-setting list' when no launch setting is stored. */
+"cli.virtual.launchSetting.list.empty" = "Tidak ada pengaturan peluncuran yang tersimpan.";
+/* One-line summary of 'ojd virtual launch-setting remove'. */
+"cli.virtual.launchSetting.remove.abstract" = "Menghapus pengaturan peluncuran sebuah program.";
+/* Message after 'ojd virtual launch-setting remove' removes a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.remove.done" = "Pengaturan peluncuran %@ dihapus.";
+/* One-line summary of 'ojd virtual launch-setting set'. */
+"cli.virtual.launchSetting.set.abstract" = "Menyimpan pengaturan peluncuran sebuah program.";
+/* Help text of the --argument option of 'ojd virtual launch-setting set'. The command in quotes stays as written. */
+"cli.virtual.launchSetting.set.argument" = "Argumen yang ditambahkan setelah argumen yang diberikan ke “ojd virtual launch”. Ulangi untuk menambah lebih banyak. Argumen ini menggantikan yang tersimpan.";
+/* Help text of the --sdl-gamecontroller-backend flag of 'ojd virtual launch-setting set'. SDL and GameController stay as written, and so do both flag names. */
+"cli.virtual.launchSetting.set.backend" = "Memulai program dengan petunjuk backend SDL GameController. Gunakan --no-sdl-gamecontroller-backend untuk mematikannya.";
+/* Message after 'ojd virtual launch-setting set' stores a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.set.done" = "Pengaturan peluncuran %@ disimpan.";
+/* Help text of the --env option of 'ojd virtual launch-setting set'. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.set.env" = "Variabel yang ditambahkan ke lingkungan program, ditulis NAME=VALUE. Ulangi untuk menambah lebih banyak. Variabel ini menggantikan yang tersimpan.";
+/* One-line summary of 'ojd virtual launch-setting show'. */
+"cli.virtual.launchSetting.show.abstract" = "Menampilkan pengaturan peluncuran sebuah program.";
 /* One-line summary of 'ojd virtual reset' in the command list and at the top of its help. */
 "cli.virtual.reset.abstract" = "Kembalikan model pengontrol, atau semua model, ke pemilihan gamepad virtual otomatis.";
 /* Help text of the --all flag of 'ojd virtual reset'. */
@@ -4964,6 +4998,34 @@
 "ui.controllers.launch.started" = "%@ dimulai.";
 /* Message after a game ends. %1$@ is the name of the program and %2$lld is its exit status. */
 "ui.controllers.launch.exited" = "%1$@ selesai dengan status %2$lld.";
+/* Label of the row in the Controllers detail that lists the apps with launch settings. */
+"ui.controllers.launchSettings" = "Pengaturan peluncuran untuk app";
+/* Message in the launch settings row when no app has a launch setting. */
+"ui.controllers.launchSettings.empty" = "Tidak ada app yang memiliki pengaturan peluncuran.";
+/* Title of the button that opens a panel to choose an app and add its launch settings. The ellipsis shows that a panel follows. */
+"ui.controllers.launchSettings.add" = "Tambah App…";
+/* Title of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.title" = "Pilih App";
+/* Confirm button of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.prompt" = "Tambah";
+/* Title of the button that opens the editor for the launch settings of one app. The ellipsis shows that a sheet follows. */
+"ui.controllers.launchSettings.edit" = "Edit…";
+/* Title of the button that copies the launch option the user pastes into Steam. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copySteam" = "Salin Opsi Peluncuran Steam";
+/* Message after the Steam launch option is copied to the clipboard. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copied" = "Opsi peluncuran Steam disalin.";
+/* Note under the launch settings list. Steam is a product name; Properties, General and Launch Options are the names Steam shows and stay as written. */
+"ui.controllers.launchSettings.steamNote" = "Untuk menerapkan pengaturan ini ke game Steam, tempel opsi yang disalin ke Properties > General > Launch Options pada game tersebut.";
+/* Title of the sheet that edits the launch settings of one app. %@ is the name of the app. */
+"ui.controllers.launchSettings.editor.title" = "Pengaturan Peluncuran untuk %@";
+/* Label of the text field that holds the environment variables of an app in the launch settings editor. */
+"ui.controllers.launchSettings.environment" = "Variabel lingkungan";
+/* Hint under the environment variables field. NAME=VALUE stays as written. */
+"ui.controllers.launchSettings.environment.hint" = "Satu NAME=VALUE per baris.";
+/* Label of the text field that holds the extra arguments of an app in the launch settings editor. */
+"ui.controllers.launchSettings.arguments" = "Argumen";
+/* Hint under the arguments field. */
+"ui.controllers.launchSettings.arguments.hint" = "Satu argumen per baris.";
 /* Button in the Controllers detail that starts a draft of a controller record. Keep the three dots. */
 "ui.controllers.draftRecord" = "Buat draf catatan…";
 /* Title of the sheet that drafts a controller record. */
@@ -5537,6 +5599,18 @@
 "ui.help.guidedValidate" = "Tinjau laporan validasi sebelum Anda mengirimnya";
 /* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
 "ui.help.launch" = "Pilih game dan jalankan dengan gamepad virtual";
+/* Tooltip of the Add App button in the launch settings row. */
+"ui.help.launchSettingsAdd" = "Pilih app untuk menetapkan opsi peluncurannya.";
+/* Tooltip of the Edit button of an app in the launch settings row. */
+"ui.help.launchSettingsEdit" = "Ubah opsi peluncuran app ini.";
+/* Tooltip of the Remove button of an app in the launch settings row. */
+"ui.help.launchSettingsRemove" = "Hapus opsi peluncuran app ini.";
+/* Tooltip of the Copy Steam Launch Option button. Steam is a product name and stays as written. */
+"ui.help.launchSettingsCopySteam" = "Salin opsi peluncuran Steam yang menerapkan pengaturan ini.";
+/* Tooltip of the environment variables field in the launch settings editor. */
+"ui.help.launchSettingsEnvironment" = "Tetapkan variabel yang ditambahkan ke lingkungan app.";
+/* Tooltip of the arguments field in the launch settings editor. */
+"ui.help.launchSettingsArguments" = "Tetapkan argumen yang ditambahkan setelah yang diterima app.";
 /* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "Buka entri pengontrol ini di browser";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */

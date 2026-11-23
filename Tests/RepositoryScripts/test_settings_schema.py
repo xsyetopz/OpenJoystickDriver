@@ -35,6 +35,33 @@ class SettingsSchemaTests(unittest.TestCase):
             with self.subTest(other=other):
                 self.assertFalse(self.valid(interfaceLevel=other))
 
+    def test_a_launch_setting_holds_a_backend_flag_environment_and_arguments(
+        self,
+    ) -> None:
+        self.assertTrue(self.valid(launchSettings={}))
+        self.assertTrue(
+            self.valid(
+                launchSettings={
+                    "org.example.game": {
+                        "sdlGameControllerBackend": True,
+                        "environment": {"SDL_VIDEODRIVER": "cocoa"},
+                        "arguments": ["-windowed"],
+                    }
+                }
+            )
+        )
+
+    def test_a_launch_setting_refuses_unknown_fields_and_bad_values(self) -> None:
+        for bad in (
+            {"sdl_game_controller_backend": True},
+            {"sdlGameControllerBackend": "yes"},
+            {"environment": {"1BAD": "x"}},
+            {"environment": {"A": 1}},
+            {"arguments": "-windowed"},
+        ):
+            with self.subTest(bad=bad):
+                self.assertFalse(self.valid(launchSettings={"k": bad}))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3765,6 +3765,45 @@
         }
       }
     },
+    "sharedLaunchSetting": {
+      "description": "The launch setting of one program.",
+      "type": "object",
+      "required": ["program", "sdlGameControllerBackend", "environment", "arguments"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "program": {
+          "description": "The bundle identifier of the app that holds the program, or the program's absolute path.",
+          "type": "string",
+          "minLength": 1
+        },
+        "sdlGameControllerBackend": {
+          "type": "boolean"
+        },
+        "environment": {
+          "description": "The variables added to the program's environment, by name.",
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "arguments": {
+          "description": "The arguments appended after the arguments given on the command line.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "sharedMacroSummary": {
       "type": "object",
       "required": ["id", "interruptOnRelease", "name", "repeat", "steps", "whileRunning"],
@@ -4721,6 +4760,65 @@
           "const": "RumbleCommand"
         }
       }
+    },
+    "virtualLaunchSettingList": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "LaunchSettingList"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {}
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sharedLaunchSetting"
+          }
+        }
+      }
+    },
+    "virtualLaunchSettingRemove": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "details": {
+          "type": "object",
+          "required": ["removed"],
+          "additionalProperties": false,
+          "properties": {
+            "removed": {
+              "description": "The key of the removed setting.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "virtualLaunchSettingSet": {
+      "required": ["apiVersion", "kind"],
+      "properties": {
+        "kind": {
+          "const": "LaunchSetting"
+        }
+      },
+      "$ref": "#/$defs/sharedLaunchSetting"
+    },
+    "virtualLaunchSettingShow": {
+      "required": ["apiVersion", "kind"],
+      "properties": {
+        "kind": {
+          "const": "LaunchSetting"
+        }
+      },
+      "$ref": "#/$defs/sharedLaunchSetting"
     },
     "virtualReset": {
       "required": ["apiVersion", "kind"],

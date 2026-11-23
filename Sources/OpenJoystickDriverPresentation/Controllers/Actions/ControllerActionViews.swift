@@ -88,6 +88,7 @@
           ControllerNoticeText(text: RuntimePresentation.userFacingError(error), isError: true)
         }
       }
+      LaunchSettingsRows()
     }
 
     /// Returns whether the launch ended in a failure.

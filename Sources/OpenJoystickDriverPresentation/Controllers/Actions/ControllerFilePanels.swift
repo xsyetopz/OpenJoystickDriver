@@ -93,6 +93,23 @@
         completion((url, backend.state == .on))
       }
     }
+
+    /// Asks for an app or an executable file whose launch setting the person edits;
+    /// `completion` gets it, or nil when cancelled.
+    ///
+    /// - Parameter completion: Receives the chosen program, or nil when the person cancelled.
+    static func chooseApp(completion: @escaping (URL?) -> Void) {
+      let panel = NSOpenPanel()
+      panel.title = OJDLocalized.string("ui.controllers.launchSettings.add.title")
+      panel.prompt = OJDLocalized.string("ui.controllers.launchSettings.add.prompt")
+      panel.allowedContentTypes = [.application, .unixExecutable]
+      panel.canChooseFiles = true
+      panel.canChooseDirectories = false
+      panel.allowsMultipleSelection = false
+      present(panel) { response in
+        completion(response == .OK ? panel.url : nil)
+      }
+    }
   }
 
   /// The format popup of the export panel.

@@ -10,6 +10,8 @@ enum VirtualGamepadLaunch {
     let executable: URL
     /// The environment to start the program with.
     let environment: [String: String]
+    /// The arguments to start the program with: the stored launch arguments of the program.
+    let arguments: [String]
   }
 
   /// Why a program cannot be launched.
@@ -53,20 +55,25 @@ enum VirtualGamepadLaunch {
   /// with the mappings of every virtual gamepad in `devices`. `gameControllerBackend` adds the SDL
   /// hints that make SDL read controllers only through Apple's GameController framework.
   ///
+  /// The stored launch setting of the program adds its variables to `baseEnvironment` first, turns
+  /// the hints on when it asks for them, and gives the arguments, as `ojd virtual launch` does.
+  ///
   /// - Parameters:
   ///   - program: The app or executable file.
   ///   - devices: The connected controllers.
   ///   - gameControllerBackend: Whether to add the SDL hints for the GameController backend.
   ///   - baseEnvironment: The environment to add the mappings to.
-  /// - Returns: The executable of `program`, an `.app` or an executable file, and `baseEnvironment`
-  ///   with the mappings of every virtual gamepad in `devices`.
+  ///   - launchSettings: The stored launch settings, by ``LaunchSettingKey``.
+  /// - Returns: The executable of `program`, the arguments to start it with, and the environment
+  ///   with the stored variables and the mappings of every virtual gamepad in `devices`.
   /// - Throws: ``Failure`` when the program cannot start or no controller has a virtual gamepad;
   ///   any other error of the lookup of the executable.
   static func prepare(
     program: URL,
     devices: [ApplicationServiceDeviceDescription],
     gameControllerBackend: Bool,
-    baseEnvironment: [String: String]
+    baseEnvironment: [String: String],
+    launchSettings: [String: LaunchSetting] = [:]
   ) throws -> Prepared {
     let executable: URL
     do {
@@ -82,13 +89,18 @@ enum VirtualGamepadLaunch {
       throw Failure.cannotStart(program: program.lastPathComponent, reason: reason)
     }
     let profiles = devices.compactMap { $0.servingDecision.selection?.profileID }
+    let setting = launchSettings[LaunchSettingKey.key(forExecutable: executable)] ?? LaunchSetting()
     do {
-      let environment = try SDLLaunchEnvironment.environment(
+      let environment = try setting.launchEnvironment(
         adding: profiles,
-        to: baseEnvironment,
+        over: baseEnvironment,
         gameControllerBackend: gameControllerBackend
       )
-      return Prepared(executable: executable, environment: environment)
+      return Prepared(
+        executable: executable,
+        environment: environment,
+        arguments: setting.launchArguments(after: [])
+      )
     } catch SDLLaunchEnvironment.Failure.noProfile {
       throw Failure.noGamepad
     }

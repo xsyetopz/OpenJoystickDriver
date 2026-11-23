@@ -315,13 +315,15 @@ final class ControllerDetailActions: ObservableObject {
   ///   - devices: The connected controllers.
   ///   - gameControllerBackend: Whether the program uses a game controller backend.
   ///   - baseEnvironment: The environment the program starts with, before the mapping is added.
+  ///   - settings: Where the stored launch settings of the programs are read from.
   func launch(
     program: URL,
     devices: [ApplicationServiceDeviceDescription],
     gameControllerBackend: Bool,
     baseEnvironment: [String: String] = VirtualGamepadLaunch.gameEnvironment(
       from: ProcessInfo.processInfo.environment
-    )
+    ),
+    settings: SettingsStore = SettingsStore()
   ) {
     let name = program.deletingPathExtension().lastPathComponent
     do {
@@ -329,11 +331,12 @@ final class ControllerDetailActions: ObservableObject {
         program: program,
         devices: devices,
         gameControllerBackend: gameControllerBackend,
-        baseEnvironment: baseEnvironment
+        baseEnvironment: baseEnvironment,
+        launchSettings: try settings.launchSettings()
       )
       let process = ProgramExecutable.process(
         executable: prepared.executable,
-        arguments: [],
+        arguments: prepared.arguments,
         environment: prepared.environment,
         standardOutput: FileHandle.nullDevice
       )

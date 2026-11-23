@@ -35,6 +35,13 @@ struct VirtualLaunchCommand: AsyncParsableCommand {
   )
   var sdlGameControllerBackend = false
 
+  /// `--no-launch-settings`: ignore the stored launch setting of the program.
+  @Flag(
+    name: .customLong("no-launch-settings"),
+    help: ArgumentHelp(CLILocalized.text("cli.virtual.launch.noLaunchSettings"))
+  )
+  var noLaunchSettings = false
+
   /// The program and its arguments.
   @Argument(
     parsing: .remaining,
@@ -56,15 +63,16 @@ struct VirtualLaunchCommand: AsyncParsableCommand {
         for: name,
         searchPath: Self.baseEnvironment["PATH"]
       )
+      let setting = try noLaunchSettings ? LaunchSetting() : storedSetting(of: executable)
       let devices = try await ServiceConnection.request { client in
         try await client.getStatus().connectedDevices
       }
       let profiles = devices.compactMap { $0.servingDecision.selection?.profileID }
       let environment: [String: String]
       do {
-        environment = try SDLLaunchEnvironment.environment(
+        environment = try setting.launchEnvironment(
           adding: profiles,
-          to: Self.baseEnvironment,
+          over: Self.baseEnvironment,
           gameControllerBackend: sdlGameControllerBackend
         )
       } catch SDLLaunchEnvironment.Failure.noProfile {
@@ -73,7 +81,8 @@ struct VirtualLaunchCommand: AsyncParsableCommand {
           CLILocalized.text("cli.virtual.launch.errorNoGamepad")
         )
       }
-      if !CLIContext.current.quiet, !sdlGameControllerBackend {
+      if !CLIContext.current.quiet, !(sdlGameControllerBackend || setting.sdlGameControllerBackend)
+      {
         for profile in VirtualHIDProfileID.allCases where profiles.contains(profile) {
           if try !profile.gamepadMapping().worksWithDefaultSDLHints {
             CLIOutput.stderr(sdlHintsNote(profile.rawValue))
@@ -82,12 +91,20 @@ struct VirtualLaunchCommand: AsyncParsableCommand {
       }
       let status = try await ProgramLauncher.run(
         executable: executable,
-        arguments: Array(command.dropFirst()),
+        arguments: setting.launchArguments(after: Array(command.dropFirst())),
         environment: environment,
         standardOutput: Self.programStandardOutput
       )
       if status != 0 { throw ExitCode(status) }
     }
+  }
+}
+
+extension VirtualLaunchCommand {
+  /// The launch setting stored for `executable`, or an empty one.
+  private func storedSetting(of executable: URL) throws -> LaunchSetting {
+    try SettingCatalog.store.launchSettings()[LaunchSettingKey.key(forExecutable: executable)]
+      ?? LaunchSetting()
   }
 }
 

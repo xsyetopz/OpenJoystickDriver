@@ -114,6 +114,41 @@
       "type": "string",
       "minLength": 1
     },
+    "launchSettings": {
+      "description": "The settings applied when a program is launched, by app bundle identifier or absolute path.",
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "sdlGameControllerBackend": {
+            "description": "Whether the program starts with the SDL GameController backend hints.",
+            "type": "boolean",
+            "default": false
+          },
+          "environment": {
+            "description": "Variables added to the program's environment, which override the ones it inherits.",
+            "type": "object",
+            "propertyNames": {
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "arguments": {
+            "description": "Arguments appended after the arguments given at launch.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "pauseShortcut": {
       "description": "The system-wide shortcut that pauses and resumes every controller, with a modifier other than shift.",
       "type": "object",

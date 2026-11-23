@@ -49,6 +49,11 @@ enum GUICoverageEntries {
           + "the window edits the scope after import"
       ),
       CLIOnlyItem(
+        command: ["virtual", "launch"],
+        option: "--no-launch-settings",
+        reason: "the window's Launch button always applies the stored launch setting"
+      ),
+      CLIOnlyItem(
         command: ["virtual", "feed"],
         option: nil,
         reason: "reads controller frames from standard input"
@@ -294,6 +299,14 @@ enum GUICoverageEntries {
     option("virtual export-mapping", "--format", "ExportMappingAccessory"),
     leaf("virtual launch", "VirtualGamepadLaunch"),
     option("virtual launch", "--sdl-gamecontroller-backend", "chooseProgram"),
+    leaf("virtual launch-setting list", "LaunchSettingsRows"),
+    leaf("virtual launch-setting show", "LaunchSettingEditor"),
+    leaf("virtual launch-setting set", "LaunchSettingEditor"),
+    option("virtual launch-setting set", "--sdl-gamecontroller-backend", "LaunchSettingEditor"),
+    option("virtual launch-setting set", "--no-sdl-gamecontroller-backend", "LaunchSettingEditor"),
+    option("virtual launch-setting set", "--env", "LaunchSettingEditor"),
+    option("virtual launch-setting set", "--argument", "LaunchSettingEditor"),
+    leaf("virtual launch-setting remove", "removeLaunchSetting"),
   ]
 
   private static let record = [

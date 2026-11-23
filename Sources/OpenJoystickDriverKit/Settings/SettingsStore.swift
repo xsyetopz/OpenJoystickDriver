@@ -155,6 +155,25 @@ public struct SettingsStore: Sendable {
     try update { $0.lastShownChangelogVersion = version }
   }
 
+  /// Every launch setting in the user file, by ``LaunchSettingKey``.
+  public func launchSettings() throws -> [String: LaunchSetting] { try load().launchSettings }
+
+  /// Stores `setting` under `key` in the user file.
+  ///
+  /// - Throws: ``LaunchSettingError`` when `setting` has an invalid environment name.
+  public func setLaunchSetting(_ setting: LaunchSetting, for key: String) throws {
+    try setting.validate()
+    try update { $0.launchSettings[key] = setting }
+  }
+
+  /// Removes the launch setting under `key` from the user file; returns whether there was one.
+  @discardableResult
+  public func removeLaunchSetting(for key: String) throws -> Bool {
+    var removed = false
+    try update { removed = $0.launchSettings.removeValue(forKey: key) != nil }
+    return removed
+  }
+
   /// Stores `value` for `key` in the user file.
   public func set(_ key: ApplicationSettingKey, to value: Bool) throws {
     try update([key: value])

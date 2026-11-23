@@ -3101,6 +3101,40 @@
 "cli.virtual.launch.errorOutput" = "プログラムが標準出力に書き込むため、--json と --plain は使えません。";
 /* Help text of the SDL backend flag of 'ojd virtual launch'. The SDL hint names and values stay as written. */
 "platform.macos.cli.virtual.launch.sdlGamecontrollerBackend" = "SDL が Apple の GameController フレームワーク経由でのみコントローラを読み取るようにする SDL ヒントも設定します: SDL_JOYSTICK_MFI=1, SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1, SDL_JOYSTICK_IOKIT=0, SDL_JOYSTICK_HIDAPI=0。ヒントはプログラムにのみ適用され、すでに設定されている値を置き換えます。";
+/* Help text of the --no-launch-settings flag of 'ojd virtual launch'. The flag and command names in quotes stay as written. */
+"cli.virtual.launch.noLaunchSettings" = "「ojd virtual launch-setting」 でプログラムに保存された起動設定を無視します。";
+/* One-line summary of 'ojd virtual launch-setting' in the command list and at the top of its help. The command in quotes stays as written. */
+"cli.virtual.launchSetting.group.abstract" = "「ojd virtual launch」 がプログラムに適用する内容を一覧表示、表示、設定、削除します。";
+/* Long description in the help of 'ojd virtual launch-setting'. SDL is a game controller library, .app is the app bundle extension, and the command and option in quotes stay as written. */
+"cli.virtual.launchSetting.group.discussion" = "起動設定には、1 つのプログラムの SDL GameController バックエンド、追加の環境変数、追加の引数が含まれます。プログラムを含む App の Bundle ID で保存され、App の外にあるプログラムは絶対パスで保存されます。そのため、.app とその中のプログラムは同じ設定に届きます。「ojd virtual launch」 がこれを適用し、--sdl-gamecontroller-backend は保存された値にかかわらずバックエンドをオンにします。";
+/* Error when an --env value is not NAME=VALUE. %@ is the text the user gave. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.group.errorAssignment" = "「%@」 は NAME=VALUE の形式ではありません。各変数を NAME=VALUE と書いてください。";
+/* Error when no launch setting is stored for a program. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.group.errorMissing" = "%@ に保存された起動設定はありません。";
+/* Error when an environment variable name is not valid. %@ is the name the user gave. */
+"cli.virtual.launchSetting.group.errorName" = "「%@」 は有効な変数名ではありません。名前は英字またはアンダースコアで始まり、英字、数字、アンダースコアだけを含められます。";
+/* Help text of the program argument of the 'ojd virtual launch-setting' commands. .app stays as written. */
+"cli.virtual.launchSetting.group.program" = "プログラム。.app または実行ファイル、あるいは保存された設定のキーです。";
+/* One-line summary of 'ojd virtual launch-setting list'. */
+"cli.virtual.launchSetting.list.abstract" = "保存された起動設定を一覧表示します。";
+/* Message of 'ojd virtual launch-setting list' when no launch setting is stored. */
+"cli.virtual.launchSetting.list.empty" = "保存された起動設定はありません。";
+/* One-line summary of 'ojd virtual launch-setting remove'. */
+"cli.virtual.launchSetting.remove.abstract" = "プログラムの起動設定を削除します。";
+/* Message after 'ojd virtual launch-setting remove' removes a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.remove.done" = "%@ の起動設定を削除しました。";
+/* One-line summary of 'ojd virtual launch-setting set'. */
+"cli.virtual.launchSetting.set.abstract" = "プログラムの起動設定を保存します。";
+/* Help text of the --argument option of 'ojd virtual launch-setting set'. The command in quotes stays as written. */
+"cli.virtual.launchSetting.set.argument" = "「ojd virtual launch」 に渡された引数の後ろに追加する引数。複数追加するには繰り返します。保存済みの引数は置き換えられます。";
+/* Help text of the --sdl-gamecontroller-backend flag of 'ojd virtual launch-setting set'. SDL and GameController stay as written, and so do both flag names. */
+"cli.virtual.launchSetting.set.backend" = "SDL GameController バックエンドのヒントを付けてプログラムを起動します。オフにするには --no-sdl-gamecontroller-backend を使います。";
+/* Message after 'ojd virtual launch-setting set' stores a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.set.done" = "%@ の起動設定を保存しました。";
+/* Help text of the --env option of 'ojd virtual launch-setting set'. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.set.env" = "プログラムの環境に追加する変数。NAME=VALUE の形式で書きます。複数追加するには繰り返します。保存済みの変数は置き換えられます。";
+/* One-line summary of 'ojd virtual launch-setting show'. */
+"cli.virtual.launchSetting.show.abstract" = "プログラムの起動設定を表示します。";
 /* One-line summary of 'ojd virtual reset' in the command list and at the top of its help. */
 "cli.virtual.reset.abstract" = "コントローラのモデル、またはすべてのモデルを、仮想ゲームパッドの自動選択に戻します。";
 /* Help text of the --all flag of 'ojd virtual reset'. */
@@ -4964,6 +4998,34 @@
 "ui.controllers.launch.started" = "%@ を起動しました。";
 /* Message after a game ends. %1$@ is the name of the program and %2$lld is its exit status. */
 "ui.controllers.launch.exited" = "%1$@ はステータス %2$lld で終了しました。";
+/* Label of the row in the Controllers detail that lists the apps with launch settings. */
+"ui.controllers.launchSettings" = "App の起動設定";
+/* Message in the launch settings row when no app has a launch setting. */
+"ui.controllers.launchSettings.empty" = "起動設定を持つ App はありません。";
+/* Title of the button that opens a panel to choose an app and add its launch settings. The ellipsis shows that a panel follows. */
+"ui.controllers.launchSettings.add" = "App を追加…";
+/* Title of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.title" = "App を選択";
+/* Confirm button of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.prompt" = "追加";
+/* Title of the button that opens the editor for the launch settings of one app. The ellipsis shows that a sheet follows. */
+"ui.controllers.launchSettings.edit" = "編集…";
+/* Title of the button that copies the launch option the user pastes into Steam. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copySteam" = "Steam の起動オプションをコピー";
+/* Message after the Steam launch option is copied to the clipboard. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copied" = "Steam の起動オプションをコピーしました。";
+/* Note under the launch settings list. Steam is a product name; Properties, General and Launch Options are the names Steam shows and stay as written. */
+"ui.controllers.launchSettings.steamNote" = "この設定を Steam のゲームに適用するには、コピーしたオプションをゲームの Properties > General > Launch Options に貼り付けます。";
+/* Title of the sheet that edits the launch settings of one app. %@ is the name of the app. */
+"ui.controllers.launchSettings.editor.title" = "%@ の起動設定";
+/* Label of the text field that holds the environment variables of an app in the launch settings editor. */
+"ui.controllers.launchSettings.environment" = "環境変数";
+/* Hint under the environment variables field. NAME=VALUE stays as written. */
+"ui.controllers.launchSettings.environment.hint" = "1 行に NAME=VALUE を 1 つ。";
+/* Label of the text field that holds the extra arguments of an app in the launch settings editor. */
+"ui.controllers.launchSettings.arguments" = "引数";
+/* Hint under the arguments field. */
+"ui.controllers.launchSettings.arguments.hint" = "1 行に引数を 1 つ。";
 /* Button in the Controllers detail that starts a draft of a controller record. Keep the three dots. */
 "ui.controllers.draftRecord" = "レコードの下書き…";
 /* Title of the sheet that drafts a controller record. */
@@ -5537,6 +5599,18 @@
 "ui.help.guidedValidate" = "送信する前に検証レポートを確認します";
 /* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
 "ui.help.launch" = "ゲームを選び、仮想ゲームパッドで起動します";
+/* Tooltip of the Add App button in the launch settings row. */
+"ui.help.launchSettingsAdd" = "App を選んで起動オプションを設定します。";
+/* Tooltip of the Edit button of an app in the launch settings row. */
+"ui.help.launchSettingsEdit" = "この App の起動オプションを変更します。";
+/* Tooltip of the Remove button of an app in the launch settings row. */
+"ui.help.launchSettingsRemove" = "この App の起動オプションを削除します。";
+/* Tooltip of the Copy Steam Launch Option button. Steam is a product name and stays as written. */
+"ui.help.launchSettingsCopySteam" = "この設定を適用する Steam の起動オプションをコピーします。";
+/* Tooltip of the environment variables field in the launch settings editor. */
+"ui.help.launchSettingsEnvironment" = "App の環境に追加する変数を設定します。";
+/* Tooltip of the arguments field in the launch settings editor. */
+"ui.help.launchSettingsArguments" = "App が受け取る引数の後ろに追加する引数を設定します。";
 /* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "このコントローラーの項目をブラウザで開きます";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */

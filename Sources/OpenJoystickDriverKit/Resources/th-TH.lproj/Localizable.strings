@@ -3101,6 +3101,40 @@
 "cli.virtual.launch.errorOutput" = "--json และ --plain ใช้ไม่ได้ เพราะโปรแกรมเขียนเอาต์พุตมาตรฐาน";
 /* Help text of the SDL backend flag of 'ojd virtual launch'. The SDL hint names and values stay as written. */
 "platform.macos.cli.virtual.launch.sdlGamecontrollerBackend" = "ตั้งค่าคำใบ้ของ SDL ที่ทำให้ SDL อ่านตัวควบคุมผ่านเฟรมเวิร์ก GameController ของ Apple เท่านั้นด้วย: SDL_JOYSTICK_MFI=1, SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1, SDL_JOYSTICK_IOKIT=0, SDL_JOYSTICK_HIDAPI=0 คำใบ้มีผลกับโปรแกรมเท่านั้นและแทนที่ค่าที่ตั้งไว้แล้ว";
+/* Help text of the --no-launch-settings flag of 'ojd virtual launch'. The flag and command names in quotes stay as written. */
+"cli.virtual.launch.noLaunchSettings" = "ข้ามการตั้งค่าการเปิดที่บันทึกไว้สำหรับโปรแกรมด้วย “ojd virtual launch-setting”";
+/* One-line summary of 'ojd virtual launch-setting' in the command list and at the top of its help. The command in quotes stays as written. */
+"cli.virtual.launchSetting.group.abstract" = "แสดงรายการ แสดง ตั้งค่า และลบสิ่งที่ “ojd virtual launch” ใช้กับโปรแกรม";
+/* Long description in the help of 'ojd virtual launch-setting'. SDL is a game controller library, .app is the app bundle extension, and the command and option in quotes stay as written. */
+"cli.virtual.launchSetting.group.discussion" = "การตั้งค่าการเปิดประกอบด้วยแบ็กเอนด์ SDL GameController ตัวแปรสภาพแวดล้อมเพิ่มเติม และอาร์กิวเมนต์เพิ่มเติมของโปรแกรมหนึ่ง การตั้งค่าจะถูกบันทึกภายใต้ตัวระบุบันเดิลของแอปที่มีโปรแกรมนั้น หรือภายใต้พาธสัมบูรณ์ของโปรแกรมที่อยู่นอกแอป ดังนั้น .app และโปรแกรมภายในจึงใช้การตั้งค่าเดียวกัน “ojd virtual launch” จะนำไปใช้ และ --sdl-gamecontroller-backend จะเปิดแบ็กเอนด์ไม่ว่าค่าที่บันทึกไว้จะเป็นอย่างไร";
+/* Error when an --env value is not NAME=VALUE. %@ is the text the user gave. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.group.errorAssignment" = "“%@” ไม่ใช่รูปแบบ NAME=VALUE เขียนแต่ละตัวแปรเป็น NAME=VALUE";
+/* Error when no launch setting is stored for a program. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.group.errorMissing" = "ไม่มีการตั้งค่าการเปิดที่บันทึกไว้สำหรับ %@";
+/* Error when an environment variable name is not valid. %@ is the name the user gave. */
+"cli.virtual.launchSetting.group.errorName" = "“%@” ไม่ใช่ชื่อตัวแปรที่ถูกต้อง ชื่อต้องขึ้นต้นด้วยตัวอักษรหรือขีดล่าง และมีได้เฉพาะตัวอักษร ตัวเลข และขีดล่าง";
+/* Help text of the program argument of the 'ojd virtual launch-setting' commands. .app stays as written. */
+"cli.virtual.launchSetting.group.program" = "โปรแกรม ซึ่งเป็น .app หรือไฟล์ที่เรียกใช้งานได้ หรือคีย์ของการตั้งค่าที่บันทึกไว้";
+/* One-line summary of 'ojd virtual launch-setting list'. */
+"cli.virtual.launchSetting.list.abstract" = "แสดงรายการการตั้งค่าการเปิดที่บันทึกไว้";
+/* Message of 'ojd virtual launch-setting list' when no launch setting is stored. */
+"cli.virtual.launchSetting.list.empty" = "ไม่มีการตั้งค่าการเปิดที่บันทึกไว้";
+/* One-line summary of 'ojd virtual launch-setting remove'. */
+"cli.virtual.launchSetting.remove.abstract" = "ลบการตั้งค่าการเปิดของโปรแกรม";
+/* Message after 'ojd virtual launch-setting remove' removes a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.remove.done" = "ลบการตั้งค่าการเปิดของ %@ แล้ว";
+/* One-line summary of 'ojd virtual launch-setting set'. */
+"cli.virtual.launchSetting.set.abstract" = "บันทึกการตั้งค่าการเปิดของโปรแกรม";
+/* Help text of the --argument option of 'ojd virtual launch-setting set'. The command in quotes stays as written. */
+"cli.virtual.launchSetting.set.argument" = "อาร์กิวเมนต์ที่ต่อท้ายอาร์กิวเมนต์ที่ส่งให้ “ojd virtual launch” ทำซ้ำเพื่อเพิ่มอีก อาร์กิวเมนต์เหล่านี้จะแทนที่ที่บันทึกไว้";
+/* Help text of the --sdl-gamecontroller-backend flag of 'ojd virtual launch-setting set'. SDL and GameController stay as written, and so do both flag names. */
+"cli.virtual.launchSetting.set.backend" = "เปิดโปรแกรมพร้อมคำใบ้ของแบ็กเอนด์ SDL GameController ใช้ --no-sdl-gamecontroller-backend เพื่อปิด";
+/* Message after 'ojd virtual launch-setting set' stores a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.set.done" = "บันทึกการตั้งค่าการเปิดของ %@ แล้ว";
+/* Help text of the --env option of 'ojd virtual launch-setting set'. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.set.env" = "ตัวแปรที่เพิ่มเข้าไปในสภาพแวดล้อมของโปรแกรม เขียนเป็น NAME=VALUE ทำซ้ำเพื่อเพิ่มอีก ตัวแปรเหล่านี้จะแทนที่ที่บันทึกไว้";
+/* One-line summary of 'ojd virtual launch-setting show'. */
+"cli.virtual.launchSetting.show.abstract" = "แสดงการตั้งค่าการเปิดของโปรแกรม";
 /* One-line summary of 'ojd virtual reset' in the command list and at the top of its help. */
 "cli.virtual.reset.abstract" = "คืนรุ่นของคอนโทรลเลอร์ หรือทุกรุ่น ให้เป็นการเลือกเกมแพดเสมือนอัตโนมัติ";
 /* Help text of the --all flag of 'ojd virtual reset'. */
@@ -4964,6 +4998,34 @@
 "ui.controllers.launch.started" = "%@ เริ่มทำงานแล้ว";
 /* Message after a game ends. %1$@ is the name of the program and %2$lld is its exit status. */
 "ui.controllers.launch.exited" = "%1$@ สิ้นสุดด้วยสถานะ %2$lld";
+/* Label of the row in the Controllers detail that lists the apps with launch settings. */
+"ui.controllers.launchSettings" = "การตั้งค่าการเปิดสำหรับแอป";
+/* Message in the launch settings row when no app has a launch setting. */
+"ui.controllers.launchSettings.empty" = "ไม่มีแอปใดที่มีการตั้งค่าการเปิด";
+/* Title of the button that opens a panel to choose an app and add its launch settings. The ellipsis shows that a panel follows. */
+"ui.controllers.launchSettings.add" = "เพิ่มแอป…";
+/* Title of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.title" = "เลือกแอป";
+/* Confirm button of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.prompt" = "เพิ่ม";
+/* Title of the button that opens the editor for the launch settings of one app. The ellipsis shows that a sheet follows. */
+"ui.controllers.launchSettings.edit" = "แก้ไข…";
+/* Title of the button that copies the launch option the user pastes into Steam. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copySteam" = "คัดลอกตัวเลือกการเปิดของ Steam";
+/* Message after the Steam launch option is copied to the clipboard. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copied" = "คัดลอกตัวเลือกการเปิดของ Steam แล้ว";
+/* Note under the launch settings list. Steam is a product name; Properties, General and Launch Options are the names Steam shows and stay as written. */
+"ui.controllers.launchSettings.steamNote" = "หากต้องการใช้การตั้งค่าเหล่านี้กับเกม Steam ให้วางตัวเลือกที่คัดลอกไว้ใน Properties > General > Launch Options ของเกม";
+/* Title of the sheet that edits the launch settings of one app. %@ is the name of the app. */
+"ui.controllers.launchSettings.editor.title" = "การตั้งค่าการเปิดสำหรับ %@";
+/* Label of the text field that holds the environment variables of an app in the launch settings editor. */
+"ui.controllers.launchSettings.environment" = "ตัวแปรสภาพแวดล้อม";
+/* Hint under the environment variables field. NAME=VALUE stays as written. */
+"ui.controllers.launchSettings.environment.hint" = "หนึ่ง NAME=VALUE ต่อบรรทัด";
+/* Label of the text field that holds the extra arguments of an app in the launch settings editor. */
+"ui.controllers.launchSettings.arguments" = "อาร์กิวเมนต์";
+/* Hint under the arguments field. */
+"ui.controllers.launchSettings.arguments.hint" = "หนึ่งอาร์กิวเมนต์ต่อบรรทัด";
 /* Button in the Controllers detail that starts a draft of a controller record. Keep the three dots. */
 "ui.controllers.draftRecord" = "ร่างเรกคอร์ด…";
 /* Title of the sheet that drafts a controller record. */
@@ -5537,6 +5599,18 @@
 "ui.help.guidedValidate" = "ตรวจทานรายงานการตรวจสอบก่อนส่ง";
 /* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
 "ui.help.launch" = "เลือกเกมและเปิดด้วยเกมแพดเสมือน";
+/* Tooltip of the Add App button in the launch settings row. */
+"ui.help.launchSettingsAdd" = "เลือกแอปเพื่อตั้งค่าตัวเลือกการเปิดของแอป";
+/* Tooltip of the Edit button of an app in the launch settings row. */
+"ui.help.launchSettingsEdit" = "เปลี่ยนตัวเลือกการเปิดของแอปนี้";
+/* Tooltip of the Remove button of an app in the launch settings row. */
+"ui.help.launchSettingsRemove" = "ลบตัวเลือกการเปิดของแอปนี้";
+/* Tooltip of the Copy Steam Launch Option button. Steam is a product name and stays as written. */
+"ui.help.launchSettingsCopySteam" = "คัดลอกตัวเลือกการเปิดของ Steam ที่ใช้การตั้งค่าเหล่านี้";
+/* Tooltip of the environment variables field in the launch settings editor. */
+"ui.help.launchSettingsEnvironment" = "ตั้งค่าตัวแปรที่เพิ่มเข้าไปในสภาพแวดล้อมของแอป";
+/* Tooltip of the arguments field in the launch settings editor. */
+"ui.help.launchSettingsArguments" = "ตั้งค่าอาร์กิวเมนต์ที่ต่อท้ายอาร์กิวเมนต์ที่แอปได้รับ";
 /* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "เปิดรายการของคอนโทรลเลอร์นี้ในเบราว์เซอร์";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */

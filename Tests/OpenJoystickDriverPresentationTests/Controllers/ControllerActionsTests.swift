@@ -238,6 +238,118 @@ struct ControllerActionsTests {
   }
 
   @Test
+  func launchAppliesStoredSettingOfTheProgram() throws {
+    let key = try LaunchSettingKey.key(for: "/bin/echo", searchPath: nil)
+    let prepared = try VirtualGamepadLaunch.prepare(
+      program: URL(fileURLWithPath: "/bin/echo"),
+      devices: [Self.device(override: .generic)],
+      gameControllerBackend: false,
+      baseEnvironment: ["KEEP": "base", "SHARED": "base"],
+      launchSettings: [
+        key: LaunchSetting(
+          sdlGameControllerBackend: true,
+          environment: ["SHARED": "stored"],
+          arguments: ["-windowed"]
+        ),
+        "org.example.other": LaunchSetting(environment: ["SHARED": "other"]),
+      ]
+    )
+    #expect(prepared.arguments == ["-windowed"])
+    #expect(prepared.environment["KEEP"] == "base")
+    #expect(prepared.environment["SHARED"] == "stored")
+    #expect(prepared.environment["SDL_JOYSTICK_HIDAPI"] == "0")
+  }
+
+  @Test
+  func launchWithoutStoredSettingAddsNoArgumentsOrHints() throws {
+    let prepared = try VirtualGamepadLaunch.prepare(
+      program: URL(fileURLWithPath: "/bin/echo"),
+      devices: [Self.device(override: .generic)],
+      gameControllerBackend: false,
+      baseEnvironment: [:]
+    )
+    #expect(prepared.arguments.isEmpty)
+    #expect(prepared.environment["SDL_JOYSTICK_HIDAPI"] == nil)
+  }
+
+  @Test
+  @MainActor
+  func steamLaunchOptionQuotesTheToolAndKeepsSteamsCommand() {
+    #expect(
+      LaunchSettingsModel.steamLaunchOption(tool: "/opt/my tools/ojd")
+        == "\"/opt/my tools/ojd\" virtual launch -- %command%"
+    )
+    #expect(
+      LaunchSettingsModel.steamLaunchOption()
+        == "\"\(CommandLineToolLinkStatus.defaultPath)\" virtual launch -- %command%"
+    )
+  }
+
+  @Test
+  @MainActor
+  func steamLaunchOptionNamesTheOjdLinkInTheUsersBinFolder() throws {
+    // Arrange
+    let home = FileManager.default.temporaryDirectory
+      .appendingPathComponent("ojd-home-\(UUID().uuidString)")
+    defer { try? FileManager.default.removeItem(at: home) }
+    let bin = home.appendingPathComponent(".local/bin")
+    try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+    let executable = home.appendingPathComponent("OpenJoystickDriver")
+    try Data().write(to: executable)
+    let link = bin.appendingPathComponent("ojd")
+    try FileManager.default.createSymbolicLink(at: link, withDestinationURL: executable)
+
+    let defaultLink = home.appendingPathComponent("usr-local-bin/ojd").path
+
+    // Act
+    let found = LaunchSettingsModel.installedTool(
+      path: defaultLink,
+      home: home,
+      searchPath: "/usr/bin:/bin",
+      executable: executable
+    )
+    let missing = LaunchSettingsModel.installedTool(
+      path: defaultLink,
+      home: home.appendingPathComponent("nobody"),
+      searchPath: "/usr/bin:/bin",
+      executable: executable
+    )
+
+    // Assert
+    #expect(found == link.path)
+    #expect(missing == defaultLink)
+  }
+
+  @Test
+  @MainActor
+  func modelStoresListsAndRemovesSettingsInTheSharedFile() throws {
+    let root = RootedDataDirectory.temporary()
+    let model = LaunchSettingsModel(settings: SettingsStore(directory: root))
+    #expect(model.entries.isEmpty)
+
+    #expect(model.save(LaunchSetting(arguments: ["-x"]), for: "/opt/game/run"))
+    #expect(model.entries.map(\.key) == ["/opt/game/run"])
+    #expect(model.entries.first?.name == "run")
+    #expect(
+      try SettingsStore(directory: root).launchSettings()["/opt/game/run"]?.arguments == ["-x"]
+    )
+
+    model.removeLaunchSetting(key: "/opt/game/run")
+    #expect(model.entries.isEmpty)
+  }
+
+  @Test
+  @MainActor
+  func modelRefusesAnInvalidEnvironmentNameAndSaysWhich() {
+    let model = LaunchSettingsModel(
+      settings: SettingsStore(directory: RootedDataDirectory.temporary())
+    )
+    #expect(!model.save(LaunchSetting(environment: ["1BAD": "x"]), for: "k"))
+    #expect(model.failure?.contains("1BAD") == true)
+    #expect(model.entries.isEmpty)
+  }
+
+  @Test
   func launchOfNonExecutableFileSaysWhy() {
     #expect(
       throws: VirtualGamepadLaunch.Failure.cannotStart(

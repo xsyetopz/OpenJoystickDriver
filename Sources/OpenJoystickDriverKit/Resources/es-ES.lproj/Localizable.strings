@@ -3101,6 +3101,40 @@
 "cli.virtual.launch.errorOutput" = "--json y --plain no se aplican, porque el programa escribe la salida estándar.";
 /* Help text of the SDL backend flag of 'ojd virtual launch'. The SDL hint names and values stay as written. */
 "platform.macos.cli.virtual.launch.sdlGamecontrollerBackend" = "Establece además las sugerencias de SDL que hacen que SDL lea los mandos solo a través del framework GameController de Apple: SDL_JOYSTICK_MFI=1, SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1, SDL_JOYSTICK_IOKIT=0, SDL_JOYSTICK_HIDAPI=0. Se aplican solo al programa y sustituyen los valores ya establecidos.";
+/* Help text of the --no-launch-settings flag of 'ojd virtual launch'. The flag and command names in quotes stay as written. */
+"cli.virtual.launch.noLaunchSettings" = "Ignora el ajuste de inicio guardado para el programa con «ojd virtual launch-setting».";
+/* One-line summary of 'ojd virtual launch-setting' in the command list and at the top of its help. The command in quotes stays as written. */
+"cli.virtual.launchSetting.group.abstract" = "Lista, muestra, establece y elimina lo que «ojd virtual launch» aplica a un programa.";
+/* Long description in the help of 'ojd virtual launch-setting'. SDL is a game controller library, .app is the app bundle extension, and the command and option in quotes stay as written. */
+"cli.virtual.launchSetting.group.discussion" = "Un ajuste de inicio contiene el backend SDL GameController, variables de entorno adicionales y argumentos adicionales de un programa. Se guarda con el identificador de paquete de la app que contiene el programa, o con la ruta absoluta de un programa fuera de una app, de modo que la .app y el programa que hay dentro llegan al mismo ajuste. «ojd virtual launch» lo aplica, y --sdl-gamecontroller-backend activa el backend sea cual sea el valor guardado.";
+/* Error when an --env value is not NAME=VALUE. %@ is the text the user gave. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.group.errorAssignment" = "«%@» no tiene la forma NAME=VALUE. Escribe cada variable como NAME=VALUE.";
+/* Error when no launch setting is stored for a program. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.group.errorMissing" = "No hay ningún ajuste de inicio guardado para %@.";
+/* Error when an environment variable name is not valid. %@ is the name the user gave. */
+"cli.virtual.launchSetting.group.errorName" = "«%@» no es un nombre de variable válido. Un nombre empieza por una letra o un guion bajo y contiene solo letras, dígitos y guiones bajos.";
+/* Help text of the program argument of the 'ojd virtual launch-setting' commands. .app stays as written. */
+"cli.virtual.launchSetting.group.program" = "El programa, una .app o un archivo ejecutable, o la clave de un ajuste guardado.";
+/* One-line summary of 'ojd virtual launch-setting list'. */
+"cli.virtual.launchSetting.list.abstract" = "Lista los ajustes de inicio guardados.";
+/* Message of 'ojd virtual launch-setting list' when no launch setting is stored. */
+"cli.virtual.launchSetting.list.empty" = "No hay ajustes de inicio guardados.";
+/* One-line summary of 'ojd virtual launch-setting remove'. */
+"cli.virtual.launchSetting.remove.abstract" = "Elimina el ajuste de inicio de un programa.";
+/* Message after 'ojd virtual launch-setting remove' removes a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.remove.done" = "Ajuste de inicio de %@ eliminado.";
+/* One-line summary of 'ojd virtual launch-setting set'. */
+"cli.virtual.launchSetting.set.abstract" = "Guarda el ajuste de inicio de un programa.";
+/* Help text of the --argument option of 'ojd virtual launch-setting set'. The command in quotes stays as written. */
+"cli.virtual.launchSetting.set.argument" = "Un argumento que se añade después de los argumentos dados a «ojd virtual launch». Repítelo para añadir más. Los argumentos sustituyen a los guardados.";
+/* Help text of the --sdl-gamecontroller-backend flag of 'ojd virtual launch-setting set'. SDL and GameController stay as written, and so do both flag names. */
+"cli.virtual.launchSetting.set.backend" = "Inicia el programa con las indicaciones del backend SDL GameController. Usa --no-sdl-gamecontroller-backend para desactivarlo.";
+/* Message after 'ojd virtual launch-setting set' stores a setting. %@ is the key of the setting: a bundle identifier or a path. */
+"cli.virtual.launchSetting.set.done" = "Ajuste de inicio de %@ guardado.";
+/* Help text of the --env option of 'ojd virtual launch-setting set'. NAME=VALUE stays as written. */
+"cli.virtual.launchSetting.set.env" = "Una variable que se añade al entorno del programa, escrita NAME=VALUE. Repítelo para añadir más. Las variables sustituyen a las guardadas.";
+/* One-line summary of 'ojd virtual launch-setting show'. */
+"cli.virtual.launchSetting.show.abstract" = "Muestra el ajuste de inicio de un programa.";
 /* One-line summary of 'ojd virtual reset' in the command list and at the top of its help. */
 "cli.virtual.reset.abstract" = "Devolver el modelo de un mando, o todos los modelos, a la selección automática de mando virtual.";
 /* Help text of the --all flag of 'ojd virtual reset'. */
@@ -4965,6 +4999,34 @@
 "ui.controllers.launch.started" = "%@ se ha iniciado.";
 /* Message after a game ends. %1$@ is the name of the program and %2$lld is its exit status. */
 "ui.controllers.launch.exited" = "%1$@ ha terminado con el estado %2$lld.";
+/* Label of the row in the Controllers detail that lists the apps with launch settings. */
+"ui.controllers.launchSettings" = "Ajustes de inicio de las apps";
+/* Message in the launch settings row when no app has a launch setting. */
+"ui.controllers.launchSettings.empty" = "Ninguna app tiene ajustes de inicio.";
+/* Title of the button that opens a panel to choose an app and add its launch settings. The ellipsis shows that a panel follows. */
+"ui.controllers.launchSettings.add" = "Añadir app…";
+/* Title of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.title" = "Elegir una app";
+/* Confirm button of the open panel in which the user picks an app to add to the launch settings. */
+"ui.controllers.launchSettings.add.prompt" = "Añadir";
+/* Title of the button that opens the editor for the launch settings of one app. The ellipsis shows that a sheet follows. */
+"ui.controllers.launchSettings.edit" = "Editar…";
+/* Title of the button that copies the launch option the user pastes into Steam. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copySteam" = "Copiar la opción de inicio de Steam";
+/* Message after the Steam launch option is copied to the clipboard. Steam is a product name and stays as written. */
+"ui.controllers.launchSettings.copied" = "Opción de inicio de Steam copiada.";
+/* Note under the launch settings list. Steam is a product name; Properties, General and Launch Options are the names Steam shows and stay as written. */
+"ui.controllers.launchSettings.steamNote" = "Para aplicar estos ajustes a un juego de Steam, pega la opción copiada en Properties > General > Launch Options del juego.";
+/* Title of the sheet that edits the launch settings of one app. %@ is the name of the app. */
+"ui.controllers.launchSettings.editor.title" = "Ajustes de inicio de %@";
+/* Label of the text field that holds the environment variables of an app in the launch settings editor. */
+"ui.controllers.launchSettings.environment" = "Variables de entorno";
+/* Hint under the environment variables field. NAME=VALUE stays as written. */
+"ui.controllers.launchSettings.environment.hint" = "Un NAME=VALUE por línea.";
+/* Label of the text field that holds the extra arguments of an app in the launch settings editor. */
+"ui.controllers.launchSettings.arguments" = "Argumentos";
+/* Hint under the arguments field. */
+"ui.controllers.launchSettings.arguments.hint" = "Un argumento por línea.";
 /* Button in the Controllers detail that starts a draft of a controller record. Keep the three dots. */
 "ui.controllers.draftRecord" = "Borrador de registro…";
 /* Title of the sheet that drafts a controller record. */
@@ -5538,6 +5600,18 @@
 "ui.help.guidedValidate" = "Revisar el informe de validación antes de enviarlo";
 /* Tooltip of the Launch button of the Controllers detail that starts a chosen game with the virtual gamepad. */
 "ui.help.launch" = "Elegir un juego e iniciarlo con el mando virtual";
+/* Tooltip of the Add App button in the launch settings row. */
+"ui.help.launchSettingsAdd" = "Elige una app para establecer sus opciones de inicio.";
+/* Tooltip of the Edit button of an app in the launch settings row. */
+"ui.help.launchSettingsEdit" = "Cambia las opciones de inicio de esta app.";
+/* Tooltip of the Remove button of an app in the launch settings row. */
+"ui.help.launchSettingsRemove" = "Elimina las opciones de inicio de esta app.";
+/* Tooltip of the Copy Steam Launch Option button. Steam is a product name and stays as written. */
+"ui.help.launchSettingsCopySteam" = "Copia la opción de inicio de Steam que aplica estos ajustes.";
+/* Tooltip of the environment variables field in the launch settings editor. */
+"ui.help.launchSettingsEnvironment" = "Establece variables que se añaden al entorno de la app.";
+/* Tooltip of the arguments field in the launch settings editor. */
+"ui.help.launchSettingsArguments" = "Establece argumentos que se añaden después de los que recibe la app.";
 /* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "Abrir en el navegador la ficha de este mando";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
