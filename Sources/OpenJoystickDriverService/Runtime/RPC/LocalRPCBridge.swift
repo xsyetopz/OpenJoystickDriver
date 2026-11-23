@@ -146,6 +146,9 @@ extension ApplicationServiceServer {
           for: value.controller
         )
       )
+    case .sendRawControllerOutput:
+      let value = try decode(LocalServiceRPCRawOutputArguments.self)
+      return try send(await sendRawControllerOutput(value.output, for: value.controller))
     case .playControllerSpeaker:
       let value = try decode(LocalServiceRPCSpeakerArguments.self)
       return try send(await playControllerSpeaker(value.audio, for: value.controller))

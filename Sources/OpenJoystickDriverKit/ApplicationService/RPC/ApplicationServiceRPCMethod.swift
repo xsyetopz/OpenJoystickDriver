@@ -16,6 +16,8 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case getVirtualOutputState
   /// Sends an output command to a controller.
   case sendControllerOutput
+  /// Sends raw bytes to a controller.
+  case sendRawControllerOutput
   /// Previews a color on a physical controller.
   case previewPhysicalColor
   /// Ends a physical color preview.

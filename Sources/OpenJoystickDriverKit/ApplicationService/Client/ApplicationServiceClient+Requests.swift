@@ -110,6 +110,17 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Writes the raw bytes of `output` to the selected controller through the running app.
+  public func sendRawControllerOutput(
+    _ output: ControllerRawOutput,
+    for controller: ControllerReference
+  ) async throws -> ControllerOutputResult {
+    try await call(
+      .sendRawControllerOutput,
+      LocalServiceRPCRawOutputArguments(controller: controller, output: output)
+    )
+  }
+
   /// Plays `audio`, bytes in the speaker's format, on the speaker of `controller`; returns when
   /// the clip ends.
   public func playControllerSpeaker(

@@ -79,6 +79,19 @@ public struct LocalServiceRPCControllerOutputArguments: Codable, Sendable {
     self.command = command
   }
 }
+/// Arguments of `sendRawControllerOutput`: the controller reference and one raw write.
+public struct LocalServiceRPCRawOutputArguments: Codable, Sendable {
+  /// The controller to write to.
+  public let controller: ControllerReference
+  /// The raw write.
+  public let output: ControllerRawOutput
+
+  /// Creates the arguments from a controller and a raw write.
+  public init(controller: ControllerReference, output: ControllerRawOutput) {
+    self.controller = controller
+    self.output = output
+  }
+}
 /// Arguments of `playControllerSpeaker`: the controller and the audio bytes in the speaker's
 /// format.
 public struct LocalServiceRPCSpeakerArguments: Codable, Sendable {

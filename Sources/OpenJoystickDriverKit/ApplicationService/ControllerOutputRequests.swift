@@ -117,13 +117,24 @@ public enum ControllerOutput {
     _ request: ControllerOutputRequest,
     _ device: ApplicationServiceDeviceDescription
   ) throws {
+    try check(result, name: request.name, feature: request.feature, device)
+  }
+
+  /// Fails as ``check(_:_:_:)`` does for an output named `name` in a failure message, for a command
+  /// that is not a ``ControllerOutputRequest``.
+  public static func check(
+    _ result: ControllerOutputResult,
+    name: String,
+    feature: String,
+    _ device: ApplicationServiceDeviceDescription
+  ) throws {
     let message: String
     switch result.outcome {
     case .delivered: return
     case .unsupportedCapability:
       message = localization.formatted(
         "cli.controller.group.outputUnsupported",
-        arguments: [device.name, request.feature, device.sessionToken.rawValue]
+        arguments: [device.name, feature, device.sessionToken.rawValue]
       )
     case .notReady:
       message = localization.formatted(
@@ -136,7 +147,7 @@ public enum ControllerOutput {
       message = localization.formatted(
         "cli.controller.group.outputFailed",
         arguments: [
-          device.name, request.name, CommandLineName.kebab(result.outcome.rawValue),
+          device.name, name, CommandLineName.kebab(result.outcome.rawValue),
         ]
       )
     }

@@ -47,6 +47,43 @@ extension DeviceManager {
     return ControllerOutputResult(outcome, droppedRumbleChannels: admission.droppedRumbleChannels)
   }
 
+  /// Writes the raw bytes `output` describes to the one connected controller `controller` names.
+  ///
+  /// The write runs as one operation on the controller's output queue, so it is ordered with the
+  /// driver's own writes. It bypasses encoding, ownership claims, and capability admission: a
+  /// native macOS-owned controller still refuses USB, and refuses HID writes its allowance does
+  /// not name.
+  public func sendRawOutput(
+    _ output: ControllerRawOutput,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult {
+    guard output.isValid else { return ControllerOutputResult(.invalidValue) }
+    guard let key = await connectedIdentifier(for: controller), !isStopping,
+      let pipeline = pipelines[key]
+    else { return ControllerOutputResult(.notFound) }
+    guard await acceptsPhysicalOutput(identifier: key, pipeline: pipeline, detachedInfo: nil)
+    else { return ControllerOutputResult(.notFound) }
+    let outcome = await physicalOutputQueue(for: key).perform { [weak self] operation in
+      guard let self else { return ControllerOutputResult.Outcome.cancelled }
+      // A write for a controller replaced or removed while it waited is dropped.
+      guard
+        await acceptsPhysicalOutput(identifier: key, pipeline: pipeline, detachedInfo: nil)
+      else { return .cancelled }
+      let written = await performPhysicalOutputPlan(
+        PhysicalOutputPlan(writes: [output.write]),
+        for: key,
+        pipeline: pipeline,
+        detachedInfo: nil,
+        in: operation
+      )
+      return written ? .delivered : .writeFailed
+    }
+    switch outcome {
+    case .completed(let outcome): return ControllerOutputResult(outcome)
+    case .cancelled: return ControllerOutputResult(.cancelled)
+    }
+  }
+
   /// Applies an admitted manual command as a claim on the controller and writes it.
   ///
   /// - Parameters:

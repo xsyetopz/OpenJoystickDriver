@@ -90,6 +90,14 @@ extension ApplicationServiceServer {
     await deviceManager.sendControllerOutput(command, for: controller)
   }
 
+  /// Writes the raw bytes of `output` to the selected controller.
+  public func sendRawControllerOutput(
+    _ output: ControllerRawOutput,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult {
+    await deviceManager.sendRawOutput(output, for: controller)
+  }
+
   /// Plays `audio` on the speaker of the selected controller.
   public func playControllerSpeaker(
     _ audio: Data,
