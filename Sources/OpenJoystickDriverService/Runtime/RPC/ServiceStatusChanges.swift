@@ -268,14 +268,28 @@ final class ServiceStatusChanges: @unchecked Sendable {
   /// The pickup deadline stays the one the request set; when it has passed, the announcement ends
   /// with `noAnswer` and no wait, held or later, takes it.
   private func giveBack(_ id: UUID) {
-    let handoff = lock.withLock { () -> (Waiter, ServiceStatusReply)? in
+    enum Return {
+      case handoff((Waiter, ServiceStatusReply))
+      case expired([CheckedContinuation<TestNotificationOutcome?, Never>])
+    }
+    let result = lock.withLock { () -> Return? in
       guard let pending, pending.id == id, pending.taken else { return nil }
       pending.taken = false
       let remaining = pending.pickupBy.timeIntervalSinceNow
-      schedule(pending, after: max(0, remaining))
-      return remaining > 0 ? handToHeldWait(pending) : nil
+      // Ends here rather than on a zero-delay deadline, which a wait arriving first would beat.
+      guard remaining > 0 else {
+        pending.deadline?.cancel()
+        self.pending = nil
+        return .expired(Array(pending.requests.values))
+      }
+      schedule(pending, after: remaining)
+      return handToHeldWait(pending).map(Return.handoff)
     }
-    if let handoff { deliver(handoff) }
+    switch result {
+    case .handoff(let handoff): deliver(handoff)
+    case .expired(let requests): for request in requests { request.resume(returning: .noAnswer) }
+    case nil: break
+    }
   }
 
   /// Removes the request from the pending announcement, which is dropped with its last request.
