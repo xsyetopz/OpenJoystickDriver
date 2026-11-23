@@ -6,15 +6,17 @@ import Testing
 @testable import OpenJoystickDriverUSB
 
 /// A DriverKit transport that publishes one service and refuses every open.
-private struct SingleServiceTransport: DriverTransport {
-  struct OpenRefused: Error {}
-
+private actor SingleServiceTransport: DriverTransport {
   let service: DriverService
+  private(set) var opens = 0
+
+  init(service: DriverService) { self.service = service }
 
   func services(matching _: DriverServiceMatch) -> [DriverService] { [service] }
 
   func open(_: DriverService, type _: UInt32) throws -> any DriverConnection {
-    throw OpenRefused()
+    opens += 1
+    throw DriverKitError(kind: .sessionClosed, operation: "test open")
   }
 }
 
@@ -132,6 +134,21 @@ struct XboxOne02D1DetectionTests {
     #expect(observation.productName == Self.dextDevice.productName)
     #expect(observation.serialNumber == Self.dextDevice.serialNumber)
     #expect(observation.physicalLocationIdentifier == Self.parentLocationID)
+  }
+
+  @Test
+  func absentConfigurationRequirementDoesNotRejectAnUnknownConfiguration() async throws {
+    let parent = Self.parent
+    let transport = SingleServiceTransport(service: Self.dextService)
+    let provider = USBDriverKitTransportProvider(client: DriverClient(transport: transport)) {
+      _ in parent
+    }
+    let devices = try await provider.devices()
+    let device = try #require(devices.first)
+    await #expect(throws: USBTransportError.disconnected) {
+      try await provider.open(device, options: USBTransportOpenOptions())
+    }
+    #expect(await transport.opens == 1)
   }
 
   @Test
