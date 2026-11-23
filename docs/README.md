@@ -109,4 +109,5 @@ For testers who check a controller and for maintainers who judge compatibility c
 - [Xbox Nano Controller Test Record](testing/xbox-nano.md)
 - [Xbox One Controller Model 1537 (`045E:02D1`) Detection](testing/xbox-one-02d1.md)
 - [Test Microsoft Xbox One Controller (Model 1537)](testing/xbox/1537.md)
+- [Unconfigured Xbox USB Bootstrap](testing/xbox-usb-bootstrap.md)
 - [ZD O+ in Switch Mode](testing/zd-o-plus.md)

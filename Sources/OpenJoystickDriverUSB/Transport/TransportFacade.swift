@@ -1,3 +1,4 @@
+import Foundation
 public import OpenJoystickDriverKit
 
 /// Generic raw USB facade that selects an Apple transport from ownership evidence.
@@ -20,6 +21,12 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   /// The models that Apple's driver holds: the direct route never serves them, and only an active
   /// extension that matched the device does.
   private let requiredDriverKitModels: Set<ControllerModelID>
+  /// Configures a vacant device so its extension-matched interface can be published.
+  private let extensionBootstrap: USBExtensionBootstrapOperations?
+  /// Earliest retry time per physical registry service; pruned on removal.
+  private var bootstrapRetries: [UInt64: TimeInterval] = [:]
+  /// Failures already reported for a service, to avoid logging on every discovery poll.
+  private var bootstrapFailures: Set<UInt64> = []
   /// Reads the passive USB observation of a raw USB device.
   private let ioUSBHostObservation: @Sendable (USBTransportDevice) throws -> PhysicalDevice?
   /// The watch of the services the providers list; nil when the facade cannot observe them.
@@ -43,6 +50,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     let registry = ProtocolDriverRegistry()
     rawUSBModels = { Set(registry.rawUSBModels) }
     requiredDriverKitModels = Self.driverKitRequiredModels
+    extensionBootstrap = USBExtensionBootstrapOperations(
+      prepare: IOUSBHostTransportProvider.bootstrapForExtension
+    )
     ioUSBHostObservation = { try PassiveUSBDescriptorProbe.physicalDeviceObservation(for: $0) }
     ioUSBHostConfigurationObservation = Self.readConfigurationObservation
     enumerationWatch = .shared
@@ -54,6 +64,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     usbDriverKitProvider: any USBTransportProvider,
     supportedRawUSBModels: Set<ControllerModelID>,
     requiredDriverKitModels: Set<ControllerModelID>,
+    extensionBootstrap: USBExtensionBootstrapOperations? = nil,
     ioUSBHostObservation: @escaping @Sendable (USBTransportDevice) throws -> PhysicalDevice? = {
       try PassiveUSBDescriptorProbe.physicalDeviceObservation(for: $0)
     },
@@ -65,6 +76,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     self.usbDriverKitProvider = usbDriverKitProvider
     rawUSBModels = { supportedRawUSBModels }
     self.requiredDriverKitModels = requiredDriverKitModels
+    self.extensionBootstrap = extensionBootstrap
     self.ioUSBHostObservation = ioUSBHostObservation
     self.ioUSBHostConfigurationObservation = ioUSBHostConfigurationObservation
     enumerationWatch = nil
@@ -113,9 +125,15 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     switch (direct, driverKit) {
     case (.failure(let directError), .failure): throw directError
     case (.success(let directDevices), .success(let driverKitDevices)):
+      var extensionDevices = driverKitDevices
+      if await bootstrapExtensionDevices(direct: directDevices, driverKit: driverKitDevices),
+        let refreshed = try? await usbDriverKitProvider.devices()
+      {
+        extensionDevices = refreshed
+      }
       return Self.selectDevices(
         direct: directDevices,
-        driverKit: driverKitDevices,
+        driverKit: extensionDevices,
         supportedRawUSBModels: supportedRawUSBModels,
         requiredDriverKitModels: requiredDriverKitModels,
         signatureServiceIDs: signatureServiceIDs(in: directDevices)
@@ -136,6 +154,45 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
         requiredDriverKitModels: requiredDriverKitModels
       )
     }
+  }
+
+  /// Prepares only supported extension-owned devices with no observed extension at their location.
+  ///
+  /// This is called only when both discovery providers answered, so an extension discovery error
+  /// cannot be mistaken for absence. An unsuccessful bootstrap never hides unrelated controllers.
+  private func bootstrapExtensionDevices(
+    direct: [USBTransportDevice],
+    driverKit: [USBTransportDevice]
+  ) async -> Bool {
+    guard let extensionBootstrap else { return false }
+    let present = Set(direct.map(\.serviceID))
+    bootstrapRetries = bootstrapRetries.filter { present.contains($0.key) }
+    bootstrapFailures.formIntersection(present)
+    let owned = Set(driverKit.map(USBTransportLocation.init))
+    var configured = false
+    for device in direct {
+      let model = ControllerModelID(device)
+      guard supportedRawUSBModels.contains(model), requiredDriverKitModels.contains(model),
+        !owned.contains(USBTransportLocation(device))
+      else { continue }
+      let now = extensionBootstrap.clock()
+      guard now >= bootstrapRetries[device.serviceID, default: -.infinity] else { continue }
+      // Reserve before the await: concurrent discovery calls must not configure twice.
+      bootstrapRetries[device.serviceID] = now + 2
+      do {
+        if try await extensionBootstrap.prepare(device) {
+          configured = true
+          bootstrapFailures.remove(device.serviceID)
+        }
+      } catch {
+        if bootstrapFailures.insert(device.serviceID).inserted {
+          print(
+            "[USBTransport] Extension USB configuration deferred for \(device.serviceID): \(error)"
+          )
+        }
+      }
+    }
+    return configured
   }
 
   /// Uncatalogued direct devices whose passive facts carry a known Xbox USB signature.
