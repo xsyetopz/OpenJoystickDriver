@@ -12,7 +12,7 @@ flowchart LR
 
 ## Before You Begin
 
-Install OJD and connect the controller. See [Start: Play a Game with a Controller](Start-Play-a-Game.md). Allow **Accessibility** by clicking **Permission Missing: Accessibility** in the menu-bar menu.
+Install OJD and connect the controller. See [Start: Play a Game with a Controller](Start-Play-a-Game.md). Allow **Accessibility** (**Device Control and Data Access** on macOS 27) by clicking its **Permission Missing** row in the menu-bar menu.
 
 ## Make a Profile in the App
 

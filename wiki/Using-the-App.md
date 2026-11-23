@@ -27,7 +27,7 @@ flowchart LR
 
 A warning triangle means something needs attention. Menu rows, top to bottom:
 
-- A row for each problem. **OpenJoystickDriver cannot reach its service** restarts it. **Permission Missing: Accessibility** or **Permission Missing: Input Monitoring** opens **Access**.
+- A row for each problem. **OpenJoystickDriver cannot reach its service** restarts it. **Permission Missing: Accessibility** (**Device Control and Data Access** on macOS 27) or **Permission Missing: Input Monitoring** opens **Access**.
 - A row for each controller, with battery, active profile, and **Paused**. **No Controller Connected** is normal with none plugged in.
 - **Open OpenJoystickDriver**, **Settings...**, **Quit OpenJoystickDriver**.
 
@@ -127,7 +127,7 @@ See [Controller Records](Controller-Records.md) and [Writing Controller Mods](Wr
 
 ### Permissions
 
-Rows show **Input Monitoring**, **Accessibility**, **Notifications**, and **Keyboard & pointer** (while an active profile sends keys or pointer movement). **Needs attention**? Click **Request...** or **Open System Settings**, then **Restart OpenJoystickDriver**. See [Permissions](Permissions-and-Security.md#permissions).
+Rows show **Input Monitoring**, **Accessibility** (**Device Control and Data Access** on macOS 27), **Notifications**, and **Keyboard & pointer** (while an active profile sends keys or pointer movement). **Needs attention**? Click **Request...** or **Open System Settings**, then **Restart OpenJoystickDriver**. See [Permissions](Permissions-and-Security.md#permissions).
 
 ### Local Endpoint
 

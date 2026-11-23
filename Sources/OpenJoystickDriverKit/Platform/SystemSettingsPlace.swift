@@ -26,6 +26,15 @@ package enum SystemSettingsPlace: Sendable, CaseIterable {
     }
   }
 
+  /// The catalog key of the name that `version` gives the Accessibility permission: Accessibility
+  /// before macOS 27, and Device Control and Data Access from macOS 27, as its pane is titled.
+  package static func accessibilityNameKey(
+    on version: OperatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
+  ) -> String {
+    version.majorVersion >= 27
+      ? "platform.macos.term.inputInjectMacOS27" : "platform.macos.term.inputInject"
+  }
+
   /// The catalog key of the path that `version` shows.
   ///
   /// macOS 13 and 14 list login items

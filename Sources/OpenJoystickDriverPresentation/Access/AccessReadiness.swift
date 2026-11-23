@@ -33,11 +33,11 @@ struct AccessPermissionRow: Equatable, Identifiable {
     /// Posting notifications.
     case notification
 
-    /// The localization key of the permission's name.
+    /// The localization key of the permission's name, as the running macOS titles its pane.
     var titleKey: String {
       switch self {
       case .inputRead: return "platform.macos.term.inputRead"
-      case .inputInject: return "platform.macos.term.inputInject"
+      case .inputInject: return SystemSettingsPlace.accessibilityNameKey()
       case .postEvent: return "term.keyboardPointer"
       case .notification: return "ui.settings.notifications.notifications"
       }

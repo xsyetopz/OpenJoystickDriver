@@ -63,7 +63,7 @@ Run `ojd status`. Still missing? [Reporting a Bug](Reporting-a-Bug.md).
 ![Controllers area with arrows at Working and Open Input Test](../docs/screenshots/steps/controller-working.png)
 
 1. Click **Open Input Test** ([Testing a Controller](Testing-a-Controller.md)) and press buttons. Nothing lights up? See [If a Controller Isn't Detected](#if-a-controller-isnt-detected).
-2. Click **Access**. **Accessibility** must say **Allowed**, so OJD can hand games the [virtual gamepad](Glossary.md#terms) (a pretend controller).
+2. Click **Access**. **Accessibility** (**Device Control and Data Access** on macOS 27) must say **Allowed**, so OJD can hand games the [virtual gamepad](Glossary.md#terms) (a pretend controller).
 
 ### Understand Why Apps Differ
 

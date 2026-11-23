@@ -41,6 +41,19 @@ struct SystemSettingsPlaceTests {
   }
 
   @Test(arguments: [
+    (13, "Accessibility"),
+    (26, "Accessibility"),
+    (27, "Device Control and Data Access"),
+  ])
+  func accessibilityIsNamedAsItsPaneOnTheRelease(major: Int, expected: String) {
+    let localization = Localization(preferredLanguages: ["en-US"])
+    #expect(
+      localization.string(SystemSettingsPlace.accessibilityNameKey(on: version(major)))
+        == expected
+    )
+  }
+
+  @Test(arguments: [
     (SystemSettingsMessage.openSettings, 13, "openSystemSettingsMacOS13"),
     (.openSettings, 15, "openSystemSettingsMacOS13"),
     (.openSettings, 26, "openSystemSettingsMacOS26"),
@@ -67,8 +80,12 @@ struct SystemSettingsPlaceTests {
         let key = message.localizationKey(on: version(major))
         #expect(localization.string(key) != key)
       }
-      let key = SystemSettingsPlace.appLocalizationKey(on: version(major))
-      #expect(localization.string(key) != key)
+      for key in [
+        SystemSettingsPlace.appLocalizationKey(on: version(major)),
+        SystemSettingsPlace.accessibilityNameKey(on: version(major)),
+      ] {
+        #expect(localization.string(key) != key)
+      }
     }
   }
 

@@ -990,8 +990,10 @@
 "term.profileName" = "Nombre del perfil";
 /* Name of the permission for keyboard and pointer output in the Access area. */
 "term.keyboardPointer" = "Teclado y puntero";
-/* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics before macOS 27. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Accesibilidad";
+/* Name of the macOS Accessibility permission in the Access area, the menu-bar menu and the diagnostics on macOS 27 and later, where System Settings titles its pane Device Control and Data Access. It is written as macOS names the pane in System Settings. */
+"platform.macos.term.inputInjectMacOS27" = "Control de dispositivos y acceso a los datos";
 /* Path of Login Items in System Settings on macOS 13 and 14, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */
 "platform.macos.term.settingsPlace.loginItems" = "General > Elementos de inicio";
 /* Path of Login Items & Extensions in System Settings on macOS 15 and later, where the user allows the login item. It is written as macOS shows it and fills a System Settings message. */

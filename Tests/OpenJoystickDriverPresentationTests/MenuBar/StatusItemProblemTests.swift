@@ -154,7 +154,7 @@ struct StatusItemProblemTests {
       )
         == .formatted(
           "a11y.menuBar.problem",
-          .formatted("ui.extra.problemPermission", .key("platform.macos.term.inputInject"))
+          .formatted("ui.extra.problemPermission", .key(SystemSettingsPlace.accessibilityNameKey()))
         )
     )
   }

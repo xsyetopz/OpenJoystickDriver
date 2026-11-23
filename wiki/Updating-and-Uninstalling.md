@@ -62,7 +62,7 @@ If **Input Monitoring** or **Accessibility** says OJD is allowed but OJD reads n
 1. Choose Apple menu > **System Settings**, then **Privacy & Security**.
    ![A red arrow points to Input Monitoring](../docs/screenshots/steps/macos-privacy-list.png)
 
-2. Click **Input Monitoring** (or **Accessibility**), select **OpenJoystickDriver**, and click **-**.
+2. Click **Input Monitoring** (or **Accessibility**, **Device Control and Data Access** on macOS 27), select **OpenJoystickDriver**, and click **-**.
 3. Click **+** and choose **OpenJoystickDriver** in **Applications**.
 
 Missing? See [If OpenJoystickDriver Isn't in the List](Permissions-and-Security.md#if-openjoystickdriver-isnt-in-the-list).
@@ -117,6 +117,6 @@ Files whose names contain `.backup-` are recovery copies.
    defaults delete com.openjoystickdriver
    ```
 
-3. In **Privacy & Security**, remove **OpenJoystickDriver** from **Input Monitoring** and **Accessibility** with **-**.
+3. In **Privacy & Security**, remove **OpenJoystickDriver** from **Input Monitoring** and **Accessibility** (**Device Control and Data Access** on macOS 27) with **-**.
 
 The **Notifications** entry stays. Whether macOS removes it is untested.

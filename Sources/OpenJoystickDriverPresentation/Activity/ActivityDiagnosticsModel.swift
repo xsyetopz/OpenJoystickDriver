@@ -64,7 +64,7 @@ struct ActivityCheckKind: Equatable {
     ),
     Self(
       id: "input-inject",
-      nameKey: "platform.macos.term.inputInject",
+      nameKey: SystemSettingsPlace.accessibilityNameKey(),
       action: .fix(.requestInputInject)
     ),
     Self(
