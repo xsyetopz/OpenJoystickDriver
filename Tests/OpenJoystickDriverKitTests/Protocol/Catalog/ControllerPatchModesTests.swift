@@ -171,6 +171,32 @@ struct ControllerPatchModesTests {
     #expect(document.capabilities.rumbleAbsent)
   }
 
+  /// A user patch gives the bundled DragonRise `0079:0006` mode a rumble template.
+  ///
+  /// The patch is the one `wiki/Writing-Controller-Mods.md` shows. Its bytes follow Linux
+  /// `drivers/hid/hid-dr.c`: `0x51` command, weak motor at byte 2, strong motor at byte 4.
+  @Test
+  func patchOfDragonRiseAddsRumbleTemplateToDefaultMode() throws {
+    let model = ControllerModelID(vendorID: 0x0079, productID: 0x0006)
+    let patch = try Self.patch(
+      patch: """
+        {"modes": [{"id": "default", "session": {"rumble": {
+          "report": {"kind": "Output", "id": 0, "length": 7}, "bytes": "51 00 00 00 00 00 00",
+          "highFrequency": {"byte": 2}, "lowFrequency": {"byte": 4}}}}]}
+        """
+    )
+    let bundled = try #require(ControllerRecordSet.bundled.records[model]?.document)
+    let record = try OrderedJSON(document: bundled, file: "record")
+    let result = ControllerPatchMerge.apply(patch, to: record)
+    let document = try JSONDecoder().decode(
+      ControllerRecordDocument.self,
+      from: result.formattedData()
+    )
+    let mode = try #require(document.modes.first { $0.id == "default" })
+    #expect(mode.session.rumbleTemplate != nil)
+    #expect(!document.capabilities.rumbleAbsent)
+  }
+
   @Test
   func recordOfTwoDriversHoldsCapabilityOnlyIfSomeModeDriverDeclaresIt() throws {
     func decode(_ family: String, capabilities: String) throws -> ControllerRecordDocument {
