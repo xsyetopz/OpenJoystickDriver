@@ -32,7 +32,7 @@ GameController reads no input from GIP-shaped reports. On `045e:02fd` (listed wi
 | --- | --- |
 | The kext lists `045e:0b0c` without `GCIOMatchVirtual`. On macOS 27 the virtual device gets `AppleUserHIDEventDriver`, not `AppleGCHIDUserEventDriver`, and GameController lists nothing. | |
 | SDL 3.4.16's Xbox One driver can't tell 0b0c from 02fd and calls it "Xbox Adaptive Controller". | `SDL_hidapi_xboxone.c:155-183`, `:274-287`; `controller_list.h:347` |
-| The kext lists `045e:0b13` with `GCIOMatchVirtual`, so the framework accepts a virtual device with that ID. GameSir G7 SE over USB GIP published as `045e:0b13` works with GameController.framework on real hardware. | |
+| On macOS 27 the kext lists `045e:0b13` with `GCIOMatchVirtual`, so the framework accepts a virtual device with that ID. GameSir G7 SE over USB GIP published as `045e:0b13` works with GameController.framework on real hardware. | |
 
 GameControllerCompatible publishes `045e:0b13` with a Bluetooth connection type and the `XboxSeriesBluetooth` layout (`XboxSeriesBluetoothReport`):
 
