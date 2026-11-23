@@ -1,0 +1,6 @@
+interface:
+  display_name: "Package OJD Mods"
+  short_description: "Bundle OpenJoystickDriver files as a shareable mod"
+  default_prompt: "Package these ojd records as a mod and validate it."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Write OJD Controller Patches"
+  short_description: "Change one detail of a bundled OpenJoystickDriver record"
+  default_prompt: "Write an ojd ControllerPatch that changes one key of my controller's record."
+policy:
+  allow_implicit_invocation: true

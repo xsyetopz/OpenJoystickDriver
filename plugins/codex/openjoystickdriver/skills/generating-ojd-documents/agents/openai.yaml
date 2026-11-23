@@ -1,0 +1,6 @@
+interface:
+  display_name: "Generate OJD Documents"
+  short_description: "Generate many OpenJoystickDriver records from one script"
+  default_prompt: "Write an ojd generate script for this controller family."
+policy:
+  allow_implicit_invocation: true

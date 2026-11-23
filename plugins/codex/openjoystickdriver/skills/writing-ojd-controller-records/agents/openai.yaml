@@ -1,0 +1,6 @@
+interface:
+  display_name: "Write OJD Controller Records"
+  short_description: "Describe an unknown controller with an OpenJoystickDriver record"
+  default_prompt: "Write and test an ojd Controller record for my unknown controller."
+policy:
+  allow_implicit_invocation: true

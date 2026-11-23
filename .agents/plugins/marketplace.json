@@ -1,0 +1,11 @@
+{
+  "name": "openjoystickdriver",
+  "plugins": [
+    {
+      "name": "openjoystickdriver",
+      "source": { "source": "local", "path": "./plugins/codex/openjoystickdriver" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Diagnose OJD Controllers"
+  short_description: "Find why a controller misbehaves under OpenJoystickDriver"
+  default_prompt: "Diagnose my controller with ojd and name the smallest fix."
+policy:
+  allow_implicit_invocation: true

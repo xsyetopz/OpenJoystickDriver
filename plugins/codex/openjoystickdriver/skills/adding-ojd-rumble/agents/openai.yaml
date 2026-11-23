@@ -1,0 +1,6 @@
+interface:
+  display_name: "Add OJD Rumble"
+  short_description: "Make a controller's motors rumble under OpenJoystickDriver"
+  default_prompt: "Add rumble to my controller with an ojd session.rumble template."
+policy:
+  allow_implicit_invocation: true
