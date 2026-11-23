@@ -43,7 +43,7 @@ extension IOUSBHostTransportProvider {
             dataStage: .input(length: 1)
           )
           let buffer = try host.ioData(withCapacity: 1)
-          let (status, count) = try await host.__enqueue(
+          let (status, count) = try await host.completedDeviceRequest(
             deviceRequest(for: request),
             data: buffer,
             completionTimeout: 1

@@ -585,7 +585,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
         buffer = output
       case .input(let length): buffer = try interface.ioData(withCapacity: Int(length))
       }
-      let (status, count) = try await interface.__enqueue(
+      let (status, count) = try await interface.completedDeviceRequest(
         IOUSBHostTransportProvider.deviceRequest(for: request),
         data: buffer,
         completionTimeout: IOUSBHostTransportProvider.completionTimeout(milliseconds: timeout)
@@ -656,7 +656,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   {
     let pipe = try pipe(for: endpoint)
     do {
-      let result = try await unsafe pipe.pipe.enqueueIORequest(
+      let result = try await unsafe pipe.pipe.completedIORequest(
         with: buffer,
         completionTimeout: IOUSBHostTransportProvider.pipeCompletionTimeout(
           endpointAttributes: pipe.pipe.descriptors.pointee.descriptor.bmAttributes,
