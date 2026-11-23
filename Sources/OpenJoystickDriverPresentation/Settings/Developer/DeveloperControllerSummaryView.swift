@@ -4,14 +4,15 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The Controller section of the developer tools: a picker of the connected controllers, Refresh
-  /// and the facts of the selected controller.
+  /// The Controller section of the developer tools: the controller picker and Refresh.
+  ///
+  /// Raw Packet Capture and Extra Buttons read the picked controller. Its facts are in its
+  /// Controllers detail and its live input is in Input Test.
   struct DeveloperControllerSummaryView: View {
     /// The state of the developer tools.
     @ObservedObject
     var model: DeveloperToolsViewModel
-    /// The Controller details section: the controller picker, the facts of the selected controller
-    /// and Refresh.
+    /// The Controller details section: the controller picker and Refresh.
     var body: some View {
       Section(OJDLocalized.string("ui.developer.controllerDetails")) {
         Picker(
@@ -32,94 +33,9 @@
         if let reason = model.controllerPickerUnavailableReason {
           Text(reason).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }
-        if let device = model.selectedDevice { controllerFacts(device) }
         Button(OJDLocalized.string("action.refresh"), action: model.requestRefresh)
           .disabled(model.isCapturing).help(OJDLocalized.string("ui.help.refreshControllers"))
       }
-    }
-
-    /// Returns the rows that describe `device` and its latest input.
-    @ViewBuilder
-    private func controllerFacts(_ device: ApplicationServiceDeviceDescription) -> some View {
-      OJDLabeledValue(
-        OJDLocalized.string("ui.developer.usbID"),
-        OJDValue.usbIdentifier(vendorID: device.vendorID, productID: device.productID)
-      )
-      OJDLabeledValue(
-        OJDLocalized.string("term.protocol"),
-        "\(device.protocolBinding.protocolID.displayName) "
-          + "(\(device.protocolBinding.commandLineName))"
-      )
-      DeveloperSerialRow(serial: OJDValue.reported(device.serialNumber)).id(
-        device.sessionToken.rawValue
-      )
-      OJDLabeledValue(OJDLocalized.string("ui.developer.route"), routeName(device.discoverySource))
-      OJDLabeledValue(OJDLocalized.string("ui.developer.connection"), device.connection)
-      if device.hasUSBEndpoints {
-        OJDLabeledValue(
-          OJDLocalized.string("ui.developer.usbEndpoints"),
-          unsafe String(
-            format: "%@ 0x%02X · %@ 0x%02X",
-            OJDLocalized.string("term.inputEndpoint"),
-            device.inputEndpoint,
-            OJDLocalized.string("term.outputEndpoint"),
-            device.outputEndpoint
-          )
-        )
-      }
-      OJDLabeledValue(
-        OJDLocalized.string("ui.developer.buttons"),
-        buttonValue(model.latestInput?.pressed)
-      )
-      OJDLabeledValue(
-        OJDLocalized.string("ui.developer.leftStick"),
-        stickValue(model.latestInput?.leftStick)
-      )
-      OJDLabeledValue(
-        OJDLocalized.string("ui.developer.rightStick"),
-        stickValue(model.latestInput?.rightStick)
-      )
-    }
-
-    /// Returns the raw x and y values of the stick, or the centered position for nil; y points
-    /// down.
-    private func stickValue(_ stick: StickPosition?) -> String {
-      let position = stick ?? .center
-      return "\(position.x.rawValue), \(position.y.rawValue)"
-    }
-
-    /// Returns the names of the pressed controls, or None when nothing is pressed.
-    private func buttonValue(_ pressed: Set<Control>?) -> String {
-      guard let pressed, !pressed.isEmpty else {
-        return OJDLocalized.string("status.none")
-      }
-      return Control.allCases.filter(pressed.contains).map(\.rawValue).joined(separator: ", ")
-    }
-
-    /// Returns the name of the route the controller is discovered on.
-    private func routeName(_ value: DeviceDiscoverySource) -> String {
-      switch value {
-      case .hid: return OJDLocalized.string("ui.developer.hid")
-      case .rawUSB: return OJDLocalized.string("ui.developer.rawUSB")
-      }
-    }
-  }
-
-  /// The serial number row; it is blurred until revealed, and starts blurred for each controller.
-  private struct DeveloperSerialRow: View {
-    /// The serial number to show.
-    let serial: OJDValue
-    /// Whether the serial number is blurred or revealed.
-    @State
-    private var visibility = SerialNumberVisibility()
-
-    /// The Serial number row with the visibility of the serial number.
-    var body: some View {
-      SerialNumberRow(
-        label: OJDLocalized.string("term.serialNumber"),
-        serial: serial,
-        visibility: $visibility
-      )
     }
   }
 

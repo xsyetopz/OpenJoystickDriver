@@ -972,8 +972,6 @@
 "status.needsAttention" = "需要注意";
 /* Column title of the diagnostics table in the Activity area. The column lists the result of each check. */
 "term.status" = "状态";
-/* Label of the protocol fact in the Controllers detail. The value is the protocol family name of the controller. */
-"term.protocol" = "协议";
 /* Label of the serial number fact in the Controllers detail. */
 "term.serialNumber" = "序列号";
 /* Label of the fact in the Controllers detail that names the USB endpoint where input arrives. */
@@ -1122,12 +1120,8 @@
 "term.protocolVariant.wired" = "有线";
 /* Label of a fact under Advanced in the Controllers detail: the parser that reads the controller, shown as its ojd spelling such as xbox-xusb:receiver. */
 "term.parser" = "解析器";
-/* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
-"ui.developer.buttons" = "按钮";
 /* Status next to the Start Capture button while the packet capture runs. */
 "ui.developer.capturing" = "正在捕捉…";
-/* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
-"ui.developer.connection" = "连接";
 /* Label of the controller name in the controller summary of the developer tools. */
 "ui.developer.controller" = "控制器";
 /* Heading of the controller summary section in the developer tools. */
@@ -1140,12 +1134,8 @@
 "ui.developer.extraInputs" = "额外按钮";
 /* Description of the extra buttons section in the developer tools. The user presses one button at a time and the detected buttons stay in the list until the user clears the capture. */
 "ui.developer.extraInputsDescription" = "每次按一个额外按钮。检测到的按钮会一直列出，直到你清除捕捉。";
-/* Value of the route in the controller summary of the developer tools when the app reads the controller as an HID device. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.developer.hid" = "HID";
 /* Note under the packet list in the developer tools. Keep-alive packets are the routine idle messages of a controller. */
 "ui.developer.keepAliveNote" = "已隐藏常规的空闲数据包，以便清楚看到控制器的活动。";
-/* Label of the left stick value in the controller summary of the developer tools. */
-"ui.developer.leftStick" = "左摇杆";
 /* Message in the developer tools while the controllers load. Keep the three dots. */
 "ui.developer.loadingControllers" = "正在加载控制器诊断信息…";
 /* Message in the developer tools before the controller diagnostics load. */
@@ -1174,24 +1164,14 @@
 "ui.developer.packetColumnData" = "数据";
 /* Warning under the packet capture export. A capture can hold data that identifies the controller or the user. */
 "ui.developer.packetSharingWarning" = "数据包内容因控制器而异。分享前请检查文件。";
-/* Value of the route in the controller summary of the developer tools when the app reads the controller over raw USB. */
-"ui.developer.rawUSB" = "原始 USB";
 /* Status of the packet capture in the developer tools when it can start. */
 "ui.developer.ready" = "就绪";
-/* Label of the right stick value in the controller summary of the developer tools. */
-"ui.developer.rightStick" = "右摇杆";
-/* Label of the route in the controller summary of the developer tools. The route is how the app found and reads the controller. */
-"ui.developer.route" = "路径";
 /* Title of the button that starts the packet capture. */
 "ui.developer.startCapture" = "开始捕捉";
 /* Status of the packet capture in the developer tools while it starts. Keep the three dots. */
 "ui.developer.starting" = "正在启动…";
 /* Title of the message in the developer tools when they cannot load. */
 "ui.developer.unavailable" = "开发工具不可用";
-/* Label of the USB endpoints in the controller summary of the developer tools. */
-"ui.developer.usbEndpoints" = "USB 端点";
-/* Label of the USB vendor and product ID in the controller summary of the developer tools. */
-"ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
 "ui.developer.waitingForPackets" = "正在等待 USB 数据包…请按控制器上的按钮。";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */

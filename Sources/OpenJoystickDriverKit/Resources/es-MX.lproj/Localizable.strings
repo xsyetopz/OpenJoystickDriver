@@ -972,8 +972,6 @@
 "status.needsAttention" = "Requiere atención";
 /* Column title of the diagnostics table in the Activity area. The column lists the result of each check. */
 "term.status" = "Estado";
-/* Label of the protocol fact in the Controllers detail. The value is the protocol family name of the controller. */
-"term.protocol" = "Protocolo";
 /* Label of the serial number fact in the Controllers detail. */
 "term.serialNumber" = "Número de serie";
 /* Label of the fact in the Controllers detail that names the USB endpoint where input arrives. */
@@ -1122,12 +1120,8 @@
 "term.protocolVariant.wired" = "Con cable";
 /* Label of a fact under Advanced in the Controllers detail: the parser that reads the controller, shown as its ojd spelling such as xbox-xusb:receiver. */
 "term.parser" = "Analizador";
-/* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
-"ui.developer.buttons" = "Botones";
 /* Status next to the Start Capture button while the packet capture runs. */
 "ui.developer.capturing" = "Capturando…";
-/* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
-"ui.developer.connection" = "Conexión";
 /* Label of the controller name in the controller summary of the developer tools. */
 "ui.developer.controller" = "Control";
 /* Heading of the controller summary section in the developer tools. */
@@ -1140,12 +1134,8 @@
 "ui.developer.extraInputs" = "Botones adicionales";
 /* Description of the extra buttons section in the developer tools. The user presses one button at a time and the detected buttons stay in the list until the user clears the capture. */
 "ui.developer.extraInputsDescription" = "Pulse un botón adicional cada vez. Los botones detectados permanecen en la lista hasta que borre la captura.";
-/* Value of the route in the controller summary of the developer tools when the app reads the controller as an HID device. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.developer.hid" = "HID";
 /* Note under the packet list in the developer tools. Keep-alive packets are the routine idle messages of a controller. */
 "ui.developer.keepAliveNote" = "El tráfico rutinario de inactividad está oculto para que la actividad del control siga siendo visible.";
-/* Label of the left stick value in the controller summary of the developer tools. */
-"ui.developer.leftStick" = "Palanca izquierda";
 /* Message in the developer tools while the controllers load. Keep the three dots. */
 "ui.developer.loadingControllers" = "Cargando diagnósticos del control…";
 /* Message in the developer tools before the controller diagnostics load. */
@@ -1174,24 +1164,14 @@
 "ui.developer.packetColumnData" = "Datos";
 /* Warning under the packet capture export. A capture can hold data that identifies the controller or the user. */
 "ui.developer.packetSharingWarning" = "El contenido de los paquetes varía según el control. Revise el archivo antes de compartirlo.";
-/* Value of the route in the controller summary of the developer tools when the app reads the controller over raw USB. */
-"ui.developer.rawUSB" = "USB sin procesar";
 /* Status of the packet capture in the developer tools when it can start. */
 "ui.developer.ready" = "Listo";
-/* Label of the right stick value in the controller summary of the developer tools. */
-"ui.developer.rightStick" = "Palanca derecha";
-/* Label of the route in the controller summary of the developer tools. The route is how the app found and reads the controller. */
-"ui.developer.route" = "Ruta";
 /* Title of the button that starts the packet capture. */
 "ui.developer.startCapture" = "Iniciar captura";
 /* Status of the packet capture in the developer tools while it starts. Keep the three dots. */
 "ui.developer.starting" = "Iniciando…";
 /* Title of the message in the developer tools when they cannot load. */
 "ui.developer.unavailable" = "Las herramientas de desarrollador no están disponibles";
-/* Label of the USB endpoints in the controller summary of the developer tools. */
-"ui.developer.usbEndpoints" = "Endpoints USB";
-/* Label of the USB vendor and product ID in the controller summary of the developer tools. */
-"ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
 "ui.developer.waitingForPackets" = "Esperando paquetes USB… Pulse un botón del control.";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */

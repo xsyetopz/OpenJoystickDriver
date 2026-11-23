@@ -972,8 +972,6 @@
 "status.needsAttention" = "확인 필요";
 /* Column title of the diagnostics table in the Activity area. The column lists the result of each check. */
 "term.status" = "상태";
-/* Label of the protocol fact in the Controllers detail. The value is the protocol family name of the controller. */
-"term.protocol" = "프로토콜";
 /* Label of the serial number fact in the Controllers detail. */
 "term.serialNumber" = "일련 번호";
 /* Label of the fact in the Controllers detail that names the USB endpoint where input arrives. */
@@ -1122,12 +1120,8 @@
 "term.protocolVariant.wired" = "유선";
 /* Label of a fact under Advanced in the Controllers detail: the parser that reads the controller, shown as its ojd spelling such as xbox-xusb:receiver. */
 "term.parser" = "파서";
-/* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
-"ui.developer.buttons" = "버튼";
 /* Status next to the Start Capture button while the packet capture runs. */
 "ui.developer.capturing" = "캡처 중…";
-/* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
-"ui.developer.connection" = "연결";
 /* Label of the controller name in the controller summary of the developer tools. */
 "ui.developer.controller" = "컨트롤러";
 /* Heading of the controller summary section in the developer tools. */
@@ -1140,12 +1134,8 @@
 "ui.developer.extraInputs" = "추가 버튼";
 /* Description of the extra buttons section in the developer tools. The user presses one button at a time and the detected buttons stay in the list until the user clears the capture. */
 "ui.developer.extraInputsDescription" = "한 번씩 추가 버튼을 누르면, 발견된 버튼은 캡처를 제거할 때까지 계속 표시됩니다.";
-/* Value of the route in the controller summary of the developer tools when the app reads the controller as an HID device. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.developer.hid" = "HID";
 /* Note under the packet list in the developer tools. Keep-alive packets are the routine idle messages of a controller. */
 "ui.developer.keepAliveNote" = "컨트롤러 활동이 잘 보이도록 일반적인 유휴 패킷은 숨겨집니다.";
-/* Label of the left stick value in the controller summary of the developer tools. */
-"ui.developer.leftStick" = "왼쪽 스틱";
 /* Message in the developer tools while the controllers load. Keep the three dots. */
 "ui.developer.loadingControllers" = "컨트롤러 진단 정보를 불러오는 중…";
 /* Message in the developer tools before the controller diagnostics load. */
@@ -1174,24 +1164,14 @@
 "ui.developer.packetColumnData" = "데이터";
 /* Warning under the packet capture export. A capture can hold data that identifies the controller or the user. */
 "ui.developer.packetSharingWarning" = "패킷 내용은 컨트롤러에 따라 달라집니다. 공유하기 전에 파일을 확인하세요.";
-/* Value of the route in the controller summary of the developer tools when the app reads the controller over raw USB. */
-"ui.developer.rawUSB" = "원시 USB";
 /* Status of the packet capture in the developer tools when it can start. */
 "ui.developer.ready" = "준비됨";
-/* Label of the right stick value in the controller summary of the developer tools. */
-"ui.developer.rightStick" = "오른쪽 스틱";
-/* Label of the route in the controller summary of the developer tools. The route is how the app found and reads the controller. */
-"ui.developer.route" = "경로";
 /* Title of the button that starts the packet capture. */
 "ui.developer.startCapture" = "캡처 시작";
 /* Status of the packet capture in the developer tools while it starts. Keep the three dots. */
 "ui.developer.starting" = "시작하는 중…";
 /* Title of the message in the developer tools when they cannot load. */
 "ui.developer.unavailable" = "개발자 도구를 사용할 수 없습니다";
-/* Label of the USB endpoints in the controller summary of the developer tools. */
-"ui.developer.usbEndpoints" = "USB 엔드포인트";
-/* Label of the USB vendor and product ID in the controller summary of the developer tools. */
-"ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
 "ui.developer.waitingForPackets" = "USB 패킷을 기다리는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
