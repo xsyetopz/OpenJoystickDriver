@@ -23,6 +23,10 @@ extension DevicePipeline {
 
     var recovery = USBInputLoopRecovery.reconnect
     var firstRead = armedRead
+    // A silent pad gets its toggles reset and its startup resent, a bounded number of times.
+    var silentSince: UInt64? =
+      plan.silentUSBStartupRecoveryNanoseconds == nil ? nil : uptimeNanoseconds()
+    var silentRecoveries = 0
     while isCurrentUSBRun(generation) {
       let loopStartNs = uptimeNanoseconds()
       var shouldBreak = false
@@ -38,6 +42,7 @@ extension DevicePipeline {
         }
         guard isCurrentUSBRun(generation) else { break }
         consecutiveUSBIOErrors = 0
+        if !bytes.isEmpty { silentSince = nil }
         appendToPacketLog(bytes: bytes, direction: .received)
         let receivedAt = uptimeNanoseconds()
         let event = try parseReport(Data(bytes), receivedAt: receivedAt)
@@ -51,6 +56,14 @@ extension DevicePipeline {
         guard isCurrentUSBRun(generation) else { break }
         // No data in this interval; throttle below to avoid a hot timeout loop.
         shouldThrottleIdle = true
+        if let since = silentSince, let window = plan.silentUSBStartupRecoveryNanoseconds,
+          uptimeNanoseconds() &- since >= window
+        {
+          silentRecoveries += 1
+          firstRead = await recoverSilentUSBStartup(handle: handle, generation: generation)
+          let canRetry = firstRead != nil && silentRecoveries < usbSilentStartupRecoveryLimit
+          silentSince = canRetry ? uptimeNanoseconds() : nil
+        }
       } catch let error as USBTransportError where error.isDisconnected {
         guard isCurrentUSBRun(generation) else { break }
         print("[DevicePipeline] Device disconnected:" + " \(identifier)")

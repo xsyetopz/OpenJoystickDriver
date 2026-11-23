@@ -258,6 +258,7 @@ extension DevicePipeline {
     for attempt in 0...retryDelays.count {
       guard isCurrentUSBOperation(runGeneration) else { return false }
       do {
+        try await performStandardStartupRequests(handle: handle, runGeneration: runGeneration)
         try await performControlTransfers(
           handle: handle,
           device: device,

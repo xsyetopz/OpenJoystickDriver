@@ -99,6 +99,12 @@ public struct DriverSessionPlan: Equatable, Sendable {
   /// True when the session has an interrupt IN read pending before it sends the USB startup
   /// writes, for a pad that sends its first report only to a read already waiting.
   public let armsInputBeforeStartup: Bool
+  /// Standard control requests sent before the record's control transfers and the USB startup
+  /// writes; a request the device or host rejects is skipped.
+  public let usbStartupStandardRequests: [USBControlTransferRequest]
+  /// How long a USB session may stay silent after its startup writes before the pipeline resets
+  /// the endpoint data toggles and sends the startup writes again; nil when it never does.
+  public let silentUSBStartupRecoveryNanoseconds: UInt64?
   /// What the user does before the controller sends input, from the family's description for the
   /// bound variant (``withDefaults(of:variant:)``); nil when input starts on its own.
   public internal(set) var inputStartAction: InputStartAction?
@@ -124,7 +130,9 @@ public struct DriverSessionPlan: Equatable, Sendable {
     assignsStartupPlayerIndicator: Bool = false,
     hidPlayerIndicatorFollowsFirstInput: Bool = false,
     usbCommandChannel: USBCommandChannel? = nil,
-    armsInputBeforeStartup: Bool = false
+    armsInputBeforeStartup: Bool = false,
+    usbStartupStandardRequests: [USBControlTransferRequest] = [],
+    silentUSBStartupRecoveryNanoseconds: UInt64? = nil
   ) {
     self.inputReportLivenessTimeoutNanoseconds = inputReportLivenessTimeoutNanoseconds
     self.requiresInputConnectionBeforeOutput = requiresInputConnectionBeforeOutput
@@ -145,6 +153,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
     self.hidPlayerIndicatorFollowsFirstInput = hidPlayerIndicatorFollowsFirstInput
     self.usbCommandChannel = usbCommandChannel
     self.armsInputBeforeStartup = armsInputBeforeStartup
+    self.usbStartupStandardRequests = usbStartupStandardRequests
+    self.silentUSBStartupRecoveryNanoseconds = silentUSBStartupRecoveryNanoseconds
   }
 
   /// This plan with the timings and the input start action that the protocol description of

@@ -45,6 +45,61 @@ struct GIPSessionTests {
     await pipeline.stop()
     await startTask.value
   }
+
+  @Test
+  func startupSelectsAudioAlternateSettingZeroBeforeTheFirstWrite() async {
+    let pad = SilentGIPPadSession()
+    let (pipeline, dispatcher) = Self.pipeline(for: pad)
+
+    let startTask = Task { await pipeline.start() }
+    await waitUntil("the first input is dispatched") { dispatcher.inputCount > 0 }
+
+    let events = await pad.events
+    let setInterface = events.firstIndex(of: "control 01 0b 0000 0001")
+    let firstWrite = events.firstIndex { $0.hasPrefix("write") }
+    #expect(setInterface != nil, "SET_INTERFACE(1, 0) is sent: \(events)")
+    #expect((setInterface ?? .max) < (firstWrite ?? .max), "it precedes the writes: \(events)")
+    await pipeline.stop()
+    await startTask.value
+  }
+
+  @Test
+  func padThatDropsWritesUntilItsTogglesResetDeliversInputAfterRecovery() async {
+    let pad = SilentGIPPadSession(dropsWritesUntilResync: true)
+    let (pipeline, dispatcher) = Self.pipeline(for: pad)
+
+    let startTask = Task { await pipeline.start() }
+    await waitUntil("the first input is dispatched") {
+      dispatcher.inputCount > 0
+    }
+
+    let events = await pad.events
+    #expect(dispatcher.inputCount > 0)
+    let outReset = events.firstIndex(of: "resync 2")
+    let inReset = events.firstIndex { $0.hasPrefix("resync 8") }
+    #expect(outReset != nil && inReset != nil, "both endpoints are reset: \(events)")
+    let resync = inReset ?? .max
+    let rearmed = events[min(resync, events.endIndex)...].firstIndex(of: "read") ?? .max
+    let resent = events[min(resync, events.endIndex)...].firstIndex(of: "write 5") ?? .max
+    #expect(rearmed < resent, "a read is pending before POWER ON is resent: \(events)")
+    await pipeline.stop()
+    await startTask.value
+  }
+
+  private static func pipeline(
+    for pad: SilentGIPPadSession
+  ) -> (DevicePipeline, InputRecordingDispatcher) {
+    let dispatcher = InputRecordingDispatcher()
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x2DC8, productID: 0x2027),
+      transport: .usb(device: device),
+      driver: GIPDriver(),
+      dispatcher: dispatcher,
+      usbTransportProvider: SilentGIPPadProvider(session: pad),
+      usbRecoveryPolicy: fastRecoveryPolicy
+    )
+    return (pipeline, dispatcher)
+  }
 }
 
 /// Hands out one pad session.
@@ -64,24 +119,45 @@ private actor SilentGIPPadProvider: USBTransportProvider {
 /// A pad that sends no announce packet. Its status frame and first input go to the interrupt IN
 /// read that is pending when it takes the power-on write; with no read pending they are lost, and
 /// it sends nothing more until a control changes.
+///
+/// With `dropsWritesUntilResync`, its OUT data toggle disagrees with the host's until the
+/// endpoint is resynchronized, so it drops every write before that.
 private actor SilentGIPPadSession: USBTransportSession {
-  /// The writes and reads in order: `read`, or `write` and the command byte in hex.
+  /// The transfers in order: `read`, `write` and the command byte, `resync` and the endpoint, or
+  /// `control` with bmRequestType, bRequest, wValue and wIndex, all in hex.
   private(set) var events: [String] = []
   private var pending: (id: Int, continuation: CheckedContinuation<[UInt8], any Error>)?
   private var nextID = 0
+  private var outToggleInSync: Bool
+
+  init(dropsWritesUntilResync: Bool = false) { outToggleInSync = !dropsWritesUntilResync }
 
   /// The status frame the pad sends first, then input with the south button down.
   private static let reply: [UInt8] =
     [0x03, 0x20, 0x01, 0x04, 0x80, 0x00, 0x00, 0x00] + [0x20, 0x00, 0x01, 0x20, 0x10, 0x00]
     + [UInt8](repeating: 0, count: 30)
 
-  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
+  func controlTransfer(_ request: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
+    func hex(_ value: some BinaryInteger, digits: Int) -> String {
+      let text = String(value, radix: 16)
+      return String(repeating: "0", count: max(0, digits - text.count)) + text
+    }
+    events.append(
+      "control \(hex(request.requestType, digits: 2)) \(hex(request.request, digits: 2))"
+        + " \(hex(request.value, digits: 4)) \(hex(request.index, digits: 4))"
+    )
     throw USBTransportError.notSupported
+  }
+
+  func resynchronizeEndpoint(_ endpoint: UInt8, timeout _: UInt32) {
+    events.append("resync \(String(endpoint, radix: 16))")
+    if endpoint & 0x80 == 0 { outToggleInSync = true }
+    expire(nextID)
   }
 
   func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int {
     events.append("write \(String(data[0], radix: 16))")
-    if data[0] == 0x05, let waiting = pending {
+    if outToggleInSync, data[0] == 0x05, let waiting = pending {
       pending = nil
       waiting.continuation.resume(returning: Self.reply)
     }

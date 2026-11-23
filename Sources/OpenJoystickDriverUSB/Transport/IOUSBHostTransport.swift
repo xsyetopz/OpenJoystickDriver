@@ -599,6 +599,32 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     } catch { throw closeIfDisconnected(error) }
   }
 
+  /// Sends `CLEAR_FEATURE(ENDPOINT_HALT)` for `endpoint`, which resets the device's data toggle
+  /// (USB 2.0 9.4.5), then clears the host pipe's halt, which resets the host's toggle and aborts
+  /// the pipe's pending transfers.
+  ///
+  /// A device that rejects the request still has the host side reset.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed, and the mapped
+  ///   IOUSBHost error of the pipe otherwise.
+  func resynchronizeEndpoint(_ endpoint: UInt8, timeout: UInt32) async throws {
+    guard !isClosed else { throw USBTransportError.disconnected }
+    let pipe = try pipe(for: endpoint)
+    let clearHalt = try USBControlTransferRequest(
+      kind: .standard,
+      recipient: .endpoint,
+      request: 0x01,
+      index: UInt16(endpoint)
+    )
+    // The host's `clearStall` may send the same request; a device that stalls this one still has
+    // its toggle reset by that one, so a rejection here does not end the reset.
+    do { try await controlTransfer(clearHalt, timeout: timeout) } catch let error
+      as USBTransportError
+    { guard !error.isDisconnected else { throw error } }
+    guard !isClosed else { throw USBTransportError.disconnected }
+    do { try pipe.pipe.clearStall() } catch { throw closeIfDisconnected(error) }
+  }
+
   /// Aborts the pipes and destroys the interface once no transfer is in flight.
   func close() {
     guard !isClosed else { return }

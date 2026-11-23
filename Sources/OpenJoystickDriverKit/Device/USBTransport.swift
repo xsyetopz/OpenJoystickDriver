@@ -45,6 +45,17 @@ public protocol USBTransportSession: AnyObject, Sendable {
     timeout: UInt32
   ) async throws -> [UInt8]
 
+  /// Clears the halt state of a bulk or interrupt endpoint on the device and on the host, which
+  /// returns the data toggle of both sides to `DATA0`.
+  ///
+  /// Every transfer pending on the endpoint ends.
+  ///
+  /// - Parameters:
+  ///   - endpoint: The endpoint address, with the IN bit for an IN endpoint.
+  ///   - timeout: The time to wait for the device's `CLEAR_FEATURE` reply, in milliseconds.
+  /// - Throws: ``USBTransportError/notSupported`` when the session cannot reset the host side.
+  func resynchronizeEndpoint(_ endpoint: UInt8, timeout: UInt32) async throws
+
   /// Closes this session; closing again has no effect.
   func close() async
 }
@@ -54,6 +65,14 @@ extension USBTransportSession {
   public var inputOwnership: HIDInputOwnership { .unknown }
   /// Yields once, for a session that holds no resource to release.
   public func close() async { await Task.yield() }
+
+  /// Resets no endpoint: a CLEAR_FEATURE alone would leave the host's toggle where it was.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` always.
+  public func resynchronizeEndpoint(_: UInt8, timeout _: UInt32) async throws {
+    await Task.yield()
+    throw USBTransportError.notSupported
+  }
 }
 
 extension USBEndpointDirection {

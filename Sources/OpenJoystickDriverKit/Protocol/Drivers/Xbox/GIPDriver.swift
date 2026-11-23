@@ -147,9 +147,30 @@ public final class GIPDriver: PhysicalProtocolDriver {
         count: PhysicalProtocolID.xboxGIP.described(limit: \.handshakeAttempts) - 1
       ),
       keepAliveChannels: keepAlivePolicy == .enabled ? [.usb] : [],
-      armsInputBeforeStartup: true
+      armsInputBeforeStartup: true,
+      usbStartupStandardRequests: Self.audioInterfaceOffRequests,
+      silentUSBStartupRecoveryNanoseconds: Self.silentStartupRecoveryNanoseconds
     ).withDefaults(of: .xboxGIP)
   }
+
+  // Linux xpad selects alternate setting 0 of the wired audio interface (1) before the init
+  // packets, because some pads send no input until it does (xpad_start_xbox_one); the usbmon
+  // capture of the 8BitDo Ultimate C in #59 shows the request ahead of POWER ON.
+  /// SET_INTERFACE(interface 1, alternate setting 0).
+  static let audioInterfaceOffRequests: [USBControlTransferRequest] =
+    (try? USBControlTransferRequest(
+      kind: .standard,
+      recipient: .interface,
+      request: 0x0B,
+      value: 0,
+      index: 1
+    )).map { [$0] } ?? []
+
+  // A powered pad reports its status within milliseconds of POWER ON (8 ms in the #59 capture),
+  // so a second of silence means the pad never received the startup writes.
+  /// The silence after startup that triggers a toggle reset and a resend of the startup writes.
+  static let silentStartupRecoveryNanoseconds: UInt64 =
+    1000 * DeviceTransportProfile.nanosecondsPerMillisecond
 
   /// Sends the GIP init sequence of the record or the description, each packet stamped with the
   /// next sequence number for its command.
