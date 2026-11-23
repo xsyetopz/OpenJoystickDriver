@@ -25,7 +25,7 @@
 
 ![The Controllers window with four controllers. The selected PlayStation 3 controller works and is handled by macOS](docs/screenshots/main-controllers.png)
 
-macOS reads a short list of game controllers and ignores the rest, such as the DualShock 3 above. OpenJoystickDriver (OJD) is a menu-bar app that reads those controllers over USB, Bluetooth or a 2.4 GHz dongle and gives games a virtual Xbox or generic gamepad. A controller macOS already handles is left to macOS. OJD runs in your user session with one DriverKit extension and no kernel extension, so SIP and AMFI stay on.
+macOS reads a short list of game controllers and ignores the rest, such as the DualShock 3 above. OpenJoystickDriver (OJD) is a menu-bar app that reads those controllers over USB, Bluetooth or a 2.4 GHz dongle and gives games a virtual gamepad: an Xbox controller, a DualShock 4 or a generic HID gamepad. A controller macOS already handles is left to macOS. OJD runs in your user session with one DriverKit extension and no kernel extension, so SIP and AMFI stay on.
 
 > [!WARNING]
 > Many controllers have no hardware test yet, and some games do not read the virtual controller.
@@ -36,24 +36,28 @@ macOS reads a short list of game controllers and ignores the rest, such as the D
 Requires macOS 13 or later, on Apple silicon or Intel.
 
 1. Download the `.dmg` from the [latest release][releases], drag **OpenJoystickDriver.app** into **Applications** and open it.
-2. Click the controller icon in the menu bar. If it shows **Grant Access**, allow OJD in **Input Monitoring** and **Accessibility**.
+2. Click the controller icon in the menu bar and choose **Open OpenJoystickDriver**. On **Finish Setting Up**, click **Request...** beside **Input Monitoring** and **Accessibility** (**Device Control and Data Access** on macOS 27) and allow OJD.
 3. Connect the controller, select it under **Controllers** and click **Open Input Test** to watch each control respond live.
 4. Start a game.
 
-An Xbox One or Series controller on USB also needs the driver extension, under **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**. Stuck? See [Troubleshooting][wiki-troubleshooting].
+A genuine Xbox One or Series controller on USB also needs the Xbox USB driver: approve it in **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions** (**Privacy & Security** on macOS 13 and 14). See [Connecting Controllers][wiki-xbox-driver]. Stuck? See [Troubleshooting][wiki-troubleshooting].
 
 ## Features
 
-- 600+ controller records across Xbox, PlayStation, Nintendo Switch, Steam, GameSir, NVIDIA SHIELD, Flydigi and generic HID gamepads.
-- Three virtual profiles per controller: `SDLCompatible` (an Xbox Adaptive Controller for SDL games and Steam), `GameControllerCompatible` (an Xbox Wireless Controller for Apple's Game Controller framework) and `Generic`.
-- Remapping with combinations, sequences and layers, plus keyboard, pointer and scroll output.
-- A live input test for every button, stick and trigger.
-- Mods that add controller records, patches, profiles and virtual devices without touching the signed app.
+- 700+ controller records across Xbox, PlayStation, Nintendo Switch, Wii and the GameCube adapter, Steam, GameSir, NVIDIA SHIELD, Flydigi and generic HID gamepads.
+- Four virtual gamepad kinds per controller:
+  - **For Steam and SDL games** (`SDLCompatible`), an Xbox Adaptive Controller.
+  - **For Apple Game Controller games** (`GameControllerCompatible`), an Xbox Wireless Controller.
+  - **For older Unity games** (`InControlCompatible`), a DualShock 4 that carries rumble to games that use InControl.
+  - **Generic HID gamepad** (`Generic`).
+- Remapping with combinations, sequences and layers, plus keyboard, pointer, scroll and system actions, and profiles that switch with the app in front.
+- A live input test for every button, stick and trigger, a guided check that records which controls respond, and stick, trigger and gyro calibration for each controller.
+- Mods that add controller records, patches, protocol descriptions, profiles and virtual gamepads without touching the signed app.
 - `ojd`, a command-line tool with JSON output for scripts.
 
 ## Usage
 
-Install `ojd` from **Settings** > **Install Command-Line Tool**, which links `/usr/local/bin/ojd`. Check the service, extension and permissions, then list connected controllers:
+Install `ojd` from **Settings** > **Advanced** > **Install Command-Line Tool**, which links `/usr/local/bin/ojd`; the button shows with the **All Controls** interface. Check the service, extension and permissions, then list connected controllers:
 
 ```bash
 ojd status
@@ -73,7 +77,13 @@ ojd mod install ~/Downloads/my-controller-mod --dry-run
 ojd mod install ~/Downloads/my-controller-mod
 ```
 
-Records, patches, profiles and mod manifests are XML property lists (`.plist`). Check one with `plutil -lint FILE.plist`, read one as JSON with `plutil -convert json -o - FILE.plist`, and write one from JSON with `plutil -convert xml1 -o FILE.plist FILE.json`.
+Ask for each control in turn and see which ones respond:
+
+```bash
+ojd controller check VVVV:PPPP
+```
+
+Records, patches, profiles and mod manifests are XML property lists (`.plist`) with `apiVersion` `openjoystickdriver/v1alpha3`. OJD converts the files of an earlier alpha when its service starts; `ojd migrate --dry-run` shows what it would convert. Check one with `plutil -lint FILE.plist`, read one as JSON with `plutil -convert json -o - FILE.plist`, and write one from JSON with `plutil -convert xml1 -o FILE.plist FILE.json`.
 
 The wiki covers the rest: [Getting started][wiki-start], [Using the app][wiki-app], [Remapping profiles][wiki-remap] and the [Command reference][wiki-cli].
 
@@ -122,6 +132,7 @@ Run `just setup` and `just verify` before opening a pull request; see [CONTRIBUT
 [sponsor]: https://github.com/sponsors/xsyetopz
 [wiki-supported]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers
 [wiki-games]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Playing-Games
+[wiki-xbox-driver]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Connecting-Controllers#xbox-usb-driver
 [wiki-troubleshooting]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Troubleshooting
 [wiki-not-seen]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Troubleshooting#game-does-not-see-the-controller
 [wiki-start]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Getting-Started
