@@ -21,6 +21,7 @@ flowchart LR
 - [Precedence and Clashes](#precedence-and-clashes)
 - [Package Profiles Are Read-Only](#package-profiles-are-read-only)
 - [Manage Packages With ojd mod](#manage-packages-with-ojd-mod)
+- [Add Rumble With a Patch](#add-rumble-with-a-patch)
 - [Further Reading](#further-reading)
 
 ## Package Layout
@@ -149,6 +150,77 @@ You can add and remove a package in the **Library** area of the app, too:
 To try the sample, run `ojd mod validate` and `ojd mod install` with the sample folder path. Then run `ojd mod list`, and `ojd mod remove ojd-sample` to clean up.
 
 [Error Codes](Error-Codes.md) lists E4001 to E4007. Run `ojd explain E4004` to read a code.
+
+## Add Rumble With a Patch
+
+A generic gamepad with motors stays still until a record names its rumble report. macOS doesn't drive those motors. A `ControllerPatch` can add the report to a bundled `HIDDescriptor` mode in `session.rumble`. The patch can live in your own `Controllers` folder or in a package. [Add Rumble to a Controller](Controller-Records.md#add-rumble-to-a-controller) lists every key.
+
+This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c`](https://github.com/torvalds/linux/blob/master/drivers/hid/hid-dr.c) writes: command `0x51`, the weak motor at byte 2, and the strong motor at byte 4. Save it as `0079-0006.patch.plist`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>ControllerPatch</string>
+ <key>patch</key>
+ <dict>
+  <key>modes</key>
+  <array>
+   <dict>
+    <key>id</key>
+    <string>default</string>
+    <key>session</key>
+    <dict>
+     <key>rumble</key>
+     <dict>
+      <key>bytes</key>
+      <string>51 00 00 00 00 00 00</string>
+      <key>highFrequency</key>
+      <dict>
+       <key>byte</key>
+       <integer>2</integer>
+      </dict>
+      <key>lowFrequency</key>
+      <dict>
+       <key>byte</key>
+       <integer>4</integer>
+      </dict>
+      <key>report</key>
+      <dict>
+       <key>id</key>
+       <integer>0</integer>
+       <key>kind</key>
+       <string>Output</string>
+       <key>length</key>
+       <integer>7</integer>
+      </dict>
+     </dict>
+    </dict>
+   </dict>
+  </array>
+ </dict>
+ <key>selector</key>
+ <dict>
+  <key>productID</key>
+  <integer>6</integer>
+  <key>vendorID</key>
+  <integer>121</integer>
+ </dict>
+</dict>
+</plist>
+```
+
+Pads sold under `0079:0006` differ inside: some have no motors, and some have a different report descriptor. Set `length` to the output report size your pad's descriptor gives. Then check the patch on the pad:
+
+1. Run `ojd record validate 0079-0006.patch.plist`, then `ojd record install 0079-0006.patch.plist`.
+2. In a second window, run `ojd controller capture 0079:0006` to see each `Tx` report OJD sends.
+3. Run `ojd controller rumble 0079:0006 --left 200 --right 200`.
+
+If the motors stay still while `Tx` reports appear, the pad needs a different report. Open an issue with the capture and the report descriptor, so the patch can join the bundled catalog once a motor is felt on hardware.
 
 ## Further Reading
 

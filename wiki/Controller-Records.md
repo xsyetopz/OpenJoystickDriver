@@ -318,7 +318,7 @@ Use this section to make a controller rumble. A `HIDReportLayout`, `HIDDescripto
 - `report`: the target. A HID report has `kind` (`Output` or `Feature`), `id` (0 to 255), and `length` of 2 to 64 bytes, counting the report ID. A raw-USB packet has `kind` `USB`, `length` of 1 to 64, and no `id`.
 - `lowFrequency`, `highFrequency`, `leftTrigger`, `rightTrigger`: one motor each, with a `byte` offset (0 to 63) for its intensity. Name at least one.
 - `encoding` (optional, per motor): `UInt8` (default, 0 to 255), `UInt16BigEndian` or `UInt16LittleEndian` (0 to 65535), or `SwitchHDRumble` (four bytes).
-- `bytes` (optional): the whole report as uppercase hex pairs, at most 64. A numbered report starts with its ID. Without it, every byte is 0 except the ID.
+- `bytes` (optional): the whole report as uppercase hex pairs with single spaces, such as `51 00 00`, at most 64. A numbered report starts with its ID. Without it, every byte is 0 except the ID.
 - `counter` (optional): a `byte` (0 to 63) where OJD writes the session's rolling counter.
 - `resendIntervalMilliseconds` (optional, 1 to 60000): while a motor runs, the keep-alive resends the last report at this interval. All motors at zero stop the resends. Without the key, the report goes out once. OJD rejects it beside a `session.keepAlive` in the mode, or when the family description declares a keep-alive (`VendorGameSir`).
 

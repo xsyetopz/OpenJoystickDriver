@@ -147,7 +147,7 @@ A record that keeps the pad with macOS, or an idle mode, stays as it is. OJD doe
 - Two sticks and two triggers.
 - One eight-position D-pad.
 
-Generic gamepads have no rumble and no lighting. Paddles and other extra controls need a controller record.
+Generic gamepads have no rumble and no lighting until a record names the report. To add rumble, see [Add Rumble With a Patch](Writing-Controller-Mods.md#add-rumble-with-a-patch). Paddles and other extra controls need a controller record.
 
 ### When OJD Refuses a Controller
 
