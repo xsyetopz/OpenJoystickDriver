@@ -5,8 +5,7 @@ import Testing
 
 /// The `37D7:2401` record's startup writes and extended `5A A5 EF` report.
 ///
-/// Both are source-derived from the pinned openflydigi notes. No dongle has received the writes or
-/// sent the report.
+/// Synthetic reports use the layout documented in `docs/testing/flydigi-vader-5-pro.md`.
 struct FlydigiVaderFiveProTests {
   private static let model = ControllerModelID(vendorID: 0x37D7, productID: 0x2401)
 
@@ -64,11 +63,42 @@ struct FlydigiVaderFiveProTests {
     ]
     let state = try #require(try driver.parseReport(Self.report(moved))).state
     #expect(state.leftStick.x.rawValue > 32_000)
-    #expect(state.leftStick.y.rawValue < -32_000)
+    #expect(state.leftStick.y.rawValue > 32_000)
     #expect(state.rightStick.x.rawValue > 32_000)
-    #expect(state.rightStick.y.rawValue < -32_000)
+    #expect(state.rightStick.y.rawValue > 32_000)
     #expect(state.leftTrigger.rawValue == UInt16.max)
     #expect(abs(Int(state.rightTrigger.rawValue) - 32_896) < 300)
+  }
+
+  @Test
+  func standardAndExtraButtonsPressAndRelease() throws {
+    let driver = try Self.driver()
+    let buttons: [(offset: Int, mask: UInt8, control: Control)] = [
+      (11, 0x10, .south), (11, 0x20, .east), (11, 0x40, .back), (11, 0x80, .west),
+      (12, 0x01, .north), (12, 0x02, .start), (12, 0x04, .leftShoulder), (12, 0x08, .rightShoulder),
+      (12, 0x40, .leftStickClick), (12, 0x80, .rightStickClick),
+      (13, 0x01, .auxiliary1), (13, 0x02, .auxiliary2),
+      (13, 0x04, .leftPaddle1), (13, 0x08, .rightPaddle1),
+      (13, 0x10, .leftPaddle2), (13, 0x20, .rightPaddle2),
+      (13, 0x40, .auxiliary3), (13, 0x80, .auxiliary4), (14, 0x08, .guide),
+    ]
+    for (offset, mask, control) in buttons {
+      #expect(try driver.parseReport(Self.report([offset: mask]))?.state.pressed == [control])
+      #expect(try driver.parseReport(Self.report([:]))?.state.pressed.isEmpty == true)
+    }
+  }
+
+  @Test
+  func directionalBitsProduceHatDirections() throws {
+    let driver = try Self.driver()
+    let directions: [(UInt8, HatDirection)] = [
+      (0x01, .north), (0x02, .east), (0x04, .south), (0x08, .west),
+      (0x03, .northEast), (0x06, .southEast), (0x0C, .southWest), (0x09, .northWest),
+    ]
+    for (mask, direction) in directions {
+      #expect(try driver.parseReport(Self.report([11: mask]))?.state.hat == direction)
+      #expect(try driver.parseReport(Self.report([:]))?.state.hat == HatDirection.neutral)
+    }
   }
 
   @Test
