@@ -4222,6 +4222,10 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: The motor and counter bytes of a rumble template must be distinct and follow the report ID inside the report. Fix: Give each motor and the counter its own byte after the report ID.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: A rumble resend interval must be 1...60000 ms. Fix: Set resendIntervalMilliseconds to 1...60000, or leave it out.";
+/* Error E5007, shown when the rumble template of a record fails: the followUp list names no report or more than 4. %1$@ is the file. */
+"error.E5007.rumble.followUpCount" = "%1$@, session.rumble.followUp: A rumble template names 1...4 follow-up reports. Fix: List 1...4 reports in followUp, or leave it out.";
+/* Error E5007, shown when the rumble template of a record fails: a followUp or stop report does not match the report length or does not start with its report ID. %2$@ is the key, followUp or stop. %1$@ is the file. */
+"error.E5007.rumble.extraBytes" = "%1$@, session.rumble.%2$@: Each %2$@ report must cover the whole rumble report and start with its report ID. Fix: Give %2$@ as many bytes as report.length, starting with the report ID of a numbered report.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
 "error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: A player-indicator template cannot write an input report. Fix: Set report to an output or feature report.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */

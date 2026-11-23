@@ -4810,6 +4810,10 @@
 "error.E5007.rumble.fields" = "%1$@，session.rumble：震动模板的马达和计数器字节必须互不相同，并且位于报告内的报告 ID 之后。修复：在报告 ID 之后为每个马达和计数器指定各自的字节。";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@，session.rumble.resendIntervalMilliseconds：震动重发间隔必须为 1...60000 毫秒。修复：将 resendIntervalMilliseconds 设为 1...60000，或省略。";
+/* Error E5007, shown when the rumble template of a record fails: the followUp list names no report or more than 4. %1$@ is the file. */
+"error.E5007.rumble.followUpCount" = "%1$@，session.rumble.followUp：震动模板指定 1...4 个后续报告。修复：在 followUp 中列出 1...4 个报告，或省略。";
+/* Error E5007, shown when the rumble template of a record fails: a followUp or stop report does not match the report length or does not start with its report ID. %2$@ is the key, followUp or stop. %1$@ is the file. */
+"error.E5007.rumble.extraBytes" = "%1$@，session.rumble.%2$@：每个 %2$@ 报告必须覆盖整个震动报告，并以其报告 ID 开头。修复：让 %2$@ 的字节数等于 report.length，编号报告以报告 ID 开头。";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
 "error.E5007.playerIndicator.reportKind" = "%1$@，session.playerIndicator.report.kind：玩家指示灯模板不能写入输入报告。修复：将 report 设为输出报告或功能报告。";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */

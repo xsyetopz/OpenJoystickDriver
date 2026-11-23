@@ -183,15 +183,16 @@ struct ControllerRecordDocument: Decodable {
     /// The decoded template.
     let template: RumbleOutputTemplate
 
-    /// Decodes `report`, `bytes`, `counter`, `resendIntervalMilliseconds` and one field per
-    /// template motor; an unknown key or a template that `RumbleOutputTemplate` rejects is
-    /// rejected.
+    /// Decodes `report`, `bytes`, `counter`, `resendIntervalMilliseconds`, `followUp`, `stop` and
+    /// one field per template motor; an unknown key or a template that `RumbleOutputTemplate`
+    /// rejects is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let motors = RumbleOutputTemplate.templateMotors
       try container.rejectUnknown(
         allowed: Set(
-          ["report", "bytes", "counter", "resendIntervalMilliseconds"] + motors.map(\.recordKey)
+          ["report", "bytes", "counter", "resendIntervalMilliseconds", "followUp", "stop"]
+            + motors.map(\.recordKey)
         )
       )
       let target = try container.decode(RumbleTarget.self, for: "report").target
@@ -211,7 +212,20 @@ struct ControllerRecordDocument: Decodable {
           resendIntervalMilliseconds: try container.decodeOptional(
             Int.self,
             for: "resendIntervalMilliseconds"
-          )
+          ),
+          followUp: try container.decodeOptional([String].self, for: "followUp")?.map {
+            text throws(ControllerRecordProblem) in
+            guard let report = HexBytes.parse(text) else {
+              throw .rule(
+                "error.E5007.record.hexBytes",
+                ["followUp", "rumble follow-up"],
+                "rumble follow-up \(HexBytes.message)"
+              )
+            }
+            return report
+          },
+          stop: container.contains(DocumentKey("stop"))
+            ? try HexBytes.decode(container, for: "stop", what: "rumble stop") : nil
         )
       } catch let problem as ControllerRecordProblem {
         throw DecodingError.dataCorrupted(

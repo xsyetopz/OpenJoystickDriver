@@ -174,7 +174,8 @@ struct ControllerPatchModesTests {
   /// A user patch gives the bundled DragonRise `0079:0006` mode a rumble template.
   ///
   /// The patch is the one `wiki/Writing-Controller-Mods.md` shows. Its bytes follow Linux
-  /// `drivers/hid/hid-dr.c`: `0x51` command, weak motor at byte 2, strong motor at byte 4.
+  /// `drivers/hid/hid-dr.c`: `0x51` command, weak motor at byte 2, strong motor at byte 4, the
+  /// `FA FE` commit report and the `F3 00` stop report.
   @Test
   func patchOfDragonRiseAddsRumbleTemplateToDefaultMode() throws {
     let model = ControllerModelID(vendorID: 0x0079, productID: 0x0006)
@@ -182,7 +183,8 @@ struct ControllerPatchModesTests {
       patch: """
         {"modes": [{"id": "default", "session": {"rumble": {
           "report": {"kind": "Output", "id": 0, "length": 7}, "bytes": "51 00 00 00 00 00 00",
-          "highFrequency": {"byte": 2}, "lowFrequency": {"byte": 4}}}}]}
+          "highFrequency": {"byte": 2}, "lowFrequency": {"byte": 4},
+          "followUp": ["FA FE 00 00 00 00 00"], "stop": "F3 00 00 00 00 00 00"}}}]}
         """
     )
     let bundled = try #require(ControllerRecordSet.bundled.records[model]?.document)
@@ -193,7 +195,9 @@ struct ControllerPatchModesTests {
       from: result.formattedData()
     )
     let mode = try #require(document.modes.first { $0.id == "default" })
-    #expect(mode.session.rumbleTemplate != nil)
+    let template = try #require(mode.session.rumbleTemplate)
+    #expect(template.followUp == [[0xFA, 0xFE, 0, 0, 0, 0, 0]])
+    #expect(template.stop == [0xF3, 0, 0, 0, 0, 0, 0])
     #expect(!document.capabilities.rumbleAbsent)
   }
 

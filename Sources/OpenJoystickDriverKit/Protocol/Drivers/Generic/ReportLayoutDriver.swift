@@ -75,23 +75,23 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     guard let rumbleTemplate, let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
     else { return [] }
-    return [rumbleWrite(rumbleTemplate, intensities)]
+    return rumbleTemplate.reportSequence(intensities).map { rumbleWrite(rumbleTemplate, $0) }
   }
 
-  /// Builds the write of `intensities`: the template's own HID report, or a raw-USB packet to the
-  /// driver's USB output.
+  /// Builds the write of one template report: the template's own HID report, or a raw-USB packet
+  /// to the driver's USB output.
   private func rumbleWrite(
     _ template: RumbleOutputTemplate,
-    _ intensities: RumbleIntensities
+    _ bytes: [UInt8]
   ) -> PhysicalOutputWrite {
-    guard case .usb = template.target else { return template.write(intensities) }
+    if case .hid(let report) = template.target { return report.write(bytes) }
     guard let usbOutput else {
       preconditionFailure("a raw-USB rumble template needs the driver's USB output")
     }
     return .usb(
       PhysicalUSBOutputPacket(
         endpoint: usbOutput.endpoint,
-        bytes: template.reportBytes(intensities),
+        bytes: bytes,
         timeoutMilliseconds: UInt32(usbOutput.timeoutMilliseconds)
       )
     )

@@ -163,7 +163,7 @@ struct ControllerRecordOutputTests {
       highFrequency: UnipolarValue(byte: 0x22),
       rightTrigger: UnipolarValue(byte: 0x33)
     )
-    guard case .hidOutput(let report) = unnumbered.write(intensities) else {
+    guard case .hidOutput(let report) = unnumbered.writes(intensities).first else {
       Issue.record("expected an output report")
       return
     }
@@ -174,7 +174,7 @@ struct ControllerRecordOutputTests {
       target: .hid(ControllerTemplateReport(kind: .feature, reportID: 5, length: 3)),
       motors: [.highFrequency: .init(byte: 1)]
     )
-    guard case .hidFeature(let featureReport) = feature.write(intensities) else {
+    guard case .hidFeature(let featureReport) = feature.writes(intensities).first else {
       Issue.record("expected a feature report")
       return
     }

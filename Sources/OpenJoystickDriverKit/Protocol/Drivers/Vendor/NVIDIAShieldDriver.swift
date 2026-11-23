@@ -86,7 +86,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     guard let rumbleTemplate, let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
     else { return [] }
-    return [rumbleTemplate.write(intensities)]
+    return rumbleTemplate.writes(intensities)
   }
   /// The rumble motors of the rumble template; none without a template.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {

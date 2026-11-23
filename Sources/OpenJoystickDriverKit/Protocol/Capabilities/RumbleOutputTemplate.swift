@@ -149,19 +149,34 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
   /// mode's keep-alive and in a family whose description declares one, so the interval alone times
   /// the keep-alive.
   public let resendIntervalMilliseconds: Int?
+  /// Whole reports sent, in order, after each report that runs a motor; empty sends none.
+  ///
+  /// Some controllers apply a motor report only after a fixed commit report, such as the `FA FE`
+  /// report Linux `hid-dr.c` sends after each DragonRise `0x51` report.
+  public let followUp: [[UInt8]]
+  /// The whole report sent in place of the template when every motor is off; nil sends the
+  /// template with every motor at zero.
+  public let stop: [UInt8]?
 
   /// The HID report this template writes; nil for a raw-USB packet.
   public var report: ControllerTemplateReport? { target.hidReport }
 
+  /// The most follow-up reports a template may name.
+  static let followUpLimit = 4
+
   /// Fails unless the target is an output or feature report or a raw-USB packet of an allowed
   /// length, `bytes` covers the whole report and starts with a nonzero report ID, at least one
-  /// template motor is named, and the motor fields and the counter are disjoint writable bytes.
+  /// template motor is named, the motor fields and the counter are disjoint writable bytes, and
+  /// a `followUp` list holds 1...4 reports, and each follow-up and stop report covers the whole
+  /// report and starts with its report ID.
   init(
     target: Target,
     bytes: [UInt8]? = nil,
     motors: [PhysicalRumbleMotor: MotorField],
     counterByte: Int? = nil,
-    resendIntervalMilliseconds: Int? = nil
+    resendIntervalMilliseconds: Int? = nil,
+    followUp: [[UInt8]]? = nil,
+    stop: [UInt8]? = nil
   ) throws(ControllerRecordProblem) {
     switch target {
     case .hid(let report):
@@ -234,11 +249,35 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
         "a rumble resend interval is 1...60000 milliseconds"
       )
     }
+    if let followUp, !(1...Self.followUpLimit).contains(followUp.count) {
+      throw .rule(
+        "error.E5007.rumble.followUpCount",
+        "a rumble template names 1...\(Self.followUpLimit) follow-up reports"
+      )
+    }
+    for (key, reports) in [("followUp", followUp ?? []), ("stop", stop.map { [$0] } ?? [])] {
+      guard reports.allSatisfy({ Self.coversReport($0, of: target) }) else {
+        throw .rule(
+          "error.E5007.rumble.extraBytes",
+          [key],
+          "rumble \(key) bytes must cover the whole report and start with the report ID"
+        )
+      }
+    }
     self.target = target
     self.bytes = base
     self.motors = motors
     self.counterByte = counterByte
     self.resendIntervalMilliseconds = resendIntervalMilliseconds
+    self.followUp = followUp ?? []
+    self.stop = stop
+  }
+
+  /// Whether `bytes` is the whole of `target`, led by its report ID when the report is numbered.
+  private static func coversReport(_ bytes: [UInt8], of target: Target) -> Bool {
+    guard bytes.count == target.length else { return false }
+    guard let hid = target.hidReport, hid.reportID != 0 else { return true }
+    return bytes[0] == hid.reportID
   }
 
   /// The bytes of a template that names none: zeros after the report ID of a numbered report.
@@ -264,6 +303,17 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     return bytes
   }
 
+  /// The reports one rumble update sends, in order.
+  ///
+  /// The stop report replaces the template when every motor is off and the template names one.
+  /// Otherwise the template report goes first, then the follow-up reports when a motor runs. Only
+  /// the template report carries `counter`.
+  func reportSequence(_ intensities: RumbleIntensities, counter: UInt8 = 0) -> [[UInt8]] {
+    let running = motors.keys.contains { intensities[$0] != .min }
+    if !running, let stop { return [stop] }
+    return [reportBytes(intensities, counter: counter)] + (running ? followUp : [])
+  }
+
   /// The intensities a keep-alive tick sends again after `last`, the last rumble the driver
   /// encoded; nil when the template names no resend interval or no template motor runs.
   func resendIntensities(after last: RumbleIntensities) -> RumbleIntensities? {
@@ -274,28 +324,32 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
   }
 
   /// Rumble through this template; the motors run until the next report. `send` builds the write
-  /// of a raw-USB template, whose driver owns the endpoint; a HID template writes its own report.
+  /// of each raw-USB packet, whose driver owns the endpoint; a HID template writes its own reports.
   func encode(
     _ command: ControllerOutputCommand,
-    sending send: ((RumbleIntensities) -> PhysicalOutputWrite)? = nil
+    sending send: (([UInt8]) -> PhysicalOutputWrite)? = nil
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
-    let build = send ?? { write($0) }
     switch command {
-    case .setRumble(let intensities, _): return PhysicalOutputPlan(writes: [build(intensities)])
-    case .stopRumble: return PhysicalOutputPlan(writes: [build(.off)])
+    case .setRumble, .stopRumble:
+      let sequence = reportSequence(command.rumbleIntensities)
+      return PhysicalOutputPlan(writes: sequence.map(send ?? hidWrite))
     default: throw .unsupportedCapability(command.capability)
     }
   }
 
-  /// The HID report carrying these intensities.
+  /// The HID reports carrying these intensities, in the order ``reportSequence(_:counter:)`` gives.
   ///
-  /// A raw-USB template has no HID report; its driver sends ``reportBytes(_:counter:)`` to its
-  /// endpoint.
-  func write(_ intensities: RumbleIntensities, counter: UInt8 = 0) -> PhysicalOutputWrite {
+  /// A raw-USB template has no HID report; its driver sends the sequence to its endpoint.
+  func writes(_ intensities: RumbleIntensities, counter: UInt8 = 0) -> [PhysicalOutputWrite] {
+    reportSequence(intensities, counter: counter).map(hidWrite)
+  }
+
+  /// The HID write of `bytes` as this template's report.
+  private func hidWrite(_ bytes: [UInt8]) -> PhysicalOutputWrite {
     guard let report else {
       preconditionFailure("a raw-USB rumble template is sent by its driver")
     }
-    return report.write(reportBytes(intensities, counter: counter))
+    return report.write(bytes)
   }
 }
 

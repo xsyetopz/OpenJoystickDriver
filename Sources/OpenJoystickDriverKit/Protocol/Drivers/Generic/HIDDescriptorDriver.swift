@@ -120,7 +120,7 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     guard let rumbleTemplate, let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
     else { return [] }
-    return [rumbleTemplate.write(intensities)]
+    return rumbleTemplate.writes(intensities)
   }
 
   /// Encodes a rumble command through the rumble template and a player-indicator command through
@@ -133,7 +133,7 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
       return try playerIndicatorTemplate.encode(command)
     }
     guard let rumbleTemplate else { throw .unsupportedCapability(command.capability) }
-    let plan = try rumbleTemplate.encode(command) { rumbleTemplate.write($0) }
+    let plan = try rumbleTemplate.encode(command)
     lastRumble = command.rumbleIntensities
     return plan
   }

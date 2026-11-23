@@ -4222,6 +4222,10 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: de motor- en tellerbytes van een trilsjabloon moeten verschillend zijn en na de rapport-ID binnen het rapport liggen. Oplossing: geef elke motor en de teller een eigen byte na de rapport-ID.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: een hersturinterval voor trillen moet 1...60000 ms zijn. Oplossing: stel resendIntervalMilliseconds in op 1...60000, of laat het weg.";
+/* Error E5007, shown when the rumble template of a record fails: the followUp list names no report or more than 4. %1$@ is the file. */
+"error.E5007.rumble.followUpCount" = "%1$@, session.rumble.followUp: een trilsjabloon noemt 1...4 vervolgrapporten. Oplossing: zet 1...4 rapporten in followUp, of laat het weg.";
+/* Error E5007, shown when the rumble template of a record fails: a followUp or stop report does not match the report length or does not start with its report ID. %2$@ is the key, followUp or stop. %1$@ is the file. */
+"error.E5007.rumble.extraBytes" = "%1$@, session.rumble.%2$@: elk %2$@-rapport moet het hele trilrapport dekken en met zijn rapport-ID beginnen. Oplossing: geef %2$@ evenveel bytes als report.length, beginnend met de ID van een genummerd rapport.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
 "error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: een spelerindicatorsjabloon mag geen invoerrapport schrijven. Oplossing: stel report in op een uitvoer- of featurerapport.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */

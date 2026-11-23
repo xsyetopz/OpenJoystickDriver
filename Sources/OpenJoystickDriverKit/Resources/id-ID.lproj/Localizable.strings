@@ -4810,6 +4810,10 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: byte motor dan penghitung templat getar harus berbeda dan berada setelah ID laporan di dalam laporan. Perbaikan: beri setiap motor dan penghitung byte sendiri setelah ID laporan.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: interval kirim ulang getar harus 1...60000 ms. Perbaikan: atur resendIntervalMilliseconds ke 1...60000, atau hilangkan.";
+/* Error E5007, shown when the rumble template of a record fails: the followUp list names no report or more than 4. %1$@ is the file. */
+"error.E5007.rumble.followUpCount" = "%1$@, session.rumble.followUp: templat getar menyebut 1...4 laporan lanjutan. Perbaikan: cantumkan 1...4 laporan di followUp, atau hilangkan.";
+/* Error E5007, shown when the rumble template of a record fails: a followUp or stop report does not match the report length or does not start with its report ID. %2$@ is the key, followUp or stop. %1$@ is the file. */
+"error.E5007.rumble.extraBytes" = "%1$@, session.rumble.%2$@: setiap laporan %2$@ harus mencakup seluruh laporan getar dan diawali ID laporannya. Perbaikan: beri %2$@ byte sebanyak report.length, diawali ID laporan bernomor.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
 "error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: templat indikator pemain tidak boleh menulis laporan masukan. Perbaikan: atur report ke laporan keluaran atau fitur.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */

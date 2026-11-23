@@ -155,7 +155,7 @@ To try the sample, run `ojd mod validate` and `ojd mod install` with the sample 
 
 A generic gamepad with motors stays still until a record names its rumble report. macOS doesn't drive those motors. A `ControllerPatch` can add the report to a bundled `HIDDescriptor` mode in `session.rumble`. The patch can live in your own `Controllers` folder or in a package. [Add Rumble to a Controller](Controller-Records.md#add-rumble-to-a-controller) lists every key.
 
-This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c`](https://github.com/torvalds/linux/blob/master/drivers/hid/hid-dr.c) writes: command `0x51`, the weak motor at byte 2, and the strong motor at byte 4. Save it as `0079-0006.patch.plist`:
+This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c`](https://github.com/torvalds/linux/blob/master/drivers/hid/hid-dr.c) writes: command `0x51`, the weak motor at byte 2, and the strong motor at byte 4. Each motor report is followed by the `FA FE` commit report, and `F3 00` stops the motors. Save it as `0079-0006.patch.plist`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -179,6 +179,10 @@ This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c
      <dict>
       <key>bytes</key>
       <string>51 00 00 00 00 00 00</string>
+      <key>followUp</key>
+      <array>
+       <string>FA FE 00 00 00 00 00</string>
+      </array>
       <key>highFrequency</key>
       <dict>
        <key>byte</key>
@@ -198,6 +202,8 @@ This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c
        <key>length</key>
        <integer>7</integer>
       </dict>
+      <key>stop</key>
+      <string>F3 00 00 00 00 00 00</string>
      </dict>
     </dict>
    </dict>

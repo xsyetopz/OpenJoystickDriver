@@ -699,7 +699,7 @@
       "enum": ["ExtensionOwned"]
     },
     "rumbleTemplate": {
-      "description": "A rumble report: its target, fixed bytes, one field per motor, a counter byte, and a resend interval.",
+      "description": "A rumble report: target, bytes, motor fields, counter, resend interval, follow-up reports, and stop report.",
       "type": "object",
       "additionalProperties": false,
       "required": ["report"],
@@ -726,6 +726,21 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 60000
+        },
+        "followUp": {
+          "description": "Whole reports sent, in order, after each report that runs a motor.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/hexBytes",
+            "maxLength": 191
+          }
+        },
+        "stop": {
+          "description": "The whole report sent in place of the template when every motor is off.",
+          "$ref": "#/$defs/hexBytes",
+          "maxLength": 191
         },
         "lowFrequency": {
           "$ref": "#/$defs/templateMotor"

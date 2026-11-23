@@ -131,7 +131,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
   /// It carries the session's next output counter value.
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     rumbleTemplate.resendIntensities(after: lastRumble).map {
-      [rumbleTemplate.write($0, counter: nextPacketNumber())]
+      rumbleTemplate.writes($0, counter: nextPacketNumber())
     } ?? []
   }
 
@@ -197,9 +197,9 @@ public final class Switch1Driver: PhysicalProtocolDriver {
       SwitchProRumbleCodec.encode(intensity: left.byte)
       + SwitchProRumbleCodec.encode(intensity: right.byte)
     lastRumble = RumbleIntensities(lowFrequency: left, highFrequency: right)
-    return PhysicalOutputPlan(writes: [
-      rumbleTemplate.write(lastRumble, counter: nextPacketNumber())
-    ])
+    return PhysicalOutputPlan(
+      writes: rumbleTemplate.writes(lastRumble, counter: nextPacketNumber())
+    )
   }
 
   /// Decodes one full `0x30` report; a `0x21` subcommand reply only feeds motion calibration.

@@ -214,7 +214,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     guard !isWirelessReceiver || receiverConnected,
       let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
     else { return [] }
-    return [.usb(outputPacket(rumbleTemplate.reportBytes(intensities)))]
+    return rumbleTemplate.reportSequence(intensities).map { .usb(outputPacket($0)) }
   }
 
   /// The description's power-off packet for a receiver slot whose controller is connected.
@@ -354,19 +354,16 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
-    let packet: PhysicalUSBOutputPacket
     switch command {
-    case .setRumble(let intensities, _):
-      lastRumble = intensities
-      packet = outputPacket(rumbleTemplate.reportBytes(intensities))
-    case .stopRumble:
-      lastRumble = .off
-      packet = outputPacket(rumbleTemplate.reportBytes(.off))
+    case .setRumble, .stopRumble:
+      lastRumble = command.rumbleIntensities
+      return try rumbleTemplate.encode(command) { .usb(self.outputPacket($0)) }
     case .setPlayerIndicator(let indicator):
-      packet = ledOutputPacket(pattern: Self.ledPattern(for: indicator))
+      return PhysicalOutputPlan(
+        writes: [.usb(ledOutputPacket(pattern: Self.ledPattern(for: indicator)))]
+      )
     default: throw .unsupportedCapability(command.capability)
     }
-    return PhysicalOutputPlan(writes: [.usb(packet)])
   }
 
   /// The bytes of the LED output report for `pattern`; a receiver slot uses the wireless envelope.

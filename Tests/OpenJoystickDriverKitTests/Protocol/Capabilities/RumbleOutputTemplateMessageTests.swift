@@ -66,4 +66,41 @@ struct RumbleOutputTemplateMessageTests {
       )
     }
   }
+
+  @Test
+  func emptyFollowUpNamesCountAndFix() {
+    do {
+      _ = try RumbleOutputTemplate(
+        target: .usb(length: 4),
+        motors: [.lowFrequency: .init(byte: 1)],
+        followUp: []
+      )
+      Issue.record("an empty followUp was accepted")
+    } catch {
+      #expect(
+        Self.describe(error)
+          == "046d-c21d.plist, session.rumble.followUp: A rumble template names 1...4 follow-up "
+          + "reports. Fix: List 1...4 reports in followUp, or leave it out."
+      )
+    }
+  }
+
+  @Test
+  func shortStopReportNamesStopKey() {
+    do {
+      _ = try RumbleOutputTemplate(
+        target: .usb(length: 4),
+        motors: [.lowFrequency: .init(byte: 1)],
+        stop: [0xF3, 0x00]
+      )
+      Issue.record("a short stop report was accepted")
+    } catch {
+      #expect(
+        Self.describe(error)
+          == "046d-c21d.plist, session.rumble.stop: Each stop report must cover the whole rumble "
+          + "report and start with its report ID. Fix: Give stop as many bytes as report.length, "
+          + "starting with the report ID of a numbered report."
+      )
+    }
+  }
 }

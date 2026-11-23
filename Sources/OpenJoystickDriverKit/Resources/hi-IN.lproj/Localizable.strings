@@ -4810,6 +4810,10 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: रंबल टेम्पलेट की मोटर और काउंटर के बाइट अलग-अलग होने चाहिए और रिपोर्ट के भीतर रिपोर्ट ID के बाद आने चाहिए। समाधान: हर मोटर और काउंटर को रिपोर्ट ID के बाद अपना अलग बाइट दें।";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: रंबल पुनः भेजने का अंतराल 1...60000 ms होना चाहिए। समाधान: resendIntervalMilliseconds को 1...60000 रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when the rumble template of a record fails: the followUp list names no report or more than 4. %1$@ is the file. */
+"error.E5007.rumble.followUpCount" = "%1$@, session.rumble.followUp: रंबल टेम्पलेट 1...4 फ़ॉलो-अप रिपोर्ट बताता है। समाधान: followUp में 1...4 रिपोर्ट रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when the rumble template of a record fails: a followUp or stop report does not match the report length or does not start with its report ID. %2$@ is the key, followUp or stop. %1$@ is the file. */
+"error.E5007.rumble.extraBytes" = "%1$@, session.rumble.%2$@: हर %2$@ रिपोर्ट पूरी रंबल रिपोर्ट को ढके और अपनी रिपोर्ट ID से शुरू हो। समाधान: %2$@ में report.length जितने बाइट दें, नंबर वाली रिपोर्ट में रिपोर्ट ID से शुरू करके।";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
 "error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: प्लेयर इंडिकेटर टेम्पलेट इनपुट रिपोर्ट नहीं लिख सकता। समाधान: report को आउटपुट या फ़ीचर रिपोर्ट पर रखें।";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */

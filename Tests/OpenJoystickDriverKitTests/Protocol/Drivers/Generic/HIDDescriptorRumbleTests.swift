@@ -54,4 +54,25 @@ struct HIDDescriptorRumbleTests {
     _ = try driver.encode(.stopRumble)
     #expect(driver.keepAliveWrites().isEmpty)
   }
+
+  /// The DragonRise reports Linux `hid-dr.c` sends: `0x51` with both motors, the `FA FE` commit,
+  /// and `F3 00` to stop.
+  @Test
+  func followUpAndStopReportsReachHIDWrites() throws {
+    let template = try RumbleOutputTemplate(
+      target: .hid(ControllerTemplateReport(kind: .output, reportID: 0, length: 7)),
+      bytes: [0x51, 0, 0, 0, 0, 0, 0],
+      motors: [.highFrequency: .init(byte: 2), .lowFrequency: .init(byte: 4)],
+      followUp: [[0xFA, 0xFE, 0, 0, 0, 0, 0]],
+      stop: [0xF3, 0, 0, 0, 0, 0, 0]
+    )
+    let driver = HIDDescriptorDriver(model: Self.model, usageMap: nil, rumbleTemplate: template)
+    let report = { (bytes: [UInt8]) in
+      PhysicalOutputWrite.hidOutput(PhysicalHIDOutputReport(reportID: 0, bytes: bytes))
+    }
+    let sent = try driver.encode(.setRumble(Self.running, duration: .held)).writes
+    #expect(sent == [report([0x51, 0, 0, 0, 0x80, 0, 0]), report([0xFA, 0xFE, 0, 0, 0, 0, 0])])
+    let stopped = try driver.encode(.stopRumble).writes
+    #expect(stopped == [report([0xF3, 0, 0, 0, 0, 0, 0])])
+  }
 }

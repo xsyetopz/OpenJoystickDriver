@@ -10525,6 +10525,205 @@
           }
         ]
       }
+    },
+    {
+      "name": "rejects malformed rumble follow-up and stop reports: empty followUp",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 746,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 2,
+                  "length": 8
+                },
+                "lowFrequency": {
+                  "byte": 3
+                },
+                "followUp": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects malformed rumble follow-up and stop reports: five followUp reports",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 746,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 2,
+                  "length": 8
+                },
+                "lowFrequency": {
+                  "byte": 3
+                },
+                "followUp": [
+                  "02 FA FE 00 00 00 00 00",
+                  "02 FA FE 00 00 00 00 00",
+                  "02 FA FE 00 00 00 00 00",
+                  "02 FA FE 00 00 00 00 00",
+                  "02 FA FE 00 00 00 00 00"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects malformed rumble follow-up and stop reports: followUp shorter than the report",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 746,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 2,
+                  "length": 8
+                },
+                "lowFrequency": {
+                  "byte": 3
+                },
+                "followUp": [
+                  "02 FA FE"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects malformed rumble follow-up and stop reports: followUp without the report ID",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 746,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 2,
+                  "length": 8
+                },
+                "lowFrequency": {
+                  "byte": 3
+                },
+                "followUp": [
+                  "FA FE 00 00 00 00 00 00"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects malformed rumble follow-up and stop reports: stop longer than the report",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 746,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 2,
+                  "length": 8
+                },
+                "lowFrequency": {
+                  "byte": 3
+                },
+                "stop": "02 F3 00 00 00 00 00 00 00"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects malformed rumble follow-up and stop reports: lowercase stop bytes",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 746,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "VendorPS3ThirdParty"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 2,
+                  "length": 8
+                },
+                "lowFrequency": {
+                  "byte": 3
+                },
+                "stop": "02 f3 00 00 00 00 00 00"
+              }
+            }
+          }
+        ]
+      }
     }
   ]
 }

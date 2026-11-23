@@ -4222,6 +4222,10 @@
 "error.E5007.rumble.fields" = "%1$@, session.rumble: i byte dei motori e del contatore di un modello di vibrazione devono essere distinti e seguire l’ID del report dentro il report. Correzione: dai a ogni motore e al contatore un proprio byte dopo l’ID del report.";
 /* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: un intervallo di reinvio della vibrazione deve essere di 1...60000 ms. Correzione: imposta resendIntervalMilliseconds su 1...60000, oppure omettilo.";
+/* Error E5007, shown when the rumble template of a record fails: the followUp list names no report or more than 4. %1$@ is the file. */
+"error.E5007.rumble.followUpCount" = "%1$@, session.rumble.followUp: un modello di vibrazione indica da 1...4 report successivi. Correzione: elenca da 1...4 report in followUp, oppure omettilo.";
+/* Error E5007, shown when the rumble template of a record fails: a followUp or stop report does not match the report length or does not start with its report ID. %2$@ is the key, followUp or stop. %1$@ is the file. */
+"error.E5007.rumble.extraBytes" = "%1$@, session.rumble.%2$@: ogni report %2$@ deve coprire l’intero report di vibrazione e iniziare con il suo ID report. Correzione: dai a %2$@ tanti byte quanti report.length, iniziando con l’ID di un report numerato.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator template names an input report. %1$@ is the file. */
 "error.E5007.playerIndicator.reportKind" = "%1$@, session.playerIndicator.report.kind: un modello di indicatore del giocatore non può scrivere un report di ingresso. Correzione: imposta report su un report di uscita o di funzionalità.";
 /* Error E5007, shown when the player-indicator template of a record fails: a player-indicator HID report is not 1...64 bytes long. %1$@ is the file. */
