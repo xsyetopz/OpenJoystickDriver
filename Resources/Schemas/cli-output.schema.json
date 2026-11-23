@@ -850,7 +850,7 @@
               "type": "string"
             },
             "destination": {
-              "enum": ["hidOutput", "hidFeature", "usbInterrupt"]
+              "enum": ["HIDOutput", "HIDFeature", "USBInterrupt"]
             },
             "endpoint": {
               "type": "integer",

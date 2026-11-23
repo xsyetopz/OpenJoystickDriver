@@ -8,7 +8,7 @@ import OpenJoystickDriverKit
 struct ControllerSendReport: Encodable, Equatable {
   /// The session ID of the controller.
   let controller: String
-  /// `hidOutput`, `hidFeature` or `usbInterrupt`.
+  /// `HIDOutput`, `HIDFeature` or `USBInterrupt`.
   let destination: String
   /// The HID report ID; nil for USB.
   let reportID: Int?
@@ -131,7 +131,7 @@ struct ControllerSendCommand: AsyncParsableCommand {
       case .plain:
         CLIOutput.plain([
           [
-            report.controller, report.destination, report.bytes,
+            report.controller, CommandLineName.kebab(report.destination), report.bytes,
             CommandLineName.kebab(report.outcome),
           ]
         ])

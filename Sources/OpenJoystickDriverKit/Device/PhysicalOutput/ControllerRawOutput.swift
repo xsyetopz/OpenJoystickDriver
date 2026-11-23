@@ -9,11 +9,11 @@ public struct ControllerRawOutput: Codable, Equatable, Sendable {
   /// Where the bytes go.
   public enum Destination: String, Codable, CaseIterable, Sendable {
     /// A HID output report.
-    case hidOutput
+    case hidOutput = "HIDOutput"
     /// A HID feature report.
-    case hidFeature
+    case hidFeature = "HIDFeature"
     /// A USB interrupt OUT packet.
-    case usbInterrupt
+    case usbInterrupt = "USBInterrupt"
   }
 
   /// The most bytes one write carries.

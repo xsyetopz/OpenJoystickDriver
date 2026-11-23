@@ -82,7 +82,7 @@ struct ControllerSendCommandTests {
     )
     let details = try #require(object["details"] as? [String: Any])
     #expect(details["bytes"] as? String == "0A FF")
-    #expect(details["destination"] as? String == "hidOutput")
+    #expect(details["destination"] as? String == "HIDOutput")
     #expect(details["reportID"] as? Int == 0)
     #expect(details["outcome"] as? String == "Delivered")
   }
