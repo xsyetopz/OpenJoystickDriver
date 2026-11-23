@@ -51,7 +51,7 @@
           Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)
         }
-        if let text = VirtualHIDProfileKinds.noGameRumbleText(for: device, level: interfaceLevel) {
+        if let text = VirtualHIDProfileKinds.noGameRumbleText(for: device) {
           Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)
         }

@@ -72,20 +72,18 @@ enum VirtualHIDProfileKinds {
   /// the kinds that carry rumble; nil when the controller has no rumble motors or the kind carries
   /// rumble.
   ///
-  /// - Parameters:
-  ///   - device: The controller.
-  ///   - level: The interface level, which decides how each kind is named.
+  /// The line names each kind by its phrase alone, since the pop-up above it already shows the
+  /// identifiers in Advanced.
+  ///
+  /// - Parameter device: The controller.
   /// - Returns: The line, or nil.
-  static func noGameRumbleText(
-    for device: ApplicationServiceDeviceDescription,
-    level: InterfaceLevel
-  ) -> String? {
+  static func noGameRumbleText(for device: ApplicationServiceDeviceDescription) -> String? {
     guard let kind = device.personaWithoutGameRumble else { return nil }
     return OJDLocalized.formatted(
       "cli.virtual.group.noGameRumbleNote",
-      optionTitle(for: kind, level: level),
+      OJDLocalized.string(phraseKey(for: kind)),
       VirtualHIDProfileID.allCases.filter(\.carriesRumble).map {
-        optionTitle(for: $0, level: level)
+        OJDLocalized.string(phraseKey(for: $0))
       }
       .joined(separator: ", ")
     )
