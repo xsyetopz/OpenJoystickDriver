@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "App の環境に追加する変数を設定します。";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "App が受け取る引数の後ろに追加する引数を設定します。";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "このコントローラーの項目をブラウザで開きます";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "サンプルの収集を止め、集めた分を保持します";

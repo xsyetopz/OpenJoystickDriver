@@ -81,10 +81,6 @@
               ).help(OJDLocalized.string("ui.help.communityLink"))
             }
           }
-          ControllerLookupButton(
-            model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
-            record: record
-          ).disabled(!hasLoadedRecord)
         }
         if device.isHeldByAppleDriver {
           Section {
@@ -247,7 +243,7 @@
       ).ojdAccessibilityValue(message)
     }
 
-    /// The header: the controller's glyph, its name and its connection.
+    /// The header: the controller's glyph, its name, its connection and Look Up.
     private var controllerHeader: some View {
       HStack(alignment: .center, spacing: OJDSpacing.medium) {
         let presentation = device.publishedIdentityPresentation
@@ -263,6 +259,10 @@
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer(minLength: 0)
+        ControllerLookupButton(
+          model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
+          record: record
+        ).disabled(!hasLoadedRecord)
       }
     }
 

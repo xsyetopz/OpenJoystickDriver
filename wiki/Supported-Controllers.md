@@ -57,7 +57,7 @@ A test covers only the connection the tester used. Other connections may not wor
 
 A tester used each controller below on real hardware. The app marks a verified connection as Community verified in the controller's details.
 
-The **Lookup** button in the details opens this page. For a controller with no record, it opens a GitHub issue search for the controller's ID.
+The **Look Up** button in the details opens this page. For a controller with no record, it opens a GitHub issue search for the controller's ID.
 
 | Controller | ID | Connection tested | What works | Not tested |
 | --- | --- | --- | --- | --- |

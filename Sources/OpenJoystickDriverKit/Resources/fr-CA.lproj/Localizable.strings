@@ -5578,7 +5578,7 @@
 "ui.help.launchSettingsEnvironment" = "Définissez des variables ajoutées à l’environnement de l’app.";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "Définissez des arguments ajoutés après ceux que reçoit l’app.";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "Ouvrir la fiche de cette manette dans le navigateur";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "Arrêter la collecte et conserver les échantillons déjà recueillis";

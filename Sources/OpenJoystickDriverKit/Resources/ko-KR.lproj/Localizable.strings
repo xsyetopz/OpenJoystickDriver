@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "앱의 환경에 추가할 변수를 설정합니다.";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "앱이 받는 인수 뒤에 덧붙일 인수를 설정합니다.";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "이 컨트롤러의 항목을 브라우저에서 엽니다";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "샘플 수집을 멈추고 모은 샘플은 유지합니다";

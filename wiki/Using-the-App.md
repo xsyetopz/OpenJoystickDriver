@@ -80,7 +80,7 @@ Select a controller to see its profile, programs using it, battery, charging, an
 - **Suspended**: OJD let go. **Resume** takes it back.
 - **Community verified**: each [mode](Glossary.md#terms) a tester confirmed, with a report link.
 
-**Lookup** finds it in [Supported Controllers](Supported-Controllers.md). **Open Input Test** tests it. See [Testing a Controller](Testing-a-Controller.md).
+**Look Up** finds it in [Supported Controllers](Supported-Controllers.md). **Open Input Test** tests it. See [Testing a Controller](Testing-a-Controller.md).
 
 ### Who Handles the Controller
 

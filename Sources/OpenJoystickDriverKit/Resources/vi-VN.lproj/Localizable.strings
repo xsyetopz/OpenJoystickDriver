@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "Đặt các biến được thêm vào môi trường của ứng dụng.";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "Đặt các đối số được thêm sau những đối số ứng dụng nhận được.";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "Mở mục của bộ điều khiển này trong trình duyệt";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "Dừng thu thập mẫu và giữ lại các mẫu đã có";

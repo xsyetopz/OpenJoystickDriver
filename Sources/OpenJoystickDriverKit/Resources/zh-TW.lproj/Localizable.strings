@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "設定加入 App 環境的變數。";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "設定附加在 App 所收到引數之後的引數。";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "在瀏覽器中開啟此控制器的項目";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "停止收集樣本，並保留已收集的樣本";

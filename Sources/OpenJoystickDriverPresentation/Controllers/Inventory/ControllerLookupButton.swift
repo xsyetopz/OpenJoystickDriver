@@ -4,7 +4,7 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The Lookup button of the controller detail: opens the controller's entry in the
+  /// The Look Up button of the controller header: opens the controller's entry in the
   /// supported-controllers list, or a GitHub search for its VID:PID when it has no record.
   struct ControllerLookupButton: View {
     /// The model of the controller.

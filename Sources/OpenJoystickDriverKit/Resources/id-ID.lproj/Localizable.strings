@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "Tetapkan variabel yang ditambahkan ke lingkungan app.";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "Tetapkan argumen yang ditambahkan setelah yang diterima app.";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "Buka entri pengontrol ini di browser";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "Hentikan pengumpulan sampel dan simpan yang sudah terkumpul";

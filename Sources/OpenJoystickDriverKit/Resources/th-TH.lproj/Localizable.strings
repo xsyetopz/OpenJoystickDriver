@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "ตั้งค่าตัวแปรที่เพิ่มเข้าไปในสภาพแวดล้อมของแอป";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "ตั้งค่าอาร์กิวเมนต์ที่ต่อท้ายอาร์กิวเมนต์ที่แอปได้รับ";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "เปิดรายการของคอนโทรลเลอร์นี้ในเบราว์เซอร์";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "หยุดเก็บตัวอย่างและคงตัวอย่างที่เก็บไว้แล้ว";

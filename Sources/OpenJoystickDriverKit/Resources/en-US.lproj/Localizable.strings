@@ -5451,7 +5451,7 @@
 /* Value of the Community verified row in the controller detail, a link to the validation. %1$@ is the id of the validated mode, such as xinput. %2$@ is the number of the GitHub issue, such as #12. */
 "ui.controllers.communityVerifiedMode" = "Mode %1$@, issue %2$@";
 /* Button in the controller detail that opens the controller's entry in the supported-controllers list, or a GitHub search for its VID:PID when it has no record, in the browser. */
-"ui.controllers.lookup" = "Lookup";
+"ui.controllers.lookup" = "Look Up";
 /* One-line summary of 'ojd controller lookup' in the command list and at the top of its help. */
 "cli.controller.lookup.abstract" = "Print the supported-controllers page for a controller model.";
 /* Long description in the help of 'ojd controller lookup'. VID:PID and GitHub stay as written. */
@@ -5578,7 +5578,7 @@
 "ui.help.launchSettingsEnvironment" = "Set variables added to the environment of the app.";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "Set arguments appended after the ones the app is given.";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "Open the entry of this controller in your browser";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "Stop collecting samples and keep those gathered";

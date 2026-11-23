@@ -5577,7 +5577,7 @@
 "ui.help.launchSettingsEnvironment" = "ऐप के एनवायरनमेंट में जोड़े जाने वाले वेरिएबल सेट करें।";
 /* Tooltip of the arguments field in the launch settings editor. */
 "ui.help.launchSettingsArguments" = "ऐप को मिलने वाले आर्गुमेंट के बाद जोड़े जाने वाले आर्गुमेंट सेट करें।";
-/* Tooltip of the Lookup button of the Controllers detail. It opens a page in the browser. */
+/* Tooltip of the Look Up button of the Controllers detail. It opens a page in the browser. */
 "ui.help.lookup" = "इस कंट्रोलर की प्रविष्टि ब्राउज़र में खोलें";
 /* Tooltip of the Pause button of the motion calibration. Samples are gyro measurements. */
 "ui.help.motionPause" = "नमूने जुटाना रोकें और अब तक के नमूने रखें";
