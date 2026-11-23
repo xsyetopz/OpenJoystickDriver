@@ -113,7 +113,6 @@ struct LocalizationTests {
       "ui.controllers.battery",
       "ui.controllers.chargingState", "ui.controllers.cableState", "ui.controllers.discharging",
       "ui.controllers.charging", "ui.controllers.batteryFull",
-      "ui.controllers.batteryAccessibilityDetails",
       "ui.profiles.actions", "ui.profiles.editorSection", "ui.profiles.combinations",
     ] { #expect(keys.contains(required)) }
     #expect(keys.filter { $0.hasPrefix("ui.inputTest.") }.count >= 20)

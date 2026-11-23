@@ -250,8 +250,6 @@
 "ui.controllers.batteryFull" = "Penuh";
 /* Value of the charging state for a controller that has no rechargeable battery. */
 "ui.controllers.notChargeable" = "Tidak dapat diisi daya";
-/* VoiceOver summary of the battery facts. %1$@ is the battery level, %2$@ is the charging state and %3$@ is the cable state. */
-"ui.controllers.batteryAccessibilityDetails" = "Baterai: %1$@. Status pengisian daya: %2$@. Status kabel: %3$@.";
 /* Label of the active profile fact in the Controllers detail. */
 "ui.controllers.activeProfile" = "Profil aktif";
 /* Value of the active profile fact when the profile cannot be shown. */
@@ -260,18 +258,6 @@
 "ui.controllers.profileLoadError" = "Profil aktif tidak dapat dimuat";
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "VID/PID USB";
-/* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "Profil aktif sedang diperiksa…";
-/* VoiceOver sentence when the controller has no active profile. */
-"ui.controllers.noActiveProfileSentence" = "Tidak ada profil aktif.";
-/* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
-"ui.controllers.activeProfileSentence" = "Profil aktif: %@.";
-/* VoiceOver sentence when the active profile cannot be shown. %@ is the reason. */
-"ui.controllers.profileUnavailableSentence" = "Profil aktif tidak tersedia: %@";
-/* VoiceOver sentence when loading the active profile failed. %@ is the reason. */
-"ui.controllers.profileErrorSentence" = "Kesalahan profil aktif: %@";
-/* VoiceOver summary of a controller. %1$@ is the connection summary, %2$@ is the profile sentence, %3$@ is the protocol, %4$@ is the parser, %5$@ is the serial number, %6$@ is the USB vendor and product ID, %7$@ is the input endpoint and %8$@ is the output endpoint. */
-"ui.controllers.accessibilityDetails" = "%1$@. %2$@. Protokol: %3$@. Parser: %4$@. Nomor seri: %5$@. VID/PID USB: %6$@. Endpoint input: %7$@. Endpoint output: %8$@.";
 /* Note on a controller row in the Controllers area when macOS serves the controller natively and the driver does not publish a virtual gamepad for it. */
 "platform.macos.ui.controllers.systemGamepadNotPublished" = "Gamepad macOS native, tidak dipublikasikan";
 /* Label of the popup in the Controllers detail that picks which program handles the controller for games. */

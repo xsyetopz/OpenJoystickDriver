@@ -250,8 +250,6 @@
 "ui.controllers.batteryFull" = "เต็ม";
 /* Value of the charging state for a controller that has no rechargeable battery. */
 "ui.controllers.notChargeable" = "ชาร์จไม่ได้";
-/* VoiceOver summary of the battery facts. %1$@ is the battery level, %2$@ is the charging state and %3$@ is the cable state. */
-"ui.controllers.batteryAccessibilityDetails" = "แบตเตอรี่: %1$@ สถานะการชาร์จ: %2$@ สถานะสาย: %3$@";
 /* Label of the active profile fact in the Controllers detail. */
 "ui.controllers.activeProfile" = "โปรไฟล์ที่ใช้งานอยู่";
 /* Value of the active profile fact when the profile cannot be shown. */
@@ -260,18 +258,6 @@
 "ui.controllers.profileLoadError" = "ไม่สามารถโหลดโปรไฟล์ที่ใช้งานอยู่ได้";
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
-/* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "กำลังตรวจสอบโปรไฟล์ที่ใช้งานอยู่…";
-/* VoiceOver sentence when the controller has no active profile. */
-"ui.controllers.noActiveProfileSentence" = "ไม่มีโปรไฟล์ที่ใช้งานอยู่";
-/* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
-"ui.controllers.activeProfileSentence" = "โปรไฟล์ที่ใช้งานอยู่: %@";
-/* VoiceOver sentence when the active profile cannot be shown. %@ is the reason. */
-"ui.controllers.profileUnavailableSentence" = "โปรไฟล์ที่ใช้งานอยู่ไม่พร้อมใช้งาน: %@";
-/* VoiceOver sentence when loading the active profile failed. %@ is the reason. */
-"ui.controllers.profileErrorSentence" = "ข้อผิดพลาดของโปรไฟล์ที่ใช้งานอยู่: %@";
-/* VoiceOver summary of a controller. %1$@ is the connection summary, %2$@ is the profile sentence, %3$@ is the protocol, %4$@ is the parser, %5$@ is the serial number, %6$@ is the USB vendor and product ID, %7$@ is the input endpoint and %8$@ is the output endpoint. */
-"ui.controllers.accessibilityDetails" = "%1$@ %2$@ โปรโตคอล: %3$@ ตัวแยกวิเคราะห์: %4$@ เลขประจำเครื่อง: %5$@ USB VID/PID: %6$@ เอนด์พอยต์อินพุต: %7$@ เอนด์พอยต์เอาต์พุต: %8$@";
 /* Note on a controller row in the Controllers area when macOS serves the controller natively and the driver does not publish a virtual gamepad for it. */
 "platform.macos.ui.controllers.systemGamepadNotPublished" = "เกมแพดดั้งเดิมของ macOS ไม่ได้เผยแพร่";
 /* Label of the popup in the Controllers detail that picks which program handles the controller for games. */

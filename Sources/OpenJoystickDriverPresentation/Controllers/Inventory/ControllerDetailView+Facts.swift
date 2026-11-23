@@ -144,7 +144,7 @@
         guard let request else { return }
         ControllerFilePanels.save(request) { actions.finishSave(to: $0) }
       }.ojdGroupedForm().accessibilityElement(children: .contain)
-        .ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
+        .ojdAccessibilityLabel(device.name)
     }
 
     /// How many hidden rows hold a value other than their default.
@@ -330,7 +330,7 @@
     }
 
     /// The controller's connection as reported.
-    var connectionValue: OJDValue { .reported(device.connection) }
+    private var connectionValue: OJDValue { .reported(device.connection) }
   }
 
 #endif

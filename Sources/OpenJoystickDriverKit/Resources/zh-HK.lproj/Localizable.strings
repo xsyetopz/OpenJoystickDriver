@@ -250,8 +250,6 @@
 "ui.controllers.batteryFull" = "已充滿";
 /* Value of the charging state for a controller that has no rechargeable battery. */
 "ui.controllers.notChargeable" = "不可充電";
-/* VoiceOver summary of the battery facts. %1$@ is the battery level, %2$@ is the charging state and %3$@ is the cable state. */
-"ui.controllers.batteryAccessibilityDetails" = "電池：%1$@。充電狀態：%2$@。連接線狀態：%3$@。";
 /* Label of the active profile fact in the Controllers detail. */
 "ui.controllers.activeProfile" = "使用中的設定檔";
 /* Value of the active profile fact when the profile cannot be shown. */
@@ -260,18 +258,6 @@
 "ui.controllers.profileLoadError" = "無法載入使用中的設定檔";
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
-/* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "正在檢查使用中的設定檔…";
-/* VoiceOver sentence when the controller has no active profile. */
-"ui.controllers.noActiveProfileSentence" = "沒有使用中的設定檔。";
-/* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
-"ui.controllers.activeProfileSentence" = "使用中的設定檔：%@。";
-/* VoiceOver sentence when the active profile cannot be shown. %@ is the reason. */
-"ui.controllers.profileUnavailableSentence" = "使用中的設定檔無法使用：%@";
-/* VoiceOver sentence when loading the active profile failed. %@ is the reason. */
-"ui.controllers.profileErrorSentence" = "使用中的設定檔發生錯誤：%@";
-/* VoiceOver summary of a controller. %1$@ is the connection summary, %2$@ is the profile sentence, %3$@ is the protocol, %4$@ is the parser, %5$@ is the serial number, %6$@ is the USB vendor and product ID, %7$@ is the input endpoint and %8$@ is the output endpoint. */
-"ui.controllers.accessibilityDetails" = "%1$@。%2$@。協定：%3$@。解析器：%4$@。序號：%5$@。USB VID/PID：%6$@。輸入端點：%7$@。輸出端點：%8$@。";
 /* Note on a controller row in the Controllers area when macOS serves the controller natively and the driver does not publish a virtual gamepad for it. */
 "platform.macos.ui.controllers.systemGamepadNotPublished" = "macOS 原生遊戲控制器，未發佈";
 /* Label of the popup in the Controllers detail that picks which program handles the controller for games. */
