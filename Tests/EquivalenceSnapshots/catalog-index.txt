@@ -7651,7 +7651,7 @@ parameters=
 protocol=hid-report-layout variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [LeftStickX,LeftStickY,LeftTrigger,RightStickX,RightStickY,RightTrigger]
+controls [Auxiliary1,Auxiliary2,Auxiliary3,Auxiliary4,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 recordStartup[0] output id=3 length=32 delayMs=0 transport=all 5AA50102030000000000000000000000000000000000000000000000000000
@@ -7660,10 +7660,30 @@ recordStartup[2] output id=3 length=32 delayMs=0 transport=all 5AA50202040000000
 recordStartup[3] output id=3 length=32 delayMs=0 transport=all 5AA51107FF01FFFFFF15000000000000000000000000000000000000000000
 rumbleTemplate output id=3 length=32 motors=high-frequency@6,left-trigger@7,low-frequency@5,right-trigger@8 bytes=035AA51206000000000000000000000000000000000000000000000000000000
 inputLayout reportID=- minimumLength=32
+inputLayout button South 11&10
+inputLayout button East 11&20
+inputLayout button Back 11&40
+inputLayout button West 11&80
+inputLayout button North 12&01
+inputLayout button Start 12&02
+inputLayout button LeftShoulder 12&04
+inputLayout button RightShoulder 12&08
+inputLayout button LeftStickClick 12&40
+inputLayout button RightStickClick 12&80
+inputLayout button Auxiliary1 13&01
+inputLayout button Auxiliary2 13&02
+inputLayout button LeftPaddle1 13&04
+inputLayout button RightPaddle1 13&08
+inputLayout button LeftPaddle2 13&10
+inputLayout button RightPaddle2 13&20
+inputLayout button Auxiliary3 13&40
+inputLayout button Auxiliary4 13&80
+inputLayout button Guide 14&08
 inputLayout axis LeftStickX byte=3 bits=16 signed=true range=-32768...32767 inverted=false
-inputLayout axis LeftStickY byte=5 bits=16 signed=true range=-32768...32767 inverted=false
+inputLayout axis LeftStickY byte=5 bits=16 signed=true range=-32768...32767 inverted=true
 inputLayout axis RightStickX byte=7 bits=16 signed=true range=-32768...32767 inverted=false
-inputLayout axis RightStickY byte=9 bits=16 signed=true range=-32768...32767 inverted=false
+inputLayout axis RightStickY byte=9 bits=16 signed=true range=-32768...32767 inverted=true
+inputLayout hat directions up=11&01 right=11&02 down=11&04 left=11&08
 inputLayout trigger left byte=15 button=-
 inputLayout trigger right byte=16 button=-
 parameters=

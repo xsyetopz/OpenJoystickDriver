@@ -1,6 +1,6 @@
 # Flydigi Vader 5 Pro 2.4 GHz Dongle
 
-USB identity 37D7:2401, the 2.4 GHz dongle of the Flydigi Vader 5 Pro. The record comes from source code and is unverified: no capture replayed. Card F3 in [Flydigi tester checks](flydigi-tester-checks.md) lists the files to send.
+USB identity 37D7:2401, the 2.4 GHz dongle of the Flydigi Vader 5 Pro. Card F3 in [Flydigi tester checks](flydigi-tester-checks.md) lists the hardware checks and files to send.
 
 ## Modes
 
@@ -13,6 +13,8 @@ A refused startup write shows as a startup failure; no XUSB mode replaces it.
 ## Source
 
 Frames and offsets come from the openflydigi `PROTOCOL.md` at commit `11653507bbe4dc77f3c479c2a7aaebf25bbda995` (CC0; see [Third-Party Notices](../../THIRD_PARTY_NOTICES.md) and [Compatibility Source Notes](../development/compatibility-sources.md)).
+
+[OpenVader's input report](https://github.com/FilipVajgand/openvader/blob/v0.2.0/Sources/VaderKit/Model/InputState.swift) documents the button positions and positive-up Y axes. The [Vader 5 Pro remap driver's paddle table](https://github.com/Chillsmeit/vader5pro-remap-driver#steam-input-elite-recognition) identifies the physical side of each paddle.
 
 ## Startup Writes
 
@@ -33,11 +35,15 @@ The 32-byte extended report starts `5A A5 EF`, with no report ID byte.
 
 | Offset | Contents |
 | --- | --- |
-| 3 to 10 | Left stick X and Y, right stick X and Y, each signed 16-bit little-endian |
+| 3 to 10 | Left stick X and Y, right stick X and Y, each signed 16-bit little-endian. The layout inverts both Y axes to match OJD's positive-down convention. |
+| 11 | D-pad up, right, down, left, A, B, View, X (bits 0 through 7) |
+| 12 | Y, Menu, LB, RB (bits 0 through 3), L3, R3 (bits 6 and 7) |
+| 13 | C, Z, M1, M2, M3, M4, LM, RM (bits 0 through 7) |
+| 14 | Home (bit 3) |
 | 15, 16 | Left and right trigger, 0 to 255 |
-| Not mapped | Buttons (bytes 11 to 14; sources name the offsets but not which bit is which control); motion sensor (gyro 17 to 22, accelerometer 23 to 28, 4096 = 1 g) |
+| 17 to 28 | Motion sensor data. Gyroscope at 17 to 22, accelerometer at 23 to 28 (4096 counts per g). |
 
-No driver decodes motion; the record declares none.
+M1 and M3 map to `LeftPaddle1` and `LeftPaddle2`. M2 and M4 map to `RightPaddle1` and `RightPaddle2`. C, Z, LM and RM map to `Auxiliary1` through `Auxiliary4`. The record leaves motion undecoded.
 
 ## Rumble
 
@@ -45,4 +51,4 @@ The grip rumble template of command 18: report ID 3 and `5A A5 12 06`, then moto
 
 ## Status
 
-Unverified on hardware: report ID, stick axis order and Y direction, trigger range, whether the writes start the report, which button bit is which.
+Hardware validation of the complete mapping is pending. The tests exercise the documented button bits, D-pad directions and axis signs with synthetic reports.
