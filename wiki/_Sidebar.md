@@ -39,4 +39,5 @@
   - [Controller Record Modes](Controller-Record-Modes.md)
   - [Writing Controller Mods](Writing-Controller-Mods.md)
   - [Generating Documents with Scripts](Generating-Documents-with-Scripts.md)
+  - [Using Agent Skills](Using-Agent-Skills.md)
   - [Building From Source](Building-from-Source.md)
