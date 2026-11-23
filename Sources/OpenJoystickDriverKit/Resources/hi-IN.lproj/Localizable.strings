@@ -2664,6 +2664,8 @@
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "रंबल मोटर";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureRaw" = "रॉ आउटपुट";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureSpeaker" = "स्पीकर";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "कंट्रोलर की लाइट का रंग या ब्राइटनेस सेट करें।";
@@ -2751,6 +2753,28 @@
 "cli.controller.rumble.sent" = "%1$@ पर %2$@ को रंबल किया गया।";
 /* Message printed after 'ojd controller rumble' stopped all motors. %@ is the controller name. */
 "cli.controller.rumble.stopped" = "%@ पर रंबल रोका गया।";
+/* One-line summary of 'ojd controller send' in the command list and at the top of its help. */
+"cli.controller.send.abstract" = "कंट्रोलर को रॉ बाइट भेजें।";
+/* Long description in the help of 'ojd controller send'. --feature, --usb-endpoint and BYTES stay as written. The limit of 64 bytes is fixed. HID is the USB Human Interface Device class. */
+"cli.controller.send.discussion" = "एक HID आउटपुट रिपोर्ट लिखता है; --feature के साथ HID फ़ीचर रिपोर्ट, और --usb-endpoint के साथ USB इंटरप्ट पैकेट। BYTES 1 से 64 हेक्स जोड़े होते हैं और पूरी रिपोर्ट बनाते हैं, इसलिए क्रमांकित रिपोर्ट अपनी ID से शुरू होती है। कंट्रोलर इन्हें जैसा है वैसा पाता है।";
+/* Examples block at the end of the help of 'ojd controller send'. The command lines, option names and hex bytes stay as written; translate only the lines that start with #. */
+"cli.controller.send.examples" = "उदाहरण:\n  # आउटपुट रिपोर्ट भेजें\n  ojd controller send 0079:0006 \"51 00 C8 00 C8 00 00\"\n  # रिपोर्ट ID 1 वाली फ़ीचर रिपोर्ट भेजें\n  ojd controller send 0079:0006 \"01 02 03\" --feature --report-id 1";
+/* Help text of the BYTES argument of 'ojd controller send'. The limit of 64 bytes is fixed. */
+"cli.controller.send.bytes" = "पूरी रिपोर्ट के हेक्स जोड़े, 1 से 64 बाइट।";
+/* Help text of the --feature option of 'ojd controller send'. A feature report is a HID report type. */
+"cli.controller.send.feature" = "आउटपुट रिपोर्ट की जगह फ़ीचर रिपोर्ट भेजें।";
+/* Help text of the --report-id option of 'ojd controller send'. The range 1 to 255 is fixed. */
+"cli.controller.send.reportID" = "क्रमांकित रिपोर्ट की रिपोर्ट ID, 1 से 255। पहला बाइट यही संख्या होना चाहिए।";
+/* Help text of the --usb-endpoint option of 'ojd controller send'. An interrupt OUT packet goes from the host to the device. */
+"cli.controller.send.usbEndpoint" = "इस एंडपॉइंट पते पर USB इंटरप्ट OUT पैकेट भेजें।";
+/* Error of 'ojd controller send' when BYTES is not 1 to 64 hex pairs. BYTES stays as written and the quoted example "51 00 FF" stays as written. */
+"cli.controller.send.errorBytes" = "BYTES में 1 से 64 हेक्स जोड़े होने चाहिए, जैसे \"51 00 FF\"।";
+/* Error of 'ojd controller send' when --report-id is outside 1 to 255 or the first byte differs from it. --report-id stays as written. */
+"cli.controller.send.errorReportID" = "--report-id को 1 से 255 की संख्या चाहिए, और पहला बाइट वही संख्या होना चाहिए।";
+/* Error of 'ojd controller send' when --usb-endpoint is combined with --feature or --report-id. The option names stay as written. */
+"cli.controller.send.errorUSB" = "--usb-endpoint को --feature या --report-id के साथ नहीं जोड़ा जा सकता।";
+/* Message printed after 'ojd controller send' wrote bytes. %1$@ is the number of bytes and %2$@ is the controller name. */
+"cli.controller.send.sent" = "%2$@ को %1$@ बाइट का राइट भेजा गया।";
 /* Error when a CONTROLLER argument cannot match because no controller is connected. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.controller.group.selectorNoneConnected" = "“%@” से कोई कंट्रोलर मेल नहीं खाता, क्योंकि कोई कनेक्ट नहीं है। एक कनेक्ट करें और “ojd controller list” चलाएँ।";
 /* Error when a CONTROLLER argument matches no connected controller; the list of valid IDs follows on the next lines, so the text ends with a colon. %@ is the text the user gave. VVVV:PPPP stays as written. */

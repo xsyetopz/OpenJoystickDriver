@@ -831,6 +831,46 @@
         }
       }
     },
+    "controllerSend": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "status": {
+          "const": "Success"
+        },
+        "details": {
+          "type": "object",
+          "required": ["bytes", "controller", "destination", "outcome"],
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "type": "string",
+              "description": "The bytes written, as uppercase hex pairs separated by spaces."
+            },
+            "controller": {
+              "type": "string"
+            },
+            "destination": {
+              "enum": ["hidOutput", "hidFeature", "usbInterrupt"]
+            },
+            "endpoint": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255,
+              "description": "The USB OUT endpoint; absent for HID."
+            },
+            "reportID": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255,
+              "description": "The HID report ID; absent for USB."
+            },
+            "outcome": {
+              "enum": ["Delivered"]
+            }
+          }
+        }
+      }
+    },
     "controllerShow": {
       "type": "object",
       "description": "A connected controller, or with kind UnservedController a connected device that OJD does not serve.",

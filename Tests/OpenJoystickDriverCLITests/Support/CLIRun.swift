@@ -119,6 +119,7 @@ enum CLICommandTree {
       ["controller", "disconnect"], ["controller", "claim"], ["controller", "release"],
       ["virtual", "reset"]:
       ["045E:028E"]
+    case ["controller", "send"]: ["045E:028E", "51 00 FF"]
     case ["controller", "light"]: ["045E:028E", "--color", "FF0000"]
     case ["controller", "player"]: ["045E:028E", "1"]
     case ["controller", "speaker", "play"]: ["045E:028E", "clip.wav"]

@@ -69,6 +69,26 @@ enum GUICoverageEntries {
         reason: "no window plays a sound file on a controller's speaker"
       ),
       CLIOnlyItem(
+        command: ["controller", "send"],
+        option: nil,
+        reason: "writes raw bytes for a controller-mod author, which no window offers"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "send"],
+        option: "--feature",
+        reason: "writes raw bytes for a controller-mod author, which no window offers"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "send"],
+        option: "--report-id",
+        reason: "writes raw bytes for a controller-mod author, which no window offers"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "send"],
+        option: "--usb-endpoint",
+        reason: "writes raw bytes for a controller-mod author, which no window offers"
+      ),
+      CLIOnlyItem(
         command: ["generate"],
         option: nil,
         reason: "runs a script file in a helper process, which no window does"

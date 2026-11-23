@@ -19,6 +19,7 @@ extension CLI {
       (ControllerSuspendCommand.self, "ControllerSession"),
       (ControllerResumeCommand.self, "ControllerSession"),
       (ControllerDisconnectCommand.self, "ControllerSession"),
+      (ControllerSendCommand.self, "Status"),
       (ControllerRumbleCommand.self, "Status"),
       (ControllerLightCommand.self, "Status"),
       (ControllerPlayerCommand.self, "Status"),
