@@ -1272,8 +1272,8 @@
 "ui.inputTest.outputNotConnected" = "컨트롤러가 연결되어 있지 않습니다. 아무것도 전송되지 않았습니다.";
 /* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
 "ui.inputTest.outputUnsupported" = "이 컨트롤러는 이 출력을 지원하지 않습니다. 아무것도 전송되지 않았습니다.";
-/* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
-"platform.macos.ui.inputTest.permissionRequired" = "입력 모니터링 권한이 필요합니다";
+/* Status shown in the input test window when the Input Monitoring permission is missing. %@ is the name of the Input Monitoring pane of System Settings. */
+"platform.macos.ui.inputTest.permissionRequired" = "%@ 권한이 필요합니다";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "플레이어 표시등";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
@@ -2311,8 +2311,8 @@
 "cli.diagnose.group.soakVerdictStable" = "안정: 상주 크기 %1$.1f MiB, 풋프린트 %2$.1f MiB, 파일 디스크립터 %3$lld, CPU %4$.1f%% (%5$.0f초 동안)";
 /* Error of 'ojd diagnose' when --soak is out of range. --soak stays as written. The range is fixed. */
 "cli.diagnose.group.soakRange" = "--soak은 1초에서 86400초 사이여야 합니다.";
-/* Detail of the USB check of 'ojd diagnose' when the scan fails. %@ is the reason from macOS. Input Monitoring is written as macOS names it. OpenJoystickDriver is the product name. */
-"platform.macos.cli.diagnose.group.usbFailed" = "USB 검색에 실패했습니다: %@. OpenJoystickDriver에 입력 모니터링을 허용하세요.";
+/* Detail of the USB check of 'ojd diagnose' when the scan fails. %1$@ is the reason from macOS. %2$@ is the name of the Input Monitoring pane of System Settings. OpenJoystickDriver is the product name. */
+"platform.macos.cli.diagnose.group.usbFailed" = "USB 검색에 실패했습니다: %1$@. OpenJoystickDriver에 %2$@을 허용하세요.";
 /* Detail of the USB check of 'ojd diagnose'. %lld is the number of vendor-specific USB controllers that the system lists. */
 "cli.diagnose.group.usbOk" = "보이는 공급업체 전용 USB 컨트롤러: %lld개";
 /* Detail of the hid-input-drops check of 'ojd diagnose' when the system dropped no input report of any controller. HID is a term of the USB HID standard. */

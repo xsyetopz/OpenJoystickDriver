@@ -1272,8 +1272,8 @@
 "ui.inputTest.outputNotConnected" = "Pengontrol tidak terhubung. Tidak ada yang dikirim.";
 /* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
 "ui.inputTest.outputUnsupported" = "Pengontrol ini tidak mendukung output ini. Tidak ada yang dikirim.";
-/* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
-"platform.macos.ui.inputTest.permissionRequired" = "Izin Pengawasan Input diperlukan";
+/* Status shown in the input test window when the Input Monitoring permission is missing. %@ is the name of the Input Monitoring pane of System Settings. */
+"platform.macos.ui.inputTest.permissionRequired" = "Izin %@ diperlukan";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "Indikator pemain";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
@@ -2311,8 +2311,8 @@
 "cli.diagnose.group.soakVerdictStable" = "Stabil: ukuran residen %1$.1f MiB, jejak memori %2$.1f MiB, deskriptor file %3$lld, CPU %4$.1f%% selama %5$.0f detik";
 /* Error of 'ojd diagnose' when --soak is out of range. --soak stays as written. The range is fixed. */
 "cli.diagnose.group.soakRange" = "--soak harus antara 1 dan 86400 detik.";
-/* Detail of the USB check of 'ojd diagnose' when the scan fails. %@ is the reason from macOS. Input Monitoring is written as macOS names it. OpenJoystickDriver is the product name. */
-"platform.macos.cli.diagnose.group.usbFailed" = "Pemindaian USB gagal: %@. Beri OpenJoystickDriver akses Pengawasan Input.";
+/* Detail of the USB check of 'ojd diagnose' when the scan fails. %1$@ is the reason from macOS. %2$@ is the name of the Input Monitoring pane of System Settings. OpenJoystickDriver is the product name. */
+"platform.macos.cli.diagnose.group.usbFailed" = "Pemindaian USB gagal: %1$@. Beri OpenJoystickDriver akses %2$@.";
 /* Detail of the USB check of 'ojd diagnose'. %lld is the number of vendor-specific USB controllers that the system lists. */
 "cli.diagnose.group.usbOk" = "Pengontrol USB khusus vendor yang terlihat: %lld";
 /* Detail of the hid-input-drops check of 'ojd diagnose' when the system dropped no input report of any controller. HID is a term of the USB HID standard. */

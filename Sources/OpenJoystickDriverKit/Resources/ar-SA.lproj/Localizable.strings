@@ -1272,8 +1272,8 @@
 "ui.inputTest.outputNotConnected" = "وحدة التحكم غير متصلة. لم يتم إرسال أي شيء.";
 /* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
 "ui.inputTest.outputUnsupported" = "وحدة التحكم هذه لا تدعم هذا الإخراج. لم يتم إرسال أي شيء.";
-/* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
-"platform.macos.ui.inputTest.permissionRequired" = "يلزم إذن مراقبة الإدخال";
+/* Status shown in the input test window when the Input Monitoring permission is missing. %@ is the name of the Input Monitoring pane of System Settings. */
+"platform.macos.ui.inputTest.permissionRequired" = "يلزم إذن %@";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "مؤشر اللاعب";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
@@ -2311,8 +2311,8 @@
 "cli.diagnose.group.soakVerdictStable" = "مستقر: الحجم المقيم %1$.1f MiB، البصمة %2$.1f MiB، واصفات الملفات %3$lld، وحدة المعالجة المركزية %4$.1f%% خلال %5$.0f ثانية";
 /* Error of 'ojd diagnose' when --soak is out of range. --soak stays as written. The range is fixed. */
 "cli.diagnose.group.soakRange" = "يجب أن تكون قيمة --soak بين 1 و86400 ثانية.";
-/* Detail of the USB check of 'ojd diagnose' when the scan fails. %@ is the reason from macOS. Input Monitoring is written as macOS names it. OpenJoystickDriver is the product name. */
-"platform.macos.cli.diagnose.group.usbFailed" = "فشل فحص USB: %@. امنح OpenJoystickDriver إذن مراقبة الإدخال.";
+/* Detail of the USB check of 'ojd diagnose' when the scan fails. %1$@ is the reason from macOS. %2$@ is the name of the Input Monitoring pane of System Settings. OpenJoystickDriver is the product name. */
+"platform.macos.cli.diagnose.group.usbFailed" = "فشل فحص USB: %1$@. امنح OpenJoystickDriver إذن %2$@.";
 /* Detail of the USB check of 'ojd diagnose'. %lld is the number of vendor-specific USB controllers that the system lists. */
 "cli.diagnose.group.usbOk" = "وحدات تحكم USB الخاصة بالمورّد الظاهرة: %lld";
 /* Detail of the hid-input-drops check of 'ojd diagnose' when the system dropped no input report of any controller. HID is a term of the USB HID standard. */

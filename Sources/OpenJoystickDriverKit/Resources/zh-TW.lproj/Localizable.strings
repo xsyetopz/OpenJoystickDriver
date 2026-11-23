@@ -1272,8 +1272,8 @@
 "ui.inputTest.outputNotConnected" = "控制器未連線。未傳送任何內容。";
 /* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
 "ui.inputTest.outputUnsupported" = "此控制器不支援該輸出。未傳送任何內容。";
-/* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
-"platform.macos.ui.inputTest.permissionRequired" = "需要「輸入監控」權限";
+/* Status shown in the input test window when the Input Monitoring permission is missing. %@ is the name of the Input Monitoring pane of System Settings. */
+"platform.macos.ui.inputTest.permissionRequired" = "需要「%@」權限";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "玩家指示燈";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
@@ -2311,8 +2311,8 @@
 "cli.diagnose.group.soakVerdictStable" = "穩定：常駐大小 %1$.1f MiB，記憶體占用 %2$.1f MiB，檔案描述符 %3$lld，CPU %4$.1f%%，歷時 %5$.0f 秒";
 /* Error of 'ojd diagnose' when --soak is out of range. --soak stays as written. The range is fixed. */
 "cli.diagnose.group.soakRange" = "--soak 必須介於 1 和 86400 秒之間。";
-/* Detail of the USB check of 'ojd diagnose' when the scan fails. %@ is the reason from macOS. Input Monitoring is written as macOS names it. OpenJoystickDriver is the product name. */
-"platform.macos.cli.diagnose.group.usbFailed" = "USB 掃描失敗：%@。請為 OpenJoystickDriver 授予輸入監控權限。";
+/* Detail of the USB check of 'ojd diagnose' when the scan fails. %1$@ is the reason from macOS. %2$@ is the name of the Input Monitoring pane of System Settings. OpenJoystickDriver is the product name. */
+"platform.macos.cli.diagnose.group.usbFailed" = "USB 掃描失敗：%1$@。請為 OpenJoystickDriver 授予「%2$@」權限。";
 /* Detail of the USB check of 'ojd diagnose'. %lld is the number of vendor-specific USB controllers that the system lists. */
 "cli.diagnose.group.usbOk" = "可見的供應商自訂 USB 控制器：%lld";
 /* Detail of the hid-input-drops check of 'ojd diagnose' when the system dropped no input report of any controller. HID is a term of the USB HID standard. */

@@ -17,8 +17,9 @@
       case .disconnected:
         return OJDLocalized.string("ui.inputTest.disconnected")
       case .permissionRequired:
-        return OJDLocalized.string(
-          "platform.macos.ui.inputTest.permissionRequired"
+        return OJDLocalized.formatted(
+          "platform.macos.ui.inputTest.permissionRequired",
+          OJDLocalized.string("platform.macos.term.inputRead")
         )
       case .unavailable:
         return OJDLocalized.string("ui.inputTest.unavailable")

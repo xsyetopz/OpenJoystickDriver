@@ -1272,8 +1272,8 @@
 "ui.inputTest.outputNotConnected" = "El mando no está conectado. No se ha enviado nada.";
 /* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
 "ui.inputTest.outputUnsupported" = "Este mando no admite esta salida. No se ha enviado nada.";
-/* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
-"platform.macos.ui.inputTest.permissionRequired" = "Se requiere el permiso de monitorización de entrada";
+/* Status shown in the input test window when the Input Monitoring permission is missing. %@ is the name of the Input Monitoring pane of System Settings. */
+"platform.macos.ui.inputTest.permissionRequired" = "Se requiere el permiso «%@»";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "Indicador de jugador";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
@@ -2311,8 +2311,8 @@
 "cli.diagnose.group.soakVerdictStable" = "Estable: tamaño residente %1$.1f MiB, huella de memoria %2$.1f MiB, descriptores de archivo %3$lld, CPU %4$.1f %% durante %5$.0f s";
 /* Error of 'ojd diagnose' when --soak is out of range. --soak stays as written. The range is fixed. */
 "cli.diagnose.group.soakRange" = "--soak debe estar entre 1 y 86400 segundos.";
-/* Detail of the USB check of 'ojd diagnose' when the scan fails. %@ is the reason from macOS. Input Monitoring is written as macOS names it. OpenJoystickDriver is the product name. */
-"platform.macos.cli.diagnose.group.usbFailed" = "Falló la búsqueda USB: %@. Concede Monitorización de entradas a OpenJoystickDriver.";
+/* Detail of the USB check of 'ojd diagnose' when the scan fails. %1$@ is the reason from macOS. %2$@ is the name of the Input Monitoring pane of System Settings. OpenJoystickDriver is the product name. */
+"platform.macos.cli.diagnose.group.usbFailed" = "Falló la búsqueda USB: %1$@. Concede «%2$@» a OpenJoystickDriver.";
 /* Detail of the USB check of 'ojd diagnose'. %lld is the number of vendor-specific USB controllers that the system lists. */
 "cli.diagnose.group.usbOk" = "Controladores USB específicos de fabricante visibles: %lld";
 /* Detail of the hid-input-drops check of 'ojd diagnose' when the system dropped no input report of any controller. HID is a term of the USB HID standard. */

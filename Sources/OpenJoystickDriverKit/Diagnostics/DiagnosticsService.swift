@@ -432,7 +432,9 @@ public enum DiagnosticsService {
         .warn,
         localization.formatted(
           "platform.macos.cli.diagnose.group.usbFailed",
-          arguments: [error.localizedDescription]
+          arguments: [
+            error.localizedDescription, localization.string("platform.macos.term.inputRead"),
+          ]
         )
       )
     }

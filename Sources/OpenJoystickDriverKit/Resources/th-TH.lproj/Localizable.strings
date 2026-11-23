@@ -1272,8 +1272,8 @@
 "ui.inputTest.outputNotConnected" = "คอนโทรลเลอร์ไม่ได้เชื่อมต่ออยู่ ไม่ได้ส่งอะไรออกไป";
 /* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
 "ui.inputTest.outputUnsupported" = "คอนโทรลเลอร์นี้ไม่รองรับเอาต์พุตนี้ ไม่ได้ส่งอะไรออกไป";
-/* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
-"platform.macos.ui.inputTest.permissionRequired" = "ต้องได้รับอนุญาตการตรวจสอบสัญญาณเข้า";
+/* Status shown in the input test window when the Input Monitoring permission is missing. %@ is the name of the Input Monitoring pane of System Settings. */
+"platform.macos.ui.inputTest.permissionRequired" = "ต้องได้รับอนุญาต%@";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "ไฟแสดงผู้เล่น";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
@@ -2311,8 +2311,8 @@
 "cli.diagnose.group.soakVerdictStable" = "เสถียร: ขนาดที่อยู่ในหน่วยความจำ %1$.1f MiB, ฟุตพริ้นต์ %2$.1f MiB, ตัวบอกไฟล์ %3$lld, CPU %4$.1f%% ใน %5$.0f วินาที";
 /* Error of 'ojd diagnose' when --soak is out of range. --soak stays as written. The range is fixed. */
 "cli.diagnose.group.soakRange" = "--soak ต้องอยู่ระหว่าง 1 ถึง 86400 วินาที";
-/* Detail of the USB check of 'ojd diagnose' when the scan fails. %@ is the reason from macOS. Input Monitoring is written as macOS names it. OpenJoystickDriver is the product name. */
-"platform.macos.cli.diagnose.group.usbFailed" = "การสแกน USB ล้มเหลว: %@ ให้สิทธิ์การตรวจสอบสัญญาณเข้าแก่ OpenJoystickDriver";
+/* Detail of the USB check of 'ojd diagnose' when the scan fails. %1$@ is the reason from macOS. %2$@ is the name of the Input Monitoring pane of System Settings. OpenJoystickDriver is the product name. */
+"platform.macos.cli.diagnose.group.usbFailed" = "การสแกน USB ล้มเหลว: %1$@ ให้สิทธิ์%2$@แก่ OpenJoystickDriver";
 /* Detail of the USB check of 'ojd diagnose'. %lld is the number of vendor-specific USB controllers that the system lists. */
 "cli.diagnose.group.usbOk" = "คอนโทรลเลอร์ USB เฉพาะผู้จำหน่ายที่มองเห็น: %lld";
 /* Detail of the hid-input-drops check of 'ojd diagnose' when the system dropped no input report of any controller. HID is a term of the USB HID standard. */
