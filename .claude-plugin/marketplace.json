@@ -1,0 +1,14 @@
+{
+  "name": "openjoystickdriver",
+  "owner": { "name": "OpenJoystickDriver" },
+  "metadata": {
+    "description": "Agent skills for OpenJoystickDriver controller support work."
+  },
+  "plugins": [
+    {
+      "name": "openjoystickdriver",
+      "source": "./plugins/claude/openjoystickdriver",
+      "description": "Diagnose controllers, write patches and records, add rumble, generate documents, and package mods."
+    }
+  ]
+}

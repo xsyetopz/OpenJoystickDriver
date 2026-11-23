@@ -1,0 +1,10 @@
+{
+  "name": "openjoystickdriver",
+  "version": "0.6.0-alpha.4",
+  "description": "Skills for OpenJoystickDriver: diagnose controllers, write patches and records, add rumble, generate documents, and package mods.",
+  "author": { "name": "OpenJoystickDriver" },
+  "homepage": "https://github.com/xsyetopz/OpenJoystickDriver",
+  "repository": "https://github.com/xsyetopz/OpenJoystickDriver",
+  "license": "MPL-2.0",
+  "keywords": ["gamepad", "controller", "macos", "hid", "ojd"]
+}
