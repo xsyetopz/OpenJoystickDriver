@@ -94,11 +94,14 @@ struct LocalServiceRPCInProcessTests {
     #expect(!ran.withLock { $0 })
   }
 
-  @Test
+  @Test(.timeLimit(.minutes(1)))
   func slowRequestTimesOutAndStillRunsToCompletion() async throws {
+    // The handler holds until the caller has timed out, so a late deadline under load cannot let
+    // the response arrive first.
+    let (release, releaseSignal) = AsyncStream.makeStream(of: Void.self)
     let (finished, finishedSignal) = AsyncStream.makeStream(of: Void.self)
     let (server, _) = makeServer(inProcess: true) { _ in
-      try? await Task.sleep(nanoseconds: 400_000_000)
+      for await _ in release { break }
       if !Task.isCancelled { finishedSignal.yield() }
     }
     try server.start()
@@ -107,6 +110,7 @@ struct LocalServiceRPCInProcessTests {
     await #expect(throws: LocalServiceRPCError.timeout) {
       _ = try await call("slow", on: server, timeoutSeconds: 0.1)
     }
+    releaseSignal.yield()
     var completed = false
     for await _ in finished {
       completed = true
