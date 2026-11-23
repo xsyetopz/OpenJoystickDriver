@@ -4061,9 +4061,9 @@
 "ui.menu.view.hideToolbar" = "Ẩn thanh công cụ";
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "Bộ điều khiển";
-/* Button and menu item that stops the remapping of one controller. */
+/* Button and menu item that releases one controller so another app can use it. */
 "ui.menu.controller.suspend" = "Tạm dừng";
-/* Button and menu item that starts the remapping of one controller again. */
+/* Button and menu item that takes one controller back and remaps it again. */
 "ui.menu.controller.resume" = "Tiếp tục";
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "Thử đầu vào";
@@ -5607,8 +5607,8 @@
 "ui.help.recalibrate.triggers" = "Đo điểm cuối của cò trong khi bạn bóp mỗi cò hết cỡ";
 /* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
 "ui.help.resetAll" = "Xóa mọi lựa chọn loại tay cầm ảo sau khi bạn xác nhận";
-/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
-"ui.help.resume" = "Bắt đầu lại việc ánh xạ lại bộ điều khiển này";
+/* Tooltip of the Resume button and menu item, which takes one controller back and remaps it again. */
+"ui.help.resume" = "Lấy lại bộ điều khiển này và ánh xạ lại lần nữa";
 /* Tooltip of the toggle of a rumble motor that has only two states. */
 "ui.help.rumbleToggle" = "Chuyển động cơ rung này giữa tắt và hết công suất";
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
@@ -5627,8 +5627,8 @@
 "ui.help.stickDeadzone" = "Chỉnh mức hành trình của cần gần tâm bị bỏ qua";
 /* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
 "ui.help.stopRumble" = "Dừng ngay các động cơ rung";
-/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
-"ui.help.suspend" = "Tạm dừng việc ánh xạ lại bộ điều khiển này cho đến khi bạn tiếp tục";
+/* Tooltip of the Suspend button and menu item, which releases one controller so another app can open it. */
+"ui.help.suspend" = "Nhả bộ điều khiển này để ứng dụng khác dùng được";
 /* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
 "ui.help.testRumble" = "Chạy các động cơ rung trong khoảng thời gian đã chọn";
 /* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */

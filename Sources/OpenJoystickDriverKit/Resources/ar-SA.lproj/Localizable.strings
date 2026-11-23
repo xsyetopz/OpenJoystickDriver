@@ -4061,9 +4061,9 @@
 "ui.menu.view.hideToolbar" = "إخفاء شريط الأدوات";
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "وحدة التحكم";
-/* Button and menu item that stops the remapping of one controller. */
+/* Button and menu item that releases one controller so another app can use it. */
 "ui.menu.controller.suspend" = "إيقاف مؤقت";
-/* Button and menu item that starts the remapping of one controller again. */
+/* Button and menu item that takes one controller back and remaps it again. */
 "ui.menu.controller.resume" = "استئناف";
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "اختبار الإدخال";
@@ -5607,8 +5607,8 @@
 "ui.help.recalibrate.triggers" = "قياس نهاية الزنادين أثناء الضغط على كل زناد حتى النهاية";
 /* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
 "ui.help.resetAll" = "مسح كل اختيارات نوع وحدة التحكم الافتراضية بعد التأكيد";
-/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
-"ui.help.resume" = "بدء إعادة تعيين وحدة التحكم هذه مرة أخرى";
+/* Tooltip of the Resume button and menu item, which takes one controller back and remaps it again. */
+"ui.help.resume" = "استعادة وحدة التحكم هذه وإعادة تعيينها مرة أخرى";
 /* Tooltip of the toggle of a rumble motor that has only two states. */
 "ui.help.rumbleToggle" = "تبديل محرك الاهتزاز هذا بين الإيقاف والقوة الكاملة";
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
@@ -5627,8 +5627,8 @@
 "ui.help.stickDeadzone" = "ضبط مقدار حركة العصا قرب المركز الذي يُتجاهل";
 /* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
 "ui.help.stopRumble" = "إيقاف محركات الاهتزاز فورًا";
-/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
-"ui.help.suspend" = "إيقاف إعادة تعيين وحدة التحكم هذه إلى أن تستأنفها";
+/* Tooltip of the Suspend button and menu item, which releases one controller so another app can open it. */
+"ui.help.suspend" = "تحرير وحدة التحكم هذه ليتمكن تطبيق آخر من استخدامها";
 /* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
 "ui.help.testRumble" = "تشغيل محركات الاهتزاز للمدة المختارة";
 /* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */

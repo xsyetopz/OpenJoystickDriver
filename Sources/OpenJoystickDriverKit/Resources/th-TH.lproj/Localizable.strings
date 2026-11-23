@@ -4061,9 +4061,9 @@
 "ui.menu.view.hideToolbar" = "ซ่อนแถบเครื่องมือ";
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "คอนโทรลเลอร์";
-/* Button and menu item that stops the remapping of one controller. */
+/* Button and menu item that releases one controller so another app can use it. */
 "ui.menu.controller.suspend" = "ระงับ";
-/* Button and menu item that starts the remapping of one controller again. */
+/* Button and menu item that takes one controller back and remaps it again. */
 "ui.menu.controller.resume" = "ทำต่อ";
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "ทดสอบอินพุต";
@@ -5607,8 +5607,8 @@
 "ui.help.recalibrate.triggers" = "วัดปลายทางของทริกเกอร์ขณะที่คุณกดแต่ละอันจนสุด";
 /* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
 "ui.help.resetAll" = "ล้างตัวเลือกประเภทเกมแพดเสมือนทั้งหมดหลังจากคุณยืนยัน";
-/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
-"ui.help.resume" = "เริ่มรีแมปคอนโทรลเลอร์นี้อีกครั้ง";
+/* Tooltip of the Resume button and menu item, which takes one controller back and remaps it again. */
+"ui.help.resume" = "นำคอนโทรลเลอร์นี้กลับมาและรีแมปอีกครั้ง";
 /* Tooltip of the toggle of a rumble motor that has only two states. */
 "ui.help.rumbleToggle" = "สลับมอเตอร์สั่นนี้ระหว่างปิดกับกำลังเต็ม";
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
@@ -5627,8 +5627,8 @@
 "ui.help.stickDeadzone" = "ปรับว่าจะไม่สนใจระยะเคลื่อนของสติ๊กใกล้จุดกึ่งกลางมากเพียงใด";
 /* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
 "ui.help.stopRumble" = "หยุดมอเตอร์สั่นทันที";
-/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
-"ui.help.suspend" = "หยุดรีแมปคอนโทรลเลอร์นี้ไว้จนกว่าคุณจะทำต่อ";
+/* Tooltip of the Suspend button and menu item, which releases one controller so another app can open it. */
+"ui.help.suspend" = "ปล่อยคอนโทรลเลอร์นี้เพื่อให้แอปอื่นใช้ได้";
 /* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
 "ui.help.testRumble" = "เปิดมอเตอร์สั่นตามระยะเวลาที่เลือก";
 /* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */

@@ -4665,9 +4665,9 @@
 "ui.menu.view.hideToolbar" = "Nascondi barra degli strumenti";
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "Controller";
-/* Button and menu item that stops the remapping of one controller. */
+/* Button and menu item that releases one controller so another app can use it. */
 "ui.menu.controller.suspend" = "Sospendi";
-/* Button and menu item that starts the remapping of one controller again. */
+/* Button and menu item that takes one controller back and remaps it again. */
 "ui.menu.controller.resume" = "Riprendi";
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "Prova input";
@@ -5608,8 +5608,8 @@
 "ui.help.recalibrate.triggers" = "Misurare il fondo corsa dei grilletti premendo ciascuno a fondo";
 /* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
 "ui.help.resetAll" = "Cancellare tutte le scelte del tipo di gamepad virtuale dopo la conferma";
-/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
-"ui.help.resume" = "Riprendere la rimappatura di questo controller";
+/* Tooltip of the Resume button and menu item, which takes one controller back and remaps it again. */
+"ui.help.resume" = "Riprendere questo controller e rimapparlo di nuovo";
 /* Tooltip of the toggle of a rumble motor that has only two states. */
 "ui.help.rumbleToggle" = "Passare questo motore di vibrazione da spento a piena intensità";
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
@@ -5628,8 +5628,8 @@
 "ui.help.stickDeadzone" = "Regolare quanta corsa della levetta vicino al centro viene ignorata";
 /* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
 "ui.help.stopRumble" = "Fermare subito i motori di vibrazione";
-/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
-"ui.help.suspend" = "Sospendere la rimappatura di questo controller fino alla ripresa";
+/* Tooltip of the Suspend button and menu item, which releases one controller so another app can open it. */
+"ui.help.suspend" = "Rilasciare questo controller perché un’altra app possa usarlo";
 /* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
 "ui.help.testRumble" = "Far girare i motori di vibrazione per la durata scelta";
 /* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */

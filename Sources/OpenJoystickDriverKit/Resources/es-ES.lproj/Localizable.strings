@@ -4665,9 +4665,9 @@
 "ui.menu.view.hideToolbar" = "Ocultar barra de herramientas";
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "Mando";
-/* Button and menu item that stops the remapping of one controller. */
+/* Button and menu item that releases one controller so another app can use it. */
 "ui.menu.controller.suspend" = "Suspender";
-/* Button and menu item that starts the remapping of one controller again. */
+/* Button and menu item that takes one controller back and remaps it again. */
 "ui.menu.controller.resume" = "Reanudar";
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "Probar entrada";
@@ -5608,8 +5608,8 @@
 "ui.help.recalibrate.triggers" = "Medir el final de los gatillos al pulsar cada uno a fondo";
 /* Tooltip of the Reset button in the row that clears all virtual gamepad kind choices. A confirmation alert follows. */
 "ui.help.resetAll" = "Borrar todas las elecciones de tipo de mando virtual tras confirmar";
-/* Tooltip of the Resume button and menu item that starts the remapping of one controller again. */
-"ui.help.resume" = "Volver a empezar a reasignar este mando";
+/* Tooltip of the Resume button and menu item, which takes one controller back and remaps it again. */
+"ui.help.resume" = "Recuperar este mando y volver a reasignarlo";
 /* Tooltip of the toggle of a rumble motor that has only two states. */
 "ui.help.rumbleToggle" = "Alternar este motor de vibración entre apagado y máxima intensidad";
 /* Tooltip of the button of a failed check of the diagnostics table. Its title names the fix. */
@@ -5628,8 +5628,8 @@
 "ui.help.stickDeadzone" = "Ajustar cuánto recorrido de la palanca cerca del centro se ignora";
 /* Tooltip of the Stop button of the Input Test window that ends the rumble test. */
 "ui.help.stopRumble" = "Detener los motores de vibración de inmediato";
-/* Tooltip of the Suspend button and menu item that stops the remapping of one controller. */
-"ui.help.suspend" = "Detener la reasignación de este mando hasta que se reanude";
+/* Tooltip of the Suspend button and menu item, which releases one controller so another app can open it. */
+"ui.help.suspend" = "Liberar este mando para que otra app pueda usarlo";
 /* Tooltip of the Test Rumble button of the Input Test window. The duration is the slider above it. */
 "ui.help.testRumble" = "Hacer funcionar los motores de vibración durante la duración elegida";
 /* Tooltip of the Try Again buttons of the motion calibration and of the Controllers detail error states. */
