@@ -328,7 +328,9 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     case .invalidServiceClass, .bufferTooLarge: return .notSupported
     case .ioReturn(let code):
       switch code {
-      case kIOReturnTimeout: return .timeout
+      // A pipe abort, such as the halt recovery's, ends the pending transfer like a timeout, as
+      // on the IOUSBHost route.
+      case kIOReturnTimeout, kIOReturnAborted: return .timeout
       case kIOReturnNoDevice, kIOReturnNotAttached, kIOReturnNotOpen: return .disconnected
       case kIOReturnExclusiveAccess: return .ownedByAnotherClient(owner: nil)
       case kIOReturnNotPermitted, kIOReturnNotPrivileged: return .accessDenied

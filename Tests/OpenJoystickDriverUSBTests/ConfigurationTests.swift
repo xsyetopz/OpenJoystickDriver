@@ -158,6 +158,11 @@ struct USBDriverKitExtensionConfigurationTests {
     )
     #expect(
       USBDriverKitTransportProvider.transportError(
+        DriverKitError(kind: .ioReturn(kIOReturnAborted), operation: "read")
+      ) == .timeout
+    )
+    #expect(
+      USBDriverKitTransportProvider.transportError(
         DriverKitError(kind: .ioReturn(kIOReturnExclusiveAccess), operation: "open")
       ) == .ownedByAnotherClient(owner: nil)
     )
