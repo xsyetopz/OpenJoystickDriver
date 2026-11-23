@@ -54,7 +54,7 @@ Use **Recalibrate** when a stick drifts or never reaches full range. Each step r
 - **Measure Rest**: release the sticks and triggers.
 - **Measure Circle**: roll each stick around its full circle.
 - **Measure Triggers**: press each trigger all the way in.
-- **Measure Gyro**: keep the controller still. A controller without a gyroscope skips this.
+- **Measure Gyro**: keep the controller still. It appears only for a controller with a gyroscope.
 
 OJD stores the values for that one controller, so two controllers of the same model keep their own. Over USB the values follow the port, so plug a controller back into the same port to keep them. A controller with no port key, such as one reached through a raw USB service, stores them for its model. OJD applies them to each reading before a profile changes what the control does. **Reset** removes the controller's values and any stored for its model, since those apply to every controller of the model. `ojd controller calibrate CONTROLLER sticks` does the same in Terminal.
 

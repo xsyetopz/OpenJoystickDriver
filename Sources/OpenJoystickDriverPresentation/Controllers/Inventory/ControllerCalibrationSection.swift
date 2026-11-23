@@ -35,7 +35,8 @@
         OJDLabeledRow(OJDLocalized.string("ui.controllers.recalibrate.title")) {
           ControllerRecalibrationControls(
             gateway: viewModel.gateway,
-            selector: .session(device.sessionToken)
+            selector: .session(device.sessionToken),
+            hasMotion: device.capabilities.motion
           )
         }
       }.ojdTaskWhileVisible(id: device.sessionToken.rawValue) {

@@ -131,7 +131,8 @@
           ControllerRecalibrationControls(
             gateway: model.gateway,
             selector: model.isDeviceConnected
-              ? model.device.map { .session($0.sessionToken) } : nil
+              ? model.device.map { .session($0.sessionToken) } : nil,
+            hasMotion: model.device?.capabilities.motion ?? false
           )
         }
       }.ojdGroupedForm().onReceive(runtimeViewModel.$statusState) { state in
