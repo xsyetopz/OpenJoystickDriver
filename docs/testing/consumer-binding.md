@@ -83,7 +83,7 @@ A browser may leave out Share even when GameController.framework shows it. A pai
 
 By hand: `swift run OpenJoystickDriverGameControllerViewer` lists every input of each connected controller and prints each change as one JSON line with `time`, `controller`, `element`, and either `pressed` and `value` (button or trigger) or `x` and `y` (D-pad or stick). If a listed controller shows no change when you press something, it's bound but gets no input. Home and Share only reach the viewer while its window is in front.
 
-For Firefox, Chrome, and Safari, run `just diagnose-browsers` ([Automated Run](browser-gamepad-api.md#automated-run)) with each browser's window in front. Other controllers can stay connected.
+For Firefox, Chrome, and Safari, run `just diagnose-browsers --as sdl-compatible` ([Automated Run](browser-gamepad-api.md#automated-run)) with each browser's window in front. Other controllers can stay connected.
 
 ## Input Integrity
 

@@ -206,9 +206,7 @@ def _installed(app: str) -> bool:
     )
 
 
-def _test_browser(
-    server: _LogServer, key: str, persona: str | None, frames: str
-) -> Event:
+def _test_browser(server: _LogServer, key: str, persona: str, frames: str) -> Event:
     app = BROWSERS[key]
     if not _installed(app):
         return {"browser": key, "skipped": f"{app} is not installed"}
@@ -222,7 +220,7 @@ def _test_browser(
             "browser": key,
             "failed": f"{app} did not load the page in {READY_TIMEOUT_SECONDS:.0f} s",
         }
-    feed = ["ojd", "virtual", "feed", *(["--as", persona] if persona else [])]
+    feed = ["ojd", "virtual", "feed", "--as", persona]
     start_ms = int(time.time() * 1000)
     result = subprocess.run(
         feed,
@@ -269,7 +267,10 @@ def _print_result(result: Event) -> None:
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="just diagnose-browsers")
     parser.add_argument(
-        "--as", dest="persona", help="persona for `ojd virtual feed --as`"
+        "--as",
+        dest="persona",
+        required=True,
+        help="persona for `ojd virtual feed --as`, such as sdl-compatible",
     )
     parser.add_argument(
         "--browsers",

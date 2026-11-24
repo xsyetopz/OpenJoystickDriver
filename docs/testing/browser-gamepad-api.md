@@ -14,7 +14,7 @@ Web browsers read gamepads through the Gamepad API. This page records how each b
 
 ## Automated Run
 
-`just diagnose-browsers [--as PERSONA] [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another. In each, it presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it.
+`just diagnose-browsers --as PERSONA [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another. In each, it presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it.
 
 ## Start Clean Each Time
 
