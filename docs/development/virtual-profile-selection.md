@@ -24,7 +24,7 @@ Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with installed app `0
 
 ## How We Measured
 
-Logs: `docs/development/virtual-profile-selection/`, named `.txt` because the repository ignores `*.log` (`.gitignore:186`).
+Logs: `docs/development/virtual-profile-selection/`, named `.txt` because the repository ignores `*.log` (`.gitignore:186`). Each log records the command line its run used. A `candidates/` log names `Scripts/Diagnostics/backend.sh gamecontroller` or `backend.sh sdl3`; `just diagnose-gamecontroller` and `just diagnose-sdl3` take the same arguments.
 
 | Tool | What it does |
 | --- | --- |
