@@ -183,6 +183,12 @@ static void print_events(int seconds, const SDL_JoystickID *joy_ids, int joy_cou
                 case SDL_EVENT_GAMEPAD_ADDED:
                     printf("GAMEPAD_ADDED which=%u ms=%llu\n", (unsigned)event.gdevice.which,
                            (unsigned long long)SDL_GetTicks());
+                    // SDL sends input events only for an open gamepad, and HIDAPI gamepads
+                    // arrive about 2 s after start, after the startup scan. SDL_Quit closes them.
+                    if (!SDL_GetGamepadFromID(event.gdevice.which)) {
+                        OJDProbePrintJoystick(event.gdevice.which);
+                        (void)SDL_OpenGamepad(event.gdevice.which);
+                    }
                     break;
                 case SDL_EVENT_GAMEPAD_REMOVED:
                     printf("GAMEPAD_REMOVED which=%u ms=%llu\n", (unsigned)event.gdevice.which,
