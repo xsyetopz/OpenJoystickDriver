@@ -119,7 +119,7 @@ struct IOHIDVirtualDevicePublisherTests {
   @Test(arguments: [
     (
       VirtualHIDProfileID.sdlCompatible, 0x045E, 0x0B0C, 0x0000, "Xbox Adaptive Controller",
-      "Microsoft", "USB", UInt64(0x48E9_971C_3CA8_EDB6), Int?(13)
+      "Microsoft", "USB", UInt64(0x23AD_AADA_A71B_4E59), Int?(13)
     ),
     (
       VirtualHIDProfileID.generic, 0x1209, 0x4A4F, 0x0408, "OpenJoystickDriver Generic HID Gamepad",

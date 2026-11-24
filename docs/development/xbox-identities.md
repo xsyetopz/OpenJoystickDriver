@@ -13,12 +13,13 @@ Linux's `xpad.c` tells Linux which real devices are which. It doesn't show that 
 
 ## Evidence: SDLCompatible
 
-SDLCompatible is the only virtual profile that sends Xbox One GIP packets. No real capture exists for it yet, so it publishes `045e:0b0c` (Xbox Adaptive Controller over Bluetooth) with a USB connection type. Its OJD-made descriptor wraps SDL's USB GIP packets as HID reports.
+SDLCompatible is the only virtual profile that sends Xbox One GIP packets. No real capture exists for it yet, so it publishes `045e:0b0c` (Xbox Adaptive Controller over Bluetooth) with a USB connection type. Its OJD-made descriptor wraps SDL's USB GIP packets as HID reports, and carries the same state again in the Xbox Bluetooth report 1 for SDL 2.
 
 | Finding | Source |
 | --- | --- |
 | macOS 27 says every IOHIDUserDevice is connected by Virtual. SDL 3.4.16 treats only a connection name that starts with Bluetooth as Bluetooth, so its Xbox One driver reads the device as USB GIP. | `src/hidapi/mac/hid.c:551-568`, `:671-697`; `src/joystick/hidapi/SDL_hidapi_xboxone.c:1935-2002` |
 | The report ID is the GIP command: input 0x20, Guide 0x07, rumble 0x09. `XboxOneGIPHIDDescriptor` and `XboxOneGIPHIDReportFormat` build them, and `XboxOneGIPSDLOracleTests` reads them the way SDL does. | `:1036-1233`, `:1242-1247`, `:533-591` |
+| SDL 2 (2.30.12, 2.32.10) picks the Bluetooth parser by product ID, and `0b0c` is on its Bluetooth list, so it reads only report 1 and skips the GIP reports. SDL 3 drops report 1 as a GIP packet whose length runs past its end, because OJD fixes the low bits of left stick X (options byte) and Y (length byte). | SDL2 `SDL_hidapi_xboxone.c:384`, `:1162-1192`; SDL 3.4.20 `SDL_hidapi_gip.c:2565-2672`, `:2765-2780` |
 | Saved `045e:02fd` tests with a Bluetooth-shaped descriptor (input report 1, rumble report 3) got no SDL HIDAPI input or rumble. | |
 | GameSir G7 SE over USB GIP works with GameController.framework on real hardware. A real GIP controller sends Hello and one resting 0x20, then only sends input when something changes. So a packet log with only status packets after that doesn't mean setup failed. | |
 | A custom SDL 3.4.16 HIDAPI xboxone build matched Bluetooth `045e:0b13` and used the 17-byte BLE road. A 12-second watch of the input stayed quiet (no button pressed). Steam's `hid_init` hangs. | |

@@ -84,7 +84,7 @@ flowchart LR
 
 **What you notice:** the game ignores the controller even though OJD shows it working.
 
-**Why:** CrossOver and some older games (built with SDL2 or IOHIDManager) may not read OJD's virtual gamepad. Steam does read it; that was tested with a GameSir G7 SE.
+**Why:** some older games, built on IOHIDManager or on an untested SDL 2 release, may not read OJD's virtual gamepad. SDL 2.30.12, which CrossOver 26.3 bundles, and SDL 3.4.20 read it. Steam does read it; that was tested with a GameSir G7 SE.
 
 **What to do:** see [Game and App Compatibility](Playing-Games.md#game-and-app-compatibility).
 

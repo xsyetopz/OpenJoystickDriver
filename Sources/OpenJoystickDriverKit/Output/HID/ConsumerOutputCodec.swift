@@ -4,8 +4,9 @@ import Foundation
 /// requests.
 ///
 /// The Xbox One GIP rumble report (report ID 9), the Xbox Series Bluetooth rumble report (report
-/// ID 3) and the DualShock 4 USB rumble and lightbar report (report ID 5) are the only output
-/// reports any format declares; the generic format is input-only.
+/// ID 3, which the Xbox One GIP format also accepts) and the DualShock 4 USB rumble and lightbar
+/// report (report ID 5) are the only output reports any format declares; the generic format is
+/// input-only.
 enum ConsumerOutputCodec {
   /// The report ID of the Xbox One GIP rumble report.
   static let xboxOneReportID = XboxOneGIPHIDDescriptor.rumbleReportID
@@ -60,7 +61,7 @@ enum ConsumerOutputCodec {
     in format: some VirtualGamepadReportFormat
   ) throws(VirtualHostReportError) -> ControllerOutputCommand {
     guard let maximum = format.outputReportPayloadSize,
-      request.reportID == format.outputReportID ?? 0
+      format.outputReportIDs.contains(request.reportID)
     else { throw .unsupported }
     let payload = request.payload
     guard payload.count <= maximum else { throw .tooLarge }

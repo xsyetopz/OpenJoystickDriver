@@ -365,7 +365,7 @@ ojd virtual launch-setting remove PROGRAM
 - `virtual launch`: Run a program with the SDL mapping of the connected virtual gamepads, so SDL in the program lists them.
   - It sets `SDL_GAMECONTROLLERCONFIG` to one line per virtual gamepad kind of the connected controllers. An existing value stays first.
   - With `--sdl-gamecontroller-backend`, it also sets `SDL_JOYSTICK_MFI=1`, `SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS=1`, `SDL_JOYSTICK_IOKIT=0`, and `SDL_JOYSTICK_HIDAPI=0`, replacing set values. SDL then reads controllers only through Apple's GameController framework. `SDL_JOYSTICK_HIDAPI=0` switches off every SDL HIDAPI driver, so no further HIDAPI variable is set. Without the option, no other variable changes.
-  - SDL 3.4.18 listed the `SDLCompatible` kind only with `SDL_JOYSTICK_HIDAPI=0`. PCSX2 2.8.2 and DuckStation map it with the default hints.
+  - SDL 3.4.18 listed the `SDLCompatible` kind only with `SDL_JOYSTICK_HIDAPI=0`. PCSX2 2.8.2 and DuckStation map it with the default hints, and SDL 2.30.12 and SDL 3.4.20 read it with them.
   - `PROGRAM` is a path, a name that `PATH` finds, or an `.app` (its main executable runs). It keeps the terminal and standard streams of `ojd`, so `--json` and `--plain` exit with code 64. Put `--` before `PROGRAM` when its arguments are also `ojd` options.
   - `ojd` exits with the program's exit code, or 128 plus the signal that ended it. Control-C or SIGTERM on `ojd` stops the program.
   - No connected controller with a virtual gamepad: exit code 1, `E2013`, nothing starts. A program that cannot be found or started: `E2033`.

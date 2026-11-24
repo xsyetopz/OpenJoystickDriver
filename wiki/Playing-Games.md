@@ -79,9 +79,10 @@ Sources: the maintainer (macOS 27) and one tester (macOS 26.7.1, ZD Ultimate Leg
 | Apple GameController | Silksong (GOG) | Use the Game Controller kind. Turn on the game's native gamepad option. |
 | Native macOS games | Non-Steam native games | Works |
 | SDL | Steam | Works, with rumble. Listed as "Xbox Adaptive Controller". |
-| Wine | CrossOver | Not verified. One tester saw no controller. |
+| Wine | CrossOver | CrossOver 26.3's own SDL 2.30.12 reads every control. Not verified in a game. |
 | SDL | RPCS3 | Not verified |
-| IOHIDManager or SDL2 | Super Meat Boy, Cuphead, LEGO Marvel's Avengers, older Unity or Feral ports | Does not work |
+| SDL2 | Games that bundle SDL 2 | SDL 2.30.12 reads every control. Not verified in a game. |
+| IOHIDManager | Super Meat Boy, Cuphead, LEGO Marvel's Avengers, older Unity or Feral ports | Does not work |
 
 Two apps work better with the Generic kind:
 

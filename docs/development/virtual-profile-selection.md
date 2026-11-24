@@ -1,4 +1,4 @@
-# Virtual Profile Selection: What GameController and SDL3 Read
+# Virtual Profile Selection: What GameController and SDL Read
 
 Games read controllers in two main ways on a Mac: Apple's GameController.framework and SDL. Think of them as two readers who only understand certain handwriting. OJD can write its virtual gamepad in several hands (profiles). This page asks two things: is there one hand both readers understand, and what would it take to switch hands to suit the app in front? Everything here was measured.
 
@@ -7,7 +7,7 @@ flowchart LR
     p["Your controller"] -->|"presses"| o["OJD"]
     o -->|"publishes as a profile"| v["Virtual gamepad"]
     v -->|"Xbox Bluetooth layout only"| gc["GameController games"]
-    v -->|"045E:0B0C over GIP only"| sdl["SDL games (HIDAPI)"]
+    v -->|"045E:0B0C: GIP for SDL 3, Bluetooth report for SDL 2"| sdl["SDL games (HIDAPI)"]
     v -->|"Bluetooth layout, with SDL_JOYSTICK_HIDAPI=0"| sdl2["SDL games (GameController backend)"]
 ```
 
@@ -17,7 +17,7 @@ Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with installed app `0
 
 | Question | Answer |
 | --- | --- |
-| One profile both GameController and SDL's HIDAPI drivers read | None found. GameController reads input only from the Xbox Bluetooth report layout. SDL's HIDAPI drivers read input only from 045E:0B0C over the Xbox One GIP layout. |
+| One profile both GameController and SDL's HIDAPI drivers read | None found. GameController reads input only from the Xbox Bluetooth report layout. SDL 3's HIDAPI drivers read input only from 045E:0B0C over the Xbox One GIP layout. SDL 2 reads 045E:0B0C only from the Xbox Series Bluetooth report, so SDLCompatible carries both; see [SDL 2](#sdl-2). |
 | A profile both read, with a condition | 045E:0B13 (GameControllerCompatible) or 045E:0B20 over the Bluetooth layout, with `SDL_JOYSTICK_HIDAPI=0`. SDL then reads the pad through its GameController backend. `ojd virtual launch --sdl-gamecontroller-backend` sets this up (see `wiki/Playing-Games.md`). |
 | Home (Guide) | Reached OJD, but neither probe reported it in any run. Both ran in the background. Still open. |
 | Swapping the published gamepad | SDL sees it removed within 36 ms, then added 2.0 s later with a different instance ID. GameController sees connect or disconnect within 76 ms. See [What a running game observes when OJD replaces the gamepad](#what-a-running-game-observes-when-ojd-replaces-the-gamepad). |
@@ -71,6 +71,26 @@ Every other cell reads nothing:
 - sdl-compatible: GameController has no controller, and SDL `HIDAPI=0` finds no joystick.
 - game-controller-compatible: SDL default and `HIDAPI=1` list the gamepad but print no event.
 - generic: no app reading it prints an event. The SDL probe prints no raw joystick events, so it can't show whether the generic joystick's raw buttons change. Generic only has an SDL mapping when `ojd virtual launch` or `ojd virtual export-mapping` supplies one (see `wiki/Command-Reference.md`). These runs used neither.
+
+## SDL 2
+
+SDL 2 and SDL 3 pick a parser for `045E:0B0C` differently, so SDLCompatible sends each its own report.
+
+- SDL 2 sets `ctx->bluetooth = SDL_IsJoystickBluetoothXboxOne(vid, pid)` (`SDL_hidapi_xboxone.c:384`), which is true for `0B0C`. In that mode it parses only report 1 (at least 16 bytes), 2, and 4, and skips every other ID (`:1162-1192`), GIP report `0x20` included.
+- SDL 3.4.20 claims the pad with its GIP driver, which runs before the Xbox One driver. `GIP_ReceivePacket` reads the options from byte 1 and a varint length from byte 3, and drops a packet whose length runs past the report (`SDL_hidapi_gip.c:2565-2672`, `:2765-2780`).
+- SDLCompatible adds Xbox Series Bluetooth report 1 (17 bytes), the Guide report 2, and rumble output 3 to its GIP reports, all as vendor data. In report 1, OJD clears bits 0 to 2 and 7 of byte 1 (`& 0x78`), and sets the low nibble of byte 3 and clears its bit 7 (`& 0x70 | 0x0F`), so SDL 3 reads a length of 15 to 127 and drops the packet. Left stick X keeps 12 bits and left stick Y 11: rest reads 15 on Y, and full right reads 32632 on X.
+- Report 2 is 2 bytes, below the 5-byte GIP header, so SDL 3 drops it too.
+
+Measured with `ojd virtual feed --as sdl-compatible` and default hints, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`:
+
+| Reader | South | LeftStickY -1 | LeftStickX 1 | RightTrigger 1 | DpadUp |
+| --- | --- | --- | --- | --- | --- |
+| SDL 2.30.12 (CrossOver 26.3 `lib64/libSDL2-2.0.0.dylib`) | button 0 | axis 1 -32753 | axis 0 32632 | axis 5 32767 | button 11 |
+| SDL 3.4.20 | button 0 | axis 1 -32767 | axis 0 32767 | axis 5 32767 | button 11 |
+| SDL 3.4.20, `SDL_JOYSTICK_HIDAPI_GIP=0` | button 0 | not checked | axis 0 read | not checked | not checked |
+| GameController | 0 controllers, `connect=false` | | | | |
+
+Before the Bluetooth report, SDL 2.30.12 listed the pad and read no input. No Wine or CrossOver game was run against it.
 
 ## Candidate Identities
 

@@ -1,15 +1,20 @@
 import Foundation
 
 /// HID report descriptor bytes for the `SDLCompatible` persona: Xbox One GIP packets carried as
-/// numbered HID reports.
+/// numbered HID reports, and a copy of the state in the Xbox Bluetooth report for SDL2.
 ///
-/// SDL's HIDAPI Xbox One driver reads a device as Bluetooth only when the IOHID `Transport`
-/// starts with `Bluetooth` (`src/hidapi/mac/hid.c` `hid_enumerate`,
-/// `src/joystick/hidapi/SDL_hidapijoystick.c` `HIDAPI_AddDevice`).
-/// The published device reports `Virtual` or `USB`, so SDL parses every report as a GIP packet
-/// (`SDL_hidapi_xboxone.c` `HIDAPI_DriverXboxOne_UpdateDevice`): the report ID is the GIP command,
-/// then options, sequence and a one-byte length, then the data. Each report here is exactly
-/// such a packet.
+/// SDL 3 reads a device as Bluetooth only when the IOHID `Transport` starts with `Bluetooth`
+/// (`src/hidapi/mac/hid.c` `hid_enumerate`, `SDL_hidapijoystick.c` `HIDAPI_AddDevice`). macOS
+/// publishes every IOHIDUserDevice with transport `Virtual`, so SDL 3 parses every report as a GIP
+/// packet (`SDL_hidapi_gip.c` `GIP_ReceivePacket`, or `SDL_hidapi_xboxone.c` when the GIP driver
+/// is off): the report ID is the GIP command, then options, sequence and a length, then the data.
+///
+/// SDL 2 picks the parser by product ID instead (`SDL_hidapi_xboxone.c`
+/// `HIDAPI_DriverXboxOne_InitDevice`, `SDL_IsJoystickBluetoothXboxOne`), and `0B0C` is on its
+/// Bluetooth list, so it reads only Bluetooth report 1 and skips every other report ID. Each
+/// parser skips the other's reports: SDL 2 ignores report IDs other than 1, 2 and 4, and SDL 3
+/// drops report 1 as a GIP packet whose length runs past its end (see
+/// ``XboxOneGIPHIDReportFormat/bluetoothStateReport(from:)``).
 ///
 /// Reports:
 /// - `0x20` (input): GIP input, options `0x00`, length 14, the 14-byte state data.
@@ -17,6 +22,10 @@ import Foundation
 ///   data byte is Guide, which SDL reads from no other report.
 /// - `0x09` (output): GIP rumble, options `0x00`, length 9: sub-command `0x00`, activation mask,
 ///   left trigger, right trigger, left motor, right motor, duration, delay, repeat.
+/// - `0x01` (input): the Xbox Series Bluetooth report 1 bytes, declared as vendor data so HID
+///   clients that read usages see only report `0x20`'s controls.
+/// - `0x02` (input): the Xbox Series Bluetooth Guide byte, as vendor data.
+/// - `0x03` (output): the Xbox Series Bluetooth rumble report SDL 2 sends.
 public enum XboxOneGIPHIDDescriptor {
   /// GIP command and report ID of the input state packet.
   public static let inputReportID: UInt8 = 0x20
@@ -102,11 +111,30 @@ public enum XboxOneGIPHIDDescriptor {
     0x09, 0x09,  //   Usage (0x09)
     0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x0C,  //   0...255, 8 bits, 12 fields
     0x91, 0x02,  //   Output (Data, Variable, Absolute)
+
+    // Report 0x01: Xbox Series Bluetooth state, 16 vendor bytes.
+    0x85, 0x01,  //   Report ID (0x01)
+    0x09, 0x01,  //   Usage (0x01)
+    0x95, 0x10,  //   Report Count (16)
+    0x81, 0x02,  //   Input (Data, Variable, Absolute)
+
+    // Report 0x02: Xbox Series Bluetooth Guide, 1 vendor byte.
+    0x85, 0x02,  //   Report ID (0x02)
+    0x09, 0x02,  //   Usage (0x02)
+    0x95, 0x01,  //   Report Count (1)
+    0x81, 0x02,  //   Input (Data, Variable, Absolute)
+
+    // Report 0x03: Xbox Series Bluetooth rumble, 8 vendor bytes.
+    0x85, 0x03,  //   Report ID (0x03)
+    0x09, 0x03,  //   Usage (0x03)
+    0x95, 0x08,  //   Report Count (8)
+    0x91, 0x02,  //   Output (Data, Variable, Absolute)
     0xC0,  // End Collection
   ]
 }
 
-/// The Xbox One GIP report layout of the 045E:0B0C `SDLCompatible` persona.
+/// The Xbox One GIP report layout of the 045E:0B0C `SDLCompatible` persona, with the state also
+/// in the Xbox Series Bluetooth report that SDL 2 reads for that product ID.
 ///
 /// The d-pad is four bits of the state data, not a hat. The data has no Share field, so this
 /// persona carries neither Capture nor the touchpad click, microphone, paddles, auxiliaries or
@@ -123,6 +151,9 @@ public struct XboxOneGIPHIDReportFormat: VirtualGamepadReportFormat {
   public var outputReportPayloadSize: Int? { XboxOneGIPHIDDescriptor.rumbleReportPayloadSize }
   /// The report ID of the rumble packet.
   public var outputReportID: UInt8? { XboxOneGIPHIDDescriptor.rumbleReportID }
+
+  /// The format that builds the Bluetooth reports SDL 2 reads.
+  private let bluetooth = XboxSeriesBluetoothHIDReportFormat()
 
   /// Creates the format.
   public init() {}
@@ -163,7 +194,13 @@ public struct XboxOneGIPHIDReportFormat: VirtualGamepadReportFormat {
     ]
   }
 
-  /// The virtual key packet that carries Guide, the only place SDL reads it.
+  /// The GIP rumble report SDL 3 sends and the Bluetooth rumble report SDL 2 sends.
+  public var outputReportIDs: Set<UInt8> {
+    [XboxOneGIPHIDDescriptor.rumbleReportID, XboxSeriesBluetoothHIDDescriptor.rumbleReportID]
+  }
+
+  /// The virtual key packet that carries Guide, the only place SDL 3 reads it, then the Bluetooth
+  /// state and Guide reports SDL 2 reads.
   public func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]] {
     let guide = state.buttons & (1 << UInt32(GamepadHIDDescriptor.ButtonBit.guide.rawValue)) != 0
     return [
@@ -171,8 +208,24 @@ public struct XboxOneGIPHIDReportFormat: VirtualGamepadReportFormat {
         XboxOneGIPHIDDescriptor.guideReportID, XboxOneGIPHIDDescriptor.guideOptions,
         XboxOneGIPHIDDescriptor.sequence, XboxOneGIPHIDDescriptor.guidePayloadLength,
         guide ? 1 : 0, XboxOneGIPHIDDescriptor.guideKeyCode,
-      ]
-    ]
+      ],
+      bluetoothStateReport(from: state),
+    ] + bluetooth.buildAuxiliaryInputReports(from: state)
+  }
+
+  /// The Xbox Series Bluetooth report 1 of `state`, with the low bits of both left stick axes
+  /// fixed so that SDL 3 drops the report.
+  ///
+  /// SDL 3 reads report 1 as a GIP packet (`SDL_hidapi_gip.c` `GIP_ReceivePacket`): byte 1, the
+  /// low byte of left stick X, is its options, and byte 3, the low byte of left stick Y, starts
+  /// its length. Options without the chunk bit `0x80` or an attachment index in bits `0...2`, and
+  /// a one-byte length of at least 14, make a packet that claims more bytes than the 17 it has,
+  /// and SDL drops it before it reads the command. Left stick X keeps 12 bits and Y keeps 11.
+  func bluetoothStateReport(from state: VirtualGamepadState) -> [UInt8] {
+    var report = bluetooth.buildInputReport(from: state)
+    report[1] &= 0x78
+    report[3] = report[3] & 0x70 | 0x0F
+    return report
   }
 
   /// A 10-bit trigger value in two little-endian bytes: `0...Int16.max` scaled to `0...1023`.

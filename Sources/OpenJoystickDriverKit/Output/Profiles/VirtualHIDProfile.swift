@@ -5,7 +5,7 @@ import Foundation
 /// These are the only four personas OJD recognizes: `SDLCompatible`, `Generic`,
 /// `GameControllerCompatible` and `InControlCompatible`. Decoding any other raw value fails.
 public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
-  /// The Xbox One GIP persona, which SDL's Xbox One driver reads.
+  /// The Xbox One GIP persona, which SDL 2 and SDL 3 read.
   case sdlCompatible = "SDLCompatible"
   /// The OJD generic gamepad persona.
   case generic = "Generic"
@@ -103,9 +103,10 @@ public protocol VirtualHIDProfile: Sendable {
 /// `SDLCompatible` as a hand-authored approximation, not a verified Microsoft ABI.
 ///
 /// The identity is the `SDLCompatible` `VirtualDevice` record's. The descriptor and input layout
-/// are `XboxOneGIPHIDReportFormat`'s: Xbox One GIP packets as numbered reports, the form SDL's
-/// HIDAPI Xbox One driver parses for a device whose IOHID transport is not `Bluetooth`. The d-pad
-/// is four state bits, and share is never set. The descriptor and codec are not byte-exact copies
+/// are `XboxOneGIPHIDReportFormat`'s: Xbox One GIP packets as numbered reports, the form SDL 3's
+/// HIDAPI drivers parse for a device whose IOHID transport is not `Bluetooth`, and the Xbox
+/// Bluetooth report SDL 2 parses for this product ID. The d-pad is four state bits, and share is
+/// never set. The descriptor and codec are not byte-exact copies
 /// of a genuine capture.
 struct XboxOneGIPHIDProfile: VirtualHIDProfile {
   /// The persona the profile publishes.
@@ -142,8 +143,8 @@ struct XboxOneGIPHIDProfile: VirtualHIDProfile {
 ///
 /// The identity is the `GameControllerCompatible` `VirtualDevice` record's. The descriptor and
 /// input layout are `XboxSeriesBluetoothHIDReportFormat`'s, the layout Apple's GameController
-/// framework reads for an Xbox identity. SDL reads the same reports as GIP packets and misreads
-/// them.
+/// framework reads for an Xbox identity. SDL 2 reads them; SDL 3 reads them as GIP packets and
+/// misreads them.
 struct XboxSeriesBluetoothHIDProfile: VirtualHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.gameControllerCompatible

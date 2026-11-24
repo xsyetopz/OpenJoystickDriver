@@ -107,7 +107,7 @@ struct XboxOneGIPSDLOracleTests {
     )
     let released = format.buildAuxiliaryInputReports(from: VirtualGamepadState())
 
-    #expect(pressed.count == 1 && released.count == 1)
+    // The first auxiliary report is the GIP virtual key packet; the others are for SDL 2.
     #expect(SDLGIPParser(report: pressed[0]).guide == true)
     #expect(SDLGIPParser(report: released[0]).guide == false)
   }

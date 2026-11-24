@@ -94,8 +94,9 @@ struct XboxOneGIPHIDReportFormatTests {
     )
     let released = format.buildAuxiliaryInputReports(from: VirtualGamepadState())
 
-    #expect(pressed == [[0x07, 0x20, 0x00, 0x02, 1, 0x5B]])
-    #expect(released == [[0x07, 0x20, 0x00, 0x02, 0, 0x5B]])
+    #expect(pressed.first == [0x07, 0x20, 0x00, 0x02, 1, 0x5B])
+    #expect(released.first == [0x07, 0x20, 0x00, 0x02, 0, 0x5B])
+    #expect(pressed.last == [0x02, 1])
     #expect(report(buttonBit: .guide) == ProtocolPacketFixtures.XboxOneGIP.neutralInputReport)
   }
 
@@ -138,5 +139,64 @@ struct XboxOneGIPHIDReportFormatTests {
     #expect(
       parsed.fields.contains { $0.reportID == 0x07 && $0.usagePage == 0x09 && $0.usage == 11 }
     )
+  }
+
+  @Test
+  func bluetoothReportCarriesStateSDL2Reads() {
+    let state = VirtualGamepadState(
+      buttons: 1 << UInt32(GamepadHIDDescriptor.ButtonBit.a.rawValue),
+      leftStickX: 0x1234,
+      leftStickY: -0x1234,
+      rightStickX: 0x4321,
+      leftTrigger: Int16.max,
+      hat: .north
+    )
+    let bluetooth = XboxSeriesBluetoothHIDReportFormat().buildInputReport(from: state)
+
+    let mirrored = format.buildAuxiliaryInputReports(from: state)[1]
+
+    #expect(mirrored.count == 17)
+    #expect(mirrored[0] == 0x01)
+    // Only the masked bits of the two left stick low bytes differ from the Bluetooth report.
+    let unmasked = mirrored.indices.filter { ![1, 3].contains($0) }
+    #expect(unmasked.allSatisfy { mirrored[$0] == bluetooth[$0] })
+    #expect(mirrored[1] == bluetooth[1] & 0x78)
+    #expect(mirrored[3] & 0x70 == bluetooth[3] & 0x70)
+  }
+
+  /// SDL 3's `GIP_ReceivePacket` drops a packet that is not a chunk and whose length, starting at
+  /// byte 3, runs past the report's end, before it reads the command or the attachment.
+  @Test
+  func sdl3DropsBluetoothReportAtEveryLeftStickPosition() {
+    for x in stride(from: Int(Int16.min), through: Int(Int16.max), by: 251) {
+      for y in [Int16.min, -1, 0, 1, 0x7F, 0x80, Int16.max] {
+        let report = format.bluetoothStateReport(
+          from: VirtualGamepadState(leftStickX: Int16(x), leftStickY: y)
+        )
+        #expect(report[1] & 0x87 == 0)
+        #expect(report[3] & 0x80 == 0)
+        #expect(3 + 1 + Int(report[3]) > report.count)
+      }
+    }
+  }
+
+  @Test
+  func descriptorDeclaresBluetoothReportsAsVendorData() throws {
+    let parsed = try #require(
+      HIDReportDescriptorParser.parse(descriptor: XboxOneGIPHIDDescriptor.descriptor)
+    )
+
+    #expect(parsed.payloadSizeBytesByReportID[0x01] == 16)
+    #expect(parsed.payloadSizeBytesByReportID[0x02] == 1)
+    let bluetoothFields = parsed.fields.filter { [0x01, 0x02].contains($0.reportID) }
+    #expect(bluetoothFields.allSatisfy { $0.usagePage == 0xFF00 })
+    #expect(format.outputReportIDs == [0x09, 0x03])
+  }
+
+  @Test
+  func sdl2BluetoothRumbleReportDecodes() throws {
+    let command = try consumerOutput(0x03, [0x03, 0x03, 0, 0, 40, 60, 25, 0, 0], in: format)
+
+    #expect(command == .consumerRumble(left: 40, right: 60, durationMs: 250))
   }
 }

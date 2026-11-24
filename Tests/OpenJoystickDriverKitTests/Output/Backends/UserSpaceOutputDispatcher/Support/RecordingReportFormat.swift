@@ -20,6 +20,7 @@ final class RecordingReportFormat: VirtualGamepadReportFormat, @unchecked Sendab
   var inputReportID: UInt8? { base.inputReportID }
   var outputReportPayloadSize: Int? { base.outputReportPayloadSize }
   var outputReportID: UInt8? { base.outputReportID }
+  var outputReportIDs: Set<UInt8> { base.outputReportIDs }
 
   func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
     let report = base.buildInputReport(from: state)

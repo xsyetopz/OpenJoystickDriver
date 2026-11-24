@@ -191,9 +191,9 @@ struct ConsumerOutputCodecTests {
     #expect(throws: VirtualHostReportError.tooLarge) {
       try consumerOutput(9, gipRumbleReport(activation: 0x0F) + [0], in: xboxOne)
     }
-    // The Bluetooth rumble report is not one the format declares.
+    // The DualShock 4 output report is not one the format declares.
     #expect(throws: VirtualHostReportError.unsupported) {
-      try consumerOutput(3, [0x03, 0x0F, 0, 0, 10, 20, 5, 0, 0], in: xboxOne)
+      try consumerOutput(5, [0x05, 0x01, 0, 0, 10, 20, 0, 0, 0], in: xboxOne)
     }
   }
 

@@ -79,6 +79,10 @@ public protocol VirtualGamepadReportFormat: Sendable {
   /// HID Report ID used for the output report, or nil if the descriptor does not use report IDs.
   var outputReportID: UInt8? { get }
 
+  /// Every output report ID a consumer may send: ``outputReportID`` and any other output report
+  /// the descriptor declares for a second consumer.
+  var outputReportIDs: Set<UInt8> { get }
+
   /// Builds one complete input report.
   ///
   /// If `inputReportID` is non-nil, the returned bytes MUST begin with that Report ID byte.
@@ -115,6 +119,8 @@ extension VirtualGamepadReportFormat {
   public var outputReportPayloadSize: Int? { nil }
   /// The default declares no output report ID.
   public var outputReportID: UInt8? { nil }
+  /// The default accepts only ``outputReportID``.
+  public var outputReportIDs: Set<UInt8> { outputReportID.map { [$0] } ?? [] }
   /// The default sends a report only when the state changes.
   public var inputReportIntervalNanoseconds: UInt64? { nil }
   /// The default report has no per-report field.
