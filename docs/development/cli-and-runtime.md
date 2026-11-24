@@ -113,7 +113,7 @@ Each controller model (vendor and product) gets a virtual HID profile, the ident
 
 | Profile | ID | Selection |
 | --- | --- | --- |
-| SDLCompatible | 045E:0B0C | Picked when the pad's controls fit |
+| SDLCompatible | 045E:0B13 | Picked when the pad's controls fit |
 | GameControllerCompatible | 045E:0B13 | Only when you choose it |
 | Generic | | When you choose it, or when nothing else fits |
 

@@ -1,0 +1,15 @@
+Scripts/Diagnostics/backend.sh sdl2 --seconds 50
+Building SDL2 probe (x86_64)...
+checking for Xcode SDK ... /Applications/Xcode.app (sdk: 27.2, arm64-apple-macos13.0)
+[100%]: build ok, spent 0.307s
+
+Running the SDL probe --seconds 50
+Tip: if it lists no joystick, grant Input Monitoring to your terminal app:
+  System Settings -> Privacy & Security -> Input Monitoring
+
+checking for Xcode SDK ... /Applications/Xcode.app (sdk: 27.2, arm64-apple-macos13.0)
+SDL 2.30.12 from /Applications/CrossOver.app/Contents/SharedSupport/CrossOver/lib64/libSDL2-2.0.0.dylib for 50s
+ADDED id=0 045e:0b13 "Xbox Series X Controller" gamecontroller=1 guid=0300c6515e040000130b000000006800 axes=6 buttons=16 hats=0
+ADDED id=1 1209:4a4f "OpenJoystickDriver Generic HID Gamepad" gamecontroller=0 guid=0300be1c091200004f4a000008040000 axes=6 buttons=16 hats=0
+0.000 id=0 0 0 0 0 0 0 | 0000000000000000
+0.000 id=1 0 0 0 0 0 0 | 0000000000000000

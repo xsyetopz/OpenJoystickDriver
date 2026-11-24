@@ -31,13 +31,13 @@ Each virtual gamepad has one of three [kinds](Glossary.md#terms).
 
 | Kind | Shown to games as | ID | Rumble |
 | --- | --- | --- | --- |
-| Default | Xbox Adaptive Controller, USB | `045E:0B0C` | Yes |
-| Game Controller | Xbox Wireless Controller | `045E:0B13` | Yes |
+| Default | Xbox Wireless Controller, USB | `045E:0B13` | Yes |
+| Game Controller | Xbox Wireless Controller, Bluetooth | `045E:0B13` | Yes |
 | Generic | Generic HID Gamepad | `1209:4A4F` | No |
 | Older Unity games | DualShock 4 Wireless Controller, USB | `054C:09CC` | Yes |
 
-- Default: SDL games, Steam, and emulators see an Xbox pad. Apple's GameController framework (Safari, some Mac games) doesn't see it.
-- Game Controller: for apps that use that framework. OJD never picks it. Run `ojd virtual set game-controller-compatible CONTROLLER`. SDL 2.30.12, as in CrossOver 26.3, reads every control from it; SDL 3 games and Steam read no input from it. For another SDL game, run `ojd virtual launch --sdl-gamecontroller-backend PROGRAM`.
+- Default: SDL 2 and SDL 3 games, Wine, and Apple's GameController framework see an Xbox pad. It has no Share button, and the left stick loses a little precision (full tilt reads about 99.6%). Home may open the macOS Game Overlay instead of reaching the game.
+- Game Controller: for GameController apps that need Share or the full left stick precision. OJD never picks it. Run `ojd virtual set game-controller-compatible CONTROLLER`. SDL 2.30.12, as in CrossOver 26.3, reads every control from it; SDL 3 games and Steam read no input from it. For another SDL game, run `ojd virtual launch --sdl-gamecontroller-backend PROGRAM`.
 - Generic: 16 buttons, no hat switch, so the D-pad uses four buttons.
 - Older Unity games: for games built on InControl, such as Hollow Knight, Hollow Knight: Silksong, and Katana ZERO, which rumble on macOS only a DualShock 4 over USB. OJD never picks it. Run `ojd virtual set in-control-compatible CONTROLLER`. Apple's GameController framework sees a DualShock 4, and SDL's PS4 driver matches its ID. Games show PlayStation button names. It carries no touchpad, touch, or motion.
 
@@ -74,21 +74,23 @@ Sources: the maintainer (macOS 27) and one tester (macOS 26.7.1, ZD Ultimate Leg
 | Interface | App | Result with the default kind |
 | --- | --- | --- |
 | OJD | Input Test | Works |
-| macOS | **System Settings** Game Controllers | Lists the Game Controller kind only |
-| Browser | Gamepad API | Chrome and Firefox misread some controls, no rumble. Safari needs the Game Controller kind, which reads every button and rumbles. |
-| Apple GameController | Silksong (GOG) | Use the Game Controller kind. Turn on the game's native gamepad option. |
+| macOS | **System Settings** Game Controllers | Not verified |
+| Browser | Gamepad API | Not verified. With the Game Controller kind, Safari reads every button and rumbles. |
+| Apple GameController | Probe (`just diagnose-gamecontroller`) | Reads every control but Home. |
+| Apple GameController | Silksong (GOG) | Not verified. With the Game Controller kind, turn on the game's native gamepad option. |
 | Native macOS games | Non-Steam native games | Works |
-| SDL | Steam | Works, with rumble. Listed as "Xbox Adaptive Controller". |
-| Wine | CrossOver | CrossOver 26.3's own SDL 2.30.12 reads every control. Not verified in a game. |
+| SDL | Steam | Not verified |
+| SDL3 | Probe (`just diagnose-sdl3`) | Reads every control, Guide included, with rumble. |
+| Wine | CrossOver | CrossOver 26.3: XInput and DirectInput read every control, and XInput rumbles. Cave Story reads it. Wine ignores the pad for its first few seconds after it appears. |
 | SDL | RPCS3 | Not verified |
-| SDL2 | Games that bundle SDL 2 | SDL 2.30.12 reads every control. Not verified in a game. |
+| SDL2 | Games that bundle SDL 2 | SDL 2.30.12 reads every control. Not verified in a native game. |
 | IOHIDManager | Super Meat Boy, Cuphead, LEGO Marvel's Avengers, older Unity or Feral ports | Does not work |
 
 Two apps work better with the Generic kind:
 
 | App | Result with the Generic kind |
 | --- | --- |
-| OpenEmu | Works. The default kind maps buttons wrongly. |
+| OpenEmu | Works. The default kind is not verified. |
 | Steam | Needs **Begin Setup**. Skip the Guide step, because it opens Big Picture mode. One tester saw it erratic. |
 
 ### Start an App with the SDL Mapping

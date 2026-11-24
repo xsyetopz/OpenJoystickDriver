@@ -1,0 +1,66 @@
+// Prints XInput and DirectInput 8 state changes of every game controller for N seconds.
+#define DIRECTINPUT_VERSION 0x0800
+#define INITGUID
+#include <windows.h>
+#include <dinput.h>
+#include <stdio.h>
+#include <string.h>
+#include <xinput.h>
+
+static LPDIRECTINPUT8W di;
+static LPDIRECTINPUTDEVICE8W devs[8];
+static int devCount;
+
+static BOOL CALLBACK onDevice(LPCDIDEVICEINSTANCEW inst, LPVOID ctx) {
+  (void)ctx;
+  if (devCount >= 8) return DIENUM_STOP;
+  LPDIRECTINPUTDEVICE8W dev;
+  if (FAILED(IDirectInput8_CreateDevice(di, &inst->guidInstance, &dev, NULL))) return DIENUM_CONTINUE;
+  IDirectInputDevice8_SetDataFormat(dev, &c_dfDIJoystick2);
+  IDirectInputDevice8_Acquire(dev);
+  DIDEVCAPS caps = {sizeof caps};
+  IDirectInputDevice8_GetCapabilities(dev, &caps);
+  printf("dinput %d: %ls vidpid=%08lx axes=%lu buttons=%lu povs=%lu\n", devCount, inst->tszProductName,
+         inst->guidProduct.Data1, caps.dwAxes, caps.dwButtons, caps.dwPOVs);
+  devs[devCount++] = dev;
+  return DIENUM_CONTINUE;
+}
+
+int main(int argc, char **argv) {
+  int seconds = argc > 1 ? atoi(argv[1]) : 20;
+  setvbuf(stdout, NULL, _IONBF, 0);
+  DirectInput8Create(GetModuleHandleW(NULL), DIRECTINPUT_VERSION, &IID_IDirectInput8W, (void **)&di, NULL);
+  IDirectInput8_EnumDevices(di, DI8DEVCLASS_GAMECTRL, onDevice, NULL, DIEDFL_ATTACHEDONLY);
+  XINPUT_STATE last[4];
+  DIJOYSTATE2 lastDI[8];
+  memset(last, 0xff, sizeof last);
+  memset(lastDI, 0xff, sizeof lastDI);
+  for (DWORD start = GetTickCount(); GetTickCount() - start < (DWORD)seconds * 1000; Sleep(50)) {
+    for (DWORD i = 0; i < 4; i++) {
+      XINPUT_STATE s;
+      if (XInputGetState(i, &s) != ERROR_SUCCESS) continue;
+      if (memcmp(&s.Gamepad, &last[i].Gamepad, sizeof s.Gamepad) == 0) continue;
+      last[i] = s;
+      printf("xinput %lu: buttons=%04x lt=%u rt=%u lx=%d ly=%d rx=%d ry=%d\n", i, s.Gamepad.wButtons,
+             s.Gamepad.bLeftTrigger, s.Gamepad.bRightTrigger, s.Gamepad.sThumbLX, s.Gamepad.sThumbLY,
+             s.Gamepad.sThumbRX, s.Gamepad.sThumbRY);
+    }
+    for (int d = 0; d < devCount; d++) {
+      DIJOYSTATE2 j;
+      IDirectInputDevice8_Poll(devs[d]);
+      if (FAILED(IDirectInputDevice8_GetDeviceState(devs[d], sizeof j, &j))) continue;
+      if (memcmp(&j, &lastDI[d], sizeof j) == 0) continue;
+      lastDI[d] = j;
+      printf("dinput %d: x=%ld y=%ld z=%ld rx=%ld ry=%ld rz=%ld pov=%ld buttons=", d, j.lX, j.lY, j.lZ, j.lRx,
+             j.lRy, j.lRz, (long)j.rgdwPOV[0]);
+      for (int b = 0; b < 16; b++) putchar(j.rgbButtons[b] ? '1' : '0');
+      putchar('\n');
+    }
+  }
+  XINPUT_VIBRATION v = {40000, 40000};
+  printf("xinput 0 rumble: %lu\n", XInputSetState(0, &v));
+  Sleep(800);
+  v.wLeftMotorSpeed = v.wRightMotorSpeed = 0;
+  XInputSetState(0, &v);
+  return 0;
+}

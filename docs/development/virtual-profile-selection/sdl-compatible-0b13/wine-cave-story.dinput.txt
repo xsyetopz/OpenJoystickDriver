@@ -1,0 +1,128 @@
+# CrossOver 26.3, Cave Story (DirectInput), WINEDEBUG=+dinput: the hid_joystick lines of the log.
+1098035.649:00e0:00e4:trace:dinput:hid_joystick_enum_device type 0x4, flags 0x1, instance 0022F800, version 0x500, index 0
+1098035.649:00e0:00e4:trace:dinput:hid_joystick_device_open index 0, guid {00000000-0000-0000-0000-000000000000}
+1098035.784:00e0:00e4:trace:dinput:hid_joystick_device_try_open detected device type 0x10404
+1098035.935:00e0:00e4:trace:dinput:hid_joystick_enum_device found device L"\\\\?\\hid#vid_045e&pid_0b13&ig_00#0&openjoystickdriver-userspace:25dc8bc75bf02cf6&0&0&1#{4d1e55b2-f16f-11cf-88cb-001111000030}", usage 0001:0005, product {0b13045e-0000-0000-0000-504944564944}, instance {9e573ed2-7734-11d2-8d4a-23903fb6bdf7}, name L"Controller (Xbox One For Windows)"
+1098035.935:00e0:00e4:trace:dinput:hid_joystick_create_device dinput 003129C0, guid {9e573ed2-7734-11d2-8d4a-23903fb6bdf7}, out 0022F3CC
+1098035.936:00e0:00e4:trace:dinput:hid_joystick_device_open index -1, guid {9e573ed2-7734-11d2-8d4a-23903fb6bdf7}
+1098036.142:00e0:00e4:trace:dinput:hid_joystick_device_try_open detected device type 0x10404
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device device control id 0, coll 0, control coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device effect control id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device effect update id 0, coll 0, type_coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device set periodic id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device set envelope id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device set condition id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device set constant force id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device set ramp force id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device device gain id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device device pool id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device block free id 0, coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device block load id 0, coll 0, status_coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device create new effect id 0, coll 0, type_coll 0
+1098036.243:00e0:00e4:trace:dinput:hid_joystick_create_device effect state id 0, coll 0
+1098044.307:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098044.307:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 01 00 00 00
+1098045.001:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098045.001:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098045.301:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098045.301:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 02 00 00 00
+1098046.008:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098046.008:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098046.306:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098046.306:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 04 00 00 00
+1098047.007:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098047.007:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098047.310:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098047.310:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 08 00 00 00
+1098048.014:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098048.014:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098048.318:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098048.318:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 10 00 00 00
+1098049.020:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098049.020:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098049.322:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098049.322:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 20 00 00 00
+1098050.032:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098050.032:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098050.321:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098050.321:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098050.327:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098050.327:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 80 ff 00 00 00 00
+1098051.035:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098051.035:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098051.337:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098051.337:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098051.347:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098051.347:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 80 00 00 00 00 00
+1098052.044:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098052.044:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098052.354:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098052.354:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 01 00 00
+1098053.045:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098053.046:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098053.350:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098053.350:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 02 00 00
+1098054.045:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098054.045:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098054.359:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098054.359:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 80 00 00 00
+1098055.053:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098055.053:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098055.350:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098055.350:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 40 00 00 00
+1098056.058:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098056.058:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098056.348:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098056.349:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098057.059:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098057.059:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098057.363:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098057.363:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 04 00 00
+1098058.056:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098058.056:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098058.360:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098058.360:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 14 00 00
+1098059.062:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098059.062:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098059.361:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098059.361:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 1c 00 00
+1098060.082:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098060.082:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098060.364:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098060.364:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 0c 00 00
+1098061.074:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098061.074:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098061.365:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098061.365:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098061.385:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098061.385:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 78 ff 00 80 00 80 00 80 00 80 00 00 00 00
+1098062.067:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098062.067:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00
+1098062.376:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098062.377:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098062.385:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098062.385:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 7f ff 00 80 00 80 00 80 00 00 00 00
+1098063.082:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098063.082:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098063.375:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098063.375:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098063.384:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098063.384:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 ff ff 00 80 00 80 00 00 00 00
+1098064.077:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098064.077:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098064.384:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098064.384:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098064.387:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098064.387:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 ff ff 00 80 00 00 00 00
+1098065.076:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098065.076:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098065.385:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098065.385:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 80 ff 00 00 00 00
+1098066.084:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098066.084:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098066.386:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098066.386:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 80 00 00 00 00 00
+1098067.084:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098067.084:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 0f 80 00 80 00 80 00 80 00 00 00 00
+1098067.417:00e0:0144:trace:dinput:hid_joystick_read iface 0032B478, size 15, report:
+1098067.417:00e0:0144:trace:dinput:hid_joystick_read 00000000  00 00 80 00 80 00 80 00 80 00 80 00 00 00 00

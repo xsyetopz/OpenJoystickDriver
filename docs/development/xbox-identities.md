@@ -13,13 +13,16 @@ Linux's `xpad.c` tells Linux which real devices are which. It doesn't show that 
 
 ## Evidence: SDLCompatible
 
-SDLCompatible is the only virtual profile that sends Xbox One GIP packets. No real capture exists for it yet, so it publishes `045e:0b0c` (Xbox Adaptive Controller over Bluetooth) with a USB connection type. Its OJD-made descriptor wraps SDL's USB GIP packets as HID reports, and carries the same state again in the Xbox Bluetooth report 1 for SDL 2.
+SDLCompatible is the only virtual profile that sends Xbox One GIP packets. No real capture exists for it yet, so it publishes `045e:0b13` (Xbox Wireless Controller) with a USB connection type. Its OJD-made descriptor is the Xbox Series Bluetooth descriptor, with its usages, followed by SDL's USB GIP packets as vendor-defined HID reports. SDL 2 and GameController read the Bluetooth reports, and SDL 3 reads the GIP reports.
 
 | Finding | Source |
 | --- | --- |
 | macOS 27 says every IOHIDUserDevice is connected by Virtual. SDL 3.4.16 treats only a connection name that starts with Bluetooth as Bluetooth, so its Xbox One driver reads the device as USB GIP. | `src/hidapi/mac/hid.c:551-568`, `:671-697`; `src/joystick/hidapi/SDL_hidapi_xboxone.c:1935-2002` |
 | The report ID is the GIP command: input 0x20, Guide 0x07, rumble 0x09. `XboxOneGIPHIDDescriptor` and `XboxOneGIPHIDReportFormat` build them, and `XboxOneGIPSDLOracleTests` reads them the way SDL does. | `:1036-1233`, `:1242-1247`, `:533-591` |
-| SDL 2 (2.30.12, 2.32.10) picks the Bluetooth parser by product ID, and `0b0c` is on its Bluetooth list, so it reads only report 1 and skips the GIP reports. SDL 3 drops report 1 as a GIP packet whose length runs past its end, because OJD fixes the low bits of left stick X (options byte) and Y (length byte). | SDL2 `SDL_hidapi_xboxone.c:384`, `:1162-1192`; SDL 3.4.20 `SDL_hidapi_gip.c:2565-2672`, `:2765-2780` |
+| SDL 2 (2.30.12, 2.32.10) picks the Bluetooth parser by product ID, and `0b13` is on its Bluetooth list, so it reads only reports 1, 2 and 4 and skips the GIP reports. SDL 3 drops report 1 as a GIP packet whose length runs past its end, because OJD fixes the low bits of left stick X (options byte) and Y (length byte). | SDL2 `SDL_hidapi_xboxone.c:384`, `:1162-1192`; SDL 3.4.20 `SDL_hidapi_gip.c:2565-2672`, `:2765-2780` |
+| The fixed low bits cost left stick precision: X keeps 12 bits and Y 11. After a move, left Y rests at +15 of 32768 in SDL 3, and full deflection reads about 99.6%. | `XboxOneGIPHIDReportFormat.bluetoothStateReport(from:)` |
+| On macOS 27 the kext lists `045e:0b13` with `GCIOMatchVirtual`, and GameController binds the virtual device. It reads the Bluetooth usages and ignores the vendor GIP reports. With `ojd virtual feed` it named every control but Home. | `ojd virtual feed` with `OpenJoystickDriverGameControllerProbe` |
+| CrossOver 26.3 (Wine) reads the device through its bundled SDL 2. A Windows XInput and DirectInput probe read every button, the D-pad and every axis, and XInput rumble reached the physical controller. Cave Story read it through DirectInput. Wine drops the first seconds of input after a hot plug. | [Virtual Profile Selection](virtual-profile-selection.md#sdlcompatible-as-0b13) |
 | Saved `045e:02fd` tests with a Bluetooth-shaped descriptor (input report 1, rumble report 3) got no SDL HIDAPI input or rumble. | |
 | GameSir G7 SE over USB GIP works with GameController.framework on real hardware. A real GIP controller sends Hello and one resting 0x20, then only sends input when something changes. So a packet log with only status packets after that doesn't mean setup failed. | |
 | A custom SDL 3.4.16 HIDAPI xboxone build matched Bluetooth `045e:0b13` and used the 17-byte BLE road. A 12-second watch of the input stayed quiet (no button pressed). Steam's `hid_init` hangs. | |
@@ -27,15 +30,14 @@ SDLCompatible is the only virtual profile that sends Xbox One GIP packets. No re
 
 ## Evidence: GameControllerCompatible
 
-GameController reads no input from GIP-shaped reports. On `045e:02fd` (listed with `GCIOMatchVirtual`) it names them "Xbox Wireless Controller (Xbox One)". `OpenJoystickDriverGameControllerProbe` reports `live_input=false`, so apps such as Safari list a controller that never moves. That's why SDLCompatible publishes `045e:0b0c` instead.
+GameController reads no input from GIP-shaped reports. On `045e:02fd` (listed with `GCIOMatchVirtual`) it names them "Xbox Wireless Controller (Xbox One)". `OpenJoystickDriverGameControllerProbe` reports `live_input=false`, so apps such as Safari list a controller that never moves. That's why SDLCompatible carries the Bluetooth reports with their usages, and keeps the GIP reports as vendor data.
 
 | Finding | Source |
 | --- | --- |
-| The kext lists `045e:0b0c` without `GCIOMatchVirtual`. On macOS 27 the virtual device gets `AppleUserHIDEventDriver`, not `AppleGCHIDUserEventDriver`, and GameController lists nothing. | |
-| SDL 3.4.16's Xbox One driver can't tell 0b0c from 02fd and calls it "Xbox Adaptive Controller". | `SDL_hidapi_xboxone.c:155-183`, `:274-287`; `controller_list.h:347` |
+| The kext lists `045e:0b0c` (Xbox Adaptive Controller) without `GCIOMatchVirtual`. On macOS 27 a virtual device with that ID gets `AppleUserHIDEventDriver`, not `AppleGCHIDUserEventDriver`, and GameController lists nothing. | |
 | On macOS 27 the kext lists `045e:0b13` with `GCIOMatchVirtual`, so the framework accepts a virtual device with that ID. GameSir G7 SE over USB GIP published as `045e:0b13` works with GameController.framework on real hardware. | |
 
-GameControllerCompatible publishes `045e:0b13` with a Bluetooth connection type and the `XboxSeriesBluetooth` layout (`XboxSeriesBluetoothReport`):
+GameControllerCompatible publishes `045e:0b13` with a Bluetooth connection type and the `XboxSeriesBluetooth` layout (`XboxSeriesBluetoothReport`), without the GIP reports. It carries Share and the full left stick precision, which SDLCompatible lacks:
 
 - Input report 1: 17 bytes, with buttons at the bit positions SDL's Xbox One Bluetooth driver reads (A 1, B 2, X 4, Y 5, LB 7, RB 8, View 11, Menu 12, Guide 13, L3 14, R3 15). It has four 16-bit stick axes (the right stick on Z/Rz), 10-bit Brake and Accelerator triggers, a hat that carries only the D-pad, and Share as Consumer 0xB2.
 - Input report 2: Guide again, as System Main Menu, which GameController reads as Home.
@@ -60,4 +62,4 @@ The audit reads the list on the current Mac, and the support report includes it.
 
 ## Before Swapping In a Real Capture
 
-To replace the guessed `045e:0b0c` descriptor with a real capture, first get a checked result from games: the SDL and GameController probes must cover input, reconnecting, rumble, and lights.
+To replace the guessed `045e:0b13` descriptor with a real capture, first get a checked result from games: the SDL and GameController probes must cover input, reconnecting, rumble, and lights.

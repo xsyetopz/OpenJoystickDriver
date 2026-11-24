@@ -6,8 +6,8 @@ Games read controllers in two main ways on a Mac: Apple's GameController.framewo
 flowchart LR
     p["Your controller"] -->|"presses"| o["OJD"]
     o -->|"publishes as a profile"| v["Virtual gamepad"]
-    v -->|"Xbox Bluetooth layout only"| gc["GameController games"]
-    v -->|"045E:0B0C: GIP for SDL 3, Bluetooth report for SDL 2"| sdl["SDL games (HIDAPI)"]
+    v -->|"045E:0B13: Bluetooth reports"| gc["GameController games"]
+    v -->|"045E:0B13: GIP for SDL 3, Bluetooth report for SDL 2"| sdl["SDL games (HIDAPI)"]
     v -->|"Bluetooth layout, with SDL_JOYSTICK_HIDAPI=0"| sdl2["SDL games (GameController backend)"]
 ```
 
@@ -17,7 +17,7 @@ Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with installed app `0
 
 | Question | Answer |
 | --- | --- |
-| One profile both GameController and SDL's HIDAPI drivers read | None found. GameController reads input only from the Xbox Bluetooth report layout. SDL 3's HIDAPI drivers read input only from 045E:0B0C over the Xbox One GIP layout. SDL 2 reads 045E:0B0C only from the Xbox Series Bluetooth report, so SDLCompatible carries both; see [SDL 2](#sdl-2). |
+| One profile both GameController and SDL's HIDAPI drivers read | SDLCompatible as `045E:0B13`: the Xbox Series Bluetooth reports with their usages for GameController and SDL 2, and the Xbox One GIP reports as vendor data for SDL 3. See [SDLCompatible as 0B13](#sdlcompatible-as-0b13). GameController reads input only from the Bluetooth report layout, and SDL 3's HIDAPI drivers only from the GIP layout. |
 | A profile both read, with a condition | 045E:0B13 (GameControllerCompatible) or 045E:0B20 over the Bluetooth layout, with `SDL_JOYSTICK_HIDAPI=0`. SDL then reads the pad through its GameController backend. `ojd virtual launch --sdl-gamecontroller-backend` sets this up (see `wiki/Playing-Games.md`). |
 | Home (Guide) | Reached OJD, but neither probe reported it in any run. Both ran in the background. Still open. |
 | Swapping the published gamepad | SDL sees it removed within 36 ms, then added 2.0 s later with a different instance ID. GameController sees connect or disconnect within 76 ms. See [What a running game observes when OJD replaces the gamepad](#what-a-running-game-observes-when-ojd-replaces-the-gamepad). |
@@ -43,6 +43,8 @@ SDL buttons: 0 South, 1 East, 2 West, 3 North, 4 Back, 5 Guide, 6 Start, 7 left 
 Button names follow `docs/testing/8bitdo-ultimate-2c.md`: View (small, left of center) reaches games as Back, Menu (right of center) as Start, Home (round, center) as Guide. Ignore the stray 045E:028E pad (`GamePad-1` or `GamePad-2`) in most GameController logs. No run published it.
 
 ## Bundled Profiles
+
+These runs measured installed app `0.6.0-alpha.2`, whose sdl-compatible published `045E:0B0C` with GIP reports alone. [SDLCompatible as 0B13](#sdlcompatible-as-0b13) measures the bundled profile.
 
 Logs: `<profile>.<tag>.txt` for sdl-compatible, game-controller-compatible, generic; tags gc, sdl-hidapi-default, sdl-hidapi-on, sdl-hidapi-off. Each ends with `# probe exit: 0` and `# feed exit: 0`.
 
@@ -72,16 +74,46 @@ Every other cell reads nothing:
 - game-controller-compatible: SDL default and `HIDAPI=1` list the gamepad but print no event.
 - generic: no app reading it prints an event. The SDL probe prints no raw joystick events, so it can't show whether the generic joystick's raw buttons change. Generic only has an SDL mapping when `ojd virtual launch` or `ojd virtual export-mapping` supplies one (see `wiki/Command-Reference.md`). These runs used neither.
 
+## SDLCompatible as 0B13
+
+SDLCompatible publishes `045E:0B13` "Xbox Wireless Controller" with a USB transport. Its descriptor is the Xbox Series Bluetooth descriptor (reports 1, 2, 3 and 4 with their usages), followed by GIP reports `0x20`, `0x07` and `0x09` as vendor data (`XboxOneGIPHIDDescriptor`).
+
+- GameController binds it, because the kext lists `0b13` with `GCIOMatchVirtual`. It reads the Bluetooth usages, and the vendor GIP reports add no controls.
+- SDL 2 reads Bluetooth reports 1, 2 and 4, because `0b13` is on `SDL_IsJoystickBluetoothXboxOne`.
+- SDL 3 reads the GIP reports and drops report 1, as in [SDL 2](#sdl-2) below.
+
+Measured with `ojd virtual feed --as sdl-compatible < frames.jsonl` and default hints, with the 2C connected over USB. Logs: `sdl-compatible-0b13/`.
+
+| Reader | Result | Log |
+| --- | --- | --- |
+| GameController | "Xbox Wireless Controller", `extended=true`, `live_input=true`; Button A, B, X, Y, both shoulders and triggers, both thumbstick buttons, Menu, Options, Direction Pad, both thumbsticks; no Home | `feed.gc.txt` |
+| SDL 3.4.20 | gamepad "Xbox Series X Controller", GUID 0300c6515e040000130b000000006800; buttons 0 to 14, Guide (button 5) included; axes 0 to 5 | `feed.sdl3.txt` |
+| SDL 3.4.20, `SDL_JOYSTICK_IOKIT=0` | `SDL_RumbleGamepad=ok` on the 2C's published pad; the maintainer felt the rumble | `rumble.sdl3-iokit-off.txt` |
+| SDL 2.30.12 (CrossOver 26.3) | gamepad "Xbox Series X Controller", same GUID; buttons and axes read; left Y rests at 15 after a move | `feed.sdl2-crossover.txt` |
+| SDL 2.30.12, beside the SDL 3 and GameController probes | listed the pad and read no event | `parallel.sdl2-crossover.txt` |
+| Wine XInput and DirectInput (CrossOver 26.3, `wine-probe.c.txt`) | DirectInput "Controller (Xbox One For Windows)" `vidpid=0b13045e`; XInput and DirectInput read A, B, X, Y, LB, RB, LT, RT, L3, R3, Start, Back, the D-pad and every axis | `wine-xinput-dinput.txt` |
+| Wine XInput rumble | `XInputSetState` returned 0 on the 2C's published pad; the maintainer felt the rumble. It returns 1167 (not connected) once the fed pad is gone. | `wine-rumble.txt` |
+| Cave Story (CrossOver 26.3, DirectInput) | opened `hid#vid_045e&pid_0b13` and read 53 reports while the pad was fed | `wine-cave-story.dinput.txt` |
+
+Wine's winebus reads the pad through its bundled SDL 2, and its IOHID bus skips the duplicate. Wine starts a hot-plugged pad a few seconds after it appears and drops its input until then, so these runs rested 25 s before the first press. Each `ojd virtual feed` pad has a new serial, so Wine installs it as a new device.
+
+Costs of the combined descriptor:
+
+- Left stick precision: X keeps 12 bits and Y 11, so left Y can rest at 15 of 32768 and full deflection reads about 99.6%.
+- No Share button, unlike GameControllerCompatible.
+- Guide is System Main Menu in report 2, which macOS can claim for its own Home gesture.
+- A game that saved bindings for `045E:0B0C` sees a new GUID.
+
 ## SDL 2
 
-SDL 2 and SDL 3 pick a parser for `045E:0B0C` differently, so SDLCompatible sends each its own report.
+SDL 2 and SDL 3 pick a parser for SDLCompatible's ID differently, so SDLCompatible sends each its own report.
 
-- SDL 2 sets `ctx->bluetooth = SDL_IsJoystickBluetoothXboxOne(vid, pid)` (`SDL_hidapi_xboxone.c:384`), which is true for `0B0C`. In that mode it parses only report 1 (at least 16 bytes), 2, and 4, and skips every other ID (`:1162-1192`), GIP report `0x20` included.
+- SDL 2 sets `ctx->bluetooth = SDL_IsJoystickBluetoothXboxOne(vid, pid)` (`SDL_hidapi_xboxone.c:384`), which is true for `0B0C` and `0B13`. In that mode it parses only report 1 (at least 16 bytes), 2, and 4, and skips every other ID (`:1162-1192`), GIP report `0x20` included.
 - SDL 3.4.20 claims the pad with its GIP driver, which runs before the Xbox One driver. `GIP_ReceivePacket` reads the options from byte 1 and a varint length from byte 3, and drops a packet whose length runs past the report (`SDL_hidapi_gip.c:2565-2672`, `:2765-2780`).
-- SDLCompatible adds Xbox Series Bluetooth report 1 (17 bytes), the Guide report 2, and rumble output 3 to its GIP reports, all as vendor data. In report 1, OJD clears bits 0 to 2 and 7 of byte 1 (`& 0x78`), and sets the low nibble of byte 3 and clears its bit 7 (`& 0x70 | 0x0F`), so SDL 3 reads a length of 15 to 127 and drops the packet. Left stick X keeps 12 bits and left stick Y 11: rest reads 15 on Y, and full right reads 32632 on X.
+- SDLCompatible carries Xbox Series Bluetooth report 1 (17 bytes), the Guide report 2, and rumble output 3 beside its GIP reports. In report 1, OJD clears bits 0 to 2 and 7 of byte 1 (`& 0x78`), and sets the low nibble of byte 3 and clears its bit 7 (`& 0x70 | 0x0F`), so SDL 3 reads a length of 15 to 127 and drops the packet. Left stick X keeps 12 bits and left stick Y 11: rest reads 15 on Y, and full right reads 32632 on X.
 - Report 2 is 2 bytes, below the 5-byte GIP header, so SDL 3 drops it too.
 
-Measured with `ojd virtual feed --as sdl-compatible`, `just diagnose-sdl2` for SDL 2 (`Tools/SDL2GamepadProbe`), and default hints, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`:
+Measured with the `045E:0B0C` identity and the Bluetooth reports declared as vendor data, `ojd virtual feed --as sdl-compatible`, `just diagnose-sdl2` for SDL 2 (`Tools/SDL2GamepadProbe`), and default hints, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`:
 
 | Reader | South | LeftStickY -1 | LeftStickX 1 | RightTrigger 1 | DpadUp |
 | --- | --- | --- | --- | --- | --- |
@@ -90,7 +122,7 @@ Measured with `ojd virtual feed --as sdl-compatible`, `just diagnose-sdl2` for S
 | SDL 3.4.20, `SDL_JOYSTICK_HIDAPI_GIP=0` | button 0 | not checked | axis 0 read | not checked | not checked |
 | GameController | 0 controllers, `connect=false` | | | | |
 
-Before the Bluetooth report, SDL 2.30.12 listed the pad and read no input. No Wine or CrossOver game was run against it.
+With GIP reports alone, SDL 2.30.12 listed the pad and read no input.
 
 ### GameControllerCompatible in SDL 2
 
@@ -184,7 +216,8 @@ Inferred, not measured. The override is a choice per controller model that beats
 
 ## Not Measured
 
-- Rumble, output reports, battery, trigger rumble (runs read input only).
+- GameController rumble, battery, and trigger rumble. Rumble was checked only through SDL 3 and Wine XInput on SDLCompatible.
+- Steam, Chrome and Firefox with SDLCompatible as `045E:0B13`.
 - Home (Guide) with a frontmost GameController app such as `OpenJoystickDriverGameControllerViewer`.
 - Real games (PCSX2, Steam) during a replacement.
 - Run-to-run repeats; each press cell comes from one run.

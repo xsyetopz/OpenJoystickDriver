@@ -46,8 +46,8 @@ A genuine Xbox One or Series controller on USB also needs the Xbox USB driver: a
 
 - 700+ controller records across Xbox, PlayStation, Nintendo Switch, Wii and the GameCube adapter, Steam, GameSir, NVIDIA SHIELD, Flydigi and generic HID gamepads.
 - Four virtual gamepad kinds per controller:
-  - **For Steam and SDL games** (`SDLCompatible`), an Xbox Adaptive Controller.
-  - **For Apple Game Controller games** (`GameControllerCompatible`), an Xbox Wireless Controller.
+  - **For Steam, SDL and Apple Game Controller games** (`SDLCompatible`), an Xbox Wireless Controller.
+  - **For Apple Game Controller games that use Share** (`GameControllerCompatible`), an Xbox Wireless Controller with Share.
   - **For older Unity games** (`InControlCompatible`), a DualShock 4 that carries rumble to games that use InControl.
   - **Generic HID gamepad** (`Generic`).
 - Remapping with combinations, sequences and layers, plus keyboard, pointer, scroll and system actions, and profiles that switch with the app in front.

@@ -1,0 +1,98 @@
+dinput 0: Controller (Xbox One For Windows) vidpid=0b13045e axes=5 buttons=10 povs=1
+dinput 1: Controller (Xbox One For Windows) vidpid=0b13045e axes=5 buttons=10 povs=1
+dinput 2: OpenJoystickDriver Generic HID Gamepad vidpid=4a4f1209 axes=5 buttons=10 povs=1
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=0 rx=0 ry=0
+xinput 1: buttons=0000 lt=0 rt=0 lx=0 ly=0 rx=0 ry=0
+xinput 2: buttons=0000 lt=0 rt=0 lx=0 ly=0 rx=0 ry=0
+dinput 0: x=32767 y=32767 z=32767 rx=32767 ry=32767 rz=0 pov=-1 buttons=0000000000000000
+dinput 1: x=32767 y=32767 z=32767 rx=32767 ry=32767 rz=0 pov=-1 buttons=0000000000000000
+dinput 2: x=32767 y=32767 z=32767 rx=32767 ry=32767 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=1000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=1000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=2000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0100000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=4000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0010000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=8000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0001000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0100 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000100000000000
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+xinput 0: buttons=0200 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000010000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=255 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=65408 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=255 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=128 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0040 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000010000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0080 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000001000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0010 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000100000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0020 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000001000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0001 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=0 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0002 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=18000 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0004 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=27000 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0008 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=9000 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=32632 ly=-1 rx=0 ry=-1
+dinput 0: x=65400 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-1 rx=0 ry=-1
+dinput 0: x=32768 y=32768 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-32640 rx=0 ry=-1
+dinput 0: x=32768 y=65407 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=32767 ry=-1
+dinput 0: x=32768 y=32783 z=32768 rx=65535 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=0 ry=-32768
+dinput 0: x=32768 y=32783 z=32768 rx=32768 ry=65535 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=255 rt=0 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=65408 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=255 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=128 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=-16 rx=0 ry=-1
+dinput 0: x=32768 y=32783 z=32768 rx=32768 ry=32768 rz=0 pov=-1 buttons=0000000000000000
+xinput 0 rumble: 1167

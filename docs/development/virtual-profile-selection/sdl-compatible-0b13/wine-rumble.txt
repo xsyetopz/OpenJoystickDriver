@@ -1,0 +1,10 @@
+dinput 0: Controller (Xbox One For Windows) vidpid=0b13045e axes=5 buttons=10 povs=1
+dinput 1: Controller (Xbox One For Windows) vidpid=0b13045e axes=5 buttons=10 povs=1
+dinput 2: OpenJoystickDriver Generic HID Gamepad vidpid=4a4f1209 axes=5 buttons=10 povs=1
+xinput 0: buttons=0000 lt=0 rt=0 lx=0 ly=0 rx=0 ry=0
+xinput 1: buttons=0000 lt=0 rt=0 lx=0 ly=0 rx=0 ry=0
+xinput 2: buttons=0000 lt=0 rt=0 lx=0 ly=0 rx=0 ry=0
+dinput 0: x=32767 y=32767 z=32767 rx=32767 ry=32767 rz=0 pov=-1 buttons=0000000000000000
+dinput 1: x=32767 y=32767 z=32767 rx=32767 ry=32767 rz=0 pov=-1 buttons=0000000000000000
+dinput 2: x=32767 y=32767 z=32767 rx=32767 ry=32767 rz=0 pov=-1 buttons=0000000000000000
+xinput 0 rumble: 0

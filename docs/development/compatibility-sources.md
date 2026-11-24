@@ -8,19 +8,19 @@ The project owner decided on the approved compatibility break. These sources onl
 
 | Kind | Source | What it shows, and its limits |
 | --- | --- | --- |
-| Official | Microsoft [GameInput device types (GDK 2604)](https://learn.microsoft.com/en-us/gaming/gdk/docs/features/common/input/hardware/input-hardware-interfaces?view=gdk-2604) | Tells generic HID apart from XUSB, XInputHID, and GIP. Doesn't give the 045e:0b0c descriptor or report bytes for OJD's planned profile |
-| Official | Apple [controller backward compatibility](https://developer.apple.com/documentation/gamecontroller/understanding-game-controller-backward-compatibility) | Describes a framework feature. Doesn't give the 045e:0b0c bytes |
-| Upstream | SDL [controller_list.h](https://github.com/libsdl-org/SDL/blob/fa2c02bb6e21974a89ea9824bc53c9932abe5f9c/src/joystick/controller_list.h) | Lists 045e:0b0c as the Xbox Adaptive Controller over Bluetooth; `SDL_IsJoystickBluetoothXboxOne` (`src/joystick/SDL_joystick.c:3166-3181`) names it |
+| Official | Microsoft [GameInput device types (GDK 2604)](https://learn.microsoft.com/en-us/gaming/gdk/docs/features/common/input/hardware/input-hardware-interfaces?view=gdk-2604) | Tells generic HID apart from XUSB, XInputHID, and GIP. Doesn't give the 045e:0b13 descriptor or report bytes for OJD's planned profile |
+| Official | Apple [controller backward compatibility](https://developer.apple.com/documentation/gamecontroller/understanding-game-controller-backward-compatibility) | Describes a framework feature. Doesn't give the 045e:0b13 bytes |
+| Upstream | SDL [controller_list.h](https://github.com/libsdl-org/SDL/blob/fa2c02bb6e21974a89ea9824bc53c9932abe5f9c/src/joystick/controller_list.h) | Lists 045e:0b13 as an Xbox Series X controller over Bluetooth; `SDL_IsJoystickBluetoothXboxOne` (`src/joystick/SDL_joystick.c:3166-3181`) names it |
 | Upstream | SDL HIDAPI Xbox One driver (`src/joystick/hidapi/SDL_hidapi_xboxone.c:370-379`) | Treats the virtual device as USB GIP, because macOS reports its connection as Virtual |
-| Upstream | Apple `AppleGameControllerPersonality.kext` | Lists 045e:0b0c without `GCIOMatchVirtual`, so GameController does not bind it (`GameControllerPersonalityMatchTests`) |
+| Upstream | Apple `AppleGameControllerPersonality.kext` | Lists 045e:0b13 with `GCIOMatchVirtual`, so GameController binds a virtual device with that ID, and 045e:0b0c without it (`GameControllerPersonalityMatchTests`) |
 | Upstream | SDL [LICENSE.txt, same commit](https://github.com/libsdl-org/SDL/blob/fa2c02bb6e21974a89ea9824bc53c9932abe5f9c/LICENSE.txt) | A permissive license with three conditions. The identity row only helps say how apps will see the pad |
 | Upstream | Linux [xpad.c](https://github.com/torvalds/linux/blob/44696aa3a489d2baf58efa61b37833f100072bee/drivers/input/joystick/xpad.c), pinned by the source lock (SHA-256 `c24c86cbb74e74eba751e50899f3137ef0439e0d2a2c391a2e7c7d7556e87278`, in [ControllerSources.lock.json](../../ControllerSources.lock.json)) | The header says GPL-2.0-or-later. Background on the protocol family, not proof of how macOS publishes it |
 | Captured | `docs/testing/consumer-binding.md`, `docs/testing/haptics-backends.md` | What users reported, including 02fd input that failed. No hardware revision, firmware, descriptor, or report exchanges |
-| Captured | `XboxOneBluetoothHIDDescriptor.seriesDescriptor` | Xbox Series descriptor. Tests that use it aren't 0b0c test data |
-| Captured | `Tests/ProtocolPacketFixtures/ProtocolPacketFixtures.swift` | No 0b0c capture |
+| Captured | `XboxOneBluetoothHIDDescriptor.seriesDescriptor` | Xbox Series descriptor. Tests that use it aren't 0b13 test data from a real controller |
+| Captured | `Tests/ProtocolPacketFixtures/ProtocolPacketFixtures.swift` | No 0b13 capture |
 | Community | Reverse-engineering repositories | Not used. Nobody reviewed their versions, licenses, or symbols |
 
-The repository has no descriptor or report capture from a real 045e:0b0c, and none of the captured rows proves its bytes. App and community sources that aren't pinned to a version need review first.
+The repository has no descriptor or report capture from a real 045e:0b13, and none of the captured rows proves its bytes. App and community sources that aren't pinned to a version need review first.
 
 Searching the repository, tests built from made-up packets, and old published names don't show how a real device behaves. Before a fact from a source goes into code or test data, it needs:
 
@@ -29,7 +29,7 @@ Searching the repository, tests built from made-up packets, and old published na
 - where it came from (a symbol name or a capture)
 - test data that shows the same thing
 
-The planned Xbox profile needs test data from a real 045e:0b0c before its descriptor or reports count as supported.
+The planned Xbox profile needs test data from a real 045e:0b13 before its descriptor or reports count as supported.
 
 ## Rules for Adding a Controller
 

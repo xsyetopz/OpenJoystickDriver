@@ -22,7 +22,7 @@ Xbox One S 1708+ over Bluetooth speaks HID, and only its USB side speaks GIP. Du
 
 Every family publishes through `VirtualHIDProfileSelector`, which picks one virtual profile per controller.
 
-- `SDLCompatible`: `045E:0B0C`, the Xbox Adaptive Controller ID over Xbox One GIP reports. Picked when the main controls fit.
+- `SDLCompatible`: `045E:0B13`, the Xbox Wireless Controller ID over the Xbox Series Bluetooth reports and Xbox One GIP reports. Picked when the main controls fit.
 - `Generic`: `1209:4A4F`, input only. Picked otherwise, or by an Advanced override for that model. An override the controller can't meet falls back to automatic.
 - `GameControllerCompatible`: chosen only by override (see [Xbox Fallback Identities](xbox-identities.md)).
 
