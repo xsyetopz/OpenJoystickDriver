@@ -6,8 +6,9 @@ import Testing
 /// Apple's GameController framework binds a virtual HID device only when its personality kext lists
 /// the device's IDs with `GCIOMatchVirtual` true.
 ///
-/// GameController reads no input from the GIP reports of `SDLCompatible`, so that persona must not
-/// be bound, and `GameControllerCompatible` and `InControlCompatible` must be.
+/// Every persona that carries reports GameController reads must be bound: `SDLCompatible` and
+/// `GameControllerCompatible` through their Xbox Series Bluetooth reports, and
+/// `InControlCompatible` through its DualShock 4 reports.
 ///
 /// The kext declares `GCIOMatchVirtual` on macOS 27. The macOS 26 kext has no such key and lists
 /// `045e:0b13` as an `IOHIDEventDummyService`, so these cases run only where the key exists.
@@ -47,15 +48,10 @@ struct GameControllerPersonalityMatchTests {
       "AppleGameControllerPersonality.kext declares GCIOMatchVirtual"
     ),
     arguments: [
-      (VirtualHIDProfileID.sdlCompatible, false),
-      (VirtualHIDProfileID.gameControllerCompatible, true),
-      (VirtualHIDProfileID.inControlCompatible, true),
+      VirtualHIDProfileID.sdlCompatible, .gameControllerCompatible, .inControlCompatible,
     ]
   )
-  func gameControllerBindsOnlyPersonaWhoseReportsItReads(
-    _ profileID: VirtualHIDProfileID,
-    _ bound: Bool
-  ) throws {
-    #expect(try Self.matchesVirtual(profileID.identity) == bound)
+  func gameControllerBindsEachPersonaWhoseReportsItReads(_ profileID: VirtualHIDProfileID) throws {
+    #expect(try Self.matchesVirtual(profileID.identity))
   }
 }
