@@ -277,7 +277,7 @@ struct VirtualHIDProfileOverrideTests {
       )
     )
     xbox.publication = ApplicationServicePublicationStatus.published(target: .sdlCompatible)
-    #expect(xbox.publishedIdentityLabel.contains("045E:0B0C"))
+    #expect(xbox.publishedIdentityLabel.contains("045E:0B13"))
     #expect(xbox.publishedIdentityPresentation.glyphFamily == .xbox)
 
     let unpublished = Self.device(ownership: .systemGamepad)
@@ -399,10 +399,10 @@ struct VirtualHIDProfileOverrideTests {
         #expect(pad.publishedIdentityLabel == identity.label)
         if published {
           #expect(identity.presentation.glyphFamily == .xbox)
-          #expect(identity.label.contains("045E:0B0C"))
+          #expect(identity.label.contains("045E:0B13"))
         } else {
           #expect(identity.presentation == .playstation)
-          #expect(!identity.label.contains("045E:0B0C"))
+          #expect(!identity.label.contains("045E:0B13"))
           let expected =
             ownership.isServedBySystem
             ? OJDLocalized.string("platform.macos.ui.controllers.systemGamepadNotPublished")

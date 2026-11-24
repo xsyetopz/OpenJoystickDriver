@@ -106,28 +106,28 @@ mapping=030000004c050000cc09000000010000,Wireless Controller,a:b1,b:b2,x:b0,y:b3
 unmapped=
 
 ## SDLCompatible
-profile=SDLCompatible vendor=1118 product=2828 version=0 name=Xbox Adaptive Controller
-guid=030000005e0400000c0b000000000000
-report length=18 descriptorBytes=206
-probe Back fields=[9:7] -> b6
+profile=SDLCompatible vendor=1118 product=2835 version=0 name=Xbox Wireless Controller
+guid=030000005e040000130b000000000000
+report length=18 descriptorBytes=365
+probe Back fields=[9:11] -> b10
 probe East fields=[9:2] -> b1
-probe LeftShoulder fields=[9:5] -> b4
-probe LeftStickClick fields=[9:9] -> b8
-probe North fields=[9:4] -> b3
-probe RightShoulder fields=[9:6] -> b5
-probe RightStickClick fields=[9:10] -> b9
+probe LeftShoulder fields=[9:7] -> b6
+probe LeftStickClick fields=[9:14] -> b13
+probe North fields=[9:5] -> b4
+probe RightShoulder fields=[9:8] -> b7
+probe RightStickClick fields=[9:15] -> b14
 probe South fields=[9:1] -> b0
-probe Start fields=[9:8] -> b7
-probe West fields=[9:3] -> b2
-probe LeftStickX fields=[1:48+65280:1] -> a0
-probe LeftStickY fields=[1:49] -> a1~
-probe RightStickX fields=[1:51] -> a3
-probe RightStickY fields=[1:52] -> a4~
-probe LeftTrigger fields=[1:50] -> a2
-probe RightTrigger fields=[1:53] -> a5
-probe DpadUp fields=[9:12] -> b11
-probe DpadRight fields=[9:15] -> b14
-probe DpadDown fields=[9:13] -> b12
-probe DpadLeft fields=[9:14] -> b13
-mapping=030000005e0400000c0b000000000000,Xbox Adaptive Controller,a:b0,b:b1,x:b2,y:b3,back:b6,start:b7,leftstick:b8,rightstick:b9,leftshoulder:b4,rightshoulder:b5,dpup:b11,dpdown:b12,dpleft:b13,dpright:b14,leftx:a0,lefty:a1~,rightx:a3,righty:a4~,lefttrigger:+a2,righttrigger:+a5,platform:Mac OS X,
+probe Start fields=[9:12] -> b11
+probe West fields=[9:4] -> b3
+probe LeftStickX fields=[1:48] -> a0
+probe LeftStickY fields=[1:49] -> a1
+probe RightStickX fields=[1:50] -> a2
+probe RightStickY fields=[1:53] -> a3
+probe LeftTrigger fields=[2:197] -> a5
+probe RightTrigger fields=[2:196] -> a4
+probe DpadUp fields=[1:57] -> h0.1
+probe DpadRight fields=[1:57] -> h0.2
+probe DpadDown fields=[1:57] -> h0.4
+probe DpadLeft fields=[1:57] -> h0.8
+mapping=030000005e040000130b000000000000,Xbox Wireless Controller,a:b0,b:b1,x:b3,y:b4,back:b10,start:b11,leftstick:b13,rightstick:b14,leftshoulder:b6,rightshoulder:b7,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:+a5,righttrigger:+a4,platform:Mac OS X,
 unmapped=

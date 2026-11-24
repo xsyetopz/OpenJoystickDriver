@@ -118,8 +118,8 @@ struct IOHIDVirtualDevicePublisherTests {
   /// profile's published identity is pinned literally rather than read back from the profile.
   @Test(arguments: [
     (
-      VirtualHIDProfileID.sdlCompatible, 0x045E, 0x0B0C, 0x0000, "Xbox Adaptive Controller",
-      "Microsoft", "USB", UInt64(0x23AD_AADA_A71B_4E59), Int?(13)
+      VirtualHIDProfileID.sdlCompatible, 0x045E, 0x0B13, 0x0000, "Xbox Wireless Controller",
+      "Microsoft", "USB", UInt64(0x1426_41FD_D78F_7BFE), Int?(13)
     ),
     (
       VirtualHIDProfileID.generic, 0x1209, 0x4A4F, 0x0408, "OpenJoystickDriver Generic HID Gamepad",

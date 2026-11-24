@@ -32,11 +32,11 @@ struct VirtualIdentityPresentationTests {
 
   @Test
   func publishedUSBIdentityLabelsNameOfficialProduct() {
-    let adaptive = VirtualDeviceProfile.sdlCompatible
-    #expect(adaptive.productName == "Xbox Adaptive Controller")
-    #expect(adaptive.publishedUSBIdentityLabel == "Xbox Adaptive Controller (045E:0B0C)")
-    #expect(adaptive.presentation.glyphFamily == .xbox)
-    #expect(adaptive.presentation.controllerSymbolName == "xbox.logo")
+    let wireless = VirtualDeviceProfile.sdlCompatible
+    #expect(wireless.productName == "Xbox Wireless Controller")
+    #expect(wireless.publishedUSBIdentityLabel == "Xbox Wireless Controller (045E:0B13)")
+    #expect(wireless.presentation.glyphFamily == .xbox)
+    #expect(wireless.presentation.controllerSymbolName == "xbox.logo")
   }
 
   @Test

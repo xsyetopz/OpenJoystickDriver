@@ -45,7 +45,7 @@ struct VirtualHIDProfileTests {
   func sdlCompatibleProfileAdaptsXboxOneGIPLayout() {
     let profile = VirtualHIDProfileID.sdlCompatible.makeProfile()
     #expect(profile.identity == .sdlCompatible)
-    #expect(profile.identity.vendorID == 0x045E && profile.identity.productID == 0x0B0C)
+    #expect(profile.identity.vendorID == 0x045E && profile.identity.productID == 0x0B13)
     #expect(profile.descriptor == XboxOneGIPHIDDescriptor.descriptor)
     let neutral = profile.inputReport(for: .neutral)
     #expect(neutral == ProtocolPacketFixtures.XboxOneGIP.neutralInputReport)

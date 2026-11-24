@@ -1,7 +1,13 @@
 import Foundation
 
-/// HID report descriptor bytes for the `SDLCompatible` persona: Xbox One GIP packets carried as
-/// numbered HID reports, and a copy of the state in the Xbox Bluetooth report for SDL2.
+/// HID report descriptor bytes for the `SDLCompatible` persona: the Xbox Series Bluetooth
+/// descriptor, then Xbox One GIP packets carried as numbered vendor reports.
+///
+/// SDL 2, SDL 3 and Apple's GameController framework each read one part of it for the
+/// `045E:0B13` identity. GameController binds a virtual device with that ID
+/// (`AppleGameControllerPersonality.kext` lists it with `GCIOMatchVirtual`) and reads the usages
+/// of Bluetooth reports 1 and 2. The GIP reports are vendor data, so it sees no second set of
+/// controls.
 ///
 /// SDL 3 reads a device as Bluetooth only when the IOHID `Transport` starts with `Bluetooth`
 /// (`src/hidapi/mac/hid.c` `hid_enumerate`, `SDL_hidapijoystick.c` `HIDAPI_AddDevice`). macOS
@@ -10,22 +16,24 @@ import Foundation
 /// is off): the report ID is the GIP command, then options, sequence and a length, then the data.
 ///
 /// SDL 2 picks the parser by product ID instead (`SDL_hidapi_xboxone.c`
-/// `HIDAPI_DriverXboxOne_InitDevice`, `SDL_IsJoystickBluetoothXboxOne`), and `0B0C` is on its
+/// `HIDAPI_DriverXboxOne_InitDevice`, `SDL_IsJoystickBluetoothXboxOne`), and `0B13` is on its
 /// Bluetooth list, so it reads only Bluetooth report 1 and skips every other report ID. Each
 /// parser skips the other's reports: SDL 2 ignores report IDs other than 1, 2 and 4, and SDL 3
 /// drops report 1 as a GIP packet whose length runs past its end (see
 /// ``XboxOneGIPHIDReportFormat/bluetoothStateReport(from:)``).
 ///
 /// Reports:
-/// - `0x20` (input): GIP input, options `0x00`, length 14, the 14-byte state data.
-/// - `0x07` (input): GIP virtual key, options `0x20` (internal), length 2: bit 0 of the first
-///   data byte is Guide, which SDL reads from no other report.
-/// - `0x09` (output): GIP rumble, options `0x00`, length 9: sub-command `0x00`, activation mask,
-///   left trigger, right trigger, left motor, right motor, duration, delay, repeat.
-/// - `0x01` (input): the Xbox Series Bluetooth report 1 bytes, declared as vendor data so HID
-///   clients that read usages see only report `0x20`'s controls.
-/// - `0x02` (input): the Xbox Series Bluetooth Guide byte, as vendor data.
-/// - `0x03` (output): the Xbox Series Bluetooth rumble report SDL 2 sends.
+/// - `0x01` (input): Xbox Series Bluetooth report 1, with the usages of
+///   ``XboxSeriesBluetoothHIDDescriptor``, which SDL 2 and GameController read.
+/// - `0x02` (input): Xbox Series Bluetooth Guide, as System Main Menu.
+/// - `0x03` (output): Xbox Series Bluetooth rumble, which SDL 2 sends.
+/// - `0x04` (input): Xbox Series Bluetooth battery. OJD does not send it.
+/// - `0x20` (input, vendor): GIP input, options `0x00`, length 14, the 14-byte state data.
+/// - `0x07` (input, vendor): GIP virtual key, options `0x20` (internal), length 2: bit 0 of the
+///   first data byte is Guide, which SDL 3 reads from no other report.
+/// - `0x09` (output, vendor): GIP rumble, options `0x00`, length 9: sub-command `0x00`,
+///   activation mask, left trigger, right trigger, left motor, right motor, duration, delay,
+///   repeat. SDL 3 sends it.
 public enum XboxOneGIPHIDDescriptor {
   /// GIP command and report ID of the input state packet.
   public static let inputReportID: UInt8 = 0x20
@@ -56,87 +64,23 @@ public enum XboxOneGIPHIDDescriptor {
   /// 8-byte rumble body.
   static let rumbleReportPayloadSize = 12
 
-  /// The report descriptor bytes.
-  public static let descriptor: [UInt8] = [
-    0x05, 0x01,  // Usage Page (Generic Desktop)
-    0x09, 0x05,  // Usage (Game Pad)
-    0xA1, 0x01,  // Collection (Application)
-
-    // Report 0x20: GIP input.
-    0x85, 0x20,  //   Report ID (0x20)
-    0x06, 0x00, 0xFF,  //   Usage Page (Vendor Defined 0xFF00)
-    0x09, 0x20,  //   Usage (0x20)
-    0x75, 0x08, 0x95, 0x03,  //   Report Size (8), Report Count (3)
-    0x81, 0x03,  //   Input (Constant, Variable): options, sequence, length
-    0x75, 0x01, 0x95, 0x02,  //   Report Size (1), Report Count (2)
-    0x81, 0x03,  //   Input (Constant): sync and reserved bits
-    0x05, 0x09,  //   Usage Page (Button)
-    0x09, 0x08, 0x09, 0x07, 0x09, 0x01, 0x09, 0x02, 0x09, 0x03, 0x09, 0x04,
-    //   Start, Back, A, B, X, Y
-    0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x06,  //   0...1, 1 bit, 6 fields
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-    0x09, 0x0C, 0x09, 0x0D, 0x09, 0x0E, 0x09, 0x0F,  //   D-pad up, down, left, right
-    0x09, 0x05, 0x09, 0x06, 0x09, 0x09, 0x09, 0x0A,  //   LB, RB, L3, R3
-    0x95, 0x08,  //   Report Count (8)
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-    0x05, 0x01,  //   Usage Page (Generic Desktop)
-    0x09, 0x32,  //   Usage (Z): left trigger
-    0x15, 0x00, 0x26, 0xFF, 0x03, 0x75, 0x0A, 0x95, 0x01,  //   0...1023, 10 bits
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-    0x75, 0x06, 0x95, 0x01, 0x81, 0x03,  //   6 constant bits
-    0x09, 0x35,  //   Usage (Rz): right trigger
-    0x75, 0x0A, 0x95, 0x01, 0x81, 0x02,  //   10 bits
-    0x75, 0x06, 0x95, 0x01, 0x81, 0x03,  //   6 constant bits
-    0x09, 0x30, 0x09, 0x31, 0x09, 0x33, 0x09, 0x34,  //   X, Y, Rx, Ry
-    0x16, 0x00, 0x80, 0x26, 0xFF, 0x7F,  //   -32768...32767
-    0x75, 0x10, 0x95, 0x04,  //   Report Size (16), Report Count (4)
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-
-    // Report 0x07: GIP virtual key.
-    0x85, 0x07,  //   Report ID (0x07)
-    0x06, 0x00, 0xFF,  //   Usage Page (Vendor Defined 0xFF00)
-    0x09, 0x07,  //   Usage (0x07)
-    0x75, 0x08, 0x95, 0x03,  //   Report Size (8), Report Count (3)
-    0x81, 0x03,  //   Input (Constant): options, sequence, length
-    0x05, 0x09,  //   Usage Page (Button)
-    0x09, 0x0B,  //   Usage (Button 11): Guide
-    0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x01,  //   0...1, 1 bit
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-    0x75, 0x01, 0x95, 0x07, 0x81, 0x03,  //   7 constant bits
-    0x75, 0x08, 0x95, 0x01, 0x81, 0x03,  //   key code byte
-
-    // Report 0x09: GIP rumble.
-    0x85, 0x09,  //   Report ID (0x09)
-    0x06, 0x00, 0xFF,  //   Usage Page (Vendor Defined 0xFF00)
-    0x09, 0x09,  //   Usage (0x09)
-    0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x0C,  //   0...255, 8 bits, 12 fields
-    0x91, 0x02,  //   Output (Data, Variable, Absolute)
-
-    // Report 0x01: Xbox Series Bluetooth state, 16 vendor bytes.
-    0x85, 0x01,  //   Report ID (0x01)
-    0x09, 0x01,  //   Usage (0x01)
-    0x95, 0x10,  //   Report Count (16)
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-
-    // Report 0x02: Xbox Series Bluetooth Guide, 1 vendor byte.
-    0x85, 0x02,  //   Report ID (0x02)
-    0x09, 0x02,  //   Usage (0x02)
-    0x95, 0x01,  //   Report Count (1)
-    0x81, 0x02,  //   Input (Data, Variable, Absolute)
-
-    // Report 0x03: Xbox Series Bluetooth rumble, 8 vendor bytes.
-    0x85, 0x03,  //   Report ID (0x03)
-    0x09, 0x03,  //   Usage (0x03)
-    0x95, 0x08,  //   Report Count (8)
-    0x91, 0x02,  //   Output (Data, Variable, Absolute)
-    0xC0,  // End Collection
-  ]
+  /// The report descriptor bytes: the Xbox Series Bluetooth descriptor without its closing End
+  /// Collection, then the three GIP reports inside the same application collection.
+  public static let descriptor: [UInt8] =
+    Array(XboxSeriesBluetoothHIDDescriptor.descriptor.dropLast()) + [
+      0x06, 0x00, 0xFF,  //   Usage Page (Vendor Defined 0xFF00)
+      0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08,  //   0...255, 8 bits
+      0x85, 0x20, 0x09, 0x20, 0x95, 0x11, 0x81, 0x02,  //   Report 0x20: 17 input bytes
+      0x85, 0x07, 0x09, 0x07, 0x95, 0x05, 0x81, 0x02,  //   Report 0x07: 5 input bytes
+      0x85, 0x09, 0x09, 0x09, 0x95, 0x0C, 0x91, 0x02,  //   Report 0x09: 12 output bytes
+      0xC0,  // End Collection
+    ]
 }
 
-/// The Xbox One GIP report layout of the 045E:0B0C `SDLCompatible` persona, with the state also
-/// in the Xbox Series Bluetooth report that SDL 2 reads for that product ID.
+/// The report layout of the 045E:0B13 `SDLCompatible` persona: Xbox One GIP packets for SDL 3,
+/// and the Xbox Series Bluetooth reports that SDL 2 and GameController read for that product ID.
 ///
-/// The d-pad is four bits of the state data, not a hat. The data has no Share field, so this
+/// In the GIP data the d-pad is four bits, not a hat. The GIP data has no Share field, so this
 /// persona carries neither Capture nor the touchpad click, microphone, paddles, auxiliaries or
 /// touch controls. Sticks are signed 16-bit values; SDL reads both Y axes inverted, so the report
 /// carries the bitwise complement of the state's Y.

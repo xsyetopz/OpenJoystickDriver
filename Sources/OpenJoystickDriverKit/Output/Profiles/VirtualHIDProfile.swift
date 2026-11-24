@@ -5,7 +5,7 @@ import Foundation
 /// These are the only four personas OJD recognizes: `SDLCompatible`, `Generic`,
 /// `GameControllerCompatible` and `InControlCompatible`. Decoding any other raw value fails.
 public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
-  /// The Xbox One GIP persona, which SDL 2 and SDL 3 read.
+  /// The Xbox Wireless Controller persona, which SDL 2, SDL 3 and Apple's GameController read.
   case sdlCompatible = "SDLCompatible"
   /// The OJD generic gamepad persona.
   case generic = "Generic"
@@ -48,8 +48,8 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
   /// checks a controller's required primary controls against.
   public var representableControls: Set<Control> {
     switch self {
-    // The Xbox layout. Guide stays out until a genuine capture shows whether ordinary HID clients
-    // see it, although the report carries it as button usage 11 of report 0x07.
+    // The Xbox layout. Guide stays out although the reports carry it, in GIP report 0x07 for SDL 3
+    // and Bluetooth report 2 for SDL 2: GameController reported no Home press on this persona.
     case .sdlCompatible: return Control.xboxLayout
     // The Xbox Series Bluetooth report: the Xbox layout, Guide and Share.
     case .gameControllerCompatible: return Control.xboxLayout.union([.guide, .capture])
@@ -105,9 +105,9 @@ public protocol VirtualHIDProfile: Sendable {
 /// The identity is the `SDLCompatible` `VirtualDevice` record's. The descriptor and input layout
 /// are `XboxOneGIPHIDReportFormat`'s: Xbox One GIP packets as numbered reports, the form SDL 3's
 /// HIDAPI drivers parse for a device whose IOHID transport is not `Bluetooth`, and the Xbox
-/// Bluetooth report SDL 2 parses for this product ID. The d-pad is four state bits, and share is
-/// never set. The descriptor and codec are not byte-exact copies
-/// of a genuine capture.
+/// Bluetooth reports that SDL 2 and Apple's GameController framework parse for this product ID.
+/// The d-pad is four state bits, and share is never set. The descriptor and codec are not
+/// byte-exact copies of a genuine capture.
 struct XboxOneGIPHIDProfile: VirtualHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.sdlCompatible

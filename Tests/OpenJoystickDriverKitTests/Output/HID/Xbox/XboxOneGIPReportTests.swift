@@ -108,8 +108,8 @@ struct XboxOneGIPHIDReportFormatTests {
     )
 
     #expect(profile.vendorID == 0x045E)
-    #expect(profile.productID == 0x0B0C)
-    #expect(profile.productName == "Xbox Adaptive Controller")
+    #expect(profile.productID == 0x0B13)
+    #expect(profile.productName == "Xbox Wireless Controller")
     #expect(format.inputReportID == 0x20)
     #expect(format.outputReportID == 0x09)
     #expect(format.outputReportPayloadSize == 12)
@@ -121,24 +121,15 @@ struct XboxOneGIPHIDReportFormatTests {
   }
 
   @Test
-  func descriptorFieldsSitWhereSDLReadsThem() throws {
+  func descriptorDeclaresGIPReportsAsVendorData() throws {
     let parsed = try #require(
       HIDReportDescriptorParser.parse(descriptor: XboxOneGIPHIDDescriptor.descriptor)
     )
-    let input = parsed.fields.filter { $0.reportID == 0x20 }
-    // Bit offsets count from the first payload bit, after the report ID.
-    let buttons = input.filter { $0.usagePage == 0x09 }.sorted { $0.bitOffset < $1.bitOffset }
-    let firstButtonBit = 8 * 3 + 2  // after the header and two constant bits
 
-    #expect(buttons.map(\.usage) == [8, 7, 1, 2, 3, 4, 12, 13, 14, 15, 5, 6, 9, 10])
-    #expect(buttons.first?.bitOffset == firstButtonBit)
-    let axes = input.filter { $0.usagePage == 0x01 }.sorted { $0.bitOffset < $1.bitOffset }
-    #expect(axes.map(\.usage) == [0x32, 0x35, 0x30, 0x31, 0x33, 0x34])
-    // Triggers at payload byte 5 and 7, then X, Y, Rx, Ry at bytes 9, 11, 13 and 15.
-    #expect(axes.map(\.bitOffset) == [40, 56, 72, 88, 104, 120])
-    #expect(
-      parsed.fields.contains { $0.reportID == 0x07 && $0.usagePage == 0x09 && $0.usage == 11 }
-    )
+    let gipFields = parsed.fields.filter { [0x20, 0x07].contains($0.reportID) }
+
+    #expect(!gipFields.isEmpty)
+    #expect(gipFields.allSatisfy { $0.usagePage == 0xFF00 })
   }
 
   @Test
@@ -180,16 +171,28 @@ struct XboxOneGIPHIDReportFormatTests {
     }
   }
 
+  /// GameController and SDL 2 read the Bluetooth reports' usages, so they match the Xbox Series
+  /// Bluetooth descriptor's field for field.
   @Test
-  func descriptorDeclaresBluetoothReportsAsVendorData() throws {
+  func descriptorDeclaresBluetoothReportsWithTheirUsages() throws {
     let parsed = try #require(
       HIDReportDescriptorParser.parse(descriptor: XboxOneGIPHIDDescriptor.descriptor)
     )
+    let bluetooth = try #require(
+      HIDReportDescriptorParser.parse(descriptor: XboxSeriesBluetoothHIDDescriptor.descriptor)
+    )
 
+    func layout(_ descriptor: HIDParsedDescriptor) -> [String] {
+      descriptor.fields.filter { [0x01, 0x02, 0x04].contains($0.reportID) }.map {
+        "\($0.reportID) \($0.bitOffset) \($0.bitSize) \($0.usagePage) \($0.usage) "
+          + "\($0.logicalMin) \($0.logicalMax)"
+      }
+    }
+
+    #expect(!layout(parsed).isEmpty)
+    #expect(layout(parsed) == layout(bluetooth))
     #expect(parsed.payloadSizeBytesByReportID[0x01] == 16)
     #expect(parsed.payloadSizeBytesByReportID[0x02] == 1)
-    let bluetoothFields = parsed.fields.filter { [0x01, 0x02].contains($0.reportID) }
-    #expect(bluetoothFields.allSatisfy { $0.usagePage == 0xFF00 })
     #expect(format.outputReportIDs == [0x09, 0x03])
   }
 
