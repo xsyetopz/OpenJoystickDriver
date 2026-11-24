@@ -92,6 +92,17 @@ Measured with `ojd virtual feed --as sdl-compatible`, `just diagnose-sdl2` for S
 
 Before the Bluetooth report, SDL 2.30.12 listed the pad and read no input. No Wine or CrossOver game was run against it.
 
+### GameControllerCompatible in SDL 2
+
+SDL 2 also reads `045E:0B13` through the Bluetooth parser, because `0b13` is on `SDL_IsJoystickBluetoothXboxOne` (SDL 2.30.12 `SDL_joystick.c:2769-2784`, `usb_ids.h:141`). The kext lists `0b13` with `GCIOMatchVirtual` (`AppleGameControllerPersonality.kext`, personality "Xbox Series X Wireless Controller"), so GameControllerCompatible is the one bundled profile that SDL 2 and GameController both read. On macOS, SDL 2's Xbox One HIDAPI driver takes only Bluetooth IDs (`SDL_hidapi_xboxone.c:355-367`), and its MFi backend skips an Xbox pad that HIDAPI holds (`SDL_mfijoystick.m:409-419`), so the pad is listed once.
+
+Measured with `ojd virtual feed --as game-controller-compatible < frames.jsonl`, CrossOver 26.3's SDL 2.30.12 through `just diagnose-sdl2 --library`, and `just diagnose-gamecontroller` in parallel, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`. Logs: `game-controller-compatible.sdl2-crossover.*`.
+
+| Reader | Result |
+| --- | --- |
+| SDL 2.30.12 | `045e:0b13` "Xbox Series X Controller", `gamecontroller=1`; buttons 0 to 14, Guide (button 5) included; stick axes 0 to 3 at 32767; triggers on axes 4 and 5, -32768 at rest |
+| GameController | "Xbox Wireless Controller", `extended=true`; Button A, B, X, Y, both shoulders and triggers, both thumbstick buttons, Menu, Options, Direction Pad, both thumbsticks; no Home |
+
 ## Candidate Identities
 
 Each candidate publishes the 2C's virtual gamepad with another Microsoft identity over one of three layouts (identity version 0). Logs: `candidates/<name>.<tag>.txt`. Listing runs had no input. Press runs used `parallel`, with the maintainer pressing each control.
