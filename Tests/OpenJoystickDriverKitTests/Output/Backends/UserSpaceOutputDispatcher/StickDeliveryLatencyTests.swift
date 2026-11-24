@@ -229,7 +229,9 @@ struct StickDeliveryLatencyTests {
     }
 
     #expect(edges == [true, false, true, false], "south per report: \(south)")
-    #expect(result.reports.last.flatMap { format.state(of: $0)?.leftStickX } == Int16(0.4 * 32_767))
+    // Auxiliary reports, such as SDLCompatible's Bluetooth mirror, follow the main report.
+    let leftStickX = result.reports.compactMap { format.state(of: $0)?.leftStickX }
+    #expect(leftStickX.last == Int16(0.4 * 32_767))
   }
 
   /// A burst far longer than the sender's queue (bounded and newest-wins, sized by

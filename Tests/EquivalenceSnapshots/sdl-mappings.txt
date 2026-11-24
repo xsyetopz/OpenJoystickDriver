@@ -108,7 +108,7 @@ unmapped=
 ## SDLCompatible
 profile=SDLCompatible vendor=1118 product=2828 version=0 name=Xbox Adaptive Controller
 guid=030000005e0400000c0b000000000000
-report length=18 descriptorBytes=182
+report length=18 descriptorBytes=206
 probe Back fields=[9:7] -> b6
 probe East fields=[9:2] -> b1
 probe LeftShoulder fields=[9:5] -> b4
@@ -119,7 +119,7 @@ probe RightStickClick fields=[9:10] -> b9
 probe South fields=[9:1] -> b0
 probe Start fields=[9:8] -> b7
 probe West fields=[9:3] -> b2
-probe LeftStickX fields=[1:48] -> a0
+probe LeftStickX fields=[1:48+65280:1] -> a0
 probe LeftStickY fields=[1:49] -> a1~
 probe RightStickX fields=[1:51] -> a3
 probe RightStickY fields=[1:52] -> a4~
