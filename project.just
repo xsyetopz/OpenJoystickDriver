@@ -87,10 +87,36 @@ check-whitespace:
     git diff --check
     git diff --check "$(git merge-base HEAD origin/main 2>/dev/null || git hash-object -t tree /dev/null)" HEAD
 
-# Run ruff and shellcheck over the scripts.
-project-lint:
+# Run ruff and shellcheck over the scripts and the bash recipe bodies.
+project-lint: lint-recipes
     ruff check Scripts Tests/RepositoryScripts
     find Scripts -type f -name '*.sh' -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
+
+# Shellcheck each bash shebang recipe; each `{{ ... }}` becomes `1`, a valid word and arithmetic operand.
+# SC2043 is off because a list such as `for x in {{ list }}` becomes a one-word loop.
+[private]
+lint-recipes:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    failed=0
+    # The JSON dump lists private and module recipes, which `just --summary` leaves out.
+    recipes="$(just --dump --dump-format json | python3 -c '
+    import json, sys
+    def walk(justfile, prefix=""):
+        for name, recipe in justfile["recipes"].items():
+            if recipe.get("shebang"):
+                print(prefix + name)
+        for name, module in justfile.get("modules", {}).items():
+            walk(module, f"{prefix}{name}::")
+    walk(json.load(sys.stdin))')"
+    for recipe in $recipes; do
+      body="$(just --show "$recipe" | awk '/^[^ #\[].*:/ { found = 1; next } found' | sed 's/^    //')"
+      [[ "$body" == '#!/usr/bin/env bash'* ]] || continue
+      printf '%s\n' "$body" | sed -E 's/\{\{[^}]*\}\}/1/g' \
+        | shellcheck --shell=bash --exclude=SC2043 --external-sources --source-path="$PWD" - \
+        || { echo "in recipe: $recipe" >&2; failed=1; }
+    done
+    exit "$failed"
 
 project-format:
     ruff format Scripts Tests/RepositoryScripts
