@@ -9,7 +9,7 @@ report length=17 descriptorBytes=331
 probe Back fields=[9:11] -> b10
 probe Capture fields=[12:178] -> b16
 probe East fields=[9:2] -> b1
-probe Guide fields=[9:13+1:133] -> b12
+probe Guide fields=[9:13] -> b12
 probe LeftShoulder fields=[9:7] -> b6
 probe LeftStickClick fields=[9:14] -> b13
 probe North fields=[9:5] -> b4
