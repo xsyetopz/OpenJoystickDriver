@@ -39,6 +39,6 @@ RECORD_VALIDATION result=valid
 
 If the interface isn't available, keep the road OJD chose and the program that holds it. OJD never detaches the device or falls back to another kind of connection.
 
-Add the full output (it holds raw packets, so read it first) to #14 with your macOS version, Mac model, firmware (if you know it), OJD commit, USB road, and any missing or wrong controls.
+Add the full output (it holds raw packets, so read it first) to a new issue (the closed [#14][1] has the earlier reports) with your macOS version, Mac model, firmware (if you know it), OJD commit, USB road, and any missing or wrong controls.
 
 Passing the schema check doesn't mean it's supported. Write down whether the handshake, input, reconnecting, rumble, and lights worked.

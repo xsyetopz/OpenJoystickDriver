@@ -4,7 +4,7 @@
 
 ## What People Reported
 
-These come from the people who reported it. Nobody has made it happen again yet.
+These come from the people who reported it. Nobody has made it happen again yet. A third reporter (eduardopuente, macOS 27, alpha.2, same symptom) got input working on a 0.6.0-alpha.3 tester build, wired, after removing the driver extension; the issue is closed.
 
 - felapas: beta.4, macOS 27.0.1, Apple silicon, controller revision 0101 behind a GenesysLogic hub. The extension was on, `--headless controller list` showed nothing, and the Xbox logo kept blinking. Steam lost the controller until the extension was removed.
 - cooltune: macOS 26.5.2, M2. A separate IOUSBHost reader that sent OJD's GIP packets did the handshake, read every input, and ran rumble. Endpoints 0x81/0x01 after `SetConfiguration(1)`.
@@ -42,7 +42,7 @@ When the host deadline passes with no completion, the adapter aborts that pipe a
 
 On macOS 26.6.1 (25G76), Apple Silicon M1, a standalone IOUSBHost reader sent powerOn, ledOn and authDone to an Xbox One `045E:02D1` with endpoints `81`/`01`. A 30-second run received 1284 input reports and the operator confirmed a solid LED. A later run fed input through the signed app's `ojd virtual feed --as game-controller-compatible`; GameController.framework reported a connected extended gamepad and live input. The operator reported days of gameplay with an original Elite `045E:02E3` through the same external bridge.
 
-The signed app used for the bridge was `0.6.0-alpha.2+build.1.21.99.sha.93d79f3973f0 (1.21.99)`. This verifies the external IOUSBHost/GIP-to-virtual-feed route, not a signed build of the extension adapter above. Native DriverKit input through this adapter, independent Elite paddle inputs, physical rumble and cold enumeration in configuration 0 are not checked. The Elite endpoint override is tracked in [PR #56](https://github.com/xsyetopz/OpenJoystickDriver/pull/56) and [issue #55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55).
+The signed app used for the bridge was `0.6.0-alpha.2+build.1.21.99.sha.93d79f3973f0 (1.21.99)`. This verifies the external IOUSBHost/GIP-to-virtual-feed route, not a signed build of the extension adapter above. Native DriverKit input through this adapter, independent Elite paddle inputs, physical rumble and cold enumeration in configuration 0 are not checked. The Elite record `045e-02e3.plist` uses the same endpoints `0x81`/`0x01`, and an owner reports input, rumble, and a game working on 0.6.0-alpha.3 ([issue #55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)).
 
 ## Commands for Maintainers
 

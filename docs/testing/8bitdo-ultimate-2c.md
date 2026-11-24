@@ -212,7 +212,7 @@ Tests:
 4. With nothing pressed, check both triggers read 0.
 5. Move the right stick, and check the triggers stay at 0.
 6. Press each button in the table, and check the name shown matches the label on the pad.
-7. Report the result with the mode and VID:PID on [#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34).
+7. Report the result with the mode and VID:PID in a new issue (closed [#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34) has the earlier reports).
 
 ## Further Reading
 

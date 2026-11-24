@@ -72,7 +72,7 @@ The pinned Nintendo source gives HID records for the left 057e:2006 and right 05
 | state reports wrapped in the receiver's packets |
 | receiver rumble and player-light packets |
 
-Still needed: the [receiver request](../testing/xbox-360-wireless-receiver.md) on real hardware.
+Owners confirmed input on 045e:0719 (every control and physical rumble) and on 045e:02a9 ([issue #9](https://github.com/xsyetopz/OpenJoystickDriver/issues/9)). Still needed: 045e:0291, ring lights, several slots at once, and virtual output in games ([receiver request](../testing/xbox-360-wireless-receiver.md)).
 
 ## Razer Wolverine V3 Tournament Edition
 
@@ -80,7 +80,11 @@ The GIP record points 1532:0A43 at XboxGIP, because Generic HID couldn't do the 
 
 ## Microsoft Xbox One Controller (Model 1537)
 
-Packets sent from an IOUSBHost test program confirm the GIP handshake, player light, every input including Guide, and rumble for 045E:02D1. The record holds the 0x81/0x01 endpoints seen on the pad, and the rule that configuration 1 must be set before OJD claims it. OJD's generated USBDriverKit extension and its wrapper haven't passed on this hardware. Still needed: [model 1537 test](../testing/xbox/1537.md).
+Packets sent from an IOUSBHost test program confirm the GIP handshake, player light, every input including Guide, and rumble for 045E:02D1. The record holds the 0x81/0x01 endpoints seen on the pad, and the rule that configuration 1 must be set before OJD claims it. An owner reports the wired pad working on 0.6.0-alpha.3 with the driver extension removed ([issue #18](https://github.com/xsyetopz/OpenJoystickDriver/issues/18)). OJD's generated USBDriverKit extension and its wrapper haven't passed on this hardware. Still needed: [model 1537 test](../testing/xbox/1537.md).
+
+## Microsoft Xbox Elite Series 1
+
+The record for 045E:02E3 uses the interface 0 interrupt endpoints 0x81/0x01, because the GIP defaults 0x82/0x02 are isochronous endpoints of interface 1. An owner reports input, the Guide button, all eight hat directions, full stick and trigger range, rumble, and a World of Warcraft session on 0.6.0-alpha.3 over USB ([issue #55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). Not checked: paddles, trigger rumble, rumble during play, and a pad that enumerates in configuration 0.
 
 ## Razer Wolverine V2
 
@@ -113,7 +117,7 @@ OJD has no parser for it, and the product pages don't describe the packets. Befo
 
 ## Flydigi Vader 4 Pro (Bluetooth)
 
-The HID record for D7D7:0041 uses the documented family VendorFlydigi instead of HIDDescriptor. A `VendorFlydigi.plist` in the user's `Protocols` folder replaces its description. The input layout comes from captured 15-byte Bluetooth LE reports. Still needed: virtual input a game can see, reconnect, rumble, and the 2.4 GHz and wired identities ([Vader 4 Pro test](../testing/flydigi-vader-4-pro.md)). See also [pull request #30](https://github.com/xsyetopz/OpenJoystickDriver/pull/30).
+The HID record for D7D7:0041 uses the documented family VendorFlydigi instead of HIDDescriptor. A `VendorFlydigi.plist` in the user's `Protocols` folder replaces its description. The input layout comes from captured 15-byte Bluetooth LE reports, and the contributor confirmed input in D-Input mode (Fn + A) on hardware. Still needed: virtual input a game can see, reconnect, rumble, and the 2.4 GHz and wired identities ([Vader 4 Pro test](../testing/flydigi-vader-4-pro.md)). See also [pull request #30](https://github.com/xsyetopz/OpenJoystickDriver/pull/30).
 
 ## WR-007 USB HID Receiver
 

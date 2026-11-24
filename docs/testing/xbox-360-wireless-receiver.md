@@ -1,6 +1,6 @@
 # Test an Xbox 360 Wireless Receiver
 
-An Xbox 360 wireless receiver is a small USB box that lets up to four wireless Xbox 360 controllers talk to a computer. See [issue #9][1]. Linux's `xpad.c` lists three Microsoft receiver IDs, and OJD imported them as records that nobody has confirmed on hardware yet.
+An Xbox 360 wireless receiver is a small USB box that lets up to four wireless Xbox 360 controllers talk to a computer. See [issue #9][1]. Linux's `xpad.c` lists three Microsoft receiver IDs, and OJD imported them as records. Owners confirmed input on 045e:0719 (with physical rumble) and on 045e:02a9; nobody has tested 045e:0291.
 
 | ID | Name |
 | --- | --- |
@@ -8,7 +8,7 @@ An Xbox 360 wireless receiver is a small USB box that lets up to four wireless X
 | 045e:02a9 | Unofficial receiver identity |
 | 045e:0719 | Xbox 360 Wireless Receiver |
 
-The receiver wraps every message in a four-byte envelope, like a letter in an envelope. The parser reads Linux's envelope and the presence, state, rumble, and ring-light commands inside it. A state report is 18 bytes inside the envelope, and its inner type byte is zero. Its inner length byte was 13 in the captures from [issue #9][1] (045e:0719) and [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) (045e:02a9). Only a wired controller must say 14. Decoder tests replay those 29-byte packets. No hardware test has confirmed virtual output, rumble, or lights.
+The receiver wraps every message in a four-byte envelope, like a letter in an envelope. The parser reads Linux's envelope and the presence, state, rumble, and ring-light commands inside it. A state report is 18 bytes inside the envelope, and its inner type byte is zero. Its inner length byte was 13 in the captures from [issue #9][1] (045e:0719) and [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) (045e:02a9). Only a wired controller must say 14. Decoder tests replay those 29-byte packets. Owners confirmed rumble only on 045e:0719; no hardware test has confirmed lights.
 
 Only connected controllers are listed and get output. A presence message or a valid state report connects a slot, and a disconnect message removes it.
 
@@ -72,7 +72,7 @@ Next, on a provisioned build with the virtual HID entitlement: virtual output, g
    - no buttons stuck down after a disconnect and reconnect
 
 4. If the USB interface isn't available, keep the road OJD chose and the program that holds it. OJD never detaches the device or falls back to another kind of connection.
-5. Add the output to issue #9 (read raw packets first) with your macOS version, Mac model, receiver VID/PID and branding, controller model, OJD commit, road, reconnect results, and any wrong or missing inputs.
+5. Add the output to a new issue (read raw packets first) with your macOS version, Mac model, receiver VID/PID and branding, controller model, OJD commit, road, reconnect results, and any wrong or missing inputs.
 
 ## Capture Receiver Slots
 
