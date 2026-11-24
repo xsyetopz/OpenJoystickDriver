@@ -7,8 +7,11 @@ import Testing
 
 @MainActor
 extension MainWindowController {
-  /// A main window controller over stubs whose window never goes on screen, and the call that
-  /// removes its defaults suite.
+  /// A main window controller over stubs whose window stays behind the desktop picture, and the
+  /// call that removes its defaults suite.
+  ///
+  /// A test may order the window in or attach a sheet to it; neither appears in front of the
+  /// person at the Mac.
   static func offScreen() throws -> (MainWindowController, cleanup: () -> Void) {
     let suiteName = "MainWindowController.\(UUID().uuidString)"
     let defaults = try #require(UserDefaults(suiteName: suiteName))
@@ -26,6 +29,7 @@ extension MainWindowController {
       visibilityChanged: { _ in },
       persistence: UserDefaultsMainWindowAreaPersistence(defaults: defaults)
     )
+    controller.window?.keepUnseen()
     return (controller, { defaults.removePersistentDomain(forName: suiteName) })
   }
 }

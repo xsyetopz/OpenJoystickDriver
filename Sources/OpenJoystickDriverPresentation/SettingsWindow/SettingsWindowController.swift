@@ -75,6 +75,8 @@
     private weak var toolbar: NSToolbar?
     /// Called with true when the window is shown and false when it closes.
     private let visibilityChanged: @MainActor (Bool) -> Void
+    /// Puts the window on screen when it is shown.
+    private let present: @MainActor (NSWindow) -> Void
     /// Returns the content of a pane, for the window and for measuring a pane's height.
     private let makeContent: (SettingsWindowPane) -> SettingsPaneContent
     /// The subscriptions that fit the window to its content and read the pane state on activation.
@@ -89,15 +91,19 @@
     ///   - runtime: the driver extension state and actions of Advanced.
     ///   - preferences: the switches of General, Notifications and Advanced.
     ///   - commandLineTool: the command-line tool link of Advanced.
+    ///   - present: puts the window on screen when it is shown; `AppForeground.show` brings it
+    ///     and the app to the front.
     ///   - visibilityChanged: called with true when the window is shown and false when it closes.
     init(
       gateway: any ApplicationServiceGateway,
       runtime: RuntimeViewModel,
       preferences: SettingsPreferencesModel,
       commandLineTool: CommandLineToolModel,
+      present: @escaping @MainActor (NSWindow) -> Void = AppForeground.show,
       visibilityChanged: @escaping @MainActor (Bool) -> Void
     ) {
       self.visibilityChanged = visibilityChanged
+      self.present = present
       self.preferences = preferences
       self.commandLineTool = commandLineTool
       panes = SettingsWindowPaneModel()
@@ -188,7 +194,7 @@
       refreshPaneState()
       refreshOnActivation = false
       visibilityChanged(true)
-      if let window { AppForeground.show(window) }
+      if let window { present(window) }
     }
 
     /// Fits the window to the screen it moved to, whose visible area may be smaller.

@@ -53,8 +53,10 @@ struct SettingsWindowControllerTests {
       gateway: gateway,
       runtime: RuntimeViewModel(gateway: gateway),
       preferences: preferences,
-      commandLineTool: commandLineTool
-    ) { _ in }
+      commandLineTool: commandLineTool,
+      present: { $0.orderInUnseen() },
+      visibilityChanged: { _ in }
+    )
     return (controller, preferences)
   }
 

@@ -72,8 +72,10 @@ struct DeveloperToolsTests {
       gateway: gateway,
       runtime: RuntimeViewModel(gateway: gateway),
       preferences: preferences,
-      commandLineTool: sandbox.model()
-    ) { _ in }
+      commandLineTool: sandbox.model(),
+      present: { $0.orderInUnseen() },
+      visibilityChanged: { _ in }
+    )
 
     controller.showSettings(pane: .advanced)
     await waitUntil("the diagnostics load") { controller.developerTools.loadState == .ready }

@@ -113,7 +113,7 @@ extension ActivityLogFollowingTests {
     let (controller, cleanup) = try MainWindowController.offScreen()
     defer { cleanup() }
     let window = try #require(controller.window)
-    window.orderFront(nil)
+    window.orderInUnseen()
     defer { window.orderOut(nil) }
     let log = controller.screens.activity.log
 
