@@ -7,6 +7,7 @@ cmd="${1:-}"
 shift || true
 
 SDL3_PROBE_DIR="$PROJECT_DIR/Tools/SDLGamepadProbe"
+SDL2_PROBE_DIR="$PROJECT_DIR/Tools/SDL2GamepadProbe"
 
 build_sdl3_probe() {
   [[ -f "$SDL3_PROBE_DIR/xmake.lua" ]] || die "Missing probe project: $SDL3_PROBE_DIR"
@@ -14,18 +15,27 @@ build_sdl3_probe() {
   xmake build -P "$SDL3_PROBE_DIR" SDLGamepadProbe
 }
 
-print_sdl3_probe_banner() {
+print_sdl_probe_banner() {
   echo
-  echo "Running SDLGamepadProbe $*"
-  echo "Tip: if it prints 'Found 0 joystick(s)', grant Input Monitoring to your terminal app:"
+  echo "Running the SDL probe $*"
+  echo "Tip: if it lists no joystick, grant Input Monitoring to your terminal app:"
   echo "  System Settings -> Privacy & Security -> Input Monitoring"
   echo
 }
 
 run_sdl3_probe_native() {
   build_sdl3_probe
-  print_sdl3_probe_banner "$@"
+  print_sdl_probe_banner "$@"
   xmake run -P "$SDL3_PROBE_DIR" SDLGamepadProbe -- "$@"
+}
+
+# SDL reads its hints from the environment, so SDL_JOYSTICK_HIDAPI_XBOX=0 and the like reach the probe.
+run_sdl2_probe() {
+  [[ -f "$SDL2_PROBE_DIR/xmake.lua" ]] || die "Missing probe project: $SDL2_PROBE_DIR"
+  echo "Building SDL2 probe (x86_64)..."
+  xmake build -P "$SDL2_PROBE_DIR" SDL2GamepadProbe
+  print_sdl_probe_banner "$@"
+  xmake run -P "$SDL2_PROBE_DIR" SDL2GamepadProbe "$@"
 }
 
 # The SDL hints that make SDL read controllers through GameController come from
@@ -33,7 +43,7 @@ run_sdl3_probe_native() {
 run_sdl3_gamecontroller_probe() {
   require_ojd_app_cli
   build_sdl3_probe
-  print_sdl3_probe_banner --gc-prewarm --wait-devices 8 --rumble --expect-rumble "$@"
+  print_sdl_probe_banner --gc-prewarm --wait-devices 8 --rumble --expect-rumble "$@"
   (ojd_cli "$OJD_APP_CLI" virtual launch --sdl-gamecontroller-backend -- \
     xmake run -P "$SDL3_PROBE_DIR" SDLGamepadProbe -- \
     --gc-prewarm --wait-devices 8 --rumble --expect-rumble "$@")
@@ -128,6 +138,11 @@ run_backend_acceptance_loop() {
 
 if [[ "$cmd" == "sdl3" ]]; then
   run_sdl3_probe_native "$@"
+  exit 0
+fi
+
+if [[ "$cmd" == "sdl2" ]]; then
+  run_sdl2_probe "$@"
   exit 0
 fi
 

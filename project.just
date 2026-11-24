@@ -47,9 +47,10 @@ check-schemas: schema-env
 check-profiles: schema-env
     {{ schema_python }} -m Scripts.Quality.check_profiles
 
-# Build the SDL gamepad probe and the WebRTC bridge package, and test the bridge.
+# Build the SDL 3 and SDL 2 gamepad probes and the WebRTC bridge package, and test the bridge.
 check-tools:
     {{ env }} xmake build -P Tools/SDLGamepadProbe SDLGamepadProbe
+    {{ env }} xmake build -P Tools/SDL2GamepadProbe SDL2GamepadProbe
     {{ env }} swift test --package-path Tools/WebRTCBridge
 
 # Run the parser regressions that need no Swift Testing runtime (macOS 14).
@@ -144,6 +145,10 @@ diagnose-usb-passive vid pid:
 # Run the SDL3 probe against the virtual device.
 diagnose-sdl3 *args:
     Scripts/Diagnostics/backend.sh sdl3 {{ args }}
+
+# Run the SDL2 probe, by default against CrossOver's SDL2, which its Wine uses.
+diagnose-sdl2 *args:
+    Scripts/Diagnostics/backend.sh sdl2 {{ args }}
 
 # Run SDL3 through GameController and test rumble.
 diagnose-sdl3-gamecontroller *args:

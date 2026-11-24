@@ -81,7 +81,7 @@ SDL 2 and SDL 3 pick a parser for `045E:0B0C` differently, so SDLCompatible send
 - SDLCompatible adds Xbox Series Bluetooth report 1 (17 bytes), the Guide report 2, and rumble output 3 to its GIP reports, all as vendor data. In report 1, OJD clears bits 0 to 2 and 7 of byte 1 (`& 0x78`), and sets the low nibble of byte 3 and clears its bit 7 (`& 0x70 | 0x0F`), so SDL 3 reads a length of 15 to 127 and drops the packet. Left stick X keeps 12 bits and left stick Y 11: rest reads 15 on Y, and full right reads 32632 on X.
 - Report 2 is 2 bytes, below the 5-byte GIP header, so SDL 3 drops it too.
 
-Measured with `ojd virtual feed --as sdl-compatible` and default hints, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`:
+Measured with `ojd virtual feed --as sdl-compatible`, `just diagnose-sdl2` for SDL 2 (`Tools/SDL2GamepadProbe`), and default hints, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`:
 
 | Reader | South | LeftStickY -1 | LeftStickX 1 | RightTrigger 1 | DpadUp |
 | --- | --- | --- | --- | --- | --- |
