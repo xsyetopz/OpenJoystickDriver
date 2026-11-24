@@ -6,7 +6,7 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-@Suite
+@Suite(.holdingControllerNavigationSession)
 struct SettingsFileRecoveryTests {
   private let root = RootedDataDirectory.temporary()
   private let trash = FileManager.default.temporaryDirectory.appendingPathComponent(

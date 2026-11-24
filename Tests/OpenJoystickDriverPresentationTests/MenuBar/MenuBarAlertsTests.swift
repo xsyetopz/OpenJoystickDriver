@@ -6,7 +6,7 @@ import Testing
 
 /// The menu bar alerts show the text, buttons and tooltips the person is promised, and each button
 /// response maps to one action.
-@Suite
+@Suite(.holdingControllerNavigationSession)
 @MainActor
 struct MenuBarAlertsTests {
   private static func tips(_ alert: NSAlert) -> [String] { alert.buttons.map { $0.toolTip ?? "" } }

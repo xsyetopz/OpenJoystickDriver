@@ -4,7 +4,7 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-@Suite
+@Suite(.holdingControllerNavigationSession)
 @MainActor
 struct MainWindowAlertTests {
   @Test
