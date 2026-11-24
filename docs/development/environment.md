@@ -25,7 +25,7 @@ Unsigned `swift build` and `just driverkit-check` load no env file. Signed local
 
 CI needs no local `.env`. What to use on your own Mac instead:
 
-- certificate and profile secrets: Keychain identities plus the Developer ID profiles `signing configure` reads (`signing ci-release-setup` on the runner);
+- certificate and profile secrets: Keychain identities plus the Developer ID profiles `just signing-configure` reads (`just signing-ci-release-setup` on the runner);
 - `NOTARIZE_APPLE_ID` and `NOTARIZE_PASSWORD`: the same keys in `.env.release`, or `NOTARIZE_KEYCHAIN_PROFILE` after storing credentials in Keychain.
 
 Never copy the CI-only `*_BASE64`, `CERTIFICATE_SECRET`, or `KEYCHAIN_SECRET` keys into `.env.dev` or `.env.release`.
@@ -46,11 +46,11 @@ The repository reads no variable outside this table. Env files hold only these k
 | `NOTARIZE_APPLE_ID` | .env.release, GitHub secret | notarize.sh | kept | Notarization account. |
 | `NOTARIZE_PASSWORD` | .env.release, GitHub secret | notarize.sh | kept | Notarization app-specific password. |
 | `NOTARIZE_KEYCHAIN_PROFILE` | .env.release (written by notarize store-credentials) | notarize.sh | kept | Keychain profile that replaces the Apple ID and password. |
-| `DEVELOPER_ID_APPLICATION_CERT_BASE64` | GitHub secret | `signing.sh ci-release-setup` | kept | Release certificate on the runner. |
-| `CERTIFICATE_SECRET` | GitHub secret | `signing.sh ci-release-setup`, `export-github-secrets.sh` | kept | Password of the release certificate. |
-| `KEYCHAIN_SECRET` | GitHub secret | `signing.sh ci-release-setup`, `export-github-secrets.sh` | kept | Password of the runner keychain. |
-| `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64` | GitHub secret | `signing.sh ci-release-setup` | kept | App Developer ID profile on the runner. |
-| `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64` | GitHub secret | `signing.sh ci-release-setup` | kept | DEXT Developer ID profile on the runner. |
+| `DEVELOPER_ID_APPLICATION_CERT_BASE64` | GitHub secret | `just signing-ci-release-setup` | kept | Release certificate on the runner. |
+| `CERTIFICATE_SECRET` | GitHub secret | `just signing-ci-release-setup`, `export-github-secrets.sh` | kept | Password of the release certificate. |
+| `KEYCHAIN_SECRET` | GitHub secret | `just signing-ci-release-setup`, `export-github-secrets.sh` | kept | Password of the runner keychain. |
+| `OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64` | GitHub secret | `just signing-ci-release-setup` | kept | App Developer ID profile on the runner. |
+| `OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64` | GitHub secret | `just signing-ci-release-setup` | kept | DEXT Developer ID profile on the runner. |
 | `OJD_BUNDLE_SHORT_VERSION` | repository scripts: package.py, package_tester.py | bundles.sh, driverkit.sh | kept | Version of the bundle being built, passed from the Python release route to the bash build. |
 | `OJD_BUNDLE_VERSION` | repository scripts: package.py, package_tester.py, install.sh | bundles.sh, driverkit.sh | kept | Build number of the app and the DEXT; install.sh passes a development-stage number so a rebuilt tree replaces the installed one. |
 | `OJD_SOURCE_COMMIT`, `OJD_SOURCE_STATE` | repository scripts: package.py, package_tester.py | bundles.sh | kept | Source facts stamped into the bundle, passed from the Python release route to the bash build. |
@@ -67,19 +67,19 @@ The repository reads no variable outside this table. Env files hold only these k
 | `SDL_GAMECONTROLLERCONFIG`, `SDL_JOYSTICK_*` | SDLLaunchEnvironment.swift, user | `SDLLaunchEnvironment.swift`, `Tools/SDLGamepadProbe`, backend.sh, SDL games | kept | SDL settings that `ojd virtual launch` passes to a game; the launcher appends to an existing SDL_GAMECONTROLLERCONFIG, and the probe prints them. |
 | `DEVELOPER_DIR`, `SDKROOT` | contributor, CI, environment.sh | Xcode tools, `swift`, `swiftlint`, `justfile` | kept | Select the Xcode SDK and tools; the compiler is the swift on PATH. |
 | `TOOLCHAINS` | contributor | bundles.sh (unset for `xcodebuild`) | kept | xcodebuild cannot resolve the package under a swift.org toolchain. |
-| `CI` | GitHub Actions | driverkit.sh, signing.sh, notarize.sh | kept | Turns off prompts and rejects local SwifterKit. |
+| `CI` | GitHub Actions | driverkit.sh, signing.just, notarize.sh | kept | Turns off prompts and rejects local SwifterKit. |
 | `GITHUB_REPOSITORY`, `GITHUB_REF_NAME`, `GITHUB_SHA`, `GITHUB_TOKEN` | GitHub Actions | `Scripts/Documentation/wiki/build.py`, `Scripts/Release/package.py`, `wiki.yml` | kept | Repository and ref facts only the runner knows. |
-| `RUNNER_TEMP`, `GITHUB_OUTPUT`, `GITHUB_PATH` | GitHub Actions | `signing.sh ci-release-setup`, workflow and action steps | kept | Runner scratch directory and step outputs. |
+| `RUNNER_TEMP`, `GITHUB_OUTPUT`, `GITHUB_PATH` | GitHub Actions | `just signing-ci-release-setup`, workflow and action steps | kept | Runner scratch directory and step outputs. |
 | `RELEASE_TAG`, `RELEASE_TAG_INPUT`, `GH_TOKEN` | release workflow | workflow shell steps | kept | Tag and token of the release job. |
 | `NO_COLOR`, `TERM`, `PAGER`, `HOME`, `PATH`, `TMPDIR` | shell, Git, user | scripts, hooks | kept | Standard variables with their standard meaning. |
 | `NOTARIZE_TIMEOUT_MINUTES`, `NOTARIZE_POLL_INTERVAL`, `NOTARIZE_MAX_RETRIES` | nobody | notarize.sh | removed | Fixed values of the script (180 minutes, 30 seconds, 5 retries). |
 | `NOTARIZE_KEYCHAIN` | nobody | notarize.sh | removed | No route sets a custom keychain. |
-| `DEV_ENV`, `REL_ENV`, `SCRIPT_DIR`, `PROJECT_DIR` | signing.sh | configure.py | removed | configure.py takes --project-dir and derives the root .env.dev and .env.release paths from it. |
+| `DEV_ENV`, `REL_ENV`, `SCRIPT_DIR`, `PROJECT_DIR` | signing.just | configure.py | removed | configure.py takes --project-dir and derives the root .env.dev and .env.release paths from it. |
 | `GUI_CODESIGN_IDENTITY`, `DEXT_BUILD_IDENTITY` | .env.* | environment.sh, driverkit.sh, package_tester.py | removed | Both profiles embed one identity, so CODESIGN_IDENTITY signs the app and the DEXT. |
 | `DEXT_BUILD_PROFILE` | .env.* | driverkit.sh, package_tester.py | removed | The build reads the profile specifier from the Name inside DEXT_PROVISIONING_PROFILE. |
-| `GUI_DEV_PROFILE`, `GUI_DEVID_PROFILE`, `DEXT_PROFILE`, `DEXT_DEVID_PROFILE` | nobody | signing.sh, configure.py | removed | `signing install-profiles` copies the profiles under fixed names, which `signing configure` reads. |
-| `APPLE_DEV_IDENTITY`, `DEVID_APP_IDENTITY` | contributor | signing.sh | removed | `signing configure --development-identity <sha1>` and `--release-identity <sha1>` pick an identity. |
-| `OJD_SIGNING_MODE` | signing.sh ci-release-setup | signing.sh, configure.py | removed | `signing configure --mode` and `signing install-profiles --mode` take development, release or all. |
+| `GUI_DEV_PROFILE`, `GUI_DEVID_PROFILE`, `DEXT_PROFILE`, `DEXT_DEVID_PROFILE` | nobody | signing.just, configure.py | removed | `just signing-install-profiles` copies the profiles under fixed names, which `just signing-configure` reads. |
+| `APPLE_DEV_IDENTITY`, `DEVID_APP_IDENTITY` | contributor | signing.just | removed | `just signing-configure --development-identity <sha1>` and `--release-identity <sha1>` pick an identity. |
+| `OJD_SIGNING_MODE` | `just signing-ci-release-setup` | signing.just, configure.py | removed | `just signing-configure --mode` and `just signing-install-profiles --mode` take development, release or all. |
 | `OJD_NOTARIZE_APP`, `OJD_NOTARIZE_ZIP` | package.py, package_tester.py, install.sh | notarize.sh | removed | `notarize.sh submit <app> <zip>` takes them as arguments. |
 | `DEXT_BUNDLE_VERSION` | install.sh | driverkit.sh | removed | install.sh passes the build number in OJD_BUNDLE_VERSION, which driverkit.sh reads. |
 | `OJD_ENABLE_CONTRIBUTOR_USB_PASSIVE` | contributor | `PassiveUSBDescriptorProbe.swift` | removed | The probe reads IORegistry facts of one allowlisted device and claims nothing, the same read the app makes on every USB attach; --usb-passive and the tuple allowlist are its opt-in. |

@@ -1,7 +1,6 @@
 import argparse
 import os
 import pathlib
-import plistlib
 import subprocess
 import sys
 
@@ -26,40 +25,16 @@ def must_exist(path: str, label: str):
 
 
 def decode_profile(path: str) -> dict:
-    p = subprocess.run(
-        ["security", "cms", "-D", "-i", path],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=False,
-        check=False,
-    )
-    raw = p.stdout if (p.returncode == 0 and p.stdout) else b""
-    if not raw:
-        p = subprocess.run(
-            ["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            text=False,
-            check=False,
-        )
-        raw = p.stdout if (p.returncode == 0 and p.stdout) else b""
-    if not raw:
+    profile = profile_certs.decoded_profile(path)
+    if profile is None:
         raise SystemExit(
             "ERROR: Could not decode provisioning profile.\n"
             f"  profile: {path}\n"
-            "Fix: reinstall/regenerate the profile and re-run `just signing-install-profiles`.\n"
+            "Fix: regenerate the profile in the Developer portal, then re-run "
+            "`just signing-install-profiles`.\n"
             'Debug (safe): `just signing-audit "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile`'
         )
-    if b"<?xml" in raw:
-        raw = raw[raw.index(b"<?xml") :]
-    try:
-        return plistlib.loads(raw)
-    except (ValueError, plistlib.InvalidFileException):
-        raise SystemExit(
-            "ERROR: Provisioning profile decoded, but plist parsing failed.\n"
-            f"  profile: {path}\n"
-            "Fix: regenerate the profile in the Developer portal and reinstall it."
-        )
+    return profile
 
 
 def embedded_cert_sha1s_from_profile(path: str) -> list[str]:

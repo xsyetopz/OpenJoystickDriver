@@ -2,6 +2,8 @@ schema_python := ".build/schema-validator/bin/python"
 env := "Scripts/with-env.sh"
 release := "env OJD_ENV=release"
 
+import ".just/project/signing.just"
+
 # Create the Python environment the catalog, schema and script tests use.
 schema-env:
     [[ -x {{ schema_python }} ]] || { python3 -m venv .build/schema-validator && {{ schema_python }} -m pip install --quiet -r Scripts/Quality/requirements.txt; }
@@ -93,38 +95,6 @@ wiki-build output *args:
 # Publish wiki/ to the GitHub wiki; --dry-run shows the diff only.
 wiki *args:
     python3 -m Scripts.Documentation.wiki.publish {{ args }}
-
-# Copy provisioning profiles from ~/Documents/Profiles into MobileDevice.
-signing-install-profiles *args:
-    Scripts/Signing/signing.sh install-profiles {{ args }}
-
-# Write .env.dev and .env.release from the Keychain and the profiles.
-signing-configure *args:
-    Scripts/Signing/signing.sh configure {{ args }}
-
-# Audit provisioning profiles without printing identifiers.
-signing-audit *paths:
-    Scripts/Signing/signing.sh audit {{ paths }}
-
-# Show the Team ID and subject of a .cer file.
-signing-cert-info cer:
-    Scripts/Signing/signing.sh cert-info {{ cer }}
-
-# Show the certificates embedded in a provisioning profile.
-signing-profile-info profile:
-    Scripts/Signing/signing.sh profile-info {{ profile }}
-
-# Import every certificate embedded in a profile into the Keychain.
-signing-import-embedded profile:
-    Scripts/Signing/signing.sh import-embedded {{ profile }}
-
-# Import the GitHub Actions release secrets (CI only).
-signing-ci-release-setup:
-    Scripts/Signing/signing.sh ci-release-setup
-
-# Write or import the GitHub Actions release secrets.
-signing-export-github-secrets *args:
-    Scripts/Signing/export-github-secrets.sh {{ args }}
 
 # Run the dext diagnostics: activation, codesign, IORegistry, app service.
 diagnose-dext:
