@@ -14,7 +14,7 @@ Web browsers read gamepads through the Gamepad API. This page records how each b
 
 ## Automated Run
 
-`just diagnose-browsers --as PERSONA [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another. In each, it presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it.
+`just diagnose-browsers --as PERSONA [--browsers firefox,chrome,safari]` opens a logging page in each browser, one after another. In each, it presses every control on one virtual gamepad with `ojd virtual feed`. It prints the standard-mapping slot each browser gave each control (`ok`, `missing`, `differs`) and the rumble result. It writes `results.json` and `events.jsonl` under `.build/browser-gamepad/`. The standard mapping has no slot for Share. A browser engine with 18 buttons and Guide at B16 (Chrome) reports Share as B17, which is where the run expects it. Guide is pressed last: with System Settings › Game Controllers › Enable Home Button Actions on, the press opens Games, and Safari stops reporting the pad to a page in the background. The run waits up to 45 s for each page, enough for a browser that wasn't running.
 
 ## Start Clean Each Time
 
@@ -82,6 +82,14 @@ With `just diagnose-browsers --as sdl-compatible` on macOS 27.2, each browser fr
 | Firefox 159 | every control in its standard slot but Share | no vibrationActuator |
 | Chrome 158 | every control but Guide; Share as B17 | `complete` |
 | Safari 27.2 | every control but Share; Guide as B16 | `complete` |
+
+The same run with Enable Home Button Actions on:
+
+| Browser | Controls | Rumble |
+| --- | --- | --- |
+| Firefox 160 | every control in its standard slot but Share | no vibrationActuator |
+| Chrome 158 | every control but Guide; Share as B17 | `complete` |
+| Safari 27.2 | every control but Share and Guide; Guide opens Games | `complete` |
 
 Chrome reads Guide from GameController's `buttonHome` into B16 (`device/gamepad/game_controller_gamepad.mm`), but never sets the button's `preferredSystemGestureState`. While the Home gesture is enabled, macOS keeps Home from the front app. A probe app on the same pad got no Home press with the default gesture state, and one press and release with `.disabled`. The harness starts Chrome as a new instance on its own profile under the run's output folder, because a Chrome that keeps running after an update keeps its old binary and the gamepads it saw before.
 

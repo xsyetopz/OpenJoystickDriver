@@ -22,7 +22,7 @@ PRESS_MS = 600
 REST_MS = 1400
 SETTLE_MS = 2000
 WAKE_MS = 3000
-READY_TIMEOUT_SECONDS = 15.0
+READY_TIMEOUT_SECONDS = 45.0
 DRAIN_SECONDS = 1.5
 ANALOG_THRESHOLD = 0.5
 
@@ -63,7 +63,6 @@ CONTROLS: tuple[Control, ...] = (
     Control("Down", {"dpad": ["DpadDown"]}, "b13"),
     Control("Left", {"dpad": ["DpadLeft"]}, "b14"),
     Control("Right", {"dpad": ["DpadRight"]}, "b15"),
-    _button("Guide", "Guide", 16),
     _button("Share", "Capture", 17),
     _axis("Left stick right", "LeftStickX", 1, 0),
     _axis("Left stick left", "LeftStickX", -1, 0),
@@ -73,6 +72,9 @@ CONTROLS: tuple[Control, ...] = (
     _axis("Right stick left", "RightStickX", -1, 2),
     _axis("Right stick up", "RightStickY", -1, 3),
     _axis("Right stick down", "RightStickY", 1, 3),
+    # Guide goes last: with macOS's Home Button Actions on, the press opens Games, and Safari
+    # stops reporting a pad to a page in the background.
+    _button("Guide", "Guide", 16),
 )
 
 

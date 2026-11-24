@@ -89,19 +89,22 @@ class BrowserGamepadHarnessTests(unittest.TestCase):
                 self.assertEqual(statuses, {"ok"})
                 self.assertEqual(result["rumble"], "complete" if wake else None)
 
+    def test_guide_is_pressed_after_every_other_control(self) -> None:
+        names = [control.name for control in harness.CONTROLS]
+        self.assertEqual(names[-1], "Guide")
+
     def test_a_dropped_or_moved_control_is_reported(self) -> None:
         events = run(10_000, wake=True)
         share = next(i for i, c in enumerate(harness.CONTROLS) if c.name == "Share")
-        guide = share - 1
-        start = 10_000 + guide * STEP_MS + 40
+        start = 10_000 + share * STEP_MS + 40
         events = [e for e in events if not (start <= e["t"] < start + 2 * STEP_MS)]
-        events.append(state(start + STEP_MS + 900, 2, [[17, 1.0]]))
+        events.append(state(start + STEP_MS + 900, 2, [[0, 1.0]]))
         rows = {
             row["control"]: row
             for row in harness.classify(events, 1_000, 120_000)["controls"]
         }
-        self.assertEqual(rows["Guide"]["status"], "missing")
-        self.assertEqual(rows["Share"]["status"], "ok")
+        self.assertEqual(rows["Share"]["status"], "missing")
+        self.assertEqual(rows["Left stick right"]["status"], "differs")
         rows_moved = harness.classify(
             [*run(10_000, wake=True), state(10_040 + 3, 2, [[5, 1.0]])], 1_000, 120_000
         )
