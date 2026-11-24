@@ -64,7 +64,7 @@ The repository reads no variable outside this table. Env files hold only these k
 | `OJD_TOKEN` | user, WebRTC bridge launcher | reference_client.py, `WebRTCBridge` | kept | Endpoint token, documented in docs/sdk/endpoint.md and the wiki page WebRTC-Bridge. |
 | `OJD_SNAPSHOT_WRITE`, `OJD_SNAPSHOT_ACTUAL_DIR` | equivalence_snapshots.py | `EquivalenceSnapshotStore.swift` | kept | `swift test` takes no arguments, so `just snapshots-check` and `snapshots write` tell the test process through the environment. |
 | `VISUAL`, `EDITOR` | user | `ProfileFileCommands.swift` | kept | Editor that `ojd profile edit` opens, documented in the wiki page Command-Reference. |
-| `SDL_GAMECONTROLLERCONFIG`, `SDL_JOYSTICK_*` | SDLLaunchEnvironment.swift, user | `SDLLaunchEnvironment.swift`, `Tools/SDLGamepadProbe`, backend.sh, SDL games | kept | SDL settings that `ojd virtual launch` passes to a game; the launcher appends to an existing SDL_GAMECONTROLLERCONFIG, and the probe prints them. |
+| `SDL_GAMECONTROLLERCONFIG`, `SDL_JOYSTICK_*` | SDLLaunchEnvironment.swift, user | `SDLLaunchEnvironment.swift`, `Tools/SDLGamepadProbe`, diagnostics.just, SDL games | kept | SDL settings that `ojd virtual launch` passes to a game; the launcher appends to an existing SDL_GAMECONTROLLERCONFIG, and the probe prints them. |
 | `DEVELOPER_DIR`, `SDKROOT` | contributor, CI, environment.sh | Xcode tools, `swift`, `swiftlint`, `justfile` | kept | Select the Xcode SDK and tools; the compiler is the swift on PATH. |
 | `TOOLCHAINS` | contributor | bundles.sh (unset for `xcodebuild`) | kept | xcodebuild cannot resolve the package under a swift.org toolchain. |
 | `CI` | GitHub Actions | driverkit.sh, signing.just, notarize.sh | kept | Turns off prompts and rejects local SwifterKit. |

@@ -3,6 +3,7 @@ env := "Scripts/with-env.sh"
 release := "env OJD_ENV=release"
 
 import ".just/project/signing.just"
+import ".just/project/diagnostics.just"
 
 # Create the Python environment the catalog, schema and script tests use.
 schema-env:
@@ -95,58 +96,6 @@ wiki-build output *args:
 # Publish wiki/ to the GitHub wiki; --dry-run shows the diff only.
 wiki *args:
     python3 -m Scripts.Documentation.wiki.publish {{ args }}
-
-# Run the dext diagnostics: activation, codesign, IORegistry, app service.
-diagnose-dext:
-    Scripts/Diagnostics/dext/diagnose.sh
-
-# Launch the installed app in Xcode's UI test runner and fail if it offers a driver repair while the driver is active.
-diagnose-driver-ui:
-    TEST_RUNNER_OJD_SYSEXT_LIST="$(systemextensionsctl list)" xcodebuild test -quiet -project OpenJoystickDriver.xcodeproj -scheme OpenJoystickDriverApp -only-testing:OpenJoystickDriverUITests/InstalledDriverUITests -destination 'platform=macOS'
-
-# Validate or probe a canonical controller record through the USB dext.
-diagnose-record record *args:
-    {{ env }} swift run OpenJoystickDriverHIDTool --record-probe "$(realpath {{ record }})" {{ args }}
-
-# Print an authorized device's USB descriptor facts (hex vid and pid).
-diagnose-usb-passive vid pid:
-    {{ env }} swift run OpenJoystickDriverHIDTool --usb-passive --vid {{ vid }} --pid {{ pid }}
-
-# Run the SDL3 probe against the virtual device.
-diagnose-sdl3 *args:
-    Scripts/Diagnostics/backend.sh sdl3 {{ args }}
-
-# Run the SDL2 probe, by default against CrossOver's SDL2, which its Wine uses.
-diagnose-sdl2 *args:
-    Scripts/Diagnostics/backend.sh sdl2 {{ args }}
-
-# Run SDL3 through GameController and test rumble.
-diagnose-sdl3-gamecontroller *args:
-    Scripts/Diagnostics/backend.sh sdl3-gamecontroller {{ args }}
-
-# Run SDL3 through the Xbox 360 HIDAPI backend and test rumble.
-diagnose-sdl3-hidapi-x360 *args:
-    Scripts/Diagnostics/backend.sh sdl3-hidapi-x360 {{ args }}
-
-# Run the GameController.framework probe.
-diagnose-gamecontroller *args:
-    Scripts/Diagnostics/backend.sh gamecontroller {{ args }}
-
-# Run the backend acceptance loop.
-diagnose-backends *args:
-    Scripts/Diagnostics/backend.sh backends {{ args }}
-
-# Feed every control to each browser's Gamepad API and report its slot.
-diagnose-browsers *args:
-    python3 -m Scripts.Diagnostics.browser_gamepad {{ args }}
-
-# Identify each physical rumble actuator, pausing between steps.
-diagnose-rumble-motors vid pid intensity="160" duration_ms="500":
-    Scripts/Diagnostics/rumble-motors.sh {{ vid }} {{ pid }} {{ intensity }} {{ duration_ms }}
-
-# Kill stale DriverKit process copies after an upgrade.
-repair-stale-dext:
-    python3 -m Scripts.Diagnostics.dext.repair
 
 # Capture the installed app's windows into .ojd-shots; pass --area, --settings-pane, --popup, --profile-section or --all.
 # Quoted arguments such as --popup "Generic HID gamepad (Generic)" reach the script whole.
