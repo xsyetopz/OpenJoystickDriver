@@ -4,7 +4,7 @@ One idea often ends up with several names, like "sofa", "couch", and "settee". T
 
 ```mermaid
 flowchart LR
-    s["App strings"] -->|"one value per line"| sc["Survey script"]
+    s["App strings"] -->|"one value per line"| sc["Survey recipe"]
     h["ojd --help pages"] -->|"one help line per line"| sc
     w["Wiki pages"] -->|"every line"| sc
     sc -->|"lines that match each word"| t["Counts table"]
@@ -13,14 +13,13 @@ flowchart LR
 
 ## How the Counts Are Made
 
-One script makes every number.
+One recipe makes every number. It builds the `ojd` command first.
 
 ```sh
-swift build --product OpenJoystickDriver
-Scripts/Quality/terminology_survey.sh [WORKDIR]   # default WORKDIR .build/terminology
+just docs-terminology-survey [WORKDIR]   # default WORKDIR .build/terminology
 ```
 
-The script writes three tab-separated input files to `WORKDIR` and counts each term in each. Running it twice prints the same table (`cmp`). Each `ojd ... --help` call takes about 9 s, so 112 pages take several minutes.
+The recipe writes three tab-separated input files to `WORKDIR` and counts each term in each. Running it twice prints the same table (`cmp`). Each `ojd ... --help` call takes about 9 s, so 112 pages take several minutes.
 
 | Source | Input file | Built by | Counted lines |
 | --- | --- | --- | --- |
@@ -31,7 +30,7 @@ The script writes three tab-separated input files to `WORKDIR` and counts each t
 Reading the numbers:
 
 - Only `OpenJoystickDriverKit` has an `en-US.lproj`, holding every GUI and CLI string (`LOCALIZATION.md`).
-- A count is the number of lines that match the pattern, ignoring case. A line with two matches counts once. The script searches values, help text, and wiki text, not keys.
+- A count is the number of lines that match the pattern, ignoring case. A line with two matches counts once. The recipe searches values, help text, and wiki text, not keys.
 - Terms overlap: "profile" includes "remapping profile", "driver (any)" includes "Xbox USB driver", and "persona" sits under concepts 2 and 3. So the counts aren't shares of a whole.
 - Help text comes mostly from `cli.*` and `platform.macos.cli.*` values, so help lines often repeat a string.
 - `Strings` includes `.stringsdict` plurals: "Xbox USB driver" has 12 here, 7 in `.strings` alone.

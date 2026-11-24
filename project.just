@@ -5,6 +5,7 @@ release := "env OJD_ENV=release"
 import ".just/project/signing.just"
 import ".just/project/diagnostics.just"
 import ".just/project/release.just"
+import ".just/project/docs.just"
 
 # Create the Python environment the catalog, schema and script tests use.
 schema-env:
@@ -85,33 +86,6 @@ vocabulary-regenerate *args:
 check-whitespace:
     git diff --check
     git diff --check "$(git merge-base HEAD origin/main 2>/dev/null || git hash-object -t tree /dev/null)" HEAD
-
-# Swap jargon for everyday words in Swift doc comments; --check lists the files it would change.
-docs-plain-words *args:
-    python3 Scripts/Documentation/plain_comment_words.py {{ args }}
-
-# Convert wiki/ into GitHub wiki pages in an empty folder.
-wiki-build output *args:
-    python3 -m Scripts.Documentation.wiki.build {{ output }} {{ args }}
-
-# Publish wiki/ to the GitHub wiki; --dry-run shows the diff only.
-wiki *args:
-    python3 -m Scripts.Documentation.wiki.publish {{ args }}
-
-# Capture the installed app's windows into .ojd-shots; pass --area, --settings-pane, --popup, --profile-section or --all.
-# Quoted arguments such as --popup "Generic HID gamepad (Generic)" reach the script whole.
-[positional-arguments]
-shots-capture *args:
-    python3 -m Scripts.GUI.capture "$@"
-
-# Draw one ojd command and its real output as a Terminal window, such as: just shots-terminal ojd-status status
-[positional-arguments]
-shots-terminal name *args:
-    python3 -m Scripts.GUI.terminal "$@"
-
-# Draw the wiki step callouts and privacy masks on one .ojd-shots folder; pass --only NAME for one picture.
-shots-annotate captures *args:
-    python3 -m Scripts.GUI.annotate {{ captures }} {{ args }}
 
 # Run ruff and shellcheck over the scripts.
 project-lint:
