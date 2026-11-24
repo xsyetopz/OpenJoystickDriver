@@ -68,7 +68,7 @@ The repository reads no variable outside this table. Env files hold only these k
 | `DEVELOPER_DIR`, `SDKROOT` | contributor, CI, environment.sh | Xcode tools, `swift`, `swiftlint`, `justfile` | kept | Select the Xcode SDK and tools; the compiler is the swift on PATH. |
 | `TOOLCHAINS` | contributor | bundles.sh (unset for `xcodebuild`) | kept | xcodebuild cannot resolve the package under a swift.org toolchain. |
 | `CI` | GitHub Actions | driverkit.sh, signing.sh, notarize.sh | kept | Turns off prompts and rejects local SwifterKit. |
-| `GITHUB_REPOSITORY`, `GITHUB_REF_NAME`, `GITHUB_SHA`, `GITHUB_TOKEN` | GitHub Actions | `wiki/build.py`, package.py, wiki.yml | kept | Repository and ref facts only the runner knows. |
+| `GITHUB_REPOSITORY`, `GITHUB_REF_NAME`, `GITHUB_SHA`, `GITHUB_TOKEN` | GitHub Actions | `Scripts/Documentation/wiki/build.py`, `Scripts/Release/package.py`, `wiki.yml` | kept | Repository and ref facts only the runner knows. |
 | `RUNNER_TEMP`, `GITHUB_OUTPUT`, `GITHUB_PATH` | GitHub Actions | `signing.sh ci-release-setup`, workflow and action steps | kept | Runner scratch directory and step outputs. |
 | `RELEASE_TAG`, `RELEASE_TAG_INPUT`, `GH_TOKEN` | release workflow | workflow shell steps | kept | Tag and token of the release job. |
 | `NO_COLOR`, `TERM`, `PAGER`, `HOME`, `PATH`, `TMPDIR` | shell, Git, user | scripts, hooks | kept | Standard variables with their standard meaning. |
