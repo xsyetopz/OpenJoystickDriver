@@ -4,6 +4,7 @@ release := "env OJD_ENV=release"
 
 import ".just/project/signing.just"
 import ".just/project/diagnostics.just"
+import ".just/project/release.just"
 
 # Create the Python environment the catalog, schema and script tests use.
 schema-env:
@@ -111,42 +112,6 @@ shots-terminal name *args:
 # Draw the wiki step callouts and privacy masks on one .ojd-shots folder; pass --only NAME for one picture.
 shots-annotate captures *args:
     python3 -m Scripts.GUI.annotate {{ captures }} {{ args }}
-
-# Build a private notarized Developer ID tester DMG without installing or publishing it.
-package-tester:
-    {{ release }} {{ env }} python3 -m Scripts.Release.package_tester tester
-
-# Set the app version in Info.plist: an exact SemVer, or major, minor, patch, release, prerelease, alpha, beta, or rc.
-release-bump-version version:
-    python3 -m Scripts.Release.bump_version {{ version }}
-
-# Build, notarize, staple, and package a release DMG.
-release-package *version:
-    {{ release }} {{ env }} python3 -m Scripts.Release.package release {{ version }}
-
-# Package the release app and install it locally.
-release-local-install *version:
-    {{ release }} {{ env }} python3 -m Scripts.Release.install_local {{ version }}
-
-# Submit the release build for notarization.
-release-notarize-submit:
-    {{ release }} Scripts/Release/notarize.sh submit
-
-# Check notarization status, optionally of one submission.
-release-notarize-status *id:
-    {{ release }} Scripts/Release/notarize.sh status {{ id }}
-
-# Show the notarization history.
-release-notarize-history:
-    {{ release }} Scripts/Release/notarize.sh history
-
-# Show the notarization log of a submission.
-release-notarize-log id:
-    {{ release }} Scripts/Release/notarize.sh log {{ id }}
-
-# Store the notarization credentials in the Keychain.
-release-notarize-store-credentials *profile:
-    {{ release }} Scripts/Release/notarize.sh store-credentials {{ profile }}
 
 # Run ruff and shellcheck over the scripts.
 project-lint:
