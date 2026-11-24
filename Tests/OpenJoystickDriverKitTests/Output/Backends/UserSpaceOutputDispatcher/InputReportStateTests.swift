@@ -70,17 +70,17 @@ struct UserSpaceInputReportStateTests {
     #expect(state.claimChangedAuxiliaryReports().isEmpty)
 
     _ = state.update { $0.buttons = 1 << GamepadHIDDescriptor.ButtonBit.guide.rawValue }
-    // The Bluetooth state report carries Guide too, so it changes with the GIP and Bluetooth
-    // Guide reports.
+    // The Bluetooth state report carries Guide too, so it changes with the GIP Guide report.
     let pressed = state.claimChangedAuxiliaryReports()
+    #expect(pressed.count == 2)
     #expect(pressed.first == [0x07, 0x20, 0x00, 0x02, 1, 0x5B])
-    #expect(pressed.last == [0x02, 1])
+    #expect(pressed.last?.first == 0x01)
     #expect(state.claimChangedAuxiliaryReports().isEmpty)
 
     _ = state.update { $0 = VirtualGamepadState() }
     let released = state.claimChangedAuxiliaryReports()
+    #expect(released.count == 2)
     #expect(released.first == [0x07, 0x20, 0x00, 0x02, 0, 0x5B])
-    #expect(released.last == [0x02, 0])
   }
 
   @Test

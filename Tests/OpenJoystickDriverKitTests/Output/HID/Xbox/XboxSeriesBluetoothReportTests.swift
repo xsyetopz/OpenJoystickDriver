@@ -47,15 +47,15 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func guideTravelsOnButtonThirteenAndInReportTwo() {
+  func guideTravelsOnlyOnButtonThirteen() {
     let guide = VirtualGamepadState(
       buttons: 1 << UInt32(GamepadHIDDescriptor.ButtonBit.guide.rawValue)
     )
     var expected = Self.neutral
     expected[15] = 0x10
     #expect(format.buildInputReport(from: guide) == expected)
-    #expect(format.buildAuxiliaryInputReports(from: guide) == [[2, 1]])
-    #expect(format.buildAuxiliaryInputReports(from: VirtualGamepadState()) == [[2, 0]])
+    // A second Guide report makes WindowServer count each press twice.
+    #expect(format.buildAuxiliaryInputReports(from: guide).isEmpty)
   }
 
   @Test

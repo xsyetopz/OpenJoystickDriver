@@ -40,7 +40,7 @@ GameController reads no input from GIP-shaped reports. On `045e:02fd` (listed wi
 GameControllerCompatible publishes `045e:0b13` with a Bluetooth connection type and the `XboxSeriesBluetooth` layout (`XboxSeriesBluetoothReport`), without the GIP reports. It carries Share and the full left stick precision, which SDLCompatible lacks:
 
 - Input report 1: 17 bytes, with buttons at the bit positions SDL's Xbox One Bluetooth driver reads (A 1, B 2, X 4, Y 5, LB 7, RB 8, View 11, Menu 12, Guide 13, L3 14, R3 15). It has four 16-bit stick axes (the right stick on Z/Rz), 10-bit Brake and Accelerator triggers, a hat that carries only the D-pad, and Share as Consumer 0xB2.
-- Input report 2: Guide again, as System Main Menu, which GameController reads as Home.
+- Input report 2: Guide as System Main Menu, declared but never sent. As on Xbox Series firmware 5.x, Guide travels only in report 1. WindowServer's `XboxOneHIDServicePlugin` reads Guide from both reports and sends a Consumer AC Home (`0x0C:0x223`) event for each. A Guide press sent in both reports counts as two presses, and the Home Button Actions in System Settings › Game Controllers ignore it.
 - Output report 3: rumble.
 
 With `ojd virtual feed`, GameController names every control once, Share included. Home reaches only the front app, and only if that app turns off the button's system gesture. The profile sets `worksWithDefaultSDLHints: false` because SDL reads it through HIDAPI only on a Bluetooth connection, and macOS 27 says Virtual. `ojd virtual launch --sdl-gamecontroller-backend` makes SDL read it through GameController instead.

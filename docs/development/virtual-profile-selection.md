@@ -101,7 +101,7 @@ Costs of the combined descriptor:
 
 - Left stick precision: X keeps 12 bits and Y 11, so left Y can rest at 15 of 32768 and full deflection reads about 99.6%.
 - No Share button, unlike GameControllerCompatible.
-- Guide is System Main Menu in report 2, which macOS can claim for its own Home gesture.
+- Guide is button 13 of report 1, which macOS can claim for its own Home gesture.
 - A game that saved bindings for `045E:0B0C` sees a new GUID.
 
 ## SDL 2
@@ -110,8 +110,7 @@ SDL 2 and SDL 3 pick a parser for SDLCompatible's ID differently, so SDLCompatib
 
 - SDL 2 sets `ctx->bluetooth = SDL_IsJoystickBluetoothXboxOne(vid, pid)` (`SDL_hidapi_xboxone.c:384`), which is true for `0B0C` and `0B13`. In that mode it parses only report 1 (at least 16 bytes), 2, and 4, and skips every other ID (`:1162-1192`), GIP report `0x20` included.
 - SDL 3.4.20 claims the pad with its GIP driver, which runs before the Xbox One driver. `GIP_ReceivePacket` reads the options from byte 1 and a varint length from byte 3, and drops a packet whose length runs past the report (`SDL_hidapi_gip.c:2565-2672`, `:2765-2780`).
-- SDLCompatible carries Xbox Series Bluetooth report 1 (17 bytes), the Guide report 2, and rumble output 3 beside its GIP reports. In report 1, OJD clears bits 0 to 2 and 7 of byte 1 (`& 0x78`), and sets the low nibble of byte 3 and clears its bit 7 (`& 0x70 | 0x0F`), so SDL 3 reads a length of 15 to 127 and drops the packet. Left stick X keeps 12 bits and left stick Y 11: rest reads 15 on Y, and full right reads 32632 on X.
-- Report 2 is 2 bytes, below the 5-byte GIP header, so SDL 3 drops it too.
+- SDLCompatible carries Xbox Series Bluetooth report 1 (17 bytes) and rumble output 3 beside its GIP reports. It declares the Guide report 2 and never sends it, so SDL 2 reads Guide from byte 15 of report 1. In report 1, OJD clears bits 0 to 2 and 7 of byte 1 (`& 0x78`), and sets the low nibble of byte 3 and clears its bit 7 (`& 0x70 | 0x0F`), so SDL 3 reads a length of 15 to 127 and drops the packet. Left stick X keeps 12 bits and left stick Y 11: rest reads 15 on Y, and full right reads 32632 on X.
 
 Measured with the `045E:0B0C` identity and the Bluetooth reports declared as vendor data, `ojd virtual feed --as sdl-compatible`, `just diagnose-sdl2` for SDL 2 (`Tools/SDL2GamepadProbe`), and default hints, on installed app `0.6.0-alpha.4+build.1.33.33.sha.2303f8a64d7c.dirty`:
 

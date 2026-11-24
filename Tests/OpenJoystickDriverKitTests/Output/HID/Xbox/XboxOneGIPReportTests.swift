@@ -96,7 +96,8 @@ struct XboxOneGIPHIDReportFormatTests {
 
     #expect(pressed.first == [0x07, 0x20, 0x00, 0x02, 1, 0x5B])
     #expect(released.first == [0x07, 0x20, 0x00, 0x02, 0, 0x5B])
-    #expect(pressed.last == [0x02, 1])
+    #expect(pressed.count == 2)
+    #expect(pressed.last?[15] == 0x10)
     #expect(report(buttonBit: .guide) == ProtocolPacketFixtures.XboxOneGIP.neutralInputReport)
   }
 

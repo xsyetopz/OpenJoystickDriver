@@ -67,7 +67,7 @@ The maintainer tested a Razer Wolverine Tournament Edition (1532:0A15) and a Gam
 | SDLCompatible reports on 045E:02FD | Listed as "Xbox Wireless Controller Extended Gamepad", no input (GameController binds that ID, not 0B0C) | Many controls mapped wrongly, no rumble | not recorded |
 | Generic | Not listed | Mapped wrongly; right stick at rest at -0.17 on axis 2 | Per contract (triggers on axes 4 and 5, no rumble), except Razer right stick at rest at -0.25 on axis 2 |
 
-GameControllerCompatible publishes the same bit layout as a real 045E:0B13 over Bluetooth, which SDL's HIDAPI driver and Firefox's XboxSeriesXRemapper read. Guide is also on report 2, where GameController reads Home. With `just diagnose-browsers --as game-controller-compatible` on macOS 27:
+GameControllerCompatible publishes the same bit layout as a real 045E:0B13 over Bluetooth, which SDL's HIDAPI driver and Firefox's XboxSeriesXRemapper read. Guide travels only on report 1, where GameController reads Home. With `just diagnose-browsers --as game-controller-compatible` on macOS 27:
 
 | Browser | Controls | Rumble |
 | --- | --- | --- |

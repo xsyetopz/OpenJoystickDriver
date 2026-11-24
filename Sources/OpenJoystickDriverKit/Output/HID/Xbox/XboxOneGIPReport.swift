@@ -25,7 +25,8 @@ import Foundation
 /// Reports:
 /// - `0x01` (input): Xbox Series Bluetooth report 1, with the usages of
 ///   ``XboxSeriesBluetoothHIDDescriptor``, which SDL 2 and GameController read.
-/// - `0x02` (input): Xbox Series Bluetooth Guide, as System Main Menu.
+/// - `0x02` (input): Xbox Series Bluetooth Guide, as System Main Menu. OJD does not send it; see
+///   ``XboxSeriesBluetoothHIDDescriptor``.
 /// - `0x03` (output): Xbox Series Bluetooth rumble, which SDL 2 sends.
 /// - `0x04` (input): Xbox Series Bluetooth battery. OJD does not send it.
 /// - `0x20` (input, vendor): GIP input, options `0x00`, length 14, the 14-byte state data.
@@ -144,7 +145,7 @@ public struct XboxOneGIPHIDReportFormat: VirtualGamepadReportFormat {
   }
 
   /// The virtual key packet that carries Guide, the only place SDL 3 reads it, then the Bluetooth
-  /// state and Guide reports SDL 2 reads.
+  /// state report SDL 2 and GameController read.
   public func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]] {
     let guide = state.buttons & (1 << UInt32(GamepadHIDDescriptor.ButtonBit.guide.rawValue)) != 0
     return [
@@ -154,7 +155,7 @@ public struct XboxOneGIPHIDReportFormat: VirtualGamepadReportFormat {
         guide ? 1 : 0, XboxOneGIPHIDDescriptor.guideKeyCode,
       ],
       bluetoothStateReport(from: state),
-    ] + bluetooth.buildAuxiliaryInputReports(from: state)
+    ]
   }
 
   /// The Xbox Series Bluetooth report 1 of `state`, with the low bits of both left stick axes

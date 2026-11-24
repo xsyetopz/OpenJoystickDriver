@@ -7,19 +7,22 @@ import Foundation
 /// SDL's HIDAPI Xbox One Bluetooth driver and Firefox's `XboxSeriesXRemapper`. Apple's
 /// GameController framework names every control, and delivers Home only to the frontmost app.
 ///
+/// Guide travels only in report 1, as on Xbox Series firmware 5.x (`SDL_hidapi_xboxone.c` reads
+/// it from byte 15 until a report 2 arrives). WindowServer's `XboxOneHIDServicePlugin` reads
+/// Guide from both reports and sends a Consumer AC Home (`0x0C:0x223`) event for each, and
+/// `GamepadHIDServiceFilter` counts two presses as a sequence the Home button actions ignore.
+///
 /// Reports:
 /// - `0x01` (input, 16 bytes): left stick X/Y and right stick Z/Rz as `0...65535` with rest
 ///   `0x8000`, Brake (left trigger) and Accelerator (right trigger) as 10 bits each, a hat
 ///   `1...8` with null state 0 that alone carries the D-pad, 15 buttons, then Share as Consumer
 ///   Record (`0x0C:0xB2`). Guide is button 13; buttons 3, 6, 9 and 10 stay clear.
-/// - `0x02` (input, 1 byte): Guide again, as System Main Menu (`0x01:0x85`), where GameController
-///   reads Home.
+/// - `0x02` (input, 1 byte): Guide as System Main Menu (`0x01:0x85`), declared as the controller
+///   declares it. OJD does not send it.
 /// - `0x03` (output, 8 bytes): actuator enable mask, then left trigger, right trigger, left and
 ///   right motor magnitudes `0...100`, duration, start delay and loop count.
 /// - `0x04` (input): battery strength. OJD does not send it.
 public enum XboxSeriesBluetoothHIDDescriptor {
-  /// Report ID of the Guide input report.
-  static let guideReportID: UInt8 = 0x02
   /// Report ID of the rumble output report.
   public static let rumbleReportID: UInt8 = 0x03
   /// Bytes of the rumble output report after its ID.
@@ -126,14 +129,8 @@ public struct XboxSeriesBluetoothHIDReportFormat: VirtualGamepadReportFormat {
     }
   }
 
-  /// Report 1 of `state`.
+  /// Report 1 of `state`, the only report that carries Guide.
   public func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
     base.buildInputReport(from: state)
-  }
-
-  /// Report 2, which carries Guide.
-  public func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]] {
-    let guide = state.buttons & (1 << UInt32(GamepadHIDDescriptor.ButtonBit.guide.rawValue)) != 0
-    return [[XboxSeriesBluetoothHIDDescriptor.guideReportID, guide ? 1 : 0]]
   }
 }
