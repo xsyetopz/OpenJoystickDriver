@@ -58,7 +58,7 @@ OJD doesn't change browsers. A patch to a browser engine should use this mapping
 
 ## Accepted Browser Results
 
-Blink reads the published Xbox Series 045E:0B13 identity correctly. So it's the reference for every report layout: descriptor, report bytes, button usages, sticks, triggers, hat, Guide, Share. OJD's automatic pick publishes SDLCompatible (045E:0B0C) for every browser.
+Blink reads the published Xbox Series 045E:0B13 identity correctly. So it's the reference for every report layout: descriptor, report bytes, button usages, sticks, triggers, hat, Guide, Share. OJD's automatic pick publishes SDLCompatible, which uses the same 045E:0B13 identity as GameControllerCompatible.
 
 The maintainer tested a Razer Wolverine Tournament Edition (1532:0A15) and a GameSir pad on macOS 27:
 
@@ -74,6 +74,14 @@ GameControllerCompatible publishes the same bit layout as a real 045E:0B13 over 
 | Firefox 158 | every control in its standard slot but Share | no vibrationActuator |
 | Chrome 156 | every control but Guide; Share as B17 | `complete` |
 | Safari 27.0.1 | every control but Share | `complete` |
+
+With `just diagnose-browsers --as sdl-compatible` on macOS 27.2, each browser frontmost for its whole run:
+
+| Browser | Controls | Rumble |
+| --- | --- | --- |
+| Firefox 159 | every control in its standard slot but Share | no vibrationActuator |
+| Chrome 158 | every control but Guide; Share as B17 | `complete` |
+| Safari 27.2 | every control but Share; Guide as B16 | `complete` |
 
 Gecko with the published Xbox One S 045E:02E0 identity kept the same axis and trigger order, and sent the D-pad only through the hat. Share never showed up, because Firefox's remapper doesn't offer B17.
 
