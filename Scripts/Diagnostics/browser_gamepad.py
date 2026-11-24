@@ -206,14 +206,37 @@ def _installed(app: str) -> bool:
     )
 
 
-def _test_browser(server: _LogServer, key: str, persona: str, frames: str) -> Event:
+def _launch_command(key: str, url: str, profile_root: Path) -> list[str]:
+    app = BROWSERS[key]
+    if key != "chrome":
+        return ["open", "-a", app, url]
+    # A Chrome already running keeps the binary it started with after an update installs a new
+    # one, and it remembers gamepads from earlier runs. A new instance on its own profile starts
+    # from the installed binary with no gamepad state.
+    return [
+        "open",
+        "-na",
+        app,
+        "--args",
+        f"--user-data-dir={profile_root / 'chrome-profile'}",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--new-window",
+        url,
+    ]
+
+
+def _test_browser(
+    server: _LogServer, key: str, persona: str, frames: str, profile_root: Path
+) -> Event:
     app = BROWSERS[key]
     if not _installed(app):
         return {"browser": key, "skipped": f"{app} is not installed"}
     run = f"{key}-{uuid.uuid4().hex[:8]}"
     port = server.server_address[1]
     subprocess.run(
-        ["open", "-a", app, f"http://127.0.0.1:{port}/?run={run}"], check=True
+        _launch_command(key, f"http://127.0.0.1:{port}/?run={run}", profile_root),
+        check=True,
     )
     if not _wait_for_ready(server, run):
         return {
@@ -294,7 +317,9 @@ def main(argv: list[str]) -> int:
     threading.Thread(target=server.serve_forever, daemon=True).start()
     frames = "".join(json.dumps(frame) + "\n" for frame in feed_frames())
     try:
-        results = [_test_browser(server, key, args.persona, frames) for key in keys]
+        results = [
+            _test_browser(server, key, args.persona, frames, output) for key in keys
+        ]
     finally:
         server.shutdown()
     for result in results:

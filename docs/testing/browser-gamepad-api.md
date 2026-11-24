@@ -83,6 +83,8 @@ With `just diagnose-browsers --as sdl-compatible` on macOS 27.2, each browser fr
 | Chrome 158 | every control but Guide; Share as B17 | `complete` |
 | Safari 27.2 | every control but Share; Guide as B16 | `complete` |
 
+Chrome reads Guide from GameController's `buttonHome` into B16 (`device/gamepad/game_controller_gamepad.mm`), but never sets the button's `preferredSystemGestureState`. While the Home gesture is enabled, macOS keeps Home from the front app. A probe app on the same pad got no Home press with the default gesture state, and one press and release with `.disabled`. The harness starts Chrome as a new instance on its own profile under the run's output folder, because a Chrome that keeps running after an update keeps its old binary and the gamepads it saw before.
+
 Gecko with the published Xbox One S 045E:02E0 identity kept the same axis and trigger order, and sent the D-pad only through the hat. Share never showed up, because Firefox's remapper doesn't offer B17.
 
 | Browser | Published identity | ID/mapping/counts | LT | RT | Issues/reconnect/switch |
