@@ -31,5 +31,5 @@ jobs:
       - if: hashFiles('bun.lock') != ''
         run: bun install --frozen-lockfile && just lint-markdown
       - if: hashFiles('bun.lock') == ''
-        uses: DavidAnson/markdownlint-cli2-action@v25.0.0
+        uses: DavidAnson/markdownlint-cli2-action@v25.1.0
       - run: just guard-base lint-hooks
