@@ -48,9 +48,9 @@ public enum VirtualHIDProfileID: String, CaseIterable, Codable, Sendable {
   /// checks a controller's required primary controls against.
   public var representableControls: Set<Control> {
     switch self {
-    // The Xbox layout. Selection leaves Guide out, although GIP report 0x07 carries it for SDL 3
-    // and Bluetooth report 1 for SDL 2 and GameController.
-    case .sdlCompatible: return Control.xboxLayout
+    // The Xbox layout and Guide, which GIP report 0x07 carries for SDL 3 and Bluetooth report 1
+    // for SDL 2, GameController and the browsers.
+    case .sdlCompatible: return Control.xboxLayout.union([.guide])
     // The Xbox Series Bluetooth report: the Xbox layout, Guide and Share.
     case .gameControllerCompatible: return Control.xboxLayout.union([.guide, .capture])
     // The DualShock 4 report: the Xbox layout and the PS button. It carries no touchpad click.

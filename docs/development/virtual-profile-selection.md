@@ -19,7 +19,7 @@ Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with installed app `0
 | --- | --- |
 | One profile both GameController and SDL's HIDAPI drivers read | SDLCompatible as `045E:0B13`: the Xbox Series Bluetooth reports with their usages for GameController and SDL 2, and the Xbox One GIP reports as vendor data for SDL 3. See [SDLCompatible as 0B13](#sdlcompatible-as-0b13). GameController reads input only from the Bluetooth report layout, and SDL 3's HIDAPI drivers only from the GIP layout. |
 | A profile both read, with a condition | 045E:0B13 (GameControllerCompatible) or 045E:0B20 over the Bluetooth layout, with `SDL_JOYSTICK_HIDAPI=0`. SDL then reads the pad through its GameController backend. `ojd virtual launch --sdl-gamecontroller-backend` sets this up (see `wiki/Playing-Games.md`). |
-| Home (Guide) | Reached OJD, but neither probe reported it in any run. Both ran in the background. Still open. |
+| Home (Guide) | SDL 2 and SDL 3 read Guide as button 5. macOS reads Guide from report 1 as Consumer AC Home. With Enable Home Button Actions on, one press opens the Games app. With it off, a front app that sets Home's `preferredSystemGestureState` to `.disabled` gets one press and one release. A background app, or a front app that keeps the default gesture state, gets none, which is why the background GameController probe never reported it. Steam opens Big Picture on Guide. |
 | Swapping the published gamepad | SDL sees it removed within 36 ms, then added 2.0 s later with a different instance ID. GameController sees connect or disconnect within 76 ms. See [What a running game observes when OJD replaces the gamepad](#what-a-running-game-observes-when-ojd-replaces-the-gamepad). |
 
 ## How We Measured

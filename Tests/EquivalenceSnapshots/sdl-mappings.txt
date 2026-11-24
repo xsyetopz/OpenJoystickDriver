@@ -111,6 +111,7 @@ guid=030000005e040000130b000000000000
 report length=18 descriptorBytes=365
 probe Back fields=[9:11] -> b10
 probe East fields=[9:2] -> b1
+probe Guide fields=[9:13] -> b12
 probe LeftShoulder fields=[9:7] -> b6
 probe LeftStickClick fields=[9:14] -> b13
 probe North fields=[9:5] -> b4
@@ -129,5 +130,5 @@ probe DpadUp fields=[1:57] -> h0.1
 probe DpadRight fields=[1:57] -> h0.2
 probe DpadDown fields=[1:57] -> h0.4
 probe DpadLeft fields=[1:57] -> h0.8
-mapping=030000005e040000130b000000000000,Xbox Wireless Controller,a:b0,b:b1,x:b3,y:b4,back:b10,start:b11,leftstick:b13,rightstick:b14,leftshoulder:b6,rightshoulder:b7,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:+a5,righttrigger:+a4,platform:Mac OS X,
+mapping=030000005e040000130b000000000000,Xbox Wireless Controller,a:b0,b:b1,x:b3,y:b4,back:b10,guide:b12,start:b11,leftstick:b13,rightstick:b14,leftshoulder:b6,rightshoulder:b7,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:+a5,righttrigger:+a4,platform:Mac OS X,
 unmapped=

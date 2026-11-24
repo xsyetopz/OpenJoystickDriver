@@ -147,7 +147,7 @@ struct VirtualHIDProfileTests {
     let layout: Set<Control> = Control.dpad.union([
       .south, .east, .west, .north, .leftShoulder, .rightShoulder,
       .leftTrigger, .rightTrigger, .leftStickX, .leftStickY, .rightStickX, .rightStickY,
-      .leftStickClick, .rightStickClick, .back, .start,
+      .leftStickClick, .rightStickClick, .back, .start, .guide,
     ])
     #expect(profile.representableControls == layout)
   }
