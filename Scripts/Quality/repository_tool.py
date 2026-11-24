@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from functools import cache
 from pathlib import Path
 from typing import Any
@@ -141,3 +142,19 @@ def domain_areas() -> dict[str, str]:
 
 def kebab(values: list[str]) -> dict[str, str]:
     return {str(key): str(value) for key, value in document(["kebab", *values]).items()}
+
+
+def main(arguments: list[str]) -> int:
+    """Runs an OJDRepositoryTool check, such as `validate controllers DIR`, and prints its problems."""
+    try:
+        check(arguments)
+    except ToolError as error:
+        for line in str(error).splitlines():
+            print(f"[FAIL] {line}", file=sys.stderr)
+        return 1
+    print(f"{PRODUCT} {' '.join(arguments)}: no problems.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

@@ -48,8 +48,8 @@ check-schemas: schema-env
     {{ schema_python }} Tests/RepositoryScripts/test_schema_style.py
 
 # Check the canonical controller records.
-check-profiles: schema-env
-    {{ schema_python }} -m Scripts.Quality.check_profiles
+check-profiles:
+    python3 -m Scripts.Quality.repository_tool validate controllers Sources/OpenJoystickDriverKit/Resources/Controllers
 
 # Build the SDL 3 and SDL 2 gamepad probes and the WebRTC bridge package, and test the bridge.
 check-tools:
