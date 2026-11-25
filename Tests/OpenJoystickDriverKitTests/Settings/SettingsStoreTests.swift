@@ -227,11 +227,11 @@ struct SettingsStoreTests {
 
   @Test(arguments: [
     "not a property list",
-    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "mystery": true}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "notify": {"mystery": 1}}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "developerTools": "yes"}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "interfaceLevel": "Pro"}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "interfaceLevel": 1}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Settings", "mystery": true}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Settings", "notify": {"mystery": 1}}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Settings", "developerTools": "yes"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Settings", "interfaceLevel": "Pro"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Settings", "interfaceLevel": 1}"#,
   ])
   func damagedFileIsErrorNotEmptyLayer(json: String) throws {
     try write(json, to: .applicationData)

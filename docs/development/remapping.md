@@ -48,7 +48,7 @@ Built, with tests on made-up input. Not yet checked:
 
 ## Several Actions per Button
 
-Profiles must declare `apiVersion: openjoystickdriver/v1alpha3`. The reader refuses any other value before it reads anything else. An assignment has one main destination and an ordered `additionalActions` list. Each action has:
+Profiles must declare `apiVersion: openjoystickdriver/v1alpha4`. The reader refuses any other value before it reads anything else. An assignment has one main destination and an ordered `additionalActions` list. Each action has:
 
 - a UUID
 - a destination

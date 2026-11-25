@@ -57,7 +57,7 @@ ojd --no-input --json controller list | jq -r '.items[] | [.id, .name, .unit // 
 
 With `--json`, `ojd` prints JSON whose keys and values stay the same between releases and are never translated. A streaming command, such as `ojd controller watch` or `ojd virtual feed`, prints one object per line.
 
-- Each object has `apiVersion` (`openjoystickdriver/v1alpha3`) and `kind`, such as `Controller`, `UnservedController` (a device OJD does not handle), or `SystemStatus`.
+- Each object has `apiVersion` (`openjoystickdriver/v1alpha4`) and `kind`, such as `Controller`, `UnservedController` (a device OJD does not handle), or `SystemStatus`.
 - List commands print a `kind` ending in `List` (`ControllerList`) with entries in `items`. An item has no `apiVersion` or `kind`. `binding list` adds a `profile` to each item.
 - A command with nothing to print, such as `ojd profile delete`, prints a `Status`: `status` is `Success` and `details` holds the data. A failed command prints no JSON and exits non-zero.
 - Enumerated values are UpperCamelCase in `--json` (`NotPublished`, `BluetoothLE`) and lowercase kebab-case in `--plain` and arguments (`not-published`). This includes routes, [virtual gamepad kinds](Glossary.md#terms), and protocol families (`xbox-gip`).
@@ -168,11 +168,11 @@ A `control` program can press buttons on a virtual gamepad, as [`ojd virtual fee
 
 1. Run `ojd access grant --token driver --scope control`. Add `--scope read` for both. A token with `--origin` can't have `control`.
 2. Send a `Hello` with `"scopes":["Control"]`.
-3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The kinds are `Generic`, `SDLCompatible`, `GameControllerCompatible`, and `InControlCompatible`. An unknown one gets `E1003` with the accepted list.
+3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha4","kind":"FeedRequest","as":"Generic"}`. The kinds are `Generic`, `SDLCompatible`, `GameControllerCompatible`, and `InControlCompatible`. An unknown one gets `E1003` with the accepted list.
 4. After the `FeedSession` answer, send one `Frame` per line, with the keys and rules of an `ojd virtual feed` line. While 256 frames wait, the endpoint stops reading.
 5. Game rumble commands return as `RumbleCommand` lines.
 
-Closing the connection removes the gamepad and drops unplayed frames. To end cleanly, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drain"}` after the last frame and stay connected until `Drained` arrives. A `Drain` before the `FeedSession` gets `E1010`.
+Closing the connection removes the gamepad and drops unplayed frames. To end cleanly, send `{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Drain"}` after the last frame and stay connected until `Drained` arrives. A `Drain` before the `FeedSession` gets `E1010`.
 
 If no line arrives for 2 seconds after the last frame plays, OJD closes the connection with `E1008` and removes the gamepad. So a stalled client can't leave a button held down. Send any line within 2 seconds to keep it. The endpoint runs at most 4 virtual gamepads and answers another `feed` with `E1007`. It also sends `E1008` if the gamepad does not start or the service stops it.
 
@@ -182,7 +182,7 @@ The [reference client](../Scripts/SDK/reference_client.py) uses only the Python 
 
 After the `Welcome`, a `control` program can change profiles and drive outputs, and a `Read` program can watch lists. Field rules and answers are in the [SDK endpoint reference](../docs/sdk/endpoint.md#messages).
 
-- `ProfileRequest`: does what `ojd profile activate`, `deactivate`, and `set` do. Example: `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}`. A refusal carries the code `ojd` prints, such as `E2012`, and the connection stays open.
+- `ProfileRequest`: does what `ojd profile activate`, `deactivate`, and `set` do. Example: `{"apiVersion":"openjoystickdriver/v1alpha4","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}`. A refusal carries the code `ojd` prints, such as `E2012`, and the connection stays open.
 - `OutputRequest`: does what `ojd controller rumble`, `player`, and `light` do, with the same code as the Shortcuts actions. `Rumble` takes motor strengths (0 to 255) and a `duration` of at most 5 seconds. With no motor named, both main motors run at 180. `Player` takes 0 to 4. `Light` takes a six-digit hex `color` and a `brightness`.
 - `Subscription` with `"stream":"Profiles"` or `"stream":"Mods"` (no `output`): the endpoint sends the whole list on each change. Any later line ends the connection.
 - `ModList`: lists mod packages once, as `ojd mod list --json` does. An entry with a `problem` is a package the service does not use.

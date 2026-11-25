@@ -28,7 +28,7 @@ Profile fields: `id`, `category`, `displayName`, `subtitle`, `appPath`, `launchU
 
 ## How One Preset Maps to an OJD Profile
 
-The OJD shape is `Resources/Schemas/profile.schema.json` (`v1alpha3`). An OJD profile names a `device`, but the library names none, so one preset becomes one profile per controller model. Inferred: an importer must ask which model, and handle buttons the model lacks (`btn 13`, `btn 10`).
+The OJD shape is `Resources/Schemas/profile.schema.json` (`v1alpha4`). An OJD profile names a `device`, but the library names none, so one preset becomes one profile per controller model. Inferred: an importer must ask which model, and handle buttons the model lacks (`btn 13`, `btn 10`).
 
 | Library field | OJD field | Result |
 | --- | --- | --- |

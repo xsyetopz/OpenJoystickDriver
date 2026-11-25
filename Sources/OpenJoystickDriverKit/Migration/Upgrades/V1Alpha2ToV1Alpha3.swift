@@ -1,6 +1,6 @@
 import Foundation
 
-/// `openjoystickdriver/v1alpha2` to `openjoystickdriver/v1alpha3`.
+/// The body of a `v1alpha2` document in its `v1alpha3` form.
 ///
 /// A property list has no `null`, so a patch `null` becomes a `remove` entry and any other `null`
 /// leaves its key out. A patch that sets `modes` also removes `modes`, so it keeps replacing the
@@ -9,12 +9,7 @@ import Foundation
 /// A settings document gains `"interfaceLevel": "Advanced"`, so a user of an earlier version keeps
 /// the full interface.
 /// A record's `idle`, and a patch's, becomes `"idle": "NoControllerLinked"` on the `default` mode.
-enum AlphaTwoToAlphaThree {
-  /// The version the step reads.
-  static let from = "openjoystickdriver/v1alpha2"
-  /// The version the step writes.
-  static let to = OpenJoystickDriverAPI.version
-
+enum V1Alpha2ToV1Alpha3: DocumentUpgrade {
   /// The keys that `v1alpha3` does not have.
   private static let droppedKeys: Set<String> = ["notes", "rationale"]
 
@@ -60,7 +55,6 @@ enum AlphaTwoToAlphaThree {
     var removed: [String] = []
     for member in members {
       switch member.key {
-      case "apiVersion": converted.append(.init(key: member.key, value: .string(to)))
       case "applicationScope" where kind == .profile:
         converted.append(.init(key: member.key, value: try listedApps(member.value)))
       case "idle" where kind == .controller: continue

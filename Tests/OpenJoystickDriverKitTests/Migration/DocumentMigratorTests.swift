@@ -31,7 +31,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func accessGrantsFileBecomesVersionThreePropertyList() throws {
+  func accessGrantsFileBecomesCurrentPropertyList() throws {
     try write(MigrationFixtures.accessGrants, "AccessGrants.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated])
@@ -43,7 +43,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func profileBecomesVersionThreePropertyList() throws {
+  func profileBecomesCurrentPropertyList() throws {
     try write(MigrationFixtures.profile, "Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
@@ -54,7 +54,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func userRecordBecomesVersionThreePropertyList() throws {
+  func userRecordBecomesCurrentPropertyList() throws {
     try write(MigrationFixtures.userRecord, "Controllers/1234-abcd.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated])
@@ -152,6 +152,55 @@ struct DocumentMigratorTests {
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.current])
     #expect(entries.map(\.file) == ["AccessGrants.plist"])
+  }
+
+  /// A settings property list of `v1alpha3`, as 0.6.0-alpha.3 saves it.
+  private static let alphaThreeSettings = MigrationFixtures.document(
+    MigrationFixtures.alphaThree,
+    "Settings",
+    #""showInDock": true"#
+  )
+
+  private func writePropertyList(_ text: String, _ file: String) throws {
+    let data = try OrderedJSON.parse(Data(text.utf8)).plistData()
+    try write(try #require(String(bytes: data, encoding: .utf8)), file)
+  }
+
+  @Test
+  func alphaThreePropertyListIsRewrittenInPlaceWithItsOriginalKept() throws {
+    try writePropertyList(Self.alphaThreeSettings, "Settings.plist")
+    let original = try read("Settings.plist")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
+    let converted = try document("Settings.plist")
+    #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
+    #expect(converted["showInDock"] == .bool(true))
+    #expect(try read("Migrated/Settings.plist") == original)
+  }
+
+  @Test
+  func dryRunLeavesAlphaThreePropertyListUnchanged() throws {
+    try writePropertyList(Self.alphaThreeSettings, "Settings.plist")
+    let original = try read("Settings.plist")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: true)
+    #expect(entries.map(\.verdict) == [.migrated])
+    #expect(try read("Settings.plist") == original)
+    #expect(!exists("Migrated/Settings.plist"))
+  }
+
+  @Test
+  func propertyListOfUnknownVersionFailsUnchanged() throws {
+    let text = MigrationFixtures.document(
+      "openjoystickdriver/v9",
+      "Settings",
+      #""showInDock": true"#
+    )
+    try writePropertyList(text, "Settings.plist")
+    let original = try read("Settings.plist")
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.failed])
+    #expect(entries.first?.detail == "no conversion from openjoystickdriver/v9")
+    #expect(try read("Settings.plist") == original)
   }
 
   @Test

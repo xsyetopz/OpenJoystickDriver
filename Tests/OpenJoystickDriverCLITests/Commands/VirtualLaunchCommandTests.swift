@@ -32,9 +32,13 @@ struct VirtualLaunchCommandTests {
     environment: [String: String] = baseEnvironment
   ) async throws -> (run: CLIRun, printed: String) {
     let pipe = Pipe()
-    let run = await VirtualLaunchCommand.$baseEnvironment.withValue(environment) {
-      await VirtualLaunchCommand.$programStandardOutput.withValue(pipe.fileHandleForWriting) {
-        await service.run(arguments)
+    // A temporary settings folder keeps the user's own launch settings out of the run.
+    let store = SettingsStore(directory: RootedDataDirectory.temporary())
+    let run = await SettingCatalog.$store.withValue(store) {
+      await VirtualLaunchCommand.$baseEnvironment.withValue(environment) {
+        await VirtualLaunchCommand.$programStandardOutput.withValue(pipe.fileHandleForWriting) {
+          await service.run(arguments)
+        }
       }
     }
     try pipe.fileHandleForWriting.close()

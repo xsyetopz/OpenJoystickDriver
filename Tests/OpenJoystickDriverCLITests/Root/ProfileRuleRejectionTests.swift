@@ -13,7 +13,7 @@ private let south = #"{"type": "Button", "button": "South"}"#
 private func document(id: String = firstID, productID: Int = 3302, bindings: [String]) -> String {
   """
   {
-    "apiVersion": "openjoystickdriver/v1alpha3", "kind": "Profile", "id": "\(id)",
+    "apiVersion": "openjoystickdriver/v1alpha4", "kind": "Profile", "id": "\(id)",
     "name": "Fixture", "applicationScope": {"type": "Global"},
     "device": {"vendorID": 1356, "productID": \(productID)},
     "bindings": [\(bindings.joined(separator: ","))]

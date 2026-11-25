@@ -154,7 +154,7 @@ struct ModeServerTests {
     let patch = try OrderedJSON.parse(
       Data(
         #"""
-        {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "ControllerPatch",
+        {"apiVersion": "openjoystickdriver/v1alpha4", "kind": "ControllerPatch",
           "selector": {"vendorID": 4660, "productID": 43981},
           "patch": {"modes": [{"id": "switching", "server": "OJD"}]}}
         """#.utf8

@@ -738,14 +738,14 @@ The command scans the support folder (the root files, `ActiveProfiles`, `Profile
 
 | Verdict | Meaning |
 | --- | --- |
-| `Migrated` | Converted to a `v1alpha3` property list, or a dry run found it would be. |
+| `Migrated` | Converted to a `v1alpha4` property list, or a dry run found it would be. |
 | `Current` | Already a property list of the current version. |
 | `Failed` | Unchanged. `detail` says why. |
 | `Foreign` | Not an OpenJoystickDriver document. Unchanged. |
 
-- It converts `v1alpha1` and `v1alpha2` JSON documents of every kind, including the `mod.json` of an installed mod.
-- It writes the result beside the original as a `.plist` and checks it with the current reader. It keeps the original under `Migrated/` in the scanned folder, at the same relative path.
-- A backup is never overwritten. When `Migrated/<path>` or the `.plist` exists, the file fails and stays unchanged.
+- It converts `v1alpha1` and `v1alpha2` JSON documents and `v1alpha3` property lists of every kind, including the `mod` file of an installed mod.
+- It writes a JSON document's result beside the original as a `.plist`, and a property list's result in its place, and checks it with the current reader. It keeps the original under `Migrated/` in the scanned folder, at the same relative path.
+- A backup is never overwritten. When `Migrated/<path>` exists, or the `.plist` beside a JSON document, the file fails and stays unchanged.
 - A file that 0.5 wrote has no `apiVersion` and fails with "written by 0.5; re-create it".
 - `--dry-run` writes nothing.
 - The other files still convert when one fails. The command then exits with code 1 and `E5009`.

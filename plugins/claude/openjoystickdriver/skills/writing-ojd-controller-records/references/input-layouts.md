@@ -62,7 +62,7 @@ An 8-byte report with no ID: eight buttons in byte 0, an eight-way hat in byte 1
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha3",
+  "apiVersion": "openjoystickdriver/v1alpha4",
   "kind": "Controller",
   "vendorID": 4617,
   "productID": 1,

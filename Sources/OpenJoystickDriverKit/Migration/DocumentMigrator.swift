@@ -2,7 +2,7 @@ public import Foundation
 
 /// Converts the stored documents of an older `apiVersion` to the current one.
 ///
-/// This is the one place that applies ``DocumentMigrationStep``; the readers stay single-version
+/// This is the one place that applies a ``DocumentUpgrade``; the readers stay single-version
 /// and refuse a stale document. Every file it scans gets one ``Verdict``.
 public struct DocumentMigrator: Sendable {
   /// What became of one file.
@@ -145,7 +145,7 @@ public struct DocumentMigrator: Sendable {
         backups: backups,
         dryRun: dryRun
       ) {
-        try AlphaTwoToAlphaThree.activeProfiles(document).plistData()
+        try V1Alpha2ToV1Alpha3.activeProfiles(document).plistData()
       }
     }
     if file == Self.lastUsedFile, isPlist, case .object = document {
@@ -156,17 +156,13 @@ public struct DocumentMigrator: Sendable {
         ? entry(nil, .failed, "written by 0.5; re-create it")
         : entry(nil, .failed, "has no apiVersion")
     }
-    guard version.hasPrefix("openjoystickdriver/") else {
+    guard version.hasPrefix(DocumentVersion.prefix) else {
       return entry(nil, .foreign, "has another apiVersion")
     }
     guard let kind = document["kind"]?.string.flatMap(DocumentKind.init(rawValue:)) else {
       return entry(nil, .failed, "has an unknown kind")
     }
-    if isPlist {
-      return version == OpenJoystickDriverAPI.version
-        ? entry(kind.rawValue, .current)
-        : entry(kind.rawValue, .failed, "no conversion from \(version)")
-    }
+    if isPlist, version == OpenJoystickDriverAPI.version { return entry(kind.rawValue, .current) }
     let target = url.deletingPathExtension().appendingPathExtension("plist")
     return migrate(url, file: file, kind: kind.rawValue, backups: backups, dryRun: dryRun) {
       try convert(document, kind: kind, file: target)
@@ -179,6 +175,9 @@ public struct DocumentMigrator: Sendable {
   }
 
   /// Converts with `make`, and writes the result unless `dryRun`.
+  ///
+  /// A `.json` file becomes the `.plist` beside it; a `.plist` file is rewritten in place. Either
+  /// way the original is kept in the backup folder.
   private func migrate(
     _ url: URL,
     file: String,
@@ -189,7 +188,7 @@ public struct DocumentMigrator: Sendable {
   ) -> Entry {
     let target = url.deletingPathExtension().appendingPathExtension("plist")
     do {
-      guard !FileManager.default.fileExists(atPath: target.path) else {
+      guard target.path == url.path || !FileManager.default.fileExists(atPath: target.path) else {
         throw DocumentMigrationProblem("\(target.lastPathComponent) exists already")
       }
       let data = try make()
@@ -202,18 +201,13 @@ public struct DocumentMigrator: Sendable {
     }
   }
 
-  /// The document converted by the chain of steps, checked with its current reader.
+  /// The document converted to the current version, checked with its current reader.
   private func convert(_ document: OrderedJSON, kind: DocumentKind, file: URL) throws -> Data {
-    var converted = document
-    while let version = converted["apiVersion"]?.string, version != OpenJoystickDriverAPI.version {
-      guard
-        let step = DocumentMigrationStep.all.first(where: {
-          $0.kind == kind.rawValue && $0.from == version
-        })
-      else { throw DocumentMigrationProblem("no conversion from \(version)") }
-      converted = try step.convert(converted)
+    let text = document["apiVersion"]?.string ?? ""
+    guard let version = DocumentVersion(rawValue: text) else {
+      throw DocumentMigrationProblem("no conversion from \(text)")
     }
-    let data = try converted.plistData()
+    let data = try version.migrate(document, kind: kind).plistData()
     try Self.check(data, kind: kind, file: file)
     return data
   }
@@ -247,7 +241,8 @@ public struct DocumentMigrator: Sendable {
     }
   }
 
-  /// Keeps the original at `backup`, writes `data` to `target`, and removes the original.
+  /// Keeps the original at `backup`, writes `data` to `target`, and removes the original unless
+  /// `target` is the original.
   ///
   /// A backup that exists already is not overwritten, so a second run cannot lose an original.
   private func write(_ data: Data, from url: URL, to target: URL, backup: URL) throws {
@@ -269,6 +264,6 @@ public struct DocumentMigrator: Sendable {
         ofItemAtPath: target.path
       )
     }
-    try FileManager.default.removeItem(at: url)
+    if target.path != url.path { try FileManager.default.removeItem(at: url) }
   }
 }

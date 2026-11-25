@@ -69,7 +69,7 @@ A profile file, exported or not, holds one profile dictionary. `ActiveProfiles.p
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `apiVersion` | Yes | `openjoystickdriver/v1alpha3` |
+| `apiVersion` | Yes | `openjoystickdriver/v1alpha4` |
 | `kind` | Yes | `Profile` |
 | `id` | Yes | UUID |
 | `name` | Yes | 1 to 80 characters |

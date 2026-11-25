@@ -83,7 +83,7 @@ Ask for each control in turn and see which ones respond:
 ojd controller check VVVV:PPPP
 ```
 
-Records, patches, profiles and mod manifests are XML property lists (`.plist`) with `apiVersion` `openjoystickdriver/v1alpha3`. OJD converts the files of an earlier alpha when its service starts; `ojd migrate --dry-run` shows what it would convert. Check one with `plutil -lint FILE.plist`, read one as JSON with `plutil -convert json -o - FILE.plist`, and write one from JSON with `plutil -convert xml1 -o FILE.plist FILE.json`.
+Records, patches, profiles and mod manifests are XML property lists (`.plist`) with `apiVersion` `openjoystickdriver/v1alpha4`. OJD converts the files of an earlier alpha when its service starts; `ojd migrate --dry-run` shows what it would convert. Check one with `plutil -lint FILE.plist`, read one as JSON with `plutil -convert json -o - FILE.plist`, and write one from JSON with `plutil -convert xml1 -o FILE.plist FILE.json`.
 
 The wiki covers the rest: [Getting started][wiki-start], [Using the app][wiki-app], [Remapping profiles][wiki-remap] and the [Command reference][wiki-cli].
 

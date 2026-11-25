@@ -40,7 +40,7 @@ struct RepositoryPatchTests {
 
   private static let record = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha3",
+      "apiVersion": "openjoystickdriver/v1alpha4",
       "kind": "Controller",
       "vendorID": 1234,
       "productID": 5678,
@@ -60,7 +60,7 @@ struct RepositoryPatchTests {
 
   private static let patch = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha3",
+      "apiVersion": "openjoystickdriver/v1alpha4",
       "kind": "ControllerPatch",
       "selector": {"vendorID": 1234, "productID": 5678},
       "patch": {
@@ -78,7 +78,7 @@ struct RepositoryPatchTests {
 
   private static let secondPatch = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha3",
+      "apiVersion": "openjoystickdriver/v1alpha4",
       "kind": "ControllerPatch",
       "selector": {"model": "04d2-162e"},
       "patch": {
@@ -118,7 +118,7 @@ struct RepositoryPatchTests {
           == Self.dictionary(
             """
             {
-              "apiVersion": "openjoystickdriver/v1alpha3",
+              "apiVersion": "openjoystickdriver/v1alpha4",
               "kind": "Controller",
               "vendorID": 1234,
               "productID": 5678,
@@ -169,7 +169,7 @@ struct RepositoryPatchTests {
       )
       let patch = """
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {"vendorID": 1234, "productID": 5678},
           "patch": {"usb": {"interface": 0.0}}

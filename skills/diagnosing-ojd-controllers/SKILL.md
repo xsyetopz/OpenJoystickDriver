@@ -5,7 +5,7 @@ license: MPL-2.0
 compatibility: Requires macOS with OpenJoystickDriver installed and the ojd command on PATH.
 metadata:
   project: OpenJoystickDriver
-  apiVersion: openjoystickdriver/v1alpha3
+  apiVersion: openjoystickdriver/v1alpha4
 ---
 
 # Diagnosing OJD Controllers

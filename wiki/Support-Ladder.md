@@ -15,7 +15,7 @@ flowchart TD
 
 Steps 1 to 3 need no build and no pull request.
 
-A record is a small file that says how a controller works: which bytes are which button, how strong the rumble is. A patch fixes one detail of a record OJD already has. Both are `.plist` files with `apiVersion` `openjoystickdriver/v1alpha3`. `plutil -lint FILE.plist` checks one.
+A record is a small file that says how a controller works: which bytes are which button, how strong the rumble is. A patch fixes one detail of a record OJD already has. Both are `.plist` files with `apiVersion` `openjoystickdriver/v1alpha4`. `plutil -lint FILE.plist` checks one.
 
 ## Contents
 
@@ -51,7 +51,7 @@ Use a patch when OJD knows your controller but one detail is wrong, such as the 
    <plist version="1.0">
    <dict>
     <key>apiVersion</key>
-    <string>openjoystickdriver/v1alpha3</string>
+    <string>openjoystickdriver/v1alpha4</string>
     <key>kind</key>
     <string>ControllerPatch</string>
     <key>patch</key>

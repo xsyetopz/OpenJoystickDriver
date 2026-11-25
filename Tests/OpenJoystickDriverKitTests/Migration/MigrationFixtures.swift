@@ -1,6 +1,7 @@
 enum MigrationFixtures {
   static let alphaOne = "openjoystickdriver/v1alpha1"
   static let alphaTwo = "openjoystickdriver/v1alpha2"
+  static let alphaThree = "openjoystickdriver/v1alpha3"
 
   static func document(_ version: String, _ kind: String, _ rest: String) -> String {
     #"{"apiVersion": "\#(version)", "kind": "\#(kind)", \#(rest)}"#

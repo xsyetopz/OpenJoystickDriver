@@ -5,7 +5,7 @@ from typing import Any
 
 from Scripts.Quality import validate_schemas
 
-HEADER = {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings"}
+HEADER = {"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Settings"}
 
 
 class SettingsSchemaTests(unittest.TestCase):

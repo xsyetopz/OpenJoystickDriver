@@ -1,79 +1,11 @@
-import Foundation
-
-/// A document that a migration step cannot convert mechanically.
-public struct DocumentMigrationProblem: Error, Equatable, CustomStringConvertible, Sendable {
-  /// What has no mechanical mapping, naming the field.
-  public let description: String
-
-  /// Creates the problem from its text.
-  init(_ description: String) { self.description = description }
-}
-
-/// The conversion of one document kind from one older `apiVersion` to the next.
+/// The body of a `v1alpha1` document in its `v1alpha2` form.
 ///
-/// A step is a pure transform on the document's JSON: it reads no file and holds no state. The
-/// readers stay single-version; only ``DocumentMigrator`` applies steps, when the user asks.
-struct DocumentMigrationStep: Sendable {
-  /// The `kind` of the documents the step converts.
-  let kind: String
-  /// The `apiVersion` the step reads.
-  let from: String
-  /// The `apiVersion` the step writes.
-  let to: String
-  /// Converts the whole document, including its `apiVersion`.
-  let convert: @Sendable (OrderedJSON) throws -> OrderedJSON
-
-  /// The steps for every kind, in the order a chain applies them.
-  static let all: [Self] = DocumentKind.allCases.flatMap { kind in
-    [
-      Self(
-        kind: kind.rawValue,
-        from: AlphaOneToAlphaTwo.from,
-        to: AlphaOneToAlphaTwo.to
-      ) { try AlphaOneToAlphaTwo.convert($0, kind: kind) },
-      Self(
-        kind: kind.rawValue,
-        from: AlphaTwoToAlphaThree.from,
-        to: AlphaTwoToAlphaThree.to
-      ) { try AlphaTwoToAlphaThree.convert($0, kind: kind) },
-    ]
-  }
-}
-
-/// The kinds of stored document that a step converts.
-enum DocumentKind: String, CaseIterable, Sendable {
-  /// `Settings.json`.
-  case settings = "Settings"
-  /// `AccessGrants.json`.
-  case accessGrants = "AccessGrants"
-  /// A profile in `Profiles/`.
-  case profile = "Profile"
-  /// A user controller record in `Controllers/`.
-  case controller = "Controller"
-  /// A user controller patch in `Controllers/`.
-  case controllerPatch = "ControllerPatch"
-  /// The `mod` file of a package.
-  case modPackage = "ModPackage"
-  /// A virtual device file in `VirtualDevices/`.
-  case virtualDevice = "VirtualDevice"
-}
-
-/// `openjoystickdriver/v1alpha1` to `openjoystickdriver/v1alpha2`.
-enum AlphaOneToAlphaTwo {
-  /// The version the step reads.
-  static let from = "openjoystickdriver/v1alpha1"
-  /// The version the step writes.
-  static let to = "openjoystickdriver/v1alpha2"
-
-  /// Converts `document` of `kind`.
-  ///
-  /// - Throws: ``DocumentMigrationProblem`` for a field that has no mechanical mapping.
+/// A profile's `doubleTap` becomes a `multiTap` list, and a record's or patch's `input` becomes
+/// `layouts` with bit-addressed fields.
+enum V1Alpha1ToV1Alpha2: DocumentUpgrade {
   static func convert(_ document: OrderedJSON, kind: DocumentKind) throws -> OrderedJSON {
     guard case .object(var members) = document else {
       throw DocumentMigrationProblem("the file is not a JSON object")
-    }
-    members = members.map {
-      $0.key == "apiVersion" ? .init(key: $0.key, value: .string(to)) : $0
     }
     switch kind {
     case .settings, .accessGrants, .virtualDevice, .modPackage: break

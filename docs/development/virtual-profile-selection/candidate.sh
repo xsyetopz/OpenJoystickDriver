@@ -20,7 +20,7 @@ cat > "$FILE" <<EOF
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key><string>openjoystickdriver/v1alpha3</string>
+	<key>apiVersion</key><string>openjoystickdriver/v1alpha4</string>
 	<key>identity</key>
 	<dict>
 		<key>manufacturer</key><string>Microsoft</string>

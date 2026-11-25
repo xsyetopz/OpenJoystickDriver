@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/profile.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/profile.schema.json",
   "title": "OpenJoystickDriver profile",
   "description": "A remapping profile.",
   "type": "object",
@@ -16,7 +16,7 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "kind": {
       "const": "Profile"

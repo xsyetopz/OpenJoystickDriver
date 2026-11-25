@@ -5,7 +5,7 @@ license: MPL-2.0
 compatibility: Requires macOS with OpenJoystickDriver installed and the ojd command on PATH.
 metadata:
   project: OpenJoystickDriver
-  apiVersion: openjoystickdriver/v1alpha3
+  apiVersion: openjoystickdriver/v1alpha4
 ---
 
 # Writing OJD Controller Patches
@@ -18,7 +18,7 @@ Every document is an XML property list. Draft it as JSON, then convert: `plutil 
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha3",
+  "apiVersion": "openjoystickdriver/v1alpha4",
   "kind": "ControllerPatch",
   "selector": { "vendorID": 1118, "productID": 746 },
   "patch": { "tuning": { "stickDeadzone": 0.08 } }

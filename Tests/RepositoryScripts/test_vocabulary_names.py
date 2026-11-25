@@ -7,7 +7,7 @@ from typing import Any, cast
 
 from Scripts.Quality import validate_schemas
 
-VERSION = "openjoystickdriver/v1alpha3"
+VERSION = "openjoystickdriver/v1alpha4"
 ROOT = validate_schemas.ROOT
 SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.plist"
 UUID = "3B0F9C52-6E1D-4A8B-9C27-5D4E8F1A0B"

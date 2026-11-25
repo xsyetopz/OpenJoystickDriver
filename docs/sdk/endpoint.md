@@ -44,7 +44,7 @@ Every line has `apiVersion` and `kind`, except watch lines. ModList, KeepAlive, 
 First line on every connection. `nonce`: 32 random bytes, unpadded base64url, different for every connection.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Challenge","nonce":"ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8"}
 ```
 
 ### Hello
@@ -52,13 +52,13 @@ First line on every connection. `nonce`: 32 random bytes, unpadded base64url, di
 Sent once after Challenge. `scopes`: Read, Control, or both, and each must be granted.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Hello","scopes":["Read"]}
 ```
 
 With a token, add `tokenName` and `proof`:
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Control"],"tokenName":"driver","proof":"2ea98b640f249c35c5644ae64b42d56812ec40516475aa62913b53b80e9551c9"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Hello","scopes":["Control"],"tokenName":"driver","proof":"2ea98b640f249c35c5644ae64b42d56812ec40516475aa62913b53b80e9551c9"}
 ```
 
 ### Welcome
@@ -66,7 +66,7 @@ With a token, add `tokenName` and `proof`:
 The reply to a good Hello: `version` and the granted `scopes`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","version":"0.6.0-alpha.1","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Welcome","version":"0.6.0-alpha.1","scopes":["Read"]}
 ```
 
 ### Subscription
@@ -74,19 +74,19 @@ The reply to a good Hello: `version` and the granted `scopes`.
 `stream`: Controllers, Profiles, or Mods (Read). `"output":true` on Controllers adds the virtual gamepad's values. The others refuse it with E1003. Sending any line after this ends the connection.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Subscription","stream":"Controllers"}
 ```
 
 Watch lines match `ojd controller watch --all --json`: connected controllers first, then each change as `ADDED`, `MODIFIED`, or `DELETED`. Members: `type` and `object` (`kind` Controller), with no `apiVersion`.
 
 ```json
-{"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"holders":[],"holdsExclusively":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
+{"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"holders":[],"holdsExclusively":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
 ```
 
 Profiles and Mods send the whole list, then again on change. The list is read twice a second, so a burst of changes gives one line. A failed read sends nothing and is tried again.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Profiles","profiles":[{"id":"7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B","name":"Rally","model":"054C:0CE6","isActive":true}]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Profiles","profiles":[{"id":"7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B","name":"Rally","model":"054C:0CE6","isActive":true}]}
 ```
 
 ### ProfileRequest
@@ -94,13 +94,13 @@ Profiles and Mods send the whole list, then again on change. The list is read tw
 Changes a profile like `ojd profile activate`, `deactivate`, `set`. `action`: Activate, Deactivate, Set. `profile`: UUID or case-insensitive name. Set takes `key` (a dotted path, such as `name`) and `value` (`null` removes a member). Anything else gets E1003.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}
 ```
 
 Answer: ProfileResult. If the service says no, you get a Status failure with the code `ojd` prints (E2012 for a missing profile), and the connection stays open.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileResult","profile":{"id":"7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B","name":"Rally","model":"054C:0CE6","isActive":true}}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"ProfileResult","profile":{"id":"7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B","name":"Rally","model":"054C:0CE6","isActive":true}}
 ```
 
 ### ModList
@@ -108,13 +108,13 @@ Answer: ProfileResult. If the service says no, you get a Status failure with the
 Lists installed mod packages, as `ojd mod list --json` does.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ModList"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"ModList"}
 ```
 
 Answer: Mods, one entry per package in name order: `name`, `files`, and, when stated, `version`, `author`. `problem` says why a package isn't used.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[{"name":"arcade-pack","version":"1.2.3","author":"Tester","files":["Controllers/1234-abcd.plist"]}]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Mods","mods":[{"name":"arcade-pack","version":"1.2.3","author":"Tester","files":["Controllers/1234-abcd.plist"]}]}
 ```
 
 ### OutputRequest
@@ -130,13 +130,13 @@ Drives rumble, player number, or light like `ojd controller rumble`, `player`, `
 E1003: unknown `action`, wrong member, out-of-range value, or no `controller`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputRequest","controller":"054C:0CE6","action":"Rumble","left":200,"duration":1.5}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"OutputRequest","controller":"054C:0CE6","action":"Rumble","left":200,"duration":1.5}
 ```
 
 Answer: OutputResult, one `results` entry per command. If the controller can't do it, doesn't answer, is unknown, or matches more than one pad, you get a Status failure with the code `ojd` prints, and the connection stays open.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputResult","controller":"pad-1","results":[{"command":"rumble","outcome":"Delivered","droppedRumbleChannels":[]}]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"OutputResult","controller":"pad-1","results":[{"command":"rumble","outcome":"Delivered","droppedRumbleChannels":[]}]}
 ```
 
 ### FeedRequest
@@ -144,7 +144,7 @@ Answer: OutputResult, one `results` entry per command. If the controller can't d
 Publishes a virtual gamepad (Control). `as`: the persona id Generic, SDLCompatible, or GameControllerCompatible. An unknown id gets E1003 with the list of accepted personas. Closing the connection removes the gamepad.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"FeedRequest","as":"Generic"}
 ```
 
 ### FeedSession
@@ -152,7 +152,7 @@ Publishes a virtual gamepad (Control). `as`: the persona id Generic, SDLCompatib
 Answers FeedRequest once the gamepad exists.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"FeedSession","as":"Generic"}
 ```
 
 ### Frame
@@ -160,7 +160,7 @@ Answers FeedRequest once the gamepad exists.
 Keys of an `ojd virtual feed` line. A control you leave out is at rest. Sticks run -1 to 1 (positive Y is down), triggers 0 to 1. `holdMilliseconds` is the shortest time the frame stays on. Without it, the frame stays until the next one.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Frame","buttons":["South"],"axes":{"LeftStickY":0.5},"holdMilliseconds":100}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Frame","buttons":["South"],"axes":{"LeftStickY":0.5},"holdMilliseconds":100}
 ```
 
 Frames play in order, like slides in a slideshow.
@@ -178,7 +178,7 @@ Frames play in order, like slides in a slideshow.
 Restarts the 2-second idle timer. There's no reply, and the gamepad keeps its state. KeepAlive and Drain before FeedSession, or on a Subscription connection, get E1010 and a hang-up.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"KeepAlive"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"KeepAlive"}
 ```
 
 ### Drain
@@ -186,7 +186,7 @@ Restarts the 2-second idle timer. There's no reply, and the gamepad keeps its st
 Answered with Drained once every earlier frame has played, the last for its full `holdMilliseconds` (at least 8 ms). No line is read while you wait, and the wait doesn't count as idle. The idle timer starts when the last frame ends, so sending nothing after Drained gets E1008. A Drain with nothing waiting is answered at once, and you can send it again. Closing while you wait ends the feed.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drain"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Drain"}
 ```
 
 ### Drained
@@ -194,7 +194,7 @@ Answered with Drained once every earlier frame has played, the last for its full
 The reply to Drain. The program may then close.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drained"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Drained"}
 ```
 
 ### RumbleCommand
@@ -202,11 +202,11 @@ The reply to Drain. The program may then close.
 Sent for each rumble command a game gives the virtual gamepad. `type`: `SetRumble` or `StopRumble`. Intensities 0 to 65535.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RumbleCommand","type":"SetRumble","intensities":{"lowFrequency":65535,"highFrequency":0,"leftTrigger":0,"rightTrigger":0,"leftHaptic":0,"rightHaptic":0},"durationMilliseconds":200}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"RumbleCommand","type":"SetRumble","intensities":{"lowFrequency":65535,"highFrequency":0,"leftTrigger":0,"rightTrigger":0,"leftHaptic":0,"rightHaptic":0},"durationMilliseconds":200}
 ```
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RumbleCommand","type":"StopRumble"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"RumbleCommand","type":"StopRumble"}
 ```
 
 ### Status
@@ -214,13 +214,13 @@ Sent for each rumble command a game gives the virtual gamepad. `type`: `SetRumbl
 Sent when the endpoint refuses a line or ends the connection. `code` is an [error code](#errors). `message` is English text for logs, so your program should decide what to do from `code`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1007","message":"The endpoint runs 4 virtual gamepads already."}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Status","status":"Failure","code":"E1007","message":"The endpoint runs 4 virtual gamepads already."}
 ```
 
 With E1009, E1010, and E1011, `details.supportedAPIVersions` lists the accepted `apiVersion` values.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1009","message":"The apiVersion is not supported.","details":{"supportedAPIVersions":["openjoystickdriver/v1alpha3"]}}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Status","status":"Failure","code":"E1009","message":"The apiVersion is not supported.","details":{"supportedAPIVersions":["openjoystickdriver/v1alpha4"]}}
 ```
 
 ## Errors
@@ -257,12 +257,12 @@ Without a grant in AccessGrants, a program gets E1002. Only the service writes `
 Treat the file like a password (the hashes are the proof keys). The service writes it with mode 0600. Keep it out of reports and backups.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"AccessGrants","enabled":true,"grants":[{"publisher":{"kind":"Signed","id":"ABCDE12345"},"identifier":"com.example.overlay","scopes":["Read"],"grantedAt":"2026-01-01T00:00:00Z","path":"/Applications/Overlay.app"}],"tokens":[{"name":"driver","tokenSHA256":"0000000000000000000000000000000000000000000000000000000000000000","origins":[],"scopes":["Control"],"grantedAt":"2026-01-01T00:00:00Z","controlGrantedAt":"2026-01-01T00:00:00Z"}],"web":{"enabled":false,"port":49152}}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"AccessGrants","enabled":true,"grants":[{"publisher":{"kind":"Signed","id":"ABCDE12345"},"identifier":"com.example.overlay","scopes":["Read"],"grantedAt":"2026-01-01T00:00:00Z","path":"/Applications/Overlay.app"}],"tokens":[{"name":"driver","tokenSHA256":"0000000000000000000000000000000000000000000000000000000000000000","origins":[],"scopes":["Control"],"grantedAt":"2026-01-01T00:00:00Z","controlGrantedAt":"2026-01-01T00:00:00Z"}],"web":{"enabled":false,"port":49152}}
 ```
 
 ## Versioning
 
-The only accepted `apiVersion` is `openjoystickdriver/v1alpha3`, as in the schemas and user files.
+The only accepted `apiVersion` is `openjoystickdriver/v1alpha4`, as in the schemas and user files.
 
 - No version translating: any other `apiVersion` gets E1009 with the supported list.
 - An alpha version can change with no promise to stay compatible. Release notes list each change.

@@ -25,7 +25,7 @@ struct ControllerPatchModesTests {
     remove: [String]? = nil
   ) throws -> ControllerPatch {
     var members: [String] = [
-      #""apiVersion": "openjoystickdriver/v1alpha3""#, #""kind": "ControllerPatch""#,
+      #""apiVersion": "openjoystickdriver/v1alpha4""#, #""kind": "ControllerPatch""#,
       #""selector": {"vendorID": 4660, "productID": 43981}"#,
     ]
     if let patch { members.append(#""patch": \#(patch)"#) }

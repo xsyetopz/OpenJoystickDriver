@@ -25,7 +25,7 @@ Hex in file names is lowercase.
 
 | Key | Rule |
 | --- | --- |
-| `apiVersion` | `openjoystickdriver/v1alpha3` |
+| `apiVersion` | `openjoystickdriver/v1alpha4` |
 | `kind` | `ModPackage` |
 | `name` | lowercase letters, digits, hyphens |
 | `version` | SemVer, no `v` prefix |
@@ -63,7 +63,7 @@ Bundled catalog, then packages, then the user's files; the user's files win. Amo
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha3",
+  "apiVersion": "openjoystickdriver/v1alpha4",
   "kind": "ModPackage",
   "name": "ojd-sample",
   "version": "1.0.0",

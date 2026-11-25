@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/service-listener-failure.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/service-listener-failure.schema.json",
   "title": "OpenJoystickDriver service listener failure",
   "description": "The record of a fatal stop of the service's request listener.",
   "type": "object",
@@ -17,7 +17,7 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "kind": {
       "const": "ServiceListenerFailure"

@@ -81,7 +81,7 @@ A `remove` path names a property (`modes`, `name`, `placeholderSerial`, `usb`, `
 <plist version="1.0">
 <dict>
  <key>apiVersion</key>
- <string>openjoystickdriver/v1alpha3</string>
+ <string>openjoystickdriver/v1alpha4</string>
  <key>kind</key>
  <string>ControllerPatch</string>
  <key>patch</key>
@@ -495,7 +495,7 @@ A patch's `tuning` merges per value into the bundled `tuning`. Timings apply whe
 
 A family's default timings and control set are data in `Resources/Protocols/<file stem>.plist`, not Swift constants. [`protocol-description.schema.json`](../Resources/Schemas/protocol-description.schema.json) defines the file. Read this list only to change a family default or define a family.
 
-A description must set `apiVersion` (`openjoystickdriver/v1alpha3`), `kind` (`ProtocolDescription`), `family`, and `endpoints`. It may set:
+A description must set `apiVersion` (`openjoystickdriver/v1alpha4`), `kind` (`ProtocolDescription`), `family`, and `endpoints`. It may set:
 
 - `displayName`: the name OJD shows for a family it doesn't build in.
 - `variants`: `USB`, `BluetoothClassic`, `BluetoothLE`, `Gamepad`, `Wired`, `Receiver`, `Dongle`, or `EnhancedHID`.
@@ -555,7 +555,7 @@ A documented description sets no `sessionKeys`, no parameters, and no session fi
 <plist version="1.0">
 <dict>
  <key>apiVersion</key>
- <string>openjoystickdriver/v1alpha3</string>
+ <string>openjoystickdriver/v1alpha4</string>
  <key>kind</key>
  <string>ControllerPatch</string>
  <key>patch</key>
@@ -589,7 +589,7 @@ A `VirtualDevice` file in `~/Library/Application Support/OpenJoystickDriver/Virt
 <plist version="1.0">
 <dict>
  <key>apiVersion</key>
- <string>openjoystickdriver/v1alpha3</string>
+ <string>openjoystickdriver/v1alpha4</string>
  <key>kind</key>
  <string>VirtualDevice</string>
  <key>match</key>
@@ -785,7 +785,7 @@ A controller without a record can use a line of SDL_GameControllerDB. `ojd contr
 ## Install a Record
 
 1. Find your controller's VID:PID. See [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id).
-2. Write the record file with `apiVersion` `openjoystickdriver/v1alpha3` and `kind` `Controller` or `ControllerPatch`.
+2. Write the record file with `apiVersion` `openjoystickdriver/v1alpha4` and `kind` `Controller` or `ControllerPatch`.
 3. Run `ojd record validate FILE`.
 4. Run `ojd record install FILE`. `--dry-run` shows the target without writing.
 
@@ -808,9 +808,9 @@ The command removes the model's `Controller` and patch files. A bundled model re
 
 ## Schema Versions
 
-Each file OJD reads declares `apiVersion: openjoystickdriver/v1alpha3` and a `kind` (`Controller`, `ControllerPatch`, `VirtualDevice`, `Profile`, or `ModPackage`). Files don't declare `$schema`. OJD rejects any other `apiVersion`, a missing one, and a `kind` it doesn't read there. The error names the file, the version found, and the version supported. `ojd migrate` converts files of an earlier alpha. The schemas are flat files in `Resources/Schemas/`. Each `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/<kind>.schema.json`, and those IDs are not published.
+Each file OJD reads declares `apiVersion: openjoystickdriver/v1alpha4` and a `kind` (`Controller`, `ControllerPatch`, `VirtualDevice`, `Profile`, or `ModPackage`). Files don't declare `$schema`. OJD rejects any other `apiVersion`, a missing one, and a `kind` it doesn't read there. The error names the file, the version found, and the version supported. `ojd migrate` converts files of an earlier alpha. The schemas are flat files in `Resources/Schemas/`. Each `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/<kind>.schema.json`, and those IDs are not published.
 
-- Before 1.0, a `v1alpha3` schema may change incompatibly. The release notes list each change.
+- Before 1.0, a `v1alpha4` schema may change incompatibly. The release notes list each change.
 - At 1.0 the schemas become `v1`, which takes only additive changes: an optional field, or a value a reader can ignore.
 - A change that isn't additive needs `v2`.
 

@@ -5,7 +5,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -21,7 +21,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -37,7 +37,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -53,7 +53,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -69,7 +69,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -84,7 +84,7 @@
       "name": "remove path of an unknown tuning key",
       "code": "E5007",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -100,7 +100,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -117,7 +117,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -131,7 +131,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -147,7 +147,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -161,7 +161,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -174,7 +174,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "all": true
@@ -189,7 +189,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "all": true
@@ -204,7 +204,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "all": true
@@ -219,7 +219,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -235,7 +235,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -251,7 +251,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -273,7 +273,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -294,7 +294,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -314,7 +314,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -330,7 +330,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -346,7 +346,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 13623,
@@ -362,7 +362,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 11720,
@@ -378,7 +378,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 11720,
@@ -394,7 +394,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -413,7 +413,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -430,7 +430,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -449,7 +449,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,
@@ -466,7 +466,7 @@
       "code": "E5007",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1356,

@@ -20,7 +20,7 @@ Goal: change a few keys of a controller record that OJD already has, with a vali
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha3",
+  "apiVersion": "openjoystickdriver/v1alpha4",
   "kind": "ControllerPatch",
   "selector": { "vendorID": 1118, "productID": 746 },
   "patch": { "tuning": { "stickDeadzone": 0.08 } }

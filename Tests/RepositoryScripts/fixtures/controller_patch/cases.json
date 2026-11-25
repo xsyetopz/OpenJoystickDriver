@@ -3,7 +3,7 @@
     {
       "name": "remove deletes a parameter",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -37,7 +37,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -49,7 +49,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -82,7 +82,7 @@
     {
       "name": "remove deletes a whole section",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -115,7 +115,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -127,7 +127,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -157,7 +157,7 @@
     {
       "name": "a patch merges nested objects key by key",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -191,7 +191,7 @@
       },
       "builtin": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -209,7 +209,7 @@
       "package": [],
       "user": [],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -246,7 +246,7 @@
     {
       "name": "a mode merges by id and keeps the other modes",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -287,7 +287,7 @@
       "builtin": [],
       "package": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -318,7 +318,7 @@
       ],
       "user": [],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -360,7 +360,7 @@
     {
       "name": "a user patch beats a package patch",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -392,7 +392,7 @@
       "builtin": [],
       "package": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -407,7 +407,7 @@
       ],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -421,7 +421,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -457,7 +457,7 @@
     {
       "name": "a package patch beats a built-in patch and keeps its other keys",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -488,7 +488,7 @@
       },
       "builtin": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -504,7 +504,7 @@
       ],
       "package": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -519,7 +519,7 @@
       ],
       "user": [],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -556,7 +556,7 @@
     {
       "name": "a user patch deletes a key a package patch set",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -588,7 +588,7 @@
       "builtin": [],
       "package": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -603,7 +603,7 @@
       ],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -615,7 +615,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -649,7 +649,7 @@
     {
       "name": "inside one layer model beats vendorID and productID, which beat all",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -682,7 +682,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "model": "045e-02ea"
@@ -694,7 +694,7 @@
           }
         },
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -708,7 +708,7 @@
           }
         },
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -723,7 +723,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -760,7 +760,7 @@
     {
       "name": "an all patch of a later layer beats a model patch of an earlier layer",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -791,7 +791,7 @@
       },
       "builtin": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "model": "045e-02ea"
@@ -806,7 +806,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -819,7 +819,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -855,7 +855,7 @@
     {
       "name": "a patch for another controller changes nothing",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -888,7 +888,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -899,7 +899,7 @@
           }
         },
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "model": "045e-02eb"
@@ -910,7 +910,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -943,7 +943,7 @@
     {
       "name": "no patch gives the catalog record",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -976,7 +976,7 @@
       "package": [],
       "user": [],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1009,7 +1009,7 @@
     {
       "name": "an all patch skips the tuning keys a raw USB family does not read",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1031,7 +1031,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1049,7 +1049,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1074,7 +1074,7 @@
     {
       "name": "an all patch gives a DualShock 4 its liveness and HID timings",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1096,7 +1096,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1114,7 +1114,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1142,7 +1142,7 @@
     {
       "name": "an all patch gives a Switch 1 controller its startup recovery",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1164,7 +1164,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1182,7 +1182,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1211,7 +1211,7 @@
     {
       "name": "an all patch treats a GameSir USB variant as raw USB",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1234,7 +1234,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1252,7 +1252,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1278,7 +1278,7 @@
     {
       "name": "an all patch treats a GameSir non-USB variant as HID",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1301,7 +1301,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1320,7 +1320,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1349,7 +1349,7 @@
     {
       "name": "an all patch gives a record with an unknown family only stickDeadzone",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1371,7 +1371,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1390,7 +1390,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1416,7 +1416,7 @@
     {
       "name": "an all patch with only out-of-scope keys changes nothing",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1438,7 +1438,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1451,7 +1451,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1473,7 +1473,7 @@
     {
       "name": "an all patch remove deletes an in-scope key and ignores an out-of-scope remove",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1499,7 +1499,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1511,7 +1511,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1536,7 +1536,7 @@
     {
       "name": "two packages with one selector apply in package name order",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1559,7 +1559,7 @@
         {
           "owner": "b-pack",
           "document": {
-            "apiVersion": "openjoystickdriver/v1alpha3",
+            "apiVersion": "openjoystickdriver/v1alpha4",
             "kind": "ControllerPatch",
             "selector": {
               "model": "045e-02ea"
@@ -1572,7 +1572,7 @@
         {
           "owner": "a-pack",
           "document": {
-            "apiVersion": "openjoystickdriver/v1alpha3",
+            "apiVersion": "openjoystickdriver/v1alpha4",
             "kind": "ControllerPatch",
             "selector": {
               "model": "045e-02ea"
@@ -1585,7 +1585,7 @@
       ],
       "user": [],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1607,7 +1607,7 @@
     {
       "name": "a record with no vendorID and productID is returned unchanged",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "name": "No identity",
         "modes": [
@@ -1623,7 +1623,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1636,7 +1636,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "name": "No identity",
         "modes": [
@@ -1652,7 +1652,7 @@
     {
       "name": "layered patches merge the family timing keys",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1678,7 +1678,7 @@
       },
       "builtin": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -1694,7 +1694,7 @@
       ],
       "package": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -1710,7 +1710,7 @@
       ],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "vendorID": 1118,
@@ -1722,7 +1722,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1754,7 +1754,7 @@
     {
       "name": "an all patch gives a GIP record its USB transfer timeout",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1776,7 +1776,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1790,7 +1790,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1815,7 +1815,7 @@
     {
       "name": "an all patch gives an XUSB record only its USB transfer timeout",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1837,7 +1837,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1852,7 +1852,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1877,7 +1877,7 @@
     {
       "name": "an all patch skips the USB transfer timeout for a family that does not read it",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1899,7 +1899,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1913,7 +1913,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1938,7 +1938,7 @@
     {
       "name": "an all patch remove deletes the USB transfer timeout of an XUSB record",
       "record": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -1964,7 +1964,7 @@
       "package": [],
       "user": [
         {
-          "apiVersion": "openjoystickdriver/v1alpha3",
+          "apiVersion": "openjoystickdriver/v1alpha4",
           "kind": "ControllerPatch",
           "selector": {
             "all": true
@@ -1975,7 +1975,7 @@
         }
       ],
       "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "vendorID": 1118,
         "productID": 746,
@@ -2013,7 +2013,7 @@
           }
         }
       },
-      "message": "E5001: no apiVersion found; the supported apiVersion is openjoystickdriver/v1alpha3"
+      "message": "E5001: no apiVersion found; the supported apiVersion is openjoystickdriver/v1alpha4"
     },
     {
       "name": "a patch with the unsupported apiVersion unsupported.example/v9",
@@ -2030,12 +2030,12 @@
           }
         }
       },
-      "message": "E5001: apiVersion unsupported.example/v9 is not supported; the supported apiVersion is openjoystickdriver/v1alpha3; run `ojd migrate` to convert"
+      "message": "E5001: apiVersion unsupported.example/v9 is not supported; the supported apiVersion is openjoystickdriver/v1alpha4; run `ojd migrate` to convert"
     },
     {
       "name": "an unknown kind",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "NotAKind",
         "selector": {
           "vendorID": 1118,
@@ -2049,7 +2049,7 @@
     {
       "name": "a selector that mixes model and identity",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "model": "045e-02ea",
@@ -2066,7 +2066,7 @@
     {
       "name": "a selector with all false",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "all": false
@@ -2083,7 +2083,7 @@
     {
       "name": "an all patch that sets more than tuning",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "all": true
@@ -2098,7 +2098,7 @@
     {
       "name": "an empty patch",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1118,
@@ -2112,7 +2112,7 @@
     {
       "name": "an unknown section",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1118,
@@ -2128,7 +2128,7 @@
     {
       "name": "a model that is not vvvv-pppp lowercase hex",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "model": "045E-02EA"
@@ -2143,7 +2143,7 @@
     {
       "name": "an unknown member",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ControllerPatch",
         "selector": {
           "vendorID": 1118,
@@ -2161,7 +2161,7 @@
       "name": "a vendorID of 0",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 0,
           "productID": 1
@@ -2179,7 +2179,7 @@
       "name": "a vendorID above 65535",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 65536,
           "productID": 1
@@ -2197,7 +2197,7 @@
       "name": "a productID above 65535",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 1,
           "productID": 65536
@@ -2215,7 +2215,7 @@
       "name": "a negative productID",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 1,
           "productID": -1
@@ -2233,7 +2233,7 @@
       "name": "a boolean vendorID",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": true,
           "productID": 1
@@ -2251,7 +2251,7 @@
       "name": "a string productID",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 1,
           "productID": "2"
@@ -2269,7 +2269,7 @@
       "name": "a float vendorID",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 1118.5,
           "productID": 1
@@ -2287,7 +2287,7 @@
       "name": "a vendorID written as a float",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "vendorID": 1118.0,
           "productID": 1
@@ -2305,7 +2305,7 @@
       "name": "a model with a trailing newline",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "model": "045e-02ea\n"
         },
@@ -2322,7 +2322,7 @@
       "name": "a model that is not a string",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "model": 5
         },
@@ -2339,7 +2339,7 @@
       "name": "a selector.all of 1",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "all": 1
         },
@@ -2355,7 +2355,7 @@
     {
       "name": "a patch with no kind",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "all": true
         },
@@ -2372,7 +2372,7 @@
       "name": "a patch that is not an object",
       "document": {
         "kind": "ControllerPatch",
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "selector": {
           "all": true
         },

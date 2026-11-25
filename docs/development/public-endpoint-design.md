@@ -59,8 +59,8 @@ A grant records that you said yes. It doesn't stop malware running as you, which
 The service sends a `Challenge`. The client answers with a `Hello`. Every line except a watch line has `apiVersion` and `kind`:
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"..."}
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Challenge","nonce":"..."}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Hello","scopes":["Read"]}
 ```
 
 The nonce is 32 random bytes, fresh for each connection, from `SecRandomCopyBytes`, in unpadded base64url. A signed program ignores it. A program using a token signs it.
@@ -68,17 +68,17 @@ The nonce is 32 random bytes, fresh for each connection, from `SecRandomCopyByte
 The service answers with one line, then streams or closes:
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","version":"0.6.0-alpha.3","scopes":["Read"]}
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1002","message":"..."}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Welcome","version":"0.6.0-alpha.3","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Status","status":"Failure","code":"E1002","message":"..."}
 ```
 
-- The service accepts only `openjoystickdriver/v1alpha3`. Any other `apiVersion` gets `E1009` with `details.supportedAPIVersions`, then a close.
+- The service accepts only `openjoystickdriver/v1alpha4`. Any other `apiVersion` gets `E1009` with `details.supportedAPIVersions`, then a close.
 - The service grants every requested `scope`, or refuses with `E1002`.
 - Error codes `E1001` to `E1011` are in `Resources/ErrorCodes.plist` and the wiki page Error-Codes.
 
 ## Read Stream (Slice 3.3)
 
-After `Welcome`, the client sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers","output":false}`. The service then sends the watch lines of `ojd controller watch --all --json`. `output: true` adds `output`, as `--output` does.
+After `Welcome`, the client sends `{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Subscription","stream":"Controllers","output":false}`. The service then sends the watch lines of `ojd controller watch --all --json`. `output: true` adds `output`, as `--output` does.
 
 - One poller serves every subscriber. Its `watchAll()` code lives in `OpenJoystickDriverKit`.
 - A slow reader gets only the latest `input` line for each controller. Connect and disconnect lines are never dropped. At 256 waiting lines, the service closes with `E1006`.
@@ -89,9 +89,9 @@ After `Welcome`, the client sends `{"apiVersion":"openjoystickdriver/v1alpha3","
 With the `control` scope, the client sends a `FeedRequest`. The service answers `FeedSession` once the virtual gamepad exists. Each later client line is a `Frame`, the keys of an `ojd virtual feed` input line plus `apiVersion` and `kind`. The service sends `RumbleCommand` lines.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}
-{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1007","message":"..."}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"FeedRequest","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"FeedSession","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Status","status":"Failure","code":"E1007","message":"..."}
 ```
 
 - `control` works on the Unix socket for a signed program or a token. Having `read` never gives `control`.
@@ -153,7 +153,7 @@ Tests swap in their own identity lookup, because a unit test can't sign with a t
 
 - The token is `ojd_` plus 32 random bytes in base64url. `AccessGrants.plist` stores its SHA-256 in `tokens`. A lost token can't be shown again: revoke it and grant a new one.
 - The grant ID is `token:NAME`. Names are unique and match `[A-Za-z0-9._-]{1,64}`.
-- `hello` carries `tokenName` and a `proof`, never the token: `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"],"tokenName":"NAME","proof":"..."}`.
+- `hello` carries `tokenName` and a `proof`, never the token: `{"apiVersion":"openjoystickdriver/v1alpha4","kind":"Hello","scopes":["Read"],"tokenName":"NAME","proof":"..."}`.
 - The proof is the lowercase hex HMAC-SHA256, keyed with the token's SHA-256, of four lines ending in `\n`: `OpenJoystickDriver endpoint hello 1`, the nonce, the normalized `Origin`, and the WebSocket port. On the Unix socket, the origin and port lines are empty. The service compares them in constant time, so timing gives nothing away.
 - A proof only works for one connection, origin, and port, so a fake listener can't reuse it.
 - A token skips the signature check, so ad-hoc signed tools work. Any process of the user that reads the token can use it.

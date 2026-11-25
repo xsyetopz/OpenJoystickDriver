@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/cli-output.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/cli-output.schema.json",
   "title": "ojd --json output",
   "description": "The JSON output of one command of the command-line tool.",
   "$defs": {
@@ -2907,7 +2907,7 @@
     },
     "sharedAPIVersion": {
       "description": "The version of the JSON output format.",
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "sharedAccessGrant": {
       "type": "object",

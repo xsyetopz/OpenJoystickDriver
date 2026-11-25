@@ -36,7 +36,7 @@ extension ListeningSocketSuites {
   /// Checks that ``HostBridge`` passes valid peer frames to the endpoint and rumble to the peer.
   final class HostBridgeTests {
     /// The `apiVersion` member that every message carries, as JSON text.
-    private static let header = #""apiVersion":"openjoystickdriver/v1alpha3""#
+    private static let header = #""apiVersion":"openjoystickdriver/v1alpha4""#
 
     /// Serves one connection on the endpoint and starts a bridge on a fake channel.
     private func started(

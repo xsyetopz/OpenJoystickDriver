@@ -738,7 +738,7 @@ struct ControllerCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     #expect(
       result.standardOutput
-        == #"{"apiVersion":"openjoystickdriver/v1alpha3","captureTime":"1970-01-01T00:00:01.500Z","#
+        == #"{"apiVersion":"openjoystickdriver/v1alpha4","captureTime":"1970-01-01T00:00:01.500Z","#
         + #""direction":"Rx","hex":"01 02","kind":"RawReport","length":2}"# + "\n"
     )
   }
@@ -793,7 +793,7 @@ struct ControllerCommandTests {
     #expect(lines.allSatisfy { $0["apiVersion"] == nil && $0["kind"] == nil })
     #expect(
       objects.allSatisfy {
-        $0["apiVersion"] as? String == "openjoystickdriver/v1alpha3"
+        $0["apiVersion"] as? String == "openjoystickdriver/v1alpha4"
           && $0["kind"] as? String == "Controller"
       }
     )

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
+	<string>openjoystickdriver/v1alpha4</string>
 	<key>capabilities</key>
 	<dict>
 		<key>absent</key>

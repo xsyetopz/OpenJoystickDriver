@@ -7,7 +7,7 @@ license: MPL-2.0
 compatibility: Requires macOS with OpenJoystickDriver installed and the ojd command on PATH.
 metadata:
   project: OpenJoystickDriver
-  apiVersion: openjoystickdriver/v1alpha3
+  apiVersion: openjoystickdriver/v1alpha4
 ---
 
 # Writing OJD Controller Records
@@ -49,7 +49,7 @@ Bit layout rules (offsets, axes, hats, triggers, touch) and a full example: [ref
 
 ## Keys
 
-`apiVersion: openjoystickdriver/v1alpha3`, `kind: Controller`, decimal `vendorID`/`productID`, `modes` (each `id` + `protocol.family`), `input`, optional `name` (USB product string verbatim), `tuning`, `server`. File: `vvvv-pppp.plist`, lowercase hex.
+`apiVersion: openjoystickdriver/v1alpha4`, `kind: Controller`, decimal `vendorID`/`productID`, `modes` (each `id` + `protocol.family`), `input`, optional `name` (USB product string verbatim), `tuning`, `server`. File: `vvvv-pppp.plist`, lowercase hex.
 
 Raw-USB records need macOS to let OJD open the device; an Xbox model outside the signed driver list cannot be added by record.
 

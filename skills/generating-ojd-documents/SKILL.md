@@ -5,7 +5,7 @@ license: MPL-2.0
 compatibility: Requires macOS with OpenJoystickDriver installed and the ojd command on PATH.
 metadata:
   project: OpenJoystickDriver
-  apiVersion: openjoystickdriver/v1alpha3
+  apiVersion: openjoystickdriver/v1alpha4
 ---
 
 # Generating OJD Documents
@@ -21,7 +21,7 @@ function generate() {
   var sticks = ["LeftStickX", "LeftStickY", "RightStickX", "RightStickY"];
   return [1, 2, 3].map(function (productID) {
     return {
-      apiVersion: "openjoystickdriver/v1alpha3",
+      apiVersion: "openjoystickdriver/v1alpha4",
       kind: "Controller",
       vendorID: 0x1209,
       productID: productID,

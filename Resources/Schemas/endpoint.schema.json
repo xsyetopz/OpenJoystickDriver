@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/endpoint.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/endpoint.schema.json",
   "title": "OpenJoystickDriver endpoint protocol",
   "description": "One line of the endpoint protocol.",
   "oneOf": [

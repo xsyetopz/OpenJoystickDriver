@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/mod-package.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/mod-package.schema.json",
   "title": "OpenJoystickDriver mod package manifest",
   "description": "The manifest of a mod package.",
   "type": "object",
@@ -8,7 +8,7 @@
   "required": ["apiVersion", "kind", "name", "version", "author", "requires"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "kind": {
       "const": "ModPackage"

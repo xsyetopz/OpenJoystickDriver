@@ -69,14 +69,14 @@ Missing? See [If OpenJoystickDriver Isn't in the List](Permissions-and-Security.
 
 ### Update from an Earlier Alpha
 
-OJD 0.6.0-alpha.3 reads only `.plist` files with `apiVersion: openjoystickdriver/v1alpha3`. JSON from alpha.1 and alpha.2 fails with `E5001`, and any other non-plist file with `E5010`. OJD converts old files at each service start. To do it yourself, rehearse (writes nothing), then run:
+OJD 0.6.0-alpha.4 reads only `.plist` files with `apiVersion: openjoystickdriver/v1alpha4`. JSON from alpha.1 and alpha.2 and a `.plist` from alpha.3 fail with `E5001`, and any other non-plist file with `E5010`. OJD converts old files at each service start. To do it yourself, rehearse (writes nothing), then run:
 
 ```sh
 ojd migrate --dry-run
 ojd migrate
 ```
 
-The `.plist` lands beside the old file, which moves to `Migrated/`. An unconvertible file stays as it was, and the command ends with `E5009`. For `E5001`, the app shows a **Migrate** button. More options: [command reference](Command-Reference.md#migrate). A 0.5 file has no `apiVersion`: remake that profile. `ojd mod validate` refuses a mod that isn't a `v1alpha3` package.
+A JSON file becomes a `.plist` beside it, and an alpha.3 `.plist` is rewritten in place. Either way the old file moves to `Migrated/`. An unconvertible file stays as it was, and the command ends with `E5009`. For `E5001`, the app shows a **Migrate** button. More options: [command reference](Command-Reference.md#migrate). A 0.5 file has no `apiVersion`: remake that profile. `ojd mod validate` refuses a mod that isn't a `v1alpha4` package.
 
 ### Get a Fix
 

@@ -12,7 +12,7 @@ struct LibraryRecordTextTests {
   /// A record text as the catalog holds it: the `plistData()` of a record.
   private static let document: String = {
     let record: [String: Any] = [
-      "apiVersion": "openjoystickdriver/v1alpha3",
+      "apiVersion": "openjoystickdriver/v1alpha4",
       "kind": "Controller",
       "vendorID": 13629,
       "productID": 4296,

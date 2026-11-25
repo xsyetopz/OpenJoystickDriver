@@ -83,7 +83,7 @@ struct ControllerServerRequestsTests {
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let file = directory.appendingPathComponent("2dc8-301b.patch.plist")
       let patch: [String: Any] = [
-        "apiVersion": "openjoystickdriver/v1alpha3", "kind": "ControllerPatch",
+        "apiVersion": "openjoystickdriver/v1alpha4", "kind": "ControllerPatch",
         "selector": ["vendorID": 0x2DC8, "productID": 0x301B], "remove": ["server"],
       ]
       try PropertyListSerialization.data(fromPropertyList: patch, format: .xml, options: 0)

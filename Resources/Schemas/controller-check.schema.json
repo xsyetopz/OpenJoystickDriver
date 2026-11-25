@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller-check.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/controller-check.schema.json",
   "title": "OpenJoystickDriver controller check",
   "description": "The result of a guided check: the support-report facts of one controller and what each control did.",
   "type": "object",
@@ -15,7 +15,7 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "kind": {
       "const": "ControllerCheck"

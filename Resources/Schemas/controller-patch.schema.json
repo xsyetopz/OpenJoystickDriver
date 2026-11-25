@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller-patch.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/controller-patch.schema.json",
   "description": "A merge patch for controller records, with the key paths to remove first.",
   "type": "object",
   "additionalProperties": false,
@@ -8,7 +8,7 @@
   "anyOf": [{"required": ["patch"]}, {"required": ["remove"]}],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "kind": {
       "const": "ControllerPatch"

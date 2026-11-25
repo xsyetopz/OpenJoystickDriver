@@ -14,7 +14,7 @@ struct FlydigiGripRumbleTests {
       .map { unsafe String(format: "%02X", $0) }.joined(separator: " ")
     return PropertyListFixture.bytes(
       json: """
-        {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Controller",
+        {"apiVersion": "openjoystickdriver/v1alpha4", "kind": "Controller",
           "vendorID": 14295, "productID": 9217,
         "modes": [{"id": "default", "protocol": {"family": "HIDReportLayout"},
           "session": {"rumble": {"report": {"kind": "Output", "id": 3, "length": 32},

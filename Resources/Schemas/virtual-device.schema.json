@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/virtual-device.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha4/virtual-device.schema.json",
   "description": "A virtual device record: a persona, or a selection of a persona for a controller model or unit.",
   "type": "object",
   "additionalProperties": false,
   "required": ["apiVersion", "kind", "persona"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha3"
+      "const": "openjoystickdriver/v1alpha4"
     },
     "kind": {
       "const": "VirtualDevice"

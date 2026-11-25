@@ -5,7 +5,7 @@ license: MPL-2.0
 compatibility: Requires macOS with OpenJoystickDriver installed and the ojd command on PATH.
 metadata:
   project: OpenJoystickDriver
-  apiVersion: openjoystickdriver/v1alpha3
+  apiVersion: openjoystickdriver/v1alpha4
 ---
 
 # Writing OJD Controller Records
@@ -39,7 +39,7 @@ A `Controller` record describes a whole model: its family, modes, and input repo
 
 ## Record Keys
 
-- `apiVersion` `openjoystickdriver/v1alpha3`, `kind` `Controller`, decimal `vendorID` and `productID`.
+- `apiVersion` `openjoystickdriver/v1alpha4`, `kind` `Controller`, decimal `vendorID` and `productID`.
 - `name`: the USB product string, copied verbatim, optional.
 - `modes`: at least one, each with an `id` and `protocol.family`.
 - `input`: `layouts` or `hidUsageMap`.

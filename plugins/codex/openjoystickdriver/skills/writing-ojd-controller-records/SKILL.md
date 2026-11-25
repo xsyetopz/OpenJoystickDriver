@@ -42,7 +42,7 @@ Run `ojd protocol list` for the families. A family OJD lacks (handshake, encrypt
 
 ## Required Keys
 
-- `apiVersion`: `openjoystickdriver/v1alpha3`
+- `apiVersion`: `openjoystickdriver/v1alpha4`
 - `kind`: `Controller`
 - `vendorID`, `productID`: decimal integers
 - `modes`: at least one entry with `id` and `protocol.family`

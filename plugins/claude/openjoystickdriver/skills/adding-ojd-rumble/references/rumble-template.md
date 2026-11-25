@@ -47,7 +47,7 @@ The same session in a patch, as JSON for reading (`plutil -convert xml1` writes 
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha3",
+  "apiVersion": "openjoystickdriver/v1alpha4",
   "kind": "ControllerPatch",
   "selector": { "vendorID": 121, "productID": 6 },
   "patch": {

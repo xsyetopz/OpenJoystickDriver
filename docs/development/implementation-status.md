@@ -10,7 +10,7 @@ The app and the `ojd` command-line tool talk through a Unix socket that checks w
 
 ## Versions of Saved Files
 
-The endpoint, the schemas, and saved documents use `apiVersion` `openjoystickdriver/v1alpha3`. OJD refuses any other version. `ojd migrate` upgrades older saved documents. `Scripts/SDK/reference_client.py` speaks only that version.
+The endpoint, the schemas, and saved documents use `apiVersion` `openjoystickdriver/v1alpha4`. OJD refuses any other version. `ojd migrate` upgrades older saved documents. `Scripts/SDK/reference_client.py` speaks only that version.
 
 A profile library saved with a different schema version gets a clear unsupported-version error. An empty library in an unsupported version keeps its bytes and any fields OJD doesn't know.
 

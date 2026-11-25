@@ -5,7 +5,7 @@
       "code": "E5002",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -41,7 +41,7 @@
       "code": "E5002",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -75,7 +75,7 @@
       "code": "E5002",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -121,7 +121,7 @@
       "code": "E5002",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -166,7 +166,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -188,7 +188,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -214,7 +214,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -250,7 +250,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -292,7 +292,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -323,7 +323,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -347,7 +347,7 @@
       "fileName": "sony-dual-sense.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "defaults": {
@@ -373,7 +373,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -414,7 +414,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -453,7 +453,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -494,7 +494,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -535,7 +535,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -563,7 +563,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -589,7 +589,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -617,7 +617,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -645,7 +645,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -667,7 +667,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -687,7 +687,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -709,7 +709,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -731,7 +731,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -753,7 +753,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -773,7 +773,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -795,7 +795,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -817,7 +817,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -845,7 +845,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -871,7 +871,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -899,7 +899,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -927,7 +927,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -949,7 +949,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -969,7 +969,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -991,7 +991,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -1013,7 +1013,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -1044,7 +1044,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -1073,7 +1073,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -1104,7 +1104,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -1135,7 +1135,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -1166,7 +1166,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -1195,7 +1195,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -1226,7 +1226,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -1257,7 +1257,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -1286,7 +1286,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -1315,7 +1315,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -1338,7 +1338,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -1359,7 +1359,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -1387,7 +1387,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -1406,7 +1406,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -1436,7 +1436,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -1465,7 +1465,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -1494,7 +1494,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -1525,7 +1525,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -1556,7 +1556,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -1586,7 +1586,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -1628,7 +1628,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -1669,7 +1669,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -1709,7 +1709,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -1751,7 +1751,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -1793,7 +1793,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -1833,7 +1833,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -1864,7 +1864,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -1899,7 +1899,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -1930,7 +1930,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -1989,7 +1989,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2018,7 +2018,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2047,7 +2047,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2075,7 +2075,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2104,7 +2104,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2133,7 +2133,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2161,7 +2161,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2190,7 +2190,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2219,7 +2219,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2247,7 +2247,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2276,7 +2276,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2305,7 +2305,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2333,7 +2333,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2362,7 +2362,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2391,7 +2391,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2419,7 +2419,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -2446,7 +2446,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2469,7 +2469,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2492,7 +2492,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2515,7 +2515,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2538,7 +2538,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2561,7 +2561,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2584,7 +2584,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2607,7 +2607,7 @@
       "code": "E5004",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -2630,7 +2630,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2653,7 +2653,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2676,7 +2676,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2699,7 +2699,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2722,7 +2722,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2745,7 +2745,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2768,7 +2768,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2791,7 +2791,7 @@
       "code": "E5004",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -2815,7 +2815,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -2839,7 +2839,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -2863,7 +2863,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -2887,7 +2887,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -2911,7 +2911,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -2935,7 +2935,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "endpoints": {
@@ -2960,7 +2960,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -3009,7 +3009,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -3058,7 +3058,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -3107,7 +3107,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -3156,7 +3156,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -3205,7 +3205,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -3254,7 +3254,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -3291,7 +3291,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -3328,7 +3328,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -3365,7 +3365,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -3402,7 +3402,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -3439,7 +3439,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -3475,7 +3475,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -3499,7 +3499,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -3523,7 +3523,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -3547,7 +3547,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -3571,7 +3571,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -3595,7 +3595,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -3620,7 +3620,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -3645,7 +3645,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -3670,7 +3670,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -3695,7 +3695,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -3720,7 +3720,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -3745,7 +3745,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -3769,7 +3769,7 @@
       "fileName": "sony-sixaxis.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "endpoints": {
@@ -3793,7 +3793,7 @@
       "fileName": "sony-sixaxis.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "endpoints": {
@@ -3817,7 +3817,7 @@
       "fileName": "sony-sixaxis.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "endpoints": {
@@ -3841,7 +3841,7 @@
       "fileName": "sony-sixaxis.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "endpoints": {
@@ -3865,7 +3865,7 @@
       "fileName": "sony-sixaxis.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "endpoints": {
@@ -3889,7 +3889,7 @@
       "fileName": "sony-sixaxis.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "endpoints": {
@@ -3914,7 +3914,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -3963,7 +3963,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -4012,7 +4012,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -4061,7 +4061,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -4110,7 +4110,7 @@
       "document": {
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "endpoints": {
@@ -4158,7 +4158,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4206,7 +4206,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4254,7 +4254,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4302,7 +4302,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4350,7 +4350,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4398,7 +4398,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4446,7 +4446,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4494,7 +4494,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -4544,7 +4544,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -4594,7 +4594,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -4644,7 +4644,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -4694,7 +4694,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -4744,7 +4744,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -4794,7 +4794,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -4820,7 +4820,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -4846,7 +4846,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -4872,7 +4872,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -4898,7 +4898,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -4924,7 +4924,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -4947,7 +4947,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -4970,7 +4970,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -4993,7 +4993,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -5016,7 +5016,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -5039,7 +5039,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -5062,7 +5062,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -5085,7 +5085,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -5108,7 +5108,7 @@
       "code": "E5004",
       "fileName": "vendor-nvidia-shield.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -5131,7 +5131,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5154,7 +5154,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5177,7 +5177,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5200,7 +5200,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5223,7 +5223,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5246,7 +5246,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5269,7 +5269,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5292,7 +5292,7 @@
       "code": "E5004",
       "fileName": "vendor-ps3-third-party.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -5317,7 +5317,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5355,7 +5355,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5393,7 +5393,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5431,7 +5431,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5469,7 +5469,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5507,7 +5507,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5545,7 +5545,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -5583,7 +5583,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5608,7 +5608,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5633,7 +5633,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5658,7 +5658,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5683,7 +5683,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5708,7 +5708,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5733,7 +5733,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -5759,7 +5759,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -5795,7 +5795,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -5831,7 +5831,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -5867,7 +5867,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -5903,7 +5903,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -5939,7 +5939,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -5973,7 +5973,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -6313,7 +6313,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -6653,7 +6653,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -6993,7 +6993,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -7333,7 +7333,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -7355,7 +7355,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -7377,7 +7377,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -7399,7 +7399,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -7421,7 +7421,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "variants": ["USB", "BluetoothClassic"],
@@ -7561,7 +7561,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "variants": ["USB", "BluetoothClassic"],
@@ -7701,7 +7701,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "variants": ["USB", "BluetoothClassic"],
@@ -7841,7 +7841,7 @@
       "fileName": "nintendo-switch-input-only.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitchInputOnly",
         "variants": ["USB", "BluetoothClassic"],
@@ -7981,7 +7981,7 @@
       "fileName": "nintendo-switch1.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "variants": ["USB", "BluetoothClassic"],
@@ -8164,7 +8164,7 @@
       "fileName": "nintendo-switch1.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "variants": ["USB", "BluetoothClassic"],
@@ -8347,7 +8347,7 @@
       "fileName": "nintendo-switch1.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "variants": ["USB", "BluetoothClassic"],
@@ -8530,7 +8530,7 @@
       "fileName": "nintendo-switch1.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "variants": ["USB", "BluetoothClassic"],
@@ -8713,7 +8713,7 @@
       "fileName": "nintendo-switch2.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "variants": ["USB", "BluetoothLE"],
@@ -8842,7 +8842,7 @@
       "fileName": "nintendo-switch2.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "variants": ["USB", "BluetoothLE"],
@@ -8971,7 +8971,7 @@
       "fileName": "nintendo-switch2.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "variants": ["USB", "BluetoothLE"],
@@ -9100,7 +9100,7 @@
       "fileName": "nintendo-switch2.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "variants": ["USB", "BluetoothLE"],
@@ -9229,7 +9229,7 @@
       "fileName": "sony-dual-sense.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "variants": ["USB", "BluetoothClassic"],
@@ -9291,7 +9291,7 @@
       "fileName": "sony-dual-sense.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "variants": ["USB", "BluetoothClassic"],
@@ -9353,7 +9353,7 @@
       "fileName": "sony-dual-sense.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "variants": ["USB", "BluetoothClassic"],
@@ -9415,7 +9415,7 @@
       "fileName": "sony-dual-sense.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "variants": ["USB", "BluetoothClassic"],
@@ -9477,7 +9477,7 @@
       "fileName": "sony-dual-shock4.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "variants": ["USB", "BluetoothClassic"],
@@ -9552,7 +9552,7 @@
       "fileName": "sony-dual-shock4.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "variants": ["USB", "BluetoothClassic"],
@@ -9627,7 +9627,7 @@
       "fileName": "sony-dual-shock4.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "variants": ["USB", "BluetoothClassic"],
@@ -9702,7 +9702,7 @@
       "fileName": "sony-dual-shock4.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "variants": ["USB", "BluetoothClassic"],
@@ -9777,7 +9777,7 @@
       "fileName": "sony-sixaxis.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "variants": ["USB", "BluetoothClassic"],
@@ -9817,7 +9817,7 @@
       "fileName": "sony-sixaxis.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "variants": ["USB", "BluetoothClassic"],
@@ -9857,7 +9857,7 @@
       "fileName": "sony-sixaxis.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "variants": ["USB", "BluetoothClassic"],
@@ -9897,7 +9897,7 @@
       "fileName": "sony-sixaxis.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "variants": ["USB", "BluetoothClassic"],
@@ -9937,7 +9937,7 @@
       "fileName": "valve-steam-controller.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -10055,7 +10055,7 @@
       "fileName": "valve-steam-controller.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -10173,7 +10173,7 @@
       "fileName": "valve-steam-controller.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -10291,7 +10291,7 @@
       "fileName": "valve-steam-controller.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamController",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -10409,7 +10409,7 @@
       "fileName": "valve-steam-deck.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -10510,7 +10510,7 @@
       "fileName": "valve-steam-deck.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -10611,7 +10611,7 @@
       "fileName": "valve-steam-deck.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -10712,7 +10712,7 @@
       "fileName": "valve-steam-deck.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -10813,7 +10813,7 @@
       "fileName": "valve-steam-triton.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -10906,7 +10906,7 @@
       "fileName": "valve-steam-triton.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -10999,7 +10999,7 @@
       "fileName": "valve-steam-triton.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -11092,7 +11092,7 @@
       "fileName": "valve-steam-triton.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "variants": ["Wired", "Dongle", "BluetoothLE"],
@@ -11185,7 +11185,7 @@
       "fileName": "vendor-game-sir.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "variants": ["USB", "EnhancedHID"],
@@ -11306,7 +11306,7 @@
       "fileName": "vendor-game-sir.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "variants": ["USB", "EnhancedHID"],
@@ -11427,7 +11427,7 @@
       "fileName": "vendor-game-sir.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "variants": ["USB", "EnhancedHID"],
@@ -11548,7 +11548,7 @@
       "fileName": "vendor-game-sir.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "variants": ["USB", "EnhancedHID"],
@@ -11669,7 +11669,7 @@
       "fileName": "vendor-nvidia-shield.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -11717,7 +11717,7 @@
       "fileName": "vendor-nvidia-shield.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -11765,7 +11765,7 @@
       "fileName": "vendor-nvidia-shield.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -11813,7 +11813,7 @@
       "fileName": "vendor-nvidia-shield.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorNVIDIAShield",
         "endpoints": {
@@ -11861,7 +11861,7 @@
       "fileName": "vendor-ps3-third-party.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -11893,7 +11893,7 @@
       "fileName": "vendor-ps3-third-party.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -11925,7 +11925,7 @@
       "fileName": "vendor-ps3-third-party.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -11957,7 +11957,7 @@
       "fileName": "vendor-ps3-third-party.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorPS3ThirdParty",
         "endpoints": {
@@ -11989,7 +11989,7 @@
       "fileName": "xbox-gip.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "variants": ["USB"],
@@ -12117,7 +12117,7 @@
       "fileName": "xbox-gip.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "variants": ["USB"],
@@ -12245,7 +12245,7 @@
       "fileName": "xbox-gip.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "variants": ["USB"],
@@ -12373,7 +12373,7 @@
       "fileName": "xbox-gip.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "variants": ["USB"],
@@ -12501,7 +12501,7 @@
       "fileName": "xbox-xid.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "variants": ["Gamepad"],
@@ -12683,7 +12683,7 @@
       "fileName": "xbox-xid.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "variants": ["Gamepad"],
@@ -12865,7 +12865,7 @@
       "fileName": "xbox-xid.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "variants": ["Gamepad"],
@@ -13047,7 +13047,7 @@
       "fileName": "xbox-xid.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "variants": ["Gamepad"],
@@ -13229,7 +13229,7 @@
       "fileName": "xbox-xusb.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -13320,7 +13320,7 @@
       "fileName": "xbox-xusb.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -13411,7 +13411,7 @@
       "fileName": "xbox-xusb.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -13502,7 +13502,7 @@
       "fileName": "xbox-xusb.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -13595,7 +13595,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -13626,7 +13626,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -13656,7 +13656,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -13692,7 +13692,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13723,7 +13723,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13756,7 +13756,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13788,7 +13788,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13819,7 +13819,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13851,7 +13851,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13872,7 +13872,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13894,7 +13894,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13915,7 +13915,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13937,7 +13937,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13959,7 +13959,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -13981,7 +13981,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14003,7 +14003,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14030,7 +14030,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14056,7 +14056,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14086,7 +14086,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14116,7 +14116,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14146,7 +14146,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14177,7 +14177,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14212,7 +14212,7 @@
       "fileName": "xbox.xusb.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "xbox.xusb",
         "variants": ["Wired", "Receiver"],
@@ -14241,7 +14241,7 @@
       "fileName": "hid.descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "hid.descriptor",
         "variants": ["Wired", "Receiver"],
@@ -14270,7 +14270,7 @@
       "fileName": "vendor.ps3-third-party.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "vendor.ps3-third-party",
         "variants": ["Wired", "Receiver"],
@@ -14300,7 +14300,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -14325,7 +14325,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -14367,7 +14367,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -14415,7 +14415,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -14455,7 +14455,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -14511,7 +14511,7 @@
         "variants": ["Wired", "Dongle", "BluetoothLE"],
         "storesVariant": true,
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamTriton",
         "endpoints": {
@@ -14641,7 +14641,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
@@ -14670,7 +14670,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "Controller",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14700,7 +14700,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14721,7 +14721,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14737,7 +14737,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14758,7 +14758,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -14793,7 +14793,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -14816,7 +14816,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -14849,7 +14849,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -14869,7 +14869,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -14888,7 +14888,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -14932,7 +14932,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -14969,7 +14969,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -14998,7 +14998,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -15027,7 +15027,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -15056,7 +15056,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -15088,7 +15088,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -15123,7 +15123,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -15158,7 +15158,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15191,7 +15191,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15225,7 +15225,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15260,7 +15260,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15299,7 +15299,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15334,7 +15334,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15372,7 +15372,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15400,7 +15400,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15422,7 +15422,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15447,7 +15447,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -15486,7 +15486,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -15525,7 +15525,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -15562,7 +15562,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15587,7 +15587,7 @@
       "fileName": "xbox.unknown.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "xbox.unknown",
         "variants": ["Wired", "Receiver"],
@@ -15617,7 +15617,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Wired"],
@@ -15647,7 +15647,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["usb"],
@@ -15677,7 +15677,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": [],
@@ -15706,7 +15706,7 @@
       "fileName": "hid-descriptor.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -15744,7 +15744,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -15782,7 +15782,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -15822,7 +15822,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -15862,7 +15862,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -15904,7 +15904,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -15946,7 +15946,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -15977,7 +15977,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -15997,7 +15997,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -16019,7 +16019,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -16042,7 +16042,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16074,7 +16074,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16108,7 +16108,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16150,7 +16150,7 @@
         "variants": ["Wired", "Receiver"],
         "storesVariant": true,
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -16181,7 +16181,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -16203,7 +16203,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -16225,7 +16225,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16268,7 +16268,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -16289,7 +16289,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -16312,7 +16312,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -16336,7 +16336,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16375,7 +16375,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -16409,7 +16409,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -16446,7 +16446,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -16480,7 +16480,7 @@
       "fileName": "hid-report-layout.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -16518,7 +16518,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16550,7 +16550,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16588,7 +16588,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16622,7 +16622,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16656,7 +16656,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16690,7 +16690,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16724,7 +16724,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16759,7 +16759,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16794,7 +16794,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16857,7 +16857,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16896,7 +16896,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16935,7 +16935,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -16975,7 +16975,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17015,7 +17015,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17055,7 +17055,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17095,7 +17095,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17135,7 +17135,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17160,7 +17160,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17271,7 +17271,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17301,7 +17301,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17331,7 +17331,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17361,7 +17361,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17392,7 +17392,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17423,7 +17423,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17454,7 +17454,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17485,7 +17485,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17516,7 +17516,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17547,7 +17547,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17578,7 +17578,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17609,7 +17609,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17640,7 +17640,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17672,7 +17672,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17703,7 +17703,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17738,7 +17738,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17769,7 +17769,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17805,7 +17805,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17842,7 +17842,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17881,7 +17881,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17920,7 +17920,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -17964,7 +17964,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18001,7 +18001,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18038,7 +18038,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18075,7 +18075,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18112,7 +18112,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18149,7 +18149,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18186,7 +18186,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18223,7 +18223,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18259,7 +18259,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18295,7 +18295,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18332,7 +18332,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -18373,7 +18373,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18405,7 +18405,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18437,7 +18437,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18469,7 +18469,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18501,7 +18501,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18532,7 +18532,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18564,7 +18564,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18596,7 +18596,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18630,7 +18630,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18666,7 +18666,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18701,7 +18701,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -18736,7 +18736,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18766,7 +18766,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18796,7 +18796,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18821,7 +18821,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18852,7 +18852,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18893,7 +18893,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18934,7 +18934,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -18975,7 +18975,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19016,7 +19016,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19052,7 +19052,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19157,7 +19157,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19199,7 +19199,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19239,7 +19239,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19285,7 +19285,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19326,7 +19326,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19367,7 +19367,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19408,7 +19408,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19449,7 +19449,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19491,7 +19491,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19536,7 +19536,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19581,7 +19581,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19626,7 +19626,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19671,7 +19671,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19716,7 +19716,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19762,7 +19762,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19796,7 +19796,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19836,7 +19836,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19877,7 +19877,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19918,7 +19918,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -19959,7 +19959,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -20001,7 +20001,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -20039,7 +20039,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -20080,7 +20080,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch1",
         "endpoints": {
@@ -20132,7 +20132,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20163,7 +20163,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20194,7 +20194,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20362,7 +20362,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20529,7 +20529,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20568,7 +20568,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20607,7 +20607,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20646,7 +20646,7 @@
       "fileName": "valve-steam-deck.json",
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20686,7 +20686,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20727,7 +20727,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20768,7 +20768,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20809,7 +20809,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20850,7 +20850,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20891,7 +20891,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20932,7 +20932,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -20973,7 +20973,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -21014,7 +21014,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -21049,7 +21049,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -21084,7 +21084,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -21123,7 +21123,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "ValveSteamDeck",
         "endpoints": {
@@ -21163,7 +21163,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -21194,7 +21194,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -21213,7 +21213,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21245,7 +21245,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21277,7 +21277,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21312,7 +21312,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21349,7 +21349,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21386,7 +21386,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21423,7 +21423,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21460,7 +21460,7 @@
         "variants": ["USB", "EnhancedHID"],
         "storesVariant": true,
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "VendorGameSir",
         "endpoints": {
@@ -21498,7 +21498,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -21534,7 +21534,7 @@
       "document": {
         "variants": ["USB", "BluetoothClassic"],
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -21567,7 +21567,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -21585,7 +21585,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -21616,7 +21616,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "storesVariant": true,
@@ -21646,7 +21646,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -21678,7 +21678,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -21713,7 +21713,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -21751,7 +21751,7 @@
       "schema": true,
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -21766,7 +21766,7 @@
       "code": "E5002",
       "fileName": "hid-descriptor.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDDescriptor",
         "endpoints": {
@@ -21785,7 +21785,7 @@
       "code": "E5002",
       "fileName": "hid-report-layout.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "HIDReportLayout",
         "endpoints": {
@@ -21807,7 +21807,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -21830,7 +21830,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -21853,7 +21853,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -21884,7 +21884,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -21915,7 +21915,7 @@
       "schema": true,
       "document": {
         "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "variants": ["Wired", "Receiver"],
@@ -21946,7 +21946,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -21971,7 +21971,7 @@
       "fileName": "sony-dual-sense.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualSense",
         "endpoints": {
@@ -21997,7 +21997,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22016,7 +22016,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22034,7 +22034,7 @@
       "fileName": "sony-dual-shock4.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -22050,7 +22050,7 @@
       "fileName": "sony-dual-shock4.json",
       "document": {
         "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonyDualShock4",
         "endpoints": {
@@ -22066,7 +22066,7 @@
       "fileName": "xbox-gip.json",
       "document": {
         "variants": ["USB"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -22098,7 +22098,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22118,7 +22118,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22138,7 +22138,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22158,7 +22158,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22177,7 +22177,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22205,7 +22205,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -22236,7 +22236,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -22267,7 +22267,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -22298,7 +22298,7 @@
       "document": {
         "variants": ["USB"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "endpoints": {
@@ -22329,7 +22329,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -22358,7 +22358,7 @@
       "document": {
         "variants": ["USB", "BluetoothLE"],
         "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoSwitch2",
         "endpoints": {
@@ -22386,7 +22386,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22418,7 +22418,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22461,7 +22461,7 @@
       "document": {
         "variants": ["Gamepad"],
         "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22497,7 +22497,7 @@
       "fileName": "sony-sixaxis.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "variants": ["USB", "BluetoothClassic"],
@@ -22516,7 +22516,7 @@
       "code": "E5004",
       "fileName": "sony-sixaxis.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "SonySixaxis",
         "variants": ["USB", "BluetoothClassic"],
@@ -22536,7 +22536,7 @@
       "schema": true,
       "fileName": "xbox-xusb.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -22566,7 +22566,7 @@
       "schema": true,
       "fileName": "xbox-xid.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXID",
         "endpoints": {
@@ -22585,7 +22585,7 @@
       "code": "E5004",
       "fileName": "xbox-xusb.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxXUSB",
         "endpoints": {
@@ -22617,7 +22617,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -23562,7 +23562,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -24508,7 +24508,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -25453,7 +25453,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -26397,7 +26397,7 @@
       "code": "E5002",
       "fileName": "nintendo-wii.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -27341,7 +27341,7 @@
       "code": "E5002",
       "fileName": "nintendo-wii.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -28285,7 +28285,7 @@
       "code": "E5002",
       "fileName": "nintendo-wii.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -29230,7 +29230,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -30174,7 +30174,7 @@
       "code": "E5002",
       "fileName": "nintendo-wii.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -31119,7 +31119,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -32063,7 +32063,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -33008,7 +33008,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -33952,7 +33952,7 @@
       "code": "E5002",
       "fileName": "nintendo-wii.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -34897,7 +34897,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -35772,7 +35772,7 @@
       "fileName": "nintendo-wii.json",
       "schema": true,
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -36720,7 +36720,7 @@
       "code": "E5002",
       "fileName": "nintendo-wii.json",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "NintendoWii",
         "variants": [
@@ -37654,7 +37654,7 @@
       "code": "E5002",
       "fileName": "XboxGIP.plist",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "displayName": "Acme Pad",
@@ -37666,7 +37666,7 @@
       "code": "E5002",
       "fileName": "AcmePad.plist",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "AcmePad",
         "displayName": "Acme Pad",
@@ -37678,7 +37678,7 @@
       "code": "E5002",
       "fileName": "AcmePad.plist",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "AcmePad",
         "endpoints": { "in": 130, "out": 2 }
@@ -37689,7 +37689,7 @@
       "code": "E5003",
       "fileName": "acme-pad.plist",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "AcmePad",
         "displayName": "Acme Pad",
@@ -37701,7 +37701,7 @@
       "code": "E5002",
       "fileName": "xbox-gip.plist",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "XboxGIP",
         "displayName": "Acme Pad",
@@ -37714,7 +37714,7 @@
       "schema": true,
       "fileName": "acme-pad.plist",
       "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
+        "apiVersion": "openjoystickdriver/v1alpha4",
         "kind": "ProtocolDescription",
         "family": "acme-pad",
         "displayName": "Acme Pad",

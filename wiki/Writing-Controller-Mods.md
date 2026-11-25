@@ -59,7 +59,7 @@ OJD refuses any file, folder, or link outside the layout. It skips hidden and `.
 <plist version="1.0">
 <dict>
  <key>apiVersion</key>
- <string>openjoystickdriver/v1alpha3</string>
+ <string>openjoystickdriver/v1alpha4</string>
  <key>author</key>
  <string>OpenJoystickDriver</string>
  <key>controllers</key>
@@ -91,7 +91,7 @@ OJD refuses any file, folder, or link outside the layout. It skips hidden and `.
 </plist>
 ```
 
-- `apiVersion`: `openjoystickdriver/v1alpha3`. OJD rejects any other version.
+- `apiVersion`: `openjoystickdriver/v1alpha4`. OJD rejects any other version.
 - `kind`: `ModPackage`.
 - `name`: Lowercase letters, digits, and hyphens.
 - `version`: SemVer without a `v` prefix.
@@ -163,7 +163,7 @@ This patch gives the DragonRise `0079:0006` pad the report that Linux [`hid-dr.c
 <plist version="1.0">
 <dict>
  <key>apiVersion</key>
- <string>openjoystickdriver/v1alpha3</string>
+ <string>openjoystickdriver/v1alpha4</string>
  <key>kind</key>
  <string>ControllerPatch</string>
  <key>patch</key>

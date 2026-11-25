@@ -3,15 +3,14 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-struct AlphaTwoToAlphaThreeTests {
+struct V1Alpha2ToV1Alpha3Tests {
   private func convert(_ text: String, _ kind: DocumentKind) throws -> OrderedJSON {
-    try AlphaTwoToAlphaThree.convert(OrderedJSON.parse(Data(text.utf8)), kind: kind)
+    try V1Alpha2ToV1Alpha3.convert(OrderedJSON.parse(Data(text.utf8)), kind: kind)
   }
 
   @Test
   func patchNullBecomesRemoveEntry() throws {
     let converted = try convert(MigrationFixtures.nullPatch, .controllerPatch)
-    #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
     #expect(converted["remove"] == .array([.string("usb"), .string("tuning.replyTimeoutMs")]))
     #expect(converted["patch"]?.formatted().contains("null") == false)
     #expect(converted["patch"]?["tuning"]?["frameQueueCapacity"] == .number("8"))
@@ -195,12 +194,5 @@ struct AlphaTwoToAlphaThreeTests {
       #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": null}"#
     )
     #expect(throws: DocumentMigrationProblem.self) { try convert(text, .controllerPatch) }
-  }
-
-  @Test
-  func chainStartsAtVersionOneAndEndsAtVersionThree() {
-    let steps = DocumentMigrationStep.all.filter { $0.kind == DocumentKind.profile.rawValue }
-    #expect(steps.map(\.from) == [MigrationFixtures.alphaOne, MigrationFixtures.alphaTwo])
-    #expect(steps.last?.to == OpenJoystickDriverAPI.version)
   }
 }

@@ -81,7 +81,7 @@ struct MigrateCommandTests {
     try write(Self.settings, "Settings.json")
     try write("not json", "Profiles/notes.json")
     try write(
-      #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#,
+      #"{"apiVersion": "openjoystickdriver/v1alpha4", "kind": "AccessGrants"}"#,
       "AccessGrants.plist"
     )
 
