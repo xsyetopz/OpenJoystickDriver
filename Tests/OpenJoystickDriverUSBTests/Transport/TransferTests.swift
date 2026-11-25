@@ -28,6 +28,44 @@ struct IOUSBHostTransferTests {
   }
 
   @Test
+  func standardSetInterfaceBecomesAnAlternateSettingSelection() throws {
+    let request = try USBControlTransferRequest(
+      kind: .standard,
+      recipient: .interface,
+      request: 0x0B,
+      value: 0,
+      index: 1
+    )
+
+    let selection = IOUSBHostTransportProvider.alternateSettingSelection(request)
+
+    #expect(selection?.interface == 1)
+    #expect(selection?.setting == 0)
+  }
+
+  /// A vendor request, a device recipient, and GET_INTERFACE.
+  private static let otherRequests:
+    [(USBControlTransferRequest.RequestKind, USBControlTransferRequest.Recipient, UInt8)] = [
+      (.vendor, .interface, 0x0B), (.standard, .device, 0x0B), (.standard, .interface, 0x0A),
+    ]
+
+  @Test(arguments: otherRequests)
+  func otherRequestsStayDeviceRequests(
+    kind: USBControlTransferRequest.RequestKind,
+    recipient: USBControlTransferRequest.Recipient,
+    request: UInt8
+  ) throws {
+    let other = try USBControlTransferRequest(
+      kind: kind,
+      recipient: recipient,
+      request: request,
+      index: 1
+    )
+
+    #expect(IOUSBHostTransportProvider.alternateSettingSelection(other) == nil)
+  }
+
+  @Test
   func bulkPipesHonorTimeoutAndInterruptPipesUseZero() {
     #expect(
       IOUSBHostTransportProvider.pipeCompletionTimeout(

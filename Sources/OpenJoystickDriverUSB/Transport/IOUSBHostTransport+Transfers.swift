@@ -15,6 +15,21 @@ extension IOUSBHostTransportProvider {
     )
   }
 
+  // IOUSBHost refuses a standard SET_INTERFACE sent as a device request (`kIOReturnNotPermitted`),
+  // as DriverKit's `DeviceRequest` does (XPadMac `XPadGIPDevice.cpp`); `selectAlternateSetting`
+  // sends it. Some third-party GIP pads wait for SET_INTERFACE(1, 0) before they start (#59).
+  /// The interface and alternate setting that `request` selects when it is a standard
+  /// SET_INTERFACE with no data stage, or nil for any other request.
+  static func alternateSettingSelection(
+    _ request: USBControlTransferRequest
+  ) -> (interface: UInt8, setting: UInt8)? {
+    guard request.kind == .standard, request.recipient == .interface, request.request == 0x0B,
+      request.dataStage == .none, let interface = UInt8(exactly: request.index),
+      let setting = UInt8(exactly: request.value)
+    else { return nil }
+    return (interface, setting)
+  }
+
   /// IOUSBHost timeouts are seconds, where zero means no timeout.
   static func completionTimeout(milliseconds: UInt32) -> TimeInterval {
     TimeInterval(milliseconds) / 1_000
