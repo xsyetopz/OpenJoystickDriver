@@ -174,11 +174,14 @@ public final class GIPDriver: PhysicalProtocolDriver {
 
   /// Sends the GIP init sequence of the record or the description, each packet stamped with the
   /// next sequence number for its command.
-  public func startupWrites() -> [PhysicalOutputWrite] {
+  public func startupWrites() -> [PhysicalOutputWrite] { stamped(startup) }
+
+  /// `writes` as output, each packet stamped with the next sequence number for its command.
+  private func stamped(_ writes: [USBStartupWrite]) -> [PhysicalOutputWrite] {
     let session: ([UInt8]) -> UInt8 = { [self] bytes in
       sequencer.next(for: bytes[0], options: bytes[1])
     }
-    return startup.map { write in
+    return writes.map { write in
       write.write(
         defaultEndpoint: outEndpoint,
         defaultTimeoutMilliseconds: usbTimeoutMilliseconds,
@@ -198,6 +201,26 @@ public final class GIPDriver: PhysicalProtocolDriver {
       ) { [self] bytes in sequencer.next(for: bytes[0], options: bytes[1]) }
     }
   }
+
+  // A pad whose firmware wedged sends no announce even after a USB reset, a fresh configuration or
+  // a suspend, since none of them cuts its power; POWER with the reset mode (0x07) reboots it, and
+  // it leaves the bus and announces again (Razer Wolverine Tournament Edition, 1532:0A15).
+  /// POWER with the reset mode, stamped with the next sequence number of its command.
+  public func silentStartupResetWrites() -> [PhysicalOutputWrite] {
+    guard let reset = PhysicalProtocolID.xboxGIP.namedPacketWrite(Self.powerResetPacket) else {
+      return []
+    }
+    return stamped(
+      PhysicalProtocolID.xboxGIP.usbStartupWrites(
+        recordWrites: [reset],
+        variant: .usb,
+        parameters: .none
+      )
+    )
+  }
+
+  /// The id of the description's POWER packet with the reset mode.
+  static let powerResetPacket = "XboxGIP/power-reset"
 
   /// The USB write of `bytes` to the OUT endpoint.
   private func usbWrite(_ bytes: [UInt8]) -> PhysicalOutputWrite {

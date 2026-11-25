@@ -25,6 +25,24 @@ extension DevicePipeline {
     }
   }
 
+  /// Sends the driver's firmware reset to a pad that stayed silent after every toggle reset.
+  ///
+  /// A reset, a fresh configuration or a suspend of the device keeps its power on, so a wedged
+  /// firmware outlasts them; the pad that reboots leaves the bus, and the pipeline attaches it
+  /// again as on a replug.
+  func restartSilentFirmware(handle: any USBTransportSession, generation: UInt64) async {
+    let writes = driver.silentStartupResetWrites()
+    guard !writes.isEmpty else { return }
+    print("[DevicePipeline] No input after startup recoveries; restarting firmware: \(identifier)")
+    for write in writes {
+      guard isCurrentUSBRun(generation), usbHandle === handle else { return }
+      do { try await performUSBWrite(write, handle: handle, runGeneration: generation) } catch {
+        print("[DevicePipeline] Firmware restart failed for \(identifier): \(error)")
+        return
+      }
+    }
+  }
+
   /// Resets the data toggles of the input and output endpoints and sends the startup writes again,
   /// for a pad that sent nothing after its startup writes.
   ///

@@ -87,6 +87,25 @@ struct GIPSessionTests {
   }
 
   @Test
+  func padThatStaysSilentThroughTheToggleResetsGetsOneFirmwareRestart() async {
+    let pad = SilentGIPPadSession(wedgedUntilRestart: true)
+    let (pipeline, dispatcher) = Self.pipeline(for: pad)
+
+    let startTask = Task { await pipeline.start() }
+    await waitUntil("the restarted pad delivers input") { dispatcher.inputCount > 0 }
+
+    let events = await pad.events
+    let resyncs = events.filter { $0.hasPrefix("resync 2") }.count
+    let restart = events.firstIndex(of: "restart") ?? .max
+    let lastResync = events.lastIndex { $0.hasPrefix("resync") } ?? .max
+    #expect(resyncs == usbSilentStartupRecoveryLimit, "both toggle resets ran: \(events)")
+    #expect(lastResync < restart, "the restart follows the toggle resets: \(events)")
+    #expect(events.filter { $0 == "restart" }.count == 1, "one restart: \(events)")
+    await pipeline.stop()
+    await startTask.value
+  }
+
+  @Test
   func readsHaveADeadlineOnlyUntilThePadFirstReports() async {
     let pad = SilentGIPPadSession()
     let (pipeline, dispatcher) = Self.pipeline(for: pad)
@@ -161,18 +180,27 @@ private actor SilentGIPPadProvider: USBTransportProvider {
 /// it sends nothing more until a control changes.
 ///
 /// With `dropsWritesUntilResync`, its OUT data toggle disagrees with the host's until the
-/// endpoint is resynchronized, so it drops every write before that.
+/// endpoint is resynchronized, so it drops every write before that. With `wedgedUntilRestart`, its
+/// firmware ignores every write but POWER with the reset mode, which reboots it: it leaves the bus
+/// and works once it is opened again.
 private actor SilentGIPPadSession: USBTransportSession {
-  /// The transfers in order: `read`, `write` and the command byte, `resync` and the endpoint, or
-  /// `control` with bmRequestType, bRequest, wValue and wIndex, all in hex.
+  /// The transfers in order: `read`, `write` and the command byte, `resync` and the endpoint,
+  /// `control` with bmRequestType, bRequest, wValue and wIndex, all in hex, or `restart` for the
+  /// firmware reset.
   private(set) var events: [String] = []
   /// The timeout of each read in order, in milliseconds; 0 waits with no deadline.
   private(set) var readTimeouts: [UInt32] = []
   private var pending: (id: Int, continuation: CheckedContinuation<[UInt8], any Error>)?
   private var nextID = 0
   private var outToggleInSync: Bool
+  private var wedged: Bool
+  /// Whether the pad left the bus to reboot; every read fails until the session is closed.
+  private var detached = false
 
-  init(dropsWritesUntilResync: Bool = false) { outToggleInSync = !dropsWritesUntilResync }
+  init(dropsWritesUntilResync: Bool = false, wedgedUntilRestart: Bool = false) {
+    outToggleInSync = !dropsWritesUntilResync
+    wedged = wedgedUntilRestart
+  }
 
   /// The status frame the pad sends first, then input with the south button down.
   private static let reply: [UInt8] =
@@ -199,6 +227,17 @@ private actor SilentGIPPadSession: USBTransportSession {
 
   func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int {
     events.append("write \(String(data[0], radix: 16))")
+    if wedged {
+      guard data == [0x05, 0x20, data[2], 0x01, 0x07] else { return data.count }
+      events.append("restart")
+      wedged = false
+      detached = true
+      if let waiting = pending {
+        pending = nil
+        waiting.continuation.resume(throwing: USBTransportError.disconnected)
+      }
+      return data.count
+    }
     if outToggleInSync, data[0] == 0x05, let waiting = pending {
       pending = nil
       waiting.continuation.resume(returning: Self.reply)
@@ -209,6 +248,7 @@ private actor SilentGIPPadSession: USBTransportSession {
   func read(endpoint _: UInt8, length _: Int, timeout: UInt32) async throws -> [UInt8] {
     events.append("read")
     readTimeouts.append(timeout)
+    if detached { throw USBTransportError.disconnected }
     nextID += 1
     let id = nextID
     return try await withCheckedThrowingContinuation { continuation in
@@ -223,6 +263,7 @@ private actor SilentGIPPadSession: USBTransportSession {
 
   /// Ends the pending read, as closing a pipe does.
   func close() {
+    detached = false
     guard let waiting = pending else { return }
     pending = nil
     waiting.continuation.resume(throwing: USBTransportError.disconnected)

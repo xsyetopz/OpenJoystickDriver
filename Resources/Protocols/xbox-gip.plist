@@ -47,6 +47,14 @@
 				</dict>
 				<dict>
 					<key>bytes</key>
+					<string>05 20 00 01 07</string>
+					<key>id</key>
+					<string>XboxGIP/power-reset</string>
+					<key>sessionByte</key>
+					<integer>2</integer>
+				</dict>
+				<dict>
+					<key>bytes</key>
 					<string>05 20 00 0F 06</string>
 					<key>id</key>
 					<string>XboxGIP/s-init</string>

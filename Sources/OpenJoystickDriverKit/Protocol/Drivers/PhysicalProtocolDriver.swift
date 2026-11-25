@@ -103,7 +103,9 @@ public struct DriverSessionPlan: Equatable, Sendable {
   /// writes; a request the device or host rejects is skipped.
   public let usbStartupStandardRequests: [USBControlTransferRequest]
   /// How long a USB session may stay silent after its startup writes before the pipeline resets
-  /// the endpoint data toggles and sends the startup writes again; nil when it never does.
+  /// the endpoint data toggles and sends the startup writes again, and, once those recoveries run
+  /// out, sends the driver's ``PhysicalProtocolDriver/silentStartupResetWrites()``; nil when it
+  /// never does.
   public let silentUSBStartupRecoveryNanoseconds: UInt64?
   /// What the user does before the controller sends input, from the family's description for the
   /// bound variant (``withDefaults(of:variant:)``); nil when input starts on its own.
@@ -389,6 +391,10 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// after an I/O error or an unplug.
   func powerOffWrites() -> [PhysicalOutputWrite]
 
+  /// Writes that restart the controller's firmware, sent once when a USB session stays silent
+  /// after every startup recovery; the controller then leaves the bus and attaches again.
+  func silentStartupResetWrites() -> [PhysicalOutputWrite]
+
   /// Tells the driver whether the active profile binds a pointer axis; the pipeline calls it
   /// before each report is parsed.
   func setPointerInputWanted(_ wanted: Bool)
@@ -456,6 +462,8 @@ extension PhysicalProtocolDriver {
   public func keepAliveWrites() -> [PhysicalOutputWrite] { [] }
   /// Default: the controller is left on.
   public func powerOffWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: the firmware is not restarted.
+  public func silentStartupResetWrites() -> [PhysicalOutputWrite] { [] }
   /// Default: the driver has no pointer hardware to turn on.
   public func setPointerInputWanted(_: Bool) {}
   /// Default: no pending writes.
