@@ -34,7 +34,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   ) async throws -> any USBTransportSession {
     guard device.route == .rawUSB else { throw USBTransportError.notSupported }
 
-    try Self.configureDevice(device, options: options)
+    try await Self.configureDevice(device, options: options)
 
     let service = try await Self.waitForInterfaceService(
       device: device,
@@ -217,10 +217,12 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   /// without a parent search, which would find a hub's value for an unconfigured device.
   /// `IOUSBHostDevice.configurationDescriptor` is documented only for the configuration selected
   /// "after a successful setConfiguration call", and needs a device client to read.
+  ///
+  /// A GIP device gets the reads of ``MicrosoftOSDescriptor`` first, as a Windows host sends them.
   private static func configureDevice(
     _ device: USBTransportDevice,
     options: USBTransportOpenOptions
-  ) throws {
+  ) async throws {
     guard let value = options.configurationValue else { return }
     let service = try deviceService(for: device)
     defer { IOObjectRelease(service) }
@@ -240,6 +242,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
         interestHandler: nil
       )
       defer { hostDevice.destroy() }
+      if isGIPDevice(service) { await probeWindowsDescriptors(hostDevice, device: device) }
       try hostDevice.__configure(withValue: Int(value), matchInterfaces: true)
     } catch { throw transportError(error) }
   }
@@ -380,7 +383,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
 
   /// Reads the property `key` as an 8-bit unsigned integer, or nil when it is missing or out of
   /// range.
-  private static func uint8Property(_ service: io_service_t, key: String) -> UInt8? {
+  static func uint8Property(_ service: io_service_t, key: String) -> UInt8? {
     uint64Property(service, key: key).flatMap(UInt8.init(exactly:))
   }
 
