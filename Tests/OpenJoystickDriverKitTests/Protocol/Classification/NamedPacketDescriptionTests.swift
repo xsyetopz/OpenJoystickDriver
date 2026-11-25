@@ -143,13 +143,13 @@ struct NamedPacketDescriptionTests {
   }
 
   @Test
-  func bundledGIPDescriptionHoldsEightPackets() throws {
+  func bundledGIPDescriptionHoldsNinePackets() throws {
     let plan = try #require(PhysicalProtocolID.xboxGIP.protocolDescription.namedPackets)
     #expect(
       plan.packets.map(\.id) == [
-        "XboxGIP/power-on", "XboxGIP/s-init", "XboxGIP/enable-extra-input",
-        "XboxGIP/hori-ack", "XboxGIP/led-on", "XboxGIP/auth-done", "XboxGIP/rumble-begin",
-        "XboxGIP/rumble-end",
+        "XboxGIP/power-on", "XboxGIP/power-reset", "XboxGIP/s-init",
+        "XboxGIP/enable-extra-input", "XboxGIP/hori-ack", "XboxGIP/led-on", "XboxGIP/auth-done",
+        "XboxGIP/rumble-begin", "XboxGIP/rumble-end",
       ]
     )
     #expect(plan.packets.allSatisfy { $0.write.sessionByte == 2 })
