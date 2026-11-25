@@ -121,4 +121,23 @@ struct MigrateCommandTests {
     #expect(result.standardError.contains("error[E5009]"))
     #expect(result.standardOutput.contains("written by 0.5; re-create it"))
   }
+
+  @Test
+  func lastUsedTimesAreReportedAsCurrentInTheReportSchema() async throws {
+    // Arrange
+    let times = try PropertyListSerialization.data(
+      fromPropertyList: ["6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E": 1_700_000_000.0],
+      format: .xml,
+      options: 0
+    )
+    try write(try #require(String(bytes: times, encoding: .utf8)), "LastUsed.plist")
+
+    // Act: `CLIRun` checks the `--json` document against its schema.
+    let result = await run(["--dry-run", "--json"])
+
+    // Assert
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardOutput.contains(#""kind": "LastUsed""#))
+    #expect(result.standardOutput.contains(#""verdict": "Current""#))
+  }
 }
