@@ -289,8 +289,8 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     case waiting(token: UInt64)
   }
 
-  /// Waits up to `timeout` milliseconds for the next reply of `peripheralID`; nil when none
-  /// arrives.
+  /// Waits up to `timeout` milliseconds, or with no deadline when `timeout` is 0, for the next
+  /// reply of `peripheralID`; nil when none arrives.
   private func nextReply(peripheralID: UUID, timeout: UInt32) async -> [UInt8]? {
     await withCheckedContinuation { (continuation: CheckedContinuation<[UInt8]?, Never>) in
       let (start, abandoned) = lock.withLock { () -> (WaitStart, ReplyWaiter?) in
@@ -310,6 +310,7 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
       abandoned?.continuation.resume(returning: nil)
       switch start {
       case .ready(let reply): continuation.resume(returning: reply)
+      case .waiting where timeout == 0: break
       case .waiting(let token):
         DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(Int(timeout))) {
           [weak self] in

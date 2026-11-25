@@ -178,8 +178,15 @@ extension DevicePipeline {
   /// Starts the interrupt IN read that the input loop takes as its first read.
   ///
   /// Returns once the read has left this actor for the session, so the session receives it
-  /// before any startup write this actor sends after the return.
+  /// before any startup write this actor sends after the return. The read waits for the whole
+  /// silent-startup window of the plan, or with no deadline when the plan has none.
   func armInputRead(handle: any USBTransportSession) async -> Task<[UInt8], any Error> {
+    let now = uptimeNanoseconds()
+    let timeout = Self.usbInputReadTimeoutMilliseconds(
+      window: plan.silentUSBStartupRecoveryNanoseconds,
+      silentSince: now,
+      now: now
+    )
     let (started, signal) = AsyncStream<Void>.makeStream()
     // The task reads `self`, so it runs on this actor, which is free only once the task suspends
     // on the session's read; the wait below resumes after that, however busy the machine is.
@@ -188,7 +195,7 @@ extension DevicePipeline {
       return try await handle.read(
         endpoint: self.transportProfile.inputEndpoint,
         length: gipReadPacketLength,
-        timeout: gipReadTimeoutMs
+        timeout: timeout
       )
     }
     for await _ in started {}

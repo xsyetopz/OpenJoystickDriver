@@ -23,8 +23,6 @@ actor USBOutputWriteSerialQueue {
 
 /// The length in bytes that one GIP interrupt read requests.
 let gipReadPacketLength = 64
-/// The timeout in milliseconds of one GIP interrupt read.
-let gipReadTimeoutMs: UInt32 = 100
 /// The waits that pace the USB open, reconnect and access-contention retries of a device pipeline.
 struct USBPipelineRecoveryPolicy: Sendable {
   /// The waits that a device pipeline uses by default.
@@ -53,12 +51,11 @@ struct USBPipelineRecoveryPolicy: Sendable {
     return min(reconnectMaximumDelayNanoseconds, reconnectBaseDelayNanoseconds << exponent)
   }
 }
-/// The duration in nanoseconds that one idle pass of the USB input loop takes at least, equal to
-/// one read timeout.
+/// The duration in nanoseconds that one idle pass of the USB input loop takes at least.
 ///
 /// Pacing an idle pass keeps a transport that completes timeouts at once from spinning a hot loop
 /// that launchd may kill as inefficient.
-let usbIdleLoopCadenceNs: UInt64 = UInt64(gipReadTimeoutMs) * 1_000_000
+let usbIdleLoopCadenceNs: UInt64 = 100_000_000
 /// The number of consecutive USB I/O errors after which the pipeline reconnects.
 let usbIOErrorReconnectThreshold = 10
 /// The backoff after the first of several consecutive USB I/O errors, which doubles with each

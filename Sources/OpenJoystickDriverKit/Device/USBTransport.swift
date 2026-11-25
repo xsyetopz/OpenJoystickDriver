@@ -24,7 +24,7 @@ public protocol USBTransportSession: AnyObject, Sendable {
   /// - Parameters:
   ///   - endpoint: The IN endpoint address.
   ///   - length: The most bytes to receive.
-  ///   - timeout: The time to wait, in milliseconds.
+  ///   - timeout: The time to wait, in milliseconds, or 0 to wait with no deadline.
   /// - Throws: ``USBTransportError/notSupported`` when `endpoint` lacks the IN bit or `length`
   ///   is not positive.
   /// - Returns: The bytes received, at most `length`.

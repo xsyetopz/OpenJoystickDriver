@@ -86,6 +86,46 @@ struct GIPSessionTests {
     await startTask.value
   }
 
+  @Test
+  func readsHaveADeadlineOnlyUntilThePadFirstReports() async {
+    let pad = SilentGIPPadSession()
+    let (pipeline, dispatcher) = Self.pipeline(for: pad)
+
+    let startTask = Task { await pipeline.start() }
+    await waitUntil("a read follows the first input") {
+      let timeouts = await pad.readTimeouts
+      return dispatcher.inputCount > 0 && timeouts.count >= 2
+    }
+
+    let timeouts = await pad.readTimeouts
+    #expect(timeouts.first == 1_000, "the armed read waits for the silent window: \(timeouts)")
+    #expect(timeouts.dropFirst().allSatisfy { $0 == 0 }, "no later deadline: \(timeouts)")
+    await pipeline.stop()
+    await startTask.value
+  }
+
+  @Test(arguments: [
+    (window: UInt64?.none, since: UInt64?.some(0), now: UInt64(5), expected: UInt32(0)),
+    (window: 1_000_000_000, since: nil, now: 5, expected: 0),
+    (window: 1_000_000_000, since: 0, now: 0, expected: 1_000),
+    (window: 1_000_000_000, since: 0, now: 400_500_000, expected: 600),
+    (window: 1_000_000_000, since: 0, now: 2_000_000_000, expected: 1),
+  ])
+  func inputReadTimeoutCoversTheRestOfTheSilentWindow(
+    window: UInt64?,
+    since: UInt64?,
+    now: UInt64,
+    expected: UInt32
+  ) {
+    let timeout = DevicePipeline.usbInputReadTimeoutMilliseconds(
+      window: window,
+      silentSince: since,
+      now: now
+    )
+
+    #expect(timeout == expected)
+  }
+
   private static func pipeline(
     for pad: SilentGIPPadSession
   ) -> (DevicePipeline, InputRecordingDispatcher) {
@@ -126,6 +166,8 @@ private actor SilentGIPPadSession: USBTransportSession {
   /// The transfers in order: `read`, `write` and the command byte, `resync` and the endpoint, or
   /// `control` with bmRequestType, bRequest, wValue and wIndex, all in hex.
   private(set) var events: [String] = []
+  /// The timeout of each read in order, in milliseconds; 0 waits with no deadline.
+  private(set) var readTimeouts: [UInt32] = []
   private var pending: (id: Int, continuation: CheckedContinuation<[UInt8], any Error>)?
   private var nextID = 0
   private var outToggleInSync: Bool
@@ -166,15 +208,24 @@ private actor SilentGIPPadSession: USBTransportSession {
 
   func read(endpoint _: UInt8, length _: Int, timeout: UInt32) async throws -> [UInt8] {
     events.append("read")
+    readTimeouts.append(timeout)
     nextID += 1
     let id = nextID
     return try await withCheckedThrowingContinuation { continuation in
       pending = (id, continuation)
+      guard timeout > 0 else { return }
       Task {
         try? await Task.sleep(nanoseconds: UInt64(timeout) * 1_000_000)
         self.expire(id)
       }
     }
+  }
+
+  /// Ends the pending read, as closing a pipe does.
+  func close() {
+    guard let waiting = pending else { return }
+    pending = nil
+    waiting.continuation.resume(throwing: USBTransportError.disconnected)
   }
 
   private func expire(_ id: Int) {

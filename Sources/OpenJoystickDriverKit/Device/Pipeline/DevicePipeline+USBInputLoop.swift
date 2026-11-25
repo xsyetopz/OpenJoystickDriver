@@ -38,7 +38,15 @@ extension DevicePipeline {
           firstRead = nil
           bytes = try await armed.value
         } else {
-          bytes = try await readInterrupt(handle: handle, inEndpoint: inEndpoint)
+          bytes = try await readInterrupt(
+            handle: handle,
+            inEndpoint: inEndpoint,
+            timeout: Self.usbInputReadTimeoutMilliseconds(
+              window: plan.silentUSBStartupRecoveryNanoseconds,
+              silentSince: silentSince,
+              now: uptimeNanoseconds()
+            )
+          )
         }
         guard isCurrentUSBRun(generation) else { break }
         consecutiveUSBIOErrors = 0
@@ -191,13 +199,38 @@ extension DevicePipeline {
     }
   }
 
-  /// Reads one interrupt packet from `inEndpoint`.
-  func readInterrupt(handle: any USBTransportSession, inEndpoint: UInt8) async throws -> [UInt8] {
-    try await handle.read(
-      endpoint: inEndpoint,
-      length: gipReadPacketLength,
-      timeout: gipReadTimeoutMs
-    )
+  /// Reads one interrupt packet from `inEndpoint`, waiting at most `timeout` milliseconds, or with
+  /// no deadline when `timeout` is 0.
+  func readInterrupt(
+    handle: any USBTransportSession,
+    inEndpoint: UInt8,
+    timeout: UInt32 = 0
+  ) async throws -> [UInt8] {
+    try await handle.read(endpoint: inEndpoint, length: gipReadPacketLength, timeout: timeout)
+  }
+
+  // Ending a pending interrupt read can lose the report the pad sends in it, and a pad that reports
+  // only on a change, such as a GIP or XUSB pad, sends a lost button release no second time, so the
+  // button stays down. Linux xpad and XPadMac never cancel a read. A read here gets a deadline only
+  // while the silent-startup window runs, so the recovery that needs a timeout to run can (#59).
+  /// The timeout of the next interrupt IN read in milliseconds, where 0 waits with no deadline.
+  ///
+  /// - Parameters:
+  ///   - window: The plan's silent-startup recovery window in nanoseconds, or nil when the plan has
+  ///     no recovery.
+  ///   - silentSince: When the current silent window started, or nil once the pad reported or the
+  ///     recovery gave up.
+  ///   - now: The current uptime in nanoseconds.
+  /// - Returns: The time left in the window, at least 1 ms, while a window runs; otherwise 0.
+  static func usbInputReadTimeoutMilliseconds(
+    window: UInt64?,
+    silentSince: UInt64?,
+    now: UInt64
+  ) -> UInt32 {
+    guard let window, let silentSince else { return 0 }
+    let remaining = window &- min(now &- silentSince, window)
+    let milliseconds = (remaining + 999_999) / 1_000_000
+    return UInt32(clamping: max(1, milliseconds))
   }
 
   /// Sends the writes that the driver deferred while it parsed; stops when the run or session
