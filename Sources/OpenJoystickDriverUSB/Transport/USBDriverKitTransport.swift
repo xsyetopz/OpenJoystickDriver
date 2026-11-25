@@ -493,6 +493,10 @@ actor USBDriverKitTransportSession: USBTransportSession {
 
   /// Sends the control transfer `request` and returns the bytes it received.
   ///
+  /// A standard SET_INTERFACE goes through the driver's alternate-setting selection of the
+  /// interface it names: the kernel's `IOUSBHostInterface` refuses it as a device request, as the
+  /// raw USB route shows, and the matched interface 0 can't select a setting of interface 1.
+  ///
   /// - Throws: ``USBTransportError/disconnected`` when the session is closed, and the mapped driver
   ///   error otherwise.
   @discardableResult
@@ -503,6 +507,13 @@ actor USBDriverKitTransportSession: USBTransportSession {
     guard !isClosed else { throw USBTransportError.disconnected }
     try await transfers.checkOpen()
     do {
+      if let selection = IOUSBHostTransportProvider.alternateSettingSelection(request) {
+        try await context.usbSelectAlternateSetting(
+          selection.setting,
+          ofInterface: selection.interface
+        )
+        return []
+      }
       return try await context.usbControlTransfer(
         USBDriverKitTransportProvider.controlRequest(for: request),
         data: request.outputData,
