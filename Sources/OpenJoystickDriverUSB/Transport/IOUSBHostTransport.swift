@@ -396,55 +396,6 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     return unsafe IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess
       ? value : nil
   }
-
-  /// Converts `request` to the IOUSBHost device request.
-  static func deviceRequest(for request: USBControlTransferRequest) -> IOUSBDeviceRequest {
-    IOUSBDeviceRequest(
-      bmRequestType: request.requestType,
-      bRequest: request.request,
-      wValue: request.value,
-      wIndex: request.index,
-      wLength: request.length
-    )
-  }
-
-  /// IOUSBHost timeouts are seconds, where zero means no timeout.
-  static func completionTimeout(milliseconds: UInt32) -> TimeInterval {
-    TimeInterval(milliseconds) / 1_000
-  }
-
-  /// IOUSBHost requires a zero completion timeout for interrupt pipes; bulk pipes honor it.
-  static func pipeCompletionTimeout(endpointAttributes: UInt8, milliseconds: UInt32) -> TimeInterval
-  { endpointAttributes & 0x03 == 0x02 ? completionTimeout(milliseconds: milliseconds) : 0 }
-
-  /// Maps `error` to a transport error by its IOReturn code.
-  static func transportError(_ error: any Error) -> USBTransportError {
-    let nsError = error as NSError
-    return transportError(IOReturn(truncatingIfNeeded: nsError.code))
-  }
-
-  /// Maps the IOReturn `code` to a transport error without an owner.
-  static func transportError(_ code: IOReturn) -> USBTransportError {
-    transportError(code, exclusiveOwner: nil)
-  }
-
-  /// `exclusiveOwner` is what the interface names when `code` says another client holds it.
-  static func transportError(
-    _ code: IOReturn,
-    exclusiveOwner: String?
-  ) -> USBTransportError {
-    switch code {
-    case kIOReturnTimeout, kIOReturnAborted: return .timeout
-    case kIOReturnNoDevice, kIOReturnNotAttached, kIOReturnNotOpen, kIOReturnNotResponding:
-      return .disconnected
-    case kIOReturnExclusiveAccess: return .ownedByAnotherClient(owner: exclusiveOwner)
-    case kIOReturnNotPermitted, kIOReturnNotPrivileged: return .accessDenied
-    case kIOReturnNotFound: return .notFound
-    case kIOReturnUnsupported, kIOReturnBadArgument: return .notSupported
-    case kIOReturnIOError: return .inputOutput
-    default: return .platform(code: code, message: String(describing: code))
-    }
-  }
 }
 
 /// The facts of one `IOUSBHostDevice` service.
@@ -652,14 +603,29 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   }
 
   /// Runs one transfer of `buffer` on the pipe of `endpoint` and returns the byte count.
+  ///
+  /// A pipe that takes no completion timeout is aborted at the host deadline instead, which ends
+  /// the transfer with ``USBTransportError/timeout``.
   private func transfer(endpoint: UInt8, buffer: NSMutableData, timeout: UInt32) async throws -> Int
   {
     let pipe = try pipe(for: endpoint)
+    let attributes = unsafe pipe.pipe.descriptors.pointee.descriptor.bmAttributes
+    let deadline = IOUSBHostTransportProvider.hostDeadlineMilliseconds(
+      endpointAttributes: attributes,
+      milliseconds: timeout
+    ).map { milliseconds in
+      Task { [weak self] in
+        // A cancelled sleep means the transfer completed first.
+        do { try await Task.sleep(nanoseconds: UInt64(milliseconds) * 1_000_000) } catch { return }
+        await self?.abortExpiredTransfers(on: endpoint)
+      }
+    }
+    defer { deadline?.cancel() }
     do {
-      let result = try await unsafe pipe.pipe.completedIORequest(
+      let result = try await pipe.pipe.completedIORequest(
         with: buffer,
         completionTimeout: IOUSBHostTransportProvider.pipeCompletionTimeout(
-          endpointAttributes: pipe.pipe.descriptors.pointee.descriptor.bmAttributes,
+          endpointAttributes: attributes,
           milliseconds: timeout
         )
       )
@@ -670,6 +636,15 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     } catch let error as USBTransportError { throw error } catch {
       throw IOUSBHostTransportProvider.transportError(error)
     }
+  }
+
+  // A deadline cancelled before it reaches the actor does nothing. One that reaches it as its
+  // transfer completes finds no pending transfer, or ends an overlapping one on the same pipe as a
+  // timeout, which callers already treat as an idle interval.
+  /// Aborts the pending transfers of `endpoint`, which complete with `kIOReturnAborted`.
+  private func abortExpiredTransfers(on endpoint: UInt8) {
+    guard !Task.isCancelled, !isClosed, let box = pipes[endpoint] else { return }
+    try? box.pipe.__abort(with: .asynchronous)
   }
 
   /// Copies `data` into `buffer`.

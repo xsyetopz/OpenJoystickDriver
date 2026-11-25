@@ -46,6 +46,26 @@ struct IOUSBHostTransferTests {
         == 0
     )
   }
+
+  @Test
+  func interruptPipesGetAHostDeadlineAndBulkPipesDoNot() {
+    #expect(
+      IOUSBHostTransportProvider.hostDeadlineMilliseconds(
+        endpointAttributes: 0x03,
+        milliseconds: 100
+      ) == 100
+    )
+    #expect(
+      IOUSBHostTransportProvider.hostDeadlineMilliseconds(
+        endpointAttributes: 0x02,
+        milliseconds: 100
+      ) == nil
+    )
+    #expect(
+      IOUSBHostTransportProvider.hostDeadlineMilliseconds(endpointAttributes: 0x03, milliseconds: 0)
+        == nil
+    )
+  }
 }
 
 struct USBDriverKitTransferTests {
