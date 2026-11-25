@@ -51,10 +51,29 @@ if let recordPath = argValue("--record-probe") {
   )
 }
 
+/// Writes `packets` to the interrupt OUT `endpoint`, 50 ms apart, and prints each write.
+///
+/// The interval matches the startup writes of the raw USB protocols, whose firmware drops a
+/// packet that follows the one before too closely.
+func sendUSBPackets(
+  _ packets: [[UInt8]],
+  endpoint: UInt8,
+  session: any USBTransportSession
+) async throws {
+  for (index, packet) in packets.enumerated() {
+    if index > 0 { try await Task.sleep(for: .milliseconds(50)) }
+    let sent = try await session.write(endpoint: endpoint, data: packet, timeout: 1000)
+    print(
+      "USB_SENT endpoint=0x\(String(endpoint, radix: 16))"
+        + " len=\(sent) bytes=\(packet.hexBytes)"
+    )
+  }
+}
+
 /// Prints the interrupt IN packets of the raw USB device that `--vid` and `--pid` select.
 ///
-/// It reads the endpoint of `--endpoint`, or sweeps 0x81 to 0x8F, with the `--length` read length
-/// and for `--seconds`.
+/// It writes the `--send` packets to `--out-endpoint` first, then reads the endpoint of
+/// `--endpoint`, or sweeps 0x81 to 0x8F, with the `--length` read length and for `--seconds`.
 func runRawUSBMonitor() {
   let vendorID = UInt16(clamping: intArg("--vid", default: 0))
   let productID = UInt16(clamping: intArg("--pid", default: 0))
@@ -63,6 +82,8 @@ func runRawUSBMonitor() {
   let length = min(max(intArg("--length", default: 64), 1), 1024)
   let seconds = min(max(intArg("--seconds", default: 20), 1), 300)
   let timeout: UInt32 = explicitEndpoint == nil ? 100 : 250
+  let packets = argValue("--send").flatMap(parseUSBPackets) ?? []
+  let outEndpoint = UInt8(clamping: intArg("--out-endpoint", default: 0))
   let exitCode = Locked<Int32>(0)
   let done = DispatchSemaphore(value: 0)
 
@@ -87,15 +108,16 @@ func runRawUSBMonitor() {
           + " product=\(device.productName ?? "(unknown)")"
       )
       let session = try await provider.open(device, options: USBTransportOpenOptions())
+      try await sendUSBPackets(packets, endpoint: outEndpoint, session: session)
 
       let deadline = Date().addingTimeInterval(TimeInterval(seconds))
-      var packets = 0
+      var received = 0
       var disabledEndpoints = Set<UInt8>()
       while Date() < deadline {
         for endpoint in endpoints where Date() < deadline && !disabledEndpoints.contains(endpoint) {
           do {
             let bytes = try await session.read(endpoint: endpoint, length: length, timeout: timeout)
-            packets += 1
+            received += 1
             print(
               "USB_REPORT endpoint=0x\(String(endpoint, radix: 16))"
                 + " len=\(bytes.count) bytes=\(bytes.hexBytes)"
@@ -112,8 +134,8 @@ func runRawUSBMonitor() {
         if disabledEndpoints.count == endpoints.count { break }
       }
       await session.close()
-      print("USB_SUMMARY packets=\(packets) disabled_endpoints=\(disabledEndpoints.count)")
-      exitCode.withLock { $0 = packets > 0 ? 0 : 3 }
+      print("USB_SUMMARY packets=\(received) disabled_endpoints=\(disabledEndpoints.count)")
+      exitCode.withLock { $0 = received > 0 ? 0 : 3 }
     } catch {
       unsafe fputs("ERROR: raw USB monitor failed: \(error)\n", unsafe stderr)
       exitCode.withLock { $0 = 1 }

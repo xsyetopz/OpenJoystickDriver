@@ -35,6 +35,13 @@ A repository build run as `ojd` (for example `ln -sf OpenJoystickDriver .build/d
 
 `OpenJoystickDriverHIDTool` is an internal tool for poking at hardware. When the service holds a controller for itself alone, `OpenJoystickDriverHIDTool --monitor` reads the service's packet log like `ojd controller capture`. The service refuses a tool it didn't sign, and the tool hints to run `ojd controller capture`.
 
+`OpenJoystickDriverHIDTool --usb-monitor --vid <id> --pid <id>` claims interface 0 through IOUSBHost and prints each IN packet; `--endpoint` limits the reads to one endpoint. `--send "<hex>; <hex>"` writes each packet to `--out-endpoint` 50 ms apart before the reads start, so a pad that waits for a host command can be woken by hand. A GIP pad that only repeats its announce packet starts sending input after the power-on command:
+
+```bash
+swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x1532 --pid 0x0a15 --endpoint 0x81 \
+  --out-endpoint 0x01 --send "05 20 00 01 00" --seconds 5
+```
+
 CLI command families:
 
 ```text

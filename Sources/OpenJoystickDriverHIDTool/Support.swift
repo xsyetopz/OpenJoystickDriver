@@ -68,7 +68,9 @@ enum HIDToolArgumentError: Error, CustomStringConvertible {
 func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   if arguments == ["-h"] || arguments == ["--help"] { return nil }
 
-  let valueOptions = Set(["--vid", "--pid", "--endpoint", "--length", "--seconds"])
+  let valueOptions = Set([
+    "--vid", "--pid", "--endpoint", "--length", "--seconds", "--send", "--out-endpoint",
+  ])
   let booleanOptions = Set(["--service-open", "--set-report", "--validate-only"])
   let knownOptions = valueOptions.union(booleanOptions).union(HIDToolMode.allCases.map(\.rawValue))
   var values: [String: String] = [:]
@@ -121,7 +123,10 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   case .dump, .dumpElements: owned = ["--vid", "--pid"]
   case .open: owned = ["--vid", "--pid", "--service-open", "--set-report"]
   case .monitor: owned = ["--vid", "--pid", "--seconds"]
-  case .usbMonitor: owned = ["--vid", "--pid", "--endpoint", "--length", "--seconds"]
+  case .usbMonitor:
+    owned = [
+      "--vid", "--pid", "--endpoint", "--length", "--seconds", "--send", "--out-endpoint",
+    ]
   case .recordProbe: owned = ["--seconds", "--validate-only"]
   case .usbPassive: owned = ["--vid", "--pid"]
   }
@@ -151,6 +156,15 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   if mode == .usbMonitor {
     try validate("--endpoint", range: 0...255)
     try validate("--length", range: 1...1024)
+    try validate("--out-endpoint", range: 0x01...0x0F)
+    if let packets = values["--send"] {
+      guard parseUSBPackets(packets) != nil else {
+        throw HIDToolArgumentError.message("malformed value '\(packets)' for '--send'")
+      }
+      guard values["--out-endpoint"] != nil else {
+        throw HIDToolArgumentError.message("'--send' requires '--out-endpoint'")
+      }
+    }
   }
   if mode == .dump || mode == .dumpElements || mode == .usbPassive || mode == .open {
     for required in ["--vid", "--pid"] where values[required] == nil {
@@ -159,6 +173,18 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   }
 
   return HIDToolArguments(mode: mode, values: values, flags: flags)
+}
+
+/// The packets of `text`: each one 1 to 64 hex pairs, separated from the next by `;`, such as
+/// `05 20 00 01 00; 0A 20 00 03 00 01 14`; nil when any packet is malformed.
+func parseUSBPackets(_ text: String) -> [[UInt8]]? {
+  let packets = text.split(separator: ";").map { ControllerRawOutput.parseHex(String($0)) }
+  guard !packets.isEmpty else { return nil }
+  let parsed = packets.compactMap { $0 }
+  guard parsed.count == packets.count,
+    parsed.allSatisfy({ $0.count <= ControllerRawOutput.maxByteCount })
+  else { return nil }
+  return parsed
 }
 
 /// Returns the integer property `key` of `dev`, or 0 when it has none.
@@ -287,6 +313,7 @@ func printUsageAndExit(_ code: Int32) -> Never {
       OpenJoystickDriverHIDTool --monitor [--vid <int> --pid <int>] [--seconds 10]
       OpenJoystickDriverHIDTool --usb-monitor --vid 0x1209
         [--endpoint 0x81] [--length 64] [--seconds 20]
+        [--out-endpoint 0x02 --send "05 20 00 01 00; 0A 20 00 03 00 01 14"]
       OpenJoystickDriverHIDTool --record-probe <record.plist>
         [--seconds 30] [--validate-only]
       OpenJoystickDriverHIDTool --usb-passive --vid 0x3537 --pid 0x1010
@@ -310,6 +337,9 @@ func printUsageAndExit(_ code: Int32) -> Never {
       --pid <int>      Product ID (decimal or 0x... hex).
       --endpoint <n>   Interrupt IN endpoint for --usb-monitor; omitted sweeps 0x81...0x8f.
       --length <n>     Read length for --usb-monitor (default: 64, max: 1024).
+      --send <bytes>   Packets --usb-monitor writes before it reads: hex pairs, packets
+        separated by ';', 50 ms apart. A wedged GIP pad answers "05 20 00 01 07" by rebooting.
+      --out-endpoint <n>  Interrupt OUT endpoint for --send (0x01...0x0f).
       --seconds <int>  Monitor duration in seconds (default varies, max: 300).
       -h, --help       Show this help.
 
