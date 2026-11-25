@@ -74,6 +74,8 @@ func sendUSBPackets(
 ///
 /// It writes the `--send` packets to `--out-endpoint` first, then reads the endpoint of
 /// `--endpoint`, or sweeps 0x81 to 0x8F, with the `--length` read length and for `--seconds`.
+/// An endpoint that fails with an error other than a timeout is read no more, and the run ends
+/// once every endpoint has failed.
 func runRawUSBMonitor() {
   let vendorID = UInt16(clamping: intArg("--vid", default: 0))
   let productID = UInt16(clamping: intArg("--pid", default: 0))
@@ -124,7 +126,7 @@ func runRawUSBMonitor() {
             )
             unsafe fflush(stdout)
           } catch USBTransportError.timeout { continue } catch {
-            if explicitEndpoint == nil { disabledEndpoints.insert(endpoint) }
+            disabledEndpoints.insert(endpoint)
             print(
               "USB_ENDPOINT endpoint=0x\(String(endpoint, radix: 16))"
                 + " result=error detail=\(error.localizedDescription)"
