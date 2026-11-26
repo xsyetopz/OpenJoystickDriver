@@ -61,86 +61,52 @@ enum MainWindowToolbarAction: String, CaseIterable {
     }
   }
 
-  /// The SF Symbol of the toolbar item.
-  var symbolName: String {
+  /// The SF Symbol, the label key and the tooltip key of the toolbar item.
+  private var presentation: (symbol: String, label: String, description: String) {
     switch self {
-    case .newProfile: return "plus"
-    case .importProfile: return "square.and.arrow.down"
-    case .validateProfileFile: return "checkmark.seal"
-    case .duplicateProfile: return "plus.square.on.square"
-    case .convertProfile: return "arrow.left.arrow.right"
-    case .exportProfile: return "square.and.arrow.up"
-    case .deleteProfile: return "trash"
-    case .installLibraryItem: return "square.and.arrow.down.on.square"
-    case .grantProgram: return "person.badge.plus"
-    case .createToken: return "key"
-    case .validateLibraryItem: return "checkmark.circle"
-    case .testLibraryRecord: return "play.circle"
-    case .removeLibraryItem: return "trash"
-    case .searchLibrary: return "magnifyingglass"
-    case .activityMode: return "list.bullet.rectangle"
-    case .activityFilter: return "line.3.horizontal.decrease.circle"
-    case .activitySearch: return "magnifyingglass"
-    case .copyActivityLog: return "doc.on.doc"
-    case .saveActivityLog: return "square.and.arrow.down"
-    case .showActivityLogInFinder: return "folder"
-    case .runDiagnostics: return "stethoscope"
+    case .newProfile: ("plus", "ui.profiles.new", "ui.help.newProfile")
+    case .importProfile: ("square.and.arrow.down", "ui.profiles.import", "ui.help.importProfile")
+    case .validateProfileFile:
+      ("checkmark.seal", "ui.profiles.validateFile", "ui.help.validateProfileFile")
+    case .duplicateProfile:
+      ("plus.square.on.square", "action.duplicate", "ui.help.duplicateProfile")
+    case .convertProfile: ("arrow.left.arrow.right", "action.convert", "ui.help.convertProfile")
+    case .exportProfile: ("square.and.arrow.up", "ui.profiles.export", "ui.help.exportProfile")
+    case .deleteProfile: ("trash", "action.delete", "ui.help.deleteProfile")
+    case .installLibraryItem:
+      ("square.and.arrow.down.on.square", "ui.library.install", "ui.help.menu.installRecordOrMod")
+    case .grantProgram: ("person.badge.plus", "ui.access.grantProgram", "a11y.access.grantProgram")
+    case .createToken: ("key", "ui.access.grantToken", "a11y.access.grantToken")
+    case .validateLibraryItem:
+      ("checkmark.circle", "ui.library.validate", "ui.help.validateLibraryItem")
+    case .testLibraryRecord: ("play.circle", "ui.library.testRecord", "ui.help.testLibraryRecord")
+    case .removeLibraryItem: ("trash", "ui.library.remove", "ui.help.removeLibraryItem")
+    case .searchLibrary: ("magnifyingglass", "ui.library.search", "ui.help.searchLibrary")
+    case .activityMode:
+      ("list.bullet.rectangle", "ui.sidebar.activity.title", "ui.help.activityMode")
+    case .activityFilter:
+      ("line.3.horizontal.decrease.circle", "ui.activity.filter", "ui.help.activityFilter")
+    case .activitySearch: ("magnifyingglass", "ui.activity.search", "ui.help.activitySearch")
+    case .copyActivityLog: ("doc.on.doc", "action.copyAll", "ui.help.copyActivityLog")
+    case .saveActivityLog:
+      ("square.and.arrow.down", "ui.menu.file.saveActivityLog", "ui.help.saveActivityLog")
+    case .showActivityLogInFinder:
+      (
+        "folder", "platform.macos.ui.activity.showInFinder",
+        "platform.macos.ui.help.showActivityLog"
+      )
+    case .runDiagnostics: ("stethoscope", "ui.activity.runChecks", "ui.help.runDiagnostics")
     }
   }
+
+  /// The SF Symbol of the toolbar item.
+  var symbolName: String { presentation.symbol }
 
   /// The localization key of the item's label.
-  var labelKey: String {
-    switch self {
-    case .newProfile: return "ui.profiles.new"
-    case .importProfile: return "ui.profiles.import"
-    case .validateProfileFile: return "ui.profiles.validateFile"
-    case .duplicateProfile: return "action.duplicate"
-    case .convertProfile: return "action.convert"
-    case .exportProfile: return "ui.profiles.export"
-    case .deleteProfile: return "action.delete"
-    case .installLibraryItem: return "ui.library.install"
-    case .grantProgram: return "ui.access.grantProgram"
-    case .createToken: return "ui.access.grantToken"
-    case .validateLibraryItem: return "ui.library.validate"
-    case .testLibraryRecord: return "ui.library.testRecord"
-    case .removeLibraryItem: return "ui.library.remove"
-    case .searchLibrary: return "ui.library.search"
-    case .activityMode: return "ui.sidebar.activity.title"
-    case .activityFilter: return "ui.activity.filter"
-    case .activitySearch: return "ui.activity.search"
-    case .copyActivityLog: return "action.copyAll"
-    case .saveActivityLog: return "ui.menu.file.saveActivityLog"
-    case .showActivityLogInFinder: return "platform.macos.ui.activity.showInFinder"
-    case .runDiagnostics: return "ui.activity.runChecks"
-    }
-  }
+  var labelKey: String { presentation.label }
 
   /// The localization key of the item's tooltip.
-  var descriptionKey: String {
-    switch self {
-    case .newProfile: return "ui.help.newProfile"
-    case .importProfile: return "ui.help.importProfile"
-    case .validateProfileFile: return "ui.help.validateProfileFile"
-    case .duplicateProfile: return "ui.help.duplicateProfile"
-    case .convertProfile: return "ui.help.convertProfile"
-    case .exportProfile: return "ui.help.exportProfile"
-    case .deleteProfile: return "ui.help.deleteProfile"
-    case .installLibraryItem: return "ui.help.menu.installRecordOrMod"
-    case .grantProgram: return "a11y.access.grantProgram"
-    case .createToken: return "a11y.access.grantToken"
-    case .validateLibraryItem: return "ui.help.validateLibraryItem"
-    case .testLibraryRecord: return "ui.help.testLibraryRecord"
-    case .removeLibraryItem: return "ui.help.removeLibraryItem"
-    case .searchLibrary: return "ui.help.searchLibrary"
-    case .activityMode: return "ui.help.activityMode"
-    case .activityFilter: return "ui.help.activityFilter"
-    case .activitySearch: return "ui.help.activitySearch"
-    case .copyActivityLog: return "ui.help.copyActivityLog"
-    case .saveActivityLog: return "ui.help.saveActivityLog"
-    case .showActivityLogInFinder: return "platform.macos.ui.help.showActivityLog"
-    case .runDiagnostics: return "ui.help.runDiagnostics"
-    }
-  }
+  var descriptionKey: String { presentation.description }
 
   /// The area that offers the action, in its toolbar or its menu.
   var area: MainWindowArea {
@@ -199,11 +165,10 @@ extension MainWindowToolbarAction {
     case .duplicateProfile, .convertProfile:
       return state.hasSelection && !state.isBlocked && !state.hasUnsavedChanges
     case .deleteProfile: return state.hasSelection && !state.isBlocked
-    case .installLibraryItem, .grantProgram, .createToken,
-      .validateLibraryItem, .testLibraryRecord, .removeLibraryItem, .searchLibrary:
-      return true
-    case .activityMode, .activityFilter, .activitySearch, .copyActivityLog, .saveActivityLog,
-      .showActivityLogInFinder, .runDiagnostics:
+    case .installLibraryItem, .grantProgram, .createToken, .validateLibraryItem,
+      .testLibraryRecord, .removeLibraryItem, .searchLibrary, .activityMode, .activityFilter,
+      .activitySearch, .copyActivityLog, .saveActivityLog, .showActivityLogInFinder,
+      .runDiagnostics:
       return true
     }
   }
