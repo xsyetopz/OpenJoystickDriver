@@ -439,6 +439,34 @@ extension ControllerRecordSet {
         "the patch changes nothing in the record"
       )
     }
+    let (layers, tuningLayers) = attributedLayers(
+      of: upstream,
+      removed: removed,
+      body: body,
+      layer: layer,
+      isAll: isAll
+    )
+    return try makeRecord(
+      merged,
+      layers: layers,
+      tuningLayers: tuningLayers,
+      userFile: layer == .user && !isAll ? file : upstream.userFile,
+      packageFile: layer == .package && !isAll ? file : upstream.packageFile
+    )
+  }
+
+  /// The field and tuning layers of `upstream` after a patch removes `removed` paths and sets the
+  /// members of `body`.
+  ///
+  /// A patch outside `all` attributes the fields it touches to `layer`. An `all` patch attributes
+  /// its tuning settings to ``ControllerRecordLayer/global``.
+  private static func attributedLayers(
+    of upstream: ControllerRecord,
+    removed: [[String]],
+    body: OrderedJSON?,
+    layer: ControllerRecordLayer,
+    isAll: Bool
+  ) -> (fields: [String: ControllerRecordLayer], tuning: [String: ControllerRecordLayer]) {
     var layers = upstream.fieldLayers
     var tuningLayers = upstream.tuningLayers
     for path in removed {
@@ -460,12 +488,6 @@ extension ControllerRecordSet {
         for setting in value.members ?? [] { tuningLayers[setting.key] = isAll ? .global : layer }
       }
     }
-    return try makeRecord(
-      merged,
-      layers: layers,
-      tuningLayers: tuningLayers,
-      userFile: layer == .user && !isAll ? file : upstream.userFile,
-      packageFile: layer == .package && !isAll ? file : upstream.packageFile
-    )
+    return (layers, tuningLayers)
   }
 }
