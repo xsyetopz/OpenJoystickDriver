@@ -57,6 +57,7 @@ struct ServiceConnectionDeadlineTests {
   func missedDeadlineIsReportedAsTimeoutNamingOption() async {
     do {
       _ = try await ServiceConnection.withDeadline(seconds: 0.05) {
+        // A fake operation that hangs until the deadline cancels it.
         try await Task.sleep(nanoseconds: 60_000_000_000)
         return 1
       }

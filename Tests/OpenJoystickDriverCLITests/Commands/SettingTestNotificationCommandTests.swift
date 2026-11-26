@@ -24,6 +24,7 @@ struct SettingTestNotificationCommandTests {
         guard request.method == ApplicationServiceRPCMethod.sendTestNotification.rawValue else {
           return LocalServiceRPCResponse(result: nil, error: "unexpected \(request.method)")
         }
+        // Injected latency the tests are about: a slow answer against the request deadline.
         try? await Task.sleep(for: answerDelay)
         return LocalServiceRPCResponse(result: try? JSONEncoder().encode(outcome), error: nil)
       }

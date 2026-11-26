@@ -195,7 +195,8 @@ struct VirtualFeedCommandTests {
       AsyncStream { continuation in
         continuation.yield("{}")
         Task {
-          // Shorter than the heartbeat, so only the wait can collect the command in time.
+          // Injected latency the test is about: the input ends sooner than the heartbeat, so only
+          // the wait can collect the command in time.
           try? await Task.sleep(nanoseconds: 250_000_000)
           continuation.finish()
         }
