@@ -254,49 +254,59 @@ extension DeviceManager {
   ) async -> Bool {
     guard !isStopping || ControllerTeardownOutput.isActive else { return false }
     if let detachedInfo {
-      guard
-        isOwnedDetachedHIDNeutralization(
-          identifier: identifier,
-          pipeline: pipeline,
-          detachedInfo: detachedInfo
-        )
-      else { return false }
-      guard let address = identifier.hidRoutingAddress,
-        let expectedConnectionID = detachedInfo.hidConnectionID,
-        let key = hidInitializationKey(for: identifier, connectionID: expectedConnectionID),
-        let expectedPhysicalDevice = detachedInfo.physicalDevice
-      else { return false }
-      if let initialization = hidInitializationTasks[key],
-        initialization.connection.connectionID != expectedConnectionID
-          || initialization.connection.physicalDevice != expectedPhysicalDevice
-      {
-        return false
-      }
-      guard let snapshots = await hidManager.currentConnectionSnapshots(),
-        snapshots.contains(where: {
-          $0.connection.connectionID == expectedConnectionID
-            && $0.connection.physicalDevice == expectedPhysicalDevice
-            && $0.connection.routingAddress == address
-        }),
-        isOwnedDetachedHIDNeutralization(
-          identifier: identifier,
-          pipeline: pipeline,
-          detachedInfo: detachedInfo
-        )
-      else { return false }
-      if let initialization = hidInitializationTasks[key],
-        initialization.connection.connectionID != expectedConnectionID
-          || initialization.connection.physicalDevice != expectedPhysicalDevice
-      {
-        return false
-      }
-      return startupConnection == nil
+      return await isCurrentDetachedHIDOutput(
+        identifier: identifier,
+        pipeline: pipeline,
+        detachedInfo: detachedInfo
+      ) && startupConnection == nil
     }
     guard pipelines[identifier] === pipeline else { return false }
     if let startupConnection {
       return isCurrentHIDStartupConnection(pipeline, connection: startupConnection)
     }
     return true
+  }
+
+  /// Whether the detached HID connection of `detachedInfo` may be written now: it is owned, no
+  /// initialization holds another connection, and the backend still lists it.
+  ///
+  /// The ownership and the initialization are checked again after the backend answers.
+  private func isCurrentDetachedHIDOutput(
+    identifier: LogicalControllerID,
+    pipeline: DevicePipeline,
+    detachedInfo: DeviceInfo
+  ) async -> Bool {
+    guard
+      isOwnedDetachedHIDNeutralization(
+        identifier: identifier,
+        pipeline: pipeline,
+        detachedInfo: detachedInfo
+      )
+    else { return false }
+    guard let address = identifier.hidRoutingAddress,
+      let expectedConnectionID = detachedInfo.hidConnectionID,
+      let key = hidInitializationKey(for: identifier, connectionID: expectedConnectionID),
+      let expectedPhysicalDevice = detachedInfo.physicalDevice
+    else { return false }
+    func initializationHoldsAnother() -> Bool {
+      guard let initialization = hidInitializationTasks[key] else { return false }
+      return initialization.connection.connectionID != expectedConnectionID
+        || initialization.connection.physicalDevice != expectedPhysicalDevice
+    }
+    if initializationHoldsAnother() { return false }
+    guard let snapshots = await hidManager.currentConnectionSnapshots(),
+      snapshots.contains(where: {
+        $0.connection.connectionID == expectedConnectionID
+          && $0.connection.physicalDevice == expectedPhysicalDevice
+          && $0.connection.routingAddress == address
+      }),
+      isOwnedDetachedHIDNeutralization(
+        identifier: identifier,
+        pipeline: pipeline,
+        detachedInfo: detachedInfo
+      )
+    else { return false }
+    return !initializationHoldsAnother()
   }
 
   /// Whether `detachedInfo` still owns the neutralization of `identifier`: no pipeline runs, and
