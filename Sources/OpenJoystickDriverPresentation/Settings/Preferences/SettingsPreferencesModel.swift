@@ -5,47 +5,6 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// Checks for a newer release of the app.
-  protocol ApplicationUpdateChecking: Sendable {
-    /// Returns the result of checking the latest release against `currentVersion`, with prereleases
-    /// included when `includePrereleases` is true.
-    func check(currentVersion: String, includePrereleases: Bool) async -> UpdateCheckState
-  }
-
-  extension UpdateChecker: ApplicationUpdateChecking {}
-
-  /// The control of General or Notifications whose failure shows beside it.
-  enum SettingsControlOrigin: Equatable {
-    /// The Open at login switch.
-    case loginItem
-    /// The pause shortcut row.
-    case pauseShortcut
-    /// The Send Test Notification button.
-    case testNotification
-  }
-
-  /// The failure of a request that a control started, with that control.
-  struct SettingsControlFailure: Equatable {
-    /// Why the request failed.
-    let message: String
-    /// The control that started the request.
-    let origin: SettingsControlOrigin
-  }
-
-  /// The app's side of the test notification: the request to the service and the report back.
-  protocol TestNotificationRequesting: Sendable {
-    /// Asks the service to announce a test notification and returns how it ended.
-    func requestTestNotification() async throws -> TestNotificationOutcome
-    /// Answers an announcement this app took from the service.
-    func reportTestNotification(
-      _ announcement: UUID,
-      outcome: TestNotificationOutcome
-    )
-      async throws -> Bool
-  }
-
-  extension ApplicationServiceClientGateway: TestNotificationRequesting {}
-
   /// The switches of the Settings window, stored in the user settings file, and the update check
   /// and notification permission state that the panes show.
   @MainActor
