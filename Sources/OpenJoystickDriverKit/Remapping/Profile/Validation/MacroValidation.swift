@@ -36,28 +36,7 @@ extension RemappingProfile {
       throw RemappingValidationError.invalidMacro(index: index, field: "repeat")
     }
     for (step, value) in macro.steps.enumerated() {
-      let delay: (field: String, ms: Double)?
-      switch value {
-      case .wait(let durationMs): delay = ("durationMs", durationMs)
-      case .chord(let destinations, let holdMs):
-        guard !destinations.isEmpty else {
-          throw RemappingValidationError.invalidMacro(
-            index: index,
-            field: "steps[\(step)].destinations"
-          )
-        }
-        delay = ("holdMs", holdMs)
-      case .tap, .press, .release: delay = nil
-      }
-      if let delay, !delay.ms.isFinite || !RemappingMacro.delayMsRange.contains(delay.ms) {
-        throw RemappingValidationError.invalidMacro(
-          index: index,
-          field: "steps[\(step)].\(delay.field)"
-        )
-      }
-      for destination in value.destinations {
-        try validateStepDestination(destination, macro: index, step: step)
-      }
+      try validateStep(value, at: step, in: index)
     }
     let passMs = macro.passMs
     guard passMs <= RemappingMacro.maximumPassMs else {
@@ -67,6 +46,32 @@ extension RemappingProfile {
       passMs * Double(count) > RemappingMacro.maximumRunMs
     {
       throw RemappingValidationError.macroRunTimeExceeded(index: index, limit: "repeat")
+    }
+  }
+
+  /// Checks one step's chord destinations, delay, and each destination.
+  private func validateStep(_ value: RemappingMacroStep, at step: Int, in index: Int) throws {
+    let delay: (field: String, ms: Double)?
+    switch value {
+    case .wait(let durationMs): delay = ("durationMs", durationMs)
+    case .chord(let destinations, let holdMs):
+      guard !destinations.isEmpty else {
+        throw RemappingValidationError.invalidMacro(
+          index: index,
+          field: "steps[\(step)].destinations"
+        )
+      }
+      delay = ("holdMs", holdMs)
+    case .tap, .press, .release: delay = nil
+    }
+    if let delay, !delay.ms.isFinite || !RemappingMacro.delayMsRange.contains(delay.ms) {
+      throw RemappingValidationError.invalidMacro(
+        index: index,
+        field: "steps[\(step)].\(delay.field)"
+      )
+    }
+    for destination in value.destinations {
+      try validateStepDestination(destination, macro: index, step: step)
     }
   }
 
