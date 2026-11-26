@@ -55,8 +55,6 @@
     /// off.
     @Published
     private(set) var idleDisconnectMinutes: Int?
-    /// Whether the developer tools show: the level is Advanced and the developer tools are on.
-    var developerToolsVisible: Bool { interfaceLevel == .advanced && developerToolsEnabled }
     /// The system-wide shortcut that pauses and resumes every controller, or nil while unset.
     @Published
     private(set) var pauseShortcut: PauseShortcut?
@@ -89,11 +87,8 @@
     private let launchAtLogin: any LaunchAtLoginControlling
     /// Reads and requests the notification permission.
     private let notificationAuthorizationController: any NotificationAuthorizationControlling
-    /// Counts authorization reads.
-    ///
-    /// The controller answers off the main actor, so a refresh that started before a newer read can
-    /// finish after it; its result is then stale and dropped.
-    private var notificationAuthorizationReads = 0
+    /// Applies the notification permission to the notification switches.
+    private lazy var notificationPermission = makeNotificationPermission()
     /// Checks for updates.
     private let updateChecker: any ApplicationUpdateChecking
     /// Posts the update available notification and the test notification.
@@ -202,25 +197,25 @@
     /// Turns the notification for a connecting controller on or off; turning it on needs the macOS
     /// notification permission, which is requested first.
     func setControllerNotifications(_ enabled: Bool) {
-      setNotificationPreference(enabled, preference: .controllers)
+      notificationPermission.setPreference(enabled, preference: .controllers)
     }
 
     /// Turns the notification for an activating profile on or off; turning it on needs the macOS
     /// notification permission, which is requested first.
     func setProfileNotifications(_ enabled: Bool) {
-      setNotificationPreference(enabled, preference: .profiles)
+      notificationPermission.setPreference(enabled, preference: .profiles)
     }
 
     /// Turns the notification for a disconnecting controller on or off; turning it on needs the
     /// macOS notification permission, which is requested first.
     func setControllerDisconnectedNotifications(_ enabled: Bool) {
-      setNotificationPreference(enabled, preference: .controllerDisconnections)
+      notificationPermission.setPreference(enabled, preference: .controllerDisconnections)
     }
 
     /// Turns the notification for a deactivating profile on or off; turning it on needs the macOS
     /// notification permission, which is requested first.
     func setProfileDeactivatedNotifications(_ enabled: Bool) {
-      setNotificationPreference(enabled, preference: .profileDeactivations)
+      notificationPermission.setPreference(enabled, preference: .profileDeactivations)
     }
 
     /// Turns notification sounds on or off.
@@ -239,16 +234,6 @@
           let outcome = try await testNotifications.requestTestNotification()
           self?.failControl(.testNotification, Self.message(for: outcome))
         } catch { self?.report(error, beside: .testNotification) }
-      }
-    }
-
-    /// The text of an outcome that is not `shown`.
-    static func message(for outcome: TestNotificationOutcome) -> String? {
-      switch outcome {
-      case .shown: return nil
-      case .denied: return OJDLocalized.string("error.E2037.message")
-      case .failed(let reason): return reason
-      case .noAnswer: return OJDLocalized.string("error.E2036.message")
       }
     }
 
@@ -281,26 +266,7 @@
     ///
     /// A delivery the system rejects, or one with no notification center, is `failed`.
     func showTestNotification() async -> TestNotificationOutcome {
-      notificationAuthorizationReads += 1
-      var state = await notificationAuthorizationController.state()
-      notificationAuthorization = state
-      if state == .notDetermined || state == .checking {
-        notificationAuthorizationReads += 1
-        let (requested, errorDescription) = await notificationAuthorizationController.request()
-        state = requested
-        notificationAuthorization = requested
-        if let errorDescription { return .failed(errorDescription) }
-      }
-      guard state == .allowed else { return .denied }
-      do {
-        try await notificationDelivery.deliverAwaitingSystem(
-          title: OJDLocalized.string("notify.testTitle"),
-          body: OJDLocalized.string("notify.testBody"),
-          sound: notificationSounds
-        )
-      } catch { return .failed(error.localizedDescription) }
-      refreshNotificationAuthorization()
-      return .shown
+      await notificationPermission.showTestNotification()
     }
 
     /// Stores the pause shortcut, or clears it for nil; a failure shows beside the row.
@@ -351,16 +317,6 @@
       guard persist(.showInDock, enabled) else { return }
       showInDock = enabled
     }
-
-    /// Whether Show in Menu Bar cannot be turned off, because the Dock icon is off.
-    ///
-    /// The two cannot both be off.
-    var showInMenuBarIsLocked: Bool { showInMenuBar && !showInDock }
-
-    /// Whether Show in Dock cannot be turned off, because the menu bar item is off.
-    ///
-    /// The two cannot both be off.
-    var showInDockIsLocked: Bool { showInDock && !showInMenuBar }
 
     /// Turns automatic update checks on or off; turning them on checks at once, so the choice
     /// applies without a restart.
@@ -424,15 +380,8 @@
       }
     }
 
-    /// Opens the page of the available release in the default browser; does nothing unless a
-    /// release is available.
-    func openAvailableUpdate() {
-      guard case .available(let info) = updateState else { return }
-      NSWorkspace.shared.open(info.htmlURL)
-    }
-
     /// Opens the notification settings of the app in System Settings.
-    func openNotificationSettings() { notificationAuthorizationController.openSystemSettings() }
+    func openNotificationSettings() { notificationPermission.openSystemSettings() }
 
     /// Hides the error.
     ///
@@ -446,29 +395,7 @@
     /// Reads the notification permission.
     ///
     /// While macOS denies it, the four event notifications are turned off.
-    func refreshNotificationAuthorization() {
-      notificationAuthorizationReads += 1
-      let read = notificationAuthorizationReads
-      Task { [weak self, notificationAuthorizationController] in
-        let systemSettings = await notificationAuthorizationController.settings()
-        guard let self, read == notificationAuthorizationReads else { return }
-        let state = systemSettings.authorization
-        notificationAuthorization = state
-        notificationSystemSettings = systemSettings
-        if state == .denied {
-          let notifications: [ApplicationSettingKey] = [
-            .notifyControllerConnected, .notifyControllerDisconnected, .notifyProfileActivated,
-            .notifyProfileDeactivated,
-          ]
-          guard persist(Dictionary(uniqueKeysWithValues: notifications.map { ($0, false) }))
-          else { return }
-          controllerNotifications = false
-          controllerDisconnectedNotifications = false
-          profileNotifications = false
-          profileDeactivatedNotifications = false
-        }
-      }
-    }
+    func refreshNotificationAuthorization() { notificationPermission.refresh() }
 
     /// Stores one setting in the user settings file and returns whether it succeeded; a failure
     /// shows in ``errorMessage``.
@@ -486,11 +413,6 @@
         report(error)
         return false
       }
-    }
-
-    /// The failure that belongs beside the control `origin`, or nil.
-    func failure(beside origin: SettingsControlOrigin) -> String? {
-      controlFailure?.origin == origin ? controlFailure?.message : nil
     }
 
     /// Records the failure of the control `origin`, or clears the failure when `message` is nil.
@@ -531,66 +453,20 @@
       }
     }
 
-    /// Turns a notification preference on or off; turning it on reads the macOS notification
-    /// permission and requests it when it is undecided.
-    private func setNotificationPreference(_ enabled: Bool, preference: NotificationPreference) {
-      guard enabled else {
-        guard persist(preference, false) else { return }
-        update(preference, enabled: false)
-        errorMessage = nil
-        return
-      }
-      notificationAuthorizationReads += 1
-      Task { [weak self, notificationAuthorizationController] in
-        let state = await notificationAuthorizationController.state()
-        guard let self else { return }
-        notificationAuthorization = state
-        switch state {
-        case .allowed:
-          acceptNotificationPreference(preference)
-          refreshNotificationAuthorization()
-        case .notDetermined, .checking: requestNotificationAuthorization(preference)
-        case .denied: rejectNotificationPreference(preference, errorDescription: nil)
-        }
-      }
-    }
-
-    /// Asks macOS for the notification permission, then keeps `preference` on or turns it off.
-    private func requestNotificationAuthorization(_ preference: NotificationPreference) {
-      notificationAuthorizationReads += 1
-      Task { [weak self, notificationAuthorizationController] in
-        let (state, errorDescription) = await notificationAuthorizationController.request()
-        guard let self else { return }
-        notificationAuthorization = state
-        if state == .allowed, errorDescription == nil {
-          acceptNotificationPreference(preference)
-        } else {
-          rejectNotificationPreference(preference, errorDescription: errorDescription)
-        }
-      }
-    }
-
-    /// Stores `preference` as on and clears the error.
-    private func acceptNotificationPreference(_ preference: NotificationPreference) {
-      guard persist(preference, true) else { return }
-      update(preference, enabled: true)
-      errorMessage = nil
-    }
-
-    /// Stores `preference` as off and shows `errorDescription`, or the text for denied
-    /// notifications when it is nil.
-    private func rejectNotificationPreference(
-      _ preference: NotificationPreference,
-      errorDescription: String?
-    ) {
-      if persist(preference, false) {
-        update(preference, enabled: false)
-      }
-      errorMessage =
-        errorDescription
-        ?? OJDLocalized.string(
-          SystemSettingsMessage.notificationsDenied.localizationKey()
+    /// Connects the notification permission flow to this model's switches and error text.
+    private func makeNotificationPermission() -> NotificationPermissionFlow {
+      NotificationPermissionFlow(
+        controller: notificationAuthorizationController,
+        delivery: notificationDelivery,
+        host: NotificationPermissionFlow.Host(
+          persist: { [weak self] in self?.persist($0) ?? false },
+          setAuthorization: { [weak self] in self?.notificationAuthorization = $0 },
+          setSystemSettings: { [weak self] in self?.notificationSystemSettings = $0 },
+          setPreference: { [weak self] in self?.update($0, enabled: $1) },
+          setErrorMessage: { [weak self] in self?.errorMessage = $0 },
+          soundsEnabled: { [weak self] in self?.notificationSounds ?? false }
         )
+      )
     }
 
     /// Sets the switch of `preference`.
@@ -600,33 +476,6 @@
       case .controllerDisconnections: controllerDisconnectedNotifications = enabled
       case .profiles: profileNotifications = enabled
       case .profileDeactivations: profileDeactivatedNotifications = enabled
-      }
-    }
-
-    /// Stores the setting of `preference` and returns whether it succeeded.
-    private func persist(_ preference: NotificationPreference, _ value: Bool) -> Bool {
-      persist(preference.settingKey, value)
-    }
-  }
-
-  /// The notification switch of one event.
-  private enum NotificationPreference: Sendable, Equatable {
-    /// A controller connects.
-    case controllers
-    /// A controller disconnects.
-    case controllerDisconnections
-    /// A profile activates.
-    case profiles
-    /// A profile deactivates.
-    case profileDeactivations
-
-    /// The setting that stores the preference.
-    var settingKey: ApplicationSettingKey {
-      switch self {
-      case .controllers: return .notifyControllerConnected
-      case .controllerDisconnections: return .notifyControllerDisconnected
-      case .profiles: return .notifyProfileActivated
-      case .profileDeactivations: return .notifyProfileDeactivated
       }
     }
   }
