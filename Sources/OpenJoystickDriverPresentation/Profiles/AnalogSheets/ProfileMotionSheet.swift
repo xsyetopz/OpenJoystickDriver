@@ -60,134 +60,179 @@
               ProfileGyroFields(draft: $gyro)
               Divider()
             }
-            Picker(label("space"), selection: $draft.space) {
-              Text(label("local")).tag(RemappingMotionSpace.local)
-              Text(label("player")).tag(RemappingMotionSpace.player)
-              Text(label("world")).tag(RemappingMotionSpace.world)
-            }.help(tooltip("space"))
-            slider(
-              "pitchSensitivity",
-              value: $draft.pitchSensitivity,
-              maximum: 100
-            )
-            slider("yawSensitivity", value: $draft.yawSensitivity, maximum: 100)
-            slider(
-              "smoothingHalfTimeMs",
-              value: $draft.smoothingHalfTimeMs,
-              maximum: 1000
-            )
-            slider(
-              "thresholdDegreesPerSecond",
-              value: $draft.thresholdDegreesPerSecond,
-              maximum: 1000
-            )
-            slider(
-              "yawRelaxation",
-              value: $draft.yawRelaxation,
-              maximum: 10
-            )
-            slider(
-              "sideReductionThreshold",
-              value: $draft.sideReductionThreshold,
-              maximum: 1
-            )
-            slider(
-              "gravityCorrectionRate",
-              value: $draft.gravityCorrectionRate,
-              maximum: 100
-            )
-            Toggle(label("invertPitch"), isOn: $draft.invertPitch)
-              .help(tooltip("invertPitch"))
-            Toggle(label("invertYaw"), isOn: $draft.invertYaw)
-              .help(tooltip("invertYaw"))
-            Toggle(
-              label("automaticBias"),
-              isOn: $draft.automaticBias
-            )
-            .help(tooltip("automaticBias"))
+            spacePicker
+            sensitivityFields
+            invertFields
             Divider()
-            Toggle(label("leanEnabled"), isOn: $draft.leanEnabled)
-              .help(tooltip("leanEnabled"))
-            if draft.leanEnabled {
-              slider(
-                "leanThresholdDegrees",
-                value: $draft.leanThresholdDegrees,
-                maximum: 89
-              )
-              slider(
-                "leanHysteresisDegrees",
-                value: $draft.leanHysteresisDegrees,
-                maximum: 30
-              )
-            }
-            Toggle(label("steeringEnabled"), isOn: $draft.steeringEnabled)
-              .help(tooltip("steeringEnabled"))
-            if draft.steeringEnabled {
-              Picker(
-                label("steeringOutput"),
-                selection: $draft.steeringOutput
-              ) {
-                Text(label("steeringLeft")).tag(
-                  RemappingMotionSteeringOutput.leftStickX
-                )
-                Text(label("steeringRight")).tag(
-                  RemappingMotionSteeringOutput.rightStickX
-                )
-              }
-              .help(tooltip("steeringOutput"))
-              slider(
-                "steeringDeadzoneDegrees",
-                value: $draft.steeringDeadzoneDegrees,
-                maximum: 89
-              )
-              slider(
-                "steeringFullScaleDegrees",
-                value: $draft.steeringFullScaleDegrees,
-                maximum: 90
-              )
-              slider(
-                "steeringResponseExponent",
-                value: $draft.steeringResponseExponent,
-                maximum: 10
-              )
-              Toggle(label("steeringInverted"), isOn: $draft.steeringInverted)
-                .help(tooltip("steeringInverted"))
-            }
+            leanFields
+            steeringFields
           }.padding(.trailing, 8)
         }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
-        HStack {
-          Button(OJDLocalized.string("action.reset")) {
-            draft = ProfileMotionDraft(.default)
-            numericText = draft.numericText
-            gyro = ProfileGyroDraft(.default)
-            errorMessage = nil
-          }.help(OJDLocalized.string("ui.help.reset"))
-          if let onInherit {
-            Button(OJDLocalized.string("ui.profiles.motion.inherit")) {
-              onInherit()
-              presentationMode.wrappedValue.dismiss()
-            }.help(OJDLocalized.string("ui.profiles.motion.inheritHelp"))
-          }
-          Spacer()
-          Button(OJDLocalized.string("action.cancel")) {
-            presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancelSheet"))
-          Button(OJDLocalized.string("action.save")) {
-            do {
-              let edited = try draft.applyingNumericText(
-                numericText,
-                decimalSeparator: Locale.current.decimalSeparator ?? "."
-              )
-              onSave(
-                try edited.validatedTuning(),
-                try gyro.validatedOutput(decimalSeparator: Locale.current.decimalSeparator ?? ".")
-              )
-              presentationMode.wrappedValue.dismiss()
-            } catch { errorMessage = RuntimePresentation.userFacingError(error) }
-          }.help(OJDLocalized.string("ui.help.save"))
-        }
+        buttonRow
       }.ojdSheet(.regular).frame(height: 600)
+    }
+
+    /// The picker of the motion space.
+    private var spacePicker: some View {
+      Picker(label("space"), selection: $draft.space) {
+        Text(label("local")).tag(RemappingMotionSpace.local)
+        Text(label("player")).tag(RemappingMotionSpace.player)
+        Text(label("world")).tag(RemappingMotionSpace.world)
+      }.help(tooltip("space"))
+    }
+
+    /// The sliders of the sensitivity, smoothing, threshold, relaxation and gravity fields.
+    @ViewBuilder
+    private var sensitivityFields: some View {
+      slider(
+        "pitchSensitivity",
+        value: $draft.pitchSensitivity,
+        maximum: 100
+      )
+      slider("yawSensitivity", value: $draft.yawSensitivity, maximum: 100)
+      slider(
+        "smoothingHalfTimeMs",
+        value: $draft.smoothingHalfTimeMs,
+        maximum: 1000
+      )
+      slider(
+        "thresholdDegreesPerSecond",
+        value: $draft.thresholdDegreesPerSecond,
+        maximum: 1000
+      )
+      slider(
+        "yawRelaxation",
+        value: $draft.yawRelaxation,
+        maximum: 10
+      )
+      slider(
+        "sideReductionThreshold",
+        value: $draft.sideReductionThreshold,
+        maximum: 1
+      )
+      slider(
+        "gravityCorrectionRate",
+        value: $draft.gravityCorrectionRate,
+        maximum: 100
+      )
+    }
+
+    /// The toggles that invert the axes and enable the automatic bias.
+    @ViewBuilder
+    private var invertFields: some View {
+      Toggle(label("invertPitch"), isOn: $draft.invertPitch)
+        .help(tooltip("invertPitch"))
+      Toggle(label("invertYaw"), isOn: $draft.invertYaw)
+        .help(tooltip("invertYaw"))
+      Toggle(
+        label("automaticBias"),
+        isOn: $draft.automaticBias
+      )
+      .help(tooltip("automaticBias"))
+    }
+
+    /// The lean toggle and, while it is on, the lean thresholds.
+    @ViewBuilder
+    private var leanFields: some View {
+      Toggle(label("leanEnabled"), isOn: $draft.leanEnabled)
+        .help(tooltip("leanEnabled"))
+      if draft.leanEnabled {
+        slider(
+          "leanThresholdDegrees",
+          value: $draft.leanThresholdDegrees,
+          maximum: 89
+        )
+        slider(
+          "leanHysteresisDegrees",
+          value: $draft.leanHysteresisDegrees,
+          maximum: 30
+        )
+      }
+    }
+
+    /// The steering toggle and, while it is on, the steering output and ranges.
+    @ViewBuilder
+    private var steeringFields: some View {
+      Toggle(label("steeringEnabled"), isOn: $draft.steeringEnabled)
+        .help(tooltip("steeringEnabled"))
+      if draft.steeringEnabled {
+        Picker(
+          label("steeringOutput"),
+          selection: $draft.steeringOutput
+        ) {
+          Text(label("steeringLeft")).tag(
+            RemappingMotionSteeringOutput.leftStickX
+          )
+          Text(label("steeringRight")).tag(
+            RemappingMotionSteeringOutput.rightStickX
+          )
+        }
+        .help(tooltip("steeringOutput"))
+        slider(
+          "steeringDeadzoneDegrees",
+          value: $draft.steeringDeadzoneDegrees,
+          maximum: 89
+        )
+        slider(
+          "steeringFullScaleDegrees",
+          value: $draft.steeringFullScaleDegrees,
+          maximum: 90
+        )
+        slider(
+          "steeringResponseExponent",
+          value: $draft.steeringResponseExponent,
+          maximum: 10
+        )
+        Toggle(label("steeringInverted"), isOn: $draft.steeringInverted)
+          .help(tooltip("steeringInverted"))
+      }
+    }
+
+    /// The Reset, Inherit, Cancel and Save buttons.
+    private var buttonRow: some View {
+      HStack {
+        Button(OJDLocalized.string("action.reset")) { reset() }.help(
+          OJDLocalized.string("ui.help.reset")
+        )
+        if let onInherit {
+          Button(OJDLocalized.string("ui.profiles.motion.inherit")) {
+            onInherit()
+            presentationMode.wrappedValue.dismiss()
+          }.help(OJDLocalized.string("ui.profiles.motion.inheritHelp"))
+        }
+        Spacer()
+        Button(OJDLocalized.string("action.cancel")) {
+          presentationMode.wrappedValue.dismiss()
+        }.help(OJDLocalized.string("ui.help.cancelSheet"))
+        Button(OJDLocalized.string("action.save")) { save() }.help(
+          OJDLocalized.string("ui.help.save")
+        )
+      }
+    }
+
+    /// Restores the default motion tuning and gyro output.
+    private func reset() {
+      draft = ProfileMotionDraft(.default)
+      numericText = draft.numericText
+      gyro = ProfileGyroDraft(.default)
+      errorMessage = nil
+    }
+
+    /// Validates the fields, hands them to ``onSave`` and dismisses the sheet; a refused value
+    /// shows its message.
+    private func save() {
+      do {
+        let edited = try draft.applyingNumericText(
+          numericText,
+          decimalSeparator: Locale.current.decimalSeparator ?? "."
+        )
+        onSave(
+          try edited.validatedTuning(),
+          try gyro.validatedOutput(decimalSeparator: Locale.current.decimalSeparator ?? ".")
+        )
+        presentationMode.wrappedValue.dismiss()
+      } catch { errorMessage = RuntimePresentation.userFacingError(error) }
     }
 
     /// Returns the text of the motion field called `key`.
