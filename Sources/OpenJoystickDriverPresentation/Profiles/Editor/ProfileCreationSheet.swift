@@ -33,111 +33,146 @@
                 .foregroundColor(Color(NSColor.secondaryLabelColor))
             }
           } else {
-            TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
-              .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
-              .help(OJDLocalized.string("ui.profiles.nameHelp"))
-            if let message = nameProblem {
-              Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
-                horizontal: false,
-                vertical: true
-              )
-            }
-            Picker(OJDLocalized.string("term.controller"), selection: controllerBinding) {
-              ForEach(context.sections) { section in
-                Section(header: Text(section.title)) {
-                  ForEach(section.choices) { choice in Text(choice.label).tag(choice.id) }
-                }
-              }
-            }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
-              .help(OJDLocalized.string("ui.profiles.controllerHelp"))
-            if context.isLoadingCatalog {
-              ProgressView().controlSize(.small)
-            }
-            if fields.controller(in: context) == nil {
-              Text(OJDLocalized.string("ui.profiles.chooseController"))
-                .foregroundColor(Color(NSColor.secondaryLabelColor))
-            }
-            if context.unreadableRecordFiles > 0 {
-              Text(
-                OJDLocalized.formatted(
-                  "ui.profiles.unreadableRecords",
-                  OJDLocalized.string("ui.sidebar.library.title")
-                )
-              )
-              .foregroundColor(Color(NSColor.secondaryLabelColor))
-            }
-            Picker(OJDLocalized.string("ui.profiles.target"), selection: $fields.scopeKind) {
-              Text(OJDLocalized.string("ui.profiles.targetGlobal")).tag(ProfileScopeKind.global)
-              Text(OJDLocalized.string("ui.profiles.targetApplication")).tag(
-                ProfileScopeKind.application
-              )
-            }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.target"))
-              .help(OJDLocalized.string("ui.profiles.targetHelp"))
-            if fields.scopeKind == .application {
-              ProfileAppChooser(appIDs: $fields.appIDs)
-            }
-            Picker(OJDLocalized.string("ui.profiles.template"), selection: $fields.template) {
-              Text(OJDLocalized.string("ui.profiles.templateEmpty"))
-                .tag(ProfileCreationTemplate.empty)
-              Text(OJDLocalized.string("ui.profiles.templateGyroStick"))
-                .tag(ProfileCreationTemplate.gyroStick)
-              Text(OJDLocalized.string("ui.profiles.templateKeyboardNavigation"))
-                .tag(ProfileCreationTemplate.bindings(.keyboardNavigation))
-              Text(OJDLocalized.string("ui.profiles.templateMouseClicks"))
-                .tag(ProfileCreationTemplate.bindings(.mouseClicks))
-            }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.template"))
-              .help(OJDLocalized.string("ui.profiles.templateHelp"))
-            if fields.template == .gyroStick {
-              Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
-                Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(
-                  RemappingGyroStickTemplate.Stick.left
-                )
-                Text(OJDLocalized.string("ui.profiles.gyro.rightStick")).tag(
-                  RemappingGyroStickTemplate.Stick.right
-                )
-              }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.gyro.output"))
-                .help(OJDLocalized.string("ui.profiles.gyro.outputHelp"))
-              if fields.lacksMotion(in: context), let controller = fields.controller(in: context) {
-                Text(
-                  OJDLocalized.formatted("ui.profiles.templateNoMotion", controller.label)
-                ).foregroundColor(Color(NSColor.systemRed))
-              }
-            }
-            let skipped = fields.skippedControls(in: context)
-            if !skipped.isEmpty {
-              Text(
-                OJDLocalized.formatted(
-                  "ui.profiles.templateSkipped",
-                  skipped.map(ControllerDetailFacts.controlName).joined(separator: ", ")
-                )
-              ).foregroundColor(Color(NSColor.secondaryLabelColor))
-            }
-            if fields.template != .gyroStick {
-              ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
-                .ojdInterfaceRow(ProfilesRow.outputPolicy)
-            }
-            if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {
-              Text(OJDLocalized.string("ui.profiles.creationValidation"))
-                .foregroundColor(Color(NSColor.systemRed)).fixedSize(
-                  horizontal: false,
-                  vertical: true
-                )
-            }
+            nameFields
+            controllerFields
+            targetFields
+            templateFields
+            policyFields
           }
         }
-        HStack {
-          Spacer()
-          Button(OJDLocalized.string("action.cancel")) {
-            presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancelSheet"))
-          Button(OJDLocalized.string("action.create")) {
-            guard let proposedProfile else { return }
-            onCreate(proposedProfile)
-            presentationMode.wrappedValue.dismiss()
-          }.disabled(proposedProfile == nil)
-            .help(OJDLocalized.string("ui.profiles.createHelp"))
-        }
+        buttonRow
       }.ojdSheet(.regular)
+    }
+
+    /// The name field and the message about the name.
+    @ViewBuilder
+    private var nameFields: some View {
+      TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
+        .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
+        .help(OJDLocalized.string("ui.profiles.nameHelp"))
+      if let message = nameProblem {
+        Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+          horizontal: false,
+          vertical: true
+        )
+      }
+    }
+
+    /// The controller picker and the notes about the controller list.
+    @ViewBuilder
+    private var controllerFields: some View {
+      Picker(OJDLocalized.string("term.controller"), selection: controllerBinding) {
+        ForEach(context.sections) { section in
+          Section(header: Text(section.title)) {
+            ForEach(section.choices) { choice in Text(choice.label).tag(choice.id) }
+          }
+        }
+      }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
+        .help(OJDLocalized.string("ui.profiles.controllerHelp"))
+      if context.isLoadingCatalog {
+        ProgressView().controlSize(.small)
+      }
+      if fields.controller(in: context) == nil {
+        Text(OJDLocalized.string("ui.profiles.chooseController"))
+          .foregroundColor(Color(NSColor.secondaryLabelColor))
+      }
+      if context.unreadableRecordFiles > 0 {
+        Text(
+          OJDLocalized.formatted(
+            "ui.profiles.unreadableRecords",
+            OJDLocalized.string("ui.sidebar.library.title")
+          )
+        )
+        .foregroundColor(Color(NSColor.secondaryLabelColor))
+      }
+    }
+
+    /// The target picker and, for an application target, the app chooser.
+    @ViewBuilder
+    private var targetFields: some View {
+      Picker(OJDLocalized.string("ui.profiles.target"), selection: $fields.scopeKind) {
+        Text(OJDLocalized.string("ui.profiles.targetGlobal")).tag(ProfileScopeKind.global)
+        Text(OJDLocalized.string("ui.profiles.targetApplication")).tag(
+          ProfileScopeKind.application
+        )
+      }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.target"))
+        .help(OJDLocalized.string("ui.profiles.targetHelp"))
+      if fields.scopeKind == .application {
+        ProfileAppChooser(appIDs: $fields.appIDs)
+      }
+    }
+
+    /// The template picker and the notes about the template.
+    @ViewBuilder
+    private var templateFields: some View {
+      Picker(OJDLocalized.string("ui.profiles.template"), selection: $fields.template) {
+        Text(OJDLocalized.string("ui.profiles.templateEmpty"))
+          .tag(ProfileCreationTemplate.empty)
+        Text(OJDLocalized.string("ui.profiles.templateGyroStick"))
+          .tag(ProfileCreationTemplate.gyroStick)
+        Text(OJDLocalized.string("ui.profiles.templateKeyboardNavigation"))
+          .tag(ProfileCreationTemplate.bindings(.keyboardNavigation))
+        Text(OJDLocalized.string("ui.profiles.templateMouseClicks"))
+          .tag(ProfileCreationTemplate.bindings(.mouseClicks))
+      }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.template"))
+        .help(OJDLocalized.string("ui.profiles.templateHelp"))
+      if fields.template == .gyroStick {
+        Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
+          Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(
+            RemappingGyroStickTemplate.Stick.left
+          )
+          Text(OJDLocalized.string("ui.profiles.gyro.rightStick")).tag(
+            RemappingGyroStickTemplate.Stick.right
+          )
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.gyro.output"))
+          .help(OJDLocalized.string("ui.profiles.gyro.outputHelp"))
+        if fields.lacksMotion(in: context), let controller = fields.controller(in: context) {
+          Text(
+            OJDLocalized.formatted("ui.profiles.templateNoMotion", controller.label)
+          ).foregroundColor(Color(NSColor.systemRed))
+        }
+      }
+      let skipped = fields.skippedControls(in: context)
+      if !skipped.isEmpty {
+        Text(
+          OJDLocalized.formatted(
+            "ui.profiles.templateSkipped",
+            skipped.map(ControllerDetailFacts.controlName).joined(separator: ", ")
+          )
+        ).foregroundColor(Color(NSColor.secondaryLabelColor))
+      }
+    }
+
+    /// The output policy and the message about an invalid profile.
+    @ViewBuilder
+    private var policyFields: some View {
+      if fields.template != .gyroStick {
+        ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
+          .ojdInterfaceRow(ProfilesRow.outputPolicy)
+      }
+      if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {
+        Text(OJDLocalized.string("ui.profiles.creationValidation"))
+          .foregroundColor(Color(NSColor.systemRed)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
+      }
+    }
+
+    /// The Cancel and Create buttons.
+    private var buttonRow: some View {
+      HStack {
+        Spacer()
+        Button(OJDLocalized.string("action.cancel")) {
+          presentationMode.wrappedValue.dismiss()
+        }.help(OJDLocalized.string("ui.help.cancelSheet"))
+        Button(OJDLocalized.string("action.create")) {
+          guard let proposedProfile else { return }
+          onCreate(proposedProfile)
+          presentationMode.wrappedValue.dismiss()
+        }.disabled(proposedProfile == nil)
+          .help(OJDLocalized.string("ui.profiles.createHelp"))
+      }
     }
 
     /// The profile the fields describe, or nil.
