@@ -327,56 +327,70 @@ extension PassiveUSBConfigurationDescriptorParser {
     chunk: [UInt8],
     endpoint: PassiveUSBDescriptorEndpoint
   ) throws {
-    guard chunk[2] <= 15 else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-    let attributes = chunk[3]
-    let bytesPerInterval = UInt16(chunk[4]) | (UInt16(chunk[5]) << 8)
-    let burst = UInt64(chunk[2]) + 1
-    let rawPacket = endpoint.maxPacketSize
-    let packet = UInt64(rawPacket & 0x07FF)
-    guard rawPacket & 0xF800 == 0 else {
+    let companion = SuperSpeedCompanionFields(chunk: chunk, maxPacketSize: endpoint.maxPacketSize)
+    guard companion.fits(transferType: endpoint.transferType) else {
       throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
     }
-    switch endpoint.transferType {
-    case "bulk":
-      guard packet == 1_024 else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-      guard attributes & 0xE0 == 0, attributes & 0x1F <= 16, bytesPerInterval == 0 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+  }
+
+  /// The fields of a SuperSpeed endpoint companion descriptor and of its endpoint that the USB 3
+  /// specification constrains together, per transfer type.
+  private struct SuperSpeedCompanionFields {
+    /// `bMaxBurst`: bursts after the first.
+    let maxBurst: UInt8
+    /// `bmAttributes`.
+    let attributes: UInt8
+    /// `wBytesPerInterval`.
+    let bytesPerInterval: UInt64
+    /// The endpoint's packet size, bits 10...0 of `wMaxPacketSize`.
+    let packet: UInt64
+    /// Whether `wMaxPacketSize` sets any of bits 15...11, which SuperSpeed reserves.
+    let packetHasReservedBits: Bool
+
+    init(chunk: [UInt8], maxPacketSize: UInt16) {
+      maxBurst = chunk[2]
+      attributes = chunk[3]
+      bytesPerInterval = UInt64(UInt16(chunk[4]) | (UInt16(chunk[5]) << 8))
+      packet = UInt64(maxPacketSize & 0x07FF)
+      packetHasReservedBits = maxPacketSize & 0xF800 != 0
+    }
+
+    /// The packets one service interval carries per burst.
+    private var burst: UInt64 { UInt64(maxBurst) + 1 }
+
+    /// Whether the fields are valid for an endpoint of `transferType`.
+    func fits(transferType: String) -> Bool {
+      guard maxBurst <= 15, !packetHasReservedBits else { return false }
+      switch transferType {
+      case "bulk": return fitsBulk
+      case "interrupt": return fitsInterrupt
+      case "control":
+        return maxBurst == 0 && packet == 512 && attributes == 0 && bytesPerInterval == 0
+      case "isochronous": return fitsIsochronous
+      default: return false
       }
-    case "interrupt":
-      guard packet >= 1, packet <= 1_024, chunk[2] == 0 || packet == 1_024 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+    }
+
+    private var fitsBulk: Bool {
+      packet == 1_024 && attributes & 0xE0 == 0 && attributes & 0x1F <= 16 && bytesPerInterval == 0
+    }
+
+    private var fitsInterrupt: Bool {
+      guard (1...1_024).contains(packet), maxBurst == 0 || packet == 1_024, attributes == 0 else {
+        return false
       }
       let maxBytes = packet.multipliedReportingOverflow(by: burst)
-      guard attributes == 0, !maxBytes.overflow, UInt64(bytesPerInterval) <= maxBytes.partialValue
-      else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-    case "control":
-      guard chunk[2] == 0, packet == 512, attributes == 0, bytesPerInterval == 0 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
-    case "isochronous":
-      guard packet <= 1_024 else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-      guard chunk[2] == 0 || packet == 1_024 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
-      guard attributes & 0x7C == 0 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
-      guard attributes & 0x03 <= 2 else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
-      if chunk[2] == 0, attributes & 0x03 != 0 {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
-      let mult = UInt64(attributes & 0x03) + 1
-      if attributes & 0x80 != 0, bytesPerInterval != 1 {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
+      return !maxBytes.overflow && bytesPerInterval <= maxBytes.partialValue
+    }
+
+    private var fitsIsochronous: Bool {
+      let mult = attributes & 0x03
+      guard packet <= 1_024, maxBurst == 0 || packet == 1_024, attributes & 0x7C == 0, mult <= 2,
+        maxBurst != 0 || mult == 0, attributes & 0x80 == 0 || bytesPerInterval == 1
+      else { return false }
       let maxBytes = packet.multipliedReportingOverflow(by: burst).partialValue
-        .multipliedReportingOverflow(by: mult)
-      guard !maxBytes.overflow, UInt64(bytesPerInterval) <= maxBytes.partialValue else {
-        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-      }
-    default: throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+        .multipliedReportingOverflow(by: UInt64(mult) + 1)
+      return !maxBytes.overflow && bytesPerInterval <= maxBytes.partialValue
     }
   }
 }
