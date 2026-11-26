@@ -62,6 +62,12 @@ extension AutomaticDispatcherCoordinator {
     var recoveryToken: UUID?
     /// Another client holds the controller's input; nothing installs until it lets go.
     var heldByAnotherClient = false
+
+    /// Whether the physical session is live and both generations equal `generations`.
+    func isCurrent(_ generations: (session: UInt64, publication: UInt64)) -> Bool {
+      physicalSessionActive && sessionGeneration == generations.session
+        && publicationGeneration == generations.publication
+    }
   }
 
   /// What a controller needs to publish again without a caller.
@@ -262,56 +268,90 @@ extension AutomaticDispatcherCoordinator {
     factory: @escaping Factory,
     replacesLiveBackend: Bool = false
   ) async throws -> AutomaticBackendLease? {
+    guard let initial = admit(controller, target: target, isEligible: isEligible, factory: factory)
+    else { return nil }
+    let generations = (
+      session: initial.sessionGeneration, publication: initial.publicationGeneration
+    )
+    guard await isEligible(controller, target) else { return nil }
+    guard !closed, let current = entries[controller], !suppressed,
+      current.isCurrent(generations)
+    else { throw CancellationError() }
+    if !replacesLiveBackend, current.target == target, let lease = current.installed?.acquire() {
+      return lease
+    }
+
+    let pending = pendingPublication(
+      controller,
+      target: target,
+      current: current,
+      generations: generations,
+      isEligible: isEligible,
+      factory: factory,
+      replacesLiveBackend: replacesLiveBackend
+    )
+    defer { settle(pending, of: controller) }
+    try await pending.task.value
+    guard !closed, let installed = entries[controller], installed.isCurrent(generations),
+      installed.target == target, installed.installedToken == pending.request.token
+    else { throw CancellationError() }
+    return installed.installed?.acquire()
+  }
+
+  /// Returns the controller's entry when it may start a publication, or nil when the coordinator
+  /// is closed or paused, the session ended, or another client holds the controller.
+  ///
+  /// A controller held by another client keeps `target` as its context, so the status names what
+  /// publishes after the release.
+  private func admit(
+    _ controller: LogicalControllerID,
+    target: VirtualHIDProfileID,
+    isEligible: @escaping Eligibility,
+    factory: @escaping Factory
+  ) -> Entry? {
     guard !closed else { return nil }
     if entries[controller] == nil { entries[controller] = Entry() }
     guard !suppressed, let initial = entries[controller], initial.physicalSessionActive else {
       return nil
     }
     if initial.heldByAnotherClient {
-      // The context keeps the target, so the status names what publishes after the release.
       entries[controller]?.context =
         initial.context
         ?? PublicationContext(target: target, isEligible: isEligible, factory: factory)
       return nil
     }
-    let sessionGeneration = initial.sessionGeneration
-    let publicationGeneration = initial.publicationGeneration
-    guard await isEligible(controller, target) else { return nil }
-    guard !closed, let current = entries[controller], current.physicalSessionActive,
-      current.sessionGeneration == sessionGeneration,
-      current.publicationGeneration == publicationGeneration, !suppressed
-    else { throw CancellationError() }
-    if !replacesLiveBackend, current.target == target, let lease = current.installed?.acquire() {
-      return lease
-    }
+    return initial
+  }
 
-    let pending: Pending
-    if let existing = current.pending, existing.request.target == target {
-      pending = existing
-    } else {
-      current.pending?.task.cancel()
-      pending = startPublication(
-        controller,
-        target: target,
-        generations: (sessionGeneration, publicationGeneration),
-        predecessors: current.tasks.values.map(\.task),
-        context: PublicationContext(target: target, isEligible: isEligible, factory: factory),
-        replacesLiveBackend: replacesLiveBackend
-      )
+  /// Forgets the finished `pending` request, and clears the controller's pending slot when it
+  /// still holds that request.
+  private func settle(_ pending: Pending, of controller: LogicalControllerID) {
+    entries[controller]?.tasks[pending.request.token] = nil
+    if entries[controller]?.pending?.request.token == pending.request.token {
+      entries[controller]?.pending = nil
     }
-    defer {
-      entries[controller]?.tasks[pending.request.token] = nil
-      if entries[controller]?.pending?.request.token == pending.request.token {
-        entries[controller]?.pending = nil
-      }
-    }
-    try await pending.task.value
-    guard !closed, let installed = entries[controller], installed.physicalSessionActive,
-      installed.sessionGeneration == sessionGeneration,
-      installed.publicationGeneration == publicationGeneration, installed.target == target,
-      installed.installedToken == pending.request.token
-    else { throw CancellationError() }
-    return installed.installed?.acquire()
+  }
+
+  /// Returns the request in flight for `target`, or cancels the one in flight and starts a new one.
+  private func pendingPublication(
+    _ controller: LogicalControllerID,
+    target: VirtualHIDProfileID,
+    current: Entry,
+    generations: (session: UInt64, publication: UInt64),
+    isEligible: @escaping Eligibility,
+    factory: @escaping Factory,
+    replacesLiveBackend: Bool
+  ) -> Pending {
+    if let existing = current.pending, existing.request.target == target { return existing }
+    current.pending?.task.cancel()
+    return startPublication(
+      controller,
+      target: target,
+      generations: generations,
+      predecessors: current.tasks.values.map(\.task),
+      context: PublicationContext(target: target, isEligible: isEligible, factory: factory),
+      replacesLiveBackend: replacesLiveBackend
+    )
   }
 
   /// Starts building and publishing `target` for `controller` and records the request as pending.
