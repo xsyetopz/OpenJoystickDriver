@@ -53,7 +53,7 @@ enum ControllerServerChange {
         accessRoute: device.recordAccessRoute
       )
       let change = try change(model, to: server, records: records, device: device)
-      if !dryRun { try write(change) }
+      if !dryRun { try ControllerRecordWriter.writeReportingFailure(change) }
       let result = Result(
         controller: device.sessionToken.rawValue,
         identity: device.identity,
@@ -172,12 +172,14 @@ enum ControllerServerChange {
       }
     }
   }
+}
 
+extension ControllerRecordWriter {
   /// Writes `change` to disk.
   ///
   /// - Throws: ``CLIFailure`` with `fileAccessFailed` when the file cannot be written.
-  private static func write(_ change: ControllerRecordWriter.Change) throws {
-    do { try ControllerRecordWriter.write(change) } catch {
+  static func writeReportingFailure(_ change: Change) throws {
+    do { try write(change) } catch {
       throw CLIFailure(
         .fileAccessFailed,
         CLILocalized.format(

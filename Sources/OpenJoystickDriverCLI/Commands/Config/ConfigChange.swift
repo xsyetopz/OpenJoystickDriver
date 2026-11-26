@@ -77,7 +77,7 @@ enum ConfigChange {
     try await global.run {
       let target = model.map(ControllerRecordWriter.Target.model) ?? .allControllers
       let change = try change(edit, for: target)
-      try write(change)
+      try ControllerRecordWriter.writeReportingFailure(change)
       var value: Double?
       if case .set(_, let number) = edit { value = number }
       let result = Result(
@@ -154,22 +154,6 @@ enum ConfigChange {
           CLILocalized.format("cli.config.unset.notSet", key.rawValue)
         )
       }
-    }
-  }
-
-  /// Writes `change` to disk.
-  ///
-  /// - Throws: ``CLIFailure`` with `fileAccessFailed` when the file cannot be written.
-  private static func write(_ change: ControllerRecordWriter.Change) throws {
-    do { try ControllerRecordWriter.write(change) } catch {
-      throw CLIFailure(
-        .fileAccessFailed,
-        CLILocalized.format(
-          "cli.record.install.failed",
-          change.file.path,
-          error.localizedDescription
-        )
-      )
     }
   }
 }
