@@ -23,44 +23,41 @@ extension RemappingEngineState {
       )
     }
     guard var current = devices[identifier] else { return actions }
-    guard current.isGyroActive else {
-      actions += current.clearGyroStick()
-      devices[identifier] = current
-      return actions
-    }
-    if current.motion.gyroAwaitingBaseline, processed != nil {
-      current.motion.gyroAwaitingBaseline = false
-      actions += current.clearGyroStick()
-      devices[identifier] = current
-      return actions
-    }
-    let trackball = current.processTrackball(processed)
-    if current.profile.gyroOutput.mode == .leftStick
-      || current.profile.gyroOutput.mode == .rightStick
-    {
-      actions += current.updateGyroStick(processed, velocity: trackball?.velocity)
-      devices[identifier] = current
-      return actions
-    }
+    actions += current.gyroActions(processed)
     devices[identifier] = current
-    guard let processed, processed.deltaTime > 0, current.profile.gyroOutput.mode == .mouse else {
-      return actions
-    }
-    let scale = current.profile.gyroOutput.pointerPointsPerDegree
-    // Player/world projections already reverse yaw relative to local controller Y.
-    let yawSign = current.effectiveMotionTuning.space == .local ? -1.0 : 1.0
-    let yaw = trackball?.yawDegrees ?? processed.tunedGyro.yawDegreesPerSecond * processed.deltaTime
-    let pitch =
-      trackball?.pitchDegrees ?? processed.tunedGyro.pitchDegreesPerSecond * processed.deltaTime
-    let x = yaw * scale * yawSign
-    let y = -pitch * scale
-    guard x.isFinite, y.isFinite, x != 0 || y != 0 else { return actions }
-    actions.append(.system(.pointerDelta(x: x, y: y)))
     return actions
   }
 }
 
 extension RemappingDeviceState {
+  /// Returns the actions of the gyro output for a processed sample.
+  mutating func gyroActions(
+    _ processed: RemappingProcessedMotion?
+  ) -> [RemappingEngineAction] {
+    guard isGyroActive else { return clearGyroStick() }
+    if motion.gyroAwaitingBaseline, processed != nil {
+      motion.gyroAwaitingBaseline = false
+      return clearGyroStick()
+    }
+    let trackball = processTrackball(processed)
+    if profile.gyroOutput.mode == .leftStick || profile.gyroOutput.mode == .rightStick {
+      return updateGyroStick(processed, velocity: trackball?.velocity)
+    }
+    guard let processed, processed.deltaTime > 0, profile.gyroOutput.mode == .mouse else {
+      return []
+    }
+    let scale = profile.gyroOutput.pointerPointsPerDegree
+    // Player/world projections already reverse yaw relative to local controller Y.
+    let yawSign = effectiveMotionTuning.space == .local ? -1.0 : 1.0
+    let yaw = trackball?.yawDegrees ?? processed.tunedGyro.yawDegreesPerSecond * processed.deltaTime
+    let pitch =
+      trackball?.pitchDegrees ?? processed.tunedGyro.pitchDegreesPerSecond * processed.deltaTime
+    let x = yaw * scale * yawSign
+    let y = -pitch * scale
+    guard x.isFinite, y.isFinite, x != 0 || y != 0 else { return [] }
+    return [.system(.pointerDelta(x: x, y: y))]
+  }
+
   /// Advances the gyro trackball for a processed sample.
   ///
   /// Returns `nil` without trackball settings, and without a sample. The trackball holds an axis
