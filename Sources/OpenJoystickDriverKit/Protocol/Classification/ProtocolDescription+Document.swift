@@ -175,16 +175,7 @@ extension ProtocolDescription {
         subcommands = try container.decodeOptional(SubcommandPlan.self, for: "subcommands")
         namedPackets = try container.decodeOptional(NamedPacketPlan.self, for: "namedPackets")
         func count(_ key: String, _ range: ClosedRange<Int>) throws -> Int? {
-          let value = try container.decodeOptional(Int.self, for: key)
-          guard value.map(range.contains) ?? true else {
-            throw DecodingError.dataCorrupted(
-              .init(
-                codingPath: decoder.codingPath + [DocumentKey(key)],
-                debugDescription: "\(key) must be in \(range.lowerBound)...\(range.upperBound)"
-              )
-            )
-          }
-          return value
+          try container.decodeOptional(Int.self, for: key, in: range)
         }
         handshakeAttempts = try count("handshakeAttempts", 1...10)
         announceResendLimit = try count("announceResendLimit", 1...100)

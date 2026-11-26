@@ -17,29 +17,10 @@ extension ControllerRecordDocument {
         )
       }
       func integer(_ key: String, _ range: ClosedRange<Int>) throws -> Int? {
-        let value = try container.decodeOptional(Int.self, for: key)
-        guard value.map(range.contains) ?? true else {
-          throw DecodingError.dataCorrupted(
-            .init(
-              codingPath: decoder.codingPath + [DocumentKey(key)],
-              debugDescription: "\(key) must be in \(range.lowerBound)...\(range.upperBound)"
-            )
-          )
-        }
-        return value
+        try container.decodeOptional(Int.self, for: key, in: range)
       }
       func fraction(_ key: ControllerTuning.Key, _ range: ClosedRange<Double>) throws -> Double? {
-        let value = try container.decodeOptional(Double.self, for: key.rawValue)
-        guard value.map(range.contains) ?? true else {
-          throw DecodingError.dataCorrupted(
-            .init(
-              codingPath: decoder.codingPath + [DocumentKey(key.rawValue)],
-              debugDescription:
-                "\(key.rawValue) must be in \(range.lowerBound)...\(range.upperBound)"
-            )
-          )
-        }
-        return value
+        try container.decodeOptional(Double.self, for: key.rawValue, in: range)
       }
       var calibration: [ControllerTuning.Key: Double] = [:]
       for key in ControllerCalibration.keys {
@@ -117,6 +98,46 @@ extension ControllerRecordDocument {
       .compactMap(tuningScopeViolation).first
     if let violation {
       throw DecodingError.dataCorrupted(violation.context(at: path))
+    }
+  }
+}
+
+extension KeyedDecodingContainer where Key == DocumentKey {
+  /// Decodes the value under `key`, which must lie in `range`; a value outside it fails.
+  func decode<Bound: Decodable & Comparable>(
+    _ type: Bound.Type,
+    for key: String,
+    in range: ClosedRange<Bound>
+  ) throws -> Bound {
+    let value = try decode(type, for: key)
+    try requireValue(value, for: key, in: range)
+    return value
+  }
+
+  /// Decodes the value under `key`, or nil when the key is absent; a value outside `range` fails.
+  func decodeOptional<Bound: Decodable & Comparable>(
+    _ type: Bound.Type,
+    for key: String,
+    in range: ClosedRange<Bound>
+  ) throws -> Bound? {
+    guard let value = try decodeOptional(type, for: key) else { return nil }
+    try requireValue(value, for: key, in: range)
+    return value
+  }
+
+  /// Fails with `dataCorrupted` at `key` unless `value` lies in `range`.
+  private func requireValue<Bound: Comparable>(
+    _ value: Bound,
+    for key: String,
+    in range: ClosedRange<Bound>
+  ) throws {
+    guard range.contains(value) else {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: codingPath + [DocumentKey(key)],
+          debugDescription: "\(key) must be in \(range.lowerBound)...\(range.upperBound)"
+        )
+      )
     }
   }
 }

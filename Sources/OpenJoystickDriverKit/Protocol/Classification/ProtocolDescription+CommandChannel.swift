@@ -30,16 +30,7 @@ extension ProtocolDescription {
         _ key: String,
         _ range: ClosedRange<Int>
       ) throws -> Int {
-        let number = try container.decode(Int.self, for: key)
-        guard range.contains(number) else {
-          throw DecodingError.dataCorrupted(
-            .init(
-              codingPath: container.codingPath + [DocumentKey(key)],
-              debugDescription: "\(key) must be in \(range.lowerBound)...\(range.upperBound)"
-            )
-          )
-        }
-        return number
+        try container.decode(Int.self, for: key, in: range)
       }
       interface = UInt8(try decodedInt(container, "interface", 0...255))
       inEndpoint = UInt8(try decodedInt(container, "inEndpoint", 128...255))
