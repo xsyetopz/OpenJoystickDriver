@@ -90,32 +90,56 @@ public indirect enum ProfileValue: Codable, Equatable, Sendable {
   /// array adds an item.
   public func setting(_ value: Self, at key: ArraySlice<String>) -> Self? {
     guard let first = key.first else { return value }
-    let last = key.count == 1
     switch self {
-    case .object(var members):
-      if last {
-        members[first] = value == .null ? nil : value
-      } else {
-        guard let child = members[first]?.setting(value, at: key.dropFirst()) else { return nil }
-        members[first] = child
-      }
-      return .object(members)
-    case .array(var items):
-      guard let index = Int(first), index >= 0 else { return nil }
-      if last, index == items.count, value != .null {
-        items.append(value)
-      } else {
-        guard items.indices.contains(index) else { return nil }
-        if last, value == .null {
-          items.remove(at: index)
-        } else {
-          guard let child = items[index].setting(value, at: key.dropFirst()) else { return nil }
-          items[index] = child
-        }
-      }
-      return .array(items)
+    case .object(let members):
+      guard let updated = Self.settingMember(members, value, first: first, rest: key.dropFirst())
+      else { return nil }
+      return .object(updated)
+    case .array(let items):
+      guard let updated = Self.settingItem(items, value, first: first, rest: key.dropFirst())
+      else { return nil }
+      return .array(updated)
     default: return nil
     }
+  }
+
+  private static func settingMember(
+    _ members: [String: Self],
+    _ value: Self,
+    first: String,
+    rest: ArraySlice<String>
+  ) -> [String: Self]? {
+    var members = members
+    if rest.isEmpty {
+      members[first] = value == .null ? nil : value
+    } else {
+      guard let child = members[first]?.setting(value, at: rest) else { return nil }
+      members[first] = child
+    }
+    return members
+  }
+
+  private static func settingItem(
+    _ items: [Self],
+    _ value: Self,
+    first: String,
+    rest: ArraySlice<String>
+  ) -> [Self]? {
+    guard let index = Int(first), index >= 0 else { return nil }
+    var items = items
+    let last = rest.isEmpty
+    if last, index == items.count, value != .null {
+      items.append(value)
+    } else {
+      guard items.indices.contains(index) else { return nil }
+      if last, value == .null {
+        items.remove(at: index)
+      } else {
+        guard let child = items[index].setting(value, at: rest) else { return nil }
+        items[index] = child
+      }
+    }
+    return items
   }
 }
 
