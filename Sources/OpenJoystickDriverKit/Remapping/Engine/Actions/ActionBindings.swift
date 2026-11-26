@@ -60,53 +60,68 @@ extension RemappingEngineState {
     at uptime: UInt64
   ) -> [RemappingEngineAction] {
     guard !suppressed else { return [] }
-    let id = binding.id
-    let destination = binding.destination
     if binding.behavior != .hold {
-      if !isActive {
-        guard binding.behavior == .tapOnRelease,
-          device.outputs.armedReleaseBindings.remove(id) != nil
-        else { return [] }
-        return tapBinding(id, destination: destination, device: &device)
-      }
-      switch binding.behavior {
-      case .hold: return []
-      case .press: return setBinding(id, destination: destination, isDown: true, device: &device)
-      case .release: return releaseDestination(destination, device: &device)
-      case .toggle:
-        return setBinding(
-          id,
-          destination: destination,
-          isDown: device.outputs.heldBindings[id] == nil,
-          device: &device
-        )
-      case .tapOnPress: return tapBinding(id, destination: destination, device: &device)
-      case .tapOnRelease:
-        device.outputs.armedReleaseBindings.insert(id)
-        return []
-      case .pulse:
-        let duration = UInt64(binding.pulseDurationMs * 1_000_000)
-        let (deadline, overflow) = uptime.addingReportingOverflow(duration)
-        device.outputs.pulseDeadlines[id] = overflow ? .max : deadline
-        return setBinding(id, destination: destination, isDown: true, device: &device)
-      }
+      return processBehavior(binding, isActive: isActive, device: &device, at: uptime)
     }
     if binding.longHold != nil || !binding.multiTap.isEmpty {
       return processTimedAction(binding, isActive: isActive, device: &device, at: uptime)
     }
     if let turbo = binding.turbo {
       if isActive {
-        device.outputs.turbos[id] = RemappingTurboOutput(
-          destination: destination,
+        device.outputs.turbos[binding.id] = RemappingTurboOutput(
+          destination: binding.destination,
           configuration: turbo,
           startedAt: uptime,
           outputIsDown: true
         )
       } else {
-        device.outputs.turbos.removeValue(forKey: id)
+        device.outputs.turbos.removeValue(forKey: binding.id)
       }
     }
-    return setBinding(id, destination: destination, isDown: isActive, device: &device)
+    return setBinding(
+      binding.id,
+      destination: binding.destination,
+      isDown: isActive,
+      device: &device
+    )
+  }
+
+  /// Applies a source change to an action whose behavior is not `hold`.
+  private mutating func processBehavior(
+    _ binding: RemappingBinding,
+    isActive: Bool,
+    device: inout RemappingDeviceState,
+    at uptime: UInt64
+  ) -> [RemappingEngineAction] {
+    let id = binding.id
+    let destination = binding.destination
+    guard isActive else {
+      guard binding.behavior == .tapOnRelease,
+        device.outputs.armedReleaseBindings.remove(id) != nil
+      else { return [] }
+      return tapBinding(id, destination: destination, device: &device)
+    }
+    switch binding.behavior {
+    case .hold: return []
+    case .press: return setBinding(id, destination: destination, isDown: true, device: &device)
+    case .release: return releaseDestination(destination, device: &device)
+    case .toggle:
+      return setBinding(
+        id,
+        destination: destination,
+        isDown: device.outputs.heldBindings[id] == nil,
+        device: &device
+      )
+    case .tapOnPress: return tapBinding(id, destination: destination, device: &device)
+    case .tapOnRelease:
+      device.outputs.armedReleaseBindings.insert(id)
+      return []
+    case .pulse:
+      let duration = UInt64(binding.pulseDurationMs * 1_000_000)
+      let (deadline, overflow) = uptime.addingReportingOverflow(duration)
+      device.outputs.pulseDeadlines[id] = overflow ? .max : deadline
+      return setBinding(id, destination: destination, isDown: true, device: &device)
+    }
   }
 
   /// Applies a source change to an action that has a long hold or multi-tap.
