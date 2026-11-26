@@ -178,6 +178,45 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     followUp: [[UInt8]]? = nil,
     stop: [UInt8]? = nil
   ) throws(ControllerRecordProblem) {
+    try Self.validateTarget(target)
+    let base = bytes ?? Self.zeroedBytes(for: target)
+    guard base.count == target.length else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.rumble.bytesCover",
+        "rumble template bytes must cover the whole report"
+      )
+    }
+    if let hid = target.hidReport, hid.reportID != 0, base[0] != hid.reportID {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.rumble.bytesReportId",
+        "rumble template bytes must start with the report ID"
+      )
+    }
+    try Self.validateMotorFields(motors, counterByte: counterByte, target: target)
+    if let resendIntervalMilliseconds,
+      !Self.resendIntervalRange.contains(resendIntervalMilliseconds)
+    {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.rumble.resendInterval",
+        "a rumble resend interval is 1...60000 milliseconds"
+      )
+    }
+    try Self.validateExtraReports(followUp: followUp, stop: stop, target: target)
+    self.target = target
+    self.bytes = base
+    self.motors = motors
+    self.counterByte = counterByte
+    self.resendIntervalMilliseconds = resendIntervalMilliseconds
+    self.followUp = followUp ?? []
+    self.stop = stop
+  }
+
+  /// Fails unless the target is an output or feature report or a raw-USB packet of an allowed
+  /// length.
+  private static func validateTarget(_ target: Target) throws(ControllerRecordProblem) {
     switch target {
     case .hid(let report):
       guard report.kind != .input else {
@@ -203,21 +242,15 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
         )
       }
     }
-    let base = bytes ?? Self.zeroedBytes(for: target)
-    guard base.count == target.length else {
-      throw ControllerRecordProblem(
-        code: .invalidControllerRecord,
-        key: "error.E5007.rumble.bytesCover",
-        "rumble template bytes must cover the whole report"
-      )
-    }
-    if let hid = target.hidReport, hid.reportID != 0, base[0] != hid.reportID {
-      throw ControllerRecordProblem(
-        code: .invalidControllerRecord,
-        key: "error.E5007.rumble.bytesReportId",
-        "rumble template bytes must start with the report ID"
-      )
-    }
+  }
+
+  /// Fails unless at least one template motor is named and the motor fields and the counter are
+  /// disjoint writable bytes.
+  private static func validateMotorFields(
+    _ motors: [PhysicalRumbleMotor: MotorField],
+    counterByte: Int?,
+    target: Target
+  ) throws(ControllerRecordProblem) {
     guard !motors.isEmpty, motors.keys.allSatisfy(Self.templateMotors.contains) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
@@ -240,15 +273,15 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
         "rumble motor and counter bytes must be distinct and follow the report ID inside the report"
       )
     }
-    if let resendIntervalMilliseconds,
-      !Self.resendIntervalRange.contains(resendIntervalMilliseconds)
-    {
-      throw ControllerRecordProblem(
-        code: .invalidControllerRecord,
-        key: "error.E5007.rumble.resendInterval",
-        "a rumble resend interval is 1...60000 milliseconds"
-      )
-    }
+  }
+
+  /// Fails unless a `followUp` list holds 1...4 reports and each follow-up and stop report covers
+  /// the whole report and starts with its report ID.
+  private static func validateExtraReports(
+    followUp: [[UInt8]]?,
+    stop: [UInt8]?,
+    target: Target
+  ) throws(ControllerRecordProblem) {
     if let followUp, !(1...Self.followUpLimit).contains(followUp.count) {
       throw .rule(
         "error.E5007.rumble.followUpCount",
@@ -264,13 +297,6 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
         )
       }
     }
-    self.target = target
-    self.bytes = base
-    self.motors = motors
-    self.counterByte = counterByte
-    self.resendIntervalMilliseconds = resendIntervalMilliseconds
-    self.followUp = followUp ?? []
-    self.stop = stop
   }
 
   /// Whether `bytes` is the whole of `target`, led by its report ID when the report is numbered.
