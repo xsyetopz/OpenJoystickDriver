@@ -21,6 +21,37 @@ struct LogCommand: AsyncParsableCommand {
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
+
+  /// Checks that `lines` is within the range that the service allows.
+  ///
+  /// - Throws: ``ValidationError`` when it is not.
+  static func validateLines(_ lines: Int) throws {
+    guard ApplicationServiceLogService.linesRange.contains(lines) else {
+      throw ValidationError(
+        CLILocalized.text("cli.log.show.linesRange")
+      )
+    }
+  }
+
+  /// Reads the last `lines` lines of every service log.
+  ///
+  /// - Throws: ``CLIFailure`` with `.fileAccessFailed` when a log cannot be read.
+  static func readSnapshots(
+    lines: Int,
+    environment: LogEnvironment
+  ) throws -> [ApplicationServiceLogSnapshot] {
+    do {
+      return try ApplicationServiceLogStream.allCases.map { try environment.tail($0, lines) }
+    } catch {
+      throw CLIFailure(
+        .fileAccessFailed,
+        CLILocalized.format(
+          "cli.log.show.readFailed",
+          error.localizedDescription
+        )
+      )
+    }
+  }
 }
 
 /// The `ojd log path` command: prints the folder that holds the service logs.
@@ -110,30 +141,13 @@ struct LogShowCommand: AsyncParsableCommand {
   /// Checks that `lines` is within the range that the service allows.
   ///
   /// - Throws: ``ValidationError`` when it is not.
-  func validate() throws {
-    guard ApplicationServiceLogService.linesRange.contains(lines) else {
-      throw ValidationError(
-        CLILocalized.text("cli.log.show.linesRange")
-      )
-    }
-  }
+  func validate() throws { try LogCommand.validateLines(lines) }
 
   /// Runs the command.
   func run() async throws {
     try await global.run {
       let environment = LogCommand.environment
-      let snapshots: [ApplicationServiceLogSnapshot]
-      do {
-        snapshots = try ApplicationServiceLogStream.allCases.map { try environment.tail($0, lines) }
-      } catch {
-        throw CLIFailure(
-          .fileAccessFailed,
-          CLILocalized.format(
-            "cli.log.show.readFailed",
-            error.localizedDescription
-          )
-        )
-      }
+      let snapshots = try LogCommand.readSnapshots(lines: lines, environment: environment)
       CLIOutput.stderr(ApplicationServiceLogService.sharingWarning)
       let format = CLIContext.current.format
       if follow {

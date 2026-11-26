@@ -56,30 +56,15 @@ struct LogExportCommand: AsyncParsableCommand {
   /// Checks that `lines` is within the range that the service allows.
   ///
   /// - Throws: ``ValidationError`` when it is not.
-  func validate() throws {
-    guard ApplicationServiceLogService.linesRange.contains(lines) else {
-      throw ValidationError(
-        CLILocalized.text("cli.log.show.linesRange")
-      )
-    }
-  }
+  func validate() throws { try LogCommand.validateLines(lines) }
 
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let environment = LogCommand.environment
-      let snapshots: [ApplicationServiceLogSnapshot]
-      do {
-        snapshots = try ApplicationServiceLogStream.allCases.map { try environment.tail($0, lines) }
-      } catch {
-        throw CLIFailure(
-          .fileAccessFailed,
-          CLILocalized.format(
-            "cli.log.show.readFailed",
-            error.localizedDescription
-          )
-        )
-      }
+      let snapshots = try LogCommand.readSnapshots(
+        lines: lines,
+        environment: LogCommand.environment
+      )
       let url = URL(fileURLWithPath: file)
       guard force || !FileManager.default.fileExists(atPath: url.path) else {
         throw CLIFailure(
