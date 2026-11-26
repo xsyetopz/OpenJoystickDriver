@@ -11,6 +11,7 @@ A stored document is a file that carries `apiVersion` and `kind`. Each is an XML
 - An integer stays an `integer` and a real stays a `real`, so write `1` for a count and `1.0` for a fraction.
 - `plutil -lint` checks a file. `swift run OJDRepositoryTool to-plist <file.json>` writes the property list beside a JSON file, and `swift run OJDRepositoryTool format-plist <file.plist>` rewrites a property list in the canonical form.
 - The schema files stay JSON, and so do the messages: `--json` output, the endpoint lines, and report files.
+- XML Schema (XSD) cannot replace them. A property list spells every dictionary entry as a `<key>` element followed by a value element, so XSD 1.0 sees one element name for every key: an optional key ahead of another key, or a `kind` that selects the shape of a dictionary, gives a content model that breaks the Unique Particle Attribution rule and fails to compile (libxml2 reports "The content model is not determinist"). XSD 1.1 assertions could state those rules only as XPath over sibling elements, which repeats the JSON Schema with no check added. The canonical-form test and `plutil -lint` already cover the XML syntax.
 
 ## Live Contracts
 
