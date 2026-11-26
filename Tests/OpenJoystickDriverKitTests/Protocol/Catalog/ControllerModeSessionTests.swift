@@ -105,6 +105,18 @@ struct ControllerModeSessionTests {
   }
 
   @Test
+  func firstNamedRawUSBStepWinsOnAHIDMode() throws {
+    let reads = [Self.read(1, gate: ["manufacturer": "SHANWAN"])]
+    let message = try #require(
+      Self.problem(
+        Self.record(family: "SonySixaxis", session: ["control": reads, "settleMilliseconds": 200])
+      )
+    )
+    #expect(message.contains("session settleMilliseconds"))
+    #expect(!message.contains("session control"))
+  }
+
+  @Test
   func unknownSessionKeyIsRejected() {
     #expect(
       Self.problem(Self.record(family: "XboxXUSB", session: ["unknownKey": 5])) != nil
