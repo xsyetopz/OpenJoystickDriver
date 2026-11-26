@@ -181,21 +181,7 @@ extension RemappingRoutingCore {
     _ session: RemappingJoyConPairSession,
     environment: RemappingEligibilityEnvironment
   ) -> RemappingRouteEligibility {
-    let profile = session.profile
-    let eligibility = RemappingForegroundPolicy.eligibility(
-      for: profile.applicationScope,
-      frontmostAppID: environment.frontmostAppID,
-      accessState: environment.postEventAccessState,
-      outputSuppressed: controls.outputSuppressed,
-      requiresPostEventAccess: profile.requiresSystemInputAccess
-    )
-    guard eligibility == .eligible else { return eligibility }
-    if profile.outputPolicy.requiresExclusiveInput,
-      session.members.contains(where: { inputOwnership[$0] != .exclusive })
-    {
-      return .physicalInputNotExclusive
-    }
-    return .eligible
+    remappingEligibility(session.profile, inputFrom: session.members, environment: environment)
   }
 
   /// Removes the route of `identifier` and releases its output.

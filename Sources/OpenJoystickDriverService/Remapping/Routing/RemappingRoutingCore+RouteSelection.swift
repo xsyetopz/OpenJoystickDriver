@@ -140,6 +140,18 @@ extension RemappingRoutingCore {
     for identifier: LogicalControllerID,
     environment: RemappingEligibilityEnvironment
   ) -> RemappingRouteEligibility {
+    remappingEligibility(profile, inputFrom: [identifier], environment: environment)
+  }
+
+  /// Returns the eligibility of `profile` over the input of `members` in `environment`.
+  ///
+  /// The profile's application scope, the post-event access and the output pausing decide it
+  /// first. A profile that requires exclusive input also needs every member to be exclusive.
+  func remappingEligibility(
+    _ profile: RemappingProfile,
+    inputFrom members: some Collection<LogicalControllerID>,
+    environment: RemappingEligibilityEnvironment
+  ) -> RemappingRouteEligibility {
     let eligibility = RemappingForegroundPolicy.eligibility(
       for: profile.applicationScope,
       frontmostAppID: environment.frontmostAppID,
@@ -148,7 +160,9 @@ extension RemappingRoutingCore {
       requiresPostEventAccess: profile.requiresSystemInputAccess
     )
     guard eligibility == .eligible else { return eligibility }
-    if profile.outputPolicy.requiresExclusiveInput, inputOwnership[identifier] != .exclusive {
+    if profile.outputPolicy.requiresExclusiveInput,
+      members.contains(where: { inputOwnership[$0] != .exclusive })
+    {
       return .physicalInputNotExclusive
     }
     return .eligible
