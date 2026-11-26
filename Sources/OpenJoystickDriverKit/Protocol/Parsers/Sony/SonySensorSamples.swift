@@ -178,19 +178,10 @@ enum SonySensorSamples {
   ) -> [ControllerMotionSample] {
     let sample = calibration.sample(
       timestamp: timestamp,
-      gyro: vector(bytes, at: offset),
-      accel: vector(bytes, at: offset + 6)
+      gyro: ControllerRawSensorVector(littleEndianIn: bytes, at: offset),
+      accel: ControllerRawSensorVector(littleEndianIn: bytes, at: offset + 6)
     )
     return sample.map { [$0] } ?? []
-  }
-
-  /// The raw vector of the three little-endian values that start at `offset`.
-  private static func vector(_ bytes: [UInt8], at offset: Int) -> ControllerRawSensorVector {
-    ControllerRawSensorVector(
-      x: Int16(bitPattern: unsigned16(bytes, at: offset)),
-      y: Int16(bitPattern: unsigned16(bytes, at: offset + 2)),
-      z: Int16(bitPattern: unsigned16(bytes, at: offset + 4))
-    )
   }
 
   /// The little-endian unsigned 16-bit value at `offset`.

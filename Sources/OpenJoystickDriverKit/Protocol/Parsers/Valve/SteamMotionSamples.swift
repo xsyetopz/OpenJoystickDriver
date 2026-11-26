@@ -61,8 +61,8 @@ struct SteamMotionSamples {
     sequence += 1
     return Self.sample(
       timestamp: timestamp,
-      gyro: vector(bytes, at: layout.gyroOffset),
-      accel: vector(bytes, at: layout.accelOffset),
+      gyro: ControllerRawSensorVector(littleEndianIn: bytes, at: layout.gyroOffset),
+      accel: ControllerRawSensorVector(littleEndianIn: bytes, at: layout.accelOffset),
       reflectsGyroY: layout.reflectsGyroY
     )
   }
@@ -112,14 +112,5 @@ struct SteamMotionSamples {
   /// The little-endian unsigned 16-bit value at `offset`.
   private func unsigned16(_ bytes: [UInt8], at offset: Int) -> UInt16 {
     UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
-  }
-
-  /// The raw vector of the three little-endian values that start at `offset`.
-  private func vector(_ bytes: [UInt8], at offset: Int) -> ControllerRawSensorVector {
-    ControllerRawSensorVector(
-      x: Int16(bitPattern: unsigned16(bytes, at: offset)),
-      y: Int16(bitPattern: unsigned16(bytes, at: offset + 2)),
-      z: Int16(bitPattern: unsigned16(bytes, at: offset + 4))
-    )
   }
 }

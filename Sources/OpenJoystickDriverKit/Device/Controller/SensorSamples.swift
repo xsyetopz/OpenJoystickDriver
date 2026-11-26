@@ -10,6 +10,16 @@ struct ControllerRawSensorVector: Equatable {
   let z: Int16
 }
 
+extension ControllerRawSensorVector {
+  /// The vector of the three little-endian 16-bit values that start at `offset` of `bytes`.
+  init(littleEndianIn bytes: [UInt8], at offset: Int) {
+    func value(at index: Int) -> Int16 {
+      Int16(bitPattern: UInt16(bytes[index]) | (UInt16(bytes[index + 1]) << 8))
+    }
+    self.init(x: value(at: offset), y: value(at: offset + 2), z: value(at: offset + 4))
+  }
+}
+
 /// Where the time of a sensor sample comes from.
 public enum ControllerSampleTimeBasis: String, Sendable, Codable {
   /// A counter in the device's report.
