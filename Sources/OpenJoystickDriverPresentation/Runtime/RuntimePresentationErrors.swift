@@ -31,52 +31,30 @@ extension RuntimePresentation {
     )
   }
 
+  /// The message key of each remapping failure that has its own message; any other failure
+  /// shows the generic message.
+  private static let rpcMessageKeys: [ApplicationServiceRemappingRPCError.Code: String] = [
+    .profileUpdateConflict: "ui.error.profileChanged",
+    .duplicateName: "ui.error.duplicateProfile",
+    .profileNotFound: "ui.error.profileMissing",
+    .invalidProfile: "ui.error.reviewAssignments",
+    .invalidArguments: "ui.error.reviewAssignments",
+    .unwritableLibrary: "ui.error.profileLibrarySave",
+    .librarySizeExceeded: "ui.error.profileLibrarySave",
+    .profileCountExceeded: "ui.error.profileLibrarySave",
+    .corruptLibrary: "ui.error.profileLibraryCorrupt",
+    .joyConPairUnavailable: "ui.error.joyConPairUnavailable",
+    .packageProfileReadOnly: "error.E3029.message",
+    .routerEngineUnavailable: "ui.error.remappingUnavailable",
+    .routerLibraryUnavailable: "ui.error.remappingUnavailable",
+    .routerLibraryAndEngineUnavailable: "ui.error.remappingUnavailable",
+    .routerShutDown: "ui.error.remappingUnavailable",
+  ]
+
   /// Returns the message for `error` without a code.
   private static func userFacingMessage(_ error: any Error) -> String {
     if let rpcError = error as? ApplicationServiceRemappingRPCError {
-      switch rpcError.code {
-      case .profileUpdateConflict:
-        return OJDLocalized.string(
-          "ui.error.profileChanged"
-        )
-      case .duplicateName:
-        return OJDLocalized.string(
-          "ui.error.duplicateProfile"
-        )
-      case .profileNotFound:
-        return OJDLocalized.string(
-          "ui.error.profileMissing"
-        )
-      case .invalidProfile, .invalidArguments:
-        return OJDLocalized.string(
-          "ui.error.reviewAssignments"
-        )
-      case .unwritableLibrary, .librarySizeExceeded, .profileCountExceeded:
-        return OJDLocalized.string(
-          "ui.error.profileLibrarySave"
-        )
-      case .corruptLibrary:
-        return OJDLocalized.string(
-          "ui.error.profileLibraryCorrupt"
-        )
-      case .joyConPairUnavailable:
-        return OJDLocalized.string(
-          "ui.error.joyConPairUnavailable"
-        )
-      case .packageProfileReadOnly:
-        return OJDLocalized.string(
-          "error.E3029.message"
-        )
-      case .routerEngineUnavailable, .routerLibraryUnavailable, .routerLibraryAndEngineUnavailable,
-        .routerShutDown:
-        return OJDLocalized.string(
-          "ui.error.remappingUnavailable"
-        )
-      default:
-        return OJDLocalized.string(
-          "ui.error.generic"
-        )
-      }
+      return OJDLocalized.string(rpcMessageKeys[rpcError.code] ?? "ui.error.generic")
     }
     if error is RuntimeProfileDraftError || error is RemappingValidationError {
       return OJDLocalized.string(

@@ -43,6 +43,31 @@ struct RuntimePresentationErrorsTests {
   }
 
   @Test(arguments: [
+    (ApplicationServiceRemappingRPCError.Code.profileUpdateConflict, "ui.error.profileChanged"),
+    (.invalidArguments, "ui.error.reviewAssignments"),
+    (.profileCountExceeded, "ui.error.profileLibrarySave"),
+    (.routerShutDown, "ui.error.remappingUnavailable"),
+    (.midiSourceRefused, "ui.error.generic"),
+  ])
+  func remappingFailureShowsItsMessageWithItsCode(
+    _ code: ApplicationServiceRemappingRPCError.Code,
+    _ key: String
+  ) {
+    let error = ApplicationServiceRemappingRPCError(code: code, message: "raw")
+
+    let message = RuntimePresentation.userFacingError(error)
+
+    #expect(
+      message
+        == OJDLocalized.formatted(
+          "ui.error.withCode",
+          OJDLocalized.string(key),
+          code.errorCode.rawValue
+        )
+    )
+  }
+
+  @Test(arguments: [
     (RemappingKeyboardKey.escape, "escape"),
     (.returnKey, "return"),
     (.deleteBackward, "delete.left"),
