@@ -130,12 +130,34 @@ public struct DocumentMigrator: Sendable {
     guard let data = try? Data(contentsOf: url) else {
       return entry(nil, .failed, "cannot be read")
     }
-    let isActiveProfiles = url.deletingPathExtension().lastPathComponent == "ActiveProfiles"
     let isPlist = url.pathExtension == "plist"
     guard
       let document = isPlist
         ? try? OrderedJSON(document: data, file: file) : try? OrderedJSON.parse(data)
     else { return entry(nil, .foreign, "is not a readable document") }
+    return verdict(
+      of: document,
+      url,
+      file: file,
+      isPlist: isPlist,
+      backups: backups,
+      dryRun: dryRun
+    )
+  }
+
+  /// The verdict for the readable `document` of one file.
+  private func verdict(
+    of document: OrderedJSON,
+    _ url: URL,
+    file: String,
+    isPlist: Bool,
+    backups: URL,
+    dryRun: Bool
+  ) -> Entry {
+    func entry(_ kind: String?, _ verdict: Verdict, _ detail: String? = nil) -> Entry {
+      Entry(file: file, kind: kind, verdict: verdict, detail: detail)
+    }
+    let isActiveProfiles = url.deletingPathExtension().lastPathComponent == "ActiveProfiles"
     if isActiveProfiles, case .array = document {
       guard !isPlist else { return entry(Self.activeProfilesKind, .current) }
       return migrate(
