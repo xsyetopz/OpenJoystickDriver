@@ -159,30 +159,43 @@ extension RemappingEngineState {
     next: RemappingTouchSurfaceState,
     for identifier: LogicalControllerID
   ) -> [RemappingEngineAction] {
-    let primaryID = next.primaryContactID
     switch mapping.mode {
-    case .pointer:
-      guard let primaryID, primaryID == previous?.primaryContactID,
-        let old = previous?.contacts[primaryID]?.position,
-        let current = next.contacts[primaryID]?.position
-      else { return [] }
-      let x = (current.x - old.x) * mapping.pointerSensitivity
-      let y = (current.y - old.y) * mapping.pointerSensitivity
-      guard x.isFinite, y.isFinite, x != 0 || y != 0 else { return [] }
-      return [.system(.pointerDelta(x: x, y: y))]
-    case .leftStick, .rightStick:
-      guard var updated = devices[identifier] else { return [] }
-      var axes: [RemappingAxis: Double] = [:]
-      if let primaryID, let contact = next.contacts[primaryID] {
-        let value = Self.stickValue(contact, mapping: mapping)
-        let horizontal: RemappingAxis = mapping.mode == .leftStick ? .leftStickX : .rightStickX
-        let vertical: RemappingAxis = mapping.mode == .leftStick ? .leftStickY : .rightStickY
-        axes = [horizontal: value.x, vertical: value.y]
-      }
-      let state = updated.outputs.gamepad.update(RemappingGamepadState(axes: axes), for: mapping.id)
-      devices[identifier] = updated
-      return state.map { [.gamepad($0, identifier)] } ?? []
+    case .pointer: Self.pointerDelta(mapping, previous: previous, next: next)
+    case .leftStick, .rightStick: followStick(mapping, next: next, for: identifier)
     }
+  }
+
+  private static func pointerDelta(
+    _ mapping: RemappingTouchMapping,
+    previous: RemappingTouchSurfaceState?,
+    next: RemappingTouchSurfaceState
+  ) -> [RemappingEngineAction] {
+    guard let primaryID = next.primaryContactID, primaryID == previous?.primaryContactID,
+      let old = previous?.contacts[primaryID]?.position,
+      let current = next.contacts[primaryID]?.position
+    else { return [] }
+    let x = (current.x - old.x) * mapping.pointerSensitivity
+    let y = (current.y - old.y) * mapping.pointerSensitivity
+    guard x.isFinite, y.isFinite, x != 0 || y != 0 else { return [] }
+    return [.system(.pointerDelta(x: x, y: y))]
+  }
+
+  private mutating func followStick(
+    _ mapping: RemappingTouchMapping,
+    next: RemappingTouchSurfaceState,
+    for identifier: LogicalControllerID
+  ) -> [RemappingEngineAction] {
+    guard var updated = devices[identifier] else { return [] }
+    var axes: [RemappingAxis: Double] = [:]
+    if let primaryID = next.primaryContactID, let contact = next.contacts[primaryID] {
+      let value = Self.stickValue(contact, mapping: mapping)
+      let horizontal: RemappingAxis = mapping.mode == .leftStick ? .leftStickX : .rightStickX
+      let vertical: RemappingAxis = mapping.mode == .leftStick ? .leftStickY : .rightStickY
+      axes = [horizontal: value.x, vertical: value.y]
+    }
+    let state = updated.outputs.gamepad.update(RemappingGamepadState(axes: axes), for: mapping.id)
+    devices[identifier] = updated
+    return state.map { [.gamepad($0, identifier)] } ?? []
   }
 
   /// Normalizes a contact position by the full range of its own axis, so each axis is a fraction of
