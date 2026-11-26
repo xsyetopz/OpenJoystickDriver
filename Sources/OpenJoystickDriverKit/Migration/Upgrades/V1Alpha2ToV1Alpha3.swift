@@ -61,16 +61,7 @@ enum V1Alpha2ToV1Alpha3: DocumentUpgrade {
       case "modes" where kind == .controller && document["idle"] == .bool(true):
         converted.append(.init(key: member.key, value: idledDefault(member.value)))
       case "patch" where kind == .controllerPatch:
-        guard member.value["idle"] != .null else {
-          throw DocumentMigrationProblem("patch.idle is null, which no mode can state")
-        }
-        try collectNulls(member.value, path: [], into: &removed)
-        var body = try stripped(member.value, path: "patch")
-        // `v1alpha2` replaced the whole `modes` list; `v1alpha3` merges it by `id`.
-        if body["modes"] != nil { removed.append("modes") }
-        body = movedIdle(body)
-        if case .object(let sections) = body, sections.isEmpty { continue }
-        converted.append(.init(key: member.key, value: body))
+        if let patch = try convertedPatch(member, removed: &removed) { converted.append(patch) }
       default:
         guard !droppedKeys.contains(member.key), member.value != .null else { continue }
         converted.append(
@@ -85,6 +76,23 @@ enum V1Alpha2ToV1Alpha3: DocumentUpgrade {
       converted.append(.init(key: "remove", value: .array(removed.map { .string($0) })))
     }
     return .object(converted)
+  }
+
+  /// The `patch` member with its `null`s collected into `removed`; nil when nothing is left of it.
+  private static func convertedPatch(
+    _ member: OrderedJSON.Member,
+    removed: inout [String]
+  ) throws -> OrderedJSON.Member? {
+    guard member.value["idle"] != .null else {
+      throw DocumentMigrationProblem("patch.idle is null, which no mode can state")
+    }
+    try collectNulls(member.value, path: [], into: &removed)
+    var body = try stripped(member.value, path: "patch")
+    // `v1alpha2` replaced the whole `modes` list; `v1alpha3` merges it by `id`.
+    if body["modes"] != nil { removed.append("modes") }
+    body = movedIdle(body)
+    if case .object(let sections) = body, sections.isEmpty { return nil }
+    return .init(key: member.key, value: body)
   }
 
   /// `modes` with the reason `NoControllerLinked` on its `default` mode, which is where a record's
