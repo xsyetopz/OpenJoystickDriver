@@ -53,20 +53,7 @@ struct ControllerRecordDocument: Decodable {
   /// wrong `kind` or an invalid combination of sections is rejected.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
-    let apiVersion = try container.decodeOptional(String.self, for: "apiVersion")
-    let documentKind = try container.decodeOptional(String.self, for: "kind")
-    if let problem = OpenJoystickDriverAPI.headerProblem(
-      apiVersion: apiVersion,
-      kind: documentKind,
-      expected: Self.kind
-    ) {
-      if problem.code != nil { throw problem }
-      throw DecodingError.dataCorruptedError(
-        forKey: DocumentKey("kind"),
-        in: container,
-        debugDescription: problem.message
-      )
-    }
+    try Self.requireHeader(in: container)
     try container.rejectUnknown(allowed: [
       "apiVersion", "kind", "vendorID", "productID", "modes", "name", "placeholderSerial", "usb",
       "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input", "tuning",
@@ -84,56 +71,31 @@ struct ControllerRecordDocument: Decodable {
       )
     }
     defaultMode = modes.first(where: \.isDefault)
-    if modes.allSatisfy({ $0.idle != nil }) {
-      let controlSections: Set<String> = [
-        "usb", "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input",
-        "tuning", "validations",
-      ]
-      guard container.allKeys.allSatisfy({ !controlSections.contains($0.stringValue) }) else {
-        throw DecodingError.dataCorrupted(
-          .init(
-            codingPath: decoder.codingPath + [DocumentKey("modes")],
-            debugDescription:
-              "a record whose modes are all idle has no section that serves controls"
-          )
-        )
-      }
-    }
+    try Self.requireNoControlSectionsForIdleModes(
+      modes,
+      in: container,
+      codingPath: decoder.codingPath
+    )
     name = try container.decodeOptional(String.self, for: "name")
     placeholderSerial = try container.decodeOptional(String.self, for: "placeholderSerial")
-    for (key, value) in [("name", name), ("placeholderSerial", placeholderSerial)]
-    where value?.isEmpty == true {
-      throw DecodingError.dataCorrupted(
-        .init(
-          codingPath: decoder.codingPath + [DocumentKey(key)],
-          debugDescription: "\(key) must not be empty"
-        )
-      )
-    }
+    try Self.requireNonEmpty(
+      [("name", name), ("placeholderSerial", placeholderSerial)],
+      codingPath: decoder.codingPath
+    )
     usb = try container.decodeOptional(USBOverride.self, for: "usb")
     bluetoothLE = try container.decodeOptional(BluetoothLE.self, for: "bluetoothLE")
     capabilities =
       try container.decodeOptional(CapabilityDelta.self, for: "capabilities")?.delta ?? .none
-    server = try container.decodeOptional(String.self, for: "server").map { name in
-      guard let parsed = ControllerServer(rawValue: name) else {
-        throw DecodingError.dataCorruptedError(
-          forKey: DocumentKey("server"),
-          in: container,
-          debugDescription: "server must be System or OJD"
-        )
-      }
-      return parsed
-    }
-    route = try container.decodeOptional(String.self, for: "route").map { name in
-      guard let parsed = ControllerRecordRoute(rawValue: name) else {
-        throw DecodingError.dataCorruptedError(
-          forKey: DocumentKey("route"),
-          in: container,
-          debugDescription: "route must be ExtensionOwned"
-        )
-      }
-      return parsed
-    }
+    server = try Self.decodeChoice(
+      for: "server",
+      expecting: "server must be System or OJD",
+      in: container
+    )
+    route = try Self.decodeChoice(
+      for: "route",
+      expecting: "route must be ExtensionOwned",
+      in: container
+    )
     heldByAppleDriver = try container.decodeOptional(Bool.self, for: "heldByAppleDriver") ?? false
     let input = try container.decodeOptional(Input.self, for: "input")
     inputLayouts = input?.layouts
@@ -149,17 +111,7 @@ struct ControllerRecordDocument: Decodable {
     tuning = try container.decodeOptional(Tuning.self, for: "tuning")?.tuning ?? .none
     validations =
       try container.decodeOptional([ControllerValidation].self, for: "validations") ?? []
-    if let index = validations.firstIndex(where: { validation in
-      !modes.contains { $0.id == validation.modeID }
-    }) {
-      let path = ["validations", String(index), "mode"].map(DocumentKey.init)
-      throw DecodingError.dataCorrupted(
-        .init(
-          codingPath: decoder.codingPath + path,
-          debugDescription: "mode \(validations[index].modeID) is not a mode of the record"
-        )
-      )
-    }
+    try Self.requireValidationModes(validations, in: modes, codingPath: decoder.codingPath)
     try validateTuning(codingPath: decoder.codingPath)
     try validateTransportSections(codingPath: decoder.codingPath)
     try validateModes(codingPath: decoder.codingPath)
