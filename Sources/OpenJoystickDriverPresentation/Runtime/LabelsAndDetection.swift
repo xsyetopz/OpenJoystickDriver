@@ -254,22 +254,11 @@ enum RuntimePresentation {
     layers: [RemappingLayer] = []
   ) -> String {
     switch destination {
-    case .macro(let id):
-      return macros.first { $0.id == id }?.name ?? OJDLocalized.string("term.macro")
+    case .macro(let id): return macroLabel(id, macros: macros)
     case .profileSwitch(.next): return OJDLocalized.string("ui.mapping.profileNext")
     case .profileSwitch(.previous): return OJDLocalized.string("ui.mapping.profilePrevious")
     case .profileSwitch(.profile): return OJDLocalized.string("ui.mapping.profileSwitch")
-    case .layerSet(let layer, let mode):
-      let key =
-        switch mode {
-        case .on: "ui.mapping.layerOn"
-        case .off: "ui.mapping.layerOff"
-        case .toggle: "ui.mapping.layerToggle"
-        }
-      return OJDLocalized.formatted(
-        key,
-        layers.first { $0.id == layer }?.name ?? OJDLocalized.string("term.layer")
-      )
+    case .layerSet(let layer, let mode): return layerSetLabel(layer, mode: mode, layers: layers)
     case .pause(.on): return OJDLocalized.string("ui.mapping.pauseOn")
     case .pause(.off): return OJDLocalized.string("ui.mapping.pauseOff")
     case .pause(.toggle): return OJDLocalized.string("ui.mapping.pauseToggle")
@@ -294,11 +283,7 @@ enum RuntimePresentation {
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)
-    case .keyboard(let key, let modifiers):
-      let modifierLabel = modifiers.sorted { $0.rawValue < $1.rawValue }.map(Self.modifierLabel)
-        .joined(separator: " + ")
-      let keyLabel = keyboardKeyLabel(key)
-      return modifierLabel.isEmpty ? keyLabel : "\(modifierLabel) + \(keyLabel)"
+    case .keyboard(let key, let modifiers): return keyboardLabel(key, modifiers: modifiers)
     case .mouseButton(let button):
       return OJDLocalized.formatted(
         "ui.mapping.mouseButton",
@@ -321,6 +306,40 @@ enum RuntimePresentation {
       )
     case .physical(let output): return physicalOutputLabel(output)
     }
+  }
+
+  /// Returns the name of the macro `id` when `macros` holds it, else the generic macro label.
+  private static func macroLabel(_ id: UUID, macros: [RemappingMacro]) -> String {
+    macros.first { $0.id == id }?.name ?? OJDLocalized.string("term.macro")
+  }
+
+  /// Returns the label that sets `layer` to `mode`, naming the layer when `layers` holds it.
+  private static func layerSetLabel(
+    _ layer: UUID,
+    mode: RemappingSwitchMode,
+    layers: [RemappingLayer]
+  ) -> String {
+    let key =
+      switch mode {
+      case .on: "ui.mapping.layerOn"
+      case .off: "ui.mapping.layerOff"
+      case .toggle: "ui.mapping.layerToggle"
+      }
+    return OJDLocalized.formatted(
+      key,
+      layers.first { $0.id == layer }?.name ?? OJDLocalized.string("term.layer")
+    )
+  }
+
+  /// Returns the label of a key with its modifiers, such as `Command + A`.
+  private static func keyboardLabel(
+    _ key: RemappingKeyboardKey,
+    modifiers: Set<RemappingKeyModifier>
+  ) -> String {
+    let modifierLabel = modifiers.sorted { $0.rawValue < $1.rawValue }.map(Self.modifierLabel)
+      .joined(separator: " + ")
+    let keyLabel = keyboardKeyLabel(key)
+    return modifierLabel.isEmpty ? keyLabel : "\(modifierLabel) + \(keyLabel)"
   }
 
   /// Returns the label of a physical output.
