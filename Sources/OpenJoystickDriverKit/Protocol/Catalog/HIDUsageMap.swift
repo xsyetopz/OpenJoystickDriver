@@ -160,116 +160,158 @@ struct HIDUsageMap: Equatable, Sendable {
     var seen: [HIDUsage: [Binding]] = [:]
     for entry in entries {
       let usage = "\(entry.usage.usagePage)/\(entry.usage.usage)"
-      let name = "usage \(usage)"
-      let others = seen[entry.usage, default: []]
-      if let half = entry.binding.half, !others.isEmpty,
-        others.allSatisfy({ $0.half != nil })
-      {
-        guard !others.contains(where: { $0.half == half }) else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.halfTwice",
-            arguments: [usage, half.rawValue],
-            "\(name) names the \(half.rawValue) half twice"
-          )
-        }
-      } else if !others.isEmpty {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.usageMap.usageTwice",
-          arguments: [usage],
-          "\(name) is named twice"
-        )
-      }
+      try Self.requireFreeUsage(entry, usage: usage, others: seen[entry.usage, default: []])
       seen[entry.usage, default: []].append(entry.binding)
-      switch entry.binding {
-      case .button(let control):
-        guard !Control.stickAxes.contains(control), !Control.dpad.contains(control) else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.buttonControl",
-            arguments: [usage, control.rawValue],
-            "\(name) is a button; \(control.rawValue) is not"
-          )
-        }
-      case .axis(let axis):
-        guard Control.stickAxes.contains(axis.control) || axis.isTrigger else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.axisControl",
-            arguments: [usage, axis.control.rawValue],
-            "\(name) is an axis; \(axis.control.rawValue) is not"
-          )
-        }
-        if let range = axis.range, range.isEmpty || range.lowerBound == range.upperBound {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.rangeOrder",
-            arguments: [usage],
-            "\(name) range must have min below max"
-          )
-        }
-        if let deadZone = axis.deadZone, !(deadZone > 0 && deadZone < 1) {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.deadZone",
-            arguments: [usage],
-            "\(name) deadZone must be above 0 and below 1"
-          )
-        }
-      case .hat(let hat):
-        if let range = hat.range, range != 0...7, range != 1...8 {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.hatRange",
-            arguments: [usage],
-            "\(name) hat range must be 0...7 or 1...8"
-          )
-        }
-      case .halfAxis(let halfAxis):
-        guard Self.triggers.contains(halfAxis.control) else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.halfAxisControl",
-            arguments: [usage, halfAxis.control.rawValue],
-            "\(name) is a half axis; \(halfAxis.control.rawValue) is not a trigger"
-          )
-        }
-      case .buttonTrigger(let control):
-        guard Self.triggers.contains(control) else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.buttonTriggerControl",
-            arguments: [usage, control.rawValue],
-            "\(name) is a button trigger; \(control.rawValue) is not a trigger"
-          )
-        }
-      case .axisDpad(let binding):
-        guard Control.dpad.contains(binding.control) else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.axisDpadControl",
-            arguments: [usage, binding.control.rawValue],
-            "\(name) is an axis dpad; \(binding.control.rawValue) is not a D-pad direction"
-          )
-        }
-        try Self.requireThreshold(binding, usage: usage)
-      case .axisButton(let binding):
-        guard !Control.stickAxes.contains(binding.control), !Control.dpad.contains(binding.control)
-        else {
-          throw ControllerRecordProblem(
-            code: .invalidControllerRecord,
-            key: "error.E5007.usageMap.axisButtonControl",
-            arguments: [usage, binding.control.rawValue],
-            "\(name) is an axis button; \(binding.control.rawValue) is not a button"
-          )
-        }
-        try Self.requireThreshold(binding, usage: usage)
-      }
+      try Self.requireValidBinding(entry.binding, usage: usage)
     }
     self.reportID = reportID
     self.entries = entries
     self.bindings = seen
+  }
+
+  /// Throws unless `entry` names a usage that no other entry names, or a half that no other entry
+  /// of the usage reads, when every entry of the usage reads its own half.
+  private static func requireFreeUsage(
+    _ entry: Entry,
+    usage: String,
+    others: [Binding]
+  ) throws(ControllerRecordProblem) {
+    let name = "usage \(usage)"
+    if let half = entry.binding.half, !others.isEmpty,
+      others.allSatisfy({ $0.half != nil })
+    {
+      guard !others.contains(where: { $0.half == half }) else {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.usageMap.halfTwice",
+          arguments: [usage, half.rawValue],
+          "\(name) names the \(half.rawValue) half twice"
+        )
+      }
+    } else if !others.isEmpty {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.usageMap.usageTwice",
+        arguments: [usage],
+        "\(name) is named twice"
+      )
+    }
+  }
+
+  /// Throws unless the control, range, dead zone, and threshold of `binding`, the entry of
+  /// `usage` as `page/usage`, suit its kind.
+  private static func requireValidBinding(
+    _ binding: Binding,
+    usage: String
+  ) throws(ControllerRecordProblem) {
+    let name = "usage \(usage)"
+    switch binding {
+    case .button(let control):
+      try requireControl(
+        control,
+        usage: usage,
+        key: "error.E5007.usageMap.buttonControl",
+        valid: !Control.stickAxes.contains(control) && !Control.dpad.contains(control),
+        "\(name) is a button; \(control.rawValue) is not"
+      )
+    case .axis(let axis): try requireValidAxis(axis, usage: usage)
+    case .hat(let hat):
+      if let range = hat.range, range != 0...7, range != 1...8 {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.usageMap.hatRange",
+          arguments: [usage],
+          "\(name) hat range must be 0...7 or 1...8"
+        )
+      }
+    case .halfAxis(let halfAxis):
+      try requireControl(
+        halfAxis.control,
+        usage: usage,
+        key: "error.E5007.usageMap.halfAxisControl",
+        valid: triggers.contains(halfAxis.control),
+        "\(name) is a half axis; \(halfAxis.control.rawValue) is not a trigger"
+      )
+    case .buttonTrigger(let control):
+      try requireControl(
+        control,
+        usage: usage,
+        key: "error.E5007.usageMap.buttonTriggerControl",
+        valid: triggers.contains(control),
+        "\(name) is a button trigger; \(control.rawValue) is not a trigger"
+      )
+    case .axisDpad(let binding):
+      try requireControl(
+        binding.control,
+        usage: usage,
+        key: "error.E5007.usageMap.axisDpadControl",
+        valid: Control.dpad.contains(binding.control),
+        "\(name) is an axis dpad; \(binding.control.rawValue) is not a D-pad direction"
+      )
+      try requireThreshold(binding, usage: usage)
+    case .axisButton(let binding):
+      try requireControl(
+        binding.control,
+        usage: usage,
+        key: "error.E5007.usageMap.axisButtonControl",
+        valid: !Control.stickAxes.contains(binding.control)
+          && !Control.dpad.contains(binding.control),
+        "\(name) is an axis button; \(binding.control.rawValue) is not a button"
+      )
+      try requireThreshold(binding, usage: usage)
+    }
+  }
+
+  /// Throws the `error.E5007.usageMap.<key>` problem for `control` of the entry `usage` unless
+  /// `valid`.
+  private static func requireControl(
+    _ control: Control,
+    usage: String,
+    key: String,
+    valid: Bool,
+    _ message: @autoclosure () -> String
+  ) throws(ControllerRecordProblem) {
+    guard valid else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: key,
+        arguments: [usage, control.rawValue],
+        message()
+      )
+    }
+  }
+
+  /// Throws unless the control, range, and dead zone of `axis`, the entry of `usage` as
+  /// `page/usage`, are valid.
+  private static func requireValidAxis(
+    _ axis: Axis,
+    usage: String
+  ) throws(ControllerRecordProblem) {
+    let name = "usage \(usage)"
+    guard Control.stickAxes.contains(axis.control) || axis.isTrigger else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.usageMap.axisControl",
+        arguments: [usage, axis.control.rawValue],
+        "\(name) is an axis; \(axis.control.rawValue) is not"
+      )
+    }
+    if let range = axis.range, range.isEmpty || range.lowerBound == range.upperBound {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.usageMap.rangeOrder",
+        arguments: [usage],
+        "\(name) range must have min below max"
+      )
+    }
+    if let deadZone = axis.deadZone, !(deadZone > 0 && deadZone < 1) {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.usageMap.deadZone",
+        arguments: [usage],
+        "\(name) deadZone must be above 0 and below 1"
+      )
+    }
   }
 
   /// Throws unless the threshold of `binding`, the entry of `usage` as `page/usage`, is above 0
