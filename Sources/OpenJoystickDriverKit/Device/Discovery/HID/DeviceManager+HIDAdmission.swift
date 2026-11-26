@@ -119,137 +119,19 @@ extension DeviceManager {
   ) async {
     let physicalDevice = connection.physicalDevice
     let routingAddress = connection.routingAddress
-    guard let vendorID = physicalDevice.vendorID, let productID = physicalDevice.productID else {
-      return
-    }
-    if let existingPipeline = pipelines[identifier] {
-      guard let existingInfo = deviceInfos[identifier] else {
-        await updateHIDOwnership(ownership, address: routingAddress)
-        return
-      }
-      if case .hid = existingInfo.discoverySource {
-        guard existingInfo.hidConnectionID != connection.connectionID else {
-          await updateHIDOwnership(ownership, address: routingAddress)
-          return
-        }
-        let existingOutputQueue = hidOutputQueues[identifier]
-        pipelines.removeValue(forKey: identifier)
-        hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
-        // The stale connection's pending output is dropped; its neutralization queues after.
-        existingOutputQueue?.cancelAll()
-        await neutralizePhysicalOutputs(
-          for: identifier,
-          pipeline: existingPipeline,
-          detachedInfo: existingInfo
-        )
-        guard isCurrentHIDInitialization(connection),
-          deviceInfos[identifier]?.hidConnectionID == existingInfo.hidConnectionID,
-          deviceInfos[identifier]?.physicalDevice == existingInfo.physicalDevice,
-          pipelines[identifier] == nil
-        else {
-          await existingPipeline.stop()
-          return
-        }
-        deviceInfos.removeValue(forKey: identifier)
-        lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
-        await existingPipeline.stop()
-        guard !Task.isCancelled, isCurrentHIDInitialization(connection),
-          deviceInfos[identifier] == nil, pipelines[identifier] == nil
-        else { return }
-        if let existingOutputQueue {
-          retireOutputQueue(for: identifier, expected: existingOutputQueue)
-        }
-        print("[DeviceManager] Replacing stale HID connection snapshot: \(identifier)")
-      }
-    }
-    let connectionName = physicalDevice.transportProperty ?? "HID"
-    let modeSelection = await selectedHIDMode(
-      for: connection,
-      device: physicalDevice,
-      vendorID: vendorID,
-      productID: productID
-    )
-    guard !Task.isCancelled, isCurrentHIDInitialization(connection) else { return }
-    let classification = protocolDriverRegistry.classify(
-      physicalDevice,
-      backend: connection.accessBackend,
-      modeID: modeSelection.modeID
-    )
-    let binding: ProtocolBinding
-    let driver: any PhysicalProtocolDriver
-    switch classification {
-    case .unsupported(let reason, let rejected):
-      await rejectHIDDevice(
-        connection,
-        identifier: identifier,
-        reason: reason,
-        rejectedCandidates: rejected.map { [$0] } ?? []
+    guard physicalDevice.vendorID != nil, physicalDevice.productID != nil else { return }
+    guard
+      await retireStaleHIDPipeline(for: identifier, connection: connection, ownership: ownership)
+    else { return }
+    guard
+      let resolved = await resolveHIDDriver(
+        for: identifier,
+        connection: connection,
+        port: port,
+        rumbleBank: rumbleBank
       )
-      return
-    case .conflict(let reason, let candidates):
-      await rejectHIDDevice(
-        connection,
-        identifier: identifier,
-        reason: reason,
-        rejectedCandidates: candidates.map {
-          ProtocolBindingResult.RejectedCandidate(protocolID: $0, reason: reason)
-        }
-      )
-      return
-    case .bound(let bound):
-      // No row names an assembly policy yet (the vocabulary is empty), so each role is its own
-      // logical controller; the first policy must assemble its roles here.
-      if let policy = protocolDriverRegistry.assemblyPolicy(for: bound) { switch policy {} }
-      let reportDescriptor = physicalDevice.interfaces?.first {
-        $0.interfaceNumber == bound.interfaceNumber
-      }?.hidLayout?.reportDescriptor
-      switch protocolDriverRegistry.makeDriver(
-        for: bound,
-        model: identifier.model,
-        claimed: nil,
-        slotOrdinal: port,
-        reportDescriptor: reportDescriptor,
-        adapterRumbleBank: rumbleBank
-      ) {
-      case .success(let resolved):
-        binding = bound
-        driver = resolved
-      case .failure(let reason):
-        await rejectHIDDevice(
-          connection,
-          identifier: identifier,
-          reason: reason,
-          rejectedCandidates: [
-            ProtocolBindingResult.RejectedCandidate(
-              protocolID: bound.protocolID,
-              reason: reason,
-              catalogRecordID: bound.record?.recordID
-            )
-          ]
-        )
-        return
-      }
-    }
-    // A HID interface of a controller that a raw-USB pipeline already serves would expose it twice.
-    // The rejected connection's claim stays held while that pipeline runs. Only this HID-side
-    // family is rejected; the raw-USB family stays bound on its own pipeline.
-    if let rawUSBIdentifier = rawUSBIdentifier(servingSameControllerAs: identifier),
-      deviceInfos[rawUSBIdentifier] != nil
-    {
-      await rejectHIDDevice(
-        connection,
-        identifier: identifier,
-        reason: .ambiguousProtocolMatch,
-        rejectedCandidates: [
-          ProtocolBindingResult.RejectedCandidate(
-            protocolID: binding.protocolID,
-            reason: .ambiguousProtocolMatch,
-            catalogRecordID: binding.record?.recordID
-          )
-        ]
-      )
-      return
-    }
+    else { return }
+    let (binding, driver) = resolved
     clearUnboundDevice(.hid(connection.connectionID))
 
     let name = controllerDisplayName(
@@ -259,7 +141,7 @@ extension DeviceManager {
     )
     deviceInfos[identifier] = DeviceInfo(
       name: name,
-      connection: connectionName,
+      connection: physicalDevice.transportProperty ?? "HID",
       serialNumber: identifier.hardware.serialNumber,
       discoverySource: .hid,
       binding: binding,
@@ -307,6 +189,191 @@ extension DeviceManager {
     pipelines[identifier] = pipeline
     notifyServiceStatusChanged()
     guard ownership != .ownedByAnotherClient else { return }
+    await runHIDStartup(
+      pipeline,
+      for: identifier,
+      connection: connection,
+      plan: plan,
+      requiresSuccessfulStartupOutput: requiresSuccessfulStartupOutput
+    )
+  }
+
+  /// Stops the pipeline of an earlier HID connection that `identifier` still names, so
+  /// `connection` can replace it.
+  ///
+  /// Returns `false` when admission ends here: `connection` already runs `identifier` (its
+  /// ownership is updated instead), the snapshot has no device info, or a later change superseded
+  /// this initialization while the stale pipeline stopped. A raw-USB pipeline is left running.
+  private func retireStaleHIDPipeline(
+    for identifier: LogicalControllerID,
+    connection: HIDDeviceConnection,
+    ownership: HIDInputOwnership
+  ) async -> Bool {
+    guard let existingPipeline = pipelines[identifier] else { return true }
+    guard let existingInfo = deviceInfos[identifier] else {
+      await updateHIDOwnership(ownership, address: connection.routingAddress)
+      return false
+    }
+    guard case .hid = existingInfo.discoverySource else { return true }
+    guard existingInfo.hidConnectionID != connection.connectionID else {
+      await updateHIDOwnership(ownership, address: connection.routingAddress)
+      return false
+    }
+    let existingOutputQueue = hidOutputQueues[identifier]
+    pipelines.removeValue(forKey: identifier)
+    hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
+    // The stale connection's pending output is dropped; its neutralization queues after.
+    existingOutputQueue?.cancelAll()
+    await neutralizePhysicalOutputs(
+      for: identifier,
+      pipeline: existingPipeline,
+      detachedInfo: existingInfo
+    )
+    guard isCurrentHIDInitialization(connection),
+      deviceInfos[identifier]?.hidConnectionID == existingInfo.hidConnectionID,
+      deviceInfos[identifier]?.physicalDevice == existingInfo.physicalDevice,
+      pipelines[identifier] == nil
+    else {
+      await existingPipeline.stop()
+      return false
+    }
+    deviceInfos.removeValue(forKey: identifier)
+    lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
+    await existingPipeline.stop()
+    guard !Task.isCancelled, isCurrentHIDInitialization(connection),
+      deviceInfos[identifier] == nil, pipelines[identifier] == nil
+    else { return false }
+    if let existingOutputQueue {
+      retireOutputQueue(for: identifier, expected: existingOutputQueue)
+    }
+    print("[DeviceManager] Replacing stale HID connection snapshot: \(identifier)")
+    return true
+  }
+
+  /// Classifies `connection` in its selected mode and makes the driver of its binding.
+  ///
+  /// Returns `nil` after recording `connection` as unbound when no driver binds it, candidates
+  /// conflict, the driver cannot be made, or a raw-USB pipeline already serves the same controller,
+  /// and also when a later initialization supersedes this one.
+  private func resolveHIDDriver(
+    for identifier: LogicalControllerID,
+    connection: HIDDeviceConnection,
+    port: Int,
+    rumbleBank: GameCubeAdapterRumbleBank?
+  ) async -> sending (ProtocolBinding, any PhysicalProtocolDriver)? {
+    let physicalDevice = connection.physicalDevice
+    guard let vendorID = physicalDevice.vendorID, let productID = physicalDevice.productID else {
+      return nil
+    }
+    let modeSelection = await selectedHIDMode(
+      for: connection,
+      device: physicalDevice,
+      vendorID: vendorID,
+      productID: productID
+    )
+    guard !Task.isCancelled, isCurrentHIDInitialization(connection) else { return nil }
+    let bound: ProtocolBinding
+    switch protocolDriverRegistry.classify(
+      physicalDevice,
+      backend: connection.accessBackend,
+      modeID: modeSelection.modeID
+    ) {
+    case .unsupported(let reason, let rejected):
+      await rejectHIDDevice(
+        connection,
+        identifier: identifier,
+        reason: reason,
+        rejectedCandidates: rejected.map { [$0] } ?? []
+      )
+      return nil
+    case .conflict(let reason, let candidates):
+      await rejectHIDDevice(
+        connection,
+        identifier: identifier,
+        reason: reason,
+        rejectedCandidates: candidates.map {
+          ProtocolBindingResult.RejectedCandidate(protocolID: $0, reason: reason)
+        }
+      )
+      return nil
+    case .bound(let binding):
+      bound = binding
+    }
+    // No row names an assembly policy yet (the vocabulary is empty), so each role is its own
+    // logical controller; the first policy must assemble its roles here.
+    if let policy = protocolDriverRegistry.assemblyPolicy(for: bound) { switch policy {} }
+    let reportDescriptor = physicalDevice.interfaces?.first {
+      $0.interfaceNumber == bound.interfaceNumber
+    }?.hidLayout?.reportDescriptor
+    let driver: any PhysicalProtocolDriver
+    switch protocolDriverRegistry.makeDriver(
+      for: bound,
+      model: identifier.model,
+      claimed: nil,
+      slotOrdinal: port,
+      reportDescriptor: reportDescriptor,
+      adapterRumbleBank: rumbleBank
+    ) {
+    case .success(let resolved):
+      driver = resolved
+    case .failure(let reason):
+      await rejectHIDDevice(connection, identifier: identifier, binding: bound, reason: reason)
+      return nil
+    }
+    // A HID interface of a controller that a raw-USB pipeline already serves would expose it twice.
+    // The rejected connection's claim stays held while that pipeline runs. Only this HID-side
+    // family is rejected; the raw-USB family stays bound on its own pipeline.
+    if let rawUSBIdentifier = rawUSBIdentifier(servingSameControllerAs: identifier),
+      deviceInfos[rawUSBIdentifier] != nil
+    {
+      await rejectHIDDevice(
+        connection,
+        identifier: identifier,
+        binding: bound,
+        reason: .ambiguousProtocolMatch
+      )
+      return nil
+    }
+    return (bound, driver)
+  }
+
+  /// Records `connection` as unbound because its one candidate `binding` was refused for `reason`.
+  private func rejectHIDDevice(
+    _ connection: HIDDeviceConnection,
+    identifier: LogicalControllerID,
+    binding: ProtocolBinding,
+    reason: ProtocolBindingReason
+  ) async {
+    await rejectHIDDevice(
+      connection,
+      identifier: identifier,
+      reason: reason,
+      rejectedCandidates: [
+        ProtocolBindingResult.RejectedCandidate(
+          protocolID: binding.protocolID,
+          reason: reason,
+          catalogRecordID: binding.record?.recordID
+        )
+      ]
+    )
+  }
+
+  /// Runs the startup of a registered HID `pipeline` in the order its session `plan` gives:
+  /// element routing, unbound-claim reconciliation, startup output, feature reads, activation
+  /// writes, output activation, the input-connection request, then periodic output.
+  ///
+  /// A native pass-through pipeline gets only the feature reads its allowance names, output
+  /// activation, and the rumble keep-alive its record resends. Each step stops the startup once
+  /// `pipeline` is no longer the current startup pipeline of `connection`. With
+  /// `requiresSuccessfulStartupOutput`, external output is allowed only after startup output
+  /// succeeded.
+  private func runHIDStartup(
+    _ pipeline: DevicePipeline,
+    for identifier: LogicalControllerID,
+    connection: HIDDeviceConnection,
+    plan: DriverSessionPlan,
+    requiresSuccessfulStartupOutput: Bool
+  ) async {
     await pipeline.start()
     guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
     if plan.parsesHIDElementValues { await hidManager.routeElementValues(connection: connection) }
