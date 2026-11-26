@@ -67,4 +67,18 @@ struct HatDirectionExactDpadTests {
       #expect(HatDirection(clockwiseFromNorth: value) == .neutral)
     }
   }
+
+  @Test
+  func maskedBitsMapToTheDirectionOfTheirMasks() {
+    func direction(_ bits: UInt32) -> HatDirection {
+      HatDirection(exactBits: bits, up: 0x2000, right: 0x800, down: 0x400, left: 0x1000)
+    }
+    #expect(direction(0x2000) == .north)
+    #expect(direction(0x2800) == .northEast)
+    #expect(direction(0x0400) == .south)
+    #expect(direction(0x1400) == .southWest)
+    #expect(direction(0x2400) == .neutral)
+    #expect(direction(0x0001) == .neutral)
+    #expect(direction(0x3000 | 0x0001) == .northWest)
+  }
 }

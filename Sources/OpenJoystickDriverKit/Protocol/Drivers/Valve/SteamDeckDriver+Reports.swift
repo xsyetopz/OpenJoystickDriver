@@ -110,12 +110,7 @@ extension SteamDeckDriver {
 
   /// The hat direction of the D-pad bits of `buttons`.
   private static func hat(_ buttons: UInt32) -> HatDirection {
-    HatDirection(
-      exactUp: buttons & dpadUp != 0,
-      right: buttons & dpadRight != 0,
-      down: buttons & dpadDown != 0,
-      left: buttons & dpadLeft != 0
-    )
+    HatDirection(exactBits: buttons, up: dpadUp, right: dpadRight, down: dpadDown, left: dpadLeft)
   }
 
   /// Raw triggers are unsigned; SDL maps `0...32767` onto its full trigger range.

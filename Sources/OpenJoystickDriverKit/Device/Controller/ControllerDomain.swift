@@ -244,6 +244,17 @@ extension HatDirection {
     }
   }
 
+  /// The direction whose D-pad bits are set in `bits` and no others; each of `up`, `right`, `down`
+  /// and `left` is the bit mask of that direction.
+  init(exactBits bits: UInt32, up: UInt32, right: UInt32, down: UInt32, left: UInt32) {
+    self.init(
+      exactUp: bits & up != 0,
+      right: bits & right != 0,
+      down: bits & down != 0,
+      left: bits & left != 0
+    )
+  }
+
   /// The direction of the low four bits of `bits`: up 1, down 2, left 4, right 8; a combination
   /// that is not one of the eight directions is at rest, and higher bits are ignored.
   init(dpadNibble bits: UInt8) {
