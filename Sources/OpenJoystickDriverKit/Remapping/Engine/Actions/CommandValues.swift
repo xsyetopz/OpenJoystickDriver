@@ -39,130 +39,145 @@ public enum RemappingCommandValueParser {
 
   /// Parses the `button`, `dpad`, `axis`, `trigger:TRIGGER:STAGE` and `motion:lean` forms.
   private static func controlSource(_ parts: [String]) -> RemappingSource? {
-    if parts.count == 2, parts[0] == "button",
-      let button = CommandLineName.value(of: parts[1], in: Control.self)
-    {
-      return .button(button)
+    switch (parts[0], parts.count) {
+    case ("button", 2): CommandLineName.value(of: parts[1], in: Control.self).map { .button($0) }
+    case ("dpad", 2):
+      CommandLineName.value(of: parts[1], in: RemappingDpadDirection.self).map { .dpad($0) }
+    case ("axis", 2): CommandLineName.value(of: parts[1], in: RemappingAxis.self).map { .axis($0) }
+    case ("axis", 3): axisDirectionSource(parts)
+    case ("trigger", 3): triggerStageSource(parts)
+    case ("motion", 3): motionLeanSource(parts)
+    default: nil
     }
-    if parts.count == 2, parts[0] == "dpad",
-      let direction = CommandLineName.value(of: parts[1], in: RemappingDpadDirection.self)
-    {
-      return .dpad(direction)
-    }
-    if parts.count == 2, parts[0] == "axis",
-      let axis = CommandLineName.value(of: parts[1], in: RemappingAxis.self)
-    {
-      return .axis(axis)
-    }
-    if parts.count == 3, parts[0] == "axis",
-      let axis = CommandLineName.value(of: parts[1], in: RemappingAxis.self),
+  }
+
+  private static func axisDirectionSource(_ parts: [String]) -> RemappingSource? {
+    guard let axis = CommandLineName.value(of: parts[1], in: RemappingAxis.self),
       let direction = CommandLineName.value(of: parts[2], in: RemappingAxisDirection.self)
-    {
-      return .axisDirection(axis, direction)
-    }
-    if parts.count == 3, parts[0] == "trigger",
-      let trigger = CommandLineName.value(of: parts[1], in: RemappingTriggerSource.self),
+    else { return nil }
+    return .axisDirection(axis, direction)
+  }
+
+  private static func triggerStageSource(_ parts: [String]) -> RemappingSource? {
+    guard let trigger = CommandLineName.value(of: parts[1], in: RemappingTriggerSource.self),
       let stage = CommandLineName.value(of: parts[2], in: RemappingTriggerStage.self)
-    {
-      return .triggerStage(trigger, stage)
-    }
-    if parts.count == 3, parts[0] == "motion", parts[1] == "lean",
+    else { return nil }
+    return .triggerStage(trigger, stage)
+  }
+
+  private static func motionLeanSource(_ parts: [String]) -> RemappingSource? {
+    guard parts[1] == "lean",
       let direction = CommandLineName.value(of: parts[2], in: RemappingMotionLeanDirection.self)
-    {
-      return .motionLean(direction)
-    }
-    return nil
+    else { return nil }
+    return .motionLean(direction)
   }
 
   /// Parses the `touch:SURFACE:contact`, `grid` and `swipe` forms.
   private static func touchSource(_ parts: [String]) -> RemappingSource? {
-    if parts.count == 3, parts[0] == "touch",
-      let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self),
-      parts[2] == "contact"
-    {
-      return .touchContact(surface)
+    guard parts[0] == "touch", parts.count >= 3,
+      let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self)
+    else { return nil }
+    switch (parts.count, parts[2]) {
+    case (3, "contact"): return .touchContact(surface)
+    case (7, "grid"): return touchGridSource(surface, parts)
+    case (5, "swipe"): return touchSwipeSource(surface, parts)
+    default: return nil
     }
-    if parts.count == 7, parts[0] == "touch",
-      let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self),
-      parts[2] == "grid",
-      let columns = Int(parts[3]), let rows = Int(parts[4]), let column = Int(parts[5]),
+  }
+
+  private static func touchGridSource(
+    _ surface: RemappingTouchSurface,
+    _ parts: [String]
+  ) -> RemappingSource? {
+    guard let columns = Int(parts[3]), let rows = Int(parts[4]), let column = Int(parts[5]),
       let row = Int(parts[6])
-    {
-      return .touchGrid(
-        RemappingTouchGridSource(
-          surface: surface,
-          columns: columns,
-          rows: rows,
-          column: column,
-          row: row
-        )
+    else { return nil }
+    return .touchGrid(
+      RemappingTouchGridSource(
+        surface: surface,
+        columns: columns,
+        rows: rows,
+        column: column,
+        row: row
       )
-    }
-    if parts.count == 5, parts[0] == "touch",
-      let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self),
-      parts[2] == "swipe",
+    )
+  }
+
+  private static func touchSwipeSource(
+    _ surface: RemappingTouchSurface,
+    _ parts: [String]
+  ) -> RemappingSource? {
+    guard
       let direction = CommandLineName.value(of: parts[3], in: RemappingTouchSwipeDirection.self),
       let minimumDistance = Double(parts[4]), minimumDistance.isFinite
-    {
-      return .touchSwipe(
-        RemappingTouchSwipeSource(
-          surface: surface,
-          direction: direction,
-          minimumDistance: minimumDistance
-        )
+    else { return nil }
+    return .touchSwipe(
+      RemappingTouchSwipeSource(
+        surface: surface,
+        direction: direction,
+        minimumDistance: minimumDistance
       )
-    }
-    return nil
+    )
   }
 
   /// Parses the `stick-region`, `trigger-band` and `touch:SURFACE:area` forms.
   ///
   /// A range is two numbers joined by `-`. Hysteresis is the default of the source.
   private static func regionSource(_ parts: [String]) -> RemappingSource? {
-    func range(_ text: String) -> (Double, Double)? {
-      let ends = text.split(separator: "-", omittingEmptySubsequences: false).map { Double($0) }
-      guard ends.count == 2, let low = ends[0], let high = ends[1], low.isFinite, high.isFinite
-      else { return nil }
-      return (low, high)
+    switch (parts[0], parts.count) {
+    case ("stick-region", 3), ("stick-region", 4): stickRegionSource(parts)
+    case ("trigger-band", 3): triggerBandSource(parts)
+    case ("touch", 7): touchAreaSource(parts)
+    default: nil
     }
-    if parts.count == 3 || parts.count == 4, parts[0] == "stick-region",
-      let stick = CommandLineName.value(of: parts[1], in: RemappingStickSource.self),
+  }
+
+  private static func range(_ text: String) -> (Double, Double)? {
+    let ends = text.split(separator: "-", omittingEmptySubsequences: false).map { Double($0) }
+    guard ends.count == 2, let low = ends[0], let high = ends[1], low.isFinite, high.isFinite
+    else { return nil }
+    return (low, high)
+  }
+
+  private static func stickRegionSource(_ parts: [String]) -> RemappingSource? {
+    guard let stick = CommandLineName.value(of: parts[1], in: RemappingStickSource.self),
       let ring = range(parts[2])
-    {
-      let sector = parts.count == 4 ? range(parts[3]) : nil
-      guard parts.count == 3 || sector != nil else { return nil }
-      return .stickRegion(
-        RemappingStickRegionSource(
-          stick: stick,
-          innerRadius: ring.0,
-          outerRadius: ring.1,
-          fromDegrees: sector?.0,
-          toDegrees: sector?.1
-        )
+    else { return nil }
+    let sector = parts.count == 4 ? range(parts[3]) : nil
+    guard parts.count == 3 || sector != nil else { return nil }
+    return .stickRegion(
+      RemappingStickRegionSource(
+        stick: stick,
+        innerRadius: ring.0,
+        outerRadius: ring.1,
+        fromDegrees: sector?.0,
+        toDegrees: sector?.1
       )
-    }
-    if parts.count == 3, parts[0] == "trigger-band",
-      let trigger = CommandLineName.value(of: parts[1], in: RemappingTriggerSource.self),
+    )
+  }
+
+  private static func triggerBandSource(_ parts: [String]) -> RemappingSource? {
+    guard let trigger = CommandLineName.value(of: parts[1], in: RemappingTriggerSource.self),
       let band = range(parts[2])
-    {
-      return .triggerBand(RemappingTriggerBandSource(trigger: trigger, from: band.0, to: band.1))
-    }
-    if parts.count == 7, parts[0] == "touch", parts[2] == "area",
+    else { return nil }
+    return .triggerBand(RemappingTriggerBandSource(trigger: trigger, from: band.0, to: band.1))
+  }
+
+  private static func touchAreaSource(_ parts: [String]) -> RemappingSource? {
+    guard parts[2] == "area",
       let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self)
-    {
-      let values = parts[3...].compactMap { Double($0) }
-      guard values.count == 4, values.allSatisfy(\.isFinite) else { return nil }
-      return .touchArea(
-        RemappingTouchAreaSource(
-          surface: surface,
-          x: values[0],
-          y: values[1],
-          width: values[2],
-          height: values[3]
-        )
+    else { return nil }
+    let values = parts[3...].compactMap { Double($0) }
+    guard values.count == 4, values.allSatisfy(\.isFinite) else { return nil }
+    return .touchArea(
+      RemappingTouchAreaSource(
+        surface: surface,
+        x: values[0],
+        y: values[1],
+        width: values[2],
+        height: values[3]
       )
-    }
-    return nil
+    )
   }
 
   /// Parses `system-key:NAME`, `system:mission-control`, `open-app:BUNDLE-ID`, `open-url:URL`,
