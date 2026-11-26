@@ -312,20 +312,12 @@ struct BindingClearCommand: AsyncParsableCommand {
   var all = false
 
   /// `-f`, `--force`: skip the confirmation that `--all` asks for.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(
-      CLILocalized.text("cli.shared.option.dryRun")
-    )
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -368,14 +360,14 @@ struct BindingClearCommand: AsyncParsableCommand {
           )
         )
       }
-      if !dryRun {
+      if !dryRun.isSet {
         if removeAll {
           try CLITerminal.confirm(
             CLILocalized.format(
               "cli.binding.clear.confirm",
               current.name
             ),
-            force: force
+            force: force.isSet
           )
         }
         let updated = try Self.clearing(current, sources: parsed, all: removeAll).validatedForCLI()
@@ -389,14 +381,14 @@ struct BindingClearCommand: AsyncParsableCommand {
         profile: try savedSummary(current.id, in: snapshot),
         removed: removing.map(ProfileText.source),
         all: removeAll,
-        dryRun: dryRun
+        dryRun: dryRun.isSet
       )
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(CLIStatus(details: result))
       case .plain: CLIOutput.plain(result.removed.map { [$0] })
       case .human:
         let message =
-          dryRun
+          dryRun.isSet
           ? CLILocalized.format(
             "cli.binding.clear.dryRun",
             current.name,
@@ -407,9 +399,9 @@ struct BindingClearCommand: AsyncParsableCommand {
             current.name,
             result.removed.count
           )
-        if dryRun { CLIOutput.stdout(message) } else { CLIOutput.success(message) }
+        if dryRun.isSet { CLIOutput.stdout(message) } else { CLIOutput.success(message) }
       }
-      if !dryRun, current.suppressesAllControllerInput,
+      if !dryRun.isSet, current.suppressesAllControllerInput,
         snapshot.routes.contains(where: { $0.activeProfileID == current.id })
       {
         CLIOutput.stderr(

@@ -27,20 +27,12 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
   }
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(
-      CLILocalized.text("cli.shared.option.dryRun")
-    )
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -55,12 +47,12 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
       let issues = try await ServiceConnection.withDeadline(seconds: timeout) {
         try await client.getRemappingSnapshot()
       }.profileIssues
-      if !dryRun, !issues.isEmpty {
+      if !dryRun.isSet, !issues.isEmpty {
         try CLITerminal.confirm(
           CLILocalized.text(
             "cli.profile.recover.confirm"
           ),
-          force: force
+          force: force.isSet
         )
         for issue in issues {
           _ = try await ServiceConnection.withDeadline(seconds: timeout) {
@@ -80,7 +72,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
             message: $0.message
           )
         },
-        dryRun: dryRun
+        dryRun: dryRun.isSet
       )
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(CLIStatus(details: result))
@@ -91,7 +83,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
             CLILocalized.text("cli.profile.recover.none")
           )
         }
-        for issue in issues { Self.printAction(issue, dryRun: dryRun) }
+        for issue in issues { Self.printAction(issue, dryRun: dryRun.isSet) }
       }
     }
   }

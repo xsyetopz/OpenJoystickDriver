@@ -71,11 +71,8 @@ struct ProtocolInstallCommand: AsyncParsableCommand {
   var file: String
 
   /// `-n`, `--dry-run`: check the description and print where it would go, and write nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -87,7 +84,7 @@ struct ProtocolInstallCommand: AsyncParsableCommand {
       let family = try ProtocolStore.read(file)
       let destination = ProtocolStore.directory.appendingPathComponent("\(family.name).plist")
       let replaced = FileManager.default.fileExists(atPath: destination.path)
-      if !dryRun {
+      if !dryRun.isSet {
         try FileManager.default.createDirectory(
           at: ProtocolStore.directory,
           withIntermediateDirectories: true
@@ -100,14 +97,14 @@ struct ProtocolInstallCommand: AsyncParsableCommand {
           Result(
             installed: destination.path,
             replaced: replaced,
-            dryRun: dryRun,
+            dryRun: dryRun.isSet,
             name: family.name,
             displayName: family.displayName
           )
         )
       case .plain: CLIOutput.plain([[destination.path]])
       case .human:
-        if dryRun {
+        if dryRun.isSet {
           CLIOutput.stdout(CLILocalized.format("cli.mod.install.dryRun", destination.path))
         } else {
           CLIOutput.success(CLILocalized.format("cli.protocol.install.success", destination.path))

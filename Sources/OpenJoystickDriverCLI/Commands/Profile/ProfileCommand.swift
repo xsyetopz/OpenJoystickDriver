@@ -529,20 +529,12 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
   var profile: ProfileSelector
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(
-      CLILocalized.text("cli.shared.option.dryRun")
-    )
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -559,23 +551,24 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
         try await selector.resolve(with: client)
       }
       let summary = ProfileSummary(target, snapshot: snapshot)
-      if !dryRun {
+      if !dryRun.isSet {
         try CLITerminal.confirm(
           CLILocalized.format(
             "cli.profile.delete.confirm",
             target.name
           ),
-          force: force
+          force: force.isSet
         )
         _ = try await ServiceConnection.withDeadline(seconds: timeout) {
           try await client.deleteRemappingProfile(id: target.id)
         }
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(CLIStatus(details: Result(deleted: summary, dryRun: dryRun)))
+      case .json:
+        try CLIOutput.json(CLIStatus(details: Result(deleted: summary, dryRun: dryRun.isSet)))
       case .plain: CLIOutput.plain([summary.row])
       case .human:
-        if dryRun {
+        if dryRun.isSet {
           CLIOutput.stdout(
             CLILocalized.format(
               "cli.profile.delete.dryRun",

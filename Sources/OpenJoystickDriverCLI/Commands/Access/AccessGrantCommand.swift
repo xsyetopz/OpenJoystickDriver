@@ -113,11 +113,8 @@ struct AccessGrantCommand: AsyncParsableCommand {
   var scope: [EndpointScope] = [.read]
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -171,7 +168,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
       }
       try CLITerminal.confirm(
         question(for: identity),
-        force: force,
+        force: force.isSet,
         needsForce: AccessText.needsForce
       )
       let scopes = scope
@@ -215,7 +212,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
     if scope.contains(.control) { lines.insert(Self.controlWarning, at: 0) }
     try CLITerminal.confirm(
       lines.joined(separator: "\n"),
-      force: force,
+      force: force.isSet,
       needsForce: AccessText.needsForce
     )
     let (origins, scopes) = (origin, scope)

@@ -16,11 +16,8 @@ struct ControllerClaimCommand: AsyncParsableCommand {
   var controller: ControllerSelector
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -31,7 +28,7 @@ struct ControllerClaimCommand: AsyncParsableCommand {
     try await ControllerServerChange.run(
       .ojd,
       controller: controller,
-      dryRun: dryRun,
+      dryRun: dryRun.isSet,
       global: global
     )
   }
@@ -52,11 +49,8 @@ struct ControllerReleaseCommand: AsyncParsableCommand {
   var controller: ControllerSelector
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -67,7 +61,7 @@ struct ControllerReleaseCommand: AsyncParsableCommand {
     try await ControllerServerChange.run(
       .system,
       controller: controller,
-      dryRun: dryRun,
+      dryRun: dryRun.isSet,
       global: global
     )
   }

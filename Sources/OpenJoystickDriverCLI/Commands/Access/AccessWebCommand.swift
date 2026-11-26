@@ -53,11 +53,8 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
   var automatic = false
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -84,7 +81,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
         CLILocalized.text(
           "cli.access.web.enableConfirm"
         ),
-        force: force,
+        force: force.isSet,
         needsForce: AccessText.needsForce
       )
       let requestedPort = automatic ? 0 : port

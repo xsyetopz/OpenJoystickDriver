@@ -347,11 +347,8 @@ struct MacroRemoveCommand: AsyncParsableCommand {
   var name: String
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -360,7 +357,7 @@ struct MacroRemoveCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, macroName, forced) = (profile, name, force)
+      let (selector, macroName, forced) = (profile, name, force.isSet)
       let client = try await ServiceConnection.open()
       defer { client.disconnect() }
       let timeout = CLIContext.current.requestTimeout

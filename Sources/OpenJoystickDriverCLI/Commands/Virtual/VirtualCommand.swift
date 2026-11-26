@@ -372,20 +372,12 @@ struct VirtualResetCommand: AsyncParsableCommand {
   var unit = false
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(
-      CLILocalized.text("cli.shared.option.dryRun")
-    )
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// Rejects `--all` together with a controller or without one, and `--all` together with `--unit`.
   ///
@@ -416,7 +408,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
   ///
   /// `--dry-run` resolves the controller and prints what would change.
   private func reset(_ selector: ControllerSelector) async throws {
-    if dryRun {
+    if dryRun.isSet {
       let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
       try requireUnit(unit, device)
       CLIOutput.stdout(
@@ -450,7 +442,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
     let summary = CLILocalized.text(
       "cli.virtual.reset.allSummary"
     )
-    if dryRun {
+    if dryRun.isSet {
       CLIOutput.stdout(
         CLILocalized.text(
           "cli.virtual.reset.allDryRun"
@@ -458,7 +450,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
       )
       return
     }
-    try CLITerminal.confirm(summary, force: force)
+    try CLITerminal.confirm(summary, force: force.isSet)
     let reset = try await ServiceConnection.request(timeout: CLIContext.current.waitTimeout) {
       try await $0.resetSettings()
     }

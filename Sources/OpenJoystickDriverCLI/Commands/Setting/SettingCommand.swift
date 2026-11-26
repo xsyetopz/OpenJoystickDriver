@@ -445,11 +445,8 @@ struct SettingResetCommand: AsyncParsableCommand {
   }
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -462,7 +459,7 @@ struct SettingResetCommand: AsyncParsableCommand {
       let file = settingsStore.userFileURL.path
       var moved = false
       if FileManager.default.fileExists(atPath: file) {
-        try CLITerminal.confirm(CLILocalized.text("cli.setting.reset.confirm"), force: force)
+        try CLITerminal.confirm(CLILocalized.text("cli.setting.reset.confirm"), force: force.isSet)
         moved = try settingsStore.moveToTrash()
       }
       switch CLIContext.current.format {

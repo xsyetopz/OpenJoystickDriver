@@ -143,11 +143,8 @@ struct AccessEnableCommand: AsyncParsableCommand {
   )
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -160,7 +157,7 @@ struct AccessEnableCommand: AsyncParsableCommand {
         CLILocalized.text(
           "cli.access.enable.confirm"
         ),
-        force: force,
+        force: force.isSet,
         needsForce: AccessText.needsForce
       )
       let status = try await ServiceConnection.request { try await $0.setAccessEnabled(true) }

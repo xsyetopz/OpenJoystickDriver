@@ -183,3 +183,23 @@ struct CLIContext: Sendable {
   /// The seconds to wait for a service to reach a state.
   var waitTimeout: Double { timeout ?? ServiceTimeouts.wait }
 }
+
+/// `-f`, `--force`: skip the confirmation.
+struct ForceFlag: ParsableArguments {
+  /// Whether the flag is set.
+  @Flag(
+    name: [.customShort("f"), .customLong("force")],
+    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
+  )
+  var isSet = false
+}
+
+/// `-n`, `--dry-run`: print what would change and change nothing.
+struct DryRunFlag: ParsableArguments {
+  /// Whether the flag is set.
+  @Flag(
+    name: [.customShort("n"), .customLong("dry-run")],
+    help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
+  )
+  var isSet = false
+}

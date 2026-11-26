@@ -82,11 +82,8 @@ struct ModInstallCommand: AsyncParsableCommand {
   var force = false
 
   /// `-n`, `--dry-run`: check the package and print where it would go, and write nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -99,7 +96,7 @@ struct ModInstallCommand: AsyncParsableCommand {
       let installation = try ModStore.store.installPackage(
         from: ModStore.folder(folder),
         replace: force,
-        dryRun: dryRun
+        dryRun: dryRun.isSet
       )
       let manifest = installation.manifest
       let destination = installation.destination
@@ -110,13 +107,13 @@ struct ModInstallCommand: AsyncParsableCommand {
           Result(
             installed: destination.path,
             replaced: replaced,
-            dryRun: dryRun,
+            dryRun: dryRun.isSet,
             package: ModPackageValidation(manifest)
           )
         )
       case .plain: CLIOutput.plain([[destination.path]])
       case .human:
-        if dryRun {
+        if dryRun.isSet {
           CLIOutput.stdout(CLILocalized.format("cli.mod.install.dryRun", destination.path))
         } else {
           CLIOutput.success(CLILocalized.format("cli.mod.install.success", destination.path))
@@ -191,18 +188,12 @@ struct ModRemoveCommand: AsyncParsableCommand {
   var name: String
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -212,19 +203,19 @@ struct ModRemoveCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let target = try ModStore.store.removePackage(named: name, dryRun: true)
-      if !dryRun {
+      if !dryRun.isSet {
         try CLITerminal.confirm(
           CLILocalized.format("cli.mod.remove.confirm", target.path),
-          force: force
+          force: force.isSet
         )
         try ModStore.store.removePackage(named: name)
       }
       switch CLIContext.current.format {
       case .json:
-        try CLIOutput.json(CLIStatus(details: Result(removed: target.path, dryRun: dryRun)))
+        try CLIOutput.json(CLIStatus(details: Result(removed: target.path, dryRun: dryRun.isSet)))
       case .plain: CLIOutput.plain([[target.path]])
       case .human:
-        if dryRun {
+        if dryRun.isSet {
           CLIOutput.stdout(CLILocalized.format("cli.mod.remove.dryRun", target.path))
         } else {
           CLIOutput.success(CLILocalized.format("cli.mod.remove.success", target.path))

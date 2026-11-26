@@ -168,20 +168,12 @@ struct RecordInstallCommand: AsyncParsableCommand {
   var file: String
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: check the record and print where it would go, and write nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(
-      CLILocalized.text("cli.shared.option.dryRun")
-    )
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -194,26 +186,26 @@ struct RecordInstallCommand: AsyncParsableCommand {
       let validated = try RecordValidation.check(file, data: data)
       let destination = RecordStore.directory.appendingPathComponent(validated.fileName)
       let replaced = FileManager.default.fileExists(atPath: destination.path)
-      if replaced, !dryRun {
+      if replaced, !dryRun.isSet {
         try CLITerminal.confirm(
           CLILocalized.format("cli.record.install.confirm", destination.path),
-          force: force
+          force: force.isSet
         )
       }
-      if !dryRun { try write(data, to: destination) }
+      if !dryRun.isSet { try write(data, to: destination) }
       switch CLIContext.current.format {
       case .json:
         try CLIOutput.json(
           Result(
             installed: destination.path,
             replaced: replaced,
-            dryRun: dryRun,
+            dryRun: dryRun.isSet,
             record: RecordValidation(validated)
           )
         )
       case .plain: CLIOutput.plain([[destination.path]])
       case .human:
-        if dryRun {
+        if dryRun.isSet {
           CLIOutput.stdout(
             CLILocalized.format("cli.record.install.dryRun", destination.path)
           )
@@ -284,20 +276,12 @@ struct RecordRemoveCommand: AsyncParsableCommand {
   var model: ControllerModelID
 
   /// `-f`, `--force`: skip the confirmation.
-  @Flag(
-    name: [.short, .long],
-    help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
-  )
-  var force = false
+  @OptionGroup
+  var force: ForceFlag
 
   /// `-n`, `--dry-run`: print what would change and change nothing.
-  @Flag(
-    name: [.customShort("n"), .long],
-    help: ArgumentHelp(
-      CLILocalized.text("cli.shared.option.dryRun")
-    )
-  )
-  var dryRun = false
+  @OptionGroup
+  var dryRun: DryRunFlag
 
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
@@ -321,10 +305,10 @@ struct RecordRemoveCommand: AsyncParsableCommand {
         )
       }
       let paths = targets.map(\.path).joined(separator: ", ")
-      if !dryRun {
+      if !dryRun.isSet {
         try CLITerminal.confirm(
           CLILocalized.format("cli.record.remove.confirm", paths),
-          force: force
+          force: force.isSet
         )
         for target in targets {
           do { try FileManager.default.removeItem(at: target) } catch {
@@ -341,10 +325,10 @@ struct RecordRemoveCommand: AsyncParsableCommand {
       }
       switch CLIContext.current.format {
       case .json:
-        try CLIOutput.json(CLIStatus(details: Result(removed: paths, dryRun: dryRun)))
+        try CLIOutput.json(CLIStatus(details: Result(removed: paths, dryRun: dryRun.isSet)))
       case .plain: CLIOutput.plain(targets.map { [$0.path] })
       case .human:
-        if dryRun {
+        if dryRun.isSet {
           CLIOutput.stdout(
             CLILocalized.format("cli.record.remove.dryRun", paths)
           )
