@@ -15,68 +15,72 @@ extension RemappingEngineState {
     after uptimeNanoseconds: UInt64,
     continuousIntervalNanoseconds: UInt64
   ) -> UInt64? {
-    var deadline: UInt64?
-    for device in devices.values {
-      let currentUptime = max(uptimeNanoseconds, device.lastUptime)
-      if let gyroDeadline = device.motion.gyroDeadline {
-        deadline = min(deadline ?? gyroDeadline, gyroDeadline)
+    devices.values.compactMap { device in
+      Self.scheduledDeadlines(
+        of: device,
+        currentUptime: max(uptimeNanoseconds, device.lastUptime),
+        continuousIntervalNanoseconds: continuousIntervalNanoseconds
+      ).min()
+    }.min()
+  }
+
+  /// Returns every uptime at which output of `device` needs a tick.
+  private static func scheduledDeadlines(
+    of device: RemappingDeviceState,
+    currentUptime: UInt64,
+    continuousIntervalNanoseconds: UInt64
+  ) -> [UInt64] {
+    var deadlines = [device.motion.gyroDeadline, device.motion.motionStickDeadline].compactMap {
+      $0
+    }
+    deadlines += device.analog.triggers.values.compactMap(\.deadline)
+    if !device.outputs.continuous.isEmpty
+      || device.analog.sticks.values.contains(where: \.needsTicks)
+    {
+      deadlines.append(saturatingAdd(currentUptime, continuousIntervalNanoseconds))
+    }
+    if let chordDeadline = device.pendingChordDeadline { deadlines.append(chordDeadline) }
+    deadlines += device.outputs.pulseDeadlines.values
+    deadlines += device.outputs.turbos.values.map { $0.nextTransition(after: currentUptime) }
+    deadlines += device.outputs.macros.values.map(\.nextAt)
+    for (id, tracker) in device.outputs.activations {
+      guard let binding = device.actionBinding(id: id) else { continue }
+      if let holdDeadline = longHoldDeadline(of: binding, tracker: tracker) {
+        deadlines.append(holdDeadline)
       }
-      if let motionStickDeadline = device.motion.motionStickDeadline {
-        deadline = min(deadline ?? motionStickDeadline, motionStickDeadline)
-      }
-      for trigger in device.analog.triggers.values {
-        if let triggerDeadline = trigger.deadline {
-          deadline = min(deadline ?? triggerDeadline, triggerDeadline)
-        }
-      }
-      if !device.outputs.continuous.isEmpty
-        || device.analog.sticks.values.contains(where: \.needsTicks)
-      {
-        let next = Self.saturatingAdd(currentUptime, continuousIntervalNanoseconds)
-        deadline = min(deadline ?? next, next)
-      }
-      if let chordDeadline = device.pendingChordDeadline {
-        deadline = min(deadline ?? chordDeadline, chordDeadline)
-      }
-      for pulseDeadline in device.outputs.pulseDeadlines.values {
-        deadline = min(deadline ?? pulseDeadline, pulseDeadline)
-      }
-      for turbo in device.outputs.turbos.values {
-        let turboDeadline = turbo.nextTransition(after: currentUptime)
-        deadline = min(deadline ?? turboDeadline, turboDeadline)
-      }
-      for run in device.outputs.macros.values {
-        deadline = min(deadline ?? run.nextAt, run.nextAt)
-      }
-      for (id, tracker) in device.outputs.activations {
-        guard let binding = device.actionBinding(id: id) else { continue }
-        if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
-          tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
-        {
-          let holdDeadline = Self.saturatingAdd(
-            pressTime,
-            UInt64(longHold.durationMs * nanosecondsPerMillisecond)
-          )
-          deadline = min(deadline ?? holdDeadline, holdDeadline)
-        }
-        if !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
-          tracker.pendingDefault
-        {
-          let windowDeadline = Self.saturatingAdd(
-            releaseTime,
-            UInt64(
-              binding.multiTap.continuationWindowMs(after: tracker.tapCount)
-                * nanosecondsPerMillisecond
-            )
-          )
-          deadline = min(deadline ?? windowDeadline, windowDeadline)
-        }
-      }
-      if let sequenceDeadline = device.sequenceHistoryDeadline {
-        deadline = min(deadline ?? sequenceDeadline, sequenceDeadline)
+      if let windowDeadline = multiTapDeadline(of: binding, tracker: tracker) {
+        deadlines.append(windowDeadline)
       }
     }
-    return deadline
+    if let sequenceDeadline = device.sequenceHistoryDeadline { deadlines.append(sequenceDeadline) }
+    return deadlines
+  }
+
+  /// Returns when the long hold of `binding` fires, or `nil` while no press waits for it.
+  private static func longHoldDeadline(
+    of binding: RemappingBinding,
+    tracker: RemappingActivationTracker
+  ) -> UInt64? {
+    guard let longHold = binding.longHold, let pressTime = tracker.pressUptime,
+      tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
+    else { return nil }
+    return saturatingAdd(pressTime, UInt64(longHold.durationMs * nanosecondsPerMillisecond))
+  }
+
+  /// Returns when the multi-tap window of `binding` closes, or `nil` while no tap waits for it.
+  private static func multiTapDeadline(
+    of binding: RemappingBinding,
+    tracker: RemappingActivationTracker
+  ) -> UInt64? {
+    guard !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
+      tracker.pendingDefault
+    else { return nil }
+    return saturatingAdd(
+      releaseTime,
+      UInt64(
+        binding.multiTap.continuationWindowMs(after: tracker.tapCount) * nanosecondsPerMillisecond
+      )
+    )
   }
 
   /// Keyboard, modifier and pointer button outputs that are down.
@@ -107,79 +111,85 @@ extension RemappingEngineState {
       actions += processChords(for: &device)
       actions += replayPendingChordPresses(device: &device, at: tickUptime)
       actions += processSequences(for: &device, at: tickUptime)
-      for bindingID in device.outputs.pulseDeadlines.keys.sorted(by: Self.uuidLessThan) {
-        guard let deadline = device.outputs.pulseDeadlines[bindingID], tickUptime >= deadline else {
-          continue
-        }
-        device.outputs.pulseDeadlines.removeValue(forKey: bindingID)
-        if let destination = device.outputs.heldBindings[bindingID] {
-          actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
-        }
-      }
-      for bindingID in device.outputs.turbos.keys.sorted(by: Self.uuidLessThan) {
-        guard var turbo = device.outputs.turbos[bindingID] else { continue }
-        let shouldBeDown = turbo.isDown(at: tickUptime)
-        if shouldBeDown != turbo.outputIsDown {
-          actions += setBinding(
-            bindingID,
-            destination: turbo.destination,
-            isDown: shouldBeDown,
-            device: &device
-          )
-          turbo.outputIsDown = shouldBeDown
-          device.outputs.turbos[bindingID] = turbo
-        }
-      }
-
+      actions += expirePulses(device: &device, at: tickUptime)
+      actions += advanceTurbos(device: &device, at: tickUptime)
       for owner in device.outputs.macros.keys.sorted(by: Self.uuidLessThan) {
         actions += advanceMacro(owner, device: &device, at: tickUptime)
       }
-
-      for id in device.outputs.activations.keys.sorted(by: Self.uuidLessThan) {
-        guard let binding = device.actionBinding(id: id) else { continue }
-        guard var tracker = device.outputs.activations[id] else { continue }
-
-        if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
-          tracker.firedBindingID == nil, tracker.pendingDefault, tracker.releaseUptime == nil
-        {
-          let threshold = Self.saturatingAdd(
-            pressTime,
-            UInt64(longHold.durationMs * nanosecondsPerMillisecond)
-          )
-          if tickUptime >= threshold {
-            tracker.firedBindingID = binding.id
-            tracker.pendingDefault = false
-            actions += setBinding(
-              binding.id,
-              destination: longHold.destination,
-              isDown: true,
-              device: &device
-            )
-          }
-        }
-
-        if !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
-          tracker.pendingDefault
-        {
-          let windowEnd = Self.saturatingAdd(
-            releaseTime,
-            UInt64(
-              binding.multiTap.continuationWindowMs(after: tracker.tapCount)
-                * nanosecondsPerMillisecond
-            )
-          )
-          if tickUptime >= windowEnd {
-            actions += resolveTaps(binding, tapCount: tracker.tapCount, device: &device)
-            tracker = RemappingActivationTracker()
-          }
-        }
-
-        device.outputs.activations[id] = tracker
-      }
-
+      actions += advanceActivations(device: &device, at: tickUptime)
       devices[identifier] = device
     }
     actions += continuousActions()
+    return actions
+  }
+
+  /// Releases each pulse binding whose pulse ended by `uptime`.
+  private mutating func expirePulses(
+    device: inout RemappingDeviceState,
+    at uptime: UInt64
+  ) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
+    for bindingID in device.outputs.pulseDeadlines.keys.sorted(by: Self.uuidLessThan) {
+      guard let deadline = device.outputs.pulseDeadlines[bindingID], uptime >= deadline else {
+        continue
+      }
+      device.outputs.pulseDeadlines.removeValue(forKey: bindingID)
+      if let destination = device.outputs.heldBindings[bindingID] {
+        actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
+      }
+    }
+    return actions
+  }
+
+  /// Presses or releases each turbo binding whose repeat phase changed by `uptime`.
+  private mutating func advanceTurbos(
+    device: inout RemappingDeviceState,
+    at uptime: UInt64
+  ) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
+    for bindingID in device.outputs.turbos.keys.sorted(by: Self.uuidLessThan) {
+      guard var turbo = device.outputs.turbos[bindingID] else { continue }
+      let shouldBeDown = turbo.isDown(at: uptime)
+      guard shouldBeDown != turbo.outputIsDown else { continue }
+      actions += setBinding(
+        bindingID,
+        destination: turbo.destination,
+        isDown: shouldBeDown,
+        device: &device
+      )
+      turbo.outputIsDown = shouldBeDown
+      device.outputs.turbos[bindingID] = turbo
+    }
+    return actions
+  }
+
+  /// Fires each long hold due by `uptime`, then resolves each multi-tap whose window closed.
+  private mutating func advanceActivations(
+    device: inout RemappingDeviceState,
+    at uptime: UInt64
+  ) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
+    for id in device.outputs.activations.keys.sorted(by: Self.uuidLessThan) {
+      guard let binding = device.actionBinding(id: id) else { continue }
+      guard var tracker = device.outputs.activations[id] else { continue }
+      if let longHold = binding.longHold,
+        let threshold = Self.longHoldDeadline(of: binding, tracker: tracker), uptime >= threshold
+      {
+        tracker.firedBindingID = binding.id
+        tracker.pendingDefault = false
+        actions += setBinding(
+          binding.id,
+          destination: longHold.destination,
+          isDown: true,
+          device: &device
+        )
+      }
+      if let windowEnd = Self.multiTapDeadline(of: binding, tracker: tracker), uptime >= windowEnd {
+        actions += resolveTaps(binding, tapCount: tracker.tapCount, device: &device)
+        tracker = RemappingActivationTracker()
+      }
+      device.outputs.activations[id] = tracker
+    }
     return actions
   }
 
@@ -243,34 +253,8 @@ extension RemappingEngineState {
     if effectiveDestination.isProfileControl {
       return isDown ? runProfileControl(effectiveDestination, device: &device) : []
     }
-    switch effectiveDestination {
-    case .midiNote(let channel, let note, let velocity):
-      return [
-        .midi(
-          isDown
-            ? .noteOn(channel: channel, note: note, velocity: velocity)
-            : .noteOff(channel: channel, note: note)
-        )
-      ]
-    case .midiControlChange(let channel, let controller):
-      return [
-        .midi(
-          .controlChange(
-            channel: channel,
-            controller: controller,
-            value: isDown ? RemappingDestination.midiMaxData : 0
-          )
-        )
-      ]
-    default: break
-    }
-    let virtualContribution: RemappingGamepadState?
-    switch effectiveDestination {
-    case .gamepadButton(let button): virtualContribution = RemappingGamepadState(buttons: [button])
-    case .gamepadDpad(let direction): virtualContribution = RemappingGamepadState(dpad: [direction])
-    default: virtualContribution = nil
-    }
-    if let virtualContribution {
+    if let midi = Self.midiMessage(effectiveDestination, isDown: isDown) { return [.midi(midi)] }
+    if let virtualContribution = Self.gamepadContribution(of: effectiveDestination) {
       let contribution = isDown ? virtualContribution : .neutral
       guard let state = device.outputs.gamepad.update(contribution, for: bindingID) else {
         return []
@@ -281,6 +265,40 @@ extension RemappingEngineState {
       return [.physical(output, active: isDown, owner: bindingID, device.identifier)]
     }
     return isDown ? press(effectiveDestination) : release(effectiveDestination)
+  }
+
+  /// Returns the MIDI message that pressing or releasing `destination` sends, or `nil` for a
+  /// destination that is not MIDI.
+  private static func midiMessage(
+    _ destination: RemappingDestination,
+    isDown: Bool
+  ) -> RemappingMIDIMessage? {
+    switch destination {
+    case .midiNote(let channel, let note, let velocity):
+      if isDown {
+        .noteOn(channel: channel, note: note, velocity: velocity)
+      } else {
+        .noteOff(channel: channel, note: note)
+      }
+    case .midiControlChange(let channel, let controller):
+      .controlChange(
+        channel: channel,
+        controller: controller,
+        value: isDown ? RemappingDestination.midiMaxData : 0
+      )
+    default: nil
+    }
+  }
+
+  /// Returns the virtual gamepad state a held gamepad button or d-pad destination contributes.
+  private static func gamepadContribution(
+    of destination: RemappingDestination
+  ) -> RemappingGamepadState? {
+    switch destination {
+    case .gamepadButton(let button): RemappingGamepadState(buttons: [button])
+    case .gamepadDpad(let direction): RemappingGamepadState(dpad: [direction])
+    default: nil
+    }
   }
 
   /// Presses and releases a destination at once.
