@@ -364,26 +364,7 @@ final class RuntimeViewModel: ObservableObject {
   /// it.
   @discardableResult
   func requestPermissions() async -> RuntimePermissionSummary? {
-    permissionRefreshGeneration += 1
-    let generation = permissionRefreshGeneration
-    authoritativePermissionSummary = nil
-    permissionState = .requesting
-    updateStatusPermissions(.init(inputRead: .unknown, inputInject: .unknown))
-    do {
-      let snapshot = try await gateway.requestPermissions()
-      guard generation == permissionRefreshGeneration else { return nil }
-      let permissions = RuntimePermissionSummary(snapshot: snapshot)
-      permissionState = .available(permissions)
-      authoritativePermissionSummary = permissions
-      updateStatusPermissions(permissions)
-      return permissions
-    } catch {
-      guard generation == permissionRefreshGeneration else { return nil }
-      let message = RuntimePresentation.userFacingError(error)
-      permissionState = .error(message)
-      updateStatusPermissions(.init(inputRead: .unknown, inputInject: .unknown))
-      return nil
-    }
+    await requestPermissionSummary { try await gateway.requestPermissions() }
   }
 
   /// Asks macOS, through the service, for one permission.
@@ -394,13 +375,23 @@ final class RuntimeViewModel: ObservableObject {
   func requestPermission(
     _ requirement: PermissionManager.Requirement
   ) async -> RuntimePermissionSummary? {
+    await requestPermissionSummary { try await gateway.requestPermission(requirement) }
+  }
+
+  /// Shows the permissions as requested while `request` runs, then shows its answer.
+  ///
+  /// Returns the permissions, or nil when the request failed or a later read or request replaced
+  /// it.
+  private func requestPermissionSummary(
+    _ request: () async throws -> PermissionManager.Snapshot
+  ) async -> RuntimePermissionSummary? {
     permissionRefreshGeneration += 1
     let generation = permissionRefreshGeneration
     authoritativePermissionSummary = nil
     permissionState = .requesting
     updateStatusPermissions(.init(inputRead: .unknown, inputInject: .unknown))
     do {
-      let snapshot = try await gateway.requestPermission(requirement)
+      let snapshot = try await request()
       guard generation == permissionRefreshGeneration else { return nil }
       let permissions = RuntimePermissionSummary(snapshot: snapshot)
       permissionState = .available(permissions)
