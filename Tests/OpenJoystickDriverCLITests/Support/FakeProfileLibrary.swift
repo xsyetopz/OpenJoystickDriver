@@ -32,7 +32,9 @@ final class FakeProfileLibrary: @unchecked Sendable {
     _ name: String,
     id: UUID = UUID(),
     virtualGamepad: RemappingVirtualGamepadPolicy = .passthrough,
-    bindings: [RemappingBinding] = []
+    bindings: [RemappingBinding] = [],
+    layers: [RemappingLayer] = [],
+    macros: [RemappingMacro] = []
   ) -> RemappingProfile {
     RemappingProfile(
       id: id,
@@ -40,7 +42,9 @@ final class FakeProfileLibrary: @unchecked Sendable {
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x028E),
       applicationScope: .global,
       outputPolicy: RemappingOutputPolicy(virtualGamepad: virtualGamepad),
-      bindings: bindings
+      bindings: bindings,
+      layers: layers,
+      macros: macros
     )
   }
 

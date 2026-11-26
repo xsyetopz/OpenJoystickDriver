@@ -122,7 +122,9 @@ struct BindingListCommand: AsyncParsableCommand {
           )
         }
         for binding in document.bindings {
-          CLIOutput.stdout(ProfileText.binding(binding, macros: document.macros))
+          CLIOutput.stdout(
+            ProfileText.binding(binding, macros: document.macros, layers: document.layers)
+          )
         }
       }
     }

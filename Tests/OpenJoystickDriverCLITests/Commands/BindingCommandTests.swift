@@ -180,6 +180,39 @@ struct BindingCommandTests {
   }
 
   @Test
+  func listNamesMacrosAndLayersInEveryTarget() async throws {
+    let macro = RemappingMacro(name: "Combo", steps: [.tap(.keyboard(key: .a, modifiers: []))])
+    let layer = RemappingLayer(name: "Alt", activationMode: .hold, activator: .button(.north))
+    let binding = RemappingBinding(
+      source: .button(.south),
+      destination: .layerSet(layer: layer.id, mode: .toggle),
+      longHold: RemappingLongHold(durationMs: 500, destination: .macro(macro.id)),
+      multiTap: [
+        RemappingMultiTap(
+          count: 2,
+          windowMs: 200,
+          destination: .layerSet(layer: layer.id, mode: .on)
+        )
+      ]
+    )
+    let profile = FakeProfileLibrary.profile(
+      "Pad",
+      bindings: [binding],
+      layers: [layer],
+      macros: [macro]
+    )
+    let library = FakeProfileLibrary([profile])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let human = await service.run(["binding", "list", "Pad"])
+
+    #expect(human.code == 0, "\(human.standardError)")
+    #expect(human.standardOutput.contains("button:south -> layer:Alt:toggle"))
+    #expect(human.standardOutput.contains("long-hold:500.0ms -> macro:Combo"))
+    #expect(human.standardOutput.contains("multi-tap:2x200.0ms -> layer:Alt:on"))
+  }
+
+  @Test
   func listPrintsEachBinding() async throws {
     let binding = RemappingBinding(
       source: .button(.south),

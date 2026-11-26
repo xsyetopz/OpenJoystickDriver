@@ -111,14 +111,15 @@ enum ProfileText {
     }
   }
 
-  /// One binding as `SOURCE -> TARGET`, followed by its behavior and alternate targets.
+  /// One binding as `SOURCE -> TARGET`, followed by its behavior and alternate targets; each
+  /// target names its macro and layer from `macros` and `layers`.
   static func binding(
     _ binding: RemappingBinding,
     macros: [RemappingMacro] = [],
     layers: [RemappingLayer] = []
   ) -> String {
-    let target = destination(binding.destination, macros: macros, layers: layers)
-    var line = "\(source(binding.source)) -> \(target)"
+    let target = { destination($0, macros: macros, layers: layers) }
+    var line = "\(source(binding.source)) -> \(target(binding.destination))"
     if binding.behavior != .hold { line += "  behavior:\(word(binding.behavior))" }
     if binding.behavior == .pulse { line += "  pulse:\(binding.pulseDurationMs)ms" }
     if let turbo = binding.turbo {
@@ -127,10 +128,10 @@ enum ProfileText {
       if let cap = turbo.maxRepeats { line += " max:\(cap)" }
     }
     if let longHold = binding.longHold {
-      line += "  long-hold:\(longHold.durationMs)ms -> \(destination(longHold.destination))"
+      line += "  long-hold:\(longHold.durationMs)ms -> \(target(longHold.destination))"
     }
     for tap in binding.multiTap.sorted(by: { $0.count < $1.count }) {
-      line += "  multi-tap:\(tap.count)x\(tap.windowMs)ms -> \(destination(tap.destination))"
+      line += "  multi-tap:\(tap.count)x\(tap.windowMs)ms -> \(target(tap.destination))"
     }
     if !binding.multiTap.isEmpty {
       line += "  tap-delay:\(binding.multiTap.longestWindowMs)ms"
@@ -141,6 +142,7 @@ enum ProfileText {
 
   /// Everything in the profile other than its header, one item per line.
   static func details(_ profile: RemappingProfile) -> [String] {
+    let target = { destination($0, macros: profile.macros, layers: profile.layers) }
     var lines = [
       "output virtual-gamepad:\(word(profile.outputPolicy.virtualGamepad)) "
         + "physical-input:\(word(profile.outputPolicy.physicalInput))"
@@ -173,12 +175,12 @@ enum ProfileText {
     lines += profile.bindings.map { binding($0, macros: profile.macros, layers: profile.layers) }
     lines += profile.chords.map { chord in
       let sources = chord.sources.map(source).sorted().joined(separator: "+")
-      return "chord \(sources) -> \(destination(chord.destination))"
+      return "chord \(sources) -> \(target(chord.destination))"
     }
     lines += profile.sequences.map { sequence in
       let sources = sequence.sources.map(source).joined(separator: ",")
       return "sequence \(sources) within:\(sequence.windowMs)ms -> "
-        + destination(sequence.destination)
+        + target(sequence.destination)
     }
     lines += profile.layers.map { layer in
       "layer \(layer.name) \(word(layer.activationMode)):\(source(layer.activator)) "
