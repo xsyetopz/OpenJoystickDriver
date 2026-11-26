@@ -21,6 +21,7 @@ struct USBLifecycleWriteTests {
     // Reads never return, so every keep-alive comes from the keep-alive timer.
     await waitUntil("session.writes.count >= 3") { await session.writes.count >= 3 }
     await pipeline.stop()
+    // Absence proof: a keep-alive that outlived the run would land within several 20 ms intervals.
     try? await Task.sleep(nanoseconds: 60_000_000)
     let countAfterStop = await session.writes.count
     try? await Task.sleep(nanoseconds: 150_000_000)
@@ -45,6 +46,7 @@ struct USBLifecycleWriteTests {
     await pipeline.start()
     await waitUntil("session.writes.count >= 1") { await session.writes.count >= 1 }
     #expect(await pipeline.suspendControllerSession())
+    // Absence proof: a keep-alive sent while suspended would land within several 20 ms intervals.
     try? await Task.sleep(nanoseconds: 60_000_000)
     let countWhileSuspended = await session.writes.count
     try? await Task.sleep(nanoseconds: 150_000_000)

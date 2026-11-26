@@ -175,6 +175,7 @@ extension InputTestTests {
     model.applyPlayerIndicator()
     model.applyColor()
     model.applyBrightness()
+    // Absence proof: dispatch would be a task started by the calls above.
     try? await Task.sleep(nanoseconds: 20_000_000)
 
     let counts = await gateway.counts()

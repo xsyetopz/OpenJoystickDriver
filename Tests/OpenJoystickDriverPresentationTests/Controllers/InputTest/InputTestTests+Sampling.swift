@@ -186,6 +186,7 @@ extension InputTestTests {
     model.open()
     await waitUntil("model.sessionState == .unavailable") { model.sessionState == .unavailable }
     let callsAtStop = await gateway.counts().input
+    // Absence proof: a further sample would follow within the 1 ms sampling interval.
     try? await Task.sleep(nanoseconds: 5_000_000)
 
     #expect(model.sessionState == .unavailable)
@@ -220,6 +221,7 @@ extension InputTestTests {
     model.open()
     model.open()
     model.reconcileConnectedDevices([device])
+    // Absence proof: a duplicate sampling task would start its own read right away.
     try? await Task.sleep(nanoseconds: 20_000_000)
 
     #expect(await gateway.counts().input == 1)
@@ -306,6 +308,7 @@ extension InputTestTests {
     model.applyPlayerIndicator()
     model.applyColor()
     model.applyBrightness()
+    // Absence proof: dispatch would be a task started by the calls above.
     try? await Task.sleep(nanoseconds: 10_000_000)
 
     let counts = await gateway.counts()
@@ -373,6 +376,7 @@ extension InputTestTests {
   @MainActor
   func explicitRumbleStopCancelsWaitAndSendsOneZeroCommand() async {
     let gateway = InputTestGatewayStub()
+    // The rumble duration wait never ends on its own; only the explicit stop cancels it.
     let rumbleSleep: InputTestViewModel.Sleep = { _ in try await Task.sleep(nanoseconds: .max) }
     let model = InputTestViewModel(gateway: gateway, rumbleSleep: rumbleSleep)
     model.selectDevice(makeInputTestDevice())

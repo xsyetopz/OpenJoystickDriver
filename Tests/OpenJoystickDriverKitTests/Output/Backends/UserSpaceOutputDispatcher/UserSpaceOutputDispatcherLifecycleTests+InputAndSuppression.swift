@@ -342,6 +342,7 @@ extension UserSpaceOutputDispatcherLifecycleTests {
     try await dispatcher.activate(for: [identifier])
     let idleSends = backend.counts().send
     #expect(idleSends == 1)
+    // Absence proof: an idle device that republished would do so without any input.
     try await Task.sleep(for: .milliseconds(50))
     #expect(backend.counts().send == idleSends)
 

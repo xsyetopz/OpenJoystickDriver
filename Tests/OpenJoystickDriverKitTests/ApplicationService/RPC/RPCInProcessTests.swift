@@ -127,6 +127,7 @@ struct LocalServiceRPCInProcessTests {
     let (server, _) = makeServer(inProcess: true) { request in
       guard request.method == held else { return }
       receivedSignal.yield()
+      // Held until cancelled; the sleep only bounds a cancellation that never comes.
       try? await Task.sleep(nanoseconds: 30_000_000_000)
       cancelledSignal.yield(Task.isCancelled)
     }

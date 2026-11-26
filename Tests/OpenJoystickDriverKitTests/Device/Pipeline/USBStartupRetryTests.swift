@@ -35,6 +35,7 @@ struct USBStartupRetryTests {
 
     let startTask = Task { await pipeline.start() }
     await waitUntil("three handshakes") { await provider.openAttempts() >= 3 }
+    // Absence proof: a fourth attempt would follow within the 1 ms retry delay.
     try? await Task.sleep(nanoseconds: 100_000_000)
 
     #expect(await provider.openAttempts() == 3)
