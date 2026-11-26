@@ -294,23 +294,54 @@ extension PassiveUSBConfigurationDescriptorParser {
       guard hasValidReservedAttributeBits(transfer: transfer, attributes: attributes) else {
         throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
       }
-      let isPeriodic = transfer == 1 || transfer == 3
-      if isPeriodic, interval == 0 { throw PassiveUSBDescriptorBlobError.invalidInterval }
-      if transfer == 1, interval > 16 { throw PassiveUSBDescriptorBlobError.invalidInterval }
+      guard intervalRange(transfer: transfer).contains(interval) else {
+        throw PassiveUSBDescriptorBlobError.invalidInterval
+      }
       let isSuperSpeedPlusInterrupt = transfer == 3 && attributes & 0x30 == 0x10
-      if isSuperSpeedPlusInterrupt, speed != .superSpeedPlus {
-        throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
-      }
-      if transfer == 2 || transfer == 1, speed == .low {
-        throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
-      }
-      if isSuperSpeedPlusInterrupt, !(8...16).contains(interval) {
+      guard
+        speedAllows(transfer: transfer, superSpeedPlusInterrupt: isSuperSpeedPlusInterrupt, speed)
+      else { throw PassiveUSBDescriptorBlobError.invalidTransferAttributes }
+      let speedRange = intervalRange(
+        transfer: transfer,
+        superSpeedPlusInterrupt: isSuperSpeedPlusInterrupt,
+        speed: speed
+      )
+      guard speedRange.contains(interval) else {
         throw PassiveUSBDescriptorBlobError.invalidInterval
       }
+    }
+
+    /// The intervals `transfer` accepts at any speed: isochronous `1...16`, interrupt nonzero.
+    private static func intervalRange(transfer: UInt8) -> ClosedRange<UInt8> {
+      switch transfer {
+      case 1: 1...16
+      case 3: 1...UInt8.max
+      default: 0...UInt8.max
+      }
+    }
+
+    /// Whether `speed` carries `transfer`: a SuperSpeedPlus interrupt only at SuperSpeedPlus, and
+    /// isochronous or bulk at any speed but low.
+    private static func speedAllows(
+      transfer: UInt8,
+      superSpeedPlusInterrupt: Bool,
+      _ speed: PassiveUSBNegotiatedSpeed?
+    ) -> Bool {
+      if superSpeedPlusInterrupt { return speed == .superSpeedPlus }
+      return !((transfer == 1 || transfer == 2) && speed == .low)
+    }
+
+    /// The intervals `speed` allows for `transfer`: `8...16` for a SuperSpeedPlus interrupt, and at
+    /// most 16 for a periodic transfer counted in microframes (high speed and above).
+    private static func intervalRange(
+      transfer: UInt8,
+      superSpeedPlusInterrupt: Bool,
+      speed: PassiveUSBNegotiatedSpeed?
+    ) -> ClosedRange<UInt8> {
+      if superSpeedPlusInterrupt { return 8...16 }
+      let isPeriodic = transfer == 1 || transfer == 3
       let isMicroframeSpeed = speed == .high || speed == .superSpeed || speed == .superSpeedPlus
-      if isMicroframeSpeed, isPeriodic, interval > 16 {
-        throw PassiveUSBDescriptorBlobError.invalidInterval
-      }
+      return isPeriodic && isMicroframeSpeed ? 0...16 : 0...UInt8.max
     }
 
     /// Whether `attributes` leaves clear the bits that `transfer` reserves: every bit above the
