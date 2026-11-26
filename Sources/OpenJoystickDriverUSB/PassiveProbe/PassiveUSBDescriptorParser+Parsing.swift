@@ -17,18 +17,12 @@ extension PassiveUSBConfigurationDescriptorParser {
       throw PassiveUSBDescriptorBlobError.unsafeSize
     }
     guard bytes.count >= 2 else { throw PassiveUSBDescriptorBlobError.truncated }
+    var walk = DescriptorWalk(
+      blobLength: bytes.count,
+      speed: negotiatedSpeed,
+      superSpeedPlusContext: superSpeedPlusContext
+    )
     var offset = 0
-    var descriptors: [PassiveUSBParsedDescriptor] = []
-    var interfaces: [PassiveUSBDescriptorInterface] = []
-    var current:
-      (
-        number: UInt8, alternate: UInt8, cls: UInt8, sub: UInt8, proto: UInt8,
-        declaredEndpoints: UInt8, endpoints: [PassiveUSBDescriptorEndpoint]
-      )?
-    var totalLength: UInt16?
-    var declaredInterfaces: UInt8?
-    var companionEligible = false
-    var sspCompanionRequired = false
     while offset < bytes.count {
       guard bytes.count - offset >= 2 else { throw PassiveUSBDescriptorBlobError.truncated }
       let length = Int(bytes[offset])
@@ -37,213 +31,293 @@ extension PassiveUSBConfigurationDescriptorParser {
         throw PassiveUSBDescriptorBlobError.descriptorOverrun
       }
       guard length >= 2 else { throw PassiveUSBDescriptorBlobError.truncated }
-      let chunk = Array(bytes[offset..<(offset + length)])
+      try walk.read(Array(bytes[offset..<(offset + length)]), isFirst: offset == 0)
+      offset += length
+    }
+    return try walk.finish()
+  }
+
+  /// The interface whose endpoint descriptors the walk is collecting.
+  private struct OpenInterface {
+    let number: UInt8
+    let alternate: UInt8
+    let interfaceClass: UInt8
+    let interfaceSubclass: UInt8
+    let interfaceProtocol: UInt8
+    let declaredEndpoints: UInt8
+    var endpoints: [PassiveUSBDescriptorEndpoint] = []
+
+    var descriptor: PassiveUSBDescriptorInterface {
+      PassiveUSBDescriptorInterface(
+        number: number,
+        alternateSetting: alternate,
+        interfaceClass: interfaceClass,
+        interfaceSubclass: interfaceSubclass,
+        interfaceProtocol: interfaceProtocol,
+        declaredEndpointCount: declaredEndpoints,
+        endpoints: endpoints
+      )
+    }
+  }
+
+  /// The parser state carried from one descriptor of a configuration blob to the next.
+  ///
+  /// Each `read` method checks one descriptor type and throws the first rule it breaks, in the
+  /// order the USB structure checks apply.
+  private struct DescriptorWalk {
+    let blobLength: Int
+    let speed: PassiveUSBNegotiatedSpeed?
+    let superSpeedPlusContext: PassiveUSBSuperSpeedPlusValidationContext?
+    var descriptors: [PassiveUSBParsedDescriptor] = []
+    var interfaces: [PassiveUSBDescriptorInterface] = []
+    var current: OpenInterface?
+    var totalLength: UInt16?
+    var declaredInterfaces: UInt8?
+    /// A SuperSpeed companion may follow only directly after an endpoint descriptor.
+    var companionEligible = false
+    /// An isochronous companion with bit 7 set requires a SuperSpeedPlus companion next.
+    var sspCompanionRequired = false
+
+    init(
+      blobLength: Int,
+      speed: PassiveUSBNegotiatedSpeed?,
+      superSpeedPlusContext: PassiveUSBSuperSpeedPlusValidationContext?
+    ) {
+      self.blobLength = blobLength
+      self.speed = speed
+      self.superSpeedPlusContext = superSpeedPlusContext
+    }
+
+    private var isSuperSpeedFamily: Bool { speed == .superSpeed || speed == .superSpeedPlus }
+
+    mutating func read(_ chunk: [UInt8], isFirst: Bool) throws {
       let type = chunk[1]
       descriptors.append(PassiveUSBParsedDescriptor(type: type, bytes: chunk))
-      if offset == 0 {
+      if isFirst {
         guard type == 2 else { throw PassiveUSBDescriptorBlobError.missingConfiguration }
       } else if type == 2 {
         throw PassiveUSBDescriptorBlobError.totalLengthMismatch
       }
-      if type == 2 {
-        guard length == 9, totalLength == nil else {
-          throw PassiveUSBDescriptorBlobError.totalLengthMismatch
-        }
-        totalLength = UInt16(chunk[2]) | (UInt16(chunk[3]) << 8)
-        declaredInterfaces = chunk[4]
-        guard totalLength == UInt16(bytes.count) else {
-          throw PassiveUSBDescriptorBlobError.totalLengthMismatch
-        }
-        companionEligible = false
-      } else if type == 4 {
-        guard length == 9 else { throw PassiveUSBDescriptorBlobError.truncated }
-        if let value = current { interfaces.append(makeInterface(value)) }
-        let key = (chunk[2], chunk[3])
-        guard !interfaces.contains(where: { ($0.number, $0.alternateSetting) == key }) else {
-          throw PassiveUSBDescriptorBlobError.duplicateInterfaceOwnership
-        }
-        current = (chunk[2], chunk[3], chunk[5], chunk[6], chunk[7], chunk[4], [])
-        companionEligible = false
-      } else if type == 5 {
-        guard length == 7, var value = current else {
-          throw PassiveUSBDescriptorBlobError.impossibleEndpointOwnership
-        }
-        let address = chunk[2]
-        guard address & 0x70 == 0, address & 0x0F != 0 else {
-          throw PassiveUSBDescriptorBlobError.invalidEndpointAddress
-        }
-        let transfer = chunk[3] & 3
-        let attributes = chunk[3]
-        let invalidAttributes: Bool =
-          switch transfer {
-          case 0, 2: attributes & 0xFC != 0
-          case 1: attributes & 0xC0 != 0 || attributes & 0x30 == 0x30
-          case 3: attributes & 0xC0 != 0 || attributes & 0x30 > 0x10
-          default: true
-          }
-        guard !invalidAttributes else {
-          throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
-        }
-        if transfer == 1 || transfer == 3 {
-          guard chunk[6] != 0 else { throw PassiveUSBDescriptorBlobError.invalidInterval }
-        }
-        if transfer == 1 {
-          guard chunk[6] <= 16 else { throw PassiveUSBDescriptorBlobError.invalidInterval }
-        }
-        if transfer == 3, attributes & 0x30 == 0x10 {
-          guard negotiatedSpeed == .superSpeedPlus else {
-            throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
-          }
-        }
-        if transfer == 2 || transfer == 1, negotiatedSpeed == .low {
-          throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
-        }
-        if transfer == 3, attributes & 0x30 == 0x10 {
-          guard (8...16).contains(chunk[6]) else {
-            throw PassiveUSBDescriptorBlobError.invalidInterval
-          }
-        }
-        if negotiatedSpeed != nil {
-          if let negotiatedSpeed,
-            negotiatedSpeed == .high || negotiatedSpeed == .superSpeed
-              || negotiatedSpeed == .superSpeedPlus, transfer == 3 || transfer == 1, chunk[6] > 16
-          {
-            throw PassiveUSBDescriptorBlobError.invalidInterval
-          }
-        }
-        guard !value.endpoints.contains(where: { $0.address == address }) else {
-          throw PassiveUSBDescriptorBlobError.impossibleEndpointOwnership
-        }
-        let packet = UInt16(chunk[4]) | (UInt16(chunk[5]) << 8)
-        value.endpoints.append(
-          PassiveUSBDescriptorEndpoint(
-            address: address,
-            transferType: transfer == 0
-              ? "control" : transfer == 1 ? "isochronous" : transfer == 2 ? "bulk" : "interrupt",
-            maxPacketSize: packet,
-            interval: chunk[6],
-            nominalIntervalMicroseconds: nominalIntervalMicroseconds(
-              transferType: transfer,
-              interval: chunk[6],
-              speed: negotiatedSpeed
-            ),
-            intervalResult: intervalResult(
-              transferType: transfer,
-              interval: chunk[6],
-              speed: negotiatedSpeed
-            ),
-            superSpeedCompanion: nil,
-            superSpeedPlusCompanion: nil
-          )
-        )
-        current = value
-        companionEligible = true
-      } else if type == 0x30 {
-        guard length == 6, var value = current, !value.endpoints.isEmpty else {
-          throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor
-        }
-        guard value.endpoints.last?.superSpeedCompanion == nil else {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
-        guard companionEligible else {
-          throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor
-        }
-        if let negotiatedSpeed, negotiatedSpeed != .superSpeed, negotiatedSpeed != .superSpeedPlus {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
-        guard let transferName = value.endpoints.last?.transferType else {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
-        let endpoint = value.endpoints.removeLast()
-        try validateSuperSpeedCompanion(chunk: chunk, endpoint: endpoint)
-        value.endpoints.append(
-          PassiveUSBDescriptorEndpoint(
-            address: endpoint.address,
-            transferType: endpoint.transferType,
-            maxPacketSize: endpoint.maxPacketSize,
-            interval: endpoint.interval,
-            nominalIntervalMicroseconds: endpoint.nominalIntervalMicroseconds,
-            intervalResult: endpoint.intervalResult,
-            superSpeedCompanion: PassiveUSBSuperSpeedCompanion(
-              maxBurst: chunk[2],
-              attributes: chunk[3],
-              bytesPerInterval: UInt16(chunk[4]) | (UInt16(chunk[5]) << 8)
-            ),
-            superSpeedPlusCompanion: nil
-          )
-        )
-        current = value
-        companionEligible = false
-        sspCompanionRequired = transferName == "isochronous" && (chunk[3] & 0x80) != 0
-      } else if type == 0x31 {
-        if let negotiatedSpeed, negotiatedSpeed != .superSpeed, negotiatedSpeed != .superSpeedPlus {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
-        guard sspCompanionRequired, length == 8, var value = current, !value.endpoints.isEmpty
-        else { throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor }
-        guard negotiatedSpeed == .superSpeedPlus else {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
-        guard let superSpeedPlusContext else {
-          throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
-        }
-        guard value.endpoints.last?.transferType == "isochronous",
-          value.endpoints.last?.superSpeedPlusCompanion == nil, chunk[2] == 0, chunk[3] == 0
-        else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-        let endpoint = value.endpoints.removeLast()
-        let perInterval =
-          UInt32(chunk[4]) | (UInt32(chunk[5]) << 8) | (UInt32(chunk[6]) << 16)
-          | (UInt32(chunk[7]) << 24)
-        guard let maximum = superSpeedPlusContext.maximumBytesPerInterval, perInterval > 49_152,
-          perInterval < maximum
-        else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-        value.endpoints.append(
-          PassiveUSBDescriptorEndpoint(
-            address: endpoint.address,
-            transferType: endpoint.transferType,
-            maxPacketSize: endpoint.maxPacketSize,
-            interval: endpoint.interval,
-            nominalIntervalMicroseconds: endpoint.nominalIntervalMicroseconds,
-            intervalResult: endpoint.intervalResult,
-            superSpeedCompanion: endpoint.superSpeedCompanion,
-            superSpeedPlusCompanion: PassiveUSBSuperSpeedPlusCompanion(
-              bytesPerInterval: perInterval
-            )
-          )
-        )
-        current = value
-        sspCompanionRequired = false
-      } else {
+      switch type {
+      case 2: try readConfiguration(chunk)
+      case 4: try readInterface(chunk)
+      case 5: try readEndpoint(chunk)
+      case 0x30: try readSuperSpeedCompanion(chunk)
+      case 0x31: try readSuperSpeedPlusCompanion(chunk)
+      default:
         companionEligible = false
         if sspCompanionRequired { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
       }
-      offset += length
     }
-    if let value = current { interfaces.append(makeInterface(value)) }
-    if sspCompanionRequired { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
-    if negotiatedSpeed == .superSpeed || negotiatedSpeed == .superSpeedPlus {
-      guard
-        interfaces.allSatisfy({ interface in
-          interface.endpoints.allSatisfy { endpoint in endpoint.superSpeedCompanion != nil }
-        })
+
+    private mutating func readConfiguration(_ chunk: [UInt8]) throws {
+      guard chunk.count == 9, totalLength == nil else {
+        throw PassiveUSBDescriptorBlobError.totalLengthMismatch
+      }
+      let declaredLength = UInt16(chunk[2]) | (UInt16(chunk[3]) << 8)
+      totalLength = declaredLength
+      declaredInterfaces = chunk[4]
+      guard declaredLength == UInt16(blobLength) else {
+        throw PassiveUSBDescriptorBlobError.totalLengthMismatch
+      }
+      companionEligible = false
+    }
+
+    private mutating func readInterface(_ chunk: [UInt8]) throws {
+      guard chunk.count == 9 else { throw PassiveUSBDescriptorBlobError.truncated }
+      if let current { interfaces.append(current.descriptor) }
+      let key = (chunk[2], chunk[3])
+      guard !interfaces.contains(where: { ($0.number, $0.alternateSetting) == key }) else {
+        throw PassiveUSBDescriptorBlobError.duplicateInterfaceOwnership
+      }
+      current = OpenInterface(
+        number: chunk[2],
+        alternate: chunk[3],
+        interfaceClass: chunk[5],
+        interfaceSubclass: chunk[6],
+        interfaceProtocol: chunk[7],
+        declaredEndpoints: chunk[4]
+      )
+      companionEligible = false
+    }
+
+    private mutating func readEndpoint(_ chunk: [UInt8]) throws {
+      guard chunk.count == 7, var value = current else {
+        throw PassiveUSBDescriptorBlobError.impossibleEndpointOwnership
+      }
+      let address = chunk[2]
+      guard address & 0x70 == 0, address & 0x0F != 0 else {
+        throw PassiveUSBDescriptorBlobError.invalidEndpointAddress
+      }
+      let attributes = chunk[3]
+      let transfer = attributes & 3
+      let interval = chunk[6]
+      try Self.validateEndpoint(
+        transfer: transfer,
+        attributes: attributes,
+        interval: interval,
+        speed: speed
+      )
+      guard !value.endpoints.contains(where: { $0.address == address }) else {
+        throw PassiveUSBDescriptorBlobError.impossibleEndpointOwnership
+      }
+      value.endpoints.append(
+        PassiveUSBDescriptorEndpoint(
+          address: address,
+          transferType: Self.transferName(transfer),
+          maxPacketSize: UInt16(chunk[4]) | (UInt16(chunk[5]) << 8),
+          interval: interval,
+          nominalIntervalMicroseconds:
+            PassiveUSBConfigurationDescriptorParser.nominalIntervalMicroseconds(
+              transferType: transfer,
+              interval: interval,
+              speed: speed
+            ),
+          intervalResult: PassiveUSBConfigurationDescriptorParser.intervalResult(
+            transferType: transfer,
+            interval: interval,
+            speed: speed
+          ),
+          superSpeedCompanion: nil,
+          superSpeedPlusCompanion: nil
+        )
+      )
+      current = value
+      companionEligible = true
+    }
+
+    private mutating func readSuperSpeedCompanion(_ chunk: [UInt8]) throws {
+      guard chunk.count == 6, var value = current, let endpoint = value.endpoints.last else {
+        throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor
+      }
+      guard endpoint.superSpeedCompanion == nil else {
+        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+      }
+      guard companionEligible else {
+        throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor
+      }
+      if speed != nil, !isSuperSpeedFamily {
+        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+      }
+      try PassiveUSBConfigurationDescriptorParser.validateSuperSpeedCompanion(
+        chunk: chunk,
+        endpoint: endpoint
+      )
+      value.endpoints[value.endpoints.count - 1] = endpoint.withCompanions(
+        superSpeed: PassiveUSBSuperSpeedCompanion(
+          maxBurst: chunk[2],
+          attributes: chunk[3],
+          bytesPerInterval: UInt16(chunk[4]) | (UInt16(chunk[5]) << 8)
+        ),
+        superSpeedPlus: nil
+      )
+      current = value
+      companionEligible = false
+      sspCompanionRequired = endpoint.transferType == "isochronous" && (chunk[3] & 0x80) != 0
+    }
+
+    private mutating func readSuperSpeedPlusCompanion(_ chunk: [UInt8]) throws {
+      if speed != nil, !isSuperSpeedFamily {
+        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+      }
+      guard sspCompanionRequired, chunk.count == 8, var value = current,
+        let endpoint = value.endpoints.last
+      else { throw PassiveUSBDescriptorBlobError.orphanCompanionDescriptor }
+      guard speed == .superSpeedPlus, let superSpeedPlusContext else {
+        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+      }
+      guard endpoint.transferType == "isochronous", endpoint.superSpeedPlusCompanion == nil,
+        chunk[2] == 0, chunk[3] == 0
       else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
+      let perInterval =
+        UInt32(chunk[4]) | (UInt32(chunk[5]) << 8) | (UInt32(chunk[6]) << 16)
+        | (UInt32(chunk[7]) << 24)
+      guard let maximum = superSpeedPlusContext.maximumBytesPerInterval, perInterval > 49_152,
+        perInterval < maximum
+      else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
+      value.endpoints[value.endpoints.count - 1] = endpoint.withCompanions(
+        superSpeed: endpoint.superSpeedCompanion,
+        superSpeedPlus: PassiveUSBSuperSpeedPlusCompanion(bytesPerInterval: perInterval)
+      )
+      current = value
+      sspCompanionRequired = false
     }
-    guard let totalLength, let declaredInterfaces else {
-      throw PassiveUSBDescriptorBlobError.missingConfiguration
+
+    /// Closes the last interface and checks the counts the configuration descriptor declared.
+    mutating func finish() throws -> PassiveUSBConfigurationDescriptor {
+      if let current { interfaces.append(current.descriptor) }
+      if sspCompanionRequired { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
+      if isSuperSpeedFamily {
+        guard
+          interfaces.allSatisfy({ interface in
+            interface.endpoints.allSatisfy { endpoint in endpoint.superSpeedCompanion != nil }
+          })
+        else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
+      }
+      guard let totalLength, let declaredInterfaces else {
+        throw PassiveUSBDescriptorBlobError.missingConfiguration
+      }
+      guard Set(interfaces.map(\.number)).count == Int(declaredInterfaces) else {
+        throw PassiveUSBDescriptorBlobError.totalLengthMismatch
+      }
+      guard interfaces.allSatisfy({ Int($0.declaredEndpointCount) == $0.endpoints.count }) else {
+        throw PassiveUSBDescriptorBlobError.totalLengthMismatch
+      }
+      return PassiveUSBConfigurationDescriptor(
+        totalLength: totalLength,
+        declaredInterfaceCount: declaredInterfaces,
+        descriptors: descriptors,
+        interfaces: interfaces,
+        negotiatedSpeed: speed
+      )
     }
-    guard Set(interfaces.map(\.number)).count == Int(declaredInterfaces) else {
-      throw PassiveUSBDescriptorBlobError.totalLengthMismatch
+
+    /// Checks the transfer attributes and interval of an endpoint for the negotiated `speed`.
+    ///
+    /// `transfer` is 0 control, 1 isochronous, 2 bulk, or 3 interrupt.
+    private static func validateEndpoint(
+      transfer: UInt8,
+      attributes: UInt8,
+      interval: UInt8,
+      speed: PassiveUSBNegotiatedSpeed?
+    ) throws {
+      let invalidAttributes: Bool =
+        switch transfer {
+        case 0, 2: attributes & 0xFC != 0
+        case 1: attributes & 0xC0 != 0 || attributes & 0x30 == 0x30
+        case 3: attributes & 0xC0 != 0 || attributes & 0x30 > 0x10
+        default: true
+        }
+      guard !invalidAttributes else {
+        throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
+      }
+      let isPeriodic = transfer == 1 || transfer == 3
+      if isPeriodic, interval == 0 { throw PassiveUSBDescriptorBlobError.invalidInterval }
+      if transfer == 1, interval > 16 { throw PassiveUSBDescriptorBlobError.invalidInterval }
+      let isSuperSpeedPlusInterrupt = transfer == 3 && attributes & 0x30 == 0x10
+      if isSuperSpeedPlusInterrupt, speed != .superSpeedPlus {
+        throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
+      }
+      if transfer == 2 || transfer == 1, speed == .low {
+        throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
+      }
+      if isSuperSpeedPlusInterrupt, !(8...16).contains(interval) {
+        throw PassiveUSBDescriptorBlobError.invalidInterval
+      }
+      let isMicroframeSpeed = speed == .high || speed == .superSpeed || speed == .superSpeedPlus
+      if isMicroframeSpeed, isPeriodic, interval > 16 {
+        throw PassiveUSBDescriptorBlobError.invalidInterval
+      }
     }
-    guard interfaces.allSatisfy({ Int($0.declaredEndpointCount) == $0.endpoints.count }) else {
-      throw PassiveUSBDescriptorBlobError.totalLengthMismatch
+
+    private static func transferName(_ transfer: UInt8) -> String {
+      switch transfer {
+      case 0: "control"
+      case 1: "isochronous"
+      case 2: "bulk"
+      default: "interrupt"
+      }
     }
-    return PassiveUSBConfigurationDescriptor(
-      totalLength: totalLength,
-      declaredInterfaceCount: declaredInterfaces,
-      descriptors: descriptors,
-      interfaces: interfaces,
-      negotiatedSpeed: negotiatedSpeed
-    )
   }
 
   /// Checks the SuperSpeed companion descriptor `chunk` against its `endpoint`.
@@ -305,22 +379,23 @@ extension PassiveUSBConfigurationDescriptorParser {
     default: throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
     }
   }
+}
 
-  /// Creates an interface descriptor from the fields that the parser collected.
-  private static func makeInterface(
-    _ value: (
-      number: UInt8, alternate: UInt8, cls: UInt8, sub: UInt8, proto: UInt8,
-      declaredEndpoints: UInt8, endpoints: [PassiveUSBDescriptorEndpoint]
-    )
-  ) -> PassiveUSBDescriptorInterface {
-    PassiveUSBDescriptorInterface(
-      number: value.number,
-      alternateSetting: value.alternate,
-      interfaceClass: value.cls,
-      interfaceSubclass: value.sub,
-      interfaceProtocol: value.proto,
-      declaredEndpointCount: value.declaredEndpoints,
-      endpoints: value.endpoints
+extension PassiveUSBDescriptorEndpoint {
+  /// Returns this endpoint with its companion descriptors replaced.
+  fileprivate func withCompanions(
+    superSpeed: PassiveUSBSuperSpeedCompanion?,
+    superSpeedPlus: PassiveUSBSuperSpeedPlusCompanion?
+  ) -> PassiveUSBDescriptorEndpoint {
+    PassiveUSBDescriptorEndpoint(
+      address: address,
+      transferType: transferType,
+      maxPacketSize: maxPacketSize,
+      interval: interval,
+      nominalIntervalMicroseconds: nominalIntervalMicroseconds,
+      intervalResult: intervalResult,
+      superSpeedCompanion: superSpeed,
+      superSpeedPlusCompanion: superSpeedPlus
     )
   }
 }
