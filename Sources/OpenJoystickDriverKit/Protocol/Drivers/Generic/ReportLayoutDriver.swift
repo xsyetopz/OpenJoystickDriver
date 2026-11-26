@@ -164,6 +164,20 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
       roles[contact.id] =
         roles[contact.id] ?? touchRoles[contact.id] ?? touch.role(x: contact.x, y: contact.y)
     }
+    let (held, deflection) = contactEffects(of: touch, touches: touches)
+    for (slot, control) in Control.stickAxes.enumerated() {
+      if let value = deflection[control] { sticks[slot] = BipolarValue(normalized: value) }
+    }
+    for control in Set(touch.spots.map(\.control)) {
+      Self.setSpotControl(control, held: held, in: &state)
+    }
+  }
+
+  /// The controls the contacts hold on spots, and each stick axis's deflection.
+  private func contactEffects(
+    of touch: ControllerInputLayout.Touch,
+    touches: [(id: Int, x: Int, y: Int)]
+  ) -> (held: Set<Control>, deflection: [Control: Float]) {
     var held: Set<Control> = []
     var deflection: [Control: Float] = [:]
     for stick in touch.sticks {
@@ -184,24 +198,28 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
       case .none: break
       }
     }
-    for (slot, control) in Control.stickAxes.enumerated() {
-      if let value = deflection[control] { sticks[slot] = BipolarValue(normalized: value) }
-    }
-    for control in Set(touch.spots.map(\.control)) {
-      switch control {
-      case .leftTrigger:
-        state.leftTrigger = UnipolarValue(normalized: held.contains(control) ? 1 : 0)
-      case .rightTrigger:
-        state.rightTrigger = UnipolarValue(normalized: held.contains(control) ? 1 : 0)
-      case .dpadUp, .dpadDown, .dpadLeft, .dpadRight:
-        state.hat = HatDirection(
-          up: held.contains(.dpadUp),
-          right: held.contains(.dpadRight),
-          down: held.contains(.dpadDown),
-          left: held.contains(.dpadLeft)
-        )
-      default: state.set(control, pressed: held.contains(control))
-      }
+    return (held, deflection)
+  }
+
+  /// Sets `control` in `state` to whether a contact holds it.
+  private static func setSpotControl(
+    _ control: Control,
+    held: Set<Control>,
+    in state: inout ControllerState
+  ) {
+    switch control {
+    case .leftTrigger:
+      state.leftTrigger = UnipolarValue(normalized: held.contains(control) ? 1 : 0)
+    case .rightTrigger:
+      state.rightTrigger = UnipolarValue(normalized: held.contains(control) ? 1 : 0)
+    case .dpadUp, .dpadDown, .dpadLeft, .dpadRight:
+      state.hat = HatDirection(
+        up: held.contains(.dpadUp),
+        right: held.contains(.dpadRight),
+        down: held.contains(.dpadDown),
+        left: held.contains(.dpadLeft)
+      )
+    default: state.set(control, pressed: held.contains(control))
     }
   }
 
