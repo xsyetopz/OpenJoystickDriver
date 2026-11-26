@@ -231,40 +231,63 @@ extension RemappingEngineState {
     isDown: Bool,
     device: inout RemappingDeviceState
   ) -> [RemappingEngineAction] {
-    let wasDown = device.outputs.heldBindings[bindingID] != nil
-    guard wasDown != isDown else { return [] }
-    let heldDestination = device.outputs.heldBindings[bindingID] ?? destination
-    if isDown {
-      device.outputs.heldBindings[bindingID] = destination
-    } else {
-      device.outputs.heldBindings.removeValue(forKey: bindingID)
-    }
-    let effectiveDestination = isDown ? destination : heldDestination
-    if case .macro(let macroID) = effectiveDestination {
+    let held = device.outputs.heldBindings[bindingID]
+    guard (held != nil) != isDown else { return [] }
+    device.outputs.heldBindings[bindingID] = isDown ? destination : nil
+    return dispatchBinding(
+      isDown ? destination : (held ?? destination),
+      owner: bindingID,
+      isDown: isDown,
+      device: &device
+    )
+  }
+
+  /// Routes a binding transition to the output that its effective destination names.
+  private mutating func dispatchBinding(
+    _ destination: RemappingDestination,
+    owner bindingID: UUID,
+    isDown: Bool,
+    device: inout RemappingDeviceState
+  ) -> [RemappingEngineAction] {
+    if case .macro(let macroID) = destination {
       return isDown
         ? startMacro(macroID, owner: bindingID, device: &device)
         : endMacroSource(owner: bindingID, device: &device)
     }
-    if case .speak(let text, let voice) = effectiveDestination {
+    if case .speak(let text, let voice) = destination {
       guard isDown else { return [] }
       device.outputs.isSpeaking = true
       return [.speak(text, voice: voice, device.identifier)]
     }
-    if effectiveDestination.isProfileControl {
-      return isDown ? runProfileControl(effectiveDestination, device: &device) : []
+    if destination.isProfileControl {
+      return isDown ? runProfileControl(destination, device: &device) : []
     }
-    if let midi = Self.midiMessage(effectiveDestination, isDown: isDown) { return [.midi(midi)] }
-    if let virtualContribution = Self.gamepadContribution(of: effectiveDestination) {
-      let contribution = isDown ? virtualContribution : .neutral
-      guard let state = device.outputs.gamepad.update(contribution, for: bindingID) else {
-        return []
-      }
-      return [.gamepad(state, device.identifier)]
+    if let midi = Self.midiMessage(destination, isDown: isDown) { return [.midi(midi)] }
+    if let virtualContribution = Self.gamepadContribution(of: destination) {
+      return Self.gamepadActions(
+        virtualContribution,
+        owner: bindingID,
+        isDown: isDown,
+        device: &device
+      )
     }
-    if case .physical(let output) = effectiveDestination {
+    if case .physical(let output) = destination {
       return [.physical(output, active: isDown, owner: bindingID, device.identifier)]
     }
-    return isDown ? press(effectiveDestination) : release(effectiveDestination)
+    return isDown ? press(destination) : release(destination)
+  }
+
+  private static func gamepadActions(
+    _ virtualContribution: RemappingGamepadState,
+    owner bindingID: UUID,
+    isDown: Bool,
+    device: inout RemappingDeviceState
+  ) -> [RemappingEngineAction] {
+    let contribution = isDown ? virtualContribution : .neutral
+    guard let state = device.outputs.gamepad.update(contribution, for: bindingID) else {
+      return []
+    }
+    return [.gamepad(state, device.identifier)]
   }
 
   /// Returns the MIDI message that pressing or releasing `destination` sends, or `nil` for a
