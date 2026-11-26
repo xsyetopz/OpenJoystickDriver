@@ -21,119 +21,204 @@ extension DevicePipeline {
     guard isCurrentUSBRun(generation) else { return .reconnect }
     startUSBKeepAlive(handle: handle, generation: generation)
 
-    var recovery = USBInputLoopRecovery.reconnect
-    var firstRead = armedRead
     // A silent pad gets its toggles reset and its startup resent, a bounded number of times, and
     // then its firmware restarted.
-    var silentSince: UInt64? =
-      plan.silentUSBStartupRecoveryNanoseconds == nil ? nil : uptimeNanoseconds()
-    var silentRecoveries = 0
+    var state = USBInputLoopState(
+      firstRead: armedRead,
+      silentSince: plan.silentUSBStartupRecoveryNanoseconds == nil ? nil : uptimeNanoseconds()
+    )
     while isCurrentUSBRun(generation) {
       let loopStartNs = uptimeNanoseconds()
-      var shouldBreak = false
-      var shouldThrottleIdle = false
-      recovery = .reconnect
-      do {
-        let bytes: [UInt8]
-        if let armed = firstRead {
-          firstRead = nil
-          bytes = try await armed.value
-        } else {
-          bytes = try await readInterrupt(
-            handle: handle,
-            inEndpoint: inEndpoint,
-            timeout: Self.usbInputReadTimeoutMilliseconds(
-              window: plan.silentUSBStartupRecoveryNanoseconds,
-              silentSince: silentSince,
-              now: uptimeNanoseconds()
-            )
-          )
-        }
-        guard isCurrentUSBRun(generation) else { break }
-        consecutiveUSBIOErrors = 0
-        if !bytes.isEmpty { silentSince = nil }
-        appendToPacketLog(bytes: bytes, direction: .received)
-        let receivedAt = uptimeNanoseconds()
-        let event = try parseReport(Data(bytes), receivedAt: receivedAt)
-        await sendPendingUSBWrites(handle: handle, generation: generation)
-        guard isCurrentUSBRun(generation) else { break }
-        _ = await handleInputConnectionStateChangeIfNeeded()
-        guard isCurrentUSBRun(generation) else { break }
-        if inputConnectionActive { await handleParsedEvent(event, now: receivedAt) }
-        guard isCurrentUSBRun(generation) else { break }
-      } catch let error as USBTransportError where error.isTimeout {
-        guard isCurrentUSBRun(generation) else { break }
-        // No data in this interval; throttle below to avoid a hot timeout loop.
-        shouldThrottleIdle = true
-        if let since = silentSince, let window = plan.silentUSBStartupRecoveryNanoseconds,
-          uptimeNanoseconds() &- since >= window
-        {
-          silentRecoveries += 1
-          if silentRecoveries <= usbSilentStartupRecoveryLimit {
-            firstRead = await recoverSilentUSBStartup(handle: handle, generation: generation)
-          }
-          if firstRead != nil {
-            silentSince = uptimeNanoseconds()
-          } else {
-            await restartSilentFirmware(handle: handle, generation: generation)
-            silentSince = nil
-          }
-        }
-      } catch let error as USBTransportError where error.isDisconnected {
-        guard isCurrentUSBRun(generation) else { break }
-        print("[DevicePipeline] Device disconnected:" + " \(identifier)")
-        await invalidateUSBHandle(handle)
-        shouldBreak = true
-      } catch let error as USBTransportError where error == .accessDenied {
-        guard isCurrentUSBRun(generation) else { break }
-        print("[DevicePipeline] USB read access denied; waiting before retry: \(identifier)")
-        await invalidateUSBHandle(handle)
-        recovery = .accessDenied
-        shouldBreak = true
-      } catch let error as USBTransportError where error.isInputOutput {
-        guard isCurrentUSBRun(generation) else { break }
-        consecutiveUSBIOErrors += 1
-
-        let now = uptimeNanoseconds()
-        if now &- lastUSBIOErrorLogNs >= usbIOErrorLogIntervalNs {
-          lastUSBIOErrorLogNs = now
-          print(
-            "[DevicePipeline] USB I/O error (will recover)" + " for \(identifier): \(error)"
-              + " (consecutive=\(consecutiveUSBIOErrors))"
-          )
-        }
-
-        // Back off to avoid a launchd "inefficient" kill.
-        let exp = min(max(0, consecutiveUSBIOErrors - 1), 4)
-        let backoff = min(usbIOErrorBackoffMaxNs, usbIOErrorBackoffBaseNs << exp)
-        try? await Task.sleep(nanoseconds: backoff)
-        guard isCurrentUSBRun(generation) else { break }
-
-        if consecutiveUSBIOErrors >= usbIOErrorReconnectThreshold {
-          print("[DevicePipeline] Too many USB I/O errors. Reconnecting:" + " \(identifier)")
-          await invalidateUSBHandle(handle)
-          shouldBreak = true
-        }
-      } catch {
-        guard isCurrentUSBRun(generation) else { break }
-        // Slow down after an unknown failure, then reconnect.
-        print("[DevicePipeline] Read error" + " for \(identifier):" + " \(error). Reconnecting")
-        await invalidateUSBHandle(handle)
-        shouldBreak = true
-      }
-
-      if shouldBreak { break }
+      state.recovery = .reconnect
+      let step = await runUSBInputPass(
+        handle: handle,
+        generation: generation,
+        inEndpoint: inEndpoint,
+        state: &state
+      )
+      if step == .stop { break }
       guard isCurrentUSBRun(generation) else { break }
-
-      // Throttle idle timeouts only. Successful packets should dispatch at device cadence.
-      let loopElapsedNs = uptimeNanoseconds() &- loopStartNs
-      if shouldThrottleIdle, loopElapsedNs < usbIdleLoopCadenceNs {
-        try? await Task.sleep(nanoseconds: usbIdleLoopCadenceNs &- loopElapsedNs)
-      } else {
-        await Task.yield()
-      }
+      await pauseBeforeNextUSBPass(idle: step == .idle, loopStartNs: loopStartNs)
     }
 
+    await finishUSBInputLoop(handle: handle, generation: generation, recovery: state.recovery)
+    return state.recovery
+  }
+
+  /// The mutable state one input loop carries from pass to pass.
+  private struct USBInputLoopState {
+    var recovery = USBInputLoopRecovery.reconnect
+    var firstRead: Task<[UInt8], any Error>?
+    var silentSince: UInt64?
+    var silentRecoveries = 0
+  }
+
+  /// What the loop does after one pass.
+  private enum USBInputLoopStep {
+    case dispatched
+    case idle
+    case stop
+  }
+
+  /// Reads, parses, and dispatches one packet, or handles the failure of that attempt.
+  private func runUSBInputPass(
+    handle: any USBTransportSession,
+    generation: UInt64,
+    inEndpoint: UInt8,
+    state: inout USBInputLoopState
+  ) async -> USBInputLoopStep {
+    do {
+      let bytes = try await nextUSBInputBytes(
+        handle: handle,
+        inEndpoint: inEndpoint,
+        state: &state
+      )
+      guard isCurrentUSBRun(generation) else { return .stop }
+      consecutiveUSBIOErrors = 0
+      if !bytes.isEmpty { state.silentSince = nil }
+      appendToPacketLog(bytes: bytes, direction: .received)
+      let receivedAt = uptimeNanoseconds()
+      let event = try parseReport(Data(bytes), receivedAt: receivedAt)
+      await sendPendingUSBWrites(handle: handle, generation: generation)
+      guard isCurrentUSBRun(generation) else { return .stop }
+      _ = await handleInputConnectionStateChangeIfNeeded()
+      guard isCurrentUSBRun(generation) else { return .stop }
+      if inputConnectionActive { await handleParsedEvent(event, now: receivedAt) }
+      guard isCurrentUSBRun(generation) else { return .stop }
+      return .dispatched
+    } catch {
+      guard isCurrentUSBRun(generation) else { return .stop }
+      return await recoverFromUSBReadFailure(
+        error,
+        handle: handle,
+        generation: generation,
+        state: &state
+      )
+    }
+  }
+
+  /// Takes the armed read's result once, then reads a new packet.
+  private func nextUSBInputBytes(
+    handle: any USBTransportSession,
+    inEndpoint: UInt8,
+    state: inout USBInputLoopState
+  ) async throws -> [UInt8] {
+    if let armed = state.firstRead {
+      state.firstRead = nil
+      return try await armed.value
+    }
+    return try await readInterrupt(
+      handle: handle,
+      inEndpoint: inEndpoint,
+      timeout: Self.usbInputReadTimeoutMilliseconds(
+        window: plan.silentUSBStartupRecoveryNanoseconds,
+        silentSince: state.silentSince,
+        now: uptimeNanoseconds()
+      )
+    )
+  }
+
+  /// Maps a failed pass to the recovery the loop applies and the step it takes next.
+  private func recoverFromUSBReadFailure(
+    _ error: any Error,
+    handle: any USBTransportSession,
+    generation: UInt64,
+    state: inout USBInputLoopState
+  ) async -> USBInputLoopStep {
+    switch error {
+    case let error as USBTransportError where error.isTimeout:
+      // No data in this interval; the loop throttles to avoid a hot timeout loop.
+      await recoverFromSilentUSBStartupIfDue(handle: handle, generation: generation, state: &state)
+      return .idle
+    case let error as USBTransportError where error.isDisconnected:
+      print("[DevicePipeline] Device disconnected:" + " \(identifier)")
+      await invalidateUSBHandle(handle)
+      return .stop
+    case let error as USBTransportError where error == .accessDenied:
+      print("[DevicePipeline] USB read access denied; waiting before retry: \(identifier)")
+      await invalidateUSBHandle(handle)
+      state.recovery = .accessDenied
+      return .stop
+    case let error as USBTransportError where error.isInputOutput:
+      return await backOffAfterUSBIOError(error, handle: handle, generation: generation)
+    default:
+      // Slow down after an unknown failure, then reconnect.
+      print("[DevicePipeline] Read error" + " for \(identifier):" + " \(error). Reconnecting")
+      await invalidateUSBHandle(handle)
+      return .stop
+    }
+  }
+
+  /// Resends the startup of a pad that stayed silent for the plan's window, and restarts its
+  /// firmware once the resend limit is spent.
+  private func recoverFromSilentUSBStartupIfDue(
+    handle: any USBTransportSession,
+    generation: UInt64,
+    state: inout USBInputLoopState
+  ) async {
+    guard let since = state.silentSince, let window = plan.silentUSBStartupRecoveryNanoseconds,
+      uptimeNanoseconds() &- since >= window
+    else { return }
+    state.silentRecoveries += 1
+    if state.silentRecoveries <= usbSilentStartupRecoveryLimit {
+      state.firstRead = await recoverSilentUSBStartup(handle: handle, generation: generation)
+    }
+    if state.firstRead != nil {
+      state.silentSince = uptimeNanoseconds()
+    } else {
+      await restartSilentFirmware(handle: handle, generation: generation)
+      state.silentSince = nil
+    }
+  }
+
+  /// Counts an I/O error, logs it at a bounded rate, backs off, and ends the session once the
+  /// errors reach the reconnect threshold.
+  private func backOffAfterUSBIOError(
+    _ error: USBTransportError,
+    handle: any USBTransportSession,
+    generation: UInt64
+  ) async -> USBInputLoopStep {
+    consecutiveUSBIOErrors += 1
+
+    let now = uptimeNanoseconds()
+    if now &- lastUSBIOErrorLogNs >= usbIOErrorLogIntervalNs {
+      lastUSBIOErrorLogNs = now
+      print(
+        "[DevicePipeline] USB I/O error (will recover)" + " for \(identifier): \(error)"
+          + " (consecutive=\(consecutiveUSBIOErrors))"
+      )
+    }
+
+    // Back off to avoid a launchd "inefficient" kill.
+    let exp = min(max(0, consecutiveUSBIOErrors - 1), 4)
+    let backoff = min(usbIOErrorBackoffMaxNs, usbIOErrorBackoffBaseNs << exp)
+    try? await Task.sleep(nanoseconds: backoff)
+    guard isCurrentUSBRun(generation) else { return .stop }
+
+    guard consecutiveUSBIOErrors >= usbIOErrorReconnectThreshold else { return .dispatched }
+    print("[DevicePipeline] Too many USB I/O errors. Reconnecting:" + " \(identifier)")
+    await invalidateUSBHandle(handle)
+    return .stop
+  }
+
+  /// Throttles idle timeouts only.
+  ///
+  /// Successful packets dispatch at device cadence.
+  private func pauseBeforeNextUSBPass(idle: Bool, loopStartNs: UInt64) async {
+    let loopElapsedNs = uptimeNanoseconds() &- loopStartNs
+    if idle, loopElapsedNs < usbIdleLoopCadenceNs {
+      try? await Task.sleep(nanoseconds: usbIdleLoopCadenceNs &- loopElapsedNs)
+    } else {
+      await Task.yield()
+    }
+  }
+
+  /// Stops the keep-alive, closes the session, and releases the output when the run is current.
+  private func finishUSBInputLoop(
+    handle: any USBTransportSession,
+    generation: UInt64,
+    recovery: USBInputLoopRecovery
+  ) async {
     stopUSBKeepAlive()
     await invalidateUSBHandle(handle)
     if isCurrentUSBRun(generation) {
@@ -141,7 +226,6 @@ extension DevicePipeline {
       await neutralizeOutput()
     }
     print("[DevicePipeline] Input loop ended:" + " \(identifier)")
-    return recovery
   }
 
   /// Sends keep-alives on their own timer, because an interrupt IN read can block until the
