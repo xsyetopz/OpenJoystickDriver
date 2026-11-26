@@ -33,23 +33,44 @@ extension PassiveUSBRegistryFactParser {
         properties: properties
       )
     }
-    if speeds.count == 1, let speed = speeds.first {
-      return PassiveUSBSpeedObservation(
-        state: .observed,
-        speed: speed,
-        sources: candidates.map(\.0),
-        values: candidates.map { String(describing: $0.1) },
-        properties: properties
-      )
-    }
+    let agreedSpeed = speeds.count == 1 ? speeds.first : nil
     return PassiveUSBSpeedObservation(
-      state: .ambiguous,
-      speed: nil,
+      state: agreedSpeed == nil ? .ambiguous : .observed,
+      speed: agreedSpeed,
       sources: candidates.map(\.0),
       values: candidates.map { String(describing: $0.1) },
       properties: properties
     )
   }
+
+  /// The speed each numeric code of a registry speed property stands for, by property key.
+  ///
+  /// `USBSpeed` code 0 and every code a table omits decode to no speed.
+  private static let numericSpeedCodes: [String: [UInt64: PassiveUSBNegotiatedSpeed]] = [
+    "USBSpeed": [
+      1: .full, 2: .low, 3: .high, 4: .superSpeed, 5: .superSpeedPlus, 6: .superSpeedPlus,
+    ],
+    "Device Speed": [
+      0: .low, 1: .full, 2: .high, 3: .superSpeed, 4: .superSpeedPlus, 5: .superSpeedPlus,
+    ],
+    "UsbLinkSpeed": [
+      1_500_000: .low,
+      12_000_000: .full,
+      480_000_000: .high,
+      5_000_000_000: .superSpeed,
+      10_000_000_000: .superSpeedPlus,
+      20_000_000_000: .superSpeedPlus,
+    ],
+  ]
+
+  /// The speed each spelling of a textual speed property stands for, lowercased without hyphens.
+  private static let textSpeedNames: [String: PassiveUSBNegotiatedSpeed] = [
+    "low": .low, "lowspeed": .low,
+    "full": .full, "fullspeed": .full,
+    "high": .high, "highspeed": .high,
+    "superspeed": .superSpeed, "ss": .superSpeed,
+    "superspeedplus": .superSpeedPlus, "ssplus": .superSpeedPlus,
+  ]
 
   /// Decodes the speed that the property `key` shows with `value`, or nil when it does not decode.
   static func speedValue(
@@ -57,48 +78,9 @@ extension PassiveUSBRegistryFactParser {
     value: PassiveUSBRegistryNode.Value
   ) -> PassiveUSBNegotiatedSpeed? {
     switch value {
-    case .unsignedInteger(let raw):
-      switch key {
-      case "USBSpeed":
-        switch raw {
-        case 0: return nil
-        case 1: return .full
-        case 2: return .low
-        case 3: return .high
-        case 4: return .superSpeed
-        case 5, 6: return .superSpeedPlus
-        default: return nil
-        }
-      case "Device Speed":
-        switch raw {
-        case 0: return .low
-        case 1: return .full
-        case 2: return .high
-        case 3: return .superSpeed
-        case 4, 5: return .superSpeedPlus
-        default: return nil
-        }
-      case "UsbLinkSpeed":
-        switch raw {
-        case 1_500_000: return .low
-        case 12_000_000: return .full
-        case 480_000_000: return .high
-        case 5_000_000_000: return .superSpeed
-        case 10_000_000_000, 20_000_000_000: return .superSpeedPlus
-        default: return nil
-        }
-      default: return nil
-      }
-    case .string(let raw):
-      switch raw.lowercased().replacingOccurrences(of: "-", with: "") {
-      case "low", "lowspeed": return .low
-      case "full", "fullspeed": return .full
-      case "high", "highspeed": return .high
-      case "superspeed", "ss": return .superSpeed
-      case "superspeedplus", "ssplus": return .superSpeedPlus
-      default: return nil
-      }
-    case .bytes: return nil
+    case .unsignedInteger(let raw): numericSpeedCodes[key]?[raw]
+    case .string(let raw): textSpeedNames[raw.lowercased().replacingOccurrences(of: "-", with: "")]
+    case .bytes: nil
     }
   }
 
