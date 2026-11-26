@@ -340,12 +340,17 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       let request = try JSONDecoder().decode(LocalServiceRPCRequest.self, from: data)
       answer(request, on: descriptor)
     } catch {
-      let response = LocalServiceRPCResponse(result: nil, error: error.localizedDescription)
-      if let encoded = try? JSONEncoder().encode(response) {
-        try? LocalServiceRPCTransport.sendFrame(encoded, to: descriptor)
-      }
-      Darwin.close(descriptor)
+      closeAfterFailure(error, on: descriptor)
     }
+  }
+
+  /// Sends `error` as the response on `descriptor`, when it can be sent, and closes the connection.
+  private func closeAfterFailure(_ error: any Error, on descriptor: Int32) {
+    let response = LocalServiceRPCResponse(result: nil, error: error.localizedDescription)
+    if let encoded = try? JSONEncoder().encode(response) {
+      try? LocalServiceRPCTransport.sendFrame(encoded, to: descriptor)
+    }
+    Darwin.close(descriptor)
   }
 
   /// Runs the handler for `request`, sends its response and closes the connection.
@@ -366,11 +371,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     var wake: (read: Int32, write: Int32) = (-1, -1)
     if watches {
       do { wake = try openWakePipe() } catch {
-        let response = LocalServiceRPCResponse(result: nil, error: error.localizedDescription)
-        if let encoded = try? JSONEncoder().encode(response) {
-          try? LocalServiceRPCTransport.sendFrame(encoded, to: descriptor)
-        }
-        Darwin.close(descriptor)
+        closeAfterFailure(error, on: descriptor)
         return
       }
     }
