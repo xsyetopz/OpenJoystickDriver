@@ -119,7 +119,6 @@
     ///
     /// Responder-chain actions never arrive here.
     func performMainMenu(_ action: MainMenuAction) {
-      let state = mainMenuState()
       switch action {
       case .about: showAbout(nil)
       case .settings: settingsWindow?.showSettings(pane: nil)
@@ -139,37 +138,15 @@
       case .controllerTarget:
         // Informational row; it carries no action.
         preconditionFailure("\(action) has no action")
-      case .suspendOrResumeController:
-        guard let controller = state.controller else { return }
-        runControllerAction(controller.id) { device in
-          if controller.isSuspended {
-            await self.viewModel.resumeController(device)
-          } else {
-            await self.viewModel.suspendController(device)
-          }
-        }
-      case .testInput: showInputTest(controllerID: state.controller?.id)
-      case .disconnectWirelessLink:
-        guard let controller = state.controller, let device = device(for: controller) else {
-          return
-        }
-        confirmDisconnectWireless(device)
-      case .showControllerInWindow:
-        if let controller = state.controller {
-          mainWindow?.showController(id: controller.id)
-        } else {
-          mainWindow?.showMainWindow(area: .controllers)
-        }
-      case .deactivateProfile:
-        guard let controller = state.controller, let device = device(for: controller) else {
-          return
-        }
-        deactivateProfiles(of: device)
+      case .suspendOrResumeController: suspendOrResumeMenuController()
+      case .testInput: showInputTest(controllerID: mainMenuState().controller?.id)
+      case .disconnectWirelessLink: disconnectWirelessMenuController()
+      case .showControllerInWindow: showMenuControllerInWindow()
+      case .deactivateProfile: deactivateProfilesOfMenuController()
       case .showActivityLog: mainWindow?.showMainWindow(area: .activity)
       case .explainErrorCode: mainWindow?.showErrorCodeExplainer()
       case .copySupportReport: copySupportReportWithFeedback()
-      case .openAreaHelp:
-        NSWorkspace.shared.open((mainWindow?.selectedArea ?? .controllers).wikiURL)
+      case .openAreaHelp: openAreaHelp()
       case .showMainWindowTour: showMainWindowTour()
       case .reportProblem: open(urlString: StatusItemModel.problemReport)
       case .openProjectWebsite: openProjectPage(nil)
@@ -179,6 +156,47 @@
         // Sent down the responder chain by the menu item; the renderer never routes these here.
         preconditionFailure("\(action) is a responder-chain action")
       }
+    }
+
+    /// Suspends the controller the menu targets, or resumes it when it is suspended.
+    private func suspendOrResumeMenuController() {
+      guard let controller = mainMenuState().controller else { return }
+      runControllerAction(controller.id) { device in
+        if controller.isSuspended {
+          await self.viewModel.resumeController(device)
+        } else {
+          await self.viewModel.suspendController(device)
+        }
+      }
+    }
+
+    /// Asks to disconnect the wireless link of the controller the menu targets.
+    private func disconnectWirelessMenuController() {
+      guard let controller = mainMenuState().controller, let device = device(for: controller)
+      else { return }
+      confirmDisconnectWireless(device)
+    }
+
+    /// Shows the controller the menu targets in the main window, or the Controllers area when
+    /// the menu targets none.
+    private func showMenuControllerInWindow() {
+      if let controller = mainMenuState().controller {
+        mainWindow?.showController(id: controller.id)
+      } else {
+        mainWindow?.showMainWindow(area: .controllers)
+      }
+    }
+
+    /// Deactivates the profiles of the controller the menu targets.
+    private func deactivateProfilesOfMenuController() {
+      guard let controller = mainMenuState().controller, let device = device(for: controller)
+      else { return }
+      deactivateProfiles(of: device)
+    }
+
+    /// Opens the wiki page of the area the main window shows, or of Controllers.
+    private func openAreaHelp() {
+      NSWorkspace.shared.open((mainWindow?.selectedArea ?? .controllers).wikiURL)
     }
 
     /// Fills the Activate Profile submenu with a row for each profile, or with one disabled row
