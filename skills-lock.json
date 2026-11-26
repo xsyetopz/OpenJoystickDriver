@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "skills": {
+    "codebase-refactoring": {
+      "source": "kucherenko/jscpd",
+      "commit": "28d2236026990badcabbd3ae3f73171b78cf77b1",
+      "sourceType": "github",
+      "skillPath": "skills/codebase-refactoring/SKILL.md",
+      "computedHash": "0bfd3743d1ff0bd1c38172e7c218375e62dfda992f4093762406d72b76423e50"
+    },
+    "dry-refactoring": {
+      "source": "kucherenko/jscpd",
+      "commit": "28d2236026990badcabbd3ae3f73171b78cf77b1",
+      "sourceType": "github",
+      "skillPath": "skills/dry-refactoring/SKILL.md",
+      "computedHash": "a1271fcaf6f275edf3b71f06371efe0ce346c44d1095114b311d66e6a9ed3d82"
+    },
+    "jscpd": {
+      "source": "kucherenko/jscpd",
+      "commit": "28d2236026990badcabbd3ae3f73171b78cf77b1",
+      "sourceType": "github",
+      "skillPath": "skills/jscpd/SKILL.md",
+      "computedHash": "46dbc92df0df5530300cc2cb0cfc17aa94aea4d1f1a287d1b4db43909817a913"
+    }
+  }
+}
