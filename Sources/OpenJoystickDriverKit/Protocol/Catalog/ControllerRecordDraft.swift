@@ -152,6 +152,10 @@ private struct DraftLayout {
   private var hat: [String: Any]?
   /// The mapped triggers, by their `input` key.
   private var triggers: [String: [String: Any]] = [:]
+  /// The controls mapped so far, so that no control maps twice.
+  private var named = Set<Control>()
+  /// The trigger keys mapped so far.
+  private var triggerKeys = Set<String>()
 
   /// The number of controls that mapped.
   var controlCount: Int { buttons.count + axes.count + (hat == nil ? 0 : 1) + triggers.count }
@@ -189,36 +193,52 @@ private struct DraftLayout {
       payload + base >= (id == 0 ? 1 : 2)
     else { return nil }
     length = payload + base
-    var named = Set<Control>()
-    var triggerKeys = Set<String>()
     for field in parsed.fields where field.reportID == id && !field.flags.isRelative {
-      let bitOffset = base * 8 + field.bitOffset
-      let shift = field.bitOffset % 8
-      switch (field.usagePage, field.usage) {
-      case (0x09, 1...Self.standardButtons.count) where field.bitSize == 1:
-        let control = Self.standardButtons[field.usage - 1]
-        guard named.insert(control).inserted else { continue }
-        buttons.append(["control": control.rawValue, "bitOffset": bitOffset, "bitSize": 1])
-      case (0x01, let usage) where Self.stickAxes[usage] != nil:
-        guard axes.count < 4, let control = Self.stickAxes[usage], !named.contains(control),
-          let axis = Self.axis(field, control: control, bitOffset: bitOffset)
-        else { continue }
-        named.insert(control)
-        axes.append(axis)
-      case (0x01, let usage) where Self.triggerAxes[usage] != nil:
-        guard let key = Self.triggerAxes[usage], field.bitSize == 8, shift == 0,
-          field.logicalMin == 0, triggerKeys.insert(key).inserted
-        else { continue }
-        triggers[key] = ["bitOffset": bitOffset, "bitSize": 8]
-      case (0x01, 0x39):
-        guard hat == nil, (3...8).contains(field.bitSize), shift + field.bitSize <= 8,
-          field.logicalMin == 0
-        else { continue }
-        hat = ["encoding": "EightWay", "bitOffset": bitOffset, "bitSize": field.bitSize]
-      default: continue
-      }
+      map(field, bitOffset: base * 8 + field.bitOffset)
     }
     guard controlCount > 0 else { return nil }
+  }
+
+  /// Maps `field` to the control its usage names, or skips it when the control is already
+  /// mapped or the field does not fit the control.
+  private mutating func map(_ field: HIDField, bitOffset: Int) {
+    switch (field.usagePage, field.usage) {
+    case (0x09, 1...Self.standardButtons.count) where field.bitSize == 1:
+      let control = Self.standardButtons[field.usage - 1]
+      guard named.insert(control).inserted else { return }
+      buttons.append(["control": control.rawValue, "bitOffset": bitOffset, "bitSize": 1])
+    case (0x01, let usage) where Self.stickAxes[usage] != nil:
+      mapStickAxis(field, usage: usage, bitOffset: bitOffset)
+    case (0x01, let usage) where Self.triggerAxes[usage] != nil:
+      mapTriggerAxis(field, usage: usage, bitOffset: bitOffset)
+    case (0x01, 0x39): mapHat(field, bitOffset: bitOffset)
+    default: return
+    }
+  }
+
+  /// Maps one of at most four stick axes.
+  private mutating func mapStickAxis(_ field: HIDField, usage: Int, bitOffset: Int) {
+    guard axes.count < 4, let control = Self.stickAxes[usage], !named.contains(control),
+      let axis = Self.axis(field, control: control, bitOffset: bitOffset)
+    else { return }
+    named.insert(control)
+    axes.append(axis)
+  }
+
+  /// Maps a byte-aligned 8-bit trigger that starts at 0.
+  private mutating func mapTriggerAxis(_ field: HIDField, usage: Int, bitOffset: Int) {
+    guard let key = Self.triggerAxes[usage], field.bitSize == 8, field.bitOffset.isMultiple(of: 8),
+      field.logicalMin == 0, triggerKeys.insert(key).inserted
+    else { return }
+    triggers[key] = ["bitOffset": bitOffset, "bitSize": 8]
+  }
+
+  /// Maps the first 3- to 8-bit hat that lies within one byte.
+  private mutating func mapHat(_ field: HIDField, bitOffset: Int) {
+    guard hat == nil, (3...8).contains(field.bitSize), field.bitOffset % 8 + field.bitSize <= 8,
+      field.logicalMin == 0
+    else { return }
+    hat = ["encoding": "EightWay", "bitOffset": bitOffset, "bitSize": field.bitSize]
   }
 
   /// A byte-aligned 8- or 16-bit axis, with its logical range when it is not the full range.
