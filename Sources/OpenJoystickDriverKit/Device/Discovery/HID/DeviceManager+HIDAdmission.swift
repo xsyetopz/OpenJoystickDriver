@@ -58,23 +58,14 @@ extension DeviceManager {
       )
       return
     }
-    // macOS serves a native controller: OJD binds only its native interface, observe-only, and
-    // leaves every other HID interface at its location to macOS.
-    if physicalDevice.nativePassThrough {
-      await yieldRawUSBPipelines(toNative: identifier)
-      await prepareNativeHIDLocation(connection)
-    } else {
-      // A native holder that this connection re-enumerated is gone, not a sibling to leave alone.
-      if hasNativeHIDDevice(at: routingAddress) {
-        await retireSupersededHIDConnections(by: connection)
-      }
-      if hasNativeHIDDevice(at: routingAddress) {
-        guard isCurrentHIDInitialization(connection) else { return }
-        recordPassThroughDevice(connection, vendorID: vendorID, productID: productID)
-        _ = await hidManager.releaseInputClaim(address: routingAddress)
-        return
-      }
-    }
+    guard
+      await prepareHIDLocation(
+        for: connection,
+        identifier: identifier,
+        vendorID: vendorID,
+        productID: productID
+      )
+    else { return }
     // A family's non-role interface carries no controller; its claim is held while a sibling
     // role is bound, through the unbound-claim reconciliation.
     guard role != .notRole else {
@@ -90,6 +81,44 @@ extension DeviceManager {
       await admitHIDController(identifier, connection: connection, ownership: ownership, role: role)
       return
     }
+    await admitHIDAdapterPorts(count, connection: connection, ownership: ownership, role: role)
+  }
+
+  /// Leaves the HID location of `connection` ready for its admission, and returns `false` when
+  /// macOS keeps serving it.
+  ///
+  /// macOS serves a native controller: OJD binds only its native interface, observe-only, and
+  /// leaves every other HID interface at its location to macOS.
+  private func prepareHIDLocation(
+    for connection: HIDDeviceConnection,
+    identifier: LogicalControllerID,
+    vendorID: UInt16,
+    productID: UInt16
+  ) async -> Bool {
+    let routingAddress = connection.routingAddress
+    if connection.physicalDevice.nativePassThrough {
+      await yieldRawUSBPipelines(toNative: identifier)
+      await prepareNativeHIDLocation(connection)
+      return true
+    }
+    // A native holder that this connection re-enumerated is gone, not a sibling to leave alone.
+    if hasNativeHIDDevice(at: routingAddress) {
+      await retireSupersededHIDConnections(by: connection)
+    }
+    guard hasNativeHIDDevice(at: routingAddress) else { return true }
+    guard isCurrentHIDInitialization(connection) else { return false }
+    recordPassThroughDevice(connection, vendorID: vendorID, productID: productID)
+    _ = await hidManager.releaseInputClaim(address: routingAddress)
+    return false
+  }
+
+  /// Admits each of the `count` ports of an adapter `connection` as its own logical controller.
+  private func admitHIDAdapterPorts(
+    _ count: Int,
+    connection: HIDDeviceConnection,
+    ownership: HIDInputOwnership,
+    role: HIDConnectionRole
+  ) async {
     // One rumble report drives every port's motor, so the ports share one bank.
     let rumbleBank = GameCubeAdapterRumbleBank()
     for port in 0..<count {
@@ -134,20 +163,11 @@ extension DeviceManager {
     let (binding, driver) = resolved
     clearUnboundDevice(.hid(connection.connectionID))
 
-    let name = controllerDisplayName(
-      productName: physicalDevice.productName,
-      vendorID: identifier.model.vendorID,
-      productID: identifier.model.productID
-    )
-    deviceInfos[identifier] = DeviceInfo(
-      name: name,
-      connection: physicalDevice.transportProperty ?? "HID",
-      serialNumber: identifier.hardware.serialNumber,
-      discoverySource: .hid,
+    let name = recordHIDDeviceInfo(
+      identifier,
+      connection: connection,
       binding: binding,
-      hidInputOwnership: ownership,
-      physicalDevice: physicalDevice,
-      hidConnectionID: connection.connectionID
+      ownership: ownership
     )
     if case .interface = role { hidRoleConnections[connection.connectionID] = identifier }
     guard !Task.isCancelled else {
@@ -160,32 +180,18 @@ extension DeviceManager {
     else { return }
     print("[DeviceManager] HID device connected:" + " \(name) (\(identifier))")
     let plan = driver.sessionPlan
-    let pipeline = DevicePipeline(
-      identifier: identifier,
-      transport: .hid(address: routingAddress),
-      driver: driver,
-      dispatcher: dispatcher,
+    let pipeline = makeHIDPipeline(
+      identifier,
+      connection: connection,
       binding: binding,
-      interface: physicalDevice.interfaces?.first,
-      macOSOwnedOutput: physicalDevice.nativePassThrough
-        ? MacOSOwnedOutput.allowance(for: binding.protocolID, record: binding.record) : nil,
-      startupPlayerIndicator: plan.assignsStartupPlayerIndicator
-        && !physicalDevice.nativePassThrough
-        ? claimStartupPlayerSlot(for: identifier) : nil,
-      usbTransportProvider: usbTransportProvider,
-      externalOutputAllowed: false,
-      frameTimings: frameTimings,
-      sessionState: suspendedControllerIdentities.contains(identifier) ? .suspended : .active,
-      unit: ControllerPortKey.of(identifier, installationKey: installationKey)
+      driver: driver,
+      plan: plan
     )
     let requiresSuccessfulStartupOutput = await pipeline.requiresSuccessfulHIDStartupOutput()
     if !requiresSuccessfulStartupOutput {
       await pipeline.setExternalOutputAllowed(externalOutputAllowed)
     }
-    guard !Task.isCancelled, !isStopping, isCurrentHIDInitialization(connection),
-      deviceInfos[identifier]?.hidConnectionID == connection.connectionID,
-      deviceInfos[identifier]?.physicalDevice == physicalDevice, pipelines[identifier] == nil
-    else { return }
+    guard canRegisterHIDPipeline(identifier, connection: connection) else { return }
     pipelines[identifier] = pipeline
     notifyServiceStatusChanged()
     guard ownership != .ownedByAnotherClient else { return }
@@ -358,85 +364,83 @@ extension DeviceManager {
     )
   }
 
-  /// Runs the startup of a registered HID `pipeline` in the order its session `plan` gives:
-  /// element routing, unbound-claim reconciliation, startup output, feature reads, activation
-  /// writes, output activation, the input-connection request, then periodic output.
-  ///
-  /// A native pass-through pipeline gets only the feature reads its allowance names, output
-  /// activation, and the rumble keep-alive its record resends. Each step stops the startup once
-  /// `pipeline` is no longer the current startup pipeline of `connection`. With
-  /// `requiresSuccessfulStartupOutput`, external output is allowed only after startup output
-  /// succeeded.
-  private func runHIDStartup(
-    _ pipeline: DevicePipeline,
-    for identifier: LogicalControllerID,
+  /// Records the device info of `identifier` on `connection` and returns its display name.
+  private func recordHIDDeviceInfo(
+    _ identifier: LogicalControllerID,
     connection: HIDDeviceConnection,
-    plan: DriverSessionPlan,
-    requiresSuccessfulStartupOutput: Bool
-  ) async {
-    await pipeline.start()
-    guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    if plan.parsesHIDElementValues { await hidManager.routeElementValues(connection: connection) }
-    guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    await reconcileUnboundHIDClaims()
-    guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    // macOS initializes a native controller; OJD sends it no startup, status or periodic output
-    // beyond its allowance, and makes feature reads only where the allowance says macOS does not.
-    // Its startup player indicator follows its first input report (`routeHIDInputReport`).
-    if pipeline.macOSOwnedOutput?.readsStartupFeatures == true {
-      await sendHIDStartupFeatureReadRequestsIfNeeded(pipeline: pipeline, connection: connection)
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
+    binding: ProtocolBinding,
+    ownership: HIDInputOwnership
+  ) -> String {
+    let physicalDevice = connection.physicalDevice
+    let name = controllerDisplayName(
+      productName: physicalDevice.productName,
+      vendorID: identifier.model.vendorID,
+      productID: identifier.model.productID
+    )
+    deviceInfos[identifier] = DeviceInfo(
+      name: name,
+      connection: physicalDevice.transportProperty ?? "HID",
+      serialNumber: identifier.hardware.serialNumber,
+      discoverySource: .hid,
+      binding: binding,
+      hidInputOwnership: ownership,
+      physicalDevice: physicalDevice,
+      hidConnectionID: connection.connectionID
+    )
+    return name
+  }
+
+  /// Whether the pipeline of `identifier` may be registered for `connection`: the admission is
+  /// still current, its device info still names this connection and device, and no pipeline holds
+  /// `identifier`.
+  private func canRegisterHIDPipeline(
+    _ identifier: LogicalControllerID,
+    connection: HIDDeviceConnection
+  ) -> Bool {
+    guard !Task.isCancelled, !isStopping, isCurrentHIDInitialization(connection),
+      let info = deviceInfos[identifier]
+    else { return false }
+    return info.hidConnectionID == connection.connectionID
+      && info.physicalDevice == connection.physicalDevice && pipelines[identifier] == nil
+  }
+
+  /// Builds the device pipeline of `identifier` on `connection`, with output held until startup
+  /// allows it.
+  ///
+  /// A native pass-through connection gets the output allowance macOS leaves to OJD and no startup
+  /// player indicator.
+  private func makeHIDPipeline(
+    _ identifier: LogicalControllerID,
+    connection: HIDDeviceConnection,
+    binding: ProtocolBinding,
+    driver: sending any PhysicalProtocolDriver,
+    plan: DriverSessionPlan
+  ) -> DevicePipeline {
+    let physicalDevice = connection.physicalDevice
+    let nativePassThrough = physicalDevice.nativePassThrough
+    var macOSOwnedOutput: MacOSOwnedOutput?
+    if nativePassThrough {
+      macOSOwnedOutput = MacOSOwnedOutput.allowance(for: binding.protocolID, record: binding.record)
     }
-    guard !pipeline.observesOnly else {
-      if await pipeline.controllerSessionState() == .active,
-        !(await pipeline.requiresInputConnectionBeforeOutput())
-      {
-        await pipeline.activateOutput()
-      }
-      // macOS runs the controller; OJD keeps alive only the rumble its record's template resends.
-      if await pipeline.resendsRumble {
-        scheduleHIDPeriodicOutput(for: identifier, pipeline: pipeline, connection: connection)
-      }
-      return
+    var startupPlayerIndicator: PhysicalPlayerIndicator?
+    if plan.assignsStartupPlayerIndicator, !nativePassThrough {
+      startupPlayerIndicator = claimStartupPlayerSlot(for: identifier)
     }
-    // Startup writes go before or after the feature reads; activation follows the reads unless
-    // it waits for a logical controller to connect.
-    var startupOutputSucceeded = true
-    if plan.outputPrecedesFeatureReads {
-      startupOutputSucceeded = await sendHIDStartupOutputReportsIfNeeded(
-        pipeline: pipeline,
-        connection: connection
-      )
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    }
-    await sendHIDStartupFeatureReadRequestsIfNeeded(pipeline: pipeline, connection: connection)
-    guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    if !plan.requiresInputConnectionBeforeOutput {
-      await sendHIDActivationWritesIfNeeded(pipeline: pipeline, connection: connection)
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    }
-    if !plan.outputPrecedesFeatureReads {
-      startupOutputSucceeded = await sendHIDStartupOutputReportsIfNeeded(
-        pipeline: pipeline,
-        connection: connection
-      )
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    }
-    if requiresSuccessfulStartupOutput {
-      guard startupOutputSucceeded else { return }
-      await pipeline.setExternalOutputAllowed(externalOutputAllowed)
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    }
-    if !plan.requiresInputConnectionBeforeOutput {
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-      if await pipeline.controllerSessionState() == .active {
-        await pipeline.activateOutput()
-      }
-      guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    }
-    await requestHIDInputConnectionStatusIfNeeded(pipeline: pipeline, connection: connection)
-    guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else { return }
-    scheduleHIDPeriodicOutput(for: identifier, pipeline: pipeline, connection: connection)
+    return DevicePipeline(
+      identifier: identifier,
+      transport: .hid(address: connection.routingAddress),
+      driver: driver,
+      dispatcher: dispatcher,
+      binding: binding,
+      interface: physicalDevice.interfaces?.first,
+      macOSOwnedOutput: macOSOwnedOutput,
+      startupPlayerIndicator: startupPlayerIndicator,
+      usbTransportProvider: usbTransportProvider,
+      externalOutputAllowed: false,
+      frameTimings: frameTimings,
+      sessionState: suspendedControllerIdentities.contains(identifier) ? .suspended : .active,
+      unit: ControllerPortKey.of(identifier, installationKey: installationKey)
+    )
   }
 
   /// Whether `connection` is still the initialization to finish: the manager is not stopping, the
@@ -450,42 +454,5 @@ extension DeviceManager {
       return true
     }
     return initialization.connection.connectionID == connection.connectionID
-  }
-
-  /// Repeats the keep-alive output of a HID controller at the interval of the pipeline until the
-  /// pipeline or its connection is replaced.
-  ///
-  /// A failed write is logged. Does nothing when `connection` is not the startup connection of
-  /// `pipeline`.
-  func scheduleHIDPeriodicOutput(
-    for identifier: LogicalControllerID,
-    pipeline: DevicePipeline,
-    connection: HIDDeviceConnection
-  ) {
-    guard isCurrentHIDStartupConnection(pipeline, connection: connection) else { return }
-    let address = connection.routingAddress
-    hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
-    hidPeriodicOutputTasks[identifier] = Task { [weak self] in
-      guard let self else { return }
-      while !Task.isCancelled {
-        guard let interval = await pipeline.hidKeepAliveInterval(), interval > 0 else {
-          return
-        }
-        guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else {
-          return
-        }
-        do { try await Task.sleep(nanoseconds: interval) } catch { return }
-        guard !Task.isCancelled,
-          await isCurrentHIDStartupPipeline(pipeline, connection: connection)
-        else { return }
-        if !(await sendHIDKeepAlive(
-          address: address,
-          identifier: identifier,
-          pipeline: pipeline
-        )) {
-          print("[DeviceManager] HID periodic output failed for route=\(address)")
-        }
-      }
-    }
   }
 }
