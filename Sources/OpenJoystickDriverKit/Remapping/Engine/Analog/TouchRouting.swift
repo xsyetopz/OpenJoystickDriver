@@ -39,106 +39,150 @@ extension RemappingEngineState {
     guard var device = devices[identifier] else { return [] }
     let surface = RemappingTouchSurface(sample.surface)
     let previous = device.analog.touchSurfaces[surface]
-    let oldContacts = previous?.contacts ?? [:]
-    var contacts: [UInt8: RemappingTouchContactState] = [:]
-    for contact in sample.contacts where contact.isActive {
-      let point = Self.normalizedPoint(contact)
-      contacts[contact.slot] = RemappingTouchContactState(
-        start: oldContacts[contact.slot]?.start ?? point,
-        position: point
-      )
-    }
-
-    let oldPrimaryID = previous?.primaryContactID
-    let primaryID = oldPrimaryID.flatMap { contacts[$0] == nil ? nil : $0 } ?? contacts.keys.min()
-    let next = RemappingTouchSurfaceState(contacts: contacts, primaryContactID: primaryID)
+    let next = Self.trackContacts(sample, previous: previous)
     device.analog.touchSurfaces[surface] = next
     devices[identifier] = device
-    let endedPrimaryContact = oldPrimaryID.flatMap { id -> RemappingTouchContactState? in
-      guard contacts[id] == nil, let old = previous?.contacts[id] else { return nil }
-      guard let final = sample.contacts.first(where: { $0.slot == id && !$0.isActive }) else {
-        return old
-      }
-      return RemappingTouchContactState(start: old.start, position: Self.normalizedPoint(final))
-    }
+    let endedPrimaryContact = Self.endedPrimaryContact(sample, previous: previous, next: next)
 
     var actions: [RemappingEngineAction] = []
     let possibleSources = device.profile.touchSources(on: surface)
     let oldDiscrete = device.activeSources.filter { $0.touchSurface == surface }
-    var nextDiscrete: Set<RemappingSource> = []
-    if primaryID != nil {
-      nextDiscrete.formUnion(
-        possibleSources.filter {
-          switch $0 {
-          case .touchContact: return true
-          case .touchGrid(let grid):
-            guard let primaryID, let contact = contacts[primaryID] else { return false }
-            return Self.gridCell(for: contact.position, columns: grid.columns, rows: grid.rows) == (
-              grid.column, grid.row
-            )
-          case .touchArea(let area): return contacts.values.contains { area.contains($0.position) }
-          case .touchSwipe: return false
-          case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .stickRegion,
-            .triggerBand:
-            return false
-          }
-        }
-      )
-    }
+    let nextDiscrete = Self.heldTouchSources(possibleSources, on: next)
     for source in oldDiscrete.subtracting(nextDiscrete).sorted(by: Self.touchSourceLessThan) {
       actions += setSource(source, isActive: false, for: identifier, at: uptime)
     }
     for source in nextDiscrete.subtracting(oldDiscrete).sorted(by: Self.touchSourceLessThan) {
       actions += setSource(source, isActive: true, for: identifier, at: uptime)
     }
-
-    if let contact = endedPrimaryContact,
-      let direction = Self.swipeDirection(from: contact.start, to: contact.position)
-    {
-      for source in possibleSources.sorted(by: Self.touchSourceLessThan) {
-        guard case .touchSwipe(let swipe) = source, swipe.direction == direction,
-          Self.swipeDistance(from: contact.start, to: contact.position, direction: direction)
-            >= swipe.minimumDistance
-        else { continue }
-        actions += setSource(source, isActive: true, for: identifier, at: uptime)
-        actions += setSource(source, isActive: false, for: identifier, at: uptime)
-      }
+    if let endedPrimaryContact {
+      actions += fireSwipes(
+        possibleSources,
+        for: endedPrimaryContact,
+        identifier: identifier,
+        at: uptime
+      )
     }
 
     guard let mapping = device.profile.touchMappings.first(where: { $0.surface == surface }) else {
       return actions
     }
+    return actions + followPrimaryContact(mapping, previous: previous, next: next, for: identifier)
+  }
+
+  /// Returns the surface's contacts after `sample`, each keeping the start of its contact.
+  ///
+  /// The primary contact stays primary while it touches; otherwise the lowest slot becomes primary.
+  private static func trackContacts(
+    _ sample: ControllerTouchSample,
+    previous: RemappingTouchSurfaceState?
+  ) -> RemappingTouchSurfaceState {
+    let oldContacts = previous?.contacts ?? [:]
+    var contacts: [UInt8: RemappingTouchContactState] = [:]
+    for contact in sample.contacts where contact.isActive {
+      let point = normalizedPoint(contact)
+      contacts[contact.slot] = RemappingTouchContactState(
+        start: oldContacts[contact.slot]?.start ?? point,
+        position: point
+      )
+    }
+    let primaryID =
+      previous?.primaryContactID.flatMap { contacts[$0] == nil ? nil : $0 } ?? contacts.keys.min()
+    return RemappingTouchSurfaceState(contacts: contacts, primaryContactID: primaryID)
+  }
+
+  /// Returns the primary contact that lifted in `sample`, at its lift position when the frame
+  /// reports one.
+  private static func endedPrimaryContact(
+    _ sample: ControllerTouchSample,
+    previous: RemappingTouchSurfaceState?,
+    next: RemappingTouchSurfaceState
+  ) -> RemappingTouchContactState? {
+    guard let id = previous?.primaryContactID, next.contacts[id] == nil,
+      let old = previous?.contacts[id]
+    else { return nil }
+    guard let final = sample.contacts.first(where: { $0.slot == id && !$0.isActive }) else {
+      return old
+    }
+    return RemappingTouchContactState(start: old.start, position: normalizedPoint(final))
+  }
+
+  /// Returns the contact, grid and area sources of `possibleSources` that `state` holds.
+  private static func heldTouchSources(
+    _ possibleSources: Set<RemappingSource>,
+    on state: RemappingTouchSurfaceState
+  ) -> Set<RemappingSource> {
+    guard let primaryID = state.primaryContactID else { return [] }
+    return possibleSources.filter {
+      switch $0 {
+      case .touchContact: return true
+      case .touchGrid(let grid):
+        guard let contact = state.contacts[primaryID] else { return false }
+        return gridCell(for: contact.position, columns: grid.columns, rows: grid.rows) == (
+          grid.column, grid.row
+        )
+      case .touchArea(let area):
+        return state.contacts.values.contains { area.contains($0.position) }
+      case .touchSwipe: return false
+      case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .stickRegion,
+        .triggerBand:
+        return false
+      }
+    }
+  }
+
+  /// Presses and releases each swipe source that the lifted `contact` travelled far enough for.
+  private mutating func fireSwipes(
+    _ possibleSources: Set<RemappingSource>,
+    for contact: RemappingTouchContactState,
+    identifier: LogicalControllerID,
+    at uptime: UInt64
+  ) -> [RemappingEngineAction] {
+    guard let direction = Self.swipeDirection(from: contact.start, to: contact.position) else {
+      return []
+    }
+    var actions: [RemappingEngineAction] = []
+    for source in possibleSources.sorted(by: Self.touchSourceLessThan) {
+      guard case .touchSwipe(let swipe) = source, swipe.direction == direction,
+        Self.swipeDistance(from: contact.start, to: contact.position, direction: direction)
+          >= swipe.minimumDistance
+      else { continue }
+      actions += setSource(source, isActive: true, for: identifier, at: uptime)
+      actions += setSource(source, isActive: false, for: identifier, at: uptime)
+    }
+    return actions
+  }
+
+  /// Moves the pointer or the virtual stick of `mapping` with the primary contact.
+  private mutating func followPrimaryContact(
+    _ mapping: RemappingTouchMapping,
+    previous: RemappingTouchSurfaceState?,
+    next: RemappingTouchSurfaceState,
+    for identifier: LogicalControllerID
+  ) -> [RemappingEngineAction] {
+    let primaryID = next.primaryContactID
     switch mapping.mode {
     case .pointer:
-      guard let primaryID, primaryID == oldPrimaryID,
+      guard let primaryID, primaryID == previous?.primaryContactID,
         let old = previous?.contacts[primaryID]?.position,
-        let current = contacts[primaryID]?.position
-      else { return actions }
+        let current = next.contacts[primaryID]?.position
+      else { return [] }
       let x = (current.x - old.x) * mapping.pointerSensitivity
       let y = (current.y - old.y) * mapping.pointerSensitivity
-      if x.isFinite, y.isFinite, x != 0 || y != 0 {
-        actions.append(.system(.pointerDelta(x: x, y: y)))
-      }
+      guard x.isFinite, y.isFinite, x != 0 || y != 0 else { return [] }
+      return [.system(.pointerDelta(x: x, y: y))]
     case .leftStick, .rightStick:
-      guard var updated = devices[identifier] else { return actions }
-      let axes: [RemappingAxis: Double]
-      if let primaryID, let contact = contacts[primaryID] {
+      guard var updated = devices[identifier] else { return [] }
+      var axes: [RemappingAxis: Double] = [:]
+      if let primaryID, let contact = next.contacts[primaryID] {
         let value = Self.stickValue(contact, mapping: mapping)
         let horizontal: RemappingAxis = mapping.mode == .leftStick ? .leftStickX : .rightStickX
         let vertical: RemappingAxis = mapping.mode == .leftStick ? .leftStickY : .rightStickY
         axes = [horizontal: value.x, vertical: value.y]
-      } else {
-        axes = [:]
       }
-      if let state = updated.outputs.gamepad.update(
-        RemappingGamepadState(axes: axes),
-        for: mapping.id
-      ) {
-        actions.append(.gamepad(state, identifier))
-      }
+      let state = updated.outputs.gamepad.update(RemappingGamepadState(axes: axes), for: mapping.id)
       devices[identifier] = updated
+      return state.map { [.gamepad($0, identifier)] } ?? []
     }
-    return actions
   }
 
   /// Normalizes a contact position by the full range of its own axis, so each axis is a fraction of
