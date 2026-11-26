@@ -290,42 +290,14 @@ extension AutomaticDispatcherCoordinator {
       pending = existing
     } else {
       current.pending?.task.cancel()
-      let request = Request(
-        controller: controller,
-        token: UUID(),
-        sessionGeneration: sessionGeneration,
-        publicationGeneration: publicationGeneration,
-        target: target
+      pending = startPublication(
+        controller,
+        target: target,
+        generations: (sessionGeneration, publicationGeneration),
+        predecessors: current.tasks.values.map(\.task),
+        context: PublicationContext(target: target, isEligible: isEligible, factory: factory),
+        replacesLiveBackend: replacesLiveBackend
       )
-      let predecessors = current.tasks.values.map(\.task)
-      let context = PublicationContext(target: target, isEligible: isEligible, factory: factory)
-      // Factories may synchronously block in native creation. Keep them off the coordinator and
-      // the cooperative pool.
-      let task = Task { [self] in
-        try Task.checkCancellation()
-        let candidate = AutomaticBackendSlot(
-          try await BlockingWork.run(label: "com.openjoystickdriver.output.factory") {
-            try factory(target)
-          }
-        )
-        do {
-          for predecessor in predecessors { _ = await predecessor.result }
-          if replacesLiveBackend {
-            try await replace(with: candidate, request: request, context: context)
-          } else {
-            try await install(candidate, request: request, factory: factory)
-          }
-        } catch {
-          _ = await candidate.retireAndWait()
-          throw error
-        }
-      }
-      pending = Pending(request: request, task: task)
-      // A replacement adopts its context only once it is live, so a failed one leaves recovery
-      // targeting the backend that stayed live.
-      if !replacesLiveBackend { entries[controller]?.context = context }
-      entries[controller]?.pending = pending
-      entries[controller]?.tasks[request.token] = pending
     }
     defer {
       entries[controller]?.tasks[pending.request.token] = nil
@@ -340,6 +312,55 @@ extension AutomaticDispatcherCoordinator {
       installed.installedToken == pending.request.token
     else { throw CancellationError() }
     return installed.installed?.acquire()
+  }
+
+  /// Starts building and publishing `target` for `controller` and records the request as pending.
+  ///
+  /// The build waits for every `predecessors` task, then installs the backend, or replaces the live
+  /// one when `replacesLiveBackend` is true.
+  private func startPublication(
+    _ controller: LogicalControllerID,
+    target: VirtualHIDProfileID,
+    generations: (session: UInt64, publication: UInt64),
+    predecessors: [Task<Void, any Error>],
+    context: PublicationContext,
+    replacesLiveBackend: Bool
+  ) -> Pending {
+    let request = Request(
+      controller: controller,
+      token: UUID(),
+      sessionGeneration: generations.session,
+      publicationGeneration: generations.publication,
+      target: target
+    )
+    // Factories may synchronously block in native creation. Keep them off the coordinator and
+    // the cooperative pool.
+    let task = Task { [self] in
+      try Task.checkCancellation()
+      let candidate = AutomaticBackendSlot(
+        try await BlockingWork.run(label: "com.openjoystickdriver.output.factory") {
+          try context.factory(target)
+        }
+      )
+      do {
+        for predecessor in predecessors { _ = await predecessor.result }
+        if replacesLiveBackend {
+          try await replace(with: candidate, request: request, context: context)
+        } else {
+          try await install(candidate, request: request, factory: context.factory)
+        }
+      } catch {
+        _ = await candidate.retireAndWait()
+        throw error
+      }
+    }
+    let pending = Pending(request: request, task: task)
+    // A replacement adopts its context only once it is live, so a failed one leaves recovery
+    // targeting the backend that stayed live.
+    if !replacesLiveBackend { entries[controller]?.context = context }
+    entries[controller]?.pending = pending
+    entries[controller]?.tasks[request.token] = pending
+    return pending
   }
 
   /// Throws `CancellationError` unless `request` is still the current request of its controller.
