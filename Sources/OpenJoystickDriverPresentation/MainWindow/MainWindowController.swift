@@ -71,103 +71,47 @@
       self.preferences = preferences
       let navigationModel = MainWindowNavigationModel(persistence: persistence)
       self.navigation = navigationModel
-      screens = MainWindowScreens(
+      let windowScreens = Self.makeScreens(
         runtime: runtime,
         supportReport: supportReport,
-        controllers: ControllersViewModel(runtime: runtime),
-        library: ProfileLibraryModel(runtime: runtime),
-        profiles: ProfilesViewModel(),
-        activity: ActivityModel(
-          log: ActivityLogModel(),
-          diagnostics: ActivityDiagnosticsModel {
-            await ActivityDiagnosticsChecks.run(gateway: supportReport.gateway)
-          }
-        ) { fix in
-          switch fix {
-          case .requestInputRead:
-            PermissionAccessActions.requestControllerAccess(
-              viewModel: runtime,
-              requirement: .inputRead
-            )
-          case .requestInputInject:
-            PermissionAccessActions.requestControllerAccess(
-              viewModel: runtime,
-              requirement: .inputInject
-            )
-          case .approveDriver:
-            if !SystemExtensionApproval.openSystemSettings() {
-              return OJDLocalized.string(
-                SystemSettingsMessage.openSettingsFailed.localizationKey()
-              )
-            }
-          case .showLibrary: _ = navigationModel.requestArea(.library)
-          }
-          return nil
-        },
-        errorCodeExplainer: ErrorCodeExplainerModel(),
-        whatsNew: WhatsNewModel(),
-        libraryArea: LibraryViewModel(),
-        access: AccessViewModel(),
+        navigation: navigationModel,
         restartApplication: restartApplication,
         openInputTest: openInputTest
       )
+      self.screens = windowScreens
 
-      let sidebar = NSSplitViewItem(
-        sidebarWithViewController: NSHostingController(
-          rootView: MainWindowSidebar(navigation: navigationModel)
-        )
-      )
+      let sidebar = Self.makeSidebarItem(navigation: navigationModel)
       self.sidebarItem = sidebar
-      sidebar.canCollapse = true
-      sidebar.minimumThickness = MainWindowSizingPolicy.sidebarWidth.minimum
-      sidebar.maximumThickness = MainWindowSizingPolicy.sidebarWidth.maximum
-      let list = NSSplitViewItem(
-        contentListWithViewController: NSHostingController(
-          rootView: MainWindowListRoot(
-            navigation: navigationModel,
-            runtime: runtime,
-            profiles: screens.profiles,
-            screens: screens,
-            preferences: preferences,
-            visibility: visibility
-          )
-        )
+      let list = Self.makeListItem(
+        navigation: navigationModel,
+        runtime: runtime,
+        screens: windowScreens,
+        preferences: preferences,
+        visibility: visibility
       )
-      list.minimumThickness = MainWindowSizingPolicy.listWidth.minimum
-      list.maximumThickness = MainWindowSizingPolicy.listWidth.maximum
-      list.isCollapsed = !navigationModel.selectedArea.hasListColumn
       self.listItem = list
-      let detailItem = NSSplitViewItem(
-        viewController: NSHostingController(
-          rootView: MainWindowRoot(
-            navigation: navigationModel,
-            runtime: runtime,
-            profiles: screens.profiles,
-            screens: screens,
-            preferences: preferences,
-            visibility: visibility
-          )
-        )
+      let detailItem = Self.makeDetailItem(
+        navigation: navigationModel,
+        runtime: runtime,
+        screens: windowScreens,
+        preferences: preferences,
+        visibility: visibility
       )
-      detailItem.minimumThickness = MainWindowSizingPolicy.minimumDetailWidth
       splitViewController.addSplitViewItem(sidebar)
       splitViewController.addSplitViewItem(list)
       splitViewController.addSplitViewItem(detailItem)
 
-      let window = NSWindow(
-        contentRect: NSRect(origin: .zero, size: MainWindowSizingPolicy.defaultContentSize),
-        styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-        backing: .buffered,
-        defer: false
-      )
-      window.hidesOnDeactivate = false
-      window.isReleasedWhenClosed = false
-      window.contentViewController = splitViewController
+      let window = Self.makeWindow(content: splitViewController)
       super.init(window: window)
       window.delegate = self
       configureToolbar(for: window)
       installSizingPolicy(on: window)
+      observeLayout(sidebar: sidebar, window: window)
+      observeState(runtime: runtime, window: window)
+    }
 
+    /// Keeps the window minimum and the list column width in step with the split view.
+    private func observeLayout(sidebar: NSSplitViewItem, window: NSWindow) {
       sidebarObservation = sidebar.publisher(for: \.isCollapsed).dropFirst().sink {
         [weak self, weak window] _ in
         guard let self, let window else { return }
@@ -177,6 +121,12 @@
         for: NSSplitView.didResizeSubviewsNotification,
         object: splitViewController.splitView
       ).receive(on: RunLoop.main).sink { [weak self] _ in self?.fitListToTitle() }
+    }
+
+    /// Keeps the window title, subtitle and toolbar in step with the selected area and the state
+    /// that enables the toolbar items.
+    private func observeState(runtime: RuntimeViewModel, window: NSWindow) {
+      let navigationModel = navigation
       areaObservation = navigationModel.$selectedArea.sink { [weak self] area in
         self?.reflect(area: area)
       }
@@ -317,7 +267,7 @@
 
     /// The selected profile, or nil while the runtime is unavailable, a damaged entry is selected
     /// or nothing is selected.
-    private var selectedProfile: RemappingProfile? {
+    var selectedProfile: RemappingProfile? {
       guard case .available(let snapshot) = screens.runtime.remappingState,
         screens.profiles.selectedRecoveryIssueID == nil,
         let selectedID = screens.profiles.selectedProfileID
@@ -546,28 +496,14 @@
       case .importProfile: screens.profiles.chooseProfileToImport()
       case .validateProfileFile: screens.profiles.validateProfileFile()
       case .duplicateProfile: screens.profiles.duplicatingProfile = selectedProfile
-      case .convertProfile:
-        if let selectedProfile { screens.profiles.beginConverting(selectedProfile) }
-      case .exportProfile:
-        if let selectedProfile { screens.profiles.exportProfile(selectedProfile) }
-      case .deleteProfile:
-        if let selectedProfile { screens.profiles.activeAlert = .delete(selectedProfile.id) }
+      case .convertProfile: convertSelectedProfile()
+      case .exportProfile: exportSelectedProfile()
+      case .deleteProfile: deleteSelectedProfile()
       case .installLibraryItem: installRecordOrMod()
-      case .grantProgram:
-        if let url = AccessFilePicker.chooseProgram() {
-          screens.access.requestGrant(programAt: url)
-        }
+      case .grantProgram: grantProgramAccess()
       case .createToken: screens.access.requestTokenForm()
-      case .validateLibraryItem:
-        if let url = LibraryFilePicker.chooseRecordOrModFolder() {
-          screens.libraryArea.validate(at: url)
-        }
-      case .testLibraryRecord:
-        if let capture = LibraryFilePicker.chooseCapture(),
-          let expectation = LibraryFilePicker.chooseExpectation()
-        {
-          screens.libraryArea.testSelectedRecord(capture: capture, expectation: expectation)
-        }
+      case .validateLibraryItem: validateLibraryFolder()
+      case .testLibraryRecord: testSelectedLibraryRecord()
       case .removeLibraryItem: screens.libraryArea.requestRemoveSelection()
       case .copyActivityLog: screens.activity.log.copyVisible()
       case .saveActivityLog: saveActivityLog()
