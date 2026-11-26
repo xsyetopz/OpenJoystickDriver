@@ -32,22 +32,8 @@ extension ApplicationServiceServer {
     value: Double?,
     directory: URL = ControllerRecordSet.userDirectory
   ) -> ControllerTuningResult {
-    func refused(
-      _ failure: ControllerTuningFailure,
-      detail: String? = nil
-    ) -> ControllerTuningResult {
-      ControllerTuningResult(
-        key: key,
-        value: value,
-        previous: nil,
-        file: nil,
-        created: false,
-        failure: failure,
-        detail: detail
-      )
-    }
     guard let vendor = UInt16(exactly: vendorID), let product = UInt16(exactly: productID) else {
-      return refused(.invalidRequest)
+      return Self.refusedTuning(key: key, value: value, failure: .invalidRequest)
     }
     return setControllerTuning(
       .model(ControllerModelID(vendorID: vendor, productID: product)),
@@ -64,20 +50,6 @@ extension ApplicationServiceServer {
     value: Double?,
     directory: URL = ControllerRecordSet.userDirectory
   ) -> ControllerTuningResult {
-    func refused(
-      _ failure: ControllerTuningFailure,
-      detail: String? = nil
-    ) -> ControllerTuningResult {
-      ControllerTuningResult(
-        key: key,
-        value: value,
-        previous: nil,
-        file: nil,
-        created: false,
-        failure: failure,
-        detail: detail
-      )
-    }
     let edit: ControllerRecordWriter.TuningEdit = value.map { .set(key, $0) } ?? .remove(key)
     let change: ControllerRecordWriter.Change
     do {
@@ -89,10 +61,16 @@ extension ApplicationServiceServer {
       )
     } catch {
       switch error {
-      case .notSet: return refused(.notSet)
-      case .refused(.noRecord): return refused(.noRecord)
+      case .notSet: return Self.refusedTuning(key: key, value: value, failure: .notSet)
+      case .refused(.noRecord):
+        return Self.refusedTuning(key: key, value: value, failure: .noRecord)
       case .refused(.invalidFile(let problem)), .refused(.invalidResult(let problem)):
-        return refused(.invalidRecord, detail: problem)
+        return Self.refusedTuning(
+          key: key,
+          value: value,
+          failure: .invalidRecord,
+          detail: problem
+        )
       }
     }
     var failure: ControllerTuningFailure?
@@ -107,6 +85,24 @@ extension ApplicationServiceServer {
       previous: change.previousTuning,
       file: change.file.path,
       created: change.created,
+      failure: failure,
+      detail: detail
+    )
+  }
+
+  /// The result of a tuning request that changed nothing, because of `failure`.
+  private static func refusedTuning(
+    key: ControllerTuning.Key,
+    value: Double?,
+    failure: ControllerTuningFailure,
+    detail: String? = nil
+  ) -> ControllerTuningResult {
+    ControllerTuningResult(
+      key: key,
+      value: value,
+      previous: nil,
+      file: nil,
+      created: false,
       failure: failure,
       detail: detail
     )
