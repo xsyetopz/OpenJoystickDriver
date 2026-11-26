@@ -105,11 +105,7 @@ struct RemappingMotionProcessor {
     tuning: RemappingMotionTuning = .default
   ) -> RemappingProcessedMotion? {
     let timestamp = sample.timestamp
-    if let previous {
-      guard timestamp.sequenceIndex > previous.sequenceIndex,
-        timestamp.monotonic >= previous.monotonic
-      else { return nil }
-    }
+    guard isNewer(timestamp) else { return nil }
     let reading = RemappingMotionReading(sample)
     guard (try? tuning.validate()) != nil,
       Self.withinBounds(reading.gyroscopeDegreesPerSecond, limit: 1_000_000),
@@ -120,12 +116,7 @@ struct RemappingMotionProcessor {
       return nil
     }
     let elapsed = previous.map { timestamp.monotonic.nanoseconds - $0.monotonic.nanoseconds } ?? 0
-    let discontinuity =
-      previous == nil || latest == nil || elapsed > 100_000_000 || previousTuning != tuning
-      || calibrationRevision != sample.calibrationRevision || previous?.basis != timestamp.basis
-      || calibrationSource != sample.calibrationSource
-      || previous?.tickNanosecondsNumerator != timestamp.tickNanosecondsNumerator
-      || previous?.tickNanosecondsDenominator != timestamp.tickNanosecondsDenominator
+    let discontinuity = isDiscontinuity(of: sample, tuning: tuning, elapsed: elapsed)
     previous = timestamp
     calibrationSource = sample.calibrationSource
     calibrationRevision = sample.calibrationRevision
@@ -135,16 +126,60 @@ struct RemappingMotionProcessor {
     let deltaTime = discontinuity ? 0 : Double(elapsed) / 1_000_000_000
     let corrected = bias.update(reading, deltaTime: deltaTime, automatic: tuning.automaticBias)
     guard
+      let result = fuseAndProject(
+        reading,
+        corrected: corrected,
+        timestamp: timestamp,
+        deltaTime: deltaTime,
+        tuning: tuning
+      )
+    else {
+      latest = nil
+      return nil
+    }
+    latest = result
+    return result
+  }
+
+  /// Whether `timestamp` follows the previous sample in sequence and in time.
+  private func isNewer(_ timestamp: ControllerSampleTimestamp) -> Bool {
+    guard let previous else { return true }
+    return timestamp.sequenceIndex > previous.sequenceIndex
+      && timestamp.monotonic >= previous.monotonic
+  }
+
+  /// Whether `sample` breaks the baseline: no previous sample or result, a gap over 100 ms, or a
+  /// change of tuning, calibration or time base.
+  private func isDiscontinuity(
+    of sample: ControllerMotionSample,
+    tuning: RemappingMotionTuning,
+    elapsed: UInt64
+  ) -> Bool {
+    let timestamp = sample.timestamp
+    return previous == nil || latest == nil || elapsed > 100_000_000 || previousTuning != tuning
+      || calibrationRevision != sample.calibrationRevision || previous?.basis != timestamp.basis
+      || calibrationSource != sample.calibrationSource
+      || previous?.tickNanosecondsNumerator != timestamp.tickNanosecondsNumerator
+      || previous?.tickNanosecondsDenominator != timestamp.tickNanosecondsDenominator
+  }
+
+  /// Fuses the corrected gyro with the acceleration, projects it, and tunes it; nil when fusion,
+  /// projection or the transform yields none.
+  private mutating func fuseAndProject(
+    _ reading: RemappingMotionReading,
+    corrected: ControllerMotionVector,
+    timestamp: ControllerSampleTimestamp,
+    deltaTime: Double,
+    tuning: RemappingMotionTuning
+  ) -> RemappingProcessedMotion? {
+    guard
       let fused = fusion.update(
         gyro: corrected,
         acceleration: reading.accelerationG,
         deltaTime: deltaTime,
         gravityCorrectionRate: tuning.gravityCorrectionRate
       )
-    else {
-      latest = nil
-      return nil
-    }
+    else { return nil }
     guard
       let projected = RemappingMotionProjection.project(
         corrected,
@@ -153,18 +188,13 @@ struct RemappingMotionProcessor {
         yawRelaxation: tuning.yawRelaxation,
         sideReductionThreshold: tuning.sideReductionThreshold
       ), let tuned = transform.apply(projected, deltaTime: deltaTime, tuning: tuning)
-    else {
-      latest = nil
-      return nil
-    }
-    let result = RemappingProcessedMotion(
+    else { return nil }
+    return RemappingProcessedMotion(
       timestamp: timestamp,
       deltaTime: deltaTime,
       fused: fused,
       tunedGyro: tuned
     )
-    latest = result
-    return result
   }
 
   /// Resets the bias, orientation, smoothing and baseline.
