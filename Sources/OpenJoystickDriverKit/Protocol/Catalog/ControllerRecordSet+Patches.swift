@@ -106,66 +106,12 @@ extension ControllerRecordSet {
     files: [ControllerRecordFile], replaced: [(ControllerModelID, URL)],
     units: [ControllerPortKey: ControllerCalibration]
   ) {
-    var results: [URL: ControllerRecordFile] = [:]
-    var units: [ControllerPortKey: ControllerCalibration] = [:]
-    var patches: [(entry: ControllerLayerEntry, patch: ControllerPatch)] = []
-    var owners: [ControllerModelID: String] = [:]
-    var replaced: [(ControllerModelID, URL)] = []
+    var state = LayerApplication()
     for entry in entries {
       do {
-        let name = entry.url.lastPathComponent
-        switch try parse(Data(contentsOf: entry.url), file: entry.url, layer: layer) {
-        case .record(let record):
-          guard name == fileName(for: record.model) else {
-            throw ControllerRecordProblem(
-              code: .invalidControllerRecord,
-              key: "error.E5007.userFile.fileNameRecord",
-              arguments: [fileName(for: record.model)],
-              "the file name must be \(fileName(for: record.model))"
-            )
-          }
-          if let owner = entry.owner {
-            if let other = owners[record.model] {
-              throw ControllerRecordProblem(
-                code: .invalidControllerRecord,
-                key: "error.E5007.userFile.packageSameController",
-                arguments: [other],
-                "same controller as package \(other)"
-              )
-            }
-            owners[record.model] = owner
-          }
-          records[record.model] = record
-          if layer == .user { replaced.append((record.model, entry.url)) }
-          results[entry.url] = ControllerRecordFile(
-            url: entry.url,
-            model: record.model,
-            operation: .add,
-            problem: nil
-          )
-        case .patch(let patch):
-          guard name == patch.selector.fileName else {
-            throw ControllerRecordProblem(
-              code: .invalidControllerRecord,
-              key: "error.E5007.userFile.fileNamePatch",
-              arguments: [patch.selector.fileName],
-              "the file name must be \(patch.selector.fileName)"
-            )
-          }
-          if case .unit(let model, let unit) = patch.selector {
-            units[unit] = try unitCalibration(patch, over: records[model], layer: layer)
-            results[entry.url] = ControllerRecordFile(
-              url: entry.url,
-              model: model,
-              operation: .patch,
-              problem: nil
-            )
-          } else {
-            patches.append((entry, patch))
-          }
-        }
+        try readLayerEntry(entry, layer: layer, records: &records, state: &state)
       } catch {
-        results[entry.url] = ControllerRecordFile(
+        state.results[entry.url] = ControllerRecordFile(
           url: entry.url,
           model: nil,
           operation: nil,
@@ -178,50 +124,140 @@ extension ControllerRecordSet {
         )
       }
     }
-    for (entry, patch) in ControllerPatchMerge.ordered(patches, by: { ($0.patch, $0.entry.owner) })
-    {
-      let targets = records.keys.filter { patch.selector.selects($0) }.sorted()
-      var failure: String?
-      if targets.isEmpty, patch.selector != .all {
-        failure = ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.userFile.unknownController",
-          arguments: [patch.selector.description],
-          "\(patch.selector.description) is not a known controller; use a Controller file"
-        ).localizedDescription(localization, file: entry.url.lastPathComponent)
-      }
-      for target in targets {
-        guard let record = records[target] else {
-          preconditionFailure("every target comes from the keys of records")
-        }
-        do {
-          records[target] = try apply(patch, to: record, layer: layer, file: entry.url)
-        } catch {
-          failure =
-            failure
-            ?? problemDescription(
-              error,
-              document: "record",
-              localization: localization,
-              file: entry.url.lastPathComponent
-            )
-        }
-      }
-      let model: ControllerModelID? =
-        switch patch.selector {
-        case .all: nil
-        case .identity(let model): model
-        case .model: targets.first
-        case .unit(let model, _): model
-        }
-      results[entry.url] = ControllerRecordFile(
-        url: entry.url,
-        model: model,
-        operation: .patch,
-        problem: failure
+    for (entry, patch) in ControllerPatchMerge.ordered(
+      state.patches,
+      by: { ($0.patch, $0.entry.owner) }
+    ) {
+      state.results[entry.url] = applyLayerPatch(
+        patch,
+        entry: entry,
+        layer: layer,
+        localization: localization,
+        to: &records
       )
     }
-    return (entries.compactMap { results[$0.url] }, replaced, units)
+    return (entries.compactMap { state.results[$0.url] }, state.replaced, state.units)
+  }
+
+  /// What reading the files of one layer collects.
+  private struct LayerApplication {
+    var results: [URL: ControllerRecordFile] = [:]
+    var units: [ControllerPortKey: ControllerCalibration] = [:]
+    var patches: [(entry: ControllerLayerEntry, patch: ControllerPatch)] = []
+    var owners: [ControllerModelID: String] = [:]
+    var replaced: [(ControllerModelID, URL)] = []
+  }
+
+  /// Reads one file of a layer: a Controller file replaces a record, a `unit` patch sets a
+  /// calibration, and any other patch is collected for the merge order of its layer.
+  private static func readLayerEntry(
+    _ entry: ControllerLayerEntry,
+    layer: ControllerRecordLayer,
+    records: inout [ControllerModelID: ControllerRecord],
+    state: inout LayerApplication
+  ) throws {
+    let name = entry.url.lastPathComponent
+    switch try parse(Data(contentsOf: entry.url), file: entry.url, layer: layer) {
+    case .record(let record):
+      guard name == fileName(for: record.model) else {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.userFile.fileNameRecord",
+          arguments: [fileName(for: record.model)],
+          "the file name must be \(fileName(for: record.model))"
+        )
+      }
+      if let owner = entry.owner {
+        if let other = state.owners[record.model] {
+          throw ControllerRecordProblem(
+            code: .invalidControllerRecord,
+            key: "error.E5007.userFile.packageSameController",
+            arguments: [other],
+            "same controller as package \(other)"
+          )
+        }
+        state.owners[record.model] = owner
+      }
+      records[record.model] = record
+      if layer == .user { state.replaced.append((record.model, entry.url)) }
+      state.results[entry.url] = ControllerRecordFile(
+        url: entry.url,
+        model: record.model,
+        operation: .add,
+        problem: nil
+      )
+    case .patch(let patch):
+      guard name == patch.selector.fileName else {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.userFile.fileNamePatch",
+          arguments: [patch.selector.fileName],
+          "the file name must be \(patch.selector.fileName)"
+        )
+      }
+      if case .unit(let model, let unit) = patch.selector {
+        state.units[unit] = try unitCalibration(patch, over: records[model], layer: layer)
+        state.results[entry.url] = ControllerRecordFile(
+          url: entry.url,
+          model: model,
+          operation: .patch,
+          problem: nil
+        )
+      } else {
+        state.patches.append((entry, patch))
+      }
+    }
+  }
+
+  /// Applies `patch` to every record its selector selects and returns the file's result, which
+  /// holds the first failure.
+  private static func applyLayerPatch(
+    _ patch: ControllerPatch,
+    entry: ControllerLayerEntry,
+    layer: ControllerRecordLayer,
+    localization: Localization,
+    to records: inout [ControllerModelID: ControllerRecord]
+  ) -> ControllerRecordFile {
+    let targets = records.keys.filter { patch.selector.selects($0) }.sorted()
+    var failure: String?
+    if targets.isEmpty, patch.selector != .all {
+      failure = ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.userFile.unknownController",
+        arguments: [patch.selector.description],
+        "\(patch.selector.description) is not a known controller; use a Controller file"
+      ).localizedDescription(localization, file: entry.url.lastPathComponent)
+    }
+    for target in targets {
+      guard let record = records[target] else {
+        preconditionFailure("every target comes from the keys of records")
+      }
+      do {
+        records[target] = try apply(patch, to: record, layer: layer, file: entry.url)
+      } catch {
+        failure =
+          failure
+          ?? problemDescription(
+            error,
+            document: "record",
+            localization: localization,
+            file: entry.url.lastPathComponent
+          )
+      }
+    }
+    let model: ControllerModelID? =
+      switch patch.selector {
+      case .all: nil
+      case .identity(let model): model
+      case .model: targets.first
+      case .unit(let model, _): model
+      }
+    return ControllerRecordFile(
+      url: entry.url,
+      model: model,
+      operation: .patch,
+      problem: failure
+    )
   }
 
   /// The calibration that the `unit` patch `patch` sets over `record`, the record of its model.
