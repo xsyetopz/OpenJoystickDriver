@@ -126,6 +126,68 @@ public enum SystemGamepadSupportAuditor {
     var versionNumbers: Set<Int> = []
   }
 
+  /// The entries, bundle versions and counts read so far from GameController bundles.
+  private struct BundleScan {
+    /// The values collected for each vendor and product ID.
+    var accumulators: [ControllerModelID: EntryAccumulator] = [:]
+    /// The bundle versions seen.
+    var versions: Set<String> = []
+    /// The devices without an exact numeric vendor and product ID.
+    var skippedDeviceCount = 0
+    /// The bundles that do not parse or list no devices.
+    var malformedBundleCount = 0
+
+    /// Reads one bundle's `Info.plist` contents; a bundle that does not parse or lists no devices
+    /// counts as malformed.
+    mutating func add(bundleInfo data: Data) {
+      guard
+        let plist = try? unsafe PropertyListSerialization.propertyList(
+          from: data,
+          options: 0,
+          format: nil
+        ), let dictionary = plist as? [String: Any]
+      else {
+        malformedBundleCount += 1
+        return
+      }
+
+      if let version = dictionary["CFBundleVersion"] as? String, !version.isEmpty {
+        versions.insert(version)
+      }
+      guard let devices = dictionary["Devices"] as? [[String: Any]] else {
+        malformedBundleCount += 1
+        return
+      }
+      for device in devices { add(device: device) }
+    }
+
+    /// Reads one device record; one without an exact numeric vendor and product ID counts as
+    /// skipped.
+    private mutating func add(device: [String: Any]) {
+      guard let match = device["IOPropertyMatch"] as? [String: Any],
+        let vendor = SystemGamepadSupportAuditor.integer(match["VendorID"]),
+        let product = SystemGamepadSupportAuditor.integer(match["ProductID"]),
+        (0...65_535).contains(vendor), (0...65_535).contains(product)
+      else {
+        skippedDeviceCount += 1
+        return
+      }
+
+      let key = ControllerModelID(vendorID: UInt16(vendor), productID: UInt16(product))
+      var accumulator = accumulators[key] ?? EntryAccumulator()
+      if let identifier = device["Identifier"] as? String, !identifier.isEmpty {
+        accumulator.identifiers.insert(identifier)
+      }
+      if let transport = match["Transport"] as? String, !transport.isEmpty {
+        accumulator.transports.insert(transport)
+      }
+      if let versionNumber = SystemGamepadSupportAuditor.integer(match["VersionNumber"]) {
+        accumulator.versionNumbers.insert(versionNumber)
+      }
+      accumulators[key] = accumulator
+    }
+  }
+
   /// The catalog of one asset.
   private struct AssetCandidate {
     /// The highest bundle version of the asset.
@@ -238,56 +300,10 @@ public enum SystemGamepadSupportAuditor {
     bundleInfoData: [Data],
     source: SystemGamepadCatalogSource
   ) -> SystemGamepadCatalogSnapshot {
-    var accumulators: [ControllerModelID: EntryAccumulator] = [:]
-    var versions: Set<String> = []
-    var skippedDeviceCount = 0
-    var malformedBundleCount = 0
+    var scan = BundleScan()
+    for data in bundleInfoData { scan.add(bundleInfo: data) }
 
-    for data in bundleInfoData {
-      guard
-        let plist = try? unsafe PropertyListSerialization.propertyList(
-          from: data,
-          options: 0,
-          format: nil
-        ), let dictionary = plist as? [String: Any]
-      else {
-        malformedBundleCount += 1
-        continue
-      }
-
-      if let version = dictionary["CFBundleVersion"] as? String, !version.isEmpty {
-        versions.insert(version)
-      }
-      guard let devices = dictionary["Devices"] as? [[String: Any]] else {
-        malformedBundleCount += 1
-        continue
-      }
-
-      for device in devices {
-        guard let match = device["IOPropertyMatch"] as? [String: Any],
-          let vendor = integer(match["VendorID"]), let product = integer(match["ProductID"]),
-          (0...65_535).contains(vendor), (0...65_535).contains(product)
-        else {
-          skippedDeviceCount += 1
-          continue
-        }
-
-        let key = ControllerModelID(vendorID: UInt16(vendor), productID: UInt16(product))
-        var accumulator = accumulators[key] ?? EntryAccumulator()
-        if let identifier = device["Identifier"] as? String, !identifier.isEmpty {
-          accumulator.identifiers.insert(identifier)
-        }
-        if let transport = match["Transport"] as? String, !transport.isEmpty {
-          accumulator.transports.insert(transport)
-        }
-        if let versionNumber = integer(match["VersionNumber"]) {
-          accumulator.versionNumbers.insert(versionNumber)
-        }
-        accumulators[key] = accumulator
-      }
-    }
-
-    let entries = accumulators.map { key, accumulator in
+    let entries = scan.accumulators.map { key, accumulator in
       SystemGamepadCatalogEntry(
         vendorID: key.vendorID,
         productID: key.productID,
@@ -297,21 +313,21 @@ public enum SystemGamepadSupportAuditor {
       )
     }
     var warnings: [String] = []
-    if malformedBundleCount > 0 {
+    if scan.malformedBundleCount > 0 {
       warnings.append(
-        "\(malformedBundleCount) GameController catalog bundle(s) could not be parsed."
+        "\(scan.malformedBundleCount) GameController catalog bundle(s) could not be parsed."
       )
     }
-    if skippedDeviceCount > 0 {
+    if scan.skippedDeviceCount > 0 {
       warnings.append(
-        "\(skippedDeviceCount) catalog device record(s) lacked an exact numeric VID/PID."
+        "\(scan.skippedDeviceCount) catalog device record(s) lacked an exact numeric VID/PID."
       )
     }
     return SystemGamepadCatalogSnapshot(
       source: source,
-      bundleVersions: Array(versions),
+      bundleVersions: Array(scan.versions),
       entries: entries,
-      skippedDeviceCount: skippedDeviceCount,
+      skippedDeviceCount: scan.skippedDeviceCount,
       warnings: warnings
     )
   }
