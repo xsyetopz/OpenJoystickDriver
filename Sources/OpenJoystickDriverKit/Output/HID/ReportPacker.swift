@@ -123,69 +123,6 @@ struct HIDReportPacker: Sendable {
   func pack(state: VirtualGamepadState) -> [UInt8] {
     var payload = [UInt8](repeating: 0, count: max(0, payloadSizeBytes))
 
-    func setBits(bitOffset: Int, bitSize: Int, value: UInt32) {
-      // Little-endian bit numbering within the report.
-      for bit in 0..<bitSize {
-        let dstBit = bitOffset + bit
-        let byteIndex = dstBit / 8
-        let bitIndex = dstBit % 8
-        if byteIndex < 0 || byteIndex >= payload.count { continue }
-        let mask = UInt8(1 << bitIndex)
-        if ((value >> bit) & 1) != 0 {
-          payload[byteIndex] |= mask
-        } else {
-          payload[byteIndex] &= ~mask
-        }
-      }
-    }
-
-    func encodeAxis(_ v: Int16, field: HIDField, signed: Bool) -> UInt32 {
-      let minV = field.logicalMin
-      let maxV = field.logicalMax
-      if signed, minV < 0 {
-        let maxAbs = max(abs(minV), abs(maxV))
-        let scaled = Int(Double(v) / 32767.0 * Double(maxAbs))
-        let clamped = max(minV, min(maxV, scaled))
-        return UInt32(bitPattern: Int32(clamped))
-      }
-      // Unsigned sticks: Int16 0 maps to the unsigned center. Xbox Series BLE
-      // axes are 0...65535 with rest 0x8000 (SDL HIDAPI: raw - 0x8000).
-      let unsigned = Int(v) - Int(Int16.min)
-      let span = maxV - minV
-      let scaled = span == 0 ? minV : minV + unsigned * span / 65_535
-      let clamped = max(minV, min(maxV, scaled))
-      return UInt32(clamped)
-    }
-
-    func encodeTrigger(_ v: Int16, field: HIDField) -> UInt32 {
-      let minV = field.logicalMin
-      let maxV = field.logicalMax
-      let scaled = Int(Double(v) / 32767.0 * Double(maxV - minV) + Double(minV))
-      let clamped = max(minV, min(maxV, scaled))
-      return UInt32(clamped)
-    }
-
-    func encodeHat(_ hat: GamepadHIDDescriptor.Hat, field: HIDField) -> UInt32 {
-      let minV = field.logicalMin
-      let maxV = field.logicalMax
-      let hasNull = field.flags.hasNullState
-      if hat == .neutral {
-        if hasNull {
-          // Many hats use "8" as at-rest for 0..7.
-          if minV == 0, maxV == 7 { return UInt32(maxV + 1) }
-          // Or "0" as at-rest for 1..8 (below min).
-          if minV == 1, maxV == 8 { return 0 }
-        }
-        return UInt32(minV)
-      }
-      // Map our 1..8 to either 0..7 or 1..8 depending on logical min.
-      let idx = Int(hat.rawValue) - 1
-      if minV == 0, maxV == 7 { return UInt32(idx) }
-      if minV == 1, maxV == 8 { return UInt32(idx + 1) }
-      // Fallback: clamp into range.
-      return UInt32(max(minV, min(maxV, idx + minV)))
-    }
-
     // Buttons use stable OJD standard bits; profiles may map them to different
     // descriptor usages without changing the global standard ordering.
     for bitIndex in 0..<32 {
@@ -197,28 +134,120 @@ struct HIDReportPacker: Sendable {
         )
       guard let field = fields[usage] else { continue }
       let pressed = ((state.buttons >> bitIndex) & 1) != 0
-      setBits(bitOffset: field.bitOffset, bitSize: field.bitSize, value: pressed ? 1 : 0)
+      Self.setBits(
+        in: &payload,
+        bitOffset: field.bitOffset,
+        bitSize: field.bitSize,
+        value: pressed ? 1 : 0
+      )
     }
 
     for role in HIDAxisRole.allCases {
       guard let usage = axisUsageMap[role], let f = fields[usage] else { continue }
-      let value: UInt32
-      switch role {
-      case .leftStickX: value = encodeAxis(state.leftStickX, field: f, signed: true)
-      case .leftStickY: value = encodeAxis(state.leftStickY, field: f, signed: true)
-      case .rightStickX: value = encodeAxis(state.rightStickX, field: f, signed: true)
-      case .rightStickY: value = encodeAxis(state.rightStickY, field: f, signed: true)
-      case .leftTrigger: value = encodeTrigger(state.effectiveLeftTrigger, field: f)
-      case .rightTrigger: value = encodeTrigger(state.effectiveRightTrigger, field: f)
-      }
-      setBits(bitOffset: f.bitOffset, bitSize: f.bitSize, value: value)
+      Self.setBits(
+        in: &payload,
+        bitOffset: f.bitOffset,
+        bitSize: f.bitSize,
+        value: Self.encode(role, of: state, field: f)
+      )
     }
 
     if let f = hatField {
-      setBits(bitOffset: f.bitOffset, bitSize: f.bitSize, value: encodeHat(state.hat, field: f))
+      Self.setBits(
+        in: &payload,
+        bitOffset: f.bitOffset,
+        bitSize: f.bitSize,
+        value: Self.encodeHat(state.hat, field: f)
+      )
     }
 
     if reportID != 0 { return [reportID] + payload }
     return payload
+  }
+
+  /// Writes the low `bitSize` bits of `value` into `payload` at `bitOffset`; bits outside the
+  /// payload are dropped.
+  private static func setBits(
+    in payload: inout [UInt8],
+    bitOffset: Int,
+    bitSize: Int,
+    value: UInt32
+  ) {
+    // Little-endian bit numbering within the report.
+    for bit in 0..<bitSize {
+      let dstBit = bitOffset + bit
+      let byteIndex = dstBit / 8
+      let bitIndex = dstBit % 8
+      if byteIndex < 0 || byteIndex >= payload.count { continue }
+      let mask = UInt8(1 << bitIndex)
+      if ((value >> bit) & 1) != 0 {
+        payload[byteIndex] |= mask
+      } else {
+        payload[byteIndex] &= ~mask
+      }
+    }
+  }
+
+  /// The field value of one axis role in `state`.
+  private static func encode(
+    _ role: HIDAxisRole,
+    of state: VirtualGamepadState,
+    field: HIDField
+  ) -> UInt32 {
+    switch role {
+    case .leftStickX: encodeAxis(state.leftStickX, field: field, signed: true)
+    case .leftStickY: encodeAxis(state.leftStickY, field: field, signed: true)
+    case .rightStickX: encodeAxis(state.rightStickX, field: field, signed: true)
+    case .rightStickY: encodeAxis(state.rightStickY, field: field, signed: true)
+    case .leftTrigger: encodeTrigger(state.effectiveLeftTrigger, field: field)
+    case .rightTrigger: encodeTrigger(state.effectiveRightTrigger, field: field)
+    }
+  }
+
+  private static func encodeAxis(_ v: Int16, field: HIDField, signed: Bool) -> UInt32 {
+    let minV = field.logicalMin
+    let maxV = field.logicalMax
+    if signed, minV < 0 {
+      let maxAbs = max(abs(minV), abs(maxV))
+      let scaled = Int(Double(v) / 32767.0 * Double(maxAbs))
+      let clamped = max(minV, min(maxV, scaled))
+      return UInt32(bitPattern: Int32(clamped))
+    }
+    // Unsigned sticks: Int16 0 maps to the unsigned center. Xbox Series BLE
+    // axes are 0...65535 with rest 0x8000 (SDL HIDAPI: raw - 0x8000).
+    let unsigned = Int(v) - Int(Int16.min)
+    let span = maxV - minV
+    let scaled = span == 0 ? minV : minV + unsigned * span / 65_535
+    let clamped = max(minV, min(maxV, scaled))
+    return UInt32(clamped)
+  }
+
+  private static func encodeTrigger(_ v: Int16, field: HIDField) -> UInt32 {
+    let minV = field.logicalMin
+    let maxV = field.logicalMax
+    let scaled = Int(Double(v) / 32767.0 * Double(maxV - minV) + Double(minV))
+    let clamped = max(minV, min(maxV, scaled))
+    return UInt32(clamped)
+  }
+
+  private static func encodeHat(_ hat: GamepadHIDDescriptor.Hat, field: HIDField) -> UInt32 {
+    let minV = field.logicalMin
+    let maxV = field.logicalMax
+    let hasNull = field.flags.hasNullState
+    if hat == .neutral {
+      if hasNull {
+        // Many hats use "8" as at-rest for 0..7.
+        if minV == 0, maxV == 7 { return UInt32(maxV + 1) }
+        // Or "0" as at-rest for 1..8 (below min).
+        if minV == 1, maxV == 8 { return 0 }
+      }
+      return UInt32(minV)
+    }
+    // Map our 1..8 to either 0..7 or 1..8 depending on logical min.
+    let idx = Int(hat.rawValue) - 1
+    if minV == 0, maxV == 7 { return UInt32(idx) }
+    if minV == 1, maxV == 8 { return UInt32(idx + 1) }
+    // Fallback: clamp into range.
+    return UInt32(max(minV, min(maxV, idx + minV)))
   }
 }
