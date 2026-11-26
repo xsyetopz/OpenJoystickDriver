@@ -149,41 +149,67 @@ actor RemappingRoutingCore {
     case .virtualGamepad:
       guard route.eligibility == .eligible else { return }
       _ = try requireOperationalPermit(proposedPermit)
-      switch input {
-      case .input(let event):
-        try? await virtualOutput.consume(
-          .controller(event, from: identifier),
-          onDelivered: onPublished
-        )
-      case .activation:
-        try? await virtualOutput.consume(.activation(identifier)) {}
-      }
+      await dispatchToVirtualGamepad(input, from: identifier, onPublished: onPublished)
     case .remapping(let profile):
       guard route.eligibility == .eligible else { return }
       let permit = try requireOperationalPermit(proposedPermit)
-      do {
-        switch input {
-        case .input(let event):
-          try await engine.process(
-            pairEvent(event, from: identifier),
-            from: identifier,
-            into: routingIdentifier,
-            using: profile,
-            at: uptimeNanoseconds,
-            requiring: permit
-          )
-        case .activation:
-          try await engine.setProfile(profile, for: routingIdentifier, requiring: permit)
-        }
-      } catch let error as RemappingEventEngineError {
-        if error == .outputSuspended {
-          if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
-          return
-        }
-        recordEngineFailure(error)
-        throw RemappingOutputRoutingError.engine(error)
-      }
+      try await dispatchToEngine(
+        input,
+        from: identifier,
+        into: routingIdentifier,
+        using: profile,
+        at: uptimeNanoseconds,
+        requiring: permit
+      )
     case .unavailable(let error): throw error
+    }
+  }
+
+  private func dispatchToVirtualGamepad(
+    _ input: RemappingRoutedInput,
+    from identifier: LogicalControllerID,
+    onPublished: @escaping @Sendable () -> Void
+  ) async {
+    switch input {
+    case .input(let event):
+      try? await virtualOutput.consume(
+        .controller(event, from: identifier),
+        onDelivered: onPublished
+      )
+    case .activation:
+      try? await virtualOutput.consume(.activation(identifier)) {}
+    }
+  }
+
+  private func dispatchToEngine(
+    _ input: RemappingRoutedInput,
+    from identifier: LogicalControllerID,
+    into routingIdentifier: LogicalControllerID,
+    using profile: RemappingProfile,
+    at uptimeNanoseconds: UInt64,
+    requiring permit: RemappingEmissionPermit
+  ) async throws {
+    do {
+      switch input {
+      case .input(let event):
+        try await engine.process(
+          pairEvent(event, from: identifier),
+          from: identifier,
+          into: routingIdentifier,
+          using: profile,
+          at: uptimeNanoseconds,
+          requiring: permit
+        )
+      case .activation:
+        try await engine.setProfile(profile, for: routingIdentifier, requiring: permit)
+      }
+    } catch let error as RemappingEventEngineError {
+      if error == .outputSuspended {
+        if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
+        return
+      }
+      recordEngineFailure(error)
+      throw RemappingOutputRoutingError.engine(error)
     }
   }
 
