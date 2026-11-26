@@ -108,28 +108,10 @@ struct ProfileSetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let selector = profile
-      let (current, snapshot) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
-      }
-      let edited = try ProfileSetting.change(current, key: key, to: ProfileValue(argument: value))
-      guard edited != current else {
-        try printProfile(
-          ProfileResult(profile: ProfileSummary(current, snapshot: snapshot), changed: false),
-          message: CLILocalized.text("cli.profile.edit.unchanged")
-        )
-        return
-      }
-      let after = try await ServiceConnection.request {
-        try await $0.updateRemappingProfile(edited, expectedCurrent: current)
-      }
-      try printProfile(
-        ProfileResult(profile: try savedSummary(edited.id, in: after), changed: true),
-        message: CLILocalized.format(
-          "cli.profile.set.done",
-          key.text,
-          edited.name
-        )
+      try await saveProfileChange(
+        of: profile,
+        change: { try ProfileSetting.change($0, key: key, to: ProfileValue(argument: value)) },
+        message: { CLILocalized.format("cli.profile.set.done", key.text, $0.name) }
       )
     }
   }

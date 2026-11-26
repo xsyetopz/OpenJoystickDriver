@@ -347,25 +347,9 @@ struct ProfileEditCommand: AsyncParsableCommand {
           )
         )
       }
-      let selector = profile
-      let (current, snapshot) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
+      try await saveProfileChange(of: profile, change: Self.edit) {
+        CLILocalized.format("cli.profile.edit.done", $0.name)
       }
-      let edited = try Self.edit(current)
-      guard edited != current else {
-        try printProfile(
-          ProfileResult(profile: ProfileSummary(current, snapshot: snapshot), changed: false),
-          message: CLILocalized.text("cli.profile.edit.unchanged")
-        )
-        return
-      }
-      let after = try await ServiceConnection.request {
-        try await $0.updateRemappingProfile(edited, expectedCurrent: current)
-      }
-      try printProfile(
-        ProfileResult(profile: try savedSummary(edited.id, in: after), changed: true),
-        message: CLILocalized.format("cli.profile.edit.done", edited.name)
-      )
     }
   }
 

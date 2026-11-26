@@ -48,6 +48,37 @@ func printProfile(_ result: ProfileResult, message: String) throws {
   }
 }
 
+/// Resolves `selector`, applies `change` to the profile and saves it, then prints the result with
+/// `message` of the saved profile as the human success line; a `change` that leaves the profile as
+/// it is saves nothing and prints the unchanged line.
+///
+/// - Throws: ``CLIFailure`` when the profile cannot be resolved, `change` throws, or the service
+///   refuses the update.
+func saveProfileChange(
+  of selector: ProfileSelector,
+  change: (RemappingProfile) throws -> RemappingProfile,
+  message: (RemappingProfile) -> String
+) async throws {
+  let (current, snapshot) = try await ServiceConnection.request {
+    try await selector.resolve(with: $0)
+  }
+  let edited = try change(current)
+  guard edited != current else {
+    try printProfile(
+      ProfileResult(profile: ProfileSummary(current, snapshot: snapshot), changed: false),
+      message: CLILocalized.text("cli.profile.edit.unchanged")
+    )
+    return
+  }
+  let after = try await ServiceConnection.request {
+    try await $0.updateRemappingProfile(edited, expectedCurrent: current)
+  }
+  try printProfile(
+    ProfileResult(profile: try savedSummary(edited.id, in: after), changed: true),
+    message: message(edited)
+  )
+}
+
 /// The profile with `id` in `snapshot`; a missing profile means the service changed it meanwhile.
 func savedSummary(
   _ id: UUID,
