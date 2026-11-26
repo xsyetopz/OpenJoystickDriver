@@ -186,39 +186,16 @@ extension DeviceManager {
         now: DispatchTime.now().uptimeNanoseconds
       )
       guard isCurrentUSBDetection(generation) else { return }
-      let events = enumeration.events(for: poll)
-      for event in events {
-        guard isCurrentUSBDetection(generation) else { return }
-        switch event {
-        case .accessFailure(let failure):
-          print("[DeviceManager] Raw USB discovery failed: \(failure.description)")
-        case .detached(let device):
-          await removeUSBDevice(device, serviceToIdentifiers: &serviceToIdentifiers)
-          guard isCurrentUSBDetection(generation) else { return }
-        case .attached(let device):
-          let outcome = await handleUSBDeviceAdded(
-            device,
+      for event in enumeration.events(for: poll) {
+        guard isCurrentUSBDetection(generation),
+          await applyUSBEvent(
+            event,
             provider: provider,
-            expectedLifecycleGeneration: generation
+            generation: generation,
+            enumeration: &enumeration,
+            serviceToIdentifiers: &serviceToIdentifiers
           )
-          guard isCurrentUSBDetection(generation) else { return }
-          switch outcome {
-          case .claimed(let identifiers):
-            serviceToIdentifiers[device.serviceAddress] = identifiers
-            guard identifiers.allSatisfy({ isRunningUSBRole($0, of: device) }) else {
-              // A role ended during admission. Tear down the survivors and keep the service
-              // unacknowledged, so the next poll admits the whole device again.
-              await removeUSBDevice(device, serviceToIdentifiers: &serviceToIdentifiers)
-              guard isCurrentUSBDetection(generation) else { return }
-              continue
-            }
-            enumeration.acknowledge(device)
-          case .ignored: enumeration.acknowledge(device)
-          case .retry:
-            // Keep the service unacknowledged so the next poll retries it.
-            break
-          }
-        }
+        else { return }
       }
       await restoreYieldedHIDRoutes()
       releaseNativeShadowedUSBServices(in: &enumeration)
@@ -226,6 +203,48 @@ extension DeviceManager {
       guard isCurrentUSBDetection(generation) else { return }
       if case .available(let devices) = poll { pruneUSBConfigurationReadFailures(keeping: devices) }
       try? await Task.sleep(nanoseconds: usbDetectionPollNanoseconds)
+    }
+  }
+
+  /// Applies one enumeration event and tells whether the detection run of `generation` goes on.
+  ///
+  /// A service stays unacknowledged when its admission must be retried or one of its roles ended
+  /// during admission, so the next poll admits it again.
+  private func applyUSBEvent(
+    _ event: USBEnumerationEvent,
+    provider: any USBTransportProvider,
+    generation: UInt64,
+    enumeration: inout USBEnumerationTracker,
+    serviceToIdentifiers: inout [ControllerConnectionAddress: [LogicalControllerID]]
+  ) async -> Bool {
+    switch event {
+    case .accessFailure(let failure):
+      print("[DeviceManager] Raw USB discovery failed: \(failure.description)")
+      return true
+    case .detached(let device):
+      await removeUSBDevice(device, serviceToIdentifiers: &serviceToIdentifiers)
+      return isCurrentUSBDetection(generation)
+    case .attached(let device):
+      let outcome = await handleUSBDeviceAdded(
+        device,
+        provider: provider,
+        expectedLifecycleGeneration: generation
+      )
+      guard isCurrentUSBDetection(generation) else { return false }
+      switch outcome {
+      case .claimed(let identifiers):
+        serviceToIdentifiers[device.serviceAddress] = identifiers
+        guard identifiers.allSatisfy({ isRunningUSBRole($0, of: device) }) else {
+          // A role ended during admission. Tear down the survivors and keep the service
+          // unacknowledged, so the next poll admits the whole device again.
+          await removeUSBDevice(device, serviceToIdentifiers: &serviceToIdentifiers)
+          return isCurrentUSBDetection(generation)
+        }
+        enumeration.acknowledge(device)
+      case .ignored: enumeration.acknowledge(device)
+      case .retry: break
+      }
+      return true
     }
   }
 
@@ -284,209 +303,6 @@ extension DeviceManager {
     for pipeline in removed { await pipeline.stop() }
     await reconcileUnboundHIDClaims()
     print("[DeviceManager] USB device removed: \(identifiers)")
-  }
-
-  /// Admits one attached raw-USB service: classifies it, resolves its transport, checks for
-  /// conflicts and starts a pipeline for each of its roles.
-  ///
-  /// - Parameters:
-  ///   - device: The enumerated service.
-  ///   - provider: The provider that enumerated it.
-  ///   - expectedLifecycleGeneration: The lifecycle generation the caller's detection run started
-  ///     under; the current generation when nil.
-  /// - Returns: Whether the service started, stays unclaimed, or must be admitted again by the next
-  ///   poll.
-  @discardableResult
-  func handleUSBDeviceAdded(
-    _ device: USBTransportDevice,
-    provider: any USBTransportProvider,
-    expectedLifecycleGeneration: UInt64? = nil
-  ) async -> USBDeviceHandlingOutcome {
-    let generation = expectedLifecycleGeneration ?? lifecycleGeneration
-    guard isCurrentUSBDetection(generation) else { return .retry }
-    let (classification, observed) = await classifyUSBDevice(device, provider: provider)
-    guard isCurrentUSBDetection(generation) else { return .retry }
-    let interfaces = observed.interfaces ?? []
-    let binding: ProtocolBinding
-    switch classification {
-    case .unsupported(let reason, let rejected):
-      recordUnboundUSBDevice(
-        device,
-        reason: reason,
-        rejectedCandidates: rejected.map { [$0] } ?? [],
-        interfaces: interfaces
-      )
-      return .ignored
-    case .conflict(let reason, let candidates):
-      recordUnboundUSBDevice(
-        device,
-        reason: reason,
-        rejectedCandidates: candidates.map {
-          ProtocolBindingResult.RejectedCandidate(protocolID: $0, reason: reason)
-        },
-        interfaces: interfaces
-      )
-      return .ignored
-    case .bound(let bound): binding = bound
-    }
-    guard
-      let configuredProfile = protocolDriverRegistry.runtimeProfile(for: binding)?.transportProfile
-    else {
-      // Only a record-less `HIDDescriptor` binding has no runtime profile; that family is driven
-      // through IOHID, never raw USB.
-      recordUnboundUSBDevice(
-        device,
-        reason: .unsupportedTransportVariant,
-        rejectedCandidates: [
-          ProtocolBindingResult.RejectedCandidate(
-            protocolID: binding.protocolID,
-            reason: .unsupportedTransportVariant
-          )
-        ],
-        interfaces: interfaces
-      )
-      return .ignored
-    }
-
-    // Resolution can move the claimed interface, so this early check keys on the configured one
-    // and the check after resolution is authoritative.
-    let configuredIdentifier = Self.usbIdentifier(for: device, claiming: configuredProfile)
-    guard !deferToNativeHID(device, identifier: configuredIdentifier) else { return .ignored }
-    guard
-      !hasUSBPipelineConflict(
-        for: configuredIdentifier,
-        service: device.serviceAddress,
-        yieldingHID: true
-      )
-    else {
-      print("[DeviceManager] Pipeline already exists for \(configuredIdentifier)")
-      return .retry
-    }
-
-    let passiveResolution = await provider.resolveTransport(
-      for: device,
-      configured: configuredProfile
-    )
-    guard isCurrentUSBDetection(generation) else { return .retry }
-    let resolution: USBTransportResolution
-    do {
-      resolution = try await provider.resolveUSBConfiguration(device, passive: passiveResolution)
-    } catch {
-      guard isCurrentUSBDetection(generation) else { return .retry }
-      return await handleUSBConfigurationReadFailure(
-        error,
-        device: device,
-        provider: provider,
-        interfaces: passiveResolution.physicalDevice?.interfaces ?? interfaces,
-        generation: generation
-      )
-    }
-    guard isCurrentUSBDetection(generation) else { return .retry }
-    usbConfigurationReadFailures.removeValue(forKey: device.serviceAddress)
-
-    // Revalidate the service after the suspension. A removed/replaced service
-    // must not be acknowledged from the earlier device snapshot.
-    let currentDevices = try? await provider.devices()
-    guard isCurrentUSBDetection(generation),
-      currentDevices?.contains(where: {
-        $0.serviceAddress == device.serviceAddress && $0 == device
-      }) == true
-    else { return .retry }
-
-    // Descriptor facts are retained only when they identify this exact
-    // enumerated service. A provider without passive observations returns nil.
-    if let physicalDevice = resolution.physicalDevice,
-      physicalDevice.serviceAddress != device.serviceAddress
-    {
-      return .retry
-    }
-
-    // Descriptor resolution suspends the actor. The device may have been
-    // replaced or exposed through another route while it was suspended.
-    guard isCurrentUSBDetection(generation) else { return .retry }
-    // Every role is checked and built before any pipeline exists, so a conflict or a failed
-    // contract leaves no partial admission.
-    var roles: [USBRoleAdmission] = []
-    let roleResolutions = protocolDriverRegistry.roleProfiles(for: binding, resolution: resolution)
-    for (slotOrdinal, role) in roleResolutions.enumerated() {
-      let identifier = Self.usbIdentifier(for: device, claiming: role.profile)
-      guard !deferToNativeHID(device, identifier: identifier) else { return .ignored }
-      guard
-        !hasUSBPipelineConflict(for: identifier, service: device.serviceAddress, yieldingHID: true)
-      else {
-        print("[DeviceManager] Pipeline already exists for \(identifier)")
-        return .retry
-      }
-      switch protocolDriverRegistry.makeDriver(
-        for: binding,
-        model: identifier.model,
-        claimed: role,
-        slotOrdinal: slotOrdinal
-      ) {
-      case .success:
-        roles.append(
-          USBRoleAdmission(identifier: identifier, resolution: role, slotOrdinal: slotOrdinal)
-        )
-      case .failure(let reason):
-        recordUnboundUSBDevice(
-          device,
-          reason: reason,
-          rejectedCandidates: [
-            ProtocolBindingResult.RejectedCandidate(
-              protocolID: binding.protocolID,
-              reason: reason,
-              catalogRecordID: binding.record?.recordID
-            )
-          ],
-          // A catalogued model classified on identity alone; resolution observed its interfaces.
-          interfaces: resolution.physicalDevice?.interfaces ?? interfaces
-        )
-        return .ignored
-      }
-    }
-    // Every role is admitted, so the HID route of this controller yields to raw USB now.
-    if let first = roles.first { await yieldHIDPipelines(to: first.identifier) }
-    return await startUSBRoles(
-      roles,
-      of: device,
-      binding: binding,
-      provider: provider,
-      generation: generation
-    )
-  }
-
-  /// A catalogued model classifies on its identity, which is all its raw-USB row reads, and runs
-  /// the mode its record's match keys select from the passive facts of the enumerated device.
-  ///
-  /// An uncatalogued model classifies on its passive facts, so an interface signature can bind it.
-  /// Returns the classification with the observation it read.
-  private func classifyUSBDevice(
-    _ device: USBTransportDevice,
-    provider: any USBTransportProvider
-  ) async -> (ProtocolClassification, PhysicalDevice) {
-    let backend = DeviceAccessBackend(route: device.route)
-    let identity = PhysicalDevice(vendorID: device.vendorID, productID: device.productID)
-    let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
-    guard let record = protocolDriverRegistry.record(for: model) else {
-      guard let observed = await provider.physicalDeviceObservation(for: device) else {
-        return (protocolDriverRegistry.classify(identity, backend: backend), identity)
-      }
-      return (protocolDriverRegistry.classify(observed, backend: backend), observed)
-    }
-    guard !record.modes.isEmpty,
-      let observed = await provider.physicalDeviceObservation(for: device)
-    else { return (protocolDriverRegistry.classify(identity, backend: backend), identity) }
-    // A raw-USB route has no feature-report read, so a mode with a probe never holds.
-    let selection = await protocolDriverRegistry.selectMode(
-      of: model,
-      backend: backend,
-      reader: UnreadableModeProbeReader(),
-      device: observed
-    )
-    return (
-      protocolDriverRegistry.classify(identity, backend: backend, modeID: selection.modeID),
-      observed
-    )
   }
 
   /// Records a raw-USB service as unbound for `reason`, with the interfaces observed.
