@@ -165,113 +165,116 @@ struct MacVirtualKeyTranslator: CoreGraphicsKeyboardTranslating {
   // profile keys address the platform Help/Insert key at 0x72.
   /// Returns the virtual key of `key`; the Help and Insert keys both map to the Help key.
   func virtualKey(for key: RemappingKeyboardKey) -> CGKeyCode? {
-    let value: Int
-    switch key {
-    case .a: value = kVK_ANSI_A
-    case .b: value = kVK_ANSI_B
-    case .c: value = kVK_ANSI_C
-    case .d: value = kVK_ANSI_D
-    case .e: value = kVK_ANSI_E
-    case .f: value = kVK_ANSI_F
-    case .g: value = kVK_ANSI_G
-    case .h: value = kVK_ANSI_H
-    case .i: value = kVK_ANSI_I
-    case .j: value = kVK_ANSI_J
-    case .k: value = kVK_ANSI_K
-    case .l: value = kVK_ANSI_L
-    case .m: value = kVK_ANSI_M
-    case .n: value = kVK_ANSI_N
-    case .o: value = kVK_ANSI_O
-    case .p: value = kVK_ANSI_P
-    case .q: value = kVK_ANSI_Q
-    case .r: value = kVK_ANSI_R
-    case .s: value = kVK_ANSI_S
-    case .t: value = kVK_ANSI_T
-    case .u: value = kVK_ANSI_U
-    case .v: value = kVK_ANSI_V
-    case .w: value = kVK_ANSI_W
-    case .x: value = kVK_ANSI_X
-    case .y: value = kVK_ANSI_Y
-    case .z: value = kVK_ANSI_Z
-    case .digit0: value = kVK_ANSI_0
-    case .digit1: value = kVK_ANSI_1
-    case .digit2: value = kVK_ANSI_2
-    case .digit3: value = kVK_ANSI_3
-    case .digit4: value = kVK_ANSI_4
-    case .digit5: value = kVK_ANSI_5
-    case .digit6: value = kVK_ANSI_6
-    case .digit7: value = kVK_ANSI_7
-    case .digit8: value = kVK_ANSI_8
-    case .digit9: value = kVK_ANSI_9
-    case .escape: value = kVK_Escape
-    case .tab: value = kVK_Tab
-    case .capsLock: value = kVK_CapsLock
-    case .space: value = kVK_Space
-    case .returnKey: value = kVK_Return
-    case .deleteBackward: value = kVK_Delete
-    case .deleteForward: value = kVK_ForwardDelete
-    case .help, .insert: value = kVK_Help
-    case .home: value = kVK_Home
-    case .end: value = kVK_End
-    case .pageUp: value = kVK_PageUp
-    case .pageDown: value = kVK_PageDown
-    case .arrowUp: value = kVK_UpArrow
-    case .arrowDown: value = kVK_DownArrow
-    case .arrowLeft: value = kVK_LeftArrow
-    case .arrowRight: value = kVK_RightArrow
-    case .minus: value = kVK_ANSI_Minus
-    case .equal: value = kVK_ANSI_Equal
-    case .leftBracket: value = kVK_ANSI_LeftBracket
-    case .rightBracket: value = kVK_ANSI_RightBracket
-    case .backslash: value = kVK_ANSI_Backslash
-    case .semicolon: value = kVK_ANSI_Semicolon
-    case .quote: value = kVK_ANSI_Quote
-    case .comma: value = kVK_ANSI_Comma
-    case .period: value = kVK_ANSI_Period
-    case .slash: value = kVK_ANSI_Slash
-    case .grave: value = kVK_ANSI_Grave
-    case .section: value = kVK_ISO_Section
-    case .f1: value = kVK_F1
-    case .f2: value = kVK_F2
-    case .f3: value = kVK_F3
-    case .f4: value = kVK_F4
-    case .f5: value = kVK_F5
-    case .f6: value = kVK_F6
-    case .f7: value = kVK_F7
-    case .f8: value = kVK_F8
-    case .f9: value = kVK_F9
-    case .f10: value = kVK_F10
-    case .f11: value = kVK_F11
-    case .f12: value = kVK_F12
-    case .f13: value = kVK_F13
-    case .f14: value = kVK_F14
-    case .f15: value = kVK_F15
-    case .f16: value = kVK_F16
-    case .f17: value = kVK_F17
-    case .f18: value = kVK_F18
-    case .f19: value = kVK_F19
-    case .f20: value = kVK_F20
-    case .keypad0: value = kVK_ANSI_Keypad0
-    case .keypad1: value = kVK_ANSI_Keypad1
-    case .keypad2: value = kVK_ANSI_Keypad2
-    case .keypad3: value = kVK_ANSI_Keypad3
-    case .keypad4: value = kVK_ANSI_Keypad4
-    case .keypad5: value = kVK_ANSI_Keypad5
-    case .keypad6: value = kVK_ANSI_Keypad6
-    case .keypad7: value = kVK_ANSI_Keypad7
-    case .keypad8: value = kVK_ANSI_Keypad8
-    case .keypad9: value = kVK_ANSI_Keypad9
-    case .keypadDecimal: value = kVK_ANSI_KeypadDecimal
-    case .keypadMultiply: value = kVK_ANSI_KeypadMultiply
-    case .keypadPlus: value = kVK_ANSI_KeypadPlus
-    case .keypadClear: value = kVK_ANSI_KeypadClear
-    case .keypadDivide: value = kVK_ANSI_KeypadDivide
-    case .keypadEnter: value = kVK_ANSI_KeypadEnter
-    case .keypadMinus: value = kVK_ANSI_KeypadMinus
-    case .keypadEqual: value = kVK_ANSI_KeypadEquals
-    }
-    return CGKeyCode(value)
+    Self.virtualKeys[key].map(CGKeyCode.init)
   }
+
+  /// The virtual key of each profile key; `MacVirtualKeyTranslatorTests` checks that every key
+  /// has one.
+  private static let virtualKeys: [RemappingKeyboardKey: Int] = [
+    .a: kVK_ANSI_A,
+    .b: kVK_ANSI_B,
+    .c: kVK_ANSI_C,
+    .d: kVK_ANSI_D,
+    .e: kVK_ANSI_E,
+    .f: kVK_ANSI_F,
+    .g: kVK_ANSI_G,
+    .h: kVK_ANSI_H,
+    .i: kVK_ANSI_I,
+    .j: kVK_ANSI_J,
+    .k: kVK_ANSI_K,
+    .l: kVK_ANSI_L,
+    .m: kVK_ANSI_M,
+    .n: kVK_ANSI_N,
+    .o: kVK_ANSI_O,
+    .p: kVK_ANSI_P,
+    .q: kVK_ANSI_Q,
+    .r: kVK_ANSI_R,
+    .s: kVK_ANSI_S,
+    .t: kVK_ANSI_T,
+    .u: kVK_ANSI_U,
+    .v: kVK_ANSI_V,
+    .w: kVK_ANSI_W,
+    .x: kVK_ANSI_X,
+    .y: kVK_ANSI_Y,
+    .z: kVK_ANSI_Z,
+    .digit0: kVK_ANSI_0,
+    .digit1: kVK_ANSI_1,
+    .digit2: kVK_ANSI_2,
+    .digit3: kVK_ANSI_3,
+    .digit4: kVK_ANSI_4,
+    .digit5: kVK_ANSI_5,
+    .digit6: kVK_ANSI_6,
+    .digit7: kVK_ANSI_7,
+    .digit8: kVK_ANSI_8,
+    .digit9: kVK_ANSI_9,
+    .escape: kVK_Escape,
+    .tab: kVK_Tab,
+    .capsLock: kVK_CapsLock,
+    .space: kVK_Space,
+    .returnKey: kVK_Return,
+    .deleteBackward: kVK_Delete,
+    .deleteForward: kVK_ForwardDelete,
+    .help: kVK_Help,
+    .insert: kVK_Help,
+    .home: kVK_Home,
+    .end: kVK_End,
+    .pageUp: kVK_PageUp,
+    .pageDown: kVK_PageDown,
+    .arrowUp: kVK_UpArrow,
+    .arrowDown: kVK_DownArrow,
+    .arrowLeft: kVK_LeftArrow,
+    .arrowRight: kVK_RightArrow,
+    .minus: kVK_ANSI_Minus,
+    .equal: kVK_ANSI_Equal,
+    .leftBracket: kVK_ANSI_LeftBracket,
+    .rightBracket: kVK_ANSI_RightBracket,
+    .backslash: kVK_ANSI_Backslash,
+    .semicolon: kVK_ANSI_Semicolon,
+    .quote: kVK_ANSI_Quote,
+    .comma: kVK_ANSI_Comma,
+    .period: kVK_ANSI_Period,
+    .slash: kVK_ANSI_Slash,
+    .grave: kVK_ANSI_Grave,
+    .section: kVK_ISO_Section,
+    .f1: kVK_F1,
+    .f2: kVK_F2,
+    .f3: kVK_F3,
+    .f4: kVK_F4,
+    .f5: kVK_F5,
+    .f6: kVK_F6,
+    .f7: kVK_F7,
+    .f8: kVK_F8,
+    .f9: kVK_F9,
+    .f10: kVK_F10,
+    .f11: kVK_F11,
+    .f12: kVK_F12,
+    .f13: kVK_F13,
+    .f14: kVK_F14,
+    .f15: kVK_F15,
+    .f16: kVK_F16,
+    .f17: kVK_F17,
+    .f18: kVK_F18,
+    .f19: kVK_F19,
+    .f20: kVK_F20,
+    .keypad0: kVK_ANSI_Keypad0,
+    .keypad1: kVK_ANSI_Keypad1,
+    .keypad2: kVK_ANSI_Keypad2,
+    .keypad3: kVK_ANSI_Keypad3,
+    .keypad4: kVK_ANSI_Keypad4,
+    .keypad5: kVK_ANSI_Keypad5,
+    .keypad6: kVK_ANSI_Keypad6,
+    .keypad7: kVK_ANSI_Keypad7,
+    .keypad8: kVK_ANSI_Keypad8,
+    .keypad9: kVK_ANSI_Keypad9,
+    .keypadDecimal: kVK_ANSI_KeypadDecimal,
+    .keypadMultiply: kVK_ANSI_KeypadMultiply,
+    .keypadPlus: kVK_ANSI_KeypadPlus,
+    .keypadClear: kVK_ANSI_KeypadClear,
+    .keypadDivide: kVK_ANSI_KeypadDivide,
+    .keypadEnter: kVK_ANSI_KeypadEnter,
+    .keypadMinus: kVK_ANSI_KeypadMinus,
+    .keypadEqual: kVK_ANSI_KeypadEquals,
+  ]
 }
 
 /// CoreGraphics implementation of the remapping engine's system-input port.
