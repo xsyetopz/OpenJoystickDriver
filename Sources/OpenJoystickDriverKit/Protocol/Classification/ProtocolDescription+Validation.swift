@@ -54,6 +54,13 @@ extension ProtocolDescription {
   ///
   /// The rule reads only this description, so it holds while the bundle is still loading.
   var scopeViolation: ControllerRecordProblem? {
+    sectionScopeViolation ?? rumbleScopeViolation ?? sessionKeyScopeViolation
+      ?? sessionFieldScopeViolation ?? tuningScopeViolation
+  }
+
+  /// Why the input layout, the HID usage map, or the receiver power-off applies to a family that
+  /// does not read it, or nil.
+  private var sectionScopeViolation: ControllerRecordProblem? {
     if inputLayouts != nil, !recordSections.contains(.input) {
       return .rule(
         "error.E5007.protocolDescription.inputLayout",
@@ -66,6 +73,12 @@ extension ProtocolDescription {
         "a HID usage map applies only to a family that reads one"
       )
     }
+    return nil
+  }
+
+  /// Why the rumble template applies to a family that does not read it, or targets the wrong
+  /// packet kind, or resends beside a family keep-alive, or nil.
+  private var rumbleScopeViolation: ControllerRecordProblem? {
     if rumbleTemplate != nil || !variantRumble.isEmpty, !recordSections.contains(.rumble) {
       return RumbleOutputTemplate.driverProblem
     }
@@ -77,6 +90,12 @@ extension ProtocolDescription {
     {
       return RumbleOutputTemplate.resendWithFamilyKeepAliveProblem
     }
+    return nil
+  }
+
+  /// Why the receiver power-off, the HID startup, or the listed session keys do not suit the
+  /// family, or nil.
+  private var sessionKeyScopeViolation: ControllerRecordProblem? {
     if receiverPowerOff != nil, family != .xboxXUSB {
       return .rule(
         "error.E5007.protocolDescription.receiverPowerOff",
@@ -110,6 +129,12 @@ extension ProtocolDescription {
         "defaults.session sets \(unlisted), which sessionKeys does not list"
       )
     }
+    return nil
+  }
+
+  /// Why the keep-alive, the activation transports, the session fields, or the named packets do
+  /// not suit the family, or nil.
+  private var sessionFieldScopeViolation: ControllerRecordProblem? {
     if let violation = keepAliveViolation { return violation }
     if (activation + deactivation).contains(where: {
       $0.transport.map { !writeTransports.contains($0) } ?? false
@@ -141,6 +166,11 @@ extension ProtocolDescription {
         "each named packet id starts with \(family.rawValue)/"
       )
     }
+    return nil
+  }
+
+  /// Why the tuning keys or the tuning defaults do not suit the family's driver, or nil.
+  private var tuningScopeViolation: ControllerRecordProblem? {
     if rawUSB == .always, !tuningKeys.isEmpty {
       return .rule(
         "error.E5007.protocolDescription.tuningRawUSB",
@@ -153,29 +183,37 @@ extension ProtocolDescription {
         "rawUSBTuningKeys apply only to a family with a raw-USB variant"
       )
     }
-    if let tuning {
-      let scope = tuningKeys.union(rawUSBTuningKeys).union(ControllerTuning.Key.alwaysRead)
-      for key in ControllerTuning.Key.allCases
-      where tuning.setKeys.contains(key) && !scope.contains(key) {
-        return .rule(
-          "error.E5007.tuning.keyNotRead",
-          [key.rawValue, family.rawValue],
-          "\(key) is not read by the \(family.rawValue) driver"
-        )
-      }
+    if let tuning,
+      let key = Self.firstUnreadKey(
+        of: tuning,
+        scope: tuningKeys.union(rawUSBTuningKeys).union(ControllerTuning.Key.alwaysRead)
+      )
+    {
+      return .rule(
+        "error.E5007.tuning.keyNotRead",
+        [key.rawValue, family.rawValue],
+        "\(key) is not read by the \(family.rawValue) driver"
+      )
     }
     for (variant, tuning) in variantTuning.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
-      let scope = tuningScope(variant: variant)
-      for key in ControllerTuning.Key.allCases
-      where tuning.setKeys.contains(key) && !scope.contains(key) {
-        return .rule(
-          "error.E5007.tuning.keyNotRead",
-          [key.rawValue, "\(family.rawValue):\(variant.rawValue)"],
-          "\(key) is not read by the \(family.rawValue):\(variant.rawValue) driver"
-        )
+      guard let key = Self.firstUnreadKey(of: tuning, scope: tuningScope(variant: variant)) else {
+        continue
       }
+      return .rule(
+        "error.E5007.tuning.keyNotRead",
+        [key.rawValue, "\(family.rawValue):\(variant.rawValue)"],
+        "\(key) is not read by the \(family.rawValue):\(variant.rawValue) driver"
+      )
     }
     return nil
+  }
+
+  /// The first key that `tuning` sets and `scope` lacks, or nil.
+  private static func firstUnreadKey(
+    of tuning: ControllerTuning,
+    scope: Set<ControllerTuning.Key>
+  ) -> ControllerTuning.Key? {
+    ControllerTuning.Key.allCases.first { tuning.setKeys.contains($0) && !scope.contains($0) }
   }
 
   /// The general `defaults.session` keys the description sets, rumble aside.
