@@ -145,7 +145,7 @@ struct LibraryListingTests {
   }
 
   @Test
-  func testRefusalShowsFailure() {
+  func refusalShowsFailure() {
     let (model, store) = loadedModel()
     store.refusal = LibraryFailure(message: "bad capture", code: .invalidInputFile)
     model.select(.record(userModel))

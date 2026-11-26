@@ -44,7 +44,7 @@ struct XUSBDriverTests {
   static let model = ControllerModelID(vendorID: 0x045E, productID: 0x028E)
 
   @Test
-  func testIgnoresNonInputReportType() throws {
+  func ignoresNonInputReportType() throws {
     let parser = XUSBDriver()
     // Type 0x08 = device connected notification on the wireless receiver
     let packet = Data([0x08, 0x14] + [UInt8](repeating: 0, count: 18))
@@ -53,14 +53,14 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testEmptyDataReturnsEmpty() throws {
+  func emptyDataReturnsEmpty() throws {
     let parser = XUSBDriver()
     let events = try parser.parseReport(Data())
     #expect(events == nil)
   }
 
   @Test
-  func testShortReportReturnsEmpty() throws {
+  func shortReportReturnsEmpty() throws {
     let parser = XUSBDriver()
     let packet = Data([0x00, 0x14, 0x00, 0x00, 0x00])
     let events = try parser.parseReport(packet)
@@ -68,7 +68,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testInvalidLengthByteReturnsEmpty() throws {
+  func invalidLengthByteReturnsEmpty() throws {
     let parser = XUSBDriver()
     var packet = [UInt8](makeXbox360ReportLE(buttons: 1 << 8))
     packet[1] = 0x0E
@@ -77,7 +77,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testAllZeroReportIsNeutralSnapshot() throws {
+  func allZeroReportIsNeutralSnapshot() throws {
     let parser = XUSBDriver()
     let packet = makeXbox360ReportLE()
     let events = try parser.parseReport(packet)
@@ -85,7 +85,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testAButtonPressRelease() throws {
+  func aButtonPressRelease() throws {
     let parser = XUSBDriver()
     // Bit 12 = A (Linux xpad data[3] & BIT(4))
     let press = makeXbox360ReportLE(buttons: 1 << 12)
@@ -97,7 +97,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testBxyButtons() throws {
+  func bxyButtons() throws {
     let parser = XUSBDriver()
     let packet = makeXbox360ReportLE(buttons: (1 << 13) | (1 << 14) | (1 << 15))
     let events = try parser.parseReport(packet)
@@ -107,7 +107,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testShoulderAndStickClicks() throws {
+  func shoulderAndStickClicks() throws {
     let parser = XUSBDriver()
     // LB=bit8, RB=bit9, L3=bit6, R3=bit7
     let packet = makeXbox360ReportLE(buttons: (1 << 8) | (1 << 9) | (1 << 6) | (1 << 7))
@@ -119,7 +119,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testStartBackButtons() throws {
+  func startBackButtons() throws {
     let parser = XUSBDriver()
     // START=bit4, BACK=bit5
     let packet = makeXbox360ReportLE(buttons: (1 << 4) | (1 << 5))
@@ -129,7 +129,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testGuideButton() throws {
+  func guideButton() throws {
     let parser = XUSBDriver()
     // GUIDE=bit10 (Linux xpad data[3] & BIT(2))
     let packet = makeXbox360ReportLE(buttons: 1 << 10)
@@ -138,7 +138,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testDpadDirections() throws {
+  func dpadDirections() throws {
     let parser = XUSBDriver()
     // up=bit0, down=bit1, left=bit2, right=bit3
     func hat(bits: UInt16) throws -> HatDirection? {
@@ -153,7 +153,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testDpadBitsNotFaceButtons() throws {
+  func dpadBitsNotFaceButtons() throws {
     let parser = XUSBDriver()
     let packet = makeXbox360ReportLE(buttons: 0x000F)  // all four dpad bits set
     let events = try parser.parseReport(packet)
@@ -164,7 +164,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testTriggerNormalization() throws {
+  func triggerNormalization() throws {
     let parser = XUSBDriver()
     let state = try #require(try parser.parseReport(makeXbox360ReportLE(lt: 255, rt: 255))?.state)
     #expect(state.leftTrigger == .max)
@@ -172,21 +172,21 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testTriggerHalfPress() throws {
+  func triggerHalfPress() throws {
     let parser = XUSBDriver()
     let events = try parser.parseReport(makeXbox360ReportLE(lt: 128, rt: 128))
     #expect(abs((events?.state.leftTrigger.normalized ?? 0) - (128.0 / 255.0)) < 0.01)
   }
 
   @Test
-  func testLeftStickFullRight() throws {
+  func leftStickFullRight() throws {
     let parser = XUSBDriver()
     let events = try parser.parseReport(makeXbox360ReportLE(lsx: Int16.max))
     #expect(events?.state.leftStick.x == .max)
   }
 
   @Test
-  func testLeftStickFullDownIsPositiveY() throws {
+  func leftStickFullDownIsPositiveY() throws {
     let parser = XUSBDriver()
     // Raw negative LSY is down, which the state reads as positive 1.
     let events = try parser.parseReport(makeXbox360ReportLE(lsy: Int16.min))
@@ -195,7 +195,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testPushingStickUpReadsNegativeY() throws {
+  func pushingStickUpReadsNegativeY() throws {
     let parser = XUSBDriver()
     // Raw positive LSY and RSY are up, which the state reads as negative.
     let state = try #require(
@@ -206,7 +206,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testRightStickNormalization() throws {
+  func rightStickNormalization() throws {
     let parser = XUSBDriver()
     let events = try parser.parseReport(makeXbox360ReportLE(rsx: Int16.min, rsy: Int16.max))
     let stick = try #require(events.rightStickPosition)
@@ -215,7 +215,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testRepeatedReportRepeatsSnapshot() throws {
+  func repeatedReportRepeatsSnapshot() throws {
     let parser = XUSBDriver()
     let report = makeXbox360ReportLE(buttons: 1 << 12, lt: 200, lsx: 10_000)
     let first = try parser.parseReport(report)
@@ -225,7 +225,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testMultipleSimultaneousButtons() throws {
+  func multipleSimultaneousButtons() throws {
     let parser = XUSBDriver()
     let packet = makeXbox360ReportLE(buttons: (1 << 12) | (1 << 13) | (1 << 8))
     let events = try parser.parseReport(packet)
@@ -235,7 +235,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testIgnoresConnectionReport() throws {
+  func ignoresConnectionReport() throws {
     let parser = XUSBDriver()
     var bytes = [UInt8](repeating: 0, count: 20)
     bytes[0] = 0x08  // connection notification
@@ -244,7 +244,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverLifecycleAndWrappedInput() throws {
+  func wirelessReceiverLifecycleAndWrappedInput() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 
     #expect(parser.sessionPlan.requiresInputConnectionBeforeOutput)
@@ -267,7 +267,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverSourceBackedOutputPackets() {
+  func wirelessReceiverSourceBackedOutputPackets() {
     let parser = XUSBDriver(isWirelessReceiver: true)
 
     #expect(
@@ -283,7 +283,7 @@ struct XUSBDriverTests {
   }
 
   @Test
-  func testWiredStartupLeavesPlayerSlotToManager() {
+  func wiredStartupLeavesPlayerSlotToManager() {
     let parser = XUSBDriver()
 
     #expect(parser.startupWrites().isEmpty)

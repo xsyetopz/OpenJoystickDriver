@@ -9,7 +9,7 @@ struct SteamControllerDriverTests {
   static let model = ControllerModelID(vendorID: 0x28DE, productID: 0x1102)
 
   @Test
-  func testSteamControllerProfilesExposeOperationalFlags() throws {
+  func steamControllerProfilesExposeOperationalFlags() throws {
     let registry = ProtocolDriverRegistry()
     let models = [
       ControllerModelID(vendorID: 10462, productID: 4354),
@@ -31,7 +31,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerReportParsesPrimaryControls() throws {
+  func steamControllerReportParsesPrimaryControls() throws {
     let parser = try catalogParser(ControllerModelID(vendorID: 10462, productID: 4354))
     _ = try parser.parseReport(ProtocolPacketFixtures.Steam.inputReport())
 
@@ -62,7 +62,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamGripBitsHaveDistinctSources() throws {
+  func steamGripBitsHaveDistinctSources() throws {
     let parser = SteamControllerDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.Steam.inputReport())
 
@@ -75,7 +75,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testLeftPadTouchDoesNotCreateVirtualLeftStickMotion() throws {
+  func leftPadTouchDoesNotCreateVirtualLeftStickMotion() throws {
     let parser = SteamControllerDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.Steam.inputReport())
 
@@ -87,7 +87,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testLeftPadAndJoyBitDoesNotReplaceStickWithPadCoordinates() throws {
+  func leftPadAndJoyBitDoesNotReplaceStickWithPadCoordinates() throws {
     let parser = SteamControllerDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.Steam.inputReport())
 
@@ -99,7 +99,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testLeftPadTouchStaysOmitted() throws {
+  func leftPadTouchStaysOmitted() throws {
     let parser = SteamControllerDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.Steam.inputReport())
 
@@ -111,7 +111,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerReportParsesDpadDirections() throws {
+  func steamControllerReportParsesDpadDirections() throws {
     let parser = SteamControllerDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.Steam.inputReport())
 
@@ -135,7 +135,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerDisablesAndRestoresLizardModeWithFeatureReports() {
+  func steamControllerDisablesAndRestoresLizardModeWithFeatureReports() {
     let parser = SteamControllerDriver()
 
     let startup = parser.activationWrites().hidFeatures
@@ -155,7 +155,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerBrightnessMatchesSDLSettingReport() {
+  func steamControllerBrightnessMatchesSDLSettingReport() {
     let report = SteamControllerDriver().encoded(.setLightBrightness(UnipolarValue(byte: 197)))
       .onlyReport
 
@@ -166,7 +166,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerHapticReportsMatchLinuxFeatureCommand() {
+  func steamControllerHapticReportsMatchLinuxFeatureCommand() {
     let reports = hapticReports(SteamControllerDriver(), left: 255, right: 128, durationMs: 450)
 
     #expect(reports.count == 2)
@@ -177,7 +177,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerHapticIntensityAndSafeHoldFallback() {
+  func steamControllerHapticIntensityAndSafeHoldFallback() {
     let low = hapticReports(SteamControllerDriver(), left: 1, right: 0, durationMs: 0)
 
     #expect(low.count == 1)
@@ -186,7 +186,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamWirelessHapticsRequireLogicalControllerConnection() throws {
+  func steamWirelessHapticsRequireLogicalControllerConnection() throws {
     let parser = SteamControllerDriver(isWirelessReceiver: true)
     #expect(hapticReports(parser, left: 255, right: 0, durationMs: 100).isEmpty)
 
@@ -198,7 +198,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamWirelessReceiverStatusRequestReport() {
+  func steamWirelessReceiverStatusRequestReport() {
     let wired = SteamControllerDriver()
     #expect(wired.presenceRequestWrite() == nil)
 
@@ -211,7 +211,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerTracksWirelessConnectDisconnectLifecycle() throws {
+  func steamControllerTracksWirelessConnectDisconnectLifecycle() throws {
     let parser = SteamControllerDriver(isWirelessReceiver: true)
     #expect(parser.sessionPlan.requiresInputConnectionBeforeOutput)
 
@@ -245,7 +245,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamWirelessStatusReportMarksReceiverConnectedWhenConnectEventWasMissed() throws {
+  func steamWirelessStatusReportMarksReceiverConnectedWhenConnectEventWasMissed() throws {
     let parser = SteamControllerDriver(isWirelessReceiver: true)
 
     let statusEvents = try parser.parseReport(ProtocolPacketFixtures.Steam.statusReport)
@@ -260,7 +260,7 @@ struct SteamControllerDriverTests {
   }
 
   @Test
-  func testSteamControllerIgnoresUnknownNonStateReports() throws {
+  func steamControllerIgnoresUnknownNonStateReports() throws {
     let parser = SteamControllerDriver()
     var unknownEvent = Array(ProtocolPacketFixtures.Steam.inputReport())
     unknownEvent[2] = 0x04

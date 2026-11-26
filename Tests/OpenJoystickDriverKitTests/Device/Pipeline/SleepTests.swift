@@ -10,7 +10,7 @@ struct DevicePipelineSleepTests {
     (UInt8(3), [InputChange.leftStick(x: 0.8, y: 0)]), (UInt8(4), [.press(.east)]),
     (UInt8(6), [.hat(.north)]), (UInt8(7), [.leftTrigger(0.75), .press(.leftTrigger)]),
   ])
-  func testIdlePipelineForwardsFirstWakeInput(code: UInt8, expected: [InputChange]) async {
+  func idlePipelineForwardsFirstWakeInput(code: UInt8, expected: [InputChange]) async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -37,7 +37,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testForegroundGateNeutralizesOutputAndWaitsForNeutralBeforeResuming() async {
+  func foregroundGateNeutralizesOutputAndWaitsForNeutralBeforeResuming() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -66,7 +66,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testForegroundGateRearmsAfterFirstPostFocusChangeWithoutFullNeutral() async {
+  func foregroundGateRearmsAfterFirstPostFocusChangeWithoutFullNeutral() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -98,7 +98,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testRepeatedAllowedSignalDoesNotRearmForegroundGate() async {
+  func repeatedAllowedSignalDoesNotRearmForegroundGate() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -117,7 +117,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testPipelineSkipsSnapshotsThatDoNotChangeDispatchedState() async {
+  func pipelineSkipsSnapshotsThatDoNotChangeDispatchedState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -139,7 +139,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testStopNeutralizesForwardedButtonState() async {
+  func stopNeutralizesForwardedButtonState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -159,7 +159,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testStopNeutralizesForwardedDpadAndAxesState() async {
+  func stopNeutralizesForwardedDpadAndAxesState() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 100, productID: 200),
@@ -184,7 +184,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testReconnectDoesNotKeepForegroundMaskFromEndedConnection() async {
+  func reconnectDoesNotKeepForegroundMaskFromEndedConnection() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 10462, productID: 4418),
@@ -211,7 +211,7 @@ struct DevicePipelineSleepTests {
   }
 
   @Test
-  func testInputConnectionLifecycleDefersAndStopsOutput() async {
+  func inputConnectionLifecycleDefersAndStopsOutput() async {
     let dispatcher = RecordingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 10462, productID: 4418),

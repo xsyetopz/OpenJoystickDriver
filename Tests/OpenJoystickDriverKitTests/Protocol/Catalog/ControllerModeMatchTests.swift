@@ -436,7 +436,7 @@ struct ControllerModeMatchTests {
   /// The DS3 record holds Bluetooth as a link of its own mode, with the enable report as that
   /// mode's session.
   @Test
-  func dS3RecordSelectsItsBluetoothModeByLink() async throws {
+  func ds3RecordSelectsItsBluetoothModeByLink() async throws {
     let ds3 = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
     let profile = try #require(DeviceCatalog().record(for: ds3))
     #expect(profile.startupWrites.isEmpty)

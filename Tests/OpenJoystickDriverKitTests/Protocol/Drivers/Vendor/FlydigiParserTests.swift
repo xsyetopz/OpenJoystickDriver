@@ -63,7 +63,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testNeutralReportKeepsRestingStickOffsetWithoutDriverDeadzone() throws {
+  func neutralReportKeepsRestingStickOffsetWithoutDriverDeadzone() throws {
     let parser = flydigiDriver()
     settled(parser)
     let rest = BipolarValue(normalized: Float(-1) / 127)
@@ -74,7 +74,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testShortReportIsIgnored() throws {
+  func shortReportIsIgnored() throws {
     let parser = flydigiDriver()
     #expect(try parser.parseReport(Data([0x01, 0xFF, 0xFF])) == nil)
   }
@@ -82,7 +82,7 @@ struct FlydigiParserTests {
   /// The hardware reports 0x80 when the stick is pushed fully up, so the
   /// normalized value stays negative and is not flipped.
   @Test
-  func testLeftStickUpIsNegativeY() throws {
+  func leftStickUpIsNegativeY() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(leftStickY: 0x80))
@@ -90,7 +90,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testLeftStickRightIsPositiveX() throws {
+  func leftStickRightIsPositiveX() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(leftStickX: 0x7F))
@@ -99,7 +99,7 @@ struct FlydigiParserTests {
 
   /// Bytes 3 and 4 are the right stick, not the triggers the descriptor implies.
   @Test
-  func testRightStickUsesZAndRzBytes() throws {
+  func rightStickUsesZAndRzBytes() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(rightStickX: 0x7F, rightStickY: 0x80))
@@ -108,7 +108,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testRightStickDeflectionLeavesTriggersReleased() throws {
+  func rightStickDeflectionLeavesTriggersReleased() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(rightStickX: 0x7F))
@@ -116,7 +116,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testAnalogTriggersUseSimulationBytes() throws {
+  func analogTriggersUseSimulationBytes() throws {
     let parser = flydigiDriver()
     settled(parser)
     let left = try parser.parseReport(CapturedReport.with(shoulders: 0x04, leftTrigger: 0xFF))
@@ -130,7 +130,7 @@ struct FlydigiParserTests {
   /// The digital trigger bit accompanies the analog value and must not be
   /// reported as a stick click.
   @Test
-  func testDigitalTriggerBitIsNotStickClick() throws {
+  func digitalTriggerBitIsNotStickClick() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(shoulders: 0x04, leftTrigger: 0xFF))
@@ -138,7 +138,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testFaceButtonsUseHighNibble() throws {
+  func faceButtonsUseHighNibble() throws {
     let cases: [(UInt8, Control)] = [
       (0x10, .south), (0x20, .east), (0x40, .west), (0x80, .north),
     ]
@@ -151,7 +151,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testShoulderByteButtons() throws {
+  func shoulderByteButtons() throws {
     let cases: [(UInt8, Control)] = [
       (0x01, .leftShoulder), (0x02, .rightShoulder), (0x10, .back), (0x20, .start),
       (0x40, .leftStickClick), (0x80, .rightStickClick),
@@ -169,7 +169,7 @@ struct FlydigiParserTests {
     (UInt8(0x01), Control.auxiliary1), (0x02, .auxiliary2), (0x04, .leftPaddle1),
     (0x08, .leftPaddle2), (0x10, .rightPaddle1), (0x20, .rightPaddle2),
   ])
-  func testByteElevenButtonsPressAndRelease(mask: UInt8, button: Control) throws {
+  func byteElevenButtonsPressAndRelease(mask: UInt8, button: Control) throws {
     let parser = flydigiDriver()
     settled(parser)
     let pressed = try parser.parseReport(CapturedReport.with(extras: mask))
@@ -179,7 +179,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testGuideUsesSystemByte() throws {
+  func guideUsesSystemByte() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(system: 0x80))
@@ -188,7 +188,7 @@ struct FlydigiParserTests {
 
   /// The D-pad is a 4-bit hat in the low nibble, clockwise from 1 = up.
   @Test
-  func testHatDirections() throws {
+  func hatDirections() throws {
     let cases: [(UInt8, HatDirection)] = [
       (1, .north), (3, .east), (5, .south), (7, .west), (0, .neutral),
     ]
@@ -203,7 +203,7 @@ struct FlydigiParserTests {
   /// The hat shares its byte with the face buttons, so one must not disturb
   /// the other.
   @Test
-  func testHatAndFaceButtonCoexist() throws {
+  func hatAndFaceButtonCoexist() throws {
     let parser = flydigiDriver()
     settled(parser)
     let events = try parser.parseReport(CapturedReport.with(hatAndFace: 0x10 | 3))
@@ -212,7 +212,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testButtonReleaseEmitsReleaseEvent() throws {
+  func buttonReleaseEmitsReleaseEvent() throws {
     let parser = flydigiDriver()
     settled(parser)
     _ = try parser.parseReport(CapturedReport.with(hatAndFace: 0x10))
@@ -221,7 +221,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testRepeatedReportRepeatsSnapshot() throws {
+  func repeatedReportRepeatsSnapshot() throws {
     let parser = flydigiDriver()
     settled(parser)
     let first = try parser.parseReport(CapturedReport.with(hatAndFace: 0x10))
@@ -229,7 +229,7 @@ struct FlydigiParserTests {
   }
 
   @Test
-  func testRestingAxisJitterPassesThroughWithoutDriverDeadzone() throws {
+  func restingAxisJitterPassesThroughWithoutDriverDeadzone() throws {
     func axis(_ raw: UInt8) throws -> BipolarValue {
       let event = try flydigiDriver().parseReport(CapturedReport.with(leftStickX: raw))
       return try #require(event?.state.leftStick.x)

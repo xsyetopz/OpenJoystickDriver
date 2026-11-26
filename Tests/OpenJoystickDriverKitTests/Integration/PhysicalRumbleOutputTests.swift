@@ -6,7 +6,7 @@ import Testing
 
 struct PhysicalRumbleOutputTests {
   @Test
-  func testSourceBackedParsersExposeExactOutputCapabilities() {
+  func sourceBackedParsersExposeExactOutputCapabilities() {
     let gip = GIPDriver()
     let xbox360 = XUSBDriver()
     let xid = xidDriver()
@@ -48,7 +48,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testServiceDescriptionDefaultsToNoPhysicalOutputCapabilities() {
+  func serviceDescriptionDefaultsToNoPhysicalOutputCapabilities() {
     let description = ApplicationServiceDeviceDescription(
       name: "Test",
       vendorID: 1,
@@ -66,7 +66,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testServiceDescriptionRejectsIncompleteOutputCapabilities() throws {
+  func serviceDescriptionRejectsIncompleteOutputCapabilities() throws {
     let json = """
       {
         "name": "Test",
@@ -88,7 +88,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testServiceDescriptionRejectsSupportsPhysicalRumbleFlag() throws {
+  func serviceDescriptionRejectsSupportsPhysicalRumbleFlag() throws {
     let json = """
       {
         "name": "Test",
@@ -111,7 +111,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testServiceDescriptionDecodesExactOutputCapabilities() throws {
+  func serviceDescriptionDecodesExactOutputCapabilities() throws {
     let capabilities = PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency, .highFrequency, .leftTrigger, .rightTrigger],
       lightingFeatures: [.playerIndicator]
@@ -139,7 +139,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testXbox360PlayerIndicatorsMapToSteadyRingPatterns() {
+  func xbox360PlayerIndicatorsMapToSteadyRingPatterns() {
     #expect(XUSBDriver.ledPattern(for: .off) == .allOff)
     #expect(XUSBDriver.ledPattern(for: .player1) == .player1On)
     #expect(XUSBDriver.ledPattern(for: .player2) == .player2On)
@@ -148,7 +148,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testConsumerCodecDecodesGIPRumbleReportWithCallbackReportIDPrefix() throws {
+  func consumerCodecDecodesGIPRumbleReportWithCallbackReportIDPrefix() throws {
     let command = try consumerOutput(
       9,
       gipRumbleReport(
@@ -185,7 +185,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs3PhysicalOutputMatchesLinuxDefaultReport() {
+  func ds3PhysicalOutputMatchesLinuxDefaultReport() {
     let report = SixaxisDriver().rumblePlan(left: 180, right: 90, lt: 255, rt: 64).onlyReport
 
     #expect(report.reportID == 0x01)
@@ -201,7 +201,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs3SmallMotorIsBinaryAndOutputStatePersistsAcrossLedChanges() {
+  func ds3SmallMotorIsBinaryAndOutputStatePersistsAcrossLedChanges() {
     let parser = SixaxisDriver()
     let off = parser.rumblePlan(left: 33, right: 0, lt: 0, rt: 0).onlyReport
     #expect(off.bytes[3] == 0)
@@ -217,7 +217,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testCapabilitiesRejectBinaryMarkersForUnsupportedMotors() {
+  func capabilitiesRejectBinaryMarkersForUnsupportedMotors() {
     let capabilities = PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency],
       binaryRumbleMotors: [.lowFrequency, .highFrequency]
@@ -227,7 +227,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDualSensePhysicalRumbleUsesExactUSBOutputLayout() {
+  func dualSensePhysicalRumbleUsesExactUSBOutputLayout() {
     let report = DualSenseDriver().rumblePlan(left: 180, right: 90, lt: 255, rt: 64).onlyReport
 
     #expect(report.reportID == 0x02)
@@ -240,7 +240,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDualSensePhysicalRumbleUsesSignedBluetoothOutputLayout() {
+  func dualSensePhysicalRumbleUsesSignedBluetoothOutputLayout() {
     let parser = DualSenseDriver(prefersBluetooth: true)
     let report = parser.rumblePlan(left: 180, right: 90, lt: 255, rt: 64).onlyReport
 
@@ -253,7 +253,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDualSensePlayerIndicatorUsesCenteredLinuxPatterns() {
+  func dualSensePlayerIndicatorUsesCenteredLinuxPatterns() {
     let parser = DualSenseDriver()
     let expected: [(PhysicalPlayerIndicator, UInt8)] = [
       (.off, 0x00), (.player1, 0x04), (.player2, 0x0A), (.player3, 0x15), (.player4, 0x1B),
@@ -269,7 +269,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDualSenseBluetoothPlayerIndicatorIsSigned() {
+  func dualSenseBluetoothPlayerIndicatorIsSigned() {
     let report = DualSenseDriver(prefersBluetooth: true).encoded(.setPlayerIndicator(.player3))
       .onlyReport
 
@@ -280,7 +280,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs4ColorReportsUseExactUsbAndBluetoothLayouts() {
+  func ds4ColorReportsUseExactUsbAndBluetoothLayouts() {
     let usb = DualShock4Driver().encoded(.setRGB(ControllerColor(red: 12, green: 34, blue: 56)))
       .onlyReport
     #expect(usb.reportID == 0x05)
@@ -299,7 +299,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDualSenseColorReportsUseExactUsbAndBluetoothLayouts() {
+  func dualSenseColorReportsUseExactUsbAndBluetoothLayouts() {
     let usb = DualSenseDriver().encoded(.setRGB(ControllerColor(red: 12, green: 34, blue: 56)))
       .onlyReport
     #expect(usb.reportID == 0x02)
@@ -317,7 +317,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs4PhysicalRumbleReportUsesUSBHIDOutputReport() {
+  func ds4PhysicalRumbleReportUsesUSBHIDOutputReport() {
     let report = DualShock4Driver().rumblePlan(left: 180, right: 90, lt: 255, rt: 64).onlyReport
 
     #expect(report.reportID == 0x05)
@@ -330,7 +330,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs4PhysicalRumbleReportUsesBluetoothReportAfterBluetoothInput() {
+  func ds4PhysicalRumbleReportUsesBluetoothReportAfterBluetoothInput() {
     let parser = DualShock4Driver(prefersBluetooth: true)
 
     let report = parser.rumblePlan(left: 180, right: 90, lt: 255, rt: 64).onlyReport
@@ -346,7 +346,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs4PreferredBluetoothParserUsesBluetoothPhysicalRumbleBeforeInput() {
+  func ds4PreferredBluetoothParserUsesBluetoothPhysicalRumbleBeforeInput() {
     let report = DualShock4Driver(prefersBluetooth: true).rumblePlan(
       left: 180,
       right: 90,

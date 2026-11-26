@@ -9,7 +9,7 @@ struct SixaxisDriverTests {
   static let model = ControllerModelID(vendorID: 0x054C, productID: 0x0268)
 
   @Test
-  func testDS3ProfileIsExperimentalAndUnverified() throws {
+  func ds3ProfileIsExperimentalAndUnverified() throws {
     let model = ControllerModelID(vendorID: 1356, productID: 616)
     let profile = try #require(ProtocolDriverRegistry().record(for: model))
 
@@ -20,7 +20,7 @@ struct SixaxisDriverTests {
   }
 
   @Test
-  func testDS3ReportParsesPrimaryButtonsAndDpad() throws {
+  func ds3ReportParsesPrimaryButtonsAndDpad() throws {
     let parser = SixaxisDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.DS3.inputReport())
 
@@ -45,7 +45,7 @@ struct SixaxisDriverTests {
   }
 
   @Test
-  func testDS3ReportParsesSticksAndAnalogTriggers() throws {
+  func ds3ReportParsesSticksAndAnalogTriggers() throws {
     let parser = SixaxisDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.DS3.inputReport())
 
@@ -60,7 +60,7 @@ struct SixaxisDriverTests {
   }
 
   @Test
-  func testDS3OperationalFeatureReadRequestsMatchLinuxUsbInitNeed() {
+  func ds3OperationalFeatureReadRequestsMatchLinuxUsbInitNeed() {
     let requests = SixaxisDriver().startupFeatureReads()
 
     #expect(
@@ -72,7 +72,7 @@ struct SixaxisDriverTests {
   }
 
   @Test
-  func testDS3StartupReportsAreTransportScoped() {
+  func ds3StartupReportsAreTransportScoped() {
     let usb = SixaxisDriver()
     let bluetooth = SixaxisDriver(isBluetooth: true)
 
@@ -90,7 +90,7 @@ struct SixaxisDriverTests {
 
   /// A USB Sixaxis streams input reports while idle, so a second without one is a stale pad.
   @Test
-  func testDS3OverUSBGoesStaleAfterSecondWithoutInput() {
+  func ds3OverUSBGoesStaleAfterSecondWithoutInput() {
     #expect(SixaxisDriver().sessionPlan.inputReportLivenessTimeoutNanoseconds == 1_000_000_000)
     let bluetooth = SixaxisDriver(isBluetooth: true)
     #expect(bluetooth.sessionPlan.inputReportLivenessTimeoutNanoseconds == nil)
@@ -99,13 +99,13 @@ struct SixaxisDriverTests {
   /// A USB Sixaxis sends no input until its PS button is pressed; over Bluetooth the press is
   /// what connects it.
   @Test
-  func testDS3OverUSBStartsInputOnGuidePress() {
+  func ds3OverUSBStartsInputOnGuidePress() {
     #expect(SixaxisDriver().sessionPlan.inputStartAction == .pressGuide)
     #expect(SixaxisDriver(isBluetooth: true).sessionPlan.inputStartAction == nil)
   }
 
   @Test
-  func testDS3IgnoresBogusBluetoothStatusReport() throws {
+  func ds3IgnoresBogusBluetoothStatusReport() throws {
     let parser = SixaxisDriver()
     var report = Array(
       ProtocolPacketFixtures.DS3.inputReport(
@@ -122,7 +122,7 @@ struct SixaxisDriverTests {
   }
 
   @Test
-  func testDS3IgnoresUnsupportedReports() throws {
+  func ds3IgnoresUnsupportedReports() throws {
     let parser = SixaxisDriver()
     let events = try parser.parseReport(Data([0x02, 0, 0, 0]))
 

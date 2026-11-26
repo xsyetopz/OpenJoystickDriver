@@ -112,7 +112,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func testNotificationUsesNativeAuthorizationAndSoundPreference() async throws {
+  func notificationUsesNativeAuthorizationAndSoundPreference() async throws {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.notifySounds, to: false)
     let authorization = NotificationAuthorizationStub(state: .notDetermined)

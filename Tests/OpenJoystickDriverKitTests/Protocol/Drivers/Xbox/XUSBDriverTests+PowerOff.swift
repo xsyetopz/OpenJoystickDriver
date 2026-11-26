@@ -29,7 +29,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testConnectedReceiverSlotPowersOffWithDescriptionsPacket() throws {
+  func connectedReceiverSlotPowersOffWithDescriptionsPacket() throws {
     let driver = connectedReceiver(description: try Self.descriptionWithPowerOff())
 
     let packet = PhysicalUSBOutputPacket(
@@ -41,7 +41,7 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testReceiverSlotThatIsNotConnectedDoesNotPowerOff() throws {
+  func receiverSlotThatIsNotConnectedDoesNotPowerOff() throws {
     let description = try Self.descriptionWithPowerOff()
     let driver = XUSBDriver(isWirelessReceiver: true, description: description)
     #expect(driver.powerOffWrites().isEmpty)
@@ -56,21 +56,21 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWiredPadDoesNotPowerOff() throws {
+  func wiredPadDoesNotPowerOff() throws {
     let description = try Self.descriptionWithPowerOff()
 
     #expect(XUSBDriver(description: description).powerOffWrites().isEmpty)
   }
 
   @Test
-  func testDescriptionWithoutPacketPowersNothingOff() throws {
+  func descriptionWithoutPacketPowersNothingOff() throws {
     let description = try ProtocolDescriptionFixture.decode(family: .xboxXUSB, #""rawUSB": true"#)
 
     #expect(connectedReceiver(description: description).powerOffWrites().isEmpty)
   }
 
   @Test
-  func testBundledDescriptionPowersNothingOffUntilHardwareChecksPass() {
+  func bundledDescriptionPowersNothingOffUntilHardwareChecksPass() {
     let driver = XUSBDriver(isWirelessReceiver: true)
     _ = driver.decode(ProtocolPacketFixtures.XUSBReceiver.presenceConnected)
 

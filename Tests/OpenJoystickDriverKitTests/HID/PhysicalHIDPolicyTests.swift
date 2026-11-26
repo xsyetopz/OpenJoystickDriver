@@ -101,7 +101,7 @@ struct PhysicalHIDPolicyTests {
   }
 
   @Test
-  func testSyntheticAppleGameControllerDevicesAreExcluded() {
+  func syntheticAppleGameControllerDevicesAreExcluded() {
     #expect(UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(true))
     #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(false))
     var numericValue: Int32 = 1

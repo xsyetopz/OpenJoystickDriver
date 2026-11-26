@@ -6,7 +6,7 @@ import Testing
 
 struct VirtualControllerBackendTests {
   @Test
-  func testGameControllerHIDBackendCapability() {
+  func gameControllerHIDBackendCapability() {
     let capabilities = VirtualControllerBackendCatalog.gameControllerHIDCapabilities
 
     #expect(capabilities.isImplemented)
@@ -17,7 +17,7 @@ struct VirtualControllerBackendTests {
   }
 
   @Test
-  func testUserSpaceSerialUsesStableHashedPhysicalIdentity() {
+  func userSpaceSerialUsesStableHashedPhysicalIdentity() {
     let identifier = LogicalControllerID(
       vendorID: 13623,
       productID: 4112,
@@ -48,7 +48,7 @@ struct VirtualControllerBackendTests {
   }
 
   @Test
-  func testXboxOneVirtualOutputFormatDeclaresRumbleOutputSize() {
+  func xboxOneVirtualOutputFormatDeclaresRumbleOutputSize() {
     let format = XboxOneGIPHIDReportFormat()
 
     #expect(format.inputReportID == 0x20)
@@ -57,7 +57,7 @@ struct VirtualControllerBackendTests {
   }
 
   @Test
-  func testVirtualOutputFormatsReturnFullyNeutralReportsAfterRelease() {
+  func virtualOutputFormatsReturnFullyNeutralReportsAfterRelease() {
     let generic = OJDGenericGamepadFormat().buildInputReport(from: VirtualGamepadState())
     let xone = XboxOneGIPHIDReportFormat().buildInputReport(from: VirtualGamepadState())
 

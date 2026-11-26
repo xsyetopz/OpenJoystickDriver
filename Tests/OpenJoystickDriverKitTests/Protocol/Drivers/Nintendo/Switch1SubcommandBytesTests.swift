@@ -82,12 +82,12 @@ struct Switch1SubcommandBytesTests {
   ]
 
   @Test
-  func testProSubcommandBytesAreUnchanged() throws {
+  func proSubcommandBytesAreUnchanged() throws {
     #expect(try sequence(Switch1Driver()) == Self.proUSB)
   }
 
   @Test
-  func testLeftJoyConSubcommandBytesAreUnchanged() throws {
+  func leftJoyConSubcommandBytesAreUnchanged() throws {
     let driver = Switch1Driver(layout: .leftJoyCon, isBluetooth: true)
     #expect(try sequence(driver) == Self.leftJoyConBluetooth)
   }

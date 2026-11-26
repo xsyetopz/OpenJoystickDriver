@@ -5,7 +5,7 @@ import Testing
 
 extension DualShock4DriverTests {
   @Test
-  func testObservedDS4RightStickYShortfallRemainsVisible() throws {
+  func observedDS4RightStickYShortfallRemainsVisible() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -15,7 +15,7 @@ extension DualShock4DriverTests {
     #expect(events.contains(expectedRightStick))
   }
   @Test
-  func testControllerStateExposesDS4Hat() async {
+  func controllerStateExposesDS4Hat() async {
     let dispatcher = CapturingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 1356, productID: 2508),
@@ -38,7 +38,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testPipelineSnapshotsPowerWithoutDispatchingItAsInput() async {
+  func pipelineSnapshotsPowerWithoutDispatchingItAsInput() async {
     let dispatcher = CapturingOutputDispatcher()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 1356, productID: 2508),
@@ -64,7 +64,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testRegistryMapsDS4V2IdentityToDualShock4Driver() throws {
+  func registryMapsDS4V2IdentityToDualShock4Driver() throws {
     let model = ControllerModelID(vendorID: 1356, productID: 2508)
     let profile = try #require(ProtocolDriverRegistry().record(for: model))
 

@@ -65,26 +65,26 @@ struct GIPStartupPacketBytesTests {
   ]
 
   @Test
-  func testEachNamedPacketAloneCarriesSameBytes() {
+  func eachNamedPacketAloneCarriesSameBytes() {
     for identifier in Self.identifiers {
       #expect(startup([identifier]) == [Self.alone[identifier]], "\(identifier)")
     }
   }
 
   @Test
-  func testAllNamedPacketsShareCommandCountersInListOrder() {
+  func allNamedPacketsShareCommandCountersInListOrder() {
     #expect(startup(Self.identifiers) == Self.all)
     #expect(startup(Self.identifiers.reversed()) == Self.reversed)
   }
 
   @Test
-  func testRepeatedPacketTakesNextSequenceNumber() {
+  func repeatedPacketTakesNextSequenceNumber() {
     let twice = startup(["XboxGIP/power-on", "XboxGIP/power-on", "XboxGIP/s-init"])
     #expect(twice == ["2:0520010100", "2:0520020100", "2:0520030f06"])
   }
 
   @Test
-  func testSequenceNumbersContinueAcrossStartupsAndIntoKeepAlive() {
+  func sequenceNumbersContinueAcrossStartupsAndIntoKeepAlive() {
     let gip = driver(Self.identifiers)
     #expect(gip.startupWrites().map(hex) == Self.all)
     #expect(
@@ -98,7 +98,7 @@ struct GIPStartupPacketBytesTests {
   }
 
   @Test
-  func testDefaultStartupIsPowerOnLedOnAuthDone() {
+  func defaultStartupIsPowerOnLedOnAuthDone() {
     #expect(
       GIPDriver().startupWrites().map(hex)
         == ["2:0520010100", "2:0a200203000114", "2:062001020100"]

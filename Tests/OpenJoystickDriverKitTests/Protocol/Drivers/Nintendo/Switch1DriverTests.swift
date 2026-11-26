@@ -9,7 +9,7 @@ struct Switch1DriverTests {
   static let model = ControllerModelID(vendorID: 0x057E, productID: 0x2009)
 
   @Test
-  func testSwitchProProfileIsExperimentalAndUnverified() throws {
+  func switchProProfileIsExperimentalAndUnverified() throws {
     let model = ControllerModelID(vendorID: 1406, productID: 8201)
     let profile = try #require(ProtocolDriverRegistry().record(for: model))
 
@@ -22,7 +22,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProReportParsesPrimaryButtonsAndDpad() throws {
+  func switchProReportParsesPrimaryButtonsAndDpad() throws {
     let parser = Switch1Driver()
     _ = try parser.parseReport(ProtocolPacketFixtures.SwitchPro.inputReport())
 
@@ -49,13 +49,13 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProDeclaresItsDigitalTriggers() {
+  func switchProDeclaresItsDigitalTriggers() {
     let capabilities = Switch1Driver(layout: .pro).capabilities
     #expect(capabilities.digitalTriggers == [.leftTrigger, .rightTrigger])
   }
 
   @Test
-  func testSwitchProFaceButtonsUseLinuxPositionalMapping() throws {
+  func switchProFaceButtonsUseLinuxPositionalMapping() throws {
     let expectations: [(UInt32, Control)] = [
       (0x0000_0008, .east), (0x0000_0004, .south), (0x0000_0002, .north),
       (0x0000_0001, .west),
@@ -74,7 +74,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProReportParsesTwelveBitSticks() throws {
+  func switchProReportParsesTwelveBitSticks() throws {
     let parser = Switch1Driver()
     _ = try parser.parseReport(ProtocolPacketFixtures.SwitchPro.inputReport())
 
@@ -87,7 +87,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProStartupReportsMatchLinuxUsbInitSlice() {
+  func switchProStartupReportsMatchLinuxUsbInitSlice() {
     let reports = Switch1Driver().startupWrites().hidOutputs
 
     #expect(reports.map(\.reportID) == ProtocolPacketFixtures.SwitchPro.usbStartupReportIDs)
@@ -109,7 +109,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProUsbHandshakeIsDescriptionsStartupWrites() {
+  func switchProUsbHandshakeIsDescriptionsStartupWrites() {
     let commands = { (layout: ProtocolParameters.Layout?, variant: PhysicalProtocolVariantID) in
       PhysicalProtocolID.nintendoSwitch1.protocolDescription.startupWrites(
         phase: .startup,
@@ -126,7 +126,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProStartupReportsAreTransportScopedAndRateLimited() {
+  func switchProStartupReportsAreTransportScopedAndRateLimited() {
     let bluetooth = Switch1Driver(isBluetooth: true).startupWrites().hidOutputs
     #expect(bluetooth.map(\.reportID) == ProtocolPacketFixtures.SwitchPro.bluetoothStartupReportIDs)
     #expect(
@@ -142,14 +142,14 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProRumbleCodecMatchesLinuxDefaultFrequencyFixtures() {
+  func switchProRumbleCodecMatchesLinuxDefaultFrequencyFixtures() {
     #expect(SwitchProRumbleCodec.encode(intensity: 0) == [0x00, 0x01, 0x40, 0x40])
     #expect(SwitchProRumbleCodec.encode(intensity: 128) == [0x00, 0x8B, 0xC0, 0x63])
     #expect(SwitchProRumbleCodec.encode(intensity: 255) == [0x00, 0xC9, 0x40, 0x72])
   }
 
   @Test
-  func testSwitchProRumbleAndPlayerLedReportsPreserveStateAndSequence() {
+  func switchProRumbleAndPlayerLedReportsPreserveStateAndSequence() {
     let parser = Switch1Driver()
     let rumble = parser.rumblePlan(left: 255, right: 128, lt: 0, rt: 0).onlyReport
     #expect(rumble.reportID == 0x10)
@@ -163,7 +163,7 @@ struct Switch1DriverTests {
   }
 
   @Test
-  func testSwitchProIgnoresUnsupportedReports() throws {
+  func switchProIgnoresUnsupportedReports() throws {
     let parser = Switch1Driver()
     let events = try parser.parseReport(Data([0x3F, 0, 0, 0]))
 

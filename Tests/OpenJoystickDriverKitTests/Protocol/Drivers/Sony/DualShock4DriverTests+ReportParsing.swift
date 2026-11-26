@@ -5,7 +5,7 @@ import Testing
 
 extension DualShock4DriverTests {
   @Test
-  func testValidatedReportsExposeAbsoluteControlsAndAdvancingTimestamp() throws {
+  func validatedReportsExposeAbsoluteControlsAndAdvancingTimestamp() throws {
     let parser = DualShock4Driver()
 
     let first = try parser.parseReport(
@@ -32,7 +32,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testInvalidBluetoothReportLeavesLastValidState() throws {
+  func invalidBluetoothReportLeavesLastValidState() throws {
     let parser = DualShock4Driver(prefersBluetooth: true)
     _ = try parser.parseReport(makeDS4BluetoothReport(buttons0: 0x28, sensorTimestamp: 1))
     var invalidReport = Array(makeDS4BluetoothReport(sensorTimestamp: 2))
@@ -48,7 +48,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testUSBReportsBatteryBucketsAndWiredPower() throws {
+  func usbReportsBatteryBucketsAndWiredPower() throws {
     let parser = DualShock4Driver()
 
     _ = try parser.parseReport(makeDS4Report(includesReportID: true, status: 0x00))
@@ -62,7 +62,7 @@ extension DualShock4DriverTests {
   }
 
   @Test(arguments: Array(UInt8(0)...UInt8(9)))
-  func testEveryBatteryBucketPreservesItsReportedRange(_ level: UInt8) throws {
+  func everyBatteryBucketPreservesItsReportedRange(_ level: UInt8) throws {
     let parser = DualShock4Driver()
 
     _ = try parser.parseReport(makeDS4Report(status: level))
@@ -72,7 +72,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testBluetoothReportParsesPower() throws {
+  func bluetoothReportParsesPower() throws {
     let parser = DualShock4Driver(prefersBluetooth: true)
 
     _ = try parser.parseReport(makeDS4BluetoothReport(status: 0x1A))
@@ -81,7 +81,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testLevelTenRetainsObservedWiredPower() throws {
+  func levelTenRetainsObservedWiredPower() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report(status: 0x0A))
     #expect(parser.power == ds4Power(.discharging, 100...100, wired: false))
@@ -91,7 +91,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testInvalidAndMinimalBatteryLevelsRemainUnknown() throws {
+  func invalidAndMinimalBatteryLevelsRemainUnknown() throws {
     let wired = DualShock4Driver()
     _ = try wired.parseReport(makeDS4Report(status: 0x0F))
     #expect(wired.power == ds4Power(.unknown, nil, wired: false))
@@ -117,7 +117,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testWiredReportWithoutReportIDIsRejected() throws {
+  func wiredReportWithoutReportIDIsRejected() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -127,7 +127,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testUSBFaceButtonTransitionsRemainOrderedAcrossUnrelatedInput() throws {
+  func usbFaceButtonTransitionsRemainOrderedAcrossUnrelatedInput() throws {
     try assertFaceButtonContinuity { buttons, leftStickX, rightStickX in
       makeDS4Report(
         includesReportID: true,
@@ -139,14 +139,14 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testBluetoothFaceButtonTransitionsRemainOrderedAcrossUnrelatedInput() throws {
+  func bluetoothFaceButtonTransitionsRemainOrderedAcrossUnrelatedInput() throws {
     try assertFaceButtonContinuity { buttons, leftStickX, rightStickX in
       makeDS4BluetoothReport(leftStickX: leftStickX, rightStickX: rightStickX, buttons0: buttons)
     }
   }
 
   @Test
-  func testBluetoothHIDTransactionReportParsesSticksTriggersAndSystemButtons() throws {
+  func bluetoothHIDTransactionReportParsesSticksTriggersAndSystemButtons() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4BluetoothReport(includesHIDTransaction: true))
 
@@ -176,7 +176,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testBluetoothPayloadWithoutReportIDIsRejected() throws {
+  func bluetoothPayloadWithoutReportIDIsRejected() throws {
 
     let parser = DualShock4Driver()
     #expect(throws: DualShock4DriverError.invalidReportFraming) {
@@ -185,7 +185,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testBluetoothShortReportWithHIDTransactionParsesFaceButtons() throws {
+  func bluetoothShortReportWithHIDTransactionParsesFaceButtons() throws {
     let parser = DualShock4Driver(prefersBluetooth: true)
     let neutral: [UInt8] = [0xA1, 0x01, 128, 128, 128, 128, 0x08, 0, 0, 0, 0]
     _ = try parser.parseReport(Data(neutral))
@@ -198,7 +198,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testCompleteBluetoothReportRejectsInvalidCRC() throws {
+  func completeBluetoothReportRejectsInvalidCRC() throws {
     let parser = DualShock4Driver(prefersBluetooth: true)
     let observedPrefix: [UInt8] = [
       0x11, 0xC0, 0x00, 0x7A, 0x81, 0x81, 0x82, 0x08, 0x00, 0xCC, 0x00, 0x00, 0xF5, 0xD1, 0x0C,
@@ -212,7 +212,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testWiredIOHIDReportParsesSticksTriggersAndSystemButtons() throws {
+  func wiredIOHIDReportParsesSticksTriggersAndSystemButtons() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -245,7 +245,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testWiredIOHIDReportParsesDpadDirections() throws {
+  func wiredIOHIDReportParsesDpadDirections() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -261,7 +261,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testSmallDS4StickJitterPassesThroughWithoutDriverDeadzone() throws {
+  func smallDS4StickJitterPassesThroughWithoutDriverDeadzone() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -297,7 +297,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testObservedDS4LeftStickXDriftPassesThroughWithoutDriverDeadzone() throws {
+  func observedDS4LeftStickXDriftPassesThroughWithoutDriverDeadzone() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -307,7 +307,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testDs4StickReportsRawHIDNormalizedRange() throws {
+  func ds4StickReportsRawHIDNormalizedRange() throws {
     let parser = DualShock4Driver()
     _ = try parser.parseReport(makeDS4Report())
 
@@ -323,7 +323,7 @@ extension DualShock4DriverTests {
   }
 
   @Test
-  func testBothStickYAxesReportUpCenterAndDown() throws {
+  func bothStickYAxesReportUpCenterAndDown() throws {
     let parser = DualShock4Driver()
 
     let up = try parser.parseReport(makeDS4Report(leftStickY: 0, rightStickY: 0))

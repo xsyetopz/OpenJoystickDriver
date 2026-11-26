@@ -9,7 +9,7 @@ struct DualSenseDriverTests {
   static let model = ControllerModelID(vendorID: 0x054C, productID: 0x0CE6)
 
   @Test
-  func testDualSenseUSBReportParsesPrimaryControls() throws {
+  func dualSenseUSBReportParsesPrimaryControls() throws {
     let model = ControllerModelID(vendorID: 1356, productID: 3302)
     let parser = try catalogParser(model)
     _ = try parser.parseReport(ProtocolPacketFixtures.DualSense.usbInputReport())
@@ -34,7 +34,7 @@ struct DualSenseDriverTests {
   }
 
   @Test
-  func testDualSenseBluetoothReportParsesPrimaryControlsWithCRC() throws {
+  func dualSenseBluetoothReportParsesPrimaryControlsWithCRC() throws {
     let parser = DualSenseDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.DualSense.bluetoothInputReport())
 
@@ -59,7 +59,7 @@ struct DualSenseDriverTests {
   }
 
   @Test
-  func testDualSenseUnknownReportIDIsIgnored() throws {
+  func dualSenseUnknownReportIDIsIgnored() throws {
     let parser = DualSenseDriver()
     var report = [UInt8](repeating: 0, count: 64)
     report[0] = 0x02
@@ -72,7 +72,7 @@ struct DualSenseDriverTests {
   }
 
   @Test
-  func testDualSenseBluetoothReportRejectsInvalidCRC() {
+  func dualSenseBluetoothReportRejectsInvalidCRC() {
     let parser = DualSenseDriver()
     var report = Array(ProtocolPacketFixtures.DualSense.bluetoothInputReport(buttons: (0x28, 0, 0)))
     report[77] ^= 0xFF
@@ -86,7 +86,7 @@ struct DualSenseDriverTests {
   }
 
   @Test
-  func testDualSenseUSBReportParsesMicrophoneMute() throws {
+  func dualSenseUSBReportParsesMicrophoneMute() throws {
     let parser = DualSenseDriver()
     _ = try parser.parseReport(ProtocolPacketFixtures.DualSense.usbInputReport())
 
@@ -98,7 +98,7 @@ struct DualSenseDriverTests {
   }
 
   @Test
-  func testDualSenseProfilesAreExperimentalAndUnverified() throws {
+  func dualSenseProfilesAreExperimentalAndUnverified() throws {
     let registry = ProtocolDriverRegistry()
     let models = [
       ControllerModelID(vendorID: 1356, productID: 3302),

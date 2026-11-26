@@ -4,7 +4,7 @@ import Testing
 
 struct SemanticVersionTests {
   @Test
-  func testParsesVersionWithLeadingVAndPrerelease() throws {
+  func parsesVersionWithLeadingVAndPrerelease() throws {
     let version = try #require(SemanticVersion("v0.2.0-rc.1"))
     #expect(version.major == 0)
     #expect(version.minor == 2)
@@ -14,7 +14,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testParsesVersionWithUppercaseLeadingV() throws {
+  func parsesVersionWithUppercaseLeadingV() throws {
     let version = try #require(SemanticVersion("V0.2.0"))
     #expect(version.major == 0)
     #expect(version.minor == 2)
@@ -24,7 +24,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testBuildMetadataIsIgnoredForComparison() throws {
+  func buildMetadataIsIgnoredForComparison() throws {
     let plain = try #require(SemanticVersion("0.2.0"))
     let withBuild = try #require(SemanticVersion("0.2.0+20260521"))
     #expect(plain == withBuild)
@@ -32,7 +32,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testSemVerPrecedenceExamples() throws {
+  func semVerPrecedenceExamples() throws {
     let versions = try [
       "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2",
       "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0",
@@ -47,7 +47,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testNumericPrereleaseIdentifiersSortBeforeAlphanumericIdentifiers() throws {
+  func numericPrereleaseIdentifiersSortBeforeAlphanumericIdentifiers() throws {
     let numeric = try #require(SemanticVersion("1.0.0-1"))
     let alphanumeric = try #require(SemanticVersion("1.0.0-alpha"))
     #expect(numeric < alphanumeric)
@@ -55,7 +55,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testNumericPrereleaseIdentifiersSortNumerically() throws {
+  func numericPrereleaseIdentifiersSortNumerically() throws {
     let rc2 = try #require(SemanticVersion("0.2.0-rc.2"))
     let rc10 = try #require(SemanticVersion("0.2.0-rc.10"))
     #expect(rc2 < rc10)
@@ -63,7 +63,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testStableReleaseSortsAfterPrerelease() throws {
+  func stableReleaseSortsAfterPrerelease() throws {
     let rc = try #require(SemanticVersion("0.2.0-rc.1"))
     let stable = try #require(SemanticVersion("0.2.0"))
     #expect(rc < stable)
@@ -71,7 +71,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testPatchReleaseSortsAfterOlderMinor() throws {
+  func patchReleaseSortsAfterOlderMinor() throws {
     let old = try #require(SemanticVersion("0.1.9"))
     let new = try #require(SemanticVersion("0.2.0"))
     #expect(old < new)
@@ -79,14 +79,14 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testInvalidVersionsReturnNil() {
+  func invalidVersionsReturnNil() {
     #expect(SemanticVersion("latest") == nil)
     #expect(SemanticVersion("0.2") == nil)
   }
 
   @Test
 
-  func testRejectsNumericIdentifiersWithLeadingZeroes() {
+  func rejectsNumericIdentifiersWithLeadingZeroes() {
     #expect(SemanticVersion("01.2.3") == nil)
     #expect(SemanticVersion("1.02.3") == nil)
     #expect(SemanticVersion("1.2.03") == nil)
@@ -96,7 +96,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testRejectsInvalidPrereleaseIdentifiers() {
+  func rejectsInvalidPrereleaseIdentifiers() {
     #expect(SemanticVersion("1.0.0-") == nil)
     #expect(SemanticVersion("1.0.0-alpha..1") == nil)
     #expect(SemanticVersion("1.0.0-alpha.") == nil)
@@ -106,7 +106,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testRejectsInvalidBuildMetadataIdentifiers() {
+  func rejectsInvalidBuildMetadataIdentifiers() {
     #expect(SemanticVersion("1.0.0+") == nil)
     #expect(SemanticVersion("1.0.0+build..1") == nil)
     #expect(SemanticVersion("1.0.0+build.") == nil)
@@ -116,7 +116,7 @@ struct SemanticVersionTests {
 
   @Test
 
-  func testComparatorConsistencyWithEquatable() throws {
+  func comparatorConsistencyWithEquatable() throws {
     let lhs = try #require(SemanticVersion("1.0.0+build.1"))
     let rhs = try #require(SemanticVersion("1.0.0+build.2"))
     #expect(lhs == rhs)

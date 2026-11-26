@@ -6,7 +6,7 @@ import Testing
 
 extension GIPDriverTests {
   @Test
-  func testGamesirStyleThirtyTwoByteGIPReportMapsViewGuideMenuAndShareFromPacketBytes() throws {
+  func gamesirStyleThirtyTwoByteGIPReportMapsViewGuideMenuAndShareFromPacketBytes() throws {
     let parser = GIPDriver(shareButtonFromEnd: 18)
     let view = try parser.parseReport(
       Data([
@@ -83,7 +83,7 @@ extension GIPDriverTests {
   /// Linux xpad reads `data[len - 26]` of the whole packet; SDL reads payload byte 18 of the
   /// 44-byte Series X firmware 5.5 payload and byte 14 of the 40-byte firmware 5.1 payload.
   @Test
-  func testShareOffsetReadsShareFromEndRelativeGIPPacking() throws {
+  func shareOffsetReadsShareFromEndRelativeGIPPacking() throws {
     for (count, shareIndex) in [(44, 18), (40, 14)] {
       let parser = GIPDriver(shareButtonFromEnd: 26)
       var payload = Data(repeating: 0, count: count)
@@ -96,7 +96,7 @@ extension GIPDriverTests {
   /// A pad whose record names no Share offset has no Share, so byte 14 of its input is not read
   /// as one.
   @Test
-  func testUndeclaredShareIsNotDecoded() throws {
+  func undeclaredShareIsNotDecoded() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 32)
     payload[14] = 1
@@ -106,7 +106,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testFirmwareCommandDoesNotInventExtraButtons() throws {
+  func firmwareCommandDoesNotInventExtraButtons() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 16)
     payload[14] = 0x05

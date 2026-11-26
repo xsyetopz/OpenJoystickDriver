@@ -6,7 +6,7 @@ import Testing
 
 extension GIPDriverTests {
   @Test
-  func testSequencerIncrements() {
+  func sequencerIncrements() {
     var seq = GIPSequencer()
     #expect(seq.next(for: 5, options: 0x20) == 1)
     #expect(seq.next(for: 5, options: 0x20) == 2)
@@ -22,7 +22,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testSequencerWrapsAt255() {
+  func sequencerWrapsAt255() {
     var seq = GIPSequencer()
     for _ in 0..<254 { _ = seq.next(for: 1, options: 0x20) }
     #expect(seq.next(for: 1, options: 0x20) == 255)
@@ -31,7 +31,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testDefaultStartupSequence() {
+  func defaultStartupSequence() {
     let described = PhysicalProtocolID.xboxGIP.protocolDescription.usbStartupWrites(
       variant: .usb,
       parameters: .none
@@ -47,13 +47,13 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testKeepAlivePolicyDefaultsToEnabledAndCanBeDisabled() {
+  func keepAlivePolicyDefaultsToEnabledAndCanBeDisabled() {
     #expect(GIPDriver().keepAlivePolicy == .enabled)
     #expect(GIPDriver(keepAlivePolicy: .disabled).keepAlivePolicy == .disabled)
   }
 
   @Test
-  func testXpadXboxOneStartupPackets() {
+  func xpadXboxOneStartupPackets() {
     #expect(Self.named("XboxGIP/s-init") == [5, 32, 0, 15, 6])
     #expect(Self.named("XboxGIP/enable-extra-input") == [77, 16, 0, 2, 7, 0])
     #expect(Self.named("XboxGIP/hori-ack") == [1, 32, 0, 9, 0, 4, 32, 58, 0, 0, 0, 128, 0])
@@ -69,7 +69,7 @@ extension GIPDriverTests {
   /// The header keeps the expansion index and drops the reserved bit 3; the acknowledged
   /// message's System bit follows its command (SDL `GIP_Acknowledge`).
   @Test
-  func testAcknowledgementPacketMatchesGIPLayout() {
+  func acknowledgementPacketMatchesGIPLayout() {
     #expect(
       GIPDriver.acknowledgementPacket(
         command: GIPCommand.input,
@@ -96,7 +96,7 @@ extension GIPDriverTests {
   /// its offset ([MS-GIPUSB] 3.1.5.2); each acknowledgement counts the bytes received and the
   /// bytes still to come (SDL `GIP_Acknowledge`).
   @Test
-  func testFragmentAcknowledgementsCountReceivedAndRemainingBytes() throws {
+  func fragmentAcknowledgementsCountReceivedAndRemainingBytes() throws {
     let parser = GIPDriver()
     let first = GIPOption.chunk | GIPOption.chunkStart | GIPOption.internal | GIPOption.acknowledge
     let later = GIPOption.chunk | GIPOption.internal | GIPOption.acknowledge
@@ -122,7 +122,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testAcknowledgementIsDeferredUntilTransportConsumesIt() throws {
+  func acknowledgementIsDeferredUntilTransportConsumesIt() throws {
     let parser = GIPDriver()
     let options = GIPOption.acknowledge | 0x03
     let packet = Data([GIPCommand.virtualKey, options, 0x55, 2, 1, 0x5B])
@@ -142,7 +142,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testAuthenticationResponseIsDeferredUntilTransportConsumesIt() throws {
+  func authenticationResponseIsDeferredUntilTransportConsumesIt() throws {
     let parser = GIPDriver()
     let authPayload = Data([
       GIPAuthType.device, GIPAuthType.version, GIPAuthState.devInit.rawValue, 0, 0, 0,
@@ -162,7 +162,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseSplitFrameAcrossTransfers() throws {
+  func parseSplitFrameAcrossTransfers() throws {
     let parser = GIPDriver()
     let packet = ProtocolPacketFixtures.GIP.inputPacket(payload: Data(repeating: 0, count: 14))
 
@@ -171,7 +171,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseStackedFramesFromOneTransfer() throws {
+  func parseStackedFramesFromOneTransfer() throws {
     let parser = GIPDriver()
     var pressed = Data(repeating: 0, count: 14)
     pressed[0] = 16
@@ -184,7 +184,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseExtendedLengthFrameWithEvenHeaderPadding() throws {
+  func parseExtendedLengthFrameWithEvenHeaderPadding() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 128)
     payload[0] = 16
@@ -194,7 +194,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseChunkFrameHeaderWithoutBlockingFollowingFrame() throws {
+  func parseChunkFrameHeaderWithoutBlockingFollowingFrame() throws {
     let parser = GIPDriver()
     let chunk =
       Data([GIPCommand.input, GIPOption.chunk, 0, 14, 0x80, 0]) + Data(repeating: 0, count: 14)
@@ -210,7 +210,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseMainInputAllZero() throws {
+  func parseMainInputAllZero() throws {
     let parser = GIPDriver()
     let packet = ProtocolPacketFixtures.GIP.inputPacket(payload: Data(repeating: 0, count: 14))
     let events = try parser.parseReport(packet)
@@ -218,7 +218,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseMainInputAButton() throws {
+  func parseMainInputAButton() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 14)
     payload[0] = 16  // A button
@@ -228,7 +228,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseMainInputShareButton() throws {
+  func parseMainInputShareButton() throws {
     let parser = GIPDriver(shareButtonFromEnd: 18)
     var payload = Data(repeating: 0, count: 32)
     payload[14] = 1
@@ -243,7 +243,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseMainInputMultipleButtons() throws {
+  func parseMainInputMultipleButtons() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 14)
     // buttons0: A(16) + B(32) = 48
@@ -259,7 +259,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testUnknownCMDReturnsEmpty() throws {
+  func unknownCMDReturnsEmpty() throws {
     let parser = GIPDriver()
     let packet = Data([3, 32, 1, 4, 32, 0, 0, 0])
     let events = try parser.parseReport(packet)
@@ -267,7 +267,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseGuideButtonPressed() throws {
+  func parseGuideButtonPressed() throws {
     let parser = GIPDriver()
     let packet = Data([7, 32, 0, 2, 1, 0x5B])
     let events = try parser.parseReport(packet)
@@ -275,7 +275,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseGuideButtonReleased() throws {
+  func parseGuideButtonReleased() throws {
     let parser = GIPDriver()
     let packet = Data([7, 32, 0, 2, 0, 0x5B])
     let events = try parser.parseReport(packet)
@@ -285,7 +285,7 @@ extension GIPDriverTests {
   /// Motor levels are percentages, `0x00...0x64` ([MS-GIPUSB] Table 56; SDL
   /// `HIDAPI_DriverGIP_RumbleJoystick` divides a 16-bit strength by 655).
   @Test
-  func testRumbleLevelsArePercentages() throws {
+  func rumbleLevelsArePercentages() throws {
     let intensities = RumbleIntensities(
       lowFrequency: .max,
       highFrequency: UnipolarValue(unitInterval: 0.5),
@@ -297,19 +297,19 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testParseShortPacketBuffersUntilComplete() throws {
+  func parseShortPacketBuffersUntilComplete() throws {
     let parser = GIPDriver()
     #expect(try parser.parseReport(Data([GIPCommand.input, 32])) == nil)
   }
 
   @Test
-  func testParseIncompletePayloadBuffersUntilComplete() throws {
+  func parseIncompletePayloadBuffersUntilComplete() throws {
     let parser = GIPDriver()
     #expect(try parser.parseReport(Data([GIPCommand.input, 32, 0, 14, 0, 0])) == nil)
   }
 
   @Test
-  func testTriggerNormalization() throws {
+  func triggerNormalization() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 14)
     // LT = 1023 (max) = 0x03FF LE
@@ -321,7 +321,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testStickNormalization() throws {
+  func stickNormalization() throws {
     let parser = GIPDriver()
     var payload = Data(repeating: 0, count: 14)
     // LSX = Int16(-32768) = full left -> lx ~ -1.0
@@ -338,7 +338,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testDpadCombinations() throws {
+  func dpadCombinations() throws {
     let parser = GIPDriver()
     // up+right = 1+8 = 9
     var payload = Data(repeating: 0, count: 14)
@@ -349,7 +349,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testUnhandledReportTypeReturnsEmpty() throws {
+  func unhandledReportTypeReturnsEmpty() throws {
     let parser = GIPDriver()
     let packet = Data([99, 32, 0, 2, 0, 0])
     let events = try parser.parseReport(packet)
@@ -357,7 +357,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testRepeatedReportRepeatsSnapshot() throws {
+  func repeatedReportRepeatsSnapshot() throws {
     let parser = GIPDriver()
     var payload1 = Data(repeating: 0, count: 14)
     payload1[0] = 16  // A
@@ -371,7 +371,7 @@ extension GIPDriverTests {
   }
 
   @Test
-  func testReleaseClearsHeldButtonAndDoesNotRepeatWhileNeutral() throws {
+  func releaseClearsHeldButtonAndDoesNotRepeatWhileNeutral() throws {
     let parser = GIPDriver()
     var held = Data(repeating: 0, count: 14)
     held[1] = 1  // D-pad up

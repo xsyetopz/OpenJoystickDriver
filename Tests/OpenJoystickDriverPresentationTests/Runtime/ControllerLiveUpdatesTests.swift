@@ -44,7 +44,7 @@ struct ControllerLiveUpdatesTests {
   }
 
   @Test
-  func testNotificationAnnouncementIsAnsweredAndRefreshesNothing() async {
+  func notificationAnnouncementIsAnsweredAndRefreshesNothing() async {
     let source = ScriptedChangeSource()
     let refreshed = Counter()
     let answers = Answers()
