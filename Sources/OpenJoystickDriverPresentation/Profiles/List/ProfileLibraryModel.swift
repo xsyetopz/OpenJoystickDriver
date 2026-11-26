@@ -53,11 +53,8 @@ final class ProfileLibraryModel: ObservableObject {
     _ profile: RemappingProfile,
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
-    guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    if let failure = locallyValid(profile, request: request) { return failure }
-    let service = self.gateway
-    return await performMutation(request: request, conflictProfileID: nil) {
-      try await service.createRemappingProfile(profile)
+    await performValidatedMutation(profile, request: request, conflictProfileID: nil) {
+      try await $0.createRemappingProfile(profile)
     }
   }
 
@@ -76,11 +73,8 @@ final class ProfileLibraryModel: ObservableObject {
     expectedCurrent: RemappingProfile,
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
-    guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    if let failure = locallyValid(profile, request: request) { return failure }
-    let service = self.gateway
-    return await performMutation(request: request, conflictProfileID: profile.id) {
-      try await service.updateRemappingProfile(profile, expectedCurrent: expectedCurrent)
+    await performValidatedMutation(profile, request: request, conflictProfileID: profile.id) {
+      try await $0.updateRemappingProfile(profile, expectedCurrent: expectedCurrent)
     }
   }
 
@@ -95,11 +89,8 @@ final class ProfileLibraryModel: ObservableObject {
     _ profile: RemappingProfile,
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
-    guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    if let failure = locallyValid(profile, request: request) { return failure }
-    let service = self.gateway
-    return await performMutation(request: request, conflictProfileID: nil) {
-      try await service.importRemappingProfile(profile)
+    await performValidatedMutation(profile, request: request, conflictProfileID: nil) {
+      try await $0.importRemappingProfile(profile)
     }
   }
 
@@ -309,6 +300,31 @@ final class ProfileLibraryModel: ObservableObject {
     mutationState = .error(message)
     lastError = message
     return .rejected(id: request.id, operation: request.operation, message: message)
+  }
+
+  /// Sends a profile change through the service unless another change runs or the profile is
+  /// invalid.
+  ///
+  /// - Parameters:
+  ///   - profile: The profile that the change carries.
+  ///   - request: The identifier and operation of the request.
+  ///   - conflictProfileID: The profile whose conflict the request reports, if any.
+  ///   - send: Sends the change through the gateway.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
+  private func performValidatedMutation(
+    _ profile: RemappingProfile,
+    request: RuntimeMutationRequest,
+    conflictProfileID: UUID?,
+    send:
+      @Sendable (any ApplicationServiceGateway) async throws
+      -> ApplicationServiceRemappingSnapshotPayload
+  ) async -> RuntimeMutationResult {
+    guard !runtime.mutationInFlight else { return rejectMutation(request) }
+    if let failure = locallyValid(profile, request: request) { return failure }
+    let service = self.gateway
+    return await performMutation(request: request, conflictProfileID: conflictProfileID) {
+      try await send(service)
+    }
   }
 
   /// Validates the profile before it is sent.
