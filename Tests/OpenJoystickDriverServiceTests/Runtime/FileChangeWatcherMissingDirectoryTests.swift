@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
@@ -22,7 +23,7 @@ struct FileChangeWatcherMissingDirectoryTests {
     defer { watcher.stop() }
 
     try FileManager.default.createDirectory(at: missing, withIntermediateDirectories: true)
-    for _ in 0..<50 where changes == 0 { try await Task.sleep(for: .milliseconds(100)) }
+    await waitUntil("the watcher reports the new folder") { changes >= 1 }
 
     #expect(changes >= 1)
   }
