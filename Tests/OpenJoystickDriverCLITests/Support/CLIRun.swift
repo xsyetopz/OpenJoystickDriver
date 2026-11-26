@@ -16,9 +16,11 @@ struct CLIRun {
     // The executable installs the host at launch; a fake keeps tests off real USB.
     PlatformHosts.install(FakePlatformHost())
     let capture = CLIOutputCapture()
-    let code = await IsolatedUserData.run {
-      await CLIOutput.$capture.withValue(capture) {
-        await CLI.execute(arguments: arguments)
+    let code = await CLIRunGate.shared.run {
+      await IsolatedUserData.run {
+        await CLIOutput.$capture.withValue(capture) {
+          await CLI.execute(arguments: arguments)
+        }
       }
     }
     let run = Self(

@@ -47,29 +47,33 @@ struct StandardInputTests {
       ["record", "remove", "366C:0005"], ["virtual", "reset", "--all"],
       ["profile", "edit", "Pad"],
     ]
-    try await Self.withStandardInputFromNull {
-      for arguments in gated {
-        await Task.yield()
-        let result = await RecordStore.$directory.withValue(directory) {
-          await service.run(arguments)
+    // One permit for the whole sweep, so each command does not queue behind the suite again.
+    try await CLIRunGate.shared.runThrowing {
+      try await Self.withStandardInputFromNull {
+        for arguments in gated {
+          let result = await RecordStore.$directory.withValue(directory) {
+            await service.run(arguments)
+          }
+          let text = "ojd \(arguments.joined(separator: " ")): \(result.standardError)"
+          #expect(result.code == 64, "\(text)")
+          #expect(!result.standardError.contains("[y/N]"), "\(text)")
+          #expect(
+            result.standardError.contains("--force") || result.standardError.contains("terminal"),
+            "\(text)"
+          )
         }
-        let text = "ojd \(arguments.joined(separator: " ")): \(result.standardError)"
-        #expect(result.code == 64, "\(text)")
-        #expect(!result.standardError.contains("[y/N]"), "\(text)")
-        #expect(
-          result.standardError.contains("--force") || result.standardError.contains("terminal"),
-          "\(text)"
-        )
-      }
-      #expect(library.stored.map(\.bindings) == [[binding]])
-      let records = try FileManager.default.contentsOfDirectory(atPath: directory.path)
-      #expect(records == ["366c-0005.patch.plist"])
-      for arguments in leaves {
-        await Task.yield()
-        let result = await RecordStore.$directory.withValue(directory) {
-          await service.run(arguments)
+        #expect(library.stored.map(\.bindings) == [[binding]])
+        let records = try FileManager.default.contentsOfDirectory(atPath: directory.path)
+        #expect(records == ["366c-0005.patch.plist"])
+        for arguments in leaves {
+          let result = await RecordStore.$directory.withValue(directory) {
+            await service.run(arguments)
+          }
+          #expect(
+            !result.standardError.contains("[y/N]"),
+            "ojd \(arguments.joined(separator: " "))"
+          )
         }
-        #expect(!result.standardError.contains("[y/N]"), "ojd \(arguments.joined(separator: " "))")
       }
     }
   }
