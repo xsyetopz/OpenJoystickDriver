@@ -168,53 +168,80 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
     guard usageMap.reportID == nil || usageMap.reportID == value.reportID, !bindings.isEmpty
     else { return nil }
     var next = state
-    for binding in bindings {
-      switch binding {
-      case .button(let control): next.set(control, pressed: value.integerValue != 0)
-      case .hat(let hat):
-        hatDirection = hat.direction(of: value)
-        next.hat = combinedHat
-      case .axis(let axis):
-        let position = axis.value(of: value)
-        switch axis.control {
-        case .leftStickX: leftX = position
-        case .leftStickY: leftY = position
-        case .rightStickX: rightX = position
-        case .rightStickY: rightY = position
-        case .leftTrigger: next.leftTrigger = UnipolarValue(normalized: position)
-        default: next.rightTrigger = UnipolarValue(normalized: position)
-        }
-        if !axis.isTrigger {
-          next.leftStick = StickPosition(x: leftX, y: leftY)
-          next.rightStick = StickPosition(x: rightX, y: rightY)
-        }
-      case .halfAxis(let halfAxis):
-        let trigger = UnipolarValue(normalized: halfAxis.value(of: value))
-        if halfAxis.control == .leftTrigger {
-          next.leftTrigger = trigger
-        } else {
-          next.rightTrigger = trigger
-        }
-      case .axisDpad(let binding):
-        if binding.isPressed(by: value) {
-          axisDpadPressed.insert(binding.control)
-        } else {
-          axisDpadPressed.remove(binding.control)
-        }
-        next.hat = combinedHat
-      case .axisButton(let binding):
-        next.set(binding.control, pressed: binding.isPressed(by: value))
-      case .buttonTrigger(let control):
-        let trigger = UnipolarValue(normalized: value.integerValue != 0 ? 1 : 0)
-        if control == .leftTrigger {
-          next.leftTrigger = trigger
-        } else {
-          next.rightTrigger = trigger
-        }
-      }
-    }
+    for binding in bindings { fold(binding, of: value, into: &next) }
     state = next
     return ControllerEvent(timestamp: receivedAt, state: next)
+  }
+
+  /// Folds one binding of a usage into `next`, updating the stick, hat, and axis D-pad memory.
+  private func fold(
+    _ binding: HIDUsageMap.Binding,
+    of value: HIDElementValue,
+    into next: inout ControllerState
+  ) {
+    switch binding {
+    case .button(let control): next.set(control, pressed: value.integerValue != 0)
+    case .hat(let hat):
+      hatDirection = hat.direction(of: value)
+      next.hat = combinedHat
+    case .axis(let axis): foldAxis(axis, of: value, into: &next)
+    case .halfAxis(let halfAxis):
+      Self.setTrigger(
+        halfAxis.control,
+        to: UnipolarValue(normalized: halfAxis.value(of: value)),
+        in: &next
+      )
+    case .axisDpad(let binding):
+      if binding.isPressed(by: value) {
+        axisDpadPressed.insert(binding.control)
+      } else {
+        axisDpadPressed.remove(binding.control)
+      }
+      next.hat = combinedHat
+    case .axisButton(let binding):
+      next.set(binding.control, pressed: binding.isPressed(by: value))
+    case .buttonTrigger(let control):
+      Self.setTrigger(
+        control,
+        to: UnipolarValue(normalized: value.integerValue != 0 ? 1 : 0),
+        in: &next
+      )
+    }
+  }
+
+  /// Folds an axis value into the stick memory or a trigger of `next`; a stick axis rewrites both
+  /// sticks from the memory.
+  private func foldAxis(
+    _ axis: HIDUsageMap.Axis,
+    of value: HIDElementValue,
+    into next: inout ControllerState
+  ) {
+    let position = axis.value(of: value)
+    switch axis.control {
+    case .leftStickX: leftX = position
+    case .leftStickY: leftY = position
+    case .rightStickX: rightX = position
+    case .rightStickY: rightY = position
+    case .leftTrigger: next.leftTrigger = UnipolarValue(normalized: position)
+    default: next.rightTrigger = UnipolarValue(normalized: position)
+    }
+    if !axis.isTrigger {
+      next.leftStick = StickPosition(x: leftX, y: leftY)
+      next.rightStick = StickPosition(x: rightX, y: rightY)
+    }
+  }
+
+  /// Sets the left trigger when `control` is the left trigger, otherwise the right one.
+  private static func setTrigger(
+    _ control: Control,
+    to trigger: UnipolarValue,
+    in state: inout ControllerState
+  ) {
+    if control == .leftTrigger {
+      state.leftTrigger = trigger
+    } else {
+      state.rightTrigger = trigger
+    }
   }
 
   /// The hat usage's direction with the directions the axes press: a direction either presses is
