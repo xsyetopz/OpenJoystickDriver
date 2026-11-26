@@ -61,119 +61,11 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
     defer { done.signal() }
     do {
       let url = URL(fileURLWithPath: recordPath)
-      if validateOnly {
-        let protocolID = try ControllerRecordProbePlan.validate(data: Data(contentsOf: url))
-        // Only a protocol the probe drives has a plan to render.
-        guard ControllerRecordProbePlan.probeableProtocols.contains(protocolID) else {
-          print("RECORD_VALIDATION result=valid")
-          return
-        }
-        let plan = try ControllerRecordProbePlan(contentsOf: url)
-        await ControllerRecordProbeIsolation(driver: plan.makeUnobservedDriver()).printRecord(
-          plan: plan,
-          transport: plan.transportProfile
-        )
-        print("RECORD_VALIDATION result=valid")
-        return
-      }
-      let plan = try ControllerRecordProbePlan(contentsOf: url)
-
-      let provider = OpenJoystickDriverUSBTransportProvider()
-      let devices = try await provider.devices().filter {
-        $0.vendorID == plan.vendorID && $0.productID == plan.productID
-      }
-      print("USB_MATCHES count=\(devices.count)")
-      guard let device = devices.first else {
-        unsafe fputs("ERROR: no raw USB transport matches the record VID/PID\n", stderr)
-        exitCode.withLock { $0 = 2 }
-        return
-      }
-
-      print("USB_DEVICE service=\(device.serviceID) location=\(device.locationID)")
-      if let product = device.productName { print("USB_STRING product=\(product)") }
-      // Validate the claimed interface as discovery does, before open can set the configuration.
-      let passive = await provider.resolveTransport(for: device, configured: plan.transportProfile)
-      let claimed: USBTransportResolution
-      do {
-        claimed = try await provider.resolveUSBConfiguration(device, passive: passive)
-      } catch USBConfigurationReadFailure.refused {
-        let owner = try? await provider.exclusiveOwner(of: device)
-        refuseProbeDevice(
-          reason: owner == nil ? "configuration-unreadable" : "device-in-use",
-          message: owner.map {
-            "the host refused the USB configuration read because \($0) holds the device; "
-              + "close that program or reconnect the controller"
-          } ?? "the host refused the USB configuration read and reports no exclusive owner; "
-            + "reconnect the controller",
-          exitCode: exitCode
-        )
-        return
-      } catch {
-        refuseProbeDevice(
-          reason: "configuration-unreadable",
-          message: "the device's USB configuration descriptor could not be read (\(error)); "
-            + "try again",
-          exitCode: exitCode
-        )
-        return
-      }
-      guard claimed.physicalDevice.map({ $0.serviceAddress == device.serviceAddress }) ?? true
-      else {
-        refuseProbeDevice(
-          reason: "configuration-unobserved",
-          message: "the USB configuration that was read belongs to another service; try again",
-          exitCode: exitCode
-        )
-        return
-      }
-      let driver: any PhysicalProtocolDriver
-      switch plan.makeDriver(for: device, claimed: claimed) {
-      case .success(let validated): driver = validated
-      case .failure(let reason):
-        refuseProbeDevice(
-          reason: reason.rawValue,
-          message: "the device does not satisfy the record's interface contract",
-          exitCode: exitCode
-        )
-        return
-      }
-      let isolation = ControllerRecordProbeIsolation(driver: driver)
-      let transport = claimed.profile
-      await isolation.printRecord(plan: plan, transport: transport)
-      let session = try await provider.open(
-        device,
-        options: USBTransportOpenOptions(transportProfile: transport)
-      )
-
-      if transport.needsSetConfiguration { print("USB_CONFIGURATION value=1 result=set") }
-      if transport.alternateSetting != 0 {
-        print(
-          "USB_ALTERNATE_SETTING interface=\(transport.interfaceNumber)"
-            + " value=\(transport.alternateSetting) result=set"
-        )
-      }
-      print(
-        "USB_OPEN interface=\(transport.interfaceNumber)"
-          + " route=\(device.route.rawValue) result=opened"
-      )
-
-      try await isolation.sendStartupPackets(session: session)
-      print("RECORD_HANDSHAKE driver=\(plan.protocolBinding.rawValue) result=complete")
-
-      if transport.postHandshakeSettleNanoseconds > 0 {
-        try await Task.sleep(nanoseconds: transport.postHandshakeSettleNanoseconds)
-      }
-      let summary = try await isolation.monitor(
-        transport: transport,
-        session: session,
-        seconds: seconds
-      )
-      await session.close()
-      print(
-        "RECORD_SUMMARY packets=\(summary.packets)"
-          + " events=\(summary.events) parse_errors=\(summary.parseErrors)"
-      )
-      exitCode.withLock { $0 = summary.packets > 0 ? 0 : 3 }
+      let code =
+        validateOnly
+        ? try await validateProbeRecord(at: url)
+        : try await probeRecordedDevice(from: url, seconds: seconds)
+      exitCode.withLock { $0 = code }
     } catch {
       unsafe fputs("ERROR: record probe failed: \(error.localizedDescription)\n", unsafe stderr)
       exitCode.withLock { $0 = 1 }
@@ -184,11 +76,156 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
   exit(exitCode.withLock { $0 })
 }
 
-/// Refuses a device before any write, when its claimed interface cannot be validated.
-private func refuseProbeDevice(reason: String, message: String, exitCode: Locked<Int32>) {
+/// Validates the record at `url` with an unobserved driver and prints its RECORD line when the
+/// probe drives its protocol.
+///
+/// - Returns: The exit code, 0.
+private func validateProbeRecord(at url: URL) async throws -> Int32 {
+  let protocolID = try ControllerRecordProbePlan.validate(data: Data(contentsOf: url))
+  // Only a protocol the probe drives has a plan to render.
+  if ControllerRecordProbePlan.probeableProtocols.contains(protocolID) {
+    let plan = try ControllerRecordProbePlan(contentsOf: url)
+    await ControllerRecordProbeIsolation(driver: plan.makeUnobservedDriver()).printRecord(
+      plan: plan,
+      transport: plan.transportProfile
+    )
+  }
+  print("RECORD_VALIDATION result=valid")
+  return 0
+}
+
+/// Opens the raw USB device that matches the record at `url`, starts it and monitors its input.
+///
+/// - Returns: The exit code: 0 with input packets, 3 without, 2 when no device matches, and 4 when
+///   the device is refused.
+private func probeRecordedDevice(from url: URL, seconds: Int) async throws -> Int32 {
+  let plan = try ControllerRecordProbePlan(contentsOf: url)
+
+  let provider = OpenJoystickDriverUSBTransportProvider()
+  let devices = try await provider.devices().filter {
+    $0.vendorID == plan.vendorID && $0.productID == plan.productID
+  }
+  print("USB_MATCHES count=\(devices.count)")
+  guard let device = devices.first else {
+    unsafe fputs("ERROR: no raw USB transport matches the record VID/PID\n", stderr)
+    return 2
+  }
+
+  print("USB_DEVICE service=\(device.serviceID) location=\(device.locationID)")
+  if let product = device.productName { print("USB_STRING product=\(product)") }
+  guard let claimed = await claimProbeInterface(provider, device: device, plan: plan),
+    let isolation = makeProbeIsolation(plan: plan, device: device, claimed: claimed)
+  else { return 4 }
+  let transport = claimed.profile
+  await isolation.printRecord(plan: plan, transport: transport)
+  let session = try await provider.open(
+    device,
+    options: USBTransportOpenOptions(transportProfile: transport)
+  )
+  printProbeOpen(transport: transport, device: device)
+
+  try await isolation.sendStartupPackets(session: session)
+  print("RECORD_HANDSHAKE driver=\(plan.protocolBinding.rawValue) result=complete")
+
+  if transport.postHandshakeSettleNanoseconds > 0 {
+    try await Task.sleep(nanoseconds: transport.postHandshakeSettleNanoseconds)
+  }
+  let summary = try await isolation.monitor(
+    transport: transport,
+    session: session,
+    seconds: seconds
+  )
+  await session.close()
+  print(
+    "RECORD_SUMMARY packets=\(summary.packets)"
+      + " events=\(summary.events) parse_errors=\(summary.parseErrors)"
+  )
+  return summary.packets > 0 ? 0 : 3
+}
+
+/// Validates the claimed interface of `device` as discovery does, before open can set the
+/// configuration.
+///
+/// - Returns: The resolution, or nil after printing the refusal when the configuration cannot be
+///   read or belongs to another service.
+private func claimProbeInterface(
+  _ provider: OpenJoystickDriverUSBTransportProvider,
+  device: USBTransportDevice,
+  plan: ControllerRecordProbePlan
+) async -> USBTransportResolution? {
+  let passive = await provider.resolveTransport(for: device, configured: plan.transportProfile)
+  let claimed: USBTransportResolution
+  do {
+    claimed = try await provider.resolveUSBConfiguration(device, passive: passive)
+  } catch USBConfigurationReadFailure.refused {
+    let owner = try? await provider.exclusiveOwner(of: device)
+    refuseProbeDevice(
+      reason: owner == nil ? "configuration-unreadable" : "device-in-use",
+      message: owner.map {
+        "the host refused the USB configuration read because \($0) holds the device; "
+          + "close that program or reconnect the controller"
+      } ?? "the host refused the USB configuration read and reports no exclusive owner; "
+        + "reconnect the controller"
+    )
+    return nil
+  } catch {
+    refuseProbeDevice(
+      reason: "configuration-unreadable",
+      message: "the device's USB configuration descriptor could not be read (\(error)); "
+        + "try again"
+    )
+    return nil
+  }
+  guard claimed.physicalDevice.map({ $0.serviceAddress == device.serviceAddress }) ?? true
+  else {
+    refuseProbeDevice(
+      reason: "configuration-unobserved",
+      message: "the USB configuration that was read belongs to another service; try again"
+    )
+    return nil
+  }
+  return claimed
+}
+
+/// Builds the driver that the record selects for the claimed interface, on its own isolation.
+///
+/// - Returns: The isolation, or nil after printing the refusal when the interface violates the
+///   record's contract.
+private func makeProbeIsolation(
+  plan: ControllerRecordProbePlan,
+  device: USBTransportDevice,
+  claimed: USBTransportResolution
+) -> ControllerRecordProbeIsolation? {
+  switch plan.makeDriver(for: device, claimed: claimed) {
+  case .success(let validated): return ControllerRecordProbeIsolation(driver: validated)
+  case .failure(let reason):
+    refuseProbeDevice(
+      reason: reason.rawValue,
+      message: "the device does not satisfy the record's interface contract"
+    )
+    return nil
+  }
+}
+
+/// Prints the USB_CONFIGURATION, USB_ALTERNATE_SETTING and USB_OPEN lines of an opened device.
+private func printProbeOpen(transport: DeviceTransportProfile, device: USBTransportDevice) {
+  if transport.needsSetConfiguration { print("USB_CONFIGURATION value=1 result=set") }
+  if transport.alternateSetting != 0 {
+    print(
+      "USB_ALTERNATE_SETTING interface=\(transport.interfaceNumber)"
+        + " value=\(transport.alternateSetting) result=set"
+    )
+  }
+  print(
+    "USB_OPEN interface=\(transport.interfaceNumber)"
+      + " route=\(device.route.rawValue) result=opened"
+  )
+}
+
+/// Reports a device refused before any write, when its claimed interface cannot be validated.
+private func refuseProbeDevice(reason: String, message: String) {
   print("RECORD_BINDING result=refused reason=\(reason)")
   unsafe fputs("ERROR: \(message) (\(reason))\n", unsafe stderr)
-  exitCode.withLock { $0 = 4 }
 }
 
 /// Prints the RECORD line: the identity, the USB transport profile and the startup packets of
