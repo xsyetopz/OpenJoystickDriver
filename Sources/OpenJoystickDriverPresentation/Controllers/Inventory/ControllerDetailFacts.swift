@@ -106,19 +106,36 @@ enum ControllerDetailFacts {
     for device: ApplicationServiceDeviceDescription,
     appName: (String) -> String = { $0 }
   ) -> [ControllerFact] {
-    let output = device.physicalOutputCapabilities
-    let selectedBy =
-      device.profileInForce?.appID.map {
-        [
-          fact(
-            .profileSelectedBy,
-            "ui.controllers.profileSelectedBy.label",
-            .text(appName($0))
-          )
-        ]
-      } ?? []
-    let paused =
-      device.paused
+    let always = routeFacts(for: device)
+    let power = powerFacts(for: device)
+    let capabilities = capabilityFacts(for: device)
+    return selectedByFacts(for: device, appName: appName) + pausedFacts(for: device) + always
+      + inputHealthFacts(for: device) + heldFacts(for: device) + [holdersFact(for: device)]
+      + alsoListedFacts(for: device)
+      + (power + wiiRemoteFacts(for: device) + capabilities).filter { $0.value != .none }
+  }
+
+  /// The app in front that selected the profile in force, if any.
+  private static func selectedByFacts(
+    for device: ApplicationServiceDeviceDescription,
+    appName: (String) -> String
+  ) -> [ControllerFact] {
+    return device.profileInForce?.appID.map {
+      [
+        fact(
+          .profileSelectedBy,
+          "ui.controllers.profileSelectedBy.label",
+          .text(appName($0))
+        )
+      ]
+    } ?? []
+  }
+
+  /// The fact that a `Pause` has the controller pass through unmapped, if it does.
+  private static func pausedFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
+    return device.paused
       ? [
         fact(
           .paused,
@@ -126,6 +143,12 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("ui.controllers.paused.value"))
         )
       ] : []
+  }
+
+  /// The publication, route and serial number facts.
+  private static func routeFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
     // The Handled by picker already names who serves the controller, so its route and a "not
     // shown because macOS serves it" publication would repeat the picker's selection.
     let pickerShown = ServingPolicy.offersServerChoice(ServingInput(device))
@@ -135,13 +158,24 @@ enum ControllerDetailFacts {
     let shown =
       pickerShown && publicationRepeatsSystemServer(device.publication)
       ? [] : [fact(.publication, "cli.controller.show.labelPublication", publication(device))]
-    let always = shown + route + [fact(.serialNumber, "term.serialNumber", serialNumber(device))]
+    return shown + route + [fact(.serialNumber, "term.serialNumber", serialNumber(device))]
+  }
+
+  /// The input health, unless another client holds the controller.
+  private static func inputHealthFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
     // A controller that another client holds runs no input session, so it has no input health.
-    let input =
-      device.hidInputOwnership == .ownedByAnotherClient
+    return device.hidInputOwnership == .ownedByAnotherClient
       ? []
       : [fact(.inputHealth, "cli.controller.show.labelInput", .text(inputHealthText(device)))]
-    let power = [
+  }
+
+  /// The battery, charging and cable facts.
+  private static func powerFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
+    return [
       fact(.battery, "ui.controllers.battery", battery(device)),
       fact(.chargingState, "ui.controllers.chargingState", chargingState(device)),
       fact(
@@ -150,15 +184,27 @@ enum ControllerDetailFacts {
         chargingState(device) == .none ? cableState(device) : .none
       ),
     ]
-    let wiiRemote =
-      device.connectionState?.wiiRemote.map {
-        [
-          fact(.wiiReportMode, "cli.controller.show.labelReportMode", .text($0.reportModeText)),
-          fact(.wiiExtension, "cli.controller.show.labelExtension", .text($0.extensionText())),
-          fact(.wiiMotionPlus, "cli.controller.show.labelMotionPlus", .text($0.motionPlusText())),
-        ]
-      } ?? []
-    let capabilities = [
+  }
+
+  /// The report mode, extension and Motion Plus facts of a Wii Remote.
+  private static func wiiRemoteFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
+    return device.connectionState?.wiiRemote.map {
+      [
+        fact(.wiiReportMode, "cli.controller.show.labelReportMode", .text($0.reportModeText)),
+        fact(.wiiExtension, "cli.controller.show.labelExtension", .text($0.extensionText())),
+        fact(.wiiMotionPlus, "cli.controller.show.labelMotionPlus", .text($0.motionPlusText())),
+      ]
+    } ?? []
+  }
+
+  /// The rumble, lighting, adaptive trigger, motion and touch facts.
+  private static func capabilityFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
+    let output = device.physicalOutputCapabilities
+    return [
       fact(.rumble, "cli.controller.show.labelRumble", list(output.rumbleMotors.map(\.title))),
       fact(
         .lighting,
@@ -182,8 +228,12 @@ enum ControllerDetailFacts {
           ? .text(String(device.capabilities.touchContactCount)) : .none
       ),
     ]
-    let held =
-      device.hidInputOwnership == .ownedByAnotherClient
+  }
+
+  /// The client that holds the controller for itself, if another client does.
+  private static func heldFacts(for device: ApplicationServiceDeviceDescription) -> [ControllerFact]
+  {
+    return device.hidInputOwnership == .ownedByAnotherClient
       ? [
         fact(
           .exclusiveOwner,
@@ -193,13 +243,23 @@ enum ControllerDetailFacts {
           )
         )
       ] : []
-    let holders = fact(
+  }
+
+  /// The processes that hold the controller open.
+  private static func holdersFact(for device: ApplicationServiceDeviceDescription) -> ControllerFact
+  {
+    fact(
       .holders,
       "ui.controllers.holders",
       list(device.holders.map { $0.label(localize: OJDLocalized.string) })
     )
-    let listed =
-      device.duplicateExposureRisk == .systemGameController
+  }
+
+  /// The fact that the system also lists the controller, if it does.
+  private static func alsoListedFacts(
+    for device: ApplicationServiceDeviceDescription
+  ) -> [ControllerFact] {
+    return device.duplicateExposureRisk == .systemGameController
       ? [
         fact(
           .alsoListedBySystem,
@@ -207,8 +267,6 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("status.controllerAlsoListedBySystem"))
         )
       ] : []
-    return selectedBy + paused + always + input + held + [holders] + listed
-      + (power + wiiRemote + capabilities).filter { $0.value != .none }
   }
 
   /// Returns the technical facts, shown under Advanced: identifiers, the parser (the binding that
