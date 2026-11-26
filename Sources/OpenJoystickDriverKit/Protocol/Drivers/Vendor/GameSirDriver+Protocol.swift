@@ -312,17 +312,7 @@ extension GameSirDriver {
 
   /// The hat direction of the D-pad nibble.
   static func dpadDirection(_ value: UInt8) -> HatDirection {
-    switch value {
-    case 0: .north
-    case 1: .northEast
-    case 2: .east
-    case 3: .southEast
-    case 4: .south
-    case 5: .southWest
-    case 6: .west
-    case 7: .northWest
-    default: .neutral
-    }
+    HatDirection(clockwiseFromNorth: value)
   }
 
   /// The hue in degrees and the saturation in percent of an RGB color.

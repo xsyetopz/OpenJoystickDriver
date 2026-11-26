@@ -255,6 +255,13 @@ extension HatDirection {
     )
   }
 
+  /// The direction of an 8-way hat `value`: 0 is up, increasing clockwise to 7 for up-left;
+  /// anything else is at rest.
+  init(clockwiseFromNorth value: UInt8) {
+    self =
+      Int(value) < Self.clockwiseFromNorth.count ? Self.clockwiseFromNorth[Int(value)] : .neutral
+  }
+
   /// The D-pad control the hat points at; a diagonal names its vertical id, and at rest the
   /// first D-pad id.
   public var dpadControl: Control {

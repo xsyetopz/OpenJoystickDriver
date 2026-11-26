@@ -136,17 +136,7 @@ extension DualShock4Driver {
 
   /// The hat direction of the D-pad nibble.
   private static func direction(for hat: UInt8) -> HatDirection {
-    switch hat {
-    case 0: .north
-    case 1: .northEast
-    case 2: .east
-    case 3: .southEast
-    case 4: .south
-    case 5: .southWest
-    case 6: .west
-    case 7: .northWest
-    default: .neutral
-    }
+    HatDirection(clockwiseFromNorth: hat)
   }
 
   /// Encodes a rumble or lightbar color command as one output report for the current transport.

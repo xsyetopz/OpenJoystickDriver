@@ -2,7 +2,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The exact D-pad initializers name a direction only for the eight valid flag combinations.
+/// The D-pad initializers name a direction only for the eight valid flag combinations.
 struct HatDirectionExactDpadTests {
   private static let expected:
     [(up: Bool, right: Bool, down: Bool, left: Bool, direction: HatDirection)] = [
@@ -53,5 +53,18 @@ struct HatDirectionExactDpadTests {
   func nibbleIgnoresHigherBits() {
     #expect(HatDirection(dpadNibble: 0xF1) == .north)
     #expect(HatDirection(dpadNibble: 0x10) == .neutral)
+  }
+
+  @Test
+  func clockwiseValueRunsFromNorthAndAnythingElseIsNeutral() {
+    let directions: [HatDirection] = [
+      .north, .northEast, .east, .southEast, .south, .southWest, .west, .northWest,
+    ]
+    for (value, direction) in directions.enumerated() {
+      #expect(HatDirection(clockwiseFromNorth: UInt8(value)) == direction)
+    }
+    for value: UInt8 in [8, 15, 16, 255] {
+      #expect(HatDirection(clockwiseFromNorth: value) == .neutral)
+    }
   }
 }

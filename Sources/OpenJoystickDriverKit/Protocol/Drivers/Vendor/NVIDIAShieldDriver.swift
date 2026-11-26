@@ -186,16 +186,6 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
 
   /// 0 = up, increasing clockwise to 7 = up-left; anything else is at rest.
   private static func direction(for hat: UInt8) -> HatDirection {
-    switch hat {
-    case 0: return .north
-    case 1: return .northEast
-    case 2: return .east
-    case 3: return .southEast
-    case 4: return .south
-    case 5: return .southWest
-    case 6: return .west
-    case 7: return .northWest
-    default: return .neutral
-    }
+    HatDirection(clockwiseFromNorth: hat)
   }
 }

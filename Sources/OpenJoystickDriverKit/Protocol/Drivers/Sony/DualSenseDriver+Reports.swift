@@ -346,16 +346,6 @@ extension DualSenseDriver {
 
   /// The hat direction of the D-pad nibble.
   private func mapHat(_ hat: UInt8) -> HatDirection {
-    switch hat {
-    case 0: .north
-    case 1: .northEast
-    case 2: .east
-    case 3: .southEast
-    case 4: .south
-    case 5: .southWest
-    case 6: .west
-    case 7: .northWest
-    default: .neutral
-    }
+    HatDirection(clockwiseFromNorth: hat)
   }
 }
