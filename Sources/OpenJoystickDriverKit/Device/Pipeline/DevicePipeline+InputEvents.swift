@@ -18,36 +18,9 @@ extension DevicePipeline {
     // samples still go out with this one.
     let held = coalescedInput
     coalescedInput = nil
-    if let parsed {
-      currentRawInputState = parsed.state
-      if let latest = parsed.motion.last { currentRawAngularVelocity = latest.angularVelocity }
-    }
-    let event = parsed.map(normalized)
-    if event != nil {
-      if lastObservedInputReportNanoseconds == nil {
-        NotificationCenter.postServiceStatusChanged(from: self)
-      }
-      lastObservedInputReportNanoseconds = now
-    }
+    let event = recordParsedInput(parsed, now: now)
     if let timeout = plan.inputReportLivenessTimeoutNanoseconds {
-      if let last = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds,
-        now - last >= timeout
-      {
-        await retireOutputAfterLivenessLoss()
-      }
-      if event?.isFresh == true {
-        lastLiveInputReportNanoseconds = now
-        armStaleWatch()
-      }
-      if awaitingNeutralAfterLivenessLoss {
-        guard let event, event.isFresh, event.state.isEffectivelyNeutral else { return }
-        currentInputState = .neutral
-        foregroundMask = nil
-        if livenessLossFollowedInput { inputHealthRecoveryCount += 1 }
-        awaitingNeutralAfterLivenessLoss = false
-        await activateOutput()
-        return
-      }
+      guard await trackInputLiveness(event, now: now, timeout: timeout) else { return }
     }
     guard let event else {
       // A report with no input leaves the held input for `dispatchCoalescedInput()`.
@@ -60,27 +33,10 @@ extension DevicePipeline {
 
     if !externalOutputAllowed { return }
     if waitingForExternalNeutral {
-      if event.state.isEffectivelyNeutral {
-        waitingForExternalNeutral = false
-        foregroundMask = ForegroundInputMask(hiding: event.state)
-        print("[DevicePipeline] Foreground gate re-armed after neutral: \(identifier)")
-        return
-      }
-      if event.state != previousInput || !event.motion.isEmpty || !event.touchFrames.isEmpty {
-        waitingForExternalNeutral = false
-        foregroundMask = ForegroundInputMask(hiding: event.state)
-        print(
-          "[DevicePipeline] Foreground gate re-armed after first post-focus change: \(identifier)"
-        )
-      }
+      rearmForegroundGate(for: event, previousInput: previousInput)
       return
     }
-    var visible = event.state
-    if var mask = foregroundMask {
-      visible = mask.visible(event.state, shown: lastDispatchedState)
-      foregroundMask = visible == event.state ? nil : mask
-    }
-    visible.connection = nil
+    let visible = visibleInputState(of: event)
     // A native controller with no remapping route is only listed: no per-report dispatch. Nothing
     // then reaches output, so the first report after a route appears delivers the held state.
     guard observedInputDemand?.wantsObservedInput(from: identifier) ?? true else {
@@ -101,14 +57,94 @@ extension DevicePipeline {
     // A slow publication must not replay stale stick positions from the reports queued behind
     // it, but every button, hat, and touch change still reaches output in order.
     if laterReportQueued, !inputFeedsRemapping, event.touchFrames.isEmpty,
-      visible.pressed == lastDispatchedState.pressed, visible.hat == lastDispatchedState.hat,
-      visible.touch == lastDispatchedState.touch
+      changesOnlyAnalogInput(visible)
     {
       coalescedInput = output
       return
     }
     lastDispatchedState = visible
     await dispatch(output)
+  }
+
+  /// Stores the raw input of `parsed` and returns its standard form, or nil for a frame that
+  /// carried no input.
+  private func recordParsedInput(_ parsed: ControllerEvent?, now: UInt64) -> ControllerEvent? {
+    if let parsed {
+      currentRawInputState = parsed.state
+      if let latest = parsed.motion.last { currentRawAngularVelocity = latest.angularVelocity }
+    }
+    let event = parsed.map(normalized)
+    if event != nil {
+      if lastObservedInputReportNanoseconds == nil {
+        NotificationCenter.postServiceStatusChanged(from: self)
+      }
+      lastObservedInputReportNanoseconds = now
+    }
+    return event
+  }
+
+  /// Retires the output after a liveness loss, notes a fresh report, and ends the loss once a
+  /// fresh neutral report arrives.
+  ///
+  /// - Returns: Whether the report goes on to dispatch; false while the pipeline waits for a
+  ///   neutral report after a liveness loss.
+  private func trackInputLiveness(
+    _ event: ControllerEvent?,
+    now: UInt64,
+    timeout: UInt64
+  ) async -> Bool {
+    if let last = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds,
+      now - last >= timeout
+    {
+      await retireOutputAfterLivenessLoss()
+    }
+    if event?.isFresh == true {
+      lastLiveInputReportNanoseconds = now
+      armStaleWatch()
+    }
+    guard awaitingNeutralAfterLivenessLoss else { return true }
+    guard let event, event.isFresh, event.state.isEffectivelyNeutral else { return false }
+    currentInputState = .neutral
+    foregroundMask = nil
+    if livenessLossFollowedInput { inputHealthRecoveryCount += 1 }
+    awaitingNeutralAfterLivenessLoss = false
+    await activateOutput()
+    return false
+  }
+
+  /// Ends the wait for external neutral once the input is neutral or has changed since the
+  /// previous report, and hides the held input until it changes.
+  private func rearmForegroundGate(for event: ControllerEvent, previousInput: ControllerState) {
+    if event.state.isEffectivelyNeutral {
+      waitingForExternalNeutral = false
+      foregroundMask = ForegroundInputMask(hiding: event.state)
+      print("[DevicePipeline] Foreground gate re-armed after neutral: \(identifier)")
+      return
+    }
+    if event.state != previousInput || !event.motion.isEmpty || !event.touchFrames.isEmpty {
+      waitingForExternalNeutral = false
+      foregroundMask = ForegroundInputMask(hiding: event.state)
+      print(
+        "[DevicePipeline] Foreground gate re-armed after first post-focus change: \(identifier)"
+      )
+    }
+  }
+
+  /// Whether `visible` differs from the last dispatched state in no button, hat, or touch.
+  private func changesOnlyAnalogInput(_ visible: ControllerState) -> Bool {
+    visible.pressed == lastDispatchedState.pressed && visible.hat == lastDispatchedState.hat
+      && visible.touch == lastDispatchedState.touch
+  }
+
+  /// The state of `event` with the foreground mask applied and the connection cleared.
+  private func visibleInputState(of event: ControllerEvent) -> ControllerState {
+    var visible = event.state
+    if var mask = foregroundMask {
+      visible = mask.visible(event.state, shown: lastDispatchedState)
+      foregroundMask = visible == event.state ? nil : mask
+    }
+    visible.connection = nil
+    return visible
   }
 
   /// Whether a remapping route consumes this controller's input.
