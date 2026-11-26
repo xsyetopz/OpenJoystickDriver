@@ -293,51 +293,54 @@ public enum RemappingCommandValueParser {
 
   /// Parses the `physical:rumble`, `player`, `color`, `brightness` and `adaptive` forms.
   private static func physicalDestination(_ parts: [String]) -> RemappingDestination? {
-    if parts.count == 4, parts[0] == "physical", parts[1] == "rumble",
-      let motor = CommandLineName.value(of: parts[2], in: PhysicalRumbleMotor.self),
-      let intensity = boundedUnit(parts[3])
-    {
-      return .physical(.rumble(motor: motor, intensity: intensity))
-    }
-    if parts.count == 3, parts[0] == "physical", parts[1] == "player",
-      let rawIndicator = Int(parts[2]),
-      let indicator = PhysicalPlayerIndicator(rawValue: rawIndicator)
-    {
-      return .physical(.playerIndicator(indicator))
-    }
-    if parts.count == 5, parts[0] == "physical", parts[1] == "color", let red = UInt8(parts[2]),
-      let green = UInt8(parts[3]), let blue = UInt8(parts[4])
-    {
-      return .physical(.color(ControllerColor(red: red, green: green, blue: blue)))
-    }
-    if parts.count == 3, parts[0] == "physical", parts[1] == "brightness",
-      let intensity = boundedUnit(parts[2])
-    {
-      return .physical(.brightness(intensity))
-    }
-    if parts.count == 4, parts[0] == "physical", parts[1] == "adaptive",
-      let trigger = CommandLineName.value(of: parts[2], in: PhysicalAdaptiveTrigger.self),
-      parts[3] == "off"
-    {
-      return .physical(.adaptiveTrigger(trigger, .off))
-    }
-    if parts.count == 6, parts[0] == "physical", parts[1] == "adaptive",
-      let trigger = CommandLineName.value(of: parts[2], in: PhysicalAdaptiveTrigger.self),
-      parts[3] == "resistance",
-      let startPosition = boundedUnit(parts[4]), let strength = boundedUnit(parts[5])
-    {
-      return .physical(
-        .adaptiveTrigger(
-          trigger,
-          PhysicalAdaptiveTriggerEffect(
-            kind: .resistance,
-            startPosition: startPosition,
-            strength: strength
-          )
+    guard parts.count >= 3, parts[0] == "physical" else { return nil }
+    let output: RemappingPhysicalOutput? =
+      switch (parts[1], parts.count) {
+      case ("rumble", 4):
+        CommandLineName.value(of: parts[2], in: PhysicalRumbleMotor.self).flatMap { motor in
+          boundedUnit(parts[3]).map { .rumble(motor: motor, intensity: $0) }
+        }
+      case ("player", 3):
+        Int(parts[2]).flatMap(PhysicalPlayerIndicator.init(rawValue:)).map { .playerIndicator($0) }
+      case ("color", 5): colorOutput(parts[2], parts[3], parts[4])
+      case ("brightness", 3): boundedUnit(parts[2]).map { .brightness($0) }
+      case ("adaptive", 4), ("adaptive", 6): adaptiveTriggerOutput(parts)
+      default: nil
+      }
+    return output.map { .physical($0) }
+  }
+
+  /// Parses `physical:color:R:G:B`, each channel 0 to 255.
+  private static func colorOutput(
+    _ redText: String,
+    _ greenText: String,
+    _ blueText: String
+  ) -> RemappingPhysicalOutput? {
+    guard let red = UInt8(redText), let green = UInt8(greenText), let blue = UInt8(blueText)
+    else { return nil }
+    return .color(ControllerColor(red: red, green: green, blue: blue))
+  }
+
+  /// Parses `physical:adaptive:TRIGGER:off` and
+  /// `physical:adaptive:TRIGGER:resistance:START:STRENGTH`.
+  private static func adaptiveTriggerOutput(_ parts: [String]) -> RemappingPhysicalOutput? {
+    guard let trigger = CommandLineName.value(of: parts[2], in: PhysicalAdaptiveTrigger.self)
+    else { return nil }
+    switch (parts[3], parts.count) {
+    case ("off", 4): return .adaptiveTrigger(trigger, .off)
+    case ("resistance", 6):
+      guard let startPosition = boundedUnit(parts[4]), let strength = boundedUnit(parts[5])
+      else { return nil }
+      return .adaptiveTrigger(
+        trigger,
+        PhysicalAdaptiveTriggerEffect(
+          kind: .resistance,
+          startPosition: startPosition,
+          strength: strength
         )
       )
+    default: return nil
     }
-    return nil
   }
 
   /// Parses a layer target operand into the layer name and the mode, or returns `nil`.

@@ -117,6 +117,33 @@ struct CommandValueParserTests {
     }
   }
 
+  @Test(arguments: [
+    ("physical:player:1", RemappingPhysicalOutput.playerIndicator(.player1)),
+    ("physical:player:0", .playerIndicator(.off)),
+    ("physical:color:255:0:16", .color(ControllerColor(red: 255, green: 0, blue: 16))),
+    ("physical:brightness:0.25", .brightness(0.25)),
+    ("physical:adaptive:left:off", .adaptiveTrigger(.left, .off)),
+  ])
+  func parsesEachPhysicalOutputForm(_ raw: String, _ output: RemappingPhysicalOutput) throws {
+    #expect(try RemappingCommandValueParser.destination(raw) == .physical(output))
+  }
+
+  @Test(arguments: [
+    "physical:player:99",
+    "physical:color:256:0:0",
+    "physical:color:1:2",
+    "physical:rumble:low-frequency",
+    "physical:adaptive:left:resistance:0.4",
+    "physical:adaptive:left:off:0",
+    "physical:adaptive:middle:off",
+    "physical:speaker:on",
+  ])
+  func rejectsMalformedPhysicalOutput(_ raw: String) {
+    #expect(throws: RemappingCommandValueError.invalidDestination(raw)) {
+      try RemappingCommandValueParser.destination(raw)
+    }
+  }
+
   @Test
   func profileFileStoreValidatesAndRoundTrips() throws {
     let profile = RemappingProfile(
